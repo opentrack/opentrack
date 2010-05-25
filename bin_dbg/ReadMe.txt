@@ -1,0 +1,1 @@
+To run the debug version of SweetSpotter you have to copy all files except SweetSpotter.exe and SweetSpotter.pdb.

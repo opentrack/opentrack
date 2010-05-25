@@ -1,0 +1,13 @@
+FaceSearcherV1
+ffmf.ini
+cascade.bin
+ftshape.txt
+clm_face_scale150.bin
+clm_face_scale250.bin
+eye_model_glasses.bin
+clm_mouth.bin
+mouthmodel.bin
+clm_model_left_eyebrow_scale100.bin
+clm_model_right_eyebrow_scale100.bin
+shapemodel2d_left_eyebrow_scale100.bin
+shapemodel2d_right_eyebrow_scale100.bin

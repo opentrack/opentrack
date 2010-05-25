@@ -1,0 +1,5 @@
+# Cameras listed here will avoid functionality testing on startup
+# This is usually required if the camera driver is ok except for the condition where the 
+# camera is not connected.
+# The camera name must match the name of the video Capture Source filter in Directshow.
+PS3Eye Camera

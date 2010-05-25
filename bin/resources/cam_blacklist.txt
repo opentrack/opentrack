@@ -1,0 +1,6 @@
+# Cameras in this file will be ignored
+# Cameras are listed here if they are not real cameras or have unreliable WDM drivers
+# The camera name must match the name of the video Capture Source filter in Directshow.
+YouUp Source
+Creative WebCam (With Video Effects)
+Point Grey Camera

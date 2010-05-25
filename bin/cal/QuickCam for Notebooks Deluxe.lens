@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LensParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.0" xmlns="http://www.seeingmachines.com/faceapi/coreframework/layer3/image/image/coords" xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+ <fx>-702.856243568665491</fx>
+ <fy>-701.865218883518082</fy>
+ <ox>341.023233945843913</ox>
+ <oy>228.468909413763441</oy>
+ <skew>-0.241630846448370</skew>
+ <k1>0.000000000000000</k1>
+ <k2>0.000000000000000</k2>
+ <k3>0.000000000000000</k3>
+ <k4>0.000000000000000</k4>
+ <k5>0.000000000000000</k5>
+ <cal_image_cols>640</cal_image_cols>
+ <cal_image_rows>480</cal_image_rows>
+</LensParameters>
