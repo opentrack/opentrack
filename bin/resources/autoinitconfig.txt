@@ -1,0 +1,6 @@
+AutoInitV1
+ffmf.ini
+cascade.bin
+ftshape.txt
+clm_face_scale150.bin
+clm_face_scale250.bin
