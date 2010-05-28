@@ -920,6 +920,144 @@ color:#000;</string>
             </widget>
            </item>
            <item>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="lblSensYaw_3">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#ccc;
+background:none;</string>
+               </property>
+               <property name="text">
+                <string>Smoothing (samples)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QSlider" name="slideSmoothing">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>120</number>
+               </property>
+               <property name="pageStep">
+                <number>10</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::NoTicks</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="spinSmoothing">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>22</height>
+                </size>
+               </property>
+               <property name="maximum">
+                <number>120</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QSlider" name="slideNeutralZone">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>15</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>45</number>
+               </property>
+               <property name="pageStep">
+                <number>2</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::NoTicks</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="spinNeutralZone">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>22</height>
+                </size>
+               </property>
+               <property name="maximum">
+                <number>45</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lblSensYaw_4">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#ccc;
+background:none;</string>
+               </property>
+               <property name="text">
+                <string>Rotation Neutral Zone (degr.)</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -1025,19 +1163,6 @@ background:none;</string>
              </layout>
             </widget>
            </item>
-           <item>
-            <spacer name="horizontalSpacer_10">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </item>
          <item>
@@ -1101,7 +1226,7 @@ opacity:100;</string>
 background:none;</string>
                   </property>
                   <property name="text">
-                   <string>Sensitivity</string>
+                   <string>Sensitivity (100 = x1)</string>
                   </property>
                  </widget>
                 </item>
@@ -1172,7 +1297,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="4">
+                <item row="1" column="6">
                  <widget class="QLabel" name="lblSensX">
                   <property name="minimumSize">
                    <size>
@@ -1195,7 +1320,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="5">
+                <item row="1" column="7">
                  <widget class="QSlider" name="sensX">
                   <property name="minimumSize">
                    <size>
@@ -1220,7 +1345,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="6">
+                <item row="1" column="8">
                  <widget class="QSpinBox" name="spinSensX">
                   <property name="minimumSize">
                    <size>
@@ -1239,7 +1364,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="6" rowspan="2">
+                <item row="2" column="8" rowspan="2">
                  <widget class="QSpinBox" name="spinSensY">
                   <property name="minimumSize">
                    <size>
@@ -1325,7 +1450,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="4">
+                <item row="3" column="6">
                  <widget class="QLabel" name="lblSensY">
                   <property name="minimumSize">
                    <size>
@@ -1348,7 +1473,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="5">
+                <item row="3" column="7">
                  <widget class="QSlider" name="sensY">
                   <property name="minimumSize">
                    <size>
@@ -1440,7 +1565,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="4">
+                <item row="4" column="6">
                  <widget class="QLabel" name="lblSensZ">
                   <property name="minimumSize">
                    <size>
@@ -1463,7 +1588,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="5">
+                <item row="4" column="7">
                  <widget class="QSlider" name="sensZ">
                   <property name="minimumSize">
                    <size>
@@ -1488,7 +1613,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="6">
+                <item row="4" column="8">
                  <widget class="QSpinBox" name="spinSensZ">
                   <property name="minimumSize">
                    <size>
@@ -1507,14 +1632,14 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="3">
+                <item row="1" column="5">
                  <widget class="QCheckBox" name="chkInvertYaw">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3">
+                <item row="0" column="5">
                  <widget class="QLabel" name="lblInvert1">
                   <property name="minimumSize">
                    <size>
@@ -1537,28 +1662,28 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="3">
+                <item row="3" column="5">
                  <widget class="QCheckBox" name="chkInvertPitch">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="3">
+                <item row="4" column="5">
                  <widget class="QCheckBox" name="chkInvertRoll">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="7">
+                <item row="1" column="11">
                  <widget class="QCheckBox" name="chkInvertX">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="7">
+                <item row="0" column="11">
                  <widget class="QLabel" name="lblInvert1_2">
                   <property name="minimumSize">
                    <size>
@@ -1581,188 +1706,373 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="7">
+                <item row="3" column="11">
                  <widget class="QCheckBox" name="chkInvertY">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="7">
+                <item row="4" column="11">
                  <widget class="QCheckBox" name="chkInvertZ">
                   <property name="text">
                    <string/>
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="3">
+                 <widget class="QSlider" name="thresYaw">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="QSlider" name="thresPitch">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="3">
+                 <widget class="QSlider" name="thresRoll">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="4">
+                 <widget class="QSpinBox" name="spinThresYaw">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="4">
+                 <widget class="QSpinBox" name="spinThresPitch">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="4">
+                 <widget class="QSpinBox" name="spinThresRoll">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLabel" name="lblSensitivity_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Threshold (100 = 1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="9">
+                 <widget class="QSlider" name="thresX">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="9">
+                 <widget class="QSlider" name="thresY">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="9">
+                 <widget class="QSlider" name="thresZ">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="10">
+                 <widget class="QSpinBox" name="spinThresX">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="10">
+                 <widget class="QSpinBox" name="spinThresY">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="10">
+                 <widget class="QSpinBox" name="spinThresZ">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>500</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="9">
+                 <widget class="QLabel" name="lblSensitivity_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Threshold (100 = 1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="7">
+                 <widget class="QLabel" name="lblSensitivity_4">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Sensitivity (100 = x1)</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QLabel" name="lblSensYaw_3">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Smoothing (samples)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QSlider" name="slideSmoothing">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>120</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinSmoothing">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximum">
-                   <number>120</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QSlider" name="slideNeutralZone">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>0</number>
-                  </property>
-                  <property name="maximum">
-                   <number>45</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>2</number>
-                  </property>
-                  <property name="value">
-                   <number>5</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QSpinBox" name="spinNeutralZone">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="maximum">
-                   <number>45</number>
-                  </property>
-                  <property name="value">
-                   <number>5</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <spacer name="horizontalSpacer_14">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>13</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="lblSensYaw_4">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Rotation Neutral Zone (degr.)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <spacer name="horizontalSpacer_13">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Minimum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>30</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_13">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>13</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
@@ -1991,11 +2301,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
+     <x>391</x>
      <y>442</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
+     <x>447</x>
      <y>446</y>
     </hint>
    </hints>
@@ -2007,11 +2317,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>457</x>
+     <x>447</x>
      <y>446</y>
     </hint>
     <hint type="destinationlabel">
-     <x>401</x>
+     <x>391</x>
      <y>442</y>
     </hint>
    </hints>
@@ -2023,11 +2333,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
+     <x>391</x>
      <y>473</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
+     <x>447</x>
      <y>476</y>
     </hint>
    </hints>
@@ -2039,11 +2349,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>457</x>
+     <x>447</x>
      <y>476</y>
     </hint>
     <hint type="destinationlabel">
-     <x>401</x>
+     <x>391</x>
      <y>473</y>
     </hint>
    </hints>
@@ -2055,11 +2365,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
+     <x>391</x>
      <y>499</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
+     <x>447</x>
      <y>502</y>
     </hint>
    </hints>
@@ -2071,11 +2381,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>457</x>
+     <x>447</x>
      <y>502</y>
     </hint>
     <hint type="destinationlabel">
-     <x>401</x>
+     <x>391</x>
      <y>499</y>
     </hint>
    </hints>
@@ -2087,11 +2397,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
+     <x>698</x>
      <y>442</y>
     </hint>
     <hint type="destinationlabel">
-     <x>634</x>
+     <x>754</x>
      <y>445</y>
     </hint>
    </hints>
@@ -2103,11 +2413,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>634</x>
+     <x>754</x>
      <y>445</y>
     </hint>
     <hint type="destinationlabel">
-     <x>578</x>
+     <x>698</x>
      <y>442</y>
     </hint>
    </hints>
@@ -2119,11 +2429,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
+     <x>698</x>
      <y>473</y>
     </hint>
     <hint type="destinationlabel">
-     <x>634</x>
+     <x>754</x>
      <y>472</y>
     </hint>
    </hints>
@@ -2135,11 +2445,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>634</x>
+     <x>754</x>
      <y>472</y>
     </hint>
     <hint type="destinationlabel">
-     <x>578</x>
+     <x>698</x>
      <y>473</y>
     </hint>
    </hints>
@@ -2151,11 +2461,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
+     <x>698</x>
      <y>499</y>
     </hint>
     <hint type="destinationlabel">
-     <x>634</x>
+     <x>754</x>
      <y>502</y>
     </hint>
    </hints>
@@ -2167,11 +2477,11 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>634</x>
+     <x>754</x>
      <y>502</y>
     </hint>
     <hint type="destinationlabel">
-     <x>578</x>
+     <x>698</x>
      <y>499</y>
     </hint>
    </hints>
@@ -2183,12 +2493,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>803</x>
-     <y>497</y>
+     <x>813</x>
+     <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>859</x>
-     <y>499</y>
+     <x>869</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
@@ -2199,12 +2509,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>859</x>
-     <y>499</y>
+     <x>869</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
-     <x>803</x>
-     <y>497</y>
+     <x>813</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>
@@ -2215,12 +2525,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>730</x>
-     <y>431</y>
+     <x>813</x>
+     <y>176</y>
     </hint>
     <hint type="destinationlabel">
-     <x>827</x>
-     <y>432</y>
+     <x>869</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -2231,12 +2541,204 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>846</x>
-     <y>441</y>
+     <x>869</x>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
-     <x>691</x>
-     <y>436</y>
+     <x>813</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresYaw</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresYaw</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>432</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresYaw</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresYaw</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>532</x>
+     <y>433</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>481</x>
+     <y>433</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresPitch</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresPitch</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>486</x>
+     <y>462</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>540</x>
+     <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresPitch</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresPitch</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>533</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>501</x>
+     <y>460</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresRoll</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresRoll</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>498</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>542</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresRoll</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresRoll</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>537</x>
+     <y>495</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>490</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresX</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresX</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>803</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>847</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresX</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresX</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>844</x>
+     <y>429</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>428</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresY</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresY</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>461</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>851</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresY</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresY</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>845</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>792</x>
+     <y>464</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thresZ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinThresZ</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>794</x>
+     <y>483</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>845</x>
+     <y>486</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinThresZ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>thresZ</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>843</x>
+     <y>499</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>805</x>
+     <y>493</y>
     </hint>
    </hints>
   </connection>
