@@ -1,12 +1,12 @@
 /********************************************************************************
-* SweetSpotter		This program is an research project of the Chair			*
-*					of Communication Acoustics at TU Dresden, Germany.			*
+* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
+*					gamers from Holland, who don't like to pay for				*
+*					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Lars Beier (Developing)									*
-*						Sebastian Merchel (Researching)							*
-*						Stephan Groth (Researching)								*
+* Copyright (C) 2010	Wim Vriend (Developing)									*
+*						Ron Hendriks (Researching and Testing)					*
 *																				*
-* Homepage				<http://www.sweetspotter.de>							*
+* Homepage																		*
 *																				*
 * This program is free software; you can redistribute it and/or modify it		*
 * under the terms of the GNU General Public License as published by the			*
@@ -240,7 +240,7 @@ void Tracker::run() {
 	}
 }
 
-/** registeres the faceapi headpose callback function **/
+/** registers the faceapi headpose callback function **/
 void Tracker::registerHeadPoseCallback() {
 	Q_ASSERT(_engine_handle);
 	smReturnCode error = smHTRegisterHeadPoseCallback( _engine->handle(), 0, receiveHeadPose);
