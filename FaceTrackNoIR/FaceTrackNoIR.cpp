@@ -23,6 +23,7 @@
 *********************************************************************************/
 
 #include "FaceTrackNoIR.h"
+#include "tracker.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
