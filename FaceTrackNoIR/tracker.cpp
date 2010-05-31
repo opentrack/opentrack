@@ -30,6 +30,10 @@
 #include "tracker.h"
 #include "FaceTrackNoIR.h"
 
+void initDInput(HINSTANCE hInstance, HWND hWnd);    // sets up and initializes DirectInput
+void detect_input(void);							// gets the current input state
+void cleanDInput(void);								// closes DirectInput and releases memory
+
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
 
@@ -138,13 +142,6 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	headRotYLine = headPoseWidget->findChild<QLineEdit *>("headRotYLine");
 	headRotZLine = headPoseWidget->findChild<QLineEdit *>("headRotZLine");
 
-	// Let's start smoothing with 10 samples...
-	intMaxYawItems = 10;
-	intMaxPitchItems = 10;
-	intMaxRollItems = 10;
-	intMaxXItems = 10;
-	intMaxYItems = 10;
-	intMaxZItems = 10;
 
 	//
 	// Check if the Freetrack Client DLL is available
@@ -163,6 +160,47 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 
 /** QThread run method @override **/
 void Tracker::run() {
+	/** Direct Input variables **/
+	LPDIRECTINPUT8 din;								// the pointer to our DirectInput interface
+	LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
+	BYTE keystate[256];								// the storage for the key-information
+	HRESULT retAcquire;
+
+	//
+	// Setup the DirectInput for keyboard strokes
+	//
+    // create the DirectInput interface
+    if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, 
+						   (void**)&din, NULL) != DI_OK) {    // COM stuff, so we'll set it to NULL
+		   qDebug() << "Tracker::setup DirectInput8 Creation failed!" << GetLastError();
+	}
+	else {
+		   qDebug() << "Tracker::setup DirectInput8 Creation OK!";
+	}
+
+    // create the keyboard device
+	if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
+		   qDebug() << "Tracker::setup CreateDevice function failed!" << GetLastError();
+	}
+	else {
+		   qDebug() << "Tracker::setup CreateDevice function OK!";
+	}
+
+    // set the data format to keyboard format
+	if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
+		   qDebug() << "Tracker::setup SetDataFormat function failed!" << GetLastError();
+	}
+	else {
+		   qDebug() << "Tracker::setup SetDataFormat function OK!";
+	}
+
+    // set the control you will have over the keyboard
+	if (dinkeyboard->SetCooperativeLevel(mainApp->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
+		   qDebug() << "Tracker::setup SetCooperativeLevel function failed!" << GetLastError();
+	}
+	else {
+		   qDebug() << "Tracker::setup SetCooperativeLevel function OK!";
+	}
 
 	forever
 	{
@@ -173,6 +211,27 @@ void Tracker::run() {
 			// Set event
 			::SetEvent(m_WaitThread);
 			return;
+		}
+
+		//
+		// Check the keyboard
+		//
+		// get access if we don't have it already
+		retAcquire = dinkeyboard->Acquire();
+		if ( (retAcquire != DI_OK) && (retAcquire != S_FALSE) ) {
+		   qDebug() << "Tracker::run Acquire function failed!" << GetLastError();
+		}
+		else {
+			// get the input data
+		   if (dinkeyboard->GetDeviceState(256, (LPVOID)keystate) != DI_OK) {
+			   qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
+		   }
+		   else {
+				qDebug() << "Tracker::run GetDeviceState function OK!";
+				if(keystate[DIK_HOME] & 0x80) {
+					qDebug() << "Tracker::run() says HOME pressed";
+				}
+		   }
 		}
 
 		//if the confidence is good enough the headpose will be updated **/

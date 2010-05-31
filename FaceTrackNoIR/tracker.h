@@ -31,8 +31,18 @@
 #include <QPoint>
 #include <QWaitCondition>
 #include <QList>
+
+#define DIRECTINPUT_VERSION 0x0800
+#include <Dinput.h>
+
 #include "FTServer.h"				// Freetrack-server
 #include "FGServer.h"				// FlightGear-server
+
+// include the DirectX Library files
+//#pragma comment (lib, "d3d9.lib")
+//#pragma comment (lib, "d3dx9.lib")
+#pragma comment (lib, "dinput8.lib")
+#pragma comment (lib, "dxguid.lib")
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;

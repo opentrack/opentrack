@@ -25,6 +25,7 @@
 #ifndef FaceTrackNoIR_H
 #define FaceTrackNoIR_H
 
+#include <tchar.h>
 #include <QtGui/QMainWindow>
 #include <QApplication>
 #include <QFileDialog>
@@ -34,13 +35,13 @@
 #include <QDialog>
 
 #include "ui_FaceTrackNoIR.h"
-#include "tracker.h"
-
 #include <sm_api_qt.h>
 #include <Dshow.h>
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
+
+class Tracker;				// pre-define class to avoid circular includes
 
 class FaceTrackNoIR : public QMainWindow
 {
