@@ -102,7 +102,7 @@ private:
 		void showHeadPoseWidget();
 		void showEngineControls();
 
-		//sensibility sliders
+		// sensibility sliders
 		void setSensYaw( int sens );
 		void setSensPitch( int sens );
 		void setSensRoll( int sens );
@@ -110,12 +110,21 @@ private:
 		void setSensY( int sens );
 		void setSensZ( int sens );
 
+		// invert checkboxes
 		void setInvertYaw( int invert );
 		void setInvertPitch( int invert );
 		void setInvertRoll( int invert );
 		void setInvertX( int invert );
 		void setInvertY( int invert );
 		void setInvertZ( int invert );
+
+		// threshold sliders
+		void setThreshYaw( int thresh );
+		void setThreshPitch( int thresh );
+		void setThreshRoll( int thresh );
+		void setThreshX( int thresh );
+		void setThreshY( int thresh );
+		void setThreshZ( int thresh );
 
 		void setNeutralZone( int angle );
 

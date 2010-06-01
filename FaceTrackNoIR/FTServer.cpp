@@ -40,6 +40,7 @@
 //
 /*
 	Modifications (last one on top):
+		20100601 - WVR: Added Mutex-bit in run(). Thought it wasn't so important (still do...). 
 		20100523 - WVR: Implemented the Freetrack-protocol just like Freetrack does. Earlier 
 						FaceTrackNoIR only worked with an adapted DLL, with a putdata function.
 						Now it works direcly in shared memory!
@@ -99,7 +100,7 @@ void FTServer::run() {
 			return;
 		}
 
-		if (pMemData != NULL) {
+		if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
 
 			//
 			// Copy the Raw measurements directly to the client.
@@ -135,6 +136,7 @@ void FTServer::run() {
 
 			qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
 			qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
+			ReleaseMutex(hFTMutex);
 		}
 
 		// just for lower cpu load

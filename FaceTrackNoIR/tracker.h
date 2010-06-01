@@ -39,8 +39,6 @@
 #include "FGServer.h"				// FlightGear-server
 
 // include the DirectX Library files
-//#pragma comment (lib, "d3d9.lib")
-//#pragma comment (lib, "d3dx9.lib")
 #pragma comment (lib, "dinput8.lib")
 #pragma comment (lib, "dxguid.lib")
 
@@ -75,8 +73,21 @@ private:
 	static float headRotX;
 	static float headRotY;
 	static float headRotZ;
+
+	// Offsets, used to center view while tracking
+	static float offset_headPosX;
+	static float offset_headPosY;
+	static float offset_headPosZ;					// Distance from camera
+
+	static float offset_headRotX;
+	static float offset_headRotY;
+	static float offset_headRotZ;
+
+	// Flags to start/stop/reset tracking
 	static bool confid;
 	static bool set_initial;						// initial headpose is set
+	static bool do_tracking;						// Start/stop tracking, using MINUS key on keyboard
+	static bool do_center;							// Center head-position, using EQUALS key on keyboard
 
 	/** static member varables for calculating the virtual head pose **/
 	static float sensYaw;
@@ -92,6 +103,14 @@ private:
 	static float invertX;
 	static float invertY;
 	static float invertZ;
+
+	/** Thresholds to remove jitter **/
+	static float thresYaw;
+	static float thresPitch;
+	static float thresRoll;
+	static float thresX;
+	static float thresY;
+	static float thresZ;
 
 	static float rotNeutralZone;						// Neutral Zone for rotations (rad).
 	
@@ -176,6 +195,13 @@ public:
 	static void setInvertX(bool invert) { invertX = invert?-1.0f:+1.0f; }
 	static void setInvertY(bool invert) { invertY = invert?-1.0f:+1.0f; }
 	static void setInvertZ(bool invert) { invertZ = invert?-1.0f:+1.0f; }
+
+	static void setThresYaw(int x) { thresYaw = x/100.0f; }
+	static void setThresPitch(int x) { thresPitch = x/100.0f; }
+	static void setThresRoll(int x) { thresRoll = x/100.0f; }
+	static void setThresX(int x) { thresX = x/100.0f; }
+	static void setThresY(int x) { thresY = x/100.0f; }
+	static void setThresZ(int x) { thresZ = x/100.0f; }
 
 	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
 

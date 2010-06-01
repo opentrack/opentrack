@@ -23,16 +23,14 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20100601 - WVR: Added DirectInput keyboard-handling. '=' used for center,
+						'BACK' for start (+center)/stop.
 		20100517 - WVR: Added upstream command(s) from FlightGear
 		20100523 - WVR: Checkboxes to invert 6DOF's was implemented. Multiply by
 						1 or (-1).
 */
 #include "tracker.h"
 #include "FaceTrackNoIR.h"
-
-void initDInput(HINSTANCE hInstance, HWND hWnd);    // sets up and initializes DirectInput
-void detect_input(void);							// gets the current input state
-void cleanDInput(void);								// closes DirectInput and releases memory
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -45,8 +43,21 @@ float Tracker::initial_headPosZ = 0.0f;
 float Tracker::headRotX = 0.0f;
 float Tracker::headRotY = 0.0f;
 float Tracker::headRotZ = 0.0f;
+
+// Offsets, to center headpos while tracking
+float Tracker::offset_headPosX = 0.0f;
+float Tracker::offset_headPosY = 0.0f;
+float Tracker::offset_headPosZ = 0.0f;
+
+float Tracker::offset_headRotX = 0.0f;
+float Tracker::offset_headRotY = 0.0f;
+float Tracker::offset_headRotZ = 0.0f;
+
+// Flags
 bool Tracker::confid = false;
 bool Tracker::set_initial = false;
+bool Tracker::do_tracking = true;
+bool Tracker::do_center = false;
 
 float Tracker::sensYaw = 1.0f;
 float Tracker::sensPitch = 1.0f;
@@ -61,6 +72,13 @@ float Tracker::invertRoll = 1.0f;
 float Tracker::invertX = 1.0f;
 float Tracker::invertY = 1.0f;
 float Tracker::invertZ = 1.0f;
+
+float Tracker::thresYaw = 1.0f;
+float Tracker::thresPitch = 1.0f;
+float Tracker::thresRoll = 1.0f;
+float Tracker::thresX = 1.0f;
+float Tracker::thresY = 1.0f;
+float Tracker::thresZ = 1.0f;
 
 float Tracker::rotNeutralZone = 0.087f;					// Neutral Zone for rotations (rad)
 
@@ -165,6 +183,22 @@ void Tracker::run() {
 	LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
 	BYTE keystate[256];								// the storage for the key-information
 	HRESULT retAcquire;
+	bool lastMinusKey = false;						// Remember state, to detect rising edge
+	bool lastEqualsKey = false;
+
+	float prevYaw = 0.0f;							// Remember previous Raw, to filter jitter
+	float prevPitch = 0.0f;
+	float prevRoll = 0.0f;
+	float prevX = 0.0f;
+	float prevY = 0.0f;
+	float prevZ = 0.0f;
+
+	float newYaw = 0.0f;							// Local new Raw, to filter jitter
+	float newPitch = 0.0f;
+	float newRoll = 0.0f;
+	float newX = 0.0f;
+	float newY = 0.0f;
+	float newZ = 0.0f;
 
 	//
 	// Setup the DirectInput for keyboard strokes
@@ -174,32 +208,20 @@ void Tracker::run() {
 						   (void**)&din, NULL) != DI_OK) {    // COM stuff, so we'll set it to NULL
 		   qDebug() << "Tracker::setup DirectInput8 Creation failed!" << GetLastError();
 	}
-	else {
-		   qDebug() << "Tracker::setup DirectInput8 Creation OK!";
-	}
 
     // create the keyboard device
 	if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
 		   qDebug() << "Tracker::setup CreateDevice function failed!" << GetLastError();
-	}
-	else {
-		   qDebug() << "Tracker::setup CreateDevice function OK!";
 	}
 
     // set the data format to keyboard format
 	if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
 		   qDebug() << "Tracker::setup SetDataFormat function failed!" << GetLastError();
 	}
-	else {
-		   qDebug() << "Tracker::setup SetDataFormat function OK!";
-	}
 
     // set the control you will have over the keyboard
 	if (dinkeyboard->SetCooperativeLevel(mainApp->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
 		   qDebug() << "Tracker::setup SetCooperativeLevel function failed!" << GetLastError();
-	}
-	else {
-		   qDebug() << "Tracker::setup SetCooperativeLevel function OK!";
 	}
 
 	forever
@@ -227,15 +249,32 @@ void Tracker::run() {
 			   qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
 		   }
 		   else {
-				qDebug() << "Tracker::run GetDeviceState function OK!";
-				if(keystate[DIK_HOME] & 0x80) {
-					qDebug() << "Tracker::run() says HOME pressed";
+				//
+				// Check the state of the MINUS key (= Start/Stop tracking) and EQUALS key (= Center)
+				//
+				if ( (keystate[DIK_BACK] & 0x80) && (!lastMinusKey) ) {
+					Tracker::do_tracking = !Tracker::do_tracking;
+
+					//
+					// To start tracking again and be '0', execute Center command too
+					//
+					if (Tracker::do_tracking) {
+						Tracker::do_center = true;
+					}
+					qDebug() << "Tracker::run() says BACK pressed, do_tracking =" << Tracker::do_tracking;
 				}
+				lastMinusKey = (keystate[DIK_BACK] & 0x80);					// Remember
+
+				if ( (keystate[DIK_EQUALS] & 0x80) && (!lastEqualsKey) ) {
+					Tracker::do_center = true;
+					qDebug() << "Tracker::run() says EQUALS pressed";
+				}
+				lastEqualsKey = (keystate[DIK_EQUALS] & 0x80);					// Remember
 		   }
 		}
 
 		//if the confidence is good enough the headpose will be updated **/
-		if(Tracker::confid) {
+		if (Tracker::confid) {
 
 			//
 			// Most games need an offset to the initial position and NOT the
@@ -268,30 +307,87 @@ void Tracker::run() {
 			// Add the raw values to the QList, so they can be smoothed.
 			// The raw value that enters the QList is first (evt.) inverted and corrected for Neutral Zone.
 			//
-			addRaw2List ( &rawPitchList, intMaxPitchItems, getCorrectedNewRaw ( Tracker::invertPitch * Tracker::headRotX , Tracker::rotNeutralZone ) );
-			addRaw2List ( &rawYawList, intMaxYawItems, getCorrectedNewRaw ( Tracker::invertYaw * Tracker::headRotY , Tracker::rotNeutralZone ) );
-			addRaw2List ( &rawRollList, intMaxRollItems, getCorrectedNewRaw ( Tracker::invertRoll * Tracker::headRotZ , Tracker::rotNeutralZone ) );
+			newPitch = Tracker::headRotX;
+			if ( (fabs (newPitch - prevPitch) ) < Tracker::thresPitch ) {	// delta smaller than threshold?
+				newPitch = prevPitch;
+			}
+			else {
+				prevPitch = newPitch;
+			}
+			addRaw2List ( &rawPitchList, intMaxPitchItems, getCorrectedNewRaw ( Tracker::invertPitch * newPitch , Tracker::rotNeutralZone ) );
+
+			newYaw = Tracker::headRotY;
+			if ( (fabs (newYaw - prevYaw) ) < Tracker::thresYaw ) {			// delta smaller than threshold?
+				newYaw = prevYaw;
+			}
+			else {
+				prevYaw = newYaw;
+			}
+			addRaw2List ( &rawYawList, intMaxYawItems, getCorrectedNewRaw ( Tracker::invertYaw * newYaw, Tracker::rotNeutralZone ) );
+
+			newRoll = Tracker::headRotZ;
+			if ( (fabs (newRoll - prevRoll) ) < Tracker::thresRoll ) {	// delta smaller than threshold?
+				newRoll = prevRoll;
+			}
+			else {
+				prevRoll = newRoll;
+			}
+			addRaw2List ( &rawRollList, intMaxRollItems, getCorrectedNewRaw ( Tracker::invertRoll * newRoll , Tracker::rotNeutralZone ) );
+
 			addRaw2List ( &rawXList, intMaxXItems, Tracker::invertX * Tracker::headPosX * 1000.0f );
 			addRaw2List ( &rawYList, intMaxYItems, Tracker::invertY * Tracker::headPosY * 1000.0f );
 			addRaw2List ( &rawZList, intMaxZItems, ( Tracker::invertZ * Tracker::headPosZ - Tracker::initial_headPosZ ) * 1000.0f );
 		}
 
 		//
-		// Also send the Virtual Pose to FT-server
+		// If Center is pressed, copy the current values to the offsets.
 		//
-		server_FT->setVirtRotX( Tracker::sensPitch * getSmoothFromList( &rawPitchList ) );
-		server_FT->setVirtRotY( Tracker::sensYaw * getSmoothFromList( &rawYawList ) );
-		server_FT->setVirtRotZ( Tracker::sensRoll * getSmoothFromList( &rawRollList ) );
-		server_FT->setVirtPosX ( Tracker::sensX * getSmoothFromList( &rawXList ) );
-		server_FT->setVirtPosY ( Tracker::sensY * getSmoothFromList( &rawYList ) );
-		server_FT->setVirtPosZ ( Tracker::sensZ * getSmoothFromList( &rawZList ) );
+		if (Tracker::do_center) {
+			offset_headRotX = getSmoothFromList( &rawPitchList );
+			offset_headRotY = getSmoothFromList( &rawYawList );
+			offset_headRotZ = getSmoothFromList( &rawRollList );
+			offset_headPosX = getSmoothFromList( &rawXList );
+			offset_headPosY = getSmoothFromList( &rawYList );
+			offset_headPosZ = getSmoothFromList( &rawZList );
+			Tracker::do_center = false;
+		}
 
-		server_FG->setVirtRotX( getDegreesFromRads ( Tracker::sensPitch * getSmoothFromList( &rawPitchList ) ) );
-		server_FG->setVirtRotY( getDegreesFromRads ( Tracker::sensYaw * getSmoothFromList( &rawYawList ) ) );
-		server_FG->setVirtRotZ( getDegreesFromRads ( Tracker::sensRoll * getSmoothFromList( &rawRollList ) ) );
-		server_FG->setVirtPosX ( ( Tracker::sensX * getSmoothFromList( &rawXList ) ) / 1000.0f );
-		server_FG->setVirtPosY ( ( Tracker::sensY * getSmoothFromList( &rawYList ) ) / 1000.0f );
-		server_FG->setVirtPosZ ( ( Tracker::sensZ * getSmoothFromList( &rawZList ) ) / 1000.0f );
+		if (Tracker::do_tracking) {
+			//
+			// Also send the Virtual Pose to FT-server and FG-server
+			//
+			server_FT->setVirtRotX ( Tracker::sensPitch * getSmoothFromList( &rawPitchList ) - offset_headRotX );
+			server_FT->setVirtRotY ( Tracker::sensYaw * getSmoothFromList( &rawYawList ) - offset_headRotY );
+			server_FT->setVirtRotZ ( Tracker::sensRoll * getSmoothFromList( &rawRollList ) - offset_headRotZ );
+			server_FT->setVirtPosX ( Tracker::sensX * getSmoothFromList( &rawXList ) - offset_headPosX );
+			server_FT->setVirtPosY ( Tracker::sensY * getSmoothFromList( &rawYList ) - offset_headPosY );
+			server_FT->setVirtPosZ ( Tracker::sensZ * getSmoothFromList( &rawZList ) - offset_headPosZ );
+
+			server_FG->setVirtRotX ( getDegreesFromRads ( Tracker::sensPitch * getSmoothFromList( &rawPitchList ) - offset_headRotX ) );
+			server_FG->setVirtRotY ( getDegreesFromRads ( Tracker::sensYaw * getSmoothFromList( &rawYawList ) - offset_headRotY ) );
+			server_FG->setVirtRotZ ( getDegreesFromRads ( Tracker::sensRoll * getSmoothFromList( &rawRollList ) - offset_headRotZ ) );
+			server_FG->setVirtPosX ( ( Tracker::sensX * getSmoothFromList( &rawXList ) - offset_headPosX ) / 1000.0f );
+			server_FG->setVirtPosY ( ( Tracker::sensY * getSmoothFromList( &rawYList ) - offset_headPosY ) / 1000.0f );
+			server_FG->setVirtPosZ ( ( Tracker::sensZ * getSmoothFromList( &rawZList ) - offset_headPosZ ) / 1000.0f );
+		}
+		else {
+			//
+			// Go to initial position
+			//
+			server_FT->setVirtRotX ( 0.0f );
+			server_FT->setVirtRotY ( 0.0f );
+			server_FT->setVirtRotZ ( 0.0f );
+			server_FT->setVirtPosX ( 0.0f );
+			server_FT->setVirtPosY ( 0.0f );
+			server_FT->setVirtPosZ ( 0.0f );
+
+			server_FG->setVirtRotX( 0.0f );
+			server_FG->setVirtRotY( 0.0f );
+			server_FG->setVirtRotZ( 0.0f );
+			server_FG->setVirtPosX ( 0.0f );
+			server_FG->setVirtPosY ( 0.0f );
+			server_FG->setVirtPosZ ( 0.0f );
+		}
 
 		//for lower cpu load 
 		msleep(50);
