@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Fri 28. May 20:44:32 2010
+** Created: Tue 1. Jun 21:00:16 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -654,7 +654,7 @@ public:
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         lblSensitivity = new QLabel(bubbleBigWidget);
         lblSensitivity->setObjectName(QString::fromUtf8("lblSensitivity"));
-        lblSensitivity->setMinimumSize(QSize(100, 0));
+        lblSensitivity->setMinimumSize(QSize(110, 0));
         lblSensitivity->setMaximumSize(QSize(150, 16777215));
         lblSensitivity->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));
@@ -1023,7 +1023,7 @@ public:
 
         lblSensitivity_4 = new QLabel(bubbleBigWidget);
         lblSensitivity_4->setObjectName(QString::fromUtf8("lblSensitivity_4"));
-        lblSensitivity_4->setMinimumSize(QSize(100, 0));
+        lblSensitivity_4->setMinimumSize(QSize(110, 0));
         lblSensitivity_4->setMaximumSize(QSize(150, 16777215));
         lblSensitivity_4->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));

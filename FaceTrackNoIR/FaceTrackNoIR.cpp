@@ -82,6 +82,14 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
 	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
 
+	// Connect sliders for threshold
+	connect(ui.thresYaw, SIGNAL(valueChanged(int)), this, SLOT(setThreshYaw(int)));
+	connect(ui.thresRoll, SIGNAL(valueChanged(int)), this, SLOT(setThreshRoll(int)));
+	connect(ui.thresPitch, SIGNAL(valueChanged(int)), this, SLOT(setThreshPitch(int)));
+	connect(ui.thresX, SIGNAL(valueChanged(int)), this, SLOT(setThreshX(int)));
+	connect(ui.thresY, SIGNAL(valueChanged(int)), this, SLOT(setThreshY(int)));
+	connect(ui.thresZ, SIGNAL(valueChanged(int)), this, SLOT(setThreshZ(int)));
+
 	connect(ui.slideNeutralZone, SIGNAL(valueChanged(int)), this, SLOT(setNeutralZone(int)));
 
 	// Connect slider for smoothing
@@ -261,6 +269,12 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertX", ui.chkInvertX->isChecked() );
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
+	iniFile.setValue ( "thresYaw", ui.thresYaw->value() );
+	iniFile.setValue ( "thresPitch", ui.thresPitch->value() );
+	iniFile.setValue ( "thresRoll", ui.thresRoll->value() );
+	iniFile.setValue ( "thresX", ui.thresX->value() );
+	iniFile.setValue ( "thresY", ui.thresY->value() );
+	iniFile.setValue ( "thresZ", ui.thresZ->value() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -317,6 +331,12 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertX->setChecked (iniFile.value ( "invertX", 0 ).toBool());
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
+	ui.thresYaw->setValue (iniFile.value ( "thresYaw", 100 ).toInt());
+	ui.thresPitch->setValue (iniFile.value ( "thresPitch", 100 ).toInt());
+	ui.thresRoll->setValue (iniFile.value ( "thresRoll", 100 ).toInt());
+	ui.thresX->setValue (iniFile.value ( "thresX", 100 ).toInt());
+	ui.thresY->setValue (iniFile.value ( "thresY", 100 ).toInt());
+	ui.thresZ->setValue (iniFile.value ( "thresZ", 100 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -365,8 +385,18 @@ void FaceTrackNoIR::startTracker( ) {
 	l->setSpacing(0);
 	l->addWidget(_display);
 
+	//
+	// Setup the Tracker and send the settings, just to be sure...
+	//
 	tracker->setup( ui.headPoseWidget , this);
 	tracker->setSmoothing ( ui.slideSmoothing->value() );
+	tracker->setNeutralZone ( ui.slideNeutralZone->value() );
+	tracker->setSensYaw (ui.sensYaw->value() );
+	tracker->setSensPitch (ui.sensPitch->value() );
+	tracker->setSensRoll (ui.sensRoll->value() );
+	tracker->setSensX (ui.sensX->value() );
+	tracker->setSensY (ui.sensY->value() );
+	tracker->setSensZ (ui.sensZ->value() );
 
 	ui.headPoseWidget->show();
 
@@ -477,6 +507,42 @@ void FaceTrackNoIR::setInvertY( int invert ) {
 /** set the invert from the checkbox **/
 void FaceTrackNoIR::setInvertZ( int invert ) {
 	Tracker::setInvertZ ( (invert != 0)?true:false );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshYaw( int thresh ) {
+	Tracker::setThresYaw ( thresh );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshPitch( int thresh ) {
+	Tracker::setThresPitch ( thresh );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshRoll( int thresh ) {
+	Tracker::setThresRoll ( thresh );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshX( int thresh ) {
+	Tracker::setThresX ( thresh );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshY( int thresh ) {
+	Tracker::setThresY ( thresh );
+	settingsDirty = true;
+}
+
+/** set the threshold from the slider **/
+void FaceTrackNoIR::setThreshZ( int thresh ) {
+	Tracker::setThresZ ( thresh );
 	settingsDirty = true;
 }
 

@@ -1211,7 +1211,7 @@ opacity:100;</string>
                  <widget class="QLabel" name="lblSensitivity">
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>110</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -2034,7 +2034,7 @@ background:none;</string>
                  <widget class="QLabel" name="lblSensitivity_4">
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>110</width>
                     <height>0</height>
                    </size>
                   </property>
