@@ -17,19 +17,19 @@ bool FaceApp::winEventFilter( MSG * msg, long * result )
 		}
 	}
 
-	if (msgType == WM_HOTKEY) {
-		switch ( msg->wParam ) {
-			case 777:
-				qDebug() << "FaceApp::winEventFilter says: HOME pressed";
-				break;
-			case 778:
-				qDebug() << "FaceApp::winEventFilter says: END pressed";
-				break;
-			default:
-				qDebug() << "FaceApp::winEventFilter says: unknown HotKey pressed";
-				break;
-		}
-	}
+	////if (msgType == WM_HOTKEY) {
+	////	switch ( msg->wParam ) {
+	////		case 777:
+	////			qDebug() << "FaceApp::winEventFilter says: HOME pressed";
+	////			break;
+	////		case 778:
+	////			qDebug() << "FaceApp::winEventFilter says: END pressed";
+	////			break;
+	////		default:
+	////			qDebug() << "FaceApp::winEventFilter says: unknown HotKey pressed";
+	////			break;
+	////	}
+	////}
 	return( false );
 }
 
@@ -42,16 +42,16 @@ void FaceApp::SetupEventFilter( FaceTrackNoIR *window ) {
 	msgID_FTClient = RegisterWindowMessageA ( FT_PROGRAMID );
 	qDebug() << "FaceApp::SetupEventFilter says: Message ID =" << msgID_FTClient;
 
-	if ( RegisterHotKey( window->winId(), 777, MOD_WIN, VK_HOME ) ) {
-		qDebug() << "FaceApp::SetupEventFilter says: RegisterHotKey HOME =" << VK_HOME;
-	}
-	if ( RegisterHotKey( window->winId(), 778, MOD_WIN, VK_END ) ) {
-		qDebug() << "FaceApp::SetupEventFilter says: RegisterHotKey END =" << VK_END;
-	}
-	
-	QAbstractEventDispatcher *evtdis = QAbstractEventDispatcher::instance();
-	if (evtdis != NULL) {
-		qDebug() << "FaceApp::SetupEventFilter says: EventDispatcher found!";
-	}
+	////if ( RegisterHotKey( window->winId(), 777, MOD_WIN, VK_HOME ) ) {
+	////	qDebug() << "FaceApp::SetupEventFilter says: RegisterHotKey HOME =" << VK_HOME;
+	////}
+	////if ( RegisterHotKey( window->winId(), 778, MOD_WIN, VK_END ) ) {
+	////	qDebug() << "FaceApp::SetupEventFilter says: RegisterHotKey END =" << VK_END;
+	////}
+	////
+	////QAbstractEventDispatcher *evtdis = QAbstractEventDispatcher::instance();
+	////if (evtdis != NULL) {
+	////	qDebug() << "FaceApp::SetupEventFilter says: EventDispatcher found!";
+	////}
 
 }

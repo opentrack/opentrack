@@ -988,7 +988,7 @@ background:none;</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="5" column="0">
               <widget class="QSlider" name="slideNeutralZone">
                <property name="minimumSize">
                 <size>
@@ -1016,7 +1016,7 @@ background:none;</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="5" column="1">
               <widget class="QSpinBox" name="spinNeutralZone">
                <property name="minimumSize">
                 <size>
@@ -1032,7 +1032,7 @@ background:none;</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="3" column="0">
               <widget class="QLabel" name="lblSensYaw_4">
                <property name="minimumSize">
                 <size>
@@ -1052,6 +1052,36 @@ background:none;</string>
                </property>
                <property name="text">
                 <string>Rotation Neutral Zone (degr.)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="chkUseEWMA">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lblSensYaw_5">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#ccc;
+background:none;</string>
+               </property>
+               <property name="text">
+                <string>Use EWMA filtering</string>
                </property>
               </widget>
              </item>
@@ -1721,7 +1751,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="1" column="3">
-                 <widget class="QSlider" name="thresYaw">
+                 <widget class="QSlider" name="redYaw">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1729,13 +1759,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1746,7 +1776,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="3" column="3">
-                 <widget class="QSlider" name="thresPitch">
+                 <widget class="QSlider" name="redPitch">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1754,13 +1784,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1771,7 +1801,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="4" column="3">
-                 <widget class="QSlider" name="thresRoll">
+                 <widget class="QSlider" name="redRoll">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1779,13 +1809,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1796,7 +1826,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="1" column="4">
-                 <widget class="QSpinBox" name="spinThresYaw">
+                 <widget class="QSpinBox" name="spinRedYaw">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1804,18 +1834,18 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="4">
-                 <widget class="QSpinBox" name="spinThresPitch">
+                 <widget class="QSpinBox" name="spinRedPitch">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1823,18 +1853,18 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
                 <item row="4" column="4">
-                 <widget class="QSpinBox" name="spinThresRoll">
+                 <widget class="QSpinBox" name="spinRedRoll">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1842,13 +1872,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
@@ -1856,7 +1886,7 @@ background:none;</string>
                  <widget class="QLabel" name="lblSensitivity_2">
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>110</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1871,12 +1901,12 @@ background:none;</string>
 background:none;</string>
                   </property>
                   <property name="text">
-                   <string>Threshold (100 = 1)</string>
+                   <string>Red.factor (100 = 1)</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="9">
-                 <widget class="QSlider" name="thresX">
+                 <widget class="QSlider" name="redX">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1884,13 +1914,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1901,7 +1931,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="3" column="9">
-                 <widget class="QSlider" name="thresY">
+                 <widget class="QSlider" name="redY">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1909,13 +1939,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1926,7 +1956,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="4" column="9">
-                 <widget class="QSlider" name="thresZ">
+                 <widget class="QSlider" name="redZ">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1934,13 +1964,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="pageStep">
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -1951,7 +1981,7 @@ background:none;</string>
                  </widget>
                 </item>
                 <item row="1" column="10">
-                 <widget class="QSpinBox" name="spinThresX">
+                 <widget class="QSpinBox" name="spinRedX">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1959,18 +1989,18 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="10">
-                 <widget class="QSpinBox" name="spinThresY">
+                 <widget class="QSpinBox" name="spinRedY">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1978,18 +2008,18 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
                 <item row="4" column="10">
-                 <widget class="QSpinBox" name="spinThresZ">
+                 <widget class="QSpinBox" name="spinRedZ">
                   <property name="minimumSize">
                    <size>
                     <width>50</width>
@@ -1997,13 +2027,13 @@ background:none;</string>
                    </size>
                   </property>
                   <property name="maximum">
-                   <number>500</number>
+                   <number>100</number>
                   </property>
                   <property name="singleStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
-                   <number>100</number>
+                   <number>70</number>
                   </property>
                  </widget>
                 </item>
@@ -2011,7 +2041,7 @@ background:none;</string>
                  <widget class="QLabel" name="lblSensitivity_3">
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>110</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -2026,7 +2056,7 @@ background:none;</string>
 background:none;</string>
                   </property>
                   <property name="text">
-                   <string>Threshold (100 = 1)</string>
+                   <string>Red.factor (100 = 1)</string>
                   </property>
                  </widget>
                 </item>
@@ -2551,9 +2581,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresYaw</sender>
+   <sender>redYaw</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresYaw</receiver>
+   <receiver>spinRedYaw</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2567,9 +2597,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresYaw</sender>
+   <sender>spinRedYaw</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresYaw</receiver>
+   <receiver>redYaw</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2583,9 +2613,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresPitch</sender>
+   <sender>redPitch</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresPitch</receiver>
+   <receiver>spinRedPitch</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2599,9 +2629,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresPitch</sender>
+   <sender>spinRedPitch</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresPitch</receiver>
+   <receiver>redPitch</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2615,9 +2645,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresRoll</sender>
+   <sender>redRoll</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresRoll</receiver>
+   <receiver>spinRedRoll</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2631,9 +2661,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresRoll</sender>
+   <sender>spinRedRoll</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresRoll</receiver>
+   <receiver>redRoll</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2647,9 +2677,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresX</sender>
+   <sender>redX</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresX</receiver>
+   <receiver>spinRedX</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2663,9 +2693,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresX</sender>
+   <sender>spinRedX</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresX</receiver>
+   <receiver>redX</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2679,9 +2709,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresY</sender>
+   <sender>redY</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresY</receiver>
+   <receiver>spinRedY</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2695,9 +2725,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresY</sender>
+   <sender>spinRedY</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresY</receiver>
+   <receiver>redY</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2711,9 +2741,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>thresZ</sender>
+   <sender>redZ</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinThresZ</receiver>
+   <receiver>spinRedZ</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2727,9 +2757,9 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>spinThresZ</sender>
+   <sender>spinRedZ</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>thresZ</receiver>
+   <receiver>redZ</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">

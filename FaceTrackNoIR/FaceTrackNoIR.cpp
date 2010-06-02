@@ -82,13 +82,15 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
 	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
 
-	// Connect sliders for threshold
-	connect(ui.thresYaw, SIGNAL(valueChanged(int)), this, SLOT(setThreshYaw(int)));
-	connect(ui.thresRoll, SIGNAL(valueChanged(int)), this, SLOT(setThreshRoll(int)));
-	connect(ui.thresPitch, SIGNAL(valueChanged(int)), this, SLOT(setThreshPitch(int)));
-	connect(ui.thresX, SIGNAL(valueChanged(int)), this, SLOT(setThreshX(int)));
-	connect(ui.thresY, SIGNAL(valueChanged(int)), this, SLOT(setThreshY(int)));
-	connect(ui.thresZ, SIGNAL(valueChanged(int)), this, SLOT(setThreshZ(int)));
+	connect(ui.chkUseEWMA, SIGNAL(stateChanged(int)), this, SLOT(setUseFilter(int)));
+
+	// Connect sliders for reduction factor
+	connect(ui.redYaw, SIGNAL(valueChanged(int)), this, SLOT(setRedYaw(int)));
+	connect(ui.redRoll, SIGNAL(valueChanged(int)), this, SLOT(setRedRoll(int)));
+	connect(ui.redPitch, SIGNAL(valueChanged(int)), this, SLOT(setRedPitch(int)));
+	connect(ui.redX, SIGNAL(valueChanged(int)), this, SLOT(setRedX(int)));
+	connect(ui.redY, SIGNAL(valueChanged(int)), this, SLOT(setRedY(int)));
+	connect(ui.redZ, SIGNAL(valueChanged(int)), this, SLOT(setRedZ(int)));
 
 	connect(ui.slideNeutralZone, SIGNAL(valueChanged(int)), this, SLOT(setNeutralZone(int)));
 
@@ -269,12 +271,13 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertX", ui.chkInvertX->isChecked() );
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
-	iniFile.setValue ( "thresYaw", ui.thresYaw->value() );
-	iniFile.setValue ( "thresPitch", ui.thresPitch->value() );
-	iniFile.setValue ( "thresRoll", ui.thresRoll->value() );
-	iniFile.setValue ( "thresX", ui.thresX->value() );
-	iniFile.setValue ( "thresY", ui.thresY->value() );
-	iniFile.setValue ( "thresZ", ui.thresZ->value() );
+	iniFile.setValue ( "useEWMA", ui.chkUseEWMA->isChecked() );
+	iniFile.setValue ( "redYaw", ui.redYaw->value() );
+	iniFile.setValue ( "redPitch", ui.redPitch->value() );
+	iniFile.setValue ( "redRoll", ui.redRoll->value() );
+	iniFile.setValue ( "redX", ui.redX->value() );
+	iniFile.setValue ( "redY", ui.redY->value() );
+	iniFile.setValue ( "redZ", ui.redZ->value() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -331,12 +334,13 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertX->setChecked (iniFile.value ( "invertX", 0 ).toBool());
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
-	ui.thresYaw->setValue (iniFile.value ( "thresYaw", 100 ).toInt());
-	ui.thresPitch->setValue (iniFile.value ( "thresPitch", 100 ).toInt());
-	ui.thresRoll->setValue (iniFile.value ( "thresRoll", 100 ).toInt());
-	ui.thresX->setValue (iniFile.value ( "thresX", 100 ).toInt());
-	ui.thresY->setValue (iniFile.value ( "thresY", 100 ).toInt());
-	ui.thresZ->setValue (iniFile.value ( "thresZ", 100 ).toInt());
+	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 0 ).toBool());
+	ui.redYaw->setValue (iniFile.value ( "redYaw", 70 ).toInt());
+	ui.redPitch->setValue (iniFile.value ( "redPitch", 70 ).toInt());
+	ui.redRoll->setValue (iniFile.value ( "redRoll", 70 ).toInt());
+	ui.redX->setValue (iniFile.value ( "redX", 70 ).toInt());
+	ui.redY->setValue (iniFile.value ( "redY", 70 ).toInt());
+	ui.redZ->setValue (iniFile.value ( "redZ", 70 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -510,39 +514,45 @@ void FaceTrackNoIR::setInvertZ( int invert ) {
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshYaw( int thresh ) {
-	Tracker::setThresYaw ( thresh );
+/** set Use Filter from the checkbox **/
+void FaceTrackNoIR::setUseFilter( int set ) {
+	Tracker::setUseFilter ( (set != 0)?true:false );
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshPitch( int thresh ) {
-	Tracker::setThresPitch ( thresh );
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedYaw( int redh ) {
+	Tracker::setRedYaw ( redh );
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshRoll( int thresh ) {
-	Tracker::setThresRoll ( thresh );
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedPitch( int redh ) {
+	Tracker::setRedPitch ( redh );
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshX( int thresh ) {
-	Tracker::setThresX ( thresh );
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedRoll( int redh ) {
+	Tracker::setRedRoll ( redh );
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshY( int thresh ) {
-	Tracker::setThresY ( thresh );
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedX( int redh ) {
+	Tracker::setRedX ( redh );
 	settingsDirty = true;
 }
 
-/** set the threshold from the slider **/
-void FaceTrackNoIR::setThreshZ( int thresh ) {
-	Tracker::setThresZ ( thresh );
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedY( int redh ) {
+	Tracker::setRedY ( redh );
+	settingsDirty = true;
+}
+
+/** set the redhold from the slider **/
+void FaceTrackNoIR::setRedZ( int redh ) {
+	Tracker::setRedZ ( redh );
 	settingsDirty = true;
 }
 

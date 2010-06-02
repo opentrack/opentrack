@@ -85,6 +85,7 @@ private:
 
 	// Flags to start/stop/reset tracking
 	static bool confid;
+	static bool newdata;
 	static bool set_initial;						// initial headpose is set
 	static bool do_tracking;						// Start/stop tracking, using MINUS key on keyboard
 	static bool do_center;							// Center head-position, using EQUALS key on keyboard
@@ -104,13 +105,15 @@ private:
 	static float invertY;
 	static float invertZ;
 
-	/** Thresholds to remove jitter **/
-	static float thresYaw;
-	static float thresPitch;
-	static float thresRoll;
-	static float thresX;
-	static float thresY;
-	static float thresZ;
+	static bool useFilter;
+
+	/** Factors to remove jitter **/
+	static float redYaw;
+	static float redPitch;
+	static float redRoll;
+	static float redX;
+	static float redY;
+	static float redZ;
 
 	static float rotNeutralZone;						// Neutral Zone for rotations (rad).
 	
@@ -196,18 +199,21 @@ public:
 	static void setInvertY(bool invert) { invertY = invert?-1.0f:+1.0f; }
 	static void setInvertZ(bool invert) { invertZ = invert?-1.0f:+1.0f; }
 
-	static void setThresYaw(int x) { thresYaw = x/100.0f; }
-	static void setThresPitch(int x) { thresPitch = x/100.0f; }
-	static void setThresRoll(int x) { thresRoll = x/100.0f; }
-	static void setThresX(int x) { thresX = x/100.0f; }
-	static void setThresY(int x) { thresY = x/100.0f; }
-	static void setThresZ(int x) { thresZ = x/100.0f; }
+	static void setUseFilter(bool set) { useFilter = set; }
+
+	static void setRedYaw(int x) { redYaw = x/100.0f; }
+	static void setRedPitch(int x) { redPitch = x/100.0f; }
+	static void setRedRoll(int x) { redRoll = x/100.0f; }
+	static void setRedX(int x) { redX = x/100.0f; }
+	static void setRedY(int x) { redY = x/100.0f; }
+	static void setRedZ(int x) { redZ = x/100.0f; }
 
 	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
 
 	void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	float getSmoothFromList ( QList<float> *rawList );
 	float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
+	float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
 	float getDegreesFromRads ( float rads ) { return ((rads * 360.0f)/ (2.0f * 3.14159)); }
 
 	// For now, use one slider for all
