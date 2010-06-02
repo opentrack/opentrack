@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Tue 1. Jun 21:00:16 2010
+** Created: Wed 2. Jun 19:35:54 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -94,6 +94,8 @@ public:
     QSlider *slideNeutralZone;
     QSpinBox *spinNeutralZone;
     QLabel *lblSensYaw_4;
+    QCheckBox *chkUseEWMA;
+    QLabel *lblSensYaw_5;
     QSpacerItem *horizontalSpacer_3;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout_11;
@@ -133,19 +135,19 @@ public:
     QLabel *lblInvert1_2;
     QCheckBox *chkInvertY;
     QCheckBox *chkInvertZ;
-    QSlider *thresYaw;
-    QSlider *thresPitch;
-    QSlider *thresRoll;
-    QSpinBox *spinThresYaw;
-    QSpinBox *spinThresPitch;
-    QSpinBox *spinThresRoll;
+    QSlider *redYaw;
+    QSlider *redPitch;
+    QSlider *redRoll;
+    QSpinBox *spinRedYaw;
+    QSpinBox *spinRedPitch;
+    QSpinBox *spinRedRoll;
     QLabel *lblSensitivity_2;
-    QSlider *thresX;
-    QSlider *thresY;
-    QSlider *thresZ;
-    QSpinBox *spinThresX;
-    QSpinBox *spinThresY;
-    QSpinBox *spinThresZ;
+    QSlider *redX;
+    QSlider *redY;
+    QSlider *redZ;
+    QSpinBox *spinRedX;
+    QSpinBox *spinRedY;
+    QSpinBox *spinRedZ;
     QLabel *lblSensitivity_3;
     QLabel *lblSensitivity_4;
     QSpacerItem *horizontalSpacer_13;
@@ -564,7 +566,7 @@ public:
         slideNeutralZone->setOrientation(Qt::Horizontal);
         slideNeutralZone->setTickPosition(QSlider::NoTicks);
 
-        gridLayout_2->addWidget(slideNeutralZone, 4, 0, 1, 1);
+        gridLayout_2->addWidget(slideNeutralZone, 5, 0, 1, 1);
 
         spinNeutralZone = new QSpinBox(widget);
         spinNeutralZone->setObjectName(QString::fromUtf8("spinNeutralZone"));
@@ -572,7 +574,7 @@ public:
         spinNeutralZone->setMaximum(45);
         spinNeutralZone->setValue(5);
 
-        gridLayout_2->addWidget(spinNeutralZone, 4, 1, 1, 1);
+        gridLayout_2->addWidget(spinNeutralZone, 5, 1, 1, 1);
 
         lblSensYaw_4 = new QLabel(widget);
         lblSensYaw_4->setObjectName(QString::fromUtf8("lblSensYaw_4"));
@@ -581,7 +583,21 @@ public:
         lblSensYaw_4->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));
 
-        gridLayout_2->addWidget(lblSensYaw_4, 2, 0, 1, 1);
+        gridLayout_2->addWidget(lblSensYaw_4, 3, 0, 1, 1);
+
+        chkUseEWMA = new QCheckBox(widget);
+        chkUseEWMA->setObjectName(QString::fromUtf8("chkUseEWMA"));
+
+        gridLayout_2->addWidget(chkUseEWMA, 2, 1, 1, 1);
+
+        lblSensYaw_5 = new QLabel(widget);
+        lblSensYaw_5->setObjectName(QString::fromUtf8("lblSensYaw_5"));
+        lblSensYaw_5->setMinimumSize(QSize(25, 0));
+        lblSensYaw_5->setMaximumSize(QSize(150, 16777215));
+        lblSensYaw_5->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
+"background:none;"));
+
+        gridLayout_2->addWidget(lblSensYaw_5, 2, 0, 1, 1);
 
 
         horizontalLayout_3->addLayout(gridLayout_2);
@@ -883,138 +899,138 @@ public:
 
         gridLayout->addWidget(chkInvertZ, 4, 11, 1, 1);
 
-        thresYaw = new QSlider(bubbleBigWidget);
-        thresYaw->setObjectName(QString::fromUtf8("thresYaw"));
-        thresYaw->setMinimumSize(QSize(50, 15));
-        thresYaw->setMaximum(500);
-        thresYaw->setPageStep(10);
-        thresYaw->setValue(100);
-        thresYaw->setOrientation(Qt::Horizontal);
-        thresYaw->setTickPosition(QSlider::NoTicks);
+        redYaw = new QSlider(bubbleBigWidget);
+        redYaw->setObjectName(QString::fromUtf8("redYaw"));
+        redYaw->setMinimumSize(QSize(50, 15));
+        redYaw->setMaximum(100);
+        redYaw->setPageStep(10);
+        redYaw->setValue(70);
+        redYaw->setOrientation(Qt::Horizontal);
+        redYaw->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresYaw, 1, 3, 1, 1);
+        gridLayout->addWidget(redYaw, 1, 3, 1, 1);
 
-        thresPitch = new QSlider(bubbleBigWidget);
-        thresPitch->setObjectName(QString::fromUtf8("thresPitch"));
-        thresPitch->setMinimumSize(QSize(50, 15));
-        thresPitch->setMaximum(500);
-        thresPitch->setPageStep(10);
-        thresPitch->setValue(100);
-        thresPitch->setOrientation(Qt::Horizontal);
-        thresPitch->setTickPosition(QSlider::NoTicks);
+        redPitch = new QSlider(bubbleBigWidget);
+        redPitch->setObjectName(QString::fromUtf8("redPitch"));
+        redPitch->setMinimumSize(QSize(50, 15));
+        redPitch->setMaximum(100);
+        redPitch->setPageStep(10);
+        redPitch->setValue(70);
+        redPitch->setOrientation(Qt::Horizontal);
+        redPitch->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresPitch, 3, 3, 1, 1);
+        gridLayout->addWidget(redPitch, 3, 3, 1, 1);
 
-        thresRoll = new QSlider(bubbleBigWidget);
-        thresRoll->setObjectName(QString::fromUtf8("thresRoll"));
-        thresRoll->setMinimumSize(QSize(50, 15));
-        thresRoll->setMaximum(500);
-        thresRoll->setPageStep(10);
-        thresRoll->setValue(100);
-        thresRoll->setOrientation(Qt::Horizontal);
-        thresRoll->setTickPosition(QSlider::NoTicks);
+        redRoll = new QSlider(bubbleBigWidget);
+        redRoll->setObjectName(QString::fromUtf8("redRoll"));
+        redRoll->setMinimumSize(QSize(50, 15));
+        redRoll->setMaximum(100);
+        redRoll->setPageStep(10);
+        redRoll->setValue(70);
+        redRoll->setOrientation(Qt::Horizontal);
+        redRoll->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresRoll, 4, 3, 1, 1);
+        gridLayout->addWidget(redRoll, 4, 3, 1, 1);
 
-        spinThresYaw = new QSpinBox(bubbleBigWidget);
-        spinThresYaw->setObjectName(QString::fromUtf8("spinThresYaw"));
-        spinThresYaw->setMinimumSize(QSize(50, 22));
-        spinThresYaw->setMaximum(500);
-        spinThresYaw->setSingleStep(10);
-        spinThresYaw->setValue(100);
+        spinRedYaw = new QSpinBox(bubbleBigWidget);
+        spinRedYaw->setObjectName(QString::fromUtf8("spinRedYaw"));
+        spinRedYaw->setMinimumSize(QSize(50, 22));
+        spinRedYaw->setMaximum(100);
+        spinRedYaw->setSingleStep(5);
+        spinRedYaw->setValue(70);
 
-        gridLayout->addWidget(spinThresYaw, 1, 4, 1, 1);
+        gridLayout->addWidget(spinRedYaw, 1, 4, 1, 1);
 
-        spinThresPitch = new QSpinBox(bubbleBigWidget);
-        spinThresPitch->setObjectName(QString::fromUtf8("spinThresPitch"));
-        spinThresPitch->setMinimumSize(QSize(50, 22));
-        spinThresPitch->setMaximum(500);
-        spinThresPitch->setSingleStep(10);
-        spinThresPitch->setValue(100);
+        spinRedPitch = new QSpinBox(bubbleBigWidget);
+        spinRedPitch->setObjectName(QString::fromUtf8("spinRedPitch"));
+        spinRedPitch->setMinimumSize(QSize(50, 22));
+        spinRedPitch->setMaximum(100);
+        spinRedPitch->setSingleStep(5);
+        spinRedPitch->setValue(70);
 
-        gridLayout->addWidget(spinThresPitch, 3, 4, 1, 1);
+        gridLayout->addWidget(spinRedPitch, 3, 4, 1, 1);
 
-        spinThresRoll = new QSpinBox(bubbleBigWidget);
-        spinThresRoll->setObjectName(QString::fromUtf8("spinThresRoll"));
-        spinThresRoll->setMinimumSize(QSize(50, 22));
-        spinThresRoll->setMaximum(500);
-        spinThresRoll->setSingleStep(10);
-        spinThresRoll->setValue(100);
+        spinRedRoll = new QSpinBox(bubbleBigWidget);
+        spinRedRoll->setObjectName(QString::fromUtf8("spinRedRoll"));
+        spinRedRoll->setMinimumSize(QSize(50, 22));
+        spinRedRoll->setMaximum(100);
+        spinRedRoll->setSingleStep(5);
+        spinRedRoll->setValue(70);
 
-        gridLayout->addWidget(spinThresRoll, 4, 4, 1, 1);
+        gridLayout->addWidget(spinRedRoll, 4, 4, 1, 1);
 
         lblSensitivity_2 = new QLabel(bubbleBigWidget);
         lblSensitivity_2->setObjectName(QString::fromUtf8("lblSensitivity_2"));
-        lblSensitivity_2->setMinimumSize(QSize(100, 0));
+        lblSensitivity_2->setMinimumSize(QSize(110, 0));
         lblSensitivity_2->setMaximumSize(QSize(150, 16777215));
         lblSensitivity_2->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));
 
         gridLayout->addWidget(lblSensitivity_2, 0, 3, 1, 1);
 
-        thresX = new QSlider(bubbleBigWidget);
-        thresX->setObjectName(QString::fromUtf8("thresX"));
-        thresX->setMinimumSize(QSize(50, 15));
-        thresX->setMaximum(500);
-        thresX->setPageStep(10);
-        thresX->setValue(100);
-        thresX->setOrientation(Qt::Horizontal);
-        thresX->setTickPosition(QSlider::NoTicks);
+        redX = new QSlider(bubbleBigWidget);
+        redX->setObjectName(QString::fromUtf8("redX"));
+        redX->setMinimumSize(QSize(50, 15));
+        redX->setMaximum(100);
+        redX->setPageStep(10);
+        redX->setValue(70);
+        redX->setOrientation(Qt::Horizontal);
+        redX->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresX, 1, 9, 1, 1);
+        gridLayout->addWidget(redX, 1, 9, 1, 1);
 
-        thresY = new QSlider(bubbleBigWidget);
-        thresY->setObjectName(QString::fromUtf8("thresY"));
-        thresY->setMinimumSize(QSize(50, 15));
-        thresY->setMaximum(500);
-        thresY->setPageStep(10);
-        thresY->setValue(100);
-        thresY->setOrientation(Qt::Horizontal);
-        thresY->setTickPosition(QSlider::NoTicks);
+        redY = new QSlider(bubbleBigWidget);
+        redY->setObjectName(QString::fromUtf8("redY"));
+        redY->setMinimumSize(QSize(50, 15));
+        redY->setMaximum(100);
+        redY->setPageStep(10);
+        redY->setValue(70);
+        redY->setOrientation(Qt::Horizontal);
+        redY->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresY, 3, 9, 1, 1);
+        gridLayout->addWidget(redY, 3, 9, 1, 1);
 
-        thresZ = new QSlider(bubbleBigWidget);
-        thresZ->setObjectName(QString::fromUtf8("thresZ"));
-        thresZ->setMinimumSize(QSize(50, 15));
-        thresZ->setMaximum(500);
-        thresZ->setPageStep(10);
-        thresZ->setValue(100);
-        thresZ->setOrientation(Qt::Horizontal);
-        thresZ->setTickPosition(QSlider::NoTicks);
+        redZ = new QSlider(bubbleBigWidget);
+        redZ->setObjectName(QString::fromUtf8("redZ"));
+        redZ->setMinimumSize(QSize(50, 15));
+        redZ->setMaximum(100);
+        redZ->setPageStep(10);
+        redZ->setValue(70);
+        redZ->setOrientation(Qt::Horizontal);
+        redZ->setTickPosition(QSlider::NoTicks);
 
-        gridLayout->addWidget(thresZ, 4, 9, 1, 1);
+        gridLayout->addWidget(redZ, 4, 9, 1, 1);
 
-        spinThresX = new QSpinBox(bubbleBigWidget);
-        spinThresX->setObjectName(QString::fromUtf8("spinThresX"));
-        spinThresX->setMinimumSize(QSize(50, 22));
-        spinThresX->setMaximum(500);
-        spinThresX->setSingleStep(10);
-        spinThresX->setValue(100);
+        spinRedX = new QSpinBox(bubbleBigWidget);
+        spinRedX->setObjectName(QString::fromUtf8("spinRedX"));
+        spinRedX->setMinimumSize(QSize(50, 22));
+        spinRedX->setMaximum(100);
+        spinRedX->setSingleStep(5);
+        spinRedX->setValue(70);
 
-        gridLayout->addWidget(spinThresX, 1, 10, 1, 1);
+        gridLayout->addWidget(spinRedX, 1, 10, 1, 1);
 
-        spinThresY = new QSpinBox(bubbleBigWidget);
-        spinThresY->setObjectName(QString::fromUtf8("spinThresY"));
-        spinThresY->setMinimumSize(QSize(50, 22));
-        spinThresY->setMaximum(500);
-        spinThresY->setSingleStep(10);
-        spinThresY->setValue(100);
+        spinRedY = new QSpinBox(bubbleBigWidget);
+        spinRedY->setObjectName(QString::fromUtf8("spinRedY"));
+        spinRedY->setMinimumSize(QSize(50, 22));
+        spinRedY->setMaximum(100);
+        spinRedY->setSingleStep(5);
+        spinRedY->setValue(70);
 
-        gridLayout->addWidget(spinThresY, 3, 10, 1, 1);
+        gridLayout->addWidget(spinRedY, 3, 10, 1, 1);
 
-        spinThresZ = new QSpinBox(bubbleBigWidget);
-        spinThresZ->setObjectName(QString::fromUtf8("spinThresZ"));
-        spinThresZ->setMinimumSize(QSize(50, 22));
-        spinThresZ->setMaximum(500);
-        spinThresZ->setSingleStep(10);
-        spinThresZ->setValue(100);
+        spinRedZ = new QSpinBox(bubbleBigWidget);
+        spinRedZ->setObjectName(QString::fromUtf8("spinRedZ"));
+        spinRedZ->setMinimumSize(QSize(50, 22));
+        spinRedZ->setMaximum(100);
+        spinRedZ->setSingleStep(5);
+        spinRedZ->setValue(70);
 
-        gridLayout->addWidget(spinThresZ, 4, 10, 1, 1);
+        gridLayout->addWidget(spinRedZ, 4, 10, 1, 1);
 
         lblSensitivity_3 = new QLabel(bubbleBigWidget);
         lblSensitivity_3->setObjectName(QString::fromUtf8("lblSensitivity_3"));
-        lblSensitivity_3->setMinimumSize(QSize(100, 0));
+        lblSensitivity_3->setMinimumSize(QSize(110, 0));
         lblSensitivity_3->setMaximumSize(QSize(150, 16777215));
         lblSensitivity_3->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));
@@ -1118,18 +1134,18 @@ public:
         QObject::connect(spinNeutralZone, SIGNAL(valueChanged(int)), slideNeutralZone, SLOT(setValue(int)));
         QObject::connect(slideSmoothing, SIGNAL(valueChanged(int)), spinSmoothing, SLOT(setValue(int)));
         QObject::connect(spinSmoothing, SIGNAL(valueChanged(int)), slideSmoothing, SLOT(setValue(int)));
-        QObject::connect(thresYaw, SIGNAL(valueChanged(int)), spinThresYaw, SLOT(setValue(int)));
-        QObject::connect(spinThresYaw, SIGNAL(valueChanged(int)), thresYaw, SLOT(setValue(int)));
-        QObject::connect(thresPitch, SIGNAL(valueChanged(int)), spinThresPitch, SLOT(setValue(int)));
-        QObject::connect(spinThresPitch, SIGNAL(valueChanged(int)), thresPitch, SLOT(setValue(int)));
-        QObject::connect(thresRoll, SIGNAL(valueChanged(int)), spinThresRoll, SLOT(setValue(int)));
-        QObject::connect(spinThresRoll, SIGNAL(valueChanged(int)), thresRoll, SLOT(setValue(int)));
-        QObject::connect(thresX, SIGNAL(valueChanged(int)), spinThresX, SLOT(setValue(int)));
-        QObject::connect(spinThresX, SIGNAL(valueChanged(int)), thresX, SLOT(setValue(int)));
-        QObject::connect(thresY, SIGNAL(valueChanged(int)), spinThresY, SLOT(setValue(int)));
-        QObject::connect(spinThresY, SIGNAL(valueChanged(int)), thresY, SLOT(setValue(int)));
-        QObject::connect(thresZ, SIGNAL(valueChanged(int)), spinThresZ, SLOT(setValue(int)));
-        QObject::connect(spinThresZ, SIGNAL(valueChanged(int)), thresZ, SLOT(setValue(int)));
+        QObject::connect(redYaw, SIGNAL(valueChanged(int)), spinRedYaw, SLOT(setValue(int)));
+        QObject::connect(spinRedYaw, SIGNAL(valueChanged(int)), redYaw, SLOT(setValue(int)));
+        QObject::connect(redPitch, SIGNAL(valueChanged(int)), spinRedPitch, SLOT(setValue(int)));
+        QObject::connect(spinRedPitch, SIGNAL(valueChanged(int)), redPitch, SLOT(setValue(int)));
+        QObject::connect(redRoll, SIGNAL(valueChanged(int)), spinRedRoll, SLOT(setValue(int)));
+        QObject::connect(spinRedRoll, SIGNAL(valueChanged(int)), redRoll, SLOT(setValue(int)));
+        QObject::connect(redX, SIGNAL(valueChanged(int)), spinRedX, SLOT(setValue(int)));
+        QObject::connect(spinRedX, SIGNAL(valueChanged(int)), redX, SLOT(setValue(int)));
+        QObject::connect(redY, SIGNAL(valueChanged(int)), spinRedY, SLOT(setValue(int)));
+        QObject::connect(spinRedY, SIGNAL(valueChanged(int)), redY, SLOT(setValue(int)));
+        QObject::connect(redZ, SIGNAL(valueChanged(int)), spinRedZ, SLOT(setValue(int)));
+        QObject::connect(spinRedZ, SIGNAL(valueChanged(int)), redZ, SLOT(setValue(int)));
 
         iconcomboTrackerSource->setCurrentIndex(-1);
         iconcomboBox->setCurrentIndex(-1);
@@ -1195,6 +1211,8 @@ public:
         groupGameProtocol->setTitle(QApplication::translate("FaceTrackNoIRClass", "Game protocol", 0, QApplication::UnicodeUTF8));
         lblSensYaw_3->setText(QApplication::translate("FaceTrackNoIRClass", "Smoothing (samples)", 0, QApplication::UnicodeUTF8));
         lblSensYaw_4->setText(QApplication::translate("FaceTrackNoIRClass", "Rotation Neutral Zone (degr.)", 0, QApplication::UnicodeUTF8));
+        chkUseEWMA->setText(QString());
+        lblSensYaw_5->setText(QApplication::translate("FaceTrackNoIRClass", "Use EWMA filtering", 0, QApplication::UnicodeUTF8));
         cameraName->setText(QApplication::translate("FaceTrackNoIRClass", "Camera Name", 0, QApplication::UnicodeUTF8));
         lblSensitivity->setText(QApplication::translate("FaceTrackNoIRClass", "Sensitivity (100 = x1)", 0, QApplication::UnicodeUTF8));
         lblSensYaw->setText(QApplication::translate("FaceTrackNoIRClass", "Yaw", 0, QApplication::UnicodeUTF8));
@@ -1211,8 +1229,8 @@ public:
         lblInvert1_2->setText(QApplication::translate("FaceTrackNoIRClass", "Invert", 0, QApplication::UnicodeUTF8));
         chkInvertY->setText(QString());
         chkInvertZ->setText(QString());
-        lblSensitivity_2->setText(QApplication::translate("FaceTrackNoIRClass", "Threshold (100 = 1)", 0, QApplication::UnicodeUTF8));
-        lblSensitivity_3->setText(QApplication::translate("FaceTrackNoIRClass", "Threshold (100 = 1)", 0, QApplication::UnicodeUTF8));
+        lblSensitivity_2->setText(QApplication::translate("FaceTrackNoIRClass", "Red.factor (100 = 1)", 0, QApplication::UnicodeUTF8));
+        lblSensitivity_3->setText(QApplication::translate("FaceTrackNoIRClass", "Red.factor (100 = 1)", 0, QApplication::UnicodeUTF8));
         lblSensitivity_4->setText(QApplication::translate("FaceTrackNoIRClass", "Sensitivity (100 = x1)", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("FaceTrackNoIRClass", "File", 0, QApplication::UnicodeUTF8));
         menuAbout->setTitle(QApplication::translate("FaceTrackNoIRClass", "About", 0, QApplication::UnicodeUTF8));

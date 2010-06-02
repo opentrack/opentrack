@@ -140,7 +140,7 @@ void FTServer::run() {
 		}
 
 		// just for lower cpu load
-		msleep(40);	
+		msleep(30);	
 		yieldCurrentThread();
 		pMemData->data.DataID += 1;
 	}

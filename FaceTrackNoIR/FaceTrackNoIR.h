@@ -118,13 +118,15 @@ private:
 		void setInvertY( int invert );
 		void setInvertZ( int invert );
 
-		// threshold sliders
-		void setThreshYaw( int thresh );
-		void setThreshPitch( int thresh );
-		void setThreshRoll( int thresh );
-		void setThreshX( int thresh );
-		void setThreshY( int thresh );
-		void setThreshZ( int thresh );
+		void setUseFilter( int set );
+
+		// reduction factor sliders
+		void setRedYaw( int redh );
+		void setRedPitch( int redh );
+		void setRedRoll( int redh );
+		void setRedX( int redh );
+		void setRedY( int redh );
+		void setRedZ( int redh );
 
 		void setNeutralZone( int angle );
 
