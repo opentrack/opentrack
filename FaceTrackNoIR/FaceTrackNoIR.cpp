@@ -345,6 +345,7 @@ void FaceTrackNoIR::loadSettings() {
 
 	iniFile.beginGroup ( "GameProtocol" );
 	ui.iconcomboBox->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
+	setIcon( ui.iconcomboBox->currentIndex() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -390,17 +391,34 @@ void FaceTrackNoIR::startTracker( ) {
 	l->addWidget(_display);
 
 	//
-	// Setup the Tracker and send the settings, just to be sure...
+	// Setup the Tracker and send the settings.
+	// This is necessary, because the events are only triggered 'on change'
 	//
 	tracker->setup( ui.headPoseWidget , this);
 	tracker->setSmoothing ( ui.slideSmoothing->value() );
 	tracker->setNeutralZone ( ui.slideNeutralZone->value() );
+	tracker->setUseFilter (ui.chkUseEWMA->isChecked() );
+
 	tracker->setSensYaw (ui.sensYaw->value() );
 	tracker->setSensPitch (ui.sensPitch->value() );
 	tracker->setSensRoll (ui.sensRoll->value() );
 	tracker->setSensX (ui.sensX->value() );
 	tracker->setSensY (ui.sensY->value() );
 	tracker->setSensZ (ui.sensZ->value() );
+
+	tracker->setInvertYaw (ui.chkInvertYaw->isChecked() );
+	tracker->setInvertPitch (ui.chkInvertPitch->isChecked() );
+	tracker->setInvertRoll (ui.chkInvertRoll->isChecked() );
+	tracker->setInvertX (ui.chkInvertX->isChecked() );
+	tracker->setInvertY (ui.chkInvertY->isChecked() );
+	tracker->setInvertZ (ui.chkInvertZ->isChecked() );
+
+	tracker->setRedYaw (ui.redYaw->value() );
+	tracker->setRedPitch (ui.redPitch->value() );
+	tracker->setRedRoll (ui.redRoll->value() );
+	tracker->setRedX (ui.redX->value() );
+	tracker->setRedY (ui.redY->value() );
+	tracker->setRedZ (ui.redZ->value() );
 
 	ui.headPoseWidget->show();
 
@@ -682,8 +700,8 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
      switch (reason) {
      case QSystemTrayIcon::Trigger:
      case QSystemTrayIcon::DoubleClick:
-         ui.iconcomboBox->setCurrentIndex((ui.iconcomboBox->currentIndex() + 1)
-                                       % ui.iconcomboBox->count());
+         //ui.iconcomboBox->setCurrentIndex((ui.iconcomboBox->currentIndex() + 1)
+         //                              % ui.iconcomboBox->count());
          break;
      ////case QSystemTrayIcon::MiddleClick:
      ////    showMessage();

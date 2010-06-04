@@ -23,6 +23,10 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20100604 - WVR: Created structure for DOF-data and changed timing of
+						ReceiveHeadPose end run().
+		20100602 - WVR: Implemented EWMA-filtering, according to the example of
+						Melchior Franz. Works like a charm...
 		20100601 - WVR: Added DirectInput keyboard-handling. '=' used for center,
 						'BACK' for start (+center)/stop.
 		20100517 - WVR: Added upstream command(s) from FlightGear
@@ -35,55 +39,21 @@
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
 
-float Tracker::headPosX = 0.0f;
-float Tracker::headPosY = 0.0f;
-float Tracker::headPosZ = 0.0f;
-float Tracker::initial_headPosZ = 0.0f;
-
-float Tracker::headRotX = 0.0f;
-float Tracker::headRotY = 0.0f;
-float Tracker::headRotZ = 0.0f;
-
-// Offsets, to center headpos while tracking
-float Tracker::offset_headPosX = 0.0f;
-float Tracker::offset_headPosY = 0.0f;
-float Tracker::offset_headPosZ = 0.0f;
-
-float Tracker::offset_headRotX = 0.0f;
-float Tracker::offset_headRotY = 0.0f;
-float Tracker::offset_headRotZ = 0.0f;
-
 // Flags
 bool Tracker::confid = false;
-bool Tracker::newdata = false;
 bool Tracker::set_initial = false;
 bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
-
-float Tracker::sensYaw = 1.0f;
-float Tracker::sensPitch = 1.0f;
-float Tracker::sensRoll = 1.0f;
-float Tracker::sensX = 1.0f;
-float Tracker::sensY = 1.0f;
-float Tracker::sensZ = 1.0f;
-
-float Tracker::invertYaw = 1.0f;
-float Tracker::invertPitch = 1.0f;
-float Tracker::invertRoll = 1.0f;
-float Tracker::invertX = 1.0f;
-float Tracker::invertY = 1.0f;
-float Tracker::invertZ = 1.0f;
-
 bool Tracker::useFilter = false;
 
-float Tracker::redYaw = 0.7f;
-float Tracker::redPitch = 0.7f;
-float Tracker::redRoll = 0.7f;
-float Tracker::redX = 0.7f;
-float Tracker::redY = 0.7f;
-float Tracker::redZ = 0.7f;
-
 float Tracker::rotNeutralZone = 0.087f;					// Neutral Zone for rotations (rad)
+long Tracker::prevHeadPoseTime = 0;
+THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
+THeadPoseDOF Tracker::Yaw;
+THeadPoseDOF Tracker::Roll;
+THeadPoseDOF Tracker::X;
+THeadPoseDOF Tracker::Y;
+THeadPoseDOF Tracker::Z;
 
 /** constructor empty **/
 Tracker::Tracker() {
@@ -186,22 +156,8 @@ void Tracker::run() {
 	LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
 	BYTE keystate[256];								// the storage for the key-information
 	HRESULT retAcquire;
-	bool lastMinusKey = false;						// Remember state, to detect rising edge
+	bool lastBackKey = false;						// Remember state, to detect rising edge
 	bool lastEqualsKey = false;
-
-	float prevYaw = 0.0f;							// Remember previous Raw, to filter jitter
-	float prevPitch = 0.0f;
-	float prevRoll = 0.0f;
-	float prevX = 0.0f;
-	float prevY = 0.0f;
-	float prevZ = 0.0f;
-
-	float newYaw = 0.0f;							// Local new Raw, to filter jitter
-	float newPitch = 0.0f;
-	float newRoll = 0.0f;
-	float newX = 0.0f;
-	float newY = 0.0f;
-	float newZ = 0.0f;
 
 	//QFile data("output.txt");
 	//if (data.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -259,9 +215,9 @@ void Tracker::run() {
 		   }
 		   else {
 				//
-				// Check the state of the MINUS key (= Start/Stop tracking) and EQUALS key (= Center)
+				// Check the state of the BACK key (= Start/Stop tracking) and EQUALS key (= Center)
 				//
-				if ( (keystate[DIK_BACK] & 0x80) && (!lastMinusKey) ) {
+				if ( (keystate[DIK_BACK] & 0x80) && (!lastBackKey) ) {
 					Tracker::do_tracking = !Tracker::do_tracking;
 
 					//
@@ -272,7 +228,7 @@ void Tracker::run() {
 					}
 					qDebug() << "Tracker::run() says BACK pressed, do_tracking =" << Tracker::do_tracking;
 				}
-				lastMinusKey = (keystate[DIK_BACK] & 0x80);					// Remember
+				lastBackKey = (keystate[DIK_BACK] & 0x80);						// Remember
 
 				if ( (keystate[DIK_EQUALS] & 0x80) && (!lastEqualsKey) ) {
 					Tracker::do_center = true;
@@ -283,7 +239,7 @@ void Tracker::run() {
 		}
 
 		//if the confidence is good enough the headpose will be updated **/
-		if (Tracker::confid && Tracker::newdata) {
+		if (Tracker::confid) {
 
 			//
 			// Most games need an offset to the initial position and NOT the
@@ -291,7 +247,7 @@ void Tracker::run() {
 			// to substract that later...
 			//
 			if(Tracker::set_initial == false) {
-				Tracker::initial_headPosZ = Tracker::getHeadPosZ();
+				Tracker::Z.initial_headPos = Tracker::getHeadPosZ();
 				Tracker::set_initial = true;
 			}
 
@@ -307,76 +263,30 @@ void Tracker::run() {
 			//
 			// Copy the Raw values directly to Free-track server
 			//
-			server_FT->setHeadRotX( Tracker::headRotX );				// rads
-			server_FT->setHeadRotY( Tracker::headRotY );
-			server_FT->setHeadRotZ( Tracker::headRotZ );
+			server_FT->setHeadRotX( Tracker::Pitch.headPos );			// rads
+			server_FT->setHeadRotY( Tracker::Yaw.headPos );
+			server_FT->setHeadRotZ( Tracker::Roll.headPos);
 
-			server_FT->setHeadPosX( Tracker::headPosX * 1000.0f);		// From m to mm
-			server_FT->setHeadPosY( Tracker::headPosY * 1000.0f);
-			server_FT->setHeadPosZ( ( Tracker::headPosZ - Tracker::initial_headPosZ ) * 1000.0f);
+			server_FT->setHeadPosX( Tracker::X.headPos * 1000.0f);		// From m to mm
+			server_FT->setHeadPosY( Tracker::Y.headPos * 1000.0f);
+			server_FT->setHeadPosZ( ( Tracker::Z.headPos - Tracker::Z.initial_headPos ) * 1000.0f);
 
-			//
-			// Calculate the new values, applying a low-pass filter.
-			// Add the values to their respective QList, for further smoothing
-			//
-			if (Tracker::useFilter) {
-				newPitch = lowPassFilter ( Tracker::headRotX, &prevPitch, 0.020f, Tracker::redPitch );
-			}
-			else {
-				newPitch = Tracker::headRotX;
-			}
-			addRaw2List ( &rawPitchList, intMaxPitchItems, newPitch );
-			//QTextStream out(&data);
-			//out << "Raw:" << Tracker::headRotX << " filtered:" << newPitch << endl;
-			if (Tracker::useFilter) {
-				newYaw = lowPassFilter ( Tracker::headRotY, &prevYaw, 0.020f, Tracker::redYaw );
-			}
-			else {
-				newYaw = Tracker::headRotY;
-			}
-			addRaw2List ( &rawYawList, intMaxYawItems, newYaw );
-			if (Tracker::useFilter) {
-				newRoll = lowPassFilter ( Tracker::headRotZ, &prevRoll, 0.020f, Tracker::redRoll );
-			}
-			else {
-				newRoll = Tracker::headRotZ;
-			}
-			addRaw2List ( &rawRollList, intMaxRollItems, newRoll );
-			if (Tracker::useFilter) {
-				newX = lowPassFilter ( Tracker::headPosX, &prevX, 0.020f, Tracker::redX );
-			}
-			else {
-				newX = Tracker::headPosX;
-			}
-			addRaw2List ( &rawXList, intMaxXItems, newX );
-			if (Tracker::useFilter) {
-				newY = lowPassFilter ( Tracker::headPosY, &prevY, 0.020f, Tracker::redY );
-			}
-			else {
-				newY = Tracker::headPosY;
-			}
-			addRaw2List ( &rawYList, intMaxYItems, newY );
-			if (Tracker::useFilter) {
-				newZ = lowPassFilter ( Tracker::headPosZ, &prevZ, 0.020f, Tracker::redZ );
-			}
-			else {
-				newZ = Tracker::headPosZ;
-			}
-			addRaw2List ( &rawZList, intMaxZItems, newZ );
-
-			Tracker::newdata = false;								// Reset flag for ReceiveHeadPose
 		}
 
 		//
 		// If Center is pressed, copy the current values to the offsets.
 		//
 		if (Tracker::do_center) {
-			offset_headRotX = getSmoothFromList( &rawPitchList );
-			offset_headRotY = getSmoothFromList( &rawYawList );
-			offset_headRotZ = getSmoothFromList( &rawRollList );
-			offset_headPosX = getSmoothFromList( &rawXList );
-			offset_headPosY = getSmoothFromList( &rawYList );
-			offset_headPosZ = getSmoothFromList( &rawZList );
+			Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
+			Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
+			Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
+			X.offset_headPos = getSmoothFromList( &X.rawList );
+			Y.offset_headPos = getSmoothFromList( &Y.rawList );
+
+			//
+			// Reset the initial distance to the camera
+			//
+			Z.offset_headPos = getSmoothFromList( &Z.rawList ) - Tracker::Z.initial_headPos;
 			Tracker::do_center = false;
 		}
 
@@ -384,19 +294,19 @@ void Tracker::run() {
 			//
 			// Also send the Virtual Pose to FT-server and FG-server
 			//
-			server_FT->setVirtRotX ( Tracker::invertPitch * Tracker::sensPitch * (getSmoothFromList( &rawPitchList ) - offset_headRotX) );
-			server_FT->setVirtRotY ( Tracker::invertYaw   * Tracker::sensYaw   * (getSmoothFromList( &rawYawList ) - offset_headRotY) );
-			server_FT->setVirtRotZ ( Tracker::invertRoll  * Tracker::sensRoll  * (getSmoothFromList( &rawRollList ) - offset_headRotZ) );
-			server_FT->setVirtPosX ( ( Tracker::invertX   * Tracker::sensX     * (getSmoothFromList( &rawXList ) - offset_headPosX) ) * 1000.0f);
-			server_FT->setVirtPosY ( ( Tracker::invertY   * Tracker::sensY     * (getSmoothFromList( &rawYList ) - offset_headPosY) ) * 1000.0f );
-			server_FT->setVirtPosZ ( ( Tracker::invertZ   * Tracker::sensZ     * (getSmoothFromList( &rawZList ) - offset_headPosZ) ) * 1000.0f );
+			server_FT->setVirtRotX ( Tracker::Pitch.invert * Tracker::Pitch.sens * (getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos) );
+			server_FT->setVirtRotY ( Tracker::Yaw.invert   * Tracker::Yaw.sens   * (getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos) );
+			server_FT->setVirtRotZ ( Tracker::Roll.invert  * Tracker::Roll.sens  * (getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos) );
+			server_FT->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
+			server_FT->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
+			server_FT->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
 
-			server_FG->setVirtRotX ( getDegreesFromRads ( Tracker::invertPitch * Tracker::sensPitch * (getSmoothFromList( &rawPitchList ) - offset_headRotX) ) );
-			server_FG->setVirtRotY ( getDegreesFromRads ( Tracker::invertYaw   * Tracker::sensYaw   * (getSmoothFromList( &rawYawList )   - offset_headRotY) ) );
-			server_FG->setVirtRotZ ( getDegreesFromRads ( Tracker::invertRoll  * Tracker::sensRoll  * (getSmoothFromList( &rawRollList )  - offset_headRotZ) ) );
-			server_FG->setVirtPosX ( Tracker::invertX * Tracker::sensX * (getSmoothFromList( &rawXList ) - offset_headPosX) );
-			server_FG->setVirtPosY ( Tracker::invertY * Tracker::sensY * (getSmoothFromList( &rawYList ) - offset_headPosY) );
-			server_FG->setVirtPosZ ( Tracker::invertZ * Tracker::sensZ * (getSmoothFromList( &rawZList ) - offset_headPosZ) );
+			server_FG->setVirtRotX ( getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * (getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos) ) );
+			server_FG->setVirtRotY ( getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   * (getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos) ) );
+			server_FG->setVirtRotZ ( getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * (getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos) ) );
+			server_FG->setVirtPosX ( Tracker::X.invert * Tracker::X.sens * (getSmoothFromList( &X.rawList ) - X.offset_headPos) );
+			server_FG->setVirtPosY ( Tracker::Y.invert * Tracker::Y.sens * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) );
+			server_FG->setVirtPosZ ( Tracker::Z.invert * Tracker::Z.sens * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) );
 		}
 		else {
 			//
@@ -418,7 +328,7 @@ void Tracker::run() {
 		}
 
 		//for lower cpu load 
-		msleep(20);
+		msleep(25);
 		yieldCurrentThread(); 
 	}
 }
@@ -434,7 +344,14 @@ void Tracker::registerHeadPoseCallback() {
 /** Callback function for head-pose - only static methods could be called **/
 void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame)
 {
-	if(head_pose.confidence>0) {
+	SYSTEMTIME now;
+	long newHeadPoseTime;
+	float dT;
+
+	//
+	// Perform actions, when valid data is received from faceAPI.
+	//
+	if( head_pose.confidence > 0 ) {
 		Tracker::confid = true;
 		Tracker::setHeadPosX(head_pose.head_pos.x);
 		Tracker::setHeadPosY(head_pose.head_pos.y);
@@ -443,14 +360,93 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 		Tracker::setHeadRotX(head_pose.head_rot.x_rads);
 		Tracker::setHeadRotY(head_pose.head_rot.y_rads);
 		Tracker::setHeadRotZ(head_pose.head_rot.z_rads);	
+
+		//
+		// Get the System-time and substract the time from the previous call.
+		// dT will be used for the EWMA-filter.
+		//
+		GetSystemTime ( &now );
+		newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
+		dT = (newHeadPoseTime - Tracker::prevHeadPoseTime) / 1000.0f;
+
+		// Remember time for next call
+		Tracker::prevHeadPoseTime = newHeadPoseTime;
+
+		//
+		// Log something
+		//
+		//QFile data("output.txt");
+		//if (data.open(QFile::WriteOnly | QFile::Append)) {
+		//	QTextStream out(&data);
+		//	out << "ReceiveHeadPose:" << dT << '\n';
+		//}
+
+
+		//
+		// Calculate the new values, applying a low-pass filter.
+		// Add the values to their respective QList, for further smoothing
+		//
+		// Pitch
+		if (Tracker::useFilter) {
+			Pitch.newPos = lowPassFilter ( Tracker::Pitch.headPos, &Pitch.prevPos, dT, Tracker::Pitch.red );
+		}
+		else {
+			Pitch.newPos = Tracker::Pitch.headPos;
+		}
+		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Pitch.newPos );
+
+		// Yaw
+		if (Tracker::useFilter) {
+			Yaw.newPos = lowPassFilter ( Tracker::Yaw.headPos, &Yaw.prevPos, dT, Tracker::Yaw.red );
+		}
+		else {
+			Yaw.newPos = Tracker::Yaw.headPos;
+		}
+		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Yaw.newPos );
+
+		// Roll
+		if (Tracker::useFilter) {
+			Roll.newPos = lowPassFilter ( Tracker::Roll.headPos, &Roll.prevPos, dT, Tracker::Roll.red );
+		}
+		else {
+			Roll.newPos = Tracker::Roll.headPos;
+		}
+		addRaw2List ( &Roll.rawList, Roll.maxItems, Roll.newPos );
+
+		// X-position
+		if (Tracker::useFilter) {
+			X.newPos = lowPassFilter ( Tracker::X.headPos, &X.prevPos, dT, Tracker::X.red );
+		}
+		else {
+			X.newPos = Tracker::X.headPos;
+		}
+		addRaw2List ( &X.rawList, X.maxItems, X.newPos );
+
+		// Y-position
+		if (Tracker::useFilter) {
+			Y.newPos = lowPassFilter ( Tracker::Y.headPos, &Y.prevPos, dT, Tracker::Y.red );
+		}
+		else {
+			Y.newPos = Tracker::Y.headPos;
+		}
+		addRaw2List ( &Y.rawList, Y.maxItems, Y.newPos );
+
+		// Z-position (distance to camera, absolute!)
+		if (Tracker::useFilter) {
+			Z.newPos = lowPassFilter ( Tracker::Z.headPos, &Z.prevPos, dT, Tracker::Z.red );
+		}
+		else {
+			Z.newPos = Tracker::Z.headPos;
+		}
+		addRaw2List ( &Z.rawList, Z.maxItems, Z.newPos );
+
 	} else {
 		Tracker::confid = false;
 	}
-	Tracker::newdata = true;									// Set flag for run()
-	// for lower cpu load
-	msleep(40);
-	yieldCurrentThread(); 
 
+	// for lower cpu load
+	msleep(30);
+	yieldCurrentThread(); 
 }
 
 //
