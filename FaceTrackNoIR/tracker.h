@@ -47,6 +47,22 @@ using namespace sm::faceapi::qt;
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
+//
+// Structure to hold all variables concerning one of 6 DOF's
+//
+struct THeadPoseDOF {
+	float headPos;					// Current position (from faceTracker, radials or meters)
+	float initial_headPos;			// Position on startup (first valid value)
+	float offset_headPos;			// Offset for centering
+	float sens;						// Sensitivity (multiplication factor)
+	float invert;					// Invert measured value (= 1.0f or -1.0f)
+	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
+	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
+	int maxItems;					// Maximum number of elements is rawList
+	float newPos;					// New Position (used locally)
+	float prevPos;					// Previous Position
+};
+
 class Tracker : public QThread {
 	Q_OBJECT
 
@@ -63,79 +79,27 @@ private:
 
 	/** static callback method for the head pose tracking **/
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
+	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
+	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
 
-	/** static member varables for saving the head pose **/
-	static float headPosX;
-	static float headPosY;
-	static float headPosZ;							// Distance from camera
-	static float initial_headPosZ;					// Initial distance when headpose is valid
-
-	static float headRotX;
-	static float headRotY;
-	static float headRotZ;
-
-	// Offsets, used to center view while tracking
-	static float offset_headPosX;
-	static float offset_headPosY;
-	static float offset_headPosZ;					// Distance from camera
-
-	static float offset_headRotX;
-	static float offset_headRotY;
-	static float offset_headRotZ;
+	/** static member variables for saving the head pose **/
+	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
+	static THeadPoseDOF Yaw;						// Head-rotation Y-direction ()
+	static THeadPoseDOF Roll;						// Head-rotation Z-direction ()
+	static THeadPoseDOF X;							// Head-movement X-direction (Left/Right)
+	static THeadPoseDOF Y;							// Head-movement Y-direction (Up/Down)
+	static THeadPoseDOF Z;							// Head-movement Z-direction (To/From camera)
 
 	// Flags to start/stop/reset tracking
-	static bool confid;
-	static bool newdata;
+	static bool confid;								// Tracker data is OK
 	static bool set_initial;						// initial headpose is set
 	static bool do_tracking;						// Start/stop tracking, using MINUS key on keyboard
 	static bool do_center;							// Center head-position, using EQUALS key on keyboard
 
-	/** static member varables for calculating the virtual head pose **/
-	static float sensYaw;
-	static float sensPitch;
-	static float sensRoll;
-	static float sensX;
-	static float sensY;
-	static float sensZ;
-
-	static float invertYaw;
-	static float invertPitch;
-	static float invertRoll;
-	static float invertX;
-	static float invertY;
-	static float invertZ;
-
 	static bool useFilter;
-
-	/** Factors to remove jitter **/
-	static float redYaw;
-	static float redPitch;
-	static float redRoll;
-	static float redX;
-	static float redY;
-	static float redZ;
-
-	static float rotNeutralZone;						// Neutral Zone for rotations (rad).
+	static float rotNeutralZone;					// Neutral Zone for rotations (rad).
+	static long prevHeadPoseTime;					// Time from previous sample
 	
-	//
-	// The Raw FaceAPI-data may need smoothing.
-	// We implement smoothing, by taking the last 'x' raw samples and making an average of this.
-	// After 'x' samples, the oldest sample is removed and the fresh 'pre-pended' to the QList
-	//
-	QList<float> rawYawList;							// List of last 'x' values from FaceAPI
-	QList<float> rawPitchList;
-	QList<float> rawRollList;
-	QList<float> rawXList;
-	QList<float> rawYList;
-	QList<float> rawZList;
-
-	int intMaxYawItems;									// Max. number of items in QList: more = smoother (yet slower!)
-	int intMaxPitchItems;
-	int intMaxRollItems;
-	int intMaxXItems;
-	int intMaxYItems;
-	int intMaxZItems;
-
 	/** QT objects **/
 	QLineEdit *headXLine;
 	QLineEdit *headYLine;
@@ -167,63 +131,61 @@ public:
 	QSharedPointer<EngineBase> getEngine() { return _engine; };
 //	smEngineHandle getEngineHandle() { return _engine->handle(); };
 
-	static float getHeadPosX() {return headPosX;}
-	static float getHeadPosY() {return headPosY;}
-	static float getHeadPosZ() {return headPosZ;}
+	static float getHeadPosX() {return X.headPos;}
+	static float getHeadPosY() {return Y.headPos;}
+	static float getHeadPosZ() {return Z.headPos;}
 
-	static void setHeadPosX(float x) { headPosX = x; }
-	static void setHeadPosY(float y) { headPosY = y; }
-	static void setHeadPosZ(float z) { headPosZ = z; }
+	static void setHeadPosX(float x) { X.headPos = x; }
+	static void setHeadPosY(float y) { Y.headPos = y; }
+	static void setHeadPosZ(float z) { Z.headPos = z; }
 
-	static float getHeadRotX() {return headRotX;}
-	static float getHeadRotY() {return headRotY;}
-	static float getHeadRotZ() {return headRotZ;}
+	static float getHeadRotX() {return Pitch.headPos;}
+	static float getHeadRotY() {return Yaw.headPos;}
+	static float getHeadRotZ() {return Roll.headPos;}
 
-	static void setHeadRotX(float x) { headRotX = x; }
-	static void setHeadRotY(float y) { headRotY = y; }
-	static void setHeadRotZ(float z) { headRotZ = z; }
+	static void setHeadRotX(float x) { Pitch.headPos = x; }
+	static void setHeadRotY(float y) { Yaw.headPos = y; }
+	static void setHeadRotZ(float z) { Roll.headPos = z; }
 
 	static bool getConfid() { return confid; }
 
-	static void setSensYaw(int x) { sensYaw = x/100.0f; }
-	static void setSensPitch(int x) { sensPitch = x/100.0f; }
-	static void setSensRoll(int x) { sensRoll = x/100.0f; }
-	static void setSensX(int x) { sensX = x/100.0f; }
-	static void setSensY(int x) { sensY = x/100.0f; }
-	static void setSensZ(int x) { sensZ = x/100.0f; }
+	static void setSensPitch(int x) { Pitch.sens = x/100.0f; }
+	static void setSensYaw(int x) { Yaw.sens = x/100.0f; }
+	static void setSensRoll(int x) { Roll.sens = x/100.0f; }
+	static void setSensX(int x) { X.sens = x/100.0f; }
+	static void setSensY(int x) { Y.sens = x/100.0f; }
+	static void setSensZ(int x) { Z.sens = x/100.0f; }
 
-	static void setInvertYaw(bool invert) { invertYaw = invert?-1.0f:+1.0f; }
-	static void setInvertPitch(bool invert) { invertPitch = invert?-1.0f:+1.0f; }
-	static void setInvertRoll(bool invert) { invertRoll = invert?-1.0f:+1.0f; }
-	static void setInvertX(bool invert) { invertX = invert?-1.0f:+1.0f; }
-	static void setInvertY(bool invert) { invertY = invert?-1.0f:+1.0f; }
-	static void setInvertZ(bool invert) { invertZ = invert?-1.0f:+1.0f; }
+	static void setInvertPitch(bool invert) { Pitch.invert = invert?-1.0f:+1.0f; }
+	static void setInvertYaw(bool invert) { Yaw.invert = invert?-1.0f:+1.0f; }
+	static void setInvertRoll(bool invert) { Roll.invert = invert?-1.0f:+1.0f; }
+	static void setInvertX(bool invert) { X.invert = invert?-1.0f:+1.0f; }
+	static void setInvertY(bool invert) { Y.invert = invert?-1.0f:+1.0f; }
+	static void setInvertZ(bool invert) { Z.invert = invert?-1.0f:+1.0f; }
 
 	static void setUseFilter(bool set) { useFilter = set; }
 
-	static void setRedYaw(int x) { redYaw = x/100.0f; }
-	static void setRedPitch(int x) { redPitch = x/100.0f; }
-	static void setRedRoll(int x) { redRoll = x/100.0f; }
-	static void setRedX(int x) { redX = x/100.0f; }
-	static void setRedY(int x) { redY = x/100.0f; }
-	static void setRedZ(int x) { redZ = x/100.0f; }
+	static void setRedYaw(int x) { Yaw.red = x/100.0f; }
+	static void setRedPitch(int x) { Pitch.red = x/100.0f; }
+	static void setRedRoll(int x) { Roll.red = x/100.0f; }
+	static void setRedX(int x) { X.red = x/100.0f; }
+	static void setRedY(int x) { Y.red = x/100.0f; }
+	static void setRedZ(int x) { Z.red = x/100.0f; }
 
 	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
 
-	void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	float getSmoothFromList ( QList<float> *rawList );
 	float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
-	float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
 	float getDegreesFromRads ( float rads ) { return ((rads * 360.0f)/ (2.0f * 3.14159)); }
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 
-		intMaxYawItems = x;
-		intMaxPitchItems = x;
-		intMaxRollItems = x;
-		intMaxXItems = x;
-		intMaxYItems = x;
-		intMaxZItems = x;
+		Pitch.maxItems = x;
+		Yaw.maxItems = x;
+		Roll.maxItems = x;
+		X.maxItems = x;
+		Y.maxItems = x;
+		Z.maxItems = x;
 	}
 
 };
