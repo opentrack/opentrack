@@ -334,7 +334,7 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertX->setChecked (iniFile.value ( "invertX", 0 ).toBool());
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
-	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 0 ).toBool());
+	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
 	ui.redYaw->setValue (iniFile.value ( "redYaw", 70 ).toInt());
 	ui.redPitch->setValue (iniFile.value ( "redPitch", 70 ).toInt());
 	ui.redRoll->setValue (iniFile.value ( "redRoll", 70 ).toInt());

@@ -940,11 +940,11 @@ color:#000;</string>
 background:none;</string>
                </property>
                <property name="text">
-                <string>Smoothing (samples)</string>
+                <string>Global settings</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QSlider" name="slideSmoothing">
                <property name="minimumSize">
                 <size>
@@ -972,7 +972,7 @@ background:none;</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="1">
               <widget class="QSpinBox" name="spinSmoothing">
                <property name="minimumSize">
                 <size>
@@ -988,6 +988,59 @@ background:none;</string>
                </property>
               </widget>
              </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="chkUseEWMA">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="lblSensYaw_5">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#ccc;
+background:none;</string>
+               </property>
+               <property name="text">
+                <string>Use EWMA filtering:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lblSensYaw_4">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#ccc;
+background:none;</string>
+               </property>
+               <property name="text">
+                <string>Smoothing (samples):</string>
+               </property>
+              </widget>
+             </item>
              <item row="5" column="0">
               <widget class="QSlider" name="slideNeutralZone">
                <property name="minimumSize">
@@ -997,13 +1050,13 @@ background:none;</string>
                 </size>
                </property>
                <property name="minimum">
-                <number>0</number>
+                <number>1</number>
                </property>
                <property name="maximum">
                 <number>45</number>
                </property>
                <property name="pageStep">
-                <number>2</number>
+                <number>5</number>
                </property>
                <property name="value">
                 <number>5</number>
@@ -1027,13 +1080,16 @@ background:none;</string>
                <property name="maximum">
                 <number>45</number>
                </property>
+               <property name="singleStep">
+                <number>5</number>
+               </property>
                <property name="value">
                 <number>5</number>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="lblSensYaw_4">
+             <item row="4" column="0">
+              <widget class="QLabel" name="lblSensYaw_6">
                <property name="minimumSize">
                 <size>
                  <width>25</width>
@@ -1051,37 +1107,7 @@ background:none;</string>
 background:none;</string>
                </property>
                <property name="text">
-                <string>Rotation Neutral Zone (degr.)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="chkUseEWMA">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lblSensYaw_5">
-               <property name="minimumSize">
-                <size>
-                 <width>25</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">color:#ccc;
-background:none;</string>
-               </property>
-               <property name="text">
-                <string>Use EWMA filtering</string>
+                <string>Neutral Zone:</string>
                </property>
               </widget>
              </item>
@@ -2311,8 +2337,6 @@ background:none;</string>
   <tabstop>spinSensZ</tabstop>
   <tabstop>slideSmoothing</tabstop>
   <tabstop>spinSmoothing</tabstop>
-  <tabstop>slideNeutralZone</tabstop>
-  <tabstop>spinNeutralZone</tabstop>
   <tabstop>headXLine</tabstop>
   <tabstop>headRotXLine</tabstop>
   <tabstop>headYLine</tabstop>
@@ -2517,50 +2541,18 @@ background:none;</string>
    </hints>
   </connection>
   <connection>
-   <sender>slideNeutralZone</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinNeutralZone</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>813</x>
-     <y>238</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>869</x>
-     <y>240</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNeutralZone</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideNeutralZone</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>869</x>
-     <y>240</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>813</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>slideSmoothing</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinSmoothing</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>813</x>
-     <y>176</y>
+     <x>776</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
-     <x>869</x>
-     <y>178</y>
+     <x>832</x>
+     <y>182</y>
     </hint>
    </hints>
   </connection>
@@ -2571,12 +2563,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>869</x>
-     <y>178</y>
+     <x>832</x>
+     <y>182</y>
     </hint>
     <hint type="destinationlabel">
-     <x>813</x>
-     <y>176</y>
+     <x>776</x>
+     <y>180</y>
     </hint>
    </hints>
   </connection>
@@ -2769,6 +2761,38 @@ background:none;</string>
     <hint type="destinationlabel">
      <x>805</x>
      <y>493</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slideNeutralZone</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinNeutralZone</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>701</x>
+     <y>233</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinNeutralZone</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slideNeutralZone</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>806</x>
+     <y>232</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>741</x>
+     <y>231</y>
     </hint>
    </hints>
   </connection>

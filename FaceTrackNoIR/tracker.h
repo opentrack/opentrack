@@ -81,6 +81,7 @@ private:
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
+	static float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
 
 	/** static member variables for saving the head pose **/
 	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
@@ -175,7 +176,6 @@ public:
 	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
 
 	float getSmoothFromList ( QList<float> *rawList );
-	float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
 	float getDegreesFromRads ( float rads ) { return ((rads * 360.0f)/ (2.0f * 3.14159)); }
 
 	// For now, use one slider for all

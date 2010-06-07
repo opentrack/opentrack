@@ -23,6 +23,8 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20100607 - WVR: Re-installed Rotation Neutral Zone and improved reaction
+						after 'start/stop'. MessageBeep when confidence is back...
 		20100604 - WVR: Created structure for DOF-data and changed timing of
 						ReceiveHeadPose end run().
 		20100602 - WVR: Implemented EWMA-filtering, according to the example of
@@ -120,7 +122,7 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	registerHeadPoseCallback();
 
 	// some parameteres [optional]
-	smHTSetHeadPosePredictionEnabled( _engine->handle(), true);
+	smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
 	smHTSetLipTrackingEnabled( _engine->handle(), false);
 	smLoggingSetFileOutputEnable( false );
 
@@ -221,10 +223,31 @@ void Tracker::run() {
 					Tracker::do_tracking = !Tracker::do_tracking;
 
 					//
-					// To start tracking again and be '0', execute Center command too
+					// To start tracking again and to be at '0', execute Center command too
 					//
 					if (Tracker::do_tracking) {
 						Tracker::do_center = true;
+
+						Tracker::set_initial = false;
+						Tracker::confid = false;
+
+						Pitch.rawList.clear();
+						Pitch.prevPos = 0.0f;
+						Yaw.rawList.clear();
+						Yaw.prevPos = 0.0f;
+						Roll.rawList.clear();
+						Roll.prevPos = 0.0f;
+						X.rawList.clear();
+						X.prevPos = 0.0f;
+						Y.rawList.clear();
+						Y.prevPos = 0.0f;
+						Z.rawList.clear();
+						Z.prevPos = 0.0f;
+
+						_engine->start();
+					}
+					else {
+						_engine->stop();
 					}
 					qDebug() << "Tracker::run() says BACK pressed, do_tracking =" << Tracker::do_tracking;
 				}
@@ -248,6 +271,7 @@ void Tracker::run() {
 			//
 			if(Tracker::set_initial == false) {
 				Tracker::Z.initial_headPos = Tracker::getHeadPosZ();
+				MessageBeep (MB_ICONASTERISK);
 				Tracker::set_initial = true;
 			}
 
@@ -276,7 +300,7 @@ void Tracker::run() {
 		//
 		// If Center is pressed, copy the current values to the offsets.
 		//
-		if (Tracker::do_center) {
+		if (Tracker::do_center && Tracker::set_initial) {
 			Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
 			Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
 			Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
@@ -290,7 +314,7 @@ void Tracker::run() {
 			Tracker::do_center = false;
 		}
 
-		if (Tracker::do_tracking) {
+		if (Tracker::do_tracking && Tracker::confid) {
 			//
 			// Also send the Virtual Pose to FT-server and FG-server
 			//
@@ -388,28 +412,31 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 		//
 		// Pitch
 		if (Tracker::useFilter) {
-			Pitch.newPos = lowPassFilter ( Tracker::Pitch.headPos, &Pitch.prevPos, dT, Tracker::Pitch.red );
+			Pitch.newPos = lowPassFilter ( getCorrectedNewRaw ( Tracker::Pitch.headPos, rotNeutralZone ), 
+				                           &Pitch.prevPos, dT, Tracker::Pitch.red );
 		}
 		else {
-			Pitch.newPos = Tracker::Pitch.headPos;
+			Pitch.newPos = getCorrectedNewRaw ( Tracker::Pitch.headPos, rotNeutralZone );
 		}
 		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Pitch.newPos );
 
 		// Yaw
 		if (Tracker::useFilter) {
-			Yaw.newPos = lowPassFilter ( Tracker::Yaw.headPos, &Yaw.prevPos, dT, Tracker::Yaw.red );
+			Yaw.newPos = lowPassFilter ( getCorrectedNewRaw ( Tracker::Yaw.headPos, rotNeutralZone ), 
+										 &Yaw.prevPos, dT, Tracker::Yaw.red );
 		}
 		else {
-			Yaw.newPos = Tracker::Yaw.headPos;
+			Yaw.newPos = getCorrectedNewRaw ( Tracker::Yaw.headPos, rotNeutralZone );
 		}
 		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Yaw.newPos );
 
 		// Roll
 		if (Tracker::useFilter) {
-			Roll.newPos = lowPassFilter ( Tracker::Roll.headPos, &Roll.prevPos, dT, Tracker::Roll.red );
+			Roll.newPos = lowPassFilter ( getCorrectedNewRaw (Tracker::Roll.headPos, rotNeutralZone ),
+										  &Roll.prevPos, dT, Tracker::Roll.red );
 		}
 		else {
-			Roll.newPos = Tracker::Roll.headPos;
+			Roll.newPos = getCorrectedNewRaw (Tracker::Roll.headPos, rotNeutralZone );
 		}
 		addRaw2List ( &Roll.rawList, Roll.maxItems, Roll.newPos );
 
@@ -474,6 +501,7 @@ bool Tracker::handleGameCommand ( int command ) {
 		case 1:										// reset headtracker
 			if ( _engine ) {
 				_engine->stop();
+				Tracker::set_initial = false;
 				_engine->start();
 			}
 			break;
