@@ -420,6 +420,8 @@ void FaceTrackNoIR::startTracker( ) {
 	tracker->setRedY (ui.redY->value() );
 	tracker->setRedZ (ui.redZ->value() );
 
+	tracker->start( QThread::TimeCriticalPriority );
+
 	ui.headPoseWidget->show();
 
 	ui.btnStartTracker->setEnabled ( false );
@@ -638,6 +640,7 @@ void FaceTrackNoIR::createIconGroupBox()
 	ui.iconcomboBox->addItem(QIcon("images/Freetrack.ico"), tr("Freetrack"));
 	ui.iconcomboBox->addItem(QIcon("images/FlightGear.ico"), tr("FlightGear"));
 	ui.iconcomboBox->addItem(QIcon("images/FaceTrackNoIR.ico"), tr("FTNoir client"));
+	ui.iconcomboBox->addItem(QIcon("images/PPJoy.ico"), tr("Virtual Joystick"));
 
 	ui.iconcomboTrackerSource->addItem(QIcon("images/SeeingMachines.ico"), tr("Face API"));
 	ui.iconcomboTrackerSource->addItem(QIcon("images/FaceTrackNoIR.ico"), tr("FTNoir server"));

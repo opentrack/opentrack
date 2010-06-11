@@ -161,6 +161,10 @@ void Tracker::run() {
 	bool lastBackKey = false;						// Remember state, to detect rising edge
 	bool lastEqualsKey = false;
 
+	SYSTEMTIME now;
+	long newHeadPoseTime;
+	float dT;
+
 	//QFile data("output.txt");
 	//if (data.open(QFile::WriteOnly | QFile::Truncate)) {
 	//	QTextStream out(&data);
@@ -261,6 +265,17 @@ void Tracker::run() {
 		   }
 		}
 
+		//
+		// Get the System-time and substract the time from the previous call.
+		// dT will be used for the EWMA-filter.
+		//
+		GetSystemTime ( &now );
+		newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
+		dT = (newHeadPoseTime - Tracker::prevHeadPoseTime) / 1000.0f;
+
+		// Remember time for next call
+		Tracker::prevHeadPoseTime = newHeadPoseTime;
+
 		//if the confidence is good enough the headpose will be updated **/
 		if (Tracker::confid) {
 
@@ -318,9 +333,33 @@ void Tracker::run() {
 			//
 			// Also send the Virtual Pose to FT-server and FG-server
 			//
-			server_FT->setVirtRotX ( Tracker::Pitch.invert * Tracker::Pitch.sens * (getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos) );
-			server_FT->setVirtRotY ( Tracker::Yaw.invert   * Tracker::Yaw.sens   * (getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos) );
-			server_FT->setVirtRotZ ( Tracker::Roll.invert  * Tracker::Roll.sens  * (getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos) );
+			if (Tracker::useFilter) {
+				Pitch.newPos = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos, 
+											   &Pitch.prevPos, dT, Tracker::Pitch.red );
+			}
+			else {
+				Pitch.newPos = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+			}
+			server_FT->setVirtRotX ( Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos );
+
+			if (Tracker::useFilter) {
+				Yaw.newPos = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
+											   &Yaw.prevPos, dT, Tracker::Yaw.red );
+			}
+			else {
+				Yaw.newPos = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
+			}
+			server_FT->setVirtRotY ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos );
+
+			if (Tracker::useFilter) {
+				Roll.newPos = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos, 
+											   &Roll.prevPos, dT, Tracker::Roll.red );
+			}
+			else {
+				Roll.newPos = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
+			}
+			server_FT->setVirtRotZ ( Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos );
+
 			server_FT->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
 			server_FT->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
 			server_FT->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
@@ -362,15 +401,15 @@ void Tracker::registerHeadPoseCallback() {
 	Q_ASSERT(_engine_handle);
 	smReturnCode error = smHTRegisterHeadPoseCallback( _engine->handle(), 0, receiveHeadPose);
 	//showErrorBox(0, "Register HeadPose Callback", error);
-	start(LowestPriority);
 }
 
 /** Callback function for head-pose - only static methods could be called **/
 void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame)
 {
-	SYSTEMTIME now;
-	long newHeadPoseTime;
-	float dT;
+	//SYSTEMTIME now;
+	//long newHeadPoseTime;
+	//float dT;
+//	float rate;
 
 	//
 	// Perform actions, when valid data is received from faceAPI.
@@ -385,25 +424,17 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 		Tracker::setHeadRotY(head_pose.head_rot.y_rads);
 		Tracker::setHeadRotZ(head_pose.head_rot.z_rads);	
 
-		//
-		// Get the System-time and substract the time from the previous call.
-		// dT will be used for the EWMA-filter.
-		//
-		GetSystemTime ( &now );
-		newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
-		dT = (newHeadPoseTime - Tracker::prevHeadPoseTime) / 1000.0f;
+		////
+		//// Get the System-time and substract the time from the previous call.
+		//// dT will be used for the EWMA-filter.
+		////
+		//GetSystemTime ( &now );
+		//newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
+		//dT = (newHeadPoseTime - Tracker::prevHeadPoseTime) / 1000.0f;
 
-		// Remember time for next call
-		Tracker::prevHeadPoseTime = newHeadPoseTime;
+		//// Remember time for next call
+		//Tracker::prevHeadPoseTime = newHeadPoseTime;
 
-		//
-		// Log something
-		//
-		//QFile data("output.txt");
-		//if (data.open(QFile::WriteOnly | QFile::Append)) {
-		//	QTextStream out(&data);
-		//	out << "ReceiveHeadPose:" << dT << '\n';
-		//}
 
 
 		//
@@ -411,60 +442,72 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 		// Add the values to their respective QList, for further smoothing
 		//
 		// Pitch
-		if (Tracker::useFilter) {
-			Pitch.newPos = lowPassFilter ( getCorrectedNewRaw ( Tracker::Pitch.headPos, rotNeutralZone ), 
-				                           &Pitch.prevPos, dT, Tracker::Pitch.red );
-		}
-		else {
+		//if (Tracker::useFilter) {
+		//	Pitch.newPos = lowPassFilter ( getCorrectedNewRaw ( rateLimiter ( Tracker::Pitch.headPos, &Tracker::Pitch.prevRawPos, dT, 1.0f ), rotNeutralZone ), 
+		//		                           &Pitch.prevPos, dT, Tracker::Pitch.red );
+		//}
+		//else {
 			Pitch.newPos = getCorrectedNewRaw ( Tracker::Pitch.headPos, rotNeutralZone );
-		}
+		//}
 		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Pitch.newPos );
 
+		//
+		// Log something
+		//
+		//rate = rateLimiter ( Tracker::Pitch.headPos, &Tracker::Pitch.prevRawPos, dT, 1.0f );
+		//QFile data("output.txt");
+		//if (data.open(QFile::WriteOnly | QFile::Append)) {
+		//	QTextStream out(&data);
+		//	out << "Limited Raw= " << rate << " dT= " << dT << " Raw= " << Tracker::Pitch.headPos << " Filtered= " << Pitch.newPos << '\n';
+		//}
+//		Tracker::Pitch.prevRawPos = Tracker::Pitch.headPos;
+
+
 		// Yaw
-		if (Tracker::useFilter) {
-			Yaw.newPos = lowPassFilter ( getCorrectedNewRaw ( Tracker::Yaw.headPos, rotNeutralZone ), 
-										 &Yaw.prevPos, dT, Tracker::Yaw.red );
-		}
-		else {
+		//if (Tracker::useFilter) {
+		//	Yaw.newPos = lowPassFilter ( getCorrectedNewRaw ( rateLimiter ( Tracker::Yaw.headPos, &Tracker::Yaw.prevRawPos, dT, 1.0f ), rotNeutralZone ), 
+		//								 &Yaw.prevPos, dT, Tracker::Yaw.red );
+		//}
+		//else {
 			Yaw.newPos = getCorrectedNewRaw ( Tracker::Yaw.headPos, rotNeutralZone );
-		}
+		//}
 		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Yaw.newPos );
 
 		// Roll
-		if (Tracker::useFilter) {
-			Roll.newPos = lowPassFilter ( getCorrectedNewRaw (Tracker::Roll.headPos, rotNeutralZone ),
-										  &Roll.prevPos, dT, Tracker::Roll.red );
-		}
-		else {
-			Roll.newPos = getCorrectedNewRaw (Tracker::Roll.headPos, rotNeutralZone );
-		}
+		//if (Tracker::useFilter) {
+		//	Roll.newPos = lowPassFilter ( getCorrectedNewRaw (rateLimiter ( Tracker::Roll.headPos, &Tracker::Roll.prevRawPos, dT, 1.0f ), rotNeutralZone ),
+		//								  &Roll.prevPos, dT, Tracker::Roll.red );
+		//}
+		//else {
+			Roll.newPos = getCorrectedNewRaw ( Tracker::Roll.headPos, rotNeutralZone );
+		//}
 		addRaw2List ( &Roll.rawList, Roll.maxItems, Roll.newPos );
 
 		// X-position
-		if (Tracker::useFilter) {
-			X.newPos = lowPassFilter ( Tracker::X.headPos, &X.prevPos, dT, Tracker::X.red );
-		}
-		else {
+		//if (Tracker::useFilter) {
+		//	X.newPos = lowPassFilter ( Tracker::X.headPos, &X.prevPos, dT, Tracker::X.red );
+		//}
+		//else {
 			X.newPos = Tracker::X.headPos;
-		}
+		//}
 		addRaw2List ( &X.rawList, X.maxItems, X.newPos );
 
 		// Y-position
-		if (Tracker::useFilter) {
-			Y.newPos = lowPassFilter ( Tracker::Y.headPos, &Y.prevPos, dT, Tracker::Y.red );
-		}
-		else {
+		//if (Tracker::useFilter) {
+		//	Y.newPos = lowPassFilter ( Tracker::Y.headPos, &Y.prevPos, dT, Tracker::Y.red );
+		//}
+		//else {
 			Y.newPos = Tracker::Y.headPos;
-		}
+		//}
 		addRaw2List ( &Y.rawList, Y.maxItems, Y.newPos );
 
 		// Z-position (distance to camera, absolute!)
-		if (Tracker::useFilter) {
-			Z.newPos = lowPassFilter ( Tracker::Z.headPos, &Z.prevPos, dT, Tracker::Z.red );
-		}
-		else {
+		//if (Tracker::useFilter) {
+		//	Z.newPos = lowPassFilter ( Tracker::Z.headPos, &Z.prevPos, dT, Tracker::Z.red );
+		//}
+		//else {
 			Z.newPos = Tracker::Z.headPos;
-		}
+		//}
 		addRaw2List ( &Z.rawList, Z.maxItems, Z.newPos );
 
 	} else {
@@ -472,7 +515,7 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 	}
 
 	// for lower cpu load
-	msleep(30);
+	msleep(15);
 	yieldCurrentThread(); 
 }
 
@@ -573,10 +616,11 @@ float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
 }
 
 //
-// Implementation of an Exponentially Weighed Moving Average, used to serve as a low-pass filter.
+// Implementation of an Exponentially Weighted Moving Average, used to serve as a low-pass filter.
 // The code was adopted from Melchior Franz, who created it for FlightGear (aircraft.nas).
 //
 // The function takes the new value, the delta-time (sec) and a weighing coefficient (>0 and <1)
+// All previou values are taken into account, the weight of this is determined by 'coeff'.
 //
 float Tracker::lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff) {
 float c = 0.0f;
@@ -587,4 +631,36 @@ float fil = 0.0f;
 	*oldvalue = fil;
 
 	return fil;
+}
+
+//
+// Implementation of a Rate Limiter, used to eliminate spikes in the raw data.
+//
+// The function takes the new value, the delta-time (sec) and the positive max. slew-rate (engineering units/sec)
+//
+float Tracker::rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate) {
+float rate = 0.0f;
+float clamped_value = 0.0f;
+
+	rate = (newvalue - *oldvalue) / dt;
+	clamped_value = newvalue;									// If all is well, the newvalue is returned
+
+	//
+	// One max-rate is used for ramp-up and ramp-down
+	// If the rate exceeds max_rate, return the maximum value that the max_rate allows
+	//
+	if (fabs(rate) > max_rate) {
+		//
+		// For ramp-down, apply a factor -1 to the max_rate
+		//
+		if (rate < 0.0f) {
+			clamped_value = (-1.0f * dt * max_rate) + *oldvalue;
+		}
+		else {
+			clamped_value = (dt * max_rate) + *oldvalue;
+		}
+	}
+	*oldvalue = clamped_value;
+
+	return clamped_value;
 }

@@ -61,6 +61,7 @@ struct THeadPoseDOF {
 	int maxItems;					// Maximum number of elements is rawList
 	float newPos;					// New Position (used locally)
 	float prevPos;					// Previous Position
+	float prevRawPos;				// Previous Raw Position
 };
 
 class Tracker : public QThread {
@@ -81,6 +82,7 @@ private:
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
+	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);
 	static float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
 
 	/** static member variables for saving the head pose **/
