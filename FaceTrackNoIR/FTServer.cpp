@@ -134,8 +134,8 @@ void FTServer::run() {
 			pMemData->data.Y3 = 0;
 			pMemData->data.Y4 = 0;
 
-			qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
-			qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
+			//qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
+			//qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
 			ReleaseMutex(hFTMutex);
 		}
 

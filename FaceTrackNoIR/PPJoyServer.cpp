@@ -30,6 +30,10 @@
 #include "Tracker.h"
 #include <Winsock.h>
 
+long PPJoyServer::PPJoyCorrection = 1470;
+long PPJoyServer::analogDefault = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 - PPJoyServer::PPJoyCorrection;
+static const char* DevName = "\\\\.\\PPJoyIOCTL1";
+
 /** constructor **/
 PPJoyServer::PPJoyServer( Tracker *parent ) {
 
@@ -39,36 +43,116 @@ PPJoyServer::PPJoyServer( Tracker *parent ) {
 	// Create events
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
 	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
+
+	// Initialize arrays
+	for (int i = 0;i < 3;i++) {
+		centerPos[i] = 0;
+		centerRot[i] = 0;
+	}
+
+	/* Open a handle to the control device for the first virtual joystick. */
+	/* Virtual joystick devices are names PPJoyIOCTL1 to PPJoyIOCTL16. */
+	h = CreateFileA((LPCSTR) DevName,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
+
+	/* Make sure we could open the device! */
+	if (h == INVALID_HANDLE_VALUE)
+	{
+		QMessageBox::critical(0, "Connection Failed", QString("FaceTrackNoIR failed to connect to Virtual Joystick.\nCheck if it was properly installed!"));
+		return;
+	}
+}
+
+/** destructor **/
+PPJoyServer::~PPJoyServer() {
+
+	// Trigger thread to stop
+	::SetEvent(m_StopThread);
+
+	// Wait until thread finished
+	::WaitForSingleObject(m_WaitThread, INFINITE);
+
+	// Close handles
+	::CloseHandle(m_StopThread);
+	::CloseHandle(m_WaitThread);
+
+	//
+	// Free the Virtual Joystick
+	//
+	CloseHandle(h);
+	//terminates the QThread and waits for finishing the QThread
+	terminate();
+	wait();
 }
 
 /** QThread run @override **/
 void PPJoyServer::run() {
 
-	//// Init. the data
-	//TestData.x = 0.0f;
-	//TestData.y = 0.0f;
-	//TestData.z = 0.0f;
-	//TestData.h = 0.0f;
-	//TestData.p = 0.0f;
-	//TestData.r = 0.0f;
-	//TestData.status = 0;
-	//fg_cmd = 0;
 
-	// Create UDP-sockets
-	//inSocket = new QUdpSocket();
-	//outSocket = new QUdpSocket();
+	/* Initialise the IOCTL data structure */
+	JoyState.Signature= JOYSTICK_STATE_V1;
+	JoyState.NumAnalog= NUM_ANALOG;					// Number of analog values
+	Analog= JoyState.Analog;						// Keep a pointer to the analog array for easy updating
+	Digital= JoyState.Digital;						// Keep a pointer to the digital array for easy updating
+	JoyState.NumDigital= NUM_DIGITAL;				// Number of digital values
 
-	//// Connect the inSocket to the port, to receive readyRead messages
-	//inSocket->bind(QHostAddress::LocalHost, 5551);
 
- //   // Connect the inSocket to the member-function, to read FlightGear commands
-	//connect(inSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()), Qt::DirectConnection);
-	exec();								// Exec only returns, when the thread terminates...
+	forever
+	{
+	    // Check event for stop thread
+		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
+		{
+			// Set event
+			::SetEvent(m_WaitThread);
+			return;
+		}
+
+		Analog[0] = scale2AnalogLimits( virtRotX, -90.0f, 90.0f );	// Pitch
+		qDebug() << "PPJoyServer says: Pitch =" << Analog[0] << " VirtRotX =" << virtRotX ;
+		Analog[1] = scale2AnalogLimits( virtRotY, -90.0f, 90.0f );	// Yaw
+		Analog[2] = scale2AnalogLimits( virtRotZ, -90.0f, 90.0f );	// Roll
+		Analog[3] = virtPosX + analogDefault;						// X
+
+		Analog[5] = virtPosY + analogDefault;						// Y (5?)
+		Analog[6] = virtPosZ + analogDefault;						// Z (6?)
+
+		checkAnalogLimits();
+
+		/* Send request to PPJoy for processing. */
+		/* Currently there is no Return Code from PPJoy, this may be added at a */
+		/* later stage. So we pass a 0 byte output buffer.                      */
+		if (!DeviceIoControl( h, IOCTL_PPORTJOY_SET_STATE, &JoyState, sizeof(JoyState), NULL, 0, &RetSize, NULL))
+		{
+			return;
+		}
+		// just for lower cpu load
+		msleep(15);	
+		yieldCurrentThread();
+	}
 }
 
-/** QThread terminate @override **/
-void PPJoyServer::terminate() {
-
+//
+// Limit the Joystick values
+//
+void PPJoyServer::checkAnalogLimits() {
+	for (int i = 0;i < NUM_ANALOG;i++) {
+		if (Analog[i]>PPJOY_AXIS_MAX) {
+			Analog[i]=PPJOY_AXIS_MAX;
+		}
+		else if (Analog[i]<PPJOY_AXIS_MIN) {
+			Analog[i]=PPJOY_AXIS_MIN;
+		}
+	}
 }
 
+//
+// Scale the measured value to the Joystick values
+//
+long PPJoyServer::scale2AnalogLimits( float x, float min_x, float max_x ) {
+double y;
+
+	y = ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/(max_x - min_x)) * x + ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/2) + PPJOY_AXIS_MIN;
+	qDebug() << "scale2AnalogLimits says: long_y =" << y;
+
+	return (long) y;
+}
 //END

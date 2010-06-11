@@ -87,6 +87,7 @@ Tracker::Tracker() {
 
 	server_FT = new FTServer;							// Create the new thread (on the heap)
 	server_FG = new FGServer ( this );					// Create the new thread (on the heap)
+	server_PPJoy = new PPJoyServer ( this );			// Create the new thread (on the heap)
 }
 
 /** destructor empty **/
@@ -94,6 +95,7 @@ Tracker::~Tracker() {
 
 	server_FT->deleteLater();
 	server_FG->deleteLater();
+	server_PPJoy->deleteLater();
 
 	// Trigger thread to stop
 	::SetEvent(m_StopThread);
@@ -149,6 +151,7 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 //	return;
 	server_FT->start();									// Should start at the push of a button?
 	server_FG->start();									// 
+	server_PPJoy->start();								// 
 }
 
 /** QThread run method @override **/
@@ -341,6 +344,7 @@ void Tracker::run() {
 				Pitch.newPos = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
 			}
 			server_FT->setVirtRotX ( Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos );
+			server_PPJoy->setVirtRotX ( getDegreesFromRads (Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos ) );
 
 			if (Tracker::useFilter) {
 				Yaw.newPos = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
@@ -350,6 +354,7 @@ void Tracker::run() {
 				Yaw.newPos = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
 			}
 			server_FT->setVirtRotY ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos );
+			server_PPJoy->setVirtRotY ( getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos ) );
 
 			if (Tracker::useFilter) {
 				Roll.newPos = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos, 
@@ -359,10 +364,15 @@ void Tracker::run() {
 				Roll.newPos = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
 			}
 			server_FT->setVirtRotZ ( Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos );
+			server_PPJoy->setVirtRotZ ( getDegreesFromRads (Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos ) );
 
 			server_FT->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
 			server_FT->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
 			server_FT->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
+
+			server_PPJoy->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
+			server_PPJoy->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
+			server_PPJoy->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
 
 			server_FG->setVirtRotX ( getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * (getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos) ) );
 			server_FG->setVirtRotY ( getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   * (getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos) ) );
