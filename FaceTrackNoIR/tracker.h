@@ -37,6 +37,7 @@
 
 #include "FTServer.h"				// Freetrack-server
 #include "FGServer.h"				// FlightGear-server
+#include "PPJoyServer.h"			// Virtual Joystick
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -117,6 +118,7 @@ private:
 
 	FTServer *server_FT;							// Freetrack Server
 	FGServer *server_FG;							// FlightGear Server
+	PPJoyServer *server_PPJoy;						// PPJoy Server
 
 protected:
 	// qthread override run method 
@@ -178,7 +180,7 @@ public:
 	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
 
 	float getSmoothFromList ( QList<float> *rawList );
-	float getDegreesFromRads ( float rads ) { return ((rads * 360.0f)/ (2.0f * 3.14159)); }
+	float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 

@@ -43,6 +43,20 @@ using namespace std;
 
 class Tracker;				// pre-define parent-class to avoid circular includes
 
+#define	NUM_ANALOG	7		/* Number of analog values which we will provide */
+#define	NUM_DIGITAL	1		/* Number of digital values which we will provide */
+
+#pragma pack(push,1)		/* All fields in structure must be byte aligned. */
+typedef struct
+{
+ unsigned long	Signature;				/* Signature to identify packet to PPJoy IOCTL */
+ char			NumAnalog;				/* Num of analog values we pass */
+ long			Analog[NUM_ANALOG];		/* Analog values */
+ char			NumDigital;				/* Num of digital values we pass */
+ char			Digital[NUM_DIGITAL];	/* Digital values */
+}	JOYSTICK_STATE;
+#pragma pack(pop)
+
 class PPJoyServer : public QThread {
 	Q_OBJECT
 
@@ -50,12 +64,11 @@ public:
 
 	// public member methods
 	PPJoyServer( Tracker *parent );
-	virtual ~PPJoyServer() {};
+	~PPJoyServer();
 
 	// protected member methods
 protected:
 	void run();
-	void terminate();
 
 private slots:
 //	void readPendingDatagrams();
@@ -67,6 +80,16 @@ private:
 
 	Tracker *headTracker;									// For upstream messages...
 	
+	HANDLE h;
+	JOYSTICK_STATE JoyState;
+	DWORD RetSize;
+	DWORD rc;
+	long *Analog;
+	char *Digital;
+
+	static long analogDefault,PPJoyCorrection;
+	long centerPos[3],centerRot[3];
+
 	/** member variables for saving the head pose **/
 	float virtPosX;
 	float virtPosY;
@@ -75,6 +98,9 @@ private:
 	float virtRotX;
 	float virtRotY;
 	float virtRotZ;
+
+	void checkAnalogLimits();
+	long scale2AnalogLimits( float x, float min_x, float max_x );
 
 public:
 	void setVirtRotX(float rot) { virtRotX = rot; }
