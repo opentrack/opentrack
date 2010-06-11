@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Fri 4. Jun 14:33:49 2010
+** Created: Tue 8. Jun 22:08:00 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -91,11 +91,12 @@ public:
     QLabel *lblSensYaw_3;
     QSlider *slideSmoothing;
     QSpinBox *spinSmoothing;
-    QSlider *slideNeutralZone;
-    QSpinBox *spinNeutralZone;
-    QLabel *lblSensYaw_4;
     QCheckBox *chkUseEWMA;
     QLabel *lblSensYaw_5;
+    QLabel *lblSensYaw_4;
+    QSlider *slideNeutralZone;
+    QSpinBox *spinNeutralZone;
+    QLabel *lblSensYaw_6;
     QSpacerItem *horizontalSpacer_3;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout_11;
@@ -546,7 +547,7 @@ public:
         slideSmoothing->setOrientation(Qt::Horizontal);
         slideSmoothing->setTickPosition(QSlider::NoTicks);
 
-        gridLayout_2->addWidget(slideSmoothing, 1, 0, 1, 1);
+        gridLayout_2->addWidget(slideSmoothing, 2, 0, 1, 1);
 
         spinSmoothing = new QSpinBox(widget);
         spinSmoothing->setObjectName(QString::fromUtf8("spinSmoothing"));
@@ -554,14 +555,37 @@ public:
         spinSmoothing->setMaximum(120);
         spinSmoothing->setValue(10);
 
-        gridLayout_2->addWidget(spinSmoothing, 1, 1, 1, 1);
+        gridLayout_2->addWidget(spinSmoothing, 2, 1, 1, 1);
+
+        chkUseEWMA = new QCheckBox(widget);
+        chkUseEWMA->setObjectName(QString::fromUtf8("chkUseEWMA"));
+
+        gridLayout_2->addWidget(chkUseEWMA, 3, 1, 1, 1);
+
+        lblSensYaw_5 = new QLabel(widget);
+        lblSensYaw_5->setObjectName(QString::fromUtf8("lblSensYaw_5"));
+        lblSensYaw_5->setMinimumSize(QSize(25, 0));
+        lblSensYaw_5->setMaximumSize(QSize(150, 16777215));
+        lblSensYaw_5->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
+"background:none;"));
+
+        gridLayout_2->addWidget(lblSensYaw_5, 3, 0, 1, 1);
+
+        lblSensYaw_4 = new QLabel(widget);
+        lblSensYaw_4->setObjectName(QString::fromUtf8("lblSensYaw_4"));
+        lblSensYaw_4->setMinimumSize(QSize(25, 0));
+        lblSensYaw_4->setMaximumSize(QSize(150, 16777215));
+        lblSensYaw_4->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
+"background:none;"));
+
+        gridLayout_2->addWidget(lblSensYaw_4, 1, 0, 1, 1);
 
         slideNeutralZone = new QSlider(widget);
         slideNeutralZone->setObjectName(QString::fromUtf8("slideNeutralZone"));
         slideNeutralZone->setMinimumSize(QSize(50, 15));
-        slideNeutralZone->setMinimum(0);
+        slideNeutralZone->setMinimum(1);
         slideNeutralZone->setMaximum(45);
-        slideNeutralZone->setPageStep(2);
+        slideNeutralZone->setPageStep(5);
         slideNeutralZone->setValue(5);
         slideNeutralZone->setOrientation(Qt::Horizontal);
         slideNeutralZone->setTickPosition(QSlider::NoTicks);
@@ -572,32 +596,19 @@ public:
         spinNeutralZone->setObjectName(QString::fromUtf8("spinNeutralZone"));
         spinNeutralZone->setMinimumSize(QSize(50, 22));
         spinNeutralZone->setMaximum(45);
+        spinNeutralZone->setSingleStep(5);
         spinNeutralZone->setValue(5);
 
         gridLayout_2->addWidget(spinNeutralZone, 5, 1, 1, 1);
 
-        lblSensYaw_4 = new QLabel(widget);
-        lblSensYaw_4->setObjectName(QString::fromUtf8("lblSensYaw_4"));
-        lblSensYaw_4->setMinimumSize(QSize(25, 0));
-        lblSensYaw_4->setMaximumSize(QSize(150, 16777215));
-        lblSensYaw_4->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
+        lblSensYaw_6 = new QLabel(widget);
+        lblSensYaw_6->setObjectName(QString::fromUtf8("lblSensYaw_6"));
+        lblSensYaw_6->setMinimumSize(QSize(25, 0));
+        lblSensYaw_6->setMaximumSize(QSize(150, 16777215));
+        lblSensYaw_6->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
 "background:none;"));
 
-        gridLayout_2->addWidget(lblSensYaw_4, 3, 0, 1, 1);
-
-        chkUseEWMA = new QCheckBox(widget);
-        chkUseEWMA->setObjectName(QString::fromUtf8("chkUseEWMA"));
-
-        gridLayout_2->addWidget(chkUseEWMA, 2, 1, 1, 1);
-
-        lblSensYaw_5 = new QLabel(widget);
-        lblSensYaw_5->setObjectName(QString::fromUtf8("lblSensYaw_5"));
-        lblSensYaw_5->setMinimumSize(QSize(25, 0));
-        lblSensYaw_5->setMaximumSize(QSize(150, 16777215));
-        lblSensYaw_5->setStyleSheet(QString::fromUtf8("color:#ccc;\n"
-"background:none;"));
-
-        gridLayout_2->addWidget(lblSensYaw_5, 2, 0, 1, 1);
+        gridLayout_2->addWidget(lblSensYaw_6, 4, 0, 1, 1);
 
 
         horizontalLayout_3->addLayout(gridLayout_2);
@@ -1096,9 +1107,7 @@ public:
         QWidget::setTabOrder(sensZ, spinSensZ);
         QWidget::setTabOrder(spinSensZ, slideSmoothing);
         QWidget::setTabOrder(slideSmoothing, spinSmoothing);
-        QWidget::setTabOrder(spinSmoothing, slideNeutralZone);
-        QWidget::setTabOrder(slideNeutralZone, spinNeutralZone);
-        QWidget::setTabOrder(spinNeutralZone, headXLine);
+        QWidget::setTabOrder(spinSmoothing, headXLine);
         QWidget::setTabOrder(headXLine, headRotXLine);
         QWidget::setTabOrder(headRotXLine, headYLine);
         QWidget::setTabOrder(headYLine, headRotYLine);
@@ -1130,8 +1139,6 @@ public:
         QObject::connect(spinSensY, SIGNAL(valueChanged(int)), sensY, SLOT(setValue(int)));
         QObject::connect(sensZ, SIGNAL(valueChanged(int)), spinSensZ, SLOT(setValue(int)));
         QObject::connect(spinSensZ, SIGNAL(valueChanged(int)), sensZ, SLOT(setValue(int)));
-        QObject::connect(slideNeutralZone, SIGNAL(valueChanged(int)), spinNeutralZone, SLOT(setValue(int)));
-        QObject::connect(spinNeutralZone, SIGNAL(valueChanged(int)), slideNeutralZone, SLOT(setValue(int)));
         QObject::connect(slideSmoothing, SIGNAL(valueChanged(int)), spinSmoothing, SLOT(setValue(int)));
         QObject::connect(spinSmoothing, SIGNAL(valueChanged(int)), slideSmoothing, SLOT(setValue(int)));
         QObject::connect(redYaw, SIGNAL(valueChanged(int)), spinRedYaw, SLOT(setValue(int)));
@@ -1146,6 +1153,8 @@ public:
         QObject::connect(spinRedY, SIGNAL(valueChanged(int)), redY, SLOT(setValue(int)));
         QObject::connect(redZ, SIGNAL(valueChanged(int)), spinRedZ, SLOT(setValue(int)));
         QObject::connect(spinRedZ, SIGNAL(valueChanged(int)), redZ, SLOT(setValue(int)));
+        QObject::connect(slideNeutralZone, SIGNAL(valueChanged(int)), spinNeutralZone, SLOT(setValue(int)));
+        QObject::connect(spinNeutralZone, SIGNAL(valueChanged(int)), slideNeutralZone, SLOT(setValue(int)));
 
         iconcomboTrackerSource->setCurrentIndex(-1);
         iconcomboBox->setCurrentIndex(-1);
@@ -1209,10 +1218,11 @@ public:
 #endif // QT_NO_TOOLTIP
         btnStopTracker->setText(QApplication::translate("FaceTrackNoIRClass", "Stop", 0, QApplication::UnicodeUTF8));
         groupGameProtocol->setTitle(QApplication::translate("FaceTrackNoIRClass", "Game protocol", 0, QApplication::UnicodeUTF8));
-        lblSensYaw_3->setText(QApplication::translate("FaceTrackNoIRClass", "Smoothing (samples)", 0, QApplication::UnicodeUTF8));
-        lblSensYaw_4->setText(QApplication::translate("FaceTrackNoIRClass", "Rotation Neutral Zone (degr.)", 0, QApplication::UnicodeUTF8));
+        lblSensYaw_3->setText(QApplication::translate("FaceTrackNoIRClass", "Global settings", 0, QApplication::UnicodeUTF8));
         chkUseEWMA->setText(QString());
-        lblSensYaw_5->setText(QApplication::translate("FaceTrackNoIRClass", "Use EWMA filtering", 0, QApplication::UnicodeUTF8));
+        lblSensYaw_5->setText(QApplication::translate("FaceTrackNoIRClass", "Use EWMA filtering:", 0, QApplication::UnicodeUTF8));
+        lblSensYaw_4->setText(QApplication::translate("FaceTrackNoIRClass", "Smoothing (samples):", 0, QApplication::UnicodeUTF8));
+        lblSensYaw_6->setText(QApplication::translate("FaceTrackNoIRClass", "Neutral Zone:", 0, QApplication::UnicodeUTF8));
         cameraName->setText(QApplication::translate("FaceTrackNoIRClass", "Camera Name", 0, QApplication::UnicodeUTF8));
         lblSensitivity->setText(QApplication::translate("FaceTrackNoIRClass", "Sensitivity (100 = x1)", 0, QApplication::UnicodeUTF8));
         lblSensYaw->setText(QApplication::translate("FaceTrackNoIRClass", "Yaw", 0, QApplication::UnicodeUTF8));
