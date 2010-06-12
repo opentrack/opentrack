@@ -380,7 +380,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Create the Tracker and setup
 	//
-	tracker = new Tracker;
+	tracker = new Tracker ( ui.iconcomboBox->currentIndex() );
 
 	// Show the video widget
 	ui.video_frame->show();

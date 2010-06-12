@@ -99,6 +99,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_171663A387D948E3A602031A59CB662F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1A0EC6350A1343F88FF69FF1027FDF21"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -226,6 +232,12 @@
         "Entry"
         {
         "MsmKey" = "8:_5393A6EEC846449B9AA402970EDF0D16"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_566A50B00FDB4C6CBEBD2219B95CB403"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -394,6 +406,12 @@
         "Entry"
         {
         "MsmKey" = "8:_97EE85134E9D418BBCC0B62679224C8F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_986D92ED31F9482BBD9BDD1AB2DE7ACC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -598,6 +616,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E1A2E61D83064D86B41F0DDEB9ADEE80"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E24875F377B6409B83263B876E243495"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1062,6 +1086,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_171663A387D948E3A602031A59CB662F"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\readme.txt"
+            "TargetName" = "8:readme.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1A0EC6350A1343F88FF69FF1027FDF21"
             {
             "SourcePath" = "8:..\\bin\\resources\\ftcascade3.bin"
@@ -1468,6 +1512,26 @@
             "TargetName" = "8:qt-mt334.dll"
             "Tag" = "8:"
             "Folder" = "8:_FC6679A753454189B5255C1AF6F32CA9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_566A50B00FDB4C6CBEBD2219B95CB403"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\tir4fun.exe"
+            "TargetName" = "8:tir4fun.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1988,6 +2052,26 @@
             "TargetName" = "8:libpng13.dll"
             "Tag" = "8:"
             "Folder" = "8:_FC6679A753454189B5255C1AF6F32CA9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_986D92ED31F9482BBD9BDD1AB2DE7ACC"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\NPClient.dll"
+            "TargetName" = "8:NPClient.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2622,6 +2706,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E24875F377B6409B83263B876E243495"
+            {
+            "SourcePath" = "8:..\\bin\\images\\PPJoy.ico"
+            "TargetName" = "8:PPJoy.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_40DAD99DC6924B3B84F32C94378E760A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E49F0C5362AB4F2F94751E2CE133F5BB"
             {
             "SourcePath" = "8:..\\bin\\resources\\ftcascade2_ir.bin"
@@ -3035,6 +3139,17 @@
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
                             "Property" = "8:_1A8EF8F8C9F843D08152F74C597ACFB7"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_FC0D1BB3B8F54E8B8EAD134A84759174"
+                            {
+                            "Name" = "8:Tir4Fun"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_1A3D0F27EA364AB6A598DDA2DE4F2E40"
                                 "Folders"
                                 {
                                 }
