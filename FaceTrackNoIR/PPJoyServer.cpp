@@ -95,25 +95,32 @@ void PPJoyServer::run() {
 	Digital= JoyState.Digital;						// Keep a pointer to the digital array for easy updating
 	JoyState.NumDigital= NUM_DIGITAL;				// Number of digital values
 
+	/* Make sure we could open the device! */
+	/* MessageBox in run() does not work! (runtime error...)*/
+	if (h == INVALID_HANDLE_VALUE) {
+		return;
+	}
 
 	forever
 	{
 	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		{
+		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0) {
 			// Set event
 			::SetEvent(m_WaitThread);
 			return;
 		}
 
-		Analog[0] = scale2AnalogLimits( virtRotX, -90.0f, 90.0f );	// Pitch
+		// The effective angle for faceTracking will be < 90 degrees, so we assume a smaller range here
+		Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );	// Pitch
 		qDebug() << "PPJoyServer says: Pitch =" << Analog[0] << " VirtRotX =" << virtRotX ;
-		Analog[1] = scale2AnalogLimits( virtRotY, -90.0f, 90.0f );	// Yaw
-		Analog[2] = scale2AnalogLimits( virtRotZ, -90.0f, 90.0f );	// Roll
-		Analog[3] = virtPosX + analogDefault;						// X
+		Analog[1] = scale2AnalogLimits( virtRotY, -50.0f, 50.0f );	// Yaw
+		Analog[2] = scale2AnalogLimits( virtRotZ, -50.0f, 50.0f );	// Roll
 
-		Analog[5] = virtPosY + analogDefault;						// Y (5?)
-		Analog[6] = virtPosZ + analogDefault;						// Z (6?)
+		// The effective movement for faceTracking will be < 50 cm, so we assume a smaller range here
+		Analog[3] = scale2AnalogLimits( virtPosX, -40.0f, 40.0f );						// X
+
+		Analog[5] = scale2AnalogLimits( virtPosY, -40.0f, 40.0f );						// Y (5?)
+		Analog[6] = scale2AnalogLimits( virtPosZ, -40.0f, 40.0f );						// Z (6?)
 
 		checkAnalogLimits();
 

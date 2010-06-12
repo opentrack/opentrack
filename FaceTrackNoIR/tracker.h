@@ -46,6 +46,22 @@
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
 
+enum AngleName {
+	PITCH = 0,
+	YAW = 1,
+	ROLL = 2,
+	X = 3,
+	Y = 4,
+	Z = 5
+};
+
+enum FTNoIR_Client {
+	FREE_TRACK = 0,
+	FLIGHTGEAR = 1,
+	FTNOIR = 2,
+	PPJOY = 3
+};
+
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
 //
@@ -72,6 +88,8 @@ private:
 	// Handles to neatly terminate thread...
 	HANDLE m_StopThread;
 	HANDLE m_WaitThread;
+
+	FTNoIR_Client selectedClient;
 
 	/** face api variables **/
 	APIScope *faceapi_scope;
@@ -125,7 +143,7 @@ protected:
 	void run();
 
 public:
-	Tracker();
+	Tracker( int clientID );
 	~Tracker();
 
 	void setup(QWidget *head, FaceTrackNoIR *parent);
