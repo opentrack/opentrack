@@ -24,6 +24,7 @@
 
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
+#include "PPJoyServer.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -36,6 +37,7 @@ QMainWindow(parent, flags)
 {	
 	cameraDetected = false;
 	_engine_controls = 0;
+	_server_controls = 0;
 	tracker = 0;
 	_display = 0;
 	l = 0;
@@ -62,6 +64,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionVideoWidget, SIGNAL(triggered()), this, SLOT(showVideoWidget()));
 	connect(ui.actionHeadPoseWidget, SIGNAL(triggered()), this, SLOT(showHeadPoseWidget()));
 	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showEngineControls()));
+	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
 
 	// button methods connect with methods in this class
 	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
@@ -624,6 +627,22 @@ void FaceTrackNoIR::showEngineControls() {
 		qDebug() << "showEngineControls says: Before show!";
 		_engine_controls->show();
 		_engine_controls->raise();
+	}
+}
+
+/** toggles Server Controls Dialog **/
+void FaceTrackNoIR::showServerControls() {
+    if (!_server_controls)
+    {
+		qDebug() << "showServerControls says: No server_controls yet!";
+        _server_controls = new PPJoyControls( this, Qt::Dialog );
+		qDebug() << "showServerControls says: After new!";
+    }
+
+	if (_server_controls) {
+		qDebug() << "showServerControls says: Before show!";
+		_server_controls->show();
+		_server_controls->raise();
 	}
 }
 

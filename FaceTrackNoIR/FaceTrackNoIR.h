@@ -61,6 +61,7 @@ private:
 	VideoDisplayWidget *_display;
 	QVBoxLayout *l;
 	QWidget *_engine_controls;
+	QWidget *_server_controls;
 
 	/** QT objects **/
 	QDialog aboutDialog;	
@@ -101,6 +102,7 @@ private:
 		void showVideoWidget();
 		void showHeadPoseWidget();
 		void showEngineControls();
+		void showServerControls();
 
 		// sensibility sliders
 		void setSensYaw( int sens );

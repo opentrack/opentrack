@@ -30,8 +30,8 @@
 #include "Tracker.h"
 #include <Winsock.h>
 
-long PPJoyServer::PPJoyCorrection = 1470;
-long PPJoyServer::analogDefault = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 - PPJoyServer::PPJoyCorrection;
+//long PPJoyServer::PPJoyCorrection = 1470;
+//long PPJoyServer::analogDefault = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 - PPJoyServer::PPJoyCorrection;
 static const char* DevName = "\\\\.\\PPJoyIOCTL1";
 
 /** constructor **/
@@ -51,7 +51,7 @@ PPJoyServer::PPJoyServer( Tracker *parent ) {
 	}
 
 	/* Open a handle to the control device for the first virtual joystick. */
-	/* Virtual joystick devices are names PPJoyIOCTL1 to PPJoyIOCTL16. */
+	/* Virtual joystick devices are named PPJoyIOCTL1 to PPJoyIOCTL16. */
 	h = CreateFileA((LPCSTR) DevName,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
 
 	/* Make sure we could open the device! */
@@ -111,16 +111,15 @@ void PPJoyServer::run() {
 		}
 
 		// The effective angle for faceTracking will be < 90 degrees, so we assume a smaller range here
-		Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );	// Pitch
-		qDebug() << "PPJoyServer says: Pitch =" << Analog[0] << " VirtRotX =" << virtRotX ;
-		Analog[1] = scale2AnalogLimits( virtRotY, -50.0f, 50.0f );	// Yaw
-		Analog[2] = scale2AnalogLimits( virtRotZ, -50.0f, 50.0f );	// Roll
+		Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );						// Pitch
+		Analog[1] = scale2AnalogLimits( virtRotY, -50.0f, 50.0f );						// Yaw
+		Analog[2] = scale2AnalogLimits( virtRotZ, -50.0f, 50.0f );						// Roll
 
 		// The effective movement for faceTracking will be < 50 cm, so we assume a smaller range here
 		Analog[3] = scale2AnalogLimits( virtPosX, -40.0f, 40.0f );						// X
 
-		Analog[5] = scale2AnalogLimits( virtPosY, -40.0f, 40.0f );						// Y (5?)
-		Analog[6] = scale2AnalogLimits( virtPosZ, -40.0f, 40.0f );						// Z (6?)
+		Analog[4] = scale2AnalogLimits( virtPosY, -40.0f, 40.0f );						// Y
+		Analog[5] = scale2AnalogLimits( virtPosZ, -40.0f, 40.0f );						// Z
 
 		checkAnalogLimits();
 
@@ -162,4 +161,38 @@ double y;
 
 	return (long) y;
 }
+
+//
+// Constructor for server-settings-dialog
+//
+PPJoyControls::PPJoyControls( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+}
+
+//
+// Destructor for server-dialog
+//
+PPJoyControls::~PPJoyControls() {
+}
+
+//
+// OK clicked on server-dialog
+//
+void PPJoyControls::doOK() {
+	qDebug() << "doOK clicked";
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void PPJoyControls::doCancel() {
+	qDebug() << "doCancel clicked";
+	this->close();
+}
+
 //END

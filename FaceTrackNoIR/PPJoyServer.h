@@ -39,6 +39,8 @@
 #include <QMutex>
 #include <QLibrary>
 
+#include "ui_FTNoIR_ppjoycontrols.h"
+
 using namespace std;
 
 class Tracker;				// pre-define parent-class to avoid circular includes
@@ -87,7 +89,7 @@ private:
 	long *Analog;
 	char *Digital;
 
-	static long analogDefault,PPJoyCorrection;
+//	static long analogDefault,PPJoyCorrection;
 	long centerPos[3],centerRot[3];
 
 	/** member variables for saving the head pose **/
@@ -109,6 +111,24 @@ public:
 	void setVirtPosX(float pos) { virtPosX = pos; }
 	void setVirtPosY(float pos) { virtPosY = pos; }
 	void setVirtPosZ(float pos) { virtPosZ = pos; }
+
+};
+
+// Widget that has controls for PPJoy server-settings.
+class PPJoyControls: public QWidget, public Ui::UICPPJoyControls
+{
+    Q_OBJECT
+public:
+
+	explicit PPJoyControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~PPJoyControls();
+
+private:
+	Ui::UICPPJoyControls ui;
+
+private slots:
+	void doOK();
+	void doCancel();
 
 };
 
