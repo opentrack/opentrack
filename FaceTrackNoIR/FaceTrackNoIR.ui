@@ -917,6 +917,28 @@ color:#000;</string>
                <number>3</number>
               </property>
              </widget>
+             <widget class="QPushButton" name="btnShowServerControls">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>80</y>
+                <width>161</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="toolTip">
+               <string>Change tracker settings</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>Settings</string>
+              </property>
+             </widget>
             </widget>
            </item>
            <item>

@@ -14,3 +14,6 @@ The FaceTrackNoIR team:
 Wim Vriend
 Ron Hendriks
 
+
+
+Disclaimer: For usage of 3rd party software like FlightGear, the FaceTrackNoIR team is not responsible. Use it at your own risk.

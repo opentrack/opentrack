@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="FaceTrackNoIR"
 	ProjectGUID="{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}"
 	RootNamespace="FaceTrackNoIR"
@@ -427,6 +427,32 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\FTNoIR_ppjoycontrols.ui"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
+						Outputs="&quot;.\GeneratedFiles\ui_$(InputName).h&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
+						Outputs="&quot;.\GeneratedFiles\ui_$(InputName).h&quot;"
+					/>
+				</FileConfiguration>
+			</File>
 			<Filter
 				Name="UIElements"
 				>
@@ -564,6 +590,10 @@
 			</File>
 			<File
 				RelativePath=".\GeneratedFiles\ui_FaceTrackNoIR.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GeneratedFiles\ui_FTNoIR_ppjoycontrols.h"
 				>
 			</File>
 			<Filter

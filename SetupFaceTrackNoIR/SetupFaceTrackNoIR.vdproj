@@ -99,12 +99,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_171663A387D948E3A602031A59CB662F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1A0EC6350A1343F88FF69FF1027FDF21"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -141,6 +135,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1E7B952F2CCE46F4A2E5F916C08691AE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1F6C2F2A8E4D47C78D101012930F012D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -172,6 +172,12 @@
         "Entry"
         {
         "MsmKey" = "8:_2E1A05D833084AD7968E33CD53F76466"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_307E6BC7D769476693EEACAF5094B550"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -232,12 +238,6 @@
         "Entry"
         {
         "MsmKey" = "8:_5393A6EEC846449B9AA402970EDF0D16"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_566A50B00FDB4C6CBEBD2219B95CB403"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -411,12 +411,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_986D92ED31F9482BBD9BDD1AB2DE7ACC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_9984E74C01F942DEBB6746C2D2F1D657"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -579,6 +573,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CD6B9C52751049D78FFFD3DFF2F0DE4B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CDD25962D42B4E16B3F463E4D4D84FD8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -598,6 +598,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D3E330CAE7574840ACD7D60421270F15"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D4237513D1C2474DBA4C15C3899DC01D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -664,6 +670,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E96D7E1F23864E8086075C2C4AC13518"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EB5EE32D15DA4BF180AA883834626FC5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1086,26 +1098,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_171663A387D948E3A602031A59CB662F"
-            {
-            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\readme.txt"
-            "TargetName" = "8:readme.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1A0EC6350A1343F88FF69FF1027FDF21"
             {
             "SourcePath" = "8:..\\bin\\resources\\ftcascade3.bin"
@@ -1226,6 +1218,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E7B952F2CCE46F4A2E5F916C08691AE"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\PPJoy\\Readme.txt"
+            "TargetName" = "8:Readme.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_FE80E73518214714BFC8E45C72EFD704"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F6C2F2A8E4D47C78D101012930F012D"
             {
             "SourcePath" = "8:..\\bin\\image6.0.dll"
@@ -1332,6 +1344,26 @@
             "TargetName" = "8:foundation6.0.dll"
             "Tag" = "8:"
             "Folder" = "8:_FC6679A753454189B5255C1AF6F32CA9"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_307E6BC7D769476693EEACAF5094B550"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\GlovePIE\\Readme.txt"
+            "TargetName" = "8:Readme.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_D8887E5A76614582A4461707E0FD0AD2"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1512,26 +1544,6 @@
             "TargetName" = "8:qt-mt334.dll"
             "Tag" = "8:"
             "Folder" = "8:_FC6679A753454189B5255C1AF6F32CA9"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_566A50B00FDB4C6CBEBD2219B95CB403"
-            {
-            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\tir4fun.exe"
-            "TargetName" = "8:tir4fun.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2066,26 +2078,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_986D92ED31F9482BBD9BDD1AB2DE7ACC"
-            {
-            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\Tir4Fun\\NPClient.dll"
-            "TargetName" = "8:NPClient.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_FC0D1BB3B8F54E8B8EAD134A84759174"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9984E74C01F942DEBB6746C2D2F1D657"
             {
             "SourcePath" = "8:..\\bin\\resources\\distraction_model.txt"
@@ -2566,6 +2558,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CD6B9C52751049D78FFFD3DFF2F0DE4B"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\FreeTrackTest\\Readme.txt"
+            "TargetName" = "8:Readme.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_5BB6AC3582E4479D93A8B9E04022F2A2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDD25962D42B4E16B3F463E4D4D84FD8"
             {
             "SourcePath" = "8:..\\bin\\resources\\ftcascade4_ir.bin"
@@ -2632,6 +2644,26 @@
             "TargetName" = "8:logoFaceTrackNoIR.png"
             "Tag" = "8:"
             "Folder" = "8:_E6F481362A194CBB96F1D6D1EB7C855F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4237513D1C2474DBA4C15C3899DC01D"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\GlovePIE\\FaceTrackNoIR2TrackIR.PIE"
+            "TargetName" = "8:FaceTrackNoIR2TrackIR.PIE"
+            "Tag" = "8:"
+            "Folder" = "8:_D8887E5A76614582A4461707E0FD0AD2"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2852,6 +2884,26 @@
             "TargetName" = "8:clm_mouth.bin"
             "Tag" = "8:"
             "Folder" = "8:_2E4E58541DBE4789914237438E7AED77"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB5EE32D15DA4BF180AA883834626FC5"
+            {
+            "SourcePath" = "8:..\\FaceTrackNoIR\\ClientFiles\\PPJoy\\PPJoy mapping for FaceTrackNoIR.jpg"
+            "TargetName" = "8:PPJoy mapping for FaceTrackNoIR.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_FE80E73518214714BFC8E45C72EFD704"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3143,13 +3195,24 @@
                                 {
                                 }
                             }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_FC0D1BB3B8F54E8B8EAD134A84759174"
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_D8887E5A76614582A4461707E0FD0AD2"
                             {
-                            "Name" = "8:Tir4Fun"
+                            "Name" = "8:GlovePIE"
                             "AlwaysCreate" = "11:FALSE"
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
-                            "Property" = "8:_1A3D0F27EA364AB6A598DDA2DE4F2E40"
+                            "Property" = "8:_F85A5B8C67D94EBE9B8F83D5768AADCC"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_FE80E73518214714BFC8E45C72EFD704"
+                            {
+                            "Name" = "8:PPJoy"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_879B5DF10E3146099CC0ABC86C53E1AA"
                                 "Folders"
                                 {
                                 }

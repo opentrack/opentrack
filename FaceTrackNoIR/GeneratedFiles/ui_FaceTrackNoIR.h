@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Tue 8. Jun 22:08:00 2010
+** Created: Sun 13. Jun 16:10:04 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -87,6 +87,7 @@ public:
     QPushButton *btnStopTracker;
     QGroupBox *groupGameProtocol;
     QComboBox *iconcomboBox;
+    QPushButton *btnShowServerControls;
     QGridLayout *gridLayout_2;
     QLabel *lblSensYaw_3;
     QSlider *slideSmoothing;
@@ -522,6 +523,11 @@ public:
         iconcomboBox->setGeometry(QRect(10, 20, 151, 22));
         iconcomboBox->setStyleSheet(QString::fromUtf8(""));
         iconcomboBox->setMaxVisibleItems(3);
+        btnShowServerControls = new QPushButton(groupGameProtocol);
+        btnShowServerControls->setObjectName(QString::fromUtf8("btnShowServerControls"));
+        btnShowServerControls->setEnabled(true);
+        btnShowServerControls->setGeometry(QRect(10, 80, 161, 23));
+        btnShowServerControls->setStyleSheet(QString::fromUtf8(""));
 
         horizontalLayout_3->addWidget(groupGameProtocol);
 
@@ -1218,6 +1224,10 @@ public:
 #endif // QT_NO_TOOLTIP
         btnStopTracker->setText(QApplication::translate("FaceTrackNoIRClass", "Stop", 0, QApplication::UnicodeUTF8));
         groupGameProtocol->setTitle(QApplication::translate("FaceTrackNoIRClass", "Game protocol", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        btnShowServerControls->setToolTip(QApplication::translate("FaceTrackNoIRClass", "Change tracker settings", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        btnShowServerControls->setText(QApplication::translate("FaceTrackNoIRClass", "Settings", 0, QApplication::UnicodeUTF8));
         lblSensYaw_3->setText(QApplication::translate("FaceTrackNoIRClass", "Global settings", 0, QApplication::UnicodeUTF8));
         chkUseEWMA->setText(QString());
         lblSensYaw_5->setText(QApplication::translate("FaceTrackNoIRClass", "Use EWMA filtering:", 0, QApplication::UnicodeUTF8));
