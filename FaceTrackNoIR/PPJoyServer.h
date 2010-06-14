@@ -88,6 +88,7 @@ private:
 	DWORD rc;
 	long *Analog;
 	char *Digital;
+	int selectedPPJoy;										// Number of virtual joystick (1..16)
 
 //	static long analogDefault,PPJoyCorrection;
 	long centerPos[3],centerRot[3];
@@ -103,6 +104,7 @@ private:
 
 	void checkAnalogLimits();
 	long scale2AnalogLimits( float x, float min_x, float max_x );
+	void loadSettings();
 
 public:
 	void setVirtRotX(float rot) { virtRotX = rot; }
@@ -122,13 +124,20 @@ public:
 
 	explicit PPJoyControls( QWidget *parent=0, Qt::WindowFlags f=0 );
     virtual ~PPJoyControls();
+	void showEvent ( QShowEvent * event );
 
 private:
 	Ui::UICPPJoyControls ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
 
 private slots:
 	void doOK();
 	void doCancel();
+	void virtualJoystickSelected( int index );
 
 };
 

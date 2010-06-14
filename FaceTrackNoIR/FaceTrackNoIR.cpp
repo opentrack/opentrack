@@ -427,10 +427,16 @@ void FaceTrackNoIR::startTracker( ) {
 
 	ui.headPoseWidget->show();
 
+	// 
 	ui.btnStartTracker->setEnabled ( false );
 	ui.btnStopTracker->setEnabled ( true );
+
+	// Engine controls
 	ui.btnShowEngineControls->setEnabled ( true );
 	ui.iconcomboBox->setEnabled ( false );
+
+	// Enable/disable Protocol-server Settings
+	ui.btnShowServerControls->setEnabled ( false );
 
 	//
 	// Update the camera-name, FaceAPI can only use the 1st one found!
@@ -463,6 +469,9 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnStopTracker->setEnabled ( false );
 	ui.btnShowEngineControls->setEnabled ( false );
 	ui.iconcomboBox->setEnabled ( true );
+
+	// Enable/disable Protocol-server Settings
+	ui.btnShowServerControls->setEnabled ( true );
 }
 
 /** set the sensibility from the slider **/
@@ -616,15 +625,15 @@ void FaceTrackNoIR::showHeadPoseWidget() {
 
 /** toggles Engine Controls Dialog **/
 void FaceTrackNoIR::showEngineControls() {
+
+	// Create if new
     if (!_engine_controls)
     {
-		qDebug() << "showEngineControls says: No engine_controls yet!";
         _engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
-		qDebug() << "showEngineControls says: After new!";
     }
 
+	// Show if already created
 	if (_engine_controls) {
-		qDebug() << "showEngineControls says: Before show!";
 		_engine_controls->show();
 		_engine_controls->raise();
 	}
@@ -632,15 +641,28 @@ void FaceTrackNoIR::showEngineControls() {
 
 /** toggles Server Controls Dialog **/
 void FaceTrackNoIR::showServerControls() {
-    if (!_server_controls)
+
+	// Create if new
+	if (!_server_controls)
     {
-		qDebug() << "showServerControls says: No server_controls yet!";
-        _server_controls = new PPJoyControls( this, Qt::Dialog );
-		qDebug() << "showServerControls says: After new!";
+		// Show the appropriate Protocol-server Settings
+		switch (ui.iconcomboBox->currentIndex()) {
+		case FREE_TRACK:
+			break;
+		case FLIGHTGEAR:
+			break;
+		case FTNOIR:
+			break;
+		case PPJOY:
+	        _server_controls = new PPJoyControls( this, Qt::Dialog );
+			break;
+		default:
+			break;
+		}
     }
 
+	// Show if already created
 	if (_server_controls) {
-		qDebug() << "showServerControls says: Before show!";
 		_server_controls->show();
 		_server_controls->raise();
 	}
@@ -712,6 +734,26 @@ void FaceTrackNoIR::setIcon(int index)
 
     trayIcon->setToolTip(ui.iconcomboBox->itemText(index));
 	settingsDirty = true;
+
+	// Enable/disable Protocol-server Settings
+	switch (ui.iconcomboBox->currentIndex()) {
+	case FREE_TRACK:
+		ui.btnShowServerControls->hide();
+		break;
+	case FLIGHTGEAR:
+		ui.btnShowServerControls->hide();
+		break;
+	case FTNOIR:
+		ui.btnShowServerControls->hide();
+		break;
+	case PPJOY:
+		ui.btnShowServerControls->show();
+		ui.btnShowServerControls->setEnabled ( true );
+		break;
+	default:
+		break;
+	}
+
 }
  
 //
