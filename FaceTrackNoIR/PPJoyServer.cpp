@@ -32,10 +32,11 @@
 
 //long PPJoyServer::PPJoyCorrection = 1470;
 //long PPJoyServer::analogDefault = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 - PPJoyServer::PPJoyCorrection;
-static const char* DevName = "\\\\.\\PPJoyIOCTL1";
+static const char* DevName = "\\\\.\\PPJoyIOCTL";
 
 /** constructor **/
 PPJoyServer::PPJoyServer( Tracker *parent ) {
+char strDevName[100];
 
 	// Save the parent
 	headTracker = parent;
@@ -49,21 +50,32 @@ PPJoyServer::PPJoyServer( Tracker *parent ) {
 		centerPos[i] = 0;
 		centerRot[i] = 0;
 	}
+	selectedPPJoy = 1;
+	loadSettings();
 
 	/* Open a handle to the control device for the first virtual joystick. */
 	/* Virtual joystick devices are named PPJoyIOCTL1 to PPJoyIOCTL16. */
-	h = CreateFileA((LPCSTR) DevName,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
+	sprintf_s(strDevName, "%s%d", DevName, selectedPPJoy);
+	h = CreateFileA((LPCSTR) strDevName,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
 
 	/* Make sure we could open the device! */
 	if (h == INVALID_HANDLE_VALUE)
 	{
-		QMessageBox::critical(0, "Connection Failed", QString("FaceTrackNoIR failed to connect to Virtual Joystick.\nCheck if it was properly installed!"));
+		QMessageBox::critical(0, "Connection Failed", QString("FaceTrackNoIR failed to connect to Virtual Joystick %1.\nCheck if it was properly installed!").arg(selectedPPJoy));
 		return;
 	}
 }
 
 /** destructor **/
 PPJoyServer::~PPJoyServer() {
+
+
+	/* Make sure we could open the device! */
+	if (h == INVALID_HANDLE_VALUE) {
+		terminate();
+		wait();
+		return;
+	}
 
 	// Trigger thread to stop
 	::SetEvent(m_StopThread);
@@ -157,10 +169,26 @@ long PPJoyServer::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 
 	y = ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/(max_x - min_x)) * x + ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/2) + PPJOY_AXIS_MIN;
-	qDebug() << "scale2AnalogLimits says: long_y =" << y;
+//	qDebug() << "scale2AnalogLimits says: long_y =" << y;
 
 	return (long) y;
 }
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void PPJoyServer::loadSettings() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "PPJoy" );
+	selectedPPJoy = iniFile.value ( "Selection", 1 ).toInt();
+	iniFile.endGroup ();
+}
+
 
 //
 // Constructor for server-settings-dialog
@@ -170,29 +198,121 @@ QWidget( parent , f)
 {
 	ui.setupUi( this );
 
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.cbxSelectPPJoyNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(virtualJoystickSelected( int )));
+
+	for (int i = 1 ; i < 17; i++) {
+		QString cbxText = QString("Virtual Joystick %1").arg(i);
+		ui.cbxSelectPPJoyNumber->addItem(QIcon("images/PPJoy.ico"), cbxText);
+	}
+	// Load the settings from the current .INI-file
+	loadSettings();
 }
 
 //
 // Destructor for server-dialog
 //
 PPJoyControls::~PPJoyControls() {
+	qDebug() << "~PPJoyControls() says: started";
 }
 
 //
 // OK clicked on server-dialog
 //
 void PPJoyControls::doOK() {
-	qDebug() << "doOK clicked";
+	save();
+	this->close();
+}
+
+// override show event
+void PPJoyControls::showEvent ( QShowEvent * event ) {
+	loadSettings();
 }
 
 //
 // Cancel clicked on server-dialog
 //
 void PPJoyControls::doCancel() {
-	qDebug() << "doCancel clicked";
-	this->close();
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void PPJoyControls::loadSettings() {
+
+	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "PPJoy" );
+	ui.cbxSelectPPJoyNumber->setCurrentIndex(iniFile.value ( "Selection", 1 ).toInt() - 1);
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void PPJoyControls::save() {
+
+	qDebug() << "save() says: started";
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "PPJoy" );
+	iniFile.setValue ( "Selection", ui.cbxSelectPPJoyNumber->currentIndex() + 1 );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//
+// Handle changes of the Virtual Joystick selection
+//
+void PPJoyControls::virtualJoystickSelected( int index )
+{
+	settingsDirty = true;
 }
 
 //END
