@@ -678,13 +678,13 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
-	ui.iconcomboBox->addItem(QIcon("images/Freetrack.ico"), tr("Freetrack"));
-	ui.iconcomboBox->addItem(QIcon("images/FlightGear.ico"), tr("FlightGear"));
-	ui.iconcomboBox->addItem(QIcon("images/FaceTrackNoIR.ico"), tr("FTNoir client"));
-	ui.iconcomboBox->addItem(QIcon("images/PPJoy.ico"), tr("Virtual Joystick"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/Freetrack.ico"), tr("Freetrack"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FlightGear.ico"), tr("FlightGear"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/PPJoy.ico"), tr("Virtual Joystick"));
 
-	ui.iconcomboTrackerSource->addItem(QIcon("images/SeeingMachines.ico"), tr("Face API"));
-	ui.iconcomboTrackerSource->addItem(QIcon("images/FaceTrackNoIR.ico"), tr("FTNoir server"));
+	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/SeeingMachines.ico"), tr("Face API"));
+	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
 }
 
 //
@@ -720,7 +720,7 @@ void FaceTrackNoIR::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    trayIcon->setIcon(QIcon("images/FaceTrackNoIR.ico"));
+    trayIcon->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
 }
 
 //
@@ -730,7 +730,7 @@ void FaceTrackNoIR::setIcon(int index)
 {
     QIcon icon = ui.iconcomboBox->itemIcon(index);
     trayIcon->setIcon(icon);
-    setWindowIcon(QIcon("images/FaceTrackNoIR.ico"));
+    setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
 
     trayIcon->setToolTip(ui.iconcomboBox->itemText(index));
 	settingsDirty = true;
