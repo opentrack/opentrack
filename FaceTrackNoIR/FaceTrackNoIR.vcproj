@@ -198,11 +198,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FTServer.cpp"
+				RelativePath=".\FTIRServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FTTypes.cpp"
+				RelativePath=".\FTServer.cpp"
 				>
 			</File>
 			<File
@@ -303,6 +303,36 @@
 			</File>
 			<File
 				RelativePath=".\FGTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FTIRServer.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(SM_API_CPP_WRAPPERS)\include\.&quot; -I&quot;$(SM_API_PATH)\include\.&quot; -I&quot;$(SM_API_QTDIR)\include\.&quot; -I&quot;$(SM_API_WIDGETS)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\FTIRTypes.h"
 				>
 			</File>
 			<File
@@ -469,95 +499,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\UIElements\button_forward.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_forward_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_play.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_play_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_rewind.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_rewind_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_Start_SweetSpotter_disabled.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_Start_SweetSpotter_enabled.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_Start_SweetSpotter_enabled_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_Stop_SweetSpotter.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\button_Stop_SweetSpotter_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\buttons_pause.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\buttons_pause_pressed.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\listener_klein_final_V3.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\listener_klein_final_V3_not detected.png"
-					>
-				</File>
-				<File
 					RelativePath=".\UIElements\Logo_FaceTrackNoIR_32px.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\logoLehrstuhl.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\logoTU.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\Loudspeaker_active.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\Loudspeaker_inactive.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\spot.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\SweetSpotterLOGO_16px.png"
-					>
-				</File>
-				<File
-					RelativePath=".\UIElements\SweetSpotterLOGO_32px.png"
 					>
 				</File>
 			</Filter>
@@ -638,6 +580,18 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\GeneratedFiles\Release\moc_FTIRServer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\GeneratedFiles\Release\moc_FTServer.cpp"
 					>
 					<FileConfiguration
@@ -705,6 +659,18 @@
 				</File>
 				<File
 					RelativePath=".\GeneratedFiles\Debug\moc_FGServer.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\GeneratedFiles\Debug\moc_FTIRServer.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

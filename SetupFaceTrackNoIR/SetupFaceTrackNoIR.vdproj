@@ -93,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_15EE3885CF76410290465B8DD4E41A59"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_16C58D11698F44F8AD4EE9372AA6DEAA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -339,6 +345,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7749DE7101A34E9CAD0B2F68CBA01378"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7CA04E8400FC4421B2E6E28ABD2F913D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -370,6 +382,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8F3392165D94447496FF604EE68ACE38"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8FD1D69FC4CD4CA38CF929A1DA238205"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -694,6 +712,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F0924BC47A0A4DE0A6D2695B2C6F7E47"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F18199244F3E4454BF3BE86ADE222E88"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1074,6 +1098,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_15EE3885CF76410290465B8DD4E41A59"
+            {
+            "SourcePath" = "8:..\\bin\\NPClient.dll"
+            "TargetName" = "8:NPClient.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BDB04948DE364E43BE4090C5F9E45677"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -1878,6 +1922,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7749DE7101A34E9CAD0B2F68CBA01378"
+            {
+            "SourcePath" = "8:..\\bin\\FTNoIR_ProtocolTester.exe"
+            "TargetName" = "8:FTNoIR_ProtocolTester.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_BDB04948DE364E43BE4090C5F9E45677"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7CA04E8400FC4421B2E6E28ABD2F913D"
             {
             "SourcePath" = "8:..\\bin\\resources\\svm_model_regression.bin"
@@ -1984,6 +2048,26 @@
             "TargetName" = "8:svm_model_binary.bin"
             "Tag" = "8:"
             "Folder" = "8:_2E4E58541DBE4789914237438E7AED77"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8FD1D69FC4CD4CA38CF929A1DA238205"
+            {
+            "SourcePath" = "8:..\\bin\\Settings\\FreeFalcon.ini"
+            "TargetName" = "8:FreeFalcon.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_44ADBF8693B049F99A2A38D3702C77BE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2978,6 +3062,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F18199244F3E4454BF3BE86ADE222E88"
+            {
+            "SourcePath" = "8:..\\bin\\images\\TrackIR.ico"
+            "TargetName" = "8:TrackIR.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_40DAD99DC6924B3B84F32C94378E760A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB3E1677A893494CAA8D6F809D17E66C"
             {
             "SourcePath" = "8:..\\bin\\images\\Freetrack.ico"
@@ -3378,6 +3482,56 @@
                     "Transitive" = "11:FALSE"
                         "Keys"
                         {
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_4E38DFCB2A994660834812A748060009"
+                            {
+                            "Name" = "8:NaturalPoint"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1AD8DA0A3CF841479B70684258E5701E"
+                                    {
+                                    "Name" = "8:NaturalPoint"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_0C788A6FCDED451C81B0EB6AD2D68B39"
+                                            {
+                                            "Name" = "8:NPClient Location"
+                                            "Condition" = "8:"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "DeleteAtUninstall" = "11:FALSE"
+                                            "Transitive" = "11:FALSE"
+                                                "Keys"
+                                                {
+                                                }
+                                                "Values"
+                                                {
+                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E8223EF2CBD940649C02C98D71D45F4A"
+                                                    {
+                                                    "Name" = "8:Path"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "ValueTypes" = "3:1"
+                                                    "Value" = "8:[TARGETDIR]"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        "Values"
+                                        {
+                                        }
+                                    }
+                                }
+                                "Values"
+                                {
+                                }
+                            }
                             "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_5C8F2BBC0F0D469F91BB538A55CE88A0"
                             {
                             "Name" = "8:Freetrack"
