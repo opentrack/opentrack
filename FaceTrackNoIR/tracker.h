@@ -38,6 +38,7 @@
 #include "FTServer.h"				// Freetrack-server
 #include "FGServer.h"				// FlightGear-server
 #include "PPJoyServer.h"			// Virtual Joystick
+#include "FTIRServer.h"				// FakeTIR-server
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -59,7 +60,8 @@ enum FTNoIR_Client {
 	FREE_TRACK = 0,
 	FLIGHTGEAR = 1,
 	FTNOIR = 2,
-	PPJOY = 3
+	PPJOY = 3,
+	TRACKIR = 4
 };
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
@@ -137,6 +139,7 @@ private:
 	FTServer *server_FT;							// Freetrack Server
 	FGServer *server_FG;							// FlightGear Server
 	PPJoyServer *server_PPJoy;						// PPJoy Server
+	FTIRServer *server_FTIR;						// Fake TIR Server
 
 protected:
 	// qthread override run method 

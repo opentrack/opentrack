@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Sun 13. Jun 16:10:04 2010
+** Created: Tue 29. Jun 20:59:30 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -522,7 +522,7 @@ public:
         iconcomboBox->setObjectName(QString::fromUtf8("iconcomboBox"));
         iconcomboBox->setGeometry(QRect(10, 20, 151, 22));
         iconcomboBox->setStyleSheet(QString::fromUtf8(""));
-        iconcomboBox->setMaxVisibleItems(3);
+        iconcomboBox->setMaxVisibleItems(5);
         btnShowServerControls = new QPushButton(groupGameProtocol);
         btnShowServerControls->setObjectName(QString::fromUtf8("btnShowServerControls"));
         btnShowServerControls->setEnabled(true);

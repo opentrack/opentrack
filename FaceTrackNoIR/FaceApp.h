@@ -19,6 +19,8 @@ protected:
 private:
 	FaceTrackNoIR *mainWindow;	
 	int msgID_FTClient;
+	int msgID_FTIR_Register;
+	int msgID_FTIR_UnRegister;
 };
 
 #endif					//  FACEAPP_H

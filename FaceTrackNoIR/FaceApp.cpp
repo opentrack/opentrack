@@ -1,6 +1,7 @@
 #include "FaceApp.h"
 #include "windows.h"
 #include "FTTypes.h"
+#include "FTIRTypes.h"
 #include <QDebug>
 
 //
@@ -41,6 +42,8 @@ void FaceApp::SetupEventFilter( FaceTrackNoIR *window ) {
 	mainWindow = window;
 	msgID_FTClient = RegisterWindowMessageA ( FT_PROGRAMID );
 	qDebug() << "FaceApp::SetupEventFilter says: Message ID =" << msgID_FTClient;
+	msgID_FTIR_Register = RegisterWindowMessageA ( FTIR_REGISTER_PROGRAMHANDLE );
+	msgID_FTIR_UnRegister = RegisterWindowMessageA ( FTIR_UNREGISTER_PROGRAMHANDLE );
 
 	////if ( RegisterHotKey( window->winId(), 777, MOD_WIN, VK_HOME ) ) {
 	////	qDebug() << "FaceApp::SetupEventFilter says: RegisterHotKey HOME =" << VK_HOME;
