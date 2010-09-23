@@ -57,6 +57,9 @@ THeadPoseDOF Tracker::X;
 THeadPoseDOF Tracker::Y;
 THeadPoseDOF Tracker::Z;
 
+TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
+TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
+
 /** constructor **/
 Tracker::Tracker( int clientID ) {
 
@@ -120,7 +123,8 @@ Tracker::Tracker( int clientID ) {
 			// should never be reached
 		break;
 	}
-
+	// Load the settings from the INI-file
+	loadSettings();
 }
 
 /** destructor empty **/
@@ -267,6 +271,9 @@ void Tracker::run() {
 	    // Check event for stop thread
 		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
 		{
+			dinkeyboard->Unacquire();			// Unacquire keyboard
+			din->Release();						// Release DirectInput
+
 			// Set event
 			::SetEvent(m_WaitThread);
 			return;
@@ -289,7 +296,13 @@ void Tracker::run() {
 				//
 				// Check the state of the BACK key (= Start/Stop tracking) and EQUALS key (= Center)
 				//
-				if ( (keystate[DIK_BACK] & 0x80) && (!lastBackKey) ) {
+				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) ) {
+				   qDebug() << "Tracker::run Shortkey Center pressed!" << GetLastError();
+				}
+				//
+				// Check the state of the BACK key (= Start/Stop tracking) and EQUALS key (= Center)
+				//
+				if ( isShortKeyPressed( &StartStopKey, &keystate[0] ) && (!lastBackKey) ) {
 					Tracker::do_tracking = !Tracker::do_tracking;
 
 					//
@@ -319,15 +332,15 @@ void Tracker::run() {
 					else {
 						_engine->stop();
 					}
-					qDebug() << "Tracker::run() says BACK pressed, do_tracking =" << Tracker::do_tracking;
+					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
 				}
-				lastBackKey = (keystate[DIK_BACK] & 0x80);						// Remember
+				lastBackKey = isShortKeyPressed( &StartStopKey, &keystate[0] );		// Remember
 
-				if ( (keystate[DIK_EQUALS] & 0x80) && (!lastEqualsKey) ) {
+				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) && (!lastEqualsKey) ) {
 					Tracker::do_center = true;
-					qDebug() << "Tracker::run() says EQUALS pressed";
+					qDebug() << "Tracker::run() says Center pressed";
 				}
-				lastEqualsKey = (keystate[DIK_EQUALS] & 0x80);					// Remember
+				lastEqualsKey = isShortKeyPressed( &CenterKey, &keystate[0] );		// Remember
 		   }
 		}
 
@@ -478,7 +491,7 @@ void Tracker::run() {
 				float rotX = getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos );
 				float rotY = getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos );
 				float rotZ = getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos );
-				qDebug() << "Tracker::run() says: virtRotX =" << rotX << " virtRotY =" << rotY;
+//				qDebug() << "Tracker::run() says: virtRotX =" << rotX << " virtRotY =" << rotY;
 
 				server_FTIR->setVirtRotX ( rotX );
 				server_FTIR->setVirtRotY ( rotY );
@@ -749,4 +762,67 @@ float clamped_value = 0.0f;
 	*oldvalue = clamped_value;
 
 	return clamped_value;
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void Tracker::loadSettings() {
+
+	qDebug() << "Tracker::loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "KB_Shortcuts" );
+	
+	// Center key
+	CenterKey.keycode = iniFile.value ( "Keycode_Center", 0 ).toInt();
+	CenterKey.shift = iniFile.value ( "Shift_Center", 0 ).toBool();
+	CenterKey.ctrl = iniFile.value ( "Ctrl_Center", 0 ).toBool();
+	CenterKey.alt = iniFile.value ( "Alt_Center", 0 ).toBool();
+
+	// StartStop key
+	StartStopKey.keycode = iniFile.value ( "Keycode_StartStop", 0 ).toInt();
+	StartStopKey.shift = iniFile.value ( "Shift_StartStop", 0 ).toBool();
+	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
+	StartStopKey.alt = iniFile.value ( "Alt_StartStop", 0 ).toBool();
+
+	iniFile.endGroup ();
+}
+
+//
+// Determine if the ShortKey (incl. CTRL, SHIFT and/or ALT) is pressed.
+//
+bool Tracker::isShortKeyPressed( TShortKey *key, BYTE *keystate ){
+bool shift;
+bool ctrl;
+bool alt;
+
+	//
+	// First, check if the right key is pressed. If so, check the modifiers
+	//
+	if (keystate[key->keycode] & 0x80) {
+		shift = ( (keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80) );
+		ctrl  = ( (keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80) );
+		alt   = ( (keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80) );
+		
+		//
+		// If one of the modifiers is needed and not pressed, return false.
+		//
+		if (key->shift && !shift) return false;
+		if (key->ctrl && !ctrl) return false;
+		if (key->alt && !alt) return false;
+
+		//
+		// All is well!
+		//
+		return true;
+	}
+	else {
+		return false;
+	}
 }

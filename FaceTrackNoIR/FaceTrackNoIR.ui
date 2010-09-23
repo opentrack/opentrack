@@ -2199,8 +2199,16 @@ background:none;</string>
     <addaction name="actionVideoWidget"/>
     <addaction name="actionHeadPoseWidget"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionPreferences"/>
+    <addaction name="actionKeyboard_Shortcuts"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuAbout"/>
   </widget>
   <action name="actionOpen">
@@ -2335,6 +2343,16 @@ background:none;</string>
   <action name="actionSave_As">
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionKeyboard_Shortcuts">
+   <property name="text">
+    <string>Keyboard Shortcuts</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>
