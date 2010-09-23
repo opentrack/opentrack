@@ -38,9 +38,12 @@ QMainWindow(parent, flags)
 	cameraDetected = false;
 	_engine_controls = 0;
 	_server_controls = 0;
+	_keyboard_shortcuts = 0;
+	_preferences = 0;
 	tracker = 0;
 	_display = 0;
 	l = 0;
+	trayIcon = 0;
 
 	setupFaceTrackNoIR();
 }
@@ -58,6 +61,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(save()));
 	connect(ui.actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(exit()));
+
+	connect(ui.actionPreferences, SIGNAL(triggered()), this, SLOT(showPreferences()));
+	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
 
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -115,6 +121,10 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	//Load the tracker-settings, from the INI-file
 	loadSettings();
 	trayIcon->show();
+
+	//Setup the timer for automatically minimizing after StartTracker.
+	timMinimizeFTN = new QTimer(this);
+    connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -442,6 +452,19 @@ void FaceTrackNoIR::startTracker( ) {
 	// Update the camera-name, FaceAPI can only use the 1st one found!
 	//
 	GetCameraNameDX();
+
+
+	//
+	// Get the TimeOut value for minimizing FaceTrackNoIR
+	// Only start the Timer if value > 0
+	//
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	int timevalue = settings.value ( "AutoMinimizeTime", 0 ).toInt() * 1000;
+
+	if (timevalue > 0) {
+		timMinimizeFTN->setSingleShot( true );
+		timMinimizeFTN->start(timevalue);
+	}
 }
 
 /** stop tracking the face **/
@@ -668,6 +691,38 @@ void FaceTrackNoIR::showServerControls() {
 	}
 }
 
+/** toggles FaceTrackNoIR Preferences Dialog **/
+void FaceTrackNoIR::showPreferences() {
+
+	// Create if new
+	if (!_preferences)
+    {
+        _preferences = new PreferencesDialog( this, Qt::Dialog );
+    }
+
+	// Show if already created
+	if (_preferences) {
+		_preferences->show();
+		_preferences->raise();
+	}
+}
+
+/** toggles Server Controls Dialog **/
+void FaceTrackNoIR::showKeyboardShortcuts() {
+
+	// Create if new
+	if (!_keyboard_shortcuts)
+    {
+        _keyboard_shortcuts = new KeyboardShortcutDialog( this, Qt::Dialog );
+    }
+
+	// Show if already created
+	if (_keyboard_shortcuts) {
+		_keyboard_shortcuts->show();
+		_keyboard_shortcuts->raise();
+	}
+}
+
 /** exit application **/
 void FaceTrackNoIR::exit() {
 	QCoreApplication::exit(0);
@@ -696,8 +751,8 @@ void FaceTrackNoIR::createActions()
     minimizeAction = new QAction(tr("Mi&nimize"), this);
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
-    maximizeAction = new QAction(tr("Ma&ximize"), this);
-    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+    //maximizeAction = new QAction(tr("Ma&ximize"), this);
+    //connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
 
     restoreAction = new QAction(tr("&Restore"), this);
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
@@ -711,17 +766,18 @@ void FaceTrackNoIR::createActions()
 //
 void FaceTrackNoIR::createTrayIcon()
 {
-    trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(minimizeAction);
-    trayIconMenu->addAction(maximizeAction);
-    trayIconMenu->addAction(restoreAction);
-    trayIconMenu->addSeparator();
-    trayIconMenu->addAction(quitAction);
+	if (QSystemTrayIcon::isSystemTrayAvailable()) {
+		trayIconMenu = new QMenu(this);
+		trayIconMenu->addAction(minimizeAction);
+		trayIconMenu->addAction(restoreAction);
+		trayIconMenu->addSeparator();
+		trayIconMenu->addAction(quitAction);
 
-    trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setContextMenu(trayIconMenu);
+		trayIcon = new QSystemTrayIcon(this);
+		trayIcon->setContextMenu(trayIconMenu);
 
-    trayIcon->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
+		trayIcon->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
+	}
 }
 
 //
@@ -730,10 +786,14 @@ void FaceTrackNoIR::createTrayIcon()
 void FaceTrackNoIR::setIcon(int index)
 {
     QIcon icon = ui.iconcomboBox->itemIcon(index);
-    trayIcon->setIcon(icon);
+	if (trayIcon != 0) {
+		trayIcon->setIcon(icon);
+	    trayIcon->setToolTip(ui.iconcomboBox->itemText(index));
+		trayIcon->show();
+		trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboBox->itemText(index));
+	}
     setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
 
-    trayIcon->setToolTip(ui.iconcomboBox->itemText(index));
 	settingsDirty = true;
 
 	// Enable/disable Protocol-server Settings
@@ -794,4 +854,397 @@ void FaceTrackNoIR::trackingSourceSelected(int index)
 	default:
 		break;
 	}
+}
+
+
+//
+// Constructor for FaceTrackNoIR=Preferences-dialog
+//
+PreferencesDialog::PreferencesDialog( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+
+	connect(ui.slideAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+PreferencesDialog::~PreferencesDialog() {
+	qDebug() << "~PreferencesDialog() says: started";
+}
+
+//
+// OK clicked on server-dialog
+//
+void PreferencesDialog::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void PreferencesDialog::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void PreferencesDialog::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void PreferencesDialog::loadSettings() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	ui.slideAutoMinimizeTime->setValue( settings.value ( "AutoMinimizeTime", 0 ).toInt() );
+
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void PreferencesDialog::save() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	settings.setValue( "AutoMinimizeTime", ui.slideAutoMinimizeTime->value() );
+
+	settingsDirty = false;
+}
+
+//
+// Constructor for server-settings-dialog
+//
+KeyboardShortcutDialog::KeyboardShortcutDialog( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+
+	connect(ui.cbxCenterKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.chkCenterShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkCenterCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkCenterAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+
+	connect(ui.cbxStartStopKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.chkStartStopShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkStartStopAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+
+	//
+	// Clear the Lists with key-descriptions and keycodes and build the Lists
+	// The strings will all be added to the ListBoxes for each Shortkey
+	//
+	stringList.clear();
+	stringList.append("NONE");
+	stringList.append("F1");
+	stringList.append("F2");
+	stringList.append("F3");
+	stringList.append("F4");
+	stringList.append("F5");
+	stringList.append("F6");
+	stringList.append("F7");
+	stringList.append("F8");
+	stringList.append("F9");
+	stringList.append("F10");
+	stringList.append("F11");
+	stringList.append("F12");
+	stringList.append("MINUS");
+	stringList.append("EQUALS");
+	stringList.append("BACK");
+	stringList.append("A");
+	stringList.append("B");
+	stringList.append("C");
+	stringList.append("D");
+	stringList.append("E");
+	stringList.append("F");
+	stringList.append("G");
+	stringList.append("H");
+	stringList.append("I");
+	stringList.append("J");
+	stringList.append("K");
+	stringList.append("L");
+	stringList.append("M");
+	stringList.append("N");
+	stringList.append("O");
+	stringList.append("P");
+	stringList.append("Q");
+	stringList.append("R");
+	stringList.append("S");
+	stringList.append("T");
+	stringList.append("U");
+	stringList.append("V");
+	stringList.append("W");
+	stringList.append("X");
+	stringList.append("Y");
+	stringList.append("Z");
+	stringList.append("NUMPAD0");
+	stringList.append("NUMPAD1");
+	stringList.append("NUMPAD2");
+	stringList.append("NUMPAD3");
+	stringList.append("NUMPAD4");
+	stringList.append("NUMPAD5");
+	stringList.append("NUMPAD6");
+	stringList.append("NUMPAD7");
+	stringList.append("NUMPAD8");
+	stringList.append("NUMPAD9");
+	stringList.append("HOME");
+	stringList.append("UP");
+	stringList.append("PGUP");		/* PgUp on arrow keypad */
+	stringList.append("LEFT");
+	stringList.append("RIGHT");
+	stringList.append("END");
+	stringList.append("DOWN");
+	stringList.append("PGDWN");		/* PgDn on arrow keypad */
+	stringList.append("INSERT");
+	stringList.append("DELETE");
+
+	keyList.clear();
+	keyList.append(0);				// NONE = 0
+	keyList.append(DIK_F1);
+	keyList.append(DIK_F2);
+	keyList.append(DIK_F3);
+	keyList.append(DIK_F4);
+	keyList.append(DIK_F5);
+	keyList.append(DIK_F6);
+	keyList.append(DIK_F7);
+	keyList.append(DIK_F8);
+	keyList.append(DIK_F9);
+	keyList.append(DIK_F10);
+	keyList.append(DIK_F11);
+	keyList.append(DIK_F12);
+	keyList.append(DIK_MINUS);
+	keyList.append(DIK_EQUALS);
+	keyList.append(DIK_BACK);
+	keyList.append(DIK_A);
+	keyList.append(DIK_B);
+	keyList.append(DIK_C);
+	keyList.append(DIK_D);
+	keyList.append(DIK_E);
+	keyList.append(DIK_F);
+	keyList.append(DIK_G);
+	keyList.append(DIK_H);
+	keyList.append(DIK_I);
+	keyList.append(DIK_J);
+	keyList.append(DIK_K);
+	keyList.append(DIK_L);
+	keyList.append(DIK_M);
+	keyList.append(DIK_N);
+	keyList.append(DIK_O);
+	keyList.append(DIK_P);
+	keyList.append(DIK_Q);
+	keyList.append(DIK_R);
+	keyList.append(DIK_S);
+	keyList.append(DIK_T);
+	keyList.append(DIK_U);
+	keyList.append(DIK_V);
+	keyList.append(DIK_W);
+	keyList.append(DIK_X);
+	keyList.append(DIK_Y);
+	keyList.append(DIK_Z);
+	keyList.append(DIK_NUMPAD0);
+	keyList.append(DIK_NUMPAD1);
+	keyList.append(DIK_NUMPAD2);
+	keyList.append(DIK_NUMPAD3);
+	keyList.append(DIK_NUMPAD4);
+	keyList.append(DIK_NUMPAD5);
+	keyList.append(DIK_NUMPAD6);
+	keyList.append(DIK_NUMPAD7);
+	keyList.append(DIK_NUMPAD8);
+	keyList.append(DIK_NUMPAD9);
+	keyList.append(DIK_HOME);
+	keyList.append(DIK_UP);
+	keyList.append(DIK_PRIOR);		/* PgUp on arrow keypad */
+	keyList.append(DIK_LEFT);
+	keyList.append(DIK_RIGHT);
+	keyList.append(DIK_END);
+	keyList.append(DIK_DOWN);
+	keyList.append(DIK_NEXT);		/* PgDn on arrow keypad */
+	keyList.append(DIK_INSERT);
+	keyList.append(DIK_DELETE);
+
+	//
+	// Add strings to the Listboxes.
+	//
+	for ( int i = 0; i < stringList.size(); i++) {
+		ui.cbxCenterKey->addItem(stringList.at(i));
+		ui.cbxStartStopKey->addItem(stringList.at(i));
+	}
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+KeyboardShortcutDialog::~KeyboardShortcutDialog() {
+	qDebug() << "~KeyboardShortcutDialog() says: started";
+}
+
+//
+// OK clicked on server-dialog
+//
+void KeyboardShortcutDialog::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void KeyboardShortcutDialog::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void KeyboardShortcutDialog::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void KeyboardShortcutDialog::loadSettings() {
+int keyindex;
+
+	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "KB_Shortcuts" );
+	
+	// Center key
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Center", 1 ).toInt() );
+	if ( keyindex > 0 ) {
+		ui.cbxCenterKey->setCurrentIndex( keyindex );
+	}
+	else {
+		ui.cbxCenterKey->setCurrentIndex( 0 );
+	}
+	ui.chkCenterShift->setChecked (iniFile.value ( "Shift_Center", 0 ).toBool());
+	ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
+	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
+
+	// Start/stop key
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_StartStop", 1 ).toInt() );
+	if ( keyindex > 0 ) {
+		ui.cbxStartStopKey->setCurrentIndex( keyindex );
+	}
+	else {
+		ui.cbxStartStopKey->setCurrentIndex( 0 );
+	}
+	ui.chkStartStopShift->setChecked (iniFile.value ( "Shift_StartStop", 0 ).toBool());
+	ui.chkStartStopCtrl->setChecked (iniFile.value ( "Ctrl_StartStop", 0 ).toBool());
+	ui.chkStartStopAlt->setChecked (iniFile.value ( "Alt_StartStop", 0 ).toBool());
+
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void KeyboardShortcutDialog::save() {
+
+	qDebug() << "save() says: started";
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "KB_Shortcuts" );
+	iniFile.setValue ( "Keycode_Center", keyList.at( ui.cbxCenterKey->currentIndex() ) );
+	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
+	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
+	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
+
+	iniFile.setValue ( "Keycode_StartStop", keyList.at( ui.cbxStartStopKey->currentIndex() ) );
+	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
+	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
+	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
 }

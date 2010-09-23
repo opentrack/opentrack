@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Tue 29. Jun 20:59:30 2010
+** Created: Fri 3. Sep 13:27:15 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -52,6 +52,8 @@ public:
     QAction *actionMute;
     QAction *actionSave;
     QAction *actionSave_As;
+    QAction *actionKeyboard_Shortcuts;
+    QAction *actionPreferences;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QWidget *widgetTop;
@@ -157,6 +159,7 @@ public:
     QMenu *menuFile;
     QMenu *menuAbout;
     QMenu *menuView;
+    QMenu *menuOptions;
 
     void setupUi(QMainWindow *FaceTrackNoIRClass)
     {
@@ -279,6 +282,10 @@ public:
         actionSave->setObjectName(QString::fromUtf8("actionSave"));
         actionSave_As = new QAction(FaceTrackNoIRClass);
         actionSave_As->setObjectName(QString::fromUtf8("actionSave_As"));
+        actionKeyboard_Shortcuts = new QAction(FaceTrackNoIRClass);
+        actionKeyboard_Shortcuts->setObjectName(QString::fromUtf8("actionKeyboard_Shortcuts"));
+        actionPreferences = new QAction(FaceTrackNoIRClass);
+        actionPreferences->setObjectName(QString::fromUtf8("actionPreferences"));
         centralWidget = new QWidget(FaceTrackNoIRClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         centralWidget->setMinimumSize(QSize(800, 500));
@@ -1094,6 +1101,8 @@ public:
         menuAbout->setAutoFillBackground(true);
         menuView = new QMenu(menuBar);
         menuView->setObjectName(QString::fromUtf8("menuView"));
+        menuOptions = new QMenu(menuBar);
+        menuOptions->setObjectName(QString::fromUtf8("menuOptions"));
         FaceTrackNoIRClass->setMenuBar(menuBar);
         QWidget::setTabOrder(iconcomboTrackerSource, btnStartTracker);
         QWidget::setTabOrder(btnStartTracker, btnStopTracker);
@@ -1122,6 +1131,7 @@ public:
 
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuView->menuAction());
+        menuBar->addAction(menuOptions->menuAction());
         menuBar->addAction(menuAbout->menuAction());
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionSave);
@@ -1131,6 +1141,8 @@ public:
         menuAbout->addAction(actionAbout);
         menuView->addAction(actionVideoWidget);
         menuView->addAction(actionHeadPoseWidget);
+        menuOptions->addAction(actionPreferences);
+        menuOptions->addAction(actionKeyboard_Shortcuts);
 
         retranslateUi(FaceTrackNoIRClass);
         QObject::connect(sensYaw, SIGNAL(valueChanged(int)), spinSensYaw, SLOT(setValue(int)));
@@ -1198,6 +1210,8 @@ public:
         actionMute->setShortcut(QApplication::translate("FaceTrackNoIRClass", "Ctrl+M", 0, QApplication::UnicodeUTF8));
         actionSave->setText(QApplication::translate("FaceTrackNoIRClass", "Save", 0, QApplication::UnicodeUTF8));
         actionSave_As->setText(QApplication::translate("FaceTrackNoIRClass", "Save As", 0, QApplication::UnicodeUTF8));
+        actionKeyboard_Shortcuts->setText(QApplication::translate("FaceTrackNoIRClass", "Keyboard Shortcuts", 0, QApplication::UnicodeUTF8));
+        actionPreferences->setText(QApplication::translate("FaceTrackNoIRClass", "Preferences", 0, QApplication::UnicodeUTF8));
         headRotYLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));
         headRotXLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));
         headRotZLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));
@@ -1255,6 +1269,7 @@ public:
         menuFile->setTitle(QApplication::translate("FaceTrackNoIRClass", "File", 0, QApplication::UnicodeUTF8));
         menuAbout->setTitle(QApplication::translate("FaceTrackNoIRClass", "About", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("FaceTrackNoIRClass", "View", 0, QApplication::UnicodeUTF8));
+        menuOptions->setTitle(QApplication::translate("FaceTrackNoIRClass", "Options", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

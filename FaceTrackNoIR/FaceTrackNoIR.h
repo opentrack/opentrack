@@ -35,6 +35,8 @@
 #include <QDialog>
 
 #include "ui_FaceTrackNoIR.h"
+#include "ui_FTNoIR_KeyboardShortcuts.h"
+#include "ui_FTNoIR_Preferences.h"
 #include <sm_api_qt.h>
 #include <Dshow.h>
 
@@ -56,19 +58,21 @@ public:
 private:
 	Ui::FaceTrackNoIRClass ui;
 	Tracker *tracker;
+	QTimer *timMinimizeFTN;
 
 	/** face api variables **/
 	VideoDisplayWidget *_display;
 	QVBoxLayout *l;
 	QWidget *_engine_controls;
 	QWidget *_server_controls;
+	QWidget *_preferences;
+	QWidget *_keyboard_shortcuts;
 
 	/** QT objects **/
 	QDialog aboutDialog;	
 	QDesktopWidget desktop;
 
     QAction *minimizeAction;
-    QAction *maximizeAction;
     QAction *restoreAction;
     QAction *quitAction;
 
@@ -103,6 +107,8 @@ private:
 		void showHeadPoseWidget();
 		void showEngineControls();
 		void showServerControls();
+		void showPreferences();
+		void showKeyboardShortcuts();
 
 		// sensibility sliders
 		void setSensYaw( int sens );
@@ -139,5 +145,56 @@ private:
 		void stopTracker();
 		void about();
 };
+
+// Widget that has controls for FaceTrackNoIR Preferences.
+class PreferencesDialog: public QWidget, public Ui::UICPreferencesDialog
+{
+    Q_OBJECT
+public:
+
+	explicit PreferencesDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~PreferencesDialog();
+	void showEvent ( QShowEvent * event );
+
+private:
+	Ui::UICPreferencesDialog ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
+
+private slots:
+	void doOK();
+	void doCancel();
+	void keyChanged( int index ) { settingsDirty = true; };
+};
+
+// Widget that has controls for Keyboard shortcuts.
+class KeyboardShortcutDialog: public QWidget, public Ui::UICKeyboardShortcutDialog
+{
+    Q_OBJECT
+public:
+
+	explicit KeyboardShortcutDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~KeyboardShortcutDialog();
+	void showEvent ( QShowEvent * event );
+
+private:
+	Ui::UICKeyboardShortcutDialog ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
+	QList<QString> stringList;			// List of strings, that describe the keyboard-keys
+	QList<BYTE> keyList; 				// List of keys, with the values of the keyboard-keys
+
+private slots:
+	void doOK();
+	void doCancel();
+	void keyChanged( int index ) { settingsDirty = true; };
+};
+
 
 #endif // FaceTrackNoIR_H

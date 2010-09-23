@@ -83,6 +83,16 @@ struct THeadPoseDOF {
 	float prevRawPos;				// Previous Raw Position
 };
 
+//
+// Structure to hold keycode and CTRL, SHIFT, ALT for shortkeys
+//
+struct TShortKey {
+	BYTE keycode;					// Required Key
+	bool shift;						// Modifiers to examine
+	bool ctrl;
+	bool alt;
+};
+
 class Tracker : public QThread {
 	Q_OBJECT
 
@@ -113,6 +123,9 @@ private:
 	static THeadPoseDOF X;							// Head-movement X-direction (Left/Right)
 	static THeadPoseDOF Y;							// Head-movement Y-direction (Up/Down)
 	static THeadPoseDOF Z;							// Head-movement Z-direction (To/From camera)
+
+	static TShortKey CenterKey;						// ShortKey to Center headposition
+	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
@@ -153,6 +166,8 @@ public:
 	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );
 	QString getGameProgramName();					// Get the ProgramName from the game and display it.
+	void loadSettings();							// Load settings from the INI-file
+	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
 	QSharedPointer<EngineBase> getEngine() { return _engine; };
 //	smEngineHandle getEngineHandle() { return _engine->handle(); };
