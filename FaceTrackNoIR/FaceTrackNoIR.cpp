@@ -36,10 +36,17 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 QMainWindow(parent, flags)
 {	
 	cameraDetected = false;
+
+	//
+	// Initialize Widget handles, to prevent memory-access errors.
+	//
 	_engine_controls = 0;
 	_server_controls = 0;
 	_keyboard_shortcuts = 0;
 	_preferences = 0;
+	_keyboard_shortcuts = 0;
+	_curve_config = 0;
+
 	tracker = 0;
 	_display = 0;
 	l = 0;
@@ -64,6 +71,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	connect(ui.actionPreferences, SIGNAL(triggered()), this, SLOT(showPreferences()));
 	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
+	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
 
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -707,7 +715,7 @@ void FaceTrackNoIR::showPreferences() {
 	}
 }
 
-/** toggles Server Controls Dialog **/
+/** toggles Keyboard Shortcut Dialog **/
 void FaceTrackNoIR::showKeyboardShortcuts() {
 
 	// Create if new
@@ -720,6 +728,22 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
 	if (_keyboard_shortcuts) {
 		_keyboard_shortcuts->show();
 		_keyboard_shortcuts->raise();
+	}
+}
+
+/** toggles Curve Configuration Dialog **/
+void FaceTrackNoIR::showCurveConfiguration() {
+
+	// Create if new
+	if (!_curve_config)
+    {
+        _curve_config = new CurveConfigurationDialog( this, Qt::Dialog );
+    }
+
+	// Show if already created
+	if (_curve_config) {
+		_curve_config->show();
+		_curve_config->raise();
 	}
 }
 
@@ -954,8 +978,10 @@ void PreferencesDialog::save() {
 	settingsDirty = false;
 }
 
+//**************************************************************************************************//
+//**************************************************************************************************//
 //
-// Constructor for server-settings-dialog
+// Constructor for Keyboard-shortcuts-dialog
 //
 KeyboardShortcutDialog::KeyboardShortcutDialog( QWidget *parent, Qt::WindowFlags f ) :
 QWidget( parent , f)
@@ -1244,6 +1270,202 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
 	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
 	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//**************************************************************************************************//
+//**************************************************************************************************//
+//
+// Constructor for Curve-configuration-dialog
+//
+CurveConfigurationDialog::CurveConfigurationDialog( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+
+	connect(ui.curveRoll, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+CurveConfigurationDialog::~CurveConfigurationDialog() {
+	qDebug() << "~CurveConfigurationDialog() says: started";
+}
+
+//
+// OK clicked on server-dialog
+//
+void CurveConfigurationDialog::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void CurveConfigurationDialog::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void CurveConfigurationDialog::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void CurveConfigurationDialog::loadSettings() {
+int NeutralZone;
+int sensRoll;
+QPointF point;
+
+	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "Tracking" );
+	NeutralZone = iniFile.value ( "NeutralZone", 5 ).toInt();
+	sensRoll = iniFile.value ( "sensRoll", 100 ).toInt();
+	iniFile.endGroup ();
+
+	iniFile.beginGroup ( "Curves" );
+
+	//
+	// If Point 1 exists, read it from the file.
+	// If not: get the y-coord from the global (deprecated) NeutralZone setting.
+	// Any case: set the x-coord to '0', to keep it on the Y-axis
+	//
+	if (iniFile.contains("Roll_point1")) {
+		point = iniFile.value ( "Roll_point1", 0 ).toPoint();
+	}
+	else {
+		point.setY(NeutralZone);
+	}
+	point.setX(0);
+	ui.curveRoll->setPointOne( point );
+
+	//
+	// If Point 4 exists, read it from the file.
+	// If not: derive the x-coord from the (deprecated) 'Sensitivity' setting and set y to max.
+	//
+	if (iniFile.contains("Roll_point4")) {
+		point = iniFile.value ( "Roll_point4", 0 ).toPoint();
+	}
+	else {
+		point.setY(50);											// Max. Input for rotations
+		if (sensRoll < 360) {
+			point.setX((sensRoll/100.0f) * 50);
+		}
+		else {
+			point.setX(180);
+		}
+	}
+	ui.curveRoll->setPointFour( point );
+
+	//
+	// If Point 2 exists, read it from the file.
+	// If not: derive it from the (deprecated) 'Sensitivity' setting.
+	//
+	if (iniFile.contains("Roll_point2")) {
+		point = iniFile.value ( "Roll_point2", 0 ).toPoint();
+	}
+	else {
+		point.setY(0.333f * 50);							// Set the Point at 1/3 of Max. Input
+		if (sensRoll < 360) {
+			point.setX(0.333f * (sensRoll/100.0f) * 50);
+
+		}
+		else {
+			point.setX(60);
+		}
+	}
+	ui.curveRoll->setPointTwo( point );
+
+	//
+	// If Point 3 exists, read it from the file.
+	// If not: derive it from the (deprecated) 'Sensitivity' setting.
+	//
+	if (iniFile.contains("Roll_point3")) {
+		point = iniFile.value ( "Roll_point3", 0 ).toPoint();
+	}
+	else {
+		point.setY(0.666f * 50);							// Set the Point at 2/3 of Max. Input
+		if (sensRoll < 360) {
+			point.setX(0.666f * (sensRoll/100.0f) * 50);
+
+		}
+		else {
+			point.setX(120);
+		}
+	}
+	ui.curveRoll->setPointThree( point );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void CurveConfigurationDialog::save() {
+
+	qDebug() << "save() says: started";
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "Curves" );
+	iniFile.setValue ("Roll_point1", ui.curveRoll->getPointOne() );
+	iniFile.setValue ("Roll_point2", ui.curveRoll->getPointTwo() );
+	iniFile.setValue ("Roll_point3", ui.curveRoll->getPointThree() );
+	iniFile.setValue ("Roll_point4", ui.curveRoll->getPointFour() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;

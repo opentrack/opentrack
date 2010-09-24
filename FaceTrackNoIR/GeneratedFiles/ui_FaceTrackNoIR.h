@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FaceTrackNoIR.ui'
 **
-** Created: Fri 3. Sep 13:27:15 2010
+** Created: Fri 24. Sep 11:22:07 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -54,6 +54,7 @@ public:
     QAction *actionSave_As;
     QAction *actionKeyboard_Shortcuts;
     QAction *actionPreferences;
+    QAction *actionCurve_Configuration;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QWidget *widgetTop;
@@ -286,6 +287,8 @@ public:
         actionKeyboard_Shortcuts->setObjectName(QString::fromUtf8("actionKeyboard_Shortcuts"));
         actionPreferences = new QAction(FaceTrackNoIRClass);
         actionPreferences->setObjectName(QString::fromUtf8("actionPreferences"));
+        actionCurve_Configuration = new QAction(FaceTrackNoIRClass);
+        actionCurve_Configuration->setObjectName(QString::fromUtf8("actionCurve_Configuration"));
         centralWidget = new QWidget(FaceTrackNoIRClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         centralWidget->setMinimumSize(QSize(800, 500));
@@ -1143,6 +1146,8 @@ public:
         menuView->addAction(actionHeadPoseWidget);
         menuOptions->addAction(actionPreferences);
         menuOptions->addAction(actionKeyboard_Shortcuts);
+        menuOptions->addSeparator();
+        menuOptions->addAction(actionCurve_Configuration);
 
         retranslateUi(FaceTrackNoIRClass);
         QObject::connect(sensYaw, SIGNAL(valueChanged(int)), spinSensYaw, SLOT(setValue(int)));
@@ -1212,6 +1217,7 @@ public:
         actionSave_As->setText(QApplication::translate("FaceTrackNoIRClass", "Save As", 0, QApplication::UnicodeUTF8));
         actionKeyboard_Shortcuts->setText(QApplication::translate("FaceTrackNoIRClass", "Keyboard Shortcuts", 0, QApplication::UnicodeUTF8));
         actionPreferences->setText(QApplication::translate("FaceTrackNoIRClass", "Preferences", 0, QApplication::UnicodeUTF8));
+        actionCurve_Configuration->setText(QApplication::translate("FaceTrackNoIRClass", "Curve Configuration", 0, QApplication::UnicodeUTF8));
         headRotYLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));
         headRotXLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));
         headRotZLine->setText(QApplication::translate("FaceTrackNoIRClass", "N/A", 0, QApplication::UnicodeUTF8));

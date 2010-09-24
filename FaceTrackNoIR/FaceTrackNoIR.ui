@@ -2205,6 +2205,8 @@ background:none;</string>
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="actionKeyboard_Shortcuts"/>
+    <addaction name="separator"/>
+    <addaction name="actionCurve_Configuration"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -2353,6 +2355,11 @@ background:none;</string>
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionCurve_Configuration">
+   <property name="text">
+    <string>Curve Configuration</string>
    </property>
   </action>
  </widget>

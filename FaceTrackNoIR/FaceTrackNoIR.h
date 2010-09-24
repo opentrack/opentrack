@@ -37,6 +37,7 @@
 #include "ui_FaceTrackNoIR.h"
 #include "ui_FTNoIR_KeyboardShortcuts.h"
 #include "ui_FTNoIR_Preferences.h"
+#include "ui_FTNoIR_Curves.h"
 #include <sm_api_qt.h>
 #include <Dshow.h>
 
@@ -67,6 +68,7 @@ private:
 	QWidget *_server_controls;
 	QWidget *_preferences;
 	QWidget *_keyboard_shortcuts;
+	QWidget *_curve_config;
 
 	/** QT objects **/
 	QDialog aboutDialog;	
@@ -109,6 +111,7 @@ private:
 		void showServerControls();
 		void showPreferences();
 		void showKeyboardShortcuts();
+		void showCurveConfiguration();
 
 		// sensibility sliders
 		void setSensYaw( int sens );
@@ -194,6 +197,30 @@ private slots:
 	void doOK();
 	void doCancel();
 	void keyChanged( int index ) { settingsDirty = true; };
+};
+
+// Widget that has controls for Keyboard shortcuts.
+class CurveConfigurationDialog: public QWidget, public Ui::UICCurveConfigurationDialog
+{
+    Q_OBJECT
+public:
+
+	explicit CurveConfigurationDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~CurveConfigurationDialog();
+	void showEvent ( QShowEvent * event );
+
+private:
+	Ui::UICCurveConfigurationDialog ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
+
+private slots:
+	void doOK();
+	void doCancel();
+	void curveChanged( bool change ) { settingsDirty = true; };
 };
 
 
