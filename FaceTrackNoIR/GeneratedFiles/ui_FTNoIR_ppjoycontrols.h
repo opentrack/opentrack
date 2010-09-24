@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'FTNoIR_ppjoycontrols.ui'
 **
-** Created: Fri 3. Sep 13:27:15 2010
+** Created: Fri 24. Sep 11:22:05 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
