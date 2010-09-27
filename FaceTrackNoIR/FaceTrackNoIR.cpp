@@ -1292,7 +1292,12 @@ QWidget( parent , f)
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
+	connect(ui.curveYaw, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	connect(ui.curvePitch, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
 	connect(ui.curveRoll, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	connect(ui.curveX, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	connect(ui.curveY, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	connect(ui.curveZ, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -1356,8 +1361,9 @@ void CurveConfigurationDialog::doCancel() {
 //
 void CurveConfigurationDialog::loadSettings() {
 int NeutralZone;
-int sensRoll;
-QPointF point;
+int sensYaw, sensPitch, sensRoll;
+int sensX, sensY, sensZ;
+QPointF point1, point2, point3, point4;
 
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -1369,80 +1375,51 @@ QPointF point;
 
 	iniFile.beginGroup ( "Tracking" );
 	NeutralZone = iniFile.value ( "NeutralZone", 5 ).toInt();
+	sensYaw = iniFile.value ( "sensYaw", 100 ).toInt();
+	sensPitch = iniFile.value ( "sensPitch", 100 ).toInt();
 	sensRoll = iniFile.value ( "sensRoll", 100 ).toInt();
+	sensX = iniFile.value ( "sensX", 100 ).toInt();
+	sensY = iniFile.value ( "sensY", 100 ).toInt();
+	sensZ = iniFile.value ( "sensZ", 100 ).toInt();
+
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "Curves" );
+	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
+	ui.curveYaw->setPointOne( point1 );
+	ui.curveYaw->setPointTwo( point2 );
+	ui.curveYaw->setPointThree( point3 );
+	ui.curveYaw->setPointFour( point4 );
 
-	//
-	// If Point 1 exists, read it from the file.
-	// If not: get the y-coord from the global (deprecated) NeutralZone setting.
-	// Any case: set the x-coord to '0', to keep it on the Y-axis
-	//
-	if (iniFile.contains("Roll_point1")) {
-		point = iniFile.value ( "Roll_point1", 0 ).toPoint();
-	}
-	else {
-		point.setY(NeutralZone);
-	}
-	point.setX(0);
-	ui.curveRoll->setPointOne( point );
+	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
+	ui.curvePitch->setPointOne( point1 );
+	ui.curvePitch->setPointTwo( point2 );
+	ui.curvePitch->setPointThree( point3 );
+	ui.curvePitch->setPointFour( point4 );
 
-	//
-	// If Point 4 exists, read it from the file.
-	// If not: derive the x-coord from the (deprecated) 'Sensitivity' setting and set y to max.
-	//
-	if (iniFile.contains("Roll_point4")) {
-		point = iniFile.value ( "Roll_point4", 0 ).toPoint();
-	}
-	else {
-		point.setY(50);											// Max. Input for rotations
-		if (sensRoll < 360) {
-			point.setX((sensRoll/100.0f) * 50);
-		}
-		else {
-			point.setX(180);
-		}
-	}
-	ui.curveRoll->setPointFour( point );
+	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
+	ui.curveRoll->setPointOne( point1 );
+	ui.curveRoll->setPointTwo( point2 );
+	ui.curveRoll->setPointThree( point3 );
+	ui.curveRoll->setPointFour( point4 );
 
-	//
-	// If Point 2 exists, read it from the file.
-	// If not: derive it from the (deprecated) 'Sensitivity' setting.
-	//
-	if (iniFile.contains("Roll_point2")) {
-		point = iniFile.value ( "Roll_point2", 0 ).toPoint();
-	}
-	else {
-		point.setY(0.333f * 50);							// Set the Point at 1/3 of Max. Input
-		if (sensRoll < 360) {
-			point.setX(0.333f * (sensRoll/100.0f) * 50);
+	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
+	ui.curveX->setPointOne( point1 );
+	ui.curveX->setPointTwo( point2 );
+	ui.curveX->setPointThree( point3 );
+	ui.curveX->setPointFour( point4 );
 
-		}
-		else {
-			point.setX(60);
-		}
-	}
-	ui.curveRoll->setPointTwo( point );
+	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
+	ui.curveY->setPointOne( point1 );
+	ui.curveY->setPointTwo( point2 );
+	ui.curveY->setPointThree( point3 );
+	ui.curveY->setPointFour( point4 );
 
-	//
-	// If Point 3 exists, read it from the file.
-	// If not: derive it from the (deprecated) 'Sensitivity' setting.
-	//
-	if (iniFile.contains("Roll_point3")) {
-		point = iniFile.value ( "Roll_point3", 0 ).toPoint();
-	}
-	else {
-		point.setY(0.666f * 50);							// Set the Point at 2/3 of Max. Input
-		if (sensRoll < 360) {
-			point.setX(0.666f * (sensRoll/100.0f) * 50);
-
-		}
-		else {
-			point.setX(120);
-		}
-	}
-	ui.curveRoll->setPointThree( point );
+	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
+	ui.curveZ->setPointOne( point1 );
+	ui.curveZ->setPointTwo( point2 );
+	ui.curveZ->setPointThree( point3 );
+	ui.curveZ->setPointFour( point4 );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -1462,11 +1439,110 @@ void CurveConfigurationDialog::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Curves" );
+	iniFile.setValue ("Yaw_point1", ui.curveYaw->getPointOne() );
+	iniFile.setValue ("Yaw_point2", ui.curveYaw->getPointTwo() );
+	iniFile.setValue ("Yaw_point3", ui.curveYaw->getPointThree() );
+	iniFile.setValue ("Yaw_point4", ui.curveYaw->getPointFour() );
+
+	iniFile.setValue ("Pitch_point1", ui.curvePitch->getPointOne() );
+	iniFile.setValue ("Pitch_point2", ui.curvePitch->getPointTwo() );
+	iniFile.setValue ("Pitch_point3", ui.curvePitch->getPointThree() );
+	iniFile.setValue ("Pitch_point4", ui.curvePitch->getPointFour() );
+
 	iniFile.setValue ("Roll_point1", ui.curveRoll->getPointOne() );
 	iniFile.setValue ("Roll_point2", ui.curveRoll->getPointTwo() );
 	iniFile.setValue ("Roll_point3", ui.curveRoll->getPointThree() );
 	iniFile.setValue ("Roll_point4", ui.curveRoll->getPointFour() );
-	iniFile.endGroup ();
+	
+	iniFile.setValue ("X_point1", ui.curveX->getPointOne() );
+	iniFile.setValue ("X_point2", ui.curveX->getPointTwo() );
+	iniFile.setValue ("X_point3", ui.curveX->getPointThree() );
+	iniFile.setValue ("X_point4", ui.curveX->getPointFour() );
 
+	iniFile.setValue ("Y_point1", ui.curveY->getPointOne() );
+	iniFile.setValue ("Y_point2", ui.curveY->getPointTwo() );
+	iniFile.setValue ("Y_point3", ui.curveY->getPointThree() );
+	iniFile.setValue ("Y_point4", ui.curveY->getPointFour() );
+
+	iniFile.setValue ("Z_point1", ui.curveZ->getPointOne() );
+	iniFile.setValue ("Z_point2", ui.curveZ->getPointTwo() );
+	iniFile.setValue ("Z_point3", ui.curveZ->getPointThree() );
+	iniFile.setValue ("Z_point4", ui.curveZ->getPointFour() );
+	
+	iniFile.endGroup ();
 	settingsDirty = false;
+}
+
+void getCurvePoints(QSettings *iniFile, QString prefix, QPointF *point1, QPointF *point2, QPointF *point3, QPointF *point4, int NeutralZone, int Sensitivity, int MaxInput, int MaxOutput) {
+bool setMax;
+float newMax;
+
+	setMax = FALSE;
+	newMax = MaxInput;
+
+	//
+	// If Point 1 exists, read it from the file.
+	// If not: get the y-coord from the global (deprecated) NeutralZone setting.
+	// Any case: set the x-coord to '0', to keep it on the Y-axis
+	//
+	if (iniFile->contains(prefix + "point1")) {
+		*point1 = iniFile->value ( prefix + "point1", 0 ).toPoint();
+	}
+	else {
+		point1->setY(NeutralZone);
+	}
+	point1->setX(0);
+
+	//
+	// If Point 4 exists, read it from the file.
+	// If not: derive the x-coord from the (deprecated) 'Sensitivity' setting and set y to max.
+	//
+	if (iniFile->contains(prefix + "point4")) {
+		*point4 = iniFile->value ( prefix + "point4", 0 ).toPoint();
+	}
+	else {
+		point4->setY(MaxInput);									// Max. Input for rotations
+		point4->setX((Sensitivity/100.0f) * MaxInput);
+		if (point4->x() > MaxOutput) {
+			point4->setX(MaxOutput);
+			setMax = TRUE;
+		}
+		else {
+			newMax = (Sensitivity/100.0f) * MaxInput;
+		}
+	}
+
+	//
+	// If Point 2 exists, read it from the file.
+	// If not: derive it from the (deprecated) 'Sensitivity' setting.
+	//
+	if (iniFile->contains(prefix + "point2")) {
+		*point2 = iniFile->value ( prefix + "point2", 0 ).toPoint();
+	}
+	else {
+		point2->setY(0.333f * MaxInput);						// Set the Point at 1/3 of Max. Input
+		if (!setMax) {
+			point2->setX(0.333f * newMax);
+		}
+		else {
+			point2->setX(0.333f * MaxOutput);
+		}
+	}
+
+	//
+	// If Point 3 exists, read it from the file.
+	// If not: derive it from the (deprecated) 'Sensitivity' setting.
+	//
+	if (iniFile->contains(prefix + "point3")) {
+		*point3 = iniFile->value ( prefix + "point3", 0 ).toPoint();
+	}
+	else {
+		point3->setY(0.666f * MaxInput);						// Set the Point at 2/3 of Max. Input
+		if (!setMax) {
+			point3->setX(0.666f * newMax);
+		}
+		else {
+			point3->setX(0.666f * MaxOutput);
+		}
+	}
 }

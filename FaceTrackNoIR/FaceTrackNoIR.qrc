@@ -1,8 +1,11 @@
 <RCC>
-    <qresource prefix="/">
-        <file>images/FlightGear.ico</file>
-        <file>images/Freetrack.ico</file>
-        <file>images/FaceTrackNoIR.ico</file>
-        <file>images/SeeingMachines.ico</file>
-    </qresource>
+  <qresource prefix="/">
+    <file>images/rotation_DOFs.png</file>
+    <file>images/translation_DOFs.png</file>
+    <file>images/FlightGear.ico</file>
+    <file>images/330px-6DOF_en.png</file>
+    <file>images/Freetrack.ico</file>
+    <file>images/FaceTrackNoIR.ico</file>
+    <file>images/SeeingMachines.ico</file>
+  </qresource>
 </RCC>
