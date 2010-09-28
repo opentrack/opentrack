@@ -432,6 +432,12 @@ void Tracker::run() {
 				Pitch.newPos = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
 			}
 
+		QFile data("output.txt");
+		if (data.open(QFile::WriteOnly | QFile::Append)) {
+			QTextStream out(&data);
+			out << "Input = " << getDegreesFromRads(Pitch.newPos) << " Output = " << getOutputFromCurve(&Pitch.curve, getDegreesFromRads(Pitch.newPos))  << '\n';
+		}
+
 			// Yaw
 			if (Tracker::useFilter) {
 				Yaw.newPos = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
@@ -765,9 +771,20 @@ float clamped_value = 0.0f;
 }
 
 //
+// Get the output from the curve.
+//
+float Tracker::getOutputFromCurve ( QPainterPath *curve, float input ) {
+	return curve->pointAtPercent(input/100.0f).x();
+}
+
+//
 // Load the current Settings from the currently 'active' INI-file.
 //
 void Tracker::loadSettings() {
+int NeutralZone;
+int sensYaw, sensPitch, sensRoll;
+int sensX, sensY, sensZ;
+QPointF point1, point2, point3, point4;
 
 	qDebug() << "Tracker::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -777,6 +794,58 @@ void Tracker::loadSettings() {
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
+	//
+	// Read the Tracking settings, to fill the curves.
+	//
+	iniFile.beginGroup ( "Tracking" );
+	NeutralZone = iniFile.value ( "NeutralZone", 5 ).toInt();
+	sensYaw = iniFile.value ( "sensYaw", 100 ).toInt();
+	sensPitch = iniFile.value ( "sensPitch", 100 ).toInt();
+	sensRoll = iniFile.value ( "sensRoll", 100 ).toInt();
+	sensX = iniFile.value ( "sensX", 100 ).toInt();
+	sensY = iniFile.value ( "sensY", 100 ).toInt();
+	sensZ = iniFile.value ( "sensZ", 100 ).toInt();
+	iniFile.endGroup ();
+
+	//
+	// Read the curve-settings from the file. Use the (deprecated) settings, if the curves are not there.
+	//
+	iniFile.beginGroup ( "Curves" );
+	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
+	Yaw.curve.moveTo( QPointF(0,0) );
+	Yaw.curve.lineTo(point1);
+    Yaw.curve.cubicTo(point2, point3, point4);
+
+	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
+	Pitch.curve.moveTo( QPointF(0,0) );
+	Pitch.curve.lineTo(point1);
+    Pitch.curve.cubicTo(point2, point3, point4);
+
+	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
+	Roll.curve.moveTo( QPointF(0,0) );
+	Roll.curve.lineTo(point1);
+    Roll.curve.cubicTo(point2, point3, point4);
+
+	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
+	X.curve.moveTo( QPointF(0,0) );
+	X.curve.lineTo(point1);
+    X.curve.cubicTo(point2, point3, point4);
+
+	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
+	Y.curve.moveTo( QPointF(0,0) );
+	Y.curve.lineTo(point1);
+    Y.curve.cubicTo(point2, point3, point4);
+
+	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
+	Z.curve.moveTo( QPointF(0,0) );
+	Z.curve.lineTo(point1);
+    Z.curve.cubicTo(point2, point3, point4);
+
+	iniFile.endGroup ();
+
+	//
+	// Read the keyboard shortcuts.
+	//
 	iniFile.beginGroup ( "KB_Shortcuts" );
 	
 	// Center key
