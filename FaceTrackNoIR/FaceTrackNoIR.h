@@ -58,6 +58,7 @@ public:
 	~FaceTrackNoIR();
 
 	void getGameProgramName();					// Get the ProgramName from the game and display it.
+	void updateSettings();						// Update the settings (let Tracker read INI-file).
 
 private:
 	Ui::FaceTrackNoIRClass ui;
@@ -158,7 +159,7 @@ class PreferencesDialog: public QWidget, public Ui::UICPreferencesDialog
     Q_OBJECT
 public:
 
-	explicit PreferencesDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit PreferencesDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
     virtual ~PreferencesDialog();
 	void showEvent ( QShowEvent * event );
 
@@ -169,6 +170,7 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
+	FaceTrackNoIR *mainApp;
 
 private slots:
 	void doOK();
@@ -182,7 +184,7 @@ class KeyboardShortcutDialog: public QWidget, public Ui::UICKeyboardShortcutDial
     Q_OBJECT
 public:
 
-	explicit KeyboardShortcutDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
     virtual ~KeyboardShortcutDialog();
 	void showEvent ( QShowEvent * event );
 
@@ -193,6 +195,7 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
+	FaceTrackNoIR *mainApp;
 	QList<QString> stringList;			// List of strings, that describe the keyboard-keys
 	QList<BYTE> keyList; 				// List of keys, with the values of the keyboard-keys
 
@@ -208,7 +211,7 @@ class CurveConfigurationDialog: public QWidget, public Ui::UICCurveConfiguration
     Q_OBJECT
 public:
 
-	explicit CurveConfigurationDialog( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
     virtual ~CurveConfigurationDialog();
 	void showEvent ( QShowEvent * event );
 
@@ -219,6 +222,7 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
+	FaceTrackNoIR *mainApp;
 
 private slots:
 	void doOK();

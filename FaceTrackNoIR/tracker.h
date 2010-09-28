@@ -31,6 +31,7 @@
 #include <QPoint>
 #include <QWaitCondition>
 #include <QList>
+#include <QPainterPath>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <Dinput.h>
@@ -81,6 +82,7 @@ struct THeadPoseDOF {
 	float newPos;					// New Position (used locally)
 	float prevPos;					// Previous Position
 	float prevRawPos;				// Previous Raw Position
+	QPainterPath curve;				// Bezier curve to translate input -> output
 };
 
 //
@@ -217,6 +219,7 @@ public:
 
 	float getSmoothFromList ( QList<float> *rawList );
 	float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
+	float getOutputFromCurve ( QPainterPath *curve, float input );
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 

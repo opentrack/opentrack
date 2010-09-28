@@ -176,6 +176,15 @@ void FaceTrackNoIR::getGameProgramName() {
 	}
 }
 
+//
+// Get the ProgramName from a connected game and display it.
+//
+void FaceTrackNoIR::updateSettings() {
+	if ( tracker != NULL ) {
+		tracker->loadSettings();
+	}
+}
+
 /** read the name of the first video-capturing device at start up **/
 /** FaceAPI can only use this first one... **/
 void FaceTrackNoIR::GetCameraNameDX() {
@@ -705,7 +714,7 @@ void FaceTrackNoIR::showPreferences() {
 	// Create if new
 	if (!_preferences)
     {
-        _preferences = new PreferencesDialog( this, Qt::Dialog );
+        _preferences = new PreferencesDialog( this, this, Qt::Dialog );
     }
 
 	// Show if already created
@@ -721,7 +730,7 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
 	// Create if new
 	if (!_keyboard_shortcuts)
     {
-        _keyboard_shortcuts = new KeyboardShortcutDialog( this, Qt::Dialog );
+        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this, Qt::Dialog );
     }
 
 	// Show if already created
@@ -737,7 +746,7 @@ void FaceTrackNoIR::showCurveConfiguration() {
 	// Create if new
 	if (!_curve_config)
     {
-        _curve_config = new CurveConfigurationDialog( this, Qt::Dialog );
+        _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
     }
 
 	// Show if already created
@@ -884,13 +893,15 @@ void FaceTrackNoIR::trackingSourceSelected(int index)
 //
 // Constructor for FaceTrackNoIR=Preferences-dialog
 //
-PreferencesDialog::PreferencesDialog( QWidget *parent, Qt::WindowFlags f ) :
+PreferencesDialog::PreferencesDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
 QWidget( parent , f)
 {
 	ui.setupUi( this );
 
 	QPoint offsetpos(100, 100);
 	this->move(parent->pos() + offsetpos);
+
+	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -975,6 +986,11 @@ void PreferencesDialog::save() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	settings.setValue( "AutoMinimizeTime", ui.slideAutoMinimizeTime->value() );
 
+	//
+	// Send a message to the main program, to update the Settings (for the tracker)
+	//
+	mainApp->updateSettings();
+
 	settingsDirty = false;
 }
 
@@ -983,13 +999,15 @@ void PreferencesDialog::save() {
 //
 // Constructor for Keyboard-shortcuts-dialog
 //
-KeyboardShortcutDialog::KeyboardShortcutDialog( QWidget *parent, Qt::WindowFlags f ) :
+KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
 QWidget( parent , f)
 {
 	ui.setupUi( this );
 
 	QPoint offsetpos(100, 100);
 	this->move(parent->pos() + offsetpos);
+
+	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -1273,6 +1291,11 @@ void KeyboardShortcutDialog::save() {
 	iniFile.endGroup ();
 
 	settingsDirty = false;
+
+	//
+	// Send a message to the main program, to update the Settings (for the tracker)
+	//
+	mainApp->updateSettings();
 }
 
 //**************************************************************************************************//
@@ -1280,13 +1303,15 @@ void KeyboardShortcutDialog::save() {
 //
 // Constructor for Curve-configuration-dialog
 //
-CurveConfigurationDialog::CurveConfigurationDialog( QWidget *parent, Qt::WindowFlags f ) :
+CurveConfigurationDialog::CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
 QWidget( parent , f)
 {
 	ui.setupUi( this );
 
 	QPoint offsetpos(100, 100);
 	this->move(parent->pos() + offsetpos);
+
+	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -1471,6 +1496,11 @@ void CurveConfigurationDialog::save() {
 	
 	iniFile.endGroup ();
 	settingsDirty = false;
+
+	//
+	// Send a message to the main program, to update the Settings (for the tracker)
+	//
+	mainApp->updateSettings();
 }
 
 void getCurvePoints(QSettings *iniFile, QString prefix, QPointF *point1, QPointF *point2, QPointF *point3, QPointF *point4, int NeutralZone, int Sensitivity, int MaxInput, int MaxOutput) {
