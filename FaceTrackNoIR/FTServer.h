@@ -99,20 +99,22 @@ private:
 	QLibrary FTClientLib;
 
 public:
-	void setHeadPosX(float x) { headPosX = x; }
-	void setHeadPosY(float y) { headPosY = y; }
-	void setHeadPosZ(float z) { headPosZ = z; }
+	void setHeadPosX(float x) { headPosX = x * 10; }
+	void setHeadPosY(float y) { headPosY = y * 10; }
+	void setHeadPosZ(float z) { headPosZ = z * 10; }
 
-	void setHeadRotX(float x) { headRotX = x; }
-	void setHeadRotY(float y) { headRotY = y; }
-	void setHeadRotZ(float z) { headRotZ = z; }
+	void setHeadRotX(float x) { headRotX = getRadsFromDegrees(x); }
+	void setHeadRotY(float y) { headRotY = getRadsFromDegrees(y); }
+	void setHeadRotZ(float z) { headRotZ = getRadsFromDegrees(z); }
 
-	void setVirtRotX(float rot) { virtRotX = rot; }
-	void setVirtRotY(float rot) { virtRotY = rot; }
-	void setVirtRotZ(float rot) { virtRotZ = rot; }
-	void setVirtPosX(float pos) { virtPosX = pos; }
-	void setVirtPosY(float pos) { virtPosY = pos; }
-	void setVirtPosZ(float pos) { virtPosZ = pos; }
+	void setVirtRotX(float rot) { virtRotX = getRadsFromDegrees(rot); }
+	void setVirtRotY(float rot) { virtRotY = getRadsFromDegrees(rot); }
+	void setVirtRotZ(float rot) { virtRotZ = getRadsFromDegrees(rot); }
+	void setVirtPosX(float pos) { virtPosX = pos * 10; }
+	void setVirtPosY(float pos) { virtPosY = pos * 10; }
+	void setVirtPosZ(float pos) { virtPosZ = pos * 10; }
+
+	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
 
 };
 

@@ -68,21 +68,10 @@ private:
 	FTIRMemMap *pMemData;
 	HANDLE hFTIRMutex;
 
-	///** member varables for saving the head pose **/
-	//float headPosX;
-	//float headPosY;
-	//float headPosZ;
-	//
-	//float headRotX;
-	//float headRotY;
-	//float headRotZ;
-	//bool confid;
-
-
 	// Private properties
 	QString ProgramName;
 	QLibrary FTIRClientLib;
-	float scale2AnalogLimits( float x, float min_x, float max_x );
+	static float scale2AnalogLimits( float x, float min_x, float max_x );
 
 public:
 
@@ -95,21 +84,13 @@ public:
 	static float virtRotY;
 	static float virtRotZ;
 
-	//void setHeadPosX(float x) { headPosX = x; }
-	//void setHeadPosY(float y) { headPosY = y; }
-	//void setHeadPosZ(float z) { headPosZ = z; }
+	static void setVirtRotX(float rot) { virtRotX = scale2AnalogLimits (rot, -180.0f, 180.0f); }
+	static void setVirtRotY(float rot) { virtRotY = scale2AnalogLimits (rot, -180.0f, 180.0f); }
+	static void setVirtRotZ(float rot) { virtRotZ = scale2AnalogLimits (rot, -180.0f, 180.0f); }
 
-	//void setHeadRotX(float x) { headRotX = x; }
-	//void setHeadRotY(float y) { headRotY = y; }
-	//void setHeadRotZ(float z) { headRotZ = z; }
-
-	void setVirtRotX(float rot) { virtRotX = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	void setVirtRotY(float rot) { virtRotY = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	void setVirtRotZ(float rot) { virtRotZ = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-
-	void setVirtPosX(float pos) { virtPosX = scale2AnalogLimits (pos, -50.0f, 50.0f); }
-	void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos, -50.0f, 50.0f); }
-	void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos, -50.0f, 50.0f); }
+	static void setVirtPosX(float pos) { virtPosX = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
+	static void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
+	static void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
 
 };
 

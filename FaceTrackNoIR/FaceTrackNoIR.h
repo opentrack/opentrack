@@ -117,14 +117,6 @@ private:
 		void showKeyboardShortcuts();
 		void showCurveConfiguration();
 
-		// sensibility sliders
-		void setSensYaw( int sens );
-		void setSensPitch( int sens );
-		void setSensRoll( int sens );
-		void setSensX( int sens );
-		void setSensY( int sens );
-		void setSensZ( int sens );
-
 		// invert checkboxes
 		void setInvertYaw( int invert );
 		void setInvertPitch( int invert );
@@ -142,8 +134,6 @@ private:
 		void setRedX( int redh );
 		void setRedY( int redh );
 		void setRedZ( int redh );
-
-		void setNeutralZone( int angle );
 
 		//smoothing slider
 		void setSmoothing( int smooth );

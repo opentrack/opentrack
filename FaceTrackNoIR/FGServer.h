@@ -86,9 +86,9 @@ public:
 	void setVirtRotX(float rot) { virtRotX = rot; }
 	void setVirtRotY(float rot) { virtRotY = rot; }
 	void setVirtRotZ(float rot) { virtRotZ = rot; }
-	void setVirtPosX(float pos) { virtPosX = pos; }
-	void setVirtPosY(float pos) { virtPosY = pos; }
-	void setVirtPosZ(float pos) { virtPosZ = pos; }
+	void setVirtPosX(float pos) { virtPosX = pos / 100.0f; }
+	void setVirtPosY(float pos) { virtPosY = pos / 100.0f; }
+	void setVirtPosZ(float pos) { virtPosZ = pos / 100.0f; }
 
 };
 
