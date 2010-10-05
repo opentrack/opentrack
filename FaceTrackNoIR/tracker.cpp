@@ -48,7 +48,6 @@ bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
 bool Tracker::useFilter = false;
 
-float Tracker::rotNeutralZone = 0.087f;					// Neutral Zone for rotations (rad)
 long Tracker::prevHeadPoseTime = 0;
 THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw;
@@ -231,15 +230,14 @@ void Tracker::run() {
 	bool lastBackKey = false;						// Remember state, to detect rising edge
 	bool lastEqualsKey = false;
 
+	float rawrotX, rawrotY, rawrotZ;				// Locals...
+	float rawposX, rawposY, rawposZ;
+	float rotX, rotY, rotZ;							// Locals...
+	float posX, posY, posZ;
+
 	SYSTEMTIME now;
 	long newHeadPoseTime;
 	float dT;
-
-	//QFile data("output.txt");
-	//if (data.open(QFile::WriteOnly | QFile::Truncate)) {
-	//	QTextStream out(&data);
-	//	out << "Polling results";
-	//}
 
 	//
 	// Setup the DirectInput for keyboard strokes
@@ -364,45 +362,41 @@ void Tracker::run() {
 			// to substract that later...
 			//
 			if(Tracker::set_initial == false) {
-				Tracker::Z.initial_headPos = Tracker::getHeadPosZ();
+				Tracker::X.initial_headPos = Tracker::X.headPos;
+				Tracker::Y.initial_headPos = Tracker::Y.headPos;
+				Tracker::Z.initial_headPos = Tracker::Z.headPos;
 				MessageBeep (MB_ICONASTERISK);
 				Tracker::set_initial = true;
 			}
 
-			headXLine->setText(QString("%1").arg(Tracker::getHeadPosX()*100, 0, 'f', 1));
-			headYLine->setText(QString("%1").arg(Tracker::getHeadPosY()*100, 0, 'f', 1));
-			headZLine->setText(QString("%1").arg(Tracker::getHeadPosZ()*100, 0, 'f', 1));
+			rawrotX = Tracker::Pitch.headPos;									// degrees
+			rawrotY = Tracker::Yaw.headPos;
+			rawrotZ = Tracker::Roll.headPos;
+			rawposX = Tracker::X.headPos;										// centimeters
+			rawposY = Tracker::Y.headPos - Tracker::Y.initial_headPos;
+			rawposZ = Tracker::Z.headPos - Tracker::Z.initial_headPos;
 
-			headRotXLine->setText(QString("%1").arg(Tracker::getHeadRotX()*100, 0, 'f', 1));
-			headRotYLine->setText(QString("%1").arg(Tracker::getHeadRotY()*100, 0, 'f', 1));
-			headRotZLine->setText(QString("%1").arg(Tracker::getHeadRotZ()*100, 0, 'f', 1));
-////			listener.setTrackedPosition(QPoint(Tracker::getHeadPosX()-50, Tracker::getHeadPosY()-37.5));
+			headRotXLine->setText(QString("%1").arg( rawrotX, 0, 'f', 1));		// show degrees
+			headRotYLine->setText(QString("%1").arg( rawrotY, 0, 'f', 1));
+			headRotZLine->setText(QString("%1").arg( rawrotZ, 0, 'f', 1));
+
+			headXLine->setText(QString("%1").arg( rawposX, 0, 'f', 1));			// show centimeters
+			headYLine->setText(QString("%1").arg( rawposY, 0, 'f', 1));
+			headZLine->setText(QString("%1").arg( rawposZ, 0, 'f', 1));
+
 
 			//
 			// Copy the Raw values directly to Free-track server
 			//
 			if (server_FT) {
-				server_FT->setHeadRotX( Tracker::Pitch.headPos );			// rads
-				server_FT->setHeadRotY( Tracker::Yaw.headPos );
-				server_FT->setHeadRotZ( Tracker::Roll.headPos);
+				//server_FT->setHeadRotX( rawrotX );								// degrees
+				//server_FT->setHeadRotY( rawrotY );
+				//server_FT->setHeadRotZ( rawrotZ );
 
-				server_FT->setHeadPosX( Tracker::X.headPos * 1000.0f);		// From m to mm
-				server_FT->setHeadPosY( Tracker::Y.headPos * 1000.0f);
-				server_FT->setHeadPosZ( ( Tracker::Z.headPos - Tracker::Z.initial_headPos ) * 1000.0f);
+				//server_FT->setHeadPosX( rawposX );								// meters
+				//server_FT->setHeadPosY( rawposY );
+				//server_FT->setHeadPosZ( rawposZ );
 			}
-
-			//
-			// Copy the Raw values directly to Fake-trackIR server
-			//
-			//if (server_FTIR) {
-			//	server_FTIR->setHeadRotX( Tracker::Pitch.headPos );			// rads
-			//	server_FTIR->setHeadRotY( Tracker::Yaw.headPos );
-			//	server_FTIR->setHeadRotZ( Tracker::Roll.headPos);
-
-			//	server_FTIR->setHeadPosX( Tracker::X.headPos * 1000.0f);		// From m to mm
-			//	server_FTIR->setHeadPosY( Tracker::Y.headPos * 1000.0f);
-			//	server_FTIR->setHeadPosZ( ( Tracker::Z.headPos - Tracker::Z.initial_headPos ) * 1000.0f);
-			//}
 		}
 
 		//
@@ -413,99 +407,147 @@ void Tracker::run() {
 			Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
 			Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
 			X.offset_headPos = getSmoothFromList( &X.rawList );
-			Y.offset_headPos = getSmoothFromList( &Y.rawList );
 
 			//
 			// Reset the initial distance to the camera
 			//
+			Y.offset_headPos = getSmoothFromList( &Y.rawList ) - Tracker::Y.initial_headPos;
 			Z.offset_headPos = getSmoothFromList( &Z.rawList ) - Tracker::Z.initial_headPos;
 			Tracker::do_center = false;
 		}
 
 		if (Tracker::do_tracking && Tracker::confid) {
+
+//////		Use this for some debug-output to file...
+////		QFile data("output.txt");
+////		if (data.open(QFile::WriteOnly | QFile::Append)) {
+////			QTextStream out(&data);
+////				out << Pitch.NeutralZone << " " << getDegreesFromRads(rotX) << " " << getOutputFromCurve(&Pitch.curve, getDegreesFromRads(rotX), Pitch.NeutralZone, Pitch.MaxInput)  << '\n';
+//////			out << dT << " " << getSmoothFromList( &Pitch.rawList ) << " " << Pitch.offset_headPos << '\n';
+////		}
+
 			// Pitch
 			if (Tracker::useFilter) {
-				Pitch.newPos = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos, 
+				rotX = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos, 
 											   &Pitch.prevPos, dT, Tracker::Pitch.red );
 			}
 			else {
-				Pitch.newPos = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+				rotX = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
 			}
-
-		QFile data("output.txt");
-		if (data.open(QFile::WriteOnly | QFile::Append)) {
-			QTextStream out(&data);
-			out << "Input = " << getDegreesFromRads(Pitch.newPos) << " Output = " << getOutputFromCurve(&Pitch.curve, getDegreesFromRads(Pitch.newPos))  << '\n';
-		}
+			rotX = Pitch.invert * getOutputFromCurve(&Pitch.curve, rotX, Pitch.NeutralZone, Pitch.MaxInput);
 
 			// Yaw
 			if (Tracker::useFilter) {
-				Yaw.newPos = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
+				rotY = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
 											   &Yaw.prevPos, dT, Tracker::Yaw.red );
 			}
 			else {
-				Yaw.newPos = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
+				rotY = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
 			}
+			rotY = Yaw.invert * getOutputFromCurve(&Yaw.curve, rotY, Yaw.NeutralZone, Yaw.MaxInput);
 
 			// Roll
 			if (Tracker::useFilter) {
-				Roll.newPos = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos, 
+				rotZ = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos, 
 											   &Roll.prevPos, dT, Tracker::Roll.red );
 			}
 			else {
-				Roll.newPos = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
+				rotZ = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
 			}
+			rotZ = Roll.invert * getOutputFromCurve(&Roll.curve, rotZ, Roll.NeutralZone, Roll.MaxInput);
+
+			// X
+			if (Tracker::useFilter) {
+				posX = lowPassFilter ( getSmoothFromList( &X.rawList ) - X.offset_headPos, 
+											   &X.prevPos, dT, Tracker::X.red );
+			}
+			else {
+				posX = getSmoothFromList( &X.rawList ) - X.offset_headPos;
+			}
+			posX = X.invert * getOutputFromCurve(&X.curve, posX, X.NeutralZone, X.MaxInput);
+
+			// Y
+			if (Tracker::useFilter) {
+				posY = lowPassFilter ( getSmoothFromList( &Y.rawList ) - Y.offset_headPos - Y.initial_headPos, 
+											   &Y.prevPos, dT, Tracker::Y.red );
+			}
+			else {
+				posY = getSmoothFromList( &Y.rawList ) - Y.offset_headPos - Y.initial_headPos;
+			}
+			posY = Y.invert * getOutputFromCurve(&Y.curve, posY, Y.NeutralZone, Y.MaxInput);
+
+			// Z
+			if (Tracker::useFilter) {
+				posZ = lowPassFilter ( getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Z.initial_headPos, 
+											   &Z.prevPos, dT, Tracker::Z.red );
+			}
+			else {
+				posZ = getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Z.initial_headPos;
+			}
+			posZ = Z.invert * getOutputFromCurve(&Z.curve, posZ, Z.NeutralZone, Z.MaxInput);
+
 
 			//
 			// Also send the Virtual Pose to selected Protocol-Server
 			//
 			// Free-track
 			if (server_FT) {
-				server_FT->setVirtRotX ( Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos );
-				server_FT->setVirtRotY ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos );
-				server_FT->setVirtRotZ ( Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos );
+				server_FT->setVirtRotX ( rotX );				// degrees
+				server_FT->setVirtRotY ( rotY );
+				server_FT->setVirtRotZ ( rotZ );
 
-				server_FT->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
-				server_FT->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
-				server_FT->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
+				server_FT->setVirtPosX ( posX );				// centimeters
+				server_FT->setVirtPosY ( posY );
+				server_FT->setVirtPosZ ( posZ );
+
+				server_FT->setHeadRotX( rotX );					// degrees
+				server_FT->setHeadRotY( rotY );
+				server_FT->setHeadRotZ( rotZ );
+
+				server_FT->setHeadPosX( posX );					// centimeters
+				server_FT->setHeadPosY( posY );
+				server_FT->setHeadPosZ( posZ );
+
 			}
 
 			// FlightGear
 			if (server_FG) {
-				server_FG->setVirtRotX ( getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * (getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos) ) );
-				server_FG->setVirtRotY ( getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   * (getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos) ) );
-				server_FG->setVirtRotZ ( getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * (getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos) ) );
-				server_FG->setVirtPosX ( Tracker::X.invert * Tracker::X.sens * (getSmoothFromList( &X.rawList ) - X.offset_headPos) );
-				server_FG->setVirtPosY ( Tracker::Y.invert * Tracker::Y.sens * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) );
-				server_FG->setVirtPosZ ( Tracker::Z.invert * Tracker::Z.sens * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) );
+				server_FG->setVirtRotX ( rotX );				// degrees
+				server_FG->setVirtRotY ( rotY );
+				server_FG->setVirtRotZ ( rotZ );
+				server_FG->setVirtPosX ( posX );				// centimeters
+				server_FG->setVirtPosY ( posY );
+				server_FG->setVirtPosZ ( posZ );
 			}
 
 			// PPJoy virtual joystick
 			if (server_PPJoy) {
-				server_PPJoy->setVirtRotX ( getDegreesFromRads (Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos ) );
-				server_PPJoy->setVirtRotY ( getDegreesFromRads (Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos ) );
-				server_PPJoy->setVirtRotZ ( getDegreesFromRads (Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos ) );
+				server_PPJoy->setVirtRotX ( rotX );				// degrees
+				server_PPJoy->setVirtRotY ( rotY );
+				server_PPJoy->setVirtRotZ ( rotZ );
 
-				server_PPJoy->setVirtPosX ( ( Tracker::X.invert   * Tracker::X.sens     * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 100.0f);
-				server_PPJoy->setVirtPosY ( ( Tracker::Y.invert   * Tracker::Y.sens     * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 100.0f );
-				server_PPJoy->setVirtPosZ ( ( Tracker::Z.invert   * Tracker::Z.sens     * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 100.0f );
+				server_PPJoy->setVirtPosX ( posX );				// centimeters
+				server_PPJoy->setVirtPosY ( posY );
+				server_PPJoy->setVirtPosZ ( posZ );
 			}
 
 			// Fake-trackIR
 			if (server_FTIR) {
 
-				float rotX = getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * Pitch.newPos );
-				float rotY = getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  Yaw.newPos );
-				float rotZ = getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * Roll.newPos );
-//				qDebug() << "Tracker::run() says: virtRotX =" << rotX << " virtRotY =" << rotY;
+				// For some reason (not yet understood) the values only came through after being copied to locals...
+				// Trying again?!
+				//float rotX = getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * rotX );
+				//float rotY = getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  rotY );
+				//float rotZ = getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * rotZ );
+				qDebug() << "Tracker::run() says: virtRotX =" << rotX << " virtRotY =" << rotY;
 
-				server_FTIR->setVirtRotX ( rotX );
+				server_FTIR->setVirtRotX ( rotX );				// degrees
 				server_FTIR->setVirtRotY ( rotY );
 				server_FTIR->setVirtRotZ ( rotZ );
 
-				server_FTIR->setVirtPosX ( ( Tracker::X.invert * Tracker::X.sens * (getSmoothFromList( &X.rawList ) - X.offset_headPos) ) * 1000.0f);
-				server_FTIR->setVirtPosY ( ( Tracker::Y.invert * Tracker::Y.sens * (getSmoothFromList( &Y.rawList ) - Y.offset_headPos) ) * 1000.0f );
-				server_FTIR->setVirtPosZ ( ( Tracker::Z.invert * Tracker::Z.sens * (getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Tracker::Z.initial_headPos) ) * 1000.0f );
+				server_FTIR->setVirtPosX ( posX );				// centimeters
+				server_FTIR->setVirtPosY ( posY );
+				server_FTIR->setVirtPosZ ( posZ );
 			}
 
 		}
@@ -568,52 +610,34 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 {
 	//
 	// Perform actions, when valid data is received from faceAPI.
+	// Write the Raw headpose-data and add it to the RawList, for processing...
 	//
 	if( head_pose.confidence > 0 ) {
 		Tracker::confid = true;
-		Tracker::setHeadPosX(head_pose.head_pos.x);
-		Tracker::setHeadPosY(head_pose.head_pos.y);
-		Tracker::setHeadPosZ(head_pose.head_pos.z);	
-
-		Tracker::setHeadRotX(head_pose.head_rot.x_rads);
-		Tracker::setHeadRotY(head_pose.head_rot.y_rads);
-		Tracker::setHeadRotZ(head_pose.head_rot.z_rads);	
 
 		// Pitch
-		Pitch.newPos = getCorrectedNewRaw ( Tracker::Pitch.headPos, rotNeutralZone );
-		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Pitch.newPos );
+		Tracker::Pitch.headPos = head_pose.head_rot.x_rads * 57.295781f;			// degrees
+		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Tracker::Pitch.headPos );
 
 		// Yaw
-		Yaw.newPos = getCorrectedNewRaw ( Tracker::Yaw.headPos, rotNeutralZone );
-		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Yaw.newPos );
+		Tracker::Yaw.headPos = head_pose.head_rot.y_rads * 57.295781f;				// degrees
+		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Tracker::Yaw.headPos );
 
 		// Roll
-		Roll.newPos = getCorrectedNewRaw ( Tracker::Roll.headPos, rotNeutralZone );
-		addRaw2List ( &Roll.rawList, Roll.maxItems, Roll.newPos );
-
-		//
-		// Log something
-		//
-		//rate = rateLimiter ( Tracker::Pitch.headPos, &Tracker::Pitch.prevRawPos, dT, 1.0f );
-		//QFile data("output.txt");
-		//if (data.open(QFile::WriteOnly | QFile::Append)) {
-		//	QTextStream out(&data);
-		//	out << "Limited Raw= " << rate << " dT= " << dT << " Raw= " << Tracker::Pitch.headPos << " Filtered= " << Pitch.newPos << '\n';
-		//}
-
-
+		Tracker::Roll.headPos = head_pose.head_rot.z_rads * 57.295781f;				// degrees
+		addRaw2List ( &Roll.rawList, Roll.maxItems, Tracker::Roll.headPos );
 
 		// X-position
-		X.newPos = Tracker::X.headPos;
-		addRaw2List ( &X.rawList, X.maxItems, X.newPos );
+		Tracker::X.headPos = head_pose.head_pos.x * 100.0f;							// centimeters
+		addRaw2List ( &X.rawList, X.maxItems, Tracker::X.headPos );
 
 		// Y-position
-		Y.newPos = Tracker::Y.headPos;
-		addRaw2List ( &Y.rawList, Y.maxItems, Y.newPos );
+		Tracker::Y.headPos = head_pose.head_pos.y * 100.0f;							// centimeters
+		addRaw2List ( &Y.rawList, Y.maxItems, Tracker::Y.headPos );
 
 		// Z-position (distance to camera, absolute!)
-		Z.newPos = Tracker::Z.headPos;
-		addRaw2List ( &Z.rawList, Z.maxItems, Z.newPos );
+		Tracker::Z.headPos = head_pose.head_pos.z * 100.0f;							// centimeters
+		addRaw2List ( &Z.rawList, Z.maxItems, Tracker::Z.headPos );
 
 	} else {
 		Tracker::confid = false;
@@ -773,8 +797,25 @@ float clamped_value = 0.0f;
 //
 // Get the output from the curve.
 //
-float Tracker::getOutputFromCurve ( QPainterPath *curve, float input ) {
-	return curve->pointAtPercent(input/100.0f).x();
+float Tracker::getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput ) {
+float sign;
+
+	sign = 1.0f;
+	if (input < 0.0f) {
+		sign = -1.0f;
+	}
+
+	//
+	// Always return 0 inside the NeutralZone
+	// Always return max. when input larger than expected
+	//
+	if (fabs(input) < neutralzone) return 0.0f;
+	if (fabs(input) > maxinput) return sign * curve->pointAtPercent(1.0).x();
+
+	//
+	// Return the value, derived from the Bezier-curve
+	//
+	return sign * curve->pointAtPercent((fabs(input) - neutralzone)/maxinput).x();
 }
 
 //
@@ -813,32 +854,38 @@ QPointF point1, point2, point3, point4;
 	iniFile.beginGroup ( "Curves" );
 	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
 	Yaw.curve.moveTo( QPointF(0,0) );
-	Yaw.curve.lineTo(point1);
+	Yaw.NeutralZone = point1.y();							// Get the Neutral Zone
+	Yaw.MaxInput = point4.y();								// Get Maximum Input
     Yaw.curve.cubicTo(point2, point3, point4);
 
 	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
 	Pitch.curve.moveTo( QPointF(0,0) );
-	Pitch.curve.lineTo(point1);
-    Pitch.curve.cubicTo(point2, point3, point4);
+	Pitch.NeutralZone = point1.y();							// Get the Neutral Zone
+	Pitch.MaxInput = point4.y();							// Get Maximum Input
+	Pitch.curve.cubicTo(point2, point3, point4);
 
 	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
 	Roll.curve.moveTo( QPointF(0,0) );
-	Roll.curve.lineTo(point1);
+	Roll.NeutralZone = point1.y();							// Get the Neutral Zone
+	Roll.MaxInput = point4.y();								// Get Maximum Input
     Roll.curve.cubicTo(point2, point3, point4);
 
 	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
 	X.curve.moveTo( QPointF(0,0) );
-	X.curve.lineTo(point1);
+	X.NeutralZone = point1.y();								// Get the Neutral Zone
+	X.MaxInput = point4.y();								// Get Maximum Input
     X.curve.cubicTo(point2, point3, point4);
 
 	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
 	Y.curve.moveTo( QPointF(0,0) );
-	Y.curve.lineTo(point1);
+	Y.NeutralZone = point1.y();								// Get the Neutral Zone
+	Y.MaxInput = point4.y();								// Get Maximum Input
     Y.curve.cubicTo(point2, point3, point4);
 
 	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
 	Z.curve.moveTo( QPointF(0,0) );
-	Z.curve.lineTo(point1);
+	Z.NeutralZone = point1.y();								// Get the Neutral Zone
+	Z.MaxInput = point4.y();								// Get Maximum Input
     Z.curve.cubicTo(point2, point3, point4);
 
 	iniFile.endGroup ();

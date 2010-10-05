@@ -84,14 +84,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
 	connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
 
-	// Connect sliders for sensitivity
-	connect(ui.sensYaw, SIGNAL(valueChanged(int)), this, SLOT(setSensYaw(int)));
-	connect(ui.sensRoll, SIGNAL(valueChanged(int)), this, SLOT(setSensRoll(int)));
-	connect(ui.sensPitch, SIGNAL(valueChanged(int)), this, SLOT(setSensPitch(int)));
-	connect(ui.sensX, SIGNAL(valueChanged(int)), this, SLOT(setSensX(int)));
-	connect(ui.sensY, SIGNAL(valueChanged(int)), this, SLOT(setSensY(int)));
-	connect(ui.sensZ, SIGNAL(valueChanged(int)), this, SLOT(setSensZ(int)));
-
+	// Connect checkboxes
 	connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
 	connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
 	connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(setInvertPitch(int)));
@@ -108,8 +101,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.redX, SIGNAL(valueChanged(int)), this, SLOT(setRedX(int)));
 	connect(ui.redY, SIGNAL(valueChanged(int)), this, SLOT(setRedY(int)));
 	connect(ui.redZ, SIGNAL(valueChanged(int)), this, SLOT(setRedZ(int)));
-
-	connect(ui.slideNeutralZone, SIGNAL(valueChanged(int)), this, SLOT(setNeutralZone(int)));
 
 	// Connect slider for smoothing
 	connect(ui.slideSmoothing, SIGNAL(valueChanged(int)), this, SLOT(setSmoothing(int)));
@@ -288,13 +279,6 @@ void FaceTrackNoIR::save() {
 
 	iniFile.beginGroup ( "Tracking" );
 	iniFile.setValue ( "Smooth", ui.slideSmoothing->value() );
-	iniFile.setValue ( "NeutralZone", ui.slideNeutralZone->value() );
-	iniFile.setValue ( "sensYaw", ui.sensYaw->value() );
-	iniFile.setValue ( "sensPitch", ui.sensPitch->value() );
-	iniFile.setValue ( "sensRoll", ui.sensRoll->value() );
-	iniFile.setValue ( "sensX", ui.sensX->value() );
-	iniFile.setValue ( "sensY", ui.sensY->value() );
-	iniFile.setValue ( "sensZ", ui.sensZ->value() );
 	iniFile.setValue ( "invertYaw", ui.chkInvertYaw->isChecked() );
 	iniFile.setValue ( "invertPitch", ui.chkInvertPitch->isChecked() );
 	iniFile.setValue ( "invertRoll", ui.chkInvertRoll->isChecked() );
@@ -351,13 +335,6 @@ void FaceTrackNoIR::loadSettings() {
 
 	iniFile.beginGroup ( "Tracking" );
 	ui.slideSmoothing->setValue (iniFile.value ( "Smooth", 10 ).toInt());
-	ui.slideNeutralZone->setValue (iniFile.value ( "NeutralZone", 5 ).toInt());
-	ui.sensYaw->setValue (iniFile.value ( "sensYaw", 100 ).toInt());
-	ui.sensPitch->setValue (iniFile.value ( "sensPitch", 100 ).toInt());
-	ui.sensRoll->setValue (iniFile.value ( "sensRoll", 100 ).toInt());
-	ui.sensX->setValue (iniFile.value ( "sensX", 100 ).toInt());
-	ui.sensY->setValue (iniFile.value ( "sensY", 100 ).toInt());
-	ui.sensZ->setValue (iniFile.value ( "sensZ", 100 ).toInt());
 	ui.chkInvertYaw->setChecked (iniFile.value ( "invertYaw", 0 ).toBool());
 	ui.chkInvertPitch->setChecked (iniFile.value ( "invertPitch", 0 ).toBool());
 	ui.chkInvertRoll->setChecked (iniFile.value ( "invertRoll", 0 ).toBool());
@@ -426,15 +403,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	tracker->setup( ui.headPoseWidget , this);
 	tracker->setSmoothing ( ui.slideSmoothing->value() );
-	tracker->setNeutralZone ( ui.slideNeutralZone->value() );
 	tracker->setUseFilter (ui.chkUseEWMA->isChecked() );
-
-	tracker->setSensYaw (ui.sensYaw->value() );
-	tracker->setSensPitch (ui.sensPitch->value() );
-	tracker->setSensRoll (ui.sensRoll->value() );
-	tracker->setSensX (ui.sensX->value() );
-	tracker->setSensY (ui.sensY->value() );
-	tracker->setSensZ (ui.sensZ->value() );
 
 	tracker->setInvertYaw (ui.chkInvertYaw->isChecked() );
 	tracker->setInvertPitch (ui.chkInvertPitch->isChecked() );
@@ -514,42 +483,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnShowServerControls->setEnabled ( true );
 }
 
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensYaw( int sens ) {
-	Tracker::setSensYaw ( sens );
-	settingsDirty = true;
-}
-
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensPitch( int sens ) {
-	Tracker::setSensPitch ( sens );
-	settingsDirty = true;
-}
-
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensRoll( int sens ) {
-	Tracker::setSensRoll ( sens );
-	settingsDirty = true;
-}
-
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensX( int sens ) {
-	Tracker::setSensX ( sens );
-	settingsDirty = true;
-}
-
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensY( int sens ) {
-	Tracker::setSensY ( sens );
-	settingsDirty = true;
-}
-
-/** set the sensibility from the slider **/
-void FaceTrackNoIR::setSensZ( int sens ) {
-	Tracker::setSensZ ( sens );
-	settingsDirty = true;
-}
-
 /** set the invert from the checkbox **/
 void FaceTrackNoIR::setInvertYaw( int invert ) {
 	Tracker::setInvertYaw ( (invert != 0)?true:false );
@@ -625,12 +558,6 @@ void FaceTrackNoIR::setRedY( int redh ) {
 /** set the redhold from the slider **/
 void FaceTrackNoIR::setRedZ( int redh ) {
 	Tracker::setRedZ ( redh );
-	settingsDirty = true;
-}
-
-/** set the Neutral Zone for rotations from the slider **/
-void FaceTrackNoIR::setNeutralZone( int angle ) {
-	Tracker::setNeutralZone ( angle );
 	settingsDirty = true;
 }
 

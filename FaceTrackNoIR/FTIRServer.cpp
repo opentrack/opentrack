@@ -97,6 +97,13 @@ void FTIRServer::run() {
 //			qDebug() << "FTIRServer says: virtRotX =" << virtRotX << " virtRotY =" << virtRotY;
 			setposition (virtPosX, virtPosY, virtPosZ, virtRotZ, virtRotX, virtRotY );
 
+		////		Use this for some debug-output to file...
+		//QFile data("outputFTIR.txt");
+		//if (data.open(QFile::WriteOnly | QFile::Append)) {
+		//	QTextStream out(&data);
+		//		out << virtPosX << " " << virtPosY << " " << virtPosZ << virtRotX << " " << virtRotY << " " << virtRotZ  << '\n';
+		//}
+
 			//qDebug() << "FTIRServer says: pMemData.xRot =" << pMemData->data.xRot << " yRot =" << pMemData->data.yRot;
 			ReleaseMutex(hFTIRMutex);
 		}

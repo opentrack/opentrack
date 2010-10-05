@@ -74,15 +74,15 @@ struct THeadPoseDOF {
 	float headPos;					// Current position (from faceTracker, radials or meters)
 	float initial_headPos;			// Position on startup (first valid value)
 	float offset_headPos;			// Offset for centering
-	float sens;						// Sensitivity (multiplication factor)
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
 	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
 	int maxItems;					// Maximum number of elements is rawList
-	float newPos;					// New Position (used locally)
 	float prevPos;					// Previous Position
 	float prevRawPos;				// Previous Raw Position
 	QPainterPath curve;				// Bezier curve to translate input -> output
+	int NeutralZone;				// Neutral zone
+	int MaxInput;					// Maximum raw input
 };
 
 //
@@ -136,7 +136,6 @@ private:
 	static bool do_center;							// Center head-position, using EQUALS key on keyboard
 
 	static bool useFilter;
-	static float rotNeutralZone;					// Neutral Zone for rotations (rad).
 	static long prevHeadPoseTime;					// Time from previous sample
 	
 	/** QT objects **/
@@ -172,32 +171,24 @@ public:
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
 	QSharedPointer<EngineBase> getEngine() { return _engine; };
-//	smEngineHandle getEngineHandle() { return _engine->handle(); };
 
-	static float getHeadPosX() {return X.headPos;}
-	static float getHeadPosY() {return Y.headPos;}
-	static float getHeadPosZ() {return Z.headPos;}
+	//static float getHeadPosX() {return X.headPos;}
+	//static float getHeadPosY() {return Y.headPos;}
+	//static float getHeadPosZ() {return Z.headPos;}
 
-	static void setHeadPosX(float x) { X.headPos = x; }
-	static void setHeadPosY(float y) { Y.headPos = y; }
-	static void setHeadPosZ(float z) { Z.headPos = z; }
+	//static void setHeadPosX(float x) { X.headPos = x; }
+	//static void setHeadPosY(float y) { Y.headPos = y; }
+	//static void setHeadPosZ(float z) { Z.headPos = z; }
 
-	static float getHeadRotX() {return Pitch.headPos;}
-	static float getHeadRotY() {return Yaw.headPos;}
-	static float getHeadRotZ() {return Roll.headPos;}
+	//static float getHeadRotX() {return Pitch.headPos;}
+	//static float getHeadRotY() {return Yaw.headPos;}
+	//static float getHeadRotZ() {return Roll.headPos;}
 
-	static void setHeadRotX(float x) { Pitch.headPos = x; }
-	static void setHeadRotY(float y) { Yaw.headPos = y; }
-	static void setHeadRotZ(float z) { Roll.headPos = z; }
+	//static void setHeadRotX(float x) { Pitch.headPos = x; }
+	//static void setHeadRotY(float y) { Yaw.headPos = y; }
+	//static void setHeadRotZ(float z) { Roll.headPos = z; }
 
 	static bool getConfid() { return confid; }
-
-	static void setSensPitch(int x) { Pitch.sens = x/100.0f; }
-	static void setSensYaw(int x) { Yaw.sens = x/100.0f; }
-	static void setSensRoll(int x) { Roll.sens = x/100.0f; }
-	static void setSensX(int x) { X.sens = x/100.0f; }
-	static void setSensY(int x) { Y.sens = x/100.0f; }
-	static void setSensZ(int x) { Z.sens = x/100.0f; }
 
 	static void setInvertPitch(bool invert) { Pitch.invert = invert?-1.0f:+1.0f; }
 	static void setInvertYaw(bool invert) { Yaw.invert = invert?-1.0f:+1.0f; }
@@ -215,11 +206,10 @@ public:
 	static void setRedY(int x) { Y.red = x/100.0f; }
 	static void setRedZ(int x) { Z.red = x/100.0f; }
 
-	static void setNeutralZone(int x) { rotNeutralZone = (x * 2.0f * 3.14159)/360.0f; }
-
-	float getSmoothFromList ( QList<float> *rawList );
-	float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
-	float getOutputFromCurve ( QPainterPath *curve, float input );
+	static float getSmoothFromList ( QList<float> *rawList );
+	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
+	static float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
+	static float getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput );
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 
