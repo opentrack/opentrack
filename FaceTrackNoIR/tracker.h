@@ -40,6 +40,7 @@
 #include "FGServer.h"				// FlightGear-server
 #include "PPJoyServer.h"			// Virtual Joystick
 #include "FTIRServer.h"				// FakeTIR-server
+#include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -62,7 +63,8 @@ enum FTNoIR_Client {
 	FLIGHTGEAR = 1,
 	FTNOIR = 2,
 	PPJOY = 3,
-	TRACKIR = 4
+	TRACKIR = 4,
+	SIMCONNECT = 5
 };
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
@@ -154,6 +156,7 @@ private:
 	FGServer *server_FG;							// FlightGear Server
 	PPJoyServer *server_PPJoy;						// PPJoy Server
 	FTIRServer *server_FTIR;						// Fake TIR Server
+	SCServer *server_SC;							// SimConnect Server
 
 protected:
 	// qthread override run method 
@@ -171,22 +174,6 @@ public:
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
 	QSharedPointer<EngineBase> getEngine() { return _engine; };
-
-	//static float getHeadPosX() {return X.headPos;}
-	//static float getHeadPosY() {return Y.headPos;}
-	//static float getHeadPosZ() {return Z.headPos;}
-
-	//static void setHeadPosX(float x) { X.headPos = x; }
-	//static void setHeadPosY(float y) { Y.headPos = y; }
-	//static void setHeadPosZ(float z) { Z.headPos = z; }
-
-	//static float getHeadRotX() {return Pitch.headPos;}
-	//static float getHeadRotY() {return Yaw.headPos;}
-	//static float getHeadRotZ() {return Roll.headPos;}
-
-	//static void setHeadRotX(float x) { Pitch.headPos = x; }
-	//static void setHeadRotY(float y) { Yaw.headPos = y; }
-	//static void setHeadRotZ(float z) { Roll.headPos = z; }
 
 	static bool getConfid() { return confid; }
 

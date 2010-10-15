@@ -23,6 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20101011 - WVR: Added SimConnect server.
+		20101007 - WVR: Created 6DOF-curves and drastically changed the tracker for that.
+						Also eliminated a 'glitch' in the process.
 		20100607 - WVR: Re-installed Rotation Neutral Zone and improved reaction
 						after 'start/stop'. MessageBeep when confidence is back...
 		20100604 - WVR: Created structure for DOF-data and changed timing of
@@ -98,6 +101,7 @@ Tracker::Tracker( int clientID ) {
 	server_FG = 0;
 	server_PPJoy = 0;
 	server_FTIR = 0;
+	server_SC = 0;
 	switch (selectedClient) {
 		case FREE_TRACK:
 			server_FT = new FTServer;					// Create Free-track protocol-server
@@ -116,6 +120,10 @@ Tracker::Tracker( int clientID ) {
 
 		case TRACKIR:
 			server_FTIR = new FTIRServer;				// Create Fake-TIR protocol-server
+			break;
+
+		case SIMCONNECT:
+			server_SC = new SCServer;					// Create SimConnect protocol-server
 			break;
 
 		default:
@@ -141,6 +149,9 @@ Tracker::~Tracker() {
 	}
 	if (server_FTIR) {
 		server_FTIR->deleteLater();
+	}
+	if (server_SC) {
+		server_SC->deleteLater();
 	}
 
 	// Trigger thread to stop
@@ -216,6 +227,23 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 		DLL_Ok = server_FTIR->FTIRCreateMapping( mainApp->winId() );
 
 		server_FTIR->start();								// Start the thread
+	}
+	//
+	// Check if the SimConnect DLL is available, load it if so.
+	//
+	if (server_SC) {
+		DLL_Ok = server_SC->SCCheckClientDLL();
+
+		if (DLL_Ok) {
+			server_SC->start();									// Start the thread
+		}
+		else {
+			QMessageBox::information(0, "FaceTrackNoIR error", "This SimConnect version is not installed!");
+		}
+		////else {
+		////	server_SC->~SCServer();
+		////	server_SC = 0;
+		////}
 	}
 
 }
@@ -458,11 +486,11 @@ void Tracker::run() {
 
 			// X
 			if (Tracker::useFilter) {
-				posX = lowPassFilter ( getSmoothFromList( &X.rawList ) - X.offset_headPos, 
+				posX = lowPassFilter ( getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos, 
 											   &X.prevPos, dT, Tracker::X.red );
 			}
 			else {
-				posX = getSmoothFromList( &X.rawList ) - X.offset_headPos;
+				posX = getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos;
 			}
 			posX = X.invert * getOutputFromCurve(&X.curve, posX, X.NeutralZone, X.MaxInput);
 
@@ -533,14 +561,6 @@ void Tracker::run() {
 
 			// Fake-trackIR
 			if (server_FTIR) {
-
-				// For some reason (not yet understood) the values only came through after being copied to locals...
-				// Trying again?!
-				//float rotX = getDegreesFromRads ( Tracker::Pitch.invert * Tracker::Pitch.sens * rotX );
-				//float rotY = getDegreesFromRads ( Tracker::Yaw.invert   * Tracker::Yaw.sens   *  rotY );
-				//float rotZ = getDegreesFromRads ( Tracker::Roll.invert  * Tracker::Roll.sens  * rotZ );
-				qDebug() << "Tracker::run() says: virtRotX =" << rotX << " virtRotY =" << rotY;
-
 				server_FTIR->setVirtRotX ( rotX );				// degrees
 				server_FTIR->setVirtRotY ( rotY );
 				server_FTIR->setVirtRotZ ( rotZ );
@@ -548,6 +568,17 @@ void Tracker::run() {
 				server_FTIR->setVirtPosX ( posX );				// centimeters
 				server_FTIR->setVirtPosY ( posY );
 				server_FTIR->setVirtPosZ ( posZ );
+			}
+
+			// SimConnect
+			if (server_SC) {
+				server_SC->setVirtRotX ( rotX );				// degrees
+				server_SC->setVirtRotY ( rotY );
+				server_SC->setVirtRotZ ( rotZ );
+
+				server_SC->setVirtPosX ( posX );				// centimeters
+				server_SC->setVirtPosY ( posY );
+				server_SC->setVirtPosZ ( posZ );
 			}
 
 		}
@@ -589,6 +620,15 @@ void Tracker::run() {
 				server_FTIR->setVirtPosX ( 0.0f );
 				server_FTIR->setVirtPosY ( 0.0f );
 				server_FTIR->setVirtPosZ ( 0.0f );
+			}
+
+			if (server_SC) {
+				server_SC->setVirtRotX ( 0.0f );
+				server_SC->setVirtRotY ( 0.0f );
+				server_SC->setVirtRotZ ( 0.0f );
+				server_SC->setVirtPosX ( 0.0f );
+				server_SC->setVirtPosY ( 0.0f );
+				server_SC->setVirtPosZ ( 0.0f );
 			}
 		}
 
@@ -852,41 +892,70 @@ QPointF point1, point2, point3, point4;
 	// Read the curve-settings from the file. Use the (deprecated) settings, if the curves are not there.
 	//
 	iniFile.beginGroup ( "Curves" );
+
+	//
+	// Create a new path and assign it to the curve.
+	//
 	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
-	Yaw.curve.moveTo( QPointF(0,0) );
+	QPainterPath newYawCurve;
+	newYawCurve.moveTo( QPointF(0,0) );
+    newYawCurve.cubicTo(point2, point3, point4);
+
 	Yaw.NeutralZone = point1.y();							// Get the Neutral Zone
 	Yaw.MaxInput = point4.y();								// Get Maximum Input
-    Yaw.curve.cubicTo(point2, point3, point4);
+	Yaw.curve = newYawCurve;
 
+	qDebug() << "loadSettings says: curve-elementcount = " << Yaw.curve.elementCount();
+
+	// Pitch
 	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
-	Pitch.curve.moveTo( QPointF(0,0) );
+	QPainterPath newPitchCurve;
+	newPitchCurve.moveTo( QPointF(0,0) );
+    newPitchCurve.cubicTo(point2, point3, point4);
+
 	Pitch.NeutralZone = point1.y();							// Get the Neutral Zone
 	Pitch.MaxInput = point4.y();							// Get Maximum Input
-	Pitch.curve.cubicTo(point2, point3, point4);
+	Pitch.curve = newPitchCurve;
 
+	// Roll
 	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
-	Roll.curve.moveTo( QPointF(0,0) );
+	QPainterPath newRollCurve;
+	newRollCurve.moveTo( QPointF(0,0) );
+    newRollCurve.cubicTo(point2, point3, point4);
+
 	Roll.NeutralZone = point1.y();							// Get the Neutral Zone
 	Roll.MaxInput = point4.y();								// Get Maximum Input
-    Roll.curve.cubicTo(point2, point3, point4);
+    Roll.curve = newRollCurve;
 
+	// X
 	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
-	X.curve.moveTo( QPointF(0,0) );
+	QPainterPath newXCurve;
+	newXCurve.moveTo( QPointF(0,0) );
+    newXCurve.cubicTo(point2, point3, point4);
+
 	X.NeutralZone = point1.y();								// Get the Neutral Zone
 	X.MaxInput = point4.y();								// Get Maximum Input
-    X.curve.cubicTo(point2, point3, point4);
+    X.curve = newXCurve;
 
+	// Y
 	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
-	Y.curve.moveTo( QPointF(0,0) );
+	QPainterPath newYCurve;
+	newYCurve.moveTo( QPointF(0,0) );
+    newYCurve.cubicTo(point2, point3, point4);
+
 	Y.NeutralZone = point1.y();								// Get the Neutral Zone
 	Y.MaxInput = point4.y();								// Get Maximum Input
-    Y.curve.cubicTo(point2, point3, point4);
+    Y.curve = newYCurve;
 
+	// Z
 	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
-	Z.curve.moveTo( QPointF(0,0) );
+	QPainterPath newZCurve;
+	newZCurve.moveTo( QPointF(0,0) );
+    newZCurve.cubicTo(point2, point3, point4);
+
 	Z.NeutralZone = point1.y();								// Get the Neutral Zone
 	Z.MaxInput = point4.y();								// Get Maximum Input
-    Z.curve.cubicTo(point2, point3, point4);
+    Z.curve = newZCurve;
 
 	iniFile.endGroup ();
 
