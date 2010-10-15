@@ -698,6 +698,7 @@ void FaceTrackNoIR::createIconGroupBox()
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/PPJoy.ico"), tr("Virtual Joystick"));
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/TrackIR.ico"), tr("Fake TrackIR"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FSX.ico"), tr("SimConnect"));
 
 	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/SeeingMachines.ico"), tr("Face API"));
 	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
@@ -772,6 +773,9 @@ void FaceTrackNoIR::setIcon(int index)
 		ui.btnShowServerControls->setEnabled ( true );
 		break;
 	case TRACKIR:
+		ui.btnShowServerControls->hide();
+		break;
+	case SIMCONNECT:
 		ui.btnShowServerControls->hide();
 		break;
 	default:

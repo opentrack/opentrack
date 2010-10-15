@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="postbuild.bat &quot;$(QTDIR)\plugins\designer\QBezierConfigurator.dll&quot; &quot;$(OutDir)&quot; $(ConfigurationName)"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -65,6 +66,7 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCLinkerTool"
@@ -103,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="postbuild.bat &quot;$(QTDIR)\plugins\designer\QBezierConfigurator.dll&quot; &quot;$(OutDir)&quot; $(ConfigurationName)"
+				CommandLine="mt.exe -manifest &quot;$(InputDir)SCServer.manifest&quot; -outputresource:&quot;$(OutDir)\$(TargetFileName)&quot;;^#101"
 			/>
 		</Configuration>
 		<Configuration
@@ -217,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\PPJoyServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SCServer.cpp"
 				>
 			</File>
 			<File
@@ -404,6 +410,32 @@
 			<File
 				RelativePath=".\resource.h"
 				>
+			</File>
+			<File
+				RelativePath=".\SCServer.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_DLL -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(SM_API_CPP_WRAPPERS)\include\.&quot; -I&quot;$(SM_API_PATH)\include\.&quot; -I&quot;$(SM_API_QTDIR)\include\.&quot; -I&quot;$(SM_API_WIDGETS)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_DLL -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\tracker.h"
@@ -712,6 +744,18 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\GeneratedFiles\Release\moc_SCServer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\GeneratedFiles\Release\moc_tracker.cpp"
 					>
 					<FileConfiguration
@@ -798,6 +842,29 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\GeneratedFiles\Debug\moc_SCServer.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
 				</File>
