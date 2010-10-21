@@ -918,7 +918,7 @@ color:#000;</string>
                <number>-1</number>
               </property>
               <property name="maxVisibleItems">
-               <number>5</number>
+               <number>6</number>
               </property>
              </widget>
              <widget class="QPushButton" name="btnShowServerControls">
@@ -943,6 +943,23 @@ color:#000;</string>
                <string>Settings</string>
               </property>
              </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnEditCurves">
+             <property name="text">
+              <string>Curves</string>
+             </property>
+             <property name="icon">
+              <iconset resource="FaceTrackNoIR.qrc">
+               <normaloff>:/UIElements/Curves.png</normaloff>:/UIElements/Curves.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>150</width>
+               <height>32</height>
+              </size>
+             </property>
             </widget>
            </item>
            <item>

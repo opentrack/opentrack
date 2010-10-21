@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20101021 - WVR: Added FSUIPC server for FS2004.
 		20101011 - WVR: Added SimConnect server.
 		20101007 - WVR: Created 6DOF-curves and drastically changed the tracker for that.
 						Also eliminated a 'glitch' in the process.
@@ -102,6 +103,7 @@ Tracker::Tracker( int clientID ) {
 	server_PPJoy = 0;
 	server_FTIR = 0;
 	server_SC = 0;
+	server_FSUIPC = 0;
 	switch (selectedClient) {
 		case FREE_TRACK:
 			server_FT = new FTServer;					// Create Free-track protocol-server
@@ -124,6 +126,10 @@ Tracker::Tracker( int clientID ) {
 
 		case SIMCONNECT:
 			server_SC = new SCServer;					// Create SimConnect protocol-server
+			break;
+
+		case FSUIPC:
+			server_FSUIPC = new FSUIPCServer;			// Create FSUIPC protocol-server
 			break;
 
 		default:
@@ -152,6 +158,10 @@ Tracker::~Tracker() {
 	}
 	if (server_SC) {
 		server_SC->deleteLater();
+	}
+
+	if (server_FSUIPC) {
+		server_FSUIPC->deleteLater();
 	}
 
 	// Trigger thread to stop
@@ -238,12 +248,22 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 			server_SC->start();									// Start the thread
 		}
 		else {
-			QMessageBox::information(0, "FaceTrackNoIR error", "This SimConnect version is not installed!");
+			QMessageBox::information(mainApp, "FaceTrackNoIR error", "SimConnect is not (correctly) installed!");
 		}
-		////else {
-		////	server_SC->~SCServer();
-		////	server_SC = 0;
-		////}
+	}
+
+	//
+	// Check if the FSUIPC DLL is available, load it if so.
+	//
+	if (server_FSUIPC) {
+		DLL_Ok = server_FSUIPC->CheckClientDLL();
+
+		if (DLL_Ok) {
+			server_FSUIPC->start();									// Start the thread
+		}
+		else {
+			QMessageBox::information(mainApp, "FaceTrackNoIR error", "FSUIPC is not (correctly) installed!");
+		}
 	}
 
 }
@@ -390,6 +410,9 @@ void Tracker::run() {
 			// to substract that later...
 			//
 			if(Tracker::set_initial == false) {
+				Tracker::Pitch.initial_headPos = Tracker::Pitch.headPos;
+				Tracker::Yaw.initial_headPos = Tracker::Yaw.headPos;
+				Tracker::Roll.initial_headPos = Tracker::Roll.headPos;
 				Tracker::X.initial_headPos = Tracker::X.headPos;
 				Tracker::Y.initial_headPos = Tracker::Y.headPos;
 				Tracker::Z.initial_headPos = Tracker::Z.headPos;
@@ -397,10 +420,10 @@ void Tracker::run() {
 				Tracker::set_initial = true;
 			}
 
-			rawrotX = Tracker::Pitch.headPos;									// degrees
-			rawrotY = Tracker::Yaw.headPos;
-			rawrotZ = Tracker::Roll.headPos;
-			rawposX = Tracker::X.headPos;										// centimeters
+			rawrotX = Tracker::Pitch.headPos- Tracker::Pitch.initial_headPos;	// degrees
+			rawrotY = Tracker::Yaw.headPos- Tracker::Yaw.initial_headPos;
+			rawrotZ = Tracker::Roll.headPos - Tracker::Roll.initial_headPos;
+			rawposX = Tracker::X.headPos - Tracker::X.initial_headPos;										// centimeters
 			rawposY = Tracker::Y.headPos - Tracker::Y.initial_headPos;
 			rawposZ = Tracker::Z.headPos - Tracker::Z.initial_headPos;
 
@@ -412,35 +435,19 @@ void Tracker::run() {
 			headYLine->setText(QString("%1").arg( rawposY, 0, 'f', 1));
 			headZLine->setText(QString("%1").arg( rawposZ, 0, 'f', 1));
 
-
-			//
-			// Copy the Raw values directly to Free-track server
-			//
-			if (server_FT) {
-				//server_FT->setHeadRotX( rawrotX );								// degrees
-				//server_FT->setHeadRotY( rawrotY );
-				//server_FT->setHeadRotZ( rawrotZ );
-
-				//server_FT->setHeadPosX( rawposX );								// meters
-				//server_FT->setHeadPosY( rawposY );
-				//server_FT->setHeadPosZ( rawposZ );
-			}
 		}
 
 		//
 		// If Center is pressed, copy the current values to the offsets.
 		//
 		if (Tracker::do_center && Tracker::set_initial) {
-			Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
-			Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
-			Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
-			X.offset_headPos = getSmoothFromList( &X.rawList );
-
-			//
-			// Reset the initial distance to the camera
-			//
+			Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList )- Tracker::Pitch.initial_headPos;
+			Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList ) - Tracker::Yaw.initial_headPos;
+			Roll.offset_headPos = getSmoothFromList( &Roll.rawList ) - Tracker::Roll.initial_headPos;
+			X.offset_headPos = getSmoothFromList( &X.rawList ) - Tracker::X.initial_headPos;
 			Y.offset_headPos = getSmoothFromList( &Y.rawList ) - Tracker::Y.initial_headPos;
 			Z.offset_headPos = getSmoothFromList( &Z.rawList ) - Tracker::Z.initial_headPos;
+
 			Tracker::do_center = false;
 		}
 
@@ -456,31 +463,31 @@ void Tracker::run() {
 
 			// Pitch
 			if (Tracker::useFilter) {
-				rotX = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos, 
+				rotX = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos, 
 											   &Pitch.prevPos, dT, Tracker::Pitch.red );
 			}
 			else {
-				rotX = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+				rotX = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos;
 			}
 			rotX = Pitch.invert * getOutputFromCurve(&Pitch.curve, rotX, Pitch.NeutralZone, Pitch.MaxInput);
 
 			// Yaw
 			if (Tracker::useFilter) {
-				rotY = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos, 
+				rotY = lowPassFilter ( getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos - Yaw.initial_headPos, 
 											   &Yaw.prevPos, dT, Tracker::Yaw.red );
 			}
 			else {
-				rotY = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
+				rotY = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos - Yaw.initial_headPos;
 			}
 			rotY = Yaw.invert * getOutputFromCurve(&Yaw.curve, rotY, Yaw.NeutralZone, Yaw.MaxInput);
 
 			// Roll
 			if (Tracker::useFilter) {
-				rotZ = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos, 
+				rotZ = lowPassFilter ( getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos - Roll.initial_headPos, 
 											   &Roll.prevPos, dT, Tracker::Roll.red );
 			}
 			else {
-				rotZ = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
+				rotZ = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos - Roll.initial_headPos;
 			}
 			rotZ = Roll.invert * getOutputFromCurve(&Roll.curve, rotZ, Roll.NeutralZone, Roll.MaxInput);
 
@@ -516,7 +523,7 @@ void Tracker::run() {
 
 
 			//
-			// Also send the Virtual Pose to selected Protocol-Server
+			// Send the Virtual Pose to selected Protocol-Server
 			//
 			// Free-track
 			if (server_FT) {
@@ -581,6 +588,17 @@ void Tracker::run() {
 				server_SC->setVirtPosZ ( posZ );
 			}
 
+			// FSUIPC
+			if (server_FSUIPC) {
+				server_FSUIPC->setVirtRotX ( rotX );				// degrees
+				server_FSUIPC->setVirtRotY ( rotY );
+				server_FSUIPC->setVirtRotZ ( rotZ );
+
+				server_FSUIPC->setVirtPosX ( posX );				// centimeters
+				server_FSUIPC->setVirtPosY ( posY );
+				server_FSUIPC->setVirtPosZ ( posZ );
+			}
+
 		}
 		else {
 			//
@@ -629,6 +647,15 @@ void Tracker::run() {
 				server_SC->setVirtPosX ( 0.0f );
 				server_SC->setVirtPosY ( 0.0f );
 				server_SC->setVirtPosZ ( 0.0f );
+			}
+
+			if (server_FSUIPC) {
+				server_FSUIPC->setVirtRotX ( 0.0f );
+				server_FSUIPC->setVirtRotY ( 0.0f );
+				server_FSUIPC->setVirtRotZ ( 0.0f );
+				server_FSUIPC->setVirtPosX ( 0.0f );
+				server_FSUIPC->setVirtPosY ( 0.0f );
+				server_FSUIPC->setVirtPosZ ( 0.0f );
 			}
 		}
 
@@ -849,13 +876,12 @@ float sign;
 	// Always return 0 inside the NeutralZone
 	// Always return max. when input larger than expected
 	//
-	if (fabs(input) < neutralzone) return 0.0f;
 	if (fabs(input) > maxinput) return sign * curve->pointAtPercent(1.0).x();
 
 	//
 	// Return the value, derived from the Bezier-curve
 	//
-	return sign * curve->pointAtPercent((fabs(input) - neutralzone)/maxinput).x();
+	return sign * curve->pointAtPercent((fabs(input))/maxinput).x();
 }
 
 //
@@ -899,7 +925,8 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
 	QPainterPath newYawCurve;
 	newYawCurve.moveTo( QPointF(0,0) );
-    newYawCurve.cubicTo(point2, point3, point4);
+	newYawCurve.lineTo( point1 );
+	newYawCurve.cubicTo(point2, point3, point4);
 
 	Yaw.NeutralZone = point1.y();							// Get the Neutral Zone
 	Yaw.MaxInput = point4.y();								// Get Maximum Input
@@ -911,6 +938,7 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
 	QPainterPath newPitchCurve;
 	newPitchCurve.moveTo( QPointF(0,0) );
+	newPitchCurve.lineTo( point1 );
     newPitchCurve.cubicTo(point2, point3, point4);
 
 	Pitch.NeutralZone = point1.y();							// Get the Neutral Zone
@@ -921,6 +949,7 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
 	QPainterPath newRollCurve;
 	newRollCurve.moveTo( QPointF(0,0) );
+	newRollCurve.lineTo( point1 );
     newRollCurve.cubicTo(point2, point3, point4);
 
 	Roll.NeutralZone = point1.y();							// Get the Neutral Zone
@@ -931,6 +960,7 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
 	QPainterPath newXCurve;
 	newXCurve.moveTo( QPointF(0,0) );
+	newXCurve.lineTo( point1 );
     newXCurve.cubicTo(point2, point3, point4);
 
 	X.NeutralZone = point1.y();								// Get the Neutral Zone
@@ -941,6 +971,7 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
 	QPainterPath newYCurve;
 	newYCurve.moveTo( QPointF(0,0) );
+	newYCurve.lineTo( point1 );
     newYCurve.cubicTo(point2, point3, point4);
 
 	Y.NeutralZone = point1.y();								// Get the Neutral Zone
@@ -951,6 +982,7 @@ QPointF point1, point2, point3, point4;
 	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
 	QPainterPath newZCurve;
 	newZCurve.moveTo( QPointF(0,0) );
+	newZCurve.lineTo( point1 );
     newZCurve.cubicTo(point2, point3, point4);
 
 	Z.NeutralZone = point1.y();								// Get the Neutral Zone

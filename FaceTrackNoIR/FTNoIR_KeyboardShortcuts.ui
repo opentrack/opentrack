@@ -138,13 +138,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>(Shortkeys are activated after tracker 'Start')</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>

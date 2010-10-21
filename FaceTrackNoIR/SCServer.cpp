@@ -123,7 +123,7 @@ importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 			// Write the 6DOF-data to FSX
 			//
 			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
-				qDebug() << "SCServer::run() says: SimConnect data written!";
+//				qDebug() << "SCServer::run() says: SimConnect data written!";
 			}
 
 			// just for lower cpu load
@@ -147,7 +147,7 @@ bool SCServer::SCCheckClientDLL()
 	ULONG_PTR ulCookie;
 
 
-	qDebug() << "FTCheckClientDLL says: Starting Function";
+	qDebug() << "SCCheckClientDLL says: Starting Function";
 
 	try {
 
@@ -166,7 +166,7 @@ bool SCServer::SCCheckClientDLL()
 		if (hctx != INVALID_HANDLE_VALUE) { 
 			if (!ActivateActCtx(hctx, &ulCookie)) { 
 				ReleaseActCtx(hctx);
-				QMessageBox::information(0, "FaceTrackNoIR error", "SimConnect DLL not found!");
+				qDebug() << "FTCheckClientDLL says: Error activating SimConnect manifest";
 			}
 		}
 		else {
@@ -184,7 +184,7 @@ bool SCServer::SCCheckClientDLL()
 		//
 		SCClientLib.setFileName(aFileName);
 		if (SCClientLib.load() != true) {
-			QMessageBox::information(0, "FaceTrackNoIR error", SCClientLib.errorString());
+			qDebug() << "FTCheckClientDLL says: Error loading SimConnect DLL";
 			return false;
 		}
 
