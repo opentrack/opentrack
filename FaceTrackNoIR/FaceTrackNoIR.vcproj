@@ -70,11 +70,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QtMain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib smft32.lib smftcpp.lib smftqt.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib"
+				AdditionalDependencies="QtMain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib smft32.lib smftcpp.lib smftqt.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib FSUIPC_User.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories=""
 				GenerateManifest="true"
-				IgnoreDefaultLibraryNames="/NODEFAULTLIB:libc.lib;libcmt.lib;libcd.lib;libcmtd;msvcrtd.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;libcd.lib;libcmtd;msvcrtd.lib"
 				GenerateDebugInformation="false"
 				AssemblyDebug="0"
 				SubSystem="2"
@@ -206,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FSUIPCServer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FTIRServer.cpp"
 				>
 			</File>
@@ -316,6 +320,32 @@
 			<File
 				RelativePath=".\FGTypes.h"
 				>
+			</File>
+			<File
+				RelativePath=".\FSUIPCServer.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_DLL -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(SM_API_CPP_WRAPPERS)\include\.&quot; -I&quot;$(SM_API_PATH)\include\.&quot; -I&quot;$(SM_API_QTDIR)\include\.&quot; -I&quot;$(SM_API_WIDGETS)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_DLL -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\FTIRServer.h"
@@ -522,6 +552,32 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\FTNoIR_FSUIPCcontrols.ui"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
+						Outputs="&quot;.\GeneratedFiles\ui_$(InputName).h&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Uic&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\uic.exe&quot; -o &quot;.\GeneratedFiles\ui_$(InputName).h&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
+						Outputs="&quot;.\GeneratedFiles\ui_$(InputName).h&quot;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\FTNoIR_KeyboardShortcuts.ui"
 				>
 				<FileConfiguration
@@ -655,6 +711,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GeneratedFiles\ui_FTNoIR_FSUIPCcontrols.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GeneratedFiles\ui_FTNoIR_KeyboardShortcuts.h"
 				>
 			</File>
@@ -697,6 +757,18 @@
 				</File>
 				<File
 					RelativePath=".\GeneratedFiles\Release\moc_FGServer.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\GeneratedFiles\Release\moc_FSUIPCServer.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -806,6 +878,29 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\GeneratedFiles\Debug\moc_FSUIPCServer.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
 				</File>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>728</height>
+    <width>757</width>
+    <height>603</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,7 +97,7 @@ color: rgb(255, 255, 255);
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="rotation_tab">
         <attribute name="icon">
@@ -112,8 +112,8 @@ color: rgb(255, 255, 255);
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>643</width>
-           <height>627</height>
+           <width>708</width>
+           <height>511</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
@@ -252,21 +252,49 @@ color: rgb(255, 255, 255);
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="2">
            <widget class="QSpinBox" name="spinNZ_Yaw">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="1">
            <widget class="QLabel" name="label">
             <property name="text">
              <string>NeutralZone</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>NeutralZone</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>NeutralZone</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QSpinBox" name="spinNZ_Pitch">
+            <property name="maximum">
+             <number>50</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QSpinBox" name="spinNZ_Roll">
+            <property name="maximum">
+             <number>50</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QWidget" name="widget" native="true">
@@ -290,33 +318,51 @@ background-color: rgb(255, 255, 255);</string>
             </item>
            </layout>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>NeutralZone</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>NeutralZone</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QSpinBox" name="spinNZ_Pitch">
-            <property name="maximum">
-             <number>50</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="3">
-           <widget class="QSpinBox" name="spinNZ_Roll">
-            <property name="maximum">
-             <number>50</number>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>115</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Use the circular handles to change</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>the curve(s).</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -334,12 +380,12 @@ background-color: rgb(255, 255, 255);</string>
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>593</width>
-           <height>633</height>
+           <width>708</width>
+           <height>491</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="2" column="0">
+          <item row="1" column="0">
            <widget class="QBezierConfigurator" name="curveY">
             <property name="maxInputEGU" stdset="0">
              <number>50</number>
@@ -384,7 +430,7 @@ background-color: rgb(255, 255, 255);</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <widget class="QBezierConfigurator" name="curveZ">
             <property name="maxInputEGU" stdset="0">
              <number>50</number>
@@ -429,24 +475,7 @@ background-color: rgb(255, 255, 255);</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QWidget" name="widget_2" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>170</width>
-                <height>140</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">image: url(:/images/translation_DOFs.png);</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
+          <item row="0" column="0">
            <widget class="QBezierConfigurator" name="curveX">
             <property name="maxInputEGU" stdset="0">
              <number>50</number>
@@ -491,47 +520,64 @@ background-color: rgb(255, 255, 255);</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="0" column="1">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>NeutralZone</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="0" column="2">
            <widget class="QSpinBox" name="spinNZ_X">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>NeutralZone</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>NeutralZone</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="1" column="2">
            <widget class="QSpinBox" name="spinNZ_Y">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
+          <item row="2" column="2">
            <widget class="QSpinBox" name="spinNZ_Z">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
+          </item>
+          <item row="1" column="3">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QWidget" name="widget_2" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>170</width>
+                <height>140</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">image: url(:/images/translation_DOFs.png);</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -539,9 +585,6 @@ background-color: rgb(255, 255, 255);</string>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4"/>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">

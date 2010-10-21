@@ -29,6 +29,7 @@
 //
 #define SIMCONNECT_H_NOMANIFEST 
 #include "Windows.h" 
+#include <stdlib.h>
 #include "SimConnect.h"
 #include <QString>
 #include <QMessageBox>
@@ -39,7 +40,6 @@
 #include <QThread>
 #include <QMutex>
 #include <QLibrary>
-#include <QUdpSocket>
 
 typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
 typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
@@ -84,13 +84,13 @@ public:
 	static float virtRotY;
 	static float virtRotZ;
 
-	static void setVirtRotX(float rot) { virtRotX = rot; }			// degrees
-	static void setVirtRotY(float rot) { virtRotY = rot; }
+	static void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
+	static void setVirtRotY(float rot) { virtRotY = -1.0f * rot; }
 	static void setVirtRotZ(float rot) { virtRotZ = rot; }
 
-	static void setVirtPosX(float pos) { virtPosX = pos/100.f; }	// cm to meters
+	static void setVirtPosX(float pos) { virtPosX = pos/100.f; }			// cm to meters
 	static void setVirtPosY(float pos) { virtPosY = pos/100.f; }
-	static void setVirtPosZ(float pos) { virtPosZ = pos/100.f; }
+	static void setVirtPosZ(float pos) { virtPosZ = -1.0f * pos/100.f; }
 
 };
 

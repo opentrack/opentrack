@@ -25,6 +25,7 @@
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
 #include "PPJoyServer.h"
+#include "FSUIPCServer.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -72,6 +73,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionPreferences, SIGNAL(triggered()), this, SLOT(showPreferences()));
 	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
 	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
+	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
 
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
@@ -304,19 +306,50 @@ void FaceTrackNoIR::save() {
 //
 // Get the new name of the INI-file and save the settings to it.
 //
+// The user may choose to overwrite an existing file. This will be deleted, before copying the current file to it.
+//
 void FaceTrackNoIR::saveAs()
 {
+	//
+	// Get the current filename of the INI-file.
+	//
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+
+	//
+	// Get the new filename of the INI-file.
+	//
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
 													QCoreApplication::applicationDirPath() + "/Settings",
 													tr("Settings file (*.ini);;All Files (*)"));
 	if (!fileName.isEmpty()) {
-		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+		//
+		// Remove the file, if it already exists.
+		//
+		QFileInfo newFileInfo ( fileName );
+		if (newFileInfo.exists()) {
+			QFile newFileFile ( fileName );
+			newFileFile.remove();
+		}
+
+		//
+		// Copy the current INI-file to the new name.
+		//
+		QFileInfo oldFileInfo ( oldFile );
+		if (oldFileInfo.exists()) {
+			QFile oldFileFile ( oldFile );
+			oldFileFile.copy( fileName );
+		}
+
+		//
+		// Write the new name to the Registry and save the other INI-values.
+		//
 		settings.setValue ("SettingsFile", fileName);
 		save();
 
 		// Put the filename in the window-title
-	    QFileInfo pathInfo ( fileName );
-		setWindowTitle ( "FaceTrackNoIR - " + pathInfo.fileName() );
+		setWindowTitle ( "FaceTrackNoIR (1.4) - " + newFileInfo.fileName() );
 	}
 }
 
@@ -359,7 +392,7 @@ void FaceTrackNoIR::loadSettings() {
 
 	// Put the filename in the window-title
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.4) - " + pathInfo.fileName() );
 
 }
 
@@ -609,19 +642,33 @@ void FaceTrackNoIR::showEngineControls() {
 /** toggles Server Controls Dialog **/
 void FaceTrackNoIR::showServerControls() {
 
+
+	//
+	// Delete the existing QDialog
+	//
+	if (_server_controls) {
+		delete _server_controls;
+		_server_controls = 0;
+	}
+
 	// Create if new
 	if (!_server_controls)
     {
+
+
 		// Show the appropriate Protocol-server Settings
 		switch (ui.iconcomboBox->currentIndex()) {
 		case FREE_TRACK:
-			break;
 		case FLIGHTGEAR:
-			break;
 		case FTNOIR:
+		case TRACKIR:
+		case SIMCONNECT:
 			break;
 		case PPJOY:
 	        _server_controls = new PPJoyControls( this, Qt::Dialog );
+			break;
+		case FSUIPC:
+	        _server_controls = new FSUIPCControls( this, Qt::Dialog );
 			break;
 		default:
 			break;
@@ -698,7 +745,8 @@ void FaceTrackNoIR::createIconGroupBox()
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/PPJoy.ico"), tr("Virtual Joystick"));
 	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/TrackIR.ico"), tr("Fake TrackIR"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FSX.ico"), tr("SimConnect"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FSX.ico"), tr("SimConnect (FSX)"));
+	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FS9.ico"), tr("FS2002/FS2004"));
 
 	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/SeeingMachines.ico"), tr("Face API"));
 	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
@@ -760,24 +808,22 @@ void FaceTrackNoIR::setIcon(int index)
 	// Enable/disable Protocol-server Settings
 	switch (ui.iconcomboBox->currentIndex()) {
 	case FREE_TRACK:
-		ui.btnShowServerControls->hide();
-		break;
 	case FLIGHTGEAR:
-		ui.btnShowServerControls->hide();
-		break;
 	case FTNOIR:
+	case TRACKIR:
+	case SIMCONNECT:
 		ui.btnShowServerControls->hide();
 		break;
 	case PPJOY:
 		ui.btnShowServerControls->show();
 		ui.btnShowServerControls->setEnabled ( true );
 		break;
-	case TRACKIR:
-		ui.btnShowServerControls->hide();
+
+	case FSUIPC:
+		ui.btnShowServerControls->show();
+		ui.btnShowServerControls->setEnabled ( true );
 		break;
-	case SIMCONNECT:
-		ui.btnShowServerControls->hide();
-		break;
+
 	default:
 		break;
 	}
@@ -1239,7 +1285,7 @@ QWidget( parent , f)
 {
 	ui.setupUi( this );
 
-	QPoint offsetpos(100, 100);
+	QPoint offsetpos(120, 30);
 	this->move(parent->pos() + offsetpos);
 
 	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
@@ -1444,7 +1490,6 @@ float newMax;
 	//
 	// If Point 1 exists, read it from the file.
 	// If not: get the y-coord from the global (deprecated) NeutralZone setting.
-	// Any case: set the x-coord to '0', to keep it on the Y-axis
 	//
 	if (iniFile->contains(prefix + "point1")) {
 		*point1 = iniFile->value ( prefix + "point1", 0 ).toPoint();
@@ -1452,7 +1497,6 @@ float newMax;
 	else {
 		point1->setY(NeutralZone);
 	}
-	point1->setX(0);
 
 	//
 	// If Point 4 exists, read it from the file.

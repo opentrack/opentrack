@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>UIElements/Curves.png</file>
     <file>images/rotation_DOFs.png</file>
     <file>images/translation_DOFs.png</file>
     <file>images/FlightGear.ico</file>

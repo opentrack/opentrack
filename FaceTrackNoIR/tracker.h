@@ -41,6 +41,7 @@
 #include "PPJoyServer.h"			// Virtual Joystick
 #include "FTIRServer.h"				// FakeTIR-server
 #include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
+#include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -64,7 +65,8 @@ enum FTNoIR_Client {
 	FTNOIR = 2,
 	PPJOY = 3,
 	TRACKIR = 4,
-	SIMCONNECT = 5
+	SIMCONNECT = 5,
+	FSUIPC = 6
 };
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
@@ -157,6 +159,7 @@ private:
 	PPJoyServer *server_PPJoy;						// PPJoy Server
 	FTIRServer *server_FTIR;						// Fake TIR Server
 	SCServer *server_SC;							// SimConnect Server
+	FSUIPCServer *server_FSUIPC;					// FSUIPC Server
 
 protected:
 	// qthread override run method 
