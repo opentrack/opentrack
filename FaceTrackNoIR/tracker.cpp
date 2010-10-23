@@ -262,7 +262,7 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 			server_FSUIPC->start();									// Start the thread
 		}
 		else {
-			QMessageBox::information(mainApp, "FaceTrackNoIR error", "FSUIPC is not (correctly) installed!");
+			QMessageBox::information(mainApp, "FaceTrackNoIR error", "FSUIPC is not (correctly) installed!\nIt should be placed in the Modules folder of FS!");
 		}
 	}
 
@@ -340,13 +340,7 @@ void Tracker::run() {
 		   }
 		   else {
 				//
-				// Check the state of the BACK key (= Start/Stop tracking) and EQUALS key (= Center)
-				//
-				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) ) {
-				   qDebug() << "Tracker::run Shortkey Center pressed!" << GetLastError();
-				}
-				//
-				// Check the state of the BACK key (= Start/Stop tracking) and EQUALS key (= Center)
+				// Check the state of the Start/Stop key
 				//
 				if ( isShortKeyPressed( &StartStopKey, &keystate[0] ) && (!lastBackKey) ) {
 					Tracker::do_tracking = !Tracker::do_tracking;
@@ -382,6 +376,9 @@ void Tracker::run() {
 				}
 				lastBackKey = isShortKeyPressed( &StartStopKey, &keystate[0] );		// Remember
 
+				//
+				// Check the state of the Center key
+				//
 				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) && (!lastEqualsKey) ) {
 					Tracker::do_center = true;
 					qDebug() << "Tracker::run() says Center pressed";

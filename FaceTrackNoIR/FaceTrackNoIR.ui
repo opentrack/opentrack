@@ -934,7 +934,7 @@ color:#000;</string>
                </rect>
               </property>
               <property name="toolTip">
-               <string>Change tracker settings</string>
+               <string>Change game protocol settings</string>
               </property>
               <property name="styleSheet">
                <string notr="true"/>
@@ -947,6 +947,9 @@ color:#000;</string>
            </item>
            <item>
             <widget class="QPushButton" name="btnEditCurves">
+             <property name="toolTip">
+              <string>Edit the Curve settings</string>
+             </property>
              <property name="text">
               <string>Curves</string>
              </property>

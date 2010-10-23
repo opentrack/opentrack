@@ -30,6 +30,7 @@
 //
 //		The FaceAPI only runs in the 'Release' configuration. It may have something to
 //		do with compiler-settings, but for now it's not solved...
+//			--> WVR 20101023: This was solved by downgrading to VS2005...
 //
 //		Connecting with the Freetrack DLL only seems to work, when UNICODE is OFF.
 //		That's strange, isn't it?

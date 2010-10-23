@@ -21,6 +21,7 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20101023 - WVR: Added TIRViews for FS2004, Combat FS3, etc...
 */
 #include "FTIRServer.h"
 
@@ -40,6 +41,7 @@ FTIRServer::FTIRServer() {
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
 	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
+	loadSettings();
 	ProgramName = "";
 }
 
@@ -57,9 +59,10 @@ FTIRServer::~FTIRServer() {
 	::CloseHandle(m_WaitThread);
 
 	//
-	// Free the DLL
+	// Free the DLL's
 	//
 	FTIRClientLib.unload();
+	FTIRViewsLib.unload();
 
 	//terminates the QThread and waits for finishing the QThread
 	terminate();
@@ -68,7 +71,9 @@ FTIRServer::~FTIRServer() {
 
 /** QThread run @override **/
 void FTIRServer::run() {
-	importSetPosition setposition;
+	importSetPosition setposition;						// Inside NPClient.dll
+	importTIRViewsStart viewsStart = NULL;				// Inside TIRViews.dll
+	importTIRViewsStop viewsStop = NULL;
 
 	//
 	// Get the setposition function from the DLL and use it!
@@ -82,11 +87,40 @@ void FTIRServer::run() {
 		setposition (7.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
 	}
 
+	//
+	// Load the Start function from TIRViews.dll and call it, to start compatibility with older games
+	//
+	if (useTIRViews) {
+		viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
+		if (viewsStart == NULL) {
+			qDebug() << "FTIRServer::run() says: TIRViewsStart function not found in DLL!";
+		}
+		else {
+			qDebug() << "FTIRServer::run() says: TIRViewsStart executed!";
+			viewsStart();
+		}
+
+		//
+		// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
+		//
+		viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
+		if (viewsStop == NULL) {
+			qDebug() << "FTIRServer::run() says: TIRViewsStop function not found in DLL!";
+		}
+	}
+
+	//
+	// Run, until termination
+	//
 	forever
 	{
 	    // Check event for stop thread
 		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
 		{
+			if (viewsStop != NULL) {
+				viewsStop();
+			}
+
 			// Set event
 			::SetEvent(m_WaitThread);
 			return;
@@ -224,16 +258,22 @@ bool FTIRServer::FTIRCheckClientDLL()
 			//
 			FTIRClientLib.setFileName(aFileName);
 			FTIRClientLib.load();
-			//provider = (importProvider) FTIRClientLib.resolve("FTProvider");
-			//if (provider) {
-			//	pProvider = provider();
-			//	qDebug() << "FTCheckClientDLL says: Provider =" << pProvider;
-			//}
 		}
 		else {
 			QMessageBox::information(0, "FaceTrackNoIR error", QString("Necessary file (NPClient.dll) was NOT found!\n"));
 			return false;
 		}
+
+		//
+		// Also load TIRViews.dll, to support some older games
+		//
+		if (useTIRViews) {
+			aFileName = aLocation;
+			aFileName.append(FTIR_VIEWS_FILENAME);
+			FTIRViewsLib.setFileName(aFileName);
+			FTIRViewsLib.load();
+		}
+
 	} catch(...) {
 		settings.~QSettings();
 	}
@@ -257,6 +297,144 @@ double local_x;
 	y = ( NP_AXIS_MAX * local_x ) / max_x;
 
 	return (float) y;
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTIRServer::loadSettings() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FTIR" );
+	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
+	iniFile.endGroup ();
+}
+
+//
+// Constructor for server-settings-dialog
+//
+FTIRControls::FTIRControls( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	QString aFileName;														// File Path and Name
+
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+
+	aFileName = QCoreApplication::applicationDirPath() + "/";
+	aFileName.append(FTIR_VIEWS_FILENAME);
+	if ( !QFile::exists( aFileName ) ) {
+		ui.chkTIRViews->setChecked( false );
+		ui.chkTIRViews->setEnabled ( false );
+	}
+	else {
+		ui.chkTIRViews->setEnabled ( true );
+	}
+	
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+FTIRControls::~FTIRControls() {
+	qDebug() << "~FTIRControls() says: started";
+}
+
+//
+// OK clicked on server-dialog
+//
+void FTIRControls::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void FTIRControls::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void FTIRControls::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTIRControls::loadSettings() {
+
+	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "FTIR" );
+	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void FTIRControls::save() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FTIR" );
+	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
 }
 
 //END

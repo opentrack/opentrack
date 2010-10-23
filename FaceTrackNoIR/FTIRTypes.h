@@ -28,8 +28,6 @@
 #include <tchar.h>
 #include <stdio.h>
 
-//#include "Registry.h"
-
 //
 // Versioning hasn't been worked out yet...
 //
@@ -92,13 +90,10 @@ typedef enum tagNPResult
 	NP_ERR_INTERNAL_DATA
 } NPRESULT;
 
-//  static const char* FTIR_CLIENT_LOCATION = "Software\\NaturalPoint\\NATURALPOINT\\NPClient Location";
   static const char* FTIR_CLIENT_FILENAME = "NPClient.dll";
+  static const char* FTIR_VIEWS_FILENAME = "TIRViews.dll";
   static const char* FTIR_MM_DATA = "{0F98177E-0E5C-4F86-8837-229D19B1701D}";
-//  static const char* FTIR_MM_DATA = "FT_TIR_SharedMem";
-//  static const char* FREETRACK = "Freetrack";
   static const char* FTIR_MUTEX = "FT_TIR_Mutex";
-//  static const char* FT_PROGRAMID = "FT_ProgramID";
   static const char* FTIR_REGISTER_PROGRAMHANDLE = "FT_Register_Program_Handle";
   static const char* FTIR_UNREGISTER_PROGRAMHANDLE = "FT_UnRegister_Program_Handle";
 
@@ -123,14 +118,6 @@ typedef struct tagTrackIRData
 	float fNPSmoothX;
 	float fNPSmoothY;
 	float fNPSmoothZ;
-
- ////   unsigned short wError;
- ////   short iFrame;
- ////   unsigned short wUnknown3;
-	////float xRot, yRot, zRot;
- ////   float x,y,z;
-	////int iPadding[9];
-
 } TRACKIRDATA, *LPTRACKIRDATA;
 
 struct FTIRMemMap {

@@ -23,7 +23,6 @@
 #ifndef INCLUDED_FTIRSERVER_H
 #define INCLUDED_FTIRSERVER_H
  
-//#include "Windows.h" 
 #include "FTIRTypes.h"
 #include <QString>
 #include <QMessageBox>
@@ -37,8 +36,10 @@
 #include <QUdpSocket>
 
 typedef void (WINAPI *importSetPosition)(float x, float y, float z, float xRot, float yRot, float zRot);
-//typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
-//typedef HANDLE (WINAPI *importGetMapHandle)(void);
+typedef void (WINAPI *importTIRViewsStart)(void);
+typedef void (WINAPI *importTIRViewsStop)(void);
+
+#include "ui_FTNoIR_FTIRcontrols.h"
 
 using namespace std;
 
@@ -71,7 +72,11 @@ private:
 	// Private properties
 	QString ProgramName;
 	QLibrary FTIRClientLib;
+	QLibrary FTIRViewsLib;
+	bool useTIRViews;
+
 	static float scale2AnalogLimits( float x, float min_x, float max_x );
+	void loadSettings();
 
 public:
 
@@ -92,6 +97,30 @@ public:
 	static void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
 	static void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
 
+};
+
+// Widget that has controls for FTIR server-settings.
+class FTIRControls: public QWidget, public Ui::UICFTIRControls
+{
+    Q_OBJECT
+public:
+
+	explicit FTIRControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~FTIRControls();
+	void showEvent ( QShowEvent * event );
+
+private:
+	Ui::UICFTIRControls ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
+
+private slots:
+	void doOK();
+	void doCancel();
+	void chkTIRViewsChanged() { settingsDirty = true; };
 };
 
 
