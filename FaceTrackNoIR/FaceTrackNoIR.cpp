@@ -26,6 +26,7 @@
 #include "tracker.h"
 #include "PPJoyServer.h"
 #include "FSUIPCServer.h"
+#include "FTIRServer.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -661,7 +662,6 @@ void FaceTrackNoIR::showServerControls() {
 		case FREE_TRACK:
 		case FLIGHTGEAR:
 		case FTNOIR:
-		case TRACKIR:
 		case SIMCONNECT:
 			break;
 		case PPJOY:
@@ -669,6 +669,9 @@ void FaceTrackNoIR::showServerControls() {
 			break;
 		case FSUIPC:
 	        _server_controls = new FSUIPCControls( this, Qt::Dialog );
+			break;
+		case TRACKIR:
+	        _server_controls = new FTIRControls( this, Qt::Dialog );
 			break;
 		default:
 			break;
@@ -757,16 +760,16 @@ void FaceTrackNoIR::createIconGroupBox()
 //
 void FaceTrackNoIR::createActions()
 {
-    minimizeAction = new QAction(tr("Mi&nimize"), this);
+    minimizeAction = new QAction(tr("Mi&nimize FaceTrackNoIR"), this);
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
     //maximizeAction = new QAction(tr("Ma&ximize"), this);
     //connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
 
-    restoreAction = new QAction(tr("&Restore"), this);
+    restoreAction = new QAction(tr("&Restore FaceTrackNoIR"), this);
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
 
-    quitAction = new QAction(tr("&Quit"), this);
+    quitAction = new QAction(tr("&Quit FaceTrackNoIR"), this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
 
@@ -810,16 +813,12 @@ void FaceTrackNoIR::setIcon(int index)
 	case FREE_TRACK:
 	case FLIGHTGEAR:
 	case FTNOIR:
-	case TRACKIR:
 	case SIMCONNECT:
 		ui.btnShowServerControls->hide();
 		break;
 	case PPJOY:
-		ui.btnShowServerControls->show();
-		ui.btnShowServerControls->setEnabled ( true );
-		break;
-
 	case FSUIPC:
+	case TRACKIR:
 		ui.btnShowServerControls->show();
 		ui.btnShowServerControls->setEnabled ( true );
 		break;
