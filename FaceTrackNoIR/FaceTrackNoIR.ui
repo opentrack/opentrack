@@ -892,7 +892,7 @@ color:#000;</string>
             <widget class="QGroupBox" name="groupGameProtocol">
              <property name="minimumSize">
               <size>
-               <width>200</width>
+               <width>190</width>
                <height>100</height>
               </size>
              </property>
@@ -929,7 +929,7 @@ color:#000;</string>
                <rect>
                 <x>10</x>
                 <y>80</y>
-                <width>161</width>
+                <width>151</width>
                 <height>23</height>
                </rect>
               </property>
