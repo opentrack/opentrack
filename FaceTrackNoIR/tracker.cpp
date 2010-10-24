@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20101024 - WVR: Added shortkey to disable/enable one or more axis during tracking.
 		20101021 - WVR: Added FSUIPC server for FS2004.
 		20101011 - WVR: Added SimConnect server.
 		20101007 - WVR: Created 6DOF-curves and drastically changed the tracker for that.
@@ -50,6 +51,7 @@ bool Tracker::confid = false;
 bool Tracker::set_initial = false;
 bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
+bool Tracker::do_inhibit = false;
 bool Tracker::useFilter = false;
 
 long Tracker::prevHeadPoseTime = 0;
@@ -62,6 +64,7 @@ THeadPoseDOF Tracker::Z;
 
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
+TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 
 /** constructor **/
 Tracker::Tracker( int clientID ) {
@@ -275,8 +278,9 @@ void Tracker::run() {
 	LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
 	BYTE keystate[256];								// the storage for the key-information
 	HRESULT retAcquire;
-	bool lastBackKey = false;						// Remember state, to detect rising edge
-	bool lastEqualsKey = false;
+	bool lastCenterKey = false;						// Remember state, to detect rising edge
+	bool lastStartStopKey = false;
+	bool lastInhibitKey = false;
 
 	float rawrotX, rawrotY, rawrotZ;				// Locals...
 	float rawposX, rawposY, rawposZ;
@@ -342,7 +346,7 @@ void Tracker::run() {
 				//
 				// Check the state of the Start/Stop key
 				//
-				if ( isShortKeyPressed( &StartStopKey, &keystate[0] ) && (!lastBackKey) ) {
+				if ( isShortKeyPressed( &StartStopKey, &keystate[0] ) && (!lastStartStopKey) ) {
 					Tracker::do_tracking = !Tracker::do_tracking;
 
 					//
@@ -374,16 +378,32 @@ void Tracker::run() {
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
 				}
-				lastBackKey = isShortKeyPressed( &StartStopKey, &keystate[0] );		// Remember
+				lastStartStopKey = isShortKeyPressed( &StartStopKey, &keystate[0] );		// Remember
 
 				//
 				// Check the state of the Center key
 				//
-				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) && (!lastEqualsKey) ) {
+				if ( isShortKeyPressed( &CenterKey, &keystate[0] ) && (!lastCenterKey) ) {
 					Tracker::do_center = true;
 					qDebug() << "Tracker::run() says Center pressed";
 				}
-				lastEqualsKey = isShortKeyPressed( &CenterKey, &keystate[0] );		// Remember
+				lastCenterKey = isShortKeyPressed( &CenterKey, &keystate[0] );				// Remember
+
+				//
+				// Check the state of the Inhibit key
+				//
+				if ( isShortKeyPressed( &InhibitKey, &keystate[0] ) && (!lastInhibitKey) ) {
+					Tracker::do_inhibit = !Tracker::do_inhibit;
+					qDebug() << "Tracker::run() says Inhibit pressed";
+					//
+					// Execute Center command too, when inhibition ends.
+					//
+					if (!Tracker::do_inhibit) {
+						Tracker::do_center = true;
+					}
+				}
+				lastInhibitKey = isShortKeyPressed( &InhibitKey, &keystate[0] );		// Remember
+
 		   }
 		}
 
@@ -518,6 +538,17 @@ void Tracker::run() {
 			}
 			posZ = Z.invert * getOutputFromCurve(&Z.curve, posZ, Z.NeutralZone, Z.MaxInput);
 
+			//
+			// Reset value for the selected axis, if inhibition is active
+			//
+			if (Tracker::do_inhibit) {
+				if (InhibitKey.doPitch) rotX = 0.0f;
+				if (InhibitKey.doYaw) rotY = 0.0f;
+				if (InhibitKey.doRoll) rotZ = 0.0f;
+				if (InhibitKey.doX) posX = 0.0f;
+				if (InhibitKey.doY) posY = 0.0f;
+				if (InhibitKey.doZ) posZ = 0.0f;
+			}
 
 			//
 			// Send the Virtual Pose to selected Protocol-Server
@@ -1004,6 +1035,18 @@ QPointF point1, point2, point3, point4;
 	StartStopKey.shift = iniFile.value ( "Shift_StartStop", 0 ).toBool();
 	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
 	StartStopKey.alt = iniFile.value ( "Alt_StartStop", 0 ).toBool();
+
+	// Inhibit key
+	InhibitKey.keycode = iniFile.value ( "Keycode_Inhibit", 0 ).toInt();
+	InhibitKey.shift = iniFile.value ( "Shift_Inhibit", 0 ).toBool();
+	InhibitKey.ctrl = iniFile.value ( "Ctrl_Inhibit", 0 ).toBool();
+	InhibitKey.alt = iniFile.value ( "Alt_Inhibit", 0 ).toBool();
+	InhibitKey.doPitch = iniFile.value ( "Inhibit_Pitch", 0 ).toBool();
+	InhibitKey.doYaw = iniFile.value ( "Inhibit_Yaw", 0 ).toBool();
+	InhibitKey.doRoll = iniFile.value ( "Inhibit_Roll", 0 ).toBool();
+	InhibitKey.doX = iniFile.value ( "Inhibit_X", 0 ).toBool();
+	InhibitKey.doY = iniFile.value ( "Inhibit_Y", 0 ).toBool();
+	InhibitKey.doZ = iniFile.value ( "Inhibit_Z", 0 ).toBool();
 
 	iniFile.endGroup ();
 }

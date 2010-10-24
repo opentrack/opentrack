@@ -805,6 +805,7 @@ void FaceTrackNoIR::setIcon(int index)
 		trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboBox->itemText(index));
 	}
     setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
+	ui.btnShowServerControls->setIcon(icon);
 
 	settingsDirty = true;
 
@@ -999,6 +1000,19 @@ QWidget( parent , f)
 	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
+	connect(ui.cbxInhibitKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+
+	// Also add events for the Axis-checkboxes
+	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitYaw, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitRoll, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitX, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitY, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkInhibitZ, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+
 	//
 	// Clear the Lists with key-descriptions and keycodes and build the Lists
 	// The strings will all be added to the ListBoxes for each Shortkey
@@ -1137,6 +1151,7 @@ QWidget( parent , f)
 	for ( int i = 0; i < stringList.size(); i++) {
 		ui.cbxCenterKey->addItem(stringList.at(i));
 		ui.cbxStartStopKey->addItem(stringList.at(i));
+		ui.cbxInhibitKey->addItem(stringList.at(i));
 	}
 
 	// Load the settings from the current .INI-file
@@ -1236,6 +1251,25 @@ int keyindex;
 	ui.chkStartStopCtrl->setChecked (iniFile.value ( "Ctrl_StartStop", 0 ).toBool());
 	ui.chkStartStopAlt->setChecked (iniFile.value ( "Alt_StartStop", 0 ).toBool());
 
+	// Axis-inhibitor key
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Inhibit", 1 ).toInt() );
+	if ( keyindex > 0 ) {
+		ui.cbxInhibitKey->setCurrentIndex( keyindex );
+	}
+	else {
+		ui.cbxInhibitKey->setCurrentIndex( 0 );
+	}
+	ui.chkInhibitShift->setChecked (iniFile.value ( "Shift_Inhibit", 0 ).toBool());
+	ui.chkInhibitCtrl->setChecked (iniFile.value ( "Ctrl_Inhibit", 0 ).toBool());
+	ui.chkInhibitAlt->setChecked (iniFile.value ( "Alt_Inhibit", 0 ).toBool());
+
+	ui.chkInhibitPitch->setChecked (iniFile.value ( "Inhibit_Pitch", 0 ).toBool());
+	ui.chkInhibitYaw->setChecked (iniFile.value ( "Inhibit_Yaw", 0 ).toBool());
+	ui.chkInhibitRoll->setChecked (iniFile.value ( "Inhibit_Roll", 0 ).toBool());
+	ui.chkInhibitX->setChecked (iniFile.value ( "Inhibit_X", 0 ).toBool());
+	ui.chkInhibitY->setChecked (iniFile.value ( "Inhibit_Y", 0 ).toBool());
+	ui.chkInhibitZ->setChecked (iniFile.value ( "Inhibit_Z", 0 ).toBool());
+
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -1264,6 +1298,19 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
 	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
 	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
+
+	iniFile.setValue ( "Keycode_Inhibit", keyList.at( ui.cbxInhibitKey->currentIndex() ) );
+	iniFile.setValue ( "Shift_Inhibit", ui.chkInhibitShift->isChecked() );
+	iniFile.setValue ( "Ctrl_Inhibit", ui.chkInhibitCtrl->isChecked() );
+	iniFile.setValue ( "Alt_Inhibit", ui.chkInhibitAlt->isChecked() );
+
+	iniFile.setValue ( "Inhibit_Pitch", ui.chkInhibitPitch->isChecked() );
+	iniFile.setValue ( "Inhibit_Yaw", ui.chkInhibitYaw->isChecked() );
+	iniFile.setValue ( "Inhibit_Roll", ui.chkInhibitRoll->isChecked() );
+	iniFile.setValue ( "Inhibit_X", ui.chkInhibitX->isChecked() );
+	iniFile.setValue ( "Inhibit_Y", ui.chkInhibitY->isChecked() );
+	iniFile.setValue ( "Inhibit_Z", ui.chkInhibitZ->isChecked() );
+
 	iniFile.endGroup ();
 
 	settingsDirty = false;

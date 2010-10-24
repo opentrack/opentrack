@@ -97,6 +97,12 @@ struct TShortKey {
 	bool shift;						// Modifiers to examine
 	bool ctrl;
 	bool alt;
+	bool doPitch;					// Modifiers to act on axis
+	bool doYaw;
+	bool doRoll;
+	bool doX;
+	bool doY;
+	bool doZ;
 };
 
 class Tracker : public QThread {
@@ -132,12 +138,14 @@ private:
 
 	static TShortKey CenterKey;						// ShortKey to Center headposition
 	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
+	static TShortKey InhibitKey;					// ShortKey to one or more axis during tracking
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
 	static bool set_initial;						// initial headpose is set
-	static bool do_tracking;						// Start/stop tracking, using MINUS key on keyboard
-	static bool do_center;							// Center head-position, using EQUALS key on keyboard
+	static bool do_tracking;						// Start/stop tracking, using the shortkey
+	static bool do_center;							// Center head-position, using the shortkey
+	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
 
 	static bool useFilter;
 	static long prevHeadPoseTime;					// Time from previous sample
