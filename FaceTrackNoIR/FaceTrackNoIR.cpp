@@ -55,6 +55,15 @@ QMainWindow(parent, flags)
 	trayIcon = 0;
 
 	setupFaceTrackNoIR();
+
+	//
+	// Read the AutoStartTracking value from the registry. If it is '1', start the Tracker and Minimize...
+	//
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	if (settings.value ( "AutoStartTracking", 0 ).toBool()) {
+		startTracker();
+		showMinimized();
+	}
 }
 
 /** sets up all objects and connections to buttons */
@@ -171,7 +180,7 @@ void FaceTrackNoIR::getGameProgramName() {
 }
 
 //
-// Get the ProgramName from a connected game and display it.
+// Update the Settings, after a value has changed. This way, the Tracker does not have to re-start.
 //
 void FaceTrackNoIR::updateSettings() {
 	if ( tracker != NULL ) {
@@ -885,6 +894,7 @@ QWidget( parent , f)
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
 	connect(ui.slideAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkAutoStartTracking, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -950,6 +960,7 @@ void PreferencesDialog::loadSettings() {
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	ui.slideAutoMinimizeTime->setValue( settings.value ( "AutoMinimizeTime", 0 ).toInt() );
+	ui.chkAutoStartTracking->setChecked( settings.value ( "AutoStartTracking", 0 ).toBool() );
 
 	settingsDirty = false;
 
@@ -962,6 +973,7 @@ void PreferencesDialog::save() {
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	settings.setValue( "AutoMinimizeTime", ui.slideAutoMinimizeTime->value() );
+	settings.setValue( "AutoStartTracking", ui.chkAutoStartTracking->isChecked() );
 
 	//
 	// Send a message to the main program, to update the Settings (for the tracker)
