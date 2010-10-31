@@ -25,8 +25,8 @@
   </property>
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
-    <layout class="QHBoxLayout" name="horLayCenter">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="textLabel2">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -42,7 +42,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QSlider" name="slideAutoMinimizeTime">
        <property name="toolTip">
         <string extracomment="Time after Start Tracker"/>
@@ -55,7 +55,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QSpinBox" name="spinAutoMinimizeTime">
        <property name="toolTip">
         <string extracomment="Time after Start Tracker"/>
@@ -68,10 +68,24 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="3">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>sec. (after 'Start')</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="chkAutoStartTracking">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Automatically Start tracking on Startup</string>
        </property>
       </widget>
      </item>
