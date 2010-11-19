@@ -243,6 +243,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_532588545DB24CC8B1B2C4CE76F1F7BE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5393A6EEC846449B9AA402970EDF0D16"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -423,6 +429,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9F862E3B1FC84828B4DBBA90B329A10F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A04F01F1242044E2AF28684C163F0651"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -478,6 +490,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B7494D7E2A1E41069876FA3E2C9F7A53"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BB1025D157704ED48587C2AB6289B042"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -676,6 +694,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F18199244F3E4454BF3BE86ADE222E88"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F8796DD78FC04235A38D7381C9BDCC05"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1557,6 +1581,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_532588545DB24CC8B1B2C4CE76F1F7BE"
+            {
+            "SourcePath" = "8:..\\bin\\images\\FS9.ico"
+            "TargetName" = "8:FS9.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_40DAD99DC6924B3B84F32C94378E760A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5393A6EEC846449B9AA402970EDF0D16"
             {
             "SourcePath" = "8:..\\bin\\qt-mt334.dll"
@@ -2137,6 +2181,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9F862E3B1FC84828B4DBBA90B329A10F"
+            {
+            "SourcePath" = "8:..\\bin\\ClientFiles\\FS2002 and FS2004\\FSUIPC.dll"
+            "TargetName" = "8:FSUIPC.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_3D47A18ACAAB46498E90BDEE8093C2B0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A04F01F1242044E2AF28684C163F0651"
             {
             "SourcePath" = "8:..\\bin\\QtGui4.dll"
@@ -2323,6 +2387,26 @@
             "TargetName" = "8:ftcascade1_ir.bin"
             "Tag" = "8:"
             "Folder" = "8:_2E4E58541DBE4789914237438E7AED77"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BB1025D157704ED48587C2AB6289B042"
+            {
+            "SourcePath" = "8:..\\bin\\images\\FSX.ico"
+            "TargetName" = "8:FSX.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_40DAD99DC6924B3B84F32C94378E760A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2957,6 +3041,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8796DD78FC04235A38D7381C9BDCC05"
+            {
+            "SourcePath" = "8:..\\bin\\QBezierConfigurator.dll"
+            "TargetName" = "8:QBezierConfigurator.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BDB04948DE364E43BE4090C5F9E45677"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB3E1677A893494CAA8D6F809D17E66C"
             {
             "SourcePath" = "8:..\\bin\\images\\Freetrack.ico"
@@ -3163,6 +3267,17 @@
                     "Property" = "8:_CD00C82CBFBB4F7180E1E24E93C93D54"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_3D47A18ACAAB46498E90BDEE8093C2B0"
+                            {
+                            "Name" = "8:FS2002 and FS2004"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_F38446BA235D48C180B96AA0E88D8BA3"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_5BB6AC3582E4479D93A8B9E04022F2A2"
                             {
                             "Name" = "8:FreeTrackTest"

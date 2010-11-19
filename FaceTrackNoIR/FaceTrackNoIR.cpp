@@ -27,6 +27,7 @@
 #include "PPJoyServer.h"
 #include "FSUIPCServer.h"
 #include "FTIRServer.h"
+#include "FGServer.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -85,6 +86,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
 	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
 
+	connect(ui.actionSupport, SIGNAL(triggered()), this, SLOT(openurl_support()));
+	connect(ui.actionYour_Support, SIGNAL(triggered()), this, SLOT(openurl_donation()));
+	connect(ui.btnDonate, SIGNAL(clicked()), this, SLOT(openurl_donation()));
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
 	connect(ui.actionVideoWidget, SIGNAL(triggered()), this, SLOT(showVideoWidget()));
@@ -359,7 +363,7 @@ void FaceTrackNoIR::saveAs()
 		save();
 
 		// Put the filename in the window-title
-		setWindowTitle ( "FaceTrackNoIR (1.4) - " + newFileInfo.fileName() );
+		setWindowTitle ( "FaceTrackNoIR (1.5) - " + newFileInfo.fileName() );
 	}
 }
 
@@ -402,9 +406,20 @@ void FaceTrackNoIR::loadSettings() {
 
 	// Put the filename in the window-title
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.4) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.5) - " + pathInfo.fileName() );
 
 }
+
+/** show support page in web-browser **/
+void FaceTrackNoIR::openurl_support() {
+	QDesktopServices::openUrl(QUrl("http://facetracknoir.sourceforge.net/manual/manual.htm", QUrl::TolerantMode));
+}
+
+/** show donations page in web-browser **/
+void FaceTrackNoIR::openurl_donation() {
+	QDesktopServices::openUrl(QUrl("http://facetracknoir.sourceforge.net/information_links/donate.htm", QUrl::TolerantMode));
+}
+
 
 /** show about dialog **/
 void FaceTrackNoIR::about() {
@@ -669,7 +684,6 @@ void FaceTrackNoIR::showServerControls() {
 		// Show the appropriate Protocol-server Settings
 		switch (ui.iconcomboBox->currentIndex()) {
 		case FREE_TRACK:
-		case FLIGHTGEAR:
 		case FTNOIR:
 		case SIMCONNECT:
 			break;
@@ -681,6 +695,9 @@ void FaceTrackNoIR::showServerControls() {
 			break;
 		case TRACKIR:
 	        _server_controls = new FTIRControls( this, Qt::Dialog );
+			break;
+		case FLIGHTGEAR:
+	        _server_controls = new FGControls( this, Qt::Dialog );
 			break;
 		default:
 			break;
@@ -821,7 +838,6 @@ void FaceTrackNoIR::setIcon(int index)
 	// Enable/disable Protocol-server Settings
 	switch (ui.iconcomboBox->currentIndex()) {
 	case FREE_TRACK:
-	case FLIGHTGEAR:
 	case FTNOIR:
 	case SIMCONNECT:
 		ui.btnShowServerControls->hide();
@@ -829,6 +845,7 @@ void FaceTrackNoIR::setIcon(int index)
 	case PPJOY:
 	case FSUIPC:
 	case TRACKIR:
+	case FLIGHTGEAR:
 		ui.btnShowServerControls->show();
 		ui.btnShowServerControls->setEnabled ( true );
 		break;

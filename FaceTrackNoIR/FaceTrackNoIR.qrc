@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>UIElements/Donate.png</file>
     <file>UIElements/Curves.png</file>
     <file>images/rotation_DOFs.png</file>
     <file>images/translation_DOFs.png</file>

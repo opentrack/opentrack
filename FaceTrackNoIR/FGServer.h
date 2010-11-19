@@ -43,6 +43,8 @@
 
 using namespace std;
 
+#include "ui_FTNoIR_FGcontrols.h"
+
 class Tracker;				// pre-define parent-class to avoid circular includes
 
 class FGServer : public QThread {
@@ -72,7 +74,9 @@ private:
 	QUdpSocket *inSocket;									// Receive from FligthGear
 	QUdpSocket *outSocket;									// Send to FligthGear
 	qint32 fg_cmd;											// Command from FlightGear
-	
+	QHostAddress destIP;									// Destination IP-address
+	int destPort;											// Destination port-number
+
 	/** member variables for saving the head pose **/
 	float virtPosX;
 	float virtPosY;
@@ -81,6 +85,8 @@ private:
 	float virtRotX;
 	float virtRotY;
 	float virtRotZ;
+
+	void loadSettings();
 
 public:
 	void setVirtRotX(float rot) { virtRotX = rot; }
@@ -91,6 +97,32 @@ public:
 	void setVirtPosZ(float pos) { virtPosZ = pos / 100.0f; }
 
 };
+
+// Widget that has controls for FG server-settings.
+class FGControls: public QWidget, public Ui::UICFGControls
+{
+    Q_OBJECT
+public:
+
+	explicit FGControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+    virtual ~FGControls();
+	void showEvent ( QShowEvent * event );
+
+private:
+	Ui::UICFGControls ui;
+	void loadSettings();
+	void save();
+
+	/** helper **/
+	bool settingsDirty;
+
+private slots:
+	void doOK();
+	void doCancel();
+	void chkLocalPCOnlyChanged();
+	void settingChanged() { settingsDirty = true; };
+};
+
 
 
 #endif//INCLUDED_FGSERVER_H
