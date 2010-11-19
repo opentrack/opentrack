@@ -789,184 +789,9 @@ color:#000;</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QGroupBox" name="groupTrackerSource">
-             <property name="minimumSize">
-              <size>
-               <width>200</width>
-               <height>120</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="title">
-              <string>Tracker Source</string>
-             </property>
-             <widget class="QComboBox" name="iconcomboTrackerSource">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>20</y>
-                <width>161</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-              <property name="maxVisibleItems">
-               <number>3</number>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="btnShowEngineControls">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>80</y>
-                <width>161</width>
-                <height>23</height>
-               </rect>
-              </property>
-              <property name="toolTip">
-               <string>Change tracker settings</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Settings</string>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="btnStartTracker">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>50</y>
-                <width>75</width>
-                <height>23</height>
-               </rect>
-              </property>
-              <property name="toolTip">
-               <string>Start the Tracker</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Start</string>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="btnStopTracker">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="geometry">
-               <rect>
-                <x>96</x>
-                <y>50</y>
-                <width>75</width>
-                <height>23</height>
-               </rect>
-              </property>
-              <property name="toolTip">
-               <string>Stop the Tracker</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Stop</string>
-              </property>
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupGameProtocol">
-             <property name="minimumSize">
-              <size>
-               <width>190</width>
-               <height>100</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="title">
-              <string>Game protocol</string>
-             </property>
-             <widget class="QComboBox" name="iconcomboBox">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>20</y>
-                <width>151</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-              <property name="maxVisibleItems">
-               <number>6</number>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="btnShowServerControls">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>80</y>
-                <width>151</width>
-                <height>23</height>
-               </rect>
-              </property>
-              <property name="toolTip">
-               <string>Change game protocol settings</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Settings</string>
-              </property>
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnEditCurves">
-             <property name="toolTip">
-              <string>Edit the Curve settings</string>
-             </property>
-             <property name="text">
-              <string>Curves</string>
-             </property>
-             <property name="icon">
-              <iconset resource="FaceTrackNoIR.qrc">
-               <normaloff>:/UIElements/Curves.png</normaloff>:/UIElements/Curves.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>150</width>
-               <height>32</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3">
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="1" column="2">
+            <spacer name="horizontalSpacer_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -978,124 +803,246 @@ color:#000;</string>
              </property>
             </spacer>
            </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>50</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11">
-           <item>
-            <spacer name="horizontalSpacer_9">
+           <item row="1" column="0">
+            <spacer name="horizontalSpacer_6">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>0</width>
+               <width>40</width>
                <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="QWidget" name="bubbleSmallWidget_2" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>667</width>
-               <height>67</height>
-              </size>
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="leftMargin">
+              <number>10</number>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>667</width>
-               <height>67</height>
-              </size>
+             <property name="rightMargin">
+              <number>10</number>
              </property>
-             <property name="acceptDrops">
-              <bool>true</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background:  url(&quot;UIElements/bubble_1_small.png&quot;) no-repeat;
-opacity:100;</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="leftMargin">
-               <number>15</number>
-              </property>
-              <property name="topMargin">
-               <number>10</number>
-              </property>
-              <property name="rightMargin">
-               <number>10</number>
-              </property>
-              <property name="bottomMargin">
-               <number>10</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="cameraName">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>30</height>
-                 </size>
+             <item>
+              <widget class="QGroupBox" name="groupTrackerSource">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Tracker Source</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboTrackerSource">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>161</width>
+                  <height>22</height>
+                 </rect>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color:#ccc;
-background:none;</string>
+                 <string notr="true"/>
                 </property>
-                <property name="text">
-                 <string>Camera Name</string>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>3</number>
                 </property>
                </widget>
-              </item>
-             </layout>
-            </widget>
+               <widget class="QPushButton" name="btnShowEngineControls">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>161</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change tracker settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnStartTracker">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>50</y>
+                  <width>75</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Start the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Start</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnStopTracker">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>96</x>
+                  <y>50</y>
+                  <width>75</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Stop the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Stop</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupGameProtocol">
+               <property name="minimumSize">
+                <size>
+                 <width>190</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Game protocol</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboBox">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>151</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>6</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnShowServerControls">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>151</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change game protocol settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnEditCurves">
+               <property name="toolTip">
+                <string>Edit the Curve settings</string>
+               </property>
+               <property name="text">
+                <string>Curves</string>
+               </property>
+               <property name="icon">
+                <iconset resource="FaceTrackNoIR.qrc">
+                 <normaloff>:/UIElements/Curves.png</normaloff>:/UIElements/Curves.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>150</width>
+                 <height>32</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <spacer name="horizontalSpacer_17">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="5" column="1">
+            <layout class="QHBoxLayout" name="horLayoutDonate">
+             <property name="rightMargin">
+              <number>10</number>
              </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>15</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDonate">
+               <property name="text">
+                <string>Click here to Donate!</string>
+               </property>
+               <property name="icon">
+                <iconset resource="FaceTrackNoIR.qrc">
+                 <normaloff>:/UIElements/Donate.png</normaloff>:/UIElements/Donate.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>18</width>
+                 <height>18</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
-           <item>
+           <item row="4" column="1">
             <widget class="QWidget" name="bubbleBigWidget" native="true">
              <property name="minimumSize">
               <size>
-               <width>667</width>
+               <width>620</width>
                <height>115</height>
               </size>
              </property>
@@ -1217,10 +1164,10 @@ background:none;</string>
                    <number>1</number>
                   </property>
                   <property name="maximum">
-                   <number>120</number>
+                   <number>50</number>
                   </property>
                   <property name="pageStep">
-                   <number>10</number>
+                   <number>5</number>
                   </property>
                   <property name="value">
                    <number>10</number>
@@ -1245,7 +1192,7 @@ background:none;</string>
                    <string notr="true">background:none;</string>
                   </property>
                   <property name="maximum">
-                   <number>120</number>
+                   <number>50</number>
                   </property>
                   <property name="value">
                    <number>10</number>
@@ -1271,8 +1218,22 @@ background:none;</string>
                </widget>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout">
-                <item row="1" column="2">
+               <layout class="QGridLayout" name="gridEWMARotations">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="layoutDirection">
+                   <enum>Qt::RightToLeft</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>EWMA</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
                  <widget class="QLabel" name="lblSensYaw">
                   <property name="minimumSize">
                    <size>
@@ -1298,33 +1259,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="6">
-                 <widget class="QLabel" name="lblSensX">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>X</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
+                <item row="2" column="0">
                  <widget class="QLabel" name="lblSensPitch">
                   <property name="minimumSize">
                    <size>
@@ -1350,33 +1285,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="6">
-                 <widget class="QLabel" name="lblSensY">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Y</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
+                <item row="3" column="0">
                  <widget class="QLabel" name="lblSensRoll">
                   <property name="minimumSize">
                    <size>
@@ -1402,7 +1311,287 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="6">
+                <item row="0" column="1">
+                 <widget class="QLabel" name="lblSensitivity_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>110</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Red.factor (100 = 1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSlider" name="redYaw">
+                  <property name="minimumSize">
+                   <size>
+                    <width>45</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSlider" name="redPitch">
+                  <property name="minimumSize">
+                   <size>
+                    <width>45</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSlider" name="redRoll">
+                  <property name="minimumSize">
+                   <size>
+                    <width>45</width>
+                    <height>15</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QSpinBox" name="spinRedYaw">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>5</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QSpinBox" name="spinRedPitch">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>5</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QSpinBox" name="spinRedRoll">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>5</number>
+                  </property>
+                  <property name="value">
+                   <number>70</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QCheckBox" name="chkInvertYaw">
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QCheckBox" name="chkInvertPitch">
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="QCheckBox" name="chkInvertRoll">
+                  <property name="styleSheet">
+                   <string notr="true">background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLabel" name="lblInvert1">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Invert</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="Line" name="line_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="gridEWMATranslations">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="lblSensX">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::RightToLeft</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>X</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="lblSensY">
+                  <property name="minimumSize">
+                   <size>
+                    <width>25</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::RightToLeft</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>Y</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
                  <widget class="QLabel" name="lblSensZ">
                   <property name="minimumSize">
                    <size>
@@ -1428,60 +1617,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="5">
-                 <widget class="QCheckBox" name="chkInvertYaw">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="5">
-                 <widget class="QLabel" name="lblInvert1">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Invert</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="5">
-                 <widget class="QCheckBox" name="chkInvertPitch">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="5">
-                 <widget class="QCheckBox" name="chkInvertRoll">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="9">
+                <item row="1" column="3">
                  <widget class="QCheckBox" name="chkInvertX">
                   <property name="styleSheet">
                    <string notr="true">background:none;</string>
@@ -1491,7 +1627,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="9">
+                <item row="0" column="3">
                  <widget class="QLabel" name="lblInvert1_2">
                   <property name="minimumSize">
                    <size>
@@ -1514,7 +1650,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="9">
+                <item row="2" column="3">
                  <widget class="QCheckBox" name="chkInvertY">
                   <property name="styleSheet">
                    <string notr="true">background:none;</string>
@@ -1524,7 +1660,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="9">
+                <item row="3" column="3">
                  <widget class="QCheckBox" name="chkInvertZ">
                   <property name="styleSheet">
                    <string notr="true">background:none;</string>
@@ -1534,171 +1670,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="3">
-                 <widget class="QSlider" name="redYaw">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QSlider" name="redPitch">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="3">
-                 <widget class="QSlider" name="redRoll">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="4">
-                 <widget class="QSpinBox" name="spinRedYaw">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="4">
-                 <widget class="QSpinBox" name="spinRedPitch">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="4">
-                 <widget class="QSpinBox" name="spinRedRoll">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>70</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QLabel" name="lblSensitivity_2">
-                  <property name="minimumSize">
-                   <size>
-                    <width>110</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Red.factor (100 = 1)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="7">
+                <item row="1" column="1">
                  <widget class="QSlider" name="redX">
                   <property name="minimumSize">
                    <size>
@@ -1723,7 +1695,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="7">
+                <item row="2" column="1">
                  <widget class="QSlider" name="redY">
                   <property name="minimumSize">
                    <size>
@@ -1748,7 +1720,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="7">
+                <item row="3" column="1">
                  <widget class="QSlider" name="redZ">
                   <property name="minimumSize">
                    <size>
@@ -1773,7 +1745,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="8">
+                <item row="1" column="2">
                  <widget class="QSpinBox" name="spinRedX">
                   <property name="minimumSize">
                    <size>
@@ -1795,7 +1767,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="8">
+                <item row="2" column="2">
                  <widget class="QSpinBox" name="spinRedY">
                   <property name="minimumSize">
                    <size>
@@ -1817,7 +1789,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="8">
+                <item row="3" column="2">
                  <widget class="QSpinBox" name="spinRedZ">
                   <property name="minimumSize">
                    <size>
@@ -1839,7 +1811,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="7">
+                <item row="0" column="1">
                  <widget class="QLabel" name="lblSensitivity_3">
                   <property name="minimumSize">
                    <size>
@@ -1862,21 +1834,7 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QLabel" name="label_2">
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>EWMA</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="6">
+                <item row="0" column="0">
                  <widget class="QLabel" name="label_3">
                   <property name="layoutDirection">
                    <enum>Qt::RightToLeft</enum>
@@ -1893,7 +1851,7 @@ background:none;</string>
                </layout>
               </item>
               <item>
-               <spacer name="horizontalSpacer_13">
+               <spacer name="horizontalSpacer_3">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1902,7 +1860,7 @@ background:none;</string>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>30</width>
+                  <width>5</width>
                   <height>20</height>
                  </size>
                 </property>
@@ -1910,6 +1868,82 @@ background:none;</string>
               </item>
              </layout>
             </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QWidget" name="bubbleSmallWidget_2" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>620</width>
+               <height>67</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>667</width>
+               <height>67</height>
+              </size>
+             </property>
+             <property name="acceptDrops">
+              <bool>true</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background:  url(&quot;UIElements/bubble_1_small.png&quot;) no-repeat;
+opacity:100;</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>15</number>
+              </property>
+              <property name="topMargin">
+               <number>10</number>
+              </property>
+              <property name="rightMargin">
+               <number>10</number>
+              </property>
+              <property name="bottomMargin">
+               <number>10</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="cameraName">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>600</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color:#ccc;
+background:none;</string>
+                </property>
+                <property name="text">
+                 <string>Camera Name</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -1942,15 +1976,6 @@ background:none;</string>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuAbout">
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>About</string>
-    </property>
-    <addaction name="actionAbout"/>
-   </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
@@ -1967,10 +1992,19 @@ background:none;</string>
     <addaction name="separator"/>
     <addaction name="actionCurve_Configuration"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionSupport"/>
+    <addaction name="actionYour_Support"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuOptions"/>
-   <addaction name="menuAbout"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -2119,6 +2153,16 @@ background:none;</string>
   <action name="actionCurve_Configuration">
    <property name="text">
     <string>Curve Configuration</string>
+   </property>
+  </action>
+  <action name="actionSupport">
+   <property name="text">
+    <string>Support</string>
+   </property>
+  </action>
+  <action name="actionYour_Support">
+   <property name="text">
+    <string>Your Support</string>
    </property>
   </action>
  </widget>

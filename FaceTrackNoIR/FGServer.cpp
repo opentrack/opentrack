@@ -40,6 +40,8 @@ FGServer::FGServer( Tracker *parent ) {
 	// Create events
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
 	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
+
+	loadSettings();
 }
 
 //
@@ -87,8 +89,8 @@ int no_bytes;
 	//
 
 	//! [1]
-	no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), 
-		QHostAddress::LocalHost, 5550);
+//	no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), QHostAddress::LocalHost, 5550);
+	no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), destIP, destPort);
 	if ( no_bytes > 0) {
 //		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
 	}
@@ -116,7 +118,8 @@ void FGServer::run() {
 	outSocket = new QUdpSocket();
 
 	// Connect the inSocket to the port, to receive readyRead messages
-	inSocket->bind(QHostAddress::LocalHost, 5551);
+//	inSocket->bind(QHostAddress::LocalHost, 5551);
+	inSocket->bind(QHostAddress::Any, destPort+1);
 
     // Connect the inSocket to the member-function, to read FlightGear commands
 	connect(inSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()), Qt::DirectConnection);
@@ -133,6 +136,185 @@ void FGServer::terminate() {
 
 	delete inSocket;
 	delete outSocket;
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FGServer::loadSettings() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FG" );
+
+	bool blnLocalPC = iniFile.value ( "LocalPCOnly", 1 ).toBool();
+	if (blnLocalPC) {
+		destIP = QHostAddress::LocalHost;
+	}
+	else {
+		QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
+		destIP = QHostAddress( destAddr );
+	}
+	destPort = iniFile.value ( "PortNumber", 5550 ).toInt();
+
+	iniFile.endGroup ();
+}
+
+//
+// Constructor for server-settings-dialog
+//
+FGControls::FGControls( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	this->move(parent->pos() + offsetpos);
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.chkLocalPC, SIGNAL(stateChanged(int)), this, SLOT(chkLocalPCOnlyChanged()));
+	connect(ui.spinIPFirstNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.spinIPSecondNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.spinIPThirdNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+FGControls::~FGControls() {
+	qDebug() << "~FGControls() says: started";
+}
+
+//
+// OK clicked on server-dialog
+//
+void FGControls::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void FGControls::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void FGControls::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FGControls::loadSettings() {
+
+//	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+//	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "FG" );
+	ui.chkLocalPC->setChecked (iniFile.value ( "LocalPCOnly", 1 ).toBool());
+
+	ui.spinIPFirstNibble->setValue( iniFile.value ( "IP-1", 192 ).toInt() );
+	ui.spinIPSecondNibble->setValue( iniFile.value ( "IP-2", 168 ).toInt() );
+	ui.spinIPThirdNibble->setValue( iniFile.value ( "IP-3", 2 ).toInt() );
+	ui.spinIPFourthNibble->setValue( iniFile.value ( "IP-4", 1 ).toInt() );
+
+	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
+	iniFile.endGroup ();
+
+	chkLocalPCOnlyChanged();	
+	settingsDirty = false;
+
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void FGControls::save() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FG" );
+	iniFile.setValue ( "LocalPCOnly", ui.chkLocalPC->isChecked() );
+	iniFile.setValue ( "IP-1", ui.spinIPFirstNibble->value() );
+	iniFile.setValue ( "IP-2", ui.spinIPSecondNibble->value() );
+	iniFile.setValue ( "IP-3", ui.spinIPThirdNibble->value() );
+	iniFile.setValue ( "IP-4", ui.spinIPFourthNibble->value() );
+	iniFile.setValue ( "PortNumber", ui.spinPortNumber->value() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//
+// Handle change of the checkbox.
+//
+void FGControls::chkLocalPCOnlyChanged() {
+
+	if ( ui.chkLocalPC->isChecked() ) {
+		ui.spinIPFirstNibble->setValue( 127 );
+		ui.spinIPFirstNibble->setEnabled ( false );
+		ui.spinIPSecondNibble->setValue( 0 );
+		ui.spinIPSecondNibble->setEnabled ( false );
+		ui.spinIPThirdNibble->setValue( 0 );
+		ui.spinIPThirdNibble->setEnabled ( false );
+		ui.spinIPFourthNibble->setValue( 1 );
+		ui.spinIPFourthNibble->setEnabled ( false );
+	}
+	else {
+		ui.spinIPFirstNibble->setEnabled ( true );
+		ui.spinIPSecondNibble->setEnabled ( true );
+		ui.spinIPThirdNibble->setEnabled ( true );
+		ui.spinIPFourthNibble->setEnabled ( true );
+	}
+
+	settingsDirty = true;
 }
 
 //END

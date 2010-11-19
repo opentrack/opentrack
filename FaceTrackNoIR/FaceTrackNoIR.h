@@ -33,6 +33,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QDialog>
+#include <QUrl>
 
 #include "ui_FaceTrackNoIR.h"
 #include "ui_FTNoIR_KeyboardShortcuts.h"
@@ -99,11 +100,16 @@ private:
 	void setupFaceTrackNoIR();
 
 	private slots:
-		//file
+		//file menu
 		void open();
 		void save();
 		void saveAs();
 		void exit();
+
+		//about menu
+		void openurl_support();
+		void openurl_donation();
+		void about();
 
 		void setIcon(int index);
 		void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -140,7 +146,6 @@ private:
 
 		void startTracker();
 		void stopTracker();
-		void about();
 };
 
 // Widget that has controls for FaceTrackNoIR Preferences.
