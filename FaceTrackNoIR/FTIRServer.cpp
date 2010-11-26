@@ -64,6 +64,13 @@ FTIRServer::~FTIRServer() {
 	FTIRClientLib.unload();
 	FTIRViewsLib.unload();
 
+	//
+	// Kill the dummy TrackIR process.
+	//
+	if (dummyTrackIR) {
+		dummyTrackIR->kill();
+	}
+
 	//terminates the QThread and waits for finishing the QThread
 	terminate();
 	wait();
@@ -273,6 +280,15 @@ bool FTIRServer::FTIRCheckClientDLL()
 			FTIRViewsLib.setFileName(aFileName);
 			FTIRViewsLib.load();
 		}
+
+		//
+		// Start TrackIR.exe, also to support some older games and EZCA
+		// Some TrackIR clients check if a process called TrackIR.exe is running.
+		// This should do the trick
+		//
+		QString program = "TrackIR.exe";
+ 		dummyTrackIR = new QProcess(this);
+		dummyTrackIR->start(program);
 
 	} catch(...) {
 		settings.~QSettings();

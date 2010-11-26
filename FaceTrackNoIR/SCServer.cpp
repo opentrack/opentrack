@@ -76,6 +76,8 @@ importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 importSimConnect_Close simconnect_close;
 importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 
+float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+
 	//
 	// Get the SimConnect_Open function from the DLL and use it!
 	//
@@ -96,6 +98,13 @@ importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 	}
 
 	qDebug() << "SCServer::run() says: SimConnect functions resolved in DLL!";
+
+	prevPosX = 0.0f;
+	prevPosY = 0.0f;
+	prevPosZ = 0.0f;
+	prevRotX = 0.0f;
+	prevRotY = 0.0f;
+	prevRotZ = 0.0f;
 
 	forever
 	{
@@ -122,9 +131,21 @@ importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 			//
 			// Write the 6DOF-data to FSX
 			//
-			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
-//				qDebug() << "SCServer::run() says: SimConnect data written!";
+			// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
+			//
+			if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
+				(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
+				if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
+//					qDebug() << "SCServer::run() says: SimConnect data written!";
+				}
 			}
+
+			prevPosX = virtPosX;
+			prevPosY = virtPosY;
+			prevPosZ = virtPosZ;
+			prevRotX = virtRotX;
+			prevRotY = virtRotY;
+			prevRotZ = virtRotZ;
 
 			// just for lower cpu load
 			msleep(15);	

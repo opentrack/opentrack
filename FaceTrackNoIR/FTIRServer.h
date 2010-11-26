@@ -33,7 +33,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QLibrary>
-#include <QUdpSocket>
+#include <QProcess>
 
 typedef void (WINAPI *importSetPosition)(float x, float y, float z, float xRot, float yRot, float zRot);
 typedef void (WINAPI *importTIRViewsStart)(void);
@@ -74,6 +74,7 @@ private:
 	QLibrary FTIRClientLib;
 	QLibrary FTIRViewsLib;
 	bool useTIRViews;
+	QProcess *dummyTrackIR;
 
 	static float scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
