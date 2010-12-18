@@ -70,6 +70,11 @@ enum FTNoIR_Client {
 	FSUIPC = 6
 };
 
+enum FTNoIR_Face_Tracker {
+	FT_SM_FACEAPI = 0,
+	FT_FTNOIR = 1
+};
+
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
 //
@@ -115,6 +120,7 @@ private:
 	HANDLE m_WaitThread;
 
 	FTNoIR_Client selectedClient;
+	FTNoIR_Face_Tracker selectedTracker;
 
 	/** face api variables **/
 	APIScope *faceapi_scope;
@@ -162,19 +168,14 @@ private:
 	QWidget *headPoseWidget;
 	FaceTrackNoIR *mainApp;
 
-//	FTServer *server_FT;							// Freetrack Server
-	QSharedPointer<ProtocolServerBase> server_FG;	// FlightGear Server
-//	PPJoyServer *server_PPJoy;						// PPJoy Server
-//	FTIRServer *server_FTIR;						// Fake TIR Server
-//	SCServer *server_SC;							// SimConnect Server
-//	FSUIPCServer *server_FSUIPC;					// FSUIPC Server
+	QSharedPointer<ProtocolServerBase> server_Game;	// Protocol Server to communicate headpose-data to the Game!
 
 protected:
 	// qthread override run method 
 	void run();
 
 public:
-	Tracker( int clientID );
+	Tracker( int clientID, int facetrackerID );
 	~Tracker();
 
 	void setup(QWidget *head, FaceTrackNoIR *parent);
