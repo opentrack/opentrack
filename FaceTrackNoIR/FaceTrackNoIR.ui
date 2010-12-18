@@ -172,19 +172,6 @@ QGroupBox {
         </spacer>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>186</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <widget class="QFrame" name="logoInstitute">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1021,8 +1008,11 @@ color:#000;</string>
              </item>
              <item>
               <widget class="QPushButton" name="btnDonate">
+               <property name="toolTip">
+                <string>Please help us: make gaming fun...</string>
+               </property>
                <property name="text">
-                <string>Click here to Donate!</string>
+                <string>Click here to Support FaceTrackNoIR!</string>
                </property>
                <property name="icon">
                 <iconset resource="FaceTrackNoIR.qrc">
@@ -1035,6 +1025,19 @@ color:#000;</string>
                 </size>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>186</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>

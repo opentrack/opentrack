@@ -42,6 +42,7 @@
 #include "FTIRServer.h"				// FakeTIR-server
 #include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
 #include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)
+#include "FTNoIR_cxx_protocolserver.h"
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -118,7 +119,6 @@ private:
 	/** face api variables **/
 	APIScope *faceapi_scope;
     QSharedPointer<EngineBase> _engine;
-	QSharedPointer<HeadTracker> _headtracker;
 	smEngineHandle _engine_handle;
 
 	/** static callback method for the head pose tracking **/
@@ -162,12 +162,12 @@ private:
 	QWidget *headPoseWidget;
 	FaceTrackNoIR *mainApp;
 
-	FTServer *server_FT;							// Freetrack Server
-	FGServer *server_FG;							// FlightGear Server
-	PPJoyServer *server_PPJoy;						// PPJoy Server
-	FTIRServer *server_FTIR;						// Fake TIR Server
-	SCServer *server_SC;							// SimConnect Server
-	FSUIPCServer *server_FSUIPC;					// FSUIPC Server
+//	FTServer *server_FT;							// Freetrack Server
+	QSharedPointer<ProtocolServerBase> server_FG;	// FlightGear Server
+//	PPJoyServer *server_PPJoy;						// PPJoy Server
+//	FTIRServer *server_FTIR;						// Fake TIR Server
+//	SCServer *server_SC;							// SimConnect Server
+//	FSUIPCServer *server_FSUIPC;					// FSUIPC Server
 
 protected:
 	// qthread override run method 

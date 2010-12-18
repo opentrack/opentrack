@@ -29,7 +29,7 @@
 #ifndef INCLUDED_FTSERVER_H
 #define INCLUDED_FTSERVER_H
  
-//#include "Windows.h" 
+#include "FTNoIR_cxx_protocolserver.h"
 #include "FTTypes.h"
 #include <QString>
 #include <QMessageBox>
@@ -47,8 +47,9 @@ typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
 typedef HANDLE (WINAPI *importGetMapHandle)(void);
 
 using namespace std;
+using namespace v4friend::ftnoir;
 
-class FTServer : public QThread {
+class FTServer : public ProtocolServerBase {
 	Q_OBJECT
 
 public: 
@@ -57,55 +58,35 @@ public:
 	FTServer();
 	~FTServer();
 
-	bool FTCreateMapping(HANDLE handle);
-	void FTDestroyMapping();
-	bool FTCheckClientDLL();
-	QString FTGetProgramName();
+	QString GetProgramName();
 
 	// protected member methods
 protected:
 	void run();
+	bool checkServerInstallationOK( HANDLE handle );
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
+	bool FTCreateMapping(HANDLE handle);
+	void FTDestroyMapping();
 
 	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
 	HANDLE hFTMutex;
 
 	/** member varables for saving the head pose **/
-	float headPosX;
-	float headPosY;
-	float headPosZ;
-	
-	float headRotX;
-	float headRotY;
-	float headRotZ;
 	bool confid;
-
-	// Settings for calculating the Virtual Pose
-	float virtPosX;
-	float virtPosY;
-	float virtPosZ;
-	
-	float virtRotX;
-	float virtRotY;
-	float virtRotZ;
 
 	// Private properties
 	QString ProgramName;
 	QLibrary FTClientLib;
 
 public:
-	void setHeadPosX(float x) { headPosX = x * 10; }
-	void setHeadPosY(float y) { headPosY = y * 10; }
-	void setHeadPosZ(float z) { headPosZ = z * 10; }
-
 	void setHeadRotX(float x) { headRotX = getRadsFromDegrees(x); }
 	void setHeadRotY(float y) { headRotY = getRadsFromDegrees(y); }
 	void setHeadRotZ(float z) { headRotZ = getRadsFromDegrees(z); }
+	void setHeadPosX(float x) { headPosX = x * 10; }
+	void setHeadPosY(float y) { headPosY = y * 10; }
+	void setHeadPosZ(float z) { headPosZ = z * 10; }
 
 	void setVirtRotX(float rot) { virtRotX = getRadsFromDegrees(rot); }
 	void setVirtRotY(float rot) { virtRotY = getRadsFromDegrees(rot); }

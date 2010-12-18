@@ -28,6 +28,7 @@
 #ifndef INCLUDED_PPJOYSERVER_H
 #define INCLUDED_PPJOYSERVER_H
  
+#include "FTNoIR_cxx_protocolserver.h"
 #include "PPJIoctl.h"
 #include <QString>
 #include <QMessageBox>
@@ -42,6 +43,7 @@
 #include "ui_FTNoIR_ppjoycontrols.h"
 
 using namespace std;
+using namespace v4friend::ftnoir;
 
 class Tracker;				// pre-define parent-class to avoid circular includes
 
@@ -59,7 +61,7 @@ typedef struct
 }	JOYSTICK_STATE;
 #pragma pack(pop)
 
-class PPJoyServer : public QThread {
+class PPJoyServer : public ProtocolServerBase {
 	Q_OBJECT
 
 public: 
@@ -76,10 +78,6 @@ private slots:
 //	void readPendingDatagrams();
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
-
 	Tracker *headTracker;									// For upstream messages...
 	
 	HANDLE h;
@@ -92,15 +90,6 @@ private:
 
 //	static long analogDefault,PPJoyCorrection;
 	long centerPos[3],centerRot[3];
-
-	/** member variables for saving the head pose **/
-	float virtPosX;
-	float virtPosY;
-	float virtPosZ;
-	
-	float virtRotX;
-	float virtRotY;
-	float virtRotZ;
 
 	void checkAnalogLimits();
 	long scale2AnalogLimits( float x, float min_x, float max_x );

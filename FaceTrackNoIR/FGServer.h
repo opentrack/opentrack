@@ -29,6 +29,7 @@
 #ifndef INCLUDED_FGSERVER_H
 #define INCLUDED_FGSERVER_H
  
+#include "FTNoIR_cxx_protocolserver.h"
 #include "FGTypes.h"
 #include <QString>
 #include <QMessageBox>
@@ -42,12 +43,13 @@
 #include <QUdpSocket>
 
 using namespace std;
+using namespace v4friend::ftnoir;
 
 #include "ui_FTNoIR_FGcontrols.h"
 
 class Tracker;				// pre-define parent-class to avoid circular includes
 
-class FGServer : public QThread {
+class FGServer : public ProtocolServerBase {
 	Q_OBJECT
 
 public: 
@@ -65,10 +67,6 @@ private slots:
 	void readPendingDatagrams();
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
-
 	Tracker *headTracker;									// For upstream messages...
 	TFlightGearData TestData;
 	QUdpSocket *inSocket;									// Receive from FligthGear
@@ -77,25 +75,7 @@ private:
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
 
-	/** member variables for saving the head pose **/
-	float virtPosX;
-	float virtPosY;
-	float virtPosZ;
-	
-	float virtRotX;
-	float virtRotY;
-	float virtRotZ;
-
 	void loadSettings();
-
-public:
-	void setVirtRotX(float rot) { virtRotX = rot; }
-	void setVirtRotY(float rot) { virtRotY = rot; }
-	void setVirtRotZ(float rot) { virtRotZ = rot; }
-	void setVirtPosX(float pos) { virtPosX = pos / 100.0f; }
-	void setVirtPosY(float pos) { virtPosY = pos / 100.0f; }
-	void setVirtPosZ(float pos) { virtPosZ = pos / 100.0f; }
-
 };
 
 // Widget that has controls for FG server-settings.

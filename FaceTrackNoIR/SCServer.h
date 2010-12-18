@@ -28,6 +28,7 @@
 // This is necessary to run FaceTrackNoIR on a PC without FSX
 //
 #define SIMCONNECT_H_NOMANIFEST 
+#include "FTNoIR_cxx_protocolserver.h"
 #include "Windows.h" 
 #include <stdlib.h>
 #include "SimConnect.h"
@@ -46,10 +47,11 @@ typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
 typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
 
 using namespace std;
+using namespace v4friend::ftnoir;
 
 static const char* SC_CLIENT_FILENAME = "SimConnect.dll";
 
-class SCServer : public QThread {
+class SCServer : public ProtocolServerBase {
 	Q_OBJECT
 
 public: 
@@ -58,40 +60,24 @@ public:
 	SCServer();
 	~SCServer();
 
-	bool SCCheckClientDLL();
-
 	// protected member methods
 protected:
 	void run();
+	bool checkServerInstallationOK( HANDLE handle );
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
-
 	// Private properties
 	QString ProgramName;
 	QLibrary SCClientLib;
 
 public:
+	void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
+	void setVirtRotY(float rot) { virtRotY = -1.0f * rot; }
+	void setVirtRotZ(float rot) { virtRotZ = rot; }
 
-	// Settings for calculating the Virtual Pose
-	static float virtPosX;
-	static float virtPosY;
-	static float virtPosZ;
-	
-	static float virtRotX;
-	static float virtRotY;
-	static float virtRotZ;
-
-	static void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
-	static void setVirtRotY(float rot) { virtRotY = -1.0f * rot; }
-	static void setVirtRotZ(float rot) { virtRotZ = rot; }
-
-	static void setVirtPosX(float pos) { virtPosX = pos/100.f; }			// cm to meters
-	static void setVirtPosY(float pos) { virtPosY = pos/100.f; }
-	static void setVirtPosZ(float pos) { virtPosZ = -1.0f * pos/100.f; }
-
+	void setVirtPosX(float pos) { virtPosX = pos/100.f; }			// cm to meters
+	void setVirtPosY(float pos) { virtPosY = pos/100.f; }
+	void setVirtPosZ(float pos) { virtPosZ = -1.0f * pos/100.f; }
 };
 
 

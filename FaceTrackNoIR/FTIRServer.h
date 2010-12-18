@@ -23,6 +23,7 @@
 #ifndef INCLUDED_FTIRSERVER_H
 #define INCLUDED_FTIRSERVER_H
  
+#include "FTNoIR_cxx_protocolserver.h"
 #include "FTIRTypes.h"
 #include <QString>
 #include <QMessageBox>
@@ -42,8 +43,9 @@ typedef void (WINAPI *importTIRViewsStop)(void);
 #include "ui_FTNoIR_FTIRcontrols.h"
 
 using namespace std;
+using namespace v4friend::ftnoir;
 
-class FTIRServer : public QThread {
+class FTIRServer : public ProtocolServerBase {
 	Q_OBJECT
 
 public: 
@@ -52,18 +54,14 @@ public:
 	FTIRServer();
 	~FTIRServer();
 
-	bool FTIRCreateMapping(HANDLE handle);
-	void FTIRDestroyMapping();
-	bool FTIRCheckClientDLL();
-
 	// protected member methods
 protected:
 	void run();
+	bool checkServerInstallationOK( HANDLE handle );
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
+	bool FTIRCreateMapping(HANDLE handle);
+	void FTIRDestroyMapping();
 
 	HANDLE hFTIRMemMap;
 	FTIRMemMap *pMemData;
@@ -80,24 +78,13 @@ private:
 	void loadSettings();
 
 public:
+	void setVirtRotX(float rot) { virtRotX = scale2AnalogLimits (rot, -180.0f, 180.0f); }
+	void setVirtRotY(float rot) { virtRotY = scale2AnalogLimits (rot, -180.0f, 180.0f); }
+	void setVirtRotZ(float rot) { virtRotZ = scale2AnalogLimits (rot, -180.0f, 180.0f); }
 
-	// Settings for calculating the Virtual Pose
-	static float virtPosX;
-	static float virtPosY;
-	static float virtPosZ;
-	
-	static float virtRotX;
-	static float virtRotY;
-	static float virtRotZ;
-
-	static void setVirtRotX(float rot) { virtRotX = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	static void setVirtRotY(float rot) { virtRotY = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	static void setVirtRotZ(float rot) { virtRotZ = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-
-	static void setVirtPosX(float pos) { virtPosX = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
-	static void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
-	static void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
-
+	void setVirtPosX(float pos) { virtPosX = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
+	void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
+	void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
 };
 
 // Widget that has controls for FTIR server-settings.
