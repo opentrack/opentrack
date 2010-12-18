@@ -25,15 +25,6 @@
 */
 #include "FTIRServer.h"
 
-
-float FTIRServer::virtPosX = 0.0f;
-float FTIRServer::virtPosY = 0.0f;
-float FTIRServer::virtPosZ = 0.0f;
-
-float FTIRServer::virtRotX = 0.0f;
-float FTIRServer::virtRotY = 0.0f;
-float FTIRServer::virtRotZ = 0.0f;
-
 /** constructor **/
 FTIRServer::FTIRServer() {
 
@@ -67,6 +58,7 @@ FTIRServer::~FTIRServer() {
 	//
 	// Kill the dummy TrackIR process.
 	//
+	qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
 	if (dummyTrackIR) {
 		dummyTrackIR->kill();
 	}
@@ -156,14 +148,12 @@ void FTIRServer::run() {
 }
 
 //
-// Create a memory-mapping to the Freetrack data.
+// Create a memory-mapping to the TrackIR data.
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTIRServer::FTIRCreateMapping(HANDLE handle)
+bool FTIRServer::FTIRCreateMapping( HANDLE handle )
 {
-	bool result;
-
 	qDebug() << "FTIRCreateMapping says: Starting Function";
 
 	//
@@ -202,8 +192,7 @@ bool FTIRServer::FTIRCreateMapping(HANDLE handle)
 		return false;
 	}
 
-  result = false;
-return result;
+	return true;
 }
 
 //
@@ -224,7 +213,7 @@ void FTIRServer::FTIRDestroyMapping()
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTIRServer::FTIRCheckClientDLL()
+bool FTIRServer::checkServerInstallationOK( HANDLE handle )
 {   
 	QSettings settings("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
 	QString aLocation;														// Location of Client DLL
@@ -293,7 +282,7 @@ bool FTIRServer::FTIRCheckClientDLL()
 	} catch(...) {
 		settings.~QSettings();
 	}
-	return true;
+	return FTIRCreateMapping( handle );
 }
 
 //

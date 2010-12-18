@@ -154,8 +154,6 @@ void FTServer::run() {
 //
 bool FTServer::FTCreateMapping(HANDLE handle)
 {
-	bool result;
-
 	qDebug() << "FTCreateMapping says: Starting Function";
 
 	//
@@ -194,8 +192,7 @@ bool FTServer::FTCreateMapping(HANDLE handle)
 		return false;
 	}
 
-  result = false;
-return result;
+	return true;
 }
 
 //
@@ -215,7 +212,7 @@ void FTServer::FTDestroyMapping()
 //
 // Get the program-name from the client (Game!).
 //
-QString FTServer::FTGetProgramName() {   
+QString FTServer::GetProgramName() {   
 QString *str;
 
 	str = new QString(pMemData->ProgramName);
@@ -227,7 +224,7 @@ QString *str;
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTServer::FTCheckClientDLL()
+bool FTServer::checkServerInstallationOK( HANDLE handle )
 {   
 	QSettings settings("Freetrack", "FreetrackClient");				// Registry settings (in HK_USER)
 	QString aLocation;												// Location of Client DLL
@@ -281,7 +278,7 @@ bool FTServer::FTCheckClientDLL()
 	} catch(...) {
 		settings.~QSettings();
 	}
-	return true;
+	return FTCreateMapping( handle );
 }
 
 //END

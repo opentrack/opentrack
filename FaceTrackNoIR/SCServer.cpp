@@ -25,13 +25,13 @@
 #include "SCServer.h"
 
 
-float SCServer::virtPosX = 0.0f;
-float SCServer::virtPosY = 0.0f;
-float SCServer::virtPosZ = 0.0f;
-
-float SCServer::virtRotX = 0.0f;
-float SCServer::virtRotY = 0.0f;
-float SCServer::virtRotZ = 0.0f;
+//float SCServer::virtPosX = 0.0f;
+//float SCServer::virtPosY = 0.0f;
+//float SCServer::virtPosZ = 0.0f;
+//
+//float SCServer::virtRotX = 0.0f;
+//float SCServer::virtRotY = 0.0f;
+//float SCServer::virtRotZ = 0.0f;
 
 /** constructor **/
 SCServer::SCServer() {
@@ -158,7 +158,7 @@ float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool SCServer::SCCheckClientDLL()
+bool SCServer::checkServerInstallationOK( HANDLE handle )
 {   
 	QString aFileName;														// File Path and Name
 

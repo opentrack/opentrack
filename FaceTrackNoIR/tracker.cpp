@@ -23,6 +23,8 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20101217 - WVR: Created Base Class for the protocol-servers. This drastically simplifies
+						the code needed here.
 		20101024 - WVR: Added shortkey to disable/enable one or more axis during tracking.
 		20101021 - WVR: Added FSUIPC server for FS2004.
 		20101011 - WVR: Added SimConnect server.
@@ -101,38 +103,32 @@ Tracker::Tracker( int clientID ) {
 	//
 	// Initialize all server-handles. Only start the server, that was selected in the GUI.
 	//
-	server_FT = 0;
-	server_FG = 0;
-	server_PPJoy = 0;
-	server_FTIR = 0;
-	server_SC = 0;
-	server_FSUIPC = 0;
 	switch (selectedClient) {
 		case FREE_TRACK:
-			server_FT = new FTServer;					// Create Free-track protocol-server
+			server_FG = QSharedPointer<FTServer>(new FTServer ( ));			// Create Free-track protocol-server
 			break;
 
 		case FLIGHTGEAR:
-			server_FG = new FGServer ( this );			// Create FlightGear protocol-server
+			server_FG = QSharedPointer<FGServer>(new FGServer ( this ));	// Create FlightGear protocol-server
 			break;
 
 		case FTNOIR:
 			break;
 
 		case PPJOY:
-			server_PPJoy = new PPJoyServer ( this );	// Create PPJoy protocol-server
+			server_FG = QSharedPointer<PPJoyServer>(new PPJoyServer ( this ));	// Create PPJoy protocol-server
 			break;
 
 		case TRACKIR:
-			server_FTIR = new FTIRServer;				// Create Fake-TIR protocol-server
+			server_FG = QSharedPointer<FTIRServer>(new FTIRServer ( ));		// Create Fake-TIR protocol-server
 			break;
 
 		case SIMCONNECT:
-			server_SC = new SCServer;					// Create SimConnect protocol-server
+			server_FG = QSharedPointer<SCServer>(new SCServer ( ));			// Create SimConnect protocol-server
 			break;
 
 		case FSUIPC:
-			server_FSUIPC = new FSUIPCServer;			// Create FSUIPC protocol-server
+			server_FG = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));	// Create FSUIPC protocol-server
 			break;
 
 		default:
@@ -147,24 +143,8 @@ Tracker::Tracker( int clientID ) {
 Tracker::~Tracker() {
 
 	// Stop the started server(s)
-	if (server_FT) {
-		server_FT->deleteLater();
-	}
 	if (server_FG) {
 		server_FG->deleteLater();
-	}
-	if (server_PPJoy) {
-		server_PPJoy->deleteLater();
-	}
-	if (server_FTIR) {
-		server_FTIR->deleteLater();
-	}
-	if (server_SC) {
-		server_SC->deleteLater();
-	}
-
-	if (server_FSUIPC) {
-		server_FSUIPC->deleteLater();
 	}
 
 	// Trigger thread to stop
@@ -207,68 +187,22 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	headRotYLine = headPoseWidget->findChild<QLineEdit *>("headRotYLine");
 	headRotZLine = headPoseWidget->findChild<QLineEdit *>("headRotZLine");
 
-
 	//
-	// Check if the Freetrack Client DLL is available
-	// and create the necessary mapping to shared memory.
+	// Check if the Protocol-server files were installed OK.
+	// Some servers also create a memory-mapping, for Inter Process Communication.
 	// The handle of the MainWindow is sent to 'The Game', so it can send a message back.
 	//
-	if (server_FT) {
-		DLL_Ok = server_FT->FTCheckClientDLL();
-		DLL_Ok = server_FT->FTCreateMapping( mainApp->winId() );
-
-		server_FT->start();								// Start the thread
-	}
-
-	// FlightGear
 	if (server_FG) {
-		server_FG->start();								// Start the thread
-	}
 
-	// PPJoy virtual joystick
-	if (server_PPJoy) {
-		server_PPJoy->start();							// Start the thread
-	}
-
-	//
-	// Check if the NP Client DLL is available
-	// and create the necessary mapping to shared memory.
-	// The handle of the MainWindow is sent to 'The Game', so it can send a message back.
-	//
-	if (server_FTIR) {
-		DLL_Ok = server_FTIR->FTIRCheckClientDLL();
-		DLL_Ok = server_FTIR->FTIRCreateMapping( mainApp->winId() );
-
-		server_FTIR->start();								// Start the thread
-	}
-	//
-	// Check if the SimConnect DLL is available, load it if so.
-	//
-	if (server_SC) {
-		DLL_Ok = server_SC->SCCheckClientDLL();
-
+		DLL_Ok = server_FG->checkServerInstallationOK( mainApp->winId() );
 		if (DLL_Ok) {
-			server_SC->start();									// Start the thread
+			server_FG->start();							// Start the thread
 		}
 		else {
-			QMessageBox::information(mainApp, "FaceTrackNoIR error", "SimConnect is not (correctly) installed!");
+			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
 		}
+
 	}
-
-	//
-	// Check if the FSUIPC DLL is available, load it if so.
-	//
-	if (server_FSUIPC) {
-		DLL_Ok = server_FSUIPC->CheckClientDLL();
-
-		if (DLL_Ok) {
-			server_FSUIPC->start();									// Start the thread
-		}
-		else {
-			QMessageBox::information(mainApp, "FaceTrackNoIR error", "FSUIPC is not (correctly) installed!\nIt should be placed in the Modules folder of FS!");
-		}
-	}
-
 }
 
 /** QThread run method @override **/
@@ -554,23 +488,14 @@ void Tracker::run() {
 			// Send the Virtual Pose to selected Protocol-Server
 			//
 			// Free-track
-			if (server_FT) {
-				server_FT->setVirtRotX ( rotX );				// degrees
-				server_FT->setVirtRotY ( rotY );
-				server_FT->setVirtRotZ ( rotZ );
+			if (selectedClient == FREE_TRACK) {
+				server_FG->setHeadRotX( rotX );					// degrees
+				server_FG->setHeadRotY( rotY );
+				server_FG->setHeadRotZ( rotZ );
 
-				server_FT->setVirtPosX ( posX );				// centimeters
-				server_FT->setVirtPosY ( posY );
-				server_FT->setVirtPosZ ( posZ );
-
-				server_FT->setHeadRotX( rotX );					// degrees
-				server_FT->setHeadRotY( rotY );
-				server_FT->setHeadRotZ( rotZ );
-
-				server_FT->setHeadPosX( posX );					// centimeters
-				server_FT->setHeadPosY( posY );
-				server_FT->setHeadPosZ( posZ );
-
+				server_FG->setHeadPosX( posX );					// centimeters
+				server_FG->setHeadPosY( posY );
+				server_FG->setHeadPosZ( posZ );
 			}
 
 			// FlightGear
@@ -582,65 +507,11 @@ void Tracker::run() {
 				server_FG->setVirtPosY ( posY );
 				server_FG->setVirtPosZ ( posZ );
 			}
-
-			// PPJoy virtual joystick
-			if (server_PPJoy) {
-				server_PPJoy->setVirtRotX ( rotX );				// degrees
-				server_PPJoy->setVirtRotY ( rotY );
-				server_PPJoy->setVirtRotZ ( rotZ );
-
-				server_PPJoy->setVirtPosX ( posX );				// centimeters
-				server_PPJoy->setVirtPosY ( posY );
-				server_PPJoy->setVirtPosZ ( posZ );
-			}
-
-			// Fake-trackIR
-			if (server_FTIR) {
-				server_FTIR->setVirtRotX ( rotX );				// degrees
-				server_FTIR->setVirtRotY ( rotY );
-				server_FTIR->setVirtRotZ ( rotZ );
-
-				server_FTIR->setVirtPosX ( posX );				// centimeters
-				server_FTIR->setVirtPosY ( posY );
-				server_FTIR->setVirtPosZ ( posZ );
-			}
-
-			// SimConnect
-			if (server_SC) {
-				server_SC->setVirtRotX ( rotX );				// degrees
-				server_SC->setVirtRotY ( rotY );
-				server_SC->setVirtRotZ ( rotZ );
-
-				server_SC->setVirtPosX ( posX );				// centimeters
-				server_SC->setVirtPosY ( posY );
-				server_SC->setVirtPosZ ( posZ );
-			}
-
-			// FSUIPC
-			if (server_FSUIPC) {
-				server_FSUIPC->setVirtRotX ( rotX );				// degrees
-				server_FSUIPC->setVirtRotY ( rotY );
-				server_FSUIPC->setVirtRotZ ( rotZ );
-
-				server_FSUIPC->setVirtPosX ( posX );				// centimeters
-				server_FSUIPC->setVirtPosY ( posY );
-				server_FSUIPC->setVirtPosZ ( posZ );
-			}
-
 		}
 		else {
 			//
 			// Go to initial position
 			//
-			if (server_FT) {
-				server_FT->setVirtRotX ( 0.0f );
-				server_FT->setVirtRotY ( 0.0f );
-				server_FT->setVirtRotZ ( 0.0f );
-				server_FT->setVirtPosX ( 0.0f );
-				server_FT->setVirtPosY ( 0.0f );
-				server_FT->setVirtPosZ ( 0.0f );
-			}
-
 			if (server_FG) {
 				server_FG->setVirtRotX ( 0.0f );
 				server_FG->setVirtRotY ( 0.0f );
@@ -648,42 +519,6 @@ void Tracker::run() {
 				server_FG->setVirtPosX ( 0.0f );
 				server_FG->setVirtPosY ( 0.0f );
 				server_FG->setVirtPosZ ( 0.0f );
-			}
-
-			if (server_PPJoy) {
-				server_PPJoy->setVirtRotX ( 0.0f );
-				server_PPJoy->setVirtRotY ( 0.0f );
-				server_PPJoy->setVirtRotZ ( 0.0f );
-				server_PPJoy->setVirtPosX ( 0.0f );
-				server_PPJoy->setVirtPosY ( 0.0f );
-				server_PPJoy->setVirtPosZ ( 0.0f );
-			}
-
-			if (server_FTIR) {
-				server_FTIR->setVirtRotX ( 0.0f );
-				server_FTIR->setVirtRotY ( 0.0f );
-				server_FTIR->setVirtRotZ ( 0.0f );
-				server_FTIR->setVirtPosX ( 0.0f );
-				server_FTIR->setVirtPosY ( 0.0f );
-				server_FTIR->setVirtPosZ ( 0.0f );
-			}
-
-			if (server_SC) {
-				server_SC->setVirtRotX ( 0.0f );
-				server_SC->setVirtRotY ( 0.0f );
-				server_SC->setVirtRotZ ( 0.0f );
-				server_SC->setVirtPosX ( 0.0f );
-				server_SC->setVirtPosY ( 0.0f );
-				server_SC->setVirtPosZ ( 0.0f );
-			}
-
-			if (server_FSUIPC) {
-				server_FSUIPC->setVirtRotX ( 0.0f );
-				server_FSUIPC->setVirtRotY ( 0.0f );
-				server_FSUIPC->setVirtRotZ ( 0.0f );
-				server_FSUIPC->setVirtPosX ( 0.0f );
-				server_FSUIPC->setVirtPosY ( 0.0f );
-				server_FSUIPC->setVirtPosZ ( 0.0f );
 			}
 		}
 
@@ -739,7 +574,7 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 	}
 
 	// for lower cpu load
-	msleep(15);
+	msleep(10);
 	yieldCurrentThread(); 
 }
 
@@ -749,9 +584,7 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 QString Tracker::getGameProgramName() {
 QString str;
 
-	if ( server_FT ) {
-		str = server_FT->FTGetProgramName();
-	}
+	str = server_FG->GetProgramName();
 	return str;	
 }
 
