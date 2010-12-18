@@ -69,11 +69,12 @@ TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 
 /** constructor **/
-Tracker::Tracker( int clientID ) {
+Tracker::Tracker( int clientID, int facetrackerID ) {
 
 	// Remember the selected client, from the ListBox
 	// If the Tracker runs, this can NOT be changed...
 	selectedClient = (FTNoIR_Client) clientID;
+	selectedTracker = (FTNoIR_Face_Tracker) facetrackerID;
 
 	// Create events
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
@@ -105,30 +106,30 @@ Tracker::Tracker( int clientID ) {
 	//
 	switch (selectedClient) {
 		case FREE_TRACK:
-			server_FG = QSharedPointer<FTServer>(new FTServer ( ));			// Create Free-track protocol-server
+			server_Game = QSharedPointer<FTServer>(new FTServer ( ));			// Create Free-track protocol-server
 			break;
 
 		case FLIGHTGEAR:
-			server_FG = QSharedPointer<FGServer>(new FGServer ( this ));	// Create FlightGear protocol-server
+			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));	// Create FlightGear protocol-server
 			break;
 
 		case FTNOIR:
 			break;
 
 		case PPJOY:
-			server_FG = QSharedPointer<PPJoyServer>(new PPJoyServer ( this ));	// Create PPJoy protocol-server
+			server_Game = QSharedPointer<PPJoyServer>(new PPJoyServer ( this ));	// Create PPJoy protocol-server
 			break;
 
 		case TRACKIR:
-			server_FG = QSharedPointer<FTIRServer>(new FTIRServer ( ));		// Create Fake-TIR protocol-server
+			server_Game = QSharedPointer<FTIRServer>(new FTIRServer ( ));		// Create Fake-TIR protocol-server
 			break;
 
 		case SIMCONNECT:
-			server_FG = QSharedPointer<SCServer>(new SCServer ( ));			// Create SimConnect protocol-server
+			server_Game = QSharedPointer<SCServer>(new SCServer ( ));			// Create SimConnect protocol-server
 			break;
 
 		case FSUIPC:
-			server_FG = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));	// Create FSUIPC protocol-server
+			server_Game = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));	// Create FSUIPC protocol-server
 			break;
 
 		default:
@@ -143,8 +144,8 @@ Tracker::Tracker( int clientID ) {
 Tracker::~Tracker() {
 
 	// Stop the started server(s)
-	if (server_FG) {
-		server_FG->deleteLater();
+	if (server_Game) {
+		server_Game->deleteLater();
 	}
 
 	// Trigger thread to stop
@@ -192,11 +193,11 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	// Some servers also create a memory-mapping, for Inter Process Communication.
 	// The handle of the MainWindow is sent to 'The Game', so it can send a message back.
 	//
-	if (server_FG) {
+	if (server_Game) {
 
-		DLL_Ok = server_FG->checkServerInstallationOK( mainApp->winId() );
+		DLL_Ok = server_Game->checkServerInstallationOK( mainApp->winId() );
 		if (DLL_Ok) {
-			server_FG->start();							// Start the thread
+			server_Game->start();							// Start the thread
 		}
 		else {
 			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
@@ -489,41 +490,41 @@ void Tracker::run() {
 			//
 			// Free-track
 			if (selectedClient == FREE_TRACK) {
-				server_FG->setHeadRotX( rotX );					// degrees
-				server_FG->setHeadRotY( rotY );
-				server_FG->setHeadRotZ( rotZ );
+				server_Game->setHeadRotX( rotX );					// degrees
+				server_Game->setHeadRotY( rotY );
+				server_Game->setHeadRotZ( rotZ );
 
-				server_FG->setHeadPosX( posX );					// centimeters
-				server_FG->setHeadPosY( posY );
-				server_FG->setHeadPosZ( posZ );
+				server_Game->setHeadPosX( posX );					// centimeters
+				server_Game->setHeadPosY( posY );
+				server_Game->setHeadPosZ( posZ );
 			}
 
 			// FlightGear
-			if (server_FG) {
-				server_FG->setVirtRotX ( rotX );				// degrees
-				server_FG->setVirtRotY ( rotY );
-				server_FG->setVirtRotZ ( rotZ );
-				server_FG->setVirtPosX ( posX );				// centimeters
-				server_FG->setVirtPosY ( posY );
-				server_FG->setVirtPosZ ( posZ );
+			if (server_Game) {
+				server_Game->setVirtRotX ( rotX );				// degrees
+				server_Game->setVirtRotY ( rotY );
+				server_Game->setVirtRotZ ( rotZ );
+				server_Game->setVirtPosX ( posX );				// centimeters
+				server_Game->setVirtPosY ( posY );
+				server_Game->setVirtPosZ ( posZ );
 			}
 		}
 		else {
 			//
 			// Go to initial position
 			//
-			if (server_FG) {
-				server_FG->setVirtRotX ( 0.0f );
-				server_FG->setVirtRotY ( 0.0f );
-				server_FG->setVirtRotZ ( 0.0f );
-				server_FG->setVirtPosX ( 0.0f );
-				server_FG->setVirtPosY ( 0.0f );
-				server_FG->setVirtPosZ ( 0.0f );
+			if (server_Game) {
+				server_Game->setVirtRotX ( 0.0f );
+				server_Game->setVirtRotY ( 0.0f );
+				server_Game->setVirtRotZ ( 0.0f );
+				server_Game->setVirtPosX ( 0.0f );
+				server_Game->setVirtPosY ( 0.0f );
+				server_Game->setVirtPosZ ( 0.0f );
 			}
 		}
 
 		//for lower cpu load 
-		msleep(15);
+		msleep(10);
 		yieldCurrentThread(); 
 	}
 }
@@ -584,7 +585,7 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 QString Tracker::getGameProgramName() {
 QString str;
 
-	str = server_FG->GetProgramName();
+	str = server_Game->GetProgramName();
 	return str;	
 }
 

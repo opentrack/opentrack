@@ -314,6 +314,10 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "Selection", ui.iconcomboBox->currentIndex() );
 	iniFile.endGroup ();
 
+	iniFile.beginGroup ( "TrackerSource" );
+	iniFile.setValue ( "Selection", ui.iconcomboTrackerSource->currentIndex() );
+	iniFile.endGroup ();
+
 	settingsDirty = false;
 }
 
@@ -402,6 +406,10 @@ void FaceTrackNoIR::loadSettings() {
 	setIcon( ui.iconcomboBox->currentIndex() );
 	iniFile.endGroup ();
 
+	iniFile.beginGroup ( "TrackerSource" );
+	ui.iconcomboTrackerSource->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
+	iniFile.endGroup ();
+
 	settingsDirty = false;
 
 	// Put the filename in the window-title
@@ -445,7 +453,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Create the Tracker and setup
 	//
-	tracker = new Tracker ( ui.iconcomboBox->currentIndex() );
+	tracker = new Tracker ( ui.iconcomboBox->currentIndex(), ui.iconcomboTrackerSource->currentIndex() );
 
 	// Show the video widget
 	ui.video_frame->show();
@@ -880,6 +888,7 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
 //
 void FaceTrackNoIR::trackingSourceSelected(int index)
 {
+	settingsDirty = true;
 	switch (ui.iconcomboTrackerSource->currentIndex()) {
 	case 0:													// Face API
 		break;
