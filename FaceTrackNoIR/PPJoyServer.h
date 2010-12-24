@@ -72,7 +72,8 @@ public:
 
 	// protected member methods
 protected:
-	void run();
+//	void run();
+	void sendHeadposeToGame();
 
 private slots:
 //	void readPendingDatagrams();

@@ -62,8 +62,9 @@ public:
 
 	// protected member methods
 protected:
-	void run();
+//	void run();
 	bool checkServerInstallationOK( HANDLE handle );
+	void sendHeadposeToGame();
 
 private:
 	bool FTCreateMapping(HANDLE handle);

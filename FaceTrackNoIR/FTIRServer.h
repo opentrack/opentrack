@@ -56,12 +56,17 @@ public:
 
 	// protected member methods
 protected:
-	void run();
+//	void run();
 	bool checkServerInstallationOK( HANDLE handle );
+	void sendHeadposeToGame();
 
 private:
 	bool FTIRCreateMapping(HANDLE handle);
 	void FTIRDestroyMapping();
+
+	importSetPosition setposition;						// Function inside NPClient.dll
+	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+	importTIRViewsStop viewsStop;
 
 	HANDLE hFTIRMemMap;
 	FTIRMemMap *pMemData;

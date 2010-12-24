@@ -38,8 +38,8 @@ FGServer::FGServer( Tracker *parent ) {
 	headTracker = parent;
 
 	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
 	loadSettings();
 }
@@ -123,7 +123,7 @@ void FGServer::run() {
 
     // Connect the inSocket to the member-function, to read FlightGear commands
 	connect(inSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()), Qt::DirectConnection);
-	exec();								// Exec only returns, when the thread terminates...
+//	exec();								// Exec only returns, when the thread terminates...
 }
 
 /** QThread terminate @override **/

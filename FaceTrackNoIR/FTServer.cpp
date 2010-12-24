@@ -41,110 +41,77 @@
 //
 /*
 	Modifications (last one on top):
-		20100601 - WVR: Added Mutex-bit in run(). Thought it wasn't so important (still do...). 
-		20100523 - WVR: Implemented the Freetrack-protocol just like Freetrack does. Earlier 
-						FaceTrackNoIR only worked with an adapted DLL, with a putdata function.
-						Now it works direcly in shared memory!
+	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
+					is called from run() of Tracker.cpp
+	20100601 - WVR: Added Mutex-bit in run(). Thought it wasn't so important (still do...). 
+	20100523 - WVR: Implemented the Freetrack-protocol just like Freetrack does. Earlier 
+					FaceTrackNoIR only worked with an adapted DLL, with a putdata function.
+					Now it works direcly in shared memory!
 */
 #include "FTServer.h"
 
 /** constructor **/
 FTServer::FTServer() {
-
-	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
-
 	ProgramName = "";
 }
 
 /** destructor **/
 FTServer::~FTServer() {
 
-	// Trigger thread to stop
-	::SetEvent(m_StopThread);
-
-	// Wait until thread finished
-	::WaitForSingleObject(m_WaitThread, INFINITE);
-
-	// Close handles
-	::CloseHandle(m_StopThread);
-	::CloseHandle(m_WaitThread);
-
 	//
 	// Free the DLL
 	//
 	FTClientLib.unload();
-	//if(  aDLLHandle != INVALID_HANDLE_VALUE )
-	//	FreeLibrary( (HMODULE) aDLLHandle );
-	//terminates the QThread and waits for finishing the QThread
-	terminate();
-	wait();
 }
 
-/** QThread run @override **/
-void FTServer::run() {
+//
+// Update Headpose in Game.
+//
+void FTServer::sendHeadposeToGame() {
 
-	if (pMemData != NULL) {
-		pMemData->data.DataID = 1;
-		pMemData->data.CamWidth = 100;
-		pMemData->data.CamHeight = 250;
+	//
+	// Check if the pointer is OK and wait for the Mutex.
+	//
+	if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
+
+		//
+		// Copy the Raw measurements directly to the client.
+		//
+		pMemData->data.RawX = headPosX;
+		pMemData->data.RawY = headPosY;
+		pMemData->data.RawZ = headPosZ;
+		pMemData->data.RawPitch = headRotX;
+		pMemData->data.RawYaw = headRotY;
+		pMemData->data.RawRoll = headRotZ;
+
+		//
+		// Multiply the FaceAPI value, with the sensitivity setting
+		//
+		pMemData->data.X = virtPosX;
+		pMemData->data.Y = virtPosY;
+		pMemData->data.Z = virtPosZ;
+		pMemData->data.Pitch = virtRotX;
+		pMemData->data.Yaw = virtRotY;
+		pMemData->data.Roll = virtRotZ;
+
+		//
+		// Leave some values 0 yet...
+		//
+		pMemData->data.X1 = pMemData->data.DataID + 10;
+		pMemData->data.X2 = 0;
+		pMemData->data.X3 = 0;
+		pMemData->data.X4 = 0;
+		pMemData->data.Y1 = 0;
+		pMemData->data.Y2 = 0;
+		pMemData->data.Y3 = 0;
+		pMemData->data.Y4 = 0;
+
+		//qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
+		//qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
+		ReleaseMutex(hFTMutex);
 	}
 
-	forever
-	{
-	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		{
-			// Set event
-			::SetEvent(m_WaitThread);
-			return;
-		}
-
-		if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
-
-			//
-			// Copy the Raw measurements directly to the client.
-			//
-			pMemData->data.RawX = headPosX;
-			pMemData->data.RawY = headPosY;
-			pMemData->data.RawZ = headPosZ;
-			pMemData->data.RawPitch = headRotX;
-			pMemData->data.RawYaw = headRotY;
-			pMemData->data.RawRoll = headRotZ;
-
-			//
-			// Multiply the FaceAPI value, with the sensitivity setting
-			//
-			pMemData->data.X = virtPosX;
-			pMemData->data.Y = virtPosY;
-			pMemData->data.Z = virtPosZ;
-			pMemData->data.Pitch = virtRotX;
-			pMemData->data.Yaw = virtRotY;
-			pMemData->data.Roll = virtRotZ;
-
-			//
-			// Leave some values 0 yet...
-			//
-			pMemData->data.X1 = pMemData->data.DataID + 10;
-			pMemData->data.X2 = 0;
-			pMemData->data.X3 = 0;
-			pMemData->data.X4 = 0;
-			pMemData->data.Y1 = 0;
-			pMemData->data.Y2 = 0;
-			pMemData->data.Y3 = 0;
-			pMemData->data.Y4 = 0;
-
-			//qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
-			//qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
-			ReleaseMutex(hFTMutex);
-		}
-
-		// just for lower cpu load
-		msleep(15);	
-		yieldCurrentThread();
-		pMemData->data.DataID += 1;
-	}
+	pMemData->data.DataID += 1;
 }
 
 //
@@ -190,6 +157,12 @@ bool FTServer::FTCreateMapping(HANDLE handle)
 	else {
 		QMessageBox::information(0, "FaceTrackNoIR error", QString("FTServer Error! \n"));
 		return false;
+	}
+
+	if (pMemData != NULL) {
+		pMemData->data.DataID = 1;
+		pMemData->data.CamWidth = 100;
+		pMemData->data.CamHeight = 250;
 	}
 
 	return true;

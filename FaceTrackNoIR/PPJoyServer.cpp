@@ -42,8 +42,8 @@ char strDevName[100];
 	headTracker = parent;
 
 	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
 	// Initialize arrays
 	for (int i = 0;i < 3;i++) {
@@ -72,33 +72,32 @@ PPJoyServer::~PPJoyServer() {
 
 	/* Make sure we could open the device! */
 	if (h == INVALID_HANDLE_VALUE) {
-		terminate();
-		wait();
+		//terminate();
+		//wait();
 		return;
 	}
 
-	// Trigger thread to stop
-	::SetEvent(m_StopThread);
+	//// Trigger thread to stop
+	//::SetEvent(m_StopThread);
 
-	// Wait until thread finished
-	::WaitForSingleObject(m_WaitThread, INFINITE);
+	//// Wait until thread finished
+	//::WaitForSingleObject(m_WaitThread, INFINITE);
 
-	// Close handles
-	::CloseHandle(m_StopThread);
-	::CloseHandle(m_WaitThread);
+	//// Close handles
+	//::CloseHandle(m_StopThread);
+	//::CloseHandle(m_WaitThread);
 
 	//
 	// Free the Virtual Joystick
 	//
 	CloseHandle(h);
 	//terminates the QThread and waits for finishing the QThread
-	terminate();
-	wait();
+	//terminate();
+	//wait();
 }
 
 /** QThread run @override **/
-void PPJoyServer::run() {
-
+void PPJoyServer::sendHeadposeToGame() {
 
 	/* Initialise the IOCTL data structure */
 	JoyState.Signature= JOYSTICK_STATE_V1;
@@ -116,11 +115,11 @@ void PPJoyServer::run() {
 	forever
 	{
 	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0) {
-			// Set event
-			::SetEvent(m_WaitThread);
-			return;
-		}
+		//if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0) {
+		//	// Set event
+		//	::SetEvent(m_WaitThread);
+		//	return;
+		//}
 
 		// The effective angle for faceTracking will be < 90 degrees, so we assume a smaller range here
 		Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );						// Pitch
@@ -143,8 +142,8 @@ void PPJoyServer::run() {
 			return;
 		}
 		// just for lower cpu load
-		msleep(15);	
-		yieldCurrentThread();
+		//msleep(15);	
+		//yieldCurrentThread();
 	}
 }
 
