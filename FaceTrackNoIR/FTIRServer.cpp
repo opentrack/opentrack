@@ -21,33 +21,21 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
+					is called from run() of Tracker.cpp
+	20101127 - WVR: Added TrackIR.exe process for EZCA etc...
 	20101023 - WVR: Added TIRViews for FS2004, Combat FS3, etc...
 */
 #include "FTIRServer.h"
 
 /** constructor **/
 FTIRServer::FTIRServer() {
-
-	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
-
 	loadSettings();
 	ProgramName = "";
 }
 
 /** destructor **/
 FTIRServer::~FTIRServer() {
-
-	// Trigger thread to stop
-	::SetEvent(m_StopThread);
-
-	// Wait until thread finished
-	::WaitForSingleObject(m_WaitThread, INFINITE);
-
-	// Close handles
-	::CloseHandle(m_StopThread);
-	::CloseHandle(m_WaitThread);
 
 	//
 	// Free the DLL's
@@ -62,88 +50,20 @@ FTIRServer::~FTIRServer() {
 	if (dummyTrackIR) {
 		dummyTrackIR->kill();
 	}
-
-	//terminates the QThread and waits for finishing the QThread
-	terminate();
-	wait();
 }
 
-/** QThread run @override **/
-void FTIRServer::run() {
-	importSetPosition setposition;						// Inside NPClient.dll
-	importTIRViewsStart viewsStart = NULL;				// Inside TIRViews.dll
-	importTIRViewsStop viewsStop = NULL;
+//
+// Update Headpose in Game.
+//
+void FTIRServer::sendHeadposeToGame() {
 
 	//
-	// Get the setposition function from the DLL and use it!
+	// Check if the pointer is OK and wait for the Mutex.
+	// Use the setposition in the (special) DLL, to write the headpose-data.
 	//
-	setposition = (importSetPosition) FTIRClientLib.resolve("SetPosition");
-	if (setposition == NULL) {
-		qDebug() << "FTIRServer::run() says: SetPosition function not found in DLL!";
-		return;
-	}
-	else {
-		setposition (7.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
-	}
-
-	//
-	// Load the Start function from TIRViews.dll and call it, to start compatibility with older games
-	//
-	if (useTIRViews) {
-		viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
-		if (viewsStart == NULL) {
-			qDebug() << "FTIRServer::run() says: TIRViewsStart function not found in DLL!";
-		}
-		else {
-			qDebug() << "FTIRServer::run() says: TIRViewsStart executed!";
-			viewsStart();
-		}
-
-		//
-		// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
-		//
-		viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
-		if (viewsStop == NULL) {
-			qDebug() << "FTIRServer::run() says: TIRViewsStop function not found in DLL!";
-		}
-	}
-
-	//
-	// Run, until termination
-	//
-	forever
-	{
-	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		{
-			if (viewsStop != NULL) {
-				viewsStop();
-			}
-
-			// Set event
-			::SetEvent(m_WaitThread);
-			return;
-		}
-
-		if ( (pMemData != NULL) && (WaitForSingleObject(hFTIRMutex, 100) == WAIT_OBJECT_0) ) {
-
-//			qDebug() << "FTIRServer says: virtRotX =" << virtRotX << " virtRotY =" << virtRotY;
-			setposition (virtPosX, virtPosY, virtPosZ, virtRotZ, virtRotX, virtRotY );
-
-		////		Use this for some debug-output to file...
-		//QFile data("outputFTIR.txt");
-		//if (data.open(QFile::WriteOnly | QFile::Append)) {
-		//	QTextStream out(&data);
-		//		out << virtPosX << " " << virtPosY << " " << virtPosZ << virtRotX << " " << virtRotY << " " << virtRotZ  << '\n';
-		//}
-
-			//qDebug() << "FTIRServer says: pMemData.xRot =" << pMemData->data.xRot << " yRot =" << pMemData->data.yRot;
-			ReleaseMutex(hFTIRMutex);
-		}
-
-		// just for lower cpu load
-		msleep(15);	
-		yieldCurrentThread();
+	if ( (pMemData != NULL) && (WaitForSingleObject(hFTIRMutex, 100) == WAIT_OBJECT_0) ) {
+		setposition (virtPosX, virtPosY, virtPosZ, virtRotZ, virtRotX, virtRotY );
+		ReleaseMutex(hFTIRMutex);
 	}
 }
 
@@ -282,7 +202,50 @@ bool FTIRServer::checkServerInstallationOK( HANDLE handle )
 	} catch(...) {
 		settings.~QSettings();
 	}
-	return FTIRCreateMapping( handle );
+	
+	//
+	// Create the File-mapping for Inter Process Communication
+	//
+	if (!FTIRCreateMapping( handle )){
+		return false;
+	}
+
+	//
+	// Find the functions in the DLL's
+	//
+	// Get the setposition function from the DLL and use it!
+	//
+	setposition = (importSetPosition) FTIRClientLib.resolve("SetPosition");
+	if (setposition == NULL) {
+		qDebug() << "FTIRServer::run() says: SetPosition function not found in DLL!";
+		return false;
+	}
+	else {
+		setposition (7.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+	}
+
+	//
+	// Load the Start function from TIRViews.dll and call it, to start compatibility with older games
+	//
+	if (useTIRViews) {
+		viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
+		if (viewsStart == NULL) {
+			qDebug() << "FTIRServer::run() says: TIRViewsStart function not found in DLL!";
+		}
+		else {
+			qDebug() << "FTIRServer::run() says: TIRViewsStart executed!";
+			viewsStart();
+		}
+
+		//
+		// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
+		//
+		viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
+		if (viewsStop == NULL) {
+			qDebug() << "FTIRServer::run() says: TIRViewsStop function not found in DLL!";
+		}
+	}
+	return true;
 }
 
 //

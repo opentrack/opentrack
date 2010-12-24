@@ -153,6 +153,9 @@ private:
 	static bool do_center;							// Center head-position, using the shortkey
 	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
 
+	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
+
+
 	static bool useFilter;
 	static long prevHeadPoseTime;					// Time from previous sample
 	

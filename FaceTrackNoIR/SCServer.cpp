@@ -24,21 +24,12 @@
 */
 #include "SCServer.h"
 
-
-//float SCServer::virtPosX = 0.0f;
-//float SCServer::virtPosY = 0.0f;
-//float SCServer::virtPosZ = 0.0f;
-//
-//float SCServer::virtRotX = 0.0f;
-//float SCServer::virtRotY = 0.0f;
-//float SCServer::virtRotZ = 0.0f;
-
 /** constructor **/
 SCServer::SCServer() {
 
 	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
+	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
 	ProgramName = "";
 }
@@ -47,16 +38,16 @@ SCServer::SCServer() {
 SCServer::~SCServer() {
 
 	// Trigger thread to stop
-	::SetEvent(m_StopThread);
+	//::SetEvent(m_StopThread);
 
 	// Wait until thread finished
-	if (isRunning()) {
-		::WaitForSingleObject(m_WaitThread, INFINITE);
-	}
+	//if (isRunning()) {
+	//	::WaitForSingleObject(m_WaitThread, INFINITE);
+	//}
 
-	// Close handles
-	::CloseHandle(m_StopThread);
-	::CloseHandle(m_WaitThread);
+	//// Close handles
+	//::CloseHandle(m_StopThread);
+	//::CloseHandle(m_WaitThread);
 
 	//
 	// Free the DLL
@@ -64,12 +55,12 @@ SCServer::~SCServer() {
 	SCClientLib.unload();
 
 	//terminates the QThread and waits for finishing the QThread
-	terminate();
-	wait();
+	//terminate();
+	//wait();
 }
 
 /** QThread run @override **/
-void SCServer::run() {
+void SCServer::sendHeadposeToGame() {
 bool blnSimConnectActive = false;
 HANDLE  hSimConnect = NULL;										// Handle to SimConnect
 importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
@@ -109,23 +100,23 @@ float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
 	forever
 	{
 	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		{
-			// Set event
-			simconnect_close( hSimConnect );
-			::SetEvent(m_WaitThread);
-			return;
-		}
+		//if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
+		//{
+		//	// Set event
+//	simconnect_close( hSimConnect );
+		//	::SetEvent(m_WaitThread);
+		//	return;
+		//}
 
 		if (!blnSimConnectActive) {
 			if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
 				qDebug() << "SCServer::run() says: SimConnect active!";
 				blnSimConnectActive = true;
 			}
-			else {
-				msleep(5000);	
-				yieldCurrentThread();
-			}
+			//else {
+			//	msleep(5000);	
+			//	yieldCurrentThread();
+			//}
 		}
 		else {
 			//
@@ -148,8 +139,8 @@ float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
 			prevRotZ = virtRotZ;
 
 			// just for lower cpu load
-			msleep(15);	
-			yieldCurrentThread();
+			//msleep(15);	
+			//yieldCurrentThread();
 		}
 	}
 }
