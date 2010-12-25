@@ -71,6 +71,14 @@ private:
 	QString ProgramName;
 	QLibrary SCClientLib;
 
+	bool blnSimConnectActive;
+	HANDLE  hSimConnect;											// Handle to SimConnect
+	importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
+	importSimConnect_Close simconnect_close;
+	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
+
+float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+
 public:
 	void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
 	void setVirtRotY(float rot) { virtRotY = -1.0f * rot; }

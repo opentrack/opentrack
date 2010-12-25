@@ -41,10 +41,6 @@ char strDevName[100];
 	// Save the parent
 	headTracker = parent;
 
-	// Create events
-	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
-
 	// Initialize arrays
 	for (int i = 0;i < 3;i++) {
 		centerPos[i] = 0;
@@ -72,28 +68,13 @@ PPJoyServer::~PPJoyServer() {
 
 	/* Make sure we could open the device! */
 	if (h == INVALID_HANDLE_VALUE) {
-		//terminate();
-		//wait();
 		return;
 	}
-
-	//// Trigger thread to stop
-	//::SetEvent(m_StopThread);
-
-	//// Wait until thread finished
-	//::WaitForSingleObject(m_WaitThread, INFINITE);
-
-	//// Close handles
-	//::CloseHandle(m_StopThread);
-	//::CloseHandle(m_WaitThread);
 
 	//
 	// Free the Virtual Joystick
 	//
 	CloseHandle(h);
-	//terminates the QThread and waits for finishing the QThread
-	//terminate();
-	//wait();
 }
 
 /** QThread run @override **/
@@ -112,38 +93,25 @@ void PPJoyServer::sendHeadposeToGame() {
 		return;
 	}
 
-	forever
+	// The effective angle for faceTracking will be < 90 degrees, so we assume a smaller range here
+	Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );						// Pitch
+	Analog[1] = scale2AnalogLimits( virtRotY, -50.0f, 50.0f );						// Yaw
+	Analog[2] = scale2AnalogLimits( virtRotZ, -50.0f, 50.0f );						// Roll
+
+	// The effective movement for faceTracking will be < 50 cm, so we assume a smaller range here
+	Analog[3] = scale2AnalogLimits( virtPosX, -40.0f, 40.0f );						// X
+
+	Analog[4] = scale2AnalogLimits( virtPosY, -40.0f, 40.0f );						// Y
+	Analog[5] = scale2AnalogLimits( virtPosZ, -40.0f, 40.0f );						// Z
+
+	checkAnalogLimits();
+
+	/* Send request to PPJoy for processing. */
+	/* Currently there is no Return Code from PPJoy, this may be added at a */
+	/* later stage. So we pass a 0 byte output buffer.                      */
+	if (!DeviceIoControl( h, IOCTL_PPORTJOY_SET_STATE, &JoyState, sizeof(JoyState), NULL, 0, &RetSize, NULL))
 	{
-	    // Check event for stop thread
-		//if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0) {
-		//	// Set event
-		//	::SetEvent(m_WaitThread);
-		//	return;
-		//}
-
-		// The effective angle for faceTracking will be < 90 degrees, so we assume a smaller range here
-		Analog[0] = scale2AnalogLimits( virtRotX, -50.0f, 50.0f );						// Pitch
-		Analog[1] = scale2AnalogLimits( virtRotY, -50.0f, 50.0f );						// Yaw
-		Analog[2] = scale2AnalogLimits( virtRotZ, -50.0f, 50.0f );						// Roll
-
-		// The effective movement for faceTracking will be < 50 cm, so we assume a smaller range here
-		Analog[3] = scale2AnalogLimits( virtPosX, -40.0f, 40.0f );						// X
-
-		Analog[4] = scale2AnalogLimits( virtPosY, -40.0f, 40.0f );						// Y
-		Analog[5] = scale2AnalogLimits( virtPosZ, -40.0f, 40.0f );						// Z
-
-		checkAnalogLimits();
-
-		/* Send request to PPJoy for processing. */
-		/* Currently there is no Return Code from PPJoy, this may be added at a */
-		/* later stage. So we pass a 0 byte output buffer.                      */
-		if (!DeviceIoControl( h, IOCTL_PPORTJOY_SET_STATE, &JoyState, sizeof(JoyState), NULL, 0, &RetSize, NULL))
-		{
-			return;
-		}
-		// just for lower cpu load
-		//msleep(15);	
-		//yieldCurrentThread();
+		return;
 	}
 }
 

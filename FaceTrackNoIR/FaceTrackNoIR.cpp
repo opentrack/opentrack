@@ -72,7 +72,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	
 	ui.setupUi(this);
 
-	ui.headPoseWidget->hide();
+	ui.headPoseWidget->show();
 	ui.video_frame->hide();
 
 	// menu objects will be connected with the functions in FaceTrackNoIR class
