@@ -1,6 +1,6 @@
 /********************************************************************************
-* SCServer		SCServer is the Class, that communicates headpose-data	*
-*					to games, using the SimConnect.dll.		         			*
+* SCServer		SCServer is the Class, that communicates headpose-data			*
+*				to games, using the SimConnect.dll.		         				*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
 *						Ron Hendriks (Testing and Research)						*
@@ -21,74 +21,16 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
+					is called from run() of Tracker.cpp
 */
 #include "SCServer.h"
 
 /** constructor **/
 SCServer::SCServer() {
-
-	// Create events
-	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
-
-	ProgramName = "";
-}
-
-/** destructor **/
-SCServer::~SCServer() {
-
-	// Trigger thread to stop
-	//::SetEvent(m_StopThread);
-
-	// Wait until thread finished
-	//if (isRunning()) {
-	//	::WaitForSingleObject(m_WaitThread, INFINITE);
-	//}
-
-	//// Close handles
-	//::CloseHandle(m_StopThread);
-	//::CloseHandle(m_WaitThread);
-
-	//
-	// Free the DLL
-	//
-	SCClientLib.unload();
-
-	//terminates the QThread and waits for finishing the QThread
-	//terminate();
-	//wait();
-}
-
-/** QThread run @override **/
-void SCServer::sendHeadposeToGame() {
-bool blnSimConnectActive = false;
-HANDLE  hSimConnect = NULL;										// Handle to SimConnect
-importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
-importSimConnect_Close simconnect_close;
-importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
-
-float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
-
-	//
-	// Get the SimConnect_Open function from the DLL and use it!
-	//
-	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
-	if (simconnect_open == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_Open function not found in DLL!";
-		return;
-	}
-	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
-	if (simconnect_set6DOF == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
-		return;
-	}
-	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
-	if (simconnect_close == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_Close function not found in DLL!";
-		return;
-	}
-
-	qDebug() << "SCServer::run() says: SimConnect functions resolved in DLL!";
+	ProgramName = "Microsoft FSX";
+	blnSimConnectActive = false;
+	hSimConnect = NULL;
 
 	prevPosX = 0.0f;
 	prevPosY = 0.0f;
@@ -97,56 +39,59 @@ float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
 	prevRotY = 0.0f;
 	prevRotZ = 0.0f;
 
-	forever
-	{
-	    // Check event for stop thread
-		//if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		//{
-		//	// Set event
-//	simconnect_close( hSimConnect );
-		//	::SetEvent(m_WaitThread);
-		//	return;
-		//}
+}
 
-		if (!blnSimConnectActive) {
-			if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-				qDebug() << "SCServer::run() says: SimConnect active!";
-				blnSimConnectActive = true;
-			}
-			//else {
-			//	msleep(5000);	
-			//	yieldCurrentThread();
-			//}
+/** destructor **/
+SCServer::~SCServer() {
+
+	//
+	// Free the DLL
+	//
+	simconnect_close( hSimConnect );
+	SCClientLib.unload();
+}
+
+//
+// Update Headpose in Game.
+//
+void SCServer::sendHeadposeToGame() {
+
+	//
+	// It's only usefull to send data, if the connection was made.
+	//
+	if (!blnSimConnectActive) {
+		if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
+			qDebug() << "SCServer::run() says: SimConnect active!";
+			blnSimConnectActive = true;
 		}
-		else {
-			//
-			// Write the 6DOF-data to FSX
-			//
-			// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
-			//
-			if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
-				(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
-				if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
+	}
+	else {
+		//
+		// Write the 6DOF-data to FSX
+		//
+		// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
+		//
+		if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
+			(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
+			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
 //					qDebug() << "SCServer::run() says: SimConnect data written!";
-				}
 			}
-
-			prevPosX = virtPosX;
-			prevPosY = virtPosY;
-			prevPosZ = virtPosZ;
-			prevRotX = virtRotX;
-			prevRotY = virtRotY;
-			prevRotZ = virtRotZ;
-
-			// just for lower cpu load
-			//msleep(15);	
-			//yieldCurrentThread();
 		}
+
+		prevPosX = virtPosX;
+		prevPosY = virtPosY;
+		prevPosZ = virtPosZ;
+		prevRotX = virtRotX;
+		prevRotY = virtRotY;
+		prevRotZ = virtRotZ;
 	}
 }
 
 //
 // Check if the Client DLL exists and load it (to test it), if so.
+// SimConnect uses a 'side-by-side' installation. The manifest is loaded and (if that's OK) the
+// right DLL will be loaded automatically...
+//
 // Returns 'true' if all seems OK.
 //
 bool SCServer::checkServerInstallationOK( HANDLE handle )
@@ -209,6 +154,28 @@ bool SCServer::checkServerInstallationOK( HANDLE handle )
 	} catch(...) {
 		return false;
 	}
+
+	//
+	// Get the functions from the DLL.
+	//
+	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
+	if (simconnect_open == NULL) {
+		qDebug() << "SCServer::run() says: SimConnect_Open function not found in DLL!";
+		return false;
+	}
+	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
+	if (simconnect_set6DOF == NULL) {
+		qDebug() << "SCServer::run() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
+		return false;
+	}
+	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
+	if (simconnect_close == NULL) {
+		qDebug() << "SCServer::run() says: SimConnect_Close function not found in DLL!";
+		return false;
+	}
+
+	qDebug() << "SCServer::run() says: SimConnect functions resolved in DLL!";
+
 	return true;
 }
 

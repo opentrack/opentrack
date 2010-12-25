@@ -56,7 +56,6 @@ public:
 
 	// protected member methods
 protected:
-//	void run();
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame();
 

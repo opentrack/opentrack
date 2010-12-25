@@ -25,6 +25,11 @@
 *					to FlightGear, using UDP.				         			*
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
+/*
+	Modifications (last one on top):
+	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
+					is called from run() of Tracker.cpp
+*/
 #include <QtGui>
 #include <QtNetwork>
 #include "FGServer.h"
@@ -36,42 +41,25 @@ FGServer::FGServer( Tracker *parent ) {
 
 	// Save the parent
 	headTracker = parent;
-
-	// Create events
-	//m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	//m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
-
 	loadSettings();
 }
 
+/** destructor **/
+FGServer::~FGServer() {
+	inSocket->disconnectFromHost();
+	inSocket->waitForDisconnected();
+	outSocket->disconnectFromHost();
+	outSocket->waitForDisconnected();
+
+	delete inSocket;
+	delete outSocket;
+}
+
 //
-// Callback function registered in the run() method.
-// Retrieve all pending Datagrams (typically 1) and send a reply, containing the headpose-data.
+// Update Headpose in Game.
 //
-void FGServer::readPendingDatagrams()
-{
-QHostAddress sender;
-quint16 senderPort;
-qint32 cmd;
+void FGServer::sendHeadposeToGame() {
 int no_bytes;
-
-	//
-	// Read data from FlightGear
-	//
-	while (inSocket->hasPendingDatagrams()) {
-		QByteArray datagram;
-		datagram.resize(inSocket->pendingDatagramSize());
-
-//		qDebug() << "FGServer::readPendingDatagrams says: size =" << inSocket->pendingDatagramSize();
-
-		inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
-//		qDebug() << "FGServer::readPendingDatagrams says: data =" << cmd;
-
-		fg_cmd = cmd;									// Let's just accept that command for now...
-		if ( cmd > 0 ) {
-			headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
-		}
-	}
 
 	//
 	// Copy the Raw measurements directly to the client.
@@ -100,9 +88,40 @@ int no_bytes;
 
 }
 
-/** QThread run @override **/
-void FGServer::run() {
+//
+// Callback function registered in the run() method.
+// Retrieve all pending Datagrams (typically 1) and send a reply, containing the headpose-data.
+//
+void FGServer::readPendingDatagrams()
+{
+QHostAddress sender;
+quint16 senderPort;
 
+	//
+	// Read data from FlightGear
+	//
+	while (inSocket->hasPendingDatagrams()) {
+		QByteArray datagram;
+		datagram.resize(inSocket->pendingDatagramSize());
+
+//		qDebug() << "FGServer::readPendingDatagrams says: size =" << inSocket->pendingDatagramSize();
+
+		inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
+//		qDebug() << "FGServer::readPendingDatagrams says: data =" << cmd;
+
+		fg_cmd = cmd;									// Let's just accept that command for now...
+		if ( cmd > 0 ) {
+			headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
+		}
+	}
+}
+
+//
+// Check if the Client DLL exists and load it (to test it), if so.
+// Returns 'true' if all seems OK.
+//
+bool FGServer::checkServerInstallationOK( HANDLE handle )
+{   
 	// Init. the data
 	TestData.x = 0.0f;
 	TestData.y = 0.0f;
@@ -123,19 +142,8 @@ void FGServer::run() {
 
     // Connect the inSocket to the member-function, to read FlightGear commands
 	connect(inSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()), Qt::DirectConnection);
-//	exec();								// Exec only returns, when the thread terminates...
-}
 
-/** QThread terminate @override **/
-void FGServer::terminate() {
-
-	inSocket->disconnectFromHost();
-	inSocket->waitForDisconnected();
-	outSocket->disconnectFromHost();
-	outSocket->waitForDisconnected();
-
-	delete inSocket;
-	delete outSocket;
+	return true;
 }
 
 //

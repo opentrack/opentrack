@@ -56,12 +56,12 @@ public:
 
 	// public member methods
 	FGServer( Tracker *parent );
-	virtual ~FGServer() {};
+	~FGServer();
 
 	// protected member methods
 protected:
-	void run();
-	void terminate();
+	bool checkServerInstallationOK( HANDLE handle );
+	void sendHeadposeToGame();
 
 private slots:
 	void readPendingDatagrams();
@@ -71,6 +71,7 @@ private:
 	TFlightGearData TestData;
 	QUdpSocket *inSocket;									// Receive from FligthGear
 	QUdpSocket *outSocket;									// Send to FligthGear
+	qint32 cmd;
 	qint32 fg_cmd;											// Command from FlightGear
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
