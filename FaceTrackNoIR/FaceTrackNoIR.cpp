@@ -538,6 +538,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	if ( tracker ) {
 		qDebug() << "stopTracker says: Deleting tracker!";
 		delete tracker;
+		qDebug() << "stopTracker says: Tracker deleted!";
 		tracker = 0;
 	}
 	ui.btnStartTracker->setEnabled ( true );
@@ -547,6 +548,9 @@ void FaceTrackNoIR::stopTracker( ) {
 
 	// Enable/disable Protocol-server Settings
 	ui.btnShowServerControls->setEnabled ( true );
+
+	timMinimizeFTN->stop();
+
 }
 
 /** set the invert from the checkbox **/

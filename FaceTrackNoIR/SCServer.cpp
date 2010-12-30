@@ -30,25 +30,31 @@
 SCServer::SCServer() {
 	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
-	hSimConnect = NULL;
+	hSimConnect = 0;
 
-	prevPosX = 0.0f;
-	prevPosY = 0.0f;
-	prevPosZ = 0.0f;
-	prevRotX = 0.0f;
-	prevRotY = 0.0f;
-	prevRotZ = 0.0f;
-
+	//prevPosX = 0.0f;
+	//prevPosY = 0.0f;
+	//prevPosZ = 0.0f;
+	//prevRotX = 0.0f;
+	//prevRotY = 0.0f;
+	//prevRotZ = 0.0f;
 }
 
 /** destructor **/
 SCServer::~SCServer() {
 
-	//
-	// Free the DLL
-	//
-	simconnect_close( hSimConnect );
-	SCClientLib.unload();
+	qDebug() << "~SCServer says: inside" << SCServer::hSimConnect;
+
+	if (hSimConnect != 0) {
+		qDebug() << "~SCServer says: before simconnect_close";
+		if (SUCCEEDED( simconnect_close( SCServer::hSimConnect ) ) ) {
+			qDebug() << "~SCServer says: close SUCCEEDED";
+		}
+	}
+
+	qDebug() << "~SCServer says: before unload";
+//	SCClientLib.unload();
+	qDebug() << "~SCServer says: finished";
 }
 
 //
@@ -57,11 +63,23 @@ SCServer::~SCServer() {
 void SCServer::sendHeadposeToGame() {
 
 	//
-	// It's only usefull to send data, if the connection was made.
+	// It's only useful to send data, if the connection was made.
 	//
 	if (!blnSimConnectActive) {
 		if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-			qDebug() << "SCServer::run() says: SimConnect active!";
+			qDebug() << "SCServer::sendHeadposeToGame() says: SimConnect active!";
+
+			//set up the events we want to listen for
+			HRESULT hr;
+
+			simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame"); 
+
+			hr = simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
+			hr = simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
+			hr = simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+			////hr = SimConnect_MapInputEventToClientEvent(hSimConnect, INPUT0, "VK_COMMA", EVENT_INIT);
+			////hr = SimConnect_SetInputGroupState(hSimConnect, INPUT0, SIMCONNECT_STATE_ON);
+
 			blnSimConnectActive = true;
 		}
 	}
@@ -84,6 +102,8 @@ void SCServer::sendHeadposeToGame() {
 		prevRotX = virtRotX;
 		prevRotY = virtRotY;
 		prevRotZ = virtRotZ;
+
+		simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL);
 	}
 }
 
@@ -160,23 +180,139 @@ bool SCServer::checkServerInstallationOK( HANDLE handle )
 	//
 	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
 	if (simconnect_open == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_Open function not found in DLL!";
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_Open function not found in DLL!";
 		return false;
 	}
 	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
 	if (simconnect_set6DOF == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
 		return false;
 	}
 	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
 	if (simconnect_close == NULL) {
-		qDebug() << "SCServer::run() says: SimConnect_Close function not found in DLL!";
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_Close function not found in DLL!";
 		return false;
 	}
 
-	qDebug() << "SCServer::run() says: SimConnect functions resolved in DLL!";
+	//return true;
+
+	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
+	if (simconnect_calldispatch == NULL) {
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_CallDispatch function not found in DLL!";
+		return false;
+	}
+
+	simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
+	if (simconnect_subscribetosystemevent == NULL) {
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
+		return false;
+	}
+
+	simconnect_mapclienteventtosimevent = (importSimConnect_MapClientEventToSimEvent) SCClientLib.resolve("SimConnect_MapClientEventToSimEvent");
+	if (simconnect_subscribetosystemevent == NULL) {
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
+		return false;
+	}
+
+	simconnect_addclienteventtonotificationgroup = (importSimConnect_AddClientEventToNotificationGroup) SCClientLib.resolve("SimConnect_AddClientEventToNotificationGroup");
+	if (simconnect_subscribetosystemevent == NULL) {
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
+		return false;
+	}
+
+	simconnect_setnotificationgrouppriority = (importSimConnect_SetNotificationGroupPriority) SCClientLib.resolve("SimConnect_SetNotificationGroupPriority");
+	if (simconnect_subscribetosystemevent == NULL) {
+		qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
+		return false;
+	}
+
+	qDebug() << "SCServer::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
 
 	return true;
 }
+
+//
+// Get the program-name from the client (Game!).
+//
+QString SCServer::GetProgramName() {   
+QString *str;
+
+	str = new QString("FSX");
+	return *str;
+}
+
+
+void CALLBACK SCServer::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
+{
+//    HRESULT hr;
+
+    switch(pData->dwID)
+    {
+        case SIMCONNECT_RECV_ID_EVENT:
+        {
+            SIMCONNECT_RECV_EVENT *evt = (SIMCONNECT_RECV_EVENT*)pData;
+
+			qDebug() << "SCServer::processNextSimconnectEvent() says: SimConnect active!";
+            //switch(evt->uEventID)
+            //{
+            //    //case EVENT_CAMERA_RIGHT:
+
+            //    //    cameraBank = normalize180( cameraBank + 5.0f);
+
+            //    //    hr = SimConnect_CameraSetRelative6DOF(hSimConnect, 0.0f, 0.0f, 0.0f,
+            //    //            SIMCONNECT_CAMERA_IGNORE_FIELD,SIMCONNECT_CAMERA_IGNORE_FIELD, cameraBank);
+
+            //    //    printf("\nCamera Bank = %f", cameraBank);
+            //    //    break;
+
+            //    //case EVENT_CAMERA_LEFT:
+            //    //    
+            //    //    cameraBank = normalize180( cameraBank - 5.0f);
+
+            //    //    hr = SimConnect_CameraSetRelative6DOF(hSimConnect, 0.0f, 0.0f, 0.0f,
+            //    //            SIMCONNECT_CAMERA_IGNORE_FIELD,SIMCONNECT_CAMERA_IGNORE_FIELD, cameraBank);
+            //    //    
+            //    //    printf("\nCamera Bank = %f", cameraBank);
+            //    //    break;
+
+            //    //default:
+            //    //    break;
+            //}
+            //break;
+        }
+		case SIMCONNECT_RECV_ID_EVENT_FRAME:
+		{
+			qDebug() << "SCServer::processNextSimconnectEvent() says: Frame event!";
+		}
+
+        case SIMCONNECT_RECV_ID_EXCEPTION:
+        {
+            SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION*)pData;
+            
+            switch (except->dwException)
+            {
+            case SIMCONNECT_EXCEPTION_ERROR:
+                printf("\nCamera error");
+                break;
+
+            default:
+                printf("\nException");
+                break;
+            }
+            break;
+        }
+
+        case SIMCONNECT_RECV_ID_QUIT:
+        {
+			qDebug() << "SCServer::processNextSimconnectEvent() says: Quit event!";
+//            quit = 1;
+            break;
+        }
+
+        default:
+            break;
+    }
+}
+
 
 //END

@@ -116,6 +116,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="postbuild.bat &quot;$(QTDIR)\plugins\designer\QBezierConfigurator.dll&quot; &quot;$(OutDir)&quot; $(ConfigurationName)"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -150,11 +151,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib smft31.lib smftcpp.lib smftqt.lib Strmiids.lib"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib smft32.lib smftcpp.lib smftqt.lib Strmiids.lib QBezierConfigurator.lib FSUIPC_User.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="/NODEFAULTLIB:libc.lib;libcmt.lib;libcd.lib;libcmtd;msvcrtd.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;libcd.lib;libcmtd;msvcrtd.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -182,6 +183,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="mt.exe -manifest &quot;$(InputDir)SCServer.manifest&quot; -outputresource:&quot;$(OutDir)\$(TargetFileName)&quot;;^#101"
 			/>
 		</Configuration>
 	</Configurations>

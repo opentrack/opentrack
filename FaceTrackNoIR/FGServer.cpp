@@ -60,6 +60,24 @@ FGServer::~FGServer() {
 //
 void FGServer::sendHeadposeToGame() {
 int no_bytes;
+QHostAddress sender;
+quint16 senderPort;
+
+	//
+	// Create UDP-sockets if they don't exist already.
+	// They must be created here, because they must be in the Tracker thread (Tracker::run())
+	//
+	if (inSocket == 0) {
+		qDebug() << "FGServer::sendHeadposeToGame creating sockets";
+		inSocket = new QUdpSocket();
+		// Connect the inSocket to the port, to receive messages
+//	inSocket->bind(QHostAddress::LocalHost, 5551);
+		inSocket->bind(QHostAddress::Any, destPort+1);
+	}
+
+	if (outSocket == 0) {
+		outSocket = new QUdpSocket();
+	}
 
 	//
 	// Copy the Raw measurements directly to the client.
@@ -86,31 +104,19 @@ int no_bytes;
 		qDebug() << "FGServer::writePendingDatagrams says: nothing send!";
 	}
 
-}
-
-//
-// Callback function registered in the run() method.
-// Retrieve all pending Datagrams (typically 1) and send a reply, containing the headpose-data.
-//
-void FGServer::readPendingDatagrams()
-{
-QHostAddress sender;
-quint16 senderPort;
-
 	//
-	// Read data from FlightGear
+	// FlightGear keeps sending data, so we must read that here.
 	//
 	while (inSocket->hasPendingDatagrams()) {
+
 		QByteArray datagram;
 		datagram.resize(inSocket->pendingDatagramSize());
 
-//		qDebug() << "FGServer::readPendingDatagrams says: size =" << inSocket->pendingDatagramSize();
-
 		inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
-//		qDebug() << "FGServer::readPendingDatagrams says: data =" << cmd;
 
 		fg_cmd = cmd;									// Let's just accept that command for now...
 		if ( cmd > 0 ) {
+			qDebug() << "FGServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
 			headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
 		}
 	}
@@ -130,18 +136,10 @@ bool FGServer::checkServerInstallationOK( HANDLE handle )
 	TestData.p = 0.0f;
 	TestData.r = 0.0f;
 	TestData.status = 0;
-	fg_cmd = 0;
+	fg_cmd = 1;
 
-	// Create UDP-sockets
-	inSocket = new QUdpSocket();
-	outSocket = new QUdpSocket();
-
-	// Connect the inSocket to the port, to receive readyRead messages
-//	inSocket->bind(QHostAddress::LocalHost, 5551);
-	inSocket->bind(QHostAddress::Any, destPort+1);
-
-    // Connect the inSocket to the member-function, to read FlightGear commands
-	connect(inSocket, SIGNAL(readyRead()), this, SLOT(readPendingDatagrams()), Qt::DirectConnection);
+	inSocket = 0;
+	outSocket = 0;
 
 	return true;
 }

@@ -32,24 +32,80 @@
 FTIRServer::FTIRServer() {
 	loadSettings();
 	ProgramName = "";
+	dummyTrackIR = 0;
+	viewsStart = 0;
+	viewsStop = 0;
 }
 
 /** destructor **/
 FTIRServer::~FTIRServer() {
 
 	//
+	// Destroy the File-mapping
+	//
+	FTIRDestroyMapping();
+
+	//
 	// Free the DLL's
 	//
 	FTIRClientLib.unload();
-	FTIRViewsLib.unload();
+	if (viewsStop != NULL) {
+		viewsStop();
+		FTIRViewsLib.unload();
+	}
 
 	//
 	// Kill the dummy TrackIR process.
 	//
 	qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
-	if (dummyTrackIR) {
-		dummyTrackIR->kill();
+	try {
+		if (dummyTrackIR) {
+			dummyTrackIR->kill();
+		}
+	} 
+	catch (...)
+    {
+		qDebug() << "~FTIRServer says: some error occurred";
 	}
+
+}
+
+/** destructor **/
+void FTIRServer::stopServer() {
+
+	////
+	//// Destroy the File-mapping
+	////
+	//FTIRDestroyMapping();
+
+	////
+	//// Free the DLL's
+	////
+	//try {
+	//	FTIRClientLib.unload();
+	//	if (useTIRViews && FTIRViewsLib.isLoaded()) {
+	//		FTIRViewsLib.unload();
+	//	}
+	//}
+	//catch (...)
+	//{
+	//	qDebug() << "~FTIRServer says: some error occurred";
+	//}
+
+	////
+	//// Kill the dummy TrackIR process.
+	////
+	//qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
+	//try {
+	//	if (dummyTrackIR) {
+	//		dummyTrackIR->kill();
+	//	}
+	//} 
+	//catch (...)
+ //   {
+	//	qDebug() << "~FTIRServer says: some error occurred";
+	//}
+
 }
 
 //
@@ -124,9 +180,26 @@ void FTIRServer::FTIRDestroyMapping()
 		UnmapViewOfFile ( pMemData );
 	}
 	
-	CloseHandle( hFTIRMutex );
-	CloseHandle( hFTIRMemMap );
+	if (hFTIRMutex != 0) {
+		CloseHandle( hFTIRMutex );
+	}
+	hFTIRMutex = 0;
+	
+	if (hFTIRMemMap != 0) {
+		CloseHandle( hFTIRMemMap );
+	}
 	hFTIRMemMap = 0;
+
+}
+
+//
+// Get the program-name from the client (Game!).
+//
+QString FTIRServer::GetProgramName() {   
+QString *str;
+
+	str = new QString("Test");
+	return *str;
 }
 
 //
