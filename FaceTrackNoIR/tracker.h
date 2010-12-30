@@ -182,6 +182,7 @@ public:
 	~Tracker();
 
 	void setup(QWidget *head, FaceTrackNoIR *parent);
+
 	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );
 	QString getGameProgramName();					// Get the ProgramName from the game and display it.

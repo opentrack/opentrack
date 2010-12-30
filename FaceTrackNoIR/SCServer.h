@@ -29,27 +29,46 @@
 //
 #define SIMCONNECT_H_NOMANIFEST 
 #include "FTNoIR_cxx_protocolserver.h"
-#include "Windows.h" 
-#include <stdlib.h>
+//#include "Windows.h" 
+//#include <stdlib.h>
 #include "SimConnect.h"
+#include <QApplication>
 #include <QString>
 #include <QMessageBox>
 #include <QSettings>
 #include <QFile>
-#include <QApplication>
 #include <QDebug>
-#include <QThread>
-#include <QMutex>
 #include <QLibrary>
 
 typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
 typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
 typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
+typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
+typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID, const char * SystemEventName);
+typedef HRESULT (WINAPI *importSimConnect_MapClientEventToSimEvent)(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID, const char * EventName);
+typedef HRESULT (WINAPI *importSimConnect_AddClientEventToNotificationGroup)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_CLIENT_EVENT_ID EventID, BOOL bMaskable);
+typedef HRESULT (WINAPI *importSimConnect_SetNotificationGroupPriority)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, DWORD uPriority);
 
 using namespace std;
 using namespace v4friend::ftnoir;
 
 static const char* SC_CLIENT_FILENAME = "SimConnect.dll";
+
+enum GROUP_ID
+{
+    GROUP0=0,
+};
+
+enum EVENT_ID
+{
+	EVENT_PING=0,
+	EVENT_INIT,
+};
+
+enum INPUT_ID
+{
+    INPUT0=0,
+};
 
 class SCServer : public ProtocolServerBase {
 	Q_OBJECT
@@ -60,9 +79,10 @@ public:
 	SCServer();
 	~SCServer();
 
+	QString GetProgramName();
+
 	// protected member methods
 protected:
-//	void run();
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame();
 
@@ -71,13 +91,19 @@ private:
 	QString ProgramName;
 	QLibrary SCClientLib;
 
-	bool blnSimConnectActive;
-	HANDLE  hSimConnect;											// Handle to SimConnect
 	importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;
 	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
+	importSimConnect_CallDispatch simconnect_calldispatch;
+	importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
+	importSimConnect_MapClientEventToSimEvent simconnect_mapclienteventtosimevent;
+	importSimConnect_AddClientEventToNotificationGroup simconnect_addclienteventtonotificationgroup;
+	importSimConnect_SetNotificationGroupPriority simconnect_setnotificationgrouppriority;
 
-float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+	HANDLE  hSimConnect;										// Handle to SimConnect
+	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
+
+	bool blnSimConnectActive;
 
 public:
 	void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
@@ -87,6 +113,8 @@ public:
 	void setVirtPosX(float pos) { virtPosX = pos/100.f; }			// cm to meters
 	void setVirtPosY(float pos) { virtPosY = pos/100.f; }
 	void setVirtPosZ(float pos) { virtPosZ = -1.0f * pos/100.f; }
+
+
 };
 
 

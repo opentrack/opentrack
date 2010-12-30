@@ -143,22 +143,22 @@ typedef FTIRMemMap * PFTIRMemMap;
 // the client -- this function receives head tester reports from the game client API
 //
 typedef NPRESULT (__stdcall *PF_NOTIFYCALLBACK)( unsigned short, unsigned short );
-
-// Typedefs for game client API functions (useful for declaring pointers to these
-// functions within the client for use during GetProcAddress() ops)
 //
-typedef NPRESULT (__stdcall *PF_NP_REGISTERWINDOWHANDLE)( HWND );
-typedef NPRESULT (__stdcall *PF_NP_UNREGISTERWINDOWHANDLE)( void );
-typedef NPRESULT (__stdcall *PF_NP_REGISTERPROGRAMPROFILEID)( unsigned short );
-typedef NPRESULT (__stdcall *PF_NP_QUERYVERSION)( unsigned short* );
-typedef NPRESULT (__stdcall *PF_NP_REQUESTDATA)( unsigned short );
-typedef NPRESULT (__stdcall *PF_NP_GETDATA)( LPTRACKIRDATA );
-typedef NPRESULT (__stdcall *PF_NP_REGISTERNOTIFY)( PF_NOTIFYCALLBACK );
-typedef NPRESULT (__stdcall *PF_NP_UNREGISTERNOTIFY)( void );
-typedef NPRESULT (__stdcall *PF_NP_STARTCURSOR)( void );
-typedef NPRESULT (__stdcall *PF_NP_STOPCURSOR)( void );
-typedef NPRESULT (__stdcall *PF_NP_STARTDATATRANSMISSION)( void );
-typedef NPRESULT (__stdcall *PF_NP_STOPDATATRANSMISSION)( void );
+//// Typedefs for game client API functions (useful for declaring pointers to these
+//// functions within the client for use during GetProcAddress() ops)
+////
+//typedef NPRESULT (__stdcall *PF_NP_REGISTERWINDOWHANDLE)( HWND );
+//typedef NPRESULT (__stdcall *PF_NP_UNREGISTERWINDOWHANDLE)( void );
+//typedef NPRESULT (__stdcall *PF_NP_REGISTERPROGRAMPROFILEID)( unsigned short );
+//typedef NPRESULT (__stdcall *PF_NP_QUERYVERSION)( unsigned short* );
+//typedef NPRESULT (__stdcall *PF_NP_REQUESTDATA)( unsigned short );
+//typedef NPRESULT (__stdcall *PF_NP_GETDATA)( LPTRACKIRDATA );
+//typedef NPRESULT (__stdcall *PF_NP_REGISTERNOTIFY)( PF_NOTIFYCALLBACK );
+//typedef NPRESULT (__stdcall *PF_NP_UNREGISTERNOTIFY)( void );
+//typedef NPRESULT (__stdcall *PF_NP_STARTCURSOR)( void );
+//typedef NPRESULT (__stdcall *PF_NP_STOPCURSOR)( void );
+//typedef NPRESULT (__stdcall *PF_NP_STARTDATATRANSMISSION)( void );
+//typedef NPRESULT (__stdcall *PF_NP_STOPDATATRANSMISSION)( void );
 
 //// Function Prototypes ///////////////////////////////////////////////
 //

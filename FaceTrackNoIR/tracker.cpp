@@ -85,37 +85,47 @@ Tracker::Tracker( int clientID, int facetrackerID ) {
 
 	Tracker::hTrackMutex = CreateMutexA(NULL, false, "HeadPose_mutex");
 
-	try {
-	    // Initialize the faceAPI Qt library
-		sm::faceapi::qt::initialize();
-		smLoggingSetFileOutputEnable( false );
+	switch (selectedTracker) {
+		case FT_SM_FACEAPI:
+			try {
+				// Initialize the faceAPI Qt library
+				sm::faceapi::qt::initialize();
+				smLoggingSetFileOutputEnable( false );
 
-	    // Initialize the API
-		faceapi_scope = new APIScope;
+				// Initialize the API
+				faceapi_scope = new APIScope;
 
-		// Create head-tracking engine v2 using first detected webcam
-		CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
-		_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
+				// Create head-tracking engine v2 using first detected webcam
+				CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
+				_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
 
-		// starts the faceapi engine
-		_engine->start();
-	} 
-	catch (sm::faceapi::Error &e)
-    {
-		/* ERROR with camera */
-        QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
+				// starts the faceapi engine
+				_engine->start();
+			} 
+			catch (sm::faceapi::Error &e)
+			{
+				/* ERROR with camera */
+				QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
+			}
+			break;
+		case FT_FTNOIR:
+			break;
+
+		default:
+			break;
 	}
+
 
 	//
 	// Initialize all server-handles. Only start the server, that was selected in the GUI.
 	//
 	switch (selectedClient) {
 		case FREE_TRACK:
-			server_Game = QSharedPointer<FTServer>(new FTServer ( ));			// Create Free-track protocol-server
+			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
 			break;
 
 		case FLIGHTGEAR:
-			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));	// Create FlightGear protocol-server
+			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));			// Create FlightGear protocol-server
 			break;
 
 		case FTNOIR:
@@ -126,15 +136,15 @@ Tracker::Tracker( int clientID, int facetrackerID ) {
 			break;
 
 		case TRACKIR:
-			server_Game = QSharedPointer<FTIRServer>(new FTIRServer ( ));		// Create Fake-TIR protocol-server
+			server_Game = QSharedPointer<FTIRServer>(new FTIRServer ( ));			// Create Fake-TIR protocol-server
 			break;
 
 		case SIMCONNECT:
-			server_Game = QSharedPointer<SCServer>(new SCServer ( ));			// Create SimConnect protocol-server
+			server_Game = QSharedPointer<SCServer>(new SCServer ( ));				// Create SimConnect protocol-server
 			break;
 
 		case FSUIPC:
-			server_Game = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));	// Create FSUIPC protocol-server
+			server_Game = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));		// Create FSUIPC protocol-server
 			break;
 
 		default:
@@ -148,11 +158,6 @@ Tracker::Tracker( int clientID, int facetrackerID ) {
 /** destructor empty **/
 Tracker::~Tracker() {
 
-	// Stop the started server(s)
-	if (server_Game) {
-		server_Game->deleteLater();
-	}
-
 	// Trigger thread to stop
 	::SetEvent(m_StopThread);
 
@@ -162,10 +167,21 @@ Tracker::~Tracker() {
 	// Close handles
 	::CloseHandle(m_StopThread);
 	::CloseHandle(m_WaitThread);
-	::CloseHandle( Tracker::hTrackMutex );
 
-	_engine->stop();
-	smAPIQuit();
+	if (Tracker::hTrackMutex != 0) {
+		::CloseHandle( Tracker::hTrackMutex );
+	}
+
+	if (selectedTracker == FT_SM_FACEAPI) {
+		_engine->stop();
+		smAPIQuit();
+	}
+
+	// Stop the started server(s)
+	if (server_Game) {
+		server_Game->deleteLater();
+	}
+   qDebug() << "Tracker::~Tracker Finished...";
 
 }
 
@@ -177,13 +193,15 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	headPoseWidget = head;
 	mainApp = parent;
 
-	//registers the faceapi callback for receiving headpose data **/
-	registerHeadPoseCallback();
+	if (selectedTracker == FT_SM_FACEAPI) {
+		//registers the faceapi callback for receiving headpose data **/
+		registerHeadPoseCallback();
 
-	// some parameteres [optional]
-	smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
-	smHTSetLipTrackingEnabled( _engine->handle(), false);
-	smLoggingSetFileOutputEnable( false );
+		// some parameteres [optional]
+		smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
+		smHTSetLipTrackingEnabled( _engine->handle(), false);
+		smLoggingSetFileOutputEnable( false );
+	}
 
 	// set up the line edits for calling
 	headXLine = headPoseWidget->findChild<QLineEdit *>("headXLine");
@@ -203,9 +221,6 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 
 		DLL_Ok = server_Game->checkServerInstallationOK( mainApp->winId() );
 		if (!DLL_Ok) {
-//			server_Game->start();							// Start the thread
-		//}
-		//else {
 			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
 		}
 
@@ -267,6 +282,7 @@ void Tracker::run() {
 
 			// Set event
 			::SetEvent(m_WaitThread);
+		   qDebug() << "Tracker::run terminated run()";
 			return;
 		}
 
@@ -507,7 +523,7 @@ void Tracker::run() {
 					server_Game->setHeadPosZ( posZ );
 				}
 
-				// FlightGear
+				// All Protocol server(s)
 				if (server_Game) {
 					server_Game->setVirtRotX ( rotX );				// degrees
 					server_Game->setVirtRotY ( rotY );
@@ -614,11 +630,7 @@ bool Tracker::handleGameCommand ( int command ) {
 
 	switch ( command ) {
 		case 1:										// reset headtracker
-			if ( _engine ) {
-				_engine->stop();
-				Tracker::set_initial = false;
-				_engine->start();
-			}
+			Tracker::do_center = true;
 			break;
 		default:
 			break;

@@ -37,7 +37,7 @@
 #include <QFile>
 #include <QApplication>
 #include <QDebug>
-#include <QThread>
+//#include <QThread>
 #include <QMutex>
 #include <QLibrary>
 #include <QUdpSocket>
@@ -63,9 +63,6 @@ protected:
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame();
 
-private slots:
-	void readPendingDatagrams();
-
 private:
 	Tracker *headTracker;									// For upstream messages...
 	TFlightGearData TestData;
@@ -75,7 +72,6 @@ private:
 	qint32 fg_cmd;											// Command from FlightGear
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
-
 	void loadSettings();
 };
 

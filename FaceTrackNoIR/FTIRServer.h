@@ -31,7 +31,6 @@
 #include <QFile>
 #include <QApplication>
 #include <QDebug>
-#include <QThread>
 #include <QMutex>
 #include <QLibrary>
 #include <QProcess>
@@ -53,11 +52,13 @@ public:
 	// public member methods
 	FTIRServer();
 	~FTIRServer();
+	QString GetProgramName();
 
 	// protected member methods
 protected:
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame();
+	void stopServer();
 
 private:
 	bool FTIRCreateMapping(HANDLE handle);
@@ -75,10 +76,10 @@ private:
 	QString ProgramName;
 	QLibrary FTIRClientLib;
 	QLibrary FTIRViewsLib;
-	bool useTIRViews;
 	QProcess *dummyTrackIR;
+	bool useTIRViews;
 
-	static float scale2AnalogLimits( float x, float min_x, float max_x );
+	float scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
 
 public:

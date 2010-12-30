@@ -37,7 +37,7 @@
 #include <QFile>
 #include <QApplication>
 #include <QDebug>
-#include <QThread>
+//#include <QThread>
 #include <QMutex>
 #include <QLibrary>
 #include <QUdpSocket>
