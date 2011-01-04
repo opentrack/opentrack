@@ -101,7 +101,7 @@ quint16 senderPort;
 //		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
 	}
 	else {
-		qDebug() << "FGServer::writePendingDatagrams says: nothing send!";
+		qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
 	}
 
 	//

@@ -10,8 +10,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>421</height>
+    <width>923</width>
+    <height>371</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,15 +48,18 @@ QWidget {
 
 /* Specials for individual widget(s) */
 QWidget#widget {
-	background-color: #484848;
+/*	background-color: #484848;*/
+	background-color: #595959;
 	border-left: 1px solid #000;
 }
 
 /* Specials for individual widget(s) */
+QWidget#widget4logo {
+	background-color: #000000;
+}
+
 QWidget#widget4video {
-	background-color: #595959;
-	border-top: 1px solid #000;
-	border-bottom: 1px solid #000;
+/*	background-color: #595959;*/
 }
 
 QWidget#Leftwidget {
@@ -121,8 +124,8 @@ QGroupBox {
   <widget class="QWidget" name="centralWidget">
    <property name="minimumSize">
     <size>
-     <width>800</width>
-     <height>400</height>
+     <width>925</width>
+     <height>350</height>
     </size>
    </property>
    <property name="styleSheet">
@@ -142,10 +145,16 @@ QGroupBox {
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
         <property name="spacing">
          <number>6</number>
         </property>
-        <item row="6" column="0">
+        <item row="5" column="0">
          <widget class="QWidget" name="headPoseWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -374,63 +383,12 @@ color:#000;</string>
           </widget>
          </widget>
         </item>
-        <item row="2" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QFrame" name="logoInstitute">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>90</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>90</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QFrame#logoInstitute {
-	background:#595959 url(UIElements/logoFaceTrackNoIR.png) no-repeat;
-border:none;
-}</string>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="5" column="0">
+        <item row="4" column="0">
          <widget class="QWidget" name="widget4video" native="true">
           <property name="minimumSize">
            <size>
             <width>250</width>
-            <height>180</height>
+            <height>150</height>
            </size>
           </property>
           <widget class="QFrame" name="video_frame">
@@ -439,13 +397,13 @@ border:none;
              <x>0</x>
              <y>0</y>
              <width>250</width>
-             <height>180</height>
+             <height>170</height>
             </rect>
            </property>
            <property name="minimumSize">
             <size>
              <width>250</width>
-             <height>180</height>
+             <height>150</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -465,6 +423,93 @@ border:none;
            </property>
           </widget>
          </widget>
+        </item>
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QWidget" name="widget4logo" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>90</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>90</height>
+             </size>
+            </property>
+            <widget class="QPushButton" name="btnDonate">
+             <property name="geometry">
+              <rect>
+               <x>100</x>
+               <y>20</y>
+               <width>145</width>
+               <height>34</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Please help us: make gaming fun...</string>
+             </property>
+             <property name="text">
+              <string>Click here to 
+Support FaceTrackNoIR!</string>
+             </property>
+             <property name="icon">
+              <iconset resource="FaceTrackNoIR.qrc">
+               <normaloff>:/UIElements/Donate.png</normaloff>:/UIElements/Donate.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+            </widget>
+            <widget class="QFrame" name="logoInstitute">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>90</width>
+               <height>90</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QFrame#logoInstitute {
+	background:#595959 url(UIElements/logoFaceTrackNoIR.png) no-repeat;
+border:none;
+}</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+            </widget>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -500,9 +545,9 @@ border:none;
            <colorrole role="Button">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -527,18 +572,18 @@ border:none;
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
            <colorrole role="Window">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -583,9 +628,9 @@ border:none;
            <colorrole role="Button">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -610,18 +655,18 @@ border:none;
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
            <colorrole role="Window">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -666,9 +711,9 @@ border:none;
            <colorrole role="Button">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -693,18 +738,18 @@ border:none;
            <colorrole role="Base">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
            <colorrole role="Window">
             <brush brushstyle="SolidPattern">
              <color alpha="255">
-              <red>72</red>
-              <green>72</green>
-              <blue>72</blue>
+              <red>89</red>
+              <green>89</green>
+              <blue>89</blue>
              </color>
             </brush>
            </colorrole>
@@ -750,33 +795,7 @@ border:none;
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="1" column="2">
-            <spacer name="horizontalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="0">
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="1">
+           <item row="2" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <property name="leftMargin">
               <number>10</number>
@@ -784,6 +803,32 @@ border:none;
              <property name="rightMargin">
               <number>10</number>
              </property>
+             <item>
+              <widget class="QGroupBox" name="groupProfile">
+               <property name="title">
+                <string>Profile</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboTrackerSource_2">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>161</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>3</number>
+                </property>
+               </widget>
+              </widget>
+             </item>
              <item>
               <widget class="QGroupBox" name="groupTrackerSource">
                <property name="minimumSize">
@@ -939,82 +984,9 @@ border:none;
                </widget>
               </widget>
              </item>
-             <item>
-              <widget class="QPushButton" name="btnEditCurves">
-               <property name="toolTip">
-                <string>Edit the Curve settings</string>
-               </property>
-               <property name="text">
-                <string>Curves</string>
-               </property>
-               <property name="icon">
-                <iconset resource="FaceTrackNoIR.qrc">
-                 <normaloff>:/UIElements/Curves.png</normaloff>:/UIElements/Curves.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>150</width>
-                 <height>32</height>
-                </size>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
-           <item row="5" column="1">
-            <layout class="QHBoxLayout" name="horLayoutDonate">
-             <property name="rightMargin">
-              <number>10</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btnDonate">
-               <property name="toolTip">
-                <string>Please help us: make gaming fun...</string>
-               </property>
-               <property name="text">
-                <string>Click here to Support FaceTrackNoIR!</string>
-               </property>
-               <property name="icon">
-                <iconset resource="FaceTrackNoIR.qrc">
-                 <normaloff>:/UIElements/Donate.png</normaloff>:/UIElements/Donate.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>18</width>
-                 <height>18</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>186</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="4" column="1">
+           <item row="3" column="0">
             <widget class="QWidget" name="bubbleBigWidget" native="true">
              <property name="minimumSize">
               <size>
@@ -1065,7 +1037,7 @@ background:none;</string>
                  <widget class="QLabel" name="lblSensYaw_5">
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>95</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1117,17 +1089,6 @@ background:none;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QLabel" name="label">
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>(samples)</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="3" column="0">
                  <widget class="QSlider" name="slideSmoothing">
                   <property name="minimumSize">
@@ -1160,7 +1121,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinSmoothing">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>35</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1172,6 +1133,17 @@ background:none;</string>
                   </property>
                   <property name="value">
                    <number>10</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLabel" name="label">
+                  <property name="styleSheet">
+                   <string notr="true">color:#ccc;
+background:none;</string>
+                  </property>
+                  <property name="text">
+                   <string>(samples)</string>
                   </property>
                  </widget>
                 </item>
@@ -1389,7 +1361,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedYaw">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1411,7 +1383,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedPitch">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1433,7 +1405,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedRoll">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1725,7 +1697,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedX">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1747,7 +1719,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedY">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1769,7 +1741,7 @@ background:none;</string>
                  <widget class="QSpinBox" name="spinRedZ">
                   <property name="minimumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -1836,7 +1808,7 @@ background:none;</string>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>5</width>
+                  <width>20</width>
                   <height>20</height>
                  </size>
                 </property>
@@ -1845,81 +1817,124 @@ background:none;</string>
              </layout>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QWidget" name="bubbleSmallWidget_2" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>620</width>
-               <height>67</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>667</width>
-               <height>67</height>
-              </size>
-             </property>
-             <property name="acceptDrops">
-              <bool>true</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background:  url(&quot;UIElements/bubble_1_small.png&quot;) no-repeat;
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QWidget" name="bubbleSmallWidget_2" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>500</width>
+                 <height>67</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>700</width>
+                 <height>67</height>
+                </size>
+               </property>
+               <property name="acceptDrops">
+                <bool>true</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background:  url(&quot;UIElements/bubble_1_small.png&quot;) no-repeat;
 opacity:100;</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="leftMargin">
-               <number>15</number>
-              </property>
-              <property name="topMargin">
-               <number>10</number>
-              </property>
-              <property name="rightMargin">
-               <number>10</number>
-              </property>
-              <property name="bottomMargin">
-               <number>10</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="cameraName">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>30</height>
-                 </size>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <property name="spacing">
+                 <number>0</number>
                 </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>600</width>
-                  <height>30</height>
-                 </size>
+                <property name="leftMargin">
+                 <number>15</number>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true">color:#ccc;
+                <property name="topMargin">
+                 <number>10</number>
+                </property>
+                <property name="rightMargin">
+                 <number>10</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>10</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="cameraName">
+                    <property name="minimumSize">
+                     <size>
+                      <width>420</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>600</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">color:#ccc;
 background:none;</string>
-                </property>
-                <property name="text">
-                 <string>Camera Name</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
+                    </property>
+                    <property name="text">
+                     <string>Camera Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="btnEditCurves">
+                    <property name="minimumSize">
+                     <size>
+                      <width>52</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>180</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>Edit the Curve settings</string>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">background:none;</string>
+                    </property>
+                    <property name="text">
+                     <string>Curves</string>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="FaceTrackNoIR.qrc">
+                      <normaloff>:/UIElements/Curves.png</normaloff>:/UIElements/Curves.png</iconset>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>150</width>
+                      <height>32</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -1935,7 +1950,7 @@ background:none;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>970</width>
+     <width>923</width>
      <height>21</height>
     </rect>
    </property>
