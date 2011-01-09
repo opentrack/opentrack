@@ -1,6 +1,6 @@
 /********************************************************************************
 * FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay for				*
+*					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*

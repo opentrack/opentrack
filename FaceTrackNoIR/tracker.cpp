@@ -1,6 +1,6 @@
 /********************************************************************************
 * FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay for				*
+*					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
@@ -23,6 +23,8 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110109 - WVR: Added setZero option to define behaviour after STOP tracking via shortkey.
+		20110104 - WVR: Removed a few nasty bugs (it was impossible to stop tracker without crash).
 		20101224 - WVR: Removed the QThread inheritance of the Base Class for the protocol-servers.
 						Again, this drastically simplifies the code in the protocols.
 		20101217 - WVR: Created Base Class for the protocol-servers. This drastically simplifies
@@ -47,6 +49,12 @@
 #include "tracker.h"
 #include "FaceTrackNoIR.h"
 
+//
+// Definitions for testing purposes
+//
+#define USE_HEADPOSE_CALLBACK
+#define USE_DEBUG_CLIENT
+
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
 
@@ -57,6 +65,7 @@ bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
 bool Tracker::do_inhibit = false;
 bool Tracker::useFilter = false;
+bool Tracker::setZero = true;
 HANDLE Tracker::hTrackMutex = 0;
 
 long Tracker::prevHeadPoseTime = 0;
@@ -151,6 +160,11 @@ Tracker::Tracker( int clientID, int facetrackerID ) {
 			// should never be reached
 		break;
 	}
+
+#       ifdef USE_DEBUG_CLIENT
+		debug_Client = QSharedPointer<ExcelServer>(new ExcelServer ( this ));		// Create Excel protocol-server
+#       endif
+
 	// Load the settings from the INI-file
 	loadSettings();
 }
@@ -181,7 +195,12 @@ Tracker::~Tracker() {
 	if (server_Game) {
 		server_Game->deleteLater();
 	}
-   qDebug() << "Tracker::~Tracker Finished...";
+
+#       ifdef USE_DEBUG_CLIENT
+	debug_Client->deleteLater();		// Delete Excel protocol-server
+#       endif
+	
+	qDebug() << "Tracker::~Tracker Finished...";
 
 }
 
@@ -195,7 +214,9 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 
 	if (selectedTracker == FT_SM_FACEAPI) {
 		//registers the faceapi callback for receiving headpose data **/
+#       ifdef USE_HEADPOSE_CALLBACK
 		registerHeadPoseCallback();
+#       endif
 
 		// some parameteres [optional]
 		smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
@@ -225,6 +246,14 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 		}
 
 	}
+
+#       ifdef USE_DEBUG_CLIENT
+	DLL_Ok = debug_Client->checkServerInstallationOK( mainApp->winId() );		// Check installation
+	if (!DLL_Ok) {
+		QMessageBox::information(mainApp, "FaceTrackNoIR error", "Excel Protocol is not (correctly) installed!");
+	}
+#       endif
+
 }
 
 /** QThread run method @override **/
@@ -246,6 +275,11 @@ void Tracker::run() {
 	SYSTEMTIME now;
 	long newHeadPoseTime;
 	float dT;
+
+#       ifndef USE_HEADPOSE_CALLBACK
+	smEngineHeadPoseData head_pose;					// headpose from faceAPI
+	smEngineHeadPoseData temp_head_pose;			// headpose from faceAPI
+#       endif
 
 	//
 	// Setup the DirectInput for keyboard strokes
@@ -365,6 +399,21 @@ void Tracker::run() {
 		}
 
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
+
+#       ifndef USE_HEADPOSE_CALLBACK
+            smReturnCode smret = smHTCurrentHeadPose(_engine->handle(), &temp_head_pose);
+			memcpy(&head_pose, &temp_head_pose, sizeof(smEngineHeadPoseData));
+
+			if ( head_pose.confidence > 0 ) {
+
+				Tracker::confid = true;
+
+				// Write the Raw headpose-data and add it to the RawList, for processing...
+				addHeadPose( head_pose );
+			} else {
+				Tracker::confid = false;
+			}
+#       endif
 
 			//
 			// Get the System-time and substract the time from the previous call.
@@ -532,12 +581,31 @@ void Tracker::run() {
 					server_Game->setVirtPosY ( posY );
 					server_Game->setVirtPosZ ( posZ );
 				}
+
+#       ifdef USE_DEBUG_CLIENT
+				debug_Client->setHeadRotX( Tracker::Pitch.headPos );	// degrees
+				debug_Client->setHeadRotY( Tracker::Yaw.headPos );
+				debug_Client->setHeadRotZ( Tracker::Roll.headPos );
+
+				debug_Client->setHeadPosX( Tracker::X.headPos );		// centimeters
+				debug_Client->setHeadPosY( Tracker::Y.headPos );
+				debug_Client->setHeadPosZ( Tracker::Z.headPos );
+
+				debug_Client->setVirtRotX ( rotX );				// degrees
+				debug_Client->setVirtRotY ( rotY );
+				debug_Client->setVirtRotZ ( rotZ );
+				debug_Client->setVirtPosX ( posX );				// centimeters
+				debug_Client->setVirtPosY ( posY );
+				debug_Client->setVirtPosZ ( posZ );
+#       endif
+
+
 			}
 			else {
 				//
 				// Go to initial position
 				//
-				if (server_Game) {
+				if (server_Game && setZero) {
 					server_Game->setVirtRotX ( 0.0f );
 					server_Game->setVirtRotY ( 0.0f );
 					server_Game->setVirtRotZ ( 0.0f );
@@ -568,12 +636,27 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 {
 	//
 	// Perform actions, when valid data is received from faceAPI.
-	// Write the Raw headpose-data and add it to the RawList, for processing...
 	//
 	if (( head_pose.confidence > 0 ) && (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) ) {
 
 		Tracker::confid = true;
 
+		// Write the Raw headpose-data and add it to the RawList, for processing...
+		addHeadPose( head_pose );
+	} else {
+		Tracker::confid = false;
+	}
+
+	ReleaseMutex(Tracker::hTrackMutex);
+
+	// for lower cpu load
+	msleep(10);
+	yieldCurrentThread(); 
+}
+
+/** Add the headpose-data to the Lists **/
+void Tracker::addHeadPose( smEngineHeadPoseData head_pose )
+{
 		// Pitch
 		Tracker::Pitch.headPos = head_pose.head_rot.x_rads * 57.295781f;			// degrees
 		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Tracker::Pitch.headPos );
@@ -597,16 +680,6 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 		// Z-position (distance to camera, absolute!)
 		Tracker::Z.headPos = head_pose.head_pos.z * 100.0f;							// centimeters
 		addRaw2List ( &Z.rawList, Z.maxItems, Tracker::Z.headPos );
-
-	} else {
-		Tracker::confid = false;
-	}
-
-	ReleaseMutex(Tracker::hTrackMutex);
-
-	// for lower cpu load
-	msleep(10);
-	yieldCurrentThread(); 
 }
 
 //
@@ -895,6 +968,7 @@ QPointF point1, point2, point3, point4;
 	StartStopKey.shift = iniFile.value ( "Shift_StartStop", 0 ).toBool();
 	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
 	StartStopKey.alt = iniFile.value ( "Alt_StartStop", 0 ).toBool();
+	setZero = iniFile.value ( "SetZero", 1 ).toBool();
 
 	// Inhibit key
 	InhibitKey.keycode = iniFile.value ( "Keycode_Inhibit", 0 ).toInt();

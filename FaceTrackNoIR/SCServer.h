@@ -93,26 +93,42 @@ private:
 
 	importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;
-	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
+	static importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 	importSimConnect_CallDispatch simconnect_calldispatch;
 	importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 	importSimConnect_MapClientEventToSimEvent simconnect_mapclienteventtosimevent;
 	importSimConnect_AddClientEventToNotificationGroup simconnect_addclienteventtonotificationgroup;
 	importSimConnect_SetNotificationGroupPriority simconnect_setnotificationgrouppriority;
 
-	HANDLE  hSimConnect;										// Handle to SimConnect
+	static HANDLE hSimConnect;										// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
+
+	static float virtSCPosX;
+	static float virtSCPosY;
+	static float virtSCPosZ;
+	
+	static float virtSCRotX;
+	static float virtSCRotY;
+	static float virtSCRotZ;
+
+	static float prevSCPosX;
+	static float prevSCPosY;
+	static float prevSCPosZ;
+	
+	static float prevSCRotX;
+	static float prevSCRotY;
+	static float prevSCRotZ;
 
 	bool blnSimConnectActive;
 
 public:
-	void setVirtRotX(float rot) { virtRotX = -1.0f * rot; }			// degrees
-	void setVirtRotY(float rot) { virtRotY = -1.0f * rot; }
-	void setVirtRotZ(float rot) { virtRotZ = rot; }
+	void setVirtRotX(float rot) { virtSCRotX = -1.0f * rot; }			// degrees
+	void setVirtRotY(float rot) { virtSCRotY = -1.0f * rot; }
+	void setVirtRotZ(float rot) { virtSCRotZ = rot; }
 
-	void setVirtPosX(float pos) { virtPosX = pos/100.f; }			// cm to meters
-	void setVirtPosY(float pos) { virtPosY = pos/100.f; }
-	void setVirtPosZ(float pos) { virtPosZ = -1.0f * pos/100.f; }
+	void setVirtPosX(float pos) { virtSCPosX = pos/100.f; }			// cm to meters
+	void setVirtPosY(float pos) { virtSCPosY = pos/100.f; }
+	void setVirtPosZ(float pos) { virtSCPosZ = -1.0f * pos/100.f; }
 
 
 };

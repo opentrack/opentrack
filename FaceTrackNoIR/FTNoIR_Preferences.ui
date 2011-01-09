@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>180</height>
+    <width>485</width>
+    <height>131</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,19 +43,6 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSlider" name="slideAutoMinimizeTime">
-       <property name="toolTip">
-        <string extracomment="Time after Start Tracker"/>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
       <widget class="QSpinBox" name="spinAutoMinimizeTime">
        <property name="toolTip">
         <string extracomment="Time after Start Tracker"/>
@@ -68,17 +55,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
+     <item row="0" column="2">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>sec. (after 'Start')</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="chkAutoStartTracking">
-       <property name="text">
-        <string/>
        </property>
       </widget>
      </item>
@@ -86,6 +66,27 @@
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Automatically Start tracking on Startup</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QRadioButton" name="radioMinimize">
+       <property name="text">
+        <string>Taskbar</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QRadioButton" name="radioTray">
+       <property name="text">
+        <string>Tray</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="chkAutoStartTracking">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -197,40 +198,7 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>slideAutoMinimizeTime</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinAutoMinimizeTime</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>245</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>330</x>
-     <y>17</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinAutoMinimizeTime</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideAutoMinimizeTime</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>352</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>267</x>
-     <y>18</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>

@@ -20,39 +20,43 @@
 *																				*
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*********************************************************************************/
+*																				*
+* ExcelServer		ExcelServer is the Class, that communicates headpose-data	*
+*					to Excel, for analysing purposes.		         			*
+********************************************************************************/
 /*
 	Modifications (last one on top):
-		20100520 - WVR: Added class FaceApp, to override winEventFilter. It receives 
-						messages from the Game.
+	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
+					is called from run() of Tracker.cpp
 */
+#include <QtGui>
+#include "ExcelServer.h"
+#include "Tracker.h"
 
-#include "FaceApp.h"
-#include "FaceTrackNoIR.h"
-#include <QtGui/QApplication>
-#include <QDesktopWidget>
-#include <QDebug>
-#include <QList>
+/** constructor **/
+ExcelServer::ExcelServer( Tracker *parent ) {
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
-
-int main(int argc, char *argv[])
-{
-////	QApplication a(argc, argv);
-	FaceApp a(argc, argv);
-
-	//
-	// Create the Main Window and DeskTop and Exec!
-	//
-	FaceTrackNoIR w;
-	a.SetupEventFilter(&w);
-
-	QDesktopWidget desktop;
-    w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
-	w.show();
-    qApp->exec();
-
-	return 0;
+	// Save the parent
+	headTracker = parent;
 }
 
+/** destructor **/
+ExcelServer::~ExcelServer() {
+}
+
+//
+// Update Headpose in Game.
+//
+void ExcelServer::sendHeadposeToGame() {
+}
+
+//
+// Check if the Client DLL exists and load it (to test it), if so.
+// Returns 'true' if all seems OK.
+//
+bool ExcelServer::checkServerInstallationOK( HANDLE handle )
+{   
+	return true;
+}
+
+//END
