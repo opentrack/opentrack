@@ -1,6 +1,6 @@
 /********************************************************************************
 * FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay for				*
+*					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
@@ -21,7 +21,10 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-
+/*
+	Modifications (last one on top):
+		20110109 - WVR: Added minimizeTaskBar option added. It is now possible to choose minimized or tray.
+*/
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
 #include "PPJoyServer.h"
@@ -512,8 +515,16 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	int timevalue = settings.value ( "AutoMinimizeTime", 0 ).toInt() * 1000;
-
 	if (timevalue > 0) {
+
+		bool minimizeTaskBar = settings.value ( "MinimizeTaskBar", 1 ).toBool();
+		if (minimizeTaskBar) {
+			connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
+		}
+		else {
+			connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(hide()));
+		}
+
 		timMinimizeFTN->setSingleShot( true );
 		timMinimizeFTN->start(timevalue);
 	}
@@ -923,8 +934,9 @@ QWidget( parent , f)
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
-	connect(ui.slideAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.spinAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkAutoStartTracking, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.radioMinimize, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -989,8 +1001,9 @@ void PreferencesDialog::doCancel() {
 void PreferencesDialog::loadSettings() {
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	ui.slideAutoMinimizeTime->setValue( settings.value ( "AutoMinimizeTime", 0 ).toInt() );
+	ui.spinAutoMinimizeTime->setValue( settings.value ( "AutoMinimizeTime", 0 ).toInt() );
 	ui.chkAutoStartTracking->setChecked( settings.value ( "AutoStartTracking", 0 ).toBool() );
+	ui.radioMinimize->setChecked( settings.value ( "MinimizeTaskBar", 1 ).toBool() );
 
 	settingsDirty = false;
 
@@ -1002,8 +1015,9 @@ void PreferencesDialog::loadSettings() {
 void PreferencesDialog::save() {
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	settings.setValue( "AutoMinimizeTime", ui.slideAutoMinimizeTime->value() );
+	settings.setValue( "AutoMinimizeTime", ui.spinAutoMinimizeTime->value() );
 	settings.setValue( "AutoStartTracking", ui.chkAutoStartTracking->isChecked() );
+	settings.setValue( "MinimizeTaskBar", ui.radioMinimize->isChecked() );
 
 	//
 	// Send a message to the main program, to update the Settings (for the tracker)
@@ -1292,6 +1306,7 @@ int keyindex;
 	ui.chkStartStopShift->setChecked (iniFile.value ( "Shift_StartStop", 0 ).toBool());
 	ui.chkStartStopCtrl->setChecked (iniFile.value ( "Ctrl_StartStop", 0 ).toBool());
 	ui.chkStartStopAlt->setChecked (iniFile.value ( "Alt_StartStop", 0 ).toBool());
+	ui.radioSetZero->setChecked (iniFile.value ( "SetZero", 1 ).toBool());
 
 	// Axis-inhibitor key
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Inhibit", 1 ).toInt() );
@@ -1340,6 +1355,7 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
 	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
 	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
+	iniFile.setValue ( "SetZero", ui.radioSetZero->isChecked() );
 
 	iniFile.setValue ( "Keycode_Inhibit", keyList.at( ui.cbxInhibitKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_Inhibit", ui.chkInhibitShift->isChecked() );

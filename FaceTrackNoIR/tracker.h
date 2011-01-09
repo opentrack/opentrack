@@ -1,6 +1,6 @@
 /********************************************************************************
 * FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay for				*
+*					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
@@ -42,6 +42,7 @@
 #include "FTIRServer.h"				// FakeTIR-server
 #include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
 #include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)
+#include "ExcelServer.h"			// Excel-server (for analysing purposes)
 #include "FTNoIR_cxx_protocolserver.h"
 
 // include the DirectX Library files
@@ -129,6 +130,7 @@ private:
 
 	/** static callback method for the head pose tracking **/
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
+	static void addHeadPose( smEngineHeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
 	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);
@@ -156,7 +158,8 @@ private:
 	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
 
 
-	static bool useFilter;
+	static bool useFilter;							// Use EWMA-filtering
+	static bool setZero;							// Set to zero's, when OFF (one-shot)
 	static long prevHeadPoseTime;					// Time from previous sample
 	
 	/** QT objects **/
@@ -171,7 +174,8 @@ private:
 	QWidget *headPoseWidget;
 	FaceTrackNoIR *mainApp;
 
-	QSharedPointer<ProtocolServerBase> server_Game;	// Protocol Server to communicate headpose-data to the Game!
+	QSharedPointer<ProtocolServerBase> server_Game;		// Protocol Server to communicate headpose-data to the Game!
+	QSharedPointer<ProtocolServerBase> debug_Client;	// Protocol Server to log debug-data
 
 protected:
 	// qthread override run method 

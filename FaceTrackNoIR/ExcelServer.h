@@ -20,39 +20,46 @@
 *																				*
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*********************************************************************************/
-/*
-	Modifications (last one on top):
-		20100520 - WVR: Added class FaceApp, to override winEventFilter. It receives 
-						messages from the Game.
-*/
-
-#include "FaceApp.h"
-#include "FaceTrackNoIR.h"
-#include <QtGui/QApplication>
-#include <QDesktopWidget>
+*																				*
+* ExcelServer		ExcelServer is the Class, that communicates headpose-data	*
+*					to Excel, for analysing purposes.		         			*
+********************************************************************************/
+#pragma once
+#ifndef INCLUDED_EXCELSERVER_H
+#define INCLUDED_EXCELSERVER_H
+ 
+#include "FTNoIR_cxx_protocolserver.h"
+#include <QString>
+#include <QMessageBox>
+#include <QSettings>
+#include <QFile>
+#include <QApplication>
 #include <QDebug>
-#include <QList>
+#include <QMutex>
+#include <QLibrary>
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
+using namespace std;
+using namespace v4friend::ftnoir;
 
-int main(int argc, char *argv[])
-{
-////	QApplication a(argc, argv);
-	FaceApp a(argc, argv);
+class Tracker;				// pre-define parent-class to avoid circular includes
 
-	//
-	// Create the Main Window and DeskTop and Exec!
-	//
-	FaceTrackNoIR w;
-	a.SetupEventFilter(&w);
+class ExcelServer : public ProtocolServerBase {
+	Q_OBJECT
 
-	QDesktopWidget desktop;
-    w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
-	w.show();
-    qApp->exec();
+public: 
 
-	return 0;
-}
+	// public member methods
+	ExcelServer( Tracker *parent );
+	~ExcelServer();
 
+	// protected member methods
+protected:
+	bool checkServerInstallationOK( HANDLE handle );
+	void sendHeadposeToGame();
+
+private:
+	Tracker *headTracker;									// For upstream messages...
+};
+
+#endif//INCLUDED_EXCELSERVER_H
+//END

@@ -26,18 +26,30 @@
 */
 #include "SCServer.h"
 
+importSimConnect_CameraSetRelative6DOF SCServer::simconnect_set6DOF;
+HANDLE SCServer::hSimConnect = 0;			// Handle to SimConnect
+
+float SCServer::virtSCPosX = 0.0f;			// Headpose
+float SCServer::virtSCPosY = 0.0f;
+float SCServer::virtSCPosZ = 0.0f;
+	
+float SCServer::virtSCRotX = 0.0f;
+float SCServer::virtSCRotY = 0.0f;
+float SCServer::virtSCRotZ = 0.0f;
+
+float SCServer::prevSCPosX = 0.0f;			// previous Headpose
+float SCServer::prevSCPosY = 0.0f;
+float SCServer::prevSCPosZ = 0.0f;
+	
+float SCServer::prevSCRotX = 0.0f;
+float SCServer::prevSCRotY = 0.0f;
+float SCServer::prevSCRotZ = 0.0f;
+
 /** constructor **/
 SCServer::SCServer() {
 	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
 	hSimConnect = 0;
-
-	//prevPosX = 0.0f;
-	//prevPosY = 0.0f;
-	//prevPosZ = 0.0f;
-	//prevRotX = 0.0f;
-	//prevRotY = 0.0f;
-	//prevRotZ = 0.0f;
 }
 
 /** destructor **/
@@ -53,7 +65,7 @@ SCServer::~SCServer() {
 	}
 
 	qDebug() << "~SCServer says: before unload";
-//	SCClientLib.unload();
+//	SCClientLib.unload(); Generates crash when tracker is ended...
 	qDebug() << "~SCServer says: finished";
 }
 
@@ -91,9 +103,9 @@ void SCServer::sendHeadposeToGame() {
 		//
 		if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
 			(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
-			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
+//			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
 //					qDebug() << "SCServer::run() says: SimConnect data written!";
-			}
+//			}
 		}
 
 		prevPosX = virtPosX;
@@ -282,7 +294,19 @@ void CALLBACK SCServer::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD
         }
 		case SIMCONNECT_RECV_ID_EVENT_FRAME:
 		{
-			qDebug() << "SCServer::processNextSimconnectEvent() says: Frame event!";
+//			qDebug() << "SCServer::processNextSimconnectEvent() says: Frame event!";
+			if ((prevSCPosX != virtSCPosX) || (prevSCPosY != virtSCPosY) || (prevSCPosZ != virtSCPosZ) ||
+				(prevSCRotX != virtSCRotX) || (prevSCRotY != virtSCRotY) || (prevSCRotZ != virtSCRotZ)) {
+				if (S_OK == simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY)) {
+	//					qDebug() << "SCServer::run() says: SimConnect data written!";
+				}
+			}
+			prevSCPosX = virtSCPosX;
+			prevSCPosY = virtSCPosY;
+			prevSCPosZ = virtSCPosZ;
+			prevSCRotX = virtSCRotX;
+			prevSCRotY = virtSCRotY;
+			prevSCRotZ = virtSCRotZ;
 		}
 
         case SIMCONNECT_RECV_ID_EXCEPTION:
