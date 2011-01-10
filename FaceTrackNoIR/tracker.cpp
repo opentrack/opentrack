@@ -618,8 +618,12 @@ void Tracker::run() {
 		ReleaseMutex(Tracker::hTrackMutex);
 		server_Game->sendHeadposeToGame();
 
+#       ifdef USE_DEBUG_CLIENT
+		debug_Client->sendHeadposeToGame();
+#       endif
+
 		//for lower cpu load 
-		msleep(10);
+		usleep(10000);
 		yieldCurrentThread(); 
 	}
 }

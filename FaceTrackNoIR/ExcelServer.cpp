@@ -32,6 +32,7 @@
 #include <QtGui>
 #include "ExcelServer.h"
 #include "Tracker.h"
+#include <Windows.h>
 
 /** constructor **/
 ExcelServer::ExcelServer( Tracker *parent ) {
@@ -48,6 +49,21 @@ ExcelServer::~ExcelServer() {
 // Update Headpose in Game.
 //
 void ExcelServer::sendHeadposeToGame() {
+SYSTEMTIME now;
+
+	//
+	// Get the System-time and substract the time from the previous call.
+	// dT will be used for the EWMA-filter.
+	//
+	GetSystemTime ( &now );
+	long newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
+	
+	//	Use this for some debug-output to file...
+	QFile data(QCoreApplication::applicationDirPath() + "\\output.txt");
+	if (data.open(QFile::WriteOnly | QFile::Append)) {
+		QTextStream out(&data);
+		out << newHeadPoseTime << "\t" << headRotX << "\t" << virtRotX << "\t" << headRotY << "\t" << virtRotY << "\t" << headRotZ << "\t" << virtRotZ << '\n';
+	}
 }
 
 //
@@ -56,6 +72,14 @@ void ExcelServer::sendHeadposeToGame() {
 //
 bool ExcelServer::checkServerInstallationOK( HANDLE handle )
 {   
+	//	Use this for some debug-output to file...
+	QFile data(QCoreApplication::applicationDirPath() + "\\output.txt");
+	if (data.open(QFile::WriteOnly)) {
+		QTextStream out(&data);
+		out << "Time"   << "\t" << "RotX (Pitch)" << "\t" << "RotX (Pitch)" << "\t" << "RotY (Yaw)" << "\t" << "RotY (Yaw)" << "\t" << "RotY (Roll)" << "\t" << "RotY (Roll)" << '\n';
+		out << "(long)" << "\t" << "Raw"          << "\t" << "Filtered"     << "\t" << "Raw"        << "\t" << "Filtered"   << "\t" << "Raw"         << "\t" << "Filtered"    << '\n';
+	}
+
 	return true;
 }
 
