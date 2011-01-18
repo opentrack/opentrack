@@ -80,8 +80,11 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	// menu objects will be connected with the functions in FaceTrackNoIR class
 	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(open()));
+	connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
 	connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(save()));
+	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
 	connect(ui.actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(exit()));
 
 	connect(ui.actionPreferences, SIGNAL(triggered()), this, SLOT(showPreferences()));
@@ -132,13 +135,15 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	createActions();
 	createTrayIcon();
 
-	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-	connect(ui.iconcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setIcon(int)));
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
 	//Load the tracker-settings, from the INI-file
 	loadSettings();
 	trayIcon->show();
+
+	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	connect(ui.iconcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setIcon(int)));
 
 	//Setup the timer for automatically minimizing after StartTracker.
 	timMinimizeFTN = new QTimer(this);
@@ -349,7 +354,7 @@ void FaceTrackNoIR::saveAs()
 		// Remove the file, if it already exists.
 		//
 		QFileInfo newFileInfo ( fileName );
-		if (newFileInfo.exists()) {
+		if ((newFileInfo.exists()) && (oldFile != fileName)) {
 			QFile newFileFile ( fileName );
 			newFileFile.remove();
 		}
@@ -385,6 +390,34 @@ void FaceTrackNoIR::loadSettings() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+	//
+	// Put the filename in the window-title.
+	//
+    QFileInfo pathInfo ( currentFile );
+    setWindowTitle ( "FaceTrackNoIR (1.5) - " + pathInfo.fileName() );
+
+	//
+	// Get a List of all the INI-files in the (currently active) Settings-folder.
+	//
+	QDir settingsDir( pathInfo.dir() );
+    QStringList filters;
+    filters << "*.ini";
+	iniFileList.clear();
+	iniFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+	
+	//
+	// Add strings to the Listbox.
+	//
+	disconnect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+	ui.iconcomboProfile->clear();
+	for ( int i = 0; i < iniFileList.size(); i++) {
+		ui.iconcomboProfile->addItem(iniFileList.at(i));
+		if (iniFileList.at(i) == pathInfo.fileName()) {
+			ui.iconcomboProfile->setCurrentIndex( i );
+		}
+	}
+	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "Tracking" );
@@ -414,11 +447,6 @@ void FaceTrackNoIR::loadSettings() {
 	iniFile.endGroup ();
 
 	settingsDirty = false;
-
-	// Put the filename in the window-title
-    QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.5) - " + pathInfo.fileName() );
-
 }
 
 /** show support page in web-browser **/
@@ -914,6 +942,25 @@ void FaceTrackNoIR::trackingSourceSelected(int index)
 	default:
 		break;
 	}
+}
+
+//
+// Handle changes of the Profile selection
+//
+void FaceTrackNoIR::profileSelected(int index)
+{
+	//
+	// Read the current INI-file setting, to get the folder in which it's located...
+	//
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QFileInfo pathInfo ( currentFile );
+
+	//
+	// Get a List of all the INI-files in the (currently active) Settings-folder.
+	//
+	settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.at(ui.iconcomboProfile->currentIndex()));
+	loadSettings();
 }
 
 
