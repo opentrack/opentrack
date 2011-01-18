@@ -88,6 +88,15 @@ namespace v4friend
 			float prevRotY;
 			float prevRotZ;
 
+			//
+			// Values for analysis of tracking...
+			//
+			float confidence;
+			float smoothvalue;
+			float prev_value;
+			bool newSample;
+			float dT;
+
 		private:
             ProtocolServerBase(const ProtocolServerBase &);
             ProtocolServerBase &operator=(const ProtocolServerBase &);

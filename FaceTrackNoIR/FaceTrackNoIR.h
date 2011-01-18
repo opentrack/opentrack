@@ -65,6 +65,7 @@ private:
 	Ui::FaceTrackNoIRClass ui;
 	Tracker *tracker;
 	QTimer *timMinimizeFTN;
+	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
 	/** face api variables **/
 	VideoDisplayWidget *_display;
@@ -114,6 +115,7 @@ private:
 		void setIcon(int index);
 		void iconActivated(QSystemTrayIcon::ActivationReason reason);
 		void trackingSourceSelected(int index);
+		void profileSelected(int index);
 
 		void showVideoWidget();
 		void showHeadPoseWidget();

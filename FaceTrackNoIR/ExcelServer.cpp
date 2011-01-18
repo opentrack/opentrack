@@ -62,7 +62,7 @@ SYSTEMTIME now;
 	QFile data(QCoreApplication::applicationDirPath() + "\\output.txt");
 	if (data.open(QFile::WriteOnly | QFile::Append)) {
 		QTextStream out(&data);
-		out << newHeadPoseTime << "\t" << headRotX << "\t" << virtRotX << "\t" << headRotY << "\t" << virtRotY << "\t" << headRotZ << "\t" << virtRotZ << '\n';
+		out << newHeadPoseTime << "\t" << newSample << "\t" << confidence << "\t" << dT << "\t" << smoothvalue << "\t" << headRotX << "\t" << virtRotX << "\t" << prev_value << '\n';
 	}
 }
 
@@ -75,9 +75,25 @@ bool ExcelServer::checkServerInstallationOK( HANDLE handle )
 	//	Use this for some debug-output to file...
 	QFile data(QCoreApplication::applicationDirPath() + "\\output.txt");
 	if (data.open(QFile::WriteOnly)) {
+
+
+		//
+		// Get the settings for the header
+		//
+		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+		QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+		QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+		iniFile.beginGroup ( "Tracking" );
+		int smoothing = iniFile.value ( "Smooth", 10 ).toInt();
+		bool useEWMA = iniFile.value ( "useEWMA", 1 ).toBool();
+		iniFile.endGroup ();
+
 		QTextStream out(&data);
-		out << "Time"   << "\t" << "RotX (Pitch)" << "\t" << "RotX (Pitch)" << "\t" << "RotY (Yaw)" << "\t" << "RotY (Yaw)" << "\t" << "RotY (Roll)" << "\t" << "RotY (Roll)" << '\n';
-		out << "(long)" << "\t" << "Raw"          << "\t" << "Filtered"     << "\t" << "Raw"        << "\t" << "Filtered"   << "\t" << "Raw"         << "\t" << "Filtered"    << '\n';
+		out << "Smoothing = \t" << smoothing << "\n" << "EWMA used = \t" << useEWMA << "\n" << "\n"; 
+		out << "Time"   << "\t" << "New Sample" << "\t" << "Confidence" << "\t" << "dT"         << "\t" << "Smoothed"    << "\t" << "RotX (Pitch)" << "\t" << "RotX (Pitch)" << "\t" << "Previous" << '\n';
+		out << "(long)" << "\t" << "(bool)"     << "\t" << "(float)"    << "\t" << "(float)"    << "\t"    << "(float)"  << "\t" << "Raw"          << "\t" << "Filtered"     << "\t" << "-" << '\n';
 	}
 
 	return true;

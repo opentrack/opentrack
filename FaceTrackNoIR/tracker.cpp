@@ -53,7 +53,7 @@
 // Definitions for testing purposes
 //
 #define USE_HEADPOSE_CALLBACK
-#define USE_DEBUG_CLIENT
+//#define USE_DEBUG_CLIENT
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -489,6 +489,7 @@ void Tracker::run() {
 				// Pitch
 				if (Tracker::useFilter) {
 					rotX = lowPassFilter ( getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos, 
+//					rotX = lowPassFilter ( getSmoothFromList( &Pitch.rawList ), 
 												   &Pitch.prevPos, dT, Tracker::Pitch.red );
 				}
 				else {
@@ -615,12 +616,20 @@ void Tracker::run() {
 				}
 			}
 		}
+
+#       ifdef USE_DEBUG_CLIENT
+		debug_Client->confidence = Tracker::Pitch.confidence;
+		debug_Client->newSample = Tracker::Pitch.newSample;
+		debug_Client->smoothvalue = getSmoothFromList( &Pitch.rawList );
+		debug_Client->prev_value = Tracker::Pitch.prevPos;
+		debug_Client->dT = dT;
+		debug_Client->sendHeadposeToGame();									// Log to Excel
+		Tracker::Pitch.newSample = false;
+#       endif
+
 		ReleaseMutex(Tracker::hTrackMutex);
 		server_Game->sendHeadposeToGame();
 
-#       ifdef USE_DEBUG_CLIENT
-		debug_Client->sendHeadposeToGame();
-#       endif
 
 		//for lower cpu load 
 		usleep(10000);
@@ -664,6 +673,8 @@ void Tracker::addHeadPose( smEngineHeadPoseData head_pose )
 		// Pitch
 		Tracker::Pitch.headPos = head_pose.head_rot.x_rads * 57.295781f;			// degrees
 		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Tracker::Pitch.headPos );
+		Tracker::Pitch.confidence = head_pose.confidence;							// Just this one ...
+		Tracker::Pitch.newSample = true;
 
 		// Yaw
 		Tracker::Yaw.headPos = head_pose.head_rot.y_rads * 57.295781f;				// degrees
@@ -781,7 +792,7 @@ float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
 // The code was adopted from Melchior Franz, who created it for FlightGear (aircraft.nas).
 //
 // The function takes the new value, the delta-time (sec) and a weighing coefficient (>0 and <1)
-// All previou values are taken into account, the weight of this is determined by 'coeff'.
+// All previous values are taken into account, the weight of this is determined by 'coeff'.
 //
 float Tracker::lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff) {
 float c = 0.0f;

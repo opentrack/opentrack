@@ -94,6 +94,8 @@ struct THeadPoseDOF {
 	QPainterPath curve;				// Bezier curve to translate input -> output
 	int NeutralZone;				// Neutral zone
 	int MaxInput;					// Maximum raw input
+	float confidence;				// Current confidence
+	bool newSample;					// Indicate new sample from tracker
 };
 
 //

@@ -10,7 +10,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
+    <width>925</width>
     <height>371</height>
    </rect>
   </property>
@@ -808,7 +808,7 @@ border:none;
                <property name="title">
                 <string>Profile</string>
                </property>
-               <widget class="QComboBox" name="iconcomboTrackerSource_2">
+               <widget class="QComboBox" name="iconcomboProfile">
                 <property name="geometry">
                  <rect>
                   <x>10</x>
@@ -824,7 +824,70 @@ border:none;
                  <number>-1</number>
                 </property>
                 <property name="maxVisibleItems">
-                 <number>3</number>
+                 <number>10</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnSaveAs">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>161</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change tracker settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Save As ...</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnLoad">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>50</y>
+                  <width>75</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Start the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Load</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnSave">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>96</x>
+                  <y>50</y>
+                  <width>75</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Stop the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Save</string>
                 </property>
                </widget>
               </widget>
@@ -1950,7 +2013,7 @@ background:none;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>923</width>
+     <width>925</width>
      <height>21</height>
     </rect>
    </property>
