@@ -82,6 +82,8 @@ TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 
 /** constructor **/
 Tracker::Tracker( int clientID, int facetrackerID ) {
+importGetTracker getIT;
+QLibrary *trackerLib;
 
 	// Remember the selected client, from the ListBox
 	// If the Tracker runs, this can NOT be changed...
@@ -117,7 +119,23 @@ Tracker::Tracker( int clientID, int facetrackerID ) {
 				QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
 			}
 			break;
+
 		case FT_FTNOIR:
+			trackerLib = new QLibrary("FTNoIR_Tracker_UDP.dll");
+			
+			getIT = (importGetTracker) trackerLib->resolve("GetTracker");
+			
+			if (getIT) {
+				ITrackerPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pTracker = ptrXyz;
+					qDebug() << "Tracker::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			}
 			break;
 
 		default:
@@ -222,6 +240,11 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 		smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
 		smHTSetLipTrackingEnabled( _engine->handle(), false);
 		smLoggingSetFileOutputEnable( false );
+	}
+
+	if (selectedTracker == FT_FTNOIR) {
+		int fooResult = pTracker->Foo(42);
+		qDebug() << "Tracker::setup Foo gives: " << fooResult;
 	}
 
 	// set up the line edits for calling
