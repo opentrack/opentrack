@@ -143,6 +143,7 @@ private:
 	/** static callback method for the head pose tracking **/
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
 	static void addHeadPose( smEngineHeadPoseData head_pose );
+	static void addHeadPose( THeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
 	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);

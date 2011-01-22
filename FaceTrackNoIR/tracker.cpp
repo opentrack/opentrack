@@ -194,7 +194,9 @@ Tracker::~Tracker() {
 	::SetEvent(m_StopThread);
 
 	// Wait until thread finished
-	::WaitForSingleObject(m_WaitThread, INFINITE);
+	if (isRunning()) {
+		::WaitForSingleObject(m_WaitThread, INFINITE);
+	}
 
 	// Close handles
 	::CloseHandle(m_StopThread);
@@ -245,6 +247,7 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	if (selectedTracker == FT_FTNOIR) {
 		int fooResult = pTracker->Foo(42);
 		qDebug() << "Tracker::setup Foo gives: " << fooResult;
+		pTracker->StartTracker();
 	}
 
 	// set up the line edits for calling
@@ -437,6 +440,13 @@ void Tracker::run() {
 				Tracker::confid = false;
 			}
 #       endif
+
+			if (selectedTracker == FT_FTNOIR) {
+				THeadPoseData newpose;
+				pTracker->GiveHeadPoseData(&newpose);
+				addHeadPose(newpose);
+				Tracker::confid = true;
+			}
 
 			//
 			// Get the System-time and substract the time from the previous call.
@@ -653,7 +663,6 @@ void Tracker::run() {
 		ReleaseMutex(Tracker::hTrackMutex);
 		server_Game->sendHeadposeToGame();
 
-
 		//for lower cpu load 
 		usleep(10000);
 		yieldCurrentThread(); 
@@ -717,6 +726,36 @@ void Tracker::addHeadPose( smEngineHeadPoseData head_pose )
 
 		// Z-position (distance to camera, absolute!)
 		Tracker::Z.headPos = head_pose.head_pos.z * 100.0f;							// centimeters
+		addRaw2List ( &Z.rawList, Z.maxItems, Tracker::Z.headPos );
+}
+
+/** Add the headpose-data to the Lists **/
+void Tracker::addHeadPose( THeadPoseData head_pose )
+{
+		// Pitch
+		Tracker::Pitch.headPos = head_pose.pitch;									// degrees
+		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Tracker::Pitch.headPos );
+//		Tracker::Pitch.confidence = head_pose.confidence;							// Just this one ...
+		Tracker::Pitch.newSample = true;
+
+		// Yaw
+		Tracker::Yaw.headPos = head_pose.yaw;										// degrees
+		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Tracker::Yaw.headPos );
+
+		// Roll
+		Tracker::Roll.headPos = head_pose.roll;										// degrees
+		addRaw2List ( &Roll.rawList, Roll.maxItems, Tracker::Roll.headPos );
+
+		// X-position
+		Tracker::X.headPos = head_pose.x;											// centimeters
+		addRaw2List ( &X.rawList, X.maxItems, Tracker::X.headPos );
+
+		// Y-position
+		Tracker::Y.headPos = head_pose.y;											// centimeters
+		addRaw2List ( &Y.rawList, Y.maxItems, Tracker::Y.headPos );
+
+		// Z-position (distance to camera, absolute!)
+		Tracker::Z.headPos = head_pose.z;											// centimeters
 		addRaw2List ( &Z.rawList, Z.maxItems, Tracker::Z.headPos );
 }
 
