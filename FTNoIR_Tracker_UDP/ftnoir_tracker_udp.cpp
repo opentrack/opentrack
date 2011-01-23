@@ -9,8 +9,7 @@ public:
 	FTNoIR_Tracker_UDP();
 	~FTNoIR_Tracker_UDP();
 
-	int Foo(int n);
-    void Release();
+	void Release();
     void Initialize();
     void StartTracker();
 	void GiveHeadPoseData(THeadPoseData *data);
@@ -123,11 +122,6 @@ quint16 senderPort;
 		yieldCurrentThread(); 
 
 	}
-}
-
-int FTNoIR_Tracker_UDP::Foo(int n)
-{
-    return n * n;
 }
 
 void FTNoIR_Tracker_UDP::Release()

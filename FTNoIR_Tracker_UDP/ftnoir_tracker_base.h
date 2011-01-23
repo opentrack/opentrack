@@ -19,7 +19,6 @@ struct THeadPoseData {
 // Instances are obtained via factory function.
 struct ITracker
 {
-    virtual int Foo(int n) = 0;
     virtual void Release() = 0;
 	virtual void Initialize() = 0;
 	virtual void StartTracker() = 0;
