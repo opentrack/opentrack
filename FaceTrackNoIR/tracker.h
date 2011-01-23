@@ -46,6 +46,7 @@
 #include "FTNoIR_cxx_protocolserver.h"
 
 #include "FTNoIR_Tracker_base.h"
+#include "FTNoIR_Filter_base.h"
 #include "AutoClosePtr.h"
 
 // 1a. COM-Like usage with smart pointer.
@@ -53,6 +54,8 @@
 // be released automatically in destructor of the smart pointer.
 typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
 typedef ITracker *(WINAPI *importGetTracker)(void);
+typedef AutoClosePtr<IFilter, void, &IFilter::Release> IFilterPtr;
+typedef IFilter *(WINAPI *importGetFilter)(void);
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -139,6 +142,7 @@ private:
     QSharedPointer<EngineBase> _engine;
 	smEngineHandle _engine_handle;
 	ITrackerPtr pTracker;							// Pointer to Tracker instance (in DLL)
+	IFilterPtr pFilter;								// Pointer to Filter instance (in DLL)
 
 	/** static callback method for the head pose tracking **/
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
