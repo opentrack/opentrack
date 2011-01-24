@@ -141,8 +141,8 @@ private:
 	APIScope *faceapi_scope;
     QSharedPointer<EngineBase> _engine;
 	smEngineHandle _engine_handle;
-	ITrackerPtr pTracker;							// Pointer to Tracker instance (in DLL)
-	IFilterPtr pFilter;								// Pointer to Filter instance (in DLL)
+	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
+	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
 	/** static callback method for the head pose tracking **/
 	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
@@ -222,13 +222,9 @@ public:
 	static void setInvertZ(bool invert) { Z.invert = invert?-1.0f:+1.0f; }
 
 	static void setUseFilter(bool set) { useFilter = set; }
-
-	static void setRedYaw(int x) { Yaw.red = x/100.0f; }
-	static void setRedPitch(int x) { Pitch.red = x/100.0f; }
-	static void setRedRoll(int x) { Roll.red = x/100.0f; }
-	static void setRedX(int x) { X.red = x/100.0f; }
-	static void setRedY(int x) { Y.red = x/100.0f; }
-	static void setRedZ(int x) { Z.red = x/100.0f; }
+	static void setMinSmooth(int x);
+	static void setMaxSmooth(int x);
+	static void setPowCurve(int x);
 
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }

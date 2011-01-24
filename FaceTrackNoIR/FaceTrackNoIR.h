@@ -136,12 +136,9 @@ private:
 		void setUseFilter( int set );
 
 		// reduction factor sliders
-		void setRedYaw( int redh );
-		void setRedPitch( int redh );
-		void setRedRoll( int redh );
-		void setRedX( int redh );
-		void setRedY( int redh );
-		void setRedZ( int redh );
+		void setMinSmooth( int redh );
+		void setMaxSmooth( int redh );
+		void setPowCurve( int redh );
 
 		//smoothing slider
 		void setSmoothing( int smooth );
