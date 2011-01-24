@@ -117,12 +117,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.chkUseEWMA, SIGNAL(stateChanged(int)), this, SLOT(setUseFilter(int)));
 
 	// Connect sliders for reduction factor
-	connect(ui.redYaw, SIGNAL(valueChanged(int)), this, SLOT(setRedYaw(int)));
-	connect(ui.redRoll, SIGNAL(valueChanged(int)), this, SLOT(setRedRoll(int)));
-	connect(ui.redPitch, SIGNAL(valueChanged(int)), this, SLOT(setRedPitch(int)));
-	connect(ui.redX, SIGNAL(valueChanged(int)), this, SLOT(setRedX(int)));
-	connect(ui.redY, SIGNAL(valueChanged(int)), this, SLOT(setRedY(int)));
-	connect(ui.redZ, SIGNAL(valueChanged(int)), this, SLOT(setRedZ(int)));
+	connect(ui.minSmooth, SIGNAL(valueChanged(int)), this, SLOT(setMinSmooth(int)));
+	connect(ui.maxSmooth, SIGNAL(valueChanged(int)), this, SLOT(setMaxSmooth(int)));
+	connect(ui.powCurve, SIGNAL(valueChanged(int)), this, SLOT(setPowCurve(int)));
 
 	// Connect slider for smoothing
 	connect(ui.slideSmoothing, SIGNAL(valueChanged(int)), this, SLOT(setSmoothing(int)));
@@ -310,12 +307,9 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
 	iniFile.setValue ( "useEWMA", ui.chkUseEWMA->isChecked() );
-	iniFile.setValue ( "redYaw", ui.redYaw->value() );
-	iniFile.setValue ( "redPitch", ui.redPitch->value() );
-	iniFile.setValue ( "redRoll", ui.redRoll->value() );
-	iniFile.setValue ( "redX", ui.redX->value() );
-	iniFile.setValue ( "redY", ui.redY->value() );
-	iniFile.setValue ( "redZ", ui.redZ->value() );
+	iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
+	iniFile.setValue ( "powCurve", ui.powCurve->value() );
+	iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -429,12 +423,9 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
 	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
-	ui.redYaw->setValue (iniFile.value ( "redYaw", 70 ).toInt());
-	ui.redPitch->setValue (iniFile.value ( "redPitch", 70 ).toInt());
-	ui.redRoll->setValue (iniFile.value ( "redRoll", 70 ).toInt());
-	ui.redX->setValue (iniFile.value ( "redX", 70 ).toInt());
-	ui.redY->setValue (iniFile.value ( "redY", 70 ).toInt());
-	ui.redZ->setValue (iniFile.value ( "redZ", 70 ).toInt());
+	ui.minSmooth->setValue (iniFile.value ( "minSmooth", 2 ).toInt());
+	ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
+	ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 10 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -509,12 +500,9 @@ void FaceTrackNoIR::startTracker( ) {
 	tracker->setInvertY (ui.chkInvertY->isChecked() );
 	tracker->setInvertZ (ui.chkInvertZ->isChecked() );
 
-	tracker->setRedYaw (ui.redYaw->value() );
-	tracker->setRedPitch (ui.redPitch->value() );
-	tracker->setRedRoll (ui.redRoll->value() );
-	tracker->setRedX (ui.redX->value() );
-	tracker->setRedY (ui.redY->value() );
-	tracker->setRedZ (ui.redZ->value() );
+	tracker->setMinSmooth (ui.minSmooth->value() );
+	tracker->setPowCurve (ui.powCurve->value() );
+	tracker->setMaxSmooth (ui.maxSmooth->value() );
 
 	tracker->start( QThread::TimeCriticalPriority );
 
@@ -635,38 +623,20 @@ void FaceTrackNoIR::setUseFilter( int set ) {
 }
 
 /** set the redhold from the slider **/
-void FaceTrackNoIR::setRedYaw( int redh ) {
-	Tracker::setRedYaw ( redh );
+void FaceTrackNoIR::setMinSmooth( int redh ) {
+	Tracker::setMinSmooth ( redh );
 	settingsDirty = true;
 }
 
 /** set the redhold from the slider **/
-void FaceTrackNoIR::setRedPitch( int redh ) {
-	Tracker::setRedPitch ( redh );
+void FaceTrackNoIR::setPowCurve( int redh ) {
+	Tracker::setPowCurve ( redh );
 	settingsDirty = true;
 }
 
 /** set the redhold from the slider **/
-void FaceTrackNoIR::setRedRoll( int redh ) {
-	Tracker::setRedRoll ( redh );
-	settingsDirty = true;
-}
-
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setRedX( int redh ) {
-	Tracker::setRedX ( redh );
-	settingsDirty = true;
-}
-
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setRedY( int redh ) {
-	Tracker::setRedY ( redh );
-	settingsDirty = true;
-}
-
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setRedZ( int redh ) {
-	Tracker::setRedZ ( redh );
+void FaceTrackNoIR::setMaxSmooth( int redh ) {
+	Tracker::setMaxSmooth ( redh );
 	settingsDirty = true;
 }
 

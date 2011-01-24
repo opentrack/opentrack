@@ -215,6 +215,16 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 	new_camera_position->pitch=output[4];
 	new_camera_position->roll=output[5];
 
+	//
+	// Also update the 'current' position, for the next iteration.
+	//
+	current_camera_position->x=output[0];
+	current_camera_position->y=output[1];
+	current_camera_position->z=output[2];
+	current_camera_position->yaw=output[3];
+	current_camera_position->pitch=output[4];
+	current_camera_position->roll=output[5];
+
 	//update filter memories ready for next sample
 	for (i=0;i<6;i++)
 	{

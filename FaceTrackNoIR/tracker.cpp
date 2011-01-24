@@ -53,7 +53,7 @@
 // Definitions for testing purposes
 //
 #define USE_HEADPOSE_CALLBACK
-#define USE_DEBUG_CLIENT
+//#define USE_DEBUG_CLIENT
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -79,6 +79,10 @@ THeadPoseDOF Tracker::Z;
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
+
+ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
+IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
+
 
 /** constructor **/
 Tracker::Tracker( int clientID, int facetrackerID ) {
@@ -552,7 +556,6 @@ void Tracker::run() {
 			if (Tracker::do_tracking && Tracker::confid) {
 
 				// Pitch
-				current_camera_position = new_camera_position;			// Remember the latest position
 				target_camera_position.x = X.headPos - X.offset_headPos - X.initial_headPos;
 				target_camera_position.y = Y.headPos - Y.offset_headPos - Y.initial_headPos;
 				target_camera_position.z = Z.headPos - Z.offset_headPos - Z.initial_headPos;
@@ -607,11 +610,11 @@ void Tracker::run() {
 				// All Protocol server(s)
 				if (server_Game) {
 					server_Game->setVirtRotX ( new_camera_position.pitch );				// degrees
-					//server_Game->setVirtRotY ( new_camera_position.yaw );
-					//server_Game->setVirtRotZ ( new_camera_position.roll );
-					//server_Game->setVirtPosX ( new_camera_position.x );				// centimeters
-					//server_Game->setVirtPosY ( new_camera_position.y );
-					//server_Game->setVirtPosZ ( new_camera_position.z );
+					server_Game->setVirtRotY ( new_camera_position.yaw );
+					server_Game->setVirtRotZ ( new_camera_position.roll );
+					server_Game->setVirtPosX ( new_camera_position.x );				// centimeters
+					server_Game->setVirtPosY ( new_camera_position.y );
+					server_Game->setVirtPosZ ( new_camera_position.z );
 				}
 
 #       ifdef USE_DEBUG_CLIENT
@@ -803,6 +806,36 @@ void Tracker::addRaw2List ( QList<float> *rawList, float maxIndex, float raw ) {
 	// Insert the newest at the beginning.
 	//
 	rawList->prepend ( raw );
+}
+
+//
+// Set the filter-value from the GUI.
+//
+void Tracker::setMinSmooth ( int x ) {
+	if (Tracker::pFilter) {
+		Tracker::pFilter->setParameterValue(0, x);
+		qDebug() << "Tracker::setMinSmooth Min Smooting frames set to: " << x;
+	}
+}
+
+//
+// Set the filter-value from the GUI.
+//
+void Tracker::setMaxSmooth ( int x ) {
+	if (Tracker::pFilter) {
+		Tracker::pFilter->setParameterValue(1, x);
+		qDebug() << "Tracker::setMaxSmooth Max Smooting frames set to: " << x;
+	}
+}
+
+//
+// Set the filter-value from the GUI.
+//
+void Tracker::setPowCurve( int x ) {
+	if (Tracker::pFilter) {
+		Tracker::pFilter->setParameterValue(2, x);
+		qDebug() << "Tracker::setPowCurve Pow Curve set to: " << x;
+	}
 }
 
 //
