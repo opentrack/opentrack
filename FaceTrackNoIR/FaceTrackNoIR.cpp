@@ -405,8 +405,9 @@ void FaceTrackNoIR::loadSettings() {
 	disconnect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
 	ui.iconcomboProfile->clear();
 	for ( int i = 0; i < iniFileList.size(); i++) {
-		ui.iconcomboProfile->addItem(iniFileList.at(i));
+		ui.iconcomboProfile->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/Settings16.png"), iniFileList.at(i));
 		if (iniFileList.at(i) == pathInfo.fileName()) {
+			ui.iconcomboProfile->setItemIcon(i, QIcon(QCoreApplication::applicationDirPath() + "/images/SettingsOpen16.png"));
 			ui.iconcomboProfile->setCurrentIndex( i );
 		}
 	}

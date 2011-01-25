@@ -813,7 +813,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>20</y>
-                  <width>161</width>
+                  <width>180</width>
                   <height>22</height>
                  </rect>
                 </property>
@@ -835,12 +835,12 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>80</y>
-                  <width>161</width>
+                  <width>180</width>
                   <height>23</height>
                  </rect>
                 </property>
                 <property name="toolTip">
-                 <string>Change tracker settings</string>
+                 <string>Save the INI-file under another name</string>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -854,12 +854,12 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>50</y>
-                  <width>75</width>
+                  <width>81</width>
                   <height>23</height>
                  </rect>
                 </property>
                 <property name="toolTip">
-                 <string>Start the Tracker</string>
+                 <string>Load an INI-file from a folder</string>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -874,14 +874,14 @@ border:none;
                 </property>
                 <property name="geometry">
                  <rect>
-                  <x>96</x>
+                  <x>110</x>
                   <y>50</y>
-                  <width>75</width>
+                  <width>81</width>
                   <height>23</height>
                  </rect>
                 </property>
                 <property name="toolTip">
-                 <string>Stop the Tracker</string>
+                 <string>Save the current INI-file</string>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -911,7 +911,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>20</y>
-                  <width>161</width>
+                  <width>180</width>
                   <height>22</height>
                  </rect>
                 </property>
@@ -933,7 +933,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>80</y>
-                  <width>161</width>
+                  <width>180</width>
                   <height>23</height>
                  </rect>
                 </property>
@@ -952,7 +952,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>50</y>
-                  <width>75</width>
+                  <width>81</width>
                   <height>23</height>
                  </rect>
                 </property>
@@ -972,9 +972,9 @@ border:none;
                 </property>
                 <property name="geometry">
                  <rect>
-                  <x>96</x>
+                  <x>109</x>
                   <y>50</y>
-                  <width>75</width>
+                  <width>81</width>
                   <height>23</height>
                  </rect>
                 </property>
@@ -1009,7 +1009,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>20</y>
-                  <width>151</width>
+                  <width>180</width>
                   <height>22</height>
                  </rect>
                 </property>
@@ -1031,7 +1031,7 @@ border:none;
                  <rect>
                   <x>10</x>
                   <y>80</y>
-                  <width>151</width>
+                  <width>180</width>
                   <height>23</height>
                  </rect>
                 </property>

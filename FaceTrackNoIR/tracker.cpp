@@ -335,13 +335,6 @@ void Tracker::run() {
 	smEngineHeadPoseData temp_head_pose;			// headpose from faceAPI
 #       endif
 
-	new_camera_position.x = 0.0f;
-	new_camera_position.y = 0.0f;
-	new_camera_position.z = 0.0f;
-	new_camera_position.yaw = 0.0f;
-	new_camera_position.pitch = 0.0f;
-	new_camera_position.roll = 0.0f;
-
 	//
 	// Test some Filter-stuff
 	//
@@ -431,6 +424,13 @@ void Tracker::run() {
 						Y.prevPos = 0.0f;
 						Z.rawList.clear();
 						Z.prevPos = 0.0f;
+
+						current_camera_position.x = 0.0f;
+						current_camera_position.y = 0.0f;
+						current_camera_position.z = 0.0f;
+						current_camera_position.yaw = 0.0f;
+						current_camera_position.pitch = 0.0f;
+						current_camera_position.roll = 0.0f;
 
 						_engine->start();
 					}
