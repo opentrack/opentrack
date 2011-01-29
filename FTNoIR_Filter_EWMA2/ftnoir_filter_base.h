@@ -15,7 +15,7 @@ struct IFilter
 {
     virtual void Release() = 0;
 	virtual void Initialize() = 0;
-	virtual void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position) = 0;
+	virtual void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget) = 0;
 
 	virtual void getFilterFullName(QString *strToBeFilled) = 0;
 	virtual void getFilterShortName(QString *strToBeFilled) = 0;

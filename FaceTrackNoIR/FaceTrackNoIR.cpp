@@ -31,6 +31,7 @@
 #include "FSUIPCServer.h"
 #include "FTIRServer.h"
 #include "FGServer.h"
+#include "FTNServer.h"
 
 using namespace sm::faceapi;
 using namespace sm::faceapi::qt;
@@ -340,7 +341,8 @@ void FaceTrackNoIR::saveAs()
 	// Get the new filename of the INI-file.
 	//
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
-													QCoreApplication::applicationDirPath() + "/Settings",
+													oldFile,
+//													QCoreApplication::applicationDirPath() + "/Settings",
 													tr("Settings file (*.ini);;All Files (*)"));
 	if (!fileName.isEmpty()) {
 
@@ -368,8 +370,10 @@ void FaceTrackNoIR::saveAs()
 		settings.setValue ("SettingsFile", fileName);
 		save();
 
-		// Put the filename in the window-title
-		setWindowTitle ( "FaceTrackNoIR (1.5) - " + newFileInfo.fileName() );
+		//
+		// Reload the settings, to get the GUI right again...
+		//
+		loadSettings();
 	}
 }
 
@@ -424,9 +428,10 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
 	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
-	ui.minSmooth->setValue (iniFile.value ( "minSmooth", 2 ).toInt());
+
+	ui.minSmooth->setValue (iniFile.value ( "minSmooth", 15 ).toInt());
+	ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 50 ).toInt());
 	ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
-	ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 10 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -514,10 +519,19 @@ void FaceTrackNoIR::startTracker( ) {
 	ui.btnStopTracker->setEnabled ( true );
 
 	// Engine controls
-	ui.btnShowEngineControls->setEnabled ( true );
-	ui.iconcomboBox->setEnabled ( false );
+	switch (ui.iconcomboTrackerSource->currentIndex()) {
+	case FT_SM_FACEAPI:										// Face API
+		ui.btnShowEngineControls->setEnabled ( true );		// Active only when started!
+		break;
+	case FT_FTNOIR:											// FTNoir server
+		ui.btnShowEngineControls->setEnabled ( false );
+		break;
+	default:
+		break;
+	}
 
 	// Enable/disable Protocol-server Settings
+	ui.iconcomboBox->setEnabled ( false );
 	ui.btnShowServerControls->setEnabled ( false );
 
 	//
@@ -577,6 +591,21 @@ void FaceTrackNoIR::stopTracker( ) {
 	// Enable/disable Protocol-server Settings
 	ui.btnShowServerControls->setEnabled ( true );
 
+	// Engine controls
+	switch (ui.iconcomboTrackerSource->currentIndex()) {
+	case FT_SM_FACEAPI:										// Face API
+		ui.btnShowEngineControls->setEnabled ( false );		// Active only when started!
+		break;
+	case FT_FTNOIR:											// FTNoir server
+		ui.btnShowEngineControls->setEnabled ( true );
+		break;
+	default:
+		break;
+	}
+
+	//
+	// Stop the timer, so it won't go off again...
+	//
 	timMinimizeFTN->stop();
 
 }
@@ -673,10 +702,27 @@ void FaceTrackNoIR::showHeadPoseWidget() {
 /** toggles Engine Controls Dialog **/
 void FaceTrackNoIR::showEngineControls() {
 
-	// Create if new
+	//
+	// Delete the existing QDialog
+	//
+	if (_engine_controls) {
+		delete _engine_controls;
+		_engine_controls = 0;
+	}
+
+	// Create  new
     if (!_engine_controls)
     {
-        _engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
+		switch (ui.iconcomboTrackerSource->currentIndex()) {
+		case FT_SM_FACEAPI:										// Face API
+			_engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
+			break;
+		case FT_FTNOIR:											// FTNoir server
+			break;
+		default:
+			break;
+		}
+
     }
 
 	// Show if already created
@@ -702,11 +748,9 @@ void FaceTrackNoIR::showServerControls() {
 	if (!_server_controls)
     {
 
-
 		// Show the appropriate Protocol-server Settings
 		switch (ui.iconcomboBox->currentIndex()) {
 		case FREE_TRACK:
-		case FTNOIR:
 		case SIMCONNECT:
 			break;
 		case PPJOY:
@@ -720,6 +764,9 @@ void FaceTrackNoIR::showServerControls() {
 			break;
 		case FLIGHTGEAR:
 	        _server_controls = new FGControls( this, Qt::Dialog );
+			break;
+		case FTNOIR:
+	        _server_controls = new FTNServerControls( this, Qt::Dialog );
 			break;
 		default:
 			break;
@@ -860,7 +907,6 @@ void FaceTrackNoIR::setIcon(int index)
 	// Enable/disable Protocol-server Settings
 	switch (ui.iconcomboBox->currentIndex()) {
 	case FREE_TRACK:
-	case FTNOIR:
 	case SIMCONNECT:
 		ui.btnShowServerControls->hide();
 		break;
@@ -868,6 +914,7 @@ void FaceTrackNoIR::setIcon(int index)
 	case FSUIPC:
 	case TRACKIR:
 	case FLIGHTGEAR:
+	case FTNOIR:
 		ui.btnShowServerControls->show();
 		ui.btnShowServerControls->setEnabled ( true );
 		break;
@@ -904,11 +951,13 @@ void FaceTrackNoIR::trackingSourceSelected(int index)
 {
 	settingsDirty = true;
 	switch (ui.iconcomboTrackerSource->currentIndex()) {
-	case 0:													// Face API
+	case FT_SM_FACEAPI:										// Face API
+		ui.btnShowEngineControls->setEnabled ( false );
 		break;
-	case 1:													// FTNoir server
+	case FT_FTNOIR:											// FTNoir server
 		ui.video_frame->hide();
 		ui.headPoseWidget->show();
+		ui.btnShowEngineControls->setEnabled ( true );
 		break;
 	default:
 		break;

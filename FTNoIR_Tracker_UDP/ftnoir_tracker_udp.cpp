@@ -65,14 +65,12 @@ FTNoIR_Tracker_UDP::~FTNoIR_Tracker_UDP()
 	::CloseHandle(m_WaitThread);
 
 	if (inSocket) {
-		inSocket->disconnectFromHost();
-		inSocket->waitForDisconnected();
+		inSocket->close();
 		delete inSocket;
 	}
 
 	if (outSocket) {
-		outSocket->disconnectFromHost();
-		outSocket->waitForDisconnected();
+		outSocket->close();
 		delete outSocket;
 	}
 }
@@ -143,12 +141,12 @@ void FTNoIR_Tracker_UDP::StartTracker()
 void FTNoIR_Tracker_UDP::GiveHeadPoseData(THeadPoseData *data)
 {
 
-	newHeadPose.x += 1.0f;
-	newHeadPose.y += 2.0f;
-	newHeadPose.z += 3.0f;
-	newHeadPose.yaw   += 4.0f;
-	newHeadPose.pitch += 5.0f;
-	newHeadPose.roll  += 6.0f;
+	//newHeadPose.x += 1.0f;
+	//newHeadPose.y += 2.0f;
+	//newHeadPose.z += 3.0f;
+	//newHeadPose.yaw   += 4.0f;
+	//newHeadPose.pitch += 5.0f;
+	//newHeadPose.roll  += 6.0f;
 
 	data->x = newHeadPose.x;
 	data->y = newHeadPose.y;

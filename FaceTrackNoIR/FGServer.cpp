@@ -46,10 +46,8 @@ FGServer::FGServer( Tracker *parent ) {
 
 /** destructor **/
 FGServer::~FGServer() {
-	inSocket->disconnectFromHost();
-	inSocket->waitForDisconnected();
-	outSocket->disconnectFromHost();
-	outSocket->waitForDisconnected();
+	inSocket->close();
+	outSocket->close();
 
 	delete inSocket;
 	delete outSocket;

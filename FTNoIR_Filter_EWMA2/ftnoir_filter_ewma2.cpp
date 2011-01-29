@@ -1,5 +1,6 @@
 #include "ftnoir_filter_base.h"
 #include "math.h"
+#include <QDebug>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -15,7 +16,7 @@ public:
 	void Release();
     void Initialize();
     void StartFilter();
-	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position);
+	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
 
 	void getFilterFullName(QString *strToBeFilled);
 	void getFilterShortName(QString *strToBeFilled);
@@ -30,6 +31,8 @@ private:
 	float	smoothing_frames_range;
 	float	alpha_smoothing;
 	float	prev_alpha[6];
+	float	alpha[6];
+	float	smoothed_alpha[6];
 
 	//parameter list for the filter-function(s)
 	enum
@@ -74,7 +77,7 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 	parameterSteps.append(1.0f);
 	parameterValueAsFloat.append(0.0f);
 	parameterValueAsString.append("");
-	setParameterValue(kMinSmoothing,2.0f);
+	setParameterValue(kMinSmoothing,10.0f);
 
 	parameterNameAsString.append("MaxSmoothing");
 	parameterUnitsAsString.append("Frames");
@@ -82,7 +85,7 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 	parameterSteps.append(1.0f);
 	parameterValueAsFloat.append(0.0f);
 	parameterValueAsString.append("");
-	setParameterValue(kMaxSmoothing,10.0f);
+	setParameterValue(kMaxSmoothing,50.0f);
 
 	parameterNameAsString.append("SmoothingScaleCurve");
 	parameterUnitsAsString.append("Power");
@@ -93,7 +96,7 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 	setParameterValue(kSmoothingScaleCurve,10.0f);
 
 	first_run = true;
-	alpha_smoothing = 0.1f;					//this is a constant for now, might be a parameter later
+	alpha_smoothing = 0.2f;					//this is a constant for now, might be a parameter later
 
 }
 
@@ -112,16 +115,14 @@ void FTNoIR_Filter_EWMA2::Initialize()
 	return;
 }
 
-void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position)
+void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
 {
 	//non-optimised version for clarity
 	float prev_output[6];
 	float target[6];
 	float output_delta[6];
-	float scale[]={0.25f,0.25f,0.25f,6.0f,6.0f,6.0f};
+	float scale[]={0.05f,0.05f,0.05f,1.2f,1.2f,1.2f};
 	float norm_output_delta[6];
-	float alpha[6];
-	float smoothed_alpha[6];
 	float output[6];
 	int i=0;
 
@@ -185,11 +186,16 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 
 	//calculate the alphas
 	//work out the dynamic smoothing factors
-	for (i=0;i<6;i++)
-	{
-		alpha[i]=1.0f/(parameterValueAsFloat[kMinSmoothing]+((1.0f-pow(norm_output_delta[i],parameterValueAsFloat[kSmoothingScaleCurve]))*smoothing_frames_range));
-		smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
+	if (newTarget) {
+		for (i=0;i<6;i++)
+		{
+			alpha[i]=1.0f/(parameterValueAsFloat[kMinSmoothing]+((1.0f-pow(norm_output_delta[i],parameterValueAsFloat[kSmoothingScaleCurve]))*smoothing_frames_range));
+			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
+		}
 	}
+
+	qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
+	qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() alpha[3] = " << alpha[3];
 
 	//use the same (largest) smoothed alpha for each channel
 	//NB: larger alpha = *less* lag (opposite to what you'd expect)
@@ -205,7 +211,8 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 	//move the camera
 	for (i=0;i<6;i++)
 	{
-		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
+//		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
+		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
 	}
 
 	new_camera_position->x=output[0];
