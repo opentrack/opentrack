@@ -163,6 +163,7 @@ QLibrary *filterLib;
 			break;
 
 		case FTNOIR:
+			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
 			break;
 
 		case PPJOY:
@@ -556,15 +557,15 @@ void Tracker::run() {
 			if (Tracker::do_tracking && Tracker::confid) {
 
 				// Pitch
-				target_camera_position.x = X.headPos - X.offset_headPos - X.initial_headPos;
-				target_camera_position.y = Y.headPos - Y.offset_headPos - Y.initial_headPos;
-				target_camera_position.z = Z.headPos - Z.offset_headPos - Z.initial_headPos;
-				target_camera_position.pitch = Pitch.headPos - Pitch.offset_headPos - Pitch.initial_headPos;
-				target_camera_position.yaw   = Yaw.headPos - Yaw.offset_headPos - Yaw.initial_headPos;
-				target_camera_position.roll  = Roll.headPos - Roll.offset_headPos - Roll.initial_headPos;
+				target_camera_position.x = getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos;
+				target_camera_position.y = getSmoothFromList( &Y.rawList ) - Y.offset_headPos - Y.initial_headPos;
+				target_camera_position.z = getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Z.initial_headPos;
+				target_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos;
+				target_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos - Yaw.initial_headPos;
+				target_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos - Roll.initial_headPos;
 
 				if (Tracker::useFilter && pFilter) {
-					pFilter->FilterHeadPoseData(&current_camera_position, &target_camera_position, &new_camera_position);
+					pFilter->FilterHeadPoseData(&current_camera_position, &target_camera_position, &new_camera_position, Tracker::Pitch.newSample);
 				}
 				else {
 					new_camera_position.x = getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos;
@@ -658,8 +659,9 @@ void Tracker::run() {
 		debug_Client->prev_value = Tracker::Pitch.prevPos;
 		debug_Client->dT = dT;
 		debug_Client->sendHeadposeToGame();									// Log to Excel
-		Tracker::Pitch.newSample = false;
 #       endif
+
+		Tracker::Pitch.newSample = false;
 
 		ReleaseMutex(Tracker::hTrackMutex);
 		server_Game->sendHeadposeToGame();
@@ -694,10 +696,6 @@ void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVid
 	}
 
 	ReleaseMutex(Tracker::hTrackMutex);
-
-	// for lower cpu load
-	msleep(10);
-	yieldCurrentThread(); 
 }
 
 /** Add the headpose-data to the Lists **/

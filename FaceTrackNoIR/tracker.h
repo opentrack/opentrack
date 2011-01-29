@@ -43,6 +43,7 @@
 #include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
 #include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)
 #include "ExcelServer.h"			// Excel-server (for analysing purposes)
+#include "FTNServer.h"				// FaceTrackNoIR-server (for client-server)
 #include "FTNoIR_cxx_protocolserver.h"
 
 #include "FTNoIR_Tracker_base.h"

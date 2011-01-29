@@ -36,7 +36,7 @@ typedef ITracker* TRACKERHANDLE;
 #   define EXTERN_C
 #endif // __cplusplus
 
-// Factory function that creates instances of the Xyz object.
+// Factory function that creates instances of the Tracker object.
 EXTERN_C
 FTNOIR_TRACKER_BASE_EXPORT
 TRACKERHANDLE

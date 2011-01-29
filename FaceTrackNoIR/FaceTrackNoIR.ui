@@ -408,8 +408,8 @@ color:#000;</string>
            </property>
            <property name="maximumSize">
             <size>
-             <width>250</width>
-             <height>180</height>
+             <width>500</width>
+             <height>500</height>
             </size>
            </property>
            <property name="styleSheet">
