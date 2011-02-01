@@ -346,6 +346,13 @@ void Tracker::run() {
 	}
 
 	//
+	// Initialize all internal data of the Game-protocol.
+	//
+	if (server_Game) {
+		server_Game->resetProperties();
+	}
+
+	//
 	// Setup the DirectInput for keyboard strokes
 	//
     // create the DirectInput interface

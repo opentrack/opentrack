@@ -96,7 +96,7 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 	setParameterValue(kSmoothingScaleCurve,10.0f);
 
 	first_run = true;
-	alpha_smoothing = 0.2f;					//this is a constant for now, might be a parameter later
+	alpha_smoothing = 0.02f;		//this is a constant for now, might be a parameter later
 
 }
 
@@ -121,7 +121,7 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 	float prev_output[6];
 	float target[6];
 	float output_delta[6];
-	float scale[]={0.05f,0.05f,0.05f,1.2f,1.2f,1.2f};
+	float scale[]={0.025f,0.025f,0.025f,6.0f,6.0f,6.0f};
 	float norm_output_delta[6];
 	float output[6];
 	int i=0;
