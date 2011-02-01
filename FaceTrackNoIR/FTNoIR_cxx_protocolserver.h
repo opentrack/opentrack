@@ -60,6 +60,29 @@ namespace v4friend
 			virtual void setHeadPosY(float y) { headPosY = y; }
 			virtual void setHeadPosZ(float z) { headPosZ = z; }
 
+			virtual void resetProperties() { 
+				virtPosX = 0.0f;
+				virtPosY = 0.0f;
+				virtPosZ = 0.0f;
+				virtRotX = 0.0f;
+				virtRotY = 0.0f;
+				virtRotZ = 0.0f;
+
+				headPosX = 0.0f;
+				headPosY = 0.0f;
+				headPosZ = 0.0f;
+				headRotX = 0.0f;
+				headRotY = 0.0f;
+				headRotZ = 0.0f;
+
+				prevPosX = 0.0f;
+				prevPosY = 0.0f;
+				prevPosZ = 0.0f;
+				prevRotX = 0.0f;
+				prevRotY = 0.0f;
+				prevRotZ = 0.0f;
+			}
+
         protected:
 			ProtocolServerBase() {};
 
