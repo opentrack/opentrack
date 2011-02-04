@@ -259,6 +259,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinIPFirstNibble</tabstop>
+  <tabstop>spinIPSecondNibble</tabstop>
+  <tabstop>spinIPThirdNibble</tabstop>
+  <tabstop>spinIPFourthNibble</tabstop>
+  <tabstop>spinPortNumber</tabstop>
+  <tabstop>btnOK</tabstop>
+  <tabstop>btnCancel</tabstop>
+  <tabstop>chkLocalPC</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <slots>
