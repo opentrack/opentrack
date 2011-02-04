@@ -186,16 +186,16 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 
 	//calculate the alphas
 	//work out the dynamic smoothing factors
-	if (newTarget) {
+//	if (newTarget) {
 		for (i=0;i<6;i++)
 		{
 			alpha[i]=1.0f/(parameterValueAsFloat[kMinSmoothing]+((1.0f-pow(norm_output_delta[i],parameterValueAsFloat[kSmoothingScaleCurve]))*smoothing_frames_range));
 			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
 		}
-	}
+//	}
 
-	qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
-	qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() alpha[3] = " << alpha[3];
+	//qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
+	//qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() alpha[3] = " << alpha[3];
 
 	//use the same (largest) smoothed alpha for each channel
 	//NB: larger alpha = *less* lag (opposite to what you'd expect)
@@ -211,8 +211,8 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 	//move the camera
 	for (i=0;i<6;i++)
 	{
-//		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
-		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
+		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
+//		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
 	}
 
 	new_camera_position->x=output[0];
