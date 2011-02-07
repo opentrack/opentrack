@@ -197,6 +197,7 @@ private slots:
 	void doOK();
 	void doCancel();
 	void keyChanged( int index ) { settingsDirty = true; };
+	void keyChanged( bool index ) { settingsDirty = true; };
 };
 
 // Widget that has controls for Keyboard shortcuts.

@@ -178,6 +178,7 @@ private:
 
 	static bool useFilter;							// Use EWMA-filtering
 	static bool setZero;							// Set to zero's, when OFF (one-shot)
+	static bool setEngineStop;						// Stop tracker->engine, when OFF
 	static long prevHeadPoseTime;					// Time from previous sample
 	
 	/** QT objects **/

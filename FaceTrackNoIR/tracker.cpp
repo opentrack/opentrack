@@ -66,6 +66,7 @@ bool Tracker::do_center = false;
 bool Tracker::do_inhibit = false;
 bool Tracker::useFilter = false;
 bool Tracker::setZero = true;
+bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
 
 long Tracker::prevHeadPoseTime = 0;
@@ -440,10 +441,14 @@ void Tracker::run() {
 						current_camera_position.pitch = 0.0f;
 						current_camera_position.roll = 0.0f;
 
-						_engine->start();
+						if (_engine->state() != SM_API_ENGINE_STATE_HT_TRACKING) {
+							_engine->start();
+						}
 					}
 					else {
-						_engine->stop();
+						if (setEngineStop) {						// Only stop engine when option is checked
+							_engine->stop();
+						}
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
 				}
@@ -1082,6 +1087,7 @@ QPointF point1, point2, point3, point4;
 	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
 	StartStopKey.alt = iniFile.value ( "Alt_StartStop", 0 ).toBool();
 	setZero = iniFile.value ( "SetZero", 1 ).toBool();
+	setEngineStop = iniFile.value ( "SetEngineStop", 1 ).toBool();
 
 	// Inhibit key
 	InhibitKey.keycode = iniFile.value ( "Keycode_Inhibit", 0 ).toInt();
