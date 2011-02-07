@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110207 - WVR: RadioButtons for 'Stop engine' added. It is now possible to choose Stop or Keep tracking.
 		20110109 - WVR: Added minimizeTaskBar option added. It is now possible to choose minimized or tray.
 */
 #include "FaceTrackNoIR.h"
@@ -1122,6 +1123,8 @@ QWidget( parent , f)
 	connect(ui.chkStartStopShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.radioSetZero, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
+	connect(ui.radioSetEngineStop, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
 
 	connect(ui.cbxInhibitKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
@@ -1374,6 +1377,9 @@ int keyindex;
 	ui.chkStartStopCtrl->setChecked (iniFile.value ( "Ctrl_StartStop", 0 ).toBool());
 	ui.chkStartStopAlt->setChecked (iniFile.value ( "Alt_StartStop", 0 ).toBool());
 	ui.radioSetZero->setChecked (iniFile.value ( "SetZero", 1 ).toBool());
+	ui.radioSetFreeze->setChecked(!ui.radioSetZero->isChecked());
+	ui.radioSetEngineStop->setChecked (iniFile.value ( "SetEngineStop", 1 ).toBool());
+	ui.radioSetKeepTracking->setChecked(!ui.radioSetEngineStop->isChecked());
 
 	// Axis-inhibitor key
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Inhibit", 1 ).toInt() );
@@ -1423,6 +1429,7 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
 	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
 	iniFile.setValue ( "SetZero", ui.radioSetZero->isChecked() );
+	iniFile.setValue ( "SetEngineStop", ui.radioSetEngineStop->isChecked() );
 
 	iniFile.setValue ( "Keycode_Inhibit", keyList.at( ui.cbxInhibitKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_Inhibit", ui.chkInhibitShift->isChecked() );
