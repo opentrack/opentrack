@@ -321,8 +321,6 @@ void Tracker::run() {
 
 	float rawrotX, rawrotY, rawrotZ;				// Locals...
 	float rawposX, rawposY, rawposZ;
-	//float new_camera_position.pitch, new_camera_position.yaw, new_camera_position.roll;							// Locals...
-	//float new_camera_position.x, new_camera_position.y, new_camera_position.z;
 
 	SYSTEMTIME now;
 	long newHeadPoseTime;
