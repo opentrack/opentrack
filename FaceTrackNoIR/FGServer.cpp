@@ -62,22 +62,6 @@ QHostAddress sender;
 quint16 senderPort;
 
 	//
-	// Create UDP-sockets if they don't exist already.
-	// They must be created here, because they must be in the Tracker thread (Tracker::run())
-	//
-	if (inSocket == 0) {
-		qDebug() << "FGServer::sendHeadposeToGame creating sockets";
-		inSocket = new QUdpSocket();
-		// Connect the inSocket to the port, to receive messages
-//	inSocket->bind(QHostAddress::LocalHost, 5551);
-		inSocket->bind(QHostAddress::Any, destPort+1);
-	}
-
-	if (outSocket == 0) {
-		outSocket = new QUdpSocket();
-	}
-
-	//
 	// Copy the Raw measurements directly to the client.
 	//
 	TestData.x = virtPosX;
@@ -94,28 +78,32 @@ quint16 senderPort;
 
 	//! [1]
 //	no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), QHostAddress::LocalHost, 5550);
-	no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), destIP, destPort);
-	if ( no_bytes > 0) {
-//		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
-	}
-	else {
-		qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
+	if (outSocket != 0) {
+		no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), destIP, destPort);
+		if ( no_bytes > 0) {
+	//		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
+		}
+		else {
+			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
+		}
 	}
 
 	//
 	// FlightGear keeps sending data, so we must read that here.
 	//
-	while (inSocket->hasPendingDatagrams()) {
+	if (inSocket != 0) {
+		while (inSocket->hasPendingDatagrams()) {
 
-		QByteArray datagram;
-		datagram.resize(inSocket->pendingDatagramSize());
+			QByteArray datagram;
+			datagram.resize(inSocket->pendingDatagramSize());
 
-		inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
+			inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
 
-		fg_cmd = cmd;									// Let's just accept that command for now...
-		if ( cmd > 0 ) {
-			qDebug() << "FGServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
-			headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
+			fg_cmd = cmd;									// Let's just accept that command for now...
+			if ( cmd > 0 ) {
+				qDebug() << "FGServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
+				headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
+			}
 		}
 	}
 }
@@ -138,6 +126,26 @@ bool FGServer::checkServerInstallationOK( HANDLE handle )
 
 	inSocket = 0;
 	outSocket = 0;
+
+	//
+	// Create UDP-sockets.
+	//
+	if (inSocket == 0) {
+		qDebug() << "FGServer::sendHeadposeToGame creating insocket";
+		inSocket = new QUdpSocket();
+
+		// Connect the inSocket to the port, to receive messages
+		if (!inSocket->bind(QHostAddress::Any, destPort+1)) {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
+			delete inSocket;
+			inSocket = 0;
+			return false;
+		}
+	}
+
+	if (outSocket == 0) {
+		outSocket = new QUdpSocket();
+	}
 
 	return true;
 }

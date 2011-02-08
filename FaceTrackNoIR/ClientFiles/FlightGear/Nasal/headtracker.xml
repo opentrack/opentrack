@@ -1,19 +1,6 @@
 <?xml version="1.0"?>
 
 <PropertyList>
-	<input>
-		<keyboard>
-			<key n="61">
-				<name>= (equal sign)</name>
-				<desc>Reset Head Tracker</desc>
-				<binding>
-					<command>nasal</command>
-					<script>headtracker.reset()</script>
-				</binding>
-			</key>
-		</keyboard>
-	</input>
-
 	<nasal>
 		<headtracker>
 			<script>
@@ -21,12 +8,10 @@
 					new: func(prop) {
 						var m = { parents: [Value] };
 						m.prop = props.globals.getNode(prop, 1);
-						m.lowpass = aircraft.lowpass.new(0.7);
 						m.value = 0;
 						return m;
 					},
 					apply: func(value) {
-						value = me.lowpass.filter(value);
 						me.prop.setDoubleValue(me.prop.getValue() - me.value + value);
 						me.value = value;
 					},
@@ -79,7 +64,6 @@
 
 				loop();
 
-				gui.popupTip("press '=' (equal sign) to reset head tracker", 20);
 			</script>
 		</headtracker>
 	</nasal>
