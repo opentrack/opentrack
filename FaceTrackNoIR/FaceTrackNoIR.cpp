@@ -442,6 +442,7 @@ void FaceTrackNoIR::loadSettings() {
 
 	iniFile.beginGroup ( "TrackerSource" );
 	ui.iconcomboTrackerSource->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
+	trackingSourceSelected( ui.iconcomboTrackerSource->currentIndex() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -702,6 +703,11 @@ void FaceTrackNoIR::showHeadPoseWidget() {
 
 /** toggles Engine Controls Dialog **/
 void FaceTrackNoIR::showEngineControls() {
+importGetTrackerDialog getIT;
+QLibrary *trackerLib;
+
+
+	qDebug() << "FaceTrackNoIR::showEngineControls started.";
 
 	//
 	// Delete the existing QDialog
@@ -711,6 +717,8 @@ void FaceTrackNoIR::showEngineControls() {
 		_engine_controls = 0;
 	}
 
+	qDebug() << "FaceTrackNoIR::showEngineControls after remove engine_controls.";
+
 	// Create  new
     if (!_engine_controls)
     {
@@ -719,6 +727,29 @@ void FaceTrackNoIR::showEngineControls() {
 			_engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
 			break;
 		case FT_FTNOIR:											// FTNoir server
+			qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";
+
+			trackerLib = new QLibrary("FTNoIR_Tracker_UDP.dll");
+
+			qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
+
+			getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
+
+			qDebug() << "FaceTrackNoIR::showEngineControls resolved?." << getIT;
+
+			if (getIT) {
+				ITrackerDialogPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pTrackerDialog = ptrXyz;
+					pTrackerDialog->Initialize( this );
+					qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			}
+
 			break;
 		default:
 			break;
@@ -951,17 +982,17 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
 void FaceTrackNoIR::trackingSourceSelected(int index)
 {
 	settingsDirty = true;
-	switch (ui.iconcomboTrackerSource->currentIndex()) {
-	case FT_SM_FACEAPI:										// Face API
-		ui.btnShowEngineControls->setEnabled ( false );
-		break;
-	case FT_FTNOIR:											// FTNoir server
-		ui.video_frame->hide();
-		ui.headPoseWidget->show();
-		ui.btnShowEngineControls->setEnabled ( true );
-		break;
-	default:
-		break;
+	switch ( index ) {
+		case FT_SM_FACEAPI:										// Face API
+			ui.btnShowEngineControls->setEnabled ( false );
+			break;
+		case FT_FTNOIR:											// FTNoir server
+			ui.video_frame->hide();
+			ui.headPoseWidget->show();
+			ui.btnShowEngineControls->setEnabled ( true );
+			break;
+		default:
+			break;
 	}
 }
 

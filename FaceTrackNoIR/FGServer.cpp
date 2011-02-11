@@ -46,11 +46,15 @@ FGServer::FGServer( Tracker *parent ) {
 
 /** destructor **/
 FGServer::~FGServer() {
-	inSocket->close();
-	outSocket->close();
-
-	delete inSocket;
-	delete outSocket;
+	if (inSocket != 0) {
+		inSocket->close();
+		delete inSocket;
+	}
+	
+	if (outSocket != 0) {
+		outSocket->close();
+		delete outSocket;
+	}
 }
 
 //
