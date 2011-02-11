@@ -39,6 +39,17 @@
 #include "ui_FTNoIR_KeyboardShortcuts.h"
 #include "ui_FTNoIR_Preferences.h"
 #include "ui_FTNoIR_Curves.h"
+
+#include "FTNoIR_Tracker_UDP.h"
+#include "AutoClosePtr.h"
+
+// 1a. COM-Like usage with smart pointer.
+// No need to call `ITracker::Release'; the instance will
+// be released automatically in destructor of the smart pointer.
+typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDialogPtr;
+typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
+
+
 #include <sm_api_qt.h>
 #include <Dshow.h>
 
@@ -66,6 +77,8 @@ private:
 	Tracker *tracker;
 	QTimer *timMinimizeFTN;
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
+
+	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 
 	/** face api variables **/
 	VideoDisplayWidget *_display;

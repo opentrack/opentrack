@@ -138,6 +138,7 @@ QLibrary *filterLib;
 				if (ptrXyz)
 				{
 					pTracker = ptrXyz;
+					pTracker->Initialize();
 					qDebug() << "Tracker::setup Function Resolved!";
 				}
 			}
