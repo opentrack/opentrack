@@ -258,7 +258,7 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	bool DLL_Ok;
 
 	// retrieve pointers to the User Interface and the main Application
-	headPoseWidget = head;
+//	headPoseWidget = head;
 	mainApp = parent;
 
 	if (selectedTracker == FT_SM_FACEAPI) {
@@ -276,15 +276,6 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	if (selectedTracker == FT_FTNOIR) {
 		pTracker->StartTracker();
 	}
-
-	// set up the line edits for calling
-	headXLine = headPoseWidget->findChild<QLineEdit *>("headXLine");
-	headYLine = headPoseWidget->findChild<QLineEdit *>("headYLine");
-	headZLine = headPoseWidget->findChild<QLineEdit *>("headZLine");
-
-	headRotXLine = headPoseWidget->findChild<QLineEdit *>("headRotXLine");
-	headRotYLine = headPoseWidget->findChild<QLineEdit *>("headRotYLine");
-	headRotZLine = headPoseWidget->findChild<QLineEdit *>("headRotZLine");
 
 	//
 	// Check if the Protocol-server files were installed OK.
@@ -320,9 +311,6 @@ void Tracker::run() {
 	bool lastStartStopKey = false;
 	bool lastInhibitKey = false;
 
-	float rawrotX, rawrotY, rawrotZ;				// Locals...
-	float rawposX, rawposY, rawposZ;
-
 	SYSTEMTIME now;
 	long newHeadPoseTime;
 	float dT;
@@ -335,6 +323,27 @@ void Tracker::run() {
 	smEngineHeadPoseData head_pose;					// headpose from faceAPI
 	smEngineHeadPoseData temp_head_pose;			// headpose from faceAPI
 #       endif
+
+	current_camera_position.x = 0.0f;
+	current_camera_position.y = 0.0f;
+	current_camera_position.z = 0.0f;
+	current_camera_position.yaw = 0.0f;
+	current_camera_position.pitch = 0.0f;
+	current_camera_position.roll = 0.0f;
+
+	target_camera_position.x = 0.0f;
+	target_camera_position.y = 0.0f;
+	target_camera_position.z = 0.0f;
+	target_camera_position.yaw = 0.0f;
+	target_camera_position.pitch = 0.0f;
+	target_camera_position.roll = 0.0f;
+
+	new_camera_position.x = 0.0f;
+	new_camera_position.y = 0.0f;
+	new_camera_position.z = 0.0f;
+	new_camera_position.yaw = 0.0f;
+	new_camera_position.pitch = 0.0f;
+	new_camera_position.roll = 0.0f;
 
 	//
 	// Test some Filter-stuff
@@ -533,22 +542,6 @@ void Tracker::run() {
 					MessageBeep (MB_ICONASTERISK);
 					Tracker::set_initial = true;
 				}
-
-				rawrotX = Tracker::Pitch.headPos- Tracker::Pitch.initial_headPos;	// degrees
-				rawrotY = Tracker::Yaw.headPos- Tracker::Yaw.initial_headPos;
-				rawrotZ = Tracker::Roll.headPos - Tracker::Roll.initial_headPos;
-				rawposX = Tracker::X.headPos - Tracker::X.initial_headPos;										// centimeters
-				rawposY = Tracker::Y.headPos - Tracker::Y.initial_headPos;
-				rawposZ = Tracker::Z.headPos - Tracker::Z.initial_headPos;
-
-				headRotXLine->setText(QString("%1").arg( rawrotX, 0, 'f', 1));		// show degrees
-				headRotYLine->setText(QString("%1").arg( rawrotY, 0, 'f', 1));
-				headRotZLine->setText(QString("%1").arg( rawrotZ, 0, 'f', 1));
-
-				headXLine->setText(QString("%1").arg( rawposX, 0, 'f', 1));			// show centimeters
-				headYLine->setText(QString("%1").arg( rawposY, 0, 'f', 1));
-				headZLine->setText(QString("%1").arg( rawposZ, 0, 'f', 1));
-
 			}
 
 			//
@@ -614,20 +607,29 @@ void Tracker::run() {
 					server_Game->setHeadRotY( new_camera_position.yaw );
 					server_Game->setHeadRotZ( new_camera_position.roll );
 
-					server_Game->setHeadPosX( new_camera_position.x );					// centimeters
+					server_Game->setHeadPosX( new_camera_position.x );						// centimeters
 					server_Game->setHeadPosY( new_camera_position.y );
 					server_Game->setHeadPosZ( new_camera_position.z );
 				}
 
 				// All Protocol server(s)
 				if (server_Game) {
-					server_Game->setVirtRotX ( new_camera_position.pitch );				// degrees
+					server_Game->setVirtRotX ( new_camera_position.pitch );					// degrees
 					server_Game->setVirtRotY ( new_camera_position.yaw );
 					server_Game->setVirtRotZ ( new_camera_position.roll );
-					server_Game->setVirtPosX ( new_camera_position.x );				// centimeters
+					server_Game->setVirtPosX ( new_camera_position.x );						// centimeters
 					server_Game->setVirtPosY ( new_camera_position.y );
 					server_Game->setVirtPosZ ( new_camera_position.z );
 				}
+
+//				headRotXLine->setText(QString("%1").arg( new_camera_position.pitch, 0, 'f', 1));	// show degrees
+//				headRotYLine->setText(QString("%1").arg( new_camera_position.yaw, 0, 'f', 1));
+//				headRotZLine->setText(QString("%1").arg( new_camera_position.roll, 0, 'f', 1));
+//
+////				headXLine->setText(QString("%1").arg( new_camera_position.x, 0, 'f', 1));			// show centimeters
+//				headYLine->setText(QString("%1").arg( new_camera_position.y, 0, 'f', 1));
+//				headZLine->setText(QString("%1").arg( new_camera_position.z, 0, 'f', 1));
+
 
 #       ifdef USE_DEBUG_CLIENT
 				debug_Client->setHeadRotX( Tracker::Pitch.headPos );	// degrees
@@ -845,6 +847,19 @@ void Tracker::setPowCurve( int x ) {
 		Tracker::pFilter->setParameterValue(2, x);
 		qDebug() << "Tracker::setPowCurve Pow Curve set to: " << x;
 	}
+}
+
+//
+// Set the filter-value from the GUI.
+//
+void Tracker::getHeadPose( THeadPoseData *data ) {
+	data->x = Tracker::X.headPos - Tracker::X.initial_headPos;						// centimeters
+	data->y = Tracker::Y.headPos - Tracker::Y.initial_headPos;
+	data->z = Tracker::Z.headPos - Tracker::Z.initial_headPos;
+
+	data->pitch = Tracker::Pitch.headPos- Tracker::Pitch.initial_headPos;			// degrees
+	data->yaw = Tracker::Yaw.headPos- Tracker::Yaw.initial_headPos;
+	data->roll = Tracker::Roll.headPos - Tracker::Roll.initial_headPos;
 }
 
 //
