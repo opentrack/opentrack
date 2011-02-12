@@ -154,235 +154,6 @@ QGroupBox {
         <property name="spacing">
          <number>6</number>
         </property>
-        <item row="5" column="0">
-         <widget class="QWidget" name="headPoseWidget" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <widget class="QLineEdit" name="headRotYLine">
-           <property name="geometry">
-            <rect>
-             <x>151</x>
-             <y>40</y>
-             <width>80</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="headRotXLine">
-           <property name="geometry">
-            <rect>
-             <x>151</x>
-             <y>10</y>
-             <width>81</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="headRotZLine">
-           <property name="geometry">
-            <rect>
-             <x>150</x>
-             <y>70</y>
-             <width>81</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_4">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white</string>
-           </property>
-           <property name="text">
-            <string>X</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_5">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>40</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
-           </property>
-           <property name="text">
-            <string>Y</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_6">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>70</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color:white;
-border:none;</string>
-           </property>
-           <property name="text">
-            <string>Z</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_7">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>70</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
-           </property>
-           <property name="text">
-            <string>rotZ</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_8">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>40</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color:white;
-border:none;</string>
-           </property>
-           <property name="text">
-            <string>rotY</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_9">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>10</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
-           </property>
-           <property name="text">
-            <string>rotX</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="headZLine">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>70</y>
-             <width>81</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="headYLine">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>40</y>
-             <width>81</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="headXLine">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>10</y>
-             <width>81</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:1px solid #ccc;
-background:white;
-color:#000;</string>
-           </property>
-           <property name="text">
-            <string>N/A</string>
-           </property>
-          </widget>
-         </widget>
-        </item>
         <item row="4" column="0">
          <widget class="QWidget" name="widget4video" native="true">
           <property name="minimumSize">
@@ -510,6 +281,205 @@ border:none;
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="5" column="0">
+         <widget class="QWidget" name="headPoseWidget" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <widget class="QLabel" name="label_4">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border:none;
+color:white</string>
+           </property>
+           <property name="text">
+            <string>X</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_5">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>40</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border:none;
+color:white;</string>
+           </property>
+           <property name="text">
+            <string>Y</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_6">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>70</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color:white;
+border:none;</string>
+           </property>
+           <property name="text">
+            <string>Z</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_7">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>70</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border:none;
+color:white;</string>
+           </property>
+           <property name="text">
+            <string>rotZ</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_8">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>40</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color:white;
+border:none;</string>
+           </property>
+           <property name="text">
+            <string>rotY</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_9">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>10</y>
+             <width>21</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border:none;
+color:white;</string>
+           </property>
+           <property name="text">
+            <string>rotX</string>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumX">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>10</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumY">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>40</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumZ">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>70</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumRotX">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>10</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumRotY">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>40</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+          <widget class="QLCDNumber" name="lcdNumRotZ">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>70</y>
+             <width>71</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+          </widget>
+         </widget>
         </item>
        </layout>
       </item>
@@ -2181,12 +2151,6 @@ background:none;</string>
   <tabstop>btnStopTracker</tabstop>
   <tabstop>btnShowEngineControls</tabstop>
   <tabstop>iconcomboBox</tabstop>
-  <tabstop>headXLine</tabstop>
-  <tabstop>headRotXLine</tabstop>
-  <tabstop>headYLine</tabstop>
-  <tabstop>headRotYLine</tabstop>
-  <tabstop>headZLine</tabstop>
-  <tabstop>headRotZLine</tabstop>
  </tabstops>
  <resources>
   <include location="FaceTrackNoIR.qrc"/>

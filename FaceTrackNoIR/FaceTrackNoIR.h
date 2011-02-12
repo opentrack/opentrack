@@ -75,7 +75,8 @@ public:
 private:
 	Ui::FaceTrackNoIRClass ui;
 	Tracker *tracker;
-	QTimer *timMinimizeFTN;
+	QTimer *timMinimizeFTN;						// Timer to Auto-minimize
+	QTimer *timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
@@ -147,8 +148,9 @@ private:
 		void setInvertZ( int invert );
 
 		void setUseFilter( int set );
+		void showHeadPose();
 
-		// reduction factor sliders
+		// EWMA filter sliders
 		void setMinSmooth( int redh );
 		void setMaxSmooth( int redh );
 		void setPowCurve( int redh );

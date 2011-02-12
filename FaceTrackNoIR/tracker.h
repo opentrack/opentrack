@@ -181,16 +181,6 @@ private:
 	static bool setEngineStop;						// Stop tracker->engine, when OFF
 	static long prevHeadPoseTime;					// Time from previous sample
 	
-	/** QT objects **/
-	QLineEdit *headXLine;
-	QLineEdit *headYLine;
-	QLineEdit *headZLine;
-
-	QLineEdit *headRotXLine;
-	QLineEdit *headRotYLine;
-	QLineEdit *headRotZLine;
-
-	QWidget *headPoseWidget;
 	FaceTrackNoIR *mainApp;
 
 	QSharedPointer<ProtocolServerBase> server_Game;		// Protocol Server to communicate headpose-data to the Game!
@@ -227,6 +217,8 @@ public:
 	static void setMinSmooth(int x);
 	static void setMaxSmooth(int x);
 	static void setPowCurve(int x);
+
+	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }

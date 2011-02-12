@@ -147,6 +147,11 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	//Setup the timer for automatically minimizing after StartTracker.
 	timMinimizeFTN = new QTimer(this);
     connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
+
+	//Setup the timer for showing the headpose.
+	timUpdateHeadPose = new QTimer(this);
+    connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+	timUpdateHeadPose->start(10);
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -652,6 +657,20 @@ void FaceTrackNoIR::setInvertZ( int invert ) {
 void FaceTrackNoIR::setUseFilter( int set ) {
 	Tracker::setUseFilter ( (set != 0)?true:false );
 	settingsDirty = true;
+}
+
+/** Show the headpose in the widget (triggered by timer) **/
+void FaceTrackNoIR::showHeadPose() {
+THeadPoseData newdata;
+
+	Tracker::getHeadPose(&newdata);
+	ui.lcdNumX->display((double) (((int)(newdata.x * 10.0f))/10.0f));
+	ui.lcdNumY->display((double) (((int)(newdata.y * 10.0f))/10.0f));
+	ui.lcdNumZ->display((double) (((int)(newdata.z * 10.0f))/10.0f));
+
+	ui.lcdNumRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
+	ui.lcdNumRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
+	ui.lcdNumRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
 }
 
 /** set the redhold from the slider **/

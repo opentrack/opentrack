@@ -1,51 +1,4 @@
-#include "ftnoir_tracker_base.h"
-#include <QThread>
-#include <QUdpSocket>
-#include <QMessageBox>
-#include "Windows.h"
-#include "math.h"
-
-class FTNoIR_Tracker_UDP : public ITracker, QThread
-{
-public:
-	FTNoIR_Tracker_UDP();
-	~FTNoIR_Tracker_UDP();
-
-	void Release();
-    void Initialize();
-    void StartTracker();
-	void GiveHeadPoseData(THeadPoseData *data);
-
-	bool setParameterValue(const int index, const float newvalue);
-
-protected:
-	void run();												// qthread override run method
-
-private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
-
-	// UDP socket-variables
-	QUdpSocket *inSocket;									// Receive from ...
-	QUdpSocket *outSocket;									// Send to ...
-	QHostAddress destIP;									// Destination IP-address
-	int destPort;											// Destination port-number
-	QHostAddress srcIP;										// Source IP-address
-	int srcPort;											// Source port-number
-
-	THeadPoseData newHeadPose;								// Structure with new headpose
-
-	//parameter list for the filter-function(s)
-	enum
-	{
-		kPortAddress=0,										// Index in QList
-		kNumFilterParameters								// Indicate number of parameters used
-	};
-	QList<std::pair<float,float>>	parameterRange;
-	QList<float>					parameterValueAsFloat;
-
-};
+#include "ftnoir_tracker_udp.h"
 
 FTNoIR_Tracker_UDP::FTNoIR_Tracker_UDP()
 {
@@ -71,23 +24,6 @@ FTNoIR_Tracker_UDP::FTNoIR_Tracker_UDP()
 	newHeadPose.yaw   = 0.0f;
 	newHeadPose.pitch = 0.0f;
 	newHeadPose.roll  = 0.0f;
-
-	//
-	// Create UDP-sockets if they don't exist already.
-	// They must be created here, because they must be in the new thread (FTNoIR_Tracker_UDP::run())
-	//
-	if (inSocket == 0) {
-		qDebug() << "FTNoIR_Tracker_UDP::run() creating insocket";
-		inSocket = new QUdpSocket();
-		// Connect the inSocket to the port, to receive messages
-		
-		if (!inSocket->bind(QHostAddress::Any, (int) parameterValueAsFloat[kPortAddress], QUdpSocket::ShareAddress )) {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
-			delete inSocket;
-			inSocket = 0;
-		}
-	}
-
 }
 
 FTNoIR_Tracker_UDP::~FTNoIR_Tracker_UDP()
@@ -163,6 +99,25 @@ void FTNoIR_Tracker_UDP::Release()
 
 void FTNoIR_Tracker_UDP::Initialize()
 {
+	qDebug() << "FTNoIR_Tracker_UDP::Initialize says: Starting ";
+	loadSettings();
+
+	//
+	// Create UDP-sockets if they don't exist already.
+	// They must be created here, because they must be in the new thread (FTNoIR_Tracker_UDP::run())
+	//
+	if (inSocket == 0) {
+		qDebug() << "FTNoIR_Tracker_UDP::Initialize() creating insocket";
+		inSocket = new QUdpSocket();
+		// Connect the inSocket to the port, to receive messages
+		
+		if (!inSocket->bind(QHostAddress::Any, (int) parameterValueAsFloat[kPortAddress], QUdpSocket::ShareAddress )) {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
+			delete inSocket;
+			inSocket = 0;
+		}
+	}
+
 	return;
 }
 
@@ -211,6 +166,24 @@ bool FTNoIR_Tracker_UDP::setParameterValue(const int index, const float newvalue
 	}
 };
 
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTNoIR_Tracker_UDP::loadSettings() {
+
+	qDebug() << "FTNoIR_Tracker_UDP::loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "FTNoIR_Tracker_UDP::loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "FTNClient" );
+	setParameterValue(kPortAddress, (float) iniFile.value ( "PortNumber", 5550 ).toInt());
+	iniFile.endGroup ();
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker object.
@@ -226,3 +199,161 @@ FTNOIR_TRACKER_BASE_EXPORT TRACKERHANDLE __stdcall GetTracker()
 	return new FTNoIR_Tracker_UDP;
 }
 
+//*******************************************************************************************************
+// FaceTrackNoIR Client Settings-dialog.
+//*******************************************************************************************************
+
+//
+// Constructor for server-settings-dialog
+//
+FTNClientControls::FTNClientControls( QWidget *parent, Qt::WindowFlags f ) :
+QWidget( parent , f)
+{
+	ui.setupUi( this );
+
+	QPoint offsetpos(100, 100);
+	if (parent) {
+		this->move(parent->pos() + offsetpos);
+	}
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	//connect(ui.spinIPFirstNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	//connect(ui.spinIPSecondNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	//connect(ui.spinIPThirdNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	//connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+}
+
+//
+// Destructor for server-dialog
+//
+FTNClientControls::~FTNClientControls() {
+	qDebug() << "~FTNClientControls() says: started";
+}
+
+void FTNClientControls::Release()
+{
+    delete this;
+}
+
+//
+// Initialize tracker-client-dialog
+//
+void FTNClientControls::Initialize(QWidget *parent) {
+
+	QPoint offsetpos(100, 100);
+	if (parent) {
+		this->move(parent->pos() + offsetpos);
+	}
+	show();
+}
+
+//
+// OK clicked on server-dialog
+//
+void FTNClientControls::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void FTNClientControls::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void FTNClientControls::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTNClientControls::loadSettings() {
+
+//	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+//	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "FTNClient" );
+	//ui.spinIPFirstNibble->setValue( iniFile.value ( "IP-1", 192 ).toInt() );
+	//ui.spinIPSecondNibble->setValue( iniFile.value ( "IP-2", 168 ).toInt() );
+	//ui.spinIPThirdNibble->setValue( iniFile.value ( "IP-3", 2 ).toInt() );
+	//ui.spinIPFourthNibble->setValue( iniFile.value ( "IP-4", 1 ).toInt() );
+
+	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void FTNClientControls::save() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FTNClient" );
+	//iniFile.setValue ( "IP-1", ui.spinIPFirstNibble->value() );
+	//iniFile.setValue ( "IP-2", ui.spinIPSecondNibble->value() );
+	//iniFile.setValue ( "IP-3", ui.spinIPThirdNibble->value() );
+	//iniFile.setValue ( "IP-4", ui.spinIPFourthNibble->value() );
+	iniFile.setValue ( "PortNumber", ui.spinPortNumber->value() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+////////////////////////////////////////////////////////////////////////////////
+// Factory function that creates instances if the Tracker-settings dialog object.
+
+// Export both decorated and undecorated names.
+//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
+//                          Win32 API function.
+//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
+#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
+
+FTNOIR_TRACKER_BASE_EXPORT TRACKERDIALOGHANDLE __stdcall GetTrackerDialog( )
+{
+	return new FTNClientControls;
+}
