@@ -2,7 +2,7 @@
 #define FTNOIR_FILTER_BASE_H
 
 #include "ftnoir_filter_base_global.h"
-#include "ftnoir_tracker_base.h"
+#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #include <QString>
 #include <QList>
 

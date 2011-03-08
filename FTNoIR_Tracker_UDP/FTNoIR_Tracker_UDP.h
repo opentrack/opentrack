@@ -1,4 +1,4 @@
-#include "ftnoir_tracker_base.h"
+#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #include "ui_FTNoIR_FTNClientcontrols.h"
 #include <QThread>
 #include <QUdpSocket>

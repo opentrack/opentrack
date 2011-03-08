@@ -88,7 +88,7 @@ quint16 senderPort;
 
 		//for lower cpu load 
 		usleep(10000);
-		yieldCurrentThread(); 
+//		yieldCurrentThread(); 
 	}
 }
 

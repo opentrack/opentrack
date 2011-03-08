@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_UDP", "FTNoI
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Filter_EWMA2", "FTNoIR_Filter_EWMA2\FTNoIR_Filter_EWMA2.vcproj", "{7DD9F1AA-B7C0-4056-AC4A-1501840E6438}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_SM", "FTNoIR_Tracker_SM\FTNoIR_Tracker_SM.vcproj", "{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -34,6 +36,10 @@ Global
 		{7DD9F1AA-B7C0-4056-AC4A-1501840E6438}.Debug|Win32.Build.0 = Debug|Win32
 		{7DD9F1AA-B7C0-4056-AC4A-1501840E6438}.Release|Win32.ActiveCfg = Release|Win32
 		{7DD9F1AA-B7C0-4056-AC4A-1501840E6438}.Release|Win32.Build.0 = Release|Win32
+		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Debug|Win32.Build.0 = Debug|Win32
+		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Release|Win32.ActiveCfg = Release|Win32
+		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

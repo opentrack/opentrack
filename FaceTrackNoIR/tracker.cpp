@@ -55,8 +55,8 @@
 #define USE_HEADPOSE_CALLBACK
 //#define USE_DEBUG_CLIENT
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
+//using namespace sm::faceapi;
+//using namespace sm::faceapi::qt;
 
 // Flags
 bool Tracker::confid = false;
@@ -104,27 +104,60 @@ QLibrary *filterLib;
 
 	Tracker::hTrackMutex = CreateMutexA(NULL, false, "HeadPose_mutex");
 
+	//
+	// Initialize the headpose-data
+	//
+	Tracker::Yaw.initHeadPoseData();
+	Tracker::Pitch.initHeadPoseData();
+	Tracker::Roll.initHeadPoseData();
+	Tracker::X.initHeadPoseData();
+	Tracker::Y.initHeadPoseData();
+	Tracker::Z.initHeadPoseData();
+
+	//
+	// Start the selected Tracker-engine
+	//
 	switch (selectedTracker) {
 		case FT_SM_FACEAPI:
-			try {
-				// Initialize the faceAPI Qt library
-				sm::faceapi::qt::initialize();
-				smLoggingSetFileOutputEnable( false );
+			//try {
+			//	// Initialize the faceAPI Qt library
+			//	sm::faceapi::qt::initialize();
+			//	smLoggingSetFileOutputEnable( false );
 
-				// Initialize the API
-				faceapi_scope = new APIScope;
+			//	// Initialize the API
+			//	faceapi_scope = new APIScope();
 
-				// Create head-tracking engine v2 using first detected webcam
-				CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
-				_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
+			//	//if (APIScope::internalQtGuiIsDisabled()){
+			//	//	QMessageBox::warning(0,"faceAPI Error","Something Bad",QMessageBox::Ok,QMessageBox::NoButton);
+			//	//}
 
-				// starts the faceapi engine
-				_engine->start();
-			} 
-			catch (sm::faceapi::Error &e)
-			{
-				/* ERROR with camera */
-				QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
+			//	// Create head-tracking engine v2 using first detected webcam
+			//	CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
+			//	_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
+
+			//	// starts the faceapi engine
+			//	_engine->start();
+			//} 
+			//catch (sm::faceapi::Error &e)
+			//{
+			//	/* ERROR with camera */
+			//	QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
+			//}
+			trackerLib = new QLibrary("FTNoIR_Tracker_SM.dll");
+			
+			getIT = (importGetTracker) trackerLib->resolve("GetTracker");
+			
+			if (getIT) {
+				ITrackerPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pTracker = ptrXyz;
+					pTracker->Initialize();
+					qDebug() << "Tracker::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
 			}
 			break;
 
@@ -681,7 +714,7 @@ void Tracker::run() {
 
 		//for lower cpu load 
 		usleep(10000);
-		yieldCurrentThread(); 
+//		yieldCurrentThread(); 
 	}
 }
 
