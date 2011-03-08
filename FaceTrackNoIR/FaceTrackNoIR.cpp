@@ -398,7 +398,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.5) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.6) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -492,7 +492,7 @@ void FaceTrackNoIR::startTracker( ) {
 
 	// Show the video widget
 	ui.video_frame->show();
-	_display = new VideoDisplayWidget( tracker->getEngine(), ui.video_frame );
+	_display = new VideoDisplayWidget( tracker->getEngine(), ui.video_frame, 0 );
 	l = new QVBoxLayout(ui.video_frame);
 	l->setMargin(0);
 	l->setSpacing(0);

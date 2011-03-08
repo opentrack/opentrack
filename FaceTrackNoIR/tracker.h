@@ -23,7 +23,7 @@
 #ifndef __TRACKER_H__
 #define __TRACKER_H__
 
-#include <sm_api_qt.h>
+//#include <sm_api_qt.h>
 #include <QThread>
 #include <QMessageBox>
 #include <QLineEdit>
@@ -46,7 +46,7 @@
 #include "FTNServer.h"				// FaceTrackNoIR-server (for client-server)
 #include "FTNoIR_cxx_protocolserver.h"
 
-#include "FTNoIR_Tracker_base.h"
+#include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "FTNoIR_Filter_base.h"
 #include "AutoClosePtr.h"
 
@@ -94,14 +94,31 @@ class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 //
 // Structure to hold all variables concerning one of 6 DOF's
 //
-struct THeadPoseDOF {
+class THeadPoseDOF {
+public:
+	void initHeadPoseData(){
+		headPos = 0.0f;
+		initial_headPos = 0.0f;
+		offset_headPos = 0.0f;
+		invert = 0.0f;
+		red = 0.0f;
+		rawList.clear();
+		maxItems = 10.0f;
+		prevPos = 0.0f;
+		prevRawPos = 0.0f;
+//		curve.???
+		NeutralZone = 0;
+		MaxInput = 0;
+		confidence = 0.0f;
+		newSample = FALSE;
+	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
 	float initial_headPos;			// Position on startup (first valid value)
 	float offset_headPos;			// Offset for centering
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
 	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
-	int maxItems;					// Maximum number of elements is rawList
+	int maxItems;					// Maximum number of elements in rawList
 	float prevPos;					// Previous Position
 	float prevRawPos;				// Previous Raw Position
 	QPainterPath curve;				// Bezier curve to translate input -> output
@@ -138,10 +155,10 @@ private:
 	FTNoIR_Client selectedClient;
 	FTNoIR_Face_Tracker selectedTracker;
 
-	/** face api variables **/
-	APIScope *faceapi_scope;
-    QSharedPointer<EngineBase> _engine;
-	smEngineHandle _engine_handle;
+	///** face api variables **/
+//	APIScope *faceapi_scope;
+ //   QSharedPointer<EngineBase> _engine;
+	//smEngineHandle _engine_handle;
 	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
