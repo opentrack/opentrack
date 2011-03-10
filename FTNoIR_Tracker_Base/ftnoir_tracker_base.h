@@ -23,7 +23,8 @@ struct ITracker
     virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize() = 0;
 	virtual void StartTracker() = 0;
-	virtual void GiveHeadPoseData(THeadPoseData *data) = 0;
+	virtual void StopTracker() = 0;
+	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
 };
 
 // Handle type. In C++ language the iterface type is used.

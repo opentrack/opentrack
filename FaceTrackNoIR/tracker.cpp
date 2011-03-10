@@ -52,11 +52,8 @@
 //
 // Definitions for testing purposes
 //
-#define USE_HEADPOSE_CALLBACK
+//#define USE_HEADPOSE_CALLBACK
 //#define USE_DEBUG_CLIENT
-
-//using namespace sm::faceapi;
-//using namespace sm::faceapi::qt;
 
 // Flags
 bool Tracker::confid = false;
@@ -119,30 +116,6 @@ QLibrary *filterLib;
 	//
 	switch (selectedTracker) {
 		case FT_SM_FACEAPI:
-			//try {
-			//	// Initialize the faceAPI Qt library
-			//	sm::faceapi::qt::initialize();
-			//	smLoggingSetFileOutputEnable( false );
-
-			//	// Initialize the API
-			//	faceapi_scope = new APIScope();
-
-			//	//if (APIScope::internalQtGuiIsDisabled()){
-			//	//	QMessageBox::warning(0,"faceAPI Error","Something Bad",QMessageBox::Ok,QMessageBox::NoButton);
-			//	//}
-
-			//	// Create head-tracking engine v2 using first detected webcam
-			//	CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
-			//	_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
-
-			//	// starts the faceapi engine
-			//	_engine->start();
-			//} 
-			//catch (sm::faceapi::Error &e)
-			//{
-			//	/* ERROR with camera */
-			//	QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
-			//}
 			trackerLib = new QLibrary("FTNoIR_Tracker_SM.dll");
 			
 			getIT = (importGetTracker) trackerLib->resolve("GetTracker");
@@ -268,11 +241,6 @@ Tracker::~Tracker() {
 		::CloseHandle( Tracker::hTrackMutex );
 	}
 
-	if (selectedTracker == FT_SM_FACEAPI) {
-		_engine->stop();
-		smAPIQuit();
-	}
-
 	// Stop the started server(s)
 	if (server_Game) {
 		server_Game->deleteLater();
@@ -291,24 +259,8 @@ void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
 	bool DLL_Ok;
 
 	// retrieve pointers to the User Interface and the main Application
-//	headPoseWidget = head;
 	mainApp = parent;
-
-	if (selectedTracker == FT_SM_FACEAPI) {
-		//registers the faceapi callback for receiving headpose data **/
-#       ifdef USE_HEADPOSE_CALLBACK
-		registerHeadPoseCallback();
-#       endif
-
-		// some parameteres [optional]
-		smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
-		smHTSetLipTrackingEnabled( _engine->handle(), false);
-		smLoggingSetFileOutputEnable( false );
-	}
-
-	if (selectedTracker == FT_FTNOIR) {
-		pTracker->StartTracker();
-	}
+	pTracker->StartTracker();
 
 	//
 	// Check if the Protocol-server files were installed OK.
@@ -351,11 +303,6 @@ void Tracker::run() {
 	THeadPoseData current_camera_position;			// Used for filtering
 	THeadPoseData target_camera_position;
 	THeadPoseData new_camera_position;
-
-#       ifndef USE_HEADPOSE_CALLBACK
-	smEngineHeadPoseData head_pose;					// headpose from faceAPI
-	smEngineHeadPoseData temp_head_pose;			// headpose from faceAPI
-#       endif
 
 	current_camera_position.x = 0.0f;
 	current_camera_position.y = 0.0f;
@@ -482,13 +429,11 @@ void Tracker::run() {
 						current_camera_position.pitch = 0.0f;
 						current_camera_position.roll = 0.0f;
 
-						if (_engine->state() != SM_API_ENGINE_STATE_HT_TRACKING) {
-							_engine->start();
-						}
+						pTracker->StartTracker();
 					}
 					else {
 						if (setEngineStop) {						// Only stop engine when option is checked
-							_engine->stop();
+							pTracker->StopTracker();
 						}
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
@@ -524,27 +469,9 @@ void Tracker::run() {
 
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
 
-#       ifndef USE_HEADPOSE_CALLBACK
-            smReturnCode smret = smHTCurrentHeadPose(_engine->handle(), &temp_head_pose);
-			memcpy(&head_pose, &temp_head_pose, sizeof(smEngineHeadPoseData));
-
-			if ( head_pose.confidence > 0 ) {
-
-				Tracker::confid = true;
-
-				// Write the Raw headpose-data and add it to the RawList, for processing...
-				addHeadPose( head_pose );
-			} else {
-				Tracker::confid = false;
-			}
-#       endif
-
-			if (selectedTracker == FT_FTNOIR) {
-				THeadPoseData newpose;
-				pTracker->GiveHeadPoseData(&newpose);
-				addHeadPose(newpose);
-				Tracker::confid = true;
-			}
+			THeadPoseData newpose;
+			Tracker::confid = pTracker->GiveHeadPoseData(&newpose);
+			addHeadPose(newpose);
 
 			//
 			// Get the System-time and substract the time from the previous call.
@@ -714,64 +641,8 @@ void Tracker::run() {
 
 		//for lower cpu load 
 		usleep(10000);
-//		yieldCurrentThread(); 
+		yieldCurrentThread(); 
 	}
-}
-
-/** registers the faceapi headpose callback function **/
-void Tracker::registerHeadPoseCallback() {
-	Q_ASSERT(_engine_handle);
-	smReturnCode error = smHTRegisterHeadPoseCallback( _engine->handle(), 0, receiveHeadPose);
-	//showErrorBox(0, "Register HeadPose Callback", error);
-}
-
-/** Callback function for head-pose - only static methods could be called **/
-void Tracker::receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame)
-{
-	//
-	// Perform actions, when valid data is received from faceAPI.
-	//
-	if (( head_pose.confidence > 0 ) && (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) ) {
-
-		Tracker::confid = true;
-
-		// Write the Raw headpose-data and add it to the RawList, for processing...
-		addHeadPose( head_pose );
-	} else {
-		Tracker::confid = false;
-	}
-
-	ReleaseMutex(Tracker::hTrackMutex);
-}
-
-/** Add the headpose-data to the Lists **/
-void Tracker::addHeadPose( smEngineHeadPoseData head_pose )
-{
-		// Pitch
-		Tracker::Pitch.headPos = head_pose.head_rot.x_rads * 57.295781f;			// degrees
-		addRaw2List ( &Pitch.rawList, Pitch.maxItems, Tracker::Pitch.headPos );
-		Tracker::Pitch.confidence = head_pose.confidence;							// Just this one ...
-		Tracker::Pitch.newSample = true;
-
-		// Yaw
-		Tracker::Yaw.headPos = head_pose.head_rot.y_rads * 57.295781f;				// degrees
-		addRaw2List ( &Yaw.rawList, Yaw.maxItems, Tracker::Yaw.headPos );
-
-		// Roll
-		Tracker::Roll.headPos = head_pose.head_rot.z_rads * 57.295781f;				// degrees
-		addRaw2List ( &Roll.rawList, Roll.maxItems, Tracker::Roll.headPos );
-
-		// X-position
-		Tracker::X.headPos = head_pose.head_pos.x * 100.0f;							// centimeters
-		addRaw2List ( &X.rawList, X.maxItems, Tracker::X.headPos );
-
-		// Y-position
-		Tracker::Y.headPos = head_pose.head_pos.y * 100.0f;							// centimeters
-		addRaw2List ( &Y.rawList, Y.maxItems, Tracker::Y.headPos );
-
-		// Z-position (distance to camera, absolute!)
-		Tracker::Z.headPos = head_pose.head_pos.z * 100.0f;							// centimeters
-		addRaw2List ( &Z.rawList, Z.maxItems, Tracker::Z.headPos );
 }
 
 /** Add the headpose-data to the Lists **/

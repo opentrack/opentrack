@@ -491,12 +491,12 @@ void FaceTrackNoIR::startTracker( ) {
 	tracker = new Tracker ( ui.iconcomboBox->currentIndex(), ui.iconcomboTrackerSource->currentIndex() );
 
 	// Show the video widget
-	ui.video_frame->show();
-	_display = new VideoDisplayWidget( tracker->getEngine(), ui.video_frame, 0 );
-	l = new QVBoxLayout(ui.video_frame);
-	l->setMargin(0);
-	l->setSpacing(0);
-	l->addWidget(_display);
+	//ui.video_frame->show();
+	//_display = new VideoDisplayWidget( tracker->getEngine(), ui.video_frame, 0 );
+	//l = new QVBoxLayout(ui.video_frame);
+	//l->setMargin(0);
+	//l->setSpacing(0);
+	//l->addWidget(_display);
 
 	//
 	// Setup the Tracker and send the settings.
@@ -743,7 +743,7 @@ QLibrary *trackerLib;
     {
 		switch (ui.iconcomboTrackerSource->currentIndex()) {
 		case FT_SM_FACEAPI:										// Face API
-			_engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
+//			_engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
 			break;
 		case FT_FTNOIR:											// FTNoir server
 			qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";

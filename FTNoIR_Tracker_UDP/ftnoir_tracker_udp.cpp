@@ -127,7 +127,15 @@ void FTNoIR_Tracker_UDP::StartTracker()
 	return;
 }
 
-void FTNoIR_Tracker_UDP::GiveHeadPoseData(THeadPoseData *data)
+void FTNoIR_Tracker_UDP::StopTracker()
+{
+	//
+	// OK, the thread is not stopped, doing this. That might be dangerous anyway...
+	//
+	return;
+}
+
+bool FTNoIR_Tracker_UDP::GiveHeadPoseData(THeadPoseData *data)
 {
 	data->x = newHeadPose.x;
 	data->y = newHeadPose.y;
@@ -135,7 +143,7 @@ void FTNoIR_Tracker_UDP::GiveHeadPoseData(THeadPoseData *data)
 	data->yaw = newHeadPose.yaw;
 	data->pitch = newHeadPose.pitch;
 	data->roll = newHeadPose.roll;
-	return;
+	return true;
 }
 
 bool FTNoIR_Tracker_UDP::setParameterValue(const int index, const float newvalue)
