@@ -23,7 +23,6 @@
 #ifndef __TRACKER_H__
 #define __TRACKER_H__
 
-//#include <sm_api_qt.h>
 #include <QThread>
 #include <QMessageBox>
 #include <QLineEdit>
@@ -61,9 +60,6 @@ typedef IFilter *(WINAPI *importGetFilter)(void);
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
 #pragma comment (lib, "dxguid.lib")
-
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
 
 enum AngleName {
 	PITCH = 0,
@@ -155,16 +151,9 @@ private:
 	FTNoIR_Client selectedClient;
 	FTNoIR_Face_Tracker selectedTracker;
 
-	///** face api variables **/
-//	APIScope *faceapi_scope;
- //   QSharedPointer<EngineBase> _engine;
-	//smEngineHandle _engine_handle;
 	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
-	/** static callback method for the head pose tracking **/
-	static void STDCALL receiveHeadPose(void *,smEngineHeadPoseData head_pose, smCameraVideoFrame video_frame);
-	static void addHeadPose( smEngineHeadPoseData head_pose );
 	static void addHeadPose( THeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
@@ -213,13 +202,13 @@ public:
 
 	void setup(QWidget *head, FaceTrackNoIR *parent);
 
-	void registerHeadPoseCallback();
+//	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );
 	QString getGameProgramName();					// Get the ProgramName from the game and display it.
 	void loadSettings();							// Load settings from the INI-file
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
-	QSharedPointer<EngineBase> getEngine() { return _engine; };
+//	QSharedPointer<EngineBase> getEngine() { return _engine; };
 
 	static bool getConfid() { return confid; }
 

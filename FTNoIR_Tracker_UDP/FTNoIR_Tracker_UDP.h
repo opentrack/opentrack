@@ -16,7 +16,8 @@ public:
 	void Release();
     void Initialize();
     void StartTracker();
-	void GiveHeadPoseData(THeadPoseData *data);
+    void StopTracker();
+	bool GiveHeadPoseData(THeadPoseData *data);
 	void loadSettings();
 
 	bool setParameterValue(const int index, const float newvalue);

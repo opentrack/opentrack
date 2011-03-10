@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_sm.h"
 
 using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
+//using namespace sm::faceapi::qt;
 
 FTNoIR_Tracker_SM::FTNoIR_Tracker_SM()
 {
@@ -13,17 +13,12 @@ FTNoIR_Tracker_SM::FTNoIR_Tracker_SM()
 	parameterRange.append(std::pair<float,float>(1000.0f,9999.0f));
 	parameterValueAsFloat.append(0.0f);
 	setParameterValue(kPortAddress,5551.0f);
-
-	newHeadPose.x = 0.0f;
-	newHeadPose.y = 0.0f;
-	newHeadPose.z = 0.0f;
-	newHeadPose.yaw   = 0.0f;
-	newHeadPose.pitch = 0.0f;
-	newHeadPose.roll  = 0.0f;
 }
 
 FTNoIR_Tracker_SM::~FTNoIR_Tracker_SM()
 {
+		_engine->stop();
+		smAPIQuit();
 }
 
 void FTNoIR_Tracker_SM::Release()
@@ -52,8 +47,6 @@ void FTNoIR_Tracker_SM::Initialize()
 		CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
 		_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
 
-		// starts the faceapi engine
-		_engine->start();
 	} 
 	catch (sm::faceapi::Error &e)
 	{
@@ -66,18 +59,43 @@ void FTNoIR_Tracker_SM::Initialize()
 
 void FTNoIR_Tracker_SM::StartTracker()
 {
+
+	// starts the faceapi engine
+	if (_engine->state() != SM_API_ENGINE_STATE_HT_TRACKING) {
+		_engine->start();
+	}
+
+	// some parameteres [optional]
+	smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
+	smHTSetLipTrackingEnabled( _engine->handle(), false);
+	smLoggingSetFileOutputEnable( false );
 	return;
 }
 
-void FTNoIR_Tracker_SM::GiveHeadPoseData(THeadPoseData *data)
+void FTNoIR_Tracker_SM::StopTracker()
 {
-	data->x = newHeadPose.x;
-	data->y = newHeadPose.y;
-	data->z = newHeadPose.z;
-	data->yaw = newHeadPose.yaw;
-	data->pitch = newHeadPose.pitch;
-	data->roll = newHeadPose.roll;
+
+	// stops the faceapi engine
+	_engine->stop();
 	return;
+}
+
+bool FTNoIR_Tracker_SM::GiveHeadPoseData(THeadPoseData *data)
+{
+	smEngineHeadPoseData head_pose;					// headpose from faceAPI
+	smEngineHeadPoseData temp_head_pose;			// headpose from faceAPI
+
+    smReturnCode smret = smHTCurrentHeadPose(_engine->handle(), &temp_head_pose);
+	memcpy(&head_pose, &temp_head_pose, sizeof(smEngineHeadPoseData));
+
+	data->x     = head_pose.head_pos.x * 100.0f;					// From meters to centimeters
+	data->y     = head_pose.head_pos.y * 100.0f;
+	data->z     = head_pose.head_pos.z * 100.0f;
+	data->yaw   = head_pose.head_rot.y_rads * 57.295781f;		// From rads to degrees
+	data->pitch = head_pose.head_rot.x_rads * 57.295781f;
+	data->roll  = head_pose.head_rot.z_rads * 57.295781f;
+
+	return ( head_pose.confidence > 0 );
 }
 
 bool FTNoIR_Tracker_SM::setParameterValue(const int index, const float newvalue)

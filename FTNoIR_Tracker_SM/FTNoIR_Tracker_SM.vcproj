@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SM_API_PATH)\include&quot;;&quot;$(SM_API_CPP_WRAPPERS)\include&quot;;&quot;$(SM_API_QTDIR)\include&quot;;&quot;$(SM_API_WIDGETS)\include&quot;"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SM_API_PATH)\include&quot;;&quot;$(SM_API_CPP_WRAPPERS)\include&quot;;&quot;$(SM_API_WIDGETS)\include&quot;;&quot;$(SM_API_QTLIB)\include&quot;"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;FTNOIR_TRACKER_BASE_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
