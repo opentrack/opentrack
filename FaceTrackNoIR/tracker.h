@@ -94,7 +94,7 @@ class THeadPoseDOF {
 public:
 	void initHeadPoseData(){
 		headPos = 0.0f;
-		initial_headPos = 0.0f;
+//		initial_headPos = 0.0f;
 		offset_headPos = 0.0f;
 		invert = 0.0f;
 		red = 0.0f;
@@ -109,7 +109,7 @@ public:
 		newSample = FALSE;
 	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
-	float initial_headPos;			// Position on startup (first valid value)
+//	float initial_headPos;			// Position on startup (first valid value)
 	float offset_headPos;			// Offset for centering
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
@@ -174,18 +174,15 @@ private:
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
-	static bool set_initial;						// initial headpose is set
 	static bool do_tracking;						// Start/stop tracking, using the shortkey
 	static bool do_center;							// Center head-position, using the shortkey
 	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
 
 	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
 
-
 	static bool useFilter;							// Use EWMA-filtering
 	static bool setZero;							// Set to zero's, when OFF (one-shot)
 	static bool setEngineStop;						// Stop tracker->engine, when OFF
-	static long prevHeadPoseTime;					// Time from previous sample
 	
 	FaceTrackNoIR *mainApp;
 
@@ -197,10 +194,10 @@ protected:
 	void run();
 
 public:
-	Tracker( int clientID, int facetrackerID );
+	Tracker( int clientID, int facetrackerID, FaceTrackNoIR *parent );
 	~Tracker();
 
-	void setup(QWidget *head, FaceTrackNoIR *parent);
+	void setup();
 
 //	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );

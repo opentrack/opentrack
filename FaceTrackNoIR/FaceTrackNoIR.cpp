@@ -34,9 +34,6 @@
 #include "FGServer.h"
 #include "FTNServer.h"
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
-
 //
 // Setup the Main Dialog
 //
@@ -56,7 +53,7 @@ QMainWindow(parent, flags)
 	_curve_config = 0;
 
 	tracker = 0;
-	_display = 0;
+//	_display = 0;
 	l = 0;
 	trayIcon = 0;
 
@@ -202,6 +199,13 @@ void FaceTrackNoIR::updateSettings() {
 	if ( tracker != NULL ) {
 		tracker->loadSettings();
 	}
+}
+
+//
+// Get a pointer to the video-widget, to use in the DLL
+//
+QFrame *FaceTrackNoIR::getVideoWidget() {
+	return ui.video_frame;
 }
 
 /** read the name of the first video-capturing device at start up **/
@@ -488,21 +492,13 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Create the Tracker and setup
 	//
-	tracker = new Tracker ( ui.iconcomboBox->currentIndex(), ui.iconcomboTrackerSource->currentIndex() );
-
-	// Show the video widget
-	//ui.video_frame->show();
-	//_display = new VideoDisplayWidget( tracker->getEngine(), ui.video_frame, 0 );
-	//l = new QVBoxLayout(ui.video_frame);
-	//l->setMargin(0);
-	//l->setSpacing(0);
-	//l->addWidget(_display);
+	tracker = new Tracker ( ui.iconcomboBox->currentIndex(), ui.iconcomboTrackerSource->currentIndex(), this );
 
 	//
 	// Setup the Tracker and send the settings.
 	// This is necessary, because the events are only triggered 'on change'
 	//
-	tracker->setup( ui.headPoseWidget , this);
+	tracker->setup();
 	tracker->setSmoothing ( ui.slideSmoothing->value() );
 	tracker->setUseFilter (ui.chkUseEWMA->isChecked() );
 
@@ -574,15 +570,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	//
 	// Delete the video-display.
 	//
-	if ( _display ) {
-		_display->disconnect();
-		delete _display;
-		_display = 0;
-		delete l;
-		l = 0;
-		qDebug() << "stopTracker says: display deleted";
-	}
-	ui.video_frame->hide();
+//	ui.video_frame->hide();
 
 	if ( tracker ) {
 		qDebug() << "stopTracker says: Deleting tracker!";

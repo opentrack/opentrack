@@ -1,6 +1,9 @@
 #include "ftnoir_tracker_sm.h"
+#include "mainwindow.h"
 
 using namespace sm::faceapi;
+using namespace sm::faceapi::qt;
+using namespace sm::faceapi::samplecode;
 //using namespace sm::faceapi::qt;
 
 FTNoIR_Tracker_SM::FTNoIR_Tracker_SM()
@@ -17,16 +20,29 @@ FTNoIR_Tracker_SM::FTNoIR_Tracker_SM()
 
 FTNoIR_Tracker_SM::~FTNoIR_Tracker_SM()
 {
-		_engine->stop();
-		smAPIQuit();
+	qDebug() << "stopTracker says: terminating";
+	//if ( _display ) {
+	//	_display->disconnect();
+	//	qDebug() << "stopTracker says: display disconnected";
+	//	delete _display;
+	//	qDebug() << "stopTracker says: display deleted";
+	//	_display = 0;
+	//	delete l;
+	//	l = 0;
+	//	qDebug() << "stopTracker says: l deleted";
+	//}
+
+	_engine->stop();
+	smAPIQuit();
 }
 
 void FTNoIR_Tracker_SM::Release()
 {
+	qDebug() << "FTNoIR_Tracker_SM::Release says: Starting ";
     delete this;
 }
 
-void FTNoIR_Tracker_SM::Initialize()
+void FTNoIR_Tracker_SM::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker_SM::Initialize says: Starting ";
 	loadSettings();
@@ -54,10 +70,27 @@ void FTNoIR_Tracker_SM::Initialize()
 		QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
 	}
 
+
+
+	// Show the video widget
+	qDebug() << "FTNoIR_Tracker_SM::Initialize says: videoframe = " << videoframe;
+
+	// QMainWindow derived class. See mainwindow.h
+    QSharedPointer<CameraBase> camera;
+    main_window = new MainWindow(camera,_engine,0);
+    main_window->show();
+
+	//videoframe->show();
+	//_display = new VideoDisplayWidget( _engine, videoframe, 0 );
+	//l = new QVBoxLayout(videoframe);
+	//l->setMargin(0);
+	//l->setSpacing(0);
+	//l->addWidget(_display);
+
 	return;
 }
 
-void FTNoIR_Tracker_SM::StartTracker()
+void FTNoIR_Tracker_SM::StartTracker( HWND parent_window )
 {
 
 	// starts the faceapi engine
@@ -75,6 +108,7 @@ void FTNoIR_Tracker_SM::StartTracker()
 void FTNoIR_Tracker_SM::StopTracker()
 {
 
+	qDebug() << "FTNoIR_Tracker_SM::StopTracker says: Starting ";
 	// stops the faceapi engine
 	_engine->stop();
 	return;

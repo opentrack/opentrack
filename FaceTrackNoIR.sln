@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Filter_EWMA2", "FTNo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_SM", "FTNoIR_Tracker_SM\FTNoIR_Tracker_SM.vcproj", "{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_FaceAPI_EXE", "faceAPI\FaceAPI2FSX.vcproj", "{EF743D32-0980-44D9-BA9E-B9D2456251AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -40,6 +42,10 @@ Global
 		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Debug|Win32.Build.0 = Debug|Win32
 		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Release|Win32.ActiveCfg = Release|Win32
 		{26346BCF-92A5-47A7-B4CF-73C402F7C3AD}.Release|Win32.Build.0 = Release|Win32
+		{EF743D32-0980-44D9-BA9E-B9D2456251AC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF743D32-0980-44D9-BA9E-B9D2456251AC}.Debug|Win32.Build.0 = Debug|Win32
+		{EF743D32-0980-44D9-BA9E-B9D2456251AC}.Release|Win32.ActiveCfg = Release|Win32
+		{EF743D32-0980-44D9-BA9E-B9D2456251AC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

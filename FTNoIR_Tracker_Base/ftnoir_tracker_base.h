@@ -3,6 +3,7 @@
 
 #include "ftnoir_tracker_base_global.h"
 #include <QtGui/QWidget>
+#include <QtGui/QFrame>
 
 //
 // x,y,z position in centimetres, yaw, pitch and roll in degrees...
@@ -21,8 +22,8 @@ struct THeadPoseData {
 struct ITracker
 {
     virtual void Release() = 0;									// Member required to enable Auto-remove
-	virtual void Initialize() = 0;
-	virtual void StartTracker() = 0;
+	virtual void Initialize( QFrame *videoframe ) = 0;
+	virtual void StartTracker( HWND parent_window ) = 0;
 	virtual void StopTracker() = 0;
 	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
 };

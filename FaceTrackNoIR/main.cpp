@@ -34,9 +34,6 @@
 #include <QDebug>
 #include <QList>
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
-
 int main(int argc, char *argv[])
 {
 ////	QApplication a(argc, argv);

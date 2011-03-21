@@ -14,8 +14,8 @@ public:
 	~FTNoIR_Tracker_UDP();
 
 	void Release();
-    void Initialize();
-    void StartTracker();
+    void Initialize( QFrame *videoframe );
+    void StartTracker( HWND parent_window );
     void StopTracker();
 	bool GiveHeadPoseData(THeadPoseData *data);
 	void loadSettings();
