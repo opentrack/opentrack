@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QtMain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib smft32.lib smftcpp.lib smftqt.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib FSUIPC_User.lib"
+				AdditionalDependencies="QtMain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib FSUIPC_User.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories=""
 				GenerateManifest="true"

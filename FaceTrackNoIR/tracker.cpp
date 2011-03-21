@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110313 - WVR: Removed 'set_initial'. Less is more.
 		20110109 - WVR: Added setZero option to define behaviour after STOP tracking via shortkey.
 		20110104 - WVR: Removed a few nasty bugs (it was impossible to stop tracker without crash).
 		20101224 - WVR: Removed the QThread inheritance of the Base Class for the protocol-servers.
@@ -57,7 +58,6 @@
 
 // Flags
 bool Tracker::confid = false;
-bool Tracker::set_initial = false;
 bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
 bool Tracker::do_inhibit = false;
@@ -66,7 +66,6 @@ bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
 
-long Tracker::prevHeadPoseTime = 0;
 THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw;
 THeadPoseDOF Tracker::Roll;
@@ -83,12 +82,15 @@ IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
 
 
 /** constructor **/
-Tracker::Tracker( int clientID, int facetrackerID ) {
+Tracker::Tracker( int clientID, int facetrackerID, FaceTrackNoIR *parent ) {
 importGetTracker getIT;
 QLibrary *trackerLib;
 importGetFilter getFilter;
 QLibrary *filterLib;
+QFrame *video_frame;
 
+	// Retieve the pointer to the parent
+	mainApp = parent;
 
 	// Remember the selected client, from the ListBox
 	// If the Tracker runs, this can NOT be changed...
@@ -112,6 +114,13 @@ QLibrary *filterLib;
 	Tracker::Z.initHeadPoseData();
 
 	//
+	// Locate the video-frame, for the DLL
+	//
+	video_frame = 0;
+	video_frame = mainApp->getVideoWidget();
+	qDebug() << "Tracker::setup VideoFrame = " << video_frame;
+
+	//
 	// Start the selected Tracker-engine
 	//
 	switch (selectedTracker) {
@@ -125,7 +134,7 @@ QLibrary *filterLib;
 				if (ptrXyz)
 				{
 					pTracker = ptrXyz;
-					pTracker->Initialize();
+					pTracker->Initialize( video_frame );
 					qDebug() << "Tracker::setup Function Resolved!";
 				}
 			}
@@ -144,7 +153,7 @@ QLibrary *filterLib;
 				if (ptrXyz)
 				{
 					pTracker = ptrXyz;
-					pTracker->Initialize();
+					pTracker->Initialize( video_frame );
 					qDebug() << "Tracker::setup Function Resolved!";
 				}
 			}
@@ -255,12 +264,11 @@ Tracker::~Tracker() {
 }
 
 /** setting up the tracker engine **/
-void Tracker::setup(QWidget *head, FaceTrackNoIR *parent) {
+void Tracker::setup() {
 	bool DLL_Ok;
 
 	// retrieve pointers to the User Interface and the main Application
-	mainApp = parent;
-	pTracker->StartTracker();
+	pTracker->StartTracker( mainApp->winId() );
 
 	//
 	// Check if the Protocol-server files were installed OK.
@@ -296,13 +304,11 @@ void Tracker::run() {
 	bool lastStartStopKey = false;
 	bool lastInhibitKey = false;
 
-	SYSTEMTIME now;
-	long newHeadPoseTime;
-	float dT;
-
 	THeadPoseData current_camera_position;			// Used for filtering
 	THeadPoseData target_camera_position;
 	THeadPoseData new_camera_position;
+
+	Tracker::do_center = true;						// Center initially
 
 	current_camera_position.x = 0.0f;
 	current_camera_position.y = 0.0f;
@@ -406,7 +412,6 @@ void Tracker::run() {
 					if (Tracker::do_tracking) {
 						Tracker::do_center = true;
 
-						Tracker::set_initial = false;
 						Tracker::confid = false;
 
 						Pitch.rawList.clear();
@@ -429,7 +434,7 @@ void Tracker::run() {
 						current_camera_position.pitch = 0.0f;
 						current_camera_position.roll = 0.0f;
 
-						pTracker->StartTracker();
+						pTracker->StartTracker( mainApp->winId() );
 					}
 					else {
 						if (setEngineStop) {						// Only stop engine when option is checked
@@ -471,49 +476,21 @@ void Tracker::run() {
 
 			THeadPoseData newpose;
 			Tracker::confid = pTracker->GiveHeadPoseData(&newpose);
-			addHeadPose(newpose);
-
-			//
-			// Get the System-time and substract the time from the previous call.
-			// dT will be used for the EWMA-filter.
-			//
-			GetSystemTime ( &now );
-			newHeadPoseTime = (((now.wHour * 3600) + (now.wMinute * 60) + now.wSecond) * 1000) + now.wMilliseconds;
-			dT = (newHeadPoseTime - Tracker::prevHeadPoseTime) / 1000.0f;
-
-			// Remember time for next call
-			Tracker::prevHeadPoseTime = newHeadPoseTime;
-
-			//if the confidence is good enough the headpose will be updated **/
-			if (Tracker::confid) {
-
-				//
-				// Most games need an offset to the initial position and NOT the
-				// absolute distance to the camera: so remember the initial distance
-				// to substract that later...
-				//
-				if(Tracker::set_initial == false) {
-					Tracker::Pitch.initial_headPos = Tracker::Pitch.headPos;
-					Tracker::Yaw.initial_headPos = Tracker::Yaw.headPos;
-					Tracker::Roll.initial_headPos = Tracker::Roll.headPos;
-					Tracker::X.initial_headPos = Tracker::X.headPos;
-					Tracker::Y.initial_headPos = Tracker::Y.headPos;
-					Tracker::Z.initial_headPos = Tracker::Z.headPos;
-					MessageBeep (MB_ICONASTERISK);
-					Tracker::set_initial = true;
-				}
+			if ( Tracker::confid ) {
+				addHeadPose(newpose);
 			}
 
 			//
 			// If Center is pressed, copy the current values to the offsets.
 			//
-			if (Tracker::do_center && Tracker::set_initial) {
-				Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList )- Tracker::Pitch.initial_headPos;
-				Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList ) - Tracker::Yaw.initial_headPos;
-				Roll.offset_headPos = getSmoothFromList( &Roll.rawList ) - Tracker::Roll.initial_headPos;
-				X.offset_headPos = getSmoothFromList( &X.rawList ) - Tracker::X.initial_headPos;
-				Y.offset_headPos = getSmoothFromList( &Y.rawList ) - Tracker::Y.initial_headPos;
-				Z.offset_headPos = getSmoothFromList( &Z.rawList ) - Tracker::Z.initial_headPos;
+			if (Tracker::confid && Tracker::do_center) {
+				Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
+				Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
+				Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
+				X.offset_headPos = getSmoothFromList( &X.rawList );
+				Y.offset_headPos = getSmoothFromList( &Y.rawList );
+				Z.offset_headPos = getSmoothFromList( &Z.rawList );
+				MessageBeep (MB_ICONASTERISK);
 
 				Tracker::do_center = false;
 			}
@@ -521,23 +498,23 @@ void Tracker::run() {
 			if (Tracker::do_tracking && Tracker::confid) {
 
 				// Pitch
-				target_camera_position.x = getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos;
-				target_camera_position.y = getSmoothFromList( &Y.rawList ) - Y.offset_headPos - Y.initial_headPos;
-				target_camera_position.z = getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Z.initial_headPos;
-				target_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos;
-				target_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos - Yaw.initial_headPos;
-				target_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos - Roll.initial_headPos;
+				target_camera_position.x     = getSmoothFromList( &X.rawList ) - X.offset_headPos;
+				target_camera_position.y     = getSmoothFromList( &Y.rawList ) - Y.offset_headPos;
+				target_camera_position.z     = getSmoothFromList( &Z.rawList ) - Z.offset_headPos;
+				target_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+				target_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
+				target_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
 
 				if (Tracker::useFilter && pFilter) {
 					pFilter->FilterHeadPoseData(&current_camera_position, &target_camera_position, &new_camera_position, Tracker::Pitch.newSample);
 				}
 				else {
-					new_camera_position.x = getSmoothFromList( &X.rawList ) - X.offset_headPos - X.initial_headPos;
-					new_camera_position.y = getSmoothFromList( &Y.rawList ) - Y.offset_headPos - Y.initial_headPos;
-					new_camera_position.z = getSmoothFromList( &Z.rawList ) - Z.offset_headPos - Z.initial_headPos;
-					new_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos - Pitch.initial_headPos;
-					new_camera_position.yaw = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos - Yaw.initial_headPos;
-					new_camera_position.roll = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos - Roll.initial_headPos;
+					new_camera_position.x     = getSmoothFromList( &X.rawList ) - X.offset_headPos;
+					new_camera_position.y     = getSmoothFromList( &Y.rawList ) - Y.offset_headPos;
+					new_camera_position.z     = getSmoothFromList( &Z.rawList ) - Z.offset_headPos;
+					new_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+					new_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
+					new_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
 				}
 				new_camera_position.x = X.invert * getOutputFromCurve(&X.curve, new_camera_position.x, X.NeutralZone, X.MaxInput);
 				new_camera_position.y = Y.invert * getOutputFromCurve(&Y.curve, new_camera_position.y, Y.NeutralZone, Y.MaxInput);
@@ -757,13 +734,13 @@ void Tracker::setPowCurve( int x ) {
 // Set the filter-value from the GUI.
 //
 void Tracker::getHeadPose( THeadPoseData *data ) {
-	data->x = Tracker::X.headPos - Tracker::X.initial_headPos;						// centimeters
-	data->y = Tracker::Y.headPos - Tracker::Y.initial_headPos;
-	data->z = Tracker::Z.headPos - Tracker::Z.initial_headPos;
+	data->x = Tracker::X.headPos - Tracker::X.offset_headPos;				// centimeters
+	data->y = Tracker::Y.headPos - Tracker::Y.offset_headPos;
+	data->z = Tracker::Z.headPos - Tracker::Z.offset_headPos;
 
-	data->pitch = Tracker::Pitch.headPos- Tracker::Pitch.initial_headPos;			// degrees
-	data->yaw = Tracker::Yaw.headPos- Tracker::Yaw.initial_headPos;
-	data->roll = Tracker::Roll.headPos - Tracker::Roll.initial_headPos;
+	data->pitch = Tracker::Pitch.headPos- Tracker::Pitch.offset_headPos;	// degrees
+	data->yaw = Tracker::Yaw.headPos- Tracker::Yaw.offset_headPos;
+	data->roll = Tracker::Roll.headPos - Tracker::Roll.offset_headPos;
 }
 
 //

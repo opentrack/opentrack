@@ -97,7 +97,7 @@ void FTNoIR_Tracker_UDP::Release()
     delete this;
 }
 
-void FTNoIR_Tracker_UDP::Initialize()
+void FTNoIR_Tracker_UDP::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker_UDP::Initialize says: Starting ";
 	loadSettings();
@@ -121,7 +121,7 @@ void FTNoIR_Tracker_UDP::Initialize()
 	return;
 }
 
-void FTNoIR_Tracker_UDP::StartTracker()
+void FTNoIR_Tracker_UDP::StartTracker( HWND parent_window )
 {
 	start( QThread::TimeCriticalPriority );
 	return;

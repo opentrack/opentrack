@@ -50,11 +50,11 @@ typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDia
 typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
 
 
-#include <sm_api_qt.h>
+//#include <sm_api_qt.h>
 #include <Dshow.h>
 
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
+//using namespace sm::faceapi;
+//using namespace sm::faceapi::qt;
 
 class Tracker;				// pre-define class to avoid circular includes
 
@@ -72,6 +72,8 @@ public:
 	void getGameProgramName();					// Get the ProgramName from the game and display it.
 	void updateSettings();						// Update the settings (let Tracker read INI-file).
 
+	QFrame *getVideoWidget();					// Get a pointer to the video-widget, to use in the DLL
+
 private:
 	Ui::FaceTrackNoIRClass ui;
 	Tracker *tracker;
@@ -82,7 +84,7 @@ private:
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 
 	/** face api variables **/
-	VideoDisplayWidget *_display;
+//	VideoDisplayWidget *_display;
 	QVBoxLayout *l;
 	QWidget *_engine_controls;
 	QWidget *_server_controls;
