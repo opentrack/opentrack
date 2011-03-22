@@ -25,7 +25,7 @@ namespace sm
             bool g_ctrl_c_detected(false);
             bool g_do_head_pose_printing(false);
             bool g_do_face_data_printing(false);
-            unsigned short g_overlay_flags(SM_API_VIDEO_DISPLAY_HEAD_MESH);
+            unsigned short g_overlay_flags(SM_API_VIDEO_DISPLAY_HEAD_MESH | SM_API_VIDEO_DISPLAY_PERFORMANCE);
 
             // CTRL-C handler function
             void __cdecl CtrlCHandler(int)
@@ -324,20 +324,20 @@ namespace sm
             {
                 HANDLE console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
                 // Buffer of 255 x 1024
-                ////COORD buffer_size;
-                ////buffer_size.X = 255;
-                ////buffer_size.Y = 1024;
-                ////SetConsoleScreenBufferSize(console_handle, buffer_size);
-                ////// Window size of 120 x 50
-                ////SMALL_RECT window_size;
-                ////window_size.Left = 0;
-                ////window_size.Right = 20;
-                ////window_size.Top = 0;
-                ////window_size.Bottom = 20;
-                ////SetConsoleWindowInfo(console_handle,TRUE,&window_size);
+                COORD buffer_size;
+                buffer_size.X = 255;
+                buffer_size.Y = 1024;
+                SetConsoleScreenBufferSize(console_handle, buffer_size);
+                // Window size of 120 x 50
+                SMALL_RECT window_size;
+                window_size.Left = 0;
+                window_size.Right = 120;
+                window_size.Top = 0;
+                window_size.Bottom = 50;
+                SetConsoleWindowInfo(console_handle,TRUE,&window_size);
                 // Green text
                 SetConsoleTextAttribute(console_handle, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-				ShowWindow(GetConsoleWindow(), SW_HIDE);
+//				ShowWindow(GetConsoleWindow(), SW_HIDE);
             }
         }
     }

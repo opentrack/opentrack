@@ -21,3 +21,8 @@ struct SMMemMap {
 };
 typedef SMMemMap * PSMMemMap;
 
+enum FTNoIR_Tracker_Command {
+	FT_SM_START = 10,
+	FT_SM_STOP  = 20,
+	FT_SM_EXIT  = 100
+};

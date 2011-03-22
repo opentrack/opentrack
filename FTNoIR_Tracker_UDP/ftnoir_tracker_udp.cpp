@@ -127,11 +127,12 @@ void FTNoIR_Tracker_UDP::StartTracker( HWND parent_window )
 	return;
 }
 
-void FTNoIR_Tracker_UDP::StopTracker()
+void FTNoIR_Tracker_UDP::StopTracker( bool exit )
 {
 	//
 	// OK, the thread is not stopped, doing this. That might be dangerous anyway...
 	//
+	if (exit || !exit) return;
 	return;
 }
 

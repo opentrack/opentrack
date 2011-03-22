@@ -234,6 +234,11 @@ QFrame *video_frame;
 /** destructor empty **/
 Tracker::~Tracker() {
 
+	// Stop the Tracker
+	if (pTracker) {
+		pTracker->StopTracker( true );
+	}
+
 	// Trigger thread to stop
 	::SetEvent(m_StopThread);
 
@@ -438,7 +443,7 @@ void Tracker::run() {
 					}
 					else {
 						if (setEngineStop) {						// Only stop engine when option is checked
-							pTracker->StopTracker();
+							pTracker->StopTracker( false );
 						}
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
