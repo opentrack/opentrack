@@ -16,7 +16,7 @@ public:
 	void Release();
     void Initialize( QFrame *videoframe );
     void StartTracker( HWND parent_window );
-    void StopTracker();
+    void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);
 	void loadSettings();
 

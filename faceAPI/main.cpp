@@ -1,9 +1,33 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	FaceAPI2FSX program implementation
-//	Merges the old CockpitCamera.cpp and TestAppConsole.cpp into a single file
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/********************************************************************************
+* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
+*					gamers from Holland, who don't like to pay much for			*
+*					head-tracking.												*
+*																				*
+* Copyright (C) 2011	Wim Vriend (Developing)									*
+*						Ron Hendriks (Researching and Testing)					*
+*																				*
+* Homepage																		*
+*																				*
+* This program is free software; you can redistribute it and/or modify it		*
+* under the terms of the GNU General Public License as published by the			*
+* Free Software Foundation; either version 3 of the License, or (at your		*
+* option) any later version.													*
+*																				*
+* This program is distributed in the hope that it will be useful, but			*
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
+* more details.																	*
+*																				*
+* You should have received a copy of the GNU General Public License along		*
+* with this program; if not, see <http://www.gnu.org/licenses/>.				*
+*********************************************************************************/
+/*
+	Modifications (last one on top):
+		20110322 - WVR: Somehow the video-widget of faceAPI version 3.2.6. does not
+					    work with FaceTrackNoIR (Qt issue?!). To be able to use 
+						release 3.2.6 of faceAPI anyway, this console-app is used.
+						It exchanges data with FaceTrackNoIR via shared-memory...
+*/
 
 //Precompiled header
 #include "stdafx.h"
@@ -184,7 +208,8 @@ smCameraHandle createFirstCamera()
 // The main function: setup a tracking engine and show a video window, then loop on the keyboard.
 void run()
 {
-    // Capture control-C
+	char msg[100];
+	// Capture control-C
 //    signal(SIGINT, CtrlCHandler);
 
     // Make the console window a bit bigger (see utils.h)
@@ -295,7 +320,12 @@ void run()
 
     // Create and show a video-display window
     smVideoDisplayHandle video_display_handle = 0;
-    THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,0,TRUE));
+	if (pMemData) {
+		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,(smWindowHandle) pMemData->handle,TRUE));
+	}
+	else {
+		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,0,TRUE));
+	}
 
     // Setup the VideoDisplay
     THROW_ON_ERROR(smVideoDisplaySetFlags(video_display_handle,g_overlay_flags));
@@ -304,9 +334,7 @@ void run()
     smWindowHandle win_handle = 0;
     THROW_ON_ERROR(smVideoDisplayGetWindowHandle(video_display_handle,&win_handle));    
     SetWindowText(win_handle, _T("faceAPI Video-widget"));
-
-    // Start tracking
-    THROW_ON_ERROR(smEngineStart(engine_handle));
+	MoveWindow(win_handle, 0, 0, 250, 150, true);
 
     // Loop on the keyboard
     while (processKeyPress(engine_handle, video_display_handle) && !stopCommand)
@@ -335,7 +363,37 @@ void run()
         // Prevent CPU overload in our simple loop.
         const int frame_period_ms = 10;
         Sleep(frame_period_ms); 
-    }
+
+		//
+		// Process the command sent by FaceTrackNoIR.
+		//
+		sprintf_s(msg, "Command: %d\n", pMemData->command);
+		OutputDebugStringA(msg);
+		if (pMemData) {
+			switch (pMemData->command) {
+				case FT_SM_START:
+					THROW_ON_ERROR(smEngineStart(engine_handle));		// Start tracking
+					pMemData->command = 0;								// Reset
+					break;
+
+				case FT_SM_STOP:
+					THROW_ON_ERROR(smEngineStop(engine_handle));		// Stop tracking
+					pMemData->command = 0;								// Reset
+					break;
+
+				case FT_SM_EXIT:
+					THROW_ON_ERROR(smEngineStop(engine_handle));		// Stop tracking
+					stopCommand = TRUE;
+					pMemData->command = 0;								// Reset
+					break;
+
+				default:
+					pMemData->command = 0;								// Reset
+					// should never be reached
+				break;
+			}
+		}
+	}			// While(1)
 
     // Destroy engine
     THROW_ON_ERROR(smEngineDestroy(&engine_handle));
@@ -382,33 +440,20 @@ int _tmain(int /*argc*/, _TCHAR** /*argv*/)
 //
 void updateHeadPose(smEngineHeadPoseData* temp_head_pose)
 {
-	char msg[100];
-
-	OutputDebugString(_T("updateHeadPose() says: Starting Function\n"));
-
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
 	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
 		
-		OutputDebugString(_T("updateHeadPose() says: Writing Data\n"));
-
 		//
 		// Copy the Raw measurements directly to the client.
 		//
 		if (temp_head_pose->confidence > 0.0f)
 		{
 			memcpy(&pMemData->data.new_pose,temp_head_pose,sizeof(smEngineHeadPoseData));
-			sprintf(msg, "HeadPose Yaw: %.2f\n", pMemData->data.new_pose.head_rot.x_rads);
-			OutputDebugStringA(msg);
-		}
-
-		if (pMemData->command == 100) {
-			stopCommand = TRUE;
 		}
 		ReleaseMutex(hSMMutex);
 	}
-
 };
 
 //

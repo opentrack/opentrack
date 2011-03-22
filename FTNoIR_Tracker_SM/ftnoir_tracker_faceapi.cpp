@@ -18,22 +18,22 @@ FTNoIR_Tracker_SM::~FTNoIR_Tracker_SM()
 	qDebug() << "stopTracker says: terminating";
 
 	if ( pMemData != NULL ) {
-		pMemData->command = 100;					// Issue 'stop' command
 		UnmapViewOfFile ( pMemData );
 	}
 	
 	CloseHandle( hSMMutex );
 	CloseHandle( hSMMemMap );
 	hSMMemMap = 0;
-
-	//_engine->stop();
-	//smAPIQuit();
 }
 
 void FTNoIR_Tracker_SM::Release()
 {
 	qDebug() << "FTNoIR_Tracker_SM::Release says: Starting ";
-    delete this;
+
+	if ( pMemData != NULL ) {
+		pMemData->command = FT_SM_EXIT;			// Issue 'exit' command
+	}
+	delete this;
 }
 
 void FTNoIR_Tracker_SM::Initialize( QFrame *videoframe )
@@ -48,91 +48,57 @@ void FTNoIR_Tracker_SM::Initialize( QFrame *videoframe )
 		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
 	}
 
+	if ( pMemData != NULL ) {
+		pMemData->command = 0;						// Reset any and all commands
+		pMemData->handle = videoframe->winId();		// Handle of Videoframe widget
+	}
+
 	//
 	// Start FTNoIR_FaceAPI_EXE.exe. The exe contains all faceAPI-stuff and is non-Qt...
 	//
-		QString program = "FTNoIR_FaceAPI_EXE.exe";
- 		faceAPI = new QProcess(0);
-		faceAPI->start(program);
-
-	////try {
-	////	// Initialize the faceAPI Qt library
-	////	sm::faceapi::qt::initialize();
-	////	smLoggingSetFileOutputEnable( false );
-
-	////	// Initialize the API
-	////	faceapi_scope = new APIScope();
-
-	////	//if (APIScope::internalQtGuiIsDisabled()){
-	////	//	QMessageBox::warning(0,"faceAPI Error","Something Bad",QMessageBox::Ok,QMessageBox::NoButton);
-	////	//}
-
-	////	// Create head-tracking engine v2 using first detected webcam
-	////	CameraInfo::registerType(SM_API_CAMERA_TYPE_WDM);
-	////	_engine = QSharedPointer<HeadTrackerV2>(new HeadTrackerV2());	
-
-	////} 
-	////catch (sm::faceapi::Error &e)
-	////{
-	////	/* ERROR with camera */
-	////	QMessageBox::warning(0,"faceAPI Error",e.what(),QMessageBox::Ok,QMessageBox::NoButton);
-	////}
-
-
+	QString program = "FTNoIR_FaceAPI_EXE.exe";
+	faceAPI = new QProcess(0);
+	faceAPI->start(program);
 
 	// Show the video widget
 	qDebug() << "FTNoIR_Tracker_SM::Initialize says: videoframe = " << videoframe;
 
-	//// QMainWindow derived class. See mainwindow.h
- //   QSharedPointer<CameraBase> camera;
- //   main_window = new MainWindow(camera,_engine,0);
- //   main_window->show();
-
-	//videoframe->show();
-	//_display = new VideoDisplayWidget( _engine, videoframe, 0 );
-	//l = new QVBoxLayout(videoframe);
-	//l->setMargin(0);
-	//l->setSpacing(0);
-	//l->addWidget(_display);
-
+	videoframe->show();
 	return;
 }
 
 void FTNoIR_Tracker_SM::StartTracker( HWND parent_window )
 {
-
-	//// starts the faceapi engine
-	//if (_engine->state() != SM_API_ENGINE_STATE_HT_TRACKING) {
-	//	_engine->start();
-	//}
-
-	//// some parameteres [optional]
-	//smHTSetHeadPosePredictionEnabled( _engine->handle(), false);
-	//smHTSetLipTrackingEnabled( _engine->handle(), false);
-	//smLoggingSetFileOutputEnable( false );
+	if ( pMemData != NULL ) {
+		pMemData->command = FT_SM_START;				// Start command
+	}
 	return;
 }
 
-void FTNoIR_Tracker_SM::StopTracker()
+void FTNoIR_Tracker_SM::StopTracker( bool exit )
 {
 
 	qDebug() << "FTNoIR_Tracker_SM::StopTracker says: Starting ";
 	// stops the faceapi engine
-////	_engine->stop();
+	if ( pMemData != NULL ) {
+//		if (exit == true) {
+			pMemData->command = (exit) ? FT_SM_EXIT : FT_SM_STOP;			// Issue 'stop' command
+		//}
+		//else {
+		//	pMemData->command = FT_SM_STOP;				// Issue 'stop' command
+		//}
+	}
 	return;
 }
 
 bool FTNoIR_Tracker_SM::GiveHeadPoseData(THeadPoseData *data)
 {
-
-	qDebug() << "FTNoIR_Tracker_SM::GiveHeadPoseData says: Starting ";
-
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
 	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
 
-		qDebug() << "FTNoIR_Tracker_SM::GiveHeadPoseData says: Retrieving data.";
+//		qDebug() << "FTNoIR_Tracker_SM::GiveHeadPoseData says: Retrieving data.";
 		
 		//
 		// Copy the measurements to FaceTrackNoIR.

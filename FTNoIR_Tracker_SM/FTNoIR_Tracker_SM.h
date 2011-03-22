@@ -19,7 +19,7 @@ public:
 	void Release();
     void Initialize( QFrame *videoframe );
     void StartTracker( HWND parent_window );
-    void StopTracker();
+    void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
 	void loadSettings();
 	bool SMCreateMapping();
