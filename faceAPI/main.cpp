@@ -10,6 +10,7 @@
 
 //FaceAPI headers
 #include "sm_api.h"
+#include "ftnoir_tracker_sm_types.h"
 #include "utils.h"
 
 //local headers
@@ -20,33 +21,13 @@ using namespace std;
 using namespace sm::faceapi::samplecode;
 
 //
-// Definitions for the Shared Memory to send the data to FaceTrackNoIR
-//
-static const char* SM_MM_DATA = "SM_SharedMem";
-static const char* SM_FACEAPI = "SM_FaceAPI";
-static const char* SM_MUTEX = "SM_Mutex";
-
-struct TFaceData {
-	int DataID;
-	smEngineHeadPoseData new_pose;
-};
-typedef TFaceData * PFaceData;
-
-struct SMMemMap {
-	int command;					// Command from FaceTrackNoIR
-	int status;						// Status from faceAPI
-	TFaceData data;
-	HANDLE handle;
-};
-typedef SMMemMap * PSMMemMap;
-
-//
 // global variables
 //
 HANDLE					hSMMemMap = NULL;
 SMMemMap				*pMemData;
 HANDLE					hSMMutex;
 smEngineHeadPoseData	new_head_pose;
+bool					stopCommand = false;
 
 //enums
 enum GROUP_ID
@@ -328,7 +309,7 @@ void run()
     THROW_ON_ERROR(smEngineStart(engine_handle));
 
     // Loop on the keyboard
-    while (processKeyPress(engine_handle, video_display_handle))
+    while (processKeyPress(engine_handle, video_display_handle) && !stopCommand)
     {
         // Read and print the current head-pose (if not using the callback mechanism)
 		#if (USE_HEADPOSE_CALLBACK==0)
@@ -360,6 +341,21 @@ void run()
     THROW_ON_ERROR(smEngineDestroy(&engine_handle));
     // Destroy video display
     THROW_ON_ERROR(smVideoDisplayDestroy(&video_display_handle));
+
+	if ( pMemData != NULL ) {
+		UnmapViewOfFile ( pMemData );
+	}
+	
+	if (hSMMutex != 0) {
+		CloseHandle( hSMMutex );
+	}
+	hSMMutex = 0;
+	
+	if (hSMMemMap != 0) {
+		CloseHandle( hSMMemMap );
+	}
+	hSMMemMap = 0;
+
 } // run()
 
 // Application entry point
@@ -386,17 +382,29 @@ int _tmain(int /*argc*/, _TCHAR** /*argv*/)
 //
 void updateHeadPose(smEngineHeadPoseData* temp_head_pose)
 {
+	char msg[100];
+
+	OutputDebugString(_T("updateHeadPose() says: Starting Function\n"));
+
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
 	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
+		
+		OutputDebugString(_T("updateHeadPose() says: Writing Data\n"));
 
 		//
 		// Copy the Raw measurements directly to the client.
 		//
 		if (temp_head_pose->confidence > 0.0f)
 		{
-			memcpy(&pMemData->data,temp_head_pose,sizeof(smEngineHeadPoseData));
+			memcpy(&pMemData->data.new_pose,temp_head_pose,sizeof(smEngineHeadPoseData));
+			sprintf(msg, "HeadPose Yaw: %.2f\n", pMemData->data.new_pose.head_rot.x_rads);
+			OutputDebugStringA(msg);
+		}
+
+		if (pMemData->command == 100) {
+			stopCommand = TRUE;
 		}
 		ReleaseMutex(hSMMutex);
 	}
