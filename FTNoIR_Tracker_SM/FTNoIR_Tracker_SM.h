@@ -1,18 +1,14 @@
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "..\ftnoir_tracker_base\ftnoir_tracker_sm_types.h"
 #include "ui_FTNoIR_SMClientcontrols.h"
-#include "mainwindow.h"
 
-#include "sm_api_qt.h"
 #include <QMessageBox>
 #include <QSettings>
+#include <QProcess>
 #include "Windows.h"
 #include "math.h"
 
 using namespace std;
-//using namespace sm::faceapi::samplecode;
-using namespace sm::faceapi;
-using namespace sm::faceapi::qt;
-using namespace sm::faceapi::samplecode;
 
 class FTNoIR_Tracker_SM : public ITracker
 {
@@ -26,17 +22,28 @@ public:
     void StopTracker();
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
 	void loadSettings();
+	bool SMCreateMapping();
 
 	bool setParameterValue(const int index, const float newvalue);
 
 private:
 	/** face api variables **/
-	APIScope *faceapi_scope;
-    QSharedPointer<EngineBase> _engine;
-	VideoDisplayWidget *_display;
-	QVBoxLayout *l;
-	MainWindow *main_window;
+	//APIScope *faceapi_scope;
+ //   QSharedPointer<EngineBase> _engine;
+	//VideoDisplayWidget *_display;
+	//QVBoxLayout *l;
+	//MainWindow *main_window;
 	//parameter list for the filter-function(s)
+
+	//
+	// global variables
+	//
+	HANDLE hSMMemMap;
+	SMMemMap *pMemData;
+	HANDLE hSMMutex;
+//	smEngineHeadPoseData new_head_pose;
+	QProcess *faceAPI;
+
 	enum
 	{
 		kPortAddress=0,										// Index in QList
