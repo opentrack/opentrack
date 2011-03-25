@@ -209,6 +209,8 @@ smCameraHandle createFirstCamera()
 void run()
 {
 	char msg[100];
+	int state;
+
 	// Capture control-C
 //    signal(SIGINT, CtrlCHandler);
 
@@ -334,7 +336,7 @@ void run()
     smWindowHandle win_handle = 0;
     THROW_ON_ERROR(smVideoDisplayGetWindowHandle(video_display_handle,&win_handle));    
     SetWindowText(win_handle, _T("faceAPI Video-widget"));
-	MoveWindow(win_handle, 0, 0, 250, 150, true);
+	MoveWindow(win_handle, 0, 0, 250, 180, true);
 
     // Loop on the keyboard
     while (processKeyPress(engine_handle, video_display_handle) && !stopCommand)
@@ -372,7 +374,14 @@ void run()
 		if (pMemData) {
 			switch (pMemData->command) {
 				case FT_SM_START:
-					THROW_ON_ERROR(smEngineStart(engine_handle));		// Start tracking
+
+					//
+					// Only execute Start, if the engine is not yet tracking.
+					//
+					THROW_ON_ERROR(smEngineGetState(engine_handle, &state));
+					if (state != SM_API_ENGINE_STATE_HT_TRACKING) {
+						THROW_ON_ERROR(smEngineStart(engine_handle));	// Start tracking
+					}
 					pMemData->command = 0;								// Reset
 					break;
 
