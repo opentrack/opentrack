@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>371</height>
+    <height>398</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -159,7 +159,7 @@ QGroupBox {
           <property name="minimumSize">
            <size>
             <width>250</width>
-            <height>150</height>
+            <height>170</height>
            </size>
           </property>
           <widget class="QFrame" name="video_frame">
