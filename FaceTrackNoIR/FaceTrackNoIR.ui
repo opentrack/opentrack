@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>398</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -238,44 +238,88 @@ Support FaceTrackNoIR!</string>
               </size>
              </property>
             </widget>
-            <widget class="QFrame" name="logoInstitute">
+            <widget class="QLCDNumber" name="lcdNumOutputRotX">
              <property name="geometry">
               <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>90</width>
-               <height>90</height>
+               <x>100</x>
+               <y>60</y>
+               <width>41</width>
+               <height>21</height>
               </rect>
              </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>90</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>90</height>
-              </size>
+             <property name="autoFillBackground">
+              <bool>false</bool>
              </property>
              <property name="styleSheet">
-              <string notr="true">QFrame#logoInstitute {
-	background:#595959 url(UIElements/logoFaceTrackNoIR.png) no-repeat;
-border:none;
-}</string>
+              <string notr="true">color: rgb(0, 255, 0);</string>
              </property>
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>3</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLCDNumber" name="lcdNumOutputRotY">
+             <property name="geometry">
+              <rect>
+               <x>150</x>
+               <y>60</y>
+               <width>41</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>3</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLCDNumber" name="lcdNumOutputRotZ">
+             <property name="geometry">
+              <rect>
+               <x>200</x>
+               <y>60</y>
+               <width>41</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>3</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
              </property>
             </widget>
            </widget>
@@ -1019,7 +1063,7 @@ color:white;</string>
              </item>
             </layout>
            </item>
-           <item row="3" column="0">
+           <item row="4" column="0">
             <widget class="QWidget" name="bubbleBigWidget" native="true">
              <property name="minimumSize">
               <size>

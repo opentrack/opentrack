@@ -35,6 +35,8 @@
 #include <QDialog>
 #include <QUrl>
 
+#include "../FTNoIR_PoseWidget/glwidget.h"
+
 #include "ui_FaceTrackNoIR.h"
 #include "ui_FTNoIR_KeyboardShortcuts.h"
 #include "ui_FTNoIR_Preferences.h"
@@ -83,14 +85,14 @@ private:
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 
-	/** face api variables **/
-//	VideoDisplayWidget *_display;
+	/** Widget variables **/
 	QVBoxLayout *l;
 	QWidget *_engine_controls;
 	QWidget *_server_controls;
 	QWidget *_preferences;
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
+	GLWidget *_pose_display;
 
 	/** QT objects **/
 	QDialog aboutDialog;	

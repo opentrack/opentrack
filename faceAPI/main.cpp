@@ -383,6 +383,9 @@ void run()
 						THROW_ON_ERROR(smEngineStart(engine_handle));	// Start tracking
 					}
 					pMemData->command = 0;								// Reset
+
+					THROW_ON_ERROR(smEngineShowCameraControlPanel(engine_handle));
+
 					break;
 
 				case FT_SM_STOP:

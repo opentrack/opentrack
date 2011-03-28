@@ -151,6 +151,11 @@ private:
 	FTNoIR_Client selectedClient;
 	FTNoIR_Face_Tracker selectedTracker;
 
+	static T6DOF current_camera;					// Used for filtering
+	static T6DOF target_camera;
+	static T6DOF new_camera;
+	static T6DOF output_camera;
+
 	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
@@ -222,6 +227,7 @@ public:
 	static void setPowCurve(int x);
 
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
+	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
