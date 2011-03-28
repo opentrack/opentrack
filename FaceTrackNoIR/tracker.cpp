@@ -23,6 +23,8 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110328 - WVR: Changed the camera-structs into class-instances. This makes initialisation
+						easier and hopefully solves the remaining 'start-up problem'.
 		20110313 - WVR: Removed 'set_initial'. Less is more.
 		20110109 - WVR: Added setZero option to define behaviour after STOP tracking via shortkey.
 		20110104 - WVR: Removed a few nasty bugs (it was impossible to stop tracker without crash).
@@ -65,6 +67,12 @@ bool Tracker::useFilter = false;
 bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
+
+
+T6DOF Tracker::current_camera;							// Used for filtering
+T6DOF Tracker::target_camera;
+T6DOF Tracker::new_camera;
+T6DOF Tracker::output_camera;							// Position sent to game protocol
 
 THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw;
@@ -309,32 +317,12 @@ void Tracker::run() {
 	bool lastStartStopKey = false;
 	bool lastInhibitKey = false;
 
-	THeadPoseData current_camera_position;			// Used for filtering
-	THeadPoseData target_camera_position;
-	THeadPoseData new_camera_position;
-
 	Tracker::do_center = true;						// Center initially
 
-	current_camera_position.x = 0.0f;
-	current_camera_position.y = 0.0f;
-	current_camera_position.z = 0.0f;
-	current_camera_position.yaw = 0.0f;
-	current_camera_position.pitch = 0.0f;
-	current_camera_position.roll = 0.0f;
-
-	target_camera_position.x = 0.0f;
-	target_camera_position.y = 0.0f;
-	target_camera_position.z = 0.0f;
-	target_camera_position.yaw = 0.0f;
-	target_camera_position.pitch = 0.0f;
-	target_camera_position.roll = 0.0f;
-
-	new_camera_position.x = 0.0f;
-	new_camera_position.y = 0.0f;
-	new_camera_position.z = 0.0f;
-	new_camera_position.yaw = 0.0f;
-	new_camera_position.pitch = 0.0f;
-	new_camera_position.roll = 0.0f;
+	current_camera.initHeadPoseData();
+	target_camera.initHeadPoseData();
+	new_camera.initHeadPoseData();
+	output_camera.initHeadPoseData();
 
 	//
 	// Test some Filter-stuff
@@ -432,12 +420,9 @@ void Tracker::run() {
 						Z.rawList.clear();
 						Z.prevPos = 0.0f;
 
-						current_camera_position.x = 0.0f;
-						current_camera_position.y = 0.0f;
-						current_camera_position.z = 0.0f;
-						current_camera_position.yaw = 0.0f;
-						current_camera_position.pitch = 0.0f;
-						current_camera_position.roll = 0.0f;
+						current_camera.initHeadPoseData();
+						target_camera.initHeadPoseData();
+						new_camera.initHeadPoseData();
 
 						pTracker->StartTracker( mainApp->winId() );
 					}
@@ -503,41 +488,41 @@ void Tracker::run() {
 			if (Tracker::do_tracking && Tracker::confid) {
 
 				// Pitch
-				target_camera_position.x     = getSmoothFromList( &X.rawList ) - X.offset_headPos;
-				target_camera_position.y     = getSmoothFromList( &Y.rawList ) - Y.offset_headPos;
-				target_camera_position.z     = getSmoothFromList( &Z.rawList ) - Z.offset_headPos;
-				target_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
-				target_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
-				target_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
+				target_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
+				target_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
+				target_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
+				target_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+				target_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
+				target_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
 
 				if (Tracker::useFilter && pFilter) {
-					pFilter->FilterHeadPoseData(&current_camera_position, &target_camera_position, &new_camera_position, Tracker::Pitch.newSample);
+					pFilter->FilterHeadPoseData(&current_camera.position, &target_camera.position, &new_camera.position, Tracker::Pitch.newSample);
 				}
 				else {
-					new_camera_position.x     = getSmoothFromList( &X.rawList ) - X.offset_headPos;
-					new_camera_position.y     = getSmoothFromList( &Y.rawList ) - Y.offset_headPos;
-					new_camera_position.z     = getSmoothFromList( &Z.rawList ) - Z.offset_headPos;
-					new_camera_position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
-					new_camera_position.yaw   = getSmoothFromList( &Yaw.rawList ) - Yaw.offset_headPos;
-					new_camera_position.roll  = getSmoothFromList( &Roll.rawList ) - Roll.offset_headPos;
+					output_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
+					output_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
+					output_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
+					output_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+					output_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
+					output_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
 				}
-				new_camera_position.x = X.invert * getOutputFromCurve(&X.curve, new_camera_position.x, X.NeutralZone, X.MaxInput);
-				new_camera_position.y = Y.invert * getOutputFromCurve(&Y.curve, new_camera_position.y, Y.NeutralZone, Y.MaxInput);
-				new_camera_position.z = Z.invert * getOutputFromCurve(&Z.curve, new_camera_position.z, Z.NeutralZone, Z.MaxInput);
-				new_camera_position.pitch = Pitch.invert * getOutputFromCurve(&Pitch.curve, new_camera_position.pitch, Pitch.NeutralZone, Pitch.MaxInput);
-				new_camera_position.yaw = Yaw.invert * getOutputFromCurve(&Yaw.curve, new_camera_position.yaw, Yaw.NeutralZone, Yaw.MaxInput);
-				new_camera_position.roll = Roll.invert * getOutputFromCurve(&Roll.curve, new_camera_position.roll, Roll.NeutralZone, Roll.MaxInput);
+				output_camera.position.x = X.invert * getOutputFromCurve(&X.curve, new_camera.position.x, X.NeutralZone, X.MaxInput);
+				output_camera.position.y = Y.invert * getOutputFromCurve(&Y.curve, new_camera.position.y, Y.NeutralZone, Y.MaxInput);
+				output_camera.position.z = Z.invert * getOutputFromCurve(&Z.curve, new_camera.position.z, Z.NeutralZone, Z.MaxInput);
+				output_camera.position.pitch = Pitch.invert * getOutputFromCurve(&Pitch.curve, new_camera.position.pitch, Pitch.NeutralZone, Pitch.MaxInput);
+				output_camera.position.yaw = Yaw.invert * getOutputFromCurve(&Yaw.curve, new_camera.position.yaw, Yaw.NeutralZone, Yaw.MaxInput);
+				output_camera.position.roll = Roll.invert * getOutputFromCurve(&Roll.curve, new_camera.position.roll, Roll.NeutralZone, Roll.MaxInput);
 
 				//
 				// Reset value for the selected axis, if inhibition is active
 				//
 				if (Tracker::do_inhibit) {
-					if (InhibitKey.doPitch) new_camera_position.pitch = 0.0f;
-					if (InhibitKey.doYaw) new_camera_position.yaw = 0.0f;
-					if (InhibitKey.doRoll) new_camera_position.roll = 0.0f;
-					if (InhibitKey.doX) new_camera_position.x = 0.0f;
-					if (InhibitKey.doY) new_camera_position.y = 0.0f;
-					if (InhibitKey.doZ) new_camera_position.z = 0.0f;
+					if (InhibitKey.doPitch) output_camera.position.pitch = 0.0f;
+					if (InhibitKey.doYaw) output_camera.position.yaw = 0.0f;
+					if (InhibitKey.doRoll) output_camera.position.roll = 0.0f;
+					if (InhibitKey.doX) output_camera.position.x = 0.0f;
+					if (InhibitKey.doY) output_camera.position.y = 0.0f;
+					if (InhibitKey.doZ) output_camera.position.z = 0.0f;
 				}
 
 				//
@@ -545,32 +530,32 @@ void Tracker::run() {
 				//
 				// Free-track
 				if (selectedClient == FREE_TRACK) {
-					server_Game->setHeadRotX( new_camera_position.pitch );					// degrees
-					server_Game->setHeadRotY( new_camera_position.yaw );
-					server_Game->setHeadRotZ( new_camera_position.roll );
+					server_Game->setHeadRotX( output_camera.position.pitch );					// degrees
+					server_Game->setHeadRotY( output_camera.position.yaw );
+					server_Game->setHeadRotZ( output_camera.position.roll );
 
-					server_Game->setHeadPosX( new_camera_position.x );						// centimeters
-					server_Game->setHeadPosY( new_camera_position.y );
-					server_Game->setHeadPosZ( new_camera_position.z );
+					server_Game->setHeadPosX( output_camera.position.x );						// centimeters
+					server_Game->setHeadPosY( output_camera.position.y );
+					server_Game->setHeadPosZ( output_camera.position.z );
 				}
 
 				// All Protocol server(s)
 				if (server_Game) {
-					server_Game->setVirtRotX ( new_camera_position.pitch );					// degrees
-					server_Game->setVirtRotY ( new_camera_position.yaw );
-					server_Game->setVirtRotZ ( new_camera_position.roll );
-					server_Game->setVirtPosX ( new_camera_position.x );						// centimeters
-					server_Game->setVirtPosY ( new_camera_position.y );
-					server_Game->setVirtPosZ ( new_camera_position.z );
+					server_Game->setVirtRotX ( output_camera.position.pitch );					// degrees
+					server_Game->setVirtRotY ( output_camera.position.yaw );
+					server_Game->setVirtRotZ ( output_camera.position.roll );
+					server_Game->setVirtPosX ( output_camera.position.x );						// centimeters
+					server_Game->setVirtPosY ( output_camera.position.y );
+					server_Game->setVirtPosZ ( output_camera.position.z );
 				}
 
-//				headRotXLine->setText(QString("%1").arg( new_camera_position.pitch, 0, 'f', 1));	// show degrees
-//				headRotYLine->setText(QString("%1").arg( new_camera_position.yaw, 0, 'f', 1));
-//				headRotZLine->setText(QString("%1").arg( new_camera_position.roll, 0, 'f', 1));
+//				headRotXLine->setText(QString("%1").arg( new_camera.position.pitch, 0, 'f', 1));	// show degrees
+//				headRotYLine->setText(QString("%1").arg( new_camera.position.yaw, 0, 'f', 1));
+//				headRotZLine->setText(QString("%1").arg( new_camera.position.roll, 0, 'f', 1));
 //
-////				headXLine->setText(QString("%1").arg( new_camera_position.x, 0, 'f', 1));			// show centimeters
-//				headYLine->setText(QString("%1").arg( new_camera_position.y, 0, 'f', 1));
-//				headZLine->setText(QString("%1").arg( new_camera_position.z, 0, 'f', 1));
+////				headXLine->setText(QString("%1").arg( new_camera.position.x, 0, 'f', 1));			// show centimeters
+//				headYLine->setText(QString("%1").arg( new_camera.position.y, 0, 'f', 1));
+//				headZLine->setText(QString("%1").arg( new_camera.position.z, 0, 'f', 1));
 
 
 #       ifdef USE_DEBUG_CLIENT
@@ -582,12 +567,12 @@ void Tracker::run() {
 				debug_Client->setHeadPosY( Tracker::Y.headPos );
 				debug_Client->setHeadPosZ( Tracker::Z.headPos );
 
-				debug_Client->setVirtRotX ( new_camera_position.pitch );				// degrees
-				debug_Client->setVirtRotY ( new_camera_position.yaw );
-				debug_Client->setVirtRotZ ( new_camera_position.roll );
-				debug_Client->setVirtPosX ( new_camera_position.x );				// centimeters
-				debug_Client->setVirtPosY ( new_camera_position.y );
-				debug_Client->setVirtPosZ ( new_camera_position.z );
+				debug_Client->setVirtRotX ( new_camera.position.pitch );				// degrees
+				debug_Client->setVirtRotY ( new_camera.position.yaw );
+				debug_Client->setVirtRotZ ( new_camera.position.roll );
+				debug_Client->setVirtPosX ( new_camera.position.x );				// centimeters
+				debug_Client->setVirtPosY ( new_camera.position.y );
+				debug_Client->setVirtPosZ ( new_camera.position.z );
 #       endif
 
 
@@ -746,6 +731,19 @@ void Tracker::getHeadPose( THeadPoseData *data ) {
 	data->pitch = Tracker::Pitch.headPos- Tracker::Pitch.offset_headPos;	// degrees
 	data->yaw = Tracker::Yaw.headPos- Tracker::Yaw.offset_headPos;
 	data->roll = Tracker::Roll.headPos - Tracker::Roll.offset_headPos;
+}
+
+//
+// Set the filter-value from the GUI.
+//
+void Tracker::getOutputHeadPose( THeadPoseData *data ) {
+	data->x = output_camera.position.x;										// centimeters
+	data->y = output_camera.position.y;
+	data->z = output_camera.position.z;
+
+	data->pitch = output_camera.position.pitch;	// degrees
+	data->yaw   = output_camera.position.yaw;
+	data->roll  = output_camera.position.roll;
 }
 
 //

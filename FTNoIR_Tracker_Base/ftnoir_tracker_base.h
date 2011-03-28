@@ -14,6 +14,22 @@ struct THeadPoseData {
 };
 #pragma pack(pop)
 
+//
+// Structure to hold all 6 DOF's
+//
+class T6DOF {
+public:
+	void initHeadPoseData(){
+		position.x = 0.0f;
+		position.y = 0.0f;
+		position.z = 0.0f;
+		position.yaw = 0.0f;
+		position.pitch = 0.0f;
+		position.roll = 0.0f;
+	}
+	THeadPoseData position;
+};
+
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.

@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110328 - WVR: Added the display for output-pose.
 		20110207 - WVR: RadioButtons for 'Stop engine' added. It is now possible to choose Stop or Keep tracking.
 		20110109 - WVR: Added minimizeTaskBar option added. It is now possible to choose minimized or tray.
 */
@@ -33,6 +34,7 @@
 #include "FTIRServer.h"
 #include "FGServer.h"
 #include "FTNServer.h"
+
 
 //
 // Setup the Main Dialog
@@ -67,6 +69,14 @@ QMainWindow(parent, flags)
 		startTracker();
 		showMinimized();
 	}
+
+    Q_INIT_RESOURCE(PoseWidget);
+	_pose_display = new GLWidget(ui.widget4logo, 0);
+    _pose_display->rotateBy(0, 0, 0);
+
+	ui.lcdNumOutputRotX->setVisible(false);
+	ui.lcdNumOutputRotY->setVisible(false);
+	ui.lcdNumOutputRotZ->setVisible(false);
 }
 
 /** sets up all objects and connections to buttons */
@@ -148,7 +158,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	//Setup the timer for showing the headpose.
 	timUpdateHeadPose = new QTimer(this);
     connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
-	timUpdateHeadPose->start(10);
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -180,7 +189,6 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 			break;
 		}
 	}
-
 }
 
 //
@@ -562,16 +570,31 @@ void FaceTrackNoIR::startTracker( ) {
 		timMinimizeFTN->setSingleShot( true );
 		timMinimizeFTN->start(timevalue);
 	}
+
+	//
+	// Start the timer to update the head-pose (digits and 'man in black')
+	//
+	timUpdateHeadPose->start(10);
+	ui.lcdNumOutputRotX->setVisible(true);
+	ui.lcdNumOutputRotY->setVisible(true);
+	ui.lcdNumOutputRotZ->setVisible(true);
 }
 
 /** stop tracking the face **/
 void FaceTrackNoIR::stopTracker( ) {	
 
 	//
-	// Delete the video-display.
+	// Stop displaying the head-pose.
 	//
-//	ui.video_frame->hide();
+	timUpdateHeadPose->stop();
+    _pose_display->rotateBy(0, 0, 0);
+	ui.lcdNumOutputRotX->setVisible(false);
+	ui.lcdNumOutputRotY->setVisible(false);
+	ui.lcdNumOutputRotZ->setVisible(false);
 
+	//
+	// Delete the tracker (after stopping things and all).
+	//
 	if ( tracker ) {
 		qDebug() << "stopTracker says: Deleting tracker!";
 		delete tracker;
@@ -651,6 +674,10 @@ void FaceTrackNoIR::setUseFilter( int set ) {
 void FaceTrackNoIR::showHeadPose() {
 THeadPoseData newdata;
 
+	//
+	// Get the pose and also display it.
+	// Updating the pose from within the Tracker-class caused crashes...
+	//
 	Tracker::getHeadPose(&newdata);
 	ui.lcdNumX->display((double) (((int)(newdata.x * 10.0f))/10.0f));
 	ui.lcdNumY->display((double) (((int)(newdata.y * 10.0f))/10.0f));
@@ -659,6 +686,18 @@ THeadPoseData newdata;
 	ui.lcdNumRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
 	ui.lcdNumRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
 	ui.lcdNumRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
+
+	//
+	// Get the output-pose and also display it.
+	//
+	if (_pose_display) {
+		Tracker::getOutputHeadPose(&newdata);
+		_pose_display->rotateBy(newdata.pitch, newdata.yaw, newdata.roll);
+
+		ui.lcdNumOutputRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
+		ui.lcdNumOutputRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
+		ui.lcdNumOutputRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
+	}
 }
 
 /** set the redhold from the slider **/
