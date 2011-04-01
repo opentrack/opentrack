@@ -1,6 +1,10 @@
 #include "ftnoir_filter_base.h"
 #include "math.h"
 #include <QDebug>
+#include <QFile>
+#include <QCoreApplication>
+
+//#define LOG_OUTPUT
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -157,6 +161,7 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 		for (i=0;i<6;i++)
 		{
 			output[i]=target[i];
+			prev_alpha[i] = 0.0f;
 		}
 
 		new_camera_position->x=target[0];
@@ -214,6 +219,19 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
 //		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
 	}
+
+
+	#ifdef LOG_OUTPUT
+	//	Use this for some debug-output to file...
+	QFile data(QCoreApplication::applicationDirPath() + "\\EWMA_output.txt");
+	if (data.open(QFile::WriteOnly | QFile::Append)) {
+		QTextStream out(&data);
+		out << "output:\t" << output[0] << "\t" << output[1] << "\t" << output[2] << "\t" << output[3] << "\t" << output[4] << "\t" << output[5] << '\n';
+		out << "target:\t" << target[0] << "\t" << target[1] << "\t" << target[2] << "\t" << target[3] << "\t" << target[4] << "\t" << target[5] << '\n';
+		out << "prev_output:\t" << prev_output[0] << "\t" << prev_output[1] << "\t" << prev_output[2] << "\t" << prev_output[3] << "\t" << prev_output[4] << "\t" << prev_output[5] << '\n';
+		out << "largest_alpha:\t" << largest_alpha << '\n';
+	}
+	#endif
 
 	new_camera_position->x=output[0];
 	new_camera_position->y=output[1];

@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110401 - WVR: The about-dialog was shown 'misplaced'. It was corrected.
 		20110328 - WVR: Added the display for output-pose.
 		20110207 - WVR: RadioButtons for 'Stop engine' added. It is now possible to choose Stop or Keep tracking.
 		20110109 - WVR: Added minimizeTaskBar option added. It is now possible to choose minimized or tray.
@@ -478,9 +479,9 @@ void FaceTrackNoIR::openurl_donation() {
 
 /** show about dialog **/
 void FaceTrackNoIR::about() {
-	aboutDialog.move(this->width()/2-135,
-					this->height()/2-220);
-	
+
+	QPoint offsetpos(100, 100);
+	aboutDialog.move(this->pos() + offsetpos);
 	aboutDialog.show();
 
 	/** ABOUT DIALOG **/

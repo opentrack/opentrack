@@ -86,6 +86,7 @@ TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 
 ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
+IProtocolPtr Tracker::pProtocol;						// Pointer to Protocol instance (in DLL)
 IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
 
 
@@ -95,6 +96,8 @@ importGetTracker getIT;
 QLibrary *trackerLib;
 importGetFilter getFilter;
 QLibrary *filterLib;
+importGetProtocol getProtocol;
+QLibrary *protocolLib;
 QFrame *video_frame;
 
 	// Retieve the pointer to the parent
@@ -184,7 +187,28 @@ QFrame *video_frame;
 			break;
 
 		case FLIGHTGEAR:
-			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));			// Create FlightGear protocol-server
+			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
+//			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));			// Create FlightGear protocol-server
+//			server_Game = NULL;
+			//
+			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
+			//
+			protocolLib = new QLibrary("FTNoIR_Protocol_FG.dll");
+			
+			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
+			if (getProtocol) {
+				IProtocolPtr ptrXyz(getProtocol());
+				if (ptrXyz)
+				{
+					pProtocol = ptrXyz;
+					pProtocol->Initialize();
+					qDebug() << "Protocol::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+				return;
+			}
 			break;
 
 		case FTNOIR:
@@ -295,6 +319,19 @@ void Tracker::setup() {
 			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
 		}
 
+	}
+
+	//
+	// Check if the Protocol-server files were installed OK.
+	// Some servers also create a memory-mapping, for Inter Process Communication.
+	// The handle of the MainWindow is sent to 'The Game', so it can send a message back.
+	//
+	if (pProtocol) {
+
+		DLL_Ok = pProtocol->checkServerInstallationOK( mainApp->winId() );
+		if (!DLL_Ok) {
+			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
+		}
 	}
 
 #       ifdef USE_DEBUG_CLIENT
@@ -499,12 +536,12 @@ void Tracker::run() {
 					pFilter->FilterHeadPoseData(&current_camera.position, &target_camera.position, &new_camera.position, Tracker::Pitch.newSample);
 				}
 				else {
-					output_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
-					output_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
-					output_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
-					output_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
-					output_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
-					output_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
+					new_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
+					new_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
+					new_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
+					new_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
+					new_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
+					new_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
 				}
 				output_camera.position.x = X.invert * getOutputFromCurve(&X.curve, new_camera.position.x, X.NeutralZone, X.MaxInput);
 				output_camera.position.y = Y.invert * getOutputFromCurve(&Y.curve, new_camera.position.y, Y.NeutralZone, Y.MaxInput);
@@ -547,6 +584,11 @@ void Tracker::run() {
 					server_Game->setVirtPosX ( output_camera.position.x );						// centimeters
 					server_Game->setVirtPosY ( output_camera.position.y );
 					server_Game->setVirtPosZ ( output_camera.position.z );
+				}
+
+				// All Protocol server(s)
+				if (pProtocol) {
+					pProtocol->sendHeadposeToGame( &output_camera );							// degrees & centimeters
 				}
 
 //				headRotXLine->setText(QString("%1").arg( new_camera.position.pitch, 0, 'f', 1));	// show degrees
