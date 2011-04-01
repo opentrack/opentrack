@@ -46,6 +46,7 @@
 #include "FTNoIR_cxx_protocolserver.h"
 
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
+#include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "FTNoIR_Filter_base.h"
 #include "AutoClosePtr.h"
 
@@ -54,6 +55,8 @@
 // be released automatically in destructor of the smart pointer.
 typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
 typedef ITracker *(WINAPI *importGetTracker)(void);
+typedef AutoClosePtr<IProtocol, void, &IProtocol::Release> IProtocolPtr;
+typedef IProtocol *(WINAPI *importGetProtocol)(void);
 typedef AutoClosePtr<IFilter, void, &IFilter::Release> IFilterPtr;
 typedef IFilter *(WINAPI *importGetFilter)(void);
 
@@ -157,6 +160,7 @@ private:
 	static T6DOF output_camera;
 
 	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
+	static IProtocolPtr pProtocol;					// Pointer to Protocol instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
 	static void addHeadPose( THeadPoseData head_pose );
