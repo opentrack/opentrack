@@ -1,9 +1,12 @@
 /********************************************************************************
-* FTIRServer		FTIRServer is the Class, that communicates headpose-data	*
-*					to games, using the NPClient.dll.		         			*
+* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
+*					gamers from Holland, who don't like to pay much for			*
+*					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
+*						Ron Hendriks (Researching and Testing)					*
+*																				*
+* Homepage																		*
 *																				*
 * This program is free software; you can redistribute it and/or modify it		*
 * under the terms of the GNU General Public License as published by the			*
@@ -18,18 +21,20 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
+* FTIRServer		FTIRServer is the Class, that communicates headpose-data	*
+*					to games, using the NPClient.dll.		         			*
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
 	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
 					is called from run() of Tracker.cpp
-	20101127 - WVR: Added TrackIR.exe process for EZCA etc...
-	20101023 - WVR: Added TIRViews for FS2004, Combat FS3, etc...
 */
-#include "FTIRServer.h"
+#include "ftnoir_protocol_ftir.h"
 
 /** constructor **/
-FTIRServer::FTIRServer() {
+FTNoIR_Protocol_FTIR::FTNoIR_Protocol_FTIR()
+{
 	loadSettings();
 	ProgramName = "";
 	dummyTrackIR = 0;
@@ -38,8 +43,8 @@ FTIRServer::FTIRServer() {
 }
 
 /** destructor **/
-FTIRServer::~FTIRServer() {
-
+FTNoIR_Protocol_FTIR::~FTNoIR_Protocol_FTIR()
+{
 	//
 	// Destroy the File-mapping
 	//
@@ -67,51 +72,74 @@ FTIRServer::~FTIRServer() {
     {
 		qDebug() << "~FTIRServer says: some error occurred";
 	}
-
 }
 
-/** destructor **/
-void FTIRServer::stopServer() {
+/** helper to Auto-destruct **/
+void FTNoIR_Protocol_FTIR::Release()
+{
+    delete this;
+}
 
-	////
-	//// Destroy the File-mapping
-	////
-	//FTIRDestroyMapping();
+void FTNoIR_Protocol_FTIR::Initialize()
+{
+	return;
+}
 
-	////
-	//// Free the DLL's
-	////
-	//try {
-	//	FTIRClientLib.unload();
-	//	if (useTIRViews && FTIRViewsLib.isLoaded()) {
-	//		FTIRViewsLib.unload();
-	//	}
-	//}
-	//catch (...)
-	//{
-	//	qDebug() << "~FTIRServer says: some error occurred";
-	//}
+//
+// Scale the measured value to the Joystick values
+//
+float FTNoIR_Protocol_FTIR::scale2AnalogLimits( float x, float min_x, float max_x ) {
+double y;
+double local_x;
+	
+	local_x = x;
+	if (local_x > max_x) {
+		local_x = max_x;
+	}
+	if (local_x < min_x) {
+		local_x = min_x;
+	}
+	y = ( NP_AXIS_MAX * local_x ) / max_x;
 
-	////
-	//// Kill the dummy TrackIR process.
-	////
-	//qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
-	//try {
-	//	if (dummyTrackIR) {
-	//		dummyTrackIR->kill();
-	//	}
-	//} 
-	//catch (...)
- //   {
-	//	qDebug() << "~FTIRServer says: some error occurred";
-	//}
+	return (float) y;
+}
 
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTNoIR_Protocol_FTIR::loadSettings() {
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FTIR" );
+	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
+	iniFile.endGroup ();
 }
 
 //
 // Update Headpose in Game.
 //
-void FTIRServer::sendHeadposeToGame() {
+void FTNoIR_Protocol_FTIR::sendHeadposeToGame( T6DOF *headpose ) {
+float virtPosX;
+float virtPosY;
+float virtPosZ;
+
+float virtRotX;
+float virtRotY;
+float virtRotZ;
+
+	//
+	// Copy the Raw measurements directly to the client.
+	//
+	virtRotX = scale2AnalogLimits (headpose->position.pitch, -180.0f, 180.0f);
+	virtRotY = scale2AnalogLimits (headpose->position.yaw, -180.0f, 180.0f);
+	virtRotZ = scale2AnalogLimits (headpose->position.roll, -180.0f, 180.0f);
+
+	virtPosX = scale2AnalogLimits (headpose->position.x * 10.0f, -500.0f, 500.0f);
+	virtPosY = scale2AnalogLimits (headpose->position.y * 10.0f, -500.0f, 500.0f);
+	virtPosZ = scale2AnalogLimits (headpose->position.z * 10.0f, -500.0f, 500.0f);
 
 	//
 	// Check if the pointer is OK and wait for the Mutex.
@@ -124,89 +152,10 @@ void FTIRServer::sendHeadposeToGame() {
 }
 
 //
-// Create a memory-mapping to the TrackIR data.
-// It contains the tracking data, a handle to the main-window and the program-name of the Game!
-//
-//
-bool FTIRServer::FTIRCreateMapping( HANDLE handle )
-{
-	qDebug() << "FTIRCreateMapping says: Starting Function";
-
-	//
-	// A FileMapping is used to create 'shared memory' between the FTIRServer and the FTClient.
-	//
-	// Try to create a FileMapping to the Shared Memory.
-	// If one already exists: close it.
-	//
-	hFTIRMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( TRACKIRDATA ) + sizeof( HANDLE ) + 100, 
-								   (LPCSTR) FTIR_MM_DATA );
-
-	if ( hFTIRMemMap != 0 ) {
-		qDebug() << "FTIRCreateMapping says: FileMapping Created!" << hFTIRMemMap;
-	}
-
-	if ( ( hFTIRMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		CloseHandle( hFTIRMemMap );
-		hFTIRMemMap = 0;
-	}
-
-	//
-	// Create a new FileMapping, Read/Write access
-	//
-	hFTIRMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FTIR_MM_DATA );
-	if ( ( hFTIRMemMap != 0 ) ) {
-		qDebug() << "FTIRCreateMapping says: FileMapping Created again:" << hFTIRMemMap;
-		pMemData = (FTIRMemMap *) MapViewOfFile(hFTIRMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TRACKIRDATA) + sizeof(hFTIRMemMap) + 100);
-		if (pMemData != NULL) {
-			pMemData->RegisteredHandle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
-		}
-	    hFTIRMutex = CreateMutexA(NULL, false, FTIR_MUTEX);
-	}
-	else {
-		QMessageBox::information(0, "FaceTrackNoIR error", QString("FTIRServer Error! \n"));
-		return false;
-	}
-
-	return true;
-}
-
-//
-// Destory the FileMapping to the shared memory
-//
-void FTIRServer::FTIRDestroyMapping()
-{
-	if ( pMemData != NULL ) {
-		UnmapViewOfFile ( pMemData );
-	}
-	
-	if (hFTIRMutex != 0) {
-		CloseHandle( hFTIRMutex );
-	}
-	hFTIRMutex = 0;
-	
-	if (hFTIRMemMap != 0) {
-		CloseHandle( hFTIRMemMap );
-	}
-	hFTIRMemMap = 0;
-
-}
-
-//
-// Get the program-name from the client (Game!).
-//
-QString FTIRServer::GetProgramName() {   
-QString *str;
-
-	str = new QString("Test");
-	return *str;
-}
-
-//
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTIRServer::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
 {   
 	QSettings settings("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
 	QString aLocation;														// Location of Client DLL
@@ -269,7 +218,7 @@ bool FTIRServer::checkServerInstallationOK( HANDLE handle )
 		// This should do the trick
 		//
 		QString program = "TrackIR.exe";
- 		dummyTrackIR = new QProcess(this);
+ 		dummyTrackIR = new QProcess();
 		dummyTrackIR->start(program);
 
 	} catch(...) {
@@ -322,51 +271,102 @@ bool FTIRServer::checkServerInstallationOK( HANDLE handle )
 }
 
 //
-// Scale the measured value to the Joystick values
+// Create a memory-mapping to the TrackIR data.
+// It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
-float FTIRServer::scale2AnalogLimits( float x, float min_x, float max_x ) {
-double y;
-double local_x;
+//
+bool FTNoIR_Protocol_FTIR::FTIRCreateMapping( HANDLE handle )
+{
+	qDebug() << "FTIRCreateMapping says: Starting Function";
+
+	//
+	// A FileMapping is used to create 'shared memory' between the FTIRServer and the FTClient.
+	//
+	// Try to create a FileMapping to the Shared Memory.
+	// If one already exists: close it.
+	//
+	hFTIRMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
+		                           sizeof( TRACKIRDATA ) + sizeof( HANDLE ) + 100, 
+								   (LPCSTR) FTIR_MM_DATA );
+
+	if ( hFTIRMemMap != 0 ) {
+		qDebug() << "FTIRCreateMapping says: FileMapping Created!" << hFTIRMemMap;
+	}
+
+	if ( ( hFTIRMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
+		CloseHandle( hFTIRMemMap );
+		hFTIRMemMap = 0;
+	}
+
+	//
+	// Create a new FileMapping, Read/Write access
+	//
+	hFTIRMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FTIR_MM_DATA );
+	if ( ( hFTIRMemMap != 0 ) ) {
+		qDebug() << "FTIRCreateMapping says: FileMapping Created again:" << hFTIRMemMap;
+		pMemData = (FTIRMemMap *) MapViewOfFile(hFTIRMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TRACKIRDATA) + sizeof(hFTIRMemMap) + 100);
+		if (pMemData != NULL) {
+			pMemData->RegisteredHandle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
+		}
+	    hFTIRMutex = CreateMutexA(NULL, false, FTIR_MUTEX);
+	}
+	else {
+		QMessageBox::information(0, "FaceTrackNoIR error", QString("FTIRServer Error! \n"));
+		return false;
+	}
+
+	return true;
+}
+
+//
+// Destory the FileMapping to the shared memory
+//
+void FTNoIR_Protocol_FTIR::FTIRDestroyMapping()
+{
+	if ( pMemData != NULL ) {
+		UnmapViewOfFile ( pMemData );
+	}
 	
-	local_x = x;
-	if (local_x > max_x) {
-		local_x = max_x;
+	if (hFTIRMutex != 0) {
+		CloseHandle( hFTIRMutex );
 	}
-	if (local_x < min_x) {
-		local_x = min_x;
+	hFTIRMutex = 0;
+	
+	if (hFTIRMemMap != 0) {
+		CloseHandle( hFTIRMemMap );
 	}
-	y = ( NP_AXIS_MAX * local_x ) / max_x;
+	hFTIRMemMap = 0;
 
-	return (float) y;
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTIRServer::loadSettings() {
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+////////////////////////////////////////////////////////////////////////////////
+// Factory function that creates instances if the Protocol object.
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+// Export both decorated and undecorated names.
+//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
+//                Win32 API function.
+//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
+#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-	iniFile.beginGroup ( "FTIR" );
-	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
-	iniFile.endGroup ();
+FTNOIR_PROTOCOL_BASE_EXPORT PROTOCOLHANDLE __stdcall GetProtocol()
+{
+	return new FTNoIR_Protocol_FTIR;
 }
+
+//*******************************************************************************************************
+// FaceTrackNoIR Client Settings-dialog.
+//*******************************************************************************************************
 
 //
 // Constructor for server-settings-dialog
 //
-FTIRControls::FTIRControls( QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
+FTIRControls::FTIRControls() :
+QWidget()
 {
 	QString aFileName;														// File Path and Name
 
 	ui.setupUi( this );
-
-	QPoint offsetpos(100, 100);
-	this->move(parent->pos() + offsetpos);
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -382,7 +382,7 @@ QWidget( parent , f)
 	else {
 		ui.chkTIRViews->setEnabled ( true );
 	}
-	
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -392,6 +392,23 @@ QWidget( parent , f)
 //
 FTIRControls::~FTIRControls() {
 	qDebug() << "~FTIRControls() says: started";
+}
+
+void FTIRControls::Release()
+{
+    delete this;
+}
+
+//
+// Initialize tracker-client-dialog
+//
+void FTIRControls::Initialize(QWidget *parent) {
+
+	QPoint offsetpos(100, 100);
+	if (parent) {
+		this->move(parent->pos() + offsetpos);
+	}
+	show();
 }
 
 //
@@ -444,7 +461,6 @@ void FTIRControls::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTIRControls::loadSettings() {
-
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -458,14 +474,12 @@ void FTIRControls::loadSettings() {
 	iniFile.endGroup ();
 
 	settingsDirty = false;
-
 }
 
 //
 // Save the current Settings to the currently 'active' INI-file.
 //
 void FTIRControls::save() {
-
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -478,4 +492,16 @@ void FTIRControls::save() {
 	settingsDirty = false;
 }
 
-//END
+////////////////////////////////////////////////////////////////////////////////
+// Factory function that creates instances if the Protocol-settings dialog object.
+
+// Export both decorated and undecorated names.
+//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
+//                          Win32 API function.
+//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
+#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
+
+FTNOIR_PROTOCOL_BASE_EXPORT PROTOCOLDIALOGHANDLE __stdcall GetProtocolDialog( )
+{
+	return new FTIRControls;
+}

@@ -57,7 +57,7 @@ class FTNClientControls: public QWidget, Ui::UICFTNClientControls, public ITrack
     Q_OBJECT
 public:
 
-	explicit FTNClientControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit FTNClientControls();
     virtual ~FTNClientControls();
 	void showEvent ( QShowEvent * event );
 

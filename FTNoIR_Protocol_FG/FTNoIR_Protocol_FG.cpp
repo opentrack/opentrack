@@ -33,6 +33,9 @@
 */
 #include "ftnoir_protocol_fg.h"
 
+// For Todd
+//#define SEND_ASCII_DATA				
+
 /** constructor **/
 FTNoIR_Protocol_FG::FTNoIR_Protocol_FG()
 {
@@ -97,6 +100,10 @@ int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
 
+#ifdef SEND_ASCII_DATA
+char data[100];
+#endif
+
 	//
 	// Copy the Raw measurements directly to the client.
 	//
@@ -112,6 +119,22 @@ quint16 senderPort;
 	// Try to send an UDP-message to the FlightGear
 	//
 
+#ifdef SEND_ASCII_DATA
+	sprintf_s(data, "%.4f;%.4f;%.4f;%.2f;%.2f;%.2f\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
+
+	if (outSocket != 0) {
+		no_bytes = outSocket->writeDatagram((const char *) &data, strlen( data ), destIP, destPort);
+		if ( no_bytes > 0) {
+		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << data;
+		}
+		else {
+			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
+		}
+	}
+
+#endif
+
+	#ifndef SEND_ASCII_DATA
 	//! [1]
 //	no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), QHostAddress::LocalHost, 5550);
 	if (outSocket != 0) {
@@ -123,6 +146,7 @@ quint16 senderPort;
 			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
 		}
 	}
+	#endif
 
 	//
 	// FlightGear keeps sending data, so we must read that here.
@@ -208,13 +232,15 @@ FTNOIR_PROTOCOL_BASE_EXPORT PROTOCOLHANDLE __stdcall GetProtocol()
 //
 // Constructor for server-settings-dialog
 //
-FGControls::FGControls( QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
+FGControls::FGControls() :
+QWidget()
 {
 	ui.setupUi( this );
 
 	QPoint offsetpos(100, 100);
-	this->move(parent->pos() + offsetpos);
+	//if (parent) {
+	//	this->move(parent->pos() + offsetpos);
+	//}
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));

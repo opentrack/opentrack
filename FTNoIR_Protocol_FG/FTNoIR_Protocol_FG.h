@@ -1,5 +1,5 @@
 /********************************************************************************
-* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
+* FaceTrackNoIR		This program is a private project of some enthusiastic		*
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
@@ -31,7 +31,7 @@
 
 #include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
 #include "ui_FTNoIR_FGcontrols.h"
-#include "..\facetracknoir\FGTypes.h"
+#include "FGTypes.h"
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
@@ -70,7 +70,7 @@ class FGControls: public QWidget, Ui::UICFGControls, public IProtocolDialog
     Q_OBJECT
 public:
 
-	explicit FGControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit FGControls();
     virtual ~FGControls();
 	void showEvent ( QShowEvent * event );
 

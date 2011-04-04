@@ -42,7 +42,9 @@
 #include "ui_FTNoIR_Preferences.h"
 #include "ui_FTNoIR_Curves.h"
 
-#include "FTNoIR_Tracker_UDP.h"
+//
+#include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
+#include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "AutoClosePtr.h"
 
 // 1a. COM-Like usage with smart pointer.
@@ -50,13 +52,11 @@
 // be released automatically in destructor of the smart pointer.
 typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDialogPtr;
 typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
+typedef AutoClosePtr<IProtocolDialog, void, &IProtocolDialog::Release> IProtocolDialogPtr;
+typedef IProtocolDialog *(WINAPI *importGetProtocolDialog)(void);
 
 
-//#include <sm_api_qt.h>
 #include <Dshow.h>
-
-//using namespace sm::faceapi;
-//using namespace sm::faceapi::qt;
 
 class Tracker;				// pre-define class to avoid circular includes
 
@@ -84,6 +84,7 @@ private:
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
+	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
 
 	/** Widget variables **/
 	QVBoxLayout *l;

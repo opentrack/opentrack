@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110404 - WVR: Migrated the FlightGear protocol to a separate DLL. The rest must follow...
 		20110401 - WVR: The about-dialog was shown 'misplaced'. It was corrected.
 		20110328 - WVR: Added the display for output-pose.
 		20110207 - WVR: RadioButtons for 'Stop engine' added. It is now possible to choose Stop or Keep tracking.
@@ -32,8 +33,8 @@
 #include "tracker.h"
 #include "PPJoyServer.h"
 #include "FSUIPCServer.h"
-#include "FTIRServer.h"
-#include "FGServer.h"
+//#include "FTIRServer.h"
+//#include "FGServer.h"
 #include "FTNServer.h"
 
 
@@ -813,6 +814,8 @@ QLibrary *trackerLib;
 
 /** toggles Server Controls Dialog **/
 void FaceTrackNoIR::showServerControls() {
+importGetProtocolDialog getIT;
+QLibrary *protocolLib;
 
 
 	//
@@ -839,11 +842,47 @@ void FaceTrackNoIR::showServerControls() {
 	        _server_controls = new FSUIPCControls( this, Qt::Dialog );
 			break;
 		case TRACKIR:
-	        _server_controls = new FTIRControls( this, Qt::Dialog );
+			protocolLib = new QLibrary("FTNoIR_Protocol_FTIR.dll");
+
+			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+			if (getIT) {
+				IProtocolDialogPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pProtocolDialog = ptrXyz;
+					pProtocolDialog->Initialize( this );
+					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+				}
+				else {
+					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+				}	
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			}
 			break;
+
 		case FLIGHTGEAR:
-	        _server_controls = new FGControls( this, Qt::Dialog );
+			protocolLib = new QLibrary("FTNoIR_Protocol_FG.dll");
+
+			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+			if (getIT) {
+				IProtocolDialogPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pProtocolDialog = ptrXyz;
+					pProtocolDialog->Initialize( this );
+					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+				}
+				else {
+					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+				}	
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			}
 			break;
+
 		case FTNOIR:
 	        _server_controls = new FTNServerControls( this, Qt::Dialog );
 			break;
