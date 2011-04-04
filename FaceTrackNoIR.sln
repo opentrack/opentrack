@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_FaceAPI_EXE", "faceA
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Protocol_FG", "FTNoIR_Protocol_FG\FTNoIR_Protocol_FG.vcproj", "{7C77C833-5687-4A35-B219-4CF4D3D8E626}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Protocol_FTIR", "FTNoIR_Protocol_FTIR\FTNoIR_Protocol_FTIR.vcproj", "{BC5B8583-036A-4A9B-84AE-01158EE6F5A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -52,6 +54,10 @@ Global
 		{7C77C833-5687-4A35-B219-4CF4D3D8E626}.Debug|Win32.Build.0 = Debug|Win32
 		{7C77C833-5687-4A35-B219-4CF4D3D8E626}.Release|Win32.ActiveCfg = Release|Win32
 		{7C77C833-5687-4A35-B219-4CF4D3D8E626}.Release|Win32.Build.0 = Release|Win32
+		{BC5B8583-036A-4A9B-84AE-01158EE6F5A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC5B8583-036A-4A9B-84AE-01158EE6F5A4}.Debug|Win32.Build.0 = Debug|Win32
+		{BC5B8583-036A-4A9B-84AE-01158EE6F5A4}.Release|Win32.ActiveCfg = Release|Win32
+		{BC5B8583-036A-4A9B-84AE-01158EE6F5A4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

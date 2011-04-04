@@ -215,15 +215,10 @@ FTNOIR_TRACKER_BASE_EXPORT TRACKERHANDLE __stdcall GetTracker()
 //
 // Constructor for server-settings-dialog
 //
-FTNClientControls::FTNClientControls( QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
+FTNClientControls::FTNClientControls() :
+QWidget()
 {
 	ui.setupUi( this );
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));

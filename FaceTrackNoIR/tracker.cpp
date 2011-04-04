@@ -188,8 +188,7 @@ QFrame *video_frame;
 
 		case FLIGHTGEAR:
 			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
-//			server_Game = QSharedPointer<FGServer>(new FGServer ( this ));			// Create FlightGear protocol-server
-//			server_Game = NULL;
+
 			//
 			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
 			//
@@ -220,7 +219,27 @@ QFrame *video_frame;
 			break;
 
 		case TRACKIR:
-			server_Game = QSharedPointer<FTIRServer>(new FTIRServer ( ));			// Create Fake-TIR protocol-server
+			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
+
+			//
+			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
+			//
+			protocolLib = new QLibrary("FTNoIR_Protocol_FTIR.dll");
+			
+			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
+			if (getProtocol) {
+				IProtocolPtr ptrXyz(getProtocol());
+				if (ptrXyz)
+				{
+					pProtocol = ptrXyz;
+					pProtocol->Initialize();
+					qDebug() << "Protocol::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+				return;
+			}
 			break;
 
 		case SIMCONNECT:

@@ -1,9 +1,12 @@
 /********************************************************************************
-* FTIRServer		FTIRServer is the Class, that communicates headpose-data	*
-*					to games, using the NPClient.dll.		         			*
+* FaceTrackNoIR		This program is a private project of some enthusiastic		*
+*					gamers from Holland, who don't like to pay much for			*
+*					head-tracking.												*
 *																				*
 * Copyright (C) 2010	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
+*						Ron Hendriks (Researching and Testing)					*
+*																				*
+* Homepage																		*
 *																				*
 * This program is free software; you can redistribute it and/or modify it		*
 * under the terms of the GNU General Public License as published by the			*
@@ -18,47 +21,41 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
+* FTIRServer		FTIRServer is the Class, that communicates headpose-data	*
+*					to games, using the NPClient.dll.		         			*
 ********************************************************************************/
 #pragma once
 #ifndef INCLUDED_FTIRSERVER_H
 #define INCLUDED_FTIRSERVER_H
- 
-#include "FTNoIR_cxx_protocolserver.h"
+
+#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
+#include "ui_FTNoIR_FTIRcontrols.h"
 #include "FTIRTypes.h"
-#include <QString>
 #include <QMessageBox>
 #include <QSettings>
-#include <QFile>
-#include <QApplication>
-#include <QDebug>
-#include <QMutex>
 #include <QLibrary>
 #include <QProcess>
+#include <QDebug>
+#include <QFile>
+#include "Windows.h"
+//#include "math.h"
 
 typedef void (WINAPI *importSetPosition)(float x, float y, float z, float xRot, float yRot, float zRot);
 typedef void (WINAPI *importTIRViewsStart)(void);
 typedef void (WINAPI *importTIRViewsStop)(void);
 
-#include "ui_FTNoIR_FTIRcontrols.h"
 
-using namespace std;
-using namespace v4friend::ftnoir;
+class FTNoIR_Protocol_FTIR : public IProtocol
+{
+public:
+	FTNoIR_Protocol_FTIR();
+	~FTNoIR_Protocol_FTIR();
 
-class FTIRServer : public ProtocolServerBase {
-	Q_OBJECT
+	void Release();
+    void Initialize();
 
-public: 
-
-	// public member methods
-	FTIRServer();
-	~FTIRServer();
-	QString GetProgramName();
-
-	// protected member methods
-protected:
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame();
-	void stopServer();
+	void sendHeadposeToGame( T6DOF *headpose );
 
 private:
 	bool FTIRCreateMapping(HANDLE handle);
@@ -82,25 +79,20 @@ private:
 	float scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
 
-public:
-	void setVirtRotX(float rot) { virtRotX = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	void setVirtRotY(float rot) { virtRotY = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-	void setVirtRotZ(float rot) { virtRotZ = scale2AnalogLimits (rot, -180.0f, 180.0f); }
-
-	void setVirtPosX(float pos) { virtPosX = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
-	void setVirtPosY(float pos) { virtPosY = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
-	void setVirtPosZ(float pos) { virtPosZ = scale2AnalogLimits (pos * 10.0f, -500.0f, 500.0f); }
 };
 
-// Widget that has controls for FTIR server-settings.
-class FTIRControls: public QWidget, public Ui::UICFTIRControls
+// Widget that has controls for FTNoIR protocol client-settings.
+class FTIRControls: public QWidget, Ui::UICFTIRControls, public IProtocolDialog
 {
     Q_OBJECT
 public:
 
-	explicit FTIRControls( QWidget *parent=0, Qt::WindowFlags f=0 );
+	explicit FTIRControls();
     virtual ~FTIRControls();
 	void showEvent ( QShowEvent * event );
+
+	void Release();											// Member functions which are accessible from outside the DLL
+    void Initialize(QWidget *parent);
 
 private:
 	Ui::UICFTIRControls ui;
@@ -114,8 +106,8 @@ private slots:
 	void doOK();
 	void doCancel();
 	void chkTIRViewsChanged() { settingsDirty = true; };
+	void settingChanged() { settingsDirty = true; };
 };
-
 
 #endif//INCLUDED_FTIRSERVER_H
 //END
