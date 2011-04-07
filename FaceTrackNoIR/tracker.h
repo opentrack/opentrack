@@ -35,9 +35,9 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <Dinput.h>
 
-#include "FTServer.h"				// Freetrack-server
+//#include "FTServer.h"				// Freetrack-server
 //#include "FGServer.h"				// FlightGear-server
-#include "PPJoyServer.h"			// Virtual Joystick
+//#include "PPJoyServer.h"			// Virtual Joystick
 //#include "FTIRServer.h"				// FakeTIR-server
 #include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
 #include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)

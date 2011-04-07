@@ -183,11 +183,31 @@ QFrame *video_frame;
 	//
 	switch (selectedClient) {
 		case FREE_TRACK:
-			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
+			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
+
+			//
+			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
+			//
+			protocolLib = new QLibrary("FTNoIR_Protocol_FT.dll");
+			
+			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
+			if (getProtocol) {
+				IProtocolPtr ptrXyz(getProtocol());
+				if (ptrXyz)
+				{
+					pProtocol = ptrXyz;
+					pProtocol->Initialize();
+					qDebug() << "Protocol::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+				return;
+			}
 			break;
 
 		case FLIGHTGEAR:
-			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
+			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
 
 			//
 			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
@@ -215,11 +235,31 @@ QFrame *video_frame;
 			break;
 
 		case PPJOY:
-			server_Game = QSharedPointer<PPJoyServer>(new PPJoyServer ( this ));	// Create PPJoy protocol-server
+			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
+
+			//
+			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
+			//
+			protocolLib = new QLibrary("FTNoIR_Protocol_PPJOY.dll");
+			
+			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
+			if (getProtocol) {
+				IProtocolPtr ptrXyz(getProtocol());
+				if (ptrXyz)
+				{
+					pProtocol = ptrXyz;
+					pProtocol->Initialize();
+					qDebug() << "Protocol::setup Function Resolved!";
+				}
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-installation invalid",QMessageBox::Ok,QMessageBox::NoButton);
+				return;
+			}
 			break;
 
 		case TRACKIR:
-			server_Game = QSharedPointer<FTServer>(new FTServer ( ));				// Create Free-track protocol-server
+			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
 
 			//
 			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
