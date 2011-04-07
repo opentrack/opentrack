@@ -32,9 +32,11 @@
 					is called from run() of Tracker.cpp
 */
 #include "ftnoir_protocol_fg.h"
+#include <QFile>
 
 // For Todd
-//#define SEND_ASCII_DATA				
+//#define SEND_ASCII_DATA
+//#define LOG_OUTPUT
 
 /** constructor **/
 FTNoIR_Protocol_FG::FTNoIR_Protocol_FG()
@@ -107,9 +109,9 @@ char data[100];
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	FlightData.x = headpose->position.x / 100.0f;
-	FlightData.y = headpose->position.y / 100.0f;
-	FlightData.z = headpose->position.z / 100.0f;
+	FlightData.x = headpose->position.x;
+	FlightData.y = headpose->position.y;
+	FlightData.z = headpose->position.z;
 	FlightData.p = headpose->position.pitch;
 	FlightData.h = headpose->position.yaw;
 	FlightData.r = headpose->position.roll;
@@ -120,7 +122,7 @@ char data[100];
 	//
 
 #ifdef SEND_ASCII_DATA
-	sprintf_s(data, "%.4f;%.4f;%.4f;%.2f;%.2f;%.2f\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
+	sprintf_s(data, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
 
 	if (outSocket != 0) {
 		no_bytes = outSocket->writeDatagram((const char *) &data, strlen( data ), destIP, destPort);
@@ -133,6 +135,15 @@ char data[100];
 	}
 
 #endif
+
+	#ifdef LOG_OUTPUT
+	//	Use this for some debug-output to file...
+	QFile datafile(QCoreApplication::applicationDirPath() + "\\FG_output.txt");
+	if (datafile.open(QFile::WriteOnly | QFile::Append)) {
+		QTextStream out(&datafile);
+		out << "output:\t" << FlightData.x << "\t" << FlightData.y << "\t" << FlightData.z << "\t" << FlightData.p << "\t" << FlightData.h << "\t" << FlightData.r << '\n';
+	}
+	#endif
 
 	#ifndef SEND_ASCII_DATA
 	//! [1]
