@@ -31,7 +31,7 @@
 */
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
-#include "PPJoyServer.h"
+//#include "PPJoyServer.h"
 #include "FSUIPCServer.h"
 //#include "FTIRServer.h"
 //#include "FGServer.h"
@@ -835,9 +835,28 @@ QLibrary *protocolLib;
 		case FREE_TRACK:
 		case SIMCONNECT:
 			break;
+
 		case PPJOY:
-	        _server_controls = new PPJoyControls( this, Qt::Dialog );
+			protocolLib = new QLibrary("FTNoIR_Protocol_PPJOY.dll");
+
+			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+			if (getIT) {
+				IProtocolDialogPtr ptrXyz(getIT());
+				if (ptrXyz)
+				{
+					pProtocolDialog = ptrXyz;
+					pProtocolDialog->Initialize( this );
+					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+				}
+				else {
+					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+				}	
+			}
+			else {
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			}
 			break;
+
 		case FSUIPC:
 	        _server_controls = new FSUIPCControls( this, Qt::Dialog );
 			break;
