@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>396</height>
+    <height>411</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,6 +56,11 @@ QWidget#widget {
 /* Specials for individual widget(s) */
 QWidget#widget4logo {
 	background-color: #000000;
+}
+
+/* Specials for individual widget(s) */
+QWidget#headPoseWidget {
+	background-color: #595959;
 }
 
 QWidget#widget4video {
@@ -331,197 +336,266 @@ Support FaceTrackNoIR!</string>
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>100</height>
+            <height>160</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>100</height>
+            <height>160</height>
            </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
-          <widget class="QLabel" name="label_4">
+          <widget class="QGroupBox" name="groupBox">
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>10</y>
-             <width>21</width>
-             <height>16</height>
+             <y>60</y>
+             <width>231</width>
+             <height>80</height>
             </rect>
            </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
+           <property name="title">
+            <string>Raw Input</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <widget class="QLCDNumber" name="lcdNumRotZ">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>60</y>
+              <width>71</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+           </widget>
+           <widget class="QLCDNumber" name="lcdNumRotX">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>20</y>
+              <width>71</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_4">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
 color:white</string>
-           </property>
-           <property name="text">
-            <string>X</string>
-           </property>
+            </property>
+            <property name="text">
+             <string>X</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>40</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+color:white;</string>
+            </property>
+            <property name="text">
+             <string>Y</string>
+            </property>
+           </widget>
+           <widget class="QLCDNumber" name="lcdNumZ">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>60</y>
+              <width>61</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>60</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:white;
+border:none;</string>
+            </property>
+            <property name="text">
+             <string>Z</string>
+            </property>
+           </widget>
+           <widget class="QLCDNumber" name="lcdNumY">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>40</y>
+              <width>61</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_7">
+            <property name="geometry">
+             <rect>
+              <x>120</x>
+              <y>60</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+color:white;</string>
+            </property>
+            <property name="text">
+             <string>rotZ</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_8">
+            <property name="geometry">
+             <rect>
+              <x>120</x>
+              <y>40</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:white;
+border:none;</string>
+            </property>
+            <property name="text">
+             <string>rotY</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_9">
+            <property name="geometry">
+             <rect>
+              <x>120</x>
+              <y>20</y>
+              <width>21</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+color:white;</string>
+            </property>
+            <property name="text">
+             <string>rotX</string>
+            </property>
+           </widget>
+           <widget class="QLCDNumber" name="lcdNumRotY">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>40</y>
+              <width>71</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+           </widget>
+           <widget class="QLCDNumber" name="lcdNumX">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>20</y>
+              <width>61</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="numDigits">
+             <number>5</number>
+            </property>
+           </widget>
           </widget>
-          <widget class="QLabel" name="label_5">
+          <widget class="QGroupBox" name="groupBox_2">
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>40</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
-           </property>
-           <property name="text">
-            <string>Y</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_6">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>70</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color:white;
-border:none;</string>
-           </property>
-           <property name="text">
-            <string>Z</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_7">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>70</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
-           </property>
-           <property name="text">
-            <string>rotZ</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_8">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>40</y>
-             <width>21</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">color:white;
-border:none;</string>
-           </property>
-           <property name="text">
-            <string>rotY</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_9">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
              <y>10</y>
-             <width>21</width>
-             <height>16</height>
+             <width>231</width>
+             <height>50</height>
             </rect>
            </property>
-           <property name="styleSheet">
-            <string notr="true">border:none;
-color:white;</string>
+           <property name="title">
+            <string>Status</string>
            </property>
-           <property name="text">
-            <string>rotX</string>
+           <property name="flat">
+            <bool>true</bool>
            </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumX">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>10</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumY">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>40</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumZ">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>70</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumRotX">
-           <property name="geometry">
-            <rect>
-             <x>150</x>
-             <y>10</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumRotY">
-           <property name="geometry">
-            <rect>
-             <x>150</x>
-             <y>40</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-          </widget>
-          <widget class="QLCDNumber" name="lcdNumRotZ">
-           <property name="geometry">
-            <rect>
-             <x>150</x>
-             <y>70</y>
-             <width>71</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
+           <widget class="QLabel" name="txtTracking">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>10</y>
+              <width>101</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+color: rgb(0, 255, 0);</string>
+            </property>
+            <property name="text">
+             <string>Tracking</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="txtAxisReverse">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>30</y>
+              <width>101</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+color: rgb(0, 255, 0);</string>
+            </property>
+            <property name="text">
+             <string>Axis Reverse</string>
+            </property>
+           </widget>
           </widget>
          </widget>
         </item>

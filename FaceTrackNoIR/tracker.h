@@ -35,14 +35,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <Dinput.h>
 
-//#include "FTServer.h"				// Freetrack-server
-//#include "FGServer.h"				// FlightGear-server
-//#include "PPJoyServer.h"			// Virtual Joystick
-//#include "FTIRServer.h"				// FakeTIR-server
-#include "SCServer.h"				// SimConnect-server (for MS Flight Simulator X)
-#include "FSUIPCServer.h"			// FSUIPC-server (for MS Flight Simulator 2004)
 #include "ExcelServer.h"			// Excel-server (for analysing purposes)
-#include "FTNServer.h"				// FaceTrackNoIR-server (for client-server)
 #include "FTNoIR_cxx_protocolserver.h"
 
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
@@ -86,6 +79,11 @@ enum FTNoIR_Client {
 enum FTNoIR_Face_Tracker {
 	FT_SM_FACEAPI = 0,
 	FT_FTNOIR = 1
+};
+
+enum FTNoIR_Tracker_Status {
+	TRACKER_OFF = 0,
+	TRACKER_ON = 1
 };
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
@@ -179,13 +177,15 @@ private:
 
 	static TShortKey CenterKey;						// ShortKey to Center headposition
 	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
-	static TShortKey InhibitKey;					// ShortKey to one or more axis during tracking
+	static TShortKey InhibitKey;					// ShortKey to disable one or more axis during tracking
+	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
 	static bool do_tracking;						// Start/stop tracking, using the shortkey
 	static bool do_center;							// Center head-position, using the shortkey
 	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
+	static bool do_axis_reverse;					// Axis reverse, using the shortkey
 
 	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
 
@@ -195,7 +195,6 @@ private:
 	
 	FaceTrackNoIR *mainApp;
 
-	QSharedPointer<ProtocolServerBase> server_Game;		// Protocol Server to communicate headpose-data to the Game!
 	QSharedPointer<ProtocolServerBase> debug_Client;	// Protocol Server to log debug-data
 
 protected:
@@ -214,7 +213,8 @@ public:
 	void loadSettings();							// Load settings from the INI-file
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
-//	QSharedPointer<EngineBase> getEngine() { return _engine; };
+	static bool getTrackingActive() { return do_tracking; }
+	static bool getAxisReverse() { return do_axis_reverse; }
 
 	static bool getConfid() { return confid; }
 
