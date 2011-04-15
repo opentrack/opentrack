@@ -23,6 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110411 - WVR: Finished moving all Protocols to separate C++ projects. Every protocol now
+						has it's own Class, that's inside it's own DLL. This reduces the size of the program,
+						makes it more structured and enables a more sophisticated installer.
 		20110328 - WVR: Changed the camera-structs into class-instances. This makes initialisation
 						easier and hopefully solves the remaining 'start-up problem'.
 		20110313 - WVR: Removed 'set_initial'. Less is more.
@@ -63,16 +66,18 @@ bool Tracker::confid = false;
 bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
 bool Tracker::do_inhibit = false;
+bool Tracker::do_axis_reverse = false;
+
 bool Tracker::useFilter = false;
 bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
 
 
-T6DOF Tracker::current_camera;							// Used for filtering
-T6DOF Tracker::target_camera;
-T6DOF Tracker::new_camera;
-T6DOF Tracker::output_camera;							// Position sent to game protocol
+T6DOF Tracker::current_camera(0,0,0,0,0,0);				// Used for filtering
+T6DOF Tracker::target_camera(0,0,0,0,0,0);
+T6DOF Tracker::new_camera(0,0,0,0,0,0);
+T6DOF Tracker::output_camera(0,0,0,0,0,0);				// Position sent to game protocol
 
 THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw;
@@ -84,6 +89,7 @@ THeadPoseDOF Tracker::Z;
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
+TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
 
 ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
 IProtocolPtr Tracker::pProtocol;						// Pointer to Protocol instance (in DLL)
@@ -92,6 +98,7 @@ IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
 
 /** constructor **/
 Tracker::Tracker( int clientID, int facetrackerID, FaceTrackNoIR *parent ) {
+QString libName;
 importGetTracker getIT;
 QLibrary *trackerLib;
 importGetFilter getFilter;
@@ -132,167 +139,99 @@ QFrame *video_frame;
 	qDebug() << "Tracker::setup VideoFrame = " << video_frame;
 
 	//
-	// Start the selected Tracker-engine
+	// Select the Tracker-engine DLL
 	//
 	switch (selectedTracker) {
 		case FT_SM_FACEAPI:
-			trackerLib = new QLibrary("FTNoIR_Tracker_SM.dll");
-			
-			getIT = (importGetTracker) trackerLib->resolve("GetTracker");
-			
-			if (getIT) {
-				ITrackerPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pTracker = ptrXyz;
-					pTracker->Initialize( video_frame );
-					qDebug() << "Tracker::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
+			libName = QString("FTNoIR_Tracker_SM.dll");
 			break;
 
 		case FT_FTNOIR:
-			trackerLib = new QLibrary("FTNoIR_Tracker_UDP.dll");
-			
-			getIT = (importGetTracker) trackerLib->resolve("GetTracker");
-			
-			if (getIT) {
-				ITrackerPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pTracker = ptrXyz;
-					pTracker->Initialize( video_frame );
-					qDebug() << "Tracker::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
+			libName = QString("FTNoIR_Tracker_UDP.dll");
 			break;
 
 		default:
 			break;
 	}
 
+	//
+	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
+	//
+	if (!libName.isEmpty()) {
+		trackerLib = new QLibrary(libName);
+		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
+			
+		if (getIT) {
+			ITrackerPtr ptrXyz(getIT());							// Get the Class
+			if (ptrXyz)
+			{
+				pTracker = ptrXyz;
+				pTracker->Initialize( video_frame );
+				qDebug() << "Tracker::setup Function Resolved!";
+			}
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
 
 	//
 	// Initialize all server-handles. Only start the server, that was selected in the GUI.
 	//
+	libName.clear();
 	switch (selectedClient) {
 		case FREE_TRACK:
-			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
-
-			//
-			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
-			//
-			protocolLib = new QLibrary("FTNoIR_Protocol_FT.dll");
-			
-			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
-			if (getProtocol) {
-				IProtocolPtr ptrXyz(getProtocol());
-				if (ptrXyz)
-				{
-					pProtocol = ptrXyz;
-					pProtocol->Initialize();
-					qDebug() << "Protocol::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-				return;
-			}
+			libName = QString("FTNoIR_Protocol_FT.dll");
 			break;
 
 		case FLIGHTGEAR:
-			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
-
-			//
-			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
-			//
-			protocolLib = new QLibrary("FTNoIR_Protocol_FG.dll");
-			
-			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
-			if (getProtocol) {
-				IProtocolPtr ptrXyz(getProtocol());
-				if (ptrXyz)
-				{
-					pProtocol = ptrXyz;
-					pProtocol->Initialize();
-					qDebug() << "Protocol::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-				return;
-			}
+			libName = QString("FTNoIR_Protocol_FG.dll");
 			break;
 
 		case FTNOIR:
-			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
+			libName = QString("FTNoIR_Protocol_FTN.dll");
 			break;
 
 		case PPJOY:
-			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
-
-			//
-			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
-			//
-			protocolLib = new QLibrary("FTNoIR_Protocol_PPJOY.dll");
-			
-			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
-			if (getProtocol) {
-				IProtocolPtr ptrXyz(getProtocol());
-				if (ptrXyz)
-				{
-					pProtocol = ptrXyz;
-					pProtocol->Initialize();
-					qDebug() << "Protocol::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-installation invalid",QMessageBox::Ok,QMessageBox::NoButton);
-				return;
-			}
+			libName = QString("FTNoIR_Protocol_PPJOY.dll");
 			break;
 
 		case TRACKIR:
-			server_Game = QSharedPointer<FTNServer>(new FTNServer ( this ));		// Create FaceTrackNoIR protocol-server
-
-			//
-			// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
-			//
-			protocolLib = new QLibrary("FTNoIR_Protocol_FTIR.dll");
-			
-			getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
-			if (getProtocol) {
-				IProtocolPtr ptrXyz(getProtocol());
-				if (ptrXyz)
-				{
-					pProtocol = ptrXyz;
-					pProtocol->Initialize();
-					qDebug() << "Protocol::setup Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-				return;
-			}
+			libName = QString("FTNoIR_Protocol_FTIR.dll");
 			break;
 
 		case SIMCONNECT:
-			server_Game = QSharedPointer<SCServer>(new SCServer ( ));				// Create SimConnect protocol-server
+			libName = QString("FTNoIR_Protocol_SC.dll");
 			break;
 
 		case FSUIPC:
-			server_Game = QSharedPointer<FSUIPCServer>(new FSUIPCServer ( ));		// Create FSUIPC protocol-server
+			libName = QString("FTNoIR_Protocol_FSUIPC.dll");
 			break;
 
 		default:
 			// should never be reached
 		break;
+	}
+
+	//
+	// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
+	//
+	if (!libName.isEmpty()) {
+		protocolLib = new QLibrary(libName);
+		getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");
+		if (getProtocol) {
+			IProtocolPtr ptrXyz(getProtocol());
+			if (ptrXyz)
+			{
+				pProtocol = ptrXyz;
+				pProtocol->Initialize();
+				qDebug() << "Protocol::setup Function Resolved!";
+			}
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			return;
+		}
 	}
 
 #	ifdef USE_DEBUG_CLIENT
@@ -346,11 +285,6 @@ Tracker::~Tracker() {
 		::CloseHandle( Tracker::hTrackMutex );
 	}
 
-	// Stop the started server(s)
-	if (server_Game) {
-		server_Game->deleteLater();
-	}
-
 #       ifdef USE_DEBUG_CLIENT
 	debug_Client->deleteLater();		// Delete Excel protocol-server
 #       endif
@@ -365,20 +299,6 @@ void Tracker::setup() {
 
 	// retrieve pointers to the User Interface and the main Application
 	pTracker->StartTracker( mainApp->winId() );
-
-	//
-	// Check if the Protocol-server files were installed OK.
-	// Some servers also create a memory-mapping, for Inter Process Communication.
-	// The handle of the MainWindow is sent to 'The Game', so it can send a message back.
-	//
-	if (server_Game) {
-
-		DLL_Ok = server_Game->checkServerInstallationOK( mainApp->winId() );
-		if (!DLL_Ok) {
-			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
-		}
-
-	}
 
 	//
 	// Check if the Protocol-server files were installed OK.
@@ -404,14 +324,18 @@ void Tracker::setup() {
 
 /** QThread run method @override **/
 void Tracker::run() {
-	/** Direct Input variables **/
-	LPDIRECTINPUT8 din;								// the pointer to our DirectInput interface
-	LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
-	BYTE keystate[256];								// the storage for the key-information
-	HRESULT retAcquire;
-	bool lastCenterKey = false;						// Remember state, to detect rising edge
-	bool lastStartStopKey = false;
-	bool lastInhibitKey = false;
+/** Direct Input variables **/
+LPDIRECTINPUT8 din;								// the pointer to our DirectInput interface
+LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
+BYTE keystate[256];								// the storage for the key-information
+HRESULT retAcquire;
+bool lastCenterKey = false;						// Remember state, to detect rising edge
+bool lastStartStopKey = false;
+bool lastInhibitKey = false;
+bool waitAxisReverse = false;
+bool waitThroughZero = false;
+double actualYaw = 0.0f;
+T6DOF offset_camera(0,0,0,0,0,0);
 
 	Tracker::do_center = true;						// Center initially
 
@@ -427,13 +351,6 @@ void Tracker::run() {
 		QString filterName;
 		pFilter->getFilterFullName(&filterName);
 		qDebug() << "Tracker::run() FilterName = " << filterName;
-	}
-
-	//
-	// Initialize all internal data of the Game-protocol.
-	//
-	if (server_Game) {
-		server_Game->resetProperties();
 	}
 
 	//
@@ -519,6 +436,7 @@ void Tracker::run() {
 						current_camera.initHeadPoseData();
 						target_camera.initHeadPoseData();
 						new_camera.initHeadPoseData();
+						offset_camera.initHeadPoseData();
 
 						pTracker->StartTracker( mainApp->winId() );
 					}
@@ -555,7 +473,23 @@ void Tracker::run() {
 				}
 				lastInhibitKey = isShortKeyPressed( &InhibitKey, &keystate[0] );		// Remember
 
+				//
+				// Check the state of the Axis Reverse key
+				//
+				if ( isShortKeyPressed( &AxisReverseKey, &keystate[0] ) ) {
+					if ((fabs(actualYaw) > 90.0f) && (!waitAxisReverse)) {
+						Tracker::do_axis_reverse = !Tracker::do_axis_reverse;
+						waitAxisReverse = true;
+					}
+				}
 		   }
+		}
+
+		//
+		// Reset the 'wait' flag. Moving above 90 with the key pressed, will (de-)activate Axis Reverse.
+		//
+		if (fabs(actualYaw) < 85.0f) {
+			waitAxisReverse = false;
 		}
 
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
@@ -570,13 +504,20 @@ void Tracker::run() {
 			// If Center is pressed, copy the current values to the offsets.
 			//
 			if (Tracker::confid && Tracker::do_center) {
-				Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
-				Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
-				Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
-				X.offset_headPos = getSmoothFromList( &X.rawList );
-				Y.offset_headPos = getSmoothFromList( &Y.rawList );
-				Z.offset_headPos = getSmoothFromList( &Z.rawList );
+				//Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
+				//Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
+				//Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
+				//X.offset_headPos = getSmoothFromList( &X.rawList );
+				//Y.offset_headPos = getSmoothFromList( &Y.rawList );
+				//Z.offset_headPos = getSmoothFromList( &Z.rawList );
 				MessageBeep (MB_ICONASTERISK);
+
+				offset_camera.position.x     = getSmoothFromList( &X.rawList );
+				offset_camera.position.y     = getSmoothFromList( &Y.rawList );
+				offset_camera.position.z     = getSmoothFromList( &Z.rawList );
+				offset_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
+				offset_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
+				offset_camera.position.roll  = getSmoothFromList( &Roll.rawList );
 
 				Tracker::do_center = false;
 			}
@@ -584,12 +525,13 @@ void Tracker::run() {
 			if (Tracker::do_tracking && Tracker::confid) {
 
 				// Pitch
-				target_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
-				target_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
-				target_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
-				target_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
-				target_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
-				target_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
+				target_camera.position.x     = getSmoothFromList( &X.rawList );
+				target_camera.position.y     = getSmoothFromList( &Y.rawList );
+				target_camera.position.z     = getSmoothFromList( &Z.rawList );
+				target_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
+				target_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
+				target_camera.position.roll  = getSmoothFromList( &Roll.rawList );
+				target_camera = target_camera - offset_camera;
 
 				if (Tracker::useFilter && pFilter) {
 					pFilter->FilterHeadPoseData(&current_camera.position, &target_camera.position, &new_camera.position, Tracker::Pitch.newSample);
@@ -610,6 +552,33 @@ void Tracker::run() {
 				output_camera.position.roll = Roll.invert * getOutputFromCurve(&Roll.curve, new_camera.position.roll, Roll.NeutralZone, Roll.MaxInput);
 
 				//
+				// Reverse Axis.
+				//
+				actualYaw = output_camera.position.yaw;					// Save the actual Yaw, otherwise we can't check for +90
+				if (Tracker::do_axis_reverse) {
+					if (fabs(actualYaw) < 5.0f) {
+						waitThroughZero = true;
+					}
+					if (waitThroughZero) {
+						output_camera.position.yaw *= -1.0f;
+					}
+					if (output_camera.position.yaw > 0.0f) {
+						output_camera.position.yaw = 180.0f - output_camera.position.yaw;
+					}
+					else {
+						output_camera.position.yaw = -180.0f - output_camera.position.yaw;
+					}
+				}
+				else {
+					if (fabs(actualYaw) < 5.0f) {
+						waitThroughZero = false;
+					}
+					if (waitThroughZero) {
+						output_camera.position.yaw *= -1.0f;
+					}
+				}
+
+				//
 				// Reset value for the selected axis, if inhibition is active
 				//
 				if (Tracker::do_inhibit) {
@@ -621,43 +590,10 @@ void Tracker::run() {
 					if (InhibitKey.doZ) output_camera.position.z = 0.0f;
 				}
 
-				//
-				// Send the Virtual Pose to selected Protocol-Server
-				//
-				// Free-track
-				if (selectedClient == FREE_TRACK) {
-					server_Game->setHeadRotX( output_camera.position.pitch );					// degrees
-					server_Game->setHeadRotY( output_camera.position.yaw );
-					server_Game->setHeadRotZ( output_camera.position.roll );
-
-					server_Game->setHeadPosX( output_camera.position.x );						// centimeters
-					server_Game->setHeadPosY( output_camera.position.y );
-					server_Game->setHeadPosZ( output_camera.position.z );
-				}
-
-				// All Protocol server(s)
-				if (server_Game) {
-					server_Game->setVirtRotX ( output_camera.position.pitch );					// degrees
-					server_Game->setVirtRotY ( output_camera.position.yaw );
-					server_Game->setVirtRotZ ( output_camera.position.roll );
-					server_Game->setVirtPosX ( output_camera.position.x );						// centimeters
-					server_Game->setVirtPosY ( output_camera.position.y );
-					server_Game->setVirtPosZ ( output_camera.position.z );
-				}
-
 				// All Protocol server(s)
 				if (pProtocol) {
 					pProtocol->sendHeadposeToGame( &output_camera );							// degrees & centimeters
 				}
-
-//				headRotXLine->setText(QString("%1").arg( new_camera.position.pitch, 0, 'f', 1));	// show degrees
-//				headRotYLine->setText(QString("%1").arg( new_camera.position.yaw, 0, 'f', 1));
-//				headRotZLine->setText(QString("%1").arg( new_camera.position.roll, 0, 'f', 1));
-//
-////				headXLine->setText(QString("%1").arg( new_camera.position.x, 0, 'f', 1));			// show centimeters
-//				headYLine->setText(QString("%1").arg( new_camera.position.y, 0, 'f', 1));
-//				headZLine->setText(QString("%1").arg( new_camera.position.z, 0, 'f', 1));
-
 
 #       ifdef USE_DEBUG_CLIENT
 				debug_Client->setHeadRotX( Tracker::Pitch.headPos );	// degrees
@@ -682,13 +618,14 @@ void Tracker::run() {
 				//
 				// Go to initial position
 				//
-				if (server_Game && setZero) {
-					server_Game->setVirtRotX ( 0.0f );
-					server_Game->setVirtRotY ( 0.0f );
-					server_Game->setVirtRotZ ( 0.0f );
-					server_Game->setVirtPosX ( 0.0f );
-					server_Game->setVirtPosY ( 0.0f );
-					server_Game->setVirtPosZ ( 0.0f );
+				if (pProtocol && setZero) {
+					output_camera.position.pitch = 0.0f;
+					output_camera.position.yaw = 0.0f;
+					output_camera.position.roll = 0.0f;
+					output_camera.position.x = 0.0f;
+					output_camera.position.y = 0.0f;
+					output_camera.position.z = 0.0f;
+					pProtocol->sendHeadposeToGame( &output_camera );							// degrees & centimeters
 				}
 			}
 		}
@@ -705,7 +642,6 @@ void Tracker::run() {
 		Tracker::Pitch.newSample = false;
 
 		ReleaseMutex(Tracker::hTrackMutex);
-		server_Game->sendHeadposeToGame();
 
 		//for lower cpu load 
 		usleep(10000);
@@ -749,7 +685,8 @@ void Tracker::addHeadPose( THeadPoseData head_pose )
 QString Tracker::getGameProgramName() {
 QString str;
 
-	str = server_Game->GetProgramName();
+//	str = server_Game->GetProgramName();
+	str = QString("");
 	return str;	
 }
 
@@ -1099,6 +1036,13 @@ QPointF point1, point2, point3, point4;
 	InhibitKey.doX = iniFile.value ( "Inhibit_X", 0 ).toBool();
 	InhibitKey.doY = iniFile.value ( "Inhibit_Y", 0 ).toBool();
 	InhibitKey.doZ = iniFile.value ( "Inhibit_Z", 0 ).toBool();
+
+	// Axis Reverse key
+	AxisReverseKey.keycode = DIK_R;
+	AxisReverseKey.shift = false;
+	AxisReverseKey.ctrl = false;
+	AxisReverseKey.alt = false;
+
 
 	iniFile.endGroup ();
 }

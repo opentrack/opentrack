@@ -31,12 +31,6 @@
 */
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
-//#include "PPJoyServer.h"
-#include "FSUIPCServer.h"
-//#include "FTIRServer.h"
-//#include "FGServer.h"
-#include "FTNServer.h"
-
 
 //
 // Setup the Main Dialog
@@ -50,7 +44,6 @@ QMainWindow(parent, flags)
 	// Initialize Widget handles, to prevent memory-access errors.
 	//
 	_engine_controls = 0;
-	_server_controls = 0;
 	_keyboard_shortcuts = 0;
 	_preferences = 0;
 	_keyboard_shortcuts = 0;
@@ -160,6 +153,8 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	//Setup the timer for showing the headpose.
 	timUpdateHeadPose = new QTimer(this);
     connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+	ui.txtTracking->setVisible(false);
+	ui.txtAxisReverse->setVisible(false);
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -593,6 +588,8 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
+	ui.txtTracking->setVisible(false);
+	ui.txtAxisReverse->setVisible(false);
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -688,6 +685,9 @@ THeadPoseData newdata;
 	ui.lcdNumRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
 	ui.lcdNumRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
 	ui.lcdNumRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
+
+	ui.txtTracking->setVisible(Tracker::getTrackingActive());
+	ui.txtAxisReverse->setVisible(Tracker::getAxisReverse());
 
 	//
 	// Get the output-pose and also display it.
@@ -816,104 +816,68 @@ QLibrary *trackerLib;
 void FaceTrackNoIR::showServerControls() {
 importGetProtocolDialog getIT;
 QLibrary *protocolLib;
-
+QString libName;
 
 	//
 	// Delete the existing QDialog
 	//
-	if (_server_controls) {
-		delete _server_controls;
-		_server_controls = 0;
+	if (pProtocolDialog) {
+		pProtocolDialog.Release();
 	}
 
-	// Create if new
-	if (!_server_controls)
-    {
+	// Show the appropriate Protocol-server Settings
+	libName.clear();
+	switch (ui.iconcomboBox->currentIndex()) {
+	case FREE_TRACK:
+	case SIMCONNECT:
+		break;
 
-		// Show the appropriate Protocol-server Settings
-		switch (ui.iconcomboBox->currentIndex()) {
-		case FREE_TRACK:
-		case SIMCONNECT:
-			break;
+	case PPJOY:
+		libName = QString("FTNoIR_Protocol_PPJOY.dll");
+		break;
 
-		case PPJOY:
-			protocolLib = new QLibrary("FTNoIR_Protocol_PPJOY.dll");
+	case FSUIPC:
+		libName = QString("FTNoIR_Protocol_FSUIPC.dll");
+		break;
 
-			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
-			if (getIT) {
-				IProtocolDialogPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pProtocolDialog = ptrXyz;
-					pProtocolDialog->Initialize( this );
-					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
-				}
-				else {
-					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-				}	
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
-			break;
+	case TRACKIR:
+		libName = QString("FTNoIR_Protocol_FTIR.dll");
+		break;
 
-		case FSUIPC:
-	        _server_controls = new FSUIPCControls( this, Qt::Dialog );
-			break;
-		case TRACKIR:
-			protocolLib = new QLibrary("FTNoIR_Protocol_FTIR.dll");
+	case FLIGHTGEAR:
+		libName = QString("FTNoIR_Protocol_FG.dll");
+		break;
 
-			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
-			if (getIT) {
-				IProtocolDialogPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pProtocolDialog = ptrXyz;
-					pProtocolDialog->Initialize( this );
-					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
-				}
-				else {
-					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-				}	
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
-			break;
+	case FTNOIR:
+		libName = QString("FTNoIR_Protocol_FTN.dll");
+		break;
 
-		case FLIGHTGEAR:
-			protocolLib = new QLibrary("FTNoIR_Protocol_FG.dll");
-
-			getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
-			if (getIT) {
-				IProtocolDialogPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pProtocolDialog = ptrXyz;
-					pProtocolDialog->Initialize( this );
-					qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
-				}
-				else {
-					qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-				}	
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
-			break;
-
-		case FTNOIR:
-	        _server_controls = new FTNServerControls( this, Qt::Dialog );
-			break;
-		default:
-			break;
-		}
+	default:
+		break;
     }
 
-	// Show if already created
-	if (_server_controls) {
-		_server_controls->show();
-		_server_controls->raise();
+	//
+	// Load the Server-settings dialog (if any) and show it.
+	//
+	if (!libName.isEmpty()) {
+		protocolLib = new QLibrary(libName);
+
+		getIT = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+		if (getIT) {
+			IProtocolDialogPtr ptrXyz(getIT());
+			if (ptrXyz)
+			{
+				pProtocolDialog = ptrXyz;
+				pProtocolDialog->Initialize( this );
+				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+			}
+			else {
+				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+			}	
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
 	}
 }
 
