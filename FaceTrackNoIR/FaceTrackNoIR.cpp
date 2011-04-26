@@ -852,6 +852,10 @@ QString libName;
 		libName = QString("FTNoIR_Protocol_FTN.dll");
 		break;
 
+	case MOUSE:
+		libName = QString("FTNoIR_Protocol_MOUSE.dll");
+		break;
+
 	default:
 		break;
     }
@@ -939,16 +943,17 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/Freetrack.ico"), tr("Freetrack"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FlightGear.ico"), tr("FlightGear"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/PPJoy.ico"), tr("Virtual Joystick"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/TrackIR.ico"), tr("Fake TrackIR"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FSX.ico"), tr("SimConnect (FSX)"));
-	ui.iconcomboBox->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FS9.ico"), tr("FS2002/FS2004"));
+	ui.iconcomboBox->addItem(QIcon(":/images/Freetrack.ico"), tr("Freetrack"));
+	ui.iconcomboBox->addItem(QIcon(":/images/FlightGear.ico"), tr("FlightGear"));
+	ui.iconcomboBox->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
+	ui.iconcomboBox->addItem(QIcon(":/images/PPJoy.ico"), tr("Virtual Joystick"));
+	ui.iconcomboBox->addItem(QIcon(":/images/TrackIR.ico"), tr("Fake TrackIR"));
+	ui.iconcomboBox->addItem(QIcon(":/images/FSX.ico"), tr("SimConnect (FSX)"));
+	ui.iconcomboBox->addItem(QIcon(":/images/FS9.ico"), tr("FS2002/FS2004"));
+	ui.iconcomboBox->addItem(QIcon(":/images/Mouse.ico"), tr("Mouse look"));
 
-	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/SeeingMachines.ico"), tr("Face API"));
-	ui.iconcomboTrackerSource->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
+	ui.iconcomboTrackerSource->addItem(QIcon(":/images/SeeingMachines.ico"), tr("Face API"));
+	ui.iconcomboTrackerSource->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
 }
 
 //
@@ -1000,7 +1005,7 @@ void FaceTrackNoIR::setIcon(int index)
 		trayIcon->show();
 		trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboBox->itemText(index));
 	}
-    setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.ico"));
+	setWindowIcon(QIcon(":/images/FaceTrackNoIR.ico"));
 	ui.btnShowServerControls->setIcon(icon);
 
 	settingsDirty = true;
@@ -1016,6 +1021,7 @@ void FaceTrackNoIR::setIcon(int index)
 	case TRACKIR:
 	case FLIGHTGEAR:
 	case FTNOIR:
+	case MOUSE:
 		ui.btnShowServerControls->show();
 		ui.btnShowServerControls->setEnabled ( true );
 		break;
@@ -1219,6 +1225,11 @@ QWidget( parent , f)
 	connect(ui.chkCenterCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkCenterAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
+	connect(ui.cbxGameZeroKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.chkGameZeroShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkGameZeroCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+	connect(ui.chkGameZeroAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+
 	connect(ui.cbxStartStopKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkStartStopShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
@@ -1376,6 +1387,7 @@ QWidget( parent , f)
 	//
 	for ( int i = 0; i < stringList.size(); i++) {
 		ui.cbxCenterKey->addItem(stringList.at(i));
+		ui.cbxGameZeroKey->addItem(stringList.at(i));
 		ui.cbxStartStopKey->addItem(stringList.at(i));
 		ui.cbxInhibitKey->addItem(stringList.at(i));
 	}
@@ -1465,6 +1477,18 @@ int keyindex;
 	ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
 	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
 
+	// GameZero key
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_GameZero", 1 ).toInt() );
+	if ( keyindex > 0 ) {
+		ui.cbxGameZeroKey->setCurrentIndex( keyindex );
+	}
+	else {
+		ui.cbxGameZeroKey->setCurrentIndex( 0 );
+	}
+	ui.chkGameZeroShift->setChecked (iniFile.value ( "Shift_GameZero", 0 ).toBool());
+	ui.chkGameZeroCtrl->setChecked (iniFile.value ( "Ctrl_GameZero", 0 ).toBool());
+	ui.chkGameZeroAlt->setChecked (iniFile.value ( "Alt_GameZero", 0 ).toBool());
+
 	// Start/stop key
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_StartStop", 1 ).toInt() );
 	if ( keyindex > 0 ) {
@@ -1523,6 +1547,11 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
 	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
 	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
+
+	iniFile.setValue ( "Keycode_GameZero", keyList.at( ui.cbxGameZeroKey->currentIndex() ) );
+	iniFile.setValue ( "Shift_GameZero", ui.chkGameZeroShift->isChecked() );
+	iniFile.setValue ( "Ctrl_GameZero", ui.chkGameZeroCtrl->isChecked() );
+	iniFile.setValue ( "Alt_GameZero", ui.chkGameZeroAlt->isChecked() );
 
 	iniFile.setValue ( "Keycode_StartStop", keyList.at( ui.cbxStartStopKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );

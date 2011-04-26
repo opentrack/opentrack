@@ -73,7 +73,8 @@ enum FTNoIR_Client {
 	PPJOY = 3,
 	TRACKIR = 4,
 	SIMCONNECT = 5,
-	FSUIPC = 6
+	FSUIPC = 6,
+	MOUSE = 7
 };
 
 enum FTNoIR_Face_Tracker {
@@ -95,7 +96,6 @@ class THeadPoseDOF {
 public:
 	void initHeadPoseData(){
 		headPos = 0.0f;
-//		initial_headPos = 0.0f;
 		offset_headPos = 0.0f;
 		invert = 0.0f;
 		red = 0.0f;
@@ -103,14 +103,12 @@ public:
 		maxItems = 10.0f;
 		prevPos = 0.0f;
 		prevRawPos = 0.0f;
-//		curve.???
 		NeutralZone = 0;
 		MaxInput = 0;
 		confidence = 0.0f;
 		newSample = FALSE;
 	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
-//	float initial_headPos;			// Position on startup (first valid value)
 	float offset_headPos;			// Offset for centering
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
@@ -178,6 +176,7 @@ private:
 	static TShortKey CenterKey;						// ShortKey to Center headposition
 	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
 	static TShortKey InhibitKey;					// ShortKey to disable one or more axis during tracking
+	static TShortKey GameZeroKey;					// ShortKey to Set Game Zero
 	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
 
 	// Flags to start/stop/reset tracking
@@ -185,6 +184,7 @@ private:
 	static bool do_tracking;						// Start/stop tracking, using the shortkey
 	static bool do_center;							// Center head-position, using the shortkey
 	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
+	static bool do_game_zero;						// Set in-game zero, using the shortkey
 	static bool do_axis_reverse;					// Axis reverse, using the shortkey
 
 	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
