@@ -1108,7 +1108,7 @@ color: rgb(0, 255, 0);</string>
                  <number>-1</number>
                 </property>
                 <property name="maxVisibleItems">
-                 <number>6</number>
+                 <number>7</number>
                 </property>
                </widget>
                <widget class="QPushButton" name="btnShowServerControls">

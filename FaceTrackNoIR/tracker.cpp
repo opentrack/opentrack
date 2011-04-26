@@ -66,6 +66,7 @@ bool Tracker::confid = false;
 bool Tracker::do_tracking = true;
 bool Tracker::do_center = false;
 bool Tracker::do_inhibit = false;
+bool Tracker::do_game_zero = false;
 bool Tracker::do_axis_reverse = false;
 
 bool Tracker::useFilter = false;
@@ -89,6 +90,7 @@ THeadPoseDOF Tracker::Z;
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
+TShortKey Tracker::GameZeroKey;							// ShortKey to Set Game Zero
 TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
 
 ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
@@ -332,10 +334,13 @@ HRESULT retAcquire;
 bool lastCenterKey = false;						// Remember state, to detect rising edge
 bool lastStartStopKey = false;
 bool lastInhibitKey = false;
+bool lastGameZeroKey = false;
 bool waitAxisReverse = false;
 bool waitThroughZero = false;
 double actualYaw = 0.0f;
 T6DOF offset_camera(0,0,0,0,0,0);
+T6DOF gamezero_camera(0,0,0,0,0,0);
+T6DOF gameoutput_camera(0,0,0,0,0,0);
 
 	Tracker::do_center = true;						// Center initially
 
@@ -459,6 +464,15 @@ T6DOF offset_camera(0,0,0,0,0,0);
 				lastCenterKey = isShortKeyPressed( &CenterKey, &keystate[0] );				// Remember
 
 				//
+				// Check the state of the GameZero key
+				//
+				if ( isShortKeyPressed( &GameZeroKey, &keystate[0] ) && (!lastGameZeroKey) ) {
+					Tracker::do_game_zero = true;
+					qDebug() << "Tracker::run() says GameZero pressed";
+				}
+				lastGameZeroKey = isShortKeyPressed( &GameZeroKey, &keystate[0] );			// Remember
+
+				//
 				// Check the state of the Inhibit key
 				//
 				if ( isShortKeyPressed( &InhibitKey, &keystate[0] ) && (!lastInhibitKey) ) {
@@ -504,12 +518,6 @@ T6DOF offset_camera(0,0,0,0,0,0);
 			// If Center is pressed, copy the current values to the offsets.
 			//
 			if (Tracker::confid && Tracker::do_center) {
-				//Pitch.offset_headPos = getSmoothFromList( &Pitch.rawList );
-				//Yaw.offset_headPos = getSmoothFromList( &Yaw.rawList );
-				//Roll.offset_headPos = getSmoothFromList( &Roll.rawList );
-				//X.offset_headPos = getSmoothFromList( &X.rawList );
-				//Y.offset_headPos = getSmoothFromList( &Y.rawList );
-				//Z.offset_headPos = getSmoothFromList( &Z.rawList );
 				MessageBeep (MB_ICONASTERISK);
 
 				offset_camera.position.x     = getSmoothFromList( &X.rawList );
@@ -520,6 +528,15 @@ T6DOF offset_camera(0,0,0,0,0,0);
 				offset_camera.position.roll  = getSmoothFromList( &Roll.rawList );
 
 				Tracker::do_center = false;
+			}
+
+			//
+			// If Set Game Zero is pressed, copy the current values to the offsets.
+			//
+			if (Tracker::confid && Tracker::do_game_zero) {
+				gamezero_camera.position = gameoutput_camera.position;
+
+				Tracker::do_game_zero = false;
 			}
 
 			if (Tracker::do_tracking && Tracker::confid) {
@@ -592,7 +609,8 @@ T6DOF offset_camera(0,0,0,0,0,0);
 
 				// All Protocol server(s)
 				if (pProtocol) {
-					pProtocol->sendHeadposeToGame( &output_camera );							// degrees & centimeters
+					gameoutput_camera = output_camera + gamezero_camera;
+					pProtocol->sendHeadposeToGame( &gameoutput_camera );	// degrees & centimeters
 				}
 
 #       ifdef USE_DEBUG_CLIENT
@@ -625,7 +643,8 @@ T6DOF offset_camera(0,0,0,0,0,0);
 					output_camera.position.x = 0.0f;
 					output_camera.position.y = 0.0f;
 					output_camera.position.z = 0.0f;
-					pProtocol->sendHeadposeToGame( &output_camera );							// degrees & centimeters
+					gameoutput_camera = output_camera + gamezero_camera;
+					pProtocol->sendHeadposeToGame( &gameoutput_camera );				// degrees & centimeters
 				}
 			}
 		}
@@ -1036,6 +1055,12 @@ QPointF point1, point2, point3, point4;
 	InhibitKey.doX = iniFile.value ( "Inhibit_X", 0 ).toBool();
 	InhibitKey.doY = iniFile.value ( "Inhibit_Y", 0 ).toBool();
 	InhibitKey.doZ = iniFile.value ( "Inhibit_Z", 0 ).toBool();
+
+	// Game Zero key
+	GameZeroKey.keycode = iniFile.value ( "Keycode_GameZero", 0 ).toInt();
+	GameZeroKey.shift = iniFile.value ( "Shift_GameZero", 0 ).toBool();
+	GameZeroKey.ctrl = iniFile.value ( "Ctrl_GameZero", 0 ).toBool();
+	GameZeroKey.alt = iniFile.value ( "Alt_GameZero", 0 ).toBool();
 
 	// Axis Reverse key
 	AxisReverseKey.keycode = DIK_R;

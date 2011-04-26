@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>270</height>
+    <height>308</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,14 +28,14 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="6">
+       <item row="3" column="6">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Disables:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="6">
+       <item row="2" column="6">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>When OFF:</string>
@@ -58,7 +58,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Axis Inhibitor</string>
@@ -78,7 +78,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="1">
         <widget class="QCheckBox" name="chkStartStopShift">
          <property name="maximumSize">
           <size>
@@ -91,7 +91,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QCheckBox" name="chkInhibitShift">
          <property name="maximumSize">
           <size>
@@ -117,7 +117,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="2" column="2">
         <widget class="QCheckBox" name="chkStartStopCtrl">
          <property name="maximumSize">
           <size>
@@ -130,7 +130,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="3" column="2">
         <widget class="QCheckBox" name="chkInhibitCtrl">
          <property name="maximumSize">
           <size>
@@ -143,20 +143,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QCheckBox" name="chkCenterAlt">
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Alt</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3">
+       <item row="2" column="3">
         <widget class="QCheckBox" name="chkStartStopAlt">
          <property name="maximumSize">
           <size>
@@ -169,7 +156,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
+       <item row="3" column="3">
         <widget class="QCheckBox" name="chkInhibitAlt">
          <property name="maximumSize">
           <size>
@@ -198,7 +185,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="4">
+       <item row="2" column="4">
         <widget class="QComboBox" name="cbxStartStopKey">
          <property name="minimumSize">
           <size>
@@ -208,7 +195,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="4">
+       <item row="3" column="4">
         <widget class="QComboBox" name="cbxInhibitKey">
          <property name="minimumSize">
           <size>
@@ -218,7 +205,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="7">
+       <item row="3" column="7">
         <widget class="QGroupBox" name="groupBox">
          <property name="minimumSize">
           <size>
@@ -291,7 +278,7 @@
          </widget>
         </widget>
        </item>
-       <item row="1" column="7">
+       <item row="2" column="7">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="minimumSize">
           <size>
@@ -333,7 +320,7 @@
          </widget>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Start/stop</string>
@@ -343,7 +330,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="8">
+       <item row="3" column="8">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="styleSheet">
           <string notr="true">color: rgb(0, 0, 0);</string>
@@ -410,7 +397,7 @@
          </widget>
         </widget>
        </item>
-       <item row="1" column="8">
+       <item row="2" column="8">
         <widget class="QGroupBox" name="groupBox_4">
          <property name="minimumSize">
           <size>
@@ -450,6 +437,90 @@
            <string>Keep tracking</string>
           </property>
          </widget>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="textLabel2_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Game Zero</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chkGameZeroShift">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Shift</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="chkGameZeroCtrl">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Ctrl</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QCheckBox" name="chkCenterAlt">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Alt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QCheckBox" name="chkGameZeroAlt">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Alt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QComboBox" name="cbxGameZeroKey">
+         <property name="minimumSize">
+          <size>
+           <width>90</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Select Number</string>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAlphabetically</enum>
+         </property>
         </widget>
        </item>
       </layout>

@@ -1,15 +1,20 @@
 <RCC>
-  <qresource prefix="/">
-    <file>images/Settings16.png</file>
-    <file>images/SettingsOpen16.png</file>
-    <file>UIElements/Donate.png</file>
-    <file>UIElements/Curves.png</file>
-    <file>images/rotation_DOFs.png</file>
-    <file>images/translation_DOFs.png</file>
-    <file>images/FlightGear.ico</file>
-    <file>images/330px-6DOF_en.png</file>
-    <file>images/Freetrack.ico</file>
-    <file>images/FaceTrackNoIR.ico</file>
-    <file>images/SeeingMachines.ico</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>images/Settings16.png</file>
+        <file>images/SettingsOpen16.png</file>
+        <file>UIElements/Donate.png</file>
+        <file>UIElements/Curves.png</file>
+        <file>images/rotation_DOFs.png</file>
+        <file>images/translation_DOFs.png</file>
+        <file>images/FlightGear.ico</file>
+        <file>images/330px-6DOF_en.png</file>
+        <file>images/Freetrack.ico</file>
+        <file>images/FaceTrackNoIR.ico</file>
+        <file>images/SeeingMachines.ico</file>
+        <file>images/Mouse.ico</file>
+        <file>images/FS9.ico</file>
+        <file>images/FSX.ico</file>
+        <file>images/PPJoy.ico</file>
+        <file>images/TrackIR.ico</file>
+    </qresource>
 </RCC>
