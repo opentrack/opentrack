@@ -210,6 +210,10 @@ QFrame *video_frame;
 			libName = QString("FTNoIR_Protocol_FSUIPC.dll");
 			break;
 
+		case MOUSE:
+			libName = QString("FTNoIR_Protocol_MOUSE.dll");
+			break;
+
 		default:
 			// should never be reached
 		break;
