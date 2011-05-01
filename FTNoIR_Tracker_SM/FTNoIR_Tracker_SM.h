@@ -1,6 +1,6 @@
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #include "..\ftnoir_tracker_base\ftnoir_tracker_sm_types.h"
-#include "ui_FTNoIR_SMClientcontrols.h"
+#include "ui_FTNoIR_SM_controls.h"
 
 #include <QMessageBox>
 #include <QSettings>
@@ -27,14 +27,6 @@ public:
 	bool setParameterValue(const int index, const float newvalue);
 
 private:
-	/** face api variables **/
-	//APIScope *faceapi_scope;
- //   QSharedPointer<EngineBase> _engine;
-	//VideoDisplayWidget *_display;
-	//QVBoxLayout *l;
-	//MainWindow *main_window;
-	//parameter list for the filter-function(s)
-
 	//
 	// global variables
 	//
@@ -53,3 +45,52 @@ private:
 	QList<float>					parameterValueAsFloat;
 
 };
+
+// Widget that has controls for SMoIR protocol client-settings.
+class SMClientControls: public QWidget, Ui::UICSMClientControls, public ITrackerDialog
+{
+    Q_OBJECT
+public:
+
+	explicit SMClientControls();
+    virtual ~SMClientControls();
+	void showEvent ( QShowEvent * event );
+
+	void Release();											// Member functions which are accessible from outside the DLL
+    void Initialize(QWidget *parent);
+
+private:
+	Ui::UICSMClientControls ui;
+	void loadSettings();
+	void save();
+	bool SMCreateMapping();
+	void doCommand( int command );
+
+	/** helper **/
+	bool settingsDirty;
+
+	//
+	// global variables
+	//
+	HANDLE hSMMemMap;
+	SMMemMap *pMemData;
+	HANDLE hSMMutex;
+    smEngineHandle *engine_handle;
+	QTimer *timUpdateSettings;								// Timer to display current settings
+
+private slots:
+	void doOK();
+	void doCancel();
+	void settingChanged() { settingsDirty = true; };
+	void showSettings();
+	void doStartEngine(){
+		doCommand(FT_SM_START);
+	}
+	void doStopEngine(){
+		doCommand(FT_SM_STOP);
+	}
+	void doShowCam(){
+		doCommand(FT_SM_SHOW_CAM);
+	}
+};
+

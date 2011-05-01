@@ -18,11 +18,13 @@ struct SMMemMap {
 	int status;						// Status from faceAPI
 	TFaceData data;
 	HANDLE handle;
+	int state;
 };
 typedef SMMemMap * PSMMemMap;
 
 enum FTNoIR_Tracker_Command {
 	FT_SM_START = 10,
 	FT_SM_STOP  = 20,
+	FT_SM_SHOW_CAM = 30,
 	FT_SM_EXIT  = 100
 };
