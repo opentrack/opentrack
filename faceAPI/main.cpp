@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110501 - WVR: Added some command to be handled from FaceTrackNoIR (settings dialog).
 		20110322 - WVR: Somehow the video-widget of faceAPI version 3.2.6. does not
 					    work with FaceTrackNoIR (Qt issue?!). To be able to use 
 						release 3.2.6 of faceAPI anyway, this console-app is used.
@@ -372,20 +373,27 @@ void run()
 		sprintf_s(msg, "Command: %d\n", pMemData->command);
 		OutputDebugStringA(msg);
 		if (pMemData) {
+
+			//
+			//
+			// Determine the trackers' state and send it to FaceTrackNoIR.
+			//
+			THROW_ON_ERROR(smEngineGetState(engine_handle, &state));
+			pMemData->state = state;
+			
+			//
+			// Check if a command was issued and do something with it!
+			//
 			switch (pMemData->command) {
 				case FT_SM_START:
 
 					//
 					// Only execute Start, if the engine is not yet tracking.
 					//
-					THROW_ON_ERROR(smEngineGetState(engine_handle, &state));
 					if (state != SM_API_ENGINE_STATE_HT_TRACKING) {
 						THROW_ON_ERROR(smEngineStart(engine_handle));	// Start tracking
 					}
 					pMemData->command = 0;								// Reset
-
-					THROW_ON_ERROR(smEngineShowCameraControlPanel(engine_handle));
-
 					break;
 
 				case FT_SM_STOP:
@@ -396,6 +404,11 @@ void run()
 				case FT_SM_EXIT:
 					THROW_ON_ERROR(smEngineStop(engine_handle));		// Stop tracking
 					stopCommand = TRUE;
+					pMemData->command = 0;								// Reset
+					break;
+
+				case FT_SM_SHOW_CAM:
+					THROW_ON_ERROR(smEngineShowCameraControlPanel(engine_handle));
 					pMemData->command = 0;								// Reset
 					break;
 
@@ -505,6 +518,7 @@ bool SMCreateMapping()
 		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
 		if (pMemData != NULL) {
 			OutputDebugString(_T("FTCreateMapping says: MapViewOfFile OK.\n"));
+			pMemData->state = 0;
 //			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
 		}
 	    hSMMutex = CreateMutexA(NULL, false, SM_MUTEX);

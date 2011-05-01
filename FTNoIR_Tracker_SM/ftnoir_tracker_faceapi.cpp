@@ -1,4 +1,5 @@
 #include "ftnoir_tracker_sm.h"
+//#include "sm_api_headtrackerv2controls.h"
 #include <QtGui>
 
 FTNoIR_Tracker_SM::FTNoIR_Tracker_SM()
@@ -231,4 +232,261 @@ bool FTNoIR_Tracker_SM::SMCreateMapping()
 FTNOIR_TRACKER_BASE_EXPORT TRACKERHANDLE __stdcall GetTracker()
 {
 	return new FTNoIR_Tracker_SM;
+}
+
+//*******************************************************************************************************
+// faceAPI Client Settings-dialog.
+//*******************************************************************************************************
+
+//
+// Constructor for server-settings-dialog
+//
+SMClientControls::SMClientControls() :
+QWidget()
+{
+	ui.setupUi( this );
+
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.btnEngineStart, SIGNAL(clicked()), this, SLOT(doStartEngine()));
+	connect(ui.btnEngineStop, SIGNAL(clicked()), this, SLOT(doStopEngine()));
+	connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
+
+	if (SMCreateMapping()) {
+		qDebug() << "SMClientControls::Initialize Mapping created.";
+	}
+	else {
+		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
+	}
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+
+	//Setup the timer for showing the headpose.
+	timUpdateSettings = new QTimer(this);
+    connect(timUpdateSettings, SIGNAL(timeout()), this, SLOT(showSettings()));
+	timUpdateSettings->start(1000);
+
+}
+
+//
+// Destructor for server-dialog
+//
+SMClientControls::~SMClientControls() {
+	qDebug() << "~SMClientControls() says: started";
+}
+
+void SMClientControls::Release()
+{
+    delete this;
+}
+
+//
+// Initialize tracker-client-dialog
+//
+void SMClientControls::Initialize(QWidget *parent) {
+
+	QPoint offsetpos(100, 100);
+	if (parent) {
+		this->move(parent->pos() + offsetpos);
+	}
+	show();
+}
+
+//
+// OK clicked on server-dialog
+//
+void SMClientControls::doOK() {
+	save();
+	this->close();
+}
+
+// override show event
+void SMClientControls::showEvent ( QShowEvent * event ) {
+	loadSettings();
+}
+
+//
+// Cancel clicked on server-dialog
+//
+void SMClientControls::doCancel() {
+	//
+	// Ask if changed Settings should be saved
+	//
+	if (settingsDirty) {
+		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+
+		qDebug() << "doCancel says: answer =" << ret;
+
+		switch (ret) {
+			case QMessageBox::Save:
+				save();
+				this->close();
+				break;
+			case QMessageBox::Discard:
+				this->close();
+				break;
+			case QMessageBox::Cancel:
+				// Cancel was clicked
+				break;
+			default:
+				// should never be reached
+			break;
+		}
+	}
+	else {
+		this->close();
+	}
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void SMClientControls::loadSettings() {
+
+//	qDebug() << "loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+//	qDebug() << "loadSettings says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "SMClient" );
+
+//	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//
+// Save the current Settings to the currently 'active' INI-file.
+//
+void SMClientControls::save() {
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "SMClient" );
+	iniFile.endGroup ();
+
+	settingsDirty = false;
+}
+
+//
+// Create a memory-mapping to the faceAPI data.
+// It contains the tracking data, a command-code from FaceTrackNoIR
+//
+//
+bool SMClientControls::SMCreateMapping()
+{
+	qDebug() << "SMClientControls::FTCreateMapping says: Starting Function";
+
+	//
+	// A FileMapping is used to create 'shared memory' between the faceAPI and FaceTrackNoIR.
+	//
+	// Try to create a FileMapping to the Shared Memory.
+	// If one already exists: close it.
+	//
+	hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
+		                           sizeof( TFaceData ) + sizeof( HANDLE ) + 100, 
+								   (LPCSTR) SM_MM_DATA );
+
+	if ( hSMMemMap != 0 ) {
+		qDebug() << "SMClientControls::FTCreateMapping says: FileMapping Created!";
+	}
+
+	if ( ( hSMMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
+		CloseHandle( hSMMemMap );
+		hSMMemMap = 0;
+	}
+
+	//
+	// Create a new FileMapping, Read/Write access
+	//
+	hSMMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) SM_MM_DATA );
+	if ( ( hSMMemMap != 0 ) ) {
+		qDebug() << "SMClientControls::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
+		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
+		if (pMemData != NULL) {
+			qDebug() << "SMClientControls::FTCreateMapping says: MapViewOfFile OK.";
+//			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
+		}
+	    hSMMutex = CreateMutexA(NULL, false, SM_MUTEX);
+	}
+	else {
+		qDebug() << "SMClientControls::FTCreateMapping says: Error creating Shared Memory for faceAPI!";
+		return false;
+	}
+
+	//if (pMemData != NULL) {
+	//	pMemData->data.DataID = 1;
+	//	pMemData->data.CamWidth = 100;
+	//	pMemData->data.CamHeight = 250;
+	//}
+
+	return true;
+}
+
+//
+// Show the current engine-settings etc.
+//
+void SMClientControls::showSettings()
+{
+	qDebug() << "SMClientControls::showSettings says: Starting Function";
+    switch (pMemData->state)
+    {
+    case SM_API_ENGINE_STATE_TERMINATED:
+        ui._engine_state_label->setText("TERMINATED");
+        break;
+    case SM_API_ENGINE_STATE_INVALID:
+        ui._engine_state_label->setText("INVALID");
+        break;
+    case SM_API_ENGINE_STATE_IDLE:
+        ui._engine_state_label->setText("IDLE");
+        break;
+    case SM_API_ENGINE_STATE_HT_INITIALIZING:
+        ui._engine_state_label->setText("INITIALIZING");
+        break;
+    case SM_API_ENGINE_STATE_HT_TRACKING:
+        ui._engine_state_label->setText("TRACKING");
+        break;
+    case SM_API_ENGINE_STATE_HT_SEARCHING:
+        ui._engine_state_label->setText("SEARCHING");
+        break;
+    default:
+        ui._engine_state_label->setText("Unknown State!");
+        break;
+    }
+
+}
+
+//
+// Start the tracking Engine.
+//
+void SMClientControls::doCommand(int command)
+{
+	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
+		pMemData->command = command;					// Send command
+		ReleaseMutex(hSMMutex);
+	}
+	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Factory function that creates instances if the Tracker-settings dialog object.
+
+// Export both decorated and undecorated names.
+//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
+//                          Win32 API function.
+//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
+#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
+
+FTNOIR_TRACKER_BASE_EXPORT TRACKERDIALOGHANDLE __stdcall GetTrackerDialog( )
+{
+	return new SMClientControls;
 }
