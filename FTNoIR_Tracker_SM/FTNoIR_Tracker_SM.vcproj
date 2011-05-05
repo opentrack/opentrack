@@ -55,9 +55,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib smft32.lib smftcpp.lib smftqt.lib"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SM_API_PATH)\bin&quot;;&quot;$(SM_API_CPP_WRAPPERS)\lib&quot;;&quot;$(SM_API_WIDGETS)\lib&quot;;&quot;$(SM_API_QTDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 			/>

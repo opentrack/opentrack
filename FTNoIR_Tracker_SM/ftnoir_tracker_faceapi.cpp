@@ -158,9 +158,9 @@ void FTNoIR_Tracker_SM::loadSettings() {
 
 	qDebug() << "FTNoIR_Tracker_SM::loadSettings says: iniFile = " << currentFile;
 
-	iniFile.beginGroup ( "FTNClient" );
-	setParameterValue(kPortAddress, (float) iniFile.value ( "PortNumber", 5550 ).toInt());
-	iniFile.endGroup ();
+	//iniFile.beginGroup ( "FTNClient" );
+	//setParameterValue(kPortAddress, (float) iniFile.value ( "PortNumber", 5550 ).toInt());
+	//iniFile.endGroup ();
 }
 
 //
