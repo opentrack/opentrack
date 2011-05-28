@@ -53,6 +53,7 @@ SMMemMap				*pMemData;
 HANDLE					hSMMutex;
 smEngineHeadPoseData	new_head_pose;
 bool					stopCommand = false;
+bool					ftnoirConnected = false;
 
 //enums
 enum GROUP_ID
@@ -370,10 +371,11 @@ void run()
 		//
 		// Process the command sent by FaceTrackNoIR.
 		//
-		sprintf_s(msg, "Command: %d, \n", pMemData->command, pMemData->par_val_int);
-		OutputDebugStringA(msg);
-		std::cout << msg;
-		if (pMemData) {
+		if (ftnoirConnected && (pMemData != 0)) {
+
+			sprintf_s(msg, "Command: %d, \n", pMemData->command, pMemData->par_val_int);
+			OutputDebugStringA(msg);
+			std::cout << msg;
 
 			//
 			//
@@ -431,19 +433,21 @@ void run()
     // Destroy video display
     THROW_ON_ERROR(smVideoDisplayDestroy(&video_display_handle));
 
-	if ( pMemData != NULL ) {
-		UnmapViewOfFile ( pMemData );
+	if (ftnoirConnected) {
+		if ( pMemData != NULL ) {
+			UnmapViewOfFile ( pMemData );
+		}
+		
+		if (hSMMutex != 0) {
+			CloseHandle( hSMMutex );
+		}
+		hSMMutex = 0;
+		
+		if (hSMMemMap != 0) {
+			CloseHandle( hSMMemMap );
+		}
+		hSMMemMap = 0;
 	}
-	
-	if (hSMMutex != 0) {
-		CloseHandle( hSMMutex );
-	}
-	hSMMutex = 0;
-	
-	if (hSMMemMap != 0) {
-		CloseHandle( hSMMemMap );
-	}
-	hSMMemMap = 0;
 
 } // run()
 
@@ -498,48 +502,27 @@ bool SMCreateMapping()
 
 	//
 	// A FileMapping is used to create 'shared memory' between the faceAPI and FaceTrackNoIR.
+	// FaceTrackNoIR creates the mapping, this program only opens it.
+	// If it's not there: the program was apparently started by the user instead of FaceTrackNoIR...
 	//
-	// Try to create a FileMapping to the Shared Memory.
-	// If one already exists: close it.
-	//
-	hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( TFaceData ) + sizeof( HANDLE ) + 100, 
-								   (LPCSTR) SM_MM_DATA );
-
-	if ( hSMMemMap != 0 ) {
-		OutputDebugString(_T("FTCreateMapping says: FileMapping Created!\n"));
-	}
-
-	if ( ( hSMMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		CloseHandle( hSMMemMap );
-		hSMMemMap = 0;
-	}
-
-	//
-	// Create a new FileMapping, Read/Write access
+	// Open an existing FileMapping, Read/Write access
 	//
 	hSMMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) SM_MM_DATA );
 	if ( ( hSMMemMap != 0 ) ) {
-		OutputDebugString(_T("FTCreateMapping says: FileMapping Created again...\n"));
+		ftnoirConnected = true;
+		OutputDebugString(_T("FTCreateMapping says: FileMapping opened successfully...\n"));
 		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
 		if (pMemData != NULL) {
 			OutputDebugString(_T("FTCreateMapping says: MapViewOfFile OK.\n"));
 			pMemData->state = 0;
-//			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
 		}
 	    hSMMutex = CreateMutexA(NULL, false, SM_MUTEX);
 	}
 	else {
-		OutputDebugString(_T("Error creating Shared Memory for faceAPI\n"));
-        cerr << "Error creating Shared Memory for faceAPI" << endl;
-		return false;
+		OutputDebugString(_T("FTCreateMapping says: FileMapping not opened...FaceTrackNoIR not connected!\n"));
+		ftnoirConnected = false;
+		pMemData = 0;
 	}
-
-	//if (pMemData != NULL) {
-	//	pMemData->data.DataID = 1;
-	//	pMemData->data.CamWidth = 100;
-	//	pMemData->data.CamHeight = 250;
-	//}
 
 	return true;
 }
