@@ -65,9 +65,11 @@ private:
 	void save();
 	bool SMCreateMapping();
 	void doCommand( int command );
+	void doCommand( int command, int value );
 
 	/** helper **/
 	bool settingsDirty;
+	int prev_state;											// Previous engine state
 
 	//
 	// global variables
@@ -82,7 +84,8 @@ private slots:
 	void doOK();
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
-	void showSettings();
+	void doTimUpdate();
+	void showSettings( int newState );
 	void doStartEngine(){
 		doCommand(FT_SM_START);
 	}
@@ -92,5 +95,12 @@ private slots:
 	void doShowCam(){
 		doCommand(FT_SM_SHOW_CAM);
 	}
+	void doSetFilter(int value){
+		doCommand(FT_SM_SET_PAR_FILTER, value);
+	}
+
+signals:
+     void stateChanged(int newState);
+
 };
 

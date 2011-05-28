@@ -251,6 +251,11 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.btnEngineStart, SIGNAL(clicked()), this, SLOT(doStartEngine()));
 	connect(ui.btnEngineStop, SIGNAL(clicked()), this, SLOT(doStopEngine()));
+
+	ui.cbxFilterSetting->addItem("None");
+	ui.cbxFilterSetting->addItem("Normal");
+	ui.cbxFilterSetting->addItem("High");
+	connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
 	connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
 
 	if (SMCreateMapping()) {
@@ -265,8 +270,9 @@ QWidget()
 
 	//Setup the timer for showing the headpose.
 	timUpdateSettings = new QTimer(this);
-    connect(timUpdateSettings, SIGNAL(timeout()), this, SLOT(showSettings()));
-	timUpdateSettings->start(1000);
+    connect(timUpdateSettings, SIGNAL(timeout()), this, SLOT(doTimUpdate()));
+	timUpdateSettings->start(100);
+	connect(this, SIGNAL(stateChanged( int )), this, SLOT(showSettings( int )));
 
 }
 
@@ -435,10 +441,22 @@ bool SMClientControls::SMCreateMapping()
 //
 // Show the current engine-settings etc.
 //
-void SMClientControls::showSettings()
+void SMClientControls::doTimUpdate()
+{
+	int state = pMemData->state;
+	if ( state != prev_state) {
+		emit stateChanged(state);
+		prev_state = state;
+	}
+}
+
+//
+// Show the current engine-settings etc.
+//
+void SMClientControls::showSettings( int newState )
 {
 	qDebug() << "SMClientControls::showSettings says: Starting Function";
-    switch (pMemData->state)
+    switch (newState)
     {
     case SM_API_ENGINE_STATE_TERMINATED:
         ui._engine_state_label->setText("TERMINATED");
@@ -463,15 +481,29 @@ void SMClientControls::showSettings()
         break;
     }
 
+	ui.cbxFilterSetting->setEnabled( (newState == SM_API_ENGINE_STATE_IDLE) );
 }
 
 //
-// Start the tracking Engine.
+// Send a command without parameter-value to the tracking Engine.
 //
 void SMClientControls::doCommand(int command)
 {
 	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
 		pMemData->command = command;					// Send command
+		ReleaseMutex(hSMMutex);
+	}
+	return;
+}
+
+//
+// Send a command with integer parameter-value to the tracking Engine.
+//
+void SMClientControls::doCommand(int command, int value)
+{
+	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
+		pMemData->command = command;					// Send command
+		pMemData->par_val_int = value;
 		ReleaseMutex(hSMMutex);
 	}
 	return;
