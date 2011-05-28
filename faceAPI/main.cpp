@@ -370,8 +370,9 @@ void run()
 		//
 		// Process the command sent by FaceTrackNoIR.
 		//
-		sprintf_s(msg, "Command: %d\n", pMemData->command);
+		sprintf_s(msg, "Command: %d, \n", pMemData->command, pMemData->par_val_int);
 		OutputDebugStringA(msg);
+		std::cout << msg;
 		if (pMemData) {
 
 			//
@@ -404,6 +405,11 @@ void run()
 				case FT_SM_EXIT:
 					THROW_ON_ERROR(smEngineStop(engine_handle));		// Stop tracking
 					stopCommand = TRUE;
+					pMemData->command = 0;								// Reset
+					break;
+
+				case FT_SM_SET_PAR_FILTER:
+					THROW_ON_ERROR(smHTV2SetHeadPoseFilterLevel(engine_handle, pMemData->par_val_int));
 					pMemData->command = 0;								// Reset
 					break;
 
