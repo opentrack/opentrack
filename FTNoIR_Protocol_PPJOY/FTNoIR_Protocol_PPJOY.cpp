@@ -195,6 +195,15 @@ bool FTNoIR_Protocol_PPJOY::checkServerInstallationOK( HANDLE handle )
 	return true;
 }
 
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_PPJOY::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "Virtual PPJoy joystick");
+	return;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.
 

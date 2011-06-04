@@ -75,7 +75,12 @@ typedef TFreeTrackData * PFreetrackData;
 
 struct FTMemMap {
 	TFreeTrackData data;
+
+#ifdef WIN64
+	__int32 command;
+#else
 	HANDLE handle;
+#endif
     char ProgramName[100];
 };
 typedef FTMemMap * PFTMemMap;

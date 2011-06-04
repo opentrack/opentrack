@@ -363,6 +363,14 @@ void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pD
     }
 }
 
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_SC::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "FSX");
+	return;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.

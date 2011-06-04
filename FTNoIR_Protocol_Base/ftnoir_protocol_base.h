@@ -18,6 +18,7 @@ struct IProtocol
 	virtual void Initialize() = 0;
 	virtual bool checkServerInstallationOK ( HANDLE handle ) = 0;
 	virtual void sendHeadposeToGame( T6DOF *headpose ) = 0;
+	virtual void getNameFromGame( char *dest ) = 0;				// Take care dest can handle up to 100 chars...
 };
 
 // Handle type. In C++ language the iterface type is used.

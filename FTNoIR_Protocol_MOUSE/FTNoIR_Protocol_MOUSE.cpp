@@ -40,6 +40,8 @@ FTNoIR_Protocol_MOUSE::FTNoIR_Protocol_MOUSE()
 	prev_fMouse_X = 0.0f;
 	prev_fMouse_Y = 0.0f;
 	prev_fMouse_Wheel = 0.0f;
+	frame_delay = 0;
+
 	loadSettings();
 }
 
@@ -217,16 +219,22 @@ float fMouse_Wheel;
 			MouseStruct.mi.dx = scale2AnalogLimits(-1.0f * fMouse_X * mouse_X_factor, -180, 180);
 			MouseStruct.mi.dy = scale2AnalogLimits(fMouse_Y * mouse_Y_factor, -180, 180);
 			MouseStruct.mi.mouseData = mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
+
+			frame_delay = 9999;					// Seems no problem with Absolute positioning
 			break;
 
 		case FTN_RELATIVE:
 			MouseStruct.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL;
-			MouseStruct.mi.dx = mouse_X_factor * (fMouse_X - prev_fMouse_X);
+			MouseStruct.mi.dx = -1.0f * mouse_X_factor * (fMouse_X - prev_fMouse_X);
 			MouseStruct.mi.dy = mouse_Y_factor * (fMouse_Y - prev_fMouse_Y);
-			MouseStruct.mi.mouseData = mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
+			MouseStruct.mi.mouseData = - 1.0f * mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
+
+			frame_delay += 1;					// Add 1 to the counter
+			qDebug() << "sendHeadposeToGame(): FTN_RELATIVE x = " << MouseStruct.mi.dx << ", y = " << MouseStruct.mi.dy;
 			break;
 
 		default:
+			Mouse_Style = FTN_ABSOLUTE;			// Force to a valid value...
 			break;
 	}
 
@@ -234,13 +242,15 @@ float fMouse_Wheel;
 	// Only send Input, when it has changed.
 	// This releases the Mouse, when tracking is stopped (for a while).
 	//
-	if ((prev_fMouse_X != fMouse_X) || (prev_fMouse_Y != fMouse_Y) || (prev_fMouse_Wheel != fMouse_Wheel)) {
-		SendInput(1, &MouseStruct, sizeof(MouseStruct));
-	}
+	if (frame_delay > 10) {
+		if ((prev_fMouse_X != fMouse_X) || (prev_fMouse_Y != fMouse_Y) || (prev_fMouse_Wheel != fMouse_Wheel)) {
+			SendInput(1, &MouseStruct, sizeof(MouseStruct));
+		}
 
-	prev_fMouse_X = fMouse_X;
-	prev_fMouse_Y = fMouse_Y;
-	prev_fMouse_Wheel = fMouse_Wheel;
+		prev_fMouse_X = fMouse_X;
+		prev_fMouse_Y = fMouse_Y;
+		prev_fMouse_Wheel = fMouse_Wheel;
+	}
 }
 
 //
@@ -250,6 +260,15 @@ bool FTNoIR_Protocol_MOUSE::checkServerInstallationOK( HANDLE handle )
 {   
 
 	return true;
+}
+
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_MOUSE::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "Mouse");
+	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -50,6 +50,7 @@ public:
 
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame( T6DOF *headpose );
+	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
 private:
 	THeadPoseData TestData;

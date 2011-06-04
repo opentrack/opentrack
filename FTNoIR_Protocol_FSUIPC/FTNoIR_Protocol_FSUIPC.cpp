@@ -118,7 +118,7 @@ float virtRotX;
 float virtRotY;
 float virtRotZ;
 
-	qDebug() << "FSUIPCServer::run() says: started!";
+//	qDebug() << "FSUIPCServer::run() says: started!";
 
 	virtRotX = -1.0f * headpose->position.pitch;				// degrees
 	virtRotY = headpose->position.yaw;
@@ -204,6 +204,15 @@ bool FTNoIR_Protocol_FSUIPC::checkServerInstallationOK( HANDLE handle )
 	//}
 
 	return true;
+}
+
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_FSUIPC::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "FS2002/2004");
+	return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

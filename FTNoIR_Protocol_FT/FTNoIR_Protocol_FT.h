@@ -53,6 +53,7 @@ public:
 
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame( T6DOF *headpose );
+	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
 	bool FTCreateMapping(HANDLE handle);
@@ -61,6 +62,9 @@ private:
 	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
 	HANDLE hFTMutex;
+
+	HANDLE hMainWindow;									// Save the handle to FaceTrackNoIR main-window
+	__int32 comhandle;									// Handle on x32, command on x64
 
 	// Private properties
 	QString ProgramName;
