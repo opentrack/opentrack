@@ -1965,27 +1965,54 @@ opacity:100;</string>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <item>
-                   <widget class="QLabel" name="cameraName">
-                    <property name="minimumSize">
-                     <size>
-                      <width>420</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>600</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">color:#ccc;
+                   <layout class="QVBoxLayout" name="verticalLayout">
+                    <item>
+                     <widget class="QLabel" name="cameraName">
+                      <property name="minimumSize">
+                       <size>
+                        <width>420</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>600</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color:#ccc;
 background:none;</string>
-                    </property>
-                    <property name="text">
-                     <string>Camera Name</string>
-                    </property>
-                   </widget>
+                      </property>
+                      <property name="text">
+                       <string>Camera Name</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="gameName">
+                      <property name="minimumSize">
+                       <size>
+                        <width>420</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>600</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color:#ccc;
+background:none;</string>
+                      </property>
+                      <property name="text">
+                       <string>Game Name</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QPushButton" name="btnEditCurves">

@@ -88,7 +88,7 @@ private:
 
 	/** Widget variables **/
 	QVBoxLayout *l;
-	QWidget *_engine_controls;
+//	QWidget *_engine_controls;
 //	QWidget *_server_controls;
 	QWidget *_preferences;
 	QWidget *_keyboard_shortcuts;
