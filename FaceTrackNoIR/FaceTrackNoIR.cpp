@@ -32,6 +32,8 @@
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
 
+//#define USE_VISAGE
+
 //
 // Setup the Main Dialog
 //
@@ -43,7 +45,6 @@ QMainWindow(parent, flags)
 	//
 	// Initialize Widget handles, to prevent memory-access errors.
 	//
-	_engine_controls = 0;
 	_keyboard_shortcuts = 0;
 	_preferences = 0;
 	_keyboard_shortcuts = 0;
@@ -155,6 +156,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
     connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
 	ui.txtTracking->setVisible(false);
 	ui.txtAxisReverse->setVisible(false);
+	ui.gameName->setText("");
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -193,7 +195,7 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 //
 void FaceTrackNoIR::getGameProgramName() {
 	if ( tracker != NULL ) {
-		ui.cameraName->setText( tracker->getGameProgramName() );
+		ui.gameName->setText( tracker->getGameProgramName() );
 	}
 }
 
@@ -539,6 +541,7 @@ void FaceTrackNoIR::startTracker( ) {
 	}
 
 	// Enable/disable Protocol-server Settings
+	ui.iconcomboTrackerSource->setEnabled ( false );
 	ui.iconcomboBox->setEnabled ( false );
 	ui.btnShowServerControls->setEnabled ( false );
 
@@ -604,6 +607,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnStopTracker->setEnabled ( false );
 	ui.btnShowEngineControls->setEnabled ( false );
 	ui.iconcomboBox->setEnabled ( true );
+	ui.iconcomboTrackerSource->setEnabled ( true );
 
 	// Enable/disable Protocol-server Settings
 	ui.btnShowServerControls->setEnabled ( true );
@@ -753,63 +757,61 @@ void FaceTrackNoIR::showHeadPoseWidget() {
 void FaceTrackNoIR::showEngineControls() {
 importGetTrackerDialog getIT;
 QLibrary *trackerLib;
-
+QString libName;
 
 	qDebug() << "FaceTrackNoIR::showEngineControls started.";
 
 	//
 	// Delete the existing QDialog
 	//
-	if (_engine_controls) {
-		delete _engine_controls;
-		_engine_controls = 0;
+	if (pTrackerDialog) {
+		pTrackerDialog.Release();
 	}
 
-	qDebug() << "FaceTrackNoIR::showEngineControls after remove engine_controls.";
+	// Show the appropriate Tracker Settings
+	libName.clear();
 
-	// Create  new
-    if (!_engine_controls)
-    {
-		switch (ui.iconcomboTrackerSource->currentIndex()) {
+	switch (ui.iconcomboTrackerSource->currentIndex()) {
 		case FT_SM_FACEAPI:										// Face API
-//			_engine_controls = new EngineControls( tracker->getEngine(), true, false, this, Qt::Dialog );
+			qDebug() << "FaceTrackNoIR::showEngineControls case FT_SM_FACEAPI.";
+			libName = QString("FTNoIR_Tracker_SM.dll");
 			break;
+
 		case FT_FTNOIR:											// FTNoir server
 			qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";
-
-			trackerLib = new QLibrary("FTNoIR_Tracker_UDP.dll");
-
-			qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
-
-			getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
-
-			qDebug() << "FaceTrackNoIR::showEngineControls resolved?." << getIT;
-
-			if (getIT) {
-				ITrackerDialogPtr ptrXyz(getIT());
-				if (ptrXyz)
-				{
-					pTrackerDialog = ptrXyz;
-					pTrackerDialog->Initialize( this );
-					qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
-				}
-			}
-			else {
-				QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-			}
-
+			libName = QString("FTNoIR_Tracker_UDP.dll");
 			break;
+
 		default:
 			break;
-		}
-
-    }
-
-	// Show if already created
-	if (_engine_controls) {
-		_engine_controls->show();
-		_engine_controls->raise();
 	}
+
+	//
+	// Load the Server-settings dialog (if any) and show it.
+	//
+	if (!libName.isEmpty()) {
+		trackerLib = new QLibrary(libName);
+
+		qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
+
+		getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
+
+		qDebug() << "FaceTrackNoIR::showEngineControls resolved?." << getIT;
+
+		if (getIT) {
+			ITrackerDialogPtr ptrXyz(getIT());
+			if (ptrXyz)
+			{
+				pTrackerDialog = ptrXyz;
+				pTrackerDialog->Initialize( this );
+				qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
+			}
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
+
 }
 
 /** toggles Server Controls Dialog **/
@@ -954,6 +956,12 @@ void FaceTrackNoIR::createIconGroupBox()
 
 	ui.iconcomboTrackerSource->addItem(QIcon(":/images/SeeingMachines.ico"), tr("Face API"));
 	ui.iconcomboTrackerSource->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
+
+#	ifdef USE_VISAGE
+	ui.iconcomboTrackerSource->addItem(QIcon(":/images/Visage.ico"), tr("Visage Tracker"));
+#   endif
+
+
 }
 
 //

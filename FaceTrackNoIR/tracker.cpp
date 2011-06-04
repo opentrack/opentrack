@@ -152,6 +152,10 @@ QFrame *video_frame;
 			libName = QString("FTNoIR_Tracker_UDP.dll");
 			break;
 
+		case FT_VISAGE:
+			libName = QString("FTNoIR_Tracker_Visage.dll");
+			break;
+
 		default:
 			break;
 	}
@@ -342,6 +346,7 @@ bool lastGameZeroKey = false;
 bool waitAxisReverse = false;
 bool waitThroughZero = false;
 double actualYaw = 0.0f;
+double actualZ = 0.0f;
 T6DOF offset_camera(0,0,0,0,0,0);
 T6DOF gamezero_camera(0,0,0,0,0,0);
 T6DOF gameoutput_camera(0,0,0,0,0,0);
@@ -494,21 +499,24 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				//
 				// Check the state of the Axis Reverse key
 				//
-				if ( isShortKeyPressed( &AxisReverseKey, &keystate[0] ) ) {
-					if ((fabs(actualYaw) > 90.0f) && (!waitAxisReverse)) {
-						Tracker::do_axis_reverse = !Tracker::do_axis_reverse;
-						waitAxisReverse = true;
-					}
-				}
+				////if ( isShortKeyPressed( &AxisReverseKey, &keystate[0] ) ) {
+				////	if ((fabs(actualYaw) > 90.0f) && (!waitAxisReverse)) {
+				////		Tracker::do_axis_reverse = !Tracker::do_axis_reverse;
+				////		waitAxisReverse = true;
+				////	}
+				////}
 		   }
 		}
 
 		//
 		// Reset the 'wait' flag. Moving above 90 with the key pressed, will (de-)activate Axis Reverse.
 		//
-		if (fabs(actualYaw) < 85.0f) {
-			waitAxisReverse = false;
-		}
+		//////if (fabs(actualYaw) < 85.0f) {
+		//////	waitAxisReverse = false;
+		//////}
+				////	if  {
+//		qDebug() << "Tracker::run() says actualZ = " << actualZ;
+		Tracker::do_axis_reverse = ((fabs(actualYaw) > 90.0f) && (actualZ < -20.0f));
 
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
 
@@ -576,27 +584,9 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				// Reverse Axis.
 				//
 				actualYaw = output_camera.position.yaw;					// Save the actual Yaw, otherwise we can't check for +90
+				actualZ = output_camera.position.z;						// Also the Z
 				if (Tracker::do_axis_reverse) {
-					if (fabs(actualYaw) < 5.0f) {
-						waitThroughZero = true;
-					}
-					if (waitThroughZero) {
-						output_camera.position.yaw *= -1.0f;
-					}
-					if (output_camera.position.yaw > 0.0f) {
-						output_camera.position.yaw = 180.0f - output_camera.position.yaw;
-					}
-					else {
-						output_camera.position.yaw = -180.0f - output_camera.position.yaw;
-					}
-				}
-				else {
-					if (fabs(actualYaw) < 5.0f) {
-						waitThroughZero = false;
-					}
-					if (waitThroughZero) {
-						output_camera.position.yaw *= -1.0f;
-					}
+					output_camera.position.z = 100;						// Max.
 				}
 
 				//
@@ -707,9 +697,13 @@ void Tracker::addHeadPose( THeadPoseData head_pose )
 //
 QString Tracker::getGameProgramName() {
 QString str;
+char dest[100];
 
-//	str = server_Game->GetProgramName();
-	str = QString("");
+	str = QString("No protocol active?");
+	if (pProtocol) {
+		pProtocol->getNameFromGame( dest );
+		str = QString( dest );
+	}
 	return str;	
 }
 

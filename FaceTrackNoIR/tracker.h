@@ -79,7 +79,8 @@ enum FTNoIR_Client {
 
 enum FTNoIR_Face_Tracker {
 	FT_SM_FACEAPI = 0,
-	FT_FTNOIR = 1
+	FT_FTNOIR = 1,
+	FT_VISAGE = 2
 };
 
 enum FTNoIR_Tracker_Status {
@@ -213,7 +214,7 @@ public:
 	void loadSettings();							// Load settings from the INI-file
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
 
-	static bool getTrackingActive() { return do_tracking; }
+	static bool getTrackingActive() { return do_tracking && confid; }
 	static bool getAxisReverse() { return do_axis_reverse; }
 
 	static bool getConfid() { return confid; }
