@@ -39,6 +39,7 @@
 /** constructor **/
 FTNoIR_Protocol_FT::FTNoIR_Protocol_FT()
 {
+	comhandle = 0;
 	loadSettings();
 	ProgramName = "";
 }
@@ -54,7 +55,7 @@ FTNoIR_Protocol_FT::~FTNoIR_Protocol_FT()
 	//
 	// Free the DLL's
 	//
-	FTClientLib.unload();
+	//////FTClientLib.unload();
 }
 
 /** helper to Auto-destruct **/
@@ -93,6 +94,9 @@ float headPosZ;
 float headRotX;
 float headRotY;
 float headRotZ;
+
+PDWORD_PTR MsgResult = 0;
+
 
 	//
 	// Scale the Raw measurements to the client measurements.
@@ -149,6 +153,19 @@ float headRotZ;
 
 		//qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
 		//qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
+
+		//
+		// Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
+		// If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
+		//
+		if (hMainWindow != pMemData->handle) {			// Handle in memory-mapping was changed!
+			comhandle = (__int32) pMemData->handle;		// Get the command from the Game.
+			if (comhandle == 1) {						// "Report Program Name"
+				SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
+				pMemData->handle = 0;					// Reset the command, to enable future commands...
+			}
+		}
+
 		ReleaseMutex(hFTMutex);
 	}
 
@@ -198,13 +215,13 @@ bool FTNoIR_Protocol_FT::checkServerInstallationOK( HANDLE handle )
 			//
 			// Load the DLL and map to the functions in it.
 			//
-			FTClientLib.setFileName(aFileName);
-			FTClientLib.load();
-			provider = (importProvider) FTClientLib.resolve("FTProvider");
-			if (provider) {
-				pProvider = provider();
-				qDebug() << "FTCheckClientDLL says: Provider =" << pProvider;
-			}
+			////////FTClientLib.setFileName(aFileName);
+			////////FTClientLib.load();
+			////////provider = (importProvider) FTClientLib.resolve("FTProvider");
+			////////if (provider) {
+			////////	pProvider = provider();
+			////////	qDebug() << "FTCheckClientDLL says: Provider =" << pProvider;
+			////////}
 		}
 		else {
 			QMessageBox::information(0, "FaceTrackNoIR error", QString("Necessary file (FreeTrackClient.dll) was NOT found!\n"));
@@ -249,10 +266,11 @@ bool FTNoIR_Protocol_FT::FTCreateMapping( HANDLE handle )
 	//
 	hFTMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FT_MM_DATA );
 	if ( ( hFTMemMap != 0 ) ) {
-		qDebug() << "FTCreateMapping says: FileMapping Created again:" << hFTMemMap;
+		qDebug() << "FTCreateMapping says: FileMapping Opened:" << hFTMemMap;
 		pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFreeTrackData) + sizeof(hFTMemMap) + 100);
 		if (pMemData != NULL) {
 			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
+			hMainWindow = handle;
 		}
 	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 	}
@@ -283,6 +301,27 @@ void FTNoIR_Protocol_FT::FTDestroyMapping()
 	CloseHandle( hFTMemMap );
 	hFTMemMap = 0;
 
+}
+
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_FT::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "FreeTrack interface");
+
+	qDebug() << "FTNoIR_Protocol_FT::getNameFromGame says: Started, pMemData = " << pMemData << ", mutex = " << hFTMutex;
+
+	//
+	// Check if the pointer is OK and wait for the Mutex.
+	//
+//	if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
+	if (pMemData != NULL) {
+		qDebug() << "FTNoIR_Protocol_FT::getNameFromGame says: Inside MemData";
+		sprintf_s(dest, 99, "%s", pMemData->ProgramName);
+	}
+
+	return;
 }
 
 

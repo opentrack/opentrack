@@ -19,6 +19,8 @@ struct SMMemMap {
 	TFaceData data;
 	HANDLE handle;
 	int state;
+	int par_val_int;				// Value of parameter, indicated by 'command'
+	int par_val_float;
 };
 typedef SMMemMap * PSMMemMap;
 
@@ -26,5 +28,6 @@ enum FTNoIR_Tracker_Command {
 	FT_SM_START = 10,
 	FT_SM_STOP  = 20,
 	FT_SM_SHOW_CAM = 30,
+	FT_SM_SET_PAR_FILTER = 50,
 	FT_SM_EXIT  = 100
 };

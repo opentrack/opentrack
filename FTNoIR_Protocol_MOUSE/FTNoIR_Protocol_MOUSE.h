@@ -54,7 +54,7 @@ enum FTN_AngleName {
 
 enum FTN_MouseStyle {
 	FTN_ABSOLUTE = 0,
-	FTN_RELATIVE = 2	
+	FTN_RELATIVE = 1	
 };
 
 
@@ -69,6 +69,7 @@ public:
 
 	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame( T6DOF *headpose );
+	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
 	HANDLE h;
@@ -85,6 +86,8 @@ private:
 	float mouse_Y_factor;			// Sensitivity factor
 	float prev_fMouse_Wheel;
 	float mouse_Wheel_factor;		// Sensitivity factor
+
+	int frame_delay;				// Number of frames to delay SendInput (too fast, too furious?)
 
 	long scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();

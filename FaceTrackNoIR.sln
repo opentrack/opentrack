@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FaceTrackNoIR", "FaceTrackNoIR\FaceTrackNoIR.vcproj", "{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}"
-EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupFaceTrackNoIR", "SetupFaceTrackNoIR\SetupFaceTrackNoIR.vdproj", "{95D54F4D-F5E2-4DEC-B517-E32F34312C07}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_ProtocolTester", "FTNoIR_ProtocolTester\FTNoIR_ProtocolTester.vcproj", "{52D2A4B6-7D76-437B-AD7F-7CDB13F2D27C}"
@@ -31,16 +29,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Protocol_FTN", "FTNo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Protocol_MOUSE", "FTNoIR_Protocol_MOUSE\FTNoIR_Protocol_MOUSE.vcproj", "{BD90CC3A-965C-4DAF-8D3D-8AABA455BA9E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_VISAGE", "FTNoIR_Tracker_VISAGE\FTNoIR_Tracker_VISAGE.vcproj", "{D8907D63-249C-49BC-9169-34C0C8F1BD54}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FaceTrackNoIR", "FaceTrackNoIR\FaceTrackNoIR.vcproj", "{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Debug|Win32.Build.0 = Debug|Win32
-		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Release|Win32.ActiveCfg = Release|Win32
-		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Release|Win32.Build.0 = Release|Win32
 		{95D54F4D-F5E2-4DEC-B517-E32F34312C07}.Debug|Win32.ActiveCfg = Debug
 		{95D54F4D-F5E2-4DEC-B517-E32F34312C07}.Release|Win32.ActiveCfg = Release
 		{52D2A4B6-7D76-437B-AD7F-7CDB13F2D27C}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -94,6 +92,14 @@ Global
 		{BD90CC3A-965C-4DAF-8D3D-8AABA455BA9E}.Debug|Win32.Build.0 = Debug|Win32
 		{BD90CC3A-965C-4DAF-8D3D-8AABA455BA9E}.Release|Win32.ActiveCfg = Release|Win32
 		{BD90CC3A-965C-4DAF-8D3D-8AABA455BA9E}.Release|Win32.Build.0 = Release|Win32
+		{D8907D63-249C-49BC-9169-34C0C8F1BD54}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8907D63-249C-49BC-9169-34C0C8F1BD54}.Debug|Win32.Build.0 = Debug|Win32
+		{D8907D63-249C-49BC-9169-34C0C8F1BD54}.Release|Win32.ActiveCfg = Release|Win32
+		{D8907D63-249C-49BC-9169-34C0C8F1BD54}.Release|Win32.Build.0 = Release|Win32
+		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Debug|Win32.Build.0 = Debug|Win32
+		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Release|Win32.ActiveCfg = Release|Win32
+		{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -221,6 +221,14 @@ bool FTNoIR_Protocol_FG::checkServerInstallationOK( HANDLE handle )
 	return true;
 }
 
+//
+// Return a name, if present the name from the Game, that is connected...
+//
+void FTNoIR_Protocol_FG::getNameFromGame( char *dest )
+{   
+	sprintf_s(dest, 99, "FlightGear");
+	return;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.

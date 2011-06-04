@@ -293,7 +293,7 @@ void SMClientControls::Release()
 //
 void SMClientControls::Initialize(QWidget *parent) {
 
-	QPoint offsetpos(100, 100);
+	QPoint offsetpos(200, 200);
 	if (parent) {
 		this->move(parent->pos() + offsetpos);
 	}
