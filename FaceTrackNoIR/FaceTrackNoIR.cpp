@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2011	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
 * Homepage																		*
@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20110813 - WVR: Changed the presentation of the raw inputs: now a decimal digit will even show when '0'.
 		20110404 - WVR: Migrated the FlightGear protocol to a separate DLL. The rest must follow...
 		20110401 - WVR: The about-dialog was shown 'misplaced'. It was corrected.
 		20110328 - WVR: Added the display for output-pose.
@@ -682,13 +683,13 @@ THeadPoseData newdata;
 	// Updating the pose from within the Tracker-class caused crashes...
 	//
 	Tracker::getHeadPose(&newdata);
-	ui.lcdNumX->display((double) (((int)(newdata.x * 10.0f))/10.0f));
-	ui.lcdNumY->display((double) (((int)(newdata.y * 10.0f))/10.0f));
-	ui.lcdNumZ->display((double) (((int)(newdata.z * 10.0f))/10.0f));
+	ui.lcdNumX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
+	ui.lcdNumY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
+	ui.lcdNumZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
 
-	ui.lcdNumRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
-	ui.lcdNumRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
-	ui.lcdNumRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
+	ui.lcdNumRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
+	ui.lcdNumRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
+	ui.lcdNumRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
 
 	ui.txtTracking->setVisible(Tracker::getTrackingActive());
 	ui.txtAxisReverse->setVisible(Tracker::getAxisReverse());

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="FaceTrackNoIR"
 	ProjectGUID="{9DCDB5B9-941E-42F7-AF76-DF794AA3C013}"
 	RootNamespace="FaceTrackNoIR"
@@ -47,7 +47,7 @@
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;$(SolutionDir)\FTNoIR_Tracker_UDP&quot;;&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles&quot;;&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2&quot;"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;&quot;$(QTDIR)\include\QtTest&quot;;&quot;$(SolutionDir)\FTNoIR_Tracker_UDP&quot;;&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles&quot;;&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2&quot;;&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include&quot;;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_NETWORK_LIB;QT_DLL"
 				RuntimeLibrary="2"
 				FloatingPointModel="2"
@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib QtMain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib QtNetwork4.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib"
+				AdditionalDependencies="opengl32.lib qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib QtNetwork4.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories=""
 				GenerateManifest="true"
@@ -238,7 +238,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; &quot;.\ExcelServer.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;.\ExcelServer.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -264,7 +264,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; &quot;.\FaceApp.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;.\FaceApp.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -290,7 +290,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; &quot;.\FaceTrackNoIR.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;.\FaceTrackNoIR.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -316,7 +316,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; &quot;.\FTNoIR_cxx_protocolserver.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;.\FTNoIR_cxx_protocolserver.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -342,7 +342,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -DQT_CORE_LIB -DQT_DLL -DQT_GUI_LIB -DQT_LARGEFILE_SUPPORT -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;..\FTNoIR_PoseWidget\glwidget.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -372,7 +372,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; &quot;.\tracker.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_NETWORK_LIB -DQT_DLL  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtNetwork\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;$(QTDIR)\include\QtWebKit\.&quot; -I&quot;$(QTDIR)\include\QtTest\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Tracker_UDP\GeneratedFiles\.&quot; -I&quot;$(SolutionDir)\FTNoIR_Filter_EWMA2\.&quot; -I&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include\.&quot; -I&quot;C:\Project\FaceTrackNoIR\VS2005\QBezierConfigurator\QBezierConfigurator\.&quot; &quot;.\tracker.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>

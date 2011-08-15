@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>157</height>
+    <width>588</width>
+    <height>216</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,31 +25,151 @@
   </property>
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
-    <layout class="QHBoxLayout">
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="chkTIRViews">
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Use TIRViews</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>TIRViews</string>
+     </property>
+     <widget class="QCheckBox" name="chkTIRViews">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>20</y>
+        <width>88</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="text">
+       <string>Use TIRViews</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>10</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TIRViews is only required for some older games (like CFS3).</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>30</y>
+        <width>421</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>For it to work, TIRViews.dll must be placed in the FaceTrackNoIR program folder.</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>50</y>
+        <width>251</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>If the checkbox is disabled, the DLL was not found.</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>TrackIR.exe</string>
+     </property>
+     <widget class="QCheckBox" name="chkStartDummy">
+      <property name="geometry">
+       <rect>
+        <x>13</x>
+        <y>20</y>
+        <width>145</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="text">
+       <string>Start dummy TrackIR.exe</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>10</y>
+        <width>351</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Some programs check, to see if a process called TrackIR.exe is running,</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>30</y>
+        <width>261</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>before enabling head-tracking (EZCA is one of them).</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>50</y>
+        <width>231</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Check the checkbox, to overcome this problem.</string>
+      </property>
+     </widget>
+     <zorder>chkStartDummy</zorder>
+     <zorder>label_2</zorder>
+     <zorder>label</zorder>
+     <zorder>label_3</zorder>
+     <zorder>groupBox</zorder>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -65,32 +185,7 @@
     </spacer>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>TIRViews is only required for some older games (like CFS3).</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>For it to work, TIRViews.dll must be placed in the FaceTrackNoIR program folder.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>If the checkbox is disabled, the DLL was not found.</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <layout class="QVBoxLayout" name="verticalLayout"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
