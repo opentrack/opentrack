@@ -40,7 +40,6 @@ void FTNoIR_Tracker_SM::Release()
 void FTNoIR_Tracker_SM::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker_SM::Initialize says: Starting ";
-	loadSettings();
 
 	if (SMCreateMapping()) {
 		qDebug() << "FTNoIR_Tracker_SM::Initialize Mapping created.";
@@ -48,6 +47,8 @@ void FTNoIR_Tracker_SM::Initialize( QFrame *videoframe )
 	else {
 		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
 	}
+
+	loadSettings();
 
 	if ( pMemData != NULL ) {
 		pMemData->command = 0;						// Reset any and all commands
@@ -158,9 +159,11 @@ void FTNoIR_Tracker_SM::loadSettings() {
 
 	qDebug() << "FTNoIR_Tracker_SM::loadSettings says: iniFile = " << currentFile;
 
-	//iniFile.beginGroup ( "FTNClient" );
-	//setParameterValue(kPortAddress, (float) iniFile.value ( "PortNumber", 5550 ).toInt());
-	//iniFile.endGroup ();
+	iniFile.beginGroup ( "SMTracker" );
+	if (pMemData) {
+		pMemData->initial_filter_level = iniFile.value ( "FilterLevel", 1 ).toInt();
+	}
+	iniFile.endGroup ();
 }
 
 //
@@ -359,9 +362,8 @@ void SMClientControls::loadSettings() {
 
 //	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
-	iniFile.beginGroup ( "SMClient" );
-
-//	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
+	iniFile.beginGroup ( "SMTracker" );
+	ui.cbxFilterSetting->setCurrentIndex(iniFile.value ( "FilterLevel", 1 ).toInt());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -377,7 +379,8 @@ void SMClientControls::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	iniFile.beginGroup ( "SMClient" );
+	iniFile.beginGroup ( "SMTracker" );
+	iniFile.setValue ( "FilterLevel", ui.cbxFilterSetting->currentIndex() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;

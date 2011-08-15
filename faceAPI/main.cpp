@@ -323,9 +323,11 @@ void run()
     }
 
     // Create and show a video-display window
-    smVideoDisplayHandle video_display_handle = 0;
+	// Set the initial filter-level, from the INI-file
+	smVideoDisplayHandle video_display_handle = 0;
 	if (pMemData) {
 		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,(smWindowHandle) pMemData->handle,TRUE));
+		THROW_ON_ERROR(smHTV2SetHeadPoseFilterLevel(engine_handle, pMemData->initial_filter_level));
 	}
 	else {
 		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,0,TRUE));

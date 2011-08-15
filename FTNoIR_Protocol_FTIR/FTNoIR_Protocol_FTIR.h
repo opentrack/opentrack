@@ -76,6 +76,7 @@ private:
 	QLibrary FTIRViewsLib;
 	QProcess *dummyTrackIR;
 	bool useTIRViews;
+	bool useDummyExe;
 
 	float scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();

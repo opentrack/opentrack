@@ -62,9 +62,11 @@ FTNoIR_Protocol_FTIR::~FTNoIR_Protocol_FTIR()
 	//
 	// Kill the dummy TrackIR process.
 	//
-	qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
+//	qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
 	try {
 		if (dummyTrackIR) {
+			qDebug() << "FTIRServer::~FTIRServer() about to kill TrackIR.exe process";
+//			dummyTrackIR->close();
 			dummyTrackIR->kill();
 		}
 	} 
@@ -115,6 +117,7 @@ void FTNoIR_Protocol_FTIR::loadSettings() {
 
 	iniFile.beginGroup ( "FTIR" );
 	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
+	useDummyExe	= iniFile.value ( "useDummyExe", 1 ).toBool();
 	iniFile.endGroup ();
 }
 
@@ -217,9 +220,11 @@ bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
 		// Some TrackIR clients check if a process called TrackIR.exe is running.
 		// This should do the trick
 		//
-		QString program = "TrackIR.exe";
- 		dummyTrackIR = new QProcess();
-		dummyTrackIR->start(program);
+		if (useDummyExe) {
+			QString program = "TrackIR.exe";
+ 			dummyTrackIR = new QProcess();
+			dummyTrackIR->start(program);
+		}
 
 	} catch(...) {
 		settings.~QSettings();
@@ -380,6 +385,7 @@ QWidget()
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
 
 	aFileName = QCoreApplication::applicationDirPath() + "/";
 	aFileName.append(FTIR_VIEWS_FILENAME);
@@ -479,6 +485,8 @@ void FTIRControls::loadSettings() {
 
 	iniFile.beginGroup ( "FTIR" );
 	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 1 ).toBool());
+
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -495,6 +503,7 @@ void FTIRControls::save() {
 
 	iniFile.beginGroup ( "FTIR" );
 	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+	iniFile.setValue ( "useDummyExe", ui.chkStartDummy->isChecked() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
