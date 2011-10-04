@@ -58,6 +58,13 @@ void FTNoIR_Protocol_MOUSE::Release()
 
 void FTNoIR_Protocol_MOUSE::Initialize()
 {
+int ScreenX, ScreenY;
+
+	ScreenX = GetSystemMetrics(SM_CXSCREEN);
+	ScreenY = GetSystemMetrics(SM_CYSCREEN);
+
+	qDebug() << "Initialize(): Screen width (x) = " << ScreenX << ", height (y) = " << ScreenY;
+
 	return;
 }
 
@@ -209,6 +216,7 @@ float fMouse_Wheel;
 	//
 	// Determine which style is used.
 	//
+	SecureZeroMemory(&MouseStruct, sizeof(MouseStruct));
 	MouseStruct.type = INPUT_MOUSE;
 	switch (Mouse_Style) {
 		case FTN_ABSOLUTE:
@@ -216,8 +224,8 @@ float fMouse_Wheel;
 			if (useVirtualDesk) {
 				MouseStruct.mi.dwFlags |= MOUSEEVENTF_VIRTUALDESK;
 			}
-			MouseStruct.mi.dx = scale2AnalogLimits(-1.0f * fMouse_X * mouse_X_factor, -180, 180);
-			MouseStruct.mi.dy = scale2AnalogLimits(fMouse_Y * mouse_Y_factor, -180, 180);
+			MouseStruct.mi.dx = scale2AnalogLimits(-1.0f * fMouse_X * mouse_X_factor, -150, 150);
+			MouseStruct.mi.dy = scale2AnalogLimits(fMouse_Y * mouse_Y_factor, -150, 150);
 			MouseStruct.mi.mouseData = mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
 
 			frame_delay = 9999;					// Seems no problem with Absolute positioning
