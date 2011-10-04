@@ -351,7 +351,8 @@ T6DOF offset_camera(0,0,0,0,0,0);
 T6DOF gamezero_camera(0,0,0,0,0,0);
 T6DOF gameoutput_camera(0,0,0,0,0,0);
 
-	Tracker::do_center = true;						// Center initially
+	Tracker::do_tracking = true;				// Start initially
+	Tracker::do_center = true;					// Center initially
 
 	current_camera.initHeadPoseData();
 	target_camera.initHeadPoseData();
