@@ -328,6 +328,7 @@ void run()
 	if (pMemData) {
 		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,(smWindowHandle) pMemData->handle,TRUE));
 		THROW_ON_ERROR(smHTV2SetHeadPoseFilterLevel(engine_handle, pMemData->initial_filter_level));
+		pMemData->handshake = 0;
 	}
 	else {
 		THROW_ON_ERROR(smVideoDisplayCreate(engine_handle,&video_display_handle,0,TRUE));
@@ -385,7 +386,17 @@ void run()
 			//
 			THROW_ON_ERROR(smEngineGetState(engine_handle, &state));
 			pMemData->state = state;
-			
+			pMemData->handshake += 1;
+
+			//
+			// Check if FaceTrackNoIR is still 'in contact'.
+			// FaceTrackNoIR will reset the handshake, every time in writes data.
+			// If the value rises too high, this exe will stop itself...
+			//
+			if ( pMemData->handshake > 200) {
+				stopCommand = TRUE;
+			}
+
 			//
 			// Check if a command was issued and do something with it!
 			//

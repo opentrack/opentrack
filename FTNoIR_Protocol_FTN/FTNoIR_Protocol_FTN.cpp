@@ -94,7 +94,9 @@ quint16 senderPort;
 	//
 	// Copy the Raw measurements directly to the client.
 	//
+	frame_counter += 1;
 	TestData = headpose->position;
+	TestData.frame_number = frame_counter;
 
 	//
 	// Try to send an UDP-message to the receiver
@@ -148,6 +150,8 @@ bool FTNoIR_Protocol_FTN::checkServerInstallationOK( HANDLE handle )
 
 	inSocket = 0;
 	outSocket = 0;
+
+	frame_counter = 0;
 
 	//
 	// Create UDP-sockets.

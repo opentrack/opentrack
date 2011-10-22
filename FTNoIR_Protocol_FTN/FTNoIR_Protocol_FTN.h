@@ -54,6 +54,7 @@ public:
 
 private:
 	THeadPoseData TestData;
+	long frame_counter;
 	QUdpSocket *inSocket;									// Receive from FaceTrackNoIR
 	QUdpSocket *outSocket;									// Send to FaceTrackNoIR
 	qint32 cmd;
