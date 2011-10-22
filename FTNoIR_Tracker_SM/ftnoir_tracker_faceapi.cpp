@@ -111,7 +111,12 @@ bool FTNoIR_Tracker_SM::GiveHeadPoseData(THeadPoseData *data)
 		data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
 		data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
 		data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
-	
+
+		//
+		// Reset the handshake, to let faceAPI know we're still here!
+		//
+		pMemData->handshake = 0;
+
 		ReleaseMutex(hSMMutex);
 		return ( pMemData->data.new_pose.confidence > 0 );
 	}

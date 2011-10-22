@@ -22,6 +22,7 @@ struct SMMemMap {
 	int par_val_int;				// Value of parameter, indicated by 'command'
 	int par_val_float;
 	int initial_filter_level;		// Internal faceAPI Filter level
+	int handshake;
 };
 typedef SMMemMap * PSMMemMap;
 
