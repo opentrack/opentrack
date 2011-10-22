@@ -427,9 +427,9 @@ void FaceTrackNoIR::loadSettings() {
 	disconnect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
 	ui.iconcomboProfile->clear();
 	for ( int i = 0; i < iniFileList.size(); i++) {
-		ui.iconcomboProfile->addItem(QIcon(QCoreApplication::applicationDirPath() + "/images/Settings16.png"), iniFileList.at(i));
+		ui.iconcomboProfile->addItem(QIcon(":/images/Settings16.png"), iniFileList.at(i));
 		if (iniFileList.at(i) == pathInfo.fileName()) {
-			ui.iconcomboProfile->setItemIcon(i, QIcon(QCoreApplication::applicationDirPath() + "/images/SettingsOpen16.png"));
+			ui.iconcomboProfile->setItemIcon(i, QIcon(":/images/SettingsOpen16.png"));
 			ui.iconcomboProfile->setCurrentIndex( i );
 		}
 	}
@@ -491,7 +491,7 @@ void FaceTrackNoIR::about() {
 
 	aboutDialog.setMinimumWidth(270);
 	aboutDialog.setMinimumHeight(440);
-	aboutDialog.setStyleSheet("background:#fff url(UIElements/aboutFaceTrackNoIR.png) no-repeat;");
+	aboutDialog.setStyleSheet("background:#fff url(:/UIElements/aboutFaceTrackNoIR.png) no-repeat;");
 }
 
 /** start tracking the face **/
@@ -1533,6 +1533,13 @@ int keyindex;
 	ui.chkInhibitY->setChecked (iniFile.value ( "Inhibit_Y", 0 ).toBool());
 	ui.chkInhibitZ->setChecked (iniFile.value ( "Inhibit_Z", 0 ).toBool());
 
+
+	// Reverse Axis
+	ui.chkEnableReverseAxis->setChecked (iniFile.value ( "Enable_ReverseAxis", 0 ).toBool());
+	ui.spinYawAngle4ReverseAxis->setValue( settings.value ( "RA_Yaw", 40 ).toInt() );
+	ui.spinZ_Pos4ReverseAxis->setValue( settings.value ( "RA_ZPos", -20 ).toInt() );
+	ui.spinZ_PosWhenReverseAxis->setValue( settings.value ( "RA_ToZPos", 50 ).toInt() );
+
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -1580,6 +1587,12 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Inhibit_X", ui.chkInhibitX->isChecked() );
 	iniFile.setValue ( "Inhibit_Y", ui.chkInhibitY->isChecked() );
 	iniFile.setValue ( "Inhibit_Z", ui.chkInhibitZ->isChecked() );
+
+	// Reverse Axis
+	iniFile.setValue ( "Enable_ReverseAxis", ui.chkEnableReverseAxis->isChecked() );
+	settings.setValue( "RA_Yaw", ui.spinYawAngle4ReverseAxis->value() );
+	settings.setValue( "RA_ZPos", ui.spinZ_Pos4ReverseAxis->value() );
+	settings.setValue( "RA_ToZPos", ui.spinZ_PosWhenReverseAxis->value() );
 
 	iniFile.endGroup ();
 

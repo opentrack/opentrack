@@ -16,5 +16,6 @@
         <file>images/FSX.ico</file>
         <file>images/PPJoy.ico</file>
         <file>images/TrackIR.ico</file>
+        <file>UIElements/aboutFaceTrackNoIR.png</file>
     </qresource>
 </RCC>
