@@ -39,6 +39,7 @@
 #pragma pack(push, 2)
 struct THeadPoseData {
 	double x, y, z, yaw, pitch, roll;
+	long frame_number;
 };
 #pragma pack(pop)
 
@@ -64,6 +65,7 @@ public:
 		position.yaw = 0.0f;
 		position.pitch = 0.0f;
 		position.roll = 0.0f;
+		position.frame_number = 0;
 	}
 	T6DOF operator-( T6DOF &other ) {
 		return T6DOF(position.x - other.position.x, position.y - other.position.y, position.z - other.position.z,
