@@ -74,6 +74,11 @@ bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
 
+bool Tracker::useAxisReverse = false;						// Use Axis Reverse
+float Tracker::YawAngle4ReverseAxis = 40.0f;				// Axis Reverse settings
+float Tracker::Z_Pos4ReverseAxis = -20.0f;
+float Tracker::Z_PosWhenReverseAxis = 50.0f;
+
 
 T6DOF Tracker::current_camera(0,0,0,0,0,0);				// Used for filtering
 T6DOF Tracker::target_camera(0,0,0,0,0,0);
@@ -91,7 +96,7 @@ TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 TShortKey Tracker::GameZeroKey;							// ShortKey to Set Game Zero
-TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
+//TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
 
 ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
 IProtocolPtr Tracker::pProtocol;						// Pointer to Protocol instance (in DLL)
@@ -496,28 +501,20 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					}
 				}
 				lastInhibitKey = isShortKeyPressed( &InhibitKey, &keystate[0] );		// Remember
-
-				//
-				// Check the state of the Axis Reverse key
-				//
-				////if ( isShortKeyPressed( &AxisReverseKey, &keystate[0] ) ) {
-				////	if ((fabs(actualYaw) > 90.0f) && (!waitAxisReverse)) {
-				////		Tracker::do_axis_reverse = !Tracker::do_axis_reverse;
-				////		waitAxisReverse = true;
-				////	}
-				////}
 		   }
 		}
 
 		//
 		// Reset the 'wait' flag. Moving above 90 with the key pressed, will (de-)activate Axis Reverse.
 		//
-		//////if (fabs(actualYaw) < 85.0f) {
-		//////	waitAxisReverse = false;
-		//////}
-				////	if  {
-//		qDebug() << "Tracker::run() says actualZ = " << actualZ;
-		Tracker::do_axis_reverse = ((fabs(actualYaw) > 90.0f) && (actualZ < -20.0f));
+		qDebug() << "Tracker::run() says actualZ = " << actualZ << ", terwijl Z_Pos4 = " << Z_Pos4ReverseAxis;
+		if (useAxisReverse) {
+			Tracker::do_axis_reverse = ((fabs(actualYaw) > YawAngle4ReverseAxis) && (actualZ < Z_Pos4ReverseAxis));
+		}
+		else {
+			Tracker::do_axis_reverse = false;
+		}
+
 
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
 
@@ -587,7 +584,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				actualYaw = output_camera.position.yaw;					// Save the actual Yaw, otherwise we can't check for +90
 				actualZ = output_camera.position.z;						// Also the Z
 				if (Tracker::do_axis_reverse) {
-					output_camera.position.z = 100;						// Max.
+					output_camera.position.z = Z_PosWhenReverseAxis;	// Set the desired Z-position
 				}
 
 				//
@@ -777,7 +774,7 @@ void Tracker::setPowCurve( int x ) {
 }
 
 //
-// Set the filter-value from the GUI.
+// Get the raw headpose, so it can be displayed.
 //
 void Tracker::getHeadPose( THeadPoseData *data ) {
 	data->x = Tracker::X.headPos - Tracker::X.offset_headPos;				// centimeters
@@ -790,7 +787,7 @@ void Tracker::getHeadPose( THeadPoseData *data ) {
 }
 
 //
-// Set the filter-value from the GUI.
+// Get the output-headpose, so it can be displayed.
 //
 void Tracker::getOutputHeadPose( THeadPoseData *data ) {
 	data->x = output_camera.position.x;										// centimeters
@@ -822,27 +819,27 @@ float sum = 0;
 //
 // Correct the Raw value, with the Neutral Zone supplied
 //
-float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
-
-	//
-	// Return 0, if NewRaw is within the Neutral Zone
-	//
-	if ( fabs( NewRaw ) < rotNeutral ) {
-		return 0.0f;
-	}
-
-	//
-	// NewRaw is outside the zone.
-	// Substract rotNeutral from the NewRaw
-	//
-	if ( NewRaw > 0.0f ) {
-		return (NewRaw - rotNeutral);
-	}
-	else {
-		return (NewRaw + rotNeutral);				// Makes sense?
-	}
-
-}
+//float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
+//
+//	//
+//	// Return 0, if NewRaw is within the Neutral Zone
+//	//
+//	if ( fabs( NewRaw ) < rotNeutral ) {
+//		return 0.0f;
+//	}
+//
+//	//
+//	// NewRaw is outside the zone.
+//	// Substract rotNeutral from the NewRaw
+//	//
+//	if ( NewRaw > 0.0f ) {
+//		return (NewRaw - rotNeutral);
+//	}
+//	else {
+//		return (NewRaw + rotNeutral);				// Makes sense?
+//	}
+//
+//}
 
 //
 // Implementation of an Exponentially Weighted Moving Average, used to serve as a low-pass filter.
@@ -851,48 +848,48 @@ float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
 // The function takes the new value, the delta-time (sec) and a weighing coefficient (>0 and <1)
 // All previous values are taken into account, the weight of this is determined by 'coeff'.
 //
-float Tracker::lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff) {
-float c = 0.0f;
-float fil = 0.0f;
-
-	c = dt / (coeff + dt);
-	fil = (newvalue * c) + (*oldvalue * (1 - c));
-	*oldvalue = fil;
-
-	return fil;
-}
+//float Tracker::lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff) {
+//float c = 0.0f;
+//float fil = 0.0f;
+//
+//	c = dt / (coeff + dt);
+//	fil = (newvalue * c) + (*oldvalue * (1 - c));
+//	*oldvalue = fil;
+//
+//	return fil;
+//}
 
 //
 // Implementation of a Rate Limiter, used to eliminate spikes in the raw data.
 //
 // The function takes the new value, the delta-time (sec) and the positive max. slew-rate (engineering units/sec)
 //
-float Tracker::rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate) {
-float rate = 0.0f;
-float clamped_value = 0.0f;
-
-	rate = (newvalue - *oldvalue) / dt;
-	clamped_value = newvalue;									// If all is well, the newvalue is returned
-
-	//
-	// One max-rate is used for ramp-up and ramp-down
-	// If the rate exceeds max_rate, return the maximum value that the max_rate allows
-	//
-	if (fabs(rate) > max_rate) {
-		//
-		// For ramp-down, apply a factor -1 to the max_rate
-		//
-		if (rate < 0.0f) {
-			clamped_value = (-1.0f * dt * max_rate) + *oldvalue;
-		}
-		else {
-			clamped_value = (dt * max_rate) + *oldvalue;
-		}
-	}
-	*oldvalue = clamped_value;
-
-	return clamped_value;
-}
+//float Tracker::rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate) {
+//float rate = 0.0f;
+//float clamped_value = 0.0f;
+//
+//	rate = (newvalue - *oldvalue) / dt;
+//	clamped_value = newvalue;									// If all is well, the newvalue is returned
+//
+//	//
+//	// One max-rate is used for ramp-up and ramp-down
+//	// If the rate exceeds max_rate, return the maximum value that the max_rate allows
+//	//
+//	if (fabs(rate) > max_rate) {
+//		//
+//		// For ramp-down, apply a factor -1 to the max_rate
+//		//
+//		if (rate < 0.0f) {
+//			clamped_value = (-1.0f * dt * max_rate) + *oldvalue;
+//		}
+//		else {
+//			clamped_value = (dt * max_rate) + *oldvalue;
+//		}
+//	}
+//	*oldvalue = clamped_value;
+//
+//	return clamped_value;
+//}
 
 //
 // Get the output from the curve.
@@ -1062,11 +1059,16 @@ QPointF point1, point2, point3, point4;
 	GameZeroKey.alt = iniFile.value ( "Alt_GameZero", 0 ).toBool();
 
 	// Axis Reverse key
-	AxisReverseKey.keycode = DIK_R;
-	AxisReverseKey.shift = false;
-	AxisReverseKey.ctrl = false;
-	AxisReverseKey.alt = false;
+	//AxisReverseKey.keycode = DIK_R;
+	//AxisReverseKey.shift = false;
+	//AxisReverseKey.ctrl = false;
+	//AxisReverseKey.alt = false;
 
+	// Reverse Axis
+	useAxisReverse = iniFile.value ( "Enable_ReverseAxis", 0 ).toBool();
+	YawAngle4ReverseAxis = iniFile.value ( "RA_Yaw", 40 ).toInt();
+	Z_Pos4ReverseAxis = iniFile.value ( "RA_ZPos", 50 ).toInt();
+	Z_PosWhenReverseAxis = iniFile.value ( "RA_ToZPos", 80 ).toInt();
 
 	iniFile.endGroup ();
 }
