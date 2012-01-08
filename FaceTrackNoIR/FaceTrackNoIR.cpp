@@ -71,6 +71,16 @@ QMainWindow(parent, flags)
 	_pose_display = new GLWidget(ui.widget4logo, 0);
     _pose_display->rotateBy(0, 0, 0);
 
+	ui.lblX->setVisible(false);
+	ui.lblY->setVisible(false);
+	ui.lblZ->setVisible(false);
+	ui.lblRotX->setVisible(false);
+	ui.lblRotY->setVisible(false);
+	ui.lblRotZ->setVisible(false);
+
+	ui.lcdNumOutputPosX->setVisible(false);
+	ui.lcdNumOutputPosY->setVisible(false);
+	ui.lcdNumOutputPosZ->setVisible(false);
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
@@ -107,6 +117,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionHeadPoseWidget, SIGNAL(triggered()), this, SLOT(showHeadPoseWidget()));
 	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showEngineControls()));
 	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
+	connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
 	// button methods connect with methods in this class
 	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
@@ -326,9 +337,9 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
 	iniFile.setValue ( "useEWMA", ui.chkUseEWMA->isChecked() );
-	iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
-	iniFile.setValue ( "powCurve", ui.powCurve->value() );
-	iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
+	//iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
+	//iniFile.setValue ( "powCurve", ui.powCurve->value() );
+	//iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -410,7 +421,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.6) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -447,9 +458,9 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
 	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
 
-	ui.minSmooth->setValue (iniFile.value ( "minSmooth", 15 ).toInt());
-	ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 50 ).toInt());
-	ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
+	//ui.minSmooth->setValue (iniFile.value ( "minSmooth", 15 ).toInt());
+	//ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 50 ).toInt());
+	//ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -576,6 +587,17 @@ void FaceTrackNoIR::startTracker( ) {
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
 	timUpdateHeadPose->start(10);
+
+	ui.lblX->setVisible(true);
+	ui.lblY->setVisible(true);
+	ui.lblZ->setVisible(true);
+	ui.lblRotX->setVisible(true);
+	ui.lblRotY->setVisible(true);
+	ui.lblRotZ->setVisible(true);
+
+	ui.lcdNumOutputPosX->setVisible(true);
+	ui.lcdNumOutputPosY->setVisible(true);
+	ui.lcdNumOutputPosZ->setVisible(true);
 	ui.lcdNumOutputRotX->setVisible(true);
 	ui.lcdNumOutputRotY->setVisible(true);
 	ui.lcdNumOutputRotZ->setVisible(true);
@@ -589,6 +611,18 @@ void FaceTrackNoIR::stopTracker( ) {
 	//
 	timUpdateHeadPose->stop();
     _pose_display->rotateBy(0, 0, 0);
+
+
+	ui.lblX->setVisible(false);
+	ui.lblY->setVisible(false);
+	ui.lblZ->setVisible(false);
+	ui.lblRotX->setVisible(false);
+	ui.lblRotY->setVisible(false);
+	ui.lblRotZ->setVisible(false);
+
+	ui.lcdNumOutputPosX->setVisible(false);
+	ui.lcdNumOutputPosY->setVisible(false);
+	ui.lcdNumOutputPosZ->setVisible(false);
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
@@ -701,9 +735,13 @@ THeadPoseData newdata;
 		Tracker::getOutputHeadPose(&newdata);
 		_pose_display->rotateBy(newdata.pitch, newdata.yaw, newdata.roll);
 
-		ui.lcdNumOutputRotX->display((double) (((int)(newdata.yaw * 10.0f))/10.0f));
-		ui.lcdNumOutputRotY->display((double) (((int)(newdata.pitch * 10.0f))/10.0f));
-		ui.lcdNumOutputRotZ->display((double) (((int)(newdata.roll * 10.0f))/10.0f));
+		ui.lcdNumOutputPosX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
+		ui.lcdNumOutputPosY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
+		ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
+
+		ui.lcdNumOutputRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
+		ui.lcdNumOutputRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
+		ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
 	}
 }
 
@@ -888,6 +926,51 @@ QString libName;
 	}
 }
 
+/** toggles Filter Controls Dialog **/
+void FaceTrackNoIR::showFilterControls() {
+importGetFilterDialog getIT;
+QLibrary *filterLib;
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	//
+	// Read the currently selected Filter from the INI-file.
+	//
+	iniFile.beginGroup ( "Filter" );
+	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
+	iniFile.endGroup ();
+
+	//
+	// Delete the existing QDialog
+	//
+	if (pFilterDialog) {
+		pFilterDialog.Release();
+	}
+
+	filterLib = new QLibrary(selectedFilterName);
+
+	getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
+	if (getIT) {
+		IFilterDialogPtr ptrXyz(getIT());
+		if (ptrXyz)
+		{
+			pFilterDialog = ptrXyz;
+			pFilterDialog->Initialize( this );
+			qDebug() << "FaceTrackNoIR::showFilterControls GetFilterDialog Function Resolved!";
+		}
+		else {
+			qDebug() << "FaceTrackNoIR::showFilterControls Function NOT Resolved!";
+		}	
+	}
+	else {
+		QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+	}
+}
+
 /** toggles FaceTrackNoIR Preferences Dialog **/
 void FaceTrackNoIR::showPreferences() {
 
@@ -946,6 +1029,15 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
+importGetFilterDialog getIT;
+QLibrary *filterLib;
+QString *filterName;
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
 	ui.iconcomboBox->addItem(QIcon(":/images/Freetrack.ico"), tr("Freetrack"));
 	ui.iconcomboBox->addItem(QIcon(":/images/FlightGear.ico"), tr("FlightGear"));
 	ui.iconcomboBox->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
@@ -962,6 +1054,70 @@ void FaceTrackNoIR::createIconGroupBox()
 	ui.iconcomboTrackerSource->addItem(QIcon(":/images/Visage.ico"), tr("Visage Tracker"));
 #   endif
 
+
+	//
+	// Read the currently selected Filter from the INI-file.
+	//
+	iniFile.beginGroup ( "Filter" );
+	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
+	iniFile.endGroup ();
+
+	//
+	// Get a List of all the Filter-DLL-files in the Program-folder.
+	//
+	QDir settingsDir( QCoreApplication::applicationDirPath() );
+    QStringList filters;
+    filters << "FTNoIR_Filter_*.dll";
+	filterFileList.clear();
+	filterFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+
+	//
+	// Add strings to the Listbox.
+	//
+	disconnect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+	ui.iconcomboFilter->clear();
+	for ( int i = 0; i < filterFileList.size(); i++) {
+
+		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
+
+		//
+		// Delete the existing QDialog
+		//
+		if (pFilterDialog) {
+			pFilterDialog.Release();
+		}
+
+		// Show the appropriate Protocol-server Settings
+		filterLib = new QLibrary(filterFileList.at(i));
+		filterName = new QString("");
+
+		getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
+		if (getIT) {
+			IFilterDialogPtr ptrXyz(getIT());
+			if (ptrXyz)
+			{
+				pFilterDialog = ptrXyz;
+				pFilterDialog->getFilterFullName( filterName );
+				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
+			}
+			else {
+				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+			}	
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+
+		ui.iconcomboFilter->addItem(QIcon(":/images/Settings16.png"), *filterName );
+		if (filterFileList.at(i) == selectedFilterName) {
+			ui.iconcomboFilter->setItemIcon(i, QIcon(":/images/SettingsOpen16.png"));
+			ui.iconcomboFilter->setCurrentIndex( i );
+		}
+	}
+	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+
+//	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 }
 
@@ -1099,6 +1255,24 @@ void FaceTrackNoIR::profileSelected(int index)
 	loadSettings();
 }
 
+//
+// Handle changes of the Filter selection
+//
+void FaceTrackNoIR::filterSelected(int index)
+{
+	////
+	//// Read the current INI-file setting, to get the folder in which it's located...
+	////
+	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+ //   QFileInfo pathInfo ( currentFile );
+
+	////
+	//// Get a List of all the INI-files in the (currently active) Settings-folder.
+	////
+	//settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.at(ui.iconcomboProfile->currentIndex()));
+	//loadSettings();
+}
 
 //
 // Constructor for FaceTrackNoIR=Preferences-dialog
@@ -1536,9 +1710,9 @@ int keyindex;
 
 	// Reverse Axis
 	ui.chkEnableReverseAxis->setChecked (iniFile.value ( "Enable_ReverseAxis", 0 ).toBool());
-	ui.spinYawAngle4ReverseAxis->setValue( settings.value ( "RA_Yaw", 40 ).toInt() );
-	ui.spinZ_Pos4ReverseAxis->setValue( settings.value ( "RA_ZPos", -20 ).toInt() );
-	ui.spinZ_PosWhenReverseAxis->setValue( settings.value ( "RA_ToZPos", 50 ).toInt() );
+	ui.spinYawAngle4ReverseAxis->setValue( iniFile.value ( "RA_Yaw", 40 ).toInt() );
+	ui.spinZ_Pos4ReverseAxis->setValue( iniFile.value ( "RA_ZPos", -20 ).toInt() );
+	ui.spinZ_PosWhenReverseAxis->setValue( iniFile.value ( "RA_ToZPos", 50 ).toInt() );
 
 	iniFile.endGroup ();
 
@@ -1590,9 +1764,9 @@ void KeyboardShortcutDialog::save() {
 
 	// Reverse Axis
 	iniFile.setValue ( "Enable_ReverseAxis", ui.chkEnableReverseAxis->isChecked() );
-	settings.setValue( "RA_Yaw", ui.spinYawAngle4ReverseAxis->value() );
-	settings.setValue( "RA_ZPos", ui.spinZ_Pos4ReverseAxis->value() );
-	settings.setValue( "RA_ToZPos", ui.spinZ_PosWhenReverseAxis->value() );
+	iniFile.setValue( "RA_Yaw", ui.spinYawAngle4ReverseAxis->value() );
+	iniFile.setValue( "RA_ZPos", ui.spinZ_Pos4ReverseAxis->value() );
+	iniFile.setValue( "RA_ToZPos", ui.spinZ_PosWhenReverseAxis->value() );
 
 	iniFile.endGroup ();
 

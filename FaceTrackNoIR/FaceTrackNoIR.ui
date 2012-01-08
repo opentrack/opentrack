@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>411</height>
+    <height>528</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -220,7 +220,7 @@ QGroupBox {
              <property name="geometry">
               <rect>
                <x>100</x>
-               <y>20</y>
+               <y>1</y>
                <width>145</width>
                <height>34</height>
               </rect>
@@ -246,9 +246,9 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputRotX">
              <property name="geometry">
               <rect>
-               <x>100</x>
-               <y>60</y>
-               <width>41</width>
+               <x>196</x>
+               <y>34</y>
+               <width>50</width>
                <height>21</height>
               </rect>
              </property>
@@ -265,7 +265,7 @@ Support FaceTrackNoIR!</string>
               <enum>QFrame::Raised</enum>
              </property>
              <property name="numDigits">
-              <number>3</number>
+              <number>5</number>
              </property>
              <property name="segmentStyle">
               <enum>QLCDNumber::Flat</enum>
@@ -274,9 +274,9 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputRotY">
              <property name="geometry">
               <rect>
-               <x>150</x>
-               <y>60</y>
-               <width>41</width>
+               <x>196</x>
+               <y>52</y>
+               <width>50</width>
                <height>21</height>
               </rect>
              </property>
@@ -293,7 +293,7 @@ Support FaceTrackNoIR!</string>
               <enum>QFrame::Raised</enum>
              </property>
              <property name="numDigits">
-              <number>3</number>
+              <number>5</number>
              </property>
              <property name="segmentStyle">
               <enum>QLCDNumber::Flat</enum>
@@ -302,9 +302,9 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputRotZ">
              <property name="geometry">
               <rect>
-               <x>200</x>
-               <y>60</y>
-               <width>41</width>
+               <x>196</x>
+               <y>70</y>
+               <width>50</width>
                <height>21</height>
               </rect>
              </property>
@@ -321,10 +321,190 @@ Support FaceTrackNoIR!</string>
               <enum>QFrame::Raised</enum>
              </property>
              <property name="numDigits">
-              <number>3</number>
+              <number>5</number>
              </property>
              <property name="segmentStyle">
               <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLCDNumber" name="lcdNumOutputPosX">
+             <property name="geometry">
+              <rect>
+               <x>114</x>
+               <y>34</y>
+               <width>50</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>5</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLCDNumber" name="lcdNumOutputPosY">
+             <property name="geometry">
+              <rect>
+               <x>114</x>
+               <y>52</y>
+               <width>50</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>5</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLCDNumber" name="lcdNumOutputPosZ">
+             <property name="geometry">
+              <rect>
+               <x>114</x>
+               <y>70</y>
+               <width>50</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <property name="numDigits">
+              <number>5</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblX">
+             <property name="geometry">
+              <rect>
+               <x>104</x>
+               <y>35</y>
+               <width>16</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblY">
+             <property name="geometry">
+              <rect>
+               <x>105</x>
+               <y>55</y>
+               <width>16</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblZ">
+             <property name="geometry">
+              <rect>
+               <x>105</x>
+               <y>74</y>
+               <width>16</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblRotZ">
+             <property name="geometry">
+              <rect>
+               <x>168</x>
+               <y>74</y>
+               <width>20</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>rotZ</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblRotX">
+             <property name="geometry">
+              <rect>
+               <x>167</x>
+               <y>35</y>
+               <width>20</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>rotX</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="lblRotY">
+             <property name="geometry">
+              <rect>
+               <x>168</x>
+               <y>55</y>
+               <width>20</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(0, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>rotY</string>
              </property>
             </widget>
            </widget>
@@ -976,161 +1156,6 @@ color: rgb(0, 255, 0);</string>
                 </property>
                 <property name="text">
                  <string>Save</string>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupTrackerSource">
-               <property name="minimumSize">
-                <size>
-                 <width>200</width>
-                 <height>120</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="title">
-                <string>Tracker Source</string>
-               </property>
-               <widget class="QComboBox" name="iconcomboTrackerSource">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>20</y>
-                  <width>180</width>
-                  <height>22</height>
-                 </rect>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="currentIndex">
-                 <number>-1</number>
-                </property>
-                <property name="maxVisibleItems">
-                 <number>3</number>
-                </property>
-               </widget>
-               <widget class="QPushButton" name="btnShowEngineControls">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>80</y>
-                  <width>180</width>
-                  <height>23</height>
-                 </rect>
-                </property>
-                <property name="toolTip">
-                 <string>Change tracker settings</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>Settings</string>
-                </property>
-               </widget>
-               <widget class="QPushButton" name="btnStartTracker">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>50</y>
-                  <width>81</width>
-                  <height>23</height>
-                 </rect>
-                </property>
-                <property name="toolTip">
-                 <string>Start the Tracker</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>Start</string>
-                </property>
-               </widget>
-               <widget class="QPushButton" name="btnStopTracker">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="geometry">
-                 <rect>
-                  <x>109</x>
-                  <y>50</y>
-                  <width>81</width>
-                  <height>23</height>
-                 </rect>
-                </property>
-                <property name="toolTip">
-                 <string>Stop the Tracker</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>Stop</string>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupGameProtocol">
-               <property name="minimumSize">
-                <size>
-                 <width>190</width>
-                 <height>100</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="title">
-                <string>Game protocol</string>
-               </property>
-               <widget class="QComboBox" name="iconcomboBox">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>20</y>
-                  <width>180</width>
-                  <height>22</height>
-                 </rect>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="currentIndex">
-                 <number>-1</number>
-                </property>
-                <property name="maxVisibleItems">
-                 <number>7</number>
-                </property>
-               </widget>
-               <widget class="QPushButton" name="btnShowServerControls">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>80</y>
-                  <width>180</width>
-                  <height>23</height>
-                 </rect>
-                </property>
-                <property name="toolTip">
-                 <string>Change game protocol settings</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>Settings</string>
                 </property>
                </widget>
               </widget>
@@ -2069,6 +2094,228 @@ background:none;</string>
              </item>
             </layout>
            </item>
+           <item row="3" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="QGroupBox" name="groupTrackerSource">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Tracker Source</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboTrackerSource">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>180</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>3</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnShowEngineControls">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>180</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change tracker settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnStartTracker">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>50</y>
+                  <width>81</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Start the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Start</string>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnStopTracker">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>109</x>
+                  <y>50</y>
+                  <width>81</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Stop the Tracker</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Stop</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupGameProtocol">
+               <property name="minimumSize">
+                <size>
+                 <width>190</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Game protocol</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboBox">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>180</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>7</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnShowServerControls">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>180</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change game protocol settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupFilter">
+               <property name="minimumSize">
+                <size>
+                 <width>190</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Filter</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboFilter">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>180</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>7</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnShowFilterControls">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>180</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change game protocol settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </item>
           </layout>
          </item>
         </layout>
@@ -2309,11 +2556,11 @@ background:none;</string>
    <hints>
     <hint type="sourcelabel">
      <x>442</x>
-     <y>347</y>
+     <y>387</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
-     <y>349</y>
+     <y>389</y>
     </hint>
    </hints>
   </connection>
@@ -2325,11 +2572,11 @@ background:none;</string>
    <hints>
     <hint type="sourcelabel">
      <x>494</x>
-     <y>349</y>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>442</x>
-     <y>347</y>
+     <y>387</y>
     </hint>
    </hints>
   </connection>
@@ -2340,12 +2587,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>648</x>
-     <y>293</y>
+     <x>643</x>
+     <y>333</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>295</y>
+     <x>691</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
@@ -2356,12 +2603,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>696</x>
-     <y>295</y>
+     <x>691</x>
+     <y>335</y>
     </hint>
     <hint type="destinationlabel">
-     <x>648</x>
-     <y>293</y>
+     <x>643</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>
@@ -2372,12 +2619,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>648</x>
-     <y>320</y>
+     <x>643</x>
+     <y>360</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>322</y>
+     <x>691</x>
+     <y>362</y>
     </hint>
    </hints>
   </connection>
@@ -2388,12 +2635,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>696</x>
-     <y>322</y>
+     <x>691</x>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>648</x>
-     <y>320</y>
+     <x>643</x>
+     <y>360</y>
     </hint>
    </hints>
   </connection>
@@ -2404,12 +2651,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>648</x>
-     <y>347</y>
+     <x>643</x>
+     <y>387</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>349</y>
+     <x>691</x>
+     <y>389</y>
     </hint>
    </hints>
   </connection>
@@ -2420,12 +2667,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>696</x>
-     <y>349</y>
+     <x>691</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>648</x>
-     <y>347</y>
+     <x>643</x>
+     <y>387</y>
     </hint>
    </hints>
   </connection>

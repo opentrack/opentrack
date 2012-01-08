@@ -40,7 +40,7 @@
 
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
-#include "FTNoIR_Filter_base.h"
+#include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
 #include "AutoClosePtr.h"
 
 // 1a. COM-Like usage with smart pointer.
@@ -162,9 +162,9 @@ private:
 
 	static void addHeadPose( THeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
-	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
-	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);
-	static float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
+//	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
+//	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);
+//	static float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
 
 	/** static member variables for saving the head pose **/
 	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
@@ -178,7 +178,7 @@ private:
 	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
 	static TShortKey InhibitKey;					// ShortKey to disable one or more axis during tracking
 	static TShortKey GameZeroKey;					// ShortKey to Set Game Zero
-	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
+//	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
@@ -193,7 +193,12 @@ private:
 	static bool useFilter;							// Use EWMA-filtering
 	static bool setZero;							// Set to zero's, when OFF (one-shot)
 	static bool setEngineStop;						// Stop tracker->engine, when OFF
-	
+
+	static bool useAxisReverse;						// Use Axis Reverse
+	static float YawAngle4ReverseAxis;				// Axis Reverse settings
+	static float Z_Pos4ReverseAxis;
+	static float Z_PosWhenReverseAxis;
+
 	FaceTrackNoIR *mainApp;
 
 	QSharedPointer<ProtocolServerBase> debug_Client;	// Protocol Server to log debug-data

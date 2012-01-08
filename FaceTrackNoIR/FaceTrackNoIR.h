@@ -45,6 +45,7 @@
 //
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
+#include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
 #include "AutoClosePtr.h"
 
 // 1a. COM-Like usage with smart pointer.
@@ -54,6 +55,8 @@ typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDia
 typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
 typedef AutoClosePtr<IProtocolDialog, void, &IProtocolDialog::Release> IProtocolDialogPtr;
 typedef IProtocolDialog *(WINAPI *importGetProtocolDialog)(void);
+typedef AutoClosePtr<IFilterDialog, void, &IFilterDialog::Release> IFilterDialogPtr;
+typedef IFilterDialog *(WINAPI *importGetFilterDialog)(void);
 
 
 #include <Dshow.h>
@@ -82,9 +85,11 @@ private:
 	QTimer *timMinimizeFTN;						// Timer to Auto-minimize
 	QTimer *timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
+	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
+	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
 	/** Widget variables **/
 	QVBoxLayout *l;
@@ -135,11 +140,13 @@ private:
 		void iconActivated(QSystemTrayIcon::ActivationReason reason);
 		void trackingSourceSelected(int index);
 		void profileSelected(int index);
+		void filterSelected(int index);
 
 		void showVideoWidget();
 		void showHeadPoseWidget();
 		void showEngineControls();
 		void showServerControls();
+		void showFilterControls();
 		void showPreferences();
 		void showKeyboardShortcuts();
 		void showCurveConfiguration();

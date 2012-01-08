@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>404</height>
+    <height>415</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -571,9 +571,15 @@
        </item>
        <item row="2" column="2">
         <widget class="QSpinBox" name="spinYawAngle4ReverseAxis">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>40</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
@@ -614,9 +620,15 @@
        </item>
        <item row="3" column="2">
         <widget class="QSpinBox" name="spinZ_Pos4ReverseAxis">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>40</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
@@ -624,10 +636,10 @@
           <number>-50</number>
          </property>
          <property name="maximum">
-          <number>50</number>
+          <number>150</number>
          </property>
          <property name="value">
-          <number>-20</number>
+          <number>50</number>
          </property>
         </widget>
        </item>
@@ -647,9 +659,15 @@
        </item>
        <item row="3" column="5">
         <widget class="QSpinBox" name="spinZ_PosWhenReverseAxis">
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>40</width>
+           <width>60</width>
            <height>16777215</height>
           </size>
          </property>
@@ -657,7 +675,7 @@
           <number>-50</number>
          </property>
          <property name="maximum">
-          <number>50</number>
+          <number>150</number>
          </property>
          <property name="value">
           <number>-20</number>
@@ -701,6 +719,30 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>These settings are saved 'per game'  (INI-file)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
