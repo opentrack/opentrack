@@ -507,7 +507,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 		//
 		// Reset the 'wait' flag. Moving above 90 with the key pressed, will (de-)activate Axis Reverse.
 		//
-		qDebug() << "Tracker::run() says actualZ = " << actualZ << ", terwijl Z_Pos4 = " << Z_Pos4ReverseAxis;
+//		qDebug() << "Tracker::run() says actualZ = " << actualZ << ", terwijl Z_Pos4 = " << Z_Pos4ReverseAxis;
 		if (useAxisReverse) {
 			Tracker::do_axis_reverse = ((fabs(actualYaw) > YawAngle4ReverseAxis) && (actualZ < Z_Pos4ReverseAxis));
 		}
@@ -741,36 +741,6 @@ void Tracker::addRaw2List ( QList<float> *rawList, float maxIndex, float raw ) {
 	// Insert the newest at the beginning.
 	//
 	rawList->prepend ( raw );
-}
-
-//
-// Set the filter-value from the GUI.
-//
-void Tracker::setMinSmooth ( int x ) {
-	if (Tracker::pFilter) {
-		Tracker::pFilter->setParameterValue(0, x);
-		qDebug() << "Tracker::setMinSmooth Min Smooting frames set to: " << x;
-	}
-}
-
-//
-// Set the filter-value from the GUI.
-//
-void Tracker::setMaxSmooth ( int x ) {
-	if (Tracker::pFilter) {
-		Tracker::pFilter->setParameterValue(1, x);
-		qDebug() << "Tracker::setMaxSmooth Max Smooting frames set to: " << x;
-	}
-}
-
-//
-// Set the filter-value from the GUI.
-//
-void Tracker::setPowCurve( int x ) {
-	if (Tracker::pFilter) {
-		Tracker::pFilter->setParameterValue(2, x);
-		qDebug() << "Tracker::setPowCurve Pow Curve set to: " << x;
-	}
 }
 
 //

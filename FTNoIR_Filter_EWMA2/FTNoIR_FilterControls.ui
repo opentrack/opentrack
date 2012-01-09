@@ -23,6 +23,9 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
@@ -41,8 +44,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>Min.</string>
@@ -64,8 +66,7 @@ background:none;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>Max.</string>
@@ -87,8 +88,7 @@ background:none;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>Curve</string>
@@ -163,8 +163,7 @@ background:none;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>frames</string>
@@ -239,8 +238,7 @@ background:none;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>frames</string>
@@ -312,8 +310,7 @@ background:none;</string>
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:#ccc;
-background:none;</string>
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>pow</string>
@@ -393,7 +390,7 @@ background:none;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>52</width>
            <height>0</height>
           </size>
          </property>
@@ -418,7 +415,7 @@ background:none;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>52</width>
            <height>0</height>
           </size>
          </property>
@@ -460,7 +457,104 @@ background:none;</string>
   <tabstop>btnCancel</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>minSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinMinSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinMinSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>minSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>17</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>maxSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinMaxSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>181</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>54</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinMaxSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>maxSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>powCurve</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPowCurve</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinPowCurve</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>powCurve</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>

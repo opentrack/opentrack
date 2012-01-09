@@ -41,7 +41,7 @@
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
-#include "AutoClosePtr.h"
+//#include "AutoClosePtr.h"
 
 // 1a. COM-Like usage with smart pointer.
 // No need to call `ITracker::Release'; the instance will
@@ -50,8 +50,7 @@ typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
 typedef ITracker *(WINAPI *importGetTracker)(void);
 typedef AutoClosePtr<IProtocol, void, &IProtocol::Release> IProtocolPtr;
 typedef IProtocol *(WINAPI *importGetProtocol)(void);
-typedef AutoClosePtr<IFilter, void, &IFilter::Release> IFilterPtr;
-typedef IFilter *(WINAPI *importGetFilter)(void);
+
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -162,9 +161,6 @@ private:
 
 	static void addHeadPose( THeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
-//	static float lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff);
-//	static float rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate);
-//	static float getCorrectedNewRaw ( float NewRaw, float rotNeutral );
 
 	/** static member variables for saving the head pose **/
 	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
@@ -232,12 +228,9 @@ public:
 	static void setInvertZ(bool invert) { Z.invert = invert?-1.0f:+1.0f; }
 
 	static void setUseFilter(bool set) { useFilter = set; }
-	static void setMinSmooth(int x);
-	static void setMaxSmooth(int x);
-	static void setPowCurve(int x);
-
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
+	static IFilterPtr getFilterPtr() { return pFilter; }
 
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }

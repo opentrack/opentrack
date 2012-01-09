@@ -21,6 +21,7 @@ private:
 	int msgID_FTClient;
 	int msgID_FTIR_Register;
 	int msgID_FTIR_UnRegister;
+	int msgID_FilterSettingChanged;
 };
 
 #endif					//  FACEAPP_H

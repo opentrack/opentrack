@@ -52,6 +52,7 @@ public:
 	bool setParameterValue(const int index, const float newvalue);
 
 private:
+	void loadSettings();									// Load the settings from the INI-file
 	THeadPoseData newHeadPose;								// Structure with new headpose
 
 	bool	first_run;
@@ -97,7 +98,7 @@ public:
 	void showEvent ( QShowEvent * event );
 
 	void Release();											// Member functions which are accessible from outside the DLL
-    void Initialize(QWidget *parent);
+    void Initialize(QWidget *parent, IFilterPtr ptr);
 	void getFilterFullName(QString *strToBeFilled);
 	void getFilterShortName(QString *strToBeFilled);
 	void getFilterDescription(QString *strToBeFilled);
@@ -113,6 +114,7 @@ private:
 	QString filterFullName;									// Filters' name and description
 	QString filterShortName;
 	QString filterDescription;
+	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 
 private slots:
 	void doOK();

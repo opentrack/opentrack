@@ -162,11 +162,6 @@ private:
 		void setUseFilter( int set );
 		void showHeadPose();
 
-		// EWMA filter sliders
-		void setMinSmooth( int redh );
-		void setMaxSmooth( int redh );
-		void setPowCurve( int redh );
-
 		//smoothing slider
 		void setSmoothing( int smooth );
 

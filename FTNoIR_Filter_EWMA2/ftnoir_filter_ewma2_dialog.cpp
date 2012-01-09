@@ -56,6 +56,8 @@ QWidget()
 	connect(ui.maxSmooth, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.powCurve, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 
+	qDebug() << "FilterControls() says: started";
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -75,8 +77,18 @@ void FilterControls::Release()
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent) {
+void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
 
+	//
+	// The dialog can be opened, while the Tracker is running.
+	// In that case, ptr will point to the active Filter-instance.
+	// This can be used to update settings, while Tracking and may also be handy to display logging-data and such...
+	//
+	pFilter = ptr;
+	
+	//
+	//
+	//
 	QPoint offsetpos(100, 100);
 	if (parent) {
 		this->move(parent->pos() + offsetpos);
@@ -89,6 +101,9 @@ void FilterControls::Initialize(QWidget *parent) {
 //
 void FilterControls::doOK() {
 	save();
+	if (pFilter) {
+		pFilter->Initialize();
+	}
 	this->close();
 }
 
@@ -134,13 +149,13 @@ void FilterControls::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FilterControls::loadSettings() {
-//	qDebug() << "loadSettings says: Starting ";
+	qDebug() << "FilterControls::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-//	qDebug() << "loadSettings says: iniFile = " << currentFile;
+	qDebug() << "FilterControls::loadSettings says: iniFile = " << currentFile;
 
 	//
 	// The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR

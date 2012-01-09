@@ -10,6 +10,8 @@
 #include <QMessageBox>
 #include <QSettings>
 
+#include "..\FaceTrackNoIR\AutoClosePtr.h"
+
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -31,6 +33,8 @@ struct IFilter
 
 // Handle type. In C++ language the interface type is used.
 typedef IFilter* FILTERHANDLE;
+typedef AutoClosePtr<IFilter, void, &IFilter::Release> IFilterPtr;
+typedef IFilter *(__stdcall *importGetFilter)(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
@@ -56,7 +60,7 @@ GetFilter(
 struct IFilterDialog
 {
     virtual void Release() = 0;									// Member required to enable Auto-remove
-	virtual void Initialize(QWidget *parent) = 0;
+	virtual void Initialize(QWidget *parent, IFilterPtr ptr) = 0;
 
 	virtual void getFilterFullName(QString *strToBeFilled) = 0;
 	virtual void getFilterShortName(QString *strToBeFilled) = 0;
