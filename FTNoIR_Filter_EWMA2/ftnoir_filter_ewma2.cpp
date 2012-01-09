@@ -75,7 +75,8 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 	setParameterValue(kSmoothingScaleCurve,10.0f);
 
 	first_run = true;
-	alpha_smoothing = 0.02f;		//this is a constant for now, might be a parameter later
+	alpha_smoothing = 0.02f;		// this is a constant for now, might be a parameter later
+	loadSettings();					// Load the Settings
 
 }
 
@@ -91,7 +92,32 @@ void FTNoIR_Filter_EWMA2::Release()
 
 void FTNoIR_Filter_EWMA2::Initialize()
 {
+	qDebug() << "FTNoIR_Filter_EWMA2::Initialize says: Starting ";
+	loadSettings();
 	return;
+}
+
+//
+// Load the current Settings from the currently 'active' INI-file.
+//
+void FTNoIR_Filter_EWMA2::loadSettings() {
+	qDebug() << "FTNoIR_Filter_EWMA2::loadSettings says: Starting ";
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	qDebug() << "FTNoIR_Filter_EWMA2::loadSettings says: iniFile = " << currentFile;
+
+	//
+	// The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
+	//
+	iniFile.beginGroup ( "Tracking" );
+	setParameterValue(0, iniFile.value ( "minSmooth", 15 ).toInt());
+	setParameterValue(1, iniFile.value ( "maxSmooth", 50 ).toInt());
+	setParameterValue(2, iniFile.value ( "powCurve", 10 ).toInt());
+	iniFile.endGroup ();
+
 }
 
 void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)

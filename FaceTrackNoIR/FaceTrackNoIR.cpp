@@ -133,11 +133,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	connect(ui.chkUseEWMA, SIGNAL(stateChanged(int)), this, SLOT(setUseFilter(int)));
 
-	// Connect sliders for reduction factor
-	connect(ui.minSmooth, SIGNAL(valueChanged(int)), this, SLOT(setMinSmooth(int)));
-	connect(ui.maxSmooth, SIGNAL(valueChanged(int)), this, SLOT(setMaxSmooth(int)));
-	connect(ui.powCurve, SIGNAL(valueChanged(int)), this, SLOT(setPowCurve(int)));
-
 	// Connect slider for smoothing
 	connect(ui.slideSmoothing, SIGNAL(valueChanged(int)), this, SLOT(setSmoothing(int)));
 
@@ -528,10 +523,6 @@ void FaceTrackNoIR::startTracker( ) {
 	tracker->setInvertY (ui.chkInvertY->isChecked() );
 	tracker->setInvertZ (ui.chkInvertZ->isChecked() );
 
-	tracker->setMinSmooth (ui.minSmooth->value() );
-	tracker->setPowCurve (ui.powCurve->value() );
-	tracker->setMaxSmooth (ui.maxSmooth->value() );
-
 	tracker->start( QThread::TimeCriticalPriority );
 
 	ui.headPoseWidget->show();
@@ -745,24 +736,6 @@ THeadPoseData newdata;
 	}
 }
 
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setMinSmooth( int redh ) {
-	Tracker::setMinSmooth ( redh );
-	settingsDirty = true;
-}
-
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setPowCurve( int redh ) {
-	Tracker::setPowCurve ( redh );
-	settingsDirty = true;
-}
-
-/** set the redhold from the slider **/
-void FaceTrackNoIR::setMaxSmooth( int redh ) {
-	Tracker::setMaxSmooth ( redh );
-	settingsDirty = true;
-}
-
 /** set the smoothing from the slider **/
 void FaceTrackNoIR::setSmoothing( int smooth ) {
 	
@@ -959,7 +932,7 @@ QLibrary *filterLib;
 		if (ptrXyz)
 		{
 			pFilterDialog = ptrXyz;
-			pFilterDialog->Initialize( this );
+			pFilterDialog->Initialize( this, Tracker::getFilterPtr() );
 			qDebug() << "FaceTrackNoIR::showFilterControls GetFilterDialog Function Resolved!";
 		}
 		else {

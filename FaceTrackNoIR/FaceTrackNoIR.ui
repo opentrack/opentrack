@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>925</width>
-    <height>528</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1073,6 +1073,18 @@ color: rgb(0, 255, 0);</string>
              </property>
              <item>
               <widget class="QGroupBox" name="groupProfile">
+               <property name="minimumSize">
+                <size>
+                 <width>206</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>210</width>
+                 <height>120</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Profile</string>
                </property>
@@ -1160,793 +1172,429 @@ color: rgb(0, 255, 0);</string>
                </widget>
               </widget>
              </item>
+             <item>
+              <widget class="QGroupBox" name="groupGlobalSettings">
+               <property name="minimumSize">
+                <size>
+                 <width>206</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>Global Settings</string>
+               </property>
+               <widget class="QWidget" name="gridLayoutWidget">
+                <property name="geometry">
+                 <rect>
+                  <x>9</x>
+                  <y>20</y>
+                  <width>171</width>
+                  <height>80</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_3">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="lblSensYaw_5">
+                   <property name="minimumSize">
+                    <size>
+                     <width>95</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Use advanced filtering:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QCheckBox" name="chkUseEWMA">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="lblSensYaw_4">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Smoothing:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="label">
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>(samples)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QSlider" name="slideSmoothing">
+                   <property name="minimumSize">
+                    <size>
+                     <width>50</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::NoTicks</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSpinBox" name="spinSmoothing">
+                   <property name="minimumSize">
+                    <size>
+                     <width>35</width>
+                     <height>22</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="gridLayoutWidget_2">
+                <property name="geometry">
+                 <rect>
+                  <x>200</x>
+                  <y>20</y>
+                  <width>211</width>
+                  <height>81</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_4">
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="lblSensRoll">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Roll</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QCheckBox" name="chkInvertRoll">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="2">
+                  <widget class="QLabel" name="lblSensZ">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Z</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="3">
+                  <widget class="QCheckBox" name="chkInvertZ">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="lblSensPitch">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Pitch</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QCheckBox" name="chkInvertPitch">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="2">
+                  <widget class="QLabel" name="lblSensY">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Y</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="3">
+                  <widget class="QCheckBox" name="chkInvertY">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="lblSensYaw">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Yaw</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QCheckBox" name="chkInvertYaw">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QLabel" name="lblSensX">
+                   <property name="minimumSize">
+                    <size>
+                     <width>25</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>150</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>X</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="3">
+                  <widget class="QCheckBox" name="chkInvertX">
+                   <property name="styleSheet">
+                    <string notr="true">background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="lblInvert1_3">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Invert</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QLabel" name="lblInvert1_2">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color:#ccc;
+background:none;</string>
+                   </property>
+                   <property name="text">
+                    <string>Invert</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
             </layout>
-           </item>
-           <item row="4" column="0">
-            <widget class="QWidget" name="bubbleBigWidget" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>620</width>
-               <height>115</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>667</width>
-               <height>115</height>
-              </size>
-             </property>
-             <property name="acceptDrops">
-              <bool>true</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background: url(&quot;UIElements/bubble_2_big.png&quot;) no-repeat;
-opacity:100;</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <layout class="QGridLayout" name="gridGlobalSettings">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="lblSensYaw_3">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Global settings</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="lblSensYaw_5">
-                  <property name="minimumSize">
-                   <size>
-                    <width>95</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Use EWMA filtering:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QCheckBox" name="chkUseEWMA">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="lblSensYaw_4">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Smoothing:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QSlider" name="slideSmoothing">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>50</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QSpinBox" name="spinSmoothing">
-                  <property name="minimumSize">
-                   <size>
-                    <width>35</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>50</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLabel" name="label">
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>(samples)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="Line" name="line">
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Sunken</enum>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QGridLayout" name="gridEWMARotations">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_2">
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>EWMA</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSlider" name="minSmooth">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>2</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QSlider" name="maxSmooth">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QSlider" name="powCurve">
-                  <property name="minimumSize">
-                   <size>
-                    <width>45</width>
-                    <height>15</height>
-                   </size>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>10</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QSpinBox" name="spinMinSmooth">
-                  <property name="minimumSize">
-                   <size>
-                    <width>40</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>2</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QSpinBox" name="spinMaxSmooth">
-                  <property name="minimumSize">
-                   <size>
-                    <width>40</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QSpinBox" name="spinPowCurve">
-                  <property name="minimumSize">
-                   <size>
-                    <width>40</width>
-                    <height>22</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="singleStep">
-                   <number>5</number>
-                  </property>
-                  <property name="value">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3">
-                 <widget class="QLabel" name="lblInvert1">
-                  <property name="minimumSize">
-                   <size>
-                    <width>35</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>frames</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QLabel" name="lblInvert1_4">
-                  <property name="minimumSize">
-                   <size>
-                    <width>35</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>frames</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="3">
-                 <widget class="QLabel" name="lblInvert1_5">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>pow</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="lblInvert1_6">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Min.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="lblInvert1_7">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Max.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="lblInvert1_8">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Curve</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="Line" name="line_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QGridLayout" name="gridEWMATranslations">
-                <item row="1" column="3">
-                 <widget class="QCheckBox" name="chkInvertX">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QLabel" name="lblInvert1_2">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Invert</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QCheckBox" name="chkInvertY">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="3">
-                 <widget class="QCheckBox" name="chkInvertZ">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QLabel" name="lblSensX">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>X</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QLabel" name="lblSensY">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Y</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QLabel" name="lblSensZ">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Z</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="lblSensYaw">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Yaw</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="lblSensPitch">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Pitch</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="lblSensRoll">
-                  <property name="minimumSize">
-                   <size>
-                    <width>25</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::RightToLeft</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Roll</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="4">
-                 <spacer name="horizontalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Minimum</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QCheckBox" name="chkInvertYaw">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QCheckBox" name="chkInvertPitch">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QCheckBox" name="chkInvertRoll">
-                  <property name="styleSheet">
-                   <string notr="true">background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="lblInvert1_3">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:#ccc;
-background:none;</string>
-                  </property>
-                  <property name="text">
-                   <string>Invert</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
            </item>
            <item row="0" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -2110,6 +1758,12 @@ background:none;</string>
                  <height>120</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>120</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -2205,7 +1859,13 @@ background:none;</string>
                <property name="minimumSize">
                 <size>
                  <width>190</width>
-                 <height>100</height>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>120</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -2262,7 +1922,13 @@ background:none;</string>
                <property name="minimumSize">
                 <size>
                  <width>190</width>
-                 <height>100</height>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>120</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -2315,6 +1981,19 @@ background:none;</string>
               </widget>
              </item>
             </layout>
+           </item>
+           <item row="4" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>30</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -2576,102 +2255,6 @@ background:none;</string>
     </hint>
     <hint type="destinationlabel">
      <x>442</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>minSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinMinSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>643</x>
-     <y>333</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>691</x>
-     <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinMinSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>minSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>691</x>
-     <y>335</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>643</x>
-     <y>333</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>maxSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinMaxSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>643</x>
-     <y>360</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>691</x>
-     <y>362</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinMaxSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>maxSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>691</x>
-     <y>362</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>643</x>
-     <y>360</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>powCurve</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinPowCurve</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>643</x>
-     <y>387</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>691</x>
-     <y>389</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinPowCurve</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>powCurve</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>691</x>
-     <y>389</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>643</x>
      <y>387</y>
     </hint>
    </hints>
