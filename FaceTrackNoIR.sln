@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FaceTrackNoIR", "FaceTrackN
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupFTN_Update", "SetupFTN_Update\SetupFTN_Update.vdproj", "{49C224BA-751A-4D15-90B6-E496C43DE308}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Filter_dz1", "FTNoIR_Filter_DZ1\FTNoIR_Filter_DZ1.vcproj", "{2212857A-7634-4E30-BA83-539EC70176E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -105,6 +107,10 @@ Global
 		{49C224BA-751A-4D15-90B6-E496C43DE308}.Debug|Win32.ActiveCfg = Debug
 		{49C224BA-751A-4D15-90B6-E496C43DE308}.Debug|Win32.Build.0 = Debug
 		{49C224BA-751A-4D15-90B6-E496C43DE308}.Release|Win32.ActiveCfg = Release
+		{2212857A-7634-4E30-BA83-539EC70176E6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2212857A-7634-4E30-BA83-539EC70176E6}.Debug|Win32.Build.0 = Debug|Win32
+		{2212857A-7634-4E30-BA83-539EC70176E6}.Release|Win32.ActiveCfg = Release|Win32
+		{2212857A-7634-4E30-BA83-539EC70176E6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
