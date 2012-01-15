@@ -22,7 +22,7 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_filter_EWMA2.h"
+#include "ftnoir_filter_ewma2.h"
 #include "math.h"
 #include <QDebug>
 
@@ -34,45 +34,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
+FTNoIR_Filter::FTNoIR_Filter()
 {
 	//populate the description strings
 	filterFullName = "EWMA Filter Mk2";
 	filterShortName = "EWMA";
 	filterDescription = "Exponentially Weighted Moving Average filter with dynamic smoothing parameter";
-
-	//allocate memory for the parameters
-	parameterValueAsFloat.clear();
-	parameterRange.clear();
-	parameterSteps.clear();
-	parameterNameAsString.clear();
-	parameterValueAsString.clear();
-	parameterUnitsAsString.clear();
-
-	//set up parameters
-	parameterNameAsString.append("MinSmoothing");
-	parameterUnitsAsString.append("Frames");
-	parameterRange.append(std::pair<float,float>(1.0f,100.0f));
-	parameterSteps.append(1.0f);
-	parameterValueAsFloat.append(0.0f);
-	parameterValueAsString.append("");
-	setParameterValue(kMinSmoothing,10.0f);
-
-	parameterNameAsString.append("MaxSmoothing");
-	parameterUnitsAsString.append("Frames");
-	parameterRange.append(std::pair<float,float>(1.0f,100.0f));
-	parameterSteps.append(1.0f);
-	parameterValueAsFloat.append(0.0f);
-	parameterValueAsString.append("");
-	setParameterValue(kMaxSmoothing,50.0f);
-
-	parameterNameAsString.append("SmoothingScaleCurve");
-	parameterUnitsAsString.append("Power");
-	parameterRange.append(std::pair<float,float>(0.25f,10.0f));
-	parameterSteps.append(0.0f);
-	parameterValueAsFloat.append(0.0f);
-	parameterValueAsString.append("");
-	setParameterValue(kSmoothingScaleCurve,10.0f);
 
 	first_run = true;
 	alpha_smoothing = 0.02f;		// this is a constant for now, might be a parameter later
@@ -80,19 +47,19 @@ FTNoIR_Filter_EWMA2::FTNoIR_Filter_EWMA2()
 
 }
 
-FTNoIR_Filter_EWMA2::~FTNoIR_Filter_EWMA2()
+FTNoIR_Filter::~FTNoIR_Filter()
 {
 
 }
 
-void FTNoIR_Filter_EWMA2::Release()
+void FTNoIR_Filter::Release()
 {
     delete this;
 }
 
-void FTNoIR_Filter_EWMA2::Initialize()
+void FTNoIR_Filter::Initialize()
 {
-	qDebug() << "FTNoIR_Filter_EWMA2::Initialize says: Starting ";
+	qDebug() << "FTNoIR_Filter::Initialize says: Starting ";
 	loadSettings();
 	return;
 }
@@ -100,27 +67,27 @@ void FTNoIR_Filter_EWMA2::Initialize()
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Filter_EWMA2::loadSettings() {
-	qDebug() << "FTNoIR_Filter_EWMA2::loadSettings says: Starting ";
+void FTNoIR_Filter::loadSettings() {
+	qDebug() << "FTNoIR_Filter::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	qDebug() << "FTNoIR_Filter_EWMA2::loadSettings says: iniFile = " << currentFile;
+	qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
 
 	//
 	// The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
 	//
 	iniFile.beginGroup ( "Tracking" );
-	setParameterValue(0, iniFile.value ( "minSmooth", 15 ).toInt());
-	setParameterValue(1, iniFile.value ( "maxSmooth", 50 ).toInt());
-	setParameterValue(2, iniFile.value ( "powCurve", 10 ).toInt());
+	kMinSmoothing = iniFile.value ( "minSmooth", 15 ).toInt();
+	kMaxSmoothing = iniFile.value ( "maxSmooth", 50 ).toInt();
+	kSmoothingScaleCurve = iniFile.value ( "powCurve", 10 ).toInt();
 	iniFile.endGroup ();
 
 }
 
-void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
+void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
 {
 	//non-optimised version for clarity
 	float prev_output[6];
@@ -195,13 +162,13 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 //	if (newTarget) {
 		for (i=0;i<6;i++)
 		{
-			alpha[i]=1.0f/(parameterValueAsFloat[kMinSmoothing]+((1.0f-pow(norm_output_delta[i],parameterValueAsFloat[kSmoothingScaleCurve]))*smoothing_frames_range));
+			alpha[i]=1.0f/(kMinSmoothing+((1.0f-pow(norm_output_delta[i],kSmoothingScaleCurve))*smoothing_frames_range));
 			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
 		}
 //	}
 
-	//qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
-	//qDebug() << "FTNoIR_Filter_EWMA2::FilterHeadPoseData() alpha[3] = " << alpha[3];
+	//qDebug() << "FTNoIR_Filter::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
+	//qDebug() << "FTNoIR_Filter::FilterHeadPoseData() alpha[3] = " << alpha[3];
 
 	//use the same (largest) smoothed alpha for each channel
 	//NB: larger alpha = *less* lag (opposite to what you'd expect)
@@ -259,42 +226,22 @@ void FTNoIR_Filter_EWMA2::FilterHeadPoseData(THeadPoseData *current_camera_posit
 	return;
 }
 
-void FTNoIR_Filter_EWMA2::getFilterFullName(QString *strToBeFilled)
+void FTNoIR_Filter::getFilterFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterFullName;
 };
 
 
-void FTNoIR_Filter_EWMA2::getFilterShortName(QString *strToBeFilled)
+void FTNoIR_Filter::getFilterShortName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterShortName;
 };
 
 
-void FTNoIR_Filter_EWMA2::getFilterDescription(QString *strToBeFilled)
+void FTNoIR_Filter::getFilterDescription(QString *strToBeFilled)
 {
 	*strToBeFilled = filterDescription;
 };
-
-bool FTNoIR_Filter_EWMA2::setParameterValue(const int index, const float newvalue)
-{
-	if ((index >= 0) && (index < parameterValueAsFloat.size()))
-	{
-		parameterValueAsFloat[index]=std::min(std::max(newvalue,parameterRange[index].first),parameterRange[index].second);
-//		updateParameterString(index);
-
-		if (index==kMinSmoothing || index==kMaxSmoothing)
-		{
-			smoothing_frames_range=parameterValueAsFloat[kMaxSmoothing]-parameterValueAsFloat[kMinSmoothing];
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter object.
@@ -307,5 +254,5 @@ bool FTNoIR_Filter_EWMA2::setParameterValue(const int index, const float newvalu
 
 FTNOIR_FILTER_BASE_EXPORT FILTERHANDLE __stdcall GetFilter()
 {
-	return new FTNoIR_Filter_EWMA2;
+	return new FTNoIR_Filter;
 }

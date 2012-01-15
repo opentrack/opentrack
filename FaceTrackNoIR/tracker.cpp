@@ -255,8 +255,19 @@ QFrame *video_frame;
 
 	//
 	// Load the DLL with the filter-logic and retrieve a pointer to the Filter-class.
-	//
-	filterLib = new QLibrary("FTNoIR_Filter_EWMA2.dll");
+	// The name of the filter can be found in the INI-file...
+	libName.clear();
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "Filter" );
+	libName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	qDebug() << "Tracker::Tracker() says: selectedFilterName = " << libName;
+	iniFile.endGroup ();
+
+	filterLib = new QLibrary(libName);
 	
 	getFilter = (importGetFilter) filterLib->resolve("GetFilter");
 	if (getFilter) {

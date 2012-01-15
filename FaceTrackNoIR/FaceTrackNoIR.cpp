@@ -153,6 +153,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	connect(ui.iconcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setIcon(int)));
+	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	//Setup the timer for automatically minimizing after StartTracker.
 	timMinimizeFTN = new QTimer(this);
@@ -332,9 +333,6 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
 	iniFile.setValue ( "useEWMA", ui.chkUseEWMA->isChecked() );
-	//iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
-	//iniFile.setValue ( "powCurve", ui.powCurve->value() );
-	//iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -453,9 +451,6 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
 	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
 
-	//ui.minSmooth->setValue (iniFile.value ( "minSmooth", 15 ).toInt());
-	//ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 50 ).toInt());
-	//ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -467,6 +462,22 @@ void FaceTrackNoIR::loadSettings() {
 	ui.iconcomboTrackerSource->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
 	trackingSourceSelected( ui.iconcomboTrackerSource->currentIndex() );
 	iniFile.endGroup ();
+
+	//
+	// Read the currently selected Filter from the INI-file.
+	//
+	iniFile.beginGroup ( "Filter" );
+	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
+	iniFile.endGroup ();
+
+	disconnect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+	for ( int i = 0; i < filterFileList.size(); i++) {
+		if (filterFileList.at(i) == selectedFilterName) {
+			ui.iconcomboFilter->setCurrentIndex( i );
+		}
+	}
+	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	settingsDirty = false;
 }
@@ -1005,6 +1016,7 @@ void FaceTrackNoIR::createIconGroupBox()
 importGetFilterDialog getIT;
 QLibrary *filterLib;
 QString *filterName;
+QIcon *filterIcon;
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -1027,14 +1039,6 @@ QString *filterName;
 	ui.iconcomboTrackerSource->addItem(QIcon(":/images/Visage.ico"), tr("Visage Tracker"));
 #   endif
 
-
-	//
-	// Read the currently selected Filter from the INI-file.
-	//
-	iniFile.beginGroup ( "Filter" );
-	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
-	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
-	iniFile.endGroup ();
 
 	//
 	// Get a List of all the Filter-DLL-files in the Program-folder.
@@ -1064,6 +1068,7 @@ QString *filterName;
 		// Show the appropriate Protocol-server Settings
 		filterLib = new QLibrary(filterFileList.at(i));
 		filterName = new QString("");
+		filterIcon = new QIcon();
 
 		getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
 		if (getIT) {
@@ -1072,6 +1077,7 @@ QString *filterName;
 			{
 				pFilterDialog = ptrXyz;
 				pFilterDialog->getFilterFullName( filterName );
+				pFilterDialog->getIcon( filterIcon );
 				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
 			}
 			else {
@@ -1082,15 +1088,9 @@ QString *filterName;
 			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
-		ui.iconcomboFilter->addItem(QIcon(":/images/Settings16.png"), *filterName );
-		if (filterFileList.at(i) == selectedFilterName) {
-			ui.iconcomboFilter->setItemIcon(i, QIcon(":/images/SettingsOpen16.png"));
-			ui.iconcomboFilter->setCurrentIndex( i );
-		}
+		ui.iconcomboFilter->addItem(*filterIcon, *filterName );
 	}
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
-
-//	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 }
 
@@ -1222,7 +1222,7 @@ void FaceTrackNoIR::profileSelected(int index)
     QFileInfo pathInfo ( currentFile );
 
 	//
-	// Get a List of all the INI-files in the (currently active) Settings-folder.
+	// Save the name of the INI-file in the Registry.
 	//
 	settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.at(ui.iconcomboProfile->currentIndex()));
 	loadSettings();
@@ -1233,18 +1233,19 @@ void FaceTrackNoIR::profileSelected(int index)
 //
 void FaceTrackNoIR::filterSelected(int index)
 {
-	////
-	//// Read the current INI-file setting, to get the folder in which it's located...
-	////
-	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
- //   QFileInfo pathInfo ( currentFile );
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
-	////
-	//// Get a List of all the INI-files in the (currently active) Settings-folder.
-	////
-	//settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.at(ui.iconcomboProfile->currentIndex()));
-	//loadSettings();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	//
+	// Save the name of the filter in the INI-file. Do this immediately, so the Tracker can just read it from the INI-file to load the filter.
+	//
+	iniFile.beginGroup ( "Filter" );
+	iniFile.setValue ( "Selection", filterFileList.at(ui.iconcomboFilter->currentIndex()) );
+	iniFile.endGroup ();
+
+	ui.btnShowFilterControls->setEnabled ( true );
 }
 
 //

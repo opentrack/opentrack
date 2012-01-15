@@ -29,9 +29,36 @@
 #include "..\ftnoir_filter_base\ftnoir_filter_base.h"
 #include "ui_FTNoIR_FilterControls.h"
 
+static int compare_double(const void *one, const void *two) {
+	double foo = (*((double*) one) - *((double*) two));
+	if (foo > 0)
+		return 1;
+	if (foo < 0)
+		return -1;
+	return 0;
+}
+
+//#define HZ 30
+
+//#define DEADZONE 0.1
+//#define MOVE_LAST 0.24
+//#define MOVE_SAVED (0.35 / HZ)
+#define SLOW_SPEED 0.1
+
+//#define MAXDIFF 1.75
+#define INITIAL_SMOOTH_SPEED 0.00834
+#define SMOOTH_FACTOR 2.5
+#define REMEMBER_SMOOTHNESS 5					// Changed from HZ/5
+
+#define MULT_Y_POS 1.7
+#define MULT_Y_NEG 0.8
+#define MULT_X 1.5
+
+#define COCKPIT_PITCH 8.7
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// EWMA Filter: Exponentially Weighted Moving Average filter with dynamic smoothing parameter
+// DZ1 Filter: Stanislaw wrote a new filter, which makes the view more stable, when not moving your face.
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class FTNoIR_Filter : public IFilter
@@ -54,20 +81,23 @@ private:
 	THeadPoseData newHeadPose;								// Structure with new headpose
 
 	bool	first_run;
-	float	smoothing_frames_range;
-	float	alpha_smoothing;
-	float	prev_alpha[6];
-	float	alpha[6];
-	float	smoothed_alpha[6];
+	double  last_positions[6];
+	double  saved_positions[6];
+	double  prev_positions[6];
+	bool    smoothing[6];
+	double  smooth_start[6];
+	double  smooth_speed[6];
+	int		smooth_remember[6];
 
-	float	kMinSmoothing;
-	float	kMaxSmoothing;
-	float	kSmoothingScaleCurve;
+	float	kCameraHz;										// Hz
+	float	kDeadZone;										// degrees
+	float	kMoveLast;										// %
+	float	kMaxDiff;										// degrees
+	float	kMoveSaved;										// %
 
 	QString filterFullName;									// Filters' name and description
 	QString filterShortName;
 	QString filterDescription;
-
 };
 
 //*******************************************************************************************************
@@ -109,6 +139,7 @@ private slots:
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
 	void settingChanged( int ) { settingsDirty = true; };
+	void settingChanged( double ) { settingsDirty = true; };
 };
 
 #endif						//INCLUDED_FTN_FILTER_H
