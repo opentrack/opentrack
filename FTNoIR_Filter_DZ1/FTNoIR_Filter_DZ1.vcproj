@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="FTNoIR_Filter_EWMA2"
-	ProjectGUID="{7DD9F1AA-B7C0-4056-AC4A-1501840E6438}"
+	Name="FTNoIR_Filter_dz1"
+	ProjectGUID="{2212857A-7634-4E30-BA83-539EC70176E6}"
 	Keyword="Qt4VSv1.0"
 	>
 	<Platforms>
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\GeneratedFiles;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\qtmain;$(QTDIR)\include\QtCore;.\"
-				PreprocessorDefinitions="UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_THREAD_SUPPORT,QT_CORE_LIB,FTNOIR_FILTER_EWMA2_LIB;QT_DLL"
+				PreprocessorDefinitions="UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_THREAD_SUPPORT,QT_CORE_LIB,FTNOIR_FILTER_dz1_LIB;QT_DLL"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
 				DebugInformationFormat="3"
@@ -167,11 +167,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\ftnoir_filter_ewma2.cpp"
+				RelativePath=".\ftnoir_filter_dz1.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ftnoir_filter_ewma2_dialog.cpp"
+				RelativePath=".\ftnoir_filter_dz1_dialog.cpp"
 				>
 			</File>
 		</Filter>
@@ -189,7 +189,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FTNoIR_Filter_EWMA2.h"
+				RelativePath=".\FTNoIR_Filter_dz1.h"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -208,7 +208,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -D_WINDLL -DFTNOIR_FILTER_EWMA2_LIB -DQT_CORE_LIB -DQT_DLL -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\qtmain\.&quot; -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot; -D_WINDLL -DFTNOIR_FILTER_dz1_LIB -DQT_CORE_LIB -DQT_DLL -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DUNICODE -DWIN32 -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\qtmain\.&quot; -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;.\GeneratedFiles\.&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -316,7 +316,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath=".\GeneratedFiles\Release\moc_FTNoIR_Filter_EWMA2.cpp"
+					RelativePath=".\GeneratedFiles\Release\moc_FTNoIR_Filter_dz1.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -334,7 +334,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath=".\GeneratedFiles\Debug\moc_FTNoIR_Filter_EWMA2.cpp"
+					RelativePath=".\GeneratedFiles\Debug\moc_FTNoIR_Filter_dz1.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

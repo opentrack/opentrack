@@ -22,7 +22,7 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_filter_EWMA2.h"
+#include "ftnoir_filter_DZ1.h"
 #include "math.h"
 #include <QDebug>
 
@@ -38,9 +38,9 @@ QWidget()
 	ui.setupUi( this );
 
 	//populate the description strings
-	filterFullName = "EWMA Filter Mk2";
-	filterShortName = "EWMA";
-	filterDescription = "Exponentially Weighted Moving Average filter with dynamic smoothing parameter";
+	filterFullName = "Deadzone Filter Mk1";
+	filterShortName = "DZ1";
+	filterDescription = "Deadzone Filter";
 
 	QPoint offsetpos(100, 100);
 	//if (parent) {
@@ -52,9 +52,9 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
 	// Connect sliders for reduction factor
-	connect(ui.minSmooth, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.maxSmooth, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.powCurve, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.slideHz, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.spinDeadZone, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+	connect(ui.slideMoveLast, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 
 	qDebug() << "FilterControls() says: started";
 
@@ -158,12 +158,14 @@ void FilterControls::loadSettings() {
 	qDebug() << "FilterControls::loadSettings says: iniFile = " << currentFile;
 
 	//
-	// The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
+	// The DZ1-filter-settings
 	//
-	iniFile.beginGroup ( "Tracking" );
-	ui.minSmooth->setValue (iniFile.value ( "minSmooth", 15 ).toInt());
-	ui.maxSmooth->setValue (iniFile.value ( "maxSmooth", 50 ).toInt());
-	ui.powCurve->setValue (iniFile.value ( "powCurve", 10 ).toInt());
+	iniFile.beginGroup ( "Filter_DZ1" );
+	ui.slideHz->setValue (iniFile.value ( "cameraHz", 30 ).toInt());
+	ui.spinDeadZone->setValue (iniFile.value ( "DeadZone", 0.1f ).toDouble());
+	ui.slideMoveLast->setValue (iniFile.value ( "MoveLast", 24 ).toInt());
+	ui.spinMaxDiff->setValue (iniFile.value ( "MaxDiff", 1.75f ).toDouble());
+	ui.slideMoveSaved->setValue (iniFile.value ( "MoveSaved", 35 ).toFloat());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -178,10 +180,12 @@ void FilterControls::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	iniFile.beginGroup ( "Tracking" );
-	iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
-	iniFile.setValue ( "powCurve", ui.powCurve->value() );
-	iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
+	iniFile.beginGroup ( "Filter_DZ1" );
+	iniFile.setValue ( "cameraHz", ui.slideHz->value() );
+	iniFile.setValue ( "DeadZone", ui.spinDeadZone->value() );
+	iniFile.setValue ( "MoveLast", ui.slideMoveLast->value() );
+	iniFile.setValue ( "MaxDiff", ui.spinMaxDiff->value() );
+	iniFile.setValue ( "MoveSaved", ui.slideMoveSaved->value() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;

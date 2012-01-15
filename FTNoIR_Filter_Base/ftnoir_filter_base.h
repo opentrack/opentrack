@@ -26,9 +26,6 @@ struct IFilter
 	virtual void getFilterFullName(QString *strToBeFilled) = 0;
 	virtual void getFilterShortName(QString *strToBeFilled) = 0;
 	virtual void getFilterDescription(QString *strToBeFilled) = 0;
-
-	//parameter value get/set - returns true if successful, false if not
-	virtual bool setParameterValue(const int index, const float newvalue) = 0;
 };
 
 // Handle type. In C++ language the interface type is used.
@@ -65,6 +62,7 @@ struct IFilterDialog
 	virtual void getFilterFullName(QString *strToBeFilled) = 0;
 	virtual void getFilterShortName(QString *strToBeFilled) = 0;
 	virtual void getFilterDescription(QString *strToBeFilled) = 0;
+	virtual void getIcon(QIcon *icon) = 0;
 };
 
 // Handle type. In C++ language the interface type is used.
