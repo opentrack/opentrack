@@ -23,9 +23,9 @@ struct IFilter
 	virtual void Initialize() = 0;
 	virtual void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget) = 0;
 
-	virtual void getFilterFullName(QString *strToBeFilled) = 0;
-	virtual void getFilterShortName(QString *strToBeFilled) = 0;
-	virtual void getFilterDescription(QString *strToBeFilled) = 0;
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
 };
 
 // Handle type. In C++ language the interface type is used.
@@ -59,9 +59,9 @@ struct IFilterDialog
     virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize(QWidget *parent, IFilterPtr ptr) = 0;
 
-	virtual void getFilterFullName(QString *strToBeFilled) = 0;
-	virtual void getFilterShortName(QString *strToBeFilled) = 0;
-	virtual void getFilterDescription(QString *strToBeFilled) = 0;
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
 	virtual void getIcon(QIcon *icon) = 0;
 };
 

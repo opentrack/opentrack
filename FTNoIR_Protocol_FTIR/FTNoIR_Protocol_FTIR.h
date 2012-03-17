@@ -40,7 +40,8 @@
 #include "Windows.h"
 //#include "math.h"
 
-typedef void (WINAPI *importSetPosition)(float x, float y, float z, float xRot, float yRot, float zRot);
+//typedef void (WINAPI *importSetPosition)(float, float, float, float, float, float);
+typedef int (WINAPI *importSetData)(TRACKIRDATA*);
 typedef void (WINAPI *importTIRViewsStart)(void);
 typedef void (WINAPI *importTIRViewsStop)(void);
 
@@ -62,7 +63,8 @@ private:
 	bool FTIRCreateMapping(HANDLE handle);
 	void FTIRDestroyMapping();
 
-	importSetPosition setposition;						// Function inside NPClient.dll
+//	importSetPosition setposition;						// Function inside NPClient.dll (old style)
+	importSetData setdata;								// Function inside NPClient.dll
 	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
 	importTIRViewsStop viewsStop;
 

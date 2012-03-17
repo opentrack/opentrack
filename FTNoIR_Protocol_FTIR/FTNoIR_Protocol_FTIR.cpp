@@ -133,6 +133,8 @@ float virtRotX;
 float virtRotY;
 float virtRotZ;
 
+TRACKIRDATA localdata;
+
 	//
 	// Copy the Raw measurements directly to the client.
 	//
@@ -148,8 +150,31 @@ float virtRotZ;
 	// Check if the pointer is OK and wait for the Mutex.
 	// Use the setposition in the (special) DLL, to write the headpose-data.
 	//
+//	qDebug() << "FTIRCreateMapping says: sendHeadpose";
 	if ( (pMemData != NULL) && (WaitForSingleObject(hFTIRMutex, 100) == WAIT_OBJECT_0) ) {
-		setposition (virtPosX, virtPosY, virtPosZ, virtRotZ, virtRotX, virtRotY );
+//		qDebug() << "FTIRCreateMapping says: Calling setposition" << setdata;
+
+		//localdata.fNPX = virtPosX;
+		//localdata.fNPY = virtPosY;
+		//localdata.fNPZ = virtPosZ;
+		//localdata.fNPRoll = virtRotZ;
+		//localdata.fNPPitch = virtRotX;
+		//localdata.fNPYaw = virtRotY;
+		//localdata.wPFrameSignature = localdata.wPFrameSignature + 1;
+
+		//setdata(&localdata);
+		//
+//		setposition ( virtPosX, virtPosY, virtPosZ, virtRotZ, virtRotX, virtRotY );
+		pMemData->data.fNPX = virtPosX;
+		pMemData->data.fNPY = virtPosY;
+		pMemData->data.fNPZ = virtPosZ;
+		pMemData->data.fNPRoll = virtRotZ;
+		pMemData->data.fNPPitch = virtRotX;
+		pMemData->data.fNPYaw = virtRotY;
+		pMemData->data.wPFrameSignature +=1;
+		if ((pMemData->data.wPFrameSignature < 0) || (pMemData->data.wPFrameSignature > 1000)){
+			pMemData->data.wPFrameSignature = 0;
+		}
 		ReleaseMutex(hFTIRMutex);
 	}
 }
@@ -185,6 +210,7 @@ bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
 		//
 		aFileName = aLocation;
 		aFileName.append(FTIR_CLIENT_FILENAME);
+//		aFileName.append("TIR5.dll");
 		qDebug() << "FTCheckClientDLL says: Full path of DLL =" << aFileName;
 						
 		if ( QFile::exists( aFileName ) ) {
@@ -240,16 +266,17 @@ bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
 	//
 	// Find the functions in the DLL's
 	//
-	// Get the setposition function from the DLL and use it!
-	//
-	setposition = (importSetPosition) FTIRClientLib.resolve("SetPosition");
-	if (setposition == NULL) {
-		qDebug() << "FTIRServer::run() says: SetPosition function not found in DLL!";
-		return false;
-	}
-	else {
-		setposition (7.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
-	}
+	//// Get the setposition function from the DLL and use it!
+	////
+	////setposition = (importSetPosition) FTIRClientLib.resolve("SetPosition");
+	////if (setdata == NULL) {
+	////	qDebug() << "FTIRServer::run() says: SetPosition function not found in DLL!";
+	////	return false;
+	////}
+	////else {
+	////	qDebug() << "FTIRCreateMapping says: Calling setposition" << setposition;
+	////	setposition ( 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f );
+	////}
 
 	//
 	// Load the Start function from TIRViews.dll and call it, to start compatibility with older games
@@ -291,26 +318,32 @@ bool FTNoIR_Protocol_FTIR::FTIRCreateMapping( HANDLE handle )
 	// If one already exists: close it.
 	//
 	hFTIRMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( TRACKIRDATA ) + sizeof( HANDLE ) + 100, 
+		                           sizeof( FTIRMemMap ), 
+//		                           sizeof( TRACKIRDATA ) + sizeof( HANDLE ) + 100, 
 								   (LPCSTR) FTIR_MM_DATA );
 
 	if ( hFTIRMemMap != 0 ) {
-		qDebug() << "FTIRCreateMapping says: FileMapping Created!" << hFTIRMemMap;
-	}
-
-	if ( ( hFTIRMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		CloseHandle( hFTIRMemMap );
-		hFTIRMemMap = 0;
+		if ( (long) GetLastError == ERROR_ALREADY_EXISTS ) {
+			qDebug() << "FTIRCreateMapping says: FileMapping already exists!" << hFTIRMemMap;
+			CloseHandle( hFTIRMemMap );
+			hFTIRMemMap = 0;
+		}
+		else {
+			qDebug() << "FTIRCreateMapping says: FileMapping newly created!" << hFTIRMemMap;
+		}
 	}
 
 	//
-	// Create a new FileMapping, Read/Write access
+	// Open the FileMapping, Read/Write access
 	//
+	pMemData = 0;
 	hFTIRMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FTIR_MM_DATA );
 	if ( ( hFTIRMemMap != 0 ) ) {
-		qDebug() << "FTIRCreateMapping says: FileMapping Created again:" << hFTIRMemMap;
-		pMemData = (FTIRMemMap *) MapViewOfFile(hFTIRMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TRACKIRDATA) + sizeof(hFTIRMemMap) + 100);
+		qDebug() << "FTIRCreateMapping says: FileMapping opened: " << hFTIRMemMap;
+//		pMemData = (FTIRMemMap *) MapViewOfFile(hFTIRMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TRACKIRDATA) + sizeof(hFTIRMemMap) + 100);
+		pMemData = (FTIRMemMap *) MapViewOfFile(hFTIRMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(FTIRMemMap));
 		if (pMemData != NULL) {
+			qDebug() << "FTIRCreateMapping says: View of File mapped: " << pMemData;
 			pMemData->RegisteredHandle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
 		}
 	    hFTIRMutex = CreateMutexA(NULL, false, FTIR_MUTEX);

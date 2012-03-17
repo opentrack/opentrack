@@ -76,11 +76,11 @@ enum FTNoIR_Client {
 	MOUSE = 7
 };
 
-enum FTNoIR_Face_Tracker {
-	FT_SM_FACEAPI = 0,
-	FT_FTNOIR = 1,
-	FT_VISAGE = 2
-};
+//enum FTNoIR_Face_Tracker {
+//	FT_SM_FACEAPI = 0,
+//	FT_FTNOIR = 1,
+//	FT_VISAGE = 2
+//};
 
 enum FTNoIR_Tracker_Status {
 	TRACKER_OFF = 0,
@@ -148,7 +148,7 @@ private:
 	HANDLE m_WaitThread;
 
 	FTNoIR_Client selectedClient;
-	FTNoIR_Face_Tracker selectedTracker;
+//	FTNoIR_Face_Tracker selectedTracker;
 
 	static T6DOF current_camera;					// Used for filtering
 	static T6DOF target_camera;
@@ -231,6 +231,11 @@ public:
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 	static IFilterPtr getFilterPtr() { return pFilter; }
+	static void doRefreshVideo() {								// Call the face-tracker-function RefreshVideo
+		if (pTracker) {
+			pTracker->refreshVideo();
+		}
+	};
 
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }

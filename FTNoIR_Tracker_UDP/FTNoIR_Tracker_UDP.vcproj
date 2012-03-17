@@ -171,6 +171,10 @@
 				RelativePath=".\ftnoir_tracker_udp.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_tracker_udp_dialog.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

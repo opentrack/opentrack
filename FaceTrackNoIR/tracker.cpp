@@ -3,10 +3,10 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2012	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
-* Homepage																		*
+* Homepage:			http://facetracknoir.sourceforge.net/home/default.htm		*
 *																				*
 * This program is free software; you can redistribute it and/or modify it		*
 * under the terms of the GNU General Public License as published by the			*
@@ -23,6 +23,10 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120317 - WVR: The Filter and Tracker-code was moved to separate DLL's. The calling-method
+						was changed accordingly.
+						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
+						requested by Stanislaw.
 		20110411 - WVR: Finished moving all Protocols to separate C++ projects. Every protocol now
 						has it's own Class, that's inside it's own DLL. This reduces the size of the program,
 						makes it more structured and enables a more sophisticated installer.
@@ -120,7 +124,7 @@ QFrame *video_frame;
 	// Remember the selected client, from the ListBox
 	// If the Tracker runs, this can NOT be changed...
 	selectedClient = (FTNoIR_Client) clientID;
-	selectedTracker = (FTNoIR_Face_Tracker) facetrackerID;
+//	selectedTracker = (FTNoIR_Face_Tracker) facetrackerID;
 
 	// Create events
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
@@ -145,29 +149,30 @@ QFrame *video_frame;
 	video_frame = mainApp->getVideoWidget();
 	qDebug() << "Tracker::setup VideoFrame = " << video_frame;
 
-	//
-	// Select the Tracker-engine DLL
-	//
-	switch (selectedTracker) {
-		case FT_SM_FACEAPI:
-			libName = QString("FTNoIR_Tracker_SM.dll");
-			break;
+	////
+	//// Select the Tracker-engine DLL
+	////
+	//switch (selectedTracker) {
+	//	case FT_SM_FACEAPI:
+	//		libName = QString("FTNoIR_Tracker_SM.dll");
+	//		break;
 
-		case FT_FTNOIR:
-			libName = QString("FTNoIR_Tracker_UDP.dll");
-			break;
+	//	case FT_FTNOIR:
+	//		libName = QString("FTNoIR_Tracker_UDP.dll");
+	//		break;
 
-		case FT_VISAGE:
-			libName = QString("FTNoIR_Tracker_Visage.dll");
-			break;
+	//	case FT_VISAGE:
+	//		libName = QString("FTNoIR_Tracker_Visage.dll");
+	//		break;
 
-		default:
-			break;
-	}
+	//	default:
+	//		break;
+	//}
 
 	//
 	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
 	//
+	libName = mainApp->getCurrentTrackerName();
 	if (!libName.isEmpty()) {
 		trackerLib = new QLibrary(libName);
 		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
@@ -182,7 +187,7 @@ QFrame *video_frame;
 			}
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Facetracker DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 	}
 
@@ -255,18 +260,8 @@ QFrame *video_frame;
 
 	//
 	// Load the DLL with the filter-logic and retrieve a pointer to the Filter-class.
-	// The name of the filter can be found in the INI-file...
-	libName.clear();
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "Filter" );
-	libName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
-	qDebug() << "Tracker::Tracker() says: selectedFilterName = " << libName;
-	iniFile.endGroup ();
-
+	//
+	libName = mainApp->getCurrentFilterName();
 	filterLib = new QLibrary(libName);
 	
 	getFilter = (importGetFilter) filterLib->resolve("GetFilter");
@@ -380,7 +375,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 	//
 	if (pFilter) {
 		QString filterName;
-		pFilter->getFilterFullName(&filterName);
+		pFilter->getFullName(&filterName);
 		qDebug() << "Tracker::run() FilterName = " << filterName;
 	}
 
@@ -553,9 +548,12 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 
 			//
 			// If Set Game Zero is pressed, copy the current values to the offsets.
+			// Change requested by Stanislaw
 			//
 			if (Tracker::confid && Tracker::do_game_zero) {
-				gamezero_camera.position = gameoutput_camera.position;
+				if (!pTracker->notifyZeroed())
+					gamezero_camera.position = gameoutput_camera.position;
+//				gamezero_camera.position = gameoutput_camera.position;
 
 				Tracker::do_game_zero = false;
 			}

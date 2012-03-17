@@ -30,6 +30,7 @@
 #ifndef INCLUDED_MOUSESERVER_H
 #define INCLUDED_MOUSESERVER_H
 
+//#include <Windows.h>
 #include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
 #include "ui_FTNoIR_MOUSEcontrols.h"
 #include <QMessageBox>
@@ -38,7 +39,6 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "Windows.h"
 
 #define MOUSE_AXIS_MIN 0
 #define MOUSE_AXIS_MAX 65535

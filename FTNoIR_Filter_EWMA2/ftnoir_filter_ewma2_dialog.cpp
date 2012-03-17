@@ -187,19 +187,19 @@ void FilterControls::save() {
 	settingsDirty = false;
 }
 
-void FilterControls::getFilterFullName(QString *strToBeFilled)
+void FilterControls::getFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterFullName;
 };
 
 
-void FilterControls::getFilterShortName(QString *strToBeFilled)
+void FilterControls::getShortName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterShortName;
 };
 
 
-void FilterControls::getFilterDescription(QString *strToBeFilled)
+void FilterControls::getDescription(QString *strToBeFilled)
 {
 	*strToBeFilled = filterDescription;
 };

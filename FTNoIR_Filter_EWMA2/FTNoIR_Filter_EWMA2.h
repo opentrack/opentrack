@@ -45,9 +45,9 @@ public:
     void StartFilter();
 	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
 
-	void getFilterFullName(QString *strToBeFilled);
-	void getFilterShortName(QString *strToBeFilled);
-	void getFilterDescription(QString *strToBeFilled);
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
@@ -86,9 +86,9 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent, IFilterPtr ptr);
-	void getFilterFullName(QString *strToBeFilled);
-	void getFilterShortName(QString *strToBeFilled);
-	void getFilterDescription(QString *strToBeFilled);
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
 
 private:

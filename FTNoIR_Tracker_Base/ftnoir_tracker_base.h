@@ -30,62 +30,9 @@
 #define FTNOIR_TRACKER_BASE_H
 
 #include "ftnoir_tracker_base_global.h"
+#include "ftnoir_tracker_types.h"
 #include <QtGui/QWidget>
 #include <QtGui/QFrame>
-
-//
-// x,y,z position in centimetres, yaw, pitch and roll in degrees...
-//
-#pragma pack(push, 2)
-struct THeadPoseData {
-	double x, y, z, yaw, pitch, roll;
-	long frame_number;
-};
-#pragma pack(pop)
-
-//
-// Structure to hold all 6 DOF's
-//
-class T6DOF {
-public:
-	T6DOF( double x, double y, double z, 
-		   double yaw, double pitch, double roll ) {
-		position.x = x;
-		position.y = y;
-		position.z = z;
-		position.yaw = yaw;
-		position.pitch = pitch;
-		position.roll = roll;
-	}
-
-	void initHeadPoseData(){
-		position.x = 0.0f;
-		position.y = 0.0f;
-		position.z = 0.0f;
-		position.yaw = 0.0f;
-		position.pitch = 0.0f;
-		position.roll = 0.0f;
-		position.frame_number = 0;
-	}
-	T6DOF operator-( T6DOF &other ) {
-		return T6DOF(position.x - other.position.x, position.y - other.position.y, position.z - other.position.z,
-			         position.yaw - other.position.yaw, position.pitch - other.position.pitch, position.roll - other.position.roll);
-	}
-	T6DOF operator-=( T6DOF &other ) {
-		return T6DOF(position.x - other.position.x, position.y - other.position.y, position.z - other.position.z,
-			         position.yaw - other.position.yaw, position.pitch - other.position.pitch, position.roll - other.position.roll);
-	}
-	T6DOF operator+( T6DOF &other ) {
-		return T6DOF(position.x + other.position.x, position.y + other.position.y, position.z + other.position.z,
-			         position.yaw + other.position.yaw, position.pitch + other.position.pitch, position.roll + other.position.roll);
-	}
-	T6DOF operator+=( T6DOF &other ) {
-		return T6DOF(position.x + other.position.x, position.y + other.position.y, position.z + other.position.z,
-			         position.yaw + other.position.yaw, position.pitch + other.position.pitch, position.roll + other.position.roll);
-	}
-
-	THeadPoseData position;
-};
 
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
@@ -99,6 +46,15 @@ struct ITracker
 	virtual void StartTracker( HWND parent_window ) = 0;
 	virtual void StopTracker(bool exit) = 0;
 	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
+
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
+
+	virtual bool notifyZeroed() {
+		return false;
+	}
+	virtual void refreshVideo() {}
 };
 
 // Handle type. In C++ language the iterface type is used.
@@ -130,6 +86,11 @@ struct ITrackerDialog
 {
     virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize(QWidget *parent) = 0;
+
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
+	virtual void getIcon(QIcon *icon) = 0;
 };
 
 // Handle type. In C++ language the iterface type is used.

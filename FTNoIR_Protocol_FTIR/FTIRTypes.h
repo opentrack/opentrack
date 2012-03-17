@@ -97,6 +97,9 @@ typedef enum tagNPResult
   static const char* FTIR_REGISTER_PROGRAMHANDLE = "FT_Register_Program_Handle";
   static const char* FTIR_UNREGISTER_PROGRAMHANDLE = "FT_UnRegister_Program_Handle";
 
+  static const char* FTIR_SIG1 = "precise head tracking\n put your head into the game\n now go look around\n\n Copyright EyeControl Technologies\0\0";
+  static const char* FTIR_SIG2 = "hardware camera\n software processing data\n track user movement\n\n Copyright EyeControl Technologies\0\0";
+
 typedef struct tagTrackIRData
 {
 	unsigned short wNPStatus;
@@ -152,7 +155,7 @@ typedef NPRESULT (__stdcall *PF_NOTIFYCALLBACK)( unsigned short, unsigned short 
 //typedef NPRESULT (__stdcall *PF_NP_REGISTERPROGRAMPROFILEID)( unsigned short );
 //typedef NPRESULT (__stdcall *PF_NP_QUERYVERSION)( unsigned short* );
 //typedef NPRESULT (__stdcall *PF_NP_REQUESTDATA)( unsigned short );
-//typedef NPRESULT (__stdcall *PF_NP_GETDATA)( LPTRACKIRDATA );
+typedef NPRESULT (__stdcall *PF_NP_GETDATA)( LPTRACKIRDATA );
 //typedef NPRESULT (__stdcall *PF_NP_REGISTERNOTIFY)( PF_NOTIFYCALLBACK );
 //typedef NPRESULT (__stdcall *PF_NP_UNREGISTERNOTIFY)( void );
 //typedef NPRESULT (__stdcall *PF_NP_STARTCURSOR)( void );
