@@ -23,6 +23,10 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120317 - WVR: The Filter and Tracker-code was moved to separate DLL's. The calling-method
+						was changed accordingly. The save() and LoadSettings() functions were adapted.
+						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
+						requested by Stanislaw.
 		20110813 - WVR: Changed the presentation of the raw inputs: now a decimal digit will even show when '0'.
 		20110404 - WVR: Migrated the FlightGear protocol to a separate DLL. The rest must follow...
 		20110401 - WVR: The about-dialog was shown 'misplaced'. It was corrected.
@@ -223,6 +227,22 @@ QFrame *FaceTrackNoIR::getVideoWidget() {
 	return ui.video_frame;
 }
 
+//
+// Return the name of the Filter-DLL
+//
+QString FaceTrackNoIR::getCurrentFilterName()
+{
+	return filterFileList.at(ui.iconcomboFilter->currentIndex());
+}
+
+//
+// Return the name of the Tracker-DLL
+//
+QString FaceTrackNoIR::getCurrentTrackerName()
+{
+	return trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
+}
+
 /** read the name of the first video-capturing device at start up **/
 /** FaceAPI can only use this first one... **/
 void FaceTrackNoIR::GetCameraNameDX() {
@@ -341,6 +361,14 @@ void FaceTrackNoIR::save() {
 
 	iniFile.beginGroup ( "TrackerSource" );
 	iniFile.setValue ( "Selection", ui.iconcomboTrackerSource->currentIndex() );
+	iniFile.setValue ( "DLL", getCurrentTrackerName() );
+	iniFile.endGroup ();
+
+	//
+	// Save the name of the filter in the INI-file.
+	//
+	iniFile.beginGroup ( "Filter" );
+	iniFile.setValue ( "DLL", getCurrentFilterName() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -458,16 +486,42 @@ void FaceTrackNoIR::loadSettings() {
 	setIcon( ui.iconcomboBox->currentIndex() );
 	iniFile.endGroup ();
 
+	//
+	// Read the currently selected Tracker from the INI-file.
+	// If the setting "DLL" isn't found (pre-1.7 version), then the setting 'Selection' is evaluated.
+	//
 	iniFile.beginGroup ( "TrackerSource" );
-	ui.iconcomboTrackerSource->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
-	trackingSourceSelected( ui.iconcomboTrackerSource->currentIndex() );
+	QString selectedTrackerName = iniFile.value ( "DLL", "" ).toString();
+	qDebug() << "createIconGroupBox says: selectedTrackerName = " << selectedTrackerName;
+	if (selectedTrackerName.length() == 0) {
+		int index = iniFile.value ( "Selection", 0 ).toInt();
+		switch ( index ) {
+			case 0:										// Face API
+				selectedTrackerName = "FTNoIR_Tracker_SM.dll";
+				break;
+			case 1:										// FTNoir server
+				selectedTrackerName = "FTNoIR_Tracker_UDP.dll";
+				break;
+			default:
+				selectedTrackerName = "FTNoIR_Tracker_SM.dll";
+				break;
+		}
+	}
 	iniFile.endGroup ();
+
+	disconnect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	for ( int i = 0; i < trackerFileList.size(); i++) {
+		if (trackerFileList.at(i) == selectedTrackerName) {
+			ui.iconcomboTrackerSource->setCurrentIndex( i );
+		}
+	}
+	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 
 	//
 	// Read the currently selected Filter from the INI-file.
 	//
 	iniFile.beginGroup ( "Filter" );
-	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	QString selectedFilterName = iniFile.value ( "DLL", "FTNoIR_Filter_EWMA2.dll" ).toString();
 	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
 	iniFile.endGroup ();
 
@@ -542,22 +596,23 @@ void FaceTrackNoIR::startTracker( ) {
 	ui.btnStartTracker->setEnabled ( false );
 	ui.btnStopTracker->setEnabled ( true );
 
-	// Engine controls
-	switch (ui.iconcomboTrackerSource->currentIndex()) {
-	case FT_SM_FACEAPI:										// Face API
-		ui.btnShowEngineControls->setEnabled ( true );		// Active only when started!
-		break;
-	case FT_FTNOIR:											// FTNoir server
-		ui.btnShowEngineControls->setEnabled ( false );
-		break;
-	default:
-		break;
-	}
+	//// Engine controls
+	//switch (ui.iconcomboTrackerSource->currentIndex()) {
+	//case FT_SM_FACEAPI:										// Face API
+	//	ui.btnShowEngineControls->setEnabled ( true );		// Active only when started!
+	//	break;
+	//case FT_FTNOIR:											// FTNoir server
+	//	ui.btnShowEngineControls->setEnabled ( false );
+	//	break;
+	//default:
+	//	break;
+	//}
 
 	// Enable/disable Protocol-server Settings
 	ui.iconcomboTrackerSource->setEnabled ( false );
 	ui.iconcomboBox->setEnabled ( false );
 	ui.btnShowServerControls->setEnabled ( false );
+	ui.iconcomboFilter->setEnabled ( false );
 
 	//
 	// Update the camera-name, FaceAPI can only use the 1st one found!
@@ -642,24 +697,25 @@ void FaceTrackNoIR::stopTracker( ) {
 	}
 	ui.btnStartTracker->setEnabled ( true );
 	ui.btnStopTracker->setEnabled ( false );
-	ui.btnShowEngineControls->setEnabled ( false );
+//	ui.btnShowEngineControls->setEnabled ( false );
 	ui.iconcomboBox->setEnabled ( true );
 	ui.iconcomboTrackerSource->setEnabled ( true );
+	ui.iconcomboFilter->setEnabled ( true );
 
 	// Enable/disable Protocol-server Settings
 	ui.btnShowServerControls->setEnabled ( true );
 
-	// Engine controls
-	switch (ui.iconcomboTrackerSource->currentIndex()) {
-	case FT_SM_FACEAPI:										// Face API
-		ui.btnShowEngineControls->setEnabled ( false );		// Active only when started!
-		break;
-	case FT_FTNOIR:											// FTNoir server
-		ui.btnShowEngineControls->setEnabled ( true );
-		break;
-	default:
-		break;
-	}
+	//// Engine controls
+	//switch (ui.iconcomboTrackerSource->currentIndex()) {
+	//case FT_SM_FACEAPI:										// Face API
+	//	ui.btnShowEngineControls->setEnabled ( false );		// Active only when started!
+	//	break;
+	//case FT_FTNOIR:											// FTNoir server
+	//	ui.btnShowEngineControls->setEnabled ( true );
+	//	break;
+	//default:
+	//	break;
+	//}
 
 	//
 	// Stop the timer, so it won't go off again...
@@ -745,6 +801,13 @@ THeadPoseData newdata;
 		ui.lcdNumOutputRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
 		ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
 	}
+
+	//
+	// Update the video-widget.
+	// Requested by Stanislaw
+	//
+	Tracker::doRefreshVideo();
+
 }
 
 /** set the smoothing from the slider **/
@@ -793,21 +856,21 @@ QString libName;
 
 	// Show the appropriate Tracker Settings
 	libName.clear();
+	libName = getCurrentTrackerName();
 
-	switch (ui.iconcomboTrackerSource->currentIndex()) {
-		case FT_SM_FACEAPI:										// Face API
-			qDebug() << "FaceTrackNoIR::showEngineControls case FT_SM_FACEAPI.";
-			libName = QString("FTNoIR_Tracker_SM.dll");
-			break;
+	//switch (ui.iconcomboTrackerSource->currentIndex()) {
+	//	case FT_SM_FACEAPI:										// Face API
+	//		qDebug() << "FaceTrackNoIR::showEngineControls case FT_SM_FACEAPI.";
+	//		break;
 
-		case FT_FTNOIR:											// FTNoir server
-			qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";
-			libName = QString("FTNoIR_Tracker_UDP.dll");
-			break;
+	//	case FT_FTNOIR:											// FTNoir server
+	//		qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";
+	//		libName = QString("FTNoIR_Tracker.dll");
+	//		break;
 
-		default:
-			break;
-	}
+	//	default:
+	//		break;
+	//}
 
 	//
 	// Load the Server-settings dialog (if any) and show it.
@@ -1013,7 +1076,8 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
-importGetFilterDialog getIT;
+importGetFilterDialog getFilter;
+importGetTrackerDialog getTracker;
 QLibrary *filterLib;
 QString *filterName;
 QIcon *filterIcon;
@@ -1031,14 +1095,6 @@ QIcon *filterIcon;
 	ui.iconcomboBox->addItem(QIcon(":/images/FSX.ico"), tr("SimConnect (FSX)"));
 	ui.iconcomboBox->addItem(QIcon(":/images/FS9.ico"), tr("FS2002/FS2004"));
 	ui.iconcomboBox->addItem(QIcon(":/images/Mouse.ico"), tr("Mouse look"));
-
-	ui.iconcomboTrackerSource->addItem(QIcon(":/images/SeeingMachines.ico"), tr("Face API"));
-	ui.iconcomboTrackerSource->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir server"));
-
-#	ifdef USE_VISAGE
-	ui.iconcomboTrackerSource->addItem(QIcon(":/images/Visage.ico"), tr("Visage Tracker"));
-#   endif
-
 
 	//
 	// Get a List of all the Filter-DLL-files in the Program-folder.
@@ -1070,13 +1126,13 @@ QIcon *filterIcon;
 		filterName = new QString("");
 		filterIcon = new QIcon();
 
-		getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
-		if (getIT) {
-			IFilterDialogPtr ptrXyz(getIT());
+		getFilter = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
+		if (getFilter) {
+			IFilterDialogPtr ptrXyz(getFilter());
 			if (ptrXyz)
 			{
 				pFilterDialog = ptrXyz;
-				pFilterDialog->getFilterFullName( filterName );
+				pFilterDialog->getFullName( filterName );
 				pFilterDialog->getIcon( filterIcon );
 				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
 			}
@@ -1085,12 +1141,64 @@ QIcon *filterIcon;
 			}	
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Filter-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
 		ui.iconcomboFilter->addItem(*filterIcon, *filterName );
 	}
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+
+	//
+	// Get a List of all the Filter-DLL-files in the Program-folder.
+	//
+    filters.clear();
+	filters << "FTNoIR_Tracker_*.dll";
+	trackerFileList.clear();
+	trackerFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+
+	//
+	// Add strings to the Listbox.
+	//
+	disconnect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	ui.iconcomboTrackerSource->clear();
+	for ( int i = 0; i < trackerFileList.size(); i++) {
+
+		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
+
+		//
+		// Delete the existing QDialog
+		//
+		if (pTrackerDialog) {
+			pTrackerDialog.Release();
+		}
+
+		// Show the appropriate Protocol-server Settings
+		filterLib = new QLibrary(trackerFileList.at(i));
+		filterName = new QString("");
+		filterIcon = new QIcon();
+
+		getTracker = (importGetTrackerDialog) filterLib->resolve("GetTrackerDialog");
+		if (getTracker) {
+			ITrackerDialogPtr ptrXyz(getTracker());
+			if (ptrXyz)
+			{
+				pTrackerDialog = ptrXyz;
+				pTrackerDialog->getFullName( filterName );
+				pTrackerDialog->getIcon( filterIcon );
+				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDialog Function Resolved!";
+			}
+			else {
+				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+			}	
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Facetracker-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+
+		ui.iconcomboTrackerSource->addItem(*filterIcon, *filterName );
+	}
+	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+
 
 }
 
@@ -1195,18 +1303,18 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
 void FaceTrackNoIR::trackingSourceSelected(int index)
 {
 	settingsDirty = true;
-	switch ( index ) {
-		case FT_SM_FACEAPI:										// Face API
-			ui.btnShowEngineControls->setEnabled ( false );
-			break;
-		case FT_FTNOIR:											// FTNoir server
-			ui.video_frame->hide();
-			ui.headPoseWidget->show();
-			ui.btnShowEngineControls->setEnabled ( true );
-			break;
-		default:
-			break;
-	}
+	//switch ( index ) {
+	//	case FT_SM_FACEAPI:										// Face API
+	//		ui.btnShowEngineControls->setEnabled ( false );
+	//		break;
+	//	case FT_FTNOIR:											// FTNoir server
+	//		ui.video_frame->hide();
+	//		ui.headPoseWidget->show();
+	ui.btnShowEngineControls->setEnabled ( true );
+	//		break;
+	//	default:
+	//		break;
+	//}
 }
 
 //
@@ -1233,17 +1341,12 @@ void FaceTrackNoIR::profileSelected(int index)
 //
 void FaceTrackNoIR::filterSelected(int index)
 {
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	settingsDirty = true;
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
-	//
-	// Save the name of the filter in the INI-file. Do this immediately, so the Tracker can just read it from the INI-file to load the filter.
-	//
-	iniFile.beginGroup ( "Filter" );
-	iniFile.setValue ( "Selection", filterFileList.at(ui.iconcomboFilter->currentIndex()) );
-	iniFile.endGroup ();
+	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	ui.btnShowFilterControls->setEnabled ( true );
 }

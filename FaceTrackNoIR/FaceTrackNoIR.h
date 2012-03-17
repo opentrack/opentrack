@@ -78,6 +78,8 @@ public:
 	void updateSettings();						// Update the settings (let Tracker read INI-file).
 
 	QFrame *getVideoWidget();					// Get a pointer to the video-widget, to use in the DLL
+	QString getCurrentFilterName();				// Get the name of the selected filter
+	QString getCurrentTrackerName();			// Get the name of the selected face-tracker
 
 private:
 	Ui::FaceTrackNoIRClass ui;
@@ -86,6 +88,7 @@ private:
 	QTimer *timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
+	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)

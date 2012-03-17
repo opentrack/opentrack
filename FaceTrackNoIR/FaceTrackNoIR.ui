@@ -1786,12 +1786,12 @@ background:none;</string>
                  <number>-1</number>
                 </property>
                 <property name="maxVisibleItems">
-                 <number>3</number>
+                 <number>5</number>
                 </property>
                </widget>
                <widget class="QPushButton" name="btnShowEngineControls">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="geometry">
                  <rect>
@@ -1855,69 +1855,6 @@ background:none;</string>
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="groupGameProtocol">
-               <property name="minimumSize">
-                <size>
-                 <width>190</width>
-                 <height>120</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>120</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="title">
-                <string>Game protocol</string>
-               </property>
-               <widget class="QComboBox" name="iconcomboBox">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>20</y>
-                  <width>180</width>
-                  <height>22</height>
-                 </rect>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="currentIndex">
-                 <number>-1</number>
-                </property>
-                <property name="maxVisibleItems">
-                 <number>7</number>
-                </property>
-               </widget>
-               <widget class="QPushButton" name="btnShowServerControls">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>80</y>
-                  <width>180</width>
-                  <height>23</height>
-                 </rect>
-                </property>
-                <property name="toolTip">
-                 <string>Change game protocol settings</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>Settings</string>
-                </property>
-               </widget>
-              </widget>
-             </item>
-             <item>
               <widget class="QGroupBox" name="groupFilter">
                <property name="minimumSize">
                 <size>
@@ -1957,6 +1894,69 @@ background:none;</string>
                 </property>
                </widget>
                <widget class="QPushButton" name="btnShowFilterControls">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>80</y>
+                  <width>180</width>
+                  <height>23</height>
+                 </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Change game protocol settings</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Settings</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupGameProtocol">
+               <property name="minimumSize">
+                <size>
+                 <width>190</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>120</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="title">
+                <string>Game protocol</string>
+               </property>
+               <widget class="QComboBox" name="iconcomboBox">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>20</y>
+                  <width>180</width>
+                  <height>22</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+                <property name="maxVisibleItems">
+                 <number>7</number>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="btnShowServerControls">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>

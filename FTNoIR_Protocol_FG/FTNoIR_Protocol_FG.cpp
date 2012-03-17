@@ -34,7 +34,7 @@
 #include "ftnoir_protocol_fg.h"
 #include <QFile>
 
-// For Todd
+// For Todd and Arda Kutlu
 //#define SEND_ASCII_DATA
 //#define LOG_OUTPUT
 
@@ -122,7 +122,7 @@ char data[100];
 	//
 
 #ifdef SEND_ASCII_DATA
-	sprintf_s(data, "%.2f %.2f %.2f %.2f %.2f %.2f;\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
+	sprintf_s(data, "%.2f %.2f %.2f %.2f %.2f %.2f\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
 
 	if (outSocket != 0) {
 		no_bytes = outSocket->writeDatagram((const char *) &data, strlen( data ), destIP, destPort);

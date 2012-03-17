@@ -226,19 +226,19 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	return;
 }
 
-void FTNoIR_Filter::getFilterFullName(QString *strToBeFilled)
+void FTNoIR_Filter::getFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterFullName;
 };
 
 
-void FTNoIR_Filter::getFilterShortName(QString *strToBeFilled)
+void FTNoIR_Filter::getShortName(QString *strToBeFilled)
 {
 	*strToBeFilled = filterShortName;
 };
 
 
-void FTNoIR_Filter::getFilterDescription(QString *strToBeFilled)
+void FTNoIR_Filter::getDescription(QString *strToBeFilled)
 {
 	*strToBeFilled = filterDescription;
 };

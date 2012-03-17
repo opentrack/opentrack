@@ -35,6 +35,7 @@
 // This is necessary to run FaceTrackNoIR on a PC without FSX
 //
 #define SIMCONNECT_H_NOMANIFEST 
+#define _WIN32_WINNT 0x0502
 
 #include "Windows.h"
 #include "SimConnect.h"
