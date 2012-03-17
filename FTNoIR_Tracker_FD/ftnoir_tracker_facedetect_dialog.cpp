@@ -190,7 +190,7 @@ void TrackerControls::getDescription(QString *strToBeFilled)
 
 void TrackerControls::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/images/SeeingMachines.ico");
+	*icon = QIcon(":/images/FaceDetect.ico");
 };
 
 ////////////////////////////////////////////////////////////////////////////////
