@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/Mouse.ico</file>
+    </qresource>
+</RCC>

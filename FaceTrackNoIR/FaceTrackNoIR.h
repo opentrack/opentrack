@@ -78,6 +78,7 @@ public:
 	void updateSettings();						// Update the settings (let Tracker read INI-file).
 
 	QFrame *getVideoWidget();					// Get a pointer to the video-widget, to use in the DLL
+	QString getCurrentProtocolName();			// Get the name of the selected protocol
 	QString getCurrentFilterName();				// Get the name of the selected filter
 	QString getCurrentTrackerName();			// Get the name of the selected face-tracker
 
@@ -87,6 +88,7 @@ private:
 	QTimer *timMinimizeFTN;						// Timer to Auto-minimize
 	QTimer *timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
+	QStringList protocolFileList;				// List of Protocol-DLL-files, that are present in the program-folder
 	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
 	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
@@ -137,11 +139,12 @@ private:
 		void openurl_donation();
 		void about();
 
-		void setIcon(int index);
+//		void setIcon(int index);
 		void iconActivated(QSystemTrayIcon::ActivationReason reason);
-		void trackingSourceSelected(int index);
 		void profileSelected(int index);
+		void protocolSelected(int index);
 		void filterSelected(int index);
+		void trackingSourceSelected(int index);
 
 		void showVideoWidget();
 		void showHeadPoseWidget();

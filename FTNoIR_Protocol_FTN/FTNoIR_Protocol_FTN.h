@@ -52,6 +52,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
+
 private:
 	THeadPoseData TestData;
 	long frame_counter;
@@ -77,6 +81,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FaceTrackNoIR.ico"); };
 
 private:
 	Ui::UICFTNControls ui;

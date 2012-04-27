@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/FaceTrackNoIR.ico</file>
+    </qresource>
+</RCC>

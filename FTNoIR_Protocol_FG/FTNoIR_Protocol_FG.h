@@ -52,6 +52,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
+
 private:
 //	Tracker *headTracker;									// For upstream messages...
 	TFlightGearData FlightData;
@@ -77,6 +81,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FlightGear.ico"); };
 
 private:
 	Ui::UICFGControls ui;

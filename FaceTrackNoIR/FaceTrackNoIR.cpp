@@ -23,7 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
-		20120317 - WVR: The Filter and Tracker-code was moved to separate DLL's. The calling-method
+		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
+						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
+		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
 						was changed accordingly. The save() and LoadSettings() functions were adapted.
 						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
 						requested by Stanislaw.
@@ -154,9 +156,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	loadSettings();
 	trayIcon->show();
 
+	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
 	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-	connect(ui.iconcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setIcon(int)));
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	//Setup the timer for automatically minimizing after StartTracker.
@@ -225,6 +227,14 @@ void FaceTrackNoIR::updateSettings() {
 //
 QFrame *FaceTrackNoIR::getVideoWidget() {
 	return ui.video_frame;
+}
+
+//
+// Return the name of the Protocol-DLL
+//
+QString FaceTrackNoIR::getCurrentProtocolName()
+{
+	return protocolFileList.at(ui.iconcomboProtocol->currentIndex());
 }
 
 //
@@ -356,7 +366,8 @@ void FaceTrackNoIR::save() {
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
-	iniFile.setValue ( "Selection", ui.iconcomboBox->currentIndex() );
+	iniFile.setValue ( "Selection", ui.iconcomboProtocol->currentIndex() );
+	iniFile.setValue ( "DLL", getCurrentProtocolName() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "TrackerSource" );
@@ -481,10 +492,65 @@ void FaceTrackNoIR::loadSettings() {
 
 	iniFile.endGroup ();
 
+	//
+	// Read the currently selected Protocol from the INI-file.
+	// If the setting "DLL" isn't found (pre-1.7 version of INI), then the setting 'Selection' is evaluated.
+	//
 	iniFile.beginGroup ( "GameProtocol" );
-	ui.iconcomboBox->setCurrentIndex(iniFile.value ( "Selection", 0 ).toInt());
-	setIcon( ui.iconcomboBox->currentIndex() );
+
+	QString selectedProtocolName = iniFile.value ( "DLL", "" ).toString();
+	qDebug() << "loadSettings says: selectedProtocolName = " << selectedProtocolName;
+
+	if (selectedProtocolName.length() == 0) {
+		int index = iniFile.value ( "Selection", 0 ).toInt();
+		switch ( index ) {
+			case FREE_TRACK:
+				selectedProtocolName = QString("FTNoIR_Protocol_FT.dll");
+				break;
+
+			case SIMCONNECT:
+				selectedProtocolName = QString("FTNoIR_Protocol_SC.dll");
+				break;
+
+			case PPJOY:
+				selectedProtocolName = QString("FTNoIR_Protocol_PPJOY.dll");
+				break;
+
+			case FSUIPC:
+				selectedProtocolName = QString("FTNoIR_Protocol_FSUIPC.dll");
+				break;
+
+			case TRACKIR:
+				selectedProtocolName = QString("FTNoIR_Protocol_FTIR.dll");
+				break;
+
+			case FLIGHTGEAR:
+				selectedProtocolName = QString("FTNoIR_Protocol_FG.dll");
+				break;
+
+			case FTNOIR:
+				selectedProtocolName = QString("FTNoIR_Protocol_FTN.dll");
+				break;
+
+			case MOUSE:
+				selectedProtocolName = QString("FTNoIR_Protocol_MOUSE.dll");
+				break;
+
+			default:
+				selectedProtocolName = QString("FTNoIR_Protocol_MOUSE.dll");
+				break;
+		}
+	}
 	iniFile.endGroup ();
+
+	disconnect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+	for ( int i = 0; i < protocolFileList.size(); i++) {
+		if (protocolFileList.at(i) == selectedProtocolName) {
+			ui.iconcomboProtocol->setCurrentIndex( i );
+		}
+	}
+	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+	protocolSelected( ui.iconcomboProtocol->currentIndex() );
 
 	//
 	// Read the currently selected Tracker from the INI-file.
@@ -492,7 +558,7 @@ void FaceTrackNoIR::loadSettings() {
 	//
 	iniFile.beginGroup ( "TrackerSource" );
 	QString selectedTrackerName = iniFile.value ( "DLL", "" ).toString();
-	qDebug() << "createIconGroupBox says: selectedTrackerName = " << selectedTrackerName;
+	qDebug() << "loadSettings says: selectedTrackerName = " << selectedTrackerName;
 	if (selectedTrackerName.length() == 0) {
 		int index = iniFile.value ( "Selection", 0 ).toInt();
 		switch ( index ) {
@@ -571,7 +637,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Create the Tracker and setup
 	//
-	tracker = new Tracker ( ui.iconcomboBox->currentIndex(), ui.iconcomboTrackerSource->currentIndex(), this );
+	tracker = new Tracker ( this );
 
 	//
 	// Setup the Tracker and send the settings.
@@ -610,7 +676,7 @@ void FaceTrackNoIR::startTracker( ) {
 
 	// Enable/disable Protocol-server Settings
 	ui.iconcomboTrackerSource->setEnabled ( false );
-	ui.iconcomboBox->setEnabled ( false );
+	ui.iconcomboProtocol->setEnabled ( false );
 	ui.btnShowServerControls->setEnabled ( false );
 	ui.iconcomboFilter->setEnabled ( false );
 
@@ -698,7 +764,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnStartTracker->setEnabled ( true );
 	ui.btnStopTracker->setEnabled ( false );
 //	ui.btnShowEngineControls->setEnabled ( false );
-	ui.iconcomboBox->setEnabled ( true );
+	ui.iconcomboProtocol->setEnabled ( true );
 	ui.iconcomboTrackerSource->setEnabled ( true );
 	ui.iconcomboFilter->setEnabled ( true );
 
@@ -858,20 +924,6 @@ QString libName;
 	libName.clear();
 	libName = getCurrentTrackerName();
 
-	//switch (ui.iconcomboTrackerSource->currentIndex()) {
-	//	case FT_SM_FACEAPI:										// Face API
-	//		qDebug() << "FaceTrackNoIR::showEngineControls case FT_SM_FACEAPI.";
-	//		break;
-
-	//	case FT_FTNOIR:											// FTNoir server
-	//		qDebug() << "FaceTrackNoIR::showEngineControls case FT_FTNOIR.";
-	//		libName = QString("FTNoIR_Tracker.dll");
-	//		break;
-
-	//	default:
-	//		break;
-	//}
-
 	//
 	// Load the Server-settings dialog (if any) and show it.
 	//
@@ -915,38 +967,7 @@ QString libName;
 
 	// Show the appropriate Protocol-server Settings
 	libName.clear();
-	switch (ui.iconcomboBox->currentIndex()) {
-	case FREE_TRACK:
-	case SIMCONNECT:
-		break;
-
-	case PPJOY:
-		libName = QString("FTNoIR_Protocol_PPJOY.dll");
-		break;
-
-	case FSUIPC:
-		libName = QString("FTNoIR_Protocol_FSUIPC.dll");
-		break;
-
-	case TRACKIR:
-		libName = QString("FTNoIR_Protocol_FTIR.dll");
-		break;
-
-	case FLIGHTGEAR:
-		libName = QString("FTNoIR_Protocol_FG.dll");
-		break;
-
-	case FTNOIR:
-		libName = QString("FTNoIR_Protocol_FTN.dll");
-		break;
-
-	case MOUSE:
-		libName = QString("FTNoIR_Protocol_MOUSE.dll");
-		break;
-
-	default:
-		break;
-    }
+	libName = getCurrentProtocolName();
 
 	//
 	// Load the Server-settings dialog (if any) and show it.
@@ -1076,31 +1097,75 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
+importGetProtocolDialog getProtocol;
 importGetFilterDialog getFilter;
 importGetTrackerDialog getTracker;
-QLibrary *filterLib;
-QString *filterName;
-QIcon *filterIcon;
+//QLibrary *filterLib;
+//QString *filterName;
+//QIcon *filterIcon;
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	ui.iconcomboBox->addItem(QIcon(":/images/Freetrack.ico"), tr("Freetrack"));
-	ui.iconcomboBox->addItem(QIcon(":/images/FlightGear.ico"), tr("FlightGear"));
-	ui.iconcomboBox->addItem(QIcon(":/images/FaceTrackNoIR.ico"), tr("FTNoir client"));
-	ui.iconcomboBox->addItem(QIcon(":/images/PPJoy.ico"), tr("Virtual Joystick"));
-	ui.iconcomboBox->addItem(QIcon(":/images/TrackIR.ico"), tr("Fake TrackIR"));
-	ui.iconcomboBox->addItem(QIcon(":/images/FSX.ico"), tr("SimConnect (FSX)"));
-	ui.iconcomboBox->addItem(QIcon(":/images/FS9.ico"), tr("FS2002/FS2004"));
-	ui.iconcomboBox->addItem(QIcon(":/images/Mouse.ico"), tr("Mouse look"));
-
 	//
 	// Get a List of all the Filter-DLL-files in the Program-folder.
 	//
 	QDir settingsDir( QCoreApplication::applicationDirPath() );
     QStringList filters;
+    filters.clear();
+    filters << "FTNoIR_Protocol_*.dll";
+	protocolFileList.clear();
+	protocolFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+
+	//
+	// Add strings to the Listbox.
+	//
+	disconnect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+	ui.iconcomboProtocol->clear();
+	for ( int i = 0; i < protocolFileList.size(); i++) {
+
+		qDebug() << "createIconGroupBox says: ProtocolName = " << protocolFileList.at(i);
+
+		//
+		// Delete the existing QDialog
+		//
+		if (pProtocolDialog) {
+			pProtocolDialog.Release();
+		}
+
+		// Show the appropriate Protocol-server Settings
+		QLibrary *protocolLib = new QLibrary(protocolFileList.at(i));
+		QString *protocolName = new QString("");
+		QIcon *protocolIcon = new QIcon();
+
+		getProtocol = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+		if (getProtocol) {
+			IProtocolDialogPtr ptrXyz(getProtocol());
+			if (ptrXyz)
+			{
+				pProtocolDialog = ptrXyz;
+				pProtocolDialog->getFullName( protocolName );
+				pProtocolDialog->getIcon( protocolIcon );
+				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+			}
+			else {
+				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
+			}	
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+
+		ui.iconcomboProtocol->addItem(*protocolIcon, *protocolName );
+	}
+	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+
+	//
+	// Get a List of all the Filter-DLL-files in the Program-folder.
+	//
+    filters.clear();
     filters << "FTNoIR_Filter_*.dll";
 	filterFileList.clear();
 	filterFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
@@ -1122,9 +1187,9 @@ QIcon *filterIcon;
 		}
 
 		// Show the appropriate Protocol-server Settings
-		filterLib = new QLibrary(filterFileList.at(i));
-		filterName = new QString("");
-		filterIcon = new QIcon();
+		QLibrary *filterLib = new QLibrary(filterFileList.at(i));
+		QString *filterName = new QString("");
+		QIcon *filterIcon = new QIcon();
 
 		getFilter = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
 		if (getFilter) {
@@ -1173,18 +1238,18 @@ QIcon *filterIcon;
 		}
 
 		// Show the appropriate Protocol-server Settings
-		filterLib = new QLibrary(trackerFileList.at(i));
-		filterName = new QString("");
-		filterIcon = new QIcon();
+		QLibrary *trackerLib = new QLibrary(trackerFileList.at(i));
+		QString *trackerName = new QString("");
+		QIcon *trackerIcon = new QIcon();
 
-		getTracker = (importGetTrackerDialog) filterLib->resolve("GetTrackerDialog");
+		getTracker = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
 		if (getTracker) {
 			ITrackerDialogPtr ptrXyz(getTracker());
 			if (ptrXyz)
 			{
 				pTrackerDialog = ptrXyz;
-				pTrackerDialog->getFullName( filterName );
-				pTrackerDialog->getIcon( filterIcon );
+				pTrackerDialog->getFullName( trackerName );
+				pTrackerDialog->getIcon( trackerIcon );
 				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDialog Function Resolved!";
 			}
 			else {
@@ -1195,7 +1260,7 @@ QIcon *filterIcon;
 			QMessageBox::warning(0,"FaceTrackNoIR Error", "Facetracker-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
-		ui.iconcomboTrackerSource->addItem(*filterIcon, *filterName );
+		ui.iconcomboTrackerSource->addItem(*trackerIcon, *trackerName );
 	}
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 
@@ -1240,45 +1305,6 @@ void FaceTrackNoIR::createTrayIcon()
 }
 
 //
-// Set the Tray icon, using the Game-protocol combobox as source
-//
-void FaceTrackNoIR::setIcon(int index)
-{
-    QIcon icon = ui.iconcomboBox->itemIcon(index);
-	if (trayIcon != 0) {
-		trayIcon->setIcon(icon);
-	    trayIcon->setToolTip(ui.iconcomboBox->itemText(index));
-		trayIcon->show();
-		trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboBox->itemText(index));
-	}
-	setWindowIcon(QIcon(":/images/FaceTrackNoIR.ico"));
-	ui.btnShowServerControls->setIcon(icon);
-
-	settingsDirty = true;
-
-	// Enable/disable Protocol-server Settings
-	switch (ui.iconcomboBox->currentIndex()) {
-	case FREE_TRACK:
-	case SIMCONNECT:
-		ui.btnShowServerControls->hide();
-		break;
-	case PPJOY:
-	case FSUIPC:
-	case TRACKIR:
-	case FLIGHTGEAR:
-	case FTNOIR:
-	case MOUSE:
-		ui.btnShowServerControls->show();
-		ui.btnShowServerControls->setEnabled ( true );
-		break;
-
-	default:
-		break;
-	}
-
-}
- 
-//
 // Handle SystemTray events
 //
 void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -1286,8 +1312,8 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
      switch (reason) {
      case QSystemTrayIcon::Trigger:
      case QSystemTrayIcon::DoubleClick:
-         //ui.iconcomboBox->setCurrentIndex((ui.iconcomboBox->currentIndex() + 1)
-         //                              % ui.iconcomboBox->count());
+         //ui.iconcomboProtocol->setCurrentIndex((ui.iconcomboProtocol->currentIndex() + 1)
+         //                              % ui.iconcomboProtocol->count());
          break;
      ////case QSystemTrayIcon::MiddleClick:
      ////    showMessage();
@@ -1298,23 +1324,34 @@ void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
  }
 
 //
+// Handle changes of the Protocol selection
+//
+void FaceTrackNoIR::protocolSelected(int index)
+{
+	settingsDirty = true;
+	ui.btnShowServerControls->setEnabled ( true );
+
+	//
+	// Set the Icon for the tray and update the Icon for the Settings button.
+	//
+	QIcon icon = ui.iconcomboProtocol->itemIcon(index);
+	if (trayIcon != 0) {
+		trayIcon->setIcon(icon);
+	    trayIcon->setToolTip(ui.iconcomboProtocol->itemText(index));
+		trayIcon->show();
+		trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboProtocol->itemText(index));
+	}
+	setWindowIcon(QIcon(":/images/FaceTrackNoIR.ico"));
+	ui.btnShowServerControls->setIcon(icon);
+}
+
+//
 // Handle changes of the Tracking Source selection
 //
 void FaceTrackNoIR::trackingSourceSelected(int index)
 {
 	settingsDirty = true;
-	//switch ( index ) {
-	//	case FT_SM_FACEAPI:										// Face API
-	//		ui.btnShowEngineControls->setEnabled ( false );
-	//		break;
-	//	case FT_FTNOIR:											// FTNoir server
-	//		ui.video_frame->hide();
-	//		ui.headPoseWidget->show();
 	ui.btnShowEngineControls->setEnabled ( true );
-	//		break;
-	//	default:
-	//		break;
-	//}
 }
 
 //

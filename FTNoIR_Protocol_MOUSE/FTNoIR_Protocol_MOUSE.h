@@ -71,6 +71,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); };
+
 private:
 	HANDLE h;
 	INPUT MouseStruct;
@@ -106,6 +110,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Mouse.ico"); };
 
 private:
 	Ui::UICMOUSEControls ui;

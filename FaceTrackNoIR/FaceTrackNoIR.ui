@@ -1937,7 +1937,7 @@ background:none;</string>
                <property name="title">
                 <string>Game protocol</string>
                </property>
-               <widget class="QComboBox" name="iconcomboBox">
+               <widget class="QComboBox" name="iconcomboProtocol">
                 <property name="geometry">
                  <rect>
                   <x>10</x>
@@ -2221,7 +2221,7 @@ background:none;</string>
   <tabstop>btnStartTracker</tabstop>
   <tabstop>btnStopTracker</tabstop>
   <tabstop>btnShowEngineControls</tabstop>
-  <tabstop>iconcomboBox</tabstop>
+  <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
   <include location="FaceTrackNoIR.qrc"/>
