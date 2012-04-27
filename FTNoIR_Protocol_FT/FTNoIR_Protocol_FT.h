@@ -55,6 +55,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
+
 private:
 	bool FTCreateMapping(HANDLE handle);
 	void FTDestroyMapping();
@@ -87,6 +91,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
 
 private:
 	Ui::UICFTControls ui;

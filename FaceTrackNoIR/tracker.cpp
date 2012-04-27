@@ -23,7 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
-		20120317 - WVR: The Filter and Tracker-code was moved to separate DLL's. The calling-method
+		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
+						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
+		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
 						was changed accordingly.
 						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
 						requested by Stanislaw.
@@ -108,7 +110,7 @@ IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
 
 
 /** constructor **/
-Tracker::Tracker( int clientID, int facetrackerID, FaceTrackNoIR *parent ) {
+Tracker::Tracker( FaceTrackNoIR *parent ) {
 QString libName;
 importGetTracker getIT;
 QLibrary *trackerLib;
@@ -120,11 +122,6 @@ QFrame *video_frame;
 
 	// Retieve the pointer to the parent
 	mainApp = parent;
-
-	// Remember the selected client, from the ListBox
-	// If the Tracker runs, this can NOT be changed...
-	selectedClient = (FTNoIR_Client) clientID;
-//	selectedTracker = (FTNoIR_Face_Tracker) facetrackerID;
 
 	// Create events
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
@@ -149,26 +146,6 @@ QFrame *video_frame;
 	video_frame = mainApp->getVideoWidget();
 	qDebug() << "Tracker::setup VideoFrame = " << video_frame;
 
-	////
-	//// Select the Tracker-engine DLL
-	////
-	//switch (selectedTracker) {
-	//	case FT_SM_FACEAPI:
-	//		libName = QString("FTNoIR_Tracker_SM.dll");
-	//		break;
-
-	//	case FT_FTNOIR:
-	//		libName = QString("FTNoIR_Tracker_UDP.dll");
-	//		break;
-
-	//	case FT_VISAGE:
-	//		libName = QString("FTNoIR_Tracker_Visage.dll");
-	//		break;
-
-	//	default:
-	//		break;
-	//}
-
 	//
 	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
 	//
@@ -192,50 +169,9 @@ QFrame *video_frame;
 	}
 
 	//
-	// Initialize all server-handles. Only start the server, that was selected in the GUI.
-	//
-	libName.clear();
-	switch (selectedClient) {
-		case FREE_TRACK:
-			libName = QString("FTNoIR_Protocol_FT.dll");
-			break;
-
-		case FLIGHTGEAR:
-			libName = QString("FTNoIR_Protocol_FG.dll");
-			break;
-
-		case FTNOIR:
-			libName = QString("FTNoIR_Protocol_FTN.dll");
-			break;
-
-		case PPJOY:
-			libName = QString("FTNoIR_Protocol_PPJOY.dll");
-			break;
-
-		case TRACKIR:
-			libName = QString("FTNoIR_Protocol_FTIR.dll");
-			break;
-
-		case SIMCONNECT:
-			libName = QString("FTNoIR_Protocol_SC.dll");
-			break;
-
-		case FSUIPC:
-			libName = QString("FTNoIR_Protocol_FSUIPC.dll");
-			break;
-
-		case MOUSE:
-			libName = QString("FTNoIR_Protocol_MOUSE.dll");
-			break;
-
-		default:
-			// should never be reached
-		break;
-	}
-
-	//
 	// Load the DLL with the protocol-logic and retrieve a pointer to the Protocol-class.
 	//
+	libName = mainApp->getCurrentProtocolName();
 	if (!libName.isEmpty()) {
 		protocolLib = new QLibrary(libName);
 		getProtocol = (importGetProtocol) protocolLib->resolve("GetProtocol");

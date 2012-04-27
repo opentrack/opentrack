@@ -59,6 +59,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("fake TrackIR"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTIR"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("TrackIR V4 protocol"); };
+
 private:
 	bool FTIRCreateMapping(HANDLE handle);
 	void FTIRDestroyMapping();
@@ -97,6 +101,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("fake TrackIR"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTIR"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("TrackIR V4 protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/TrackIR.ico"); };
 
 private:
 	Ui::UICFTIRControls ui;

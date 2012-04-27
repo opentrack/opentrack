@@ -147,7 +147,7 @@ private:
 	HANDLE m_StopThread;
 	HANDLE m_WaitThread;
 
-	FTNoIR_Client selectedClient;
+//	FTNoIR_Client selectedClient;
 //	FTNoIR_Face_Tracker selectedTracker;
 
 	static T6DOF current_camera;					// Used for filtering
@@ -204,7 +204,7 @@ protected:
 	void run();
 
 public:
-	Tracker( int clientID, int facetrackerID, FaceTrackNoIR *parent );
+	Tracker( FaceTrackNoIR *parent );
 	~Tracker();
 
 	void setup();

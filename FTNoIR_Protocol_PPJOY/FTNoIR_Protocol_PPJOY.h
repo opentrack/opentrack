@@ -72,6 +72,10 @@ public:
 	void sendHeadposeToGame( T6DOF *headpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy Virtual Joystick"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy virtual joystick protocol"); };
+
 private:
 	HANDLE h;
 	JOYSTICK_STATE JoyState;
@@ -102,6 +106,11 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy Virtual Joystick"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy virtual joystick protocol"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/PPJoy.ico"); };
 
 private:
 	Ui::UICPPJOYControls ui;

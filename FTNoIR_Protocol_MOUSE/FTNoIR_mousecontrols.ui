@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PPJoy settings FaceTrackNoIR</string>
+   <string>MouseLook settings FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.ico</normaloff>images/FaceTrackNoIR.ico</iconset>
+   <iconset resource="Protocol.qrc">
+    <normaloff>:/images/Mouse.ico</normaloff>:/images/Mouse.ico</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -403,7 +403,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="Protocol.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>slideSensX</sender>
