@@ -124,7 +124,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\SeeingMachines\FaceTrackingAPI_NC 3.2\API\include&quot;;..\FTNoIR_Tracker_Base"
+				AdditionalIncludeDirectories="&quot;D:\Program Files (x86)\SeeingMachines\FaceTrackingAPI_NC 3.2\API\include&quot;;..\FTNoIR_Tracker_Base"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
