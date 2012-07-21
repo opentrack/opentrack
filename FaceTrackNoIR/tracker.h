@@ -3,8 +3,8 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
+* Copyright (C) 2010 - 2012	Wim Vriend (Developing)								*
+*							Ron Hendriks (Researching and Testing)				*
 *																				*
 * Homepage																		*																				*
 * This program is free software; you can redistribute it and/or modify it		*
@@ -20,6 +20,10 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
+/*
+	Modifications (last one on top):
+		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
+*/
 #ifndef __TRACKER_H__
 #define __TRACKER_H__
 
@@ -37,6 +41,7 @@
 
 #include "ExcelServer.h"			// Excel-server (for analysing purposes)
 #include "FTNoIR_cxx_protocolserver.h"
+#include "FunctionConfig.h"
 
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
@@ -94,6 +99,20 @@ class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 //
 class THeadPoseDOF {
 public:
+
+	THeadPoseDOF(QString primary, QString secondary = "") {
+		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+		QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+		QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+		curvePtr = new FunctionConfig(primary);						// Create the Function-config for input-output translation
+		curvePtr->loadSettings(iniFile);							// Load the settings from the INI-file
+		if (secondary != "") {
+			curvePtrAlt = new FunctionConfig(secondary);
+			curvePtrAlt->loadSettings(iniFile);
+		}
+	}
+
 	void initHeadPoseData(){
 		headPos = 0.0f;
 		offset_headPos = 0.0f;
@@ -116,7 +135,11 @@ public:
 	int maxItems;					// Maximum number of elements in rawList
 	float prevPos;					// Previous Position
 	float prevRawPos;				// Previous Raw Position
-	QPainterPath curve;				// Bezier curve to translate input -> output
+//	QPainterPath curve;				// Bezier curve to translate input -> output
+
+	FunctionConfig* curvePtr;		// Function to translate input -> output
+	FunctionConfig* curvePtrAlt;
+
 	int NeutralZone;				// Neutral zone
 	int MaxInput;					// Maximum raw input
 	float confidence;				// Current confidence
@@ -162,14 +185,6 @@ private:
 	static void addHeadPose( THeadPoseData head_pose );
 	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
 
-	/** static member variables for saving the head pose **/
-	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
-	static THeadPoseDOF Yaw;						// Head-rotation Y-direction ()
-	static THeadPoseDOF Roll;						// Head-rotation Z-direction ()
-	static THeadPoseDOF X;							// Head-movement X-direction (Left/Right)
-	static THeadPoseDOF Y;							// Head-movement Y-direction (Up/Down)
-	static THeadPoseDOF Z;							// Head-movement Z-direction (To/From camera)
-
 	static TShortKey CenterKey;						// ShortKey to Center headposition
 	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
 	static TShortKey InhibitKey;					// ShortKey to disable one or more axis during tracking
@@ -207,6 +222,14 @@ public:
 	Tracker( FaceTrackNoIR *parent );
 	~Tracker();
 
+	/** static member variables for saving the head pose **/
+	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
+	static THeadPoseDOF Yaw;						// Head-rotation Y-direction ()
+	static THeadPoseDOF Roll;						// Head-rotation Z-direction ()
+	static THeadPoseDOF X;							// Head-movement X-direction (Left/Right)
+	static THeadPoseDOF Y;							// Head-movement Y-direction (Up/Down)
+	static THeadPoseDOF Z;							// Head-movement Z-direction (To/From camera)
+
 	void setup();
 
 //	void registerHeadPoseCallback();
@@ -240,7 +263,7 @@ public:
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
 	static float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-	static float getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput );
+//	static float getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput );
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 

@@ -91,12 +91,12 @@ T6DOF Tracker::target_camera(0,0,0,0,0,0);
 T6DOF Tracker::new_camera(0,0,0,0,0,0);
 T6DOF Tracker::output_camera(0,0,0,0,0,0);				// Position sent to game protocol
 
-THeadPoseDOF Tracker::Pitch;							// One structure for each of 6DOF's
-THeadPoseDOF Tracker::Yaw;
-THeadPoseDOF Tracker::Roll;
-THeadPoseDOF Tracker::X;
-THeadPoseDOF Tracker::Y;
-THeadPoseDOF Tracker::Z;
+THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown");	// One structure for each of 6DOF's
+THeadPoseDOF Tracker::Yaw("Yaw", "");
+THeadPoseDOF Tracker::Roll("Roll", "");
+THeadPoseDOF Tracker::X("X","");
+THeadPoseDOF Tracker::Y("Y","");
+THeadPoseDOF Tracker::Z("Z","");
 
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
@@ -233,6 +233,12 @@ Tracker::~Tracker() {
 	if (isRunning()) {
 		::WaitForSingleObject(m_WaitThread, INFINITE);
 	}
+
+	//
+	// Remove the Tracker
+	// 20120615, WVR: As suggested by Stanislaw
+	if (pTracker)
+		pTracker.Release();
 
 	// Close handles
 	::CloseHandle(m_StopThread);
@@ -516,12 +522,23 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					new_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
 					new_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
 				}
-				output_camera.position.x = X.invert * getOutputFromCurve(&X.curve, new_camera.position.x, X.NeutralZone, X.MaxInput);
-				output_camera.position.y = Y.invert * getOutputFromCurve(&Y.curve, new_camera.position.y, Y.NeutralZone, Y.MaxInput);
-				output_camera.position.z = Z.invert * getOutputFromCurve(&Z.curve, new_camera.position.z, Z.NeutralZone, Z.MaxInput);
-				output_camera.position.pitch = Pitch.invert * getOutputFromCurve(&Pitch.curve, new_camera.position.pitch, Pitch.NeutralZone, Pitch.MaxInput);
-				output_camera.position.yaw = Yaw.invert * getOutputFromCurve(&Yaw.curve, new_camera.position.yaw, Yaw.NeutralZone, Yaw.MaxInput);
-				output_camera.position.roll = Roll.invert * getOutputFromCurve(&Roll.curve, new_camera.position.roll, Roll.NeutralZone, Roll.MaxInput);
+				output_camera.position.x = X.invert * X.curvePtr->getValue(new_camera.position.x);
+				output_camera.position.y = Y.invert * Y.curvePtr->getValue(new_camera.position.y);
+				output_camera.position.z = Z.invert * Z.curvePtr->getValue(new_camera.position.z);
+				int altp = new_camera.position.pitch < 0;
+				output_camera.position.pitch = Pitch.invert * (altp ? Pitch.curvePtrAlt : Pitch.curvePtr)->getValue(new_camera.position.pitch);
+				///output_camera.position.pitch = Pitch.invert * Pitch.curvePtr->getValue(new_camera.position.pitch);
+				output_camera.position.yaw = Yaw.invert * Yaw.curvePtr->getValue(new_camera.position.yaw);
+				output_camera.position.roll = Roll.invert * Roll.curvePtr->getValue(new_camera.position.roll);
+
+
+				X.curvePtr->setTrackingActive( true );
+				Y.curvePtr->setTrackingActive( true );
+				Z.curvePtr->setTrackingActive( true );
+				Yaw.curvePtr->setTrackingActive( true );
+				Pitch.curvePtr->setTrackingActive( true );
+				Pitch.curvePtrAlt->setTrackingActive( true );
+				Roll.curvePtr->setTrackingActive( true );
 
 				//
 				// Reverse Axis.
@@ -583,6 +600,13 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					gameoutput_camera = output_camera + gamezero_camera;
 					pProtocol->sendHeadposeToGame( &gameoutput_camera );				// degrees & centimeters
 				}
+				X.curvePtr->setTrackingActive( false );
+				Y.curvePtr->setTrackingActive( false );
+				Z.curvePtr->setTrackingActive( false );
+				Yaw.curvePtr->setTrackingActive( false );
+				Pitch.curvePtr->setTrackingActive( false );
+				Pitch.curvePtrAlt->setTrackingActive( false );
+				Roll.curvePtr->setTrackingActive( false );
 			}
 		}
 
@@ -732,111 +756,12 @@ float sum = 0;
 }
 
 //
-// Correct the Raw value, with the Neutral Zone supplied
-//
-//float Tracker::getCorrectedNewRaw ( float NewRaw, float rotNeutral ) {
-//
-//	//
-//	// Return 0, if NewRaw is within the Neutral Zone
-//	//
-//	if ( fabs( NewRaw ) < rotNeutral ) {
-//		return 0.0f;
-//	}
-//
-//	//
-//	// NewRaw is outside the zone.
-//	// Substract rotNeutral from the NewRaw
-//	//
-//	if ( NewRaw > 0.0f ) {
-//		return (NewRaw - rotNeutral);
-//	}
-//	else {
-//		return (NewRaw + rotNeutral);				// Makes sense?
-//	}
-//
-//}
-
-//
-// Implementation of an Exponentially Weighted Moving Average, used to serve as a low-pass filter.
-// The code was adopted from Melchior Franz, who created it for FlightGear (aircraft.nas).
-//
-// The function takes the new value, the delta-time (sec) and a weighing coefficient (>0 and <1)
-// All previous values are taken into account, the weight of this is determined by 'coeff'.
-//
-//float Tracker::lowPassFilter ( float newvalue, float *oldvalue, float dt, float coeff) {
-//float c = 0.0f;
-//float fil = 0.0f;
-//
-//	c = dt / (coeff + dt);
-//	fil = (newvalue * c) + (*oldvalue * (1 - c));
-//	*oldvalue = fil;
-//
-//	return fil;
-//}
-
-//
-// Implementation of a Rate Limiter, used to eliminate spikes in the raw data.
-//
-// The function takes the new value, the delta-time (sec) and the positive max. slew-rate (engineering units/sec)
-//
-//float Tracker::rateLimiter ( float newvalue, float *oldvalue, float dt, float max_rate) {
-//float rate = 0.0f;
-//float clamped_value = 0.0f;
-//
-//	rate = (newvalue - *oldvalue) / dt;
-//	clamped_value = newvalue;									// If all is well, the newvalue is returned
-//
-//	//
-//	// One max-rate is used for ramp-up and ramp-down
-//	// If the rate exceeds max_rate, return the maximum value that the max_rate allows
-//	//
-//	if (fabs(rate) > max_rate) {
-//		//
-//		// For ramp-down, apply a factor -1 to the max_rate
-//		//
-//		if (rate < 0.0f) {
-//			clamped_value = (-1.0f * dt * max_rate) + *oldvalue;
-//		}
-//		else {
-//			clamped_value = (dt * max_rate) + *oldvalue;
-//		}
-//	}
-//	*oldvalue = clamped_value;
-//
-//	return clamped_value;
-//}
-
-//
-// Get the output from the curve.
-//
-float Tracker::getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput ) {
-float sign;
-
-	sign = 1.0f;
-	if (input < 0.0f) {
-		sign = -1.0f;
-	}
-
-	//
-	// Always return 0 inside the NeutralZone
-	// Always return max. when input larger than expected
-	//
-	if (fabs(input) > maxinput) return sign * curve->pointAtPercent(1.0).x();
-
-	//
-	// Return the value, derived from the Bezier-curve
-	//
-	return sign * curve->pointAtPercent((fabs(input))/maxinput).x();
-}
-
-//
 // Load the current Settings from the currently 'active' INI-file.
 //
 void Tracker::loadSettings() {
 int NeutralZone;
 int sensYaw, sensPitch, sensRoll;
 int sensX, sensY, sensZ;
-QPointF point1, point2, point3, point4;
 
 	qDebug() << "Tracker::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -857,83 +782,6 @@ QPointF point1, point2, point3, point4;
 	sensX = iniFile.value ( "sensX", 100 ).toInt();
 	sensY = iniFile.value ( "sensY", 100 ).toInt();
 	sensZ = iniFile.value ( "sensZ", 100 ).toInt();
-	iniFile.endGroup ();
-
-	//
-	// Read the curve-settings from the file. Use the (deprecated) settings, if the curves are not there.
-	//
-	iniFile.beginGroup ( "Curves" );
-
-	//
-	// Create a new path and assign it to the curve.
-	//
-	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
-	QPainterPath newYawCurve;
-	newYawCurve.moveTo( QPointF(0,0) );
-	newYawCurve.lineTo( point1 );
-	newYawCurve.cubicTo(point2, point3, point4);
-
-	Yaw.NeutralZone = point1.y();							// Get the Neutral Zone
-	Yaw.MaxInput = point4.y();								// Get Maximum Input
-	Yaw.curve = newYawCurve;
-
-	qDebug() << "loadSettings says: curve-elementcount = " << Yaw.curve.elementCount();
-
-	// Pitch
-	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
-	QPainterPath newPitchCurve;
-	newPitchCurve.moveTo( QPointF(0,0) );
-	newPitchCurve.lineTo( point1 );
-    newPitchCurve.cubicTo(point2, point3, point4);
-
-	Pitch.NeutralZone = point1.y();							// Get the Neutral Zone
-	Pitch.MaxInput = point4.y();							// Get Maximum Input
-	Pitch.curve = newPitchCurve;
-
-	// Roll
-	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
-	QPainterPath newRollCurve;
-	newRollCurve.moveTo( QPointF(0,0) );
-	newRollCurve.lineTo( point1 );
-    newRollCurve.cubicTo(point2, point3, point4);
-
-	Roll.NeutralZone = point1.y();							// Get the Neutral Zone
-	Roll.MaxInput = point4.y();								// Get Maximum Input
-    Roll.curve = newRollCurve;
-
-	// X
-	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
-	QPainterPath newXCurve;
-	newXCurve.moveTo( QPointF(0,0) );
-	newXCurve.lineTo( point1 );
-    newXCurve.cubicTo(point2, point3, point4);
-
-	X.NeutralZone = point1.y();								// Get the Neutral Zone
-	X.MaxInput = point4.y();								// Get Maximum Input
-    X.curve = newXCurve;
-
-	// Y
-	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
-	QPainterPath newYCurve;
-	newYCurve.moveTo( QPointF(0,0) );
-	newYCurve.lineTo( point1 );
-    newYCurve.cubicTo(point2, point3, point4);
-
-	Y.NeutralZone = point1.y();								// Get the Neutral Zone
-	Y.MaxInput = point4.y();								// Get Maximum Input
-    Y.curve = newYCurve;
-
-	// Z
-	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
-	QPainterPath newZCurve;
-	newZCurve.moveTo( QPointF(0,0) );
-	newZCurve.lineTo( point1 );
-    newZCurve.cubicTo(point2, point3, point4);
-
-	Z.NeutralZone = point1.y();								// Get the Neutral Zone
-	Z.MaxInput = point4.y();								// Get Maximum Input
-    Z.curve = newZCurve;
-
 	iniFile.endGroup ();
 
 	//

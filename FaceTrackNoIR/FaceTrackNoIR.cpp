@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
 		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
 						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
 		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
@@ -38,6 +39,7 @@
 */
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
+//#include "FunctionConfig.h"
 
 //#define USE_VISAGE
 
@@ -709,7 +711,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
-	timUpdateHeadPose->start(10);
+	timUpdateHeadPose->start(50);
 
 	ui.lblX->setVisible(true);
 	ui.lblY->setVisible(true);
@@ -1126,7 +1128,7 @@ importGetTrackerDialog getTracker;
 	ui.iconcomboProtocol->clear();
 	for ( int i = 0; i < protocolFileList.size(); i++) {
 
-		qDebug() << "createIconGroupBox says: ProtocolName = " << protocolFileList.at(i);
+//		qDebug() << "createIconGroupBox says: ProtocolName = " << protocolFileList.at(i);
 
 		//
 		// Delete the existing QDialog
@@ -1148,7 +1150,7 @@ importGetTrackerDialog getTracker;
 				pProtocolDialog = ptrXyz;
 				pProtocolDialog->getFullName( protocolName );
 				pProtocolDialog->getIcon( protocolIcon );
-				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+//				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
 			}
 			else {
 				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
@@ -1177,7 +1179,7 @@ importGetTrackerDialog getTracker;
 	ui.iconcomboFilter->clear();
 	for ( int i = 0; i < filterFileList.size(); i++) {
 
-		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
+//		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
 
 		//
 		// Delete the existing QDialog
@@ -1199,7 +1201,7 @@ importGetTrackerDialog getTracker;
 				pFilterDialog = ptrXyz;
 				pFilterDialog->getFullName( filterName );
 				pFilterDialog->getIcon( filterIcon );
-				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
+//				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
 			}
 			else {
 				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
@@ -1228,7 +1230,7 @@ importGetTrackerDialog getTracker;
 	ui.iconcomboTrackerSource->clear();
 	for ( int i = 0; i < trackerFileList.size(); i++) {
 
-		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
+//		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
 
 		//
 		// Delete the existing QDialog
@@ -1250,7 +1252,7 @@ importGetTrackerDialog getTracker;
 				pTrackerDialog = ptrXyz;
 				pTrackerDialog->getFullName( trackerName );
 				pTrackerDialog->getIcon( trackerIcon );
-				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDialog Function Resolved!";
+//				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDialog Function Resolved!";
 			}
 			else {
 				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
@@ -1911,12 +1913,25 @@ QWidget( parent , f)
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
-	connect(ui.curveYaw, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	connect(ui.curvePitch, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	connect(ui.curveRoll, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	connect(ui.curveX, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	connect(ui.curveY, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	connect(ui.curveZ, SIGNAL(BezierCurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	ui.qFunctionX->setConfig(Tracker::X.curvePtr);
+	connect(ui.qFunctionX, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	ui.qFunctionY->setConfig(Tracker::Y.curvePtr);
+	connect(ui.qFunctionY, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	ui.qFunctionZ->setConfig(Tracker::Z.curvePtr);
+	connect(ui.qFunctionZ, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+
+	ui.qFunctionYaw->setConfig(Tracker::Yaw.curvePtr);
+	connect(ui.qFunctionYaw, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	//
+	// There are 2 curves for Pitch: Up and Down. Users have indicated that, to be able to use visual Flight controls, it is necessary to have a 'slow' curve for Down...
+	//
+	ui.qFunctionPitch->setConfig(Tracker::Pitch.curvePtr);
+	connect(ui.qFunctionPitch, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+	ui.qFunctionPitchDown->setConfig(Tracker::Pitch.curvePtrAlt);							
+	connect(ui.qFunctionPitchDown, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+
+	ui.qFunctionRoll->setConfig(Tracker::Roll.curvePtr);
+	connect(ui.qFunctionRoll, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -1982,7 +1997,6 @@ void CurveConfigurationDialog::loadSettings() {
 int NeutralZone;
 int sensYaw, sensPitch, sensRoll;
 int sensX, sensY, sensZ;
-QPointF point1, point2, point3, point4;
 
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -2003,43 +2017,10 @@ QPointF point1, point2, point3, point4;
 
 	iniFile.endGroup ();
 
-	iniFile.beginGroup ( "Curves" );
-	getCurvePoints( &iniFile, "Yaw_", &point1, &point2, &point3, &point4, NeutralZone, sensYaw, 50, 180 );
-	ui.curveYaw->setPointOne( point1 );
-	ui.curveYaw->setPointTwo( point2 );
-	ui.curveYaw->setPointThree( point3 );
-	ui.curveYaw->setPointFour( point4 );
-
-	getCurvePoints( &iniFile, "Pitch_", &point1, &point2, &point3, &point4, NeutralZone, sensPitch, 50, 180 );
-	ui.curvePitch->setPointOne( point1 );
-	ui.curvePitch->setPointTwo( point2 );
-	ui.curvePitch->setPointThree( point3 );
-	ui.curvePitch->setPointFour( point4 );
-
-	getCurvePoints( &iniFile, "Roll_", &point1, &point2, &point3, &point4, NeutralZone, sensRoll, 50, 180 );
-	ui.curveRoll->setPointOne( point1 );
-	ui.curveRoll->setPointTwo( point2 );
-	ui.curveRoll->setPointThree( point3 );
-	ui.curveRoll->setPointFour( point4 );
-
-	getCurvePoints( &iniFile, "X_", &point1, &point2, &point3, &point4, NeutralZone, sensX, 50, 180 );
-	ui.curveX->setPointOne( point1 );
-	ui.curveX->setPointTwo( point2 );
-	ui.curveX->setPointThree( point3 );
-	ui.curveX->setPointFour( point4 );
-
-	getCurvePoints( &iniFile, "Y_", &point1, &point2, &point3, &point4, NeutralZone, sensY, 50, 180 );
-	ui.curveY->setPointOne( point1 );
-	ui.curveY->setPointTwo( point2 );
-	ui.curveY->setPointThree( point3 );
-	ui.curveY->setPointFour( point4 );
-
-	getCurvePoints( &iniFile, "Z_", &point1, &point2, &point3, &point4, NeutralZone, sensZ, 50, 180 );
-	ui.curveZ->setPointOne( point1 );
-	ui.curveZ->setPointTwo( point2 );
-	ui.curveZ->setPointThree( point3 );
-	ui.curveZ->setPointFour( point4 );
-	iniFile.endGroup ();
+	ui.qFunctionYaw->loadSettings(iniFile);
+	ui.qFunctionPitch->loadSettings(iniFile);
+	ui.qFunctionPitchDown->loadSettings(iniFile);
+	ui.qFunctionRoll->loadSettings(iniFile);
 
 	settingsDirty = false;
 
@@ -2057,38 +2038,11 @@ void CurveConfigurationDialog::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	iniFile.beginGroup ( "Curves" );
-	iniFile.setValue ("Yaw_point1", ui.curveYaw->getPointOne() );
-	iniFile.setValue ("Yaw_point2", ui.curveYaw->getPointTwo() );
-	iniFile.setValue ("Yaw_point3", ui.curveYaw->getPointThree() );
-	iniFile.setValue ("Yaw_point4", ui.curveYaw->getPointFour() );
+	ui.qFunctionYaw->saveSettings(iniFile);
+	ui.qFunctionPitch->saveSettings(iniFile);
+	ui.qFunctionPitchDown->saveSettings(iniFile);
+	ui.qFunctionRoll->saveSettings(iniFile);
 
-	iniFile.setValue ("Pitch_point1", ui.curvePitch->getPointOne() );
-	iniFile.setValue ("Pitch_point2", ui.curvePitch->getPointTwo() );
-	iniFile.setValue ("Pitch_point3", ui.curvePitch->getPointThree() );
-	iniFile.setValue ("Pitch_point4", ui.curvePitch->getPointFour() );
-
-	iniFile.setValue ("Roll_point1", ui.curveRoll->getPointOne() );
-	iniFile.setValue ("Roll_point2", ui.curveRoll->getPointTwo() );
-	iniFile.setValue ("Roll_point3", ui.curveRoll->getPointThree() );
-	iniFile.setValue ("Roll_point4", ui.curveRoll->getPointFour() );
-	
-	iniFile.setValue ("X_point1", ui.curveX->getPointOne() );
-	iniFile.setValue ("X_point2", ui.curveX->getPointTwo() );
-	iniFile.setValue ("X_point3", ui.curveX->getPointThree() );
-	iniFile.setValue ("X_point4", ui.curveX->getPointFour() );
-
-	iniFile.setValue ("Y_point1", ui.curveY->getPointOne() );
-	iniFile.setValue ("Y_point2", ui.curveY->getPointTwo() );
-	iniFile.setValue ("Y_point3", ui.curveY->getPointThree() );
-	iniFile.setValue ("Y_point4", ui.curveY->getPointFour() );
-
-	iniFile.setValue ("Z_point1", ui.curveZ->getPointOne() );
-	iniFile.setValue ("Z_point2", ui.curveZ->getPointTwo() );
-	iniFile.setValue ("Z_point3", ui.curveZ->getPointThree() );
-	iniFile.setValue ("Z_point4", ui.curveZ->getPointFour() );
-	
-	iniFile.endGroup ();
 	settingsDirty = false;
 
 	//

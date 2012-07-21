@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>757</width>
-    <height>603</height>
+    <width>858</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,7 +97,7 @@ color: rgb(255, 255, 255);
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="rotation_tab">
         <attribute name="icon">
@@ -112,63 +112,24 @@ color: rgb(255, 255, 255);
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>708</width>
-           <height>511</height>
+           <width>794</width>
+           <height>488</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QBezierConfigurator" name="curveYaw">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
+          <item row="0" column="1">
+           <widget class="QFunctionConfigurator" name="qFunctionPitch">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>255</red>
-              <green>170</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Yaw (degr.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Yaw (degr.)</string>
-            </property>
-            <property name="stringCaption" stdset="0">
-             <string>Yaw (left and right)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QBezierConfigurator" name="curvePitch">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
-            </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
             <property name="colorBezier">
              <color>
@@ -185,35 +146,26 @@ color: rgb(255, 255, 255);
              </color>
             </property>
             <property name="stringInputEGU" stdset="0">
-             <string>Input Pitch (degr.)</string>
+             <string>Input Pitch Up (degr.)</string>
             </property>
             <property name="stringOutputEGU" stdset="0">
-             <string>Output Pitch (degr.)</string>
-            </property>
-            <property name="stringCaption" stdset="0">
-             <string>Pitch (forward and backward)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
+             <string>Output Pitch Up (degr.)</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QBezierConfigurator" name="curveRoll">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
+          <item row="0" column="2">
+           <widget class="QFunctionConfigurator" name="qFunctionRoll">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
             <property name="colorBezier">
              <color>
@@ -235,134 +187,108 @@ color: rgb(255, 255, 255);
             <property name="stringOutputEGU" stdset="0">
              <string>Output Roll (degr.)</string>
             </property>
-            <property name="stringCaption" stdset="0">
-             <string>Roll (left and right)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QSpinBox" name="spinNZ_Yaw">
-            <property name="maximum">
-             <number>50</number>
+          <item row="0" column="0">
+           <widget class="QFunctionConfigurator" name="qFunctionYaw">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>NeutralZone</string>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="colorBezier">
+             <color>
+              <red>255</red>
+              <green>170</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="colorBackground">
+             <color>
+              <red>192</red>
+              <green>192</green>
+              <blue>192</blue>
+             </color>
+            </property>
+            <property name="stringInputEGU" stdset="0">
+             <string>Input Yaw (degr.)</string>
+            </property>
+            <property name="stringOutputEGU" stdset="0">
+             <string>Output Yaw (degr.)</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>NeutralZone</string>
+           <widget class="QFunctionConfigurator" name="qFunctionPitchDown">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="colorBezier">
+             <color>
+              <red>0</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </property>
+            <property name="colorBackground">
+             <color>
+              <red>192</red>
+              <green>192</green>
+              <blue>192</blue>
+             </color>
+            </property>
+            <property name="stringInputEGU" stdset="0">
+             <string>Input Pitch Down (degr.)</string>
+            </property>
+            <property name="stringOutputEGU" stdset="0">
+             <string>Output Pitch Down (degr.)</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_3">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>25</height>
+             </size>
+            </property>
             <property name="text">
-             <string>NeutralZone</string>
+             <string>Left-click the graph to place a new point, right-click a point to remove. Left-click and drag to move a point.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QSpinBox" name="spinNZ_Pitch">
-            <property name="maximum">
-             <number>50</number>
+           <widget class="QWidget" name="widget_3" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>170</width>
+              <height>140</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">image: url(:/images/rotation_DOFs.png);</string>
             </property>
            </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QSpinBox" name="spinNZ_Roll">
-            <property name="maximum">
-             <number>50</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QWidget" name="widget" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>170</width>
-                <height>140</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>170</width>
-                <height>140</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">image: url(:/images/rotation_DOFs.png);
-background-color: rgb(255, 255, 255);</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="3">
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>115</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_9">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Use the circular handles to change</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_8">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>the curve(s).</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
@@ -378,110 +304,26 @@ background-color: rgb(255, 255, 255);</string>
         <widget class="QWidget" name="verticalLayoutWidget_2">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>30</x>
            <y>10</y>
-           <width>708</width>
-           <height>491</height>
+           <width>794</width>
+           <height>388</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="0">
-           <widget class="QBezierConfigurator" name="curveY">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
-            </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>0</red>
-              <green>0</green>
-              <blue>255</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Move (cm)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Move (cm)</string>
-            </property>
-            <property name="stringCaption" stdset="0">
-             <string>Move (up and down)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QBezierConfigurator" name="curveZ">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
-            </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>255</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Move (cm)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Move (cm)</string>
-            </property>
-            <property name="stringCaption" stdset="0">
-             <string>Move (forward and backward)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
-           <widget class="QBezierConfigurator" name="curveX">
-            <property name="maxInputEGU" stdset="0">
-             <number>50</number>
+           <widget class="QFunctionConfigurator" name="qFunctionX">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
             </property>
             <property name="colorBezier">
              <color>
@@ -498,86 +340,124 @@ background-color: rgb(255, 255, 255);</string>
              </color>
             </property>
             <property name="stringInputEGU" stdset="0">
-             <string>Input Move (cm)</string>
+             <string>Left/Right Input X (cm.)</string>
             </property>
             <property name="stringOutputEGU" stdset="0">
-             <string>Output Move (cm)</string>
-            </property>
-            <property name="stringCaption" stdset="0">
-             <string>Move (left and right)</string>
-            </property>
-            <property name="pointOne" stdset="0">
-             <pointf>
-              <x>0.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
-            </property>
-            <property name="pointThree" stdset="0">
-             <pointf>
-              <x>90.000000000000000</x>
-              <y>0.000000000000000</y>
-             </pointf>
+             <string>Output X (cm.)</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>NeutralZone</string>
+           <widget class="QFunctionConfigurator" name="qFunctionY">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="colorBezier">
+             <color>
+              <red>85</red>
+              <green>0</green>
+              <blue>255</blue>
+             </color>
+            </property>
+            <property name="colorBackground">
+             <color>
+              <red>192</red>
+              <green>192</green>
+              <blue>192</blue>
+             </color>
+            </property>
+            <property name="stringInputEGU" stdset="0">
+             <string>Up/Down Input Y (cm.)</string>
+            </property>
+            <property name="stringOutputEGU" stdset="0">
+             <string>Output Y (cm.)</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QSpinBox" name="spinNZ_X">
-            <property name="maximum">
-             <number>50</number>
+           <widget class="QFunctionConfigurator" name="qFunctionZ">
+            <property name="minimumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>260</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="colorBezier">
+             <color>
+              <red>255</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="colorBackground">
+             <color>
+              <red>192</red>
+              <green>192</green>
+              <blue>192</blue>
+             </color>
+            </property>
+            <property name="stringInputEGU" stdset="0">
+             <string>Forward/Backward Input Z (cm.)</string>
+            </property>
+            <property name="stringOutputEGU" stdset="0">
+             <string>Output Z (cm.)</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>NeutralZone</string>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>25</height>
+             </size>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>NeutralZone</string>
+             <string>Left-click the graph to place a new point, right-click a point to remove. Left-click and drag to move a point.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QSpinBox" name="spinNZ_Y">
-            <property name="maximum">
-             <number>50</number>
+           <widget class="QWidget" name="widget_2" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>170</width>
+              <height>140</height>
+             </size>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QSpinBox" name="spinNZ_Z">
-            <property name="maximum">
-             <number>50</number>
+            <property name="styleSheet">
+             <string notr="true">image: url(:/images/translation_DOFs.png);</string>
             </property>
+            <widget class="QWidget" name="layoutWidget">
+             <property name="geometry">
+              <rect>
+               <x>-40</x>
+               <y>0</y>
+               <width>260</width>
+               <height>140</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+            </widget>
            </widget>
-          </item>
-          <item row="1" column="3">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QWidget" name="widget_2" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>170</width>
-                <height>140</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">image: url(:/images/translation_DOFs.png);</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
@@ -680,208 +560,15 @@ background-color: rgb(255, 255, 255);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QBezierConfigurator</class>
+   <class>QFunctionConfigurator</class>
    <extends>QWidget</extends>
-   <header>qbezierconfigurator.h</header>
+   <header>qfunctionconfigurator.h</header>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="FaceTrackNoIR.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>curveYaw</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_Yaw</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>268</x>
-     <y>114</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>593</x>
-     <y>125</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_Yaw</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curveYaw</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>588</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>296</x>
-     <y>110</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>curvePitch</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_Pitch</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>321</x>
-     <y>280</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>576</x>
-     <y>289</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_Pitch</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curvePitch</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>629</x>
-     <y>287</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>334</x>
-     <y>285</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>curveRoll</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_Roll</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>322</x>
-     <y>423</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>589</x>
-     <y>447</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_Roll</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curveRoll</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>618</x>
-     <y>446</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>257</x>
-     <y>464</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>curveX</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_X</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>312</x>
-     <y>107</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>568</x>
-     <y>126</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_X</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curveX</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>548</x>
-     <y>125</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>322</x>
-     <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>curveY</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_Y</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>282</x>
-     <y>261</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>569</x>
-     <y>286</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_Y</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curveY</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>549</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>342</x>
-     <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>curveZ</sender>
-   <signal>valueNeutralZoneChanged(int)</signal>
-   <receiver>spinNZ_Z</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>363</x>
-     <y>417</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>571</x>
-     <y>445</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinNZ_Z</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>curveZ</receiver>
-   <slot>setNeutralZone(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>546</x>
-     <y>444</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>316</x>
-     <y>447</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>
