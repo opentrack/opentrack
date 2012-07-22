@@ -128,6 +128,11 @@ public slots:
     void setOutputEGU(QString);
     void setCaption(QString);
 
+	void resetCurve() {
+		QSettings iniFile( strSettingsFile, QSettings::IniFormat );		// Application settings (in INI-file)
+		loadSettings( iniFile );
+	}
+
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
@@ -135,11 +140,13 @@ protected slots:
 	void mouseReleaseEvent(QMouseEvent *e);
       
 protected:
-	void drawBackground(QPainter *painter, const QRectF &rect);
+	void drawBackground(const QRectF &rect);
+	void drawFunction(const QRectF &rect);
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
 	bool markContains(const QPointF &pt, const QPointF &coord) const;
-	bool withinRange( const QPointF &coord ) const;
+//	bool withinRange( const QPointF &coord ) const;
+	bool withinRect( const QPointF &coord, const QRectF &rect ) const;
 
 protected:
 	virtual void resizeEvent(QResizeEvent *);
@@ -163,6 +170,13 @@ private:
 	QString strInputEGU;			// Engineering Units input (vertical axis)
 	QString strOutputEGU;			// Engineering Units output (horizontal axis)
 	QString strCaption;				// Caption of the graph
+	QString strSettingsFile;		// Name of last read INI-file
+	QPushButton *btnReset;			// Reset Curve
+
+	bool _draw_background;			// Flag to determine if the background should be (re-)drawn on the QPixmap
+	QPixmap _background;			// Image of the static parts (axis, lines, etc.)
+	bool _draw_function;			// Flag to determine if the function should be (re-)drawn on the QPixmap
+	QPixmap _function;				// Image of the function (static unless edited by the user)
 
 	//
 	// Properties of the CurveConfigurator Widget
