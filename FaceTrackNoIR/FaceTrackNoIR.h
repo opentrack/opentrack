@@ -63,8 +63,8 @@ typedef IFilterDialog *(WINAPI *importGetFilterDialog)(void);
 
 class Tracker;				// pre-define class to avoid circular includes
 
-void getCurvePoints(QSettings *iniFile, QString prefix, QPointF *one, QPointF *two, QPointF *three, QPointF *four, 
-					int NeutralZone, int Sensitivity, int MaxInput, int MaxOutput);
+//void getCurvePoints(QSettings *iniFile, QString prefix, QPointF *one, QPointF *two, QPointF *three, QPointF *four, 
+//					int NeutralZone, int Sensitivity, int MaxInput, int MaxOutput);
 
 class FaceTrackNoIR : public QMainWindow
 {

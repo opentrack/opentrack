@@ -772,6 +772,7 @@ void FaceTrackNoIR::stopTracker( ) {
 
 	// Enable/disable Protocol-server Settings
 	ui.btnShowServerControls->setEnabled ( true );
+	ui.video_frame->hide();
 
 	//// Engine controls
 	//switch (ui.iconcomboTrackerSource->currentIndex()) {
@@ -1000,19 +1001,20 @@ QString libName;
 void FaceTrackNoIR::showFilterControls() {
 importGetFilterDialog getIT;
 QLibrary *filterLib;
+QString libName;
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	//
-	// Read the currently selected Filter from the INI-file.
-	//
-	iniFile.beginGroup ( "Filter" );
-	QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
-	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
-	iniFile.endGroup ();
+	////
+	//// Read the currently selected Filter from the INI-file.
+	////
+	//iniFile.beginGroup ( "Filter" );
+	//QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
+	//qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
+	//iniFile.endGroup ();
 
 	//
 	// Delete the existing QDialog
@@ -1021,23 +1023,32 @@ QLibrary *filterLib;
 		pFilterDialog.Release();
 	}
 
-	filterLib = new QLibrary(selectedFilterName);
+		// Show the appropriate Protocol-server Settings
+	libName.clear();
+	libName = getCurrentFilterName();
 
-	getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
-	if (getIT) {
-		IFilterDialogPtr ptrXyz(getIT());
-		if (ptrXyz)
-		{
-			pFilterDialog = ptrXyz;
-			pFilterDialog->Initialize( this, Tracker::getFilterPtr() );
-			qDebug() << "FaceTrackNoIR::showFilterControls GetFilterDialog Function Resolved!";
+	//
+	// Load the Server-settings dialog (if any) and show it.
+	//
+	if (!libName.isEmpty()) {
+		filterLib = new QLibrary(libName);
+
+		getIT = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
+		if (getIT) {
+			IFilterDialogPtr ptrXyz(getIT());
+			if (ptrXyz)
+			{
+				pFilterDialog = ptrXyz;
+				pFilterDialog->Initialize( this, Tracker::getFilterPtr() );
+				qDebug() << "FaceTrackNoIR::showFilterControls GetFilterDialog Function Resolved!";
+			}
+			else {
+				qDebug() << "FaceTrackNoIR::showFilterControls Function NOT Resolved!";
+			}	
 		}
 		else {
-			qDebug() << "FaceTrackNoIR::showFilterControls Function NOT Resolved!";
-		}	
-	}
-	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
 	}
 }
 

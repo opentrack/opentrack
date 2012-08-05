@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="postbuild.bat &quot;$(QTDIR)\plugins\designer\QBezierConfigurator.dll&quot; &quot;$(OutDir)&quot; $(ConfigurationName)"
+				CommandLine="postbuild.bat &quot;$(QTDIR)\plugins\designer\QFunctionConfigurator.dll&quot; &quot;$(OutDir)&quot; $(ConfigurationName)"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib QtNetwork4.lib Strmiids.lib Ws2_32.lib QBezierConfigurator.lib QFunctionConfigurator.lib"
+				AdditionalDependencies="opengl32.lib qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib QtNetwork4.lib Strmiids.lib Ws2_32.lib QFunctionConfigurator.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories=""
 				GenerateManifest="true"
