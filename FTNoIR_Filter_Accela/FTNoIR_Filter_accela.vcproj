@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="FTNoIR_Filter_Accela"
 	ProjectGUID="{2212857A-7634-4E30-BA83-539EC70176E6}"
 	RootNamespace="FTNoIR_Filter_Accela"
@@ -55,7 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QFunctionConfigurator.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="false"

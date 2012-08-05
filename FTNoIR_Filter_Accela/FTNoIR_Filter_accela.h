@@ -28,6 +28,8 @@
 
 #include "..\ftnoir_filter_base\ftnoir_filter_base.h"
 #include "ui_FTNoIR_FilterControls.h"
+#include <FunctionConfig.h>
+//#include <FunctionEditorFrame.h>
 
 class FTNoIR_Filter : public IFilter
 {
@@ -51,11 +53,12 @@ private:
 	bool	first_run;
 	double kFactor, kFactorTranslation;
 	double kSensitivity, kSensitivityTranslation;
-	double kC1, kC2, kC3, kC4, kC0;
 
 	QString filterFullName;									// Filters' name and description
 	QString filterShortName;
 	QString filterDescription;
+	FunctionConfig functionConfig;
+	FunctionConfig translationFunctionConfig;
 };
 
 //*******************************************************************************************************
@@ -78,7 +81,6 @@ public:
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
-
 private:
 	Ui::UICFilterControls ui;
 	void loadSettings();
@@ -91,13 +93,13 @@ private:
 	QString filterShortName;
 	QString filterDescription;
 	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+	FunctionConfig functionConfig;
+	FunctionConfig translationFunctionConfig;
 
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged( int ) { settingsDirty = true; };
-	void settingChanged( double ) { settingsDirty = true; };
+	void settingChanged(bool) { settingsDirty = true; };
 };
 
 #endif						//INCLUDED_FTN_FILTER_H
