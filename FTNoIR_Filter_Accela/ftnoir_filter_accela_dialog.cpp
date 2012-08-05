@@ -33,7 +33,9 @@
 // Constructor for server-settings-dialog
 //
 FilterControls::FilterControls() :
-QWidget()
+	QWidget(),
+	functionConfig("Accela-Scaling-Rotation", 4, 8),
+	translationFunctionConfig("Accela-Scaling-Translation", 4, 8)
 {
 	ui.setupUi( this );
 
@@ -41,29 +43,12 @@ QWidget()
 	filterFullName = "Accela Filter";
 	filterShortName = "Accela";
 	filterDescription = "Accela Filter";
-
 	// Load the settings from the current .INI-file
 	loadSettings();
-
-	QPoint offsetpos(100, 100);
-	//if (parent) {
-	//	this->move(parent->pos() + offsetpos);
-	//}
-
-	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-	// Connect sliders for reduction factor
-	connect(ui.sensitivity, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.factor, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.sensitivity_translation, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.factor_translation, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.c_0, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.c_1, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.c_2, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.c_3, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.c_4, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+	connect(ui.scalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
+	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
 
 	qDebug() << "FilterControls() says: started";
 }
@@ -159,17 +144,17 @@ void FilterControls::loadSettings() {
 
 	qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
 
-	iniFile.beginGroup ( "Filter_Accela" );
-	ui.factor->setValue(iniFile.value ("factor", 8.0).toDouble());
-	ui.sensitivity->setValue(iniFile.value("sensitivity", 12.0).toDouble());
-	ui.factor_translation->setValue(iniFile.value ("factor_translation", 1.0).toDouble());
-	ui.sensitivity_translation->setValue(iniFile.value("sensitivity_translation", 1.0).toDouble());
-	ui.c_0->setValue(iniFile.value("c0", 0.005).toDouble());
-	ui.c_1->setValue(iniFile.value("c1", 0.125).toDouble());
-	ui.c_2->setValue(iniFile.value("c2", 0.33333).toDouble());
-	ui.c_3->setValue(iniFile.value("c3", 0.75).toDouble());
-	ui.c_4->setValue(iniFile.value("c4", 1.0).toDouble());
-	iniFile.endGroup ();
+	//ui.scalingConfig->setBounds(0, 0, 4.0, 8, 0.25, 0.25);
+	//ui.scalingConfig->setSize(1000, 550);
+
+	//ui.translationScalingConfig->setBounds(0, 0, 4.0, 8, 0.25, 0.25);
+	//ui.translationScalingConfig->setSize(1000, 550);
+
+	functionConfig.loadSettings(iniFile);
+	translationFunctionConfig.loadSettings(iniFile);
+
+	ui.translationScalingConfig->setConfig(&translationFunctionConfig);
+	ui.scalingConfig->setConfig(&functionConfig);
 
 	settingsDirty = false;
 }
@@ -183,17 +168,8 @@ void FilterControls::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	iniFile.beginGroup ( "Filter_Accela" );
-	iniFile.setValue ( "sensitivity", ui.sensitivity->value() );
-	iniFile.setValue("factor", ui.factor->value());
-	iniFile.setValue ( "sensitivity_translation", ui.sensitivity_translation->value() );
-	iniFile.setValue("factor_translation", ui.factor_translation->value());
-	iniFile.setValue("c0", ui.c_0->value());
-	iniFile.setValue("c1", ui.c_1->value());
-	iniFile.setValue("c2", ui.c_2->value());
-	iniFile.setValue("c3", ui.c_3->value());
-	iniFile.setValue("c4", ui.c_4->value());
-	iniFile.endGroup ();
+	functionConfig.saveSettings(iniFile);
+	translationFunctionConfig.saveSettings(iniFile);
 
 	settingsDirty = false;
 }
@@ -217,7 +193,7 @@ void FilterControls::getDescription(QString *strToBeFilled)
 
 void FilterControls::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/images/filter-16-ac.png");
+	*icon = QIcon(":/images/filter-16.png");
 };
 
 ////////////////////////////////////////////////////////////////////////////////

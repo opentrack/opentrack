@@ -7,17 +7,19 @@
 #include "ftnoir_filter_Accela.h"
 #include "math.h"
 #include <QDebug>
+#include <windows.h>
 
-FTNoIR_Filter::FTNoIR_Filter()
+FTNoIR_Filter::FTNoIR_Filter() :
+	functionConfig("Accela-Scaling-Rotation", 4, 8),
+	translationFunctionConfig("Accela-Scaling-Translation", 4, 8)
 {
 	//populate the description strings
-	filterFullName = "Accela Filter";
-	filterShortName = "Accela";
-	filterDescription = "Accela filter";
+	filterFullName = "Accela Filter mkII";
+	filterShortName = "Accela mkII";
+	filterDescription = "Accela filter mkII";
 
 	first_run = true;
 	loadSettings();					// Load the Settings
-
 }
 
 FTNoIR_Filter::~FTNoIR_Filter()
@@ -42,20 +44,8 @@ void FTNoIR_Filter::loadSettings() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "Filter_Accela" );
-	kFactor = iniFile.value ( "factor", 8.0 ).toDouble();
-	kSensitivity = iniFile.value("sensitivity", 12.0).toDouble();
-	kC0 = iniFile.value("c0", 0.005).toDouble();
-	kC1 = iniFile.value("c1", 0.125).toDouble();
-	kC2 = iniFile.value("c2", 0.33333).toDouble();
-	kC3 = iniFile.value("c3", 0.75).toDouble();
-	kC4 = iniFile.value("c4", 1.0).toDouble();
-	kFactorTranslation = iniFile.value("factor_translation", 1.0).toDouble();
-	kSensitivityTranslation = iniFile.value("sensitivity_translation", 1.0).toDouble();
-
-	iniFile.endGroup ();
+	functionConfig.loadSettings(iniFile);
+	translationFunctionConfig.loadSettings(iniFile);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
@@ -94,27 +84,44 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 
 	for (i=0;i<6;i++)
 	{
+		volatile double bleh;
+
+		bleh = target[i];
+
+		if (bleh != bleh)
+			return;
+
+		bleh = prev_output[i];
+
+		if (bleh != bleh)
+			return;
+
 		double e2 = target[i];
 		double start = prev_output[i];
 		double vec = e2 - start;
 		int sign = vec < 0 ? -1 : 1;
-		double max = i >= 3 ? kFactor : kFactorTranslation;
-		double x = fabs(vec) / max;
-		double foo = kC4 * x * x * x * x + kC3 * x * x * x + kC2 * x * x + kC1 * x + kC0;
+		double x = fabs(vec);
+		double foo = (i >= 3 ? functionConfig : translationFunctionConfig).getValue((x > 4 ? 4 : x));
+		if (x > 4)
+			foo = x * x * log(x) / log(4.0);
 		// the idea is that "empty" updates without new head pose data are still
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
-		double velocity = foo * (i >= 3 ? kSensitivity : kSensitivityTranslation) / 100.0;
+		double velocity = foo / 100.0;
 		double sum = start + velocity * sign;
-		bool done = sign > 0 ? sum >= e2 : sum <= e2;
+		bool done = /*x >= 6 || */(sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {
 			output[i] = e2;
 		} else {
 			output[i] = sum;
 		}
+
+		bleh = output[i];
+
+		if (bleh != bleh)
+			return;
 	}
 
-end:
 	new_camera_position->x=output[0];
 	new_camera_position->y=output[1];
 	new_camera_position->z=output[2];
