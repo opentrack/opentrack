@@ -100,17 +100,18 @@ class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 class THeadPoseDOF {
 public:
 
-	THeadPoseDOF(QString primary, QString secondary = "") {
-		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	THeadPoseDOF(QString primary, QString secondary = "", int maxInput = 50, int maxOutput = 180) {
+		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");							// Registry settings (in HK_USER)
 		QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-		QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+		QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
 
-		curvePtr = new FunctionConfig(primary);						// Create the Function-config for input-output translation
-		curvePtr->loadSettings(iniFile);							// Load the settings from the INI-file
+		curvePtr = new FunctionConfig(primary, maxInput, maxOutput);						// Create the Function-config for input-output translation
+		curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
 		if (secondary != "") {
-			curvePtrAlt = new FunctionConfig(secondary);
+			curvePtrAlt = new FunctionConfig(secondary, maxInput, maxOutput);
 			curvePtrAlt->loadSettings(iniFile);
 		}
+
 	}
 
 	void initHeadPoseData(){
@@ -126,6 +127,9 @@ public:
 		MaxInput = 0;
 		confidence = 0.0f;
 		newSample = FALSE;
+
+		qDebug() << "initHeadPoseData: " << curvePtr->getTitle();
+
 	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
 	float offset_headPos;			// Offset for centering

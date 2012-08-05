@@ -23,6 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
+						uses the Curve(s). ToDo: make the ranges configurable by the user. Development on the Toradex IMU makes us realize, that
+						a fixed input-range may not be so handy after all..
 		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
 						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
 		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
@@ -80,23 +83,23 @@ bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
 
-bool Tracker::useAxisReverse = false;						// Use Axis Reverse
-float Tracker::YawAngle4ReverseAxis = 40.0f;				// Axis Reverse settings
+bool Tracker::useAxisReverse = false;							// Use Axis Reverse
+float Tracker::YawAngle4ReverseAxis = 40.0f;					// Axis Reverse settings
 float Tracker::Z_Pos4ReverseAxis = -20.0f;
 float Tracker::Z_PosWhenReverseAxis = 50.0f;
 
 
-T6DOF Tracker::current_camera(0,0,0,0,0,0);				// Used for filtering
+T6DOF Tracker::current_camera(0,0,0,0,0,0);						// Used for filtering
 T6DOF Tracker::target_camera(0,0,0,0,0,0);
 T6DOF Tracker::new_camera(0,0,0,0,0,0);
-T6DOF Tracker::output_camera(0,0,0,0,0,0);				// Position sent to game protocol
+T6DOF Tracker::output_camera(0,0,0,0,0,0);						// Position sent to game protocol
 
-THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown");	// One structure for each of 6DOF's
-THeadPoseDOF Tracker::Yaw("Yaw", "");
-THeadPoseDOF Tracker::Roll("Roll", "");
-THeadPoseDOF Tracker::X("X","");
-THeadPoseDOF Tracker::Y("Y","");
-THeadPoseDOF Tracker::Z("Z","");
+THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown", 50, 90);	// One structure for each of 6DOF's
+THeadPoseDOF Tracker::Yaw("Yaw", "", 50, 180);
+THeadPoseDOF Tracker::Roll("Roll", "", 50, 180);
+THeadPoseDOF Tracker::X("X","", 50, 180);
+THeadPoseDOF Tracker::Y("Y","", 50, 180);
+THeadPoseDOF Tracker::Z("Z","", 50, 180);
 
 TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
@@ -384,28 +387,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					// To start tracking again and to be at '0', execute Center command too
 					//
 					if (Tracker::do_tracking) {
-						Tracker::do_center = true;
-
 						Tracker::confid = false;
-
-						Pitch.rawList.clear();
-						Pitch.prevPos = 0.0f;
-						Yaw.rawList.clear();
-						Yaw.prevPos = 0.0f;
-						Roll.rawList.clear();
-						Roll.prevPos = 0.0f;
-						X.rawList.clear();
-						X.prevPos = 0.0f;
-						Y.rawList.clear();
-						Y.prevPos = 0.0f;
-						Z.rawList.clear();
-						Z.prevPos = 0.0f;
-
-						current_camera.initHeadPoseData();
-						target_camera.initHeadPoseData();
-						new_camera.initHeadPoseData();
-						offset_camera.initHeadPoseData();
-
 						pTracker->StartTracker( mainApp->winId() );
 					}
 					else {
