@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>157</height>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FTIR settings FaceTrackNoIR</string>
+   <string>FreeTrack settings FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -39,16 +39,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QCheckBox" name="chkTIRViews">
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>Use TIRViews</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -69,24 +59,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>TIRViews is only required for some older games (like CFS3).</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>For it to work, TIRViews.dll must be placed in the FaceTrackNoIR program folder.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>If the checkbox is disabled, the DLL was not found.</string>
+        <string>There are no settings necessary for the FreeTrack protocol.</string>
        </property>
       </widget>
      </item>
