@@ -37,7 +37,7 @@
 //#include "winbase.h"
 
 #include "windows.h"
-#include "winable.h"
+//#include "winable.h"
 
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.

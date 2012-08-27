@@ -40,6 +40,8 @@
 #include <QDebug>
 #include <QFile>
 
+#include "winable.h"
+
 #define MOUSE_AXIS_MIN 0
 #define MOUSE_AXIS_MAX 65535
 
