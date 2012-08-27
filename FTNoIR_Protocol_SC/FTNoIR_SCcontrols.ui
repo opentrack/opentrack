@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>346</width>
-    <height>180</height>
+    <height>104</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PPJoy settings FaceTrackNoIR</string>
+   <string>SimConnect settings FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -35,23 +35,13 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Virtual Joystick number:</string>
+        <string>There are no setting necessary for SimConnect</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="wordWrap">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cbxSelectPPJoyNumber">
-       <property name="toolTip">
-        <string>Select Number</string>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAlphabetically</enum>
        </property>
       </widget>
      </item>

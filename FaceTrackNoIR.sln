@@ -41,6 +41,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Filter_Accela", "FTN
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Protocol_VJOY", "FTNoIR_Protocol_VJOY\FTNoIR_Protocol_VJOY.vcproj", "{07E729F2-57E5-408E-A009-3501B38A621A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_Toradex", "FTNoIR_Tracker_Toradex\FTNoIR_Tracker_Toradex.vcproj", "{07B81A72-65AE-4ACF-8734-8519E8604CEC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_Arduino", "FTNoIR_Tracker_Arduino\FTNoIR_Tracker_Arduino.vcproj", "{26073935-6C44-49FD-A986-DD91FE727306}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -122,6 +126,14 @@ Global
 		{07E729F2-57E5-408E-A009-3501B38A621A}.Debug|Win32.Build.0 = Debug|Win32
 		{07E729F2-57E5-408E-A009-3501B38A621A}.Release|Win32.ActiveCfg = Release|Win32
 		{07E729F2-57E5-408E-A009-3501B38A621A}.Release|Win32.Build.0 = Release|Win32
+		{07B81A72-65AE-4ACF-8734-8519E8604CEC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07B81A72-65AE-4ACF-8734-8519E8604CEC}.Debug|Win32.Build.0 = Debug|Win32
+		{07B81A72-65AE-4ACF-8734-8519E8604CEC}.Release|Win32.ActiveCfg = Release|Win32
+		{07B81A72-65AE-4ACF-8734-8519E8604CEC}.Release|Win32.Build.0 = Release|Win32
+		{26073935-6C44-49FD-A986-DD91FE727306}.Debug|Win32.ActiveCfg = Debug|Win32
+		{26073935-6C44-49FD-A986-DD91FE727306}.Debug|Win32.Build.0 = Debug|Win32
+		{26073935-6C44-49FD-A986-DD91FE727306}.Release|Win32.ActiveCfg = Release|Win32
+		{26073935-6C44-49FD-A986-DD91FE727306}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
 		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
 						uses the Curve(s). ToDo: make the ranges configurable by the user. Development on the Toradex IMU makes us realize, that
 						a fixed input-range may not be so handy after all..
@@ -359,7 +360,15 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 
 			// Set event
 			::SetEvent(m_WaitThread);
-		   qDebug() << "Tracker::run terminated run()";
+			qDebug() << "Tracker::run terminated run()";
+			X.curvePtr->setTrackingActive( false );
+			Y.curvePtr->setTrackingActive( false );
+			Z.curvePtr->setTrackingActive( false );
+			Yaw.curvePtr->setTrackingActive( false );
+			Pitch.curvePtr->setTrackingActive( false );
+			Pitch.curvePtrAlt->setTrackingActive( false );
+			Roll.curvePtr->setTrackingActive( false );
+
 			return;
 		}
 
@@ -507,9 +516,17 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				output_camera.position.x = X.invert * X.curvePtr->getValue(new_camera.position.x);
 				output_camera.position.y = Y.invert * Y.curvePtr->getValue(new_camera.position.y);
 				output_camera.position.z = Z.invert * Z.curvePtr->getValue(new_camera.position.z);
-				int altp = new_camera.position.pitch < 0;
-				output_camera.position.pitch = Pitch.invert * (altp ? Pitch.curvePtrAlt : Pitch.curvePtr)->getValue(new_camera.position.pitch);
-				///output_camera.position.pitch = Pitch.invert * Pitch.curvePtr->getValue(new_camera.position.pitch);
+				bool altp = new_camera.position.pitch < 0;
+				if (altp) {
+					output_camera.position.pitch = Pitch.invert * Pitch.curvePtrAlt->getValue(new_camera.position.pitch);
+					Pitch.curvePtr->setTrackingActive( false );
+					Pitch.curvePtrAlt->setTrackingActive( true );
+				}
+				else {
+					output_camera.position.pitch = Pitch.invert * Pitch.curvePtr->getValue(new_camera.position.pitch);
+					Pitch.curvePtr->setTrackingActive( true );
+					Pitch.curvePtrAlt->setTrackingActive( false );
+				}
 				output_camera.position.yaw = Yaw.invert * Yaw.curvePtr->getValue(new_camera.position.yaw);
 				output_camera.position.roll = Roll.invert * Roll.curvePtr->getValue(new_camera.position.roll);
 
@@ -518,8 +535,6 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				Y.curvePtr->setTrackingActive( true );
 				Z.curvePtr->setTrackingActive( true );
 				Yaw.curvePtr->setTrackingActive( true );
-				Pitch.curvePtr->setTrackingActive( true );
-				Pitch.curvePtrAlt->setTrackingActive( true );
 				Roll.curvePtr->setTrackingActive( true );
 
 				//

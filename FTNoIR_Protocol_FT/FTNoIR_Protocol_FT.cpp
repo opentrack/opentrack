@@ -356,7 +356,7 @@ QWidget()
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+//	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -445,7 +445,7 @@ void FTControls::loadSettings() {
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "FT" );
-	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+//	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -461,7 +461,7 @@ void FTControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FT" );
-	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+//	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
