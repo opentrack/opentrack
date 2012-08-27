@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1118</width>
-    <height>649</height>
+    <width>518</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,14 +43,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>1100</width>
-       <height>600</height>
+       <width>500</width>
+       <height>300</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>65535</width>
-       <height>65535</height>
+       <width>500</width>
+       <height>300</height>
       </size>
      </property>
      <property name="currentIndex">
@@ -60,54 +60,6 @@
       <attribute name="title">
        <string>Rotation</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="translationScalingConfig">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>30</y>
-         <width>215</width>
-         <height>220</height>
-        </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>4</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>40</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>20</number>
-       </property>
-       <property name="gridDistEGU_Input" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="gridDistEGU_Output" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="colorBezier">
-        <color>
-         <red>255</red>
-         <green>170</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground">
-        <color>
-         <red>192</red>
-         <green>192</green>
-         <blue>192</blue>
-        </color>
-       </property>
-       <property name="stringInputEGU" stdset="0">
-        <string>Input Yaw (degr.)</string>
-       </property>
-       <property name="stringOutputEGU" stdset="0">
-        <string>Output Yaw (degr.)</string>
-       </property>
-      </widget>
       <widget class="QFunctionConfigurator" name="scalingConfig">
        <property name="geometry">
         <rect>
@@ -161,6 +113,54 @@
       <attribute name="title">
        <string>Translation</string>
       </attribute>
+      <widget class="QFunctionConfigurator" name="translationScalingConfig">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>20</y>
+         <width>215</width>
+         <height>220</height>
+        </rect>
+       </property>
+       <property name="maxInputEGU" stdset="0">
+        <number>4</number>
+       </property>
+       <property name="maxOutputEGU" stdset="0">
+        <number>8</number>
+       </property>
+       <property name="pixPerEGU_Input" stdset="0">
+        <number>40</number>
+       </property>
+       <property name="pixPerEGU_Output" stdset="0">
+        <number>20</number>
+       </property>
+       <property name="gridDistEGU_Input" stdset="0">
+        <number>1</number>
+       </property>
+       <property name="gridDistEGU_Output" stdset="0">
+        <number>1</number>
+       </property>
+       <property name="colorBezier">
+        <color>
+         <red>255</red>
+         <green>170</green>
+         <blue>0</blue>
+        </color>
+       </property>
+       <property name="colorBackground">
+        <color>
+         <red>192</red>
+         <green>192</green>
+         <blue>192</blue>
+        </color>
+       </property>
+       <property name="stringInputEGU" stdset="0">
+        <string>Input Yaw (degr.)</string>
+       </property>
+       <property name="stringOutputEGU" stdset="0">
+        <string>Output Yaw (degr.)</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

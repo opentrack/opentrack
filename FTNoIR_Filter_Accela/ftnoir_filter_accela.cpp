@@ -4,6 +4,12 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
+/*
+	Modifications (last one on top):
+		20120807 - WVR: FunctionConfig is now also used for the Filter. The extrapolation was adapted from Stanislaw.
+					    Additional changes: I have added two parameters to the constructor of FunctionConfig and
+						renamed 3 member-functions (getFilterFullName is now called getFullName).
+*/
 #include "ftnoir_filter_Accela.h"
 #include "math.h"
 #include <QDebug>
@@ -101,15 +107,27 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 		double vec = e2 - start;
 		int sign = vec < 0 ? -1 : 1;
 		double x = fabs(vec);
-		double foo = (i >= 3 ? functionConfig : translationFunctionConfig).getValue((x > 4 ? 4 : x));
-		if (x > 4)
-			foo = x * x * log(x) / log(4.0);
+		QList<QPointF> points = (i >= 3 ? functionConfig : translationFunctionConfig).getPoints();
+		int extrapolatep = 0;
+		double ratio;
+		double maxx;
+		double add;
+		// extrapolation of a spline
+		if (points.size() > 1) {
+			QPointF last = points[points.size() - 1];
+			QPointF penultimate = points[points.size() - 2];
+			ratio = (last.y() - penultimate.y()) / (last.x() - penultimate.x());
+			extrapolatep = 1;
+			add = last.y();
+			maxx = last.x();
+		}
+		double foo = extrapolatep && x > maxx ? add + ratio * (x - maxx) : (i >= 3 ? functionConfig : translationFunctionConfig).getValue(x);
 		// the idea is that "empty" updates without new head pose data are still
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
 		double velocity = foo / 100.0;
 		double sum = start + velocity * sign;
-		bool done = /*x >= 6 || */(sign > 0 ? sum >= e2 : sum <= e2);
+		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {
 			output[i] = e2;
 		} else {
