@@ -120,9 +120,9 @@ public:
 	~QFunctionConfigurator();
 	FunctionConfig* config();
 
-	void setConfig(FunctionConfig* config);			// Connect the FunctionConfig to the Widget.
-	void loadSettings(QSettings& settings);			// Load the FunctionConfig (points) from the INI-file
-	void saveSettings(QSettings& settings);			// Save the FunctionConfig (points) to the INI-file
+	void setConfig(FunctionConfig* config, QString settingsFile);		// Connect the FunctionConfig to the Widget.
+	void loadSettings(QString settingsFile);							// Load the FunctionConfig (points) from the INI-file
+	void saveSettings(QString settingsFile);							// Save the FunctionConfig (points) to the INI-file
 
 signals:
     void CurveChanged(bool);
@@ -142,8 +142,8 @@ public slots:
     void setCaption(QString);
 
 	void resetCurve() {
-		QSettings iniFile( strSettingsFile, QSettings::IniFormat );		// Application settings (in INI-file)
-		loadSettings( iniFile );
+		qDebug() << "QFunctionConfigurator::resetCurve = " << strSettingsFile;
+		loadSettings( strSettingsFile );
 	}
 
 protected slots:
@@ -165,10 +165,10 @@ protected:
 	virtual void resizeEvent(QResizeEvent *);
 
 private:
-	QRectF  range;										// The actual rectangle for the Bezier-curve
-	QPointF lastPoint;									// The right-most point of the Function
-	QPointF normalizePoint (QPointF point) const;		// Convert the graphical Point to a real-life Point
-	QPointF graphicalizePoint (QPointF point) const;	// Convert the Point to a graphical Point
+	QRectF  range;														// The actual rectangle for the Bezier-curve
+	QPointF lastPoint;													// The right-most point of the Function
+	QPointF normalizePoint (QPointF point) const;						// Convert the graphical Point to a real-life Point
+	QPointF graphicalizePoint (QPointF point, QString source) const;	// Convert the Point to a graphical Point
 
 	QPointF *moving;
 	int     movingPoint;

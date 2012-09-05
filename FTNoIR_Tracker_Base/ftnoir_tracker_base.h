@@ -41,7 +41,8 @@
 // Instances are obtained via factory function.
 struct ITracker
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+    virtual ~ITracker() {};
+//	virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize( QFrame *videoframe ) = 0;
 	virtual void StartTracker( HWND parent_window ) = 0;
 	virtual void StopTracker(bool exit) = 0;
