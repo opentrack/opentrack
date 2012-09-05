@@ -875,7 +875,7 @@ THeadPoseData newdata;
 	// Update the video-widget.
 	// Requested by Stanislaw
 	//
-	Tracker::doRefreshVideo();
+//	Tracker::doRefreshVideo();
 
 }
 
@@ -1111,11 +1111,9 @@ void FaceTrackNoIR::exit() {
 void FaceTrackNoIR::createIconGroupBox()
 {
 importGetProtocolDialog getProtocol;
-importGetFilterDialog getFilter;
+importGetFilterDll getFilter;
+IFilterDllPtr pFilterDll;				// Pointer to Filter dialog instance (in DLL)
 importGetTrackerDialog getTracker;
-//QLibrary *filterLib;
-//QString *filterName;
-//QIcon *filterIcon;
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -1123,7 +1121,7 @@ importGetTrackerDialog getTracker;
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	//
-	// Get a List of all the Filter-DLL-files in the Program-folder.
+	// Get a List of all the Protocol-DLL-files in the Program-folder.
 	//
 	QDir settingsDir( QCoreApplication::applicationDirPath() );
     QStringList filters;
@@ -1192,26 +1190,26 @@ importGetTrackerDialog getTracker;
 
 //		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
 
-		//
-		// Delete the existing QDialog
-		//
-		if (pFilterDialog) {
-			pFilterDialog.Release();
-		}
+		////
+		//// Delete the existing QDialog
+		////
+		//if (pFilterDll) {
+		//	pFilterDialog.Release();
+		//}
 
 		// Show the appropriate Protocol-server Settings
 		QLibrary *filterLib = new QLibrary(filterFileList.at(i));
 		QString *filterName = new QString("");
 		QIcon *filterIcon = new QIcon();
 
-		getFilter = (importGetFilterDialog) filterLib->resolve("GetFilterDialog");
+		getFilter = (importGetFilterDll) filterLib->resolve("GetFilterDll");
 		if (getFilter) {
-			IFilterDialogPtr ptrXyz(getFilter());
+			IFilterDllPtr ptrXyz(getFilter());
 			if (ptrXyz)
 			{
-				pFilterDialog = ptrXyz;
-				pFilterDialog->getFullName( filterName );
-				pFilterDialog->getIcon( filterIcon );
+				pFilterDll = ptrXyz;
+				pFilterDll->getFullName( filterName );
+				pFilterDll->getIcon( filterIcon );
 //				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
 			}
 			else {
@@ -1227,7 +1225,7 @@ importGetTrackerDialog getTracker;
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	//
-	// Get a List of all the Filter-DLL-files in the Program-folder.
+	// Get a List of all the Tracker-DLL-files in the Program-folder.
 	//
     filters.clear();
 	filters << "FTNoIR_Tracker_*.dll";
@@ -1924,24 +1922,27 @@ QWidget( parent , f)
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
-	ui.qFunctionX->setConfig(Tracker::X.curvePtr);
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+
+	ui.qFunctionX->setConfig(Tracker::X.curvePtr, currentFile);
 	connect(ui.qFunctionX, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	ui.qFunctionY->setConfig(Tracker::Y.curvePtr);
+	ui.qFunctionY->setConfig(Tracker::Y.curvePtr, currentFile);
 	connect(ui.qFunctionY, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	ui.qFunctionZ->setConfig(Tracker::Z.curvePtr);
+	ui.qFunctionZ->setConfig(Tracker::Z.curvePtr, currentFile);
 	connect(ui.qFunctionZ, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
-	ui.qFunctionYaw->setConfig(Tracker::Yaw.curvePtr);
+	ui.qFunctionYaw->setConfig(Tracker::Yaw.curvePtr, currentFile);
 	connect(ui.qFunctionYaw, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 	//
 	// There are 2 curves for Pitch: Up and Down. Users have indicated that, to be able to use visual Flight controls, it is necessary to have a 'slow' curve for Down...
 	//
-	ui.qFunctionPitch->setConfig(Tracker::Pitch.curvePtr);
+	ui.qFunctionPitch->setConfig(Tracker::Pitch.curvePtr, currentFile);
 	connect(ui.qFunctionPitch, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-	ui.qFunctionPitchDown->setConfig(Tracker::Pitch.curvePtrAlt);							
+	ui.qFunctionPitchDown->setConfig(Tracker::Pitch.curvePtrAlt, currentFile);							
 	connect(ui.qFunctionPitchDown, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
-	ui.qFunctionRoll->setConfig(Tracker::Roll.curvePtr);
+	ui.qFunctionRoll->setConfig(Tracker::Roll.curvePtr, currentFile);
 	connect(ui.qFunctionRoll, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
 	// Load the settings from the current .INI-file
@@ -2028,10 +2029,10 @@ int sensX, sensY, sensZ;
 
 	iniFile.endGroup ();
 
-	ui.qFunctionYaw->loadSettings(iniFile);
-	ui.qFunctionPitch->loadSettings(iniFile);
-	ui.qFunctionPitchDown->loadSettings(iniFile);
-	ui.qFunctionRoll->loadSettings(iniFile);
+	ui.qFunctionYaw->loadSettings(currentFile);
+	ui.qFunctionPitch->loadSettings(currentFile);
+	ui.qFunctionPitchDown->loadSettings(currentFile);
+	ui.qFunctionRoll->loadSettings(currentFile);
 
 	settingsDirty = false;
 
@@ -2049,10 +2050,10 @@ void CurveConfigurationDialog::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	ui.qFunctionYaw->saveSettings(iniFile);
-	ui.qFunctionPitch->saveSettings(iniFile);
-	ui.qFunctionPitchDown->saveSettings(iniFile);
-	ui.qFunctionRoll->saveSettings(iniFile);
+	ui.qFunctionYaw->saveSettings(currentFile);
+	ui.qFunctionPitch->saveSettings(currentFile);
+	ui.qFunctionPitchDown->saveSettings(currentFile);
+	ui.qFunctionRoll->saveSettings(currentFile);
 
 	settingsDirty = false;
 

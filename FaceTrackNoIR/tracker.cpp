@@ -108,7 +108,7 @@ TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
 TShortKey Tracker::GameZeroKey;							// ShortKey to Set Game Zero
 //TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
 
-ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
+//ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
 IProtocolPtr Tracker::pProtocol;						// Pointer to Protocol instance (in DLL)
 IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
 
@@ -153,13 +153,14 @@ QFrame *video_frame;
 	//
 	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
 	//
+	pTracker = NULL;
 	libName = mainApp->getCurrentTrackerName();
 	if (!libName.isEmpty()) {
 		trackerLib = new QLibrary(libName);
 		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
 			
 		if (getIT) {
-			ITrackerPtr ptrXyz(getIT());							// Get the Class
+			ITracker *ptrXyz(getIT());							// Get the Class
 			if (ptrXyz)
 			{
 				pTracker = ptrXyz;
@@ -227,7 +228,9 @@ Tracker::~Tracker() {
 
 	// Stop the Tracker
 	if (pTracker) {
+		qDebug() << "Tracker::~Tracker Calling pTracker->StopTracker()...";
 		pTracker->StopTracker( true );
+		qDebug() << "Tracker::~Tracker After Calling pTracker->StopTracker()...";
 	}
 
 	// Trigger thread to stop
@@ -241,8 +244,15 @@ Tracker::~Tracker() {
 	//
 	// Remove the Tracker
 	// 20120615, WVR: As suggested by Stanislaw
-	if (pTracker)
-		pTracker.Release();
+	if (pTracker) {
+		QString name;
+		pTracker->getShortName(&name);
+		qDebug() << "Tracker::~Tracker Calling pTracker->Release()..." << name;
+		delete pTracker;
+		pTracker = NULL;
+//		pTracker.Release();
+		qDebug() << "Tracker::~Tracker After Calling pTracker->Release()...";
+	}
 
 	// Close handles
 	::CloseHandle(m_StopThread);
@@ -321,8 +331,8 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 	//
 	if (pFilter) {
 		QString filterName;
-		pFilter->getFullName(&filterName);
-		qDebug() << "Tracker::run() FilterName = " << filterName;
+		//pFilter->getFullName(&filterName);
+		//qDebug() << "Tracker::run() FilterName = " << filterName;
 	}
 
 	//
