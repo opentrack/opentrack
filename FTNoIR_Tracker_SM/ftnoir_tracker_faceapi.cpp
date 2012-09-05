@@ -35,7 +35,7 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
-	qDebug() << "stopTracker says: terminating";
+	qDebug() << "~FTNoIR_Tracker says: cleaning up";
 
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
