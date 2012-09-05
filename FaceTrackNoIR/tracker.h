@@ -51,7 +51,7 @@
 // 1a. COM-Like usage with smart pointer.
 // No need to call `ITracker::Release'; the instance will
 // be released automatically in destructor of the smart pointer.
-typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
+//typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
 typedef ITracker *(WINAPI *importGetTracker)(void);
 typedef AutoClosePtr<IProtocol, void, &IProtocol::Release> IProtocolPtr;
 typedef IProtocol *(WINAPI *importGetProtocol)(void);
@@ -182,7 +182,7 @@ private:
 	static T6DOF new_camera;
 	static T6DOF output_camera;
 
-	static ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
+	ITracker *pTracker;								// Pointer to Tracker instance (in DLL)
 	static IProtocolPtr pProtocol;					// Pointer to Protocol instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
@@ -258,7 +258,7 @@ public:
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 	static IFilterPtr getFilterPtr() { return pFilter; }
-	static void doRefreshVideo() {								// Call the face-tracker-function RefreshVideo
+	void doRefreshVideo() {										// Call the face-tracker-function RefreshVideo
 		if (pTracker) {
 			pTracker->refreshVideo();
 		}
