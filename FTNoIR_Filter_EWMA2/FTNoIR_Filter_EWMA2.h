@@ -45,10 +45,6 @@ public:
     void StartFilter();
 	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
 
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-
 private:
 	void loadSettings();									// Load the settings from the INI-file
 	THeadPoseData newHeadPose;								// Structure with new headpose
@@ -63,11 +59,6 @@ private:
 	float	kMinSmoothing;
 	float	kMaxSmoothing;
 	float	kSmoothingScaleCurve;
-
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
-
 };
 
 //*******************************************************************************************************
@@ -86,10 +77,6 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent, IFilterPtr ptr);
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
 
 private:
 	Ui::UICFilterControls ui;
@@ -99,9 +86,6 @@ private:
 	/** helper **/
 	bool settingsDirty;
 
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
 	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 
 private slots:
@@ -109,6 +93,29 @@ private slots:
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
 	void settingChanged( int ) { settingsDirty = true; };
+};
+
+//*******************************************************************************************************
+// FaceTrackNoIR Filter DLL. Functions used to get general info on the Filter
+//*******************************************************************************************************
+class FTNoIR_FilterDll : public IFilterDll
+{
+public:
+	FTNoIR_FilterDll();
+	~FTNoIR_FilterDll();
+
+	void Release();
+    void Initialize();
+
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
+	void getIcon(QIcon *icon);
+
+private:
+	QString filterFullName;									// Filters' name and description
+	QString filterShortName;
+	QString filterDescription;
 };
 
 #endif						//INCLUDED_FTN_FILTER_H

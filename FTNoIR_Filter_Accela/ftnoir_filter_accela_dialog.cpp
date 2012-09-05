@@ -39,10 +39,6 @@ FilterControls::FilterControls() :
 {
 	ui.setupUi( this );
 
-	//populate the description strings
-	filterFullName = "Accela Filter";
-	filterShortName = "Accela";
-	filterDescription = "Accela Filter";
 	// Load the settings from the current .INI-file
 	loadSettings();
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -153,8 +149,8 @@ void FilterControls::loadSettings() {
 	functionConfig.loadSettings(iniFile);
 	translationFunctionConfig.loadSettings(iniFile);
 
-	ui.translationScalingConfig->setConfig(&translationFunctionConfig);
-	ui.scalingConfig->setConfig(&functionConfig);
+	ui.translationScalingConfig->setConfig(&translationFunctionConfig, currentFile);
+	ui.scalingConfig->setConfig(&functionConfig, currentFile);
 
 	settingsDirty = false;
 }
@@ -168,33 +164,13 @@ void FilterControls::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
+
 	functionConfig.saveSettings(iniFile);
 	translationFunctionConfig.saveSettings(iniFile);
 
 	settingsDirty = false;
 }
-
-void FilterControls::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-
-void FilterControls::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-
-void FilterControls::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
-
-void FilterControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/filter-16.png");
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter-settings dialog object.

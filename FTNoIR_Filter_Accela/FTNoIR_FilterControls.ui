@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
+    <width>321</width>
     <height>349</height>
    </rect>
   </property>
@@ -43,13 +43,13 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>500</width>
+       <width>300</width>
        <height>300</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>500</width>
+       <width>300</width>
        <height>300</height>
       </size>
      </property>
@@ -63,60 +63,7 @@
       <widget class="QFunctionConfigurator" name="scalingConfig">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>30</y>
-         <width>215</width>
-         <height>220</height>
-        </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>4</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>40</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>20</number>
-       </property>
-       <property name="gridDistEGU_Input" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="gridDistEGU_Output" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="colorBezier">
-        <color>
-         <red>255</red>
-         <green>170</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground">
-        <color>
-         <red>192</red>
-         <green>192</green>
-         <blue>192</blue>
-        </color>
-       </property>
-       <property name="stringInputEGU" stdset="0">
-        <string>Input Yaw (degr.)</string>
-       </property>
-       <property name="stringOutputEGU" stdset="0">
-        <string>Output Yaw (degr.)</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Translation</string>
-      </attribute>
-      <widget class="QFunctionConfigurator" name="translationScalingConfig">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
+         <x>20</x>
          <y>20</y>
          <width>215</width>
          <height>220</height>
@@ -155,10 +102,66 @@
         </color>
        </property>
        <property name="stringInputEGU" stdset="0">
-        <string>Input Yaw (degr.)</string>
+        <string>Input</string>
        </property>
        <property name="stringOutputEGU" stdset="0">
-        <string>Output Yaw (degr.)</string>
+        <string>Output</string>
+       </property>
+       <property name="stringCaption" stdset="0">
+        <string>Translation</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Translation</string>
+      </attribute>
+      <widget class="QFunctionConfigurator" name="translationScalingConfig">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>215</width>
+         <height>220</height>
+        </rect>
+       </property>
+       <property name="maxInputEGU" stdset="0">
+        <number>4</number>
+       </property>
+       <property name="maxOutputEGU" stdset="0">
+        <number>8</number>
+       </property>
+       <property name="pixPerEGU_Input" stdset="0">
+        <number>40</number>
+       </property>
+       <property name="pixPerEGU_Output" stdset="0">
+        <number>20</number>
+       </property>
+       <property name="gridDistEGU_Input" stdset="0">
+        <number>1</number>
+       </property>
+       <property name="gridDistEGU_Output" stdset="0">
+        <number>1</number>
+       </property>
+       <property name="colorBezier">
+        <color>
+         <red>85</red>
+         <green>255</green>
+         <blue>0</blue>
+        </color>
+       </property>
+       <property name="colorBackground">
+        <color>
+         <red>192</red>
+         <green>192</green>
+         <blue>192</blue>
+        </color>
+       </property>
+       <property name="stringInputEGU" stdset="0">
+        <string>Input</string>
+       </property>
+       <property name="stringOutputEGU" stdset="0">
+        <string>Output</string>
        </property>
       </widget>
      </widget>

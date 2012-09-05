@@ -29,8 +29,10 @@
 #include "..\ftnoir_filter_base\ftnoir_filter_base.h"
 #include "ui_FTNoIR_FilterControls.h"
 #include <FunctionConfig.h>
-//#include <FunctionEditorFrame.h>
 
+//*******************************************************************************************************
+// FaceTrackNoIR Filter class.
+//*******************************************************************************************************
 class FTNoIR_Filter : public IFilter
 {
 public:
@@ -42,10 +44,6 @@ public:
     void StartFilter();
 	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
 
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-
 private:
 	void loadSettings();									// Load the settings from the INI-file
 	THeadPoseData newHeadPose;								// Structure with new headpose
@@ -54,9 +52,6 @@ private:
 	double kFactor, kFactorTranslation;
 	double kSensitivity, kSensitivityTranslation;
 
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
 };
@@ -77,10 +72,7 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent, IFilterPtr ptr);
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+
 private:
 	Ui::UICFilterControls ui;
 	void loadSettings();
@@ -89,9 +81,6 @@ private:
 	/** helper **/
 	bool settingsDirty;
 
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
 	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
@@ -101,6 +90,30 @@ private slots:
 	void doCancel();
 	void settingChanged(bool) { settingsDirty = true; };
 };
+
+//*******************************************************************************************************
+// FaceTrackNoIR Filter DLL. Functions used to get general info on the Filter
+//*******************************************************************************************************
+class FTNoIR_FilterDll : public IFilterDll
+{
+public:
+	FTNoIR_FilterDll();
+	~FTNoIR_FilterDll();
+
+	void Release();
+    void Initialize();
+
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
+	void getIcon(QIcon *icon);
+
+private:
+	QString filterFullName;									// Filters' name and description
+	QString filterShortName;
+	QString filterDescription;
+};
+
 
 #endif						//INCLUDED_FTN_FILTER_H
 //END

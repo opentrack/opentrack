@@ -175,6 +175,10 @@
 				RelativePath=".\ftnoir_filter_accela_dialog.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_filter_accela_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -36,11 +36,6 @@
 
 FTNoIR_Filter::FTNoIR_Filter()
 {
-	//populate the description strings
-	filterFullName = "EWMA Filter Mk2";
-	filterShortName = "EWMA";
-	filterDescription = "Exponentially Weighted Moving Average filter with dynamic smoothing parameter";
-
 	first_run = true;
 	alpha_smoothing = 0.02f;		// this is a constant for now, might be a parameter later
 	loadSettings();					// Load the Settings
@@ -225,23 +220,6 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	}
 	return;
 }
-
-void FTNoIR_Filter::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-
-void FTNoIR_Filter::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-
-void FTNoIR_Filter::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter object.
