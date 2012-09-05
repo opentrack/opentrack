@@ -19,11 +19,6 @@ FTNoIR_Filter::FTNoIR_Filter() :
 	functionConfig("Accela-Scaling-Rotation", 4, 8),
 	translationFunctionConfig("Accela-Scaling-Translation", 4, 8)
 {
-	//populate the description strings
-	filterFullName = "Accela Filter mkII";
-	filterShortName = "Accela mkII";
-	filterDescription = "Accela filter mkII";
-
 	first_run = true;
 	loadSettings();					// Load the Settings
 }
@@ -154,23 +149,6 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	current_camera_position->pitch=output[4];
 	current_camera_position->roll=output[5];
 }
-
-void FTNoIR_Filter::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-
-void FTNoIR_Filter::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-
-void FTNoIR_Filter::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter object.

@@ -37,11 +37,6 @@ QWidget()
 {
 	ui.setupUi( this );
 
-	//populate the description strings
-	filterFullName = "EWMA Filter Mk2";
-	filterShortName = "EWMA";
-	filterDescription = "Exponentially Weighted Moving Average filter with dynamic smoothing parameter";
-
 	QPoint offsetpos(100, 100);
 	//if (parent) {
 	//	this->move(parent->pos() + offsetpos);
@@ -186,28 +181,6 @@ void FilterControls::save() {
 
 	settingsDirty = false;
 }
-
-void FilterControls::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-
-void FilterControls::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-
-void FilterControls::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
-
-void FilterControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/filter-16.png");
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter-settings dialog object.
