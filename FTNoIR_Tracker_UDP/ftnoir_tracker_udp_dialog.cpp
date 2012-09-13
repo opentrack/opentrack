@@ -45,11 +45,6 @@ QWidget()
 	//connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 
-	//populate the description strings
-	trackerFullName = "FaceTrackNoIR UDP";
-	trackerShortName = "UDP";
-	trackerDescription = "FaceTrackNoIR UDP";
-
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -59,11 +54,6 @@ QWidget()
 //
 TrackerControls::~TrackerControls() {
 	qDebug() << "~TrackerControls() says: started";
-}
-
-void TrackerControls::Release()
-{
-    delete this;
 }
 
 //
@@ -123,28 +113,6 @@ void TrackerControls::doCancel() {
 		this->close();
 	}
 }
-
-void TrackerControls::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void TrackerControls::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void TrackerControls::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
-
-void TrackerControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/FaceTrackNoIR.ico");
-};
 
 
 //
