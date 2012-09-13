@@ -245,13 +245,8 @@ Tracker::~Tracker() {
 	// Remove the Tracker
 	// 20120615, WVR: As suggested by Stanislaw
 	if (pTracker) {
-		QString name;
-		pTracker->getShortName(&name);
-		qDebug() << "Tracker::~Tracker Calling pTracker->Release()..." << name;
 		delete pTracker;
 		pTracker = NULL;
-//		pTracker.Release();
-		qDebug() << "Tracker::~Tracker After Calling pTracker->Release()...";
 	}
 
 	// Close handles

@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGL4.lib QtNetworkd4.lib Strmiids.lib QBezierConfigurator.lib FSUIPC_User.lib"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGL4.lib QtNetworkd4.lib Strmiids.lib QFunctionConfigurator.lib FSUIPC_User.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				IgnoreAllDefaultLibraries="false"

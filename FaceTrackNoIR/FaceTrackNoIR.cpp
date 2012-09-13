@@ -60,6 +60,7 @@ QMainWindow(parent, flags)
 	_curve_config = 0;
 
 	tracker = 0;
+	pTrackerDialog = NULL;
 //	_display = 0;
 	l = 0;
 	trayIcon = 0;
@@ -920,7 +921,8 @@ QString libName;
 	// Delete the existing QDialog
 	//
 	if (pTrackerDialog) {
-		pTrackerDialog.Release();
+		delete pTrackerDialog;
+		pTrackerDialog = NULL;
 	}
 
 	// Show the appropriate Tracker Settings
@@ -940,7 +942,7 @@ QString libName;
 		qDebug() << "FaceTrackNoIR::showEngineControls resolved?." << getIT;
 
 		if (getIT) {
-			ITrackerDialogPtr ptrXyz(getIT());
+			ITrackerDialog *ptrXyz(getIT());
 			if (ptrXyz)
 			{
 				pTrackerDialog = ptrXyz;
@@ -1112,8 +1114,9 @@ void FaceTrackNoIR::createIconGroupBox()
 {
 importGetProtocolDialog getProtocol;
 importGetFilterDll getFilter;
-IFilterDllPtr pFilterDll;				// Pointer to Filter dialog instance (in DLL)
-importGetTrackerDialog getTracker;
+IFilterDllPtr pFilterDll;				// Pointer to Filter info instance (in DLL)
+importGetTrackerDll getTracker;
+ITrackerDll *pTrackerDll;				// Pointer to Filter info instance (in DLL)
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -1190,13 +1193,6 @@ importGetTrackerDialog getTracker;
 
 //		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
 
-		////
-		//// Delete the existing QDialog
-		////
-		//if (pFilterDll) {
-		//	pFilterDialog.Release();
-		//}
-
 		// Show the appropriate Protocol-server Settings
 		QLibrary *filterLib = new QLibrary(filterFileList.at(i));
 		QString *filterName = new QString("");
@@ -1241,27 +1237,20 @@ importGetTrackerDialog getTracker;
 
 //		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
 
-		//
-		// Delete the existing QDialog
-		//
-		if (pTrackerDialog) {
-			pTrackerDialog.Release();
-		}
-
 		// Show the appropriate Protocol-server Settings
 		QLibrary *trackerLib = new QLibrary(trackerFileList.at(i));
 		QString *trackerName = new QString("");
 		QIcon *trackerIcon = new QIcon();
 
-		getTracker = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
+		getTracker = (importGetTrackerDll) trackerLib->resolve("GetTrackerDll");
 		if (getTracker) {
-			ITrackerDialogPtr ptrXyz(getTracker());
+			ITrackerDll *ptrXyz(getTracker());
 			if (ptrXyz)
 			{
-				pTrackerDialog = ptrXyz;
-				pTrackerDialog->getFullName( trackerName );
-				pTrackerDialog->getIcon( trackerIcon );
-//				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDialog Function Resolved!";
+				pTrackerDll = ptrXyz;
+				pTrackerDll->getFullName( trackerName );
+				pTrackerDll->getIcon( trackerIcon );
+//				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDll Function Resolved!";
 			}
 			else {
 				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";

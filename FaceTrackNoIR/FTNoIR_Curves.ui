@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>901</width>
-    <height>585</height>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,7 +113,7 @@ color: rgb(255, 255, 255);
            <x>10</x>
            <y>10</y>
            <width>794</width>
-           <height>488</height>
+           <height>548</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
@@ -128,7 +128,7 @@ color: rgb(255, 255, 255);
             <property name="minimumSize">
              <size>
               <width>260</width>
-              <height>240</height>
+              <height>300</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -138,7 +138,7 @@ color: rgb(255, 255, 255);
              </size>
             </property>
             <property name="maxOutputEGU" stdset="0">
-             <number>90</number>
+             <number>120</number>
             </property>
             <property name="pixPerEGU_Output" stdset="0">
              <number>2</number>
