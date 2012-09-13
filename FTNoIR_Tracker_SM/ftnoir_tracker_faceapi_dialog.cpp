@@ -56,11 +56,6 @@ QWidget()
 		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
 	}
 
-	//populate the description strings
-	trackerFullName = "faceAPI V3.2.6";
-	trackerShortName = "faceAPI";
-	trackerDescription = "SeeingMachines faceAPI V3.2.6";
-
 	// Load the settings from the current .INI-file
 	loadSettings();
 
@@ -77,11 +72,6 @@ QWidget()
 //
 TrackerControls::~TrackerControls() {
 	qDebug() << "~TrackerControls() says: started";
-}
-
-void TrackerControls::Release()
-{
-    delete this;
 }
 
 //
@@ -141,29 +131,6 @@ void TrackerControls::doCancel() {
 		this->close();
 	}
 }
-
-
-void TrackerControls::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void TrackerControls::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void TrackerControls::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
-
-void TrackerControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/SeeingMachines.ico");
-};
 
 //
 // Load the current Settings from the currently 'active' INI-file.

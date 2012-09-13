@@ -27,10 +27,6 @@
 
 FTNoIR_Tracker::FTNoIR_Tracker()
 {
-	//populate the description strings
-	trackerFullName = "faceAPI V3.2.6";
-	trackerShortName = "faceAPI";
-	trackerDescription = "SeeingMachines faceAPI V3.2.6";
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
@@ -44,16 +40,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	CloseHandle( hSMMutex );
 	CloseHandle( hSMMemMap );
 	hSMMemMap = 0;
-}
-
-void FTNoIR_Tracker::Release()
-{
-	qDebug() << "FTNoIR_Tracker::Release says: Starting ";
-
-	if ( pMemData != NULL ) {
-		pMemData->command = FT_SM_EXIT;			// Issue 'exit' command
-	}
-	delete this;
 }
 
 void FTNoIR_Tracker::Initialize( QFrame *videoframe )
@@ -141,23 +127,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	}
 	return false;
 }
-
-void FTNoIR_Tracker::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void FTNoIR_Tracker::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void FTNoIR_Tracker::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
 
 //
 // Load the current Settings from the currently 'active' INI-file.
