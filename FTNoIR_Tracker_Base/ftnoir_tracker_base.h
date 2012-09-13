@@ -24,6 +24,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120009 - WVR: Removed AutoClosePtr (seemed like it didn't work OK)
 		20110415 - WVR: Added overloaded operator - and -=
 */
 #ifndef FTNOIR_TRACKER_BASE_H
@@ -48,9 +49,9 @@ struct ITracker
 	virtual void StopTracker(bool exit) = 0;
 	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
 
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
+	//virtual void getFullName(QString *strToBeFilled) = 0;
+	//virtual void getShortName(QString *strToBeFilled) = 0;
+	//virtual void getDescription(QString *strToBeFilled) = 0;
 
 	virtual bool notifyZeroed() {
 		return false;
@@ -58,7 +59,7 @@ struct ITracker
 	virtual void refreshVideo() {}
 };
 
-// Handle type. In C++ language the iterface type is used.
+// Handle type. In C++ language the interface type is used.
 typedef ITracker* TRACKERHANDLE;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,13 +86,13 @@ GetTracker(
 // Instances are obtained via factory function.
 struct ITrackerDialog
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+//    virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize(QWidget *parent) = 0;
 
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
+	//virtual void getFullName(QString *strToBeFilled) = 0;
+	//virtual void getShortName(QString *strToBeFilled) = 0;
+	//virtual void getDescription(QString *strToBeFilled) = 0;
+	//virtual void getIcon(QIcon *icon) = 0;
 };
 
 // Handle type. In C++ language the iterface type is used.
@@ -103,6 +104,32 @@ FTNOIR_TRACKER_BASE_EXPORT
 TRACKERDIALOGHANDLE
 __stdcall
 GetTrackerDialog(void);
+
+// COM-Like abstract interface.
+// This interface doesn't require __declspec(dllexport/dllimport) specifier.
+// Method calls are dispatched via virtual table.
+// Any C++ compiler can use it.
+// Instances are obtained via factory function.
+struct ITrackerDll
+{
+//    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual void Initialize() = 0;
+
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
+	virtual void getIcon(QIcon *icon) = 0;
+};
+
+// Handle type. In C++ language the interface type is used.
+typedef ITrackerDll* TRACKERDLLHANDLE;
+
+// Factory function that creates instances of the Tracker object.
+EXTERN_C
+FTNOIR_TRACKER_BASE_EXPORT
+TRACKERDLLHANDLE
+__stdcall
+GetTrackerDll(void);
 
 
 #endif // FTNOIR_TRACKER_BASE_H
