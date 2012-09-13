@@ -51,8 +51,10 @@
 // 1a. COM-Like usage with smart pointer.
 // No need to call `ITracker::Release'; the instance will
 // be released automatically in destructor of the smart pointer.
-typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDialogPtr;
+//typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDialogPtr;
 typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
+typedef ITrackerDll *(WINAPI *importGetTrackerDll)(void);
+
 typedef AutoClosePtr<IProtocolDialog, void, &IProtocolDialog::Release> IProtocolDialogPtr;
 typedef IProtocolDialog *(WINAPI *importGetProtocolDialog)(void);
 typedef AutoClosePtr<IFilterDialog, void, &IFilterDialog::Release> IFilterDialogPtr;
@@ -91,7 +93,7 @@ private:
 	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
 	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
-	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
+	ITrackerDialog *pTrackerDialog;				// Pointer to Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
 	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
