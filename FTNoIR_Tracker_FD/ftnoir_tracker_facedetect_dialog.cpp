@@ -72,12 +72,6 @@ QWidget()
 	QObject::connect(ui.redetect_ms, SIGNAL(valueChanged(int)), this, SLOT(doSetRedetectMs(int)));
 	QObject::connect(ui.cameraId, SIGNAL(valueChanged(int)), this, SLOT(doSetCameraId(int)));
 	QObject::connect(ui.videoWidget, SIGNAL(toggled(bool)), this, SLOT(doSetVideoWidget(bool)));
-
-	//populate the description strings
-	trackerFullName = "faceDetect V1.0.0";
-	trackerShortName = "faceDetect";
-	trackerDescription = "Stans' faceDetect V1.0.0";
-
 }
 
 void TrackerControls::save() {
@@ -170,28 +164,6 @@ void TrackerControls::doCancel() {
 		this->close();
 	}
 }
-
-void TrackerControls::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void TrackerControls::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void TrackerControls::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
-
-void TrackerControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/FaceDetect.ico");
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker-settings dialog object.

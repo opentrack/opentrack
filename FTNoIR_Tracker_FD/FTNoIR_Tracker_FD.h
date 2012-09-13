@@ -37,7 +37,6 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-	void Release();
     void Initialize( QFrame *videoframe );
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
@@ -46,10 +45,6 @@ public:
 //	bool setParameterValue(const int index, const float newvalue);
 	bool notifyZeroed();
 	void refreshVideo();
-
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
 
 private:
 	bool activep;
@@ -61,11 +56,6 @@ private:
 	PROCESS_INFORMATION procInfo;
 	VideoWidget* ctrl;
 	QFrame* qframe;
-
-	QString trackerFullName;								// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
-
 };
 
 class TrackerControls: public QWidget, Ui::UICFDClientControls, public ITrackerDialog
@@ -79,11 +69,6 @@ public:
     void Initialize(QWidget *parent);
 	void NotifyZeroing();
 
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
-
 private:
 	Ui::UICFDClientControls ui;
 	void loadSettings();
@@ -93,10 +78,6 @@ private:
 	HANDLE hMapFile, hMutex;
 	struct face_detect_shm* shm;
 
-	QString trackerFullName;								// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
-
 private slots:
 	void doOK();
 	void doCancel();
@@ -105,4 +86,26 @@ private slots:
 	void doSetCameraId(int val);
 	void doSetVideoWidget(bool val);
 signals:
+};
+
+//*******************************************************************************************************
+// FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
+//*******************************************************************************************************
+class FTNoIR_TrackerDll : public ITrackerDll
+{
+public:
+	FTNoIR_TrackerDll();
+	~FTNoIR_TrackerDll();
+
+    void Initialize();
+
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
+	void getIcon(QIcon *icon);
+
+private:
+	QString trackerFullName;									// Trackers' name and description
+	QString trackerShortName;
+	QString trackerDescription;
 };
