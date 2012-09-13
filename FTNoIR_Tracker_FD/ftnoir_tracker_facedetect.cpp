@@ -63,14 +63,6 @@ void VideoWidget::paintEvent(QPaintEvent*) {
 FTNoIR_Tracker::FTNoIR_Tracker()
 {
 	qDebug("making tracker FaceDetect");
-	////allocate memory for the parameters
-	//parameterValueAsFloat.clear();
-	//parameterRange.clear();
-
-	//// Add the parameters to the list
-	//parameterRange.append(std::pair<float,float>(1000.0f,9999.0f));
-	//parameterValueAsFloat.append(0.0f);
-	////setParameterValue(kPortAddress,5551.0f);
 
 	hMutex = CreateMutex(NULL, false, fd_mutex_name);
 	hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(struct face_detect_shm), fd_shm_name);
@@ -80,12 +72,6 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	procInfo.hProcess = INVALID_HANDLE_VALUE;
 	ctrl = NULL;
 	qframe = NULL;
-
-	//populate the description strings
-	trackerFullName = "faceDetect V1.0.0";
-	trackerShortName = "faceDetect";
-	trackerDescription = "Stans' faceDetect V1.0.0";
-
 }
 
 void FTNoIR_Tracker::TerminateTracker() {
@@ -106,12 +92,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	//CloseHandle(hMapFile);
 	ReleaseMutex(hMutex);
 	//CloseHandle(hMutex);
-}
-
-void FTNoIR_Tracker::Release()
-{
-	qDebug("FTNoIR_Tracker::Release says: Starting ");
-	delete this;
 }
 
 void FTNoIR_Tracker::Initialize( QFrame *videoframe )
@@ -211,23 +191,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	ReleaseMutex(hMutex);
 	return false;
 }
-
-void FTNoIR_Tracker::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void FTNoIR_Tracker::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void FTNoIR_Tracker::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
 
 //
 // Load the current Settings from the currently 'active' INI-file.

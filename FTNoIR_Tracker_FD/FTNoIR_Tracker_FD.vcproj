@@ -175,6 +175,10 @@
 				RelativePath=".\ftnoir_tracker_facedetect_dialog.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_tracker_facedetect_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
