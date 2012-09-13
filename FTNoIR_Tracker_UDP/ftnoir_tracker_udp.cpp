@@ -44,11 +44,6 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 
 	portAddress = 5551;
 
-	//populate the description strings
-	trackerFullName = "FaceTrackNoIR UDP";
-	trackerShortName = "UDP";
-	trackerDescription = "FaceTrackNoIR UDP";
-
 	newHeadPose.x = 0.0f;
 	newHeadPose.y = 0.0f;
 	newHeadPose.z = 0.0f;
@@ -123,11 +118,6 @@ quint16 senderPort;
 	}
 }
 
-void FTNoIR_Tracker::Release()
-{
-    delete this;
-}
-
 void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
@@ -177,23 +167,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	data->roll = newHeadPose.roll;
 	return true;
 }
-
-void FTNoIR_Tracker::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerFullName;
-};
-
-
-void FTNoIR_Tracker::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerShortName;
-};
-
-
-void FTNoIR_Tracker::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = trackerDescription;
-};
 
 //
 // Load the current Settings from the currently 'active' INI-file.
