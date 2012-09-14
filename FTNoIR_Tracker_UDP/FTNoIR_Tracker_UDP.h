@@ -51,6 +51,8 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent);
+	void registerTracker(ITracker *tracker) {};
+	void unRegisterTracker() {};
 
 private:
 	Ui::UICFTNClientControls ui;
