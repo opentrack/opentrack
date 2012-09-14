@@ -174,9 +174,6 @@ private:
 	HANDLE m_StopThread;
 	HANDLE m_WaitThread;
 
-//	FTNoIR_Client selectedClient;
-//	FTNoIR_Face_Tracker selectedTracker;
-
 	static T6DOF current_camera;					// Used for filtering
 	static T6DOF target_camera;
 	static T6DOF new_camera;
@@ -257,7 +254,9 @@ public:
 	static void setUseFilter(bool set) { useFilter = set; }
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
-	static IFilterPtr getFilterPtr() { return pFilter; }
+	static IFilterPtr getFilterPtr() { return pFilter; }		// Return the pointer for the active Filter
+	ITracker *getTrackerPtr() { return pTracker; }				// Return the pointer for the active Tracker
+
 	void doRefreshVideo() {										// Call the face-tracker-function RefreshVideo
 		if (pTracker) {
 			pTracker->refreshVideo();
