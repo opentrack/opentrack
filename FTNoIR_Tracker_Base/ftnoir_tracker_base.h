@@ -49,10 +49,6 @@ struct ITracker
 	virtual void StopTracker(bool exit) = 0;
 	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
 
-	//virtual void getFullName(QString *strToBeFilled) = 0;
-	//virtual void getShortName(QString *strToBeFilled) = 0;
-	//virtual void getDescription(QString *strToBeFilled) = 0;
-
 	virtual bool notifyZeroed() {
 		return false;
 	}
@@ -86,13 +82,9 @@ GetTracker(
 // Instances are obtained via factory function.
 struct ITrackerDialog
 {
-//    virtual void Release() = 0;									// Member required to enable Auto-remove
 	virtual void Initialize(QWidget *parent) = 0;
-
-	//virtual void getFullName(QString *strToBeFilled) = 0;
-	//virtual void getShortName(QString *strToBeFilled) = 0;
-	//virtual void getDescription(QString *strToBeFilled) = 0;
-	//virtual void getIcon(QIcon *icon) = 0;
+	virtual void registerTracker(ITracker *tracker) = 0;
+	virtual void unRegisterTracker() = 0;
 };
 
 // Handle type. In C++ language the iterface type is used.
