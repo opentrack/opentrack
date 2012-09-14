@@ -67,6 +67,8 @@ public:
     virtual ~TrackerControls();
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+	void registerTracker(ITracker *tracker) {};
+	void unRegisterTracker() {};
 	void NotifyZeroing();
 
 private:
