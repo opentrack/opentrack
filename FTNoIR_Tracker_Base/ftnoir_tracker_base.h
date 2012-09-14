@@ -53,6 +53,9 @@ struct ITracker
 		return false;
 	}
 	virtual void refreshVideo() {}
+	virtual void notifyCenter() {
+		return;
+	}
 };
 
 // Handle type. In C++ language the interface type is used.
