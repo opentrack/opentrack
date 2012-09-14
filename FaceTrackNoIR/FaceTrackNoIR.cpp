@@ -659,23 +659,18 @@ void FaceTrackNoIR::startTracker( ) {
 
 	tracker->start( QThread::TimeCriticalPriority );
 
+	//
+	// Register the Tracker instance with the Tracker Dialog (if open)
+	//
+	if (pTrackerDialog) {
+		pTrackerDialog->registerTracker( tracker->getTrackerPtr() );
+	}
+
 	ui.headPoseWidget->show();
 
 	// 
 	ui.btnStartTracker->setEnabled ( false );
 	ui.btnStopTracker->setEnabled ( true );
-
-	//// Engine controls
-	//switch (ui.iconcomboTrackerSource->currentIndex()) {
-	//case FT_SM_FACEAPI:										// Face API
-	//	ui.btnShowEngineControls->setEnabled ( true );		// Active only when started!
-	//	break;
-	//case FT_FTNOIR:											// FTNoir server
-	//	ui.btnShowEngineControls->setEnabled ( false );
-	//	break;
-	//default:
-	//	break;
-	//}
 
 	// Enable/disable Protocol-server Settings
 	ui.iconcomboTrackerSource->setEnabled ( false );
@@ -754,6 +749,13 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.lcdNumOutputRotZ->setVisible(false);
 	ui.txtTracking->setVisible(false);
 	ui.txtAxisReverse->setVisible(false);
+
+	//
+	// UnRegister the Tracker instance with the Tracker Dialog (if open)
+	//
+	if (pTrackerDialog) {
+		pTrackerDialog->unRegisterTracker();
+	}
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -939,7 +941,7 @@ QString libName;
 
 		getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
 
-		qDebug() << "FaceTrackNoIR::showEngineControls resolved?." << getIT;
+		qDebug() << "FaceTrackNoIR::showEngineControls resolved." << getIT;
 
 		if (getIT) {
 			ITrackerDialog *ptrXyz(getIT());
@@ -948,6 +950,10 @@ QString libName;
 				pTrackerDialog = ptrXyz;
 				pTrackerDialog->Initialize( this );
 				qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
+				if (tracker) {
+					pTrackerDialog->registerTracker( tracker->getTrackerPtr() );
+					qDebug() << "FaceTrackNoIR::showEngineControls RegisterTracker Function Executed";
+				}
 			}
 		}
 		else {
