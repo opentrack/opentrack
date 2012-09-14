@@ -471,15 +471,23 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			//
 			// If Center is pressed, copy the current values to the offsets.
 			//
-			if (Tracker::confid && Tracker::do_center) {
+			if (Tracker::do_center) {
+				
 				MessageBeep (MB_ICONASTERISK);
+				pTracker->notifyCenter();				// Send 'center' to the tracker
 
-				offset_camera.position.x     = getSmoothFromList( &X.rawList );
-				offset_camera.position.y     = getSmoothFromList( &Y.rawList );
-				offset_camera.position.z     = getSmoothFromList( &Z.rawList );
-				offset_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
-				offset_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
-				offset_camera.position.roll  = getSmoothFromList( &Roll.rawList );
+				//
+				// Only copy valid values
+				//
+				if (Tracker::confid) {
+
+					offset_camera.position.x     = getSmoothFromList( &X.rawList );
+					offset_camera.position.y     = getSmoothFromList( &Y.rawList );
+					offset_camera.position.z     = getSmoothFromList( &Z.rawList );
+					offset_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
+					offset_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
+					offset_camera.position.roll  = getSmoothFromList( &Roll.rawList );
+				}
 
 				Tracker::do_center = false;
 			}
