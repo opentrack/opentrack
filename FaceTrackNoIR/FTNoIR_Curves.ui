@@ -128,7 +128,7 @@ color: rgb(255, 255, 255);
             <property name="minimumSize">
              <size>
               <width>260</width>
-              <height>300</height>
+              <height>240</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -138,10 +138,10 @@ color: rgb(255, 255, 255);
              </size>
             </property>
             <property name="maxOutputEGU" stdset="0">
-             <number>120</number>
+             <number>180</number>
             </property>
             <property name="pixPerEGU_Output" stdset="0">
-             <number>2</number>
+             <number>1</number>
             </property>
             <property name="colorBezier">
              <color>
