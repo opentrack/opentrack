@@ -878,6 +878,12 @@ THeadPoseData newdata;
 	// Update the video-widget.
 	// Requested by Stanislaw
 	//
+	if (tracker) {
+		ITracker * theTracker =	tracker->getTrackerPtr();
+		if (theTracker) {
+			theTracker->refreshVideo();
+		}
+	}
 //	Tracker::doRefreshVideo();
 
 }
