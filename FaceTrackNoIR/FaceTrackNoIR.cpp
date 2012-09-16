@@ -456,7 +456,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 2) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 4) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -937,11 +937,11 @@ QString libName;
 	if (!libName.isEmpty()) {
 		trackerLib = new QLibrary(libName);
 
-		qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
+//		qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
 
 		getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
 
-		qDebug() << "FaceTrackNoIR::showEngineControls resolved." << getIT;
+//		qDebug() << "FaceTrackNoIR::showEngineControls resolved." << getIT;
 
 		if (getIT) {
 			ITrackerDialog *ptrXyz(getIT());
@@ -949,10 +949,10 @@ QString libName;
 			{
 				pTrackerDialog = ptrXyz;
 				pTrackerDialog->Initialize( this );
-				qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
+//				qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
 				if (tracker) {
 					pTrackerDialog->registerTracker( tracker->getTrackerPtr() );
-					qDebug() << "FaceTrackNoIR::showEngineControls RegisterTracker Function Executed";
+//					qDebug() << "FaceTrackNoIR::showEngineControls RegisterTracker Function Executed";
 				}
 			}
 		}
