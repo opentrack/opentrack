@@ -95,7 +95,7 @@ T6DOF Tracker::target_camera(0,0,0,0,0,0);
 T6DOF Tracker::new_camera(0,0,0,0,0,0);
 T6DOF Tracker::output_camera(0,0,0,0,0,0);						// Position sent to game protocol
 
-THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown", 50, 90);	// One structure for each of 6DOF's
+THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown", 50, 180);	// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw("Yaw", "", 50, 180);
 THeadPoseDOF Tracker::Roll("Roll", "", 50, 180);
 THeadPoseDOF Tracker::X("X","", 50, 180);
@@ -463,6 +463,13 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 		if (WaitForSingleObject(Tracker::hTrackMutex, 100) == WAIT_OBJECT_0) {
 
 			THeadPoseData newpose;
+			newpose.pitch = 0.0f;
+			newpose.roll = 0.0f;
+			newpose.yaw = 0.0f;
+			newpose.x = 0.0f;
+			newpose.y = 0.0f;
+			newpose.z = 0.0f;
+
 			Tracker::confid = pTracker->GiveHeadPoseData(&newpose);
 			if ( Tracker::confid ) {
 				addHeadPose(newpose);
