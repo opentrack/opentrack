@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/icon.ico</file>
+        <file>Resources/Logo_IR.png</file>
+    </qresource>
+</RCC>
