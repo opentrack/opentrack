@@ -192,6 +192,11 @@ private:
 	static TShortKey GameZeroKey;					// ShortKey to Set Game Zero
 //	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
 
+	static int CenterMouseKey;						// ShortKey to Center headposition
+	static int StartStopMouseKey;					// ShortKey to Start/stop tracking
+	static int InhibitMouseKey;						// ShortKey to disable one or more axis during tracking
+	static int GameZeroMouseKey;					// ShortKey to Set Game Zero
+
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK
 	static bool do_tracking;						// Start/stop tracking, using the shortkey
@@ -238,6 +243,7 @@ public:
 	QString getGameProgramName();					// Get the ProgramName from the game and display it.
 	void loadSettings();							// Load settings from the INI-file
 	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
+	bool isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate );
 
 	static bool getTrackingActive() { return do_tracking && confid; }
 	static bool getAxisReverse() { return do_axis_reverse; }

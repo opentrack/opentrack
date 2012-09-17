@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120917 - WVR: Added Mouse-buttons to ShortKeys.
 		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
 		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
 						uses the Curve(s). ToDo: make the ranges configurable by the user. Development on the Toradex IMU makes us realize, that
@@ -102,15 +103,20 @@ THeadPoseDOF Tracker::X("X","", 50, 180);
 THeadPoseDOF Tracker::Y("Y","", 50, 180);
 THeadPoseDOF Tracker::Z("Z","", 50, 180);
 
-TShortKey Tracker::CenterKey;							// ShortKey to Center headposition
-TShortKey Tracker::StartStopKey;						// ShortKey to Start/stop tracking
-TShortKey Tracker::InhibitKey;							// ShortKey to inhibit axis while tracking
-TShortKey Tracker::GameZeroKey;							// ShortKey to Set Game Zero
-//TShortKey Tracker::AxisReverseKey;						// ShortKey to start/stop axis reverse while tracking
+TShortKey Tracker::CenterKey;									// ShortKey to Center headposition
+TShortKey Tracker::StartStopKey;								// ShortKey to Start/stop tracking
+TShortKey Tracker::InhibitKey;									// ShortKey to inhibit axis while tracking
+TShortKey Tracker::GameZeroKey;									// ShortKey to Set Game Zero
+//TShortKey Tracker::AxisReverseKey;							// ShortKey to start/stop axis reverse while tracking
 
-//ITrackerPtr Tracker::pTracker;							// Pointer to Tracker instance (in DLL)
-IProtocolPtr Tracker::pProtocol;						// Pointer to Protocol instance (in DLL)
-IFilterPtr Tracker::pFilter;							// Pointer to Filter instance (in DLL)
+int Tracker::CenterMouseKey;									// ShortKey to Center headposition
+int Tracker::StartStopMouseKey;									// ShortKey to Start/stop tracking
+int Tracker::InhibitMouseKey;									// ShortKey to inhibit axis while tracking
+int Tracker::GameZeroMouseKey;									// ShortKey to Set Game Zero
+
+//ITrackerPtr Tracker::pTracker;								// Pointer to Tracker instance (in DLL)
+IProtocolPtr Tracker::pProtocol;								// Pointer to Protocol instance (in DLL)
+IFilterPtr Tracker::pFilter;									// Pointer to Filter instance (in DLL)
 
 
 /** constructor **/
@@ -297,14 +303,25 @@ void Tracker::setup() {
 /** QThread run method @override **/
 void Tracker::run() {
 /** Direct Input variables **/
+//
+// The DirectX stuff was found here: http://www.directxtutorial.com/tutorial9/e-directinput/dx9e2.aspx
+//
 LPDIRECTINPUT8 din;								// the pointer to our DirectInput interface
 LPDIRECTINPUTDEVICE8 dinkeyboard;				// the pointer to the keyboard device
+LPDIRECTINPUTDEVICE8 dinmouse;					// the pointer to the mouse device
 BYTE keystate[256];								// the storage for the key-information
+DIMOUSESTATE mousestate;						// the storage for the mouse-information
 HRESULT retAcquire;
 bool lastCenterKey = false;						// Remember state, to detect rising edge
 bool lastStartStopKey = false;
 bool lastInhibitKey = false;
 bool lastGameZeroKey = false;
+
+bool lastCenterMouseKey = false;				// Remember state, to detect rising edge
+bool lastStartStopMouseKey = false;
+bool lastInhibitMouseKey = false;
+bool lastGameZeroMouseKey = false;
+
 bool waitAxisReverse = false;
 bool waitThroughZero = false;
 double actualYaw = 0.0f;
@@ -343,16 +360,22 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 	if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
 		   qDebug() << "Tracker::setup CreateDevice function failed!" << GetLastError();
 	}
+    // create the mouse device
+    din->CreateDevice(GUID_SysMouse, &dinmouse, NULL);
 
     // set the data format to keyboard format
 	if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
 		   qDebug() << "Tracker::setup SetDataFormat function failed!" << GetLastError();
 	}
+    // set the data format to mouse format
+    dinmouse->SetDataFormat(&c_dfDIMouse);
 
     // set the control you will have over the keyboard
 	if (dinkeyboard->SetCooperativeLevel(mainApp->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
 		   qDebug() << "Tracker::setup SetCooperativeLevel function failed!" << GetLastError();
 	}
+    // set the control you will have over the mouse
+    dinmouse->SetCooperativeLevel(mainApp->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
 
 	forever
 	{
@@ -375,6 +398,76 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			Roll.curvePtr->setTrackingActive( false );
 
 			return;
+		}
+    
+		//
+		// Check the mouse
+		//
+		// get access if we don't have it already
+		retAcquire = dinmouse->Acquire();
+		if ( (retAcquire != DI_OK) && (retAcquire != S_FALSE) ) {
+		   qDebug() << "Tracker::run Acquire function failed!" << GetLastError();
+		}
+		else {
+			if (dinmouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&mousestate) != DI_OK) {
+			   qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
+			}
+			else {
+				//
+				// Check the state of the StartStop MouseKey
+				//
+				if ( isMouseKeyPressed( &StartStopMouseKey, &mousestate ) && (!lastStartStopMouseKey) ) {
+					Tracker::do_tracking = !Tracker::do_tracking;
+
+					//
+					// To start tracking again and to be at '0', execute Center command too
+					//
+					if (Tracker::do_tracking) {
+						Tracker::confid = false;
+						pTracker->StartTracker( mainApp->winId() );
+					}
+					else {
+						if (setEngineStop) {						// Only stop engine when option is checked
+							pTracker->StopTracker( false );
+						}
+					}
+					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
+				}
+				lastStartStopMouseKey = isMouseKeyPressed( &StartStopMouseKey, &mousestate );				// Remember
+
+				//
+				// Check the state of the Center MouseKey
+				//
+				if ( isMouseKeyPressed( &CenterMouseKey, &mousestate ) && (!lastCenterMouseKey) ) {
+					Tracker::do_center = true;
+					qDebug() << "Tracker::run() says Center MouseKey pressed";
+				}
+				lastCenterMouseKey = isMouseKeyPressed( &CenterMouseKey, &mousestate );						// Remember
+
+				//
+				// Check the state of the GameZero MouseKey
+				//
+				if ( isMouseKeyPressed( &GameZeroMouseKey, &mousestate ) && (!lastGameZeroMouseKey) ) {
+					Tracker::do_game_zero = true;
+					qDebug() << "Tracker::run() says GameZero MouseKey pressed";
+				}
+				lastGameZeroMouseKey = isMouseKeyPressed( &GameZeroMouseKey, &mousestate );					// Remember
+
+				//
+				// Check the state of the Inhibit MouseKey
+				//
+				if ( isMouseKeyPressed( &InhibitMouseKey, &mousestate ) && (!lastInhibitMouseKey) ) {
+					Tracker::do_inhibit = !Tracker::do_inhibit;
+					qDebug() << "Tracker::run() says Inhibit MouseKey pressed";
+					//
+					// Execute Center command too, when inhibition ends.
+					//
+					if (!Tracker::do_inhibit) {
+						Tracker::do_center = true;
+					}
+				}
+				lastInhibitMouseKey = isMouseKeyPressed( &InhibitMouseKey, &mousestate );					// Remember
+			}
 		}
 
 		//
@@ -807,12 +900,14 @@ int sensX, sensY, sensZ;
 	iniFile.beginGroup ( "KB_Shortcuts" );
 	
 	// Center key
+	CenterMouseKey = iniFile.value ( "MouseKey_Center", 0 ).toInt();
 	CenterKey.keycode = iniFile.value ( "Keycode_Center", 0 ).toInt();
 	CenterKey.shift = iniFile.value ( "Shift_Center", 0 ).toBool();
 	CenterKey.ctrl = iniFile.value ( "Ctrl_Center", 0 ).toBool();
 	CenterKey.alt = iniFile.value ( "Alt_Center", 0 ).toBool();
 
 	// StartStop key
+	StartStopMouseKey = iniFile.value ( "MouseKey_StartStop", 0 ).toInt();
 	StartStopKey.keycode = iniFile.value ( "Keycode_StartStop", 0 ).toInt();
 	StartStopKey.shift = iniFile.value ( "Shift_StartStop", 0 ).toBool();
 	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
@@ -821,6 +916,7 @@ int sensX, sensY, sensZ;
 	setEngineStop = iniFile.value ( "SetEngineStop", 1 ).toBool();
 
 	// Inhibit key
+	InhibitMouseKey = iniFile.value ( "MouseKey_Inhibit", 0 ).toInt();
 	InhibitKey.keycode = iniFile.value ( "Keycode_Inhibit", 0 ).toInt();
 	InhibitKey.shift = iniFile.value ( "Shift_Inhibit", 0 ).toBool();
 	InhibitKey.ctrl = iniFile.value ( "Ctrl_Inhibit", 0 ).toBool();
@@ -833,6 +929,7 @@ int sensX, sensY, sensZ;
 	InhibitKey.doZ = iniFile.value ( "Inhibit_Z", 0 ).toBool();
 
 	// Game Zero key
+	GameZeroMouseKey = iniFile.value ( "MouseKey_GameZero", 0 ).toInt();
 	GameZeroKey.keycode = iniFile.value ( "Keycode_GameZero", 0 ).toInt();
 	GameZeroKey.shift = iniFile.value ( "Shift_GameZero", 0 ).toBool();
 	GameZeroKey.ctrl = iniFile.value ( "Ctrl_GameZero", 0 ).toBool();
@@ -879,6 +976,29 @@ bool alt;
 		//
 		// All is well!
 		//
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+//
+// Determine if the MouseKey is pressed.
+//
+bool Tracker::isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate ){
+
+	//
+	// If key == NONE, or invalid: ready!
+	//
+	if ((*key <= 0) || (*key > 5)) {
+		return false;
+	}
+
+	//
+	// Now, check if the right key is pressed.
+	//
+	if (mousestate->rgbButtons[*key-1] & 0x80) {
 		return true;
 	}
 	else {
