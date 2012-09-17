@@ -219,6 +219,7 @@ private:
 	FaceTrackNoIR *mainApp;
 	QList<QString> stringList;			// List of strings, that describe the keyboard-keys
 	QList<BYTE> keyList; 				// List of keys, with the values of the keyboard-keys
+	QList<QString> stringListMouse;		// List of strings, that describe the mouse-keys
 
 private slots:
 	void doOK();

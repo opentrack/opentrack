@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120917 - WVR: Added Mouse-buttons to ShortKeys.
 		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
 		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
 						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
@@ -1530,16 +1531,19 @@ QWidget( parent , f)
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 
 	connect(ui.cbxCenterKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.cbxCenterMouseKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkCenterShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkCenterCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkCenterAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
 	connect(ui.cbxGameZeroKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.cbxGameZeroMouseKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkGameZeroShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkGameZeroCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkGameZeroAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
 	connect(ui.cbxStartStopKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.cbxStartStopMouseKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkStartStopShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkStartStopAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
@@ -1547,6 +1551,7 @@ QWidget( parent , f)
 	connect(ui.radioSetEngineStop, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
 
 	connect(ui.cbxInhibitKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
+	connect(ui.cbxInhibitMouseKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
 	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkInhibitCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkInhibitAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
@@ -1701,6 +1706,28 @@ QWidget( parent , f)
 		ui.cbxInhibitKey->addItem(stringList.at(i));
 	}
 
+	//
+	// Clear the Lists with key-descriptions and keycodes and build the Lists
+	// The strings will all be added to the ListBoxes for each Shortkey
+	//
+	stringListMouse.clear();
+	stringListMouse.append("NONE");
+	stringListMouse.append("LEFT");
+	stringListMouse.append("RIGHT");
+	stringListMouse.append("MIDDLE");
+	stringListMouse.append("BACK");
+	stringListMouse.append("FORWARD");
+
+	//
+	// Add strings to the Listboxes.
+	//
+	for ( int i = 0; i < stringListMouse.size(); i++) {
+		ui.cbxCenterMouseKey->addItem(stringListMouse.at(i));
+		ui.cbxGameZeroMouseKey->addItem(stringListMouse.at(i));
+		ui.cbxStartStopMouseKey->addItem(stringListMouse.at(i));
+		ui.cbxInhibitMouseKey->addItem(stringListMouse.at(i));
+	}
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -1775,6 +1802,7 @@ int keyindex;
 	iniFile.beginGroup ( "KB_Shortcuts" );
 	
 	// Center key
+	ui.cbxCenterMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_Center", 0 ).toInt() );
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Center", 1 ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxCenterKey->setCurrentIndex( keyindex );
@@ -1787,6 +1815,7 @@ int keyindex;
 	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
 
 	// GameZero key
+	ui.cbxGameZeroMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_GameZero", 0 ).toInt() );
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_GameZero", 1 ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxGameZeroKey->setCurrentIndex( keyindex );
@@ -1799,6 +1828,7 @@ int keyindex;
 	ui.chkGameZeroAlt->setChecked (iniFile.value ( "Alt_GameZero", 0 ).toBool());
 
 	// Start/stop key
+	ui.cbxStartStopMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_StartStop", 0 ).toInt() );
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_StartStop", 1 ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxStartStopKey->setCurrentIndex( keyindex );
@@ -1815,6 +1845,7 @@ int keyindex;
 	ui.radioSetKeepTracking->setChecked(!ui.radioSetEngineStop->isChecked());
 
 	// Axis-inhibitor key
+	ui.cbxInhibitMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_Inhibit", 0 ).toInt() );
 	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Inhibit", 1 ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxInhibitKey->setCurrentIndex( keyindex );
@@ -1859,16 +1890,19 @@ void KeyboardShortcutDialog::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "KB_Shortcuts" );
+	iniFile.setValue ( "MouseKey_Center", ui.cbxCenterMouseKey->currentIndex());
 	iniFile.setValue ( "Keycode_Center", keyList.at( ui.cbxCenterKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
 	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
 	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
 
+	iniFile.setValue ( "MouseKey_GameZero", ui.cbxGameZeroMouseKey->currentIndex());
 	iniFile.setValue ( "Keycode_GameZero", keyList.at( ui.cbxGameZeroKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_GameZero", ui.chkGameZeroShift->isChecked() );
 	iniFile.setValue ( "Ctrl_GameZero", ui.chkGameZeroCtrl->isChecked() );
 	iniFile.setValue ( "Alt_GameZero", ui.chkGameZeroAlt->isChecked() );
 
+	iniFile.setValue ( "MouseKey_StartStop", ui.cbxStartStopMouseKey->currentIndex());
 	iniFile.setValue ( "Keycode_StartStop", keyList.at( ui.cbxStartStopKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
 	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
@@ -1876,6 +1910,7 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "SetZero", ui.radioSetZero->isChecked() );
 	iniFile.setValue ( "SetEngineStop", ui.radioSetEngineStop->isChecked() );
 
+	iniFile.setValue ( "MouseKey_Inhibit", ui.cbxInhibitMouseKey->currentIndex());
 	iniFile.setValue ( "Keycode_Inhibit", keyList.at( ui.cbxInhibitKey->currentIndex() ) );
 	iniFile.setValue ( "Shift_Inhibit", ui.chkInhibitShift->isChecked() );
 	iniFile.setValue ( "Ctrl_Inhibit", ui.chkInhibitCtrl->isChecked() );

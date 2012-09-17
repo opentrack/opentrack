@@ -2188,7 +2188,7 @@ background:none;</string>
   </action>
   <action name="actionKeyboard_Shortcuts">
    <property name="text">
-    <string>Keyboard Shortcuts</string>
+    <string>Keyboard and Mouse Shortcuts</string>
    </property>
   </action>
   <action name="actionPreferences">
