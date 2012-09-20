@@ -150,9 +150,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGL4.lib QtNetworkd4.lib Strmiids.lib QFunctionConfigurator.lib"
+				AdditionalDependencies="opengl32.lib qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib QtNetworkd4.lib Strmiids.lib QFunctionConfigurator.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\QFunctionConfigurator\release&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\QFunctionConfigurator\debug&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"

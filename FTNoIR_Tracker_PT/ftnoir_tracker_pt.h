@@ -27,6 +27,9 @@ public:
 	Tracker();
 	~Tracker();
 
+	void CenterTracker();
+	
+
 	// ITracker interface
 	void Initialize(QFrame *videoframe);
 	void StartTracker(HWND parent_window);
@@ -42,7 +45,9 @@ public:
 	int get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
 	void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
 
-protected:
+protected:	
+	FrameTrafo X_CH_0; // for centering
+
 	QMutex mutex;
 	cv::Mat frame;	// the output frame for display
 
@@ -53,14 +58,14 @@ protected:
 	void set_command(Command command);
 	void reset_command(Command command);
 	int commands;
-
+	
 	Camera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
 	cv::Vec3f t_MH;
 	bool draw_frame;
 	int sleep_time;
-
+	
 	long frame_count;
 
 	VideoWidget* video_widget;

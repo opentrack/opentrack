@@ -152,27 +152,47 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 	const float rad2deg = 180.0/3.14159265;
 	{
 		QMutexLocker lock(&mutex);
-		FrameTrafo pose = point_tracker.get_pose();
+
+		FrameTrafo X_CM = point_tracker.get_pose();
+		FrameTrafo X_MH(Matx33f::eye(), t_MH);
+		FrameTrafo X_CH = X_CM * X_MH;
+
+		Matx33f R = X_CH.R * X_CH_0.R.t(); 
+		Vec3f t   = X_CH.t - X_CH_0.t;
 
 		// get translation
-		Vec3f p = pose.R * t_MH + pose.t;
-		data->x = p[0] / 10.0;	// convert to cm
-		data->y = p[1] / 10.0;
-		data->z = p[2] / 10.0;
+		data->x = t[0] / 10.0;	// convert to cm
+		data->y = t[1] / 10.0;
+		data->z = t[2] / 10.0;
 
-		// extract rotation angles from rotation matrix
-		const Matx33f& R = pose.R;
-		data->yaw = atan2( -R(2,0), sqrt(R(0,0)*R(0,0) + R(1,0)*R(1,0)) );
-		float cos_beta = cos(data->yaw);
-		if (cos_beta != 0)
-		{
-			data->pitch = rad2deg * atan2( R(2,1)/cos_beta, R(2,2)/cos_beta);
-			data->roll  = rad2deg * atan2( R(1,0)/cos_beta, R(0,0)/cos_beta);
-		}
-		data->yaw *= rad2deg;
+		// translate rotatation matrix from opengl (G) to roll-pitch-yaw (R) frame
+		// -z -> x, y -> z, x -> -y
+		Matx33f R_RG( 0, 0,-1,
+			         -1, 0, 0,
+					  0, 1, 0);
+		R = R_RG * R * R_RG.t();
+
+		// extract rotation angles
+		float alpha, beta, gamma;
+		//beta = atan2( -R(2,0), sqrt(R(0,0)*R(0,0) + R(1,0)*R(1,0)) );
+		beta = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+		alpha = atan2( R(1,0), R(0,0));
+		gamma = atan2( R(2,1), R(2,2));		
+
+		data->yaw   = rad2deg * alpha;
+		data->pitch = rad2deg * beta;
+		data->roll  = rad2deg * gamma;
 	}
-	refreshVideo();
 	return true;
+}
+
+void Tracker::CenterTracker()
+{
+	QMutexLocker lock(&mutex);
+	FrameTrafo X_CM_0 = point_tracker.get_pose();
+	FrameTrafo X_MH(Matx33f::eye(), t_MH);
+	X_CH_0 = X_CM_0 * X_MH;
+
 }
 
 //-----------------------------------------------------------------------------

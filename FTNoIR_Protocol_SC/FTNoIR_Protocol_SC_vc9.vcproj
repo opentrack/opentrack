@@ -89,7 +89,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)/bin_dbg"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			>

@@ -62,6 +62,7 @@ TrackerDialog::TrackerDialog()
 
 	connect(ui.ok_button, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.cancel_button, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.center_button, SIGNAL(clicked()), this, SLOT(doCenter()));
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     timer.start(100);
@@ -112,6 +113,12 @@ void TrackerDialog::settings_changed()
 	settings_dirty = true;
 	if (tracker)
 		tracker->apply_without_camindex(settings);
+}
+
+void TrackerDialog::doCenter()
+{
+	if (tracker)
+		tracker->CenterTracker();
 }
 
 void TrackerDialog::doOK()
@@ -196,7 +203,7 @@ void TrackerDialog::unRegisterTracker()
 {
 	qDebug()<<"tracker un-registerd";
 	tracker = NULL;
-	ui.tcalib_button->setEnabled(true); 
+	ui.tcalib_button->setEnabled(false); 
 }
 
 //-----------------------------------------------------------------------------
