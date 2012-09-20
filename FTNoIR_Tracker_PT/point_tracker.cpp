@@ -138,7 +138,7 @@ void PointTracker::POSIT(float f)
 	//Matx33f R_expected = X_CM.R;
 
 	const int MAX_ITER = 100;
-	const float EPS_THRESHOLD = 1e-3;
+	const float EPS_THRESHOLD = 1e-4;
 
 	int i=1;
 	for (; i<MAX_ITER; ++i)

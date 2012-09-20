@@ -15,7 +15,7 @@
 // by recursive least squares /
 // kalman filter in information form with identity noise covariance
 // measurement equation when head position = t_CH is fixed:
-// (R_CM_k , Id)*(t_MH, -t_CH) = t_CM_k
+// (R_CM_k , Id)*(-t_MH, t_CH) = t_CM_k
 
 class TranslationCalibrator
 {
@@ -33,7 +33,7 @@ public:
 
 protected:
 	cv::Matx66f P;	// normalized precision matrix = inverse covariance
-	cv::Vec6f y;	// P*(t_MH, -c)
+	cv::Vec6f y;	// P*(-t_MH, t_CH)
 };
 
 #endif //TRANSCALIB_H

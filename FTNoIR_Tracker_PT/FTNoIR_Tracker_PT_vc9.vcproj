@@ -85,7 +85,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\bin"
+			OutputDirectory="$(SolutionDir)/bin_dbg"
 			IntermediateDirectory="$(SolutionDir)\$(ConfigurationName)"
 			ConfigurationType="2"
 			>
@@ -124,7 +124,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib opencv_core242d.lib opencv_highgui242d.lib opencv_imgproc242d.lib opencv_calib3d242d.lib"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib opengl32.lib glu32.lib opencv_core242d.lib opencv_highgui242d.lib opencv_imgproc242d.lib opencv_calib3d242d.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\lib&quot;"
 				GenerateDebugInformation="true"

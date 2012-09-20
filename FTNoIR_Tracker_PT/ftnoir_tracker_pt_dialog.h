@@ -33,6 +33,7 @@ public:
 protected slots:
 	void doOK();
 	void doCancel();
+	void doCenter();
 
 	// ugly qt stuff
 	void set_video_widget(bool val)  { settings.video_widget = val;   settings_changed(); }
