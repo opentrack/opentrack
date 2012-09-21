@@ -24,6 +24,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+	    20122109 - C14: Replaced Release with virtual destructor
 		20120009 - WVR: Removed AutoClosePtr (seemed like it didn't work OK)
 		20110415 - WVR: Added overloaded operator - and -=
 */
@@ -35,6 +36,14 @@
 #include <QtGui/QWidget>
 #include <QtGui/QFrame>
 
+////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
+#   define EXTERN_C     extern "C"
+#else
+#   define EXTERN_C
+#endif // __cplusplus
+
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -42,8 +51,7 @@
 // Instances are obtained via factory function.
 struct ITracker
 {
-    virtual ~ITracker() {};
-//	virtual void Release() = 0;									// Member required to enable Auto-remove
+    virtual ~ITracker() {}
 	virtual void Initialize( QFrame *videoframe ) = 0;
 	virtual void StartTracker( HWND parent_window ) = 0;
 	virtual void StopTracker(bool exit) = 0;
@@ -58,26 +66,16 @@ struct ITracker
 	}
 };
 
-// Handle type. In C++ language the interface type is used.
-typedef ITracker* TRACKERHANDLE;
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
+typedef ITracker* ITrackerPtr;
 
 // Factory function that creates instances of the Tracker object.
 EXTERN_C
 FTNOIR_TRACKER_BASE_EXPORT
-TRACKERHANDLE
+ITrackerPtr
 __stdcall
-GetTracker(
-    void);
+GetTracker(void);
 
-
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -85,21 +83,22 @@ GetTracker(
 // Instances are obtained via factory function.
 struct ITrackerDialog
 {
+	virtual ~ITrackerDialog() {}
 	virtual void Initialize(QWidget *parent) = 0;
 	virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
 
-// Handle type. In C++ language the iterface type is used.
-typedef ITrackerDialog* TRACKERDIALOGHANDLE;
+typedef ITrackerDialog* ITrackerDialogPtr;
 
 // Factory function that creates instances of the Tracker object.
 EXTERN_C
 FTNOIR_TRACKER_BASE_EXPORT
-TRACKERDIALOGHANDLE
+ITrackerDialogPtr
 __stdcall
 GetTrackerDialog(void);
 
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -107,7 +106,7 @@ GetTrackerDialog(void);
 // Instances are obtained via factory function.
 struct ITrackerDll
 {
-//    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual ~ITrackerDll() {}
 	virtual void Initialize() = 0;
 
 	virtual void getFullName(QString *strToBeFilled) = 0;
@@ -116,13 +115,12 @@ struct ITrackerDll
 	virtual void getIcon(QIcon *icon) = 0;
 };
 
-// Handle type. In C++ language the interface type is used.
-typedef ITrackerDll* TRACKERDLLHANDLE;
+typedef ITrackerDll* ITrackerDllPtr;
 
 // Factory function that creates instances of the Tracker object.
 EXTERN_C
 FTNOIR_TRACKER_BASE_EXPORT
-TRACKERDLLHANDLE
+ITrackerDllPtr
 __stdcall
 GetTrackerDll(void);
 

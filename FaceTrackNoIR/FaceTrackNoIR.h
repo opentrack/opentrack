@@ -42,26 +42,16 @@
 #include "ui_FTNoIR_Preferences.h"
 #include "ui_FTNoIR_Curves.h"
 
-//
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
-#include "AutoClosePtr.h"
 
-// 1a. COM-Like usage with smart pointer.
-// No need to call `ITracker::Release'; the instance will
-// be released automatically in destructor of the smart pointer.
-//typedef AutoClosePtr<ITrackerDialog, void, &ITrackerDialog::Release> ITrackerDialogPtr;
-typedef ITrackerDialog *(WINAPI *importGetTrackerDialog)(void);
-typedef ITrackerDll *(WINAPI *importGetTrackerDll)(void);
-
-typedef AutoClosePtr<IProtocolDialog, void, &IProtocolDialog::Release> IProtocolDialogPtr;
-typedef IProtocolDialog *(WINAPI *importGetProtocolDialog)(void);
-typedef AutoClosePtr<IFilterDialog, void, &IFilterDialog::Release> IFilterDialogPtr;
-typedef IFilterDialog *(WINAPI *importGetFilterDialog)(void);
-
-typedef AutoClosePtr<IFilterDll, void, &IFilterDll::Release> IFilterDllPtr;
-typedef IFilterDll *(WINAPI *importGetFilterDll)(void);
+typedef ITrackerDialogPtr (WINAPI *importGetTrackerDialog)(void);
+typedef ITrackerDllPtr (WINAPI *importGetTrackerDll)(void);
+typedef IProtocolDialogPtr (WINAPI *importGetProtocolDialog)(void);
+//typedef IProtocolDllPtr (WINAPI *importGetProtocolDll)(void);
+typedef IFilterDialogPtr (WINAPI *importGetFilterDialog)(void);
+typedef IFilterDllPtr (WINAPI *importGetFilterDll)(void);
 
 #include <Dshow.h>
 
@@ -93,7 +83,7 @@ private:
 	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
 	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
-	ITrackerDialog *pTrackerDialog;				// Pointer to Tracker dialog instance (in DLL)
+	ITrackerDialogPtr pTrackerDialog;				// Pointer to Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
 	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 

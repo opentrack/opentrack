@@ -24,6 +24,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		
 		20110415 - WVR: Added overloaded operator - and -=
 */
 
@@ -39,6 +40,14 @@
 #include "windows.h"
 //#include "winable.h"
 
+////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
+#   define EXTERN_C     extern "C"
+#else
+#   define EXTERN_C
+#endif // __cplusplus
+
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -46,7 +55,7 @@
 // Instances are obtained via factory function.
 struct IProtocol
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual ~IProtocol() {}
 	virtual void Initialize() = 0;
 	virtual bool checkServerInstallationOK ( HANDLE handle ) = 0;
 	virtual void sendHeadposeToGame( T6DOF *headpose ) = 0;
@@ -57,26 +66,16 @@ struct IProtocol
 	virtual void getDescription(QString *strToBeFilled) = 0;
 };
 
-// Handle type. In C++ language the iterface type is used.
-typedef IProtocol* PROTOCOLHANDLE;
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
+typedef IProtocol* IProtocolPtr;
 
 // Factory function that creates instances of the Protocol object.
 EXTERN_C
 FTNOIR_PROTOCOL_BASE_EXPORT
-PROTOCOLHANDLE
+IProtocolPtr
 __stdcall
-GetProtocol(
-    void);
+GetProtocol(void);
 
-
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -84,7 +83,7 @@ GetProtocol(
 // Instances are obtained via factory function.
 struct IProtocolDialog
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual ~IProtocolDialog() {}
 	virtual void Initialize(QWidget *parent) = 0;
 
 	virtual void getFullName(QString *strToBeFilled) = 0;
@@ -93,13 +92,12 @@ struct IProtocolDialog
 	virtual void getIcon(QIcon *icon) = 0;
 };
 
-// Handle type. In C++ language the iterface type is used.
-typedef IProtocolDialog* PROTOCOLDIALOGHANDLE;
+typedef IProtocolDialog* IProtocolDialogPtr;
 
 // Factory function that creates instances of the Protocol object.
 EXTERN_C
 FTNOIR_PROTOCOL_BASE_EXPORT
-PROTOCOLDIALOGHANDLE
+IProtocolDialogPtr
 __stdcall
 GetProtocolDialog(void);
 

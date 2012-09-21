@@ -46,16 +46,10 @@
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
-//#include "AutoClosePtr.h"
 
-// 1a. COM-Like usage with smart pointer.
-// No need to call `ITracker::Release'; the instance will
-// be released automatically in destructor of the smart pointer.
-//typedef AutoClosePtr<ITracker, void, &ITracker::Release> ITrackerPtr;
-typedef ITracker *(WINAPI *importGetTracker)(void);
-typedef AutoClosePtr<IProtocol, void, &IProtocol::Release> IProtocolPtr;
-typedef IProtocol *(WINAPI *importGetProtocol)(void);
-
+typedef ITrackerPtr (WINAPI *importGetTracker)(void);
+typedef IProtocolPtr (WINAPI *importGetProtocol)(void);
+typedef IFilterPtr (WINAPI *importGetFilter)(void);
 
 // include the DirectX Library files
 #pragma comment (lib, "dinput8.lib")
@@ -179,7 +173,7 @@ private:
 	static T6DOF new_camera;
 	static T6DOF output_camera;
 
-	ITracker *pTracker;								// Pointer to Tracker instance (in DLL)
+	ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
 	static IProtocolPtr pProtocol;					// Pointer to Protocol instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 

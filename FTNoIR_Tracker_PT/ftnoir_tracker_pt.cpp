@@ -198,7 +198,7 @@ void Tracker::CenterTracker()
 //-----------------------------------------------------------------------------
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-FTNOIR_TRACKER_BASE_EXPORT TRACKERHANDLE __stdcall GetTracker()
+FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
 {
 	return new Tracker;
 }

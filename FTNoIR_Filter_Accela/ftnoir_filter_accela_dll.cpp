@@ -84,7 +84,7 @@ void FTNoIR_FilterDll::getIcon(QIcon *icon)
 //   _GetFilterDll@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetFilterDll=_GetFilterDll@0")
 
-FTNOIR_FILTER_BASE_EXPORT FILTERDLLHANDLE __stdcall GetFilterDll()
+FTNOIR_FILTER_BASE_EXPORT IFilterDllPtr __stdcall GetFilterDll()
 {
 	return new FTNoIR_FilterDll;
 }

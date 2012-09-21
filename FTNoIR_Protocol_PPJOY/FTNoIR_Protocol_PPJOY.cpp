@@ -213,7 +213,7 @@ void FTNoIR_Protocol_PPJOY::getNameFromGame( char *dest )
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT PROTOCOLHANDLE __stdcall GetProtocol()
+FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
 	return new FTNoIR_Protocol_PPJOY;
 }
@@ -367,7 +367,7 @@ void PPJOYControls::virtualJoystickSelected( int index )
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT PROTOCOLDIALOGHANDLE __stdcall GetProtocolDialog( )
+FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialogPtr __stdcall GetProtocolDialog( )
 {
 	return new PPJOYControls;
 }

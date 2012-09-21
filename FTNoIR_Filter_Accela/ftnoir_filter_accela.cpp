@@ -29,11 +29,6 @@ FTNoIR_Filter::~FTNoIR_Filter()
 
 }
 
-void FTNoIR_Filter::Release()
-{
-    delete this;
-}
-
 void FTNoIR_Filter::Initialize()
 {
 	loadSettings();
@@ -152,7 +147,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 //   _GetFilter@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetFilter=_GetFilter@0")
 
-FTNOIR_FILTER_BASE_EXPORT FILTERHANDLE __stdcall GetFilter()
+FTNOIR_FILTER_BASE_EXPORT IFilterPtr __stdcall GetFilter()
 {
 	return new FTNoIR_Filter;
 }

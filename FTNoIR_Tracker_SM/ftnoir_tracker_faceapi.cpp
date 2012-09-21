@@ -214,7 +214,7 @@ bool FTNoIR_Tracker::SMCreateMapping()
 //   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-FTNOIR_TRACKER_BASE_EXPORT TRACKERHANDLE __stdcall GetTracker()
+FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
 {
 	return new FTNoIR_Tracker;
 }
