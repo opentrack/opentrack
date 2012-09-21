@@ -23,6 +23,9 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120918 - WVR: When AutoStart is TRUE, the program is not directly minimized any more.
+						This now depends on the AutoMinimize time. Fixed the 'not showing' of the MIB.
+						Also disable combo and buttons after 'Start'.
 		20120917 - WVR: Added Mouse-buttons to ShortKeys.
 		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
 		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled ´statically´. Now, a Dir() of the
@@ -74,7 +77,7 @@ QMainWindow(parent, flags)
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	if (settings.value ( "AutoStartTracking", 0 ).toBool()) {
 		startTracker();
-		showMinimized();
+//		showMinimized();
 	}
 
     Q_INIT_RESOURCE(PoseWidget);
@@ -638,6 +641,12 @@ void FaceTrackNoIR::about() {
 /** start tracking the face **/
 void FaceTrackNoIR::startTracker( ) {	
 
+	// 
+	ui.iconcomboProfile->setEnabled ( false );
+	ui.btnLoad->setEnabled ( false );
+	ui.btnSave->setEnabled ( false );
+	ui.btnSaveAs->setEnabled ( false );
+
 	//
 	// Create the Tracker and setup
 	//
@@ -778,17 +787,11 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnShowServerControls->setEnabled ( true );
 	ui.video_frame->hide();
 
-	//// Engine controls
-	//switch (ui.iconcomboTrackerSource->currentIndex()) {
-	//case FT_SM_FACEAPI:										// Face API
-	//	ui.btnShowEngineControls->setEnabled ( false );		// Active only when started!
-	//	break;
-	//case FT_FTNOIR:											// FTNoir server
-	//	ui.btnShowEngineControls->setEnabled ( true );
-	//	break;
-	//default:
-	//	break;
-	//}
+	// 
+	ui.iconcomboProfile->setEnabled ( true );
+	ui.btnLoad->setEnabled ( true );
+	ui.btnSave->setEnabled ( true );
+	ui.btnSaveAs->setEnabled ( true );
 
 	//
 	// Stop the timer, so it won't go off again...
@@ -842,6 +845,20 @@ void FaceTrackNoIR::setUseFilter( int set ) {
 /** Show the headpose in the widget (triggered by timer) **/
 void FaceTrackNoIR::showHeadPose() {
 THeadPoseData newdata;
+
+	ui.lblX->setVisible(true);
+	ui.lblY->setVisible(true);
+	ui.lblZ->setVisible(true);
+	ui.lblRotX->setVisible(true);
+	ui.lblRotY->setVisible(true);
+	ui.lblRotZ->setVisible(true);
+
+	ui.lcdNumOutputPosX->setVisible(true);
+	ui.lcdNumOutputPosY->setVisible(true);
+	ui.lcdNumOutputPosZ->setVisible(true);
+	ui.lcdNumOutputRotX->setVisible(true);
+	ui.lcdNumOutputRotY->setVisible(true);
+	ui.lcdNumOutputRotZ->setVisible(true);
 
 	//
 	// Get the pose and also display it.
