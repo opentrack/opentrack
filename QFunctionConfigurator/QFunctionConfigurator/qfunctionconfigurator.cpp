@@ -86,8 +86,8 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 	range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
 
     setMouseTracking(true);
-    moving = 0;						// Pointer to the curve-point, that's being moved
-	movingPoint = 0;				// Index of that same point
+    moving = NULL;						// Pointer to the curve-point, that's being moved
+	movingPoint = 1;				// Index of that same point
 
 	//
 	// Add a Reset-button
@@ -262,6 +262,8 @@ QRect scale;
 //
 void QFunctionConfigurator::drawFunction(const QRectF &fullRect)
 {
+	if (!_config)
+		return;
 int i;
 QPointF prevPoint;
 QPointF currentPoint;
@@ -290,12 +292,15 @@ QPointF currentPoint;
 	QPen pen(colBezier, 2, Qt::SolidLine);
 
 	prevPoint = graphicalizePoint( QPointF(0,0), "drawFunction lines" );		// Start at the Axis
-	for (i = 0; i < _draw_points.size(); i++) {
-		currentPoint = _draw_points[i];
-		drawLine(&painter, prevPoint, currentPoint, pen);
-		prevPoint = currentPoint;
+	double max = maxInputEGU();
+	QPointF prev = graphicalizePoint(QPointF(0, 0));
+    double step = 1 / (double) pixPerEGU_Input();
+	for (double i = 0; i < max; i += step) {
+	    double val = _config->getValue(i);
+	    QPointF cur = graphicalizePoint(QPointF(i, val));
+	    drawLine(&painter, prev, cur, pen);
+		prev = cur;
 	}
-
 	painter.restore();
 }
 
@@ -451,7 +456,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 				if (withinRect(e->pos(), range)) {
 					_config->addPoint(normalizePoint(e->pos()));
 					setConfig(_config, strSettingsFile);
-					moving = 0;
+					moving = NULL;
 					emit CurveChanged( true );
 				}
 			}
@@ -467,7 +472,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 		//
 		// Check to see if the cursor is touching one of the points.
 		//
-		moving = 0;
+		moving = NULL;
 		movingPoint = -1;
 		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
@@ -541,7 +546,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 	}
 }
 
-void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *)
+void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
     //qDebug()<<"releasing";
 	if (moving > 0) {
@@ -552,14 +557,14 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *)
 		//
 		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
-			_config->movePoint(movingPoint, _points[movingPoint]);
+			_config->movePoint(movingPoint, normalizePoint(e->pos()));
 			setConfig(_config, strSettingsFile);
 		}
 		ReleaseMutex(_mutex);
 
 	}
 	setCursor(Qt::ArrowCursor);		
-	moving = 0;
+	moving = NULL;
     movingPoint = 0;
 }
 
@@ -588,10 +593,19 @@ bool QFunctionConfigurator::withinRect( const QPointF &coord, const QRectF &rect
 //
 QPointF QFunctionConfigurator::normalizePoint(QPointF point) const
 {
-QPointF norm;
+	QPointF norm;
 
 	norm.setX( (point.x() - range.left()) / pPerEGU_Input );
-	norm.setY( (range.bottom() - point.y()) / pPerEGU_Output );
+    norm.setY( (range.bottom() - point.y()) / pPerEGU_Output );
+
+	if (norm.x() > maxInputEGU())
+		norm.setX(maxInputEGU());
+	else if (norm.x() < 0)
+		norm.setX(0);
+	if (norm.y() > maxOutputEGU())
+		norm.setY(maxOutputEGU());
+	else if (norm.y() < 0)
+		norm.setY(0);
 
 	return norm;
 }
