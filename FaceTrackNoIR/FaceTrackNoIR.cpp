@@ -2091,6 +2091,10 @@ void CurveConfigurationDialog::save() {
 	ui.qFunctionPitchDown->saveSettings(currentFile);
 	ui.qFunctionRoll->saveSettings(currentFile);
 
+	ui.qFunctionX->saveSettings(currentFile);
+    ui.qFunctionY->saveSettings(currentFile);
+	ui.qFunctionZ->saveSettings(currentFile);
+
 	settingsDirty = false;
 
 	//

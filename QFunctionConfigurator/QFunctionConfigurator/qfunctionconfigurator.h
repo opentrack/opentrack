@@ -168,7 +168,7 @@ private:
 	QRectF  range;														// The actual rectangle for the Bezier-curve
 	QPointF lastPoint;													// The right-most point of the Function
 	QPointF normalizePoint (QPointF point) const;						// Convert the graphical Point to a real-life Point
-	QPointF graphicalizePoint (QPointF point, QString source) const;	// Convert the Point to a graphical Point
+	QPointF graphicalizePoint (QPointF point, QString source = "") const;	// Convert the Point to a graphical Point
 
 	QPointF *moving;
 	int     movingPoint;

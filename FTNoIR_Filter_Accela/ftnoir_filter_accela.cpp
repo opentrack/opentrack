@@ -14,6 +14,7 @@
 #include "math.h"
 #include <QDebug>
 #include <windows.h>
+#include <float.h>
 
 FTNoIR_Filter::FTNoIR_Filter() :
 	functionConfig("Accela-Scaling-Rotation", 4, 8),
@@ -85,16 +86,10 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 
 	for (i=0;i<6;i++)
 	{
-		volatile double bleh;
-
-		bleh = target[i];
-
-		if (bleh != bleh)
+		if (_isnan(target[i]))
 			return;
 
-		bleh = prev_output[i];
-
-		if (bleh != bleh)
+		if (_isnan(prev_output[i]))
 			return;
 
 		double e2 = target[i];
@@ -129,9 +124,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 			output[i] = sum;
 		}
 
-		bleh = output[i];
-
-		if (bleh != bleh)
+		if (_isnan(output[i]))
 			return;
 	}
 
