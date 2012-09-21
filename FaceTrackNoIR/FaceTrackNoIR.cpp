@@ -50,7 +50,10 @@
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
-QMainWindow(parent, flags)
+QMainWindow(parent, flags),
+pTrackerDialog(NULL),
+pProtocolDialog(NULL),
+pFilterDialog(NULL)
 {	
 	cameraDetected = false;
 
@@ -63,7 +66,6 @@ QMainWindow(parent, flags)
 	_curve_config = 0;
 
 	tracker = 0;
-	pTrackerDialog = NULL;
 //	_display = 0;
 	l = 0;
 	trayIcon = 0;
@@ -995,7 +997,7 @@ QString libName;
 	// Delete the existing QDialog
 	//
 	if (pProtocolDialog) {
-		pProtocolDialog.Release();
+		delete pProtocolDialog;
 	}
 
 	// Show the appropriate Protocol-server Settings
@@ -1050,7 +1052,8 @@ QString libName;
 	// Delete the existing QDialog
 	//
 	if (pFilterDialog) {
-		pFilterDialog.Release();
+		delete pFilterDialog;
+		pFilterDialog = NULL;
 	}
 
 		// Show the appropriate Protocol-server Settings
@@ -1174,7 +1177,8 @@ ITrackerDll *pTrackerDll;				// Pointer to Filter info instance (in DLL)
 		// Delete the existing QDialog
 		//
 		if (pProtocolDialog) {
-			pProtocolDialog.Release();
+			delete pProtocolDialog;
+			pProtocolDialog = NULL;
 		}
 
 		// Show the appropriate Protocol-server Settings

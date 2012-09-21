@@ -169,7 +169,7 @@ void TrackerControls::save() {
 //   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-FTNOIR_TRACKER_BASE_EXPORT TRACKERDIALOGHANDLE __stdcall GetTrackerDialog( )
+FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
 {
 	return new TrackerControls;
 }

@@ -22,6 +22,7 @@ class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDi
     Q_OBJECT
 public:
 	TrackerDialog();
+	~TrackerDialog();
 
 	// ITrackerDialog interface
 	void Initialize(QWidget *parent);

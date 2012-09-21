@@ -177,11 +177,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\FTNoIR_Protocol_Base\ftnoir_Protocol_base.h"
+				RelativePath="..\FTNoIR_Protocol_Base\ftnoir_protocol_base.h"
 				>
 			</File>
 			<File
-				RelativePath="..\FTNoIR_Protocol_Base\ftnoir_Protocol_base_global.h"
+				RelativePath="..\FTNoIR_Protocol_Base\ftnoir_protocol_base_global.h"
 				>
 			</File>
 			<File

@@ -10,8 +10,14 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "..\FaceTrackNoIR\AutoClosePtr.h"
+////////////////////////////////////////////////////////////////////////////////
+#ifdef __cplusplus
+#   define EXTERN_C     extern "C"
+#else
+#   define EXTERN_C
+#endif // __cplusplus
 
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -19,32 +25,22 @@
 // Instances are obtained via factory function.
 struct IFilter
 {
-    virtual void Release() = 0;
+	virtual ~IFilter() {}
 	virtual void Initialize() = 0;
 	virtual void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget) = 0;
 };
 
-// Handle type. In C++ language the interface type is used.
-typedef IFilter* FILTERHANDLE;
-typedef AutoClosePtr<IFilter, void, &IFilter::Release> IFilterPtr;
-typedef IFilter *(__stdcall *importGetFilter)(void);
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
+typedef IFilter* IFilterPtr;
+//typedef IFilter *(__stdcall *importGetFilter)(void);
 
 // Factory function that creates instances of the Filter object.
 EXTERN_C
 FTNOIR_FILTER_BASE_EXPORT
-FILTERHANDLE
+IFilterPtr
 __stdcall
-GetFilter(
-    void);
+GetFilter(void);
 
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -52,20 +48,21 @@ GetFilter(
 // Instances are obtained via factory function.
 struct IFilterDialog
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual ~IFilterDialog() {}
 	virtual void Initialize(QWidget *parent, IFilterPtr ptr) = 0;
 };
 
-// Handle type. In C++ language the interface type is used.
-typedef IFilterDialog* FILTERDIALOGHANDLE;
+typedef IFilterDialog* IFilterDialogPtr;
+
 
 // Factory function that creates instances of the Filter object.
 EXTERN_C
 FTNOIR_FILTER_BASE_EXPORT
-FILTERDIALOGHANDLE
+IFilterDialogPtr
 __stdcall
 GetFilterDialog(void);
 
+////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
@@ -73,7 +70,7 @@ GetFilterDialog(void);
 // Instances are obtained via factory function.
 struct IFilterDll
 {
-    virtual void Release() = 0;									// Member required to enable Auto-remove
+	virtual ~IFilterDll() {}
 	virtual void Initialize() = 0;
 
 	virtual void getFullName(QString *strToBeFilled) = 0;
@@ -82,13 +79,12 @@ struct IFilterDll
 	virtual void getIcon(QIcon *icon) = 0;
 };
 
-// Handle type. In C++ language the interface type is used.
-typedef IFilterDll* FILTERDLLHANDLE;
+typedef IFilterDll* IFilterDllPtr;
 
 // Factory function that creates instances of the Filter object.
 EXTERN_C
 FTNOIR_FILTER_BASE_EXPORT
-FILTERDLLHANDLE
+IFilterDllPtr
 __stdcall
 GetFilterDll(void);
 

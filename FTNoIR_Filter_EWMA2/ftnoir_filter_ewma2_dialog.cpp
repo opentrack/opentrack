@@ -191,7 +191,7 @@ void FilterControls::save() {
 //   _GetFilterDialog@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
 
-FTNOIR_FILTER_BASE_EXPORT FILTERDIALOGHANDLE __stdcall GetFilterDialog( )
+FTNOIR_FILTER_BASE_EXPORT IFilterDialogPtr __stdcall GetFilterDialog( )
 {
 	return new FilterControls;
 }

@@ -14,6 +14,8 @@
 TrackerDialog::TrackerDialog()
 	: settings_dirty(false), tracker(NULL), timer(this), trans_calib_running(false)
 {
+	setAttribute(Qt::WA_DeleteOnClose, false);
+
 	ui.setupUi( this );
 
 	settings.load_ini();
@@ -68,6 +70,11 @@ TrackerDialog::TrackerDialog()
     timer.start(100);
 }
 
+TrackerDialog::~TrackerDialog()
+{
+	qDebug()<<"TrackerDialog::~TrackerDialog";
+}
+
 void TrackerDialog::startstop_trans_calib(bool start)
 {
 	if (start)
@@ -93,7 +100,7 @@ void TrackerDialog::trans_calib_step()
 		tracker->get_pose(&X_CM);
 		trans_calib.update(X_CM.R, X_CM.t);
 		cv::Vec3f t_MH = trans_calib.get_estimate();
-		qDebug()<<"TrackerDialog:: current translation estimate: "<<t_MH[0]<<t_MH[1]<<t_MH[2];
+		//qDebug()<<"TrackerDialog:: current translation estimate: "<<t_MH[0]<<t_MH[1]<<t_MH[2];
 		ui.tx_spin->setValue(t_MH[0]);
 		ui.ty_spin->setValue(t_MH[1]);
 		ui.tz_spin->setValue(t_MH[2]);
@@ -209,7 +216,7 @@ void TrackerDialog::unRegisterTracker()
 //-----------------------------------------------------------------------------
 #pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-FTNOIR_TRACKER_BASE_EXPORT TRACKERDIALOGHANDLE __stdcall GetTrackerDialog( )
+FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
 {
 	return new TrackerDialog;
 }
