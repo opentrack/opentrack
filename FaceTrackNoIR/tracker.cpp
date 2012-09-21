@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120921 - WVR: Fixed centering when no filter is selected.
 		20120917 - WVR: Added Mouse-buttons to ShortKeys.
 		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
 		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
@@ -619,12 +620,12 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					pFilter->FilterHeadPoseData(&current_camera.position, &target_camera.position, &new_camera.position, Tracker::Pitch.newSample);
 				}
 				else {
-					new_camera.position.x     = getSmoothFromList( &X.rawList )     - X.offset_headPos;
-					new_camera.position.y     = getSmoothFromList( &Y.rawList )     - Y.offset_headPos;
-					new_camera.position.z     = getSmoothFromList( &Z.rawList )     - Z.offset_headPos;
-					new_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - Pitch.offset_headPos;
-					new_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - Yaw.offset_headPos;
-					new_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - Roll.offset_headPos;
+					new_camera.position.x     = getSmoothFromList( &X.rawList )     - offset_camera.position.x;
+					new_camera.position.y     = getSmoothFromList( &Y.rawList )     - offset_camera.position.y;
+					new_camera.position.z     = getSmoothFromList( &Z.rawList )     - offset_camera.position.z;
+					new_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - offset_camera.position.pitch;
+					new_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - offset_camera.position.yaw;
+					new_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - offset_camera.position.roll;
 				}
 				output_camera.position.x = X.invert * X.curvePtr->getValue(new_camera.position.x);
 				output_camera.position.y = Y.invert * Y.curvePtr->getValue(new_camera.position.y);
@@ -826,13 +827,13 @@ void Tracker::addRaw2List ( QList<float> *rawList, float maxIndex, float raw ) {
 // Get the raw headpose, so it can be displayed.
 //
 void Tracker::getHeadPose( THeadPoseData *data ) {
-	data->x = Tracker::X.headPos - Tracker::X.offset_headPos;				// centimeters
-	data->y = Tracker::Y.headPos - Tracker::Y.offset_headPos;
-	data->z = Tracker::Z.headPos - Tracker::Z.offset_headPos;
+	data->x = Tracker::X.headPos;				// centimeters
+	data->y = Tracker::Y.headPos;
+	data->z = Tracker::Z.headPos;
 
-	data->pitch = Tracker::Pitch.headPos- Tracker::Pitch.offset_headPos;	// degrees
-	data->yaw = Tracker::Yaw.headPos- Tracker::Yaw.offset_headPos;
-	data->roll = Tracker::Roll.headPos - Tracker::Roll.offset_headPos;
+	data->pitch = Tracker::Pitch.headPos;		// degrees
+	data->yaw = Tracker::Yaw.headPos;
+	data->roll = Tracker::Roll.headPos;
 }
 
 //
