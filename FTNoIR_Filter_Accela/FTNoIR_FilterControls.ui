@@ -121,8 +121,8 @@
         <rect>
          <x>20</x>
          <y>20</y>
-         <width>215</width>
-         <height>220</height>
+         <width>819</width>
+         <height>244</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -132,10 +132,10 @@
         <number>8</number>
        </property>
        <property name="pixPerEGU_Input" stdset="0">
-        <number>40</number>
+        <number>191</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
-        <number>20</number>
+        <number>23</number>
        </property>
        <property name="gridDistEGU_Input" stdset="0">
         <number>1</number>
