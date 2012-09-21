@@ -116,7 +116,7 @@ public:
 
 	void initHeadPoseData(){
 		headPos = 0.0f;
-		offset_headPos = 0.0f;
+//		offset_headPos = 0.0f;
 		invert = 0.0f;
 		red = 0.0f;
 		rawList.clear();
@@ -132,7 +132,7 @@ public:
 
 	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
-	float offset_headPos;			// Offset for centering
+//	float offset_headPos;			// Offset for centering
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
 	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
