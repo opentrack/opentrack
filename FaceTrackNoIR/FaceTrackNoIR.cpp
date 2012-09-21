@@ -43,7 +43,6 @@
 */
 #include "FaceTrackNoIR.h"
 #include "tracker.h"
-//#include "FunctionConfig.h"
 
 //#define USE_VISAGE
 
@@ -77,7 +76,6 @@ QMainWindow(parent, flags)
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	if (settings.value ( "AutoStartTracking", 0 ).toBool()) {
 		startTracker();
-//		showMinimized();
 	}
 
     Q_INIT_RESOURCE(PoseWidget);
@@ -2118,76 +2116,4 @@ void CurveConfigurationDialog::save() {
 	// Send a message to the main program, to update the Settings (for the tracker)
 	//
 	mainApp->updateSettings();
-}
-
-void getCurvePoints(QSettings *iniFile, QString prefix, QPointF *point1, QPointF *point2, QPointF *point3, QPointF *point4, int NeutralZone, int Sensitivity, int MaxInput, int MaxOutput) {
-bool setMax;
-float newMax;
-
-	setMax = FALSE;
-	newMax = MaxInput;
-
-	//
-	// If Point 1 exists, read it from the file.
-	// If not: get the y-coord from the global (deprecated) NeutralZone setting.
-	//
-	if (iniFile->contains(prefix + "point1")) {
-		*point1 = iniFile->value ( prefix + "point1", 0 ).toPoint();
-	}
-	else {
-		point1->setY(NeutralZone);
-	}
-
-	//
-	// If Point 4 exists, read it from the file.
-	// If not: derive the x-coord from the (deprecated) 'Sensitivity' setting and set y to max.
-	//
-	if (iniFile->contains(prefix + "point4")) {
-		*point4 = iniFile->value ( prefix + "point4", 0 ).toPoint();
-	}
-	else {
-		point4->setY(MaxInput);									// Max. Input for rotations
-		point4->setX((Sensitivity/100.0f) * MaxInput);
-		if (point4->x() > MaxOutput) {
-			point4->setX(MaxOutput);
-			setMax = TRUE;
-		}
-		else {
-			newMax = (Sensitivity/100.0f) * MaxInput;
-		}
-	}
-
-	//
-	// If Point 2 exists, read it from the file.
-	// If not: derive it from the (deprecated) 'Sensitivity' setting.
-	//
-	if (iniFile->contains(prefix + "point2")) {
-		*point2 = iniFile->value ( prefix + "point2", 0 ).toPoint();
-	}
-	else {
-		point2->setY(0.333f * MaxInput);						// Set the Point at 1/3 of Max. Input
-		if (!setMax) {
-			point2->setX(0.333f * newMax);
-		}
-		else {
-			point2->setX(0.333f * MaxOutput);
-		}
-	}
-
-	//
-	// If Point 3 exists, read it from the file.
-	// If not: derive it from the (deprecated) 'Sensitivity' setting.
-	//
-	if (iniFile->contains(prefix + "point3")) {
-		*point3 = iniFile->value ( prefix + "point3", 0 ).toPoint();
-	}
-	else {
-		point3->setY(0.666f * MaxInput);						// Set the Point at 2/3 of Max. Input
-		if (!setMax) {
-			point3->setX(0.666f * newMax);
-		}
-		else {
-			point3->setX(0.666f * MaxOutput);
-		}
-	}
 }
