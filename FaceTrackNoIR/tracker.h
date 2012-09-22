@@ -35,12 +35,11 @@
 #include <QWaitCondition>
 #include <QList>
 #include <QPainterPath>
+#include <QDebug>
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <Dinput.h>
 
-#include "ExcelServer.h"			// Excel-server (for analysing purposes)
-#include "FTNoIR_cxx_protocolserver.h"
 #include "FunctionConfig.h"
 
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
@@ -211,8 +210,6 @@ private:
 	static float Z_PosWhenReverseAxis;
 
 	FaceTrackNoIR *mainApp;
-
-	QSharedPointer<ProtocolServerBase> debug_Client;	// Protocol Server to log debug-data
 
 protected:
 	// qthread override run method 
