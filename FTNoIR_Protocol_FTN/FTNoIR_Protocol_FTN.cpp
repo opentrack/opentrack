@@ -161,7 +161,7 @@ bool FTNoIR_Protocol_FTN::checkServerInstallationOK( HANDLE handle )
 		inSocket = new QUdpSocket();
 
 		// Connect the inSocket to the port, to receive messages
-		if (!inSocket->bind(QHostAddress::Any, destPort+1)) {
+		if (!inSocket->bind(QHostAddress::Any, destPort+1, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
 			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
 			delete inSocket;
 			inSocket = 0;
