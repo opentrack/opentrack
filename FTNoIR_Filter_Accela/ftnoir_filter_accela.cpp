@@ -17,8 +17,8 @@
 #include <float.h>
 
 FTNoIR_Filter::FTNoIR_Filter() :
-	functionConfig("Accela-Scaling-Rotation", 4, 8),
-	translationFunctionConfig("Accela-Scaling-Translation", 4, 8)
+	functionConfig("Accela-Scaling-Rotation", 4, 6),
+	translationFunctionConfig("Accela-Scaling-Translation", 4, 6)
 {
 	first_run = true;
 	loadSettings();					// Load the Settings
@@ -68,6 +68,8 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 
 	if (first_run)
 	{
+		functionConfig.setTrackingActive(true);
+		translationFunctionConfig.setTrackingActive(true);
 		new_camera_position->x=target[0];
 		new_camera_position->y=target[1];
 		new_camera_position->z=target[2];

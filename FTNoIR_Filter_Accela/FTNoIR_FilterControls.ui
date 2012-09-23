@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>349</height>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,13 +44,13 @@
      <property name="minimumSize">
       <size>
        <width>850</width>
-       <height>300</height>
+       <height>594</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>300</width>
-       <height>300</height>
+       <height>594</height>
       </size>
      </property>
      <property name="currentIndex">
@@ -60,7 +60,7 @@
       <attribute name="title">
        <string>Rotation</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="scalingConfig">
+      <widget class="QFunctionConfigurator" name="scalingConfig" native="true">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -73,13 +73,13 @@
         <number>4</number>
        </property>
        <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
+        <number>6</number>
        </property>
        <property name="pixPerEGU_Input" stdset="0">
         <number>191</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
-        <number>23</number>
+        <number>75</number>
        </property>
        <property name="gridDistEGU_Input" stdset="0">
         <number>1</number>
@@ -87,14 +87,14 @@
        <property name="gridDistEGU_Output" stdset="0">
         <number>1</number>
        </property>
-       <property name="colorBezier">
+       <property name="colorBezier" stdset="0">
         <color>
          <red>255</red>
          <green>170</green>
          <blue>0</blue>
         </color>
        </property>
-       <property name="colorBackground">
+       <property name="colorBackground" stdset="0">
         <color>
          <red>192</red>
          <green>192</green>
@@ -116,7 +116,7 @@
       <attribute name="title">
        <string>Translation</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="translationScalingConfig">
+      <widget class="QFunctionConfigurator" name="translationScalingConfig" native="true">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -129,13 +129,13 @@
         <number>4</number>
        </property>
        <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
+        <number>6</number>
        </property>
        <property name="pixPerEGU_Input" stdset="0">
         <number>191</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
-        <number>23</number>
+        <number>75</number>
        </property>
        <property name="gridDistEGU_Input" stdset="0">
         <number>1</number>
@@ -143,14 +143,14 @@
        <property name="gridDistEGU_Output" stdset="0">
         <number>1</number>
        </property>
-       <property name="colorBezier">
+       <property name="colorBezier" stdset="0">
         <color>
          <red>85</red>
          <green>255</green>
          <blue>0</blue>
         </color>
        </property>
-       <property name="colorBackground">
+       <property name="colorBackground" stdset="0">
         <color>
          <red>192</red>
          <green>192</green>
