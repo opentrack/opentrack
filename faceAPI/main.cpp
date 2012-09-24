@@ -34,7 +34,7 @@
 #include "stdafx.h"
 
 //FaceAPI headers
-#include "sm_api.h"
+#include <sm_api.h>
 #include "ftnoir_tracker_sm_types.h"
 #include "utils.h"
 
