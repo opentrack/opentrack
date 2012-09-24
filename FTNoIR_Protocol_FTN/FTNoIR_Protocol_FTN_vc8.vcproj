@@ -355,7 +355,7 @@
 	<Globals>
 		<Global
 			Name="lupdateOnBuild"
-			Value="0"
+			Value="1"
 		/>
 		<Global
 			Name="MocDir"
