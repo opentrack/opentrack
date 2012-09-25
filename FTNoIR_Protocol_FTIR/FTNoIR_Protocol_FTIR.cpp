@@ -124,7 +124,7 @@ void FTNoIR_Protocol_FTIR::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FTIR::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_FTIR::sendHeadposeToGame( THeadPoseData *headpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -138,13 +138,13 @@ TRACKIRDATA localdata;
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	virtRotX = scale2AnalogLimits (headpose->position.pitch, -180.0f, 180.0f);
-	virtRotY = scale2AnalogLimits (headpose->position.yaw, -180.0f, 180.0f);
-	virtRotZ = scale2AnalogLimits (headpose->position.roll, -180.0f, 180.0f);
+	virtRotX = scale2AnalogLimits (headpose->pitch, -180.0f, 180.0f);
+	virtRotY = scale2AnalogLimits (headpose->yaw, -180.0f, 180.0f);
+	virtRotZ = scale2AnalogLimits (headpose->roll, -180.0f, 180.0f);
 
-	virtPosX = scale2AnalogLimits (headpose->position.x * 10.0f, -500.0f, 500.0f);
-	virtPosY = scale2AnalogLimits (headpose->position.y * 10.0f, -500.0f, 500.0f);
-	virtPosZ = scale2AnalogLimits (headpose->position.z * 10.0f, -500.0f, 500.0f);
+	virtPosX = scale2AnalogLimits (headpose->x * 10.0f, -500.0f, 500.0f);
+	virtPosY = scale2AnalogLimits (headpose->y * 10.0f, -500.0f, 500.0f);
+	virtPosZ = scale2AnalogLimits (headpose->z * 10.0f, -500.0f, 500.0f);
 
 	//
 	// Check if the pointer is OK and wait for the Mutex.

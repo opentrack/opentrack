@@ -45,6 +45,7 @@
 #include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
 #include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
 #include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
+#include "tracker_types.h"
 
 typedef ITrackerPtr (WINAPI *importGetTracker)(void);
 typedef IProtocolPtr (WINAPI *importGetProtocol)(void);

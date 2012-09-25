@@ -128,7 +128,7 @@ void FTNoIR_Protocol_PPJOY::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_PPJOY::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_PPJOY::sendHeadposeToGame( THeadPoseData *headpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -140,13 +140,13 @@ float virtRotZ;
 	//
 	// Copy the Raw measurements.
 	//
-	virtRotX = headpose->position.pitch;
-	virtRotY = headpose->position.yaw;
-	virtRotZ = headpose->position.roll;
+	virtRotX = headpose->pitch;
+	virtRotY = headpose->yaw;
+	virtRotZ = headpose->roll;
 
-	virtPosX = headpose->position.x;
-	virtPosY = headpose->position.y;
-	virtPosZ = headpose->position.z;
+	virtPosX = headpose->x;
+	virtPosY = headpose->y;
+	virtPosZ = headpose->z;
 
 	/* Initialise the IOCTL data structure */
 	JoyState.Signature= JOYSTICK_STATE_V1;
