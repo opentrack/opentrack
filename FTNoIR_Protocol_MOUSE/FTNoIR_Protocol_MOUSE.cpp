@@ -105,7 +105,7 @@ void FTNoIR_Protocol_MOUSE::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_MOUSE::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_MOUSE::sendHeadposeToGame( THeadPoseData *headpose ) {
 float fMouse_X;							// The actual value
 float fMouse_Y;
 float fMouse_Wheel;
@@ -118,27 +118,27 @@ float fMouse_Wheel;
 	//
 	switch (Mouse_X) {
 		case FTN_PITCH:
-			fMouse_X = headpose->position.pitch;
+			fMouse_X = headpose->pitch;
 			break;
 
 		case FTN_YAW:
-			fMouse_X = headpose->position.yaw;
+			fMouse_X = headpose->yaw;
 			break;
 
 		case FTN_ROLL:
-			fMouse_X = headpose->position.roll;
+			fMouse_X = headpose->roll;
 			break;
 
 		case FTN_X:
-			fMouse_X = headpose->position.x * 3.0f;
+			fMouse_X = headpose->x * 3.0f;
 			break;
 
 		case FTN_Y:
-			fMouse_X = headpose->position.y * 3.0f;
+			fMouse_X = headpose->y * 3.0f;
 			break;
 
 		case FTN_Z:
-			fMouse_X = headpose->position.z * 3.0f;
+			fMouse_X = headpose->z * 3.0f;
 			break;
 
 		default:
@@ -152,27 +152,27 @@ float fMouse_Wheel;
 	//
 	switch (Mouse_Y) {
 		case FTN_PITCH:
-			fMouse_Y = headpose->position.pitch;
+			fMouse_Y = headpose->pitch;
 			break;
 
 		case FTN_YAW:
-			fMouse_Y = headpose->position.yaw;
+			fMouse_Y = headpose->yaw;
 			break;
 
 		case FTN_ROLL:
-			fMouse_Y = headpose->position.roll;
+			fMouse_Y = headpose->roll;
 			break;
 
 		case FTN_X:
-			fMouse_Y = headpose->position.x * 3.0f;
+			fMouse_Y = headpose->x * 3.0f;
 			break;
 
 		case FTN_Y:
-			fMouse_Y = headpose->position.y * 3.0f;
+			fMouse_Y = headpose->y * 3.0f;
 			break;
 
 		case FTN_Z:
-			fMouse_Y = headpose->position.z * 3.0f;
+			fMouse_Y = headpose->z * 3.0f;
 			break;
 
 		default:
@@ -186,27 +186,27 @@ float fMouse_Wheel;
 	//
 	switch (Mouse_Wheel) {
 		case FTN_PITCH:
-			fMouse_Wheel = headpose->position.pitch;
+			fMouse_Wheel = headpose->pitch;
 			break;
 
 		case FTN_YAW:
-			fMouse_Wheel = headpose->position.yaw;
+			fMouse_Wheel = headpose->yaw;
 			break;
 
 		case FTN_ROLL:
-			fMouse_Wheel = headpose->position.roll;
+			fMouse_Wheel = headpose->roll;
 			break;
 
 		case FTN_X:
-			fMouse_Wheel = headpose->position.x * 3.0f;
+			fMouse_Wheel = headpose->x * 3.0f;
 			break;
 
 		case FTN_Y:
-			fMouse_Wheel = headpose->position.y * 3.0f;
+			fMouse_Wheel = headpose->y * 3.0f;
 			break;
 
 		case FTN_Z:
-			fMouse_Wheel = headpose->position.z * 3.0f;
+			fMouse_Wheel = headpose->z * 3.0f;
 			break;
 
 		default:

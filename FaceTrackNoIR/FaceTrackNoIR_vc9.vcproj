@@ -207,7 +207,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\rotation.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\tracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tracker_types.cpp"
 				>
 			</File>
 		</Filter>
@@ -299,6 +307,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\rotation.h"
+				>
+			</File>
+			<File
 				RelativePath=".\tracker.h"
 				>
 				<FileConfiguration
@@ -323,6 +335,10 @@
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\tracker_types.h"
+				>
 			</File>
 		</Filter>
 		<Filter

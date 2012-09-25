@@ -86,7 +86,7 @@ void FTNoIR_Protocol_FTN::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FTN::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_FTN::sendHeadposeToGame( THeadPoseData *headpose ) {
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
@@ -95,7 +95,7 @@ quint16 senderPort;
 	// Copy the Raw measurements directly to the client.
 	//
 	frame_counter += 1;
-	TestData = headpose->position;
+	TestData = *headpose;
 	TestData.frame_number = frame_counter;
 
 	//

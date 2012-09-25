@@ -97,7 +97,7 @@ void FTNoIR_Protocol_FG::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FG::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_FG::sendHeadposeToGame( THeadPoseData *headpose ) {
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
@@ -109,12 +109,12 @@ char data[100];
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	FlightData.x = headpose->position.x;
-	FlightData.y = headpose->position.y;
-	FlightData.z = headpose->position.z;
-	FlightData.p = headpose->position.pitch;
-	FlightData.h = headpose->position.yaw;
-	FlightData.r = headpose->position.roll;
+	FlightData.x = headpose->x;
+	FlightData.y = headpose->y;
+	FlightData.z = headpose->z;
+	FlightData.p = headpose->pitch;
+	FlightData.h = headpose->yaw;
+	FlightData.r = headpose->roll;
 	FlightData.status = fg_cmd;
 
 	//

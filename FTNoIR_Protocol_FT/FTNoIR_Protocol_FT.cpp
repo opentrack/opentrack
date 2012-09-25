@@ -78,7 +78,7 @@ void FTNoIR_Protocol_FT::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FT::sendHeadposeToGame( T6DOF *headpose ) {
+void FTNoIR_Protocol_FT::sendHeadposeToGame( THeadPoseData *headpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -101,19 +101,19 @@ PDWORD_PTR MsgResult = 0;
 	//
 	// Scale the Raw measurements to the client measurements.
 	//
-	headRotX = getRadsFromDegrees(headpose->position.pitch);
-	headRotY = getRadsFromDegrees(headpose->position.yaw);
-	headRotZ = getRadsFromDegrees(headpose->position.roll);
-	headPosX = headpose->position.x * 10;
-	headPosY = headpose->position.y * 10;
-	headPosZ = headpose->position.z * 10;
+	headRotX = getRadsFromDegrees(headpose->pitch);
+	headRotY = getRadsFromDegrees(headpose->yaw);
+	headRotZ = getRadsFromDegrees(headpose->roll);
+	headPosX = headpose->x * 10;
+	headPosY = headpose->y * 10;
+	headPosZ = headpose->z * 10;
 
-	virtRotX = getRadsFromDegrees(headpose->position.pitch);
-	virtRotY = getRadsFromDegrees(headpose->position.yaw);
-	virtRotZ = getRadsFromDegrees(headpose->position.roll);
-	virtPosX = headpose->position.x * 10;
-	virtPosY = headpose->position.y * 10;
-	virtPosZ = headpose->position.z * 10;
+	virtRotX = getRadsFromDegrees(headpose->pitch);
+	virtRotY = getRadsFromDegrees(headpose->yaw);
+	virtRotZ = getRadsFromDegrees(headpose->roll);
+	virtPosX = headpose->x * 10;
+	virtPosY = headpose->y * 10;
+	virtPosZ = headpose->z * 10;
 
 	//
 	// Check if the pointer is OK and wait for the Mutex.

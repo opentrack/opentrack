@@ -334,11 +334,6 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 	Tracker::do_tracking = true;				// Start initially
 	Tracker::do_center = true;					// Center initially
 
-	current_camera.initHeadPoseData();
-	target_camera.initHeadPoseData();
-	new_camera.initHeadPoseData();
-	output_camera.initHeadPoseData();
-
 	//
 	// Test some Filter-stuff
 	//
@@ -582,12 +577,12 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				//
 				if (Tracker::confid) {
 
-					offset_camera.position.x     = getSmoothFromList( &X.rawList );
-					offset_camera.position.y     = getSmoothFromList( &Y.rawList );
-					offset_camera.position.z     = getSmoothFromList( &Z.rawList );
-					offset_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
-					offset_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
-					offset_camera.position.roll  = getSmoothFromList( &Roll.rawList );
+					offset_camera.x     = getSmoothFromList( &X.rawList );
+					offset_camera.y     = getSmoothFromList( &Y.rawList );
+					offset_camera.z     = getSmoothFromList( &Z.rawList );
+					offset_camera.pitch = getSmoothFromList( &Pitch.rawList );
+					offset_camera.yaw   = getSmoothFromList( &Yaw.rawList );
+					offset_camera.roll  = getSmoothFromList( &Roll.rawList );
 				}
 
 				Tracker::do_center = false;
@@ -599,50 +594,47 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			//
 			if (Tracker::confid && Tracker::do_game_zero) {
 				if (!pTracker->notifyZeroed())
-					gamezero_camera.position = gameoutput_camera.position;
-//				gamezero_camera.position = gameoutput_camera.position;
+					gamezero_camera = gameoutput_camera;
+//				gamezero_camera = gameoutput_camera;
 
 				Tracker::do_game_zero = false;
 			}
 
 			if (Tracker::do_tracking && Tracker::confid) {
 
-				// Pitch
-				target_camera.position.x     = getSmoothFromList( &X.rawList );
-				target_camera.position.y     = getSmoothFromList( &Y.rawList );
-				target_camera.position.z     = getSmoothFromList( &Z.rawList );
-				target_camera.position.pitch = getSmoothFromList( &Pitch.rawList );
-				target_camera.position.yaw   = getSmoothFromList( &Yaw.rawList );
-				target_camera.position.roll  = getSmoothFromList( &Roll.rawList );
+				// get values
+				target_camera.x     = getSmoothFromList( &X.rawList );
+				target_camera.y     = getSmoothFromList( &Y.rawList );
+				target_camera.z     = getSmoothFromList( &Z.rawList );
+				target_camera.pitch = getSmoothFromList( &Pitch.rawList );
+				target_camera.yaw   = getSmoothFromList( &Yaw.rawList );
+				target_camera.roll  = getSmoothFromList( &Roll.rawList );
+
+				// do the centering
 				target_camera = target_camera - offset_camera;
 
 				if (Tracker::useFilter && pFilter) {
-					pFilter->FilterHeadPoseData(&current_camera.position, &target_camera.position, &new_camera.position, Tracker::Pitch.newSample);
+					pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, Tracker::Pitch.newSample);
 				}
 				else {
-					new_camera.position.x     = getSmoothFromList( &X.rawList )     - offset_camera.position.x;
-					new_camera.position.y     = getSmoothFromList( &Y.rawList )     - offset_camera.position.y;
-					new_camera.position.z     = getSmoothFromList( &Z.rawList )     - offset_camera.position.z;
-					new_camera.position.pitch = getSmoothFromList( &Pitch.rawList ) - offset_camera.position.pitch;
-					new_camera.position.yaw   = getSmoothFromList( &Yaw.rawList )   - offset_camera.position.yaw;
-					new_camera.position.roll  = getSmoothFromList( &Roll.rawList )  - offset_camera.position.roll;
+					new_camera = target_camera;
 				}
-				output_camera.position.x = X.invert * X.curvePtr->getValue(new_camera.position.x);
-				output_camera.position.y = Y.invert * Y.curvePtr->getValue(new_camera.position.y);
-				output_camera.position.z = Z.invert * Z.curvePtr->getValue(new_camera.position.z);
-				bool altp = new_camera.position.pitch < 0;
+				output_camera.x = X.invert * X.curvePtr->getValue(new_camera.x);
+				output_camera.y = Y.invert * Y.curvePtr->getValue(new_camera.y);
+				output_camera.z = Z.invert * Z.curvePtr->getValue(new_camera.z);
+				bool altp = new_camera.pitch < 0;
 				if (altp) {
-					output_camera.position.pitch = Pitch.invert * Pitch.curvePtrAlt->getValue(new_camera.position.pitch);
+					output_camera.pitch = Pitch.invert * Pitch.curvePtrAlt->getValue(new_camera.pitch);
 					Pitch.curvePtr->setTrackingActive( false );
 					Pitch.curvePtrAlt->setTrackingActive( true );
 				}
 				else {
-					output_camera.position.pitch = Pitch.invert * Pitch.curvePtr->getValue(new_camera.position.pitch);
+					output_camera.pitch = Pitch.invert * Pitch.curvePtr->getValue(new_camera.pitch);
 					Pitch.curvePtr->setTrackingActive( true );
 					Pitch.curvePtrAlt->setTrackingActive( false );
 				}
-				output_camera.position.yaw = Yaw.invert * Yaw.curvePtr->getValue(new_camera.position.yaw);
-				output_camera.position.roll = Roll.invert * Roll.curvePtr->getValue(new_camera.position.roll);
+				output_camera.yaw = Yaw.invert * Yaw.curvePtr->getValue(new_camera.yaw);
+				output_camera.roll = Roll.invert * Roll.curvePtr->getValue(new_camera.roll);
 
 
 				X.curvePtr->setTrackingActive( true );
@@ -654,22 +646,22 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				//
 				// Reverse Axis.
 				//
-				actualYaw = output_camera.position.yaw;					// Save the actual Yaw, otherwise we can't check for +90
-				actualZ = output_camera.position.z;						// Also the Z
+				actualYaw = output_camera.yaw;					// Save the actual Yaw, otherwise we can't check for +90
+				actualZ = output_camera.z;						// Also the Z
 				if (Tracker::do_axis_reverse) {
-					output_camera.position.z = Z_PosWhenReverseAxis;	// Set the desired Z-position
+					output_camera.z = Z_PosWhenReverseAxis;	// Set the desired Z-position
 				}
 
 				//
 				// Reset value for the selected axis, if inhibition is active
 				//
 				if (Tracker::do_inhibit) {
-					if (InhibitKey.doPitch) output_camera.position.pitch = 0.0f;
-					if (InhibitKey.doYaw) output_camera.position.yaw = 0.0f;
-					if (InhibitKey.doRoll) output_camera.position.roll = 0.0f;
-					if (InhibitKey.doX) output_camera.position.x = 0.0f;
-					if (InhibitKey.doY) output_camera.position.y = 0.0f;
-					if (InhibitKey.doZ) output_camera.position.z = 0.0f;
+					if (InhibitKey.doPitch) output_camera.pitch = 0.0f;
+					if (InhibitKey.doYaw) output_camera.yaw = 0.0f;
+					if (InhibitKey.doRoll) output_camera.roll = 0.0f;
+					if (InhibitKey.doX) output_camera.x = 0.0f;
+					if (InhibitKey.doY) output_camera.y = 0.0f;
+					if (InhibitKey.doZ) output_camera.z = 0.0f;
 				}
 
 				// All Protocol server(s)
@@ -687,12 +679,12 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				debug_Client->setHeadPosY( Tracker::Y.headPos );
 				debug_Client->setHeadPosZ( Tracker::Z.headPos );
 
-				debug_Client->setVirtRotX ( new_camera.position.pitch );				// degrees
-				debug_Client->setVirtRotY ( new_camera.position.yaw );
-				debug_Client->setVirtRotZ ( new_camera.position.roll );
-				debug_Client->setVirtPosX ( new_camera.position.x );				// centimeters
-				debug_Client->setVirtPosY ( new_camera.position.y );
-				debug_Client->setVirtPosZ ( new_camera.position.z );
+				debug_Client->setVirtRotX ( new_camera.pitch );				// degrees
+				debug_Client->setVirtRotY ( new_camera.yaw );
+				debug_Client->setVirtRotZ ( new_camera.roll );
+				debug_Client->setVirtPosX ( new_camera.x );				// centimeters
+				debug_Client->setVirtPosY ( new_camera.y );
+				debug_Client->setVirtPosZ ( new_camera.z );
 #       endif
 
 
@@ -702,12 +694,12 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 				// Go to initial position
 				//
 				if (pProtocol && setZero) {
-					output_camera.position.pitch = 0.0f;
-					output_camera.position.yaw = 0.0f;
-					output_camera.position.roll = 0.0f;
-					output_camera.position.x = 0.0f;
-					output_camera.position.y = 0.0f;
-					output_camera.position.z = 0.0f;
+					output_camera.pitch = 0.0f;
+					output_camera.yaw = 0.0f;
+					output_camera.roll = 0.0f;
+					output_camera.x = 0.0f;
+					output_camera.y = 0.0f;
+					output_camera.z = 0.0f;
 					gameoutput_camera = output_camera + gamezero_camera;
 					pProtocol->sendHeadposeToGame( &gameoutput_camera );				// degrees & centimeters
 				}
@@ -840,13 +832,13 @@ void Tracker::getHeadPose( THeadPoseData *data ) {
 // Get the output-headpose, so it can be displayed.
 //
 void Tracker::getOutputHeadPose( THeadPoseData *data ) {
-	data->x = output_camera.position.x;										// centimeters
-	data->y = output_camera.position.y;
-	data->z = output_camera.position.z;
+	data->x = output_camera.x;										// centimeters
+	data->y = output_camera.y;
+	data->z = output_camera.z;
 
-	data->pitch = output_camera.position.pitch;	// degrees
-	data->yaw   = output_camera.position.yaw;
-	data->roll  = output_camera.position.roll;
+	data->pitch = output_camera.pitch;	// degrees
+	data->yaw   = output_camera.yaw;
+	data->roll  = output_camera.roll;
 }
 
 //

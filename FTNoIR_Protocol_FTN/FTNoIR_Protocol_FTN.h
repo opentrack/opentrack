@@ -49,7 +49,7 @@ public:
     void Initialize();
 
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame( T6DOF *headpose );
+	void sendHeadposeToGame( THeadPoseData *headpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
 	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
