@@ -49,7 +49,7 @@
 typedef ITrackerDialogPtr (WINAPI *importGetTrackerDialog)(void);
 typedef ITrackerDllPtr (WINAPI *importGetTrackerDll)(void);
 typedef IProtocolDialogPtr (WINAPI *importGetProtocolDialog)(void);
-//typedef IProtocolDllPtr (WINAPI *importGetProtocolDll)(void);
+typedef IProtocolDllPtr (WINAPI *importGetProtocolDll)(void);
 typedef IFilterDialogPtr (WINAPI *importGetFilterDialog)(void);
 typedef IFilterDllPtr (WINAPI *importGetFilterDll)(void);
 
@@ -83,7 +83,7 @@ private:
 	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
 	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
-	ITrackerDialogPtr pTrackerDialog;				// Pointer to Tracker dialog instance (in DLL)
+	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
 	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 

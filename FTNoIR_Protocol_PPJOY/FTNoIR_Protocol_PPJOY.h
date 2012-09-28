@@ -69,12 +69,8 @@ public:
     void Initialize();
 
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame( THeadPoseData *headpose );
+	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy Virtual Joystick"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy virtual joystick protocol"); };
 
 private:
 	HANDLE h;
@@ -107,11 +103,6 @@ public:
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy Virtual Joystick"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy virtual joystick protocol"); };
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/PPJoy.ico"); };
-
 private:
 	Ui::UICPPJOYControls ui;
 	void loadSettings();
@@ -126,6 +117,23 @@ private slots:
 	void virtualJoystickSelected( int index );
 	void settingChanged() { settingsDirty = true; };
 };
+
+//*******************************************************************************************************
+// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
+//*******************************************************************************************************
+class FTNoIR_ProtocolDll : public IProtocolDll
+{
+public:
+	FTNoIR_ProtocolDll();
+	~FTNoIR_ProtocolDll();
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy Virtual Joystick"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("PPJoy virtual joystick protocol"); };
+
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/PPJoy.ico"); };
+};
+
 
 #endif//INCLUDED_PPJOYSERVER_H
 //END

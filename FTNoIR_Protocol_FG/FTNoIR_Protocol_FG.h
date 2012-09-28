@@ -49,12 +49,8 @@ public:
     void Initialize();
 
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame( THeadPoseData *headpose );
+	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
 
 private:
 //	Tracker *headTracker;									// For upstream messages...
@@ -82,11 +78,6 @@ public:
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FlightGear.ico"); };
-
 private:
 	Ui::UICFGControls ui;
 	void loadSettings();
@@ -101,6 +92,23 @@ private slots:
 	void chkLocalPCOnlyChanged();
 	void settingChanged() { settingsDirty = true; };
 };
+
+//*******************************************************************************************************
+// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
+//*******************************************************************************************************
+class FTNoIR_ProtocolDll : public IProtocolDll
+{
+public:
+	FTNoIR_ProtocolDll();
+	~FTNoIR_ProtocolDll();
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
+
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FlightGear.ico"); };
+};
+
 
 #endif//INCLUDED_FGSERVER_H
 //END
