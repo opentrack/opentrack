@@ -135,18 +135,11 @@ public:
 	FTNoIR_FilterDll();
 	~FTNoIR_FilterDll();
 
-	void Release();
-    void Initialize();
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk2"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk2"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk2"); };
 
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
-
-private:
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
+	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	};
 };
 
 

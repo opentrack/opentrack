@@ -45,6 +45,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_Toradex", "F
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_Arduino", "FTNoIR_Tracker_Arduino\FTNoIR_Tracker_Arduino.vcproj", "{26073935-6C44-49FD-A986-DD91FE727306}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_PT", "FTNoIR_Tracker_PT\FTNoIR_Tracker_PT.vcproj", "{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -134,6 +136,9 @@ Global
 		{26073935-6C44-49FD-A986-DD91FE727306}.Debug|Win32.Build.0 = Debug|Win32
 		{26073935-6C44-49FD-A986-DD91FE727306}.Release|Win32.ActiveCfg = Release|Win32
 		{26073935-6C44-49FD-A986-DD91FE727306}.Release|Win32.Build.0 = Release|Win32
+		{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}.Debug|Win32.Build.0 = Debug|Win32
+		{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}.Release|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

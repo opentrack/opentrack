@@ -71,7 +71,6 @@ GetFilterDialog(void);
 struct IFilterDll
 {
 	virtual ~IFilterDll() {}
-	virtual void Initialize() = 0;
 
 	virtual void getFullName(QString *strToBeFilled) = 0;
 	virtual void getShortName(QString *strToBeFilled) = 0;

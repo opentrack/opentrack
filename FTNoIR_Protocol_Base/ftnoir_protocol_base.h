@@ -58,12 +58,8 @@ struct IProtocol
 	virtual ~IProtocol() {}
 	virtual void Initialize() = 0;
 	virtual bool checkServerInstallationOK ( HANDLE handle ) = 0;
-	virtual void sendHeadposeToGame( THeadPoseData *headpose ) = 0;
+	virtual void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) = 0;
 	virtual void getNameFromGame( char *dest ) = 0;				// Take care dest can handle up to 100 chars...
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
 };
 
 typedef IProtocol* IProtocolPtr;
@@ -85,11 +81,6 @@ struct IProtocolDialog
 {
 	virtual ~IProtocolDialog() {}
 	virtual void Initialize(QWidget *parent) = 0;
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
 };
 
 typedef IProtocolDialog* IProtocolDialogPtr;
@@ -100,6 +91,31 @@ FTNOIR_PROTOCOL_BASE_EXPORT
 IProtocolDialogPtr
 __stdcall
 GetProtocolDialog(void);
+
+////////////////////////////////////////////////////////////////////////////////
+// COM-Like abstract interface.
+// This interface doesn't require __declspec(dllexport/dllimport) specifier.
+// Method calls are dispatched via virtual table.
+// Any C++ compiler can use it.
+// Instances are obtained via factory function.
+struct IProtocolDll
+{
+	virtual ~IProtocolDll() {}
+
+	virtual void getFullName(QString *strToBeFilled) = 0;
+	virtual void getShortName(QString *strToBeFilled) = 0;
+	virtual void getDescription(QString *strToBeFilled) = 0;
+	virtual void getIcon(QIcon *icon) = 0;
+};
+
+typedef IProtocolDll* IProtocolDllPtr;
+
+// Factory function that creates instances of the Protocol object.
+EXTERN_C
+FTNOIR_PROTOCOL_BASE_EXPORT
+IProtocolDllPtr
+__stdcall
+GetProtocolDll(void);
 
 
 #endif // FTNOIR_PROTOCOL_BASE_H

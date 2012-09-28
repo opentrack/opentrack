@@ -22,41 +22,46 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_filter_DZ1.h"
-#include "math.h"
+/*
+	Modifications (last one on top):
+		20120830 - WVR: The Dialog class was used to get general info on the DLL. This
+						had a big disadvantage: the complete dialog was loaded, just to get
+						some data and then it was deleted again (without ever showing the dialog).
+						The ProtocolDll class solves this.
+						The functions to get the name(s) and icon were removed from the two other classes.
+*/
+#include "ftnoir_protocol_ftir.h"
 #include <QDebug>
 
 //*******************************************************************************************************
-// FaceTrackNoIR Filter Settings-dialog.
+// FaceTrackNoIR Client Settings-dialog.
 //*******************************************************************************************************
+
 //
 // Constructor for server-settings-dialog
 //
-FilterControls::FilterControls() :
+FTIRControls::FTIRControls() :
 QWidget()
 {
+	QString aFileName;														// File Path and Name
+
 	ui.setupUi( this );
-
-	//populate the description strings
-	filterFullName = "Deadzone Filter Mk1";
-	filterShortName = "DZ1";
-	filterDescription = "Deadzone Filter";
-
-	QPoint offsetpos(100, 100);
-	//if (parent) {
-	//	this->move(parent->pos() + offsetpos);
-	//}
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
 
-	// Connect sliders for reduction factor
-	connect(ui.slideHz, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.spinDeadZone, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.slideMoveLast, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-
-	qDebug() << "FilterControls() says: started";
+	aFileName = QCoreApplication::applicationDirPath() + "/";
+	aFileName.append(FTIR_VIEWS_FILENAME);
+	if ( !QFile::exists( aFileName ) ) {
+		ui.chkTIRViews->setChecked( false );
+		ui.chkTIRViews->setEnabled ( false );
+	}
+	else {
+		ui.chkTIRViews->setEnabled ( true );
+	}
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -65,11 +70,11 @@ QWidget()
 //
 // Destructor for server-dialog
 //
-FilterControls::~FilterControls() {
-	qDebug() << "~FilterControls() says: started";
+FTIRControls::~FTIRControls() {
+	qDebug() << "~FTIRControls() says: started";
 }
 
-void FilterControls::Release()
+void FTIRControls::Release()
 {
     delete this;
 }
@@ -77,18 +82,8 @@ void FilterControls::Release()
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
+void FTIRControls::Initialize(QWidget *parent) {
 
-	//
-	// The dialog can be opened, while the Tracker is running.
-	// In that case, ptr will point to the active Filter-instance.
-	// This can be used to update settings, while Tracking and may also be handy to display logging-data and such...
-	//
-	pFilter = ptr;
-	
-	//
-	//
-	//
 	QPoint offsetpos(100, 100);
 	if (parent) {
 		this->move(parent->pos() + offsetpos);
@@ -99,23 +94,20 @@ void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
 //
 // OK clicked on server-dialog
 //
-void FilterControls::doOK() {
+void FTIRControls::doOK() {
 	save();
-	if (pFilter) {
-		pFilter->Initialize();
-	}
 	this->close();
 }
 
 // override show event
-void FilterControls::showEvent ( QShowEvent * event ) {
+void FTIRControls::showEvent ( QShowEvent * event ) {
 	loadSettings();
 }
 
 //
 // Cancel clicked on server-dialog
 //
-void FilterControls::doCancel() {
+void FTIRControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved
 	//
@@ -148,24 +140,19 @@ void FilterControls::doCancel() {
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FilterControls::loadSettings() {
-	qDebug() << "FilterControls::loadSettings says: Starting ";
+void FTIRControls::loadSettings() {
+	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	qDebug() << "FilterControls::loadSettings says: iniFile = " << currentFile;
+	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
-	//
-	// The DZ1-filter-settings
-	//
-	iniFile.beginGroup ( "Filter_DZ1" );
-	ui.slideHz->setValue (iniFile.value ( "cameraHz", 30 ).toInt());
-	ui.spinDeadZone->setValue (iniFile.value ( "DeadZone", 0.1f ).toDouble());
-	ui.slideMoveLast->setValue (iniFile.value ( "MoveLast", 24 ).toInt());
-	ui.spinMaxDiff->setValue (iniFile.value ( "MaxDiff", 1.75f ).toDouble());
-	ui.slideMoveSaved->setValue (iniFile.value ( "MoveSaved", 35 ).toFloat());
+	iniFile.beginGroup ( "FTIR" );
+	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 1 ).toBool());
+
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -174,55 +161,30 @@ void FilterControls::loadSettings() {
 //
 // Save the current Settings to the currently 'active' INI-file.
 //
-void FilterControls::save() {
+void FTIRControls::save() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	iniFile.beginGroup ( "Filter_DZ1" );
-	iniFile.setValue ( "cameraHz", ui.slideHz->value() );
-	iniFile.setValue ( "DeadZone", ui.spinDeadZone->value() );
-	iniFile.setValue ( "MoveLast", ui.slideMoveLast->value() );
-	iniFile.setValue ( "MaxDiff", ui.spinMaxDiff->value() );
-	iniFile.setValue ( "MoveSaved", ui.slideMoveSaved->value() );
+	iniFile.beginGroup ( "FTIR" );
+	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+	iniFile.setValue ( "useDummyExe", ui.chkStartDummy->isChecked() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
 }
 
-void FilterControls::getFilterFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-
-void FilterControls::getFilterShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-
-void FilterControls::getFilterDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
-
-void FilterControls::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/filter-16.png");
-};
-
 ////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Filter-settings dialog object.
+// Factory function that creates instances if the Protocol-settings dialog object.
 
 // Export both decorated and undecorated names.
-//   GetFilterDialog     - Undecorated name, which can be easily used with GetProcAddress
+//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
-//   _GetFilterDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
+//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
+#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-FTNOIR_FILTER_BASE_EXPORT FILTERDIALOGHANDLE __stdcall GetFilterDialog( )
+FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialogPtr __stdcall GetProtocolDialog( )
 {
-	return new FilterControls;
+	return new FTIRControls;
 }

@@ -1143,11 +1143,12 @@ void FaceTrackNoIR::exit() {
 //
 void FaceTrackNoIR::createIconGroupBox()
 {
-importGetProtocolDialog getProtocol;
+importGetProtocolDll getProtocol;
+IProtocolDllPtr pProtocolDll;			// Pointer to Protocol info instance (in DLL)
 importGetFilterDll getFilter;
 IFilterDllPtr pFilterDll;				// Pointer to Filter info instance (in DLL)
 importGetTrackerDll getTracker;
-ITrackerDll *pTrackerDll;				// Pointer to Filter info instance (in DLL)
+ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -1173,27 +1174,19 @@ ITrackerDll *pTrackerDll;				// Pointer to Filter info instance (in DLL)
 
 //		qDebug() << "createIconGroupBox says: ProtocolName = " << protocolFileList.at(i);
 
-		//
-		// Delete the existing QDialog
-		//
-		if (pProtocolDialog) {
-			delete pProtocolDialog;
-			pProtocolDialog = NULL;
-		}
-
 		// Show the appropriate Protocol-server Settings
 		QLibrary *protocolLib = new QLibrary(protocolFileList.at(i));
 		QString *protocolName = new QString("");
 		QIcon *protocolIcon = new QIcon();
 
-		getProtocol = (importGetProtocolDialog) protocolLib->resolve("GetProtocolDialog");
+		getProtocol = (importGetProtocolDll) protocolLib->resolve("GetProtocolDll");
 		if (getProtocol) {
-			IProtocolDialogPtr ptrXyz(getProtocol());
+			IProtocolDllPtr ptrXyz(getProtocol());
 			if (ptrXyz)
 			{
-				pProtocolDialog = ptrXyz;
-				pProtocolDialog->getFullName( protocolName );
-				pProtocolDialog->getIcon( protocolIcon );
+				pProtocolDll = ptrXyz;
+				pProtocolDll->getFullName( protocolName );
+				pProtocolDll->getIcon( protocolIcon );
 //				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
 			}
 			else {

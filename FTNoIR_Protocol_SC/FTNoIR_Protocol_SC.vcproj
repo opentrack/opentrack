@@ -172,6 +172,14 @@
 				RelativePath=".\ftnoir_Protocol_SC.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_SC_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_SC_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

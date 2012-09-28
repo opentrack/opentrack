@@ -171,6 +171,14 @@
 				RelativePath=".\ftnoir_Protocol_FTIR.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FTIR_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FTIR_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

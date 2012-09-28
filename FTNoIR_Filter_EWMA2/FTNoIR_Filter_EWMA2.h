@@ -107,15 +107,11 @@ public:
 	void Release();
     void Initialize();
 
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); };
 
-private:
-	QString filterFullName;									// Filters' name and description
-	QString filterShortName;
-	QString filterDescription;
+	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	};
 };
 
 #endif						//INCLUDED_FTN_FILTER_H

@@ -52,12 +52,8 @@ public:
     void Initialize();
 
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame( THeadPoseData *headpose );
+	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
 
 private:
 	bool FTCreateMapping(HANDLE handle);
@@ -92,11 +88,6 @@ public:
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
-
 private:
 	Ui::UICFTControls ui;
 	void loadSettings();
@@ -110,6 +101,23 @@ private slots:
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
 };
+
+//*******************************************************************************************************
+// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
+//*******************************************************************************************************
+class FTNoIR_ProtocolDll : public IProtocolDll
+{
+public:
+	FTNoIR_ProtocolDll();
+	~FTNoIR_ProtocolDll();
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
+
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
+};
+
 
 #endif//INCLUDED_FTSERVER_H
 //END

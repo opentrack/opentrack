@@ -664,30 +664,13 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					if (InhibitKey.doZ) output_camera.z = 0.0f;
 				}
 
-				// All Protocol server(s)
+				//
+				// Send the headpose to the game
+				//
 				if (pProtocol) {
 					gameoutput_camera = output_camera + gamezero_camera;
-					pProtocol->sendHeadposeToGame( &gameoutput_camera );	// degrees & centimeters
+					pProtocol->sendHeadposeToGame( &gameoutput_camera, &newpose );	// degrees & centimeters
 				}
-
-#       ifdef USE_DEBUG_CLIENT
-				debug_Client->setHeadRotX( Tracker::Pitch.headPos );	// degrees
-				debug_Client->setHeadRotY( Tracker::Yaw.headPos );
-				debug_Client->setHeadRotZ( Tracker::Roll.headPos );
-
-				debug_Client->setHeadPosX( Tracker::X.headPos );		// centimeters
-				debug_Client->setHeadPosY( Tracker::Y.headPos );
-				debug_Client->setHeadPosZ( Tracker::Z.headPos );
-
-				debug_Client->setVirtRotX ( new_camera.pitch );				// degrees
-				debug_Client->setVirtRotY ( new_camera.yaw );
-				debug_Client->setVirtRotZ ( new_camera.roll );
-				debug_Client->setVirtPosX ( new_camera.x );				// centimeters
-				debug_Client->setVirtPosY ( new_camera.y );
-				debug_Client->setVirtPosZ ( new_camera.z );
-#       endif
-
-
 			}
 			else {
 				//
@@ -701,7 +684,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					output_camera.y = 0.0f;
 					output_camera.z = 0.0f;
 					gameoutput_camera = output_camera + gamezero_camera;
-					pProtocol->sendHeadposeToGame( &gameoutput_camera );				// degrees & centimeters
+					pProtocol->sendHeadposeToGame( &gameoutput_camera, &newpose );				// degrees & centimeters
 				}
 				X.curvePtr->setTrackingActive( false );
 				Y.curvePtr->setTrackingActive( false );
@@ -713,17 +696,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			}
 		}
 
-#       ifdef USE_DEBUG_CLIENT
-		debug_Client->confidence = Tracker::Pitch.confidence;
-		debug_Client->newSample = Tracker::Pitch.newSample;
-		debug_Client->smoothvalue = getSmoothFromList( &Pitch.rawList );
-		debug_Client->prev_value = Tracker::Pitch.prevPos;
-		debug_Client->dT = dT;
-		debug_Client->sendHeadposeToGame();									// Log to Excel
-#       endif
-
 		Tracker::Pitch.newSample = false;
-
 		ReleaseMutex(Tracker::hTrackMutex);
 
 		//for lower cpu load 

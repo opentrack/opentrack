@@ -34,46 +34,12 @@
 #include <QDebug>
 
 FTNoIR_FilterDll::FTNoIR_FilterDll() {
-	//populate the description strings
-	filterFullName = "Accela Filter Mk2";
-	filterShortName = "Accela Mk2";
-	filterDescription = "Accela filter Mk2";
 }
 
 FTNoIR_FilterDll::~FTNoIR_FilterDll()
 {
 
 }
-
-void FTNoIR_FilterDll::Release()
-{
-    delete this;
-}
-
-void FTNoIR_FilterDll::Initialize()
-{
-	return;
-}
-
-void FTNoIR_FilterDll::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterFullName;
-};
-
-void FTNoIR_FilterDll::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = filterShortName;
-};
-
-void FTNoIR_FilterDll::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = filterDescription;
-};
-
-void FTNoIR_FilterDll::getIcon(QIcon *icon)
-{
-	*icon = QIcon(":/images/filter-16.png");
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Filter object.

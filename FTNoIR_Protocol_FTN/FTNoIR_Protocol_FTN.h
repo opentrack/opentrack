@@ -49,12 +49,8 @@ public:
     void Initialize();
 
 	bool checkServerInstallationOK( HANDLE handle );
-	void sendHeadposeToGame( THeadPoseData *headpose );
+	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
 
 private:
 	THeadPoseData TestData;
@@ -82,11 +78,6 @@ public:
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FaceTrackNoIR.ico"); };
-
 private:
 	Ui::UICFTNControls ui;
 	void loadSettings();
@@ -99,6 +90,22 @@ private slots:
 	void doOK();
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
+};
+
+//*******************************************************************************************************
+// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
+//*******************************************************************************************************
+class FTNoIR_ProtocolDll : public IProtocolDll
+{
+public:
+	FTNoIR_ProtocolDll();
+	~FTNoIR_ProtocolDll();
+
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
+
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FaceTrackNoIR.ico"); };
 };
 
 #endif//INCLUDED_FTNSERVER_H

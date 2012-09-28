@@ -172,6 +172,14 @@
 				RelativePath=".\ftnoir_Protocol_FSUIPC.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FSUIPC_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FSUIPC_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
