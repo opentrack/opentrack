@@ -133,21 +133,29 @@ void FilterControls::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FilterControls::loadSettings() {
+QList<QPointF> defPoints;
+
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
+	qDebug() << "FTNoIR_Filter::loadSettings2 says: iniFile = " << currentFile;
 
-	//ui.scalingConfig->setBounds(0, 0, 4.0, 8, 0.25, 0.25);
-	//ui.scalingConfig->setSize(1000, 550);
 
-	//ui.translationScalingConfig->setBounds(0, 0, 4.0, 8, 0.25, 0.25);
-	//ui.translationScalingConfig->setSize(1000, 550);
+	qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
 
-	functionConfig.loadSettings(iniFile);
-	translationFunctionConfig.loadSettings(iniFile);
+	defPoints.clear();
+	for (int i = 0; i < NUM_OF(defScaleRotation); i++) {		// Get the default points (hardcoded!)
+		defPoints.append(defScaleRotation[i]);
+	}
+	functionConfig.loadSettings(iniFile, defPoints);
+
+	defPoints.clear();
+	for (int i = 0; i < NUM_OF(defScaleTranslation); i++) {		// Get the default points (hardcoded!)
+		defPoints.append(defScaleTranslation[i]);
+	}
+	translationFunctionConfig.loadSettings(iniFile, defPoints);
 
 	ui.translationScalingConfig->setConfig(&translationFunctionConfig, currentFile);
 	ui.scalingConfig->setConfig(&functionConfig, currentFile);

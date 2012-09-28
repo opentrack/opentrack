@@ -36,13 +36,24 @@ void FTNoIR_Filter::Initialize()
 }
 
 void FTNoIR_Filter::loadSettings() {
+	QList<QPointF> defPoints;
+
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	functionConfig.loadSettings(iniFile);
-	translationFunctionConfig.loadSettings(iniFile);
+	defPoints.clear();
+	for (int i = 0; i < NUM_OF(defScaleRotation); i++) {		// Get the default points (hardcoded!)
+		defPoints.append(defScaleRotation[i]);
+	}
+	functionConfig.loadSettings(iniFile, defPoints);
+
+	defPoints.clear();
+	for (int i = 0; i < NUM_OF(defScaleTranslation); i++) {		// Get the default points (hardcoded!)
+		defPoints.append(defScaleTranslation[i]);
+	}
+	translationFunctionConfig.loadSettings(iniFile, defPoints);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
