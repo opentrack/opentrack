@@ -27,9 +27,6 @@ public:
 	Tracker();
 	~Tracker();
 
-	void CenterTracker();
-	
-
 	// ITracker interface
 	void Initialize(QFrame *videoframe);
 	void StartTracker(HWND parent_window);
@@ -38,8 +35,13 @@ public:
 	void refreshVideo();
 
 	void apply(const TrackerSettings& settings);
-	void apply_without_camindex(const TrackerSettings& settings); // changing the camindex is expensive and not suitable for realtime editing
+	void center();
+	void reset();	// reset the trackers internal state variables
 	void run();
+
+	void get_pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.get_pose(); }
+	int get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
+	void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
 
 protected:	
 	FrameTrafo X_CH_0; // for centering
@@ -58,7 +60,7 @@ protected:
 	Camera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
-	FrameTrafo X_MH;
+	cv::Vec3f t_MH;
 	bool draw_frame;
 	int sleep_time;
 	
@@ -66,17 +68,6 @@ protected:
 
 	VideoWidget* video_widget;
 	QTime time;
-};
-
-//-----------------------------------------------------------------------------
-class TrackerDll : public ITrackerDll
-{
-	// ITrackerDll interface
-	void Initialize() {}
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
 };
 
 #endif // FTNOIR_TRACKER_PT_H

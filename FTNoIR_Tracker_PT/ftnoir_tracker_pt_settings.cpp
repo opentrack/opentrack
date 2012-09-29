@@ -22,18 +22,24 @@ void TrackerSettings::load_ini()
 
 	cam_index      = iniFile.value("CameraId", 0).toInt();
 	cam_f          = iniFile.value("CameraF", 1).toFloat();
+	cam_res_x      = iniFile.value("CameraResX", 640).toInt();
+	cam_res_y      = iniFile.value("CameraResY", 480).toInt();
+	cam_fps        = iniFile.value("CameraFPS", 30).toInt();
 	threshold      = iniFile.value("PointExtractThreshold", 128).toInt();
 	min_point_size = iniFile.value("PointExtractMinSize", 2).toInt();
 	max_point_size = iniFile.value("PointExtractMaxSize", 50).toInt();
-	M01[0] = iniFile.value("PointModelM01x", 0).toFloat();
-	M01[1] = iniFile.value("PointModelM01y", 40).toFloat();
-	M01[2] = iniFile.value("PointModelM01z", -30).toFloat();
-	M02[0] = iniFile.value("PointModelM02x", 0).toFloat();
-	M02[1] = iniFile.value("PointModelM02y", -70).toFloat();
-	M02[2] = iniFile.value("PointModelM02z", -80).toFloat();
-	//TODO: headpos
+	M01[0]  = iniFile.value("PointModelM01x", 0).toFloat();
+	M01[1]  = iniFile.value("PointModelM01y", 40).toFloat();
+	M01[2]  = iniFile.value("PointModelM01z", -30).toFloat();
+	M02[0]  = iniFile.value("PointModelM02x", 0).toFloat();
+	M02[1]  = iniFile.value("PointModelM02y", -70).toFloat();
+	M02[2]  = iniFile.value("PointModelM02z", -80).toFloat();
+	t_MH[0] = iniFile.value("tMHx", 0).toFloat();
+	t_MH[1] = iniFile.value("tMHy", 0).toFloat();
+	t_MH[2] = iniFile.value("tMHz", 0).toFloat();
 	video_widget = iniFile.value("VideoWidget", true).toBool();
 	sleep_time   = iniFile.value("SleepTime", 10).toInt();
+	reset_time   = iniFile.value("ResetTime", 3).toInt();
 	
 	iniFile.endGroup();
 }
@@ -50,6 +56,9 @@ void TrackerSettings::save_ini() const
 
 	iniFile.setValue("CameraId", cam_index);
 	iniFile.setValue("CameraF",  cam_f);
+	iniFile.setValue("CameraResX",  cam_res_x);
+	iniFile.setValue("CameraResY",  cam_res_y);
+	iniFile.setValue("CameraFPS",  cam_fps);
 	iniFile.setValue("PointExtractThreshold", threshold);
 	iniFile.setValue("PointExtractMinSize", min_point_size);
 	iniFile.setValue("PointExtractMaxSize", max_point_size);
@@ -59,9 +68,12 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue("PointModelM02x", M02[0]);
 	iniFile.setValue("PointModelM02y", M02[1]);
 	iniFile.setValue("PointModelM02z", M02[2]);
-	//TODO: headpos
+	iniFile.setValue("tMHx", t_MH[0]);
+	iniFile.setValue("tMHy", t_MH[1]);
+	iniFile.setValue("tMHz", t_MH[2]);
 	iniFile.setValue("VideoWidget", video_widget);
 	iniFile.setValue("SleepTime", sleep_time);
+	iniFile.setValue("ResetTime", reset_time);
 
 	iniFile.endGroup();
 }

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>395</width>
-    <height>450</height>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,7 +51,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -67,11 +67,15 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
-             <widget class="QCheckBox" name="videowidget_check">
-              <property name="text">
-               <string>Show VideoWidget</string>
-              </property>
-             </widget>
+             <layout class="QFormLayout" name="formLayout_3">
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="videowidget_check">
+                <property name="text">
+                 <string>Show VideoWidget</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <spacer name="horizontalSpacer_7">
@@ -87,28 +91,70 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="label_39">
-              <property name="text">
-               <string>Sleep time</string>
+             <layout class="QFormLayout" name="formLayout_2">
+              <property name="fieldGrowthPolicy">
+               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
               </property>
-              <property name="buddy">
-               <cstring>sleep_spin</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="sleep_spin">
-              <property name="maximum">
-               <number>999</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_40">
-              <property name="text">
-               <string>ms</string>
-              </property>
-             </widget>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_39">
+                <property name="text">
+                 <string>Sleep time</string>
+                </property>
+                <property name="buddy">
+                 <cstring>sleep_spin</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QSpinBox" name="sleep_spin">
+                  <property name="suffix">
+                   <string/>
+                  </property>
+                  <property name="maximum">
+                   <number>9999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_40">
+                  <property name="text">
+                   <string>ms</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_43">
+                <property name="text">
+                 <string>Auto-reset time</string>
+                </property>
+                <property name="buddy">
+                 <cstring>reset_spin</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <item>
+                 <widget class="QSpinBox" name="reset_spin">
+                  <property name="maximum">
+                   <number>9999</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_42">
+                  <property name="text">
+                   <string>s</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -165,6 +211,70 @@
                <double>0.100000000000000</double>
               </property>
              </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>Resolution</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="res_x_spin">
+              <property name="maximum">
+               <number>2000</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_41">
+              <property name="text">
+               <string>x</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="res_y_spin">
+              <property name="maximum">
+               <number>2000</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_37">
+              <property name="text">
+               <string>FPS</string>
+              </property>
+              <property name="buddy">
+               <cstring>fps_spin</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="fps_spin"/>
             </item>
            </layout>
           </item>
@@ -285,26 +395,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
            <layout class="QFormLayout" name="formLayout">
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Extracted Points:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="pointinfo_label">
-              <property name="minimumSize">
-               <size>
-                <width>50</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="label_38">
               <property name="text">
@@ -331,13 +424,55 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Extracted Points:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="pointinfo_label">
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
          <zorder></zorder>
-         <zorder>caminfo_label</zorder>
-         <zorder>formLayoutWidget</zorder>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QPushButton" name="reset_button">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="center_button">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Center</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -663,9 +798,15 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="tcalib_button">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Calibrate</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -719,11 +860,6 @@
         </layout>
        </item>
       </layout>
-      <zorder>groupBox_3</zorder>
-      <zorder>groupBox_4</zorder>
-      <zorder>label_32</zorder>
-      <zorder>horizontalLayoutWidget_3</zorder>
-      <zorder>label_33</zorder>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -739,7 +875,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 0.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 0.2&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="openExternalLinks">
         <bool>true</bool>
@@ -766,13 +902,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QPushButton" name="center_button">
-       <property name="text">
-        <string>Center</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
@@ -810,11 +939,17 @@
   <tabstop>cancel_button</tabstop>
   <tabstop>videowidget_check</tabstop>
   <tabstop>sleep_spin</tabstop>
+  <tabstop>reset_spin</tabstop>
   <tabstop>camindex_spin</tabstop>
   <tabstop>f_dspin</tabstop>
+  <tabstop>res_x_spin</tabstop>
+  <tabstop>res_y_spin</tabstop>
+  <tabstop>fps_spin</tabstop>
   <tabstop>threshold_slider</tabstop>
   <tabstop>mindiam_spin</tabstop>
   <tabstop>maxdiam_spin</tabstop>
+  <tabstop>reset_button</tabstop>
+  <tabstop>center_button</tabstop>
   <tabstop>m1x_spin</tabstop>
   <tabstop>m1y_spin</tabstop>
   <tabstop>m1z_spin</tabstop>
@@ -824,7 +959,7 @@
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_tracker_pt.qrc"/>

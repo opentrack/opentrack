@@ -29,6 +29,8 @@ public:
 
 	void set_index(int index);
 	void set_f(float f) { cam_info.f = f; }
+	bool set_fps(int fps);
+	bool set_res(int x_res, int y_res);
 
 	// gets a frame from the camera, dt: time since last call in seconds
 	cv::Mat get_frame(float dt);
@@ -37,6 +39,7 @@ public:
 	const CamInfo& get_info() const { return cam_info; }
 
 protected:
+	int active_index;
 	CvCapture* cap;
 	CamInfo cam_info;
 	float dt_valid;

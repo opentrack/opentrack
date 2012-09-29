@@ -17,6 +17,9 @@ struct TrackerSettings
 	// camera
 	int cam_index;
 	float cam_f;
+	int cam_res_x;
+	int cam_res_y;
+	int cam_fps;
 
 	// point extraction
 	int threshold;
@@ -27,10 +30,11 @@ struct TrackerSettings
 	cv::Vec3f M01;
 	cv::Vec3f M02;
 
-	// head pos
-	FrameTrafo X_MH;
+	// head to model translation
+	cv::Vec3f t_MH;
 
-	int sleep_time;
+	int sleep_time; // in ms
+	int reset_time; // in s
 	bool video_widget;
 
 	void load_ini();
