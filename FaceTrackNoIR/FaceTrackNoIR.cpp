@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20120929 - WVR: Disable button Filter-settings when StartTracker.
 		20120918 - WVR: When AutoStart is TRUE, the program is not directly minimized any more.
 						This now depends on the AutoMinimize time. Fixed the 'not showing' of the MIB.
 						Also disable combo and buttons after 'Start'.
@@ -642,10 +643,13 @@ void FaceTrackNoIR::about() {
 void FaceTrackNoIR::startTracker( ) {	
 
 	// 
+	// Disable buttons
+	//
 	ui.iconcomboProfile->setEnabled ( false );
 	ui.btnLoad->setEnabled ( false );
 	ui.btnSave->setEnabled ( false );
 	ui.btnSaveAs->setEnabled ( false );
+	ui.btnShowFilterControls->setEnabled ( false );
 
 	//
 	// Create the Tracker and setup
@@ -792,6 +796,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnLoad->setEnabled ( true );
 	ui.btnSave->setEnabled ( true );
 	ui.btnSaveAs->setEnabled ( true );
+	ui.btnShowFilterControls->setEnabled ( true );
 
 	//
 	// Stop the timer, so it won't go off again...
