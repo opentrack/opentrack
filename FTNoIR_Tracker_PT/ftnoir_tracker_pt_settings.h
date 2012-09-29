@@ -27,8 +27,8 @@ struct TrackerSettings
 	cv::Vec3f M01;
 	cv::Vec3f M02;
 
-	// head to model translation
-	cv::Vec3f t_MH;
+	// head pos
+	FrameTrafo X_MH;
 
 	int sleep_time;
 	bool video_widget;

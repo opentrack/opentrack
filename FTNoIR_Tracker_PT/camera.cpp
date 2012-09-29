@@ -54,7 +54,7 @@ cv::Mat Camera::get_frame(float dt)
 	if (!frame.empty())
 	{
 		dt_mean = dt_smoothing_const * dt_mean + (1.0 - dt_smoothing_const) * dt_valid;
-		cam_info.fps = 1.0 / dt_mean;
+		cam_info.fps = 1.0 / (dt_mean + 1e-6);
 		dt_valid = 0;
 	}
 

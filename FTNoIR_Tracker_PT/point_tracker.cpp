@@ -223,8 +223,8 @@ void PointTracker::POSIT(float f)
 	X_CM.t[1] = p[0][1] * Z0/f;
 	X_CM.t[2] = Z0;
 
-	//qDebug()<<"iter: "<<i;
-	//qDebug()<<"t: "<<X_CM.t[0]<<' '<<X_CM.t[1]<<' '<<X_CM.t[2];
+	qDebug()<<"iter: "<<i;
+	qDebug()<<"t: "<<X_CM.t[0]<<' '<<X_CM.t[1]<<' '<<X_CM.t[2];
 	//Vec3f r;
 	//Rodrigues(X_CM.R, r);
 	//qDebug()<<"r: "<<r[0]<<' '<<r[1]<<' '<<r[2]<<'\n';

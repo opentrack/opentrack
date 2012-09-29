@@ -335,6 +335,8 @@
           </item>
          </layout>
          <zorder></zorder>
+         <zorder>caminfo_label</zorder>
+         <zorder>formLayoutWidget</zorder>
         </widget>
        </item>
       </layout>
@@ -661,12 +663,9 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="tcalib_button">
+             <widget class="QPushButton" name="pushButton">
               <property name="text">
                <string>Calibrate</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -720,6 +719,11 @@
         </layout>
        </item>
       </layout>
+      <zorder>groupBox_3</zorder>
+      <zorder>groupBox_4</zorder>
+      <zorder>label_32</zorder>
+      <zorder>horizontalLayoutWidget_3</zorder>
+      <zorder>label_33</zorder>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -820,6 +824,7 @@
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>
+  <tabstop>pushButton</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_tracker_pt.qrc"/>
