@@ -12,9 +12,6 @@
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "ui_FTNoIR_PT_Controls.h"
-#include "trans_calib.h"
-
-#include <QTimer>
 
 //-----------------------------------------------------------------------------
 class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDialog
@@ -28,8 +25,6 @@ public:
 	void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker);
 	void unRegisterTracker();
-	
-	void trans_calib_step();
 
 protected slots:
 	void doOK();
@@ -50,13 +45,6 @@ protected slots:
 	void set_m2x(int val) { settings.M02[0] = val; settings_changed(); }
 	void set_m2y(int val) { settings.M02[1] = val; settings_changed(); }
 	void set_m2z(int val) { settings.M02[2] = val; settings_changed(); }
-	void set_tx(int val) { settings.t_MH[0] = val; settings_changed(); }
-	void set_ty(int val) { settings.t_MH[1] = val; settings_changed(); }
-	void set_tz(int val) { settings.t_MH[2] = val; settings_changed(); }
-
-	void startstop_trans_calib(bool start);
-	
-	void poll_tracker_info();
 
 protected:
 	void settings_changed();
@@ -65,9 +53,6 @@ protected:
 	bool settings_dirty;
 
 	Tracker* tracker;
-	TranslationCalibrator trans_calib;
-	bool trans_calib_running;
-	QTimer timer;
 	Ui::UICPTClientControls ui;
 };
 

@@ -41,10 +41,6 @@ public:
 	void apply_without_camindex(const TrackerSettings& settings); // changing the camindex is expensive and not suitable for realtime editing
 	void run();
 
-	void get_pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.get_pose(); }
-	int get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
-	void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
-
 protected:	
 	FrameTrafo X_CH_0; // for centering
 
@@ -62,7 +58,7 @@ protected:
 	Camera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
-	cv::Vec3f t_MH;
+	FrameTrafo X_MH;
 	bool draw_frame;
 	int sleep_time;
 	
