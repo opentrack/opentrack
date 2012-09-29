@@ -58,13 +58,12 @@ void Tracker::run()
 			if (commands & PAUSE) continue;
 			commands = 0;
 			
-			float dt = time.elapsed();
+			float dt = time.elapsed() / 1000.0;
 			time.restart();
 
 			frame = camera.get_frame(dt);
 			if (!frame.empty())
 			{
-				qDebug()<<"processing frame";
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, draw_frame);
 				point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
@@ -77,24 +76,33 @@ void Tracker::run()
 
 void Tracker::apply(const TrackerSettings& settings)
 {
-	apply_without_camindex(settings);
+	qDebug()<<"Tracker::apply";
 	QMutexLocker lock(&mutex);
-	qDebug()<<"Tracker: setting cam index "<<settings.cam_index;
 	camera.set_index(settings.cam_index);
-	qDebug()<<"Tracker: done setting cam index";
-}
-
-void Tracker::apply_without_camindex(const TrackerSettings& settings)
-{
-	qDebug()<<"Tracker::apply_without_camindex";
-	QMutexLocker lock(&mutex);
 	camera.set_f(settings.cam_f);
+	camera.set_res(settings.cam_res_x, settings.cam_res_y);
+	camera.set_fps(settings.cam_fps);
 	point_extractor.threshold_val = settings.threshold;
 	point_extractor.min_size = settings.min_point_size;
 	point_extractor.max_size = settings.max_point_size;
 	point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
 	sleep_time = settings.sleep_time;
+	// TODO: reset time
 	draw_frame = settings.video_widget;
+	t_MH = settings.t_MH;
+}
+
+void Tracker::reset()
+{
+	//TODO
+}
+
+void Tracker::center()
+{
+	QMutexLocker lock(&mutex);
+	FrameTrafo X_CM_0 = point_tracker.get_pose();
+	FrameTrafo X_MH(Matx33f::eye(), t_MH);
+	X_CH_0 = X_CM_0 * X_MH;
 }
 
 //-----------------------------------------------------------------------------
@@ -123,7 +131,6 @@ void Tracker::refreshVideo()
 	{
 		Mat frame_copy;
 		shared_ptr< vector<Vec2f> > points;
-		qDebug("Tracker::refreshVideo()");
 		{
 			QMutexLocker lock(&mutex);
 			if (!draw_frame || frame.empty()) return;
@@ -152,21 +159,6 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 	const float rad2deg = 180.0/3.14159265;
 	{
 		QMutexLocker lock(&mutex);
-<<<<<<< .mine
-		// convert to cm
-		data->x = pose.t[0] / 10.0;
-		data->y = pose.t[1] / 10.0;
-		data->z = pose.t[2] / 10.0;
-		const Matx33f& R = pose.R;
-		data->yaw = atan2( -R(2,0), sqrt(R(0,0)*R(0,0) + R(1,0)*R(1,0)) );
-		float cos_beta = cos(data->yaw);
-		if (cos_beta != 0)
-		{
-			data->pitch = rad2deg * atan2( R(2,1)/cos_beta, R(2,2)/cos_beta);
-			data->roll  = rad2deg * atan2( R(1,0)/cos_beta, R(0,0)/cos_beta);
-		}
-		data->yaw *= rad2deg;
-=======
 
 		FrameTrafo X_CM = point_tracker.get_pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
@@ -194,21 +186,11 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
-		data->yaw   = rad2deg * alpha;
-		data->pitch = rad2deg * beta;
-		data->roll  = rad2deg * gamma;
->>>>>>> .r148
+		data->yaw   =  rad2deg * alpha;
+		data->pitch = -rad2deg * beta;	// this is what ftnoir expects?
+		data->roll  =  rad2deg * gamma;
 	}
 	return true;
-}
-
-void Tracker::CenterTracker()
-{
-	QMutexLocker lock(&mutex);
-	FrameTrafo X_CM_0 = point_tracker.get_pose();
-	FrameTrafo X_MH(Matx33f::eye(), t_MH);
-	X_CH_0 = X_CM_0 * X_MH;
-
 }
 
 //-----------------------------------------------------------------------------

@@ -170,6 +170,14 @@
 				RelativePath=".\ftnoir_Protocol_MOUSE.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_MOUSE_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_MOUSE_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

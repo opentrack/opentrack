@@ -170,6 +170,14 @@
 				RelativePath=".\ftnoir_Protocol_PPJOY.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_PPJOY_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_PPJOY_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

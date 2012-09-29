@@ -6,3 +6,14 @@
  */
 
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+
+//-----------------------------------------------------------------------------
+class TrackerDll : public ITrackerDll
+{
+	// ITrackerDll interface
+	void Initialize() {}
+	void getFullName(QString *strToBeFilled);
+	void getShortName(QString *strToBeFilled);
+	void getDescription(QString *strToBeFilled);
+	void getIcon(QIcon *icon);
+};

@@ -40,7 +40,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 
 	// find connected components...
 	// Method 1: contours
-	/*
+	//*
 	// find contours
 	vector< vector<Point> > contours;
 	findContours(frame_bw.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
@@ -64,10 +64,10 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 		c[1] = -(m.m01/m.m00 - frame.rows/2)/frame.cols;
 		points.push_back(c);
 	}
-	*/
+	//*/
 
 	// Method 2: floodfill
-	//*
+	/*
 	// extract blobs
 	struct BlobInfo
 	{
@@ -115,7 +115,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 		c[1] = -(m.m01/float(m.m00) - frame.rows/2)/frame.cols;
 		points.push_back(c);
 	}
-	//*/
+	*/
 	
 	// draw output image
 	if (draw_output)

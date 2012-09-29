@@ -12,6 +12,9 @@
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "ui_FTNoIR_PT_Controls.h"
+#include "trans_calib.h"
+
+#include <QTimer>
 
 //-----------------------------------------------------------------------------
 class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDialog
@@ -25,17 +28,19 @@ public:
 	void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker);
 	void unRegisterTracker();
+	
+	void trans_calib_step();
 
 protected slots:
-	void doOK();
-	void doCancel();
-	void doCenter();
-
 	// ugly qt stuff
 	void set_video_widget(bool val)  { settings.video_widget = val;   settings_changed(); }
 	void set_sleep_time(int val)     { settings.sleep_time = val;     settings_changed(); }
-	void set_cam_index(int val);
+	void set_reset_time(int val)     { settings.reset_time = val;     settings_changed(); }
+	void set_cam_index(int val)		 { settings.cam_index = val;      settings_changed(); }
 	void set_cam_f(double val)       { settings.cam_f = val;          settings_changed(); }
+	void set_cam_res_x(int val)      { settings.cam_res_x = val;      settings_changed(); }
+	void set_cam_res_y(int val)      { settings.cam_res_y = val;      settings_changed(); }
+	void set_cam_fps(int val)        { settings.cam_fps = val;        settings_changed(); }
 	void set_min_point_size(int val) { settings.min_point_size = val; settings_changed(); }
 	void set_max_point_size(int val) { settings.max_point_size = val; settings_changed(); }
 	void set_threshold(int val)      { settings.threshold = val;      settings_changed(); }
@@ -45,6 +50,19 @@ protected slots:
 	void set_m2x(int val) { settings.M02[0] = val; settings_changed(); }
 	void set_m2y(int val) { settings.M02[1] = val; settings_changed(); }
 	void set_m2z(int val) { settings.M02[2] = val; settings_changed(); }
+	void set_tx(int val) { settings.t_MH[0] = val; settings_changed(); }
+	void set_ty(int val) { settings.t_MH[1] = val; settings_changed(); }
+	void set_tz(int val) { settings.t_MH[2] = val; settings_changed(); }
+
+	void doCenter();
+	void doReset();
+
+	void doOK();
+	void doCancel();
+
+	void startstop_trans_calib(bool start);
+	
+	void poll_tracker_info();
 
 protected:
 	void settings_changed();
@@ -53,6 +71,9 @@ protected:
 	bool settings_dirty;
 
 	Tracker* tracker;
+	TranslationCalibrator trans_calib;
+	bool trans_calib_running;
+	QTimer timer;
 	Ui::UICPTClientControls ui;
 };
 

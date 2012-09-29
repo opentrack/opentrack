@@ -14,6 +14,7 @@
 TrackerDialog::TrackerDialog()
 	: settings_dirty(false), tracker(NULL), timer(this), trans_calib_running(false)
 {
+	qDebug()<<"TrackerDialog::TrackerDialog";
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
 	ui.setupUi( this );
@@ -23,8 +24,12 @@ TrackerDialog::TrackerDialog()
 	// initialize ui values
 	ui.videowidget_check->setChecked(settings.video_widget);
 	ui.sleep_spin->setValue(settings.sleep_time);
+	ui.reset_spin->setValue(settings.reset_time);
 	ui.camindex_spin->setValue(settings.cam_index);
 	ui.f_dspin->setValue(settings.cam_f);
+	ui.res_x_spin->setValue(settings.cam_res_x);
+	ui.res_y_spin->setValue(settings.cam_res_y);
+	ui.fps_spin->setValue(settings.cam_fps);
 	ui.threshold_slider->setValue(settings.threshold);
 	ui.mindiam_spin->setValue(settings.min_point_size);
 	ui.maxdiam_spin->setValue(settings.max_point_size);
@@ -38,14 +43,16 @@ TrackerDialog::TrackerDialog()
 	ui.tx_spin->setValue(settings.t_MH[0]);
 	ui.ty_spin->setValue(settings.t_MH[1]);
 	ui.tz_spin->setValue(settings.t_MH[2]);
-
-	ui.tcalib_button->setEnabled(false); 
 	
 	// connect Qt signals and slots
 	connect( ui.videowidget_check,SIGNAL(toggled(bool)),   this,SLOT(set_video_widget(bool)) );
 	connect( ui.sleep_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_sleep_time(int)) );
+	connect( ui.reset_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_reset_time(int)) );
 	connect( ui.camindex_spin,SIGNAL(valueChanged(int)),   this,SLOT(set_cam_index(int)) );	
 	connect( ui.f_dspin,SIGNAL(valueChanged(double)),      this,SLOT(set_cam_f(double)) );
+	connect( ui.res_x_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_cam_res_x(int)) );
+	connect( ui.res_y_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_cam_res_y(int)) );
+	connect( ui.fps_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_fps(int)) );
 	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)), this,SLOT(set_threshold(int)) );
 	connect( ui.mindiam_spin,SIGNAL(valueChanged(int)),    this,SLOT(set_min_point_size(int)) );
 	connect( ui.maxdiam_spin,SIGNAL(valueChanged(int)),    this,SLOT(set_max_point_size(int)) );
@@ -56,15 +63,17 @@ TrackerDialog::TrackerDialog()
 	connect( ui.m2x_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2x(int)) );
 	connect( ui.m2y_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2y(int)) );
 	connect( ui.m2z_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2z(int)) );
-	connect( ui.tx_spin,SIGNAL(valueChanged(int)), this,SLOT(set_tx(int)) );
-	connect( ui.ty_spin,SIGNAL(valueChanged(int)), this,SLOT(set_ty(int)) );
-	connect( ui.tz_spin,SIGNAL(valueChanged(int)), this,SLOT(set_tz(int)) );
+	connect( ui.tx_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_tx(int)) );
+	connect( ui.ty_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_ty(int)) );
+	connect( ui.tz_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_tz(int)) );
 
 	connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
-	connect(ui.ok_button, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.cancel_button, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.reset_button, SIGNAL(clicked()),  this, SLOT(doReset()));
 	connect(ui.center_button, SIGNAL(clicked()), this, SLOT(doCenter()));
+
+	connect(ui.ok_button, SIGNAL(clicked()),     this, SLOT(doOK()));
+	connect(ui.cancel_button, SIGNAL(clicked()), this, SLOT(doCancel()));
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     timer.start(100);
@@ -79,13 +88,13 @@ void TrackerDialog::startstop_trans_calib(bool start)
 {
 	if (start)
 	{
-		qDebug()<<"TrackerDialog:: starting translation calibration";
+		qDebug()<<"TrackerDialog:: Starting translation calibration";
 		trans_calib.reset();
 		trans_calib_running = true;
 	}
 	else
 	{
-		qDebug()<<"TrackerDialog:: stoppping translation calibration";
+		qDebug()<<"TrackerDialog:: Stoppping translation calibration";
 		trans_calib_running = false;
 		settings.t_MH = trans_calib.get_estimate();
 		settings_changed();
@@ -100,32 +109,27 @@ void TrackerDialog::trans_calib_step()
 		tracker->get_pose(&X_CM);
 		trans_calib.update(X_CM.R, X_CM.t);
 		cv::Vec3f t_MH = trans_calib.get_estimate();
-		//qDebug()<<"TrackerDialog:: current translation estimate: "<<t_MH[0]<<t_MH[1]<<t_MH[2];
+		//qDebug()<<"TrackerDialog:: Current translation estimate: "<<t_MH[0]<<t_MH[1]<<t_MH[2];
 		ui.tx_spin->setValue(t_MH[0]);
 		ui.ty_spin->setValue(t_MH[1]);
 		ui.tz_spin->setValue(t_MH[2]);
 	}
 }
 
-void TrackerDialog::set_cam_index(int val)
-{	
-	settings.cam_index = val;
-	settings_dirty = true;
-	if (tracker)
-		tracker->apply(settings);
-}
-
 void TrackerDialog::settings_changed()
 {
 	settings_dirty = true;
-	if (tracker)
-		tracker->apply_without_camindex(settings);
+	if (tracker) tracker->apply(settings);
 }
 
 void TrackerDialog::doCenter()
 {
-	if (tracker)
-		tracker->CenterTracker();
+	if (tracker) tracker->center();
+}
+
+void TrackerDialog::doReset()
+{
+	if (tracker) tracker->reset();
 }
 
 void TrackerDialog::doOK()
@@ -164,10 +168,12 @@ void TrackerDialog::poll_tracker_info()
 {
 	if (tracker)
 	{
+		// display caminfo
 		CamInfo info;
 		tracker->get_cam_info(&info);
 		ui.caminfo_label->setText(QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS");
 
+		// display pointinfo
 		int n_points = tracker->get_n_points();
 		QString to_print = QString::number(n_points);
 		if (n_points == 3)
@@ -176,6 +182,7 @@ void TrackerDialog::poll_tracker_info()
 			to_print += " BAD!";
 		ui.pointinfo_label->setText(to_print);
 
+		// update calibration
 		if (trans_calib_running) trans_calib_step();
 	}
 	else
@@ -199,18 +206,21 @@ void TrackerDialog::Initialize(QWidget *parent)
 
 void TrackerDialog::registerTracker(ITracker *t)
 {
-	qDebug()<<"tracker registerd";
+	qDebug()<<"TrackerDialog:: Tracker registerd";
 	tracker = static_cast<Tracker*>(t);
-	if (isVisible() && settings_dirty)
-		tracker->apply(settings);
-	ui.tcalib_button->setEnabled(true); 
+	if (isVisible() && settings_dirty) tracker->apply(settings);
+	ui.tcalib_button->setEnabled(true);
+	ui.center_button->setEnabled(true);
+	ui.reset_button->setEnabled(true);
 }
 
 void TrackerDialog::unRegisterTracker()
 {
-	qDebug()<<"tracker un-registerd";
+	qDebug()<<"TrackerDialog:: Tracker un-registerd";
 	tracker = NULL;
 	ui.tcalib_button->setEnabled(false); 
+	ui.center_button->setEnabled(false);
+	ui.reset_button->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------

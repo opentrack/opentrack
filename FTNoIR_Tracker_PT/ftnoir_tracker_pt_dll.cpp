@@ -5,14 +5,14 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_pt.h"
+#include "ftnoir_tracker_pt_dll.h"
 
 #include <QIcon>
 
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = "PointTracker 0.1";
+	*strToBeFilled = "PointTracker 0.2";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
