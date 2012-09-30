@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)/bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			>

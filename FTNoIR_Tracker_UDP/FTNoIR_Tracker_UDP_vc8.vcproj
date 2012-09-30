@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="FTNoIR_Tracker_UDP"
-	ProjectGUID="{A42E7DE9-C1C5-48A2-8FEA-86D31CE3DA31}"
+	ProjectGUID="{507B92A6-8725-4921-9432-2864EF2B64D9}"
 	RootNamespace="FTNoIR_Tracker_UDP"
 	Keyword="Qt4VSv1.0"
 	>
