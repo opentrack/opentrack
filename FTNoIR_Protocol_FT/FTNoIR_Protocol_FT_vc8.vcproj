@@ -178,6 +178,14 @@
 				RelativePath=".\ftnoir_Protocol_FT.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FT_dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ftnoir_protocol_FT_dll.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
