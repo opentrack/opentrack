@@ -505,10 +505,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
 
-	if (!withinRect(e->pos(), range)) {
-		return;
-	}
-
 	if (moving) {
 
 		setCursor(Qt::ClosedHandCursor);		
