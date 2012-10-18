@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20121014 - WVR: Added second Tracker Source for Arduino solution. The two will be mutually exclusive.
 		20120929 - WVR: Disable button Filter-settings when StartTracker.
 		20120918 - WVR: When AutoStart is TRUE, the program is not directly minimized any more.
 						This now depends on the AutoMinimize time. Fixed the 'not showing' of the MIB.
@@ -53,6 +54,7 @@
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
 QMainWindow(parent, flags),
 pTrackerDialog(NULL),
+pSecondTrackerDialog(NULL),
 pProtocolDialog(NULL),
 pFilterDialog(NULL)
 {	
@@ -129,7 +131,8 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	connect(ui.actionVideoWidget, SIGNAL(triggered()), this, SLOT(showVideoWidget()));
 	connect(ui.actionHeadPoseWidget, SIGNAL(triggered()), this, SLOT(showHeadPoseWidget()));
-	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showEngineControls()));
+	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
+	connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
 	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
 	connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
@@ -261,6 +264,19 @@ QString FaceTrackNoIR::getCurrentTrackerName()
 	return trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
 }
 
+//
+// Return the name of the second Tracker-DLL
+//
+QString FaceTrackNoIR::getSecondTrackerName()
+{
+	if (ui.cbxSecondTrackerSource->currentIndex() <= 0) {
+		return QString("None");
+	}
+	else {
+		return trackerFileList.at(ui.cbxSecondTrackerSource->currentIndex() - 1 );
+	}
+}
+
 /** read the name of the first video-capturing device at start up **/
 /** FaceAPI can only use this first one... **/
 void FaceTrackNoIR::GetCameraNameDX() {
@@ -381,6 +397,7 @@ void FaceTrackNoIR::save() {
 	iniFile.beginGroup ( "TrackerSource" );
 	iniFile.setValue ( "Selection", ui.iconcomboTrackerSource->currentIndex() );
 	iniFile.setValue ( "DLL", getCurrentTrackerName() );
+	iniFile.setValue ( "2ndDLL", getSecondTrackerName() );
 	iniFile.endGroup ();
 
 	//
@@ -461,7 +478,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 4) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 5) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -581,15 +598,23 @@ void FaceTrackNoIR::loadSettings() {
 				break;
 		}
 	}
+	QString secondTrackerName = iniFile.value ( "2ndDLL", "None" ).toString();
+	qDebug() << "loadSettings says: secondTrackerName = " << secondTrackerName;
+
 	iniFile.endGroup ();
 
 	disconnect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	disconnect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	for ( int i = 0; i < trackerFileList.size(); i++) {
 		if (trackerFileList.at(i) == selectedTrackerName) {
 			ui.iconcomboTrackerSource->setCurrentIndex( i );
 		}
+		if (trackerFileList.at(i) == secondTrackerName) {
+			ui.cbxSecondTrackerSource->setCurrentIndex( i + 1 );		// The first value = "None", so add 1
+		}
 	}
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 
 	//
 	// Read the currently selected Filter from the INI-file.
@@ -688,6 +713,7 @@ void FaceTrackNoIR::startTracker( ) {
 
 	// Enable/disable Protocol-server Settings
 	ui.iconcomboTrackerSource->setEnabled ( false );
+	ui.cbxSecondTrackerSource->setEnabled ( false );
 	ui.iconcomboProtocol->setEnabled ( false );
 	ui.btnShowServerControls->setEnabled ( false );
 	ui.iconcomboFilter->setEnabled ( false );
@@ -785,6 +811,7 @@ void FaceTrackNoIR::stopTracker( ) {
 //	ui.btnShowEngineControls->setEnabled ( false );
 	ui.iconcomboProtocol->setEnabled ( true );
 	ui.iconcomboTrackerSource->setEnabled ( true );
+	ui.cbxSecondTrackerSource->setEnabled ( true );
 	ui.iconcomboFilter->setEnabled ( true );
 
 	// Enable/disable Protocol-server Settings
@@ -941,12 +968,12 @@ void FaceTrackNoIR::showHeadPoseWidget() {
 }
 
 /** toggles Engine Controls Dialog **/
-void FaceTrackNoIR::showEngineControls() {
+void FaceTrackNoIR::showTrackerSettings() {
 importGetTrackerDialog getIT;
 QLibrary *trackerLib;
 QString libName;
 
-	qDebug() << "FaceTrackNoIR::showEngineControls started.";
+	qDebug() << "FaceTrackNoIR::showTrackerSettings started.";
 
 	//
 	// Delete the existing QDialog
@@ -966,22 +993,74 @@ QString libName;
 	if (!libName.isEmpty()) {
 		trackerLib = new QLibrary(libName);
 
-//		qDebug() << "FaceTrackNoIR::showEngineControls Loaded trackerLib." << trackerLib;
+//		qDebug() << "FaceTrackNoIR::showTrackerSettings Loaded trackerLib." << trackerLib;
 
 		getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
 
-//		qDebug() << "FaceTrackNoIR::showEngineControls resolved." << getIT;
+//		qDebug() << "FaceTrackNoIR::showTrackerSettings resolved." << getIT;
 
 		if (getIT) {
 			ITrackerDialog *ptrXyz(getIT());
 			if (ptrXyz)
 			{
 				pTrackerDialog = ptrXyz;
-				pTrackerDialog->Initialize( this );
-//				qDebug() << "FaceTrackNoIR::showEngineControls GetTrackerDialog Function Resolved!";
+				pTrackerDialog->Initialize( this, 1 );
+//				qDebug() << "FaceTrackNoIR::showTrackerSettings GetTrackerDialog Function Resolved!";
 				if (tracker) {
 					pTrackerDialog->registerTracker( tracker->getTrackerPtr() );
-//					qDebug() << "FaceTrackNoIR::showEngineControls RegisterTracker Function Executed";
+//					qDebug() << "FaceTrackNoIR::showTrackerSettings RegisterTracker Function Executed";
+				}
+			}
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
+
+}
+
+// Show the Settings dialog for the secondary Tracker
+void FaceTrackNoIR::showSecondTrackerSettings() {
+importGetTrackerDialog getIT;
+QLibrary *trackerLib;
+QString libName;
+
+	qDebug() << "FaceTrackNoIR::showSecondTrackerSettings started.";
+
+	//
+	// Delete the existing QDialog
+	//
+	if (pSecondTrackerDialog) {
+		delete pSecondTrackerDialog;
+		pSecondTrackerDialog = NULL;
+	}
+
+	// Show the appropriate Tracker Settings
+	libName.clear();
+	libName = getSecondTrackerName();
+
+	//
+	// Load the Server-settings dialog (if any) and show it.
+	//
+	if ((!libName.isEmpty()) && (libName != "None")) {
+		trackerLib = new QLibrary(libName);
+
+//		qDebug() << "FaceTrackNoIR::showTrackerSettings Loaded trackerLib." << trackerLib;
+
+		getIT = (importGetTrackerDialog) trackerLib->resolve("GetTrackerDialog");
+
+//		qDebug() << "FaceTrackNoIR::showTrackerSettings resolved." << getIT;
+
+		if (getIT) {
+			ITrackerDialog *ptrXyz(getIT());
+			if (ptrXyz)
+			{
+				pSecondTrackerDialog = ptrXyz;
+				pSecondTrackerDialog->Initialize( this, 2 );
+//				qDebug() << "FaceTrackNoIR::showTrackerSettings GetTrackerDialog Function Resolved!";
+				if (tracker) {
+					pSecondTrackerDialog->registerTracker( tracker->getSecondTrackerPtr() );
+//					qDebug() << "FaceTrackNoIR::showTrackerSettings RegisterTracker Function Executed";
 				}
 			}
 		}
@@ -1259,10 +1338,15 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 	trackerFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
 
 	//
-	// Add strings to the Listbox.
+	// Add strings to the Listbox(es).
 	//
 	disconnect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	ui.iconcomboTrackerSource->clear();
+
+	disconnect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+	ui.cbxSecondTrackerSource->clear();
+	ui.cbxSecondTrackerSource->addItem("None");
+
 	for ( int i = 0; i < trackerFileList.size(); i++) {
 
 //		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
@@ -1291,10 +1375,10 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 		}
 
 		ui.iconcomboTrackerSource->addItem(*trackerIcon, *trackerName );
+		ui.cbxSecondTrackerSource->addItem(*trackerIcon, *trackerName );
 	}
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-
-
+	connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 }
 
 //

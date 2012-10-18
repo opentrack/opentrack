@@ -40,7 +40,7 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void Initialize( QFrame *videoframe );
+    void Initialize( QFrame *videoframe, int numTracker );
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
@@ -67,7 +67,7 @@ public:
     virtual ~TrackerControls();
 	void showEvent ( QShowEvent * event );
 
-    void Initialize(QWidget *parent);
+    void Initialize(QWidget *parent, int numTracker);
 	void registerTracker(ITracker *tracker) {};
 	void unRegisterTracker() {};
 

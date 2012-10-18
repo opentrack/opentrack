@@ -171,7 +171,7 @@ QFrame *video_frame;
 			if (ptrXyz)
 			{
 				pTracker = ptrXyz;
-				pTracker->Initialize( video_frame );
+				pTracker->Initialize( video_frame, 1 );
 				qDebug() << "Tracker::setup Function Resolved!";
 			}
 		}

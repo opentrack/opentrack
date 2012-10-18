@@ -77,7 +77,7 @@ TrackerControls::~TrackerControls() {
 //
 // Initialize tracker-client-dialog
 //
-void TrackerControls::Initialize(QWidget *parent) {
+void TrackerControls::Initialize(QWidget *parent, int numTracker) {
 
 	QPoint offsetpos(200, 200);
 	if (parent) {

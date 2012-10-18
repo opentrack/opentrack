@@ -173,7 +173,8 @@ private:
 	static T6DOF new_camera;
 	static T6DOF output_camera;
 
-	ITrackerPtr pTracker;					// Pointer to Tracker instance (in DLL)
+	ITrackerPtr pTracker;							// Pointer to Tracker instance (in DLL)
+	ITrackerPtr pSecondTracker;						// Pointer to second Tracker instance (in DLL)
 	static IProtocolPtr pProtocol;					// Pointer to Protocol instance (in DLL)
 	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
 
@@ -254,6 +255,7 @@ public:
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 	static IFilterPtr getFilterPtr() { return pFilter; }		// Return the pointer for the active Filter
 	ITracker *getTrackerPtr() { return pTracker; }				// Return the pointer for the active Tracker
+	ITracker *getSecondTrackerPtr() { return pSecondTracker; }	// Return the pointer for the secondary Tracker
 
 	void doRefreshVideo() {										// Call the face-tracker-function RefreshVideo
 		if (pTracker) {

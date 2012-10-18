@@ -42,7 +42,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	hSMMemMap = 0;
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe )
+void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
 {
 	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
 

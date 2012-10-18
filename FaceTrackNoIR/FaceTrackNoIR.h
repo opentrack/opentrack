@@ -72,6 +72,7 @@ public:
 	QString getCurrentProtocolName();			// Get the name of the selected protocol
 	QString getCurrentFilterName();				// Get the name of the selected filter
 	QString getCurrentTrackerName();			// Get the name of the selected face-tracker
+	QString getSecondTrackerName();				// Get the name of the second face-tracker ("None" if no selection)
 
 private:
 	Ui::FaceTrackNoIRClass ui;
@@ -84,6 +85,7 @@ private:
 	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
 	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
+	ITrackerDialogPtr pSecondTrackerDialog;		// Pointer to the second Tracker dialog instance (in DLL)
 	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
 	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
@@ -139,7 +141,9 @@ private:
 
 		void showVideoWidget();
 		void showHeadPoseWidget();
-		void showEngineControls();
+		void showTrackerSettings();
+		void showSecondTrackerSettings();
+
 		void showServerControls();
 		void showFilterControls();
 		void showPreferences();
