@@ -55,6 +55,21 @@ private:
 	SMMemMap *pMemData;
 	HANDLE hSMMutex;
 	QProcess *faceAPI;
+
+	int numTracker;
+	bool bEnableRoll;
+	bool bEnablePitch;
+	bool bEnableYaw;
+	bool bEnableX;
+	bool bEnableY;
+	bool bEnableZ;
+
+	double dInvertRoll;
+	double dInvertPitch;
+	double dInvertYaw;
+	double dInvertX;
+	double dInvertY;
+	double dInvertZ;
 };
 
 // Widget that has controls for SMoIR protocol client-settings.
@@ -68,8 +83,12 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent, int numTracker);
-	void registerTracker(ITracker *tracker) {};
-	void unRegisterTracker() {};
+	void registerTracker(ITracker *tracker) {
+		theTracker = (FTNoIR_Tracker *) tracker;			// Accept the pointer to the Tracker
+	};
+	void unRegisterTracker() {
+		theTracker = NULL;									// Reset the pointer
+	};
 
 private:
 	Ui::UICSMClientControls ui;
@@ -92,6 +111,16 @@ private:
     smEngineHandle *engine_handle;
 	QTimer *timUpdateSettings;								// Timer to display current settings
 
+	FTNoIR_Tracker *theTracker;
+	int numTracker;											// Primary (1) or secondary tracker (2)
+
+	int numRoll;											// Number of Tracker (1 or 2) which tracks this axis
+	int numPitch;
+	int numYaw;
+	int numX;
+	int numY;
+	int numZ;
+
 private slots:
 	void doOK();
 	void doCancel();
@@ -110,6 +139,9 @@ private slots:
 	void doSetFilter(int value){
 		doCommand(FT_SM_SET_PAR_FILTER, value);
 	}
+	void settingChanged(int dummy) { 
+		settingsDirty = true;
+	};
 
 signals:
      void stateChanged(int newState);

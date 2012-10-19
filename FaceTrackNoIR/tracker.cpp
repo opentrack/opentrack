@@ -176,7 +176,29 @@ QFrame *video_frame;
 			}
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Facetracker DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", libName + " DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
+	//
+	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
+	//
+	pSecondTracker = NULL;
+	libName = mainApp->getSecondTrackerName();
+	if (!libName.isEmpty()) {
+		trackerLib = new QLibrary(libName);
+		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
+			
+		if (getIT) {
+			ITracker *ptrXyz(getIT());							// Get the Class
+			if (ptrXyz)
+			{
+				pSecondTracker = ptrXyz;
+				pSecondTracker->Initialize( NULL, 2 );
+				qDebug() << "Tracker::setup Function Resolved!";
+			}
+		}
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", libName + " DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 	}
 
@@ -233,11 +255,12 @@ QFrame *video_frame;
 /** destructor empty **/
 Tracker::~Tracker() {
 
-	// Stop the Tracker
+	// Stop the Tracker(s)
 	if (pTracker) {
-		qDebug() << "Tracker::~Tracker Calling pTracker->StopTracker()...";
 		pTracker->StopTracker( true );
-		qDebug() << "Tracker::~Tracker After Calling pTracker->StopTracker()...";
+	}
+	if (pSecondTracker) {
+		pSecondTracker->StopTracker( true );
 	}
 
 	// Trigger thread to stop
@@ -254,6 +277,10 @@ Tracker::~Tracker() {
 	if (pTracker) {
 		delete pTracker;
 		pTracker = NULL;
+	}
+	if (pSecondTracker) {
+		delete pSecondTracker;
+		pSecondTracker = NULL;
 	}
 
 	// Close handles
@@ -277,7 +304,12 @@ void Tracker::setup() {
 	bool DLL_Ok;
 
 	// retrieve pointers to the User Interface and the main Application
-	pTracker->StartTracker( mainApp->winId() );
+	if (pTracker) {
+		pTracker->StartTracker( mainApp->winId() );
+	}
+	if (pSecondTracker) {
+		pSecondTracker->StartTracker( mainApp->winId() );
+	}
 
 	//
 	// Check if the Protocol-server files were installed OK.
@@ -331,8 +363,13 @@ T6DOF offset_camera(0,0,0,0,0,0);
 T6DOF gamezero_camera(0,0,0,0,0,0);
 T6DOF gameoutput_camera(0,0,0,0,0,0);
 
+bool bInitialCenter = true;
+bool bTracker1Confid = false;
+bool bTracker2Confid = false;
+
 	Tracker::do_tracking = true;				// Start initially
-	Tracker::do_center = true;					// Center initially
+	Tracker::do_center = false;					// Center initially
+	bInitialCenter = true;
 
 	//
 	// Test some Filter-stuff
@@ -420,11 +457,21 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					//
 					if (Tracker::do_tracking) {
 						Tracker::confid = false;
-						pTracker->StartTracker( mainApp->winId() );
+						if (pTracker) {
+							pTracker->StartTracker( mainApp->winId() );
+						}
+						if (pSecondTracker) {
+							pSecondTracker->StartTracker( mainApp->winId() );
+						}
 					}
 					else {
 						if (setEngineStop) {						// Only stop engine when option is checked
-							pTracker->StopTracker( false );
+							if (pTracker) {
+								pTracker->StopTracker( false );
+							}
+							if (pSecondTracker) {
+								pSecondTracker->StopTracker( false );
+							}
 						}
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
@@ -491,11 +538,21 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					//
 					if (Tracker::do_tracking) {
 						Tracker::confid = false;
-						pTracker->StartTracker( mainApp->winId() );
+						if (pTracker) {
+							pTracker->StartTracker( mainApp->winId() );
+						}
+						if (pSecondTracker) {
+							pSecondTracker->StartTracker( mainApp->winId() );
+						}
 					}
 					else {
 						if (setEngineStop) {						// Only stop engine when option is checked
-							pTracker->StopTracker( false );
+							if (pTracker) {
+								pTracker->StopTracker( false );
+							}
+							if (pSecondTracker) {
+								pSecondTracker->StopTracker( false );
+							}
 						}
 					}
 					qDebug() << "Tracker::run() says StartStop pressed, do_tracking =" << Tracker::do_tracking;
@@ -559,7 +616,20 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			newpose.y = 0.0f;
 			newpose.z = 0.0f;
 
-			Tracker::confid = pTracker->GiveHeadPoseData(&newpose);
+			if (pTracker) {
+				bTracker1Confid = pTracker->GiveHeadPoseData(&newpose);
+			}
+			else {
+				bTracker1Confid = true;
+			}
+			if (pSecondTracker) {
+				bTracker2Confid = pSecondTracker->GiveHeadPoseData(&newpose);
+			}
+			else {
+				bTracker2Confid = true;
+			}
+
+			Tracker::confid = (bTracker1Confid && bTracker2Confid);
 			if ( Tracker::confid ) {
 				addHeadPose(newpose);
 			}
@@ -567,10 +637,15 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			//
 			// If Center is pressed, copy the current values to the offsets.
 			//
-			if (Tracker::do_center) {
+			if ((Tracker::do_center) || ((bInitialCenter) && (Tracker::confid)))  {
 				
 				MessageBeep (MB_ICONASTERISK);
-				pTracker->notifyCenter();				// Send 'center' to the tracker
+				if (pTracker) {
+					pTracker->notifyCenter();					// Send 'center' to the tracker
+				}
+				if (pSecondTracker) {
+					pSecondTracker->notifyCenter();				// Send 'center' to the tracker
+				}
 
 				//
 				// Only copy valid values
@@ -583,6 +658,7 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 					offset_camera.pitch = getSmoothFromList( &Pitch.rawList );
 					offset_camera.yaw   = getSmoothFromList( &Yaw.rawList );
 					offset_camera.roll  = getSmoothFromList( &Roll.rawList );
+					bInitialCenter = false;
 				}
 
 				Tracker::do_center = false;
@@ -593,8 +669,10 @@ T6DOF gameoutput_camera(0,0,0,0,0,0);
 			// Change requested by Stanislaw
 			//
 			if (Tracker::confid && Tracker::do_game_zero) {
-				if (!pTracker->notifyZeroed())
-					gamezero_camera = gameoutput_camera;
+				if (pTracker) {
+					if (!pTracker->notifyZeroed())
+						gamezero_camera = gameoutput_camera;
+				}
 //				gamezero_camera = gameoutput_camera;
 
 				Tracker::do_game_zero = false;
