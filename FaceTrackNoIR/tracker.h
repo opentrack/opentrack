@@ -261,6 +261,9 @@ public:
 		if (pTracker) {
 			pTracker->refreshVideo();
 		}
+		if (pSecondTracker) {
+			pSecondTracker->refreshVideo();
+		}
 	};
 
 	static float getSmoothFromList ( QList<float> *rawList );

@@ -36,13 +36,28 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
 	}
+
+	numTracker = 1;
+	bEnableRoll = true;
+	bEnablePitch = true;
+	bEnableYaw = true;
+	bEnableX = true;
+	bEnableY = true;
+	bEnableZ = true;
+
+	dInvertRoll = 1.0f;
+	dInvertPitch = 1.0f;
+	dInvertYaw = 1.0f;
+	dInvertX = 1.0f;
+	dInvertY = 1.0f;
+	dInvertZ = 1.0f;
 	
 	CloseHandle( hSMMutex );
 	CloseHandle( hSMMemMap );
 	hSMMemMap = 0;
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
+void FTNoIR_Tracker::Initialize( QFrame *videoframe, int num)
 {
 	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
 
@@ -53,11 +68,17 @@ void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
 		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
 	}
 
+	numTracker = num;
 	loadSettings();
 
 	if ( pMemData != NULL ) {
-		pMemData->command = 0;						// Reset any and all commands
-		pMemData->handle = videoframe->winId();		// Handle of Videoframe widget
+		pMemData->command = 0;							// Reset any and all commands
+		if (videoframe != NULL) {
+			pMemData->handle = videoframe->winId();		// Handle of Videoframe widget
+		}
+		else {
+			pMemData->handle = NULL;					// reset Handle of Videoframe widget
+		}
 	}
 
 	//
@@ -70,7 +91,9 @@ void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
 	// Show the video widget
 	qDebug() << "FTNoIR_Tracker::Initialize says: videoframe = " << videoframe;
 
-	videoframe->show();
+	if (videoframe != NULL) {
+		videoframe->show();
+	}
 	return;
 }
 
@@ -110,12 +133,24 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 		//
 		// Copy the measurements to FaceTrackNoIR.
 		//
-		data->x     = pMemData->data.new_pose.head_pos.x * 100.0f;					// From meters to centimeters
-		data->y     = pMemData->data.new_pose.head_pos.y * 100.0f;
-		data->z     = pMemData->data.new_pose.head_pos.z * 100.0f;
-		data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
-		data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
-		data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+		if (bEnableX) {
+			data->x     = dInvertX * pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
+		}
+		if (bEnableY) {
+			data->y     = dInvertY * pMemData->data.new_pose.head_pos.y * 100.0f;
+		}
+		if (bEnableZ) {
+			data->z     = dInvertZ * pMemData->data.new_pose.head_pos.z * 100.0f;
+		}
+		if (bEnableYaw) {
+			data->yaw   = dInvertYaw * pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
+		}
+		if (bEnablePitch) {
+			data->pitch = dInvertPitch * pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
+		}
+		if (bEnableRoll) {
+			data->roll  = dInvertRoll * pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+		}
 
 		//
 		// Reset the handshake, to let faceAPI know we're still here!
@@ -132,6 +167,12 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTNoIR_Tracker::loadSettings() {
+int numRoll;											// Number of Tracker (1 or 2) which tracks this axis
+int numPitch;
+int numYaw;
+int numX;
+int numY;
+int numZ;
 
 	qDebug() << "FTNoIR_Tracker::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -145,7 +186,45 @@ void FTNoIR_Tracker::loadSettings() {
 	if (pMemData) {
 		pMemData->initial_filter_level = iniFile.value ( "FilterLevel", 1 ).toInt();
 	}
+	dInvertRoll = (iniFile.value ( "InvertRoll", 0 ).toBool()) ? -1.0f : 1.0f;
+	dInvertPitch = (iniFile.value ( "InvertPitch", 0 ).toBool()) ? -1.0f : 1.0f;
+	dInvertYaw = (iniFile.value ( "InvertYaw", 0 ).toBool()) ? -1.0f : 1.0f;
+	dInvertX = (iniFile.value ( "InvertX", 0 ).toBool()) ? -1.0f : 1.0f;
+	dInvertY = (iniFile.value ( "InvertY", 0 ).toBool()) ? -1.0f : 1.0f;
+	dInvertZ = (iniFile.value ( "InvertZ", 0 ).toBool()) ? -1.0f : 1.0f;
+
 	iniFile.endGroup ();
+
+	iniFile.beginGroup ( "HeadTracker" );
+	//
+	// Check if the Tracker is the Primary one.
+	// If the property is not found in the INI-file, set the value.
+	//
+	if (numTracker == 1) {
+		numRoll = iniFile.value ( "RollTracker", 1 ).toInt();
+		numPitch = iniFile.value ( "PitchTracker", 1 ).toInt();
+		numYaw = iniFile.value ( "YawTracker", 1 ).toInt();
+		numX = iniFile.value ( "XTracker", 0 ).toInt();
+		numY = iniFile.value ( "YTracker", 0 ).toInt();
+		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
+	}
+	else {
+		numRoll = iniFile.value ( "RollTracker", 0 ).toInt();
+		numPitch = iniFile.value ( "PitchTracker", 0 ).toInt();
+		numYaw = iniFile.value ( "YawTracker", 0 ).toInt();
+		numX = iniFile.value ( "XTracker", 0 ).toInt();
+		numY = iniFile.value ( "YTracker", 0 ).toInt();
+		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
+	}
+	bEnableRoll = (numRoll == numTracker);
+	bEnablePitch = (numPitch == numTracker);
+	bEnableYaw = (numYaw == numTracker);
+	bEnableX = (numX == numTracker);
+	bEnableY = (numY == numTracker);
+	bEnableZ = (numZ == numTracker);
+
+	iniFile.endGroup ();
+
 }
 
 //
