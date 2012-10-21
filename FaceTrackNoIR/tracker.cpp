@@ -184,7 +184,7 @@ QFrame *video_frame;
 	//
 	pSecondTracker = NULL;
 	libName = mainApp->getSecondTrackerName();
-	if (!libName.isEmpty()) {
+	if ((!libName.isEmpty()) && (libName != "None")) {
 		trackerLib = new QLibrary(libName);
 		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
 			
