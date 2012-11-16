@@ -39,11 +39,11 @@
 #include "Windows.h"
 #include "math.h"
 
-class FTNoIR_Protocol_FTN : public IProtocol
+class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol_FTN();
-	~FTNoIR_Protocol_FTN();
+	FTNoIR_Protocol();
+	~FTNoIR_Protocol();
 
 	void Release();
     void Initialize();
@@ -77,6 +77,12 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+	void registerProtocol(IProtocol *protocol) {
+		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
+	};
+	void unRegisterProtocol() {
+		theProtocol = NULL;									// Reset the pointer
+	};
 
 private:
 	Ui::UICFTNControls ui;
@@ -85,6 +91,7 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
+	FTNoIR_Protocol *theProtocol;
 
 private slots:
 	void doOK();

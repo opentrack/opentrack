@@ -52,6 +52,8 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 //	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
 
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

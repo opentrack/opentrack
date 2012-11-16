@@ -35,7 +35,7 @@
 static const char* DevName = "\\\\.\\PPJoyIOCTL";
 
 /** constructor **/
-FTNoIR_Protocol_PPJOY::FTNoIR_Protocol_PPJOY()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 char strDevName[100];
 
@@ -61,7 +61,7 @@ char strDevName[100];
 }
 
 /** destructor **/
-FTNoIR_Protocol_PPJOY::~FTNoIR_Protocol_PPJOY()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	/* Make sure we could open the device! */
 	if (h == INVALID_HANDLE_VALUE) {
@@ -75,12 +75,12 @@ FTNoIR_Protocol_PPJOY::~FTNoIR_Protocol_PPJOY()
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_PPJOY::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_PPJOY::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -88,7 +88,7 @@ void FTNoIR_Protocol_PPJOY::Initialize()
 //
 // Limit the Joystick values
 //
-void FTNoIR_Protocol_PPJOY::checkAnalogLimits() {
+void FTNoIR_Protocol::checkAnalogLimits() {
 	for (int i = 0;i < NUM_ANALOG;i++) {
 		if (Analog[i]>PPJOY_AXIS_MAX) {
 			Analog[i]=PPJOY_AXIS_MAX;
@@ -102,7 +102,7 @@ void FTNoIR_Protocol_PPJOY::checkAnalogLimits() {
 //
 // Scale the measured value to the Joystick values
 //
-long FTNoIR_Protocol_PPJOY::scale2AnalogLimits( float x, float min_x, float max_x ) {
+long FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 
 	y = ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/(max_x - min_x)) * x + ((PPJOY_AXIS_MAX - PPJOY_AXIS_MIN)/2) + PPJOY_AXIS_MIN;
@@ -114,7 +114,7 @@ double y;
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_PPJOY::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -128,7 +128,7 @@ void FTNoIR_Protocol_PPJOY::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_PPJOY::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -186,7 +186,7 @@ float virtRotZ;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_PPJOY::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	/* Make sure we could open the device! */
 	if (h == INVALID_HANDLE_VALUE) {
@@ -198,7 +198,7 @@ bool FTNoIR_Protocol_PPJOY::checkServerInstallationOK( HANDLE handle )
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_PPJOY::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "Virtual PPJoy joystick");
 	return;
@@ -215,5 +215,5 @@ void FTNoIR_Protocol_PPJOY::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_PPJOY;
+	return new FTNoIR_Protocol;
 }

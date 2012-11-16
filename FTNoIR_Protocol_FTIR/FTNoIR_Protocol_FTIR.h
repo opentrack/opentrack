@@ -46,11 +46,11 @@ typedef void (WINAPI *importTIRViewsStart)(void);
 typedef void (WINAPI *importTIRViewsStop)(void);
 
 
-class FTNoIR_Protocol_FTIR : public IProtocol
+class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol_FTIR();
-	~FTNoIR_Protocol_FTIR();
+	FTNoIR_Protocol();
+	~FTNoIR_Protocol();
 
 	void Release();
     void Initialize();
@@ -97,6 +97,12 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
+	void registerProtocol(IProtocol *protocol) {
+		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
+	};
+	void unRegisterProtocol() {
+		theProtocol = NULL;									// Reset the pointer
+	};
 
 private:
 	Ui::UICFTIRControls ui;
@@ -105,6 +111,7 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
+	FTNoIR_Protocol *theProtocol;
 
 private slots:
 	void doOK();

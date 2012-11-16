@@ -35,7 +35,7 @@
 #include "ftnoir_protocol_mouse.h"
 
 /** constructor **/
-FTNoIR_Protocol_MOUSE::FTNoIR_Protocol_MOUSE()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	prev_fMouse_X = 0.0f;
 	prev_fMouse_Y = 0.0f;
@@ -46,17 +46,17 @@ FTNoIR_Protocol_MOUSE::FTNoIR_Protocol_MOUSE()
 }
 
 /** destructor **/
-FTNoIR_Protocol_MOUSE::~FTNoIR_Protocol_MOUSE()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_MOUSE::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_MOUSE::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 int ScreenX, ScreenY;
 
@@ -71,7 +71,7 @@ int ScreenX, ScreenY;
 //
 // Scale the measured value to the Joystick values
 //
-long FTNoIR_Protocol_MOUSE::scale2AnalogLimits( float x, float min_x, float max_x ) {
+long FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 
 	y = ((MOUSE_AXIS_MAX - MOUSE_AXIS_MIN)/(max_x - min_x)) * x + ((MOUSE_AXIS_MAX - MOUSE_AXIS_MIN)/2) + MOUSE_AXIS_MIN;
@@ -81,7 +81,7 @@ double y;
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_MOUSE::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -105,7 +105,7 @@ void FTNoIR_Protocol_MOUSE::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_MOUSE::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 float fMouse_X;							// The actual value
 float fMouse_Y;
 float fMouse_Wheel;
@@ -264,7 +264,7 @@ float fMouse_Wheel;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_MOUSE::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 
 	return true;
@@ -273,7 +273,7 @@ bool FTNoIR_Protocol_MOUSE::checkServerInstallationOK( HANDLE handle )
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_MOUSE::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "Mouse");
 	return;
@@ -290,5 +290,5 @@ void FTNoIR_Protocol_MOUSE::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_MOUSE;
+	return new FTNoIR_Protocol;
 }

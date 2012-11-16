@@ -33,7 +33,7 @@
 #include "ftnoir_protocol_fsuipc.h"
 
 /** constructor **/
-FTNoIR_Protocol_FSUIPC::FTNoIR_Protocol_FSUIPC()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
 	ProgramName = "Microsoft FS2004";
@@ -47,7 +47,7 @@ FTNoIR_Protocol_FSUIPC::FTNoIR_Protocol_FSUIPC()
 }
 
 /** destructor **/
-FTNoIR_Protocol_FSUIPC::~FTNoIR_Protocol_FSUIPC()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	//
 	// Free the DLL
@@ -56,12 +56,12 @@ FTNoIR_Protocol_FSUIPC::~FTNoIR_Protocol_FSUIPC()
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_FSUIPC::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_FSUIPC::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -69,7 +69,7 @@ void FTNoIR_Protocol_FSUIPC::Initialize()
 //
 // Scale the measured value to the Joystick values
 //
-int FTNoIR_Protocol_FSUIPC::scale2AnalogLimits( float x, float min_x, float max_x ) {
+int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 double local_x;
 	
@@ -88,7 +88,7 @@ double local_x;
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_FSUIPC::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -103,7 +103,7 @@ void FTNoIR_Protocol_FSUIPC::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FSUIPC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 DWORD result;
 TFSState pitch;
 TFSState yaw;
@@ -187,7 +187,7 @@ float virtRotZ;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_FSUIPC::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	qDebug() << "checkServerInstallationOK says: Starting Function";
 
@@ -209,7 +209,7 @@ bool FTNoIR_Protocol_FSUIPC::checkServerInstallationOK( HANDLE handle )
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_FSUIPC::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "FS2002/2004");
 	return;
@@ -226,5 +226,5 @@ void FTNoIR_Protocol_FSUIPC::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_FSUIPC;
+	return new FTNoIR_Protocol;
 }

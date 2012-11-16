@@ -50,10 +50,8 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	//connect(ui.cbxSelectPPJoyNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(virtualJoystickSelected( int )));
 
-	//for (int i = 1 ; i < 17; i++) {
-	//	QString cbxText = QString("Virtual Joystick %1").arg(i);
-	//	ui.cbxSelectPPJoyNumber->addItem(QIcon("images/PPJoy.ico"), cbxText);
-	//}
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

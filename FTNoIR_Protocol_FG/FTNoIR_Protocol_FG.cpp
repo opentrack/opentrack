@@ -39,13 +39,13 @@
 //#define LOG_OUTPUT
 
 /** constructor **/
-FTNoIR_Protocol_FG::FTNoIR_Protocol_FG()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
 }
 
 /** destructor **/
-FTNoIR_Protocol_FG::~FTNoIR_Protocol_FG()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	if (inSocket != 0) {
 		inSocket->close();
@@ -59,12 +59,12 @@ FTNoIR_Protocol_FG::~FTNoIR_Protocol_FG()
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_FG::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_FG::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -72,7 +72,7 @@ void FTNoIR_Protocol_FG::Initialize()
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_FG::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -97,7 +97,7 @@ void FTNoIR_Protocol_FG::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FG::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
@@ -183,7 +183,7 @@ char data[100];
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_FG::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	// Init. the data
 	FlightData.x = 0.0f;
@@ -224,7 +224,7 @@ bool FTNoIR_Protocol_FG::checkServerInstallationOK( HANDLE handle )
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_FG::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "FlightGear");
 	return;
@@ -241,5 +241,5 @@ void FTNoIR_Protocol_FG::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_FG;
+	return new FTNoIR_Protocol;
 }

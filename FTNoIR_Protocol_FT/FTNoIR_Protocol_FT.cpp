@@ -37,7 +37,7 @@
 #include "ftnoir_protocol_ft.h"
 
 /** constructor **/
-FTNoIR_Protocol_FT::FTNoIR_Protocol_FT()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	comhandle = 0;
 	loadSettings();
@@ -45,7 +45,7 @@ FTNoIR_Protocol_FT::FTNoIR_Protocol_FT()
 }
 
 /** destructor **/
-FTNoIR_Protocol_FT::~FTNoIR_Protocol_FT()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	//
 	// Destroy the File-mapping
@@ -59,12 +59,12 @@ FTNoIR_Protocol_FT::~FTNoIR_Protocol_FT()
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_FT::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_FT::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -72,13 +72,13 @@ void FTNoIR_Protocol_FT::Initialize()
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_FT::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 }
 
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FT::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -176,7 +176,7 @@ PDWORD_PTR MsgResult = 0;
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_FT::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	QSettings settings("Freetrack", "FreetrackClient");				// Registry settings (in HK_USER)
 	QString aLocation;												// Location of Client DLL
@@ -238,7 +238,7 @@ bool FTNoIR_Protocol_FT::checkServerInstallationOK( HANDLE handle )
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTNoIR_Protocol_FT::FTCreateMapping( HANDLE handle )
+bool FTNoIR_Protocol::FTCreateMapping( HANDLE handle )
 {
 	qDebug() << "FTCreateMapping says: Starting Function";
 
@@ -291,7 +291,7 @@ bool FTNoIR_Protocol_FT::FTCreateMapping( HANDLE handle )
 //
 // Destory the FileMapping to the shared memory
 //
-void FTNoIR_Protocol_FT::FTDestroyMapping()
+void FTNoIR_Protocol::FTDestroyMapping()
 {
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
@@ -306,18 +306,18 @@ void FTNoIR_Protocol_FT::FTDestroyMapping()
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_FT::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "FreeTrack interface");
 
-	qDebug() << "FTNoIR_Protocol_FT::getNameFromGame says: Started, pMemData = " << pMemData << ", mutex = " << hFTMutex;
+	qDebug() << "FTNoIR_Protocol::getNameFromGame says: Started, pMemData = " << pMemData << ", mutex = " << hFTMutex;
 
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
 //	if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
 	if (pMemData != NULL) {
-		qDebug() << "FTNoIR_Protocol_FT::getNameFromGame says: Inside MemData";
+		qDebug() << "FTNoIR_Protocol::getNameFromGame says: Inside MemData";
 		sprintf_s(dest, 99, "%s", pMemData->ProgramName);
 	}
 
@@ -336,5 +336,5 @@ void FTNoIR_Protocol_FT::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_FT;
+	return new FTNoIR_Protocol;
 }

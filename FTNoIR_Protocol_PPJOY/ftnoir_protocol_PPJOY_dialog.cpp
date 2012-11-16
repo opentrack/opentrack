@@ -55,6 +55,8 @@ QWidget()
 		QString cbxText = QString("Virtual Joystick %1").arg(i);
 		ui.cbxSelectPPJoyNumber->addItem(QIcon("images/PPJoy.ico"), cbxText);
 	}
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

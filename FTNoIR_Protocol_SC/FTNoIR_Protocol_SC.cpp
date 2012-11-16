@@ -21,7 +21,7 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
-* FTNoIR_Protocol_SC		FTNoIR_Protocol_SC is the Class, that communicates headpose-data			*
+* FTNoIR_Protocol		FTNoIR_Protocol is the Class, that communicates headpose-data			*
 *				to games, using the SimConnect.dll.		         				*
 *				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
 *				must be treated as such...										*
@@ -34,27 +34,27 @@
 */
 #include "ftnoir_protocol_sc.h"
 
-importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol_SC::simconnect_set6DOF;
-HANDLE FTNoIR_Protocol_SC::hSimConnect = 0;			// Handle to SimConnect
+importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol::simconnect_set6DOF;
+HANDLE FTNoIR_Protocol::hSimConnect = 0;			// Handle to SimConnect
 
-float FTNoIR_Protocol_SC::virtSCPosX = 0.0f;			// Headpose
-float FTNoIR_Protocol_SC::virtSCPosY = 0.0f;
-float FTNoIR_Protocol_SC::virtSCPosZ = 0.0f;
+float FTNoIR_Protocol::virtSCPosX = 0.0f;			// Headpose
+float FTNoIR_Protocol::virtSCPosY = 0.0f;
+float FTNoIR_Protocol::virtSCPosZ = 0.0f;
 	
-float FTNoIR_Protocol_SC::virtSCRotX = 0.0f;
-float FTNoIR_Protocol_SC::virtSCRotY = 0.0f;
-float FTNoIR_Protocol_SC::virtSCRotZ = 0.0f;
+float FTNoIR_Protocol::virtSCRotX = 0.0f;
+float FTNoIR_Protocol::virtSCRotY = 0.0f;
+float FTNoIR_Protocol::virtSCRotZ = 0.0f;
 
-float FTNoIR_Protocol_SC::prevSCPosX = 0.0f;			// previous Headpose
-float FTNoIR_Protocol_SC::prevSCPosY = 0.0f;
-float FTNoIR_Protocol_SC::prevSCPosZ = 0.0f;
+float FTNoIR_Protocol::prevSCPosX = 0.0f;			// previous Headpose
+float FTNoIR_Protocol::prevSCPosY = 0.0f;
+float FTNoIR_Protocol::prevSCPosZ = 0.0f;
 	
-float FTNoIR_Protocol_SC::prevSCRotX = 0.0f;
-float FTNoIR_Protocol_SC::prevSCRotY = 0.0f;
-float FTNoIR_Protocol_SC::prevSCRotZ = 0.0f;
+float FTNoIR_Protocol::prevSCRotX = 0.0f;
+float FTNoIR_Protocol::prevSCRotY = 0.0f;
+float FTNoIR_Protocol::prevSCRotZ = 0.0f;
 
 /** constructor **/
-FTNoIR_Protocol_SC::FTNoIR_Protocol_SC()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
@@ -62,26 +62,26 @@ FTNoIR_Protocol_SC::FTNoIR_Protocol_SC()
 }
 
 /** destructor **/
-FTNoIR_Protocol_SC::~FTNoIR_Protocol_SC()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	qDebug() << "~FTNoIR_Protocol_SC says: inside" << FTNoIR_Protocol_SC::hSimConnect;
+	qDebug() << "~FTNoIR_Protocol says: inside" << FTNoIR_Protocol::hSimConnect;
 
 	if (hSimConnect != 0) {
-		qDebug() << "~FTNoIR_Protocol_SC says: before simconnect_close";
-		if (SUCCEEDED( simconnect_close( FTNoIR_Protocol_SC::hSimConnect ) ) ) {
-			qDebug() << "~FTNoIR_Protocol_SC says: close SUCCEEDED";
+		qDebug() << "~FTNoIR_Protocol says: before simconnect_close";
+		if (SUCCEEDED( simconnect_close( FTNoIR_Protocol::hSimConnect ) ) ) {
+			qDebug() << "~FTNoIR_Protocol says: close SUCCEEDED";
 		}
 	}
 //	SCClientLib.unload(); Generates crash when tracker is ended...
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_SC::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_SC::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -89,14 +89,14 @@ void FTNoIR_Protocol_SC::Initialize()
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_SC::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 // None yet...
 }
 
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_SC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 
 
 	virtSCRotX = -1.0f * headpose->pitch;					// degrees
@@ -112,7 +112,7 @@ void FTNoIR_Protocol_SC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseD
 	//
 	if (!blnSimConnectActive) {
 		if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-			qDebug() << "FTNoIR_Protocol_SC::sendHeadposeToGame() says: SimConnect active!";
+			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: SimConnect active!";
 
 			//set up the events we want to listen for
 			HRESULT hr;
@@ -137,7 +137,7 @@ void FTNoIR_Protocol_SC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseD
 //		if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
 //			(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
 ////			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
-////					qDebug() << "FTNoIR_Protocol_SC::run() says: SimConnect data written!";
+////					qDebug() << "FTNoIR_Protocol::run() says: SimConnect data written!";
 ////			}
 //		}
 //
@@ -149,10 +149,10 @@ void FTNoIR_Protocol_SC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseD
 //		prevRotZ = virtRotZ;
 
 		if SUCCEEDED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL)) {
-			qDebug() << "FTNoIR_Protocol_SC::sendHeadposeToGame() says: Dispatching";
+			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: Dispatching";
 		}
 		else {
-			qDebug() << "FTNoIR_Protocol_SC::sendHeadposeToGame() says: Error Dispatching!";
+			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: Error Dispatching!";
 		}
 	}
 }
@@ -160,7 +160,7 @@ void FTNoIR_Protocol_SC::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseD
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_SC::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	QString aFileName;														// File Path and Name
 
@@ -179,7 +179,7 @@ bool FTNoIR_Protocol_SC::checkServerInstallationOK( HANDLE handle )
 
 		QString manifest(QCoreApplication::applicationDirPath());
 //		manifest += "\\FaceTrackNoIR.exe";
-		manifest += "\\FTNoIR_Protocol_SC.dll";
+		manifest += "\\FTNoIR_Protocol.dll";
 		const wchar_t * encodedName = reinterpret_cast<const wchar_t *>(manifest.utf16());
 		
 		act.lpSource = encodedName;
@@ -228,17 +228,17 @@ bool FTNoIR_Protocol_SC::checkServerInstallationOK( HANDLE handle )
 	//
 	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
 	if (simconnect_open == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_Open function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_Open function not found in DLL!";
 		return false;
 	}
 	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
 	if (simconnect_set6DOF == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
 		return false;
 	}
 	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
 	if (simconnect_close == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_Close function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_Close function not found in DLL!";
 		return false;
 	}
 
@@ -246,40 +246,40 @@ bool FTNoIR_Protocol_SC::checkServerInstallationOK( HANDLE handle )
 
 	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
 	if (simconnect_calldispatch == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_CallDispatch function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_CallDispatch function not found in DLL!";
 		return false;
 	}
 
 	simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
 		return false;
 	}
 
 	simconnect_mapclienteventtosimevent = (importSimConnect_MapClientEventToSimEvent) SCClientLib.resolve("SimConnect_MapClientEventToSimEvent");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
 		return false;
 	}
 
 	simconnect_addclienteventtonotificationgroup = (importSimConnect_AddClientEventToNotificationGroup) SCClientLib.resolve("SimConnect_AddClientEventToNotificationGroup");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
 		return false;
 	}
 
 	simconnect_setnotificationgrouppriority = (importSimConnect_SetNotificationGroupPriority) SCClientLib.resolve("SimConnect_SetNotificationGroupPriority");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
 		return false;
 	}
 
-	qDebug() << "FTNoIR_Protocol_SC::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
+	qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
 
 	return true;
 }
 
-void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
+void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
 //    HRESULT hr;
 
@@ -289,7 +289,7 @@ void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pD
         {
             SIMCONNECT_RECV_EVENT *evt = (SIMCONNECT_RECV_EVENT*)pData;
 
-			qDebug() << "FTNoIR_Protocol_SC::processNextSimconnectEvent() says: SimConnect active!";
+			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: SimConnect active!";
             //switch(evt->uEventID)
             //{
             //    //case EVENT_CAMERA_RIGHT:
@@ -319,11 +319,11 @@ void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pD
         }
 		case SIMCONNECT_RECV_ID_EVENT_FRAME:
 		{
-//			qDebug() << "FTNoIR_Protocol_SC::processNextSimconnectEvent() says: Frame event!";
+//			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: Frame event!";
 			if ((prevSCPosX != virtSCPosX) || (prevSCPosY != virtSCPosY) || (prevSCPosZ != virtSCPosZ) ||
 				(prevSCRotX != virtSCRotX) || (prevSCRotY != virtSCRotY) || (prevSCRotZ != virtSCRotZ)) {
 				if (S_OK == simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY)) {
-	//					qDebug() << "FTNoIR_Protocol_SC::run() says: SimConnect data written!";
+	//					qDebug() << "FTNoIR_Protocol::run() says: SimConnect data written!";
 				}
 			}
 			prevSCPosX = virtSCPosX;
@@ -353,7 +353,7 @@ void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pD
 
         case SIMCONNECT_RECV_ID_QUIT:
         {
-			qDebug() << "FTNoIR_Protocol_SC::processNextSimconnectEvent() says: Quit event!";
+			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: Quit event!";
 //            quit = 1;
             break;
         }
@@ -366,7 +366,7 @@ void CALLBACK FTNoIR_Protocol_SC::processNextSimconnectEvent(SIMCONNECT_RECV* pD
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_SC::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "FSX");
 	return;
@@ -383,5 +383,5 @@ void FTNoIR_Protocol_SC::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_SC;
+	return new FTNoIR_Protocol;
 }

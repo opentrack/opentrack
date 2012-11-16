@@ -59,6 +59,8 @@ QWidget()
 	connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

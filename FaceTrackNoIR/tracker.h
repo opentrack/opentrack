@@ -256,6 +256,7 @@ public:
 	static IFilterPtr getFilterPtr() { return pFilter; }		// Return the pointer for the active Filter
 	ITracker *getTrackerPtr() { return pTracker; }				// Return the pointer for the active Tracker
 	ITracker *getSecondTrackerPtr() { return pSecondTracker; }	// Return the pointer for the secondary Tracker
+	IProtocol *getProtocolPtr() { return pProtocol; }			// Return the pointer for the active Protocol
 
 	void doRefreshVideo() {										// Call the face-tracker-function RefreshVideo
 		if (pTracker) {
