@@ -33,7 +33,7 @@
 #include "ftnoir_protocol_ftir.h"
 
 /** constructor **/
-FTNoIR_Protocol_FTIR::FTNoIR_Protocol_FTIR()
+FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
 	ProgramName = "";
@@ -43,7 +43,7 @@ FTNoIR_Protocol_FTIR::FTNoIR_Protocol_FTIR()
 }
 
 /** destructor **/
-FTNoIR_Protocol_FTIR::~FTNoIR_Protocol_FTIR()
+FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	//
 	// Destroy the File-mapping
@@ -77,12 +77,12 @@ FTNoIR_Protocol_FTIR::~FTNoIR_Protocol_FTIR()
 }
 
 /** helper to Auto-destruct **/
-void FTNoIR_Protocol_FTIR::Release()
+void FTNoIR_Protocol::Release()
 {
     delete this;
 }
 
-void FTNoIR_Protocol_FTIR::Initialize()
+void FTNoIR_Protocol::Initialize()
 {
 	return;
 }
@@ -90,7 +90,7 @@ void FTNoIR_Protocol_FTIR::Initialize()
 //
 // Scale the measured value to the Joystick values
 //
-float FTNoIR_Protocol_FTIR::scale2AnalogLimits( float x, float min_x, float max_x ) {
+float FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 double local_x;
 	
@@ -109,7 +109,7 @@ double local_x;
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
-void FTNoIR_Protocol_FTIR::loadSettings() {
+void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -124,7 +124,7 @@ void FTNoIR_Protocol_FTIR::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol_FTIR::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 float virtPosX;
 float virtPosY;
 float virtPosZ;
@@ -183,7 +183,7 @@ TRACKIRDATA localdata;
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	QSettings settings("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
 	QString aLocation;														// Location of Client DLL
@@ -307,7 +307,7 @@ bool FTNoIR_Protocol_FTIR::checkServerInstallationOK( HANDLE handle )
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTNoIR_Protocol_FTIR::FTIRCreateMapping( HANDLE handle )
+bool FTNoIR_Protocol::FTIRCreateMapping( HANDLE handle )
 {
 	qDebug() << "FTIRCreateMapping says: Starting Function";
 
@@ -359,7 +359,7 @@ bool FTNoIR_Protocol_FTIR::FTIRCreateMapping( HANDLE handle )
 //
 // Destory the FileMapping to the shared memory
 //
-void FTNoIR_Protocol_FTIR::FTIRDestroyMapping()
+void FTNoIR_Protocol::FTIRDestroyMapping()
 {
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
@@ -380,7 +380,7 @@ void FTNoIR_Protocol_FTIR::FTIRDestroyMapping()
 //
 // Return a name, if present the name from the Game, that is connected...
 //
-void FTNoIR_Protocol_FTIR::getNameFromGame( char *dest )
+void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
 	sprintf_s(dest, 99, "TIR compatible game");
 	return;
@@ -397,5 +397,5 @@ void FTNoIR_Protocol_FTIR::getNameFromGame( char *dest )
 
 FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
 {
-	return new FTNoIR_Protocol_FTIR;
+	return new FTNoIR_Protocol;
 }

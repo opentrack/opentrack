@@ -88,6 +88,8 @@ QWidget()
 
 	connect(ui.chkUseVirtualDesk, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

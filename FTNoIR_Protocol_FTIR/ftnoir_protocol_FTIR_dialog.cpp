@@ -63,6 +63,8 @@ QWidget()
 		ui.chkTIRViews->setEnabled ( true );
 	}
 
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }

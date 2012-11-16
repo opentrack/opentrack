@@ -25,6 +25,7 @@
 /*
 	Modifications (last one on top):
 		
+		20121115 - WVR: Added RegisterProtocol() and unRegisterProtocol() to Dialog Class
 		20110415 - WVR: Added overloaded operator - and -=
 */
 
@@ -81,6 +82,8 @@ struct IProtocolDialog
 {
 	virtual ~IProtocolDialog() {}
 	virtual void Initialize(QWidget *parent) = 0;
+	virtual void registerProtocol(IProtocol *protocol) = 0;
+	virtual void unRegisterProtocol() = 0;
 };
 
 typedef IProtocolDialog* IProtocolDialogPtr;

@@ -715,7 +715,7 @@ void FaceTrackNoIR::startTracker( ) {
 	ui.iconcomboTrackerSource->setEnabled ( false );
 	ui.cbxSecondTrackerSource->setEnabled ( false );
 	ui.iconcomboProtocol->setEnabled ( false );
-	ui.btnShowServerControls->setEnabled ( false );
+//	ui.btnShowServerControls->setEnabled ( false );
 	ui.iconcomboFilter->setEnabled ( false );
 
 	//
@@ -795,6 +795,9 @@ void FaceTrackNoIR::stopTracker( ) {
 	//
 	if (pTrackerDialog) {
 		pTrackerDialog->unRegisterTracker();
+	}
+	if (pProtocolDialog) {
+		pProtocolDialog->unRegisterProtocol();
 	}
 
 	//
@@ -1101,6 +1104,10 @@ QString libName;
 			{
 				pProtocolDialog = ptrXyz;
 				pProtocolDialog->Initialize( this );
+				if (tracker) {
+					pProtocolDialog->registerProtocol( tracker->getProtocolPtr() );
+					qDebug() << "FaceTrackNoIR::showServerControls RegisterProtocol Function Executed";
+				}
 				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
 			}
 			else {

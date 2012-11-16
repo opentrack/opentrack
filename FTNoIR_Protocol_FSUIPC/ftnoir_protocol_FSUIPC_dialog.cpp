@@ -49,6 +49,8 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.btnFindDLL, SIGNAL(clicked()), this, SLOT(getLocationOfDLL()));
 
+	theProtocol = NULL;
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
