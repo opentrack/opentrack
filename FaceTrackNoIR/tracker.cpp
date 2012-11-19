@@ -97,7 +97,7 @@ T6DOF Tracker::target_camera(0,0,0,0,0,0);
 T6DOF Tracker::new_camera(0,0,0,0,0,0);
 T6DOF Tracker::output_camera(0,0,0,0,0,0);						// Position sent to game protocol
 
-THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown", 50, 180);	// One structure for each of 6DOF's
+THeadPoseDOF Tracker::Pitch("PitchUp", "PitchDown", 50, 180, 50, 90);	// One structure for each of 6DOF's
 THeadPoseDOF Tracker::Yaw("Yaw", "", 50, 180);
 THeadPoseDOF Tracker::Roll("Roll", "", 50, 180);
 THeadPoseDOF Tracker::X("X","", 50, 180);
