@@ -94,15 +94,15 @@ class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 class THeadPoseDOF {
 public:
 
-	THeadPoseDOF(QString primary, QString secondary = "", int maxInput = 50, int maxOutput = 180) {
+	THeadPoseDOF(QString primary, QString secondary = "", int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
 		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");							// Registry settings (in HK_USER)
 		QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 		QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
 
-		curvePtr = new FunctionConfig(primary, maxInput, maxOutput);						// Create the Function-config for input-output translation
+		curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
 		curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
 		if (secondary != "") {
-			curvePtrAlt = new FunctionConfig(secondary, maxInput, maxOutput);
+			curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
 			curvePtrAlt->loadSettings(iniFile);
 		}
 
