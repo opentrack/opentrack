@@ -363,13 +363,13 @@ T6DOF offset_camera(0,0,0,0,0,0);
 T6DOF gamezero_camera(0,0,0,0,0,0);
 T6DOF gameoutput_camera(0,0,0,0,0,0);
 
-bool bInitialCenter = true;
+bool bInitialCenter = false;
 bool bTracker1Confid = false;
 bool bTracker2Confid = false;
 
 	Tracker::do_tracking = true;				// Start initially
 	Tracker::do_center = false;					// Center initially
-	bInitialCenter = true;
+//	bInitialCenter = true;
 
 	//
 	// Test some Filter-stuff
@@ -692,6 +692,7 @@ bool bTracker2Confid = false;
 				target_camera = target_camera - offset_camera;
 
 				if (Tracker::useFilter && pFilter) {
+//		qDebug() << "Tracker::run() says target_camera.yaw = " << target_camera.yaw;
 					pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, Tracker::Pitch.newSample);
 				}
 				else {

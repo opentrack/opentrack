@@ -552,6 +552,9 @@ Support FaceTrackNoIR!</string>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
+            <property name="numDigits">
+             <number>6</number>
+            </property>
            </widget>
            <widget class="QLCDNumber" name="lcdNumRotX">
             <property name="geometry">
@@ -564,6 +567,9 @@ Support FaceTrackNoIR!</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="numDigits">
+             <number>6</number>
             </property>
            </widget>
            <widget class="QLabel" name="label_4">
@@ -705,6 +711,9 @@ color:white;</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="numDigits">
+             <number>6</number>
             </property>
            </widget>
            <widget class="QLCDNumber" name="lcdNumX">
