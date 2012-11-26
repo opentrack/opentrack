@@ -245,7 +245,12 @@ QFrame *FaceTrackNoIR::getVideoWidget() {
 //
 QString FaceTrackNoIR::getCurrentProtocolName()
 {
-	return protocolFileList.at(ui.iconcomboProtocol->currentIndex());
+	if (ui.iconcomboProtocol->currentIndex() < 0) {
+		return QString("");
+	}
+	else {
+		return protocolFileList.at(ui.iconcomboProtocol->currentIndex());
+	}
 }
 
 //
@@ -253,7 +258,13 @@ QString FaceTrackNoIR::getCurrentProtocolName()
 //
 QString FaceTrackNoIR::getCurrentFilterName()
 {
-	return filterFileList.at(ui.iconcomboFilter->currentIndex());
+	qDebug() << "getCurrentFilterName says: " << ui.iconcomboFilter->currentIndex();
+	if (ui.iconcomboFilter->currentIndex() < 0) {
+		return QString("");
+	}
+	else {
+		return filterFileList.at(ui.iconcomboFilter->currentIndex());
+	}
 }
 
 //
@@ -261,7 +272,12 @@ QString FaceTrackNoIR::getCurrentFilterName()
 //
 QString FaceTrackNoIR::getCurrentTrackerName()
 {
-	return trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
+	if (ui.iconcomboTrackerSource->currentIndex() < 0) {
+		return QString("");
+	}
+	else {
+		return trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
+	}
 }
 
 //
@@ -478,7 +494,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 6) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 8) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -1007,7 +1023,7 @@ QString libName;
 			if (ptrXyz)
 			{
 				pTrackerDialog = ptrXyz;
-				pTrackerDialog->Initialize( this, 1 );
+				pTrackerDialog->Initialize( this );
 //				qDebug() << "FaceTrackNoIR::showTrackerSettings GetTrackerDialog Function Resolved!";
 				if (tracker) {
 					pTrackerDialog->registerTracker( tracker->getTrackerPtr() );
@@ -1059,7 +1075,7 @@ QString libName;
 			if (ptrXyz)
 			{
 				pSecondTrackerDialog = ptrXyz;
-				pSecondTrackerDialog->Initialize( this, 2 );
+				pSecondTrackerDialog->Initialize( this );
 //				qDebug() << "FaceTrackNoIR::showTrackerSettings GetTrackerDialog Function Resolved!";
 				if (tracker) {
 					pSecondTrackerDialog->registerTracker( tracker->getSecondTrackerPtr() );
@@ -1126,19 +1142,6 @@ importGetFilterDialog getIT;
 QLibrary *filterLib;
 QString libName;
 
-	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-
-	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	////
-	//// Read the currently selected Filter from the INI-file.
-	////
-	//iniFile.beginGroup ( "Filter" );
-	//QString selectedFilterName = iniFile.value ( "Selection", "FTNoIR_Filter_EWMA2.dll" ).toString();
-	//qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
-	//iniFile.endGroup ();
-
 	//
 	// Delete the existing QDialog
 	//
@@ -1147,12 +1150,12 @@ QString libName;
 		pFilterDialog = NULL;
 	}
 
-		// Show the appropriate Protocol-server Settings
+	// Get the currently selected Filter
 	libName.clear();
 	libName = getCurrentFilterName();
 
 	//
-	// Load the Server-settings dialog (if any) and show it.
+	// Load the Filter-settings dialog (if any) and show it.
 	//
 	if (!libName.isEmpty()) {
 		filterLib = new QLibrary(libName);

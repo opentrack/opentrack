@@ -94,7 +94,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	//CloseHandle(hMutex);
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
+void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 {
 	qDebug("FTNoIR_Tracker::Initialize()");
 	WaitForSingleObject(hMutex, INFINITE);

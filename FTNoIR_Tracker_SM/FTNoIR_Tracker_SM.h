@@ -40,7 +40,7 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void Initialize( QFrame *videoframe, int numTracker );
+    void Initialize( QFrame *videoframe );
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
@@ -56,7 +56,7 @@ private:
 	HANDLE hSMMutex;
 	QProcess *faceAPI;
 
-	int numTracker;
+//	int numTracker;
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;
@@ -82,7 +82,7 @@ public:
     virtual ~TrackerControls();
 	void showEvent ( QShowEvent * event );
 
-    void Initialize(QWidget *parent, int numTracker);
+    void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker) {
 		theTracker = (FTNoIR_Tracker *) tracker;			// Accept the pointer to the Tracker
 	};
@@ -93,7 +93,6 @@ public:
 private:
 	Ui::UICSMClientControls ui;
 	void loadSettings();
-	void save();
 	bool SMCreateMapping();
 	void doCommand( int command );
 	void doCommand( int command, int value );
@@ -112,18 +111,11 @@ private:
 	QTimer *timUpdateSettings;								// Timer to display current settings
 
 	FTNoIR_Tracker *theTracker;
-	int numTracker;											// Primary (1) or secondary tracker (2)
-
-	int numRoll;											// Number of Tracker (1 or 2) which tracks this axis
-	int numPitch;
-	int numYaw;
-	int numX;
-	int numY;
-	int numZ;
 
 private slots:
 	void doOK();
 	void doCancel();
+	void save();
 	void settingChanged() { settingsDirty = true; };
 	void doTimUpdate();
 	void showSettings( int newState );

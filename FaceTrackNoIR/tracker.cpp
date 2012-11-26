@@ -171,7 +171,7 @@ QFrame *video_frame;
 			if (ptrXyz)
 			{
 				pTracker = ptrXyz;
-				pTracker->Initialize( video_frame, 1 );
+				pTracker->Initialize( video_frame );
 				qDebug() << "Tracker::setup Function Resolved!";
 			}
 		}
@@ -193,7 +193,7 @@ QFrame *video_frame;
 			if (ptrXyz)
 			{
 				pSecondTracker = ptrXyz;
-				pSecondTracker->Initialize( NULL, 2 );
+				pSecondTracker->Initialize( NULL );
 				qDebug() << "Tracker::setup Function Resolved!";
 			}
 		}
@@ -363,13 +363,13 @@ T6DOF offset_camera(0,0,0,0,0,0);
 T6DOF gamezero_camera(0,0,0,0,0,0);
 T6DOF gameoutput_camera(0,0,0,0,0,0);
 
-bool bInitialCenter = false;
+bool bInitialCenter1 = true;
+bool bInitialCenter2 = true;
 bool bTracker1Confid = false;
 bool bTracker2Confid = false;
 
 	Tracker::do_tracking = true;				// Start initially
 	Tracker::do_center = false;					// Center initially
-//	bInitialCenter = true;
 
 	//
 	// Test some Filter-stuff
@@ -616,20 +616,24 @@ bool bTracker2Confid = false;
 			newpose.y = 0.0f;
 			newpose.z = 0.0f;
 
-			if (pTracker) {
-				bTracker1Confid = pTracker->GiveHeadPoseData(&newpose);
-			}
-			else {
-				bTracker1Confid = true;
-			}
+			//
+			// The second tracker serves as 'secondary'. So if an axis is written by the second tracker it CAN be overwritten by the Primary tracker.
+			// This is enforced by the sequence below.
+			//
 			if (pSecondTracker) {
 				bTracker2Confid = pSecondTracker->GiveHeadPoseData(&newpose);
 			}
 			else {
 				bTracker2Confid = true;
 			}
+			if (pTracker) {
+				bTracker1Confid = pTracker->GiveHeadPoseData(&newpose);
+			}
+			else {
+				bTracker1Confid = true;
+			}
 
-			Tracker::confid = (bTracker1Confid && bTracker2Confid);
+			Tracker::confid = (bTracker1Confid || bTracker2Confid);
 			if ( Tracker::confid ) {
 				addHeadPose(newpose);
 			}
@@ -637,14 +641,16 @@ bool bTracker2Confid = false;
 			//
 			// If Center is pressed, copy the current values to the offsets.
 			//
-			if ((Tracker::do_center) || ((bInitialCenter) && (Tracker::confid)))  {
+			if ((Tracker::do_center) || ((bInitialCenter1 && bTracker1Confid ) || (bInitialCenter2 && bTracker2Confid)))  {
 				
 				MessageBeep (MB_ICONASTERISK);
-				if (pTracker) {
+				if (pTracker && bTracker1Confid) {
 					pTracker->notifyCenter();					// Send 'center' to the tracker
+					bInitialCenter1 = false;
 				}
-				if (pSecondTracker) {
-					pSecondTracker->notifyCenter();				// Send 'center' to the tracker
+				if (pSecondTracker && bTracker2Confid) {
+					pSecondTracker->notifyCenter();				// Send 'center' to the second tracker
+					bInitialCenter2 = false;
 				}
 
 				//
@@ -658,7 +664,6 @@ bool bTracker2Confid = false;
 					offset_camera.pitch = getSmoothFromList( &Pitch.rawList );
 					offset_camera.yaw   = getSmoothFromList( &Yaw.rawList );
 					offset_camera.roll  = getSmoothFromList( &Roll.rawList );
-					bInitialCenter = false;
 				}
 
 				Tracker::do_center = false;

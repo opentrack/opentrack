@@ -222,6 +222,9 @@ QGroupBox {
                <height>34</height>
               </rect>
              </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
              <property name="toolTip">
               <string>Please help us: make gaming fun...</string>
              </property>
@@ -459,7 +462,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLabel" name="lblRotZ">
              <property name="geometry">
               <rect>
-               <x>168</x>
+               <x>166</x>
                <y>74</y>
                <width>20</width>
                <height>16</height>
@@ -469,13 +472,13 @@ Support FaceTrackNoIR!</string>
               <string notr="true">color: rgb(0, 255, 0);</string>
              </property>
              <property name="text">
-              <string>rotZ</string>
+              <string>roll</string>
              </property>
             </widget>
             <widget class="QLabel" name="lblRotX">
              <property name="geometry">
               <rect>
-               <x>167</x>
+               <x>168</x>
                <y>35</y>
                <width>20</width>
                <height>16</height>
@@ -485,15 +488,15 @@ Support FaceTrackNoIR!</string>
               <string notr="true">color: rgb(0, 255, 0);</string>
              </property>
              <property name="text">
-              <string>rotX</string>
+              <string>yaw</string>
              </property>
             </widget>
             <widget class="QLabel" name="lblRotY">
              <property name="geometry">
               <rect>
-               <x>168</x>
+               <x>166</x>
                <y>55</y>
-               <width>20</width>
+               <width>22</width>
                <height>16</height>
               </rect>
              </property>
@@ -501,7 +504,7 @@ Support FaceTrackNoIR!</string>
               <string notr="true">color: rgb(0, 255, 0);</string>
              </property>
              <property name="text">
-              <string>rotY</string>
+              <string>pitch</string>
              </property>
             </widget>
            </widget>
@@ -652,7 +655,7 @@ border:none;</string>
            <widget class="QLabel" name="label_7">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>118</x>
               <y>60</y>
               <width>21</width>
               <height>16</height>
@@ -663,15 +666,15 @@ border:none;</string>
 color:white;</string>
             </property>
             <property name="text">
-             <string>rotZ</string>
+             <string>roll</string>
             </property>
            </widget>
            <widget class="QLabel" name="label_8">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>118</x>
               <y>40</y>
-              <width>21</width>
+              <width>22</width>
               <height>16</height>
              </rect>
             </property>
@@ -680,13 +683,13 @@ color:white;</string>
 border:none;</string>
             </property>
             <property name="text">
-             <string>rotY</string>
+             <string>pitch</string>
             </property>
            </widget>
            <widget class="QLabel" name="label_9">
             <property name="geometry">
              <rect>
-              <x>120</x>
+              <x>118</x>
               <y>20</y>
               <width>21</width>
               <height>16</height>
@@ -697,7 +700,7 @@ border:none;</string>
 color:white;</string>
             </property>
             <property name="text">
-             <string>rotX</string>
+             <string>yaw</string>
             </property>
            </widget>
            <widget class="QLCDNumber" name="lcdNumRotY">
@@ -1720,6 +1723,9 @@ background:none;</string>
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="cursor">
+                     <cursorShape>PointingHandCursor</cursorShape>
+                    </property>
                     <property name="toolTip">
                      <string>Edit the Curve settings</string>
                     </property>
@@ -1784,7 +1790,7 @@ background:none;</string>
                 <string notr="true"/>
                </property>
                <property name="title">
-                <string>Tracker Source(1st)</string>
+                <string>Tracker Source(1st = Master)</string>
                </property>
                <widget class="QComboBox" name="iconcomboTrackerSource">
                 <property name="geometry">

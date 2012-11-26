@@ -52,7 +52,7 @@
 struct ITracker
 {
     virtual ~ITracker() {}
-	virtual void Initialize( QFrame *videoframe, int numTracker ) = 0;
+	virtual void Initialize( QFrame *videoframe ) = 0;
 	virtual void StartTracker( HWND parent_window ) = 0;
 	virtual void StopTracker(bool exit) = 0;
 	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
@@ -84,7 +84,7 @@ GetTracker(void);
 struct ITrackerDialog
 {
 	virtual ~ITrackerDialog() {}
-	virtual void Initialize(QWidget *parent, int numTracker) = 0;
+	virtual void Initialize(QWidget *parent) = 0;
 	virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
