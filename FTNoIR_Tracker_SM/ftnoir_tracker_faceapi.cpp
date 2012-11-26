@@ -37,7 +37,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 		UnmapViewOfFile ( pMemData );
 	}
 
-	numTracker = 1;
 	bEnableRoll = true;
 	bEnablePitch = true;
 	bEnableYaw = true;
@@ -57,7 +56,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	hSMMemMap = 0;
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe, int num)
+void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
 
@@ -68,7 +67,6 @@ void FTNoIR_Tracker::Initialize( QFrame *videoframe, int num)
 		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
 	}
 
-	numTracker = num;
 	loadSettings();
 
 	if ( pMemData != NULL ) {
@@ -167,12 +165,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTNoIR_Tracker::loadSettings() {
-int numRoll;											// Number of Tracker (1 or 2) which tracks this axis
-int numPitch;
-int numYaw;
-int numX;
-int numY;
-int numZ;
 
 	qDebug() << "FTNoIR_Tracker::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -193,38 +185,14 @@ int numZ;
 	dInvertY = (iniFile.value ( "InvertY", 0 ).toBool()) ? -1.0f : 1.0f;
 	dInvertZ = (iniFile.value ( "InvertZ", 0 ).toBool()) ? -1.0f : 1.0f;
 
-	iniFile.endGroup ();
-
-	iniFile.beginGroup ( "HeadTracker" );
-	//
-	// Check if the Tracker is the Primary one.
-	// If the property is not found in the INI-file, set the value.
-	//
-	if (numTracker == 1) {
-		numRoll = iniFile.value ( "RollTracker", 1 ).toInt();
-		numPitch = iniFile.value ( "PitchTracker", 1 ).toInt();
-		numYaw = iniFile.value ( "YawTracker", 1 ).toInt();
-		numX = iniFile.value ( "XTracker", 0 ).toInt();
-		numY = iniFile.value ( "YTracker", 0 ).toInt();
-		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
-	}
-	else {
-		numRoll = iniFile.value ( "RollTracker", 0 ).toInt();
-		numPitch = iniFile.value ( "PitchTracker", 0 ).toInt();
-		numYaw = iniFile.value ( "YawTracker", 0 ).toInt();
-		numX = iniFile.value ( "XTracker", 0 ).toInt();
-		numY = iniFile.value ( "YTracker", 0 ).toInt();
-		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
-	}
-	bEnableRoll = (numRoll == numTracker);
-	bEnablePitch = (numPitch == numTracker);
-	bEnableYaw = (numYaw == numTracker);
-	bEnableX = (numX == numTracker);
-	bEnableY = (numY == numTracker);
-	bEnableZ = (numZ == numTracker);
+	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
+	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
+	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
+	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
+	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
+	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
 
 	iniFile.endGroup ();
-
 }
 
 //

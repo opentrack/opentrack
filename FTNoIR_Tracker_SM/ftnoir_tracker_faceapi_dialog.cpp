@@ -44,6 +44,7 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.btnEngineStart, SIGNAL(clicked()), this, SLOT(doStartEngine()));
 	connect(ui.btnEngineStop, SIGNAL(clicked()), this, SLOT(doStopEngine()));
+	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
 
 	ui.cbxFilterSetting->addItem("None");
 	ui.cbxFilterSetting->addItem("Normal");
@@ -90,7 +91,7 @@ TrackerControls::~TrackerControls() {
 //
 // Initialize tracker-client-dialog
 //
-void TrackerControls::Initialize(QWidget *parent, int num) {
+void TrackerControls::Initialize(QWidget *parent) {
 
 	QPoint offsetpos(200, 200);
 	if (parent) {
@@ -98,7 +99,6 @@ void TrackerControls::Initialize(QWidget *parent, int num) {
 	}
 
 	// Load the settings from the current .INI-file
-	numTracker = num;
 	loadSettings();
 
 	show();
@@ -165,6 +165,7 @@ void TrackerControls::loadSettings() {
 
 	iniFile.beginGroup ( "SMTracker" );
 	ui.cbxFilterSetting->setCurrentIndex(iniFile.value ( "FilterLevel", 1 ).toInt());
+
 	ui.chkInvertRoll->setChecked(iniFile.value ( "InvertRoll", 0 ).toBool());
 	ui.chkInvertPitch->setChecked(iniFile.value ( "InvertPitch", 0 ).toBool());
 	ui.chkInvertYaw->setChecked(iniFile.value ( "InvertYaw", 0 ).toBool());
@@ -172,35 +173,13 @@ void TrackerControls::loadSettings() {
 	ui.chkInvertY->setChecked(iniFile.value ( "InvertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked(iniFile.value ( "InvertZ", 0 ).toBool());
 
-	iniFile.endGroup ();
+	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
+	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
+	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
+	ui.chkEnableX->setChecked(iniFile.value ( "EnableX", 1 ).toBool());
+	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
+	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
 
-	iniFile.beginGroup ( "HeadTracker" );
-	//
-	// Check if the Tracker is the Primary one.
-	// If the property is not found in the INI-file, set the value.
-	//
-	if (numTracker == 1) {
-		numRoll = iniFile.value ( "RollTracker", 1 ).toInt();
-		numPitch = iniFile.value ( "PitchTracker", 1 ).toInt();
-		numYaw = iniFile.value ( "YawTracker", 1 ).toInt();
-		numX = iniFile.value ( "XTracker", 0 ).toInt();
-		numY = iniFile.value ( "YTracker", 0 ).toInt();
-		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
-	}
-	else {
-		numRoll = iniFile.value ( "RollTracker", 0 ).toInt();
-		numPitch = iniFile.value ( "PitchTracker", 0 ).toInt();
-		numYaw = iniFile.value ( "YawTracker", 0 ).toInt();
-		numX = iniFile.value ( "XTracker", 0 ).toInt();
-		numY = iniFile.value ( "YTracker", 0 ).toInt();
-		numZ = iniFile.value ( "ZTracker", 0 ).toInt();
-	}
-	ui.chkEnableRoll->setChecked(numRoll == numTracker);
-	ui.chkEnablePitch->setChecked(numPitch == numTracker);
-	ui.chkEnableYaw->setChecked(numYaw == numTracker);
-	ui.chkEnableX->setChecked(numX == numTracker);
-	ui.chkEnableY->setChecked(numY == numTracker);
-	ui.chkEnableZ->setChecked(numZ == numTracker);
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -224,61 +203,22 @@ void TrackerControls::save() {
 	iniFile.setValue ( "InvertX", ui.chkInvertX->isChecked() );
 	iniFile.setValue ( "InvertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "InvertZ", ui.chkInvertZ->isChecked() );
-	iniFile.endGroup ();
 
-	iniFile.beginGroup ( "HeadTracker" );
-	if ( ui.chkEnableRoll->isChecked() ) {
-		iniFile.setValue ( "RollTracker", numTracker );
-	}
-	else {
-		if (numRoll == numTracker) {
-			iniFile.setValue ( "RollTracker", 0 );
-		}
-	}
-
-	if ( ui.chkEnablePitch->isChecked() ) {
-		iniFile.setValue ( "PitchTracker", numTracker );
-	}
-	else {
-		if (numPitch == numTracker) {
-			iniFile.setValue ( "PitchTracker", 0 );
-		}
-	}
-
-	if ( ui.chkEnableYaw->isChecked() ) {
-		iniFile.setValue ( "YawTracker", numTracker );
-	}
-	else {
-		if (numYaw == numTracker) {
-			iniFile.setValue ( "YawTracker", 0 );
-		}
-	}
-	if ( ui.chkEnableX->isChecked() ) {
-		iniFile.setValue ( "XTracker", numTracker );
-	}
-	else {
-		if (numX == numTracker) {
-			iniFile.setValue ( "XTracker", 0 );
-		}
-	}
-	if ( ui.chkEnableY->isChecked() ) {
-		iniFile.setValue ( "YTracker", numTracker );
-	}
-	else {
-		if (numY == numTracker) {
-			iniFile.setValue ( "YTracker", 0 );
-		}
-	}
-	if ( ui.chkEnableZ->isChecked() ) {
-		iniFile.setValue ( "ZTracker", numTracker );
-	}
-	else {
-		if (numZ == numTracker) {
-			iniFile.setValue ( "ZTracker", 0 );
-		}
-	}
+	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
+	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
+	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
+	iniFile.setValue ( "EnableX", ui.chkEnableX->isChecked() );
+	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
+	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
 
 	iniFile.endGroup ();
+
+	//
+	// If the Tracker is active, let it load the new Settings.
+	//
+	if (theTracker) {
+		theTracker->loadSettings();
+	}
 
 	settingsDirty = false;
 }

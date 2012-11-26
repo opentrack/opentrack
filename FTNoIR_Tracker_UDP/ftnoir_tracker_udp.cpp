@@ -118,7 +118,7 @@ quint16 senderPort;
 	}
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe, int numTracker )
+void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 {
 	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
 	loadSettings();

@@ -13,7 +13,7 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void Initialize( QFrame *videoframe, int numTracker );
+    void Initialize( QFrame *videoframe );
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);
@@ -50,7 +50,7 @@ public:
     virtual ~TrackerControls();
 	void showEvent ( QShowEvent * event );
 
-    void Initialize(QWidget *parent, int numTracker);
+    void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker) {};
 	void unRegisterTracker() {};
 
