@@ -123,6 +123,7 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
 	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
 	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
+	connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
 
 	connect(ui.actionSupport, SIGNAL(triggered()), this, SLOT(openurl_support()));
 	connect(ui.actionYour_Support, SIGNAL(triggered()), this, SLOT(openurl_donation()));
@@ -1914,7 +1915,7 @@ int keyindex;
 	
 	// Center key
 	ui.cbxCenterMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_Center", 0 ).toInt() );
-	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Center", 1 ).toInt() );
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_Center", DIK_HOME ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxCenterKey->setCurrentIndex( keyindex );
 	}
@@ -1940,7 +1941,7 @@ int keyindex;
 
 	// Start/stop key
 	ui.cbxStartStopMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_StartStop", 0 ).toInt() );
-	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_StartStop", 1 ).toInt() );
+	keyindex = keyList.indexOf ( iniFile.value ( "Keycode_StartStop", DIK_END ).toInt() );
 	if ( keyindex > 0 ) {
 		ui.cbxStartStopKey->setCurrentIndex( keyindex );
 	}

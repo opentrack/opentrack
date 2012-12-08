@@ -624,13 +624,15 @@ bool bTracker2Confid = false;
 				bTracker2Confid = pSecondTracker->GiveHeadPoseData(&newpose);
 			}
 			else {
-				bTracker2Confid = true;
+				bTracker2Confid = false;
+				bInitialCenter2 = false;
 			}
 			if (pTracker) {
 				bTracker1Confid = pTracker->GiveHeadPoseData(&newpose);
 			}
 			else {
-				bTracker1Confid = true;
+				bTracker1Confid = false;
+				bInitialCenter1 = false;
 			}
 
 			Tracker::confid = (bTracker1Confid || bTracker2Confid);
@@ -951,14 +953,14 @@ int sensX, sensY, sensZ;
 	
 	// Center key
 	CenterMouseKey = iniFile.value ( "MouseKey_Center", 0 ).toInt();
-	CenterKey.keycode = iniFile.value ( "Keycode_Center", 0 ).toInt();
+	CenterKey.keycode = iniFile.value ( "Keycode_Center", DIK_HOME ).toInt();
 	CenterKey.shift = iniFile.value ( "Shift_Center", 0 ).toBool();
 	CenterKey.ctrl = iniFile.value ( "Ctrl_Center", 0 ).toBool();
 	CenterKey.alt = iniFile.value ( "Alt_Center", 0 ).toBool();
 
 	// StartStop key
 	StartStopMouseKey = iniFile.value ( "MouseKey_StartStop", 0 ).toInt();
-	StartStopKey.keycode = iniFile.value ( "Keycode_StartStop", 0 ).toInt();
+	StartStopKey.keycode = iniFile.value ( "Keycode_StartStop", DIK_END ).toInt();
 	StartStopKey.shift = iniFile.value ( "Shift_StartStop", 0 ).toBool();
 	StartStopKey.ctrl = iniFile.value ( "Ctrl_StartStop", 0 ).toBool();
 	StartStopKey.alt = iniFile.value ( "Alt_StartStop", 0 ).toBool();
