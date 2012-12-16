@@ -2081,8 +2081,8 @@ background:none;</string>
                   <string>Edit the Keyboard and mouse shortcuts</string>
                  </property>
                  <property name="text">
-                  <string>Short
-cuts</string>
+                  <string>Short-
+keys</string>
                  </property>
                  <property name="icon">
                   <iconset resource="FaceTrackNoIR.qrc">
