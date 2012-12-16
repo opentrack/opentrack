@@ -21,7 +21,7 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
-* FTNoIR_Protocol		FTNoIR_Protocol is the Class, that communicates headpose-data			*
+* FTNoIR_Protocol: the Class, that communicates headpose-data					*
 *				to games, using the SimConnect.dll.		         				*
 *				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
 *				must be treated as such...										*
@@ -179,7 +179,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 
 		QString manifest(QCoreApplication::applicationDirPath());
 //		manifest += "\\FaceTrackNoIR.exe";
-		manifest += "\\FTNoIR_Protocol.dll";
+		manifest += "\\FTNoIR_Protocol_SC.dll";
 		const wchar_t * encodedName = reinterpret_cast<const wchar_t *>(manifest.utf16());
 		
 		act.lpSource = encodedName;

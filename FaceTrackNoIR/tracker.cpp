@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20121215 - WVR: Fixed crash after message: protocol not installed correctly... by terminating the thread.
 		20120921 - WVR: Fixed centering when no filter is selected.
 		20120917 - WVR: Added Mouse-buttons to ShortKeys.
 		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
@@ -320,6 +321,8 @@ void Tracker::setup() {
 
 		DLL_Ok = pProtocol->checkServerInstallationOK( mainApp->winId() );
 		if (!DLL_Ok) {
+			// Trigger thread to stop
+			::SetEvent(m_StopThread);
 			QMessageBox::information(mainApp, "FaceTrackNoIR error", "Protocol is not (correctly) installed!");
 		}
 	}
