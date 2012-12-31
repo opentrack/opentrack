@@ -87,37 +87,159 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 
 
 // ----------------------------------------------------------------------------
-PointTracker::PointTracker()
+PointTracker::PointTracker() : init_phase(true), dt_valid(0), dt_reset(1), v_t(0,0,0), v_r(0,0,0)
 {
-	X_CM.t[2] = 1000;	// default position: 1 m away from cam
+	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
+
+void PointTracker::reset()
+{
+	// enter init phase and reset velocities
+	init_phase = true;
+	dt_valid = 0;
+	reset_velocities();
+}
+
+void PointTracker::reset_velocities()
+{	
+	v_t = Vec3f(0,0,0);
+	v_r = Vec3f(0,0,0);
+}
+
 
 bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 {
-	if (!point_model) return false;
-	if (!find_correspondences(points)) return false;
-	POSIT(f);
+	dt_valid += dt;
+	// if there was no valid tracking result for too long, do a reset
+	if (dt_valid > dt_reset) 
+	{
+		//qDebug()<<"dt_valid "<<dt_valid<<" > dt_reset "<<dt_reset;
+		reset();
+	}
+
+	// if there is a pointtracking problem, reset the velocities
+	if (!point_model || points.size() != PointModel::N_POINTS) 
+	{
+		//qDebug()<<"Wrong number of points!";
+		reset_velocities();
+		return false;
+	}
+
+	X_CM_old = X_CM;	// backup old transformation for velocity calculation
+
+	if (!init_phase) 
+		predict(dt_valid);
+
+	// if there is a point correspondence problem something has gone wrong, do a reset
+	if (!find_correspondences(points, f))
+	{
+		//qDebug()<<"Error in finding point correspondences!";
+		X_CM = X_CM_old;	// undo prediction
+		reset();
+		return false;
+	}
+
+	int n_iter = POSIT(f);
+	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
+
+	if (!init_phase)
+		update_velocities(dt_valid);
+
+	// we have a valid tracking result, leave init phase and reset time since valid result
+	init_phase = false;
+	dt_valid = 0;
 	return true;
 }
 
-bool PointTracker::find_correspondences(const vector<Vec2f>& points)
+void PointTracker::predict(float dt)
 {
-	if (points.size() != PointModel::N_POINTS) return false;
+	// predict with constant velocity
+	Matx33f R;
+	Rodrigues(dt*v_r, R);
+	X_CM.R = R*X_CM.R;
+	X_CM.t += dt * v_t;
+}
 
-	// sort points
-	int point_d_order[PointModel::N_POINTS];
-	point_model->get_d_order(points, point_d_order);
+void PointTracker::update_velocities(float dt)
+{
+	// update velocities
+	Rodrigues(X_CM.R*X_CM_old.R.t(), v_r);
+	v_r /= dt;
+	v_t = (X_CM.t - X_CM_old.t)/dt;
+}
 
-	// set correspondences
-	for (int i=0; i<PointModel::N_POINTS; ++i)
-	{
-		p[point_model->d_order[i]] = points[point_d_order[i]];
+bool PointTracker::find_correspondences(const vector<Vec2f>& points, float f)
+{
+	if (init_phase) {
+		// We do a simple freetrack-like sorting in the init phase...
+		// sort points
+		int point_d_order[PointModel::N_POINTS];
+		point_model->get_d_order(points, point_d_order);
+
+		// set correspondences
+		for (int i=0; i<PointModel::N_POINTS; ++i)
+		{
+			p[point_model->d_order[i]] = points[point_d_order[i]];
+		}
+	}
+	else {
+		// ... otherwise we look at the distance to the projection of the expected model points 
+		// project model points under current pose
+		p_exp[0] = project(Vec3f(0,0,0), f);
+		p_exp[1] = project(point_model->M01, f);
+		p_exp[2] = project(point_model->M02, f);
+
+		// set correspondences by minimum distance to projected model point
+		bool point_taken[PointModel::N_POINTS];
+		for (int i=0; i<PointModel::N_POINTS; ++i)
+			point_taken[i] = false;
+
+		float min_sdist = 0;
+		int min_idx = 0;
+		
+		for (int i=0; i<PointModel::N_POINTS; ++i)
+		{
+			// find closest point to projected model point i
+			for (int j=0; j<PointModel::N_POINTS; ++j)
+			{
+				Vec2f d = p_exp[i]-points[j];
+				float sdist = d.dot(d);
+				if (sdist < min_sdist || j==0) 
+				{
+					min_idx = j;
+					min_sdist = sdist;
+				}
+			}
+			// if one point is closest to more than one model point, abort
+			if (point_taken[min_idx]) return false;
+			point_taken[min_idx] = true;
+			p[i] = points[min_idx];
+		}
 	}
 	return true;
 }
 
-void PointTracker::POSIT(float f)
+
+
+int PointTracker::POSIT(float f)
 {
+	// POSIT algorithm for coplanar points as presented in
+	// [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
+	// we use the same notation as in the paper here
+
+	// The expected rotation used for resolving the ambiguity in POSIT:
+	// In every iteration step the rotation closer to R_expected is taken 
+	Matx33f R_expected;	
+	if (init_phase)
+		R_expected = Matx33f::eye(); // in the init phase, we want to be close to the default pose = no rotation
+	else 
+		R_expected = X_CM.R; // later we want to be close to the last (predicted) rotation
+	
+	// initial pose = last (predicted) pose
+	Vec3f k;
+	get_row(X_CM.R, 2, k);
+	float Z0 = X_CM.t[2];
+
 	float old_epsilon_1 = 0;
 	float old_epsilon_2 = 0;
 	float epsilon_1 = 1;
@@ -129,13 +251,6 @@ void PointTracker::POSIT(float f)
 	Vec3f I_1, J_1, I_2, J_2;
 	Matx33f R_1, R_2;
 	Matx33f* R_current;
-
-	//TODO: do extrapolation or reinit here!
-	Vec3f k;
-	get_row(X_CM.R, 2, k);
-	float Z0 = X_CM.t[2];
-	Matx33f R_expected = Matx33f::eye();
-	//Matx33f R_expected = X_CM.R;
 
 	const int MAX_ITER = 100;
 	const float EPS_THRESHOLD = 1e-4;
@@ -218,14 +333,18 @@ void PointTracker::POSIT(float f)
 		old_epsilon_2 = epsilon_2;
 	}	
 
+	// apply results
 	X_CM.R = *R_current;
 	X_CM.t[0] = p[0][0] * Z0/f;
 	X_CM.t[1] = p[0][1] * Z0/f;
 	X_CM.t[2] = Z0;
 
+	return i;
+
+	//Rodrigues(X_CM.R, r);
 	//qDebug()<<"iter: "<<i;
 	//qDebug()<<"t: "<<X_CM.t[0]<<' '<<X_CM.t[1]<<' '<<X_CM.t[2];
 	//Vec3f r;
-	//Rodrigues(X_CM.R, r);
+	//
 	//qDebug()<<"r: "<<r[0]<<' '<<r[1]<<' '<<r[2]<<'\n';
 }

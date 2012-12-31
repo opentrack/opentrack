@@ -13,8 +13,8 @@
 void TrackerSettings::load_ini()
 {
 	qDebug("TrackerSettings::load_ini()");
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -39,7 +39,7 @@ void TrackerSettings::load_ini()
 	t_MH[2] = iniFile.value("tMHz", 0).toFloat();
 	video_widget = iniFile.value("VideoWidget", true).toBool();
 	sleep_time   = iniFile.value("SleepTime", 10).toInt();
-	reset_time   = iniFile.value("ResetTime", 3).toInt();
+	reset_time   = iniFile.value("ResetTime", 1000).toInt();
 	
 	iniFile.endGroup();
 }
@@ -47,8 +47,8 @@ void TrackerSettings::load_ini()
 void TrackerSettings::save_ini() const
 {
 	qDebug("TrackerSettings::save_ini()");
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -76,4 +76,57 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue("ResetTime", reset_time);
 
 	iniFile.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+void TrackerDialogSettings::load_ini()
+{
+	qDebug("TrackerDialogSettings::load_ini()");
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup( "PointTrackerDialog" );
+
+	active_model_panel = iniFile.value("ActiveModelPanel", MODEL_CLIP).toInt();
+	M01x    = iniFile.value("CustomM01x", 0).toInt();
+	M01y    = iniFile.value("CustomM01y", 40).toInt();
+	M01z    = iniFile.value("CustomM01z", -30).toInt();
+	M02x    = iniFile.value("CustomM02x", 0).toInt();
+	M02y    = iniFile.value("CustomM02y", -70).toInt();
+	M02z    = iniFile.value("CustomM02z", -80).toInt();
+	clip_ty = iniFile.value("ClipTopHeight", 40).toInt();
+	clip_tz = iniFile.value("ClipTopLength", 30).toInt();
+	clip_by = iniFile.value("ClipBottomHeight", 70).toInt();
+	clip_bz = iniFile.value("ClipBottomLength", 80).toInt();
+	cap_x   = iniFile.value("CapHalfWidth", 40).toInt();
+	cap_y   = iniFile.value("CapHeight", 60).toInt();
+	cap_z   = iniFile.value("CapLength", 100).toInt();
+}
+
+void TrackerDialogSettings::save_ini() const
+{
+	qDebug("TrackerDialogSettings::save_ini()");
+
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "PointTrackerDialog" );
+
+	iniFile.setValue("ActiveModelPanel", active_model_panel);
+	iniFile.setValue("CustomM01x", M01x);
+	iniFile.setValue("CustomM01y", M01y);
+	iniFile.setValue("CustomM01z", M01z);
+	iniFile.setValue("CustomM02x", M02x);
+	iniFile.setValue("CustomM02y", M02y);
+	iniFile.setValue("CustomM02z", M02z);
+	iniFile.setValue("ClipTopHeight", clip_ty);
+	iniFile.setValue("ClipTopLength", clip_tz);
+	iniFile.setValue("ClipBottomHeight", clip_by);
+	iniFile.setValue("ClipBottomLength", clip_bz);
+	iniFile.setValue("CapHalfWidth", cap_x);
+	iniFile.setValue("CapHeight", cap_y);
+	iniFile.setValue("CapLength", cap_z);
 }

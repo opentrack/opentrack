@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="FTNoIR_Tracker_PT"
 	ProjectGUID="{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}"
+	RootNamespace="FTNoIR_Tracker_PT"
 	Keyword="Qt4VSv1.0"
 	TargetFrameworkVersion="0"
 	>
@@ -39,8 +40,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;.&quot;;&quot;.\GeneratedFiles&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(OPENCV_DIR)\include&quot;;&quot;$(BOOST_DIR)&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;FTNOIR_TRACKER_BASE_LIB;QT_OPENGL_LIB"
 				RuntimeLibrary="2"
@@ -58,12 +57,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib opencv_core242.lib opencv_highgui242.lib opencv_imgproc242.lib libjasper.lib libjpeg.lib libpng.lib libtiff.lib vfw32.lib"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib opencv_core242.lib opencv_imgproc242.lib opencv_calib3d242.lib videoInput_vc9.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\static_lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\static_lib&quot;;&quot;$(ProjectDir)\videoInput&quot;"
+				IgnoreDefaultLibraryNames="atlthunk.lib;libcmt"
 				GenerateDebugInformation="false"
 				SubSystem="2"
-				LinkTimeCodeGeneration="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -89,7 +88,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\bin"
+			OutputDirectory="$(SolutionDir)/bin_dbg"
 			IntermediateDirectory="$(SolutionDir)\$(ConfigurationName)"
 			ConfigurationType="2"
 			>
@@ -128,9 +127,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib opencv_core242d.lib opencv_highgui242d.lib opencv_imgproc242d.lib opencv_calib3d242d.lib"
-				OutputFile="$(OutDir)\$(ProjectName)d.dll"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\lib&quot;"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib opengl32.lib glu32.lib opencv_core242d.lib opencv_imgproc242d.lib opencv_calib3d242d.lib videoInput_vc9.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\lib&quot;;&quot;$(ProjectDir)\videoInput&quot;"
+				IgnoreDefaultLibraryNames="atlthunk.lib;libcmt"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -191,6 +191,10 @@
 			</File>
 			<File
 				RelativePath=".\point_tracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\timer.cpp"
 				>
 			</File>
 			<File
@@ -288,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\timer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\trans_calib.h"
 				>
 			</File>
@@ -379,46 +387,6 @@
 						CommandLine="&quot;$(QTDIR)\bin\rcc.exe&quot; -name &quot;$(InputName)&quot; -no-compress &quot;$(InputPath)&quot; -o .\GeneratedFiles\qrc_$(InputName).cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(InputPath);.\Resources\icon.ico;.\Resources\Logo_IR.png"
 						Outputs=".\GeneratedFiles\qrc_$(InputName).cpp"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Resources\icon.ico"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Resources\Logo_IR.png"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
 			</File>

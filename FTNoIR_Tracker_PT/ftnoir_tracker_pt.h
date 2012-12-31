@@ -14,6 +14,7 @@
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "video_widget.h"
+#include "timer.h"
 
 #include <QThread>
 #include <QMutex>
@@ -57,7 +58,7 @@ protected:
 	void reset_command(Command command);
 	int commands;
 	
-	Camera camera;
+	VICamera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
 	cv::Vec3f t_MH;
@@ -67,7 +68,7 @@ protected:
 	long frame_count;
 
 	VideoWidget* video_widget;
-	QTime time;
+	Timer time;
 };
 
 #endif // FTNOIR_TRACKER_PT_H

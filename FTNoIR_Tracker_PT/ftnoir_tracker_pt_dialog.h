@@ -44,15 +44,23 @@ protected slots:
 	void set_min_point_size(int val) { settings.min_point_size = val; settings_changed(); }
 	void set_max_point_size(int val) { settings.max_point_size = val; settings_changed(); }
 	void set_threshold(int val)      { settings.threshold = val;      settings_changed(); }
-	void set_m1x(int val) { settings.M01[0] = val; settings_changed(); }
-	void set_m1y(int val) { settings.M01[1] = val; settings_changed(); }
-	void set_m1z(int val) { settings.M01[2] = val; settings_changed(); }
-	void set_m2x(int val) { settings.M02[0] = val; settings_changed(); }
-	void set_m2y(int val) { settings.M02[1] = val; settings_changed(); }
-	void set_m2z(int val) { settings.M02[2] = val; settings_changed(); }
-	void set_tx(int val) { settings.t_MH[0] = val; settings_changed(); }
-	void set_ty(int val) { settings.t_MH[1] = val; settings_changed(); }
-	void set_tz(int val) { settings.t_MH[2] = val; settings_changed(); }
+	void set_clip_t_height(int val)  { dialog_settings.clip_ty = val; set_clip(); }
+	void set_clip_t_length(int val)  { dialog_settings.clip_tz = val; set_clip(); }
+	void set_clip_b_height(int val)  { dialog_settings.clip_by = val; set_clip(); }
+	void set_clip_b_length(int val)  { dialog_settings.clip_bz = val; set_clip(); }
+	void set_cap_width(int val)      { dialog_settings.cap_x = val;   set_cap(); }
+	void set_cap_height(int val)     { dialog_settings.cap_y = val;   set_cap(); }
+	void set_cap_length(int val)     { dialog_settings.cap_z = val;   set_cap(); }
+	void set_m1x(int val)            { dialog_settings.M01x = val;	  set_custom(); }
+	void set_m1y(int val)            { dialog_settings.M01y = val;    set_custom(); }
+	void set_m1z(int val)            { dialog_settings.M01z = val;    set_custom(); }
+	void set_m2x(int val)            { dialog_settings.M02x = val;    set_custom(); }
+	void set_m2y(int val)            { dialog_settings.M02y = val;    set_custom(); }
+	void set_m2z(int val)            { dialog_settings.M02z = val;    set_custom(); }
+	void set_tx(int val)             { settings.t_MH[0] = val;        settings_changed(); }
+	void set_ty(int val)             { settings.t_MH[1] = val;        settings_changed(); }
+	void set_tz(int val)             { settings.t_MH[2] = val;        settings_changed(); }
+	void set_model(int model_id);
 
 	void doCenter();
 	void doReset();
@@ -65,9 +73,14 @@ protected slots:
 	void poll_tracker_info();
 
 protected:
+	void set_clip();
+	void set_cap();
+	void set_custom();
+
 	void settings_changed();
 
 	TrackerSettings settings;
+	TrackerDialogSettings dialog_settings;
 	bool settings_dirty;
 
 	Tracker* tracker;
