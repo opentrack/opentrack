@@ -11,9 +11,10 @@
 #include <opencv2/opencv.hpp>
 #include "point_tracker.h"
 
+
 //-----------------------------------------------------------------------------
 struct TrackerSettings
-{
+{	
 	// camera
 	int cam_index;
 	float cam_f;
@@ -34,8 +35,38 @@ struct TrackerSettings
 	cv::Vec3f t_MH;
 
 	int sleep_time; // in ms
-	int reset_time; // in s
+	int reset_time; // in ms
 	bool video_widget;
+
+	void load_ini();
+	void save_ini() const;
+};
+
+
+//-----------------------------------------------------------------------------
+struct TrackerDialogSettings
+{
+	enum
+	{
+		MODEL_CLIP,
+		MODEL_CAP,
+		MODEL_CUSTOM
+	};
+	int active_model_panel;
+
+	int M01x;
+	int M01y;
+	int M01z;
+	int M02x;
+	int M02y;
+	int M02z;
+	int clip_ty;
+	int clip_tz;
+	int clip_by;
+	int clip_bz;
+	int cap_x;
+	int cap_y;
+	int cap_z;
 
 	void load_ini();
 	void save_ini() const;

@@ -77,15 +77,36 @@ public:
 	bool track(const std::vector<cv::Vec2f>& points, float f, float dt);
 	boost::shared_ptr<PointModel> point_model;
 
+	float dt_reset;
+
 	FrameTrafo get_pose() const { return X_CM; }
+	void reset();
 
 protected:
-	bool find_correspondences(const std::vector<cv::Vec2f>& points);
+	inline cv::Vec2f project(const cv::Vec3f& v_M, float f)
+	{
+		cv::Vec3f v_C = X_CM * v_M;
+		return cv::Vec2f(f*v_C[0]/v_C[2], f*v_C[1]/v_C[2]);
+	}
+
+	bool find_correspondences(const std::vector<cv::Vec2f>& points, float f);
+
 	cv::Vec2f p[PointModel::N_POINTS];	// the points in model order
+	cv::Vec2f p_exp[PointModel::N_POINTS];	// the expected point positions
 
-	void POSIT(float f);
+	void predict(float dt);
+	void update_velocities(float dt);
+	void reset_velocities();
 
+	
+	int POSIT(float f);  // The POSIT algorithm, returns the number of iterations
+
+	bool init_phase;
+	float dt_valid;	// time since last valid tracking result
+	cv::Vec3f v_t;	// velocities
+	cv::Vec3f v_r;
 	FrameTrafo X_CM; // trafo from model to camera
+	FrameTrafo X_CM_old;
 };
 
 #endif //POINTTRACKER_H

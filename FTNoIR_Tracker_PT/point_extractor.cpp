@@ -6,7 +6,6 @@
  */
 
 #include "point_extractor.h"
-
 #include <QDebug>
 
 using namespace cv;
@@ -39,36 +38,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 	//erode(frame_bw, frame_bw, Mat(), Point(-1,-1), min_size); //destroys information -> bad for subpixel accurarcy
 
 	// find connected components...
-	// Method 1: contours
-	//*
-	// find contours
-	vector< vector<Point> > contours;
-	findContours(frame_bw.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-
-	// extract points
-	// TODO: use proximity to old points for classification
-	float r;
-	Vec2f c;
-	Point2f dummy;
-	points.clear();
-	for (vector< vector<Point> >::iterator iter = contours.begin();
-		 iter!= contours.end();
-		 ++iter)
-	{
-		minEnclosingCircle(*iter, dummy, r);
-		if (r > max_size) continue;
-		Moments m = moments(*iter);
-		if (m.m00 < 3.14*min_size*min_size) continue;
-		// convert to centered camera coordinate system with y axis upwards
-		c[0] =  (m.m10/m.m00 - frame.cols/2)/frame.cols;
-		c[1] = -(m.m01/m.m00 - frame.rows/2)/frame.cols;
-		points.push_back(c);
-	}
-	//*/
-
-	// Method 2: floodfill
-	/*
-	// extract blobs
+	// extract blobs with floodfill
 	struct BlobInfo
 	{
 		BlobInfo() : m00(0), m10(0), m01(0) {}
@@ -97,6 +67,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
             blob_count++;
 			if (blob_count >= 255) break;
         }
+		if (blob_count >= 255) break;
     }
 
 	// extract points
@@ -115,7 +86,6 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 		c[1] = -(m.m01/float(m.m00) - frame.rows/2)/frame.cols;
 		points.push_back(c);
 	}
-	*/
 	
 	// draw output image
 	if (draw_output)

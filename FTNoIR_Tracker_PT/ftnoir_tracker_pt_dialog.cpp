@@ -20,6 +20,7 @@ TrackerDialog::TrackerDialog()
 	ui.setupUi( this );
 
 	settings.load_ini();
+	dialog_settings.load_ini();
 
 	// initialize ui values
 	ui.videowidget_check->setChecked(settings.video_widget);
@@ -33,39 +34,53 @@ TrackerDialog::TrackerDialog()
 	ui.threshold_slider->setValue(settings.threshold);
 	ui.mindiam_spin->setValue(settings.min_point_size);
 	ui.maxdiam_spin->setValue(settings.max_point_size);
-
-	ui.m1x_spin->setValue(settings.M01[0]);
-	ui.m1y_spin->setValue(settings.M01[1]);
-	ui.m1z_spin->setValue(settings.M01[2]);
-	ui.m2x_spin->setValue(settings.M02[0]);
-	ui.m2y_spin->setValue(settings.M02[1]);
-	ui.m2z_spin->setValue(settings.M02[2]);
+	ui.model_tabs->setCurrentIndex(dialog_settings.active_model_panel);
+	ui.clip_bheight_spin->setValue(dialog_settings.clip_by);
+	ui.clip_blength_spin->setValue(dialog_settings.clip_bz);
+	ui.clip_theight_spin->setValue(dialog_settings.clip_ty);
+	ui.clip_tlength_spin->setValue(dialog_settings.clip_tz);
+	ui.cap_width_spin->setValue(dialog_settings.cap_x);
+	ui.cap_height_spin->setValue(dialog_settings.cap_y);
+	ui.cap_length_spin->setValue(dialog_settings.cap_z);
+	ui.m1x_spin->setValue(dialog_settings.M01x);
+	ui.m1y_spin->setValue(dialog_settings.M01y);
+	ui.m1z_spin->setValue(dialog_settings.M01z);
+	ui.m2x_spin->setValue(dialog_settings.M02x);
+	ui.m2y_spin->setValue(dialog_settings.M02y);
+	ui.m2z_spin->setValue(dialog_settings.M02z);
 	ui.tx_spin->setValue(settings.t_MH[0]);
 	ui.ty_spin->setValue(settings.t_MH[1]);
 	ui.tz_spin->setValue(settings.t_MH[2]);
-	
-	// connect Qt signals and slots
-	connect( ui.videowidget_check,SIGNAL(toggled(bool)),   this,SLOT(set_video_widget(bool)) );
-	connect( ui.sleep_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_sleep_time(int)) );
-	connect( ui.reset_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_reset_time(int)) );
-	connect( ui.camindex_spin,SIGNAL(valueChanged(int)),   this,SLOT(set_cam_index(int)) );	
-	connect( ui.f_dspin,SIGNAL(valueChanged(double)),      this,SLOT(set_cam_f(double)) );
-	connect( ui.res_x_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_cam_res_x(int)) );
-	connect( ui.res_y_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_cam_res_y(int)) );
-	connect( ui.fps_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_fps(int)) );
-	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)), this,SLOT(set_threshold(int)) );
-	connect( ui.mindiam_spin,SIGNAL(valueChanged(int)),    this,SLOT(set_min_point_size(int)) );
-	connect( ui.maxdiam_spin,SIGNAL(valueChanged(int)),    this,SLOT(set_max_point_size(int)) );
 
-	connect( ui.m1x_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m1x(int)) );
-	connect( ui.m1y_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m1y(int)) );
-	connect( ui.m1z_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m1z(int)) );
-	connect( ui.m2x_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2x(int)) );
-	connect( ui.m2y_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2y(int)) );
-	connect( ui.m2z_spin,SIGNAL(valueChanged(int)), this,SLOT(set_m2z(int)) );
-	connect( ui.tx_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_tx(int)) );
-	connect( ui.ty_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_ty(int)) );
-	connect( ui.tz_spin,SIGNAL(valueChanged(int)),  this,SLOT(set_tz(int)) );
+	// connect Qt signals and slots
+	connect( ui.videowidget_check,SIGNAL(toggled(bool)),     this,SLOT(set_video_widget(bool)) );
+	connect( ui.sleep_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_sleep_time(int)) );
+	connect( ui.reset_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_reset_time(int)) );
+	connect( ui.camindex_spin,SIGNAL(valueChanged(int)),     this,SLOT(set_cam_index(int)) );	
+	connect( ui.f_dspin,SIGNAL(valueChanged(double)),        this,SLOT(set_cam_f(double)) );
+	connect( ui.res_x_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_res_x(int)) );
+	connect( ui.res_y_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_res_y(int)) );
+	connect( ui.fps_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_cam_fps(int)) );
+	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)),   this,SLOT(set_threshold(int)) );
+	connect( ui.mindiam_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_min_point_size(int)) );
+	connect( ui.maxdiam_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_max_point_size(int)) );
+	connect( ui.model_tabs,SIGNAL(currentChanged(int)),      this,SLOT(set_model(int)) );
+	connect( ui.clip_theight_spin,SIGNAL(valueChanged(int)), this,SLOT(set_clip_t_height(int)) );
+	connect( ui.clip_tlength_spin,SIGNAL(valueChanged(int)), this,SLOT(set_clip_t_length(int)) );
+	connect( ui.clip_bheight_spin,SIGNAL(valueChanged(int)), this,SLOT(set_clip_b_height(int)) );
+	connect( ui.clip_blength_spin,SIGNAL(valueChanged(int)), this,SLOT(set_clip_b_length(int)) );
+	connect( ui.cap_width_spin,SIGNAL(valueChanged(int)),    this,SLOT(set_cap_width(int)) );
+	connect( ui.cap_height_spin,SIGNAL(valueChanged(int)),   this,SLOT(set_cap_height(int)) );	
+	connect( ui.cap_length_spin,SIGNAL(valueChanged(int)),   this,SLOT(set_cap_length(int)) );
+	connect( ui.m1x_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m1x(int)) );
+	connect( ui.m1y_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m1y(int)) );
+	connect( ui.m1z_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m1z(int)) );
+	connect( ui.m2x_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m2x(int)) );
+	connect( ui.m2y_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m2y(int)) );
+	connect( ui.m2z_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_m2z(int)) );
+	connect( ui.tx_spin,SIGNAL(valueChanged(int)),           this,SLOT(set_tx(int)) );
+	connect( ui.ty_spin,SIGNAL(valueChanged(int)),           this,SLOT(set_ty(int)) );
+	connect( ui.tz_spin,SIGNAL(valueChanged(int)),           this,SLOT(set_tz(int)) );
 
 	connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
@@ -82,6 +97,65 @@ TrackerDialog::TrackerDialog()
 TrackerDialog::~TrackerDialog()
 {
 	qDebug()<<"TrackerDialog::~TrackerDialog";
+}
+
+void TrackerDialog::set_clip()
+{
+	settings.M01[0] =  0;
+	settings.M01[1] =  dialog_settings.clip_ty;
+	settings.M01[2] = -dialog_settings.clip_tz;
+	settings.M02[0] =  0;
+	settings.M02[1] = -dialog_settings.clip_by;
+	settings.M02[2] = -dialog_settings.clip_bz;
+
+	settings_changed();
+}
+
+void TrackerDialog::set_cap()
+{
+	settings.M01[0] = -dialog_settings.cap_x;
+	settings.M01[1] = -dialog_settings.cap_y;
+	settings.M01[2] = -dialog_settings.cap_z;
+	settings.M02[0] =  dialog_settings.cap_x;
+	settings.M02[1] = -dialog_settings.cap_y;
+	settings.M02[2] = -dialog_settings.cap_z;
+
+	settings_changed();
+}
+
+void TrackerDialog::set_custom()
+{
+	settings.M01[0] = dialog_settings.M01x;
+	settings.M01[1] = dialog_settings.M01y;
+	settings.M01[2] = dialog_settings.M01z;
+	settings.M02[0] = dialog_settings.M02x;
+	settings.M02[1] = dialog_settings.M02y;
+	settings.M02[2] = dialog_settings.M02z;
+
+	settings_changed();
+}
+
+void TrackerDialog::set_model(int val)
+{
+	dialog_settings.active_model_panel = val;
+
+	switch (val) {
+
+	case TrackerDialogSettings::MODEL_CLIP:
+		set_clip();
+		break;
+
+	case TrackerDialogSettings::MODEL_CAP:
+		set_cap();
+		break;
+
+	case TrackerDialogSettings::MODEL_CUSTOM:
+		set_custom();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void TrackerDialog::startstop_trans_calib(bool start)
@@ -135,6 +209,7 @@ void TrackerDialog::doReset()
 void TrackerDialog::doOK()
 {
 	settings.save_ini();
+	dialog_settings.save_ini();
 	close();
 }
 
@@ -146,6 +221,7 @@ void TrackerDialog::doCancel()
 		switch (ret) {
 			case QMessageBox::Save:
 				settings.save_ini();
+				dialog_settings.save_ini();
 				close();
 				break;
 			case QMessageBox::Discard:

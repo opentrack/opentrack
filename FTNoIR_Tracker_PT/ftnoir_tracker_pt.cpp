@@ -9,25 +9,30 @@
 #include <QHBoxLayout>
 #include <cmath>
 #include <QDebug>
+#include <QFile>
+#include <QCoreApplication>
 
 using namespace std;
 using namespace cv;
 using namespace boost;
 
+//#define PT_PERF_LOG	//log performance
+
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
 	: frame_count(0), commands(0), video_widget(NULL)
 {
-	qDebug()<<"Tracker Const";
+	qDebug()<<"Tracker::Tracker";
 	TrackerSettings settings;
 	settings.load_ini();
 	apply(settings);
-	qDebug()<<"Tracker Starting";
+	camera.start();
 	start();
 }
 
 Tracker::~Tracker()
 {
+	qDebug()<<"Tracker::~Tracker";
 	set_command(ABORT);
 	wait();
 	if (video_widget) delete video_widget;
@@ -47,8 +52,17 @@ void Tracker::reset_command(Command command)
 
 void Tracker::run()
 {
-	qDebug()<<"Tracker Thread started";
+	qDebug()<<"Tracker:: Thread started";
+
+#ifdef PT_PERF_LOG
+	QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
+	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+	QTextStream log_stream(&log_file);
+#endif
+
 	time.start();
+	float dt;
+	bool new_frame;
 	forever
 	{
 		{	
@@ -58,47 +72,55 @@ void Tracker::run()
 			if (commands & PAUSE) continue;
 			commands = 0;
 			
-			float dt = time.elapsed() / 1000.0;
+			dt = time.elapsed() / 1000.0;
 			time.restart();
 
-			frame = camera.get_frame(dt);
-			if (!frame.empty())
+			new_frame = camera.get_frame(dt, &frame);
+			if (new_frame && !frame.empty())
 			{
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, draw_frame);
 				point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
 			}
+#ifdef PT_PERF_LOG
+			log_stream<<"dt: "<<dt;
+			if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
+			log_stream<<"\n";
+#endif
 		}
 		msleep(sleep_time);
 	}
-	qDebug()<<"Tracker Thread stopping";
+
+	qDebug()<<"Tracker:: Thread stopping";
 }
 
 void Tracker::apply(const TrackerSettings& settings)
 {
-	qDebug()<<"Tracker::apply";
+	qDebug()<<"Tracker:: Applying settings";
 	QMutexLocker lock(&mutex);
 	camera.set_index(settings.cam_index);
-	camera.set_f(settings.cam_f);
-	camera.set_res(settings.cam_res_x, settings.cam_res_y);
+	camera.set_res(settings.cam_res_x, settings.cam_res_y);	
 	camera.set_fps(settings.cam_fps);
+	camera.set_f(settings.cam_f);
 	point_extractor.threshold_val = settings.threshold;
 	point_extractor.min_size = settings.min_point_size;
 	point_extractor.max_size = settings.max_point_size;
 	point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
 	sleep_time = settings.sleep_time;
-	// TODO: reset time
+	point_tracker.dt_reset = settings.reset_time / 1000.0;
 	draw_frame = settings.video_widget;
 	t_MH = settings.t_MH;
 }
 
 void Tracker::reset()
 {
-	//TODO
+	QMutexLocker lock(&mutex);
+	point_tracker.reset();
 }
 
 void Tracker::center()
 {
+	point_tracker.reset();	// we also do a reset here since there is no reset shortkey yet
 	QMutexLocker lock(&mutex);
 	FrameTrafo X_CM_0 = point_tracker.get_pose();
 	FrameTrafo X_MH(Matx33f::eye(), t_MH);
@@ -112,7 +134,7 @@ void Tracker::Initialize(QFrame *videoframe)
 	const int VIDEO_FRAME_WIDTH = 252;
 	const int VIDEO_FRAME_HEIGHT = 189;
 
-	qDebug("Tracker::Initialize()");
+	qDebug("Tracker::Initialize");
 	// setup video frame
 	videoframe->setAttribute(Qt::WA_NativeWindow);
 	videoframe->show();
