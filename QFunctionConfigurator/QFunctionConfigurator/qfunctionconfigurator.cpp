@@ -396,7 +396,7 @@ int i;
 	drawLine(&p, QPoint(lastPoint.x(), range.top()), QPoint(lastPoint.x(), range.bottom()), pen);
 	drawLine(&p, QPoint(range.left(), lastPoint.y()), QPoint(range.right(), lastPoint.y()), pen);
 
-	QTimer::singleShot(100, this, SLOT(update()));
+	QTimer::singleShot(250, this, SLOT(update()));
 }
 
 //
