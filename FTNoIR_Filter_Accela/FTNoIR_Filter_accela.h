@@ -86,6 +86,7 @@ private:
 	bool	first_run;
 	double kFactor, kFactorTranslation;
 	double kSensitivity, kSensitivityTranslation;
+	double kMagicNumber;									// Stanislaws' magic number (should be 100 according to him...)
 
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
@@ -124,6 +125,7 @@ private slots:
 	void doOK();
 	void doCancel();
 	void settingChanged(bool) { settingsDirty = true; };
+	void settingChanged(int) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************

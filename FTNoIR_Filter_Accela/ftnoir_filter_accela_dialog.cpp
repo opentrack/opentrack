@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2012	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
 * Homepage																		*
@@ -22,6 +22,10 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
+/*
+	Modifications (last one on top):
+		20130102 - WVR: Added 'reduction factor' to accommodate Patrick's need for speed.
+*/
 #include "ftnoir_filter_Accela.h"
 #include "math.h"
 #include <QDebug>
@@ -45,6 +49,9 @@ FilterControls::FilterControls() :
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.scalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
 	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
+
+	// Connect slider for reduction
+	connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 
 	qDebug() << "FilterControls() says: started";
 }
@@ -160,6 +167,10 @@ QList<QPointF> defPoints;
 	ui.translationScalingConfig->setConfig(&translationFunctionConfig, currentFile);
 	ui.scalingConfig->setConfig(&functionConfig, currentFile);
 
+	iniFile.beginGroup ( "Accela" );
+	ui.slideReduction->setValue (iniFile.value ( "Reduction", 100 ).toInt());
+	iniFile.endGroup ();
+
 	settingsDirty = false;
 }
 
@@ -173,6 +184,10 @@ void FilterControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
+
+	iniFile.beginGroup ( "Accela" );
+	iniFile.setValue ( "Reduction", ui.slideReduction->value() );
+	iniFile.endGroup ();
 
 	functionConfig.saveSettings(iniFile);
 	translationFunctionConfig.saveSettings(iniFile);
