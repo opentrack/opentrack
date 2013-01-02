@@ -21,6 +21,7 @@ FTNoIR_Filter::FTNoIR_Filter() :
 	translationFunctionConfig("Accela-Scaling-Translation", 4, 6)
 {
 	first_run = true;
+	kMagicNumber = 100.0f;
 	loadSettings();					// Load the Settings
 }
 
@@ -54,6 +55,11 @@ void FTNoIR_Filter::loadSettings() {
 		defPoints.append(defScaleTranslation[i]);
 	}
 	translationFunctionConfig.loadSettings(iniFile, defPoints);
+
+	iniFile.beginGroup ( "Accela" );
+	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
+	iniFile.endGroup ();
+
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
@@ -123,7 +129,11 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 		// the idea is that "empty" updates without new head pose data are still
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
+		// WVR: Added kMagicNumber for Patrick
 		double velocity = foo / 100.0;
+		if (kMagicNumber > 0.0f) {
+			double velocity = foo / kMagicNumber;
+		}
 		double sum = start + velocity * sign;
 		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {

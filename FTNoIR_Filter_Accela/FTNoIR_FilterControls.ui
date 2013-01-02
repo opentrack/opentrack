@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>880</width>
-    <height>643</height>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,13 +44,13 @@
      <property name="minimumSize">
       <size>
        <width>850</width>
-       <height>594</height>
+       <height>574</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>300</width>
-       <height>594</height>
+       <height>574</height>
       </size>
      </property>
      <property name="currentIndex">
@@ -60,13 +60,13 @@
       <attribute name="title">
        <string>Rotation</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="scalingConfig" native="true">
+      <widget class="QFunctionConfigurator" name="scalingConfig">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>20</y>
          <width>819</width>
-         <height>244</height>
+         <height>510</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -87,14 +87,14 @@
        <property name="gridDistEGU_Output" stdset="0">
         <number>1</number>
        </property>
-       <property name="colorBezier" stdset="0">
+       <property name="colorBezier">
         <color>
          <red>255</red>
          <green>170</green>
          <blue>0</blue>
         </color>
        </property>
-       <property name="colorBackground" stdset="0">
+       <property name="colorBackground">
         <color>
          <red>192</red>
          <green>192</green>
@@ -116,13 +116,13 @@
       <attribute name="title">
        <string>Translation</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="translationScalingConfig" native="true">
+      <widget class="QFunctionConfigurator" name="translationScalingConfig">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>20</y>
          <width>819</width>
-         <height>244</height>
+         <height>510</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -143,14 +143,14 @@
        <property name="gridDistEGU_Output" stdset="0">
         <number>1</number>
        </property>
-       <property name="colorBezier" stdset="0">
+       <property name="colorBezier">
         <color>
          <red>85</red>
          <green>255</green>
          <blue>0</blue>
         </color>
        </property>
-       <property name="colorBackground" stdset="0">
+       <property name="colorBackground">
         <color>
          <red>192</red>
          <green>192</green>
@@ -166,6 +166,119 @@
       </widget>
      </widget>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="lblSensYaw_4">
+       <property name="minimumSize">
+        <size>
+         <width>25</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#0;
+background:none;</string>
+       </property>
+       <property name="text">
+        <string>Reduction factor:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="slideReduction">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>15</height>
+        </size>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="pageStep">
+        <number>5</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::NoTicks</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinReduction">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background:none;</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblSensYaw_5">
+       <property name="minimumSize">
+        <size>
+         <width>25</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color:#0;
+background:none;</string>
+       </property>
+       <property name="text">
+        <string>(lowering this value will speed up response (in exchange for stability)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -208,7 +321,40 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>slideReduction</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinReduction</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>620</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>622</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinReduction</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slideReduction</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>315</x>
+     <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>170</x>
+     <y>621</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>
