@@ -33,6 +33,7 @@ public:
 	void StartTracker(HWND parent_window);
 	void StopTracker(bool exit);
 	bool GiveHeadPoseData(THeadPoseData *data);
+
 	void refreshVideo();
 
 	void apply(const TrackerSettings& settings);
@@ -64,6 +65,12 @@ protected:
 	cv::Vec3f t_MH;
 	bool draw_frame;
 	int sleep_time;
+	bool bEnableRoll;
+	bool bEnablePitch;
+	bool bEnableYaw;
+	bool bEnableX;
+	bool bEnableY;
+	bool bEnableZ;
 	
 	long frame_count;
 

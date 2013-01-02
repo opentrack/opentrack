@@ -39,11 +39,14 @@ QWidget()
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	//connect(ui.spinIPFirstNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	//connect(ui.spinIPSecondNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	//connect(ui.spinIPThirdNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	//connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
+
+	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -129,10 +132,12 @@ void TrackerControls::loadSettings() {
 //	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "FTNClient" );
-	//ui.spinIPFirstNibble->setValue( iniFile.value ( "IP-1", 192 ).toInt() );
-	//ui.spinIPSecondNibble->setValue( iniFile.value ( "IP-2", 168 ).toInt() );
-	//ui.spinIPThirdNibble->setValue( iniFile.value ( "IP-3", 2 ).toInt() );
-	//ui.spinIPFourthNibble->setValue( iniFile.value ( "IP-4", 1 ).toInt() );
+	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
+	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
+	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
+	ui.chkEnableX->setChecked(iniFile.value ( "EnableX", 1 ).toBool());
+	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
+	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
 
 	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
 	iniFile.endGroup ();
@@ -151,10 +156,12 @@ void TrackerControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FTNClient" );
-	//iniFile.setValue ( "IP-1", ui.spinIPFirstNibble->value() );
-	//iniFile.setValue ( "IP-2", ui.spinIPSecondNibble->value() );
-	//iniFile.setValue ( "IP-3", ui.spinIPThirdNibble->value() );
-	//iniFile.setValue ( "IP-4", ui.spinIPFourthNibble->value() );
+	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
+	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
+	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
+	iniFile.setValue ( "EnableX", ui.chkEnableX->isChecked() );
+	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
+	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
 	iniFile.setValue ( "PortNumber", ui.spinPortNumber->value() );
 	iniFile.endGroup ();
 

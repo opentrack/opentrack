@@ -44,6 +44,7 @@ public:
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
+
 	void loadSettings();
 	bool SMCreateMapping();
 
@@ -63,13 +64,6 @@ private:
 	bool bEnableX;
 	bool bEnableY;
 	bool bEnableZ;
-
-	double dInvertRoll;
-	double dInvertPitch;
-	double dInvertYaw;
-	double dInvertX;
-	double dInvertY;
-	double dInvertZ;
 };
 
 // Widget that has controls for SMoIR protocol client-settings.

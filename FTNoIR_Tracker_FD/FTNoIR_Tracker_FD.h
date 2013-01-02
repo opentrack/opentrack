@@ -41,6 +41,7 @@ public:
     void StartTracker( HWND parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
+
 	void loadSettings();
 //	bool setParameterValue(const int index, const float newvalue);
 	bool notifyZeroed();

@@ -68,12 +68,6 @@
 #include "tracker.h"
 #include "FaceTrackNoIR.h"
 
-//
-// Definitions for testing purposes
-//
-//#define USE_HEADPOSE_CALLBACK
-//#define USE_DEBUG_CLIENT
-
 // Flags
 bool Tracker::confid = false;
 bool Tracker::do_tracking = true;
@@ -82,7 +76,6 @@ bool Tracker::do_inhibit = false;
 bool Tracker::do_game_zero = false;
 bool Tracker::do_axis_reverse = false;
 
-bool Tracker::useFilter = false;
 bool Tracker::setZero = true;
 bool Tracker::setEngineStop = true;
 HANDLE Tracker::hTrackMutex = 0;
@@ -156,7 +149,7 @@ QFrame *video_frame;
 	//
 	video_frame = 0;
 	video_frame = mainApp->getVideoWidget();
-	qDebug() << "Tracker::setup VideoFrame = " << video_frame;
+	qDebug() << "Tracker::Tracker VideoFrame = " << video_frame;
 
 	//
 	// Load the Tracker-engine DLL, get the tracker-class from it and do stuff...
@@ -166,6 +159,7 @@ QFrame *video_frame;
 	if (!libName.isEmpty()) {
 		trackerLib = new QLibrary(libName);
 		getIT = (importGetTracker) trackerLib->resolve("GetTracker");
+		qDebug() << "Tracker::Tracker libName = " << libName;
 			
 		if (getIT) {
 			ITracker *ptrXyz(getIT());							// Get the Class
@@ -225,28 +219,28 @@ QFrame *video_frame;
 		}
 	}
 
-#	ifdef USE_DEBUG_CLIENT
-	debug_Client = QSharedPointer<ExcelServer>(new ExcelServer ( this ));		// Create Excel protocol-server
-#   endif
-
 	//
 	// Load the DLL with the filter-logic and retrieve a pointer to the Filter-class.
 	//
+	pFilter = NULL;
 	libName = mainApp->getCurrentFilterName();
-	filterLib = new QLibrary(libName);
-	
-	getFilter = (importGetFilter) filterLib->resolve("GetFilter");
-	if (getFilter) {
-		IFilterPtr ptrXyz(getFilter());
-		if (ptrXyz)
-		{
-			pFilter = ptrXyz;
-			qDebug() << "Filter::setup Function Resolved!";
+
+	if ((!libName.isEmpty()) && (libName != "None")) {
+		filterLib = new QLibrary(libName);
+		
+		getFilter = (importGetFilter) filterLib->resolve("GetFilter");
+		if (getFilter) {
+			IFilterPtr ptrXyz(getFilter());
+			if (ptrXyz)
+			{
+				pFilter = ptrXyz;
+				qDebug() << "Filter::setup Function Resolved!";
+			}
 		}
-	}
-	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "Filter-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
-		return;
+		else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Filter-DLL not loaded",QMessageBox::Ok,QMessageBox::NoButton);
+			return;
+		}
 	}
 
 	// Load the settings from the INI-file
@@ -701,8 +695,10 @@ bool bTracker2Confid = false;
 				// do the centering
 				target_camera = target_camera - offset_camera;
 
-				if (Tracker::useFilter && pFilter) {
-//		qDebug() << "Tracker::run() says target_camera.yaw = " << target_camera.yaw;
+				//
+				// Use advanced filtering, when a filter was selected.
+				//
+				if (pFilter) {
 					pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, Tracker::Pitch.newSample);
 				}
 				else {
@@ -711,7 +707,11 @@ bool bTracker2Confid = false;
 				output_camera.x = X.invert * X.curvePtr->getValue(new_camera.x);
 				output_camera.y = Y.invert * Y.curvePtr->getValue(new_camera.y);
 				output_camera.z = Z.invert * Z.curvePtr->getValue(new_camera.z);
-				bool altp = new_camera.pitch < 0;
+
+				//
+				// Determine, which curve (Up or Down) must be used for Pitch
+				//
+				bool altp = (new_camera.pitch < 0);
 				if (altp) {
 					output_camera.pitch = Pitch.invert * Pitch.curvePtrAlt->getValue(new_camera.pitch);
 					Pitch.curvePtr->setTrackingActive( false );
@@ -724,7 +724,6 @@ bool bTracker2Confid = false;
 				}
 				output_camera.yaw = Yaw.invert * Yaw.curvePtr->getValue(new_camera.yaw);
 				output_camera.roll = Roll.invert * Roll.curvePtr->getValue(new_camera.roll);
-
 
 				X.curvePtr->setTrackingActive( true );
 				Y.curvePtr->setTrackingActive( true );

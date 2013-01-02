@@ -44,13 +44,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	bEnableY = true;
 	bEnableZ = true;
 
-	dInvertRoll = 1.0f;
-	dInvertPitch = 1.0f;
-	dInvertYaw = 1.0f;
-	dInvertX = 1.0f;
-	dInvertY = 1.0f;
-	dInvertZ = 1.0f;
-	
 	CloseHandle( hSMMutex );
 	CloseHandle( hSMMemMap );
 	hSMMemMap = 0;
@@ -132,22 +125,22 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 		// Copy the measurements to FaceTrackNoIR.
 		//
 		if (bEnableX) {
-			data->x     = dInvertX * pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
+			data->x     = pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
 		}
 		if (bEnableY) {
-			data->y     = dInvertY * pMemData->data.new_pose.head_pos.y * 100.0f;
+			data->y     = pMemData->data.new_pose.head_pos.y * 100.0f;
 		}
 		if (bEnableZ) {
-			data->z     = dInvertZ * pMemData->data.new_pose.head_pos.z * 100.0f;
+			data->z     = pMemData->data.new_pose.head_pos.z * 100.0f;
 		}
 		if (bEnableYaw) {
-			data->yaw   = dInvertYaw * pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
+			data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
 		}
 		if (bEnablePitch) {
-			data->pitch = dInvertPitch * pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
+			data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
 		}
 		if (bEnableRoll) {
-			data->roll  = dInvertRoll * pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+			data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
 		}
 
 		//
@@ -178,12 +171,6 @@ void FTNoIR_Tracker::loadSettings() {
 	if (pMemData) {
 		pMemData->initial_filter_level = iniFile.value ( "FilterLevel", 1 ).toInt();
 	}
-	dInvertRoll = (iniFile.value ( "InvertRoll", 0 ).toBool()) ? -1.0f : 1.0f;
-	dInvertPitch = (iniFile.value ( "InvertPitch", 0 ).toBool()) ? -1.0f : 1.0f;
-	dInvertYaw = (iniFile.value ( "InvertYaw", 0 ).toBool()) ? -1.0f : 1.0f;
-	dInvertX = (iniFile.value ( "InvertX", 0 ).toBool()) ? -1.0f : 1.0f;
-	dInvertY = (iniFile.value ( "InvertY", 0 ).toBool()) ? -1.0f : 1.0f;
-	dInvertZ = (iniFile.value ( "InvertZ", 0 ).toBool()) ? -1.0f : 1.0f;
 
 	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
 	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();

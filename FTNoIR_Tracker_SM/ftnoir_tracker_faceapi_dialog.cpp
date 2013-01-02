@@ -65,13 +65,6 @@ QWidget()
 	timUpdateSettings->start(100);
 	connect(this, SIGNAL(stateChanged( int )), this, SLOT(showSettings( int )));
 
-	connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkInvertX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-
 	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
@@ -166,13 +159,6 @@ void TrackerControls::loadSettings() {
 	iniFile.beginGroup ( "SMTracker" );
 	ui.cbxFilterSetting->setCurrentIndex(iniFile.value ( "FilterLevel", 1 ).toInt());
 
-	ui.chkInvertRoll->setChecked(iniFile.value ( "InvertRoll", 0 ).toBool());
-	ui.chkInvertPitch->setChecked(iniFile.value ( "InvertPitch", 0 ).toBool());
-	ui.chkInvertYaw->setChecked(iniFile.value ( "InvertYaw", 0 ).toBool());
-	ui.chkInvertX->setChecked(iniFile.value ( "InvertX", 0 ).toBool());
-	ui.chkInvertY->setChecked(iniFile.value ( "InvertY", 0 ).toBool());
-	ui.chkInvertZ->setChecked(iniFile.value ( "InvertZ", 0 ).toBool());
-
 	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
 	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
 	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
@@ -197,12 +183,6 @@ void TrackerControls::save() {
 
 	iniFile.beginGroup ( "SMTracker" );
 	iniFile.setValue ( "FilterLevel", ui.cbxFilterSetting->currentIndex() );
-	iniFile.setValue ( "InvertRoll", ui.chkInvertRoll->isChecked() );
-	iniFile.setValue ( "InvertPitch", ui.chkInvertPitch->isChecked() );
-	iniFile.setValue ( "InvertYaw", ui.chkInvertYaw->isChecked() );
-	iniFile.setValue ( "InvertX", ui.chkInvertX->isChecked() );
-	iniFile.setValue ( "InvertY", ui.chkInvertY->isChecked() );
-	iniFile.setValue ( "InvertZ", ui.chkInvertZ->isChecked() );
 
 	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
 	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );

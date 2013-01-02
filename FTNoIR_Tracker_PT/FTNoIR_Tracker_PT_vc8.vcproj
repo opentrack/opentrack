@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="FTNoIR_Tracker_PT"
 	ProjectGUID="{7A2A2560-9253-4CC8-A9D5-4B9D9C224D9D}"
 	Keyword="Qt4VSv1.0"
@@ -56,7 +56,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib opencv_core242.lib opencv_highgui242.lib opencv_imgproc242.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc8\lib\release&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="1"
@@ -130,7 +130,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib opengl32.lib glu32.lib opencv_core242d.lib opencv_highgui242d.lib opencv_imgproc242d.lib opencv_calib3d242d.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc9\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(OPENCV_DIR)\x86\vc8\lib\debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -268,7 +268,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing ftnoir_tracker_pt_dialog.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -DQT_OPENGL_LIB -D_WINDLL &quot;-I.&quot; &quot;-I.\GeneratedFiles&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I$(OPENCV_DIR)\include&quot; &quot;-I$(BOOST_DIR)\.&quot; &quot;-I$(QTDIR)\include\QtOpenGL&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -DQT_OPENGL_LIB -D_WINDLL  -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(OPENCV_DIR)\include\.&quot; -I&quot;$(BOOST_DIR)\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; &quot;.\ftnoir_tracker_pt_dialog.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -314,7 +314,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing video_widget.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -DQT_OPENGL_LIB -D_WINDLL &quot;-I.&quot; &quot;-I.\GeneratedFiles&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I$(OPENCV_DIR)\include&quot; &quot;-I$(BOOST_DIR)\.&quot; &quot;-I$(QTDIR)\include\QtOpenGL&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -DQT_OPENGL_LIB -D_WINDLL  -I&quot;.\.&quot; -I&quot;.\GeneratedFiles\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(OPENCV_DIR)\include\.&quot; -I&quot;$(BOOST_DIR)\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; &quot;.\video_widget.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -545,7 +545,7 @@
 		/>
 		<Global
 			Name="QtVersion Win32"
-			Value="4.6.2"
+			Value="$(DefaultQtVersion)"
 		/>
 		<Global
 			Name="RccDir"

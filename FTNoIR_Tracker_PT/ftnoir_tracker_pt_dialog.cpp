@@ -32,6 +32,14 @@ TrackerDialog::TrackerDialog()
 	ui.res_y_spin->setValue(settings.cam_res_y);
 	ui.fps_spin->setValue(settings.cam_fps);
 	ui.threshold_slider->setValue(settings.threshold);
+
+	ui.chkEnableRoll->setChecked(settings.bEnableRoll);
+	ui.chkEnablePitch->setChecked(settings.bEnablePitch);
+	ui.chkEnableYaw->setChecked(settings.bEnableYaw);
+	ui.chkEnableX->setChecked(settings.bEnableX);
+	ui.chkEnableY->setChecked(settings.bEnableY);
+	ui.chkEnableZ->setChecked(settings.bEnableZ);
+
 	ui.mindiam_spin->setValue(settings.min_point_size);
 	ui.maxdiam_spin->setValue(settings.max_point_size);
 	ui.model_tabs->setCurrentIndex(dialog_settings.active_model_panel);
@@ -62,6 +70,14 @@ TrackerDialog::TrackerDialog()
 	connect( ui.res_y_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_res_y(int)) );
 	connect( ui.fps_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_cam_fps(int)) );
 	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)),   this,SLOT(set_threshold(int)) );
+
+	connect( ui.chkEnableRoll,SIGNAL(toggled(bool)),		 this,SLOT(set_ena_roll(bool)) );
+	connect( ui.chkEnablePitch,SIGNAL(toggled(bool)),		 this,SLOT(set_ena_pitch(bool)) );
+	connect( ui.chkEnableYaw,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_yaw(bool)) );
+	connect( ui.chkEnableX,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_x(bool)) );
+	connect( ui.chkEnableY,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_y(bool)) );
+	connect( ui.chkEnableZ,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_z(bool)) );
+
 	connect( ui.mindiam_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_min_point_size(int)) );
 	connect( ui.maxdiam_spin,SIGNAL(valueChanged(int)),      this,SLOT(set_max_point_size(int)) );
 	connect( ui.model_tabs,SIGNAL(currentChanged(int)),      this,SLOT(set_model(int)) );
@@ -282,7 +298,7 @@ void TrackerDialog::Initialize(QWidget *parent)
 
 void TrackerDialog::registerTracker(ITracker *t)
 {
-	qDebug()<<"TrackerDialog:: Tracker registerd";
+	qDebug()<<"TrackerDialog:: Tracker registered";
 	tracker = static_cast<Tracker*>(t);
 	if (isVisible() && settings_dirty) tracker->apply(settings);
 	ui.tcalib_button->setEnabled(true);
@@ -292,7 +308,7 @@ void TrackerDialog::registerTracker(ITracker *t)
 
 void TrackerDialog::unRegisterTracker()
 {
-	qDebug()<<"TrackerDialog:: Tracker un-registerd";
+	qDebug()<<"TrackerDialog:: Tracker un-registered";
 	tracker = NULL;
 	ui.tcalib_button->setEnabled(false); 
 	ui.center_button->setEnabled(false);

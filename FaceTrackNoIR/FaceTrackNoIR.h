@@ -150,7 +150,6 @@ private:
 		void showKeyboardShortcuts();
 		void showCurveConfiguration();
 
-		// invert checkboxes
 		void setInvertYaw( int invert );
 		void setInvertPitch( int invert );
 		void setInvertRoll( int invert );
@@ -158,7 +157,6 @@ private:
 		void setInvertY( int invert );
 		void setInvertZ( int invert );
 
-		void setUseFilter( int set );
 		void showHeadPose();
 
 		//smoothing slider

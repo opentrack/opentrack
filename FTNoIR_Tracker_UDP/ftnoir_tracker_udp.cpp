@@ -33,15 +33,12 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
 	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
-	////allocate memory for the parameters
-	//parameterValueAsFloat.clear();
-	//parameterRange.clear();
-
-	//// Add the parameters to the list
-	//parameterRange.append(std::pair<float,float>(1000.0f,9999.0f));
-	//parameterValueAsFloat.append(0.0f);
-	//setParameterValue(kPortAddress,5551.0f);
-
+	bEnableRoll = true;
+	bEnablePitch = true;
+	bEnableYaw = true;
+	bEnableX = true;
+	bEnableY = true;
+	bEnableZ = true;
 	portAddress = 5551;
 
 	newHeadPose.x = 0.0f;
@@ -159,12 +156,24 @@ void FTNoIR_Tracker::StopTracker( bool exit )
 
 bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
-	data->x = newHeadPose.x;
-	data->y = newHeadPose.y;
-	data->z = newHeadPose.z;
-	data->yaw = newHeadPose.yaw;
-	data->pitch = newHeadPose.pitch;
-	data->roll = newHeadPose.roll;
+	if (bEnableX) {
+		data->x = newHeadPose.x;
+	}
+	if (bEnableX) {
+		data->y = newHeadPose.y;
+	}
+	if (bEnableX) {
+		data->z = newHeadPose.z;
+	}
+	if (bEnableX) {
+		data->yaw = newHeadPose.yaw;
+	}
+	if (bEnableX) {
+		data->pitch = newHeadPose.pitch;
+	}
+	if (bEnableX) {
+		data->roll = newHeadPose.roll;
+	}
 	return true;
 }
 
@@ -182,6 +191,12 @@ void FTNoIR_Tracker::loadSettings() {
 	qDebug() << "FTNoIR_Tracker::loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "FTNClient" );
+	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
+	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
+	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
+	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
+	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
+	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
 	portAddress = (float) iniFile.value ( "PortNumber", 5550 ).toInt();
 	iniFile.endGroup ();
 }

@@ -44,6 +44,13 @@ protected slots:
 	void set_min_point_size(int val) { settings.min_point_size = val; settings_changed(); }
 	void set_max_point_size(int val) { settings.max_point_size = val; settings_changed(); }
 	void set_threshold(int val)      { settings.threshold = val;      settings_changed(); }
+	void set_ena_roll(bool val)		 { settings.bEnableRoll = val;    settings_changed(); }
+	void set_ena_pitch(bool val)	 { settings.bEnablePitch = val;   settings_changed(); }
+	void set_ena_yaw(bool val)		 { settings.bEnableYaw = val;     settings_changed(); }
+	void set_ena_x(bool val)		 { settings.bEnableX = val;       settings_changed(); }
+	void set_ena_y(bool val)		 { settings.bEnableY = val;       settings_changed(); }
+	void set_ena_z(bool val)		 { settings.bEnableZ = val;       settings_changed(); }
+
 	void set_clip_t_height(int val)  { dialog_settings.clip_ty = val; set_clip(); }
 	void set_clip_t_length(int val)  { dialog_settings.clip_tz = val; set_clip(); }
 	void set_clip_b_height(int val)  { dialog_settings.clip_by = val; set_clip(); }
