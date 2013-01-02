@@ -40,7 +40,14 @@ void TrackerSettings::load_ini()
 	video_widget = iniFile.value("VideoWidget", true).toBool();
 	sleep_time   = iniFile.value("SleepTime", 10).toInt();
 	reset_time   = iniFile.value("ResetTime", 1000).toInt();
-	
+
+	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
+	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
+	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
+	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
+	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
+	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
+
 	iniFile.endGroup();
 }
 
@@ -74,6 +81,13 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue("VideoWidget", video_widget);
 	iniFile.setValue("SleepTime", sleep_time);
 	iniFile.setValue("ResetTime", reset_time);
+
+	iniFile.setValue ( "EnableRoll", bEnableRoll );
+	iniFile.setValue ( "EnablePitch", bEnablePitch );
+	iniFile.setValue ( "EnableYaw", bEnableYaw );
+	iniFile.setValue ( "EnableX", bEnableX );
+	iniFile.setValue ( "EnableY", bEnableY );
+	iniFile.setValue ( "EnableZ", bEnableZ );
 
 	iniFile.endGroup();
 }

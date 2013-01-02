@@ -38,6 +38,12 @@ private:
 	THeadPoseData newHeadPose;								// Structure with new headpose
 
 	float portAddress;										// Port-number
+	bool bEnableRoll;
+	bool bEnablePitch;
+	bool bEnableYaw;
+	bool bEnableX;
+	bool bEnableY;
+	bool bEnableZ;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -66,6 +72,7 @@ private slots:
 	void doOK();
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
+	void settingChanged(int) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************

@@ -23,6 +23,8 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20130101 - WVR: Added "None" to filter-listbox to remove "use advanced filtering".
+		20121209 - WVR: Pre-v170 DLLs will not be added to the Listbox. Initial selection was changed (made case-insensitive).
 		20121014 - WVR: Added second Tracker Source for Arduino solution. The two will be mutually exclusive.
 		20120929 - WVR: Disable button Filter-settings when StartTracker.
 		20120918 - WVR: When AutoStart is TRUE, the program is not directly minimized any more.
@@ -137,10 +139,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
 	connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
-	// button methods connect with methods in this class
-	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
-	connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-
 	// Connect checkboxes
 	connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
 	connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
@@ -149,7 +147,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
 	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
 
-	connect(ui.chkUseEWMA, SIGNAL(stateChanged(int)), this, SLOT(setUseFilter(int)));
+	// button methods connect with methods in this class
+	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
+	connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
 
 	// Connect slider for smoothing
 	connect(ui.slideSmoothing, SIGNAL(valueChanged(int)), this, SLOT(setSmoothing(int)));
@@ -260,11 +260,11 @@ QString FaceTrackNoIR::getCurrentProtocolName()
 QString FaceTrackNoIR::getCurrentFilterName()
 {
 	qDebug() << "getCurrentFilterName says: " << ui.iconcomboFilter->currentIndex();
-	if (ui.iconcomboFilter->currentIndex() < 0) {
-		return QString("");
+	if (ui.iconcomboFilter->currentIndex() <= 0) {
+		return QString("None");
 	}
 	else {
-		return filterFileList.at(ui.iconcomboFilter->currentIndex());
+		return filterFileList.at(ui.iconcomboFilter->currentIndex() - 1 );
 	}
 }
 
@@ -277,6 +277,7 @@ QString FaceTrackNoIR::getCurrentTrackerName()
 		return QString("");
 	}
 	else {
+		qDebug() << "FaceTrackNoIR::getCurrentTrackerName libName = " << trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
 		return trackerFileList.at(ui.iconcomboTrackerSource->currentIndex());
 	}
 }
@@ -403,7 +404,6 @@ void FaceTrackNoIR::save() {
 	iniFile.setValue ( "invertX", ui.chkInvertX->isChecked() );
 	iniFile.setValue ( "invertY", ui.chkInvertY->isChecked() );
 	iniFile.setValue ( "invertZ", ui.chkInvertZ->isChecked() );
-	iniFile.setValue ( "useEWMA", ui.chkUseEWMA->isChecked() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "GameProtocol" );
@@ -495,7 +495,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 8) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 10) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -530,8 +530,6 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertX->setChecked (iniFile.value ( "invertX", 0 ).toBool());
 	ui.chkInvertY->setChecked (iniFile.value ( "invertY", 0 ).toBool());
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
-	ui.chkUseEWMA->setChecked (iniFile.value ( "useEWMA", 1 ).toBool());
-
 	iniFile.endGroup ();
 
 	//
@@ -585,14 +583,15 @@ void FaceTrackNoIR::loadSettings() {
 	}
 	iniFile.endGroup ();
 
-	disconnect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+	//
+	// Find the Index of the DLL and set the selection.
+	//
 	for ( int i = 0; i < protocolFileList.size(); i++) {
-		if (protocolFileList.at(i) == selectedProtocolName) {
+		if (protocolFileList.at(i).compare( selectedProtocolName, Qt::CaseInsensitive ) == 0) {
 			ui.iconcomboProtocol->setCurrentIndex( i );
+			break;
 		}
 	}
-	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
-	protocolSelected( ui.iconcomboProtocol->currentIndex() );
 
 	//
 	// Read the currently selected Tracker from the INI-file.
@@ -623,10 +622,10 @@ void FaceTrackNoIR::loadSettings() {
 	disconnect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	disconnect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	for ( int i = 0; i < trackerFileList.size(); i++) {
-		if (trackerFileList.at(i) == selectedTrackerName) {
+		if (trackerFileList.at(i).compare( selectedTrackerName, Qt::CaseInsensitive ) == 0) {
 			ui.iconcomboTrackerSource->setCurrentIndex( i );
 		}
-		if (trackerFileList.at(i) == secondTrackerName) {
+		if (trackerFileList.at(i).compare( secondTrackerName, Qt::CaseInsensitive ) == 0) {
 			ui.cbxSecondTrackerSource->setCurrentIndex( i + 1 );		// The first value = "None", so add 1
 		}
 	}
@@ -641,13 +640,15 @@ void FaceTrackNoIR::loadSettings() {
 	qDebug() << "createIconGroupBox says: selectedFilterName = " << selectedFilterName;
 	iniFile.endGroup ();
 
-	disconnect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+	//
+	// Find the Index of the DLL and set the selection.
+	//
 	for ( int i = 0; i < filterFileList.size(); i++) {
-		if (filterFileList.at(i) == selectedFilterName) {
-			ui.iconcomboFilter->setCurrentIndex( i );
+		if (filterFileList.at(i).compare( selectedFilterName, Qt::CaseInsensitive ) == 0) {
+			ui.iconcomboFilter->setCurrentIndex( i + 1 );		// The first value = "None", so add 1
+			break;
 		}
 	}
-	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	settingsDirty = false;
 }
@@ -704,8 +705,6 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	tracker->setup();
 	tracker->setSmoothing ( ui.slideSmoothing->value() );
-	tracker->setUseFilter (ui.chkUseEWMA->isChecked() );
-
 	tracker->setInvertYaw (ui.chkInvertYaw->isChecked() );
 	tracker->setInvertPitch (ui.chkInvertPitch->isChecked() );
 	tracker->setInvertRoll (ui.chkInvertRoll->isChecked() );
@@ -885,12 +884,6 @@ void FaceTrackNoIR::setInvertY( int invert ) {
 /** set the invert from the checkbox **/
 void FaceTrackNoIR::setInvertZ( int invert ) {
 	Tracker::setInvertZ ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set Use Filter from the checkbox **/
-void FaceTrackNoIR::setUseFilter( int set ) {
-	Tracker::setUseFilter ( (set != 0)?true:false );
 	settingsDirty = true;
 }
 
@@ -1244,6 +1237,7 @@ importGetFilterDll getFilter;
 IFilterDllPtr pFilterDll;				// Pointer to Filter info instance (in DLL)
 importGetTrackerDll getTracker;
 ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
+QStringList listDLLs;					// List of specific DLLs
 
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
@@ -1258,19 +1252,18 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
     filters.clear();
     filters << "FTNoIR_Protocol_*.dll";
 	protocolFileList.clear();
-	protocolFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+	listDLLs.clear();
+	listDLLs = settingsDir.entryList( filters, QDir::Files, QDir::Name );
 
 	//
 	// Add strings to the Listbox.
 	//
 	disconnect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
 	ui.iconcomboProtocol->clear();
-	for ( int i = 0; i < protocolFileList.size(); i++) {
+	for ( int i = 0; i < listDLLs.size(); i++) {
 
-//		qDebug() << "createIconGroupBox says: ProtocolName = " << protocolFileList.at(i);
-
-		// Show the appropriate Protocol-server Settings
-		QLibrary *protocolLib = new QLibrary(protocolFileList.at(i));
+		// Try to load the DLL and get the Icon and Name
+		QLibrary *protocolLib = new QLibrary(listDLLs.at(i));
 		QString *protocolName = new QString("");
 		QIcon *protocolIcon = new QIcon();
 
@@ -1282,17 +1275,18 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 				pProtocolDll = ptrXyz;
 				pProtocolDll->getFullName( protocolName );
 				pProtocolDll->getIcon( protocolIcon );
-//				qDebug() << "FaceTrackNoIR::showServerControls GetProtocolDialog Function Resolved!";
+
+				//
+				// Add the Icon and the Name to the Listbox and update the fileList
+				//
+				ui.iconcomboProtocol->addItem(*protocolIcon, *protocolName );
+				protocolFileList.append(listDLLs.at(i));
 			}
-			else {
-				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-			}	
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Protocol-DLL not loaded, please check if the DLL is version 1.7 \nand all dependencies are installed. \n(" + listDLLs.at(i) + ")",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
-		ui.iconcomboProtocol->addItem(*protocolIcon, *protocolName );
 	}
 	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
 
@@ -1302,19 +1296,20 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
     filters.clear();
     filters << "FTNoIR_Filter_*.dll";
 	filterFileList.clear();
-	filterFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+	listDLLs.clear();
+	listDLLs = settingsDir.entryList( filters, QDir::Files, QDir::Name );
 
 	//
 	// Add strings to the Listbox.
 	//
 	disconnect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 	ui.iconcomboFilter->clear();
-	for ( int i = 0; i < filterFileList.size(); i++) {
+	ui.iconcomboFilter->addItem("None");
 
-//		qDebug() << "createIconGroupBox says: FilterName = " << filterFileList.at(i);
+	for ( int i = 0; i < listDLLs.size(); i++) {
 
-		// Show the appropriate Protocol-server Settings
-		QLibrary *filterLib = new QLibrary(filterFileList.at(i));
+		// Try to load the DLL and get the Icon and Name
+		QLibrary *filterLib = new QLibrary(listDLLs.at(i));
 		QString *filterName = new QString("");
 		QIcon *filterIcon = new QIcon();
 
@@ -1326,17 +1321,18 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 				pFilterDll = ptrXyz;
 				pFilterDll->getFullName( filterName );
 				pFilterDll->getIcon( filterIcon );
-//				qDebug() << "FaceTrackNoIR::showServerControls GetFilterDialog Function Resolved!";
+
+				//
+				// Add the Icon and the Name to the Listbox and update the fileList
+				//
+				ui.iconcomboFilter->addItem(*filterIcon, *filterName );
+				filterFileList.append(listDLLs.at(i));
 			}
-			else {
-				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-			}	
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Filter-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Filter-DLL not loaded, please check if the DLL is version 1.7 \nand all dependencies are installed. \n(" + listDLLs.at(i) + ")",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
-		ui.iconcomboFilter->addItem(*filterIcon, *filterName );
 	}
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
@@ -1346,7 +1342,8 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
     filters.clear();
 	filters << "FTNoIR_Tracker_*.dll";
 	trackerFileList.clear();
-	trackerFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
+	listDLLs.clear();
+	listDLLs = settingsDir.entryList( filters, QDir::Files, QDir::Name );
 
 	//
 	// Add strings to the Listbox(es).
@@ -1358,12 +1355,10 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 	ui.cbxSecondTrackerSource->clear();
 	ui.cbxSecondTrackerSource->addItem("None");
 
-	for ( int i = 0; i < trackerFileList.size(); i++) {
+	for ( int i = 0; i < listDLLs.size(); i++) {
 
-//		qDebug() << "createIconGroupBox says: TrackerName = " << trackerFileList.at(i);
-
-		// Show the appropriate Protocol-server Settings
-		QLibrary *trackerLib = new QLibrary(trackerFileList.at(i));
+		// Try to load the DLL and get the Icon and Name
+		QLibrary *trackerLib = new QLibrary(listDLLs.at(i));
 		QString *trackerName = new QString("");
 		QIcon *trackerIcon = new QIcon();
 
@@ -1375,18 +1370,19 @@ ITrackerDll *pTrackerDll;				// Pointer to Tracker info instance (in DLL)
 				pTrackerDll = ptrXyz;
 				pTrackerDll->getFullName( trackerName );
 				pTrackerDll->getIcon( trackerIcon );
-//				qDebug() << "FaceTrackNoIR::showServerControls GetTrackerDll Function Resolved!";
+
+				//
+				// Add the Icon and the Name to the Listbox and update the fileList
+				//
+				ui.iconcomboTrackerSource->addItem(*trackerIcon, *trackerName );
+				ui.cbxSecondTrackerSource->addItem(*trackerIcon, *trackerName );
+				trackerFileList.append(listDLLs.at(i));
 			}
-			else {
-				qDebug() << "FaceTrackNoIR::showServerControls Function NOT Resolved!";
-			}	
 		}
 		else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Facetracker-DLL not loaded, please check if the DLL is version 1.7",QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"FaceTrackNoIR Error", "Tracker-DLL not loaded, please check if the DLL is version 1.7 \nand all dependencies are installed. \n(" + listDLLs.at(i) + ")",QMessageBox::Ok,QMessageBox::NoButton);
 		}
 
-		ui.iconcomboTrackerSource->addItem(*trackerIcon, *trackerName );
-		ui.cbxSecondTrackerSource->addItem(*trackerIcon, *trackerName );
 	}
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));

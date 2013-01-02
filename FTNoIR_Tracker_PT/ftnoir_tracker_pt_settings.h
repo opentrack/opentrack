@@ -31,6 +31,13 @@ struct TrackerSettings
 	cv::Vec3f M01;
 	cv::Vec3f M02;
 
+	bool bEnableRoll;
+	bool bEnablePitch;
+	bool bEnableYaw;
+	bool bEnableX;
+	bool bEnableY;
+	bool bEnableZ;
+
 	// head to model translation
 	cv::Vec3f t_MH;
 

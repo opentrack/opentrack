@@ -110,7 +110,6 @@ public:
 
 	void initHeadPoseData(){
 		headPos = 0.0f;
-//		offset_headPos = 0.0f;
 		invert = 0.0f;
 		red = 0.0f;
 		rawList.clear();
@@ -126,14 +125,12 @@ public:
 
 	}
 	float headPos;					// Current position (from faceTracker, radials or meters)
-//	float offset_headPos;			// Offset for centering
 	float invert;					// Invert measured value (= 1.0f or -1.0f)
 	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
 	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
 	int maxItems;					// Maximum number of elements in rawList
 	float prevPos;					// Previous Position
 	float prevRawPos;				// Previous Raw Position
-//	QPainterPath curve;				// Bezier curve to translate input -> output
 
 	FunctionConfig* curvePtr;		// Function to translate input -> output
 	FunctionConfig* curvePtrAlt;
@@ -202,7 +199,6 @@ private:
 
 	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
 
-	static bool useFilter;							// Use EWMA-filtering
 	static bool setZero;							// Set to zero's, when OFF (one-shot)
 	static bool setEngineStop;						// Stop tracker->engine, when OFF
 
@@ -250,7 +246,6 @@ public:
 	static void setInvertY(bool invert) { Y.invert = invert?-1.0f:+1.0f; }
 	static void setInvertZ(bool invert) { Z.invert = invert?-1.0f:+1.0f; }
 
-	static void setUseFilter(bool set) { useFilter = set; }
 	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
 	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 	static IFilterPtr getFilterPtr() { return pFilter; }		// Return the pointer for the active Filter
@@ -270,7 +265,6 @@ public:
 	static float getSmoothFromList ( QList<float> *rawList );
 	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
 	static float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-//	static float getOutputFromCurve ( QPainterPath *curve, float input, float neutralzone, float maxinput );
 
 	// For now, use one slider for all
 	void setSmoothing(int x) { 

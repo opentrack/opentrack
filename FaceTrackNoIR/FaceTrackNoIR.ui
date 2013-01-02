@@ -1221,39 +1221,6 @@ color: rgb(0, 255, 0);</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
                  <item row="0" column="0">
-                  <widget class="QLabel" name="lblSensYaw_5">
-                   <property name="minimumSize">
-                    <size>
-                     <width>95</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>150</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">color:#ccc;
-background:none;</string>
-                   </property>
-                   <property name="text">
-                    <string>Use advanced filtering:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QCheckBox" name="chkUseEWMA">
-                   <property name="styleSheet">
-                    <string notr="true">background:none;</string>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
                   <widget class="QLabel" name="lblSensYaw_4">
                    <property name="minimumSize">
                     <size>
@@ -1276,7 +1243,7 @@ background:none;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item row="0" column="1">
                   <widget class="QLabel" name="label">
                    <property name="styleSheet">
                     <string notr="true">color:#ccc;
@@ -1287,7 +1254,7 @@ background:none;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
+                 <item row="1" column="0">
                   <widget class="QSlider" name="slideSmoothing">
                    <property name="minimumSize">
                     <size>
@@ -1315,7 +1282,7 @@ background:none;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
+                 <item row="1" column="1">
                   <widget class="QSpinBox" name="spinSmoothing">
                    <property name="minimumSize">
                     <size>
@@ -1342,7 +1309,7 @@ background:none;</string>
                <widget class="QWidget" name="gridLayoutWidget_2">
                 <property name="geometry">
                  <rect>
-                  <x>200</x>
+                  <x>190</x>
                   <y>20</y>
                   <width>211</width>
                   <height>81</height>
@@ -2059,7 +2026,7 @@ background:none;</string>
               </spacer>
              </item>
              <item row="1" column="2">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
                 <widget class="QPushButton" name="btnShortcuts">
                  <property name="minimumSize">
@@ -2081,8 +2048,7 @@ background:none;</string>
                   <string>Edit the Keyboard and mouse shortcuts</string>
                  </property>
                  <property name="text">
-                  <string>Short-
-keys</string>
+                  <string>Shortkeys</string>
                  </property>
                  <property name="icon">
                   <iconset resource="FaceTrackNoIR.qrc">
@@ -2131,7 +2097,7 @@ keys</string>
                  </property>
                  <property name="iconSize">
                   <size>
-                   <width>70</width>
+                   <width>120</width>
                    <height>24</height>
                   </size>
                  </property>

@@ -109,7 +109,16 @@ void Tracker::apply(const TrackerSettings& settings)
 	sleep_time = settings.sleep_time;
 	point_tracker.dt_reset = settings.reset_time / 1000.0;
 	draw_frame = settings.video_widget;
+
+	bEnableRoll = settings.bEnableRoll;
+	bEnablePitch = settings.bEnablePitch;
+	bEnableYaw = settings.bEnableYaw;
+	bEnableX = settings.bEnableX;
+	bEnableY = settings.bEnableY;
+	bEnableZ = settings.bEnableZ;
+
 	t_MH = settings.t_MH;
+	qDebug()<<"Tracker::apply ends";
 }
 
 void Tracker::reset()
@@ -189,12 +198,19 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		Matx33f R = X_CH.R * X_CH_0.R.t(); 
 		Vec3f t   = X_CH.t - X_CH_0.t;
 
-		// get translation
-		data->x = t[0] / 10.0;	// convert to cm
-		data->y = t[1] / 10.0;
-		data->z = t[2] / 10.0;
+		// get translation(s)
+		if (bEnableX) {
+			data->x = t[0] / 10.0;	// convert to cm
+		}
 
-		// translate rotatation matrix from opengl (G) to roll-pitch-yaw (R) frame
+		if (bEnableY) {
+			data->y = t[1] / 10.0;
+		}
+		if (bEnableZ) {
+			data->z = t[2] / 10.0;
+		}
+
+		// translate rotation matrix from opengl (G) to roll-pitch-yaw (R) frame
 		// -z -> x, y -> z, x -> -y
 		Matx33f R_RG( 0, 0,-1,
 			         -1, 0, 0,
@@ -208,9 +224,15 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
-		data->yaw   =  rad2deg * alpha;
-		data->pitch = -rad2deg * beta;	// this is what ftnoir expects?
-		data->roll  =  rad2deg * gamma;
+		if (bEnableYaw) {
+			data->yaw   =  rad2deg * alpha;
+		}
+		if (bEnablePitch) {
+			data->pitch = -rad2deg * beta;	// this is what ftnoir expects?
+		}
+		if (bEnableRoll) {
+			data->roll  =  rad2deg * gamma;
+		}
 	}
 	return true;
 }
