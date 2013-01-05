@@ -38,6 +38,7 @@ QWidget()
 	ui.setupUi( this );
 
 	theTracker = NULL;
+	prev_state = -1;
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -107,6 +108,7 @@ void TrackerControls::doOK() {
 
 // override show event
 void TrackerControls::showEvent ( QShowEvent * event ) {
+	prev_state = -1;
 	loadSettings();
 }
 
