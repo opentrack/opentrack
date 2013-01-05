@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2011	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
 * Homepage																		*
@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20130105 - WVR: Set engine state to TERMINATED, when EXIT.
 		20110501 - WVR: Added some command to be handled from FaceTrackNoIR (settings dialog).
 		20110322 - WVR: Somehow the video-widget of faceAPI version 3.2.6. does not
 					    work with FaceTrackNoIR (Qt issue?!). To be able to use 
@@ -421,6 +422,7 @@ void run()
 					THROW_ON_ERROR(smEngineStop(engine_handle));		// Stop tracking
 					stopCommand = TRUE;
 					pMemData->command = 0;								// Reset
+					pMemData->state = SM_API_ENGINE_STATE_TERMINATED;	// One last update, before quitting...
 					break;
 
 				case FT_SM_SET_PAR_FILTER:
