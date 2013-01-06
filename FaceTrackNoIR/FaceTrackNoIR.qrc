@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>UIElements/Tools.png</file>
+        <file>images/Settings16.png</file>
+        <file>images/SettingsOpen16.png</file>
+        <file>UIElements/Donate.png</file>
+        <file>UIElements/Curves.png</file>
+        <file>images/rotation_DOFs.png</file>
+        <file>images/translation_DOFs.png</file>
+        <file>images/330px-6DOF_en.png</file>
+        <file>images/FaceTrackNoIR.ico</file>
+        <file>UIElements/aboutFaceTrackNoIR.png</file>
+    </qresource>
+</RCC>
