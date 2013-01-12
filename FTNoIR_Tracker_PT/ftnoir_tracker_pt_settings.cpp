@@ -25,6 +25,7 @@ void TrackerSettings::load_ini()
 	cam_res_x      = iniFile.value("CameraResX", 640).toInt();
 	cam_res_y      = iniFile.value("CameraResY", 480).toInt();
 	cam_fps        = iniFile.value("CameraFPS", 30).toInt();
+	cam_pitch      = iniFile.value("CameraPitch", 0).toInt();
 	threshold      = iniFile.value("PointExtractThreshold", 128).toInt();
 	min_point_size = iniFile.value("PointExtractMinSize", 2).toInt();
 	max_point_size = iniFile.value("PointExtractMaxSize", 50).toInt();
@@ -37,16 +38,17 @@ void TrackerSettings::load_ini()
 	t_MH[0] = iniFile.value("tMHx", 0).toFloat();
 	t_MH[1] = iniFile.value("tMHy", 0).toFloat();
 	t_MH[2] = iniFile.value("tMHz", 0).toFloat();
+	dyn_pose_res = iniFile.value("DynamicPoseResolution", true).toBool();
 	video_widget = iniFile.value("VideoWidget", true).toBool();
 	sleep_time   = iniFile.value("SleepTime", 10).toInt();
 	reset_time   = iniFile.value("ResetTime", 1000).toInt();
 
-	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
-	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
-	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
-	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
-	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
-	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
+	bEnableRoll = iniFile.value( "EnableRoll", 1 ).toBool();
+	bEnablePitch = iniFile.value( "EnablePitch", 1 ).toBool();
+	bEnableYaw = iniFile.value( "EnableYaw", 1 ).toBool();
+	bEnableX = iniFile.value( "EnableX", 1 ).toBool();
+	bEnableY = iniFile.value( "EnableY", 1 ).toBool();
+	bEnableZ = iniFile.value( "EnableZ", 1 ).toBool();
 
 	iniFile.endGroup();
 }
@@ -62,10 +64,11 @@ void TrackerSettings::save_ini() const
 	iniFile.beginGroup ( "PointTracker" );
 
 	iniFile.setValue("CameraId", cam_index);
-	iniFile.setValue("CameraF",  cam_f);
-	iniFile.setValue("CameraResX",  cam_res_x);
-	iniFile.setValue("CameraResY",  cam_res_y);
-	iniFile.setValue("CameraFPS",  cam_fps);
+	iniFile.setValue("CameraF", cam_f);
+	iniFile.setValue("CameraResX", cam_res_x);
+	iniFile.setValue("CameraResY", cam_res_y);
+	iniFile.setValue("CameraFPS", cam_fps);
+	iniFile.setValue("CameraPitch", cam_pitch);
 	iniFile.setValue("PointExtractThreshold", threshold);
 	iniFile.setValue("PointExtractMinSize", min_point_size);
 	iniFile.setValue("PointExtractMaxSize", max_point_size);
@@ -78,16 +81,17 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue("tMHx", t_MH[0]);
 	iniFile.setValue("tMHy", t_MH[1]);
 	iniFile.setValue("tMHz", t_MH[2]);
+	iniFile.setValue("DynamicPoseResolution", dyn_pose_res);
 	iniFile.setValue("VideoWidget", video_widget);
 	iniFile.setValue("SleepTime", sleep_time);
 	iniFile.setValue("ResetTime", reset_time);
 
-	iniFile.setValue ( "EnableRoll", bEnableRoll );
-	iniFile.setValue ( "EnablePitch", bEnablePitch );
-	iniFile.setValue ( "EnableYaw", bEnableYaw );
-	iniFile.setValue ( "EnableX", bEnableX );
-	iniFile.setValue ( "EnableY", bEnableY );
-	iniFile.setValue ( "EnableZ", bEnableZ );
+	iniFile.setValue( "EnableRoll", bEnableRoll );
+	iniFile.setValue( "EnablePitch", bEnablePitch );
+	iniFile.setValue( "EnableYaw", bEnableYaw );
+	iniFile.setValue( "EnableX", bEnableX );
+	iniFile.setValue( "EnableY", bEnableY );
+	iniFile.setValue( "EnableZ", bEnableZ );
 
 	iniFile.endGroup();
 }

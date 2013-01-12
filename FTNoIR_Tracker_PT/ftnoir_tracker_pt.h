@@ -62,9 +62,14 @@ protected:
 	VICamera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
+	bool tracking_valid;
+
 	cv::Vec3f t_MH;
+	int cam_pitch;
+
 	bool draw_frame;
 	int sleep_time;
+
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;

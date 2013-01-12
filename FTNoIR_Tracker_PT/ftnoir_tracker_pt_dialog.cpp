@@ -24,6 +24,7 @@ TrackerDialog::TrackerDialog()
 
 	// initialize ui values
 	ui.videowidget_check->setChecked(settings.video_widget);
+	ui.dynpose_check->setChecked(settings.dyn_pose_res);
 	ui.sleep_spin->setValue(settings.sleep_time);
 	ui.reset_spin->setValue(settings.reset_time);
 	ui.camindex_spin->setValue(settings.cam_index);
@@ -31,6 +32,7 @@ TrackerDialog::TrackerDialog()
 	ui.res_x_spin->setValue(settings.cam_res_x);
 	ui.res_y_spin->setValue(settings.cam_res_y);
 	ui.fps_spin->setValue(settings.cam_fps);
+	ui.campitch_spin->setValue(settings.cam_pitch);
 	ui.threshold_slider->setValue(settings.threshold);
 
 	ui.chkEnableRoll->setChecked(settings.bEnableRoll);
@@ -62,6 +64,7 @@ TrackerDialog::TrackerDialog()
 
 	// connect Qt signals and slots
 	connect( ui.videowidget_check,SIGNAL(toggled(bool)),     this,SLOT(set_video_widget(bool)) );
+	connect( ui.dynpose_check,SIGNAL(toggled(bool)),         this,SLOT(set_dyn_pose_res(bool)) );
 	connect( ui.sleep_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_sleep_time(int)) );
 	connect( ui.reset_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_reset_time(int)) );
 	connect( ui.camindex_spin,SIGNAL(valueChanged(int)),     this,SLOT(set_cam_index(int)) );	
@@ -69,6 +72,7 @@ TrackerDialog::TrackerDialog()
 	connect( ui.res_x_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_res_x(int)) );
 	connect( ui.res_y_spin,SIGNAL(valueChanged(int)),        this,SLOT(set_cam_res_y(int)) );
 	connect( ui.fps_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_cam_fps(int)) );
+	connect( ui.campitch_spin,SIGNAL(valueChanged(int)),     this,SLOT(set_cam_pitch(int)) );
 	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)),   this,SLOT(set_threshold(int)) );
 
 	connect( ui.chkEnableRoll,SIGNAL(toggled(bool)),		 this,SLOT(set_ena_roll(bool)) );
@@ -259,28 +263,36 @@ void TrackerDialog::doCancel()
 void TrackerDialog::poll_tracker_info()
 {
 	if (tracker)
-	{
+	{	
+		QString to_print;
+
 		// display caminfo
 		CamInfo info;
 		tracker->get_cam_info(&info);
-		ui.caminfo_label->setText(QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS");
+		to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
+		ui.caminfo_label->setText(to_print);
+		ui.caminfo_label_2->setText(to_print);
 
 		// display pointinfo
 		int n_points = tracker->get_n_points();
-		QString to_print = QString::number(n_points);
+		to_print = QString::number(n_points);
 		if (n_points == 3)
 			to_print += " OK!";
 		else
 			to_print += " BAD!";
 		ui.pointinfo_label->setText(to_print);
+		ui.pointinfo_label_2->setText(to_print);
 
 		// update calibration
 		if (trans_calib_running) trans_calib_step();
 	}
 	else
 	{
-		ui.caminfo_label->setText("Tracker offline");
-		ui.pointinfo_label->setText("Tracker offline");
+		QString to_print = "Tracker offline";
+		ui.caminfo_label->setText(to_print);
+		ui.caminfo_label_2->setText(to_print);
+		ui.pointinfo_label->setText(to_print);
+		ui.pointinfo_label_2->setText(to_print);
 	}
 }
 

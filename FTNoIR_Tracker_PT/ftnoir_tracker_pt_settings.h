@@ -21,6 +21,7 @@ struct TrackerSettings
 	int cam_res_x;
 	int cam_res_y;
 	int cam_fps;
+	int cam_pitch;
 
 	// point extraction
 	int threshold;
@@ -30,13 +31,7 @@ struct TrackerSettings
 	// point tracking
 	cv::Vec3f M01;
 	cv::Vec3f M02;
-
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
+	bool dyn_pose_res;
 
 	// head to model translation
 	cv::Vec3f t_MH;
@@ -44,6 +39,13 @@ struct TrackerSettings
 	int sleep_time; // in ms
 	int reset_time; // in ms
 	bool video_widget;
+
+	bool bEnableRoll;
+	bool bEnablePitch;
+	bool bEnableYaw;
+	bool bEnableX;
+	bool bEnableY;
+	bool bEnableZ;
 
 	void load_ini();
 	void save_ini() const;
