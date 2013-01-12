@@ -87,7 +87,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 
 
 // ----------------------------------------------------------------------------
-PointTracker::PointTracker() : init_phase(true), dt_valid(0), dt_reset(1), v_t(0,0,0), v_r(0,0,0)
+PointTracker::PointTracker() : init_phase(true), dt_valid(0), dt_reset(1), v_t(0,0,0), v_r(0,0,0), dynamic_pose_resolution(true)
 {
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
@@ -109,6 +109,8 @@ void PointTracker::reset_velocities()
 
 bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 {
+	if (!dynamic_pose_resolution) init_phase = true;
+
 	dt_valid += dt;
 	// if there was no valid tracking result for too long, do a reset
 	if (dt_valid > dt_reset) 

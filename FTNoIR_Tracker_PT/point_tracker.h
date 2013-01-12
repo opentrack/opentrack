@@ -74,9 +74,11 @@ public:
 
 	// track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
 	// f : (focal length)/(sensor width)
+	// dt : time since last call
 	bool track(const std::vector<cv::Vec2f>& points, float f, float dt);
 	boost::shared_ptr<PointModel> point_model;
 
+	bool dynamic_pose_resolution;
 	float dt_reset;
 
 	FrameTrafo get_pose() const { return X_CM; }

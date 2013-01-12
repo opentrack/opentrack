@@ -20,7 +20,7 @@ using namespace boost;
 
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
-	: frame_count(0), commands(0), video_widget(NULL)
+	: frame_count(0), commands(0), video_widget(NULL), tracking_valid(false)
 {
 	qDebug()<<"Tracker::Tracker";
 	TrackerSettings settings;
@@ -79,7 +79,7 @@ void Tracker::run()
 			if (new_frame && !frame.empty())
 			{
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, draw_frame);
-				point_tracker.track(points, camera.get_info().f, dt);
+				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
 			}
 #ifdef PT_PERF_LOG
@@ -106,9 +106,11 @@ void Tracker::apply(const TrackerSettings& settings)
 	point_extractor.min_size = settings.min_point_size;
 	point_extractor.max_size = settings.max_point_size;
 	point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
+	point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
 	sleep_time = settings.sleep_time;
 	point_tracker.dt_reset = settings.reset_time / 1000.0;
 	draw_frame = settings.video_widget;
+	cam_pitch = settings.cam_pitch;
 
 	bEnableRoll = settings.bEnableRoll;
 	bEnablePitch = settings.bEnablePitch;
@@ -188,8 +190,11 @@ void Tracker::StopTracker(bool exit)
 bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
 	const float rad2deg = 180.0/3.14159265;
+	const float deg2rad = 1.0/rad2deg;
 	{
 		QMutexLocker lock(&mutex);
+
+		if (!tracking_valid) return false;
 
 		FrameTrafo X_CM = point_tracker.get_pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
@@ -202,13 +207,18 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		if (bEnableX) {
 			data->x = t[0] / 10.0;	// convert to cm
 		}
-
 		if (bEnableY) {
 			data->y = t[1] / 10.0;
 		}
 		if (bEnableZ) {
 			data->z = t[2] / 10.0;
 		}
+	
+		// correct for camera pitch
+		Matx33f R_CP( 1, 0, 0,
+			          0,  cos(deg2rad*cam_pitch), sin(deg2rad*cam_pitch),
+					  0, -sin(deg2rad*cam_pitch), cos(deg2rad*cam_pitch));
+		R = R_CP * R * R_CP.t();
 
 		// translate rotation matrix from opengl (G) to roll-pitch-yaw (R) frame
 		// -z -> x, y -> z, x -> -y
@@ -225,13 +235,13 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		gamma = atan2( R(2,1), R(2,2));		
 
 		if (bEnableYaw) {
-			data->yaw   =  rad2deg * alpha;
+			data->yaw   = rad2deg * alpha;
 		}
 		if (bEnablePitch) {
-			data->pitch = -rad2deg * beta;	// this is what ftnoir expects?
+			data->pitch = rad2deg * beta;
 		}
 		if (bEnableRoll) {
-			data->roll  =  rad2deg * gamma;
+			data->roll  = rad2deg * gamma;
 		}
 	}
 	return true;
