@@ -201,7 +201,14 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		FrameTrafo X_CH = X_CM * X_MH;
 
 		Matx33f R = X_CH.R * X_CH_0.R.t(); 
-		Vec3f t   = X_CH.t - X_CH_0.t;
+		Vec3f t   = X_CH.t - X_CH_0.t;		
+		
+		// correct for camera pitch
+		Matx33f R_CP( 1, 0, 0,
+			          0,  cos(deg2rad*cam_pitch), sin(deg2rad*cam_pitch),
+					  0, -sin(deg2rad*cam_pitch), cos(deg2rad*cam_pitch));
+		R = R_CP * R * R_CP.t();
+		t = R_CP * t;
 
 		// get translation(s)
 		if (bEnableX) {
@@ -213,12 +220,6 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		if (bEnableZ) {
 			data->z = t[2] / 10.0;
 		}
-	
-		// correct for camera pitch
-		Matx33f R_CP( 1, 0, 0,
-			          0,  cos(deg2rad*cam_pitch), sin(deg2rad*cam_pitch),
-					  0, -sin(deg2rad*cam_pitch), cos(deg2rad*cam_pitch));
-		R = R_CP * R * R_CP.t();
 
 		// translate rotation matrix from opengl (G) to roll-pitch-yaw (R) frame
 		// -z -> x, y -> z, x -> -y

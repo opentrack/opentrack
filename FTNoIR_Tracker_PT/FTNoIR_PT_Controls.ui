@@ -69,17 +69,17 @@
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="3">
-             <widget class="QCheckBox" name="videowidget_check">
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="dynpose_check">
               <property name="toolTip">
-               <string>Whether to update the content of the VideoWidget</string>
+               <string/>
               </property>
               <property name="text">
-               <string>Show VideoWidget</string>
+               <string>Dynamic Pose Resolution</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
+            <item row="0" column="2">
              <widget class="QLabel" name="label_39">
               <property name="text">
                <string>Sleep time</string>
@@ -89,7 +89,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
                <widget class="QSpinBox" name="sleep_spin">
@@ -113,20 +113,7 @@
               </item>
              </layout>
             </item>
-            <item row="0" column="2">
-             <spacer name="horizontalSpacer_11">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="0">
+            <item row="1" column="2">
              <widget class="QLabel" name="label_43">
               <property name="text">
                <string>Auto-reset time</string>
@@ -136,7 +123,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="1" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
                <widget class="QSpinBox" name="reset_spin">
@@ -157,17 +144,17 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="3">
-             <widget class="QCheckBox" name="dynpose_check">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="videowidget_check">
               <property name="toolTip">
-               <string/>
+               <string>Whether to update the content of the VideoWidget</string>
               </property>
               <property name="text">
-               <string>Dynamic Pose Resolution</string>
+               <string>Show VideoWidget</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="1" column="1">
              <spacer name="horizontalSpacer_7">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -179,6 +166,32 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="reset_button">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>Reset the tracker's internal state</string>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -498,36 +511,6 @@
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <widget class="QPushButton" name="center_button">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Center the tracker</string>
-           </property>
-           <property name="text">
-            <string>Center</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="reset_button">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Reset the tracker's internal state</string>
-           </property>
-           <property name="text">
-            <string>Reset</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
@@ -1654,7 +1637,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.0 beta&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="openExternalLinks">
         <bool>true</bool>
@@ -1715,17 +1698,13 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>sleep_spin</tabstop>
-  <tabstop>videowidget_check</tabstop>
   <tabstop>reset_spin</tabstop>
-  <tabstop>dynpose_check</tabstop>
   <tabstop>chkEnableRoll</tabstop>
   <tabstop>chkEnablePitch</tabstop>
   <tabstop>chkEnableYaw</tabstop>
   <tabstop>chkEnableX</tabstop>
   <tabstop>chkEnableY</tabstop>
   <tabstop>chkEnableZ</tabstop>
-  <tabstop>center_button</tabstop>
-  <tabstop>reset_button</tabstop>
   <tabstop>camindex_spin</tabstop>
   <tabstop>res_x_spin</tabstop>
   <tabstop>res_y_spin</tabstop>
