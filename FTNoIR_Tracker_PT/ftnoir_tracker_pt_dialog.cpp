@@ -105,7 +105,7 @@ TrackerDialog::TrackerDialog()
 	connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
 	connect(ui.reset_button, SIGNAL(clicked()),  this, SLOT(doReset()));
-	connect(ui.center_button, SIGNAL(clicked()), this, SLOT(doCenter()));
+	//connect(ui.center_button, SIGNAL(clicked()), this, SLOT(doCenter()));
 
 	connect(ui.ok_button, SIGNAL(clicked()),     this, SLOT(doOK()));
 	connect(ui.cancel_button, SIGNAL(clicked()), this, SLOT(doCancel()));
@@ -314,7 +314,7 @@ void TrackerDialog::registerTracker(ITracker *t)
 	tracker = static_cast<Tracker*>(t);
 	if (isVisible() && settings_dirty) tracker->apply(settings);
 	ui.tcalib_button->setEnabled(true);
-	ui.center_button->setEnabled(true);
+	//ui.center_button->setEnabled(true);
 	ui.reset_button->setEnabled(true);
 }
 
@@ -323,7 +323,7 @@ void TrackerDialog::unRegisterTracker()
 	qDebug()<<"TrackerDialog:: Tracker un-registered";
 	tracker = NULL;
 	ui.tcalib_button->setEnabled(false); 
-	ui.center_button->setEnabled(false);
+	//ui.center_button->setEnabled(false);
 	ui.reset_button->setEnabled(false);
 }
 

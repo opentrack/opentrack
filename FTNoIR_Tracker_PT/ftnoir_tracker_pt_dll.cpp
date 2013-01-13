@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = "PointTracker 1.0 beta";
+	*strToBeFilled = "PointTracker 1.0";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
