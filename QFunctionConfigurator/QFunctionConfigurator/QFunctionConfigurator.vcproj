@@ -341,7 +341,7 @@
 		/>
 		<Global
 			Name="QtVersion Win32"
-			Value="$(DefaultQtVersion)"
+			Value="qt-everywhere-opensource-src-4.6.2"
 		/>
 		<Global
 			Name="RccDir"
