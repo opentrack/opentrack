@@ -62,7 +62,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QFunctionConfigurator.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Release&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\QFunctionConfigurator\QFunctionConfigurator\Release&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\bin&quot;;&quot;$(SolutionDir)\Release&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\QFunctionConfigurator\QFunctionConfigurator\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -373,7 +373,7 @@
 		/>
 		<Global
 			Name="QtVersion Win32"
-			Value="4.6.2"
+			Value="qt-everywhere-opensource-src-4.6.2"
 		/>
 		<Global
 			Name="RccDir"

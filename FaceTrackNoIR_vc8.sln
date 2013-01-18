@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Filter_Accela", "FTN
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_UDP", "FTNoIR_Tracker_UDP\FTNoIR_Tracker_UDP_vc8.vcproj", "{507B92A6-8725-4921-9432-2864EF2B64D9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FTNoIR_Tracker_HT", "FTNoIR_Tracker_HT\FTNoIR_Tracker_HT.vcproj", "{61F2B142-F7DD-4070-8A68-53AD63A5D528}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -66,11 +68,15 @@ Global
 		{507B92A6-8725-4921-9432-2864EF2B64D9}.Debug|Win32.Build.0 = Debug|Win32
 		{507B92A6-8725-4921-9432-2864EF2B64D9}.Release|Win32.ActiveCfg = Release|Win32
 		{507B92A6-8725-4921-9432-2864EF2B64D9}.Release|Win32.Build.0 = Release|Win32
+		{61F2B142-F7DD-4070-8A68-53AD63A5D528}.Debug|Win32.ActiveCfg = Debug|Win32
+		{61F2B142-F7DD-4070-8A68-53AD63A5D528}.Debug|Win32.Build.0 = Debug|Win32
+		{61F2B142-F7DD-4070-8A68-53AD63A5D528}.Release|Win32.ActiveCfg = Release|Win32
+		{61F2B142-F7DD-4070-8A68-53AD63A5D528}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		QtVersion = 4.6.2
+		QtVersion = qt-everywhere-opensource-src-4.6.2
 	EndGlobalSection
 EndGlobal

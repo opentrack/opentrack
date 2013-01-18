@@ -149,7 +149,6 @@ void TrackerControls::loadSettings() {
 // Save the current Settings to the currently 'active' INI-file.
 //
 void TrackerControls::save() {
-
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
