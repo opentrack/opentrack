@@ -138,10 +138,10 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
 {
 	bool ret = false;
 
-	if (WaitForSingleObject(hMutex, INFINITE) == WAIT_OBJECT_0)
+	if (WaitForSingleObject(hMutex, 100) == WAIT_OBJECT_0)
 	{
 		shm->timer = 0;
-		if (WaitForSingleObject(videoWidget->hMutex, INFINITE) == WAIT_OBJECT_0)
+		if (WaitForSingleObject(videoWidget->hMutex, 100) == WAIT_OBJECT_0)
 		{
 			memcpy(&videoWidget->videoFrame, &shm->frame, sizeof(ht_video_t));
 			ReleaseMutex(videoWidget->hMutex);
@@ -182,15 +182,22 @@ VideoWidget::~VideoWidget()
 
 void VideoWidget::paintEvent(QPaintEvent *e)
 {
-	if (WaitForSingleObject(hMutex, INFINITE) == WAIT_OBJECT_0)
+	uchar* data = NULL;
+	if (WaitForSingleObject(hMutex, 100) == WAIT_OBJECT_0)
 	{
 		if (videoFrame.width > 0)
 		{
-			QImage image((uchar*) videoFrame.frame, videoFrame.width, videoFrame.height, QImage::Format_RGB888);
-			QPainter painter(this);
-			painter.drawPixmap(e->rect(), QPixmap::fromImage(image.rgbSwapped()).scaled(WIDGET_WIDTH, WIDGET_HEIGHT, Qt::AspectRatioMode::KeepAspectRatioByExpanding), e->rect());
+			data = new uchar[videoFrame.width * videoFrame.height * 3];
+			memcpy(data, videoFrame.frame, videoFrame.width * videoFrame.height * 3);
 		}
 		ReleaseMutex(hMutex);
+	}
+	if (data)
+	{
+		QImage image((uchar*) data, videoFrame.width, videoFrame.height, QImage::Format_RGB888);
+		QPainter painter(this);
+		painter.drawPixmap(e->rect(), QPixmap::fromImage(image.rgbSwapped()).scaled(WIDGET_WIDTH, WIDGET_HEIGHT, Qt::AspectRatioMode::KeepAspectRatioByExpanding), e->rect());
+		delete[] data;
 	}
 }
 
