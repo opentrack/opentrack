@@ -18,7 +18,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
 	iniFile.beginGroup( "HT-Tracker" );
-	config->classification_delay = 1000;
+	config->classification_delay = 4000;
 	config->field_of_view = iniFile.value("fov", 69).toFloat();
 	config->pyrlk_pyramids = 3;
 	config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
@@ -141,7 +141,7 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
 	if (WaitForSingleObject(hMutex, 100) == WAIT_OBJECT_0)
 	{
 		shm->timer = 0;
-		if (WaitForSingleObject(videoWidget->hMutex, 100) == WAIT_OBJECT_0)
+		if (WaitForSingleObject(videoWidget->hMutex, 10) == WAIT_OBJECT_0)
 		{
 			memcpy(&videoWidget->videoFrame, &shm->frame, sizeof(ht_video_t));
 			ReleaseMutex(videoWidget->hMutex);
@@ -183,7 +183,7 @@ VideoWidget::~VideoWidget()
 void VideoWidget::paintEvent(QPaintEvent *e)
 {
 	uchar* data = NULL;
-	if (WaitForSingleObject(hMutex, 100) == WAIT_OBJECT_0)
+	if (WaitForSingleObject(hMutex, 10) == WAIT_OBJECT_0)
 	{
 		if (videoFrame.width > 0)
 		{
