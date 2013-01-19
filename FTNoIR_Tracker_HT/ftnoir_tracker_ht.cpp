@@ -23,20 +23,20 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->pyrlk_pyramids = 3;
 	config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
 	config->max_keypoints = 250;
-	config->keypoint_quality = 31;
-	config->keypoint_distance = 3.9;
-	config->keypoint_3distance = 12;
+	config->keypoint_quality = 12;
+	config->keypoint_distance = 2.1;
+	config->keypoint_3distance = 5;
 	config->force_width = 640;
 	config->force_height = 480;
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
-	config->ransac_max_reprojection_error = 7;
-	config->ransac_max_inlier_error = 7;
-	config->ransac_max_mean_error = 5;
-	config->ransac_abs_max_mean_error = 7;
+	config->ransac_max_reprojection_error = 3.5;
+	config->ransac_max_inlier_error = 3.5;
+	config->ransac_max_mean_error = 3;
+	config->ransac_abs_max_mean_error = 5;
 	config->debug = 0;
-	config->ransac_min_features = 0.90;
+	config->ransac_min_features = 0.88;
 	if (tracker)
 	{
 		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
