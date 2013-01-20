@@ -24,19 +24,19 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
 	config->max_keypoints = 250;
 	config->keypoint_quality = 12;
-	config->keypoint_distance = 2.1;
+	config->keypoint_distance = 2.1f;
 	config->keypoint_3distance = 5;
 	config->force_width = 640;
 	config->force_height = 480;
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
-	config->ransac_max_reprojection_error = 2.8;
-	config->ransac_max_inlier_error = 2.8;
-	config->ransac_max_mean_error = 2.3;
-	config->ransac_abs_max_mean_error = 3.5;
+	config->ransac_max_reprojection_error = 2.8f;
+	config->ransac_max_inlier_error = 2.8f;
+	config->ransac_max_mean_error = 2.3f;
+	config->ransac_abs_max_mean_error = 3.5f;
 	config->debug = 0;
-	config->ransac_min_features = 0.9;
+	config->ransac_min_features = 0.9f;
 	if (tracker)
 	{
 		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
@@ -112,12 +112,12 @@ void Tracker::StartTracker(HWND parent)
 		shm->timer = 0;
 		switch (subprocess.state())
 		{
-		case QProcess::ProcessState::Running:
-		case QProcess::ProcessState::Starting:
+		case QProcess::Running:
+		case QProcess::Starting:
 			subprocess.kill();
 		}
-		subprocess.setWorkingDirectory("tracker-ht");
-		subprocess.start("tracker-ht/headtracker-ftnoir.exe");
+		subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
+		subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir.exe");
 	}
 }
 
@@ -219,7 +219,7 @@ void TrackerDll::getDescription(QString *strToBeFilled)
 
 void TrackerDll::getIcon(QIcon *icon)
 {
-	*icon = QIcon();
+	*icon = QIcon(":/images/HT.ico");
 }
 
 
@@ -309,12 +309,12 @@ void TrackerControls::loadSettings()
 		break;
 	}
 	ui.cameraFPS->setCurrentIndex(fps);
-	ui.rx->setCheckState(iniFile.value("enable-rx", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-	ui.ry->setCheckState(iniFile.value("enable-ry", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-	ui.rz->setCheckState(iniFile.value("enable-rz", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+	ui.rx->setCheckState(iniFile.value("enable-rx", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.ry->setCheckState(iniFile.value("enable-ry", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.rz->setCheckState(iniFile.value("enable-rz", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	iniFile.endGroup();
 	settingsDirty = false;
 }
