@@ -24,16 +24,16 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
 	config->max_keypoints = 250;
 	config->keypoint_quality = 12;
-	config->keypoint_distance = 2.1f;
-	config->keypoint_3distance = 5;
+	config->keypoint_distance = 2.3f;
+	config->keypoint_3distance = 6;
 	config->force_width = 640;
 	config->force_height = 480;
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
-	config->ransac_max_reprojection_error = 2.8f;
-	config->ransac_max_inlier_error = 2.8f;
-	config->ransac_max_mean_error = 2.3f;
+	config->ransac_max_reprojection_error = 3.5f;
+	config->ransac_max_inlier_error = 3.5f;
+	config->ransac_max_mean_error = 2.6f;
 	config->ransac_abs_max_mean_error = 3.5f;
 	config->debug = 0;
 	config->ransac_min_features = 0.9f;
@@ -196,7 +196,7 @@ void VideoWidget::paintEvent(QPaintEvent *e)
 	{
 		QImage image((uchar*) data, videoFrame.width, videoFrame.height, QImage::Format_RGB888);
 		QPainter painter(this);
-		painter.drawPixmap(e->rect(), QPixmap::fromImage(image.rgbSwapped()).scaled(WIDGET_WIDTH, WIDGET_HEIGHT, Qt::AspectRatioMode::KeepAspectRatioByExpanding), e->rect());
+		painter.drawPixmap(e->rect(), QPixmap::fromImage(image.rgbSwapped()).scaled(WIDGET_WIDTH, WIDGET_HEIGHT, Qt::KeepAspectRatioByExpanding), e->rect());
 		delete[] data;
 	}
 }
@@ -290,7 +290,7 @@ void TrackerControls::loadSettings()
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 	iniFile.beginGroup( "HT-Tracker" );
 	ui.cameraIndex->setValue(iniFile.value("camera-index", -1).toInt());
-	ui.cameraFOV->setValue(iniFile.value("fov", 69).toInt());
+	ui.cameraFOV->setValue(iniFile.value("fov", 69).toFloat());
 	int fps;
 	switch (iniFile.value("fps", 0).toInt())
 	{
