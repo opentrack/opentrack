@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>378</width>
+    <width>333</width>
     <height>127</height>
    </rect>
   </property>
@@ -35,13 +35,13 @@
     </rect>
    </property>
    <property name="text">
-    <string>Vertical camera field of view</string>
+    <string>Horizontal field of view</string>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="cameraFOV">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>10</y>
      <width>91</width>
      <height>22</height>
@@ -76,7 +76,7 @@
   <widget class="QComboBox" name="cameraFPS">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>40</y>
      <width>81</width>
      <height>22</height>
@@ -119,7 +119,7 @@
   <widget class="QSpinBox" name="cameraIndex">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>130</x>
      <y>70</y>
      <width>42</width>
      <height>22</height>
@@ -141,7 +141,7 @@
   <widget class="QPushButton" name="buttonOK">
    <property name="geometry">
     <rect>
-     <x>220</x>
+     <x>170</x>
      <y>100</y>
      <width>75</width>
      <height>23</height>
@@ -154,7 +154,7 @@
   <widget class="QPushButton" name="buttonCancel">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>250</x>
      <y>100</y>
      <width>75</width>
      <height>23</height>
@@ -167,7 +167,7 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>220</x>
      <y>10</y>
      <width>101</width>
      <height>81</height>
