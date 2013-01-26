@@ -11,6 +11,57 @@ static TCHAR mutexName[] = TEXT(HT_MUTEX_NAME);
 #define WIDGET_WIDTH 250
 #define WIDGET_HEIGHT 170
 
+// delicious copypasta
+static QList<QString> get_camera_names(void) {
+	QList<QString> ret;
+	// Create the System Device Enumerator.
+	HRESULT hr;
+	ICreateDevEnum *pSysDevEnum = NULL;
+	hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
+	if (FAILED(hr))
+	{
+		return ret;
+	}
+	// Obtain a class enumerator for the video compressor category.
+	IEnumMoniker *pEnumCat = NULL;
+	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
+
+	if (hr == S_OK) {
+		// Enumerate the monikers.
+		IMoniker *pMoniker = NULL;
+		ULONG cFetched;
+		while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) {
+			IPropertyBag *pPropBag;
+			hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
+			if (SUCCEEDED(hr))	{
+				// To retrieve the filter's friendly name, do the following:
+				VARIANT varName;
+				VariantInit(&varName);
+				hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+				if (SUCCEEDED(hr))
+				{
+					// Display the name in your UI somehow.
+					QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
+					ret.append(str);
+				}
+				VariantClear(&varName);
+
+				////// To create an instance of the filter, do the following:
+				////IBaseFilter *pFilter;
+				////hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter,
+				////	(void**)&pFilter);
+				// Now add the filter to the graph. 
+				//Remember to release pFilter later.
+				pPropBag->Release();
+			}
+			pMoniker->Release();
+		}
+		pEnumCat->Release();
+	}
+	pSysDevEnum->Release();
+	return ret;
+}
+
 static void load_settings(ht_config_t* config, Tracker* tracker)
 {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
@@ -256,7 +307,7 @@ TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
 	loadSettings();
-	connect(ui.cameraIndex, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
 	connect(ui.rx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
@@ -285,11 +336,15 @@ void TrackerControls::Initialize(QWidget* parent)
 
 void TrackerControls::loadSettings()
 {
+	ui.cameraName->clear();
+	QList<QString> names = get_camera_names();
+	names.prepend("Any available");
+	ui.cameraName->addItems(names);
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 	iniFile.beginGroup( "HT-Tracker" );
-	ui.cameraIndex->setValue(iniFile.value("camera-index", -1).toInt());
+	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
 	ui.cameraFOV->setValue(iniFile.value("fov", 69).toFloat());
 	int fps;
 	switch (iniFile.value("fps", 0).toInt())
@@ -345,7 +400,7 @@ void TrackerControls::save()
 		break;
 	}
 	iniFile.setValue("fps", fps);
-	iniFile.setValue("camera-index", ui.cameraIndex->value());
+	iniFile.setValue("camera-index", ui.cameraName->currentIndex() - 1);
 	iniFile.setValue("enable-rx", ui.rx->checkState());
 	iniFile.setValue("enable-ry", ui.ry->checkState());
 	iniFile.setValue("enable-rz", ui.rz->checkState());

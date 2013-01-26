@@ -38,3 +38,6 @@
 #include <QTimer>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QList>
+#include <QString>
+#include <dshow.h>
