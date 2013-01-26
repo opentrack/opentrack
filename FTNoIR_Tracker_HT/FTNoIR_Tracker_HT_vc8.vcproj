@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="FTNoIR_Tracker_HT"
 	ProjectGUID="{61F2B142-F7DD-4070-8A68-53AD63A5D528}"
 	RootNamespace="FTNoIR_Tracker_HT"
@@ -121,7 +121,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\.GeneratedFiles&quot;"
+				AdditionalIncludeDirectories="&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\.GeneratedFiles;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FTNOIR_TRACKER_HT_EXPORTS;QT_CORE_LIB;QT_GUI_LIB;FTNOIR_TRACKER_BASE_LIB"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="QtCore4.lib QtGui4.lib"
+				AdditionalDependencies="QtCore4.lib QtGui4.lib Strmiids.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\dinput&quot;;&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="true"
@@ -214,7 +214,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing ftnoir_tracker_ht.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.GeneratedFiles$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DWIN32 -DNDEBUG -D_WINDOWS -D_USRDLL -DFTNOIR_TRACKER_HT_EXPORTS -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -D_WINDLL -D_UNICODE -DUNICODE  &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.GeneratedFiles&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\.GeneratedFiles$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DWIN32 -DNDEBUG -D_WINDOWS -D_USRDLL -DFTNOIR_TRACKER_HT_EXPORTS -DQT_CORE_LIB -DQT_GUI_LIB -DFTNOIR_TRACKER_BASE_LIB -D_WINDLL -D_UNICODE -DUNICODE  &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;-I.\.GeneratedFiles&quot; &quot;-IC:\Program Files\Microsoft SDKs\Windows\v6.0A\Include&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\.GeneratedFiles$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
