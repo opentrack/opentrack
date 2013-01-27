@@ -41,6 +41,8 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
+	blnConnectionActive = false;
+	hMainWindow = NULL;
 	loadSettings();
 }
 
@@ -101,6 +103,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
+PDWORD_PTR MsgResult = 0;
 
 #ifdef SEND_ASCII_DATA
 char data[100];
@@ -175,6 +178,13 @@ char data[100];
 				qDebug() << "FGServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
 //				headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
 			}
+
+			if (!blnConnectionActive) {
+				blnConnectionActive = true;
+				if (hMainWindow != NULL) {
+					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
+				}
+			}
 		}
 	}
 }
@@ -197,6 +207,8 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 
 	inSocket = 0;
 	outSocket = 0;
+
+	hMainWindow = handle;
 
 	//
 	// Create UDP-sockets.
