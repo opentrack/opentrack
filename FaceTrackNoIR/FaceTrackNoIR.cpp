@@ -339,7 +339,6 @@ void FaceTrackNoIR::GetCameraNameDX() {
 					QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
 					qDebug() << "GetWDM says: Moniker found:" << str;
 					ui.cameraName->setText(str);
-					return;
 				}
 				VariantClear(&varName);
 
