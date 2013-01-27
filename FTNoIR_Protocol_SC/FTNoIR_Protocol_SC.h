@@ -60,6 +60,7 @@ typedef HRESULT (WINAPI *importSimConnect_AddClientEventToNotificationGroup)(HAN
 typedef HRESULT (WINAPI *importSimConnect_SetNotificationGroupPriority)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, DWORD uPriority);
 
 static const char* SC_CLIENT_FILENAME = "SimConnect.dll";
+static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
 
 enum GROUP_ID
 {
@@ -112,6 +113,7 @@ private:
 	static float prevSCRotZ;
 
 	bool blnSimConnectActive;
+	HANDLE hMainWindow;												// Save the handle to FaceTrackNoIR main-window
 
 	importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;

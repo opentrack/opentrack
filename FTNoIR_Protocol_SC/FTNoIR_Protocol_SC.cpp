@@ -59,6 +59,7 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
 	hSimConnect = 0;
+	hMainWindow = 0;
 }
 
 /** destructor **/
@@ -97,6 +98,7 @@ void FTNoIR_Protocol::loadSettings() {
 // Update Headpose in Game.
 //
 void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+PDWORD_PTR MsgResult = 0;
 
 
 	virtSCRotX = -1.0f * headpose->pitch;					// degrees
@@ -126,6 +128,9 @@ void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData
 			////hr = SimConnect_SetInputGroupState(hSimConnect, INPUT0, SIMCONNECT_STATE_ON);
 
 			blnSimConnectActive = true;
+			if (hMainWindow != NULL) {
+				SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
+			}
 		}
 	}
 	else {
@@ -169,6 +174,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 	HANDLE hctx;
 	ULONG_PTR ulCookie;
 
+	hMainWindow = handle;
 
 	qDebug() << "SCCheckClientDLL says: Starting Function";
 
@@ -368,7 +374,7 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "FSX");
+	sprintf_s(dest, 99, "Microsoft FSX");
 	return;
 }
 
