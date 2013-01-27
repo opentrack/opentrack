@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
 * Homepage																		*
@@ -39,6 +39,8 @@
 #include "Windows.h"
 #include "math.h"
 
+static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
+
 class FTNoIR_Protocol : public IProtocol
 {
 public:
@@ -53,7 +55,11 @@ public:
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
 private:
-//	Tracker *headTracker;									// For upstream messages...
+
+	bool blnConnectionActive;
+	HANDLE hMainWindow;										// Save the handle to FaceTrackNoIR main-window
+
+	//	Tracker *headTracker;								// For upstream messages...
 	TFlightGearData FlightData;
 	QUdpSocket *inSocket;									// Receive from FligthGear
 	QUdpSocket *outSocket;									// Send to FligthGear
