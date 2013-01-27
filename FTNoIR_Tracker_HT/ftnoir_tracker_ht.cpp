@@ -87,7 +87,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->ransac_max_mean_error = 2.6f;
 	config->ransac_abs_max_mean_error = 3.5f;
 	config->debug = 0;
-	config->ransac_min_features = 0.9f;
+	config->ransac_min_features = 0.75f;
 	if (tracker)
 	{
 		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
