@@ -255,7 +255,7 @@ void VideoWidget::paintEvent(QPaintEvent *e)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = "HT 0.5";
+	*strToBeFilled = "HT 0.6";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
