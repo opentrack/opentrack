@@ -77,8 +77,8 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->keypoint_quality = 12;
 	config->keypoint_distance = 2.3f;
 	config->keypoint_3distance = 6;
-	config->force_width = 640;
-	config->force_height = 480;
+	config->force_width = 0;
+	config->force_height = 0;
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
@@ -161,12 +161,6 @@ void Tracker::StartTracker(HWND parent)
 		shm->frame.channels = shm->frame.width = shm->frame.height = 0;
 		shm->pause = shm->terminate = shm->running = false;
 		shm->timer = 0;
-		switch (subprocess.state())
-		{
-		case QProcess::Running:
-		case QProcess::Starting:
-			subprocess.kill();
-		}
 		subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
 		subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir.exe");
 	}
