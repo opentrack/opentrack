@@ -162,7 +162,7 @@ void Tracker::StartTracker(HWND parent)
 		shm->pause = shm->terminate = shm->running = false;
 		shm->timer = 0;
 		subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
-		subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir.exe");
+		subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir.exe" + "\"");
 	}
 }
 
@@ -249,7 +249,7 @@ void VideoWidget::paintEvent(QPaintEvent *e)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = "HT 0.6";
+	*strToBeFilled = "HT 0.7";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
@@ -395,12 +395,12 @@ void TrackerControls::save()
 	}
 	iniFile.setValue("fps", fps);
 	iniFile.setValue("camera-index", ui.cameraName->currentIndex() - 1);
-	iniFile.setValue("enable-rx", ui.rx->checkState());
-	iniFile.setValue("enable-ry", ui.ry->checkState());
-	iniFile.setValue("enable-rz", ui.rz->checkState());
-	iniFile.setValue("enable-tx", ui.tx->checkState());
-	iniFile.setValue("enable-ty", ui.ty->checkState());
-	iniFile.setValue("enable-tz", ui.tz->checkState());
+	iniFile.setValue("enable-rx", ui.rx->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("enable-ry", ui.ry->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("enable-rz", ui.rz->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("enable-tx", ui.tx->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.endGroup();
 	settingsDirty = false;
 }
