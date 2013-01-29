@@ -1,4 +1,4 @@
-<U+FEFF>Copyright (c) 2012-2013 Stanisław Halik <sthalik@misaki.pl>
+Copyright (c) 2012-2013 Stanisław Halik <sthalik@misaki.pl>
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -31,3 +31,7 @@ Michal Uřičář and Vojtěch Franc. The library is GPL3-licensed.
 
 More info at: http://cmp.felk.cvut.cz/~uricamic/flandmark
 Github repo: https://github.com/uricamic/flandmark
+
+------------------------------------------------------------------------
+
+The projects uses OpenCV, see http://code.opencv.org for more info.
