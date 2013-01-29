@@ -62,6 +62,18 @@ static QList<QString> get_camera_names(void) {
 	return ret;
 }
 
+typedef struct {
+	int width;
+	int height;
+} resolution_tuple;
+
+static resolution_tuple resolution_choices[] = {
+	{ 640, 480 },
+	{ 320, 240 },
+	{ 320, 200 },
+	{ 0, 0 }
+};
+
 static void load_settings(ht_config_t* config, Tracker* tracker)
 {
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
@@ -77,17 +89,23 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->keypoint_quality = 12;
 	config->keypoint_distance = 2.3f;
 	config->keypoint_3distance = 6;
-	config->force_width = 0;
-	config->force_height = 0;
+	//config->force_width = 640;
+	//config->force_height = 480;
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
-	config->ransac_max_reprojection_error = 4.0f;
-	config->ransac_max_inlier_error = 4.0f;
-	config->ransac_max_mean_error = 2.9f;
-	config->ransac_abs_max_mean_error = 4.0f;
+	config->ransac_max_reprojection_error = 5.5f;
+	config->ransac_max_inlier_error = 5.5f;
+	config->ransac_max_mean_error = 4.0f;
+	config->ransac_abs_max_mean_error = 6.0f;
 	config->debug = 0;
 	config->ransac_min_features = 0.75f;
+	int res = iniFile.value("resolution", 0).toInt();
+	if (res < 0 || res >= sizeof(*resolution_choices) / sizeof(resolution_tuple))
+		res = 0;
+	resolution_tuple r = resolution_choices[res];
+	config->force_width = r.width;
+	config->force_height = r.height;
 	if (tracker)
 	{
 		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
@@ -364,6 +382,7 @@ void TrackerControls::loadSettings()
 	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
+	ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -401,6 +420,7 @@ void TrackerControls::save()
 	iniFile.setValue("enable-tx", ui.tx->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
+	iniFile.setValue("resolution", ui.resolution->currentIndex());
 	iniFile.endGroup();
 	settingsDirty = false;
 }
