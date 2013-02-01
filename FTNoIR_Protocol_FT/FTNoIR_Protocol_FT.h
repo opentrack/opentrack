@@ -40,7 +40,9 @@
 #include "Windows.h"
 //#include "math.h"
 
-typedef char *(WINAPI *importProvider)(void);
+//typedef char *(WINAPI *importProvider)(void);
+typedef void (WINAPI *importTIRViewsStart)(void);
+typedef void (WINAPI *importTIRViewsStop)(void);
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -59,6 +61,9 @@ private:
 	bool FTCreateMapping(HANDLE handle);
 	void FTDestroyMapping();
 
+	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+	importTIRViewsStop viewsStop;
+
 	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
 	HANDLE hFTMutex;
@@ -68,9 +73,13 @@ private:
 
 	// Private properties
 	QString ProgramName;
-	QLibrary FTClientLib;
+//	QLibrary FTClientLib;
+	QLibrary FTIRViewsLib;
+	QProcess *dummyTrackIR;
+	int intGameID;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
+	bool getGameData( QString gameID );
 	void loadSettings();
 
 };
@@ -118,9 +127,9 @@ public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); };
 
 	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
 };

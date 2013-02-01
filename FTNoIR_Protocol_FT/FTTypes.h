@@ -4,7 +4,7 @@
 *					It was loosely translated from FTTypes.pas					*
 *					which was created by the FreeTrack-team.					*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Testing and Research)						*
 *																				*
 * Homepage				<http://www.free-track.net>								*
@@ -25,6 +25,10 @@
 * We would like to extend our grattitude to the creators of SweetSpotter,		*
 * which has become the basis of this program: "Great work guys!"				*
 ********************************************************************************/
+/*
+	Modifications (last one on top):
+	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games. The memory-mapping was expanded for this purpose.
+*/
 #pragma once
 #ifndef INCLUDED_FTTYPES_H
 #define INCLUDED_FTTYPES_H
@@ -81,7 +85,10 @@ struct FTMemMap {
 #else
 	HANDLE handle;
 #endif
-    char ProgramName[100];
+    char ProgramName[100];		// The name of the game
+	char GameID[10];			// The international game-ID
+	char FTNID[30];				// The FaceTrackNoIR game-ID
+	char FTNVERSION[10];		// The version of FaceTrackNoIR, in which the game was first supported
 };
 typedef FTMemMap * PFTMemMap;
 

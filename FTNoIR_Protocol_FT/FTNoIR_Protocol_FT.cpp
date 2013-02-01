@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Researching and Testing)					*
 *																				*
 * Homepage																		*
@@ -26,6 +26,7 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games.
 	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
 	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
 					is called from run() of Tracker.cpp
@@ -35,6 +36,7 @@
 					Now it works direcly in shared memory!
 */
 #include "ftnoir_protocol_ft.h"
+#include "csv.h"
 
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
@@ -42,20 +44,48 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	comhandle = 0;
 	loadSettings();
 	ProgramName = "";
+	intGameID = 0;
+
+	dummyTrackIR = 0;
+	viewsStart = 0;
+	viewsStop = 0;
 }
 
 /** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
+
+	qDebug()<< "~FTNoIR_Protocol: Destructor started.";
+
+	//
+	// Stop if started
+	//
+	if (viewsStop != NULL) {
+		qDebug()<< "~FTNoIR_Protocol: Stopping TIRViews.";
+		viewsStop();
+		FTIRViewsLib.unload();
+	}
+
+	//
+	// Kill the dummy TrackIR process.
+	//
+	qDebug() << "~FTNoIR_Protocol() about to kill TrackIR.exe process";
+	try {
+		if (dummyTrackIR) {
+			qDebug() << "FTServer::~FTServer() about to kill TrackIR.exe process";
+//			dummyTrackIR->close();
+			dummyTrackIR->kill();
+		}
+	} 
+	catch (...)
+    {
+		qDebug() << "~FTServer says: some error occurred";
+	}
+
 	//
 	// Destroy the File-mapping
 	//
 	FTDestroyMapping();
-
-	//
-	// Free the DLL's
-	//
-	//////FTClientLib.unload();
 }
 
 /** helper to Auto-destruct **/
@@ -67,6 +97,61 @@ void FTNoIR_Protocol::Release()
 void FTNoIR_Protocol::Initialize()
 {
 	return;
+}
+
+//
+// Read the game-data from CSV
+//
+bool FTNoIR_Protocol::getGameData( QString gameID ){
+QStringList gameLine;
+
+	qDebug() << "getGameData, ID = " << gameID;
+
+	//
+	// Open the supported games list, to get the Name.
+	//
+	QFile file(QCoreApplication::applicationDirPath() + "/Settings/FaceTrackNoIR Supported Games.csv");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+		qDebug()<< "cannot read file!";
+		return false;
+	}
+	CSV csv(&file);
+	gameLine = csv.parseLine();
+	
+	while (gameLine.count() > 2) {
+		qDebug() << "Column 0: " << gameLine.at(0);		// No.
+		qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
+		qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
+		qDebug() << "Column 3: " << gameLine.at(3);		// Supported since version
+		qDebug() << "Column 4: " << gameLine.at(4);		// Verified
+		qDebug() << "Column 5: " << gameLine.at(5);		// By
+		qDebug() << "Column 6: " << gameLine.at(6);		// International ID
+		qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
+		
+		//
+		// If the gameID was found, fill the shared memory
+		//
+		if (gameLine.count() > 6) {
+			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
+				if (pMemData != NULL) {		
+					sprintf_s(pMemData->ProgramName, 99, gameLine.at(1).toAscii());
+					sprintf_s(pMemData->FTNVERSION, 9, gameLine.at(3).toAscii());
+					sprintf_s(pMemData->FTNID, 24, gameLine.at(7).toAscii());
+				}
+				file.close();
+				return true;
+			}
+		}
+
+		gameLine = csv.parseLine();
+	}
+
+	//
+	// If the gameID was NOT found, fill only the name "Unknown game connected"
+	//
+	sprintf_s(pMemData->ProgramName, 99, gameLine.at(1).toAscii());
+	file.close();
+	return true;
 }
 
 //
@@ -151,9 +236,6 @@ PDWORD_PTR MsgResult = 0;
 		pMemData->data.Y3 = 0;
 		pMemData->data.Y4 = 0;
 
-		//qDebug() << "FTServer says: pMemData.DataID =" << pMemData->data.DataID;
-		//qDebug() << "FTServer says: ProgramName =" << pMemData->ProgramName;
-
 		//
 		// Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
 		// If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
@@ -166,6 +248,63 @@ PDWORD_PTR MsgResult = 0;
 			}
 		}
 
+		//
+		// The game-ID was changed?
+		//
+		QString gameID = QString(pMemData->GameID);
+//	QString gameID = QString("2304");
+
+		qDebug() << "sendHeadposeToGame: gameID = " << gameID;
+		if (gameID.length() > 0) {
+			if ( gameID.toInt() != intGameID ) {
+				if (getGameData( gameID ) ) {
+					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
+
+					//
+					// Check if TIRViews or dummy TrackIR.exe is required for this game
+					//
+					QString ftnID = QString(pMemData->FTNID);
+					if (ftnID.length() >= 22) {
+						if (ftnID.at(20) != '0') {
+							FTIRViewsLib.setFileName(QCoreApplication::applicationDirPath() + "/TIRViews.dll");
+							FTIRViewsLib.load();
+
+							viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
+							if (viewsStart == NULL) {
+								qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
+							}
+							else {
+								qDebug() << "FTServer::run() says: TIRViewsStart executed!";
+								viewsStart();
+							}
+
+							//
+							// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
+							//
+							viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
+							if (viewsStop == NULL) {
+								qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
+							}
+						}
+						if (ftnID.at(21) != '0') {
+							QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
+ 							dummyTrackIR = new QProcess();
+							dummyTrackIR->start(program);
+
+							qDebug() << "FTServer::run() says: TrackIR.exe executed!";
+						}
+					}
+				}
+				intGameID = gameID.toInt();
+			}
+		}
+		else {
+			intGameID = 0;
+			pMemData->ProgramName[0] = NULL;
+			pMemData->FTNID[0] = NULL;
+			pMemData->FTNVERSION[0] = NULL;
+		}
+
 		ReleaseMutex(hFTMutex);
 	}
 
@@ -173,60 +312,32 @@ PDWORD_PTR MsgResult = 0;
 }
 
 //
-// Check if the Client DLL exists and load it (to test it), if so.
+// Set the Path variables and load the memory-mapping.
+// Simplified function: No need to check if the DLL's actually exist. The are installed by the installer.
+// If they are absent, something went terribly wrong anyway...
+//
 // Returns 'true' if all seems OK.
+//
 //
 bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
-	QSettings settings("Freetrack", "FreetrackClient");				// Registry settings (in HK_USER)
-	QString aLocation;												// Location of Client DLL
-	QString aFileName;												// File Path and Name
+	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
+	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
+	QString aLocation;															// Location of Client DLL
 
-	importProvider provider;
-	char *pProvider;
-
-	qDebug() << "FTCheckClientDLL says: Starting Function";
+	qDebug() << "checkServerInstallationOK says: Starting Function";
 
 	try {
 
 		//
-		// Load the FreeTrackClient.dll from the current path of FaceTrackNoIR, because there is no
-		// guarantee FreeTrack is also installed.
-		//
-		// Write this path in the registry (under FreeTrack/FreeTrackClient, for the game(s).
+		// Write the path in the registry (for FreeTrack and FreeTrack20), for the game(s).
 		//
 		aLocation =  QCoreApplication::applicationDirPath() + "/";
-		qDebug() << "FTCheckClientDLL says: Location of DLL =" << aLocation;
+		settings.setValue( "Path" , aLocation );
+		settingsTIR.setValue( "Path" , aLocation );
 
-		//
-		// Append a '/' to the Path and then the name of the dll.
-		//
-		aFileName = aLocation;
-		aFileName.append(FT_CLIENT_FILENAME);
-		qDebug() << "FTCheckClientDLL says: Full path of DLL =" << aFileName;
-						
-		if ( QFile::exists( aFileName ) ) {
-			qDebug() << "FTCheckClientDLL says: DLL exists!";
-			//
-			// Write the path to the key in the Registry, so the game(s) can find it too...
-			//
-			settings.setValue( "Path" , aLocation );
 
-			//
-			// Load the DLL and map to the functions in it.
-			//
-			////////FTClientLib.setFileName(aFileName);
-			////////FTClientLib.load();
-			////////provider = (importProvider) FTClientLib.resolve("FTProvider");
-			////////if (provider) {
-			////////	pProvider = provider();
-			////////	qDebug() << "FTCheckClientDLL says: Provider =" << pProvider;
-			////////}
-		}
-		else {
-			QMessageBox::information(0, "FaceTrackNoIR error", QString("Necessary file (FreeTrackClient.dll) was NOT found!\n"));
-			return false;
-		}
+
 	} catch(...) {
 		settings.~QSettings();
 	}
@@ -234,12 +345,14 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 }
 
 //
-// Create a memory-mapping to the TrackIR data.
+// Create a memory-mapping to the FreeTrack data.
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
 bool FTNoIR_Protocol::FTCreateMapping( HANDLE handle )
 {
+bool bFirst = false;
+
 	qDebug() << "FTCreateMapping says: Starting Function";
 
 	//
@@ -249,14 +362,18 @@ bool FTNoIR_Protocol::FTCreateMapping( HANDLE handle )
 	// If one already exists: close it.
 	//
 	hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( TFreeTrackData ) + sizeof( HANDLE ) + 100, 
+//		                           sizeof( TFreeTrackData ) + sizeof( HANDLE ) + 100, 
+		                           sizeof( FTMemMap ), 
 								   (LPCSTR) FT_MM_DATA );
 
 	if ( hFTMemMap != 0 ) {
+		bFirst = true;
 		qDebug() << "FTCreateMapping says: FileMapping Created!" << hFTMemMap;
 	}
 
 	if ( ( hFTMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
+		bFirst = false;
+		qDebug() << "FTCreateMapping says: FileMapping already exists!" << hFTMemMap;
 		CloseHandle( hFTMemMap );
 		hFTMemMap = 0;
 	}
@@ -267,8 +384,13 @@ bool FTNoIR_Protocol::FTCreateMapping( HANDLE handle )
 	hFTMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FT_MM_DATA );
 	if ( ( hFTMemMap != 0 ) ) {
 		qDebug() << "FTCreateMapping says: FileMapping Opened:" << hFTMemMap;
-		pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFreeTrackData) + sizeof(hFTMemMap) + 100);
+		pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_ALL_ACCESS, 0, 0, 
+//					sizeof(TFreeTrackData) + sizeof(hFTMemMap) + 100);
+					sizeof(FTMemMap));
 		if (pMemData != NULL) {
+			if (bFirst) {
+				memset(pMemData, 0, sizeof(FTMemMap));			// Write zero's, if first...
+			}
 			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
 			hMainWindow = handle;
 		}
