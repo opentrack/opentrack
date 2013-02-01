@@ -43,6 +43,7 @@
 #include <QFileDialog>
 
 static const char* FSUIPC_FILENAME = "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll";
+static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
 
 //
 // Define the structures necessary for the FSUIPC_Write calls
@@ -74,6 +75,9 @@ private:
 	QLibrary FSUIPCLib;
 	QString LocationOfDLL;
 	float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+
+	bool blnConnectionActive;
+	HANDLE hMainWindow;										// Save the handle to FaceTrackNoIR main-window
 
 	static int scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();

@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010-2011	Wim Vriend (Developing)								*
+* Copyright (C) 2010-2013	Wim Vriend (Developing)								*
 *							Ron Hendriks (Researching and Testing)				*
 *																				*
 * Homepage																		*
@@ -37,6 +37,9 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
 	ProgramName = "Microsoft FS2004";
+
+	blnConnectionActive = false;
+	hMainWindow = NULL;
 
 	prevPosX = 0.0f;
 	prevPosY = 0.0f;
@@ -118,6 +121,8 @@ float virtRotX;
 float virtRotY;
 float virtRotZ;
 
+PDWORD_PTR MsgResult = 0;
+
 //	qDebug() << "FSUIPCServer::run() says: started!";
 
 	virtRotX = -1.0f * headpose->pitch;				// degrees
@@ -173,6 +178,14 @@ float virtRotZ;
 			if (result == FSUIPC_ERR_SENDMSG) {
 				FSUIPC_Close();							//timeout (1 second) so assume FS closed
 			}
+
+			if (!blnConnectionActive) {
+				blnConnectionActive = true;
+				if (hMainWindow != NULL) {
+					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
+				}
+			}
+
 		}
 	}
 
@@ -191,17 +204,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 {   
 	qDebug() << "checkServerInstallationOK says: Starting Function";
 
-	//
-	// Load the DLL.
-	//
-	//FSUIPCLib.setFileName( LocationOfDLL );
-	//if (FSUIPCLib.load() != true) {
-	//	qDebug() << "checkServerInstallationOK says: Error loading FSUIPC DLL";
-	//	return false;
-	//}
-	//else {
-	//	qDebug() << "checkServerInstallationOK says: FSUIPC DLL loaded.";
-	//}
+	hMainWindow = handle;
 
 	return true;
 }
@@ -211,7 +214,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "FS2002/2004");
+	sprintf_s(dest, 99, "Microsoft FS2002/2004");
 	return;
 }
 
