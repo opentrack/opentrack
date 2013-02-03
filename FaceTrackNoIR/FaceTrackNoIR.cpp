@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20130201 - WVR: Load FreeTrack 2.0 protocol instead of fake TrackIR (which is now obsolete).
 		20130101 - WVR: Added "None" to filter-listbox to remove "use advanced filtering".
 		20121209 - WVR: Pre-v170 DLLs will not be added to the Listbox. Initial selection was changed (made case-insensitive).
 		20121014 - WVR: Added second Tracker Source for Arduino solution. The two will be mutually exclusive.
@@ -494,7 +495,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.7 alpha 10) - " + pathInfo.fileName() );
+    setWindowTitle ( "FaceTrackNoIR (1.7) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -543,6 +544,7 @@ void FaceTrackNoIR::loadSettings() {
 	if (selectedProtocolName.length() == 0) {
 		int index = iniFile.value ( "Selection", 0 ).toInt();
 		switch ( index ) {
+			case TRACKIR:
 			case FREE_TRACK:
 				selectedProtocolName = QString("FTNoIR_Protocol_FT.dll");
 				break;
@@ -557,10 +559,6 @@ void FaceTrackNoIR::loadSettings() {
 
 			case FSUIPC:
 				selectedProtocolName = QString("FTNoIR_Protocol_FSUIPC.dll");
-				break;
-
-			case TRACKIR:
-				selectedProtocolName = QString("FTNoIR_Protocol_FTIR.dll");
 				break;
 
 			case FLIGHTGEAR:
@@ -1920,6 +1918,7 @@ int keyindex;
 	ui.chkCenterShift->setChecked (iniFile.value ( "Shift_Center", 0 ).toBool());
 	ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
 	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
+	ui.chkDisableBeep->setChecked (iniFile.value ( "Disable_Beep", 0 ).toBool());
 
 	// GameZero key
 	ui.cbxGameZeroMouseKey->setCurrentIndex( iniFile.value ( "MouseKey_GameZero", 0 ).toInt() );
@@ -2002,6 +2001,7 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
 	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
 	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
+	iniFile.setValue ( "Disable_Beep", ui.chkDisableBeep->isChecked() );
 
 	iniFile.setValue ( "MouseKey_GameZero", ui.cbxGameZeroMouseKey->currentIndex());
 	iniFile.setValue ( "Keycode_GameZero", keyList.at( ui.cbxGameZeroKey->currentIndex() ) );

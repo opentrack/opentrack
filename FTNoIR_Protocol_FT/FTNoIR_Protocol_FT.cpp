@@ -26,6 +26,7 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20130203 - WVR: Added Tirviews and dummy checkboxes to the Settings dialog. This is necessary for CFS3 etc.
 	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games.
 	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
 	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
@@ -42,6 +43,9 @@
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	comhandle = 0;
+	useTIRViews	= false;
+	useDummyExe	= false;
+
 	loadSettings();
 	ProgramName = "";
 	intGameID = 0;
@@ -49,6 +53,7 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	dummyTrackIR = 0;
 	viewsStart = 0;
 	viewsStop = 0;
+
 }
 
 /** destructor **/
@@ -88,11 +93,11 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	FTDestroyMapping();
 }
 
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
+///** helper to Auto-destruct **/
+//void FTNoIR_Protocol::Release()
+//{
+//    delete this;
+//}
 
 void FTNoIR_Protocol::Initialize()
 {
@@ -113,20 +118,28 @@ QStringList gameLine;
 	QFile file(QCoreApplication::applicationDirPath() + "/Settings/FaceTrackNoIR Supported Games.csv");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
 		qDebug()<< "cannot read file!";
-		return false;
+
+		QString strError("Cannot load file: " + file.fileName());
+		sprintf_s(pMemData->ProgramName, 99, strError.toAscii());
+		file.close();
+
+		//
+		// Return true anyway, because maybe it's V160 compatible.
+		//
+		return true;
 	}
 	CSV csv(&file);
 	gameLine = csv.parseLine();
 	
 	while (gameLine.count() > 2) {
-		qDebug() << "Column 0: " << gameLine.at(0);		// No.
-		qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
-		qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
-		qDebug() << "Column 3: " << gameLine.at(3);		// Supported since version
-		qDebug() << "Column 4: " << gameLine.at(4);		// Verified
-		qDebug() << "Column 5: " << gameLine.at(5);		// By
-		qDebug() << "Column 6: " << gameLine.at(6);		// International ID
-		qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
+		//qDebug() << "Column 0: " << gameLine.at(0);		// No.
+		//qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
+		//qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
+		//qDebug() << "Column 3: " << gameLine.at(3);		// Supported since version
+		//qDebug() << "Column 4: " << gameLine.at(4);		// Verified
+		//qDebug() << "Column 5: " << gameLine.at(5);		// By
+		//qDebug() << "Column 6: " << gameLine.at(6);		// International ID
+		//qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
 		
 		//
 		// If the gameID was found, fill the shared memory
@@ -149,7 +162,8 @@ QStringList gameLine;
 	//
 	// If the gameID was NOT found, fill only the name "Unknown game connected"
 	//
-	sprintf_s(pMemData->ProgramName, 99, gameLine.at(1).toAscii());
+	QString strUnknown("Unknown game connected (ID = " + gameID + ")");
+	sprintf_s(pMemData->ProgramName, 99, strUnknown.toAscii());
 	file.close();
 	return true;
 }
@@ -158,6 +172,18 @@ QStringList gameLine;
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTNoIR_Protocol::loadSettings() {
+	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	//
+	// Use the settings-section from the deprecated fake-TIR protocol, as they are most likely to be found there.
+	//
+	iniFile.beginGroup ( "FTIR" );
+	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
+	useDummyExe	= iniFile.value ( "useDummyExe", 1 ).toBool();
+	iniFile.endGroup ();
 }
 
 //
@@ -254,46 +280,11 @@ PDWORD_PTR MsgResult = 0;
 		QString gameID = QString(pMemData->GameID);
 //	QString gameID = QString("2304");
 
-		qDebug() << "sendHeadposeToGame: gameID = " << gameID;
+//		qDebug() << "sendHeadposeToGame: gameID = " << gameID;
 		if (gameID.length() > 0) {
 			if ( gameID.toInt() != intGameID ) {
 				if (getGameData( gameID ) ) {
 					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-
-					//
-					// Check if TIRViews or dummy TrackIR.exe is required for this game
-					//
-					QString ftnID = QString(pMemData->FTNID);
-					if (ftnID.length() >= 22) {
-						if (ftnID.at(20) != '0') {
-							FTIRViewsLib.setFileName(QCoreApplication::applicationDirPath() + "/TIRViews.dll");
-							FTIRViewsLib.load();
-
-							viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
-							if (viewsStart == NULL) {
-								qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
-							}
-							else {
-								qDebug() << "FTServer::run() says: TIRViewsStart executed!";
-								viewsStart();
-							}
-
-							//
-							// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
-							//
-							viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
-							if (viewsStop == NULL) {
-								qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
-							}
-						}
-						if (ftnID.at(21) != '0') {
-							QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
- 							dummyTrackIR = new QProcess();
-							dummyTrackIR->start(program);
-
-							qDebug() << "FTServer::run() says: TrackIR.exe executed!";
-						}
-					}
 				}
 				intGameID = gameID.toInt();
 			}
@@ -336,6 +327,46 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 		settings.setValue( "Path" , aLocation );
 		settingsTIR.setValue( "Path" , aLocation );
 
+		//
+		// TIRViews must be started first, or the NPClient DLL will never be loaded.
+		//
+		if (useTIRViews) {
+
+			QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
+			if ( QFile::exists( aFileName ) ) {
+
+				FTIRViewsLib.setFileName(aFileName);
+				FTIRViewsLib.load();
+
+				viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
+				if (viewsStart == NULL) {
+					qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
+				}
+				else {
+					qDebug() << "FTServer::run() says: TIRViewsStart executed!";
+					viewsStart();
+				}
+
+				//
+				// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
+				//
+				viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
+				if (viewsStop == NULL) {
+					qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
+				}
+			}
+		}
+
+		//
+		// Check if TIRViews or dummy TrackIR.exe is required for this game
+		//
+		if (useDummyExe) {
+			QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
+			dummyTrackIR = new QProcess();
+			dummyTrackIR->start(program);
+
+			qDebug() << "FTServer::run() says: TrackIR.exe executed!";
+		}
 
 
 	} catch(...) {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
+    <width>687</width>
     <height>438</height>
    </rect>
   </property>
@@ -679,6 +679,19 @@
         <widget class="Line" name="line_12">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="9">
+        <widget class="QCheckBox" name="chkDisableBeep">
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Disable Beep</string>
          </property>
         </widget>
        </item>
