@@ -23,6 +23,7 @@
 *********************************************************************************/
 /*
 	Modifications (last one on top):
+		20130201 - WVR: Remove the Protocol, when stopping the Thread.
 		20121215 - WVR: Fixed crash after message: protocol not installed correctly... by terminating the thread.
 		20120921 - WVR: Fixed centering when no filter is selected.
 		20120917 - WVR: Added Mouse-buttons to ShortKeys.
@@ -102,6 +103,7 @@ TShortKey Tracker::CenterKey;									// ShortKey to Center headposition
 TShortKey Tracker::StartStopKey;								// ShortKey to Start/stop tracking
 TShortKey Tracker::InhibitKey;									// ShortKey to inhibit axis while tracking
 TShortKey Tracker::GameZeroKey;									// ShortKey to Set Game Zero
+bool Tracker::DisableBeep = false;								// Disable beep when center
 //TShortKey Tracker::AxisReverseKey;							// ShortKey to start/stop axis reverse while tracking
 
 int Tracker::CenterMouseKey;									// ShortKey to Center headposition
@@ -276,6 +278,14 @@ Tracker::~Tracker() {
 	if (pSecondTracker) {
 		delete pSecondTracker;
 		pSecondTracker = NULL;
+	}
+
+	//
+	// Remove the Protocol
+	//
+	if (pProtocol) {
+		delete pProtocol;
+		pProtocol = NULL;
 	}
 
 	// Close handles
@@ -642,7 +652,9 @@ bool bTracker2Confid = false;
 			//
 			if ((Tracker::do_center) || ((bInitialCenter1 && bTracker1Confid ) || (bInitialCenter2 && bTracker2Confid)))  {
 				
-				MessageBeep (MB_ICONASTERISK);
+				if (!DisableBeep) {
+					MessageBeep (MB_ICONASTERISK);				// Acknowledge the key-press with a beep.
+				}
 				if (pTracker && bTracker1Confid) {
 					pTracker->notifyCenter();					// Send 'center' to the tracker
 					bInitialCenter1 = false;
@@ -923,9 +935,9 @@ float sum = 0;
 // Load the current Settings from the currently 'active' INI-file.
 //
 void Tracker::loadSettings() {
-int NeutralZone;
-int sensYaw, sensPitch, sensRoll;
-int sensX, sensY, sensZ;
+//int NeutralZone;
+//int sensYaw, sensPitch, sensRoll;
+//int sensX, sensY, sensZ;
 
 	qDebug() << "Tracker::loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -938,15 +950,15 @@ int sensX, sensY, sensZ;
 	//
 	// Read the Tracking settings, to fill the curves.
 	//
-	iniFile.beginGroup ( "Tracking" );
-	NeutralZone = iniFile.value ( "NeutralZone", 5 ).toInt();
-	sensYaw = iniFile.value ( "sensYaw", 100 ).toInt();
-	sensPitch = iniFile.value ( "sensPitch", 100 ).toInt();
-	sensRoll = iniFile.value ( "sensRoll", 100 ).toInt();
-	sensX = iniFile.value ( "sensX", 100 ).toInt();
-	sensY = iniFile.value ( "sensY", 100 ).toInt();
-	sensZ = iniFile.value ( "sensZ", 100 ).toInt();
-	iniFile.endGroup ();
+	//iniFile.beginGroup ( "Tracking" );
+	//NeutralZone = iniFile.value ( "NeutralZone", 5 ).toInt();
+	//sensYaw = iniFile.value ( "sensYaw", 100 ).toInt();
+	//sensPitch = iniFile.value ( "sensPitch", 100 ).toInt();
+	//sensRoll = iniFile.value ( "sensRoll", 100 ).toInt();
+	//sensX = iniFile.value ( "sensX", 100 ).toInt();
+	//sensY = iniFile.value ( "sensY", 100 ).toInt();
+	//sensZ = iniFile.value ( "sensZ", 100 ).toInt();
+	//iniFile.endGroup ();
 
 	//
 	// Read the keyboard shortcuts.
@@ -959,6 +971,7 @@ int sensX, sensY, sensZ;
 	CenterKey.shift = iniFile.value ( "Shift_Center", 0 ).toBool();
 	CenterKey.ctrl = iniFile.value ( "Ctrl_Center", 0 ).toBool();
 	CenterKey.alt = iniFile.value ( "Alt_Center", 0 ).toBool();
+	DisableBeep = iniFile.value ( "Disable_Beep", 0 ).toBool();
 
 	// StartStop key
 	StartStopMouseKey = iniFile.value ( "MouseKey_StartStop", 0 ).toInt();

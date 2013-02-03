@@ -50,7 +50,18 @@ QWidget()
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-//	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
+
+	aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
+	if ( !QFile::exists( aFileName ) ) {
+		ui.chkTIRViews->setChecked( false );
+		ui.chkTIRViews->setEnabled ( false );
+		save();
+	}
+	else {
+		ui.chkTIRViews->setEnabled ( true );
+	}
 
 	theProtocol = NULL;
 
@@ -63,11 +74,6 @@ QWidget()
 //
 FTControls::~FTControls() {
 	qDebug() << "~FTControls() says: started";
-}
-
-void FTControls::Release()
-{
-    delete this;
 }
 
 //
@@ -144,6 +150,11 @@ void FTControls::loadSettings() {
 //	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
 	iniFile.endGroup ();
 
+	iniFile.beginGroup ( "FTIR" );
+	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 1 ).toBool());
+	iniFile.endGroup ();
+
 	settingsDirty = false;
 }
 
@@ -157,7 +168,11 @@ void FTControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FT" );
-//	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+	iniFile.endGroup ();
+
+	iniFile.beginGroup ( "FTIR" );
+	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
+	iniFile.setValue ( "useDummyExe", ui.chkStartDummy->isChecked() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;

@@ -188,6 +188,7 @@ private:
 	static int StartStopMouseKey;					// ShortKey to Start/stop tracking
 	static int InhibitMouseKey;						// ShortKey to disable one or more axis during tracking
 	static int GameZeroMouseKey;					// ShortKey to Set Game Zero
+	static bool DisableBeep;						// Disable Beep when center is pressed
 
 	// Flags to start/stop/reset tracking
 	static bool confid;								// Tracker data is OK

@@ -73,10 +73,11 @@ private:
 
 	// Private properties
 	QString ProgramName;
-//	QLibrary FTClientLib;
 	QLibrary FTIRViewsLib;
 	QProcess *dummyTrackIR;
 	int intGameID;
+	bool useTIRViews;									// Needs to be in the Settings dialog
+	bool useDummyExe;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
 	bool getGameData( QString gameID );
