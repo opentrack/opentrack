@@ -424,6 +424,7 @@ bool bTracker2Confid = false;
 		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
 		{
 			dinkeyboard->Unacquire();			// Unacquire keyboard
+			dinkeyboard->Release();
 			din->Release();						// Release DirectInput
 
 			// Set event
