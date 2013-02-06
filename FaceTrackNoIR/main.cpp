@@ -38,6 +38,10 @@ int main(int argc, char *argv[])
 {
 ////	QApplication a(argc, argv);
 	FaceApp a(argc, argv);
+    QFont font;
+    font.setFamily(font.defaultFamily());
+    font.setPointSize(9);
+    a.setFont(font);
 
 	//
 	// Create the Main Window and DeskTop and Exec!

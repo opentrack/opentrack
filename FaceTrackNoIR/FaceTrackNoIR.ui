@@ -667,10 +667,10 @@ border:none;</string>
            <widget class="QLabel" name="label_7">
             <property name="geometry">
              <rect>
-              <x>118</x>
-              <y>60</y>
-              <width>21</width>
-              <height>16</height>
+              <x>108</x>
+              <y>58</y>
+              <width>31</width>
+              <height>20</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -684,10 +684,10 @@ color:white;</string>
            <widget class="QLabel" name="label_8">
             <property name="geometry">
              <rect>
-              <x>118</x>
-              <y>40</y>
-              <width>22</width>
-              <height>16</height>
+              <x>109</x>
+              <y>38</y>
+              <width>31</width>
+              <height>20</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -701,10 +701,10 @@ border:none;</string>
            <widget class="QLabel" name="label_9">
             <property name="geometry">
              <rect>
-              <x>118</x>
-              <y>20</y>
-              <width>21</width>
-              <height>16</height>
+              <x>108</x>
+              <y>18</y>
+              <width>31</width>
+              <height>20</height>
              </rect>
             </property>
             <property name="styleSheet">
