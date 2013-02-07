@@ -117,11 +117,8 @@ QStringList gameLine;
 	//
 	QFile file(QCoreApplication::applicationDirPath() + "/Settings/FaceTrackNoIR Supported Games.csv");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-		qDebug()<< "cannot read file!";
-
-		QString strError("Cannot load file: " + file.fileName());
+		QString strError( "Cannot load file: FaceTrackNoIR Supported Games.csv" );
 		sprintf_s(pMemData->ProgramName, 99, strError.toAscii());
-		file.close();
 
 		//
 		// Return true anyway, because maybe it's V160 compatible.
@@ -278,7 +275,7 @@ PDWORD_PTR MsgResult = 0;
 		// The game-ID was changed?
 		//
 		QString gameID = QString(pMemData->GameID);
-//	QString gameID = QString("2304");
+	//QString gameID = QString("9999");
 
 //		qDebug() << "sendHeadposeToGame: gameID = " << gameID;
 		if (gameID.length() > 0) {
