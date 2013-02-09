@@ -342,7 +342,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputPosX">
              <property name="geometry">
               <rect>
-               <x>114</x>
+               <x>112</x>
                <y>34</y>
                <width>50</width>
                <height>21</height>
@@ -370,7 +370,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputPosY">
              <property name="geometry">
               <rect>
-               <x>114</x>
+               <x>112</x>
                <y>52</y>
                <width>50</width>
                <height>21</height>
@@ -398,7 +398,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLCDNumber" name="lcdNumOutputPosZ">
              <property name="geometry">
               <rect>
-               <x>114</x>
+               <x>112</x>
                <y>70</y>
                <width>50</width>
                <height>21</height>
@@ -474,7 +474,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLabel" name="lblRotZ">
              <property name="geometry">
               <rect>
-               <x>166</x>
+               <x>164</x>
                <y>74</y>
                <width>20</width>
                <height>16</height>
@@ -490,7 +490,7 @@ Support FaceTrackNoIR!</string>
             <widget class="QLabel" name="lblRotX">
              <property name="geometry">
               <rect>
-               <x>168</x>
+               <x>166</x>
                <y>35</y>
                <width>20</width>
                <height>16</height>
@@ -506,9 +506,9 @@ Support FaceTrackNoIR!</string>
             <widget class="QLabel" name="lblRotY">
              <property name="geometry">
               <rect>
-               <x>166</x>
+               <x>164</x>
                <y>55</y>
-               <width>22</width>
+               <width>25</width>
                <height>16</height>
               </rect>
              </property>

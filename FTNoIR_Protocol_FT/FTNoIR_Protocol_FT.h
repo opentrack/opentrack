@@ -76,6 +76,7 @@ private:
 	QLibrary FTIRViewsLib;
 	QProcess *dummyTrackIR;
 	int intGameID;
+	int intUsedInterface;								// Determine which interface to use (or to hide from the game)
 	bool useTIRViews;									// Needs to be in the Settings dialog
 	bool useDummyExe;
 
@@ -114,9 +115,11 @@ private:
 	FTNoIR_Protocol *theProtocol;
 
 private slots:
+	void selectDLL();
 	void doOK();
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
+	void settingChanged(int) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************

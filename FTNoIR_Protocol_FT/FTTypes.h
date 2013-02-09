@@ -92,6 +92,13 @@ struct FTMemMap {
 };
 typedef FTMemMap * PFTMemMap;
 
-extern bool (*FTGetData) (PFreetrackData data); 
+//extern bool (*FTGetData) (PFreetrackData data); 
+// DLL function signatures
+// These match those given in FTTypes.pas
+// WINAPI is macro for __stdcall defined somewhere in the depths of windows.h
+typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
+typedef char *(WINAPI *importGetDllVersion)(void);
+typedef void (WINAPI *importReportID)(int name);
+typedef char *(WINAPI *importProvider)(void);
 
 #endif//INCLUDED_FTTYPES_H
