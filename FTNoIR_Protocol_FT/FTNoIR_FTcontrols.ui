@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>263</height>
+    <width>645</width>
+    <height>416</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>645</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>FreeTrack 2.0 settings FaceTrackNoIR</string>
@@ -40,8 +46,8 @@
        <widget class="QCheckBox" name="chkTIRViews">
         <property name="geometry">
          <rect>
-          <x>70</x>
-          <y>20</y>
+          <x>80</x>
+          <y>30</y>
           <width>88</width>
           <height>17</height>
          </rect>
@@ -56,27 +62,27 @@
        <widget class="QLabel" name="label_4">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>10</y>
-          <width>301</width>
+          <width>421</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>TIRViews is only required for some older games (like CFS3).</string>
+         <string>TIRViews is only required for some older games (like CFS3). For it to work, TIRViews.dll</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_5">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>30</y>
           <width>421</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>For it to work, TIRViews.dll must be placed in the FaceTrackNoIR program folder.</string>
+         <string>must be placed in the FaceTrackNoIR program folder. If the checkbox is disabled, the</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -85,14 +91,14 @@
        <widget class="QLabel" name="label_6">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>50</y>
-          <width>251</width>
+          <width>411</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>If the checkbox is disabled, the DLL was not found.</string>
+         <string>the DLL was not found. You can get it from NaturalPoint.</string>
         </property>
        </widget>
       </widget>
@@ -111,8 +117,8 @@
        <widget class="QCheckBox" name="chkStartDummy">
         <property name="geometry">
          <rect>
-          <x>13</x>
-          <y>20</y>
+          <x>20</x>
+          <y>30</y>
           <width>145</width>
           <height>17</height>
          </rect>
@@ -127,7 +133,7 @@
        <widget class="QLabel" name="label_3">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>10</y>
           <width>351</width>
           <height>16</height>
@@ -140,7 +146,7 @@
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>30</y>
           <width>261</width>
           <height>16</height>
@@ -156,7 +162,7 @@
        <widget class="QLabel" name="label_7">
         <property name="geometry">
          <rect>
-          <x>180</x>
+          <x>189</x>
           <y>50</y>
           <width>231</width>
           <height>16</height>
@@ -164,6 +170,139 @@
         </property>
         <property name="text">
          <string>Check the checkbox, to overcome this problem.</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Select interface</string>
+       </property>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>189</x>
+          <y>10</y>
+          <width>351</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Some games support both FreeTrack and TrackIR and may get confused,</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>189</x>
+          <y>30</y>
+          <width>261</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>when both interfaces are visible.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>189</x>
+          <y>50</y>
+          <width>381</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Try to disable one interface, if you experience problems.</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="cbxSelectInterface">
+        <property name="geometry">
+         <rect>
+          <x>6</x>
+          <y>30</y>
+          <width>168</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Repair NPClient location</string>
+       </property>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>188</x>
+          <y>10</y>
+          <width>381</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Users who use other software with an NPClient DLL (like TrackIR, FreeTrack or </string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>184</x>
+          <y>30</y>
+          <width>411</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string> GlovePIE) may need to repair the location of the DLL, after running FaceTrackNoIR.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>187</x>
+          <y>50</y>
+          <width>391</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Use this button to locate the desired NPClient DLL.</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="bntLocateNPClient">
+        <property name="geometry">
+         <rect>
+          <x>4</x>
+          <y>30</y>
+          <width>171</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Locate DLL</string>
         </property>
        </widget>
       </widget>

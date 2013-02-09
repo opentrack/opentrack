@@ -32,6 +32,7 @@
 */
 #include "ftnoir_protocol_ft.h"
 #include <QDebug>
+#include <QFileDialog>
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -52,6 +53,12 @@ QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
 	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
+	connect(ui.cbxSelectInterface, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
+	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
+
+	ui.cbxSelectInterface->addItem("Enable both");
+	ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
+	ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
 
 	aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
 	if ( !QFile::exists( aFileName ) ) {
@@ -147,7 +154,7 @@ void FTControls::loadSettings() {
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "FT" );
-//	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
+	ui.cbxSelectInterface->setCurrentIndex( iniFile.value ( "UsedInterface", 0 ).toInt() );
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "FTIR" );
@@ -168,6 +175,7 @@ void FTControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FT" );
+	iniFile.setValue ( "UsedInterface", ui.cbxSelectInterface->currentIndex());
 	iniFile.endGroup ();
 
 	iniFile.beginGroup ( "FTIR" );
@@ -177,6 +185,33 @@ void FTControls::save() {
 
 	settingsDirty = false;
 }
+
+//
+// Select a NPClient.dll file, to repair the Location in the Registry.
+// Several program distribute their own version of this file.
+//
+void FTControls::selectDLL() {
+	QFileDialog::Options options;
+	QFileDialog::FileMode mode;
+
+    options |= QFileDialog::DontUseNativeDialog;
+	mode = QFileDialog::ExistingFile;
+    QString selectedFilter;
+	QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
+
+	//
+	// Write the location of the file in the required Registry-key.
+	//
+	if (! fileName.isEmpty() ) {
+		if (fileName.endsWith("NPClient.dll", Qt::CaseInsensitive) ) {
+			QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");			// Registry settings (in HK_USER)
+			QString aLocation = fileName.left(fileName.length() - 12);							// Location of Client DLL
+
+			settingsTIR.setValue( "Path" , aLocation );
+		}
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol-settings dialog object.

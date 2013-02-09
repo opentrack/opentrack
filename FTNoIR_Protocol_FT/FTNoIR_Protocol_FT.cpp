@@ -26,6 +26,8 @@
 ********************************************************************************/
 /*
 	Modifications (last one on top):
+	20130209 - WVR: Some games support both interfaces and cause trouble. Added ComboBox to fix this (hide one interface 
+					by clearing the appropriate Registry-setting).
 	20130203 - WVR: Added Tirviews and dummy checkboxes to the Settings dialog. This is necessary for CFS3 etc.
 	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games.
 	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
@@ -45,8 +47,13 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	comhandle = 0;
 	useTIRViews	= false;
 	useDummyExe	= false;
+	intUsedInterface = 0;
 
+	//
+	// Load the INI-settings.
+	//
 	loadSettings();
+
 	ProgramName = "";
 	intGameID = 0;
 
@@ -92,12 +99,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	//
 	FTDestroyMapping();
 }
-
-///** helper to Auto-destruct **/
-//void FTNoIR_Protocol::Release()
-//{
-//    delete this;
-//}
 
 void FTNoIR_Protocol::Initialize()
 {
@@ -173,6 +174,10 @@ void FTNoIR_Protocol::loadSettings() {
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+	iniFile.beginGroup ( "FT" );
+	intUsedInterface = iniFile.value ( "UsedInterface", 0 ).toInt();
+	iniFile.endGroup ();
 
 	//
 	// Use the settings-section from the deprecated fake-TIR protocol, as they are most likely to be found there.
@@ -321,8 +326,25 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 		// Write the path in the registry (for FreeTrack and FreeTrack20), for the game(s).
 		//
 		aLocation =  QCoreApplication::applicationDirPath() + "/";
-		settings.setValue( "Path" , aLocation );
-		settingsTIR.setValue( "Path" , aLocation );
+
+		qDebug() << "checkServerInstallationOK says: used interface = " << intUsedInterface;
+		switch (intUsedInterface) {
+			case 0:									// Use both interfaces
+				settings.setValue( "Path" , aLocation );
+				settingsTIR.setValue( "Path" , aLocation );
+				break;
+			case 1:									// Use FreeTrack, disable TrackIR
+				settings.setValue( "Path" , aLocation );
+				settingsTIR.setValue( "Path" , "" );
+				break;
+			case 2:									// Use TrackIR, disable FreeTrack
+				settings.setValue( "Path" , "" );
+				settingsTIR.setValue( "Path" , aLocation );
+				break;
+			default:
+				// should never be reached
+			break;
+		}
 
 		//
 		// TIRViews must be started first, or the NPClient DLL will never be loaded.
