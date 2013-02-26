@@ -120,6 +120,7 @@ QStringList gameLine;
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
 		QString strError( "Cannot load file: FaceTrackNoIR Supported Games.csv" );
 		sprintf_s(pMemData->ProgramName, 99, strError.toAscii());
+		sprintf_s(pMemData->FTNVERSION, 9, "V160");
 
 		//
 		// Return true anyway, because maybe it's V160 compatible.

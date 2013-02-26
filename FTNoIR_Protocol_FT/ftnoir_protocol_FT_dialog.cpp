@@ -51,29 +51,36 @@ QWidget()
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
+	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
+	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.cbxSelectInterface, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
 	ui.cbxSelectInterface->addItem("Enable both");
 	ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
 	ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
 
+	theProtocol = NULL;
+
+	// Load the settings from the current .INI-file
+	loadSettings();
+
+
 	aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
 	if ( !QFile::exists( aFileName ) ) {
 		ui.chkTIRViews->setChecked( false );
 		ui.chkTIRViews->setEnabled ( false );
+
+		//
+		// Best do this save() last, or it will continually reset the settings... :-(
+		//
 		save();
 	}
 	else {
 		ui.chkTIRViews->setEnabled ( true );
 	}
 
-	theProtocol = NULL;
 
-	// Load the settings from the current .INI-file
-	loadSettings();
 }
 
 //

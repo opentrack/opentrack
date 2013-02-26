@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanis³aw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -9,41 +9,43 @@
 #define FTNOIR_TRACKER_HT_H
 
 #include "stdafx.h"
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
-#include "ui_TrackerControls.h"
+#include "ui_trackercontrols.h"
+#include "video_widget.h"
+#include "../compat/compat.h"
+#include <QObject>
+#include <QTimer>
 
-class VideoWidget : public QWidget
+class Tracker : public QObject, public ITracker
 {
-	Q_OBJECT
-public:
-	VideoWidget(QWidget* parent);
-	~VideoWidget();
-	ht_video_t videoFrame;
-	HANDLE hMutex;
-protected:
-	void paintEvent(QPaintEvent* e);
-private:
-	QTimer timer;
-};
-
-class Tracker : public ITracker
-{
+    Q_OBJECT
 public:
 	Tracker();
 	~Tracker();
-	void Initialize(QFrame *videoframe);
-	void StartTracker(HWND parent_window);
-	void StopTracker(bool exit);
-	bool GiveHeadPoseData(THeadPoseData *data);
+    void StartTracker(QFrame* frame);
+    bool GiveHeadPoseData(THeadPoseData *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
 	ht_shm_t* shm;
+    bool NeedsTimeToFinish() {
+        return true;
+    }
+    void WaitForExit() {
+        if (shm) {
+            shm->terminate = true;
+            subprocess.waitForFinished(5000);
+        }
+        subprocess.kill();
+    }
 private:
-	HANDLE hMutex, hMapFile;
-	bool paused;
+    QTimer timer;
+    PortableLockedShm lck_shm;
 	QProcess subprocess;
 	VideoWidget* videoWidget;
 	QHBoxLayout* layout;
+    volatile bool fresh;
+private slots:
+    void paint_widget();
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

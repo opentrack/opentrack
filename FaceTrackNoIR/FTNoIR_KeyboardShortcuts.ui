@@ -686,7 +686,7 @@
         <widget class="QCheckBox" name="chkDisableBeep">
          <property name="maximumSize">
           <size>
-           <width>80</width>
+           <width>85</width>
            <height>16777215</height>
           </size>
          </property>
