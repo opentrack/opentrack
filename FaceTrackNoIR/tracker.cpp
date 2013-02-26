@@ -639,6 +639,7 @@ bool bTracker2Confid = false;
 			}
 			if (pTracker) {
 				bTracker1Confid = pTracker->GiveHeadPoseData(&newpose);
+//		qDebug() << "Tracker::run() says Roll = " << newpose.roll;
 			}
 			else {
 				bTracker1Confid = false;
@@ -706,6 +707,7 @@ bool bTracker2Confid = false;
 				target_camera.pitch = getSmoothFromList( &Pitch.rawList );
 				target_camera.yaw   = getSmoothFromList( &Yaw.rawList );
 				target_camera.roll  = getSmoothFromList( &Roll.rawList );
+//		qDebug() << "Tracker::run() says Roll from Smoothing = " << target_camera.roll;
 
 				// do the centering
 				target_camera = target_camera - offset_camera;
@@ -715,9 +717,11 @@ bool bTracker2Confid = false;
 				//
 				if (pFilter) {
 					pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, Tracker::Pitch.newSample);
+//		qDebug() << "Tracker::run() says Roll in Filter = " << current_camera.roll << ", Roll to output = " << new_camera.roll;
 				}
 				else {
 					new_camera = target_camera;
+//		qDebug() << "Tracker::run() says Roll to output = " << new_camera.roll;
 				}
 				output_camera.x = X.invert * X.curvePtr->getValue(new_camera.x);
 				output_camera.y = Y.invert * Y.curvePtr->getValue(new_camera.y);

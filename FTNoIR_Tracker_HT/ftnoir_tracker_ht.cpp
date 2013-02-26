@@ -1,19 +1,24 @@
 #include "stdafx.h"
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
-#include "UI_TRACKERCONTROLS.h"
-
-static TCHAR shmName[] = TEXT(HT_SHM_NAME);
-static TCHAR mutexName[] = TEXT(HT_MUTEX_NAME);
+#include "ui_trackercontrols.h"
+#include "../facetracknoir/global-settings.h"
 
 #define WIDGET_WIDTH 250
-#define WIDGET_HEIGHT 170
+#define WIDGET_HEIGHT 188
+
+#if defined(_WIN32) || defined(__WIN32)
+#include <dshow.h>
+#else
+#include <unistd.h>
+#endif
 
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
-	QList<QString> ret;
+    QList<QString> ret;
+#if defined(_WIN32) || defined(__WIN32)
 	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;
@@ -59,7 +64,18 @@ static QList<QString> get_camera_names(void) {
 		pEnumCat->Release();
 	}
 	pSysDevEnum->Release();
-	return ret;
+#else
+    for (int i = 0; i < 16; i++) {
+        char buf[128];
+        sprintf(buf, "/dev/video%d", i);
+        if (access(buf, R_OK | W_OK) == 0) {
+            ret.append(buf);
+        } else {
+            break;
+        }
+    }
+#endif
+    return ret;
 }
 
 typedef struct {
@@ -68,6 +84,7 @@ typedef struct {
 } resolution_tuple;
 
 static resolution_tuple resolution_choices[] = {
+    { 0, 0 },
 	{ 640, 480 },
 	{ 320, 240 },
 	{ 320, 200 },
@@ -94,14 +111,14 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->force_fps = iniFile.value("fps", 0).toInt();
 	config->camera_index = iniFile.value("camera-index", -1).toInt();
 	config->ransac_num_iters = 100;
-	config->ransac_max_reprojection_error = 5.5f;
-	config->ransac_max_inlier_error = 5.5f;
-	config->ransac_max_mean_error = 4.0f;
-	config->ransac_abs_max_mean_error = 6.0f;
+    config->ransac_max_reprojection_error = 6.5f;
+    config->ransac_max_inlier_error = 6.5f;
+    config->ransac_max_mean_error = 4.0f;
+    config->ransac_abs_max_mean_error = 7.0f;
 	config->debug = 0;
 	config->ransac_min_features = 0.75f;
-	int res = iniFile.value("resolution", 0).toInt();
-	if (res < 0 || res >= sizeof(*resolution_choices) / sizeof(resolution_tuple))
+    int res = iniFile.value("resolution", 0).toInt();
+    if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
@@ -118,150 +135,93 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	iniFile.endGroup();
 }
 
-Tracker::Tracker()
+Tracker::Tracker() : lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)), fresh(false)
 {
 	videoWidget = NULL;
 	layout = NULL;
 	enableRX = enableRY = enableRZ = enableTX = enableTY = enableTZ = true;
-	hMutex = CreateMutex(NULL, false, mutexName);
-	hMapFile = CreateFileMapping(
-                 INVALID_HANDLE_VALUE,
-                 NULL,
-                 PAGE_READWRITE,
-                 0,
-				 sizeof(ht_shm_t),
-                 shmName);
-	shm = (ht_shm_t*) MapViewOfFile(hMapFile,
-									FILE_MAP_READ | FILE_MAP_WRITE,
-									0,
-									0,
-									sizeof(ht_shm_t));
-	paused = false;
+    shm = (ht_shm_t*) lck_shm.mem;
+    shm->terminate = 0;
 	load_settings(&shm->config, this);
+    shm->result.filled = false;
 }
 
 Tracker::~Tracker()
 {
+    subprocess.kill();
+    if (shm)
+        shm->terminate = true;
 	if (layout)
 		delete layout;
 	if (videoWidget)
 		delete videoWidget;
-	UnmapViewOfFile(shm);
-	CloseHandle(hMapFile);
-	CloseHandle(hMutex);
 }
 
-void Tracker::Initialize(QFrame *videoframe)
+void Tracker::StartTracker(QFrame* videoframe)
 {
-	videoframe->setAttribute(Qt::WA_NativeWindow);
-	videoframe->show();
-	videoWidget = new VideoWidget(videoframe);
-	QHBoxLayout* layout = new QHBoxLayout();
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(videoWidget);
-	if (videoframe->layout())
-		delete videoframe->layout();
-	videoframe->setLayout(layout);
-	videoWidget->resize(WIDGET_WIDTH, WIDGET_HEIGHT);
-	videoWidget->show();
-	this->layout = layout;
+    videoframe->setAttribute(Qt::WA_NativeWindow);
+    videoframe->show();
+    videoWidget = new VideoWidget(videoframe);
+    QHBoxLayout* layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(videoWidget);
+    if (videoframe->layout())
+        delete videoframe->layout();
+    videoframe->setLayout(layout);
+    videoWidget->resize(WIDGET_WIDTH, WIDGET_HEIGHT);
+    videoWidget->show();
+    this->layout = layout;
+    load_settings(&shm->config, this);
+    shm->frame.channels = shm->frame.width = shm->frame.height = 0;
+    shm->pause = shm->terminate = shm->running = false;
+    shm->timer = 0;
+    subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
+#if defined(_WIN32) || defined(__WIN32)
+    subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir" + "\"");
+#else
+    subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");
+#endif
+    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
+    timer.start(15);
 }
 
-void Tracker::StartTracker(HWND parent)
-{
-	if (paused)
-	{
-		shm->pause = false;
-	}
-	else
-	{
-		load_settings(&shm->config, this);
-		shm->frame.channels = shm->frame.width = shm->frame.height = 0;
-		shm->pause = shm->terminate = shm->running = false;
-		shm->timer = 0;
-		subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
-		subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir.exe" + "\"");
-	}
-}
-
-void Tracker::StopTracker(bool exit)
-{
-	if (exit)
-	{
-		shm->terminate = true;
-		subprocess.kill();
-	}
-	else
-	{
-		shm->pause = true;
-	}
+void Tracker::paint_widget() {
+    if (fresh) {
+        fresh = false;
+        videoWidget->update();
+    }
 }
 
 bool Tracker::GiveHeadPoseData(THeadPoseData* data)
 {
 	bool ret = false;
 
-	if (WaitForSingleObject(hMutex, 100) == WAIT_OBJECT_0)
-	{
-		shm->timer = 0;
-		if (WaitForSingleObject(videoWidget->hMutex, 10) == WAIT_OBJECT_0)
-		{
-			memcpy(&videoWidget->videoFrame, &shm->frame, sizeof(ht_video_t));
-			ReleaseMutex(videoWidget->hMutex);
-		}
-		if (shm->result.filled) {
-			if (enableRX)
-				data->yaw = shm->result.rotx * 57.295781;
-			if (enableRY)
-				data->pitch = shm->result.roty * 57.295781;
-			if (enableRZ)
-				data->roll = shm->result.rotz * 57.295781;
-			if (enableTX)
-				data->x = shm->result.tx;
-			if (enableTY)
-				data->y = shm->result.ty;
-			if (enableTZ)
-				data->z = shm->result.tz;
-			ret = true;
-		}
-		ReleaseMutex(hMutex);
-	}
+    lck_shm.lock();
+    shm->timer = 0;
+    if (shm->frame.width > 0)
+    {
+        videoWidget->updateImage(shm->frame.frame, shm->frame.width, shm->frame.height);
+        //memcpy(foo, shm->frame.frame, shm->frame.width * shm->frame.height * 3);
+        fresh = true;
+    }
+    if (shm->result.filled) {
+        if (enableRX)
+            data->yaw = shm->result.rotx;
+        if (enableRY)
+            data->pitch = shm->result.roty;
+        if (enableRZ)
+            data->roll = shm->result.rotz;
+        if (enableTX)
+            data->x = shm->result.tx;
+        if (enableTY)
+            data->y = shm->result.ty;
+        if (enableTZ)
+            data->z = shm->result.tz;
+        ret = true;
+    }
+    lck_shm.unlock();
 
 	return ret;
-}
-
-VideoWidget::VideoWidget(QWidget* parent) : QWidget(parent)
-{
-	hMutex = CreateMutex(NULL, false, NULL);
-	videoFrame.channels = videoFrame.height = videoFrame.width = 0;
-    connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer.start(35);
-}
-
-VideoWidget::~VideoWidget()
-{
-	CloseHandle(hMutex);
-}
-
-void VideoWidget::paintEvent(QPaintEvent *e)
-{
-	uchar* data = NULL;
-	if (WaitForSingleObject(hMutex, 10) == WAIT_OBJECT_0)
-	{
-		if (videoFrame.width > 0)
-		{
-			data = new uchar[videoFrame.width * videoFrame.height * 3];
-			memcpy(data, videoFrame.frame, videoFrame.width * videoFrame.height * 3);
-		}
-		ReleaseMutex(hMutex);
-	}
-	if (data)
-	{
-		QImage image((uchar*) data, videoFrame.width, videoFrame.height, QImage::Format_RGB888);
-		QPainter painter(this);
-		painter.drawPixmap(e->rect(), QPixmap::fromImage(image.rgbSwapped()).scaled(WIDGET_WIDTH, WIDGET_HEIGHT, Qt::KeepAspectRatioByExpanding), e->rect());
-		delete[] data;
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -282,23 +242,23 @@ void TrackerDll::getDescription(QString *strToBeFilled)
 
 void TrackerDll::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/images/HT.ico");
+    *icon = QIcon(":/images/ht.png");
 }
 
 
 //-----------------------------------------------------------------------------
-#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
+//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDllPtr __stdcall GetTrackerDll()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new TrackerDll;
 }
 
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
+//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new Tracker;
+    return (ITracker*) new Tracker;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -308,11 +268,11 @@ FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
 //   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
+//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new TrackerControls;
+    return (ITrackerDialog*) new TrackerControls;
 }
 
 TrackerControls::TrackerControls()
@@ -382,7 +342,7 @@ void TrackerControls::loadSettings()
 	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
+    ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
 	iniFile.endGroup();
 	settingsDirty = false;
 }

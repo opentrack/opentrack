@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="QFunctionConfigurator"
 	ProjectGUID="{2527B683-7EFC-4D51-B25A-843668649C54}"
 	RootNamespace="QFunctionConfigurator"
@@ -341,7 +341,7 @@
 		/>
 		<Global
 			Name="QtVersion Win32"
-			Value="qt-everywhere-opensource-src-4.6.2"
+			Value="$(DefaultQtVersion)"
 		/>
 		<Global
 			Name="RccDir"

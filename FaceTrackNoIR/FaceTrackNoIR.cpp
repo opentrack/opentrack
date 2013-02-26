@@ -946,6 +946,10 @@ THeadPoseData newdata;
 	}
 //	Tracker::doRefreshVideo();
 
+	if (_curve_config) {
+		_curve_config->update();
+	}
+
 }
 
 /** set the smoothing from the slider **/
