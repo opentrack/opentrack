@@ -1,8 +1,0 @@
-[Dd]ebug
-[Rr]elease
-/bin/*
-/bin_dbg/*
-[Gg]enerated[Ff]iles
-*.ncb
-*.suo
-*.user
