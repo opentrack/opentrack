@@ -902,54 +902,59 @@ THeadPoseData newdata;
 	ui.lcdNumOutputRotY->setVisible(true);
 	ui.lcdNumOutputRotZ->setVisible(true);
 
-	//
-	// Get the pose and also display it.
-	// Updating the pose from within the Tracker-class caused crashes...
-	//
-	Tracker::getHeadPose(&newdata);
-	ui.lcdNumX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
-	ui.lcdNumY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
-	ui.lcdNumZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
+	if (!isMinimized()) {
 
-	ui.lcdNumRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
-	ui.lcdNumRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
-	ui.lcdNumRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
+		//
+		// Get the pose and also display it.
+		// Updating the pose from within the Tracker-class caused crashes...
+		//
+		Tracker::getHeadPose(&newdata);
+		ui.lcdNumX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
+		ui.lcdNumY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
+		ui.lcdNumZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
 
-	ui.txtTracking->setVisible(Tracker::getTrackingActive());
-	ui.txtAxisReverse->setVisible(Tracker::getAxisReverse());
+		ui.lcdNumRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
+		ui.lcdNumRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
+		ui.lcdNumRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
 
-	//
-	// Get the output-pose and also display it.
-	//
-	if (_pose_display) {
-		Tracker::getOutputHeadPose(&newdata);
-		_pose_display->rotateBy(newdata.pitch, newdata.yaw, newdata.roll);
+		ui.txtTracking->setVisible(Tracker::getTrackingActive());
+		ui.txtAxisReverse->setVisible(Tracker::getAxisReverse());
 
-		ui.lcdNumOutputPosX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
-		ui.lcdNumOutputPosY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
-		ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
+		//
+		// Get the output-pose and also display it.
+		//
+		if (_pose_display) {
+			Tracker::getOutputHeadPose(&newdata);
+			_pose_display->rotateBy(newdata.pitch, newdata.yaw, newdata.roll);
 
-		ui.lcdNumOutputRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
-		ui.lcdNumOutputRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
-		ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
-	}
+			ui.lcdNumOutputPosX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
+			ui.lcdNumOutputPosY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
+			ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
 
-	//
-	// Update the video-widget.
-	// Requested by Stanislaw
-	//
-	if (tracker) {
-		ITracker * theTracker =	tracker->getTrackerPtr();
-		if (theTracker) {
-			theTracker->refreshVideo();
+			ui.lcdNumOutputRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
+			ui.lcdNumOutputRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
+			ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
+		}
+
+		//
+		// Update the video-widget.
+		// Requested by Stanislaw
+		//
+		if (tracker) {
+			ITracker * theTracker =	tracker->getTrackerPtr();
+			if (theTracker) {
+				theTracker->refreshVideo();
+			}
+		}
+	//	Tracker::doRefreshVideo();
+
+		if (_curve_config) {
+			_curve_config->update();
 		}
 	}
-//	Tracker::doRefreshVideo();
-
-	if (_curve_config) {
-		_curve_config->update();
-	}
-
+	//else {
+	//	qDebug() << "FaceTrackNoIR::showHeadPose status: window = minimized.";
+	//}
 }
 
 /** set the smoothing from the slider **/
