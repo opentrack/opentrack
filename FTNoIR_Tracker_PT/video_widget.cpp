@@ -3,6 +3,8 @@
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
+ *
+ * 20130312, WVR: Add 7 lines to resizeGL after resize_frame. This should lower CPU-load.
  */
 
 #include "video_widget.h"
@@ -29,6 +31,13 @@ void VideoWidget::resizeGL(int w, int h)
 	glLoadIdentity();
 	glOrtho(0, w, 0, h, -1, 1);
 	resize_frame();
+	glDisable(GL_DEPTH_TEST);
+	glBegin(GL_QUADS);
+	glVertex2f(0,0);
+	glVertex2f(1,0);
+	glVertex2f(1,1);
+	glVertex2f(0,1);
+	glEnd(); 
 }
 
 void VideoWidget::paintGL()
