@@ -1,9 +1,9 @@
 #include "tracker_types.h"
 #include "rotation.h"
 
-const double PI = 3.14159265358979323846264;
-const double D2R = PI/180.0;
-const double R2D = 180.0/PI;
+#define PI 3.14159265358979323846264
+#define D2R PI/180.0
+#define R2D 180.0/PI
 
 T6DOF operator-(const T6DOF& A, const T6DOF& B)
 {
