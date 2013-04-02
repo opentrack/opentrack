@@ -37,7 +37,7 @@ int main(void)
 		return 1;
 	}
 	WineSHM* shm_posix = (WineSHM*) lck_posix.mem;
-    FTMemMap* shm_wine = (TFreeTrackData*) lck_wine.mem;
+    FTMemMap* shm_wine = (FTMemMap*) lck_wine.mem;
     TFreeTrackData* data = &shm_wine->data;
 	while (!shm_posix->stop) {
 		(void) Sleep(10);
