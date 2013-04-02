@@ -248,6 +248,10 @@ if(NOT SDK_FACEAPI_ONLY)
 
 # x-plane plugin
     file(GLOB ftnoir-xplane-plugin-c "x-plane-plugin/*.c")
+	
+# freetrack
+
+	file(GLOB ftnoir-freetrack-c "freetrackclient/*.c")
 
     if(SDK_XPLANE)
         # probably librt already included
@@ -350,6 +354,7 @@ endif()
 
         add_library(ftnoir-proto-win32-mouse SHARED ${ftnoir-proto-win32-mouse-c} ${ftnoir-proto-win32-mouse-moc} ${ftnoir-proto-win32-mouse-uih} ${ftnoir-proto-win32-mouse-rcc})
         target_link_libraries(ftnoir-proto-win32-mouse ${MY_QT_LIBS})
+		add_library(freetrackclient SHARED ${ftnoir-freetrack-c})
     endif()
 
     add_library(ftnoir-proto-udp SHARED ${ftnoir-proto-udp-c} ${ftnoir-proto-udp-moc} ${ftnoir-proto-udp-uih} ${ftnoir-proto-udp-rcc})
@@ -455,6 +460,7 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
     if(WIN32)
         install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
+		install(TARGETS freetrackclient DESTINATION .)
     endif()
 
     install(FILES "${CMAKE_SOURCE_DIR}/bin/npclient.dll" "${CMAKE_SOURCE_DIR}/bin/npclient64.dll" DESTINATION .)
