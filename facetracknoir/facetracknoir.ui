@@ -10,8 +10,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>441</height>
+    <width>890</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,14 +22,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>900</width>
-    <height>441</height>
+    <width>890</width>
+    <height>431</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>900</width>
-    <height>441</height>
+    <width>890</width>
+    <height>431</height>
    </size>
   </property>
   <property name="contextMenuPolicy">
@@ -145,7 +145,7 @@ QGroupBox {
    <property name="minimumSize">
     <size>
      <width>890</width>
-     <height>420</height>
+     <height>410</height>
     </size>
    </property>
    <property name="styleSheet">
@@ -158,7 +158,7 @@ QGroupBox {
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>-2</y>
+      <y>0</y>
       <width>671</width>
       <height>431</height>
      </rect>
@@ -876,8 +876,8 @@ background:none;</string>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>300</x>
-       <y>80</y>
+       <x>350</x>
+       <y>71</y>
        <width>251</width>
        <height>121</height>
       </rect>
@@ -889,8 +889,8 @@ background:none;</string>
     <widget class="QGroupBox" name="groupProfile">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>80</y>
+       <x>30</x>
+       <y>71</y>
        <width>271</width>
        <height>120</height>
       </rect>
@@ -996,8 +996,8 @@ background:none;</string>
     <widget class="QLabel" name="lblInvert1_2">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>101</y>
+       <x>530</x>
+       <y>92</y>
        <width>30</width>
        <height>16</height>
       </rect>
@@ -1025,8 +1025,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertRoll">
      <property name="geometry">
       <rect>
-       <x>383</x>
-       <y>167</y>
+       <x>433</x>
+       <y>158</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1041,8 +1041,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensZ">
      <property name="geometry">
       <rect>
-       <x>419</x>
-       <y>167</y>
+       <x>469</x>
+       <y>158</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1073,8 +1073,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertZ">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>167</y>
+       <x>530</x>
+       <y>158</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1089,8 +1089,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensPitch">
      <property name="geometry">
       <rect>
-       <x>321</x>
-       <y>148</y>
+       <x>371</x>
+       <y>139</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1121,8 +1121,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertPitch">
      <property name="geometry">
       <rect>
-       <x>383</x>
-       <y>148</y>
+       <x>433</x>
+       <y>139</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1137,8 +1137,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensY">
      <property name="geometry">
       <rect>
-       <x>419</x>
-       <y>148</y>
+       <x>469</x>
+       <y>139</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1169,8 +1169,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertY">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>148</y>
+       <x>530</x>
+       <y>139</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1185,8 +1185,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensYaw">
      <property name="geometry">
       <rect>
-       <x>321</x>
-       <y>129</y>
+       <x>371</x>
+       <y>120</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1217,8 +1217,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertYaw">
      <property name="geometry">
       <rect>
-       <x>383</x>
-       <y>129</y>
+       <x>433</x>
+       <y>120</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1233,8 +1233,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensX">
      <property name="geometry">
       <rect>
-       <x>419</x>
-       <y>129</y>
+       <x>469</x>
+       <y>120</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1265,8 +1265,8 @@ background:none;</string>
     <widget class="QCheckBox" name="chkInvertX">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>129</y>
+       <x>530</x>
+       <y>120</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1281,8 +1281,8 @@ background:none;</string>
     <widget class="QLabel" name="lblInvert1_3">
      <property name="geometry">
       <rect>
-       <x>383</x>
-       <y>101</y>
+       <x>433</x>
+       <y>92</y>
        <width>30</width>
        <height>16</height>
       </rect>
@@ -1310,8 +1310,8 @@ background:none;</string>
     <widget class="QLabel" name="lblSensRoll">
      <property name="geometry">
       <rect>
-       <x>321</x>
-       <y>167</y>
+       <x>371</x>
+       <y>158</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -1371,7 +1371,10 @@ background:none;</string>
      <enum>QFrame::NoFrame</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Sunken</enum>
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>0</number>
     </property>
     <widget class="QWidget" name="widget4video" native="true">
      <property name="geometry">
@@ -1406,7 +1409,7 @@ background:none;</string>
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>280</y>
+      <y>275</y>
       <width>261</width>
       <height>141</height>
      </rect>
@@ -2019,7 +2022,7 @@ Support FaceTrackNoIR!</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
+     <width>890</width>
      <height>21</height>
     </rect>
    </property>

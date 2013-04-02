@@ -65,6 +65,7 @@
 #include <iostream>
 
 #if defined(__WIN32) || defined(_WIN32)
+#undef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x0800
 #include <dshow.h>
 #include <dinput.h>
