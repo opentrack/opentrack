@@ -1,3 +1,13 @@
+#pragma once
+
+#define WINE_SHM_NAME "facetracknoir-wine-shm"
+#define WINE_MTX_NAME "facetracknoir-wine-mtx"
+
+struct WineSHM {
+    float rx, ry, rz, tx, ty, tz;
+    bool stop;
+};
+
 struct TFreeTrackData {
 	int DataID;
 	int CamWidth;
