@@ -33,7 +33,7 @@
 #ifndef INCLUDED_FTTYPES_H
 #define INCLUDED_FTTYPES_H
   
-#include "Windows.h" 
+#include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
 
