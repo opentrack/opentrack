@@ -39,8 +39,8 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>UIElements/FaceTrackNoIR.ico</normaloff>UIElements/FaceTrackNoIR.ico</iconset>
+   <iconset resource="main-facetracknoir.qrc">
+    <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
    <string/>
@@ -155,9 +155,9 @@ QGroupBox {
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>10</y>
+      <y>-2</y>
       <width>671</width>
-      <height>419</height>
+      <height>431</height>
      </rect>
     </property>
     <property name="sizePolicy">
