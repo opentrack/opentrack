@@ -6,6 +6,7 @@ SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX})
 SET(CMAKE_SKIP_RPATH FALSE)
 
 SET(SDK_FACEAPI_ONLY FALSE CACHE BOOL "FaceAPI only (MSVC 2005)")
+
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
 ENDIF()
@@ -69,6 +70,7 @@ if(NOT SDK_FACEAPI_ONLY)
         set(SDK_MINGW_PATH "" CACHE PATH "MinGW path")
         set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
         set(SDK_DIRECTX "" CACHE PATH "Path to DirectX SDK")
+        set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
         if(SDK_DIRECTX)
             include_directories("${SDK_DIRECTX}/Include")
             link_directories("${SDK_DIRECTX}/Lib")
@@ -94,6 +96,11 @@ if(NOT SDK_FACEAPI_ONLY)
         SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
       endif()
     endif(WIN32)
+
+if(SDK_FSUIPC AND WIN32)
+    include_directories("${SDK_FSUIPC}")
+    link_directories("${SDK_FSUIPC}")
+endif()
 
 if(NOT SDK_FACEAPI_ONLY)
 # main app
@@ -294,13 +301,19 @@ endif()
     endif()
 
     if(OpenCV_FOUND)
+        include_directories(${OPENCV_INCLUDE_DIRS})
         include_directories("${OpenCV_DIR}/include")
-		include_directories("${OpenCV_CONFIG_PATH}/include")
+        include_directories("${OpenCV_CONFIG_PATH}/include")
         add_library(ftnoir-filter-kalman SHARED ${ftnoir-filter-kalman-c} ${ftnoir-filter-kalman-moc} ${ftnoir-filter-kalman-uih} ${ftnoir-filter-kalman-rcc})
         target_link_libraries(ftnoir-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
             SET_TARGET_PROPERTIES(ftnoir-filter-kalman
             PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+        if(WIN32)
+                SET(STATIC_EXT "lib")
+        else()
+                SET(STATIC_EXT "a")
         endif()
     endif()
 
@@ -320,8 +333,10 @@ endif()
     endif()
 
     if(WIN32)
-        #add_library(ftnoir-proto-fsuipc SHARED ${ftnoir-proto-fsuipc-c} ${ftnoir-proto-fsuipc-moc} ${ftnoir-proto-fsuipc-uih} ${ftnoir-proto-fsuipc-rcc})
-        #target_link_libraries(ftnoir-proto-fsuipc ${MY_QT_LIBS})
+        if(SDK_FSUIPC)
+            add_library(ftnoir-proto-fsuipc SHARED ${ftnoir-proto-fsuipc-c} ${ftnoir-proto-fsuipc-moc} ${ftnoir-proto-fsuipc-uih} ${ftnoir-proto-fsuipc-rcc})
+            target_link_libraries(ftnoir-proto-fsuipc ${MY_QT_LIBS} "${SDK_FSUIPC}/FSUIPC_User.lib")
+        endif()
 
         if(SDK_SIMCONNECT)
             add_library(ftnoir-proto-simconnect SHARED ${ftnoir-proto-simconnect-c} ${ftnoir-proto-simconnect-moc} ${ftnoir-proto-simconnect-uih} ${ftnoir-proto-simconnect-rcc})
@@ -532,12 +547,18 @@ if(NOT SDK_FACEAPI_ONLY)
         install(TARGETS
                 ftnoir-proto-freetrack
                 ftnoir-proto-win32-mouse
-                #ftnoir-proto-fsuipc
                 #ftnoir-proto-simconnect
                 RUNTIME DESTINATION .
                 LIBRARY DESTINATION .
                 NAMELINK_SKIP
         )
+        if(SDK_FSUIPC)
+            install(TARGETS ftnoir-proto-fsuipc
+                    RUNTIME DESTINATION .
+                    LIBRARY DESTINATION .
+                    NAMELINK_SKIP)
+        endif()
+
     endif()
 endif()
 if(WIN32 AND NOT SDK_FACEAPI_ONLY)
