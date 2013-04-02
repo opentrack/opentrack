@@ -1,9 +1,9 @@
 //
 // Definitions for the Shared Memory to send the data to FaceTrackNoIR
 //
-static const char* MA_MM_DATA = "MA_SharedMem";
-static const char* MA_FACEAPI = "MA_FaceAPI";
-static const char* MA_MUTEX = "MA_Mutex";
+#define MA_MM_DATA "MA_SharedMem"
+#define MA_FACEAPI "MA_FaceAPI"
+#define MA_MUTEX "MA_Mutex"
 
 struct TFaceData {
 	int DataID;
