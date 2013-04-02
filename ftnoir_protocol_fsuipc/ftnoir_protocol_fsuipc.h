@@ -128,7 +128,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FSUIPC"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft FS2004 protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FS9.png"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fs9.png"); };
 };
 
 
