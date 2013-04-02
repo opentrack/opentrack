@@ -16,7 +16,7 @@
 #ifndef FUNCTION_CONFIG_H
 #define FUNCTION_CONFIG_H
 
-#define MEMOIZE_PRECISION 400
+#define MEMOIZE_PRECISION 500
 
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
