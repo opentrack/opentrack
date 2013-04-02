@@ -28,16 +28,17 @@
 #ifndef INCLUDED_FTSERVER_H
 #define INCLUDED_FTSERVER_H
 
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "ui_FTNoIR_FTcontrols.h"
-#include "FTTypes.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ui_ftnoir_ftcontrols.h"
+#include "facetracknoir/global-settings.h"
+#include "fttypes.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "Windows.h"
+#include <windows.h>
 //#include "math.h"
 
 //typedef char *(WINAPI *importProvider)(void);
@@ -125,7 +126,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
