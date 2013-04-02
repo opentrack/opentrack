@@ -40,12 +40,7 @@ typedef TFreeTrackData * PFreetrackData;
 
 struct FTMemMap {
 	TFreeTrackData data;
-
-#ifdef WIN64
-	__int32 command;
-#else
 	HANDLE handle;
-#endif
     char ProgramName[100];		// The name of the game
 	char GameID[10];			// The international game-ID
 	char FTNID[30];				// The FaceTrackNoIR game-ID
