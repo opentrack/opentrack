@@ -23,15 +23,12 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_tracker_udp.h"
+#include "facetracknoir/global-settings.h"
 
 FTNoIR_Tracker::FTNoIR_Tracker()
 {
 	inSocket = 0;
 	outSocket = 0;
-
-	// Create events
-	m_StopThread = CreateEvent(0, TRUE, FALSE, 0);
-	m_WaitThread = CreateEvent(0, TRUE, FALSE, 0);
 
 	bEnableRoll = true;
 	bEnablePitch = true;
@@ -51,18 +48,6 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
-	// Trigger thread to stop
-	::SetEvent(m_StopThread);
-
-	// Wait until thread finished
-	if (isRunning()) {
-		::WaitForSingleObject(m_WaitThread, INFINITE);
-	}
-
-	// Close handles
-	::CloseHandle(m_StopThread);
-	::CloseHandle(m_WaitThread);
-
 	if (inSocket) {
 		inSocket->close();
 		delete inSocket;
@@ -77,7 +62,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 /** QThread run @override **/
 void FTNoIR_Tracker::run() {
 
-int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
 
@@ -85,77 +69,51 @@ quint16 senderPort;
 	// Read the data that was received.
 	//
 	forever {
-
-	    // Check event for stop thread
-		if(::WaitForSingleObject(m_StopThread, 0) == WAIT_OBJECT_0)
-		{
-			// Set event
-			::SetEvent(m_WaitThread);
-			qDebug() << "FTNoIR_Tracker::run() terminated run()";
-			return;
-		}
-
+        if (should_quit)
+            break;
 		if (inSocket != 0) {
 			while (inSocket->hasPendingDatagrams()) {
 
 				QByteArray datagram;
 				datagram.resize(inSocket->pendingDatagramSize());
-
+                mutex.lock();
 				inSocket->readDatagram( (char * ) &newHeadPose, sizeof(newHeadPose), &sender, &senderPort);
+                mutex.unlock();
 			}
 		}
 		else {
-			qDebug() << "FTNoIR_Tracker::run() insocket not ready: exit run()";
-			return;
+            break;
 		}
 
-		//for lower cpu load 
 		usleep(10000);
-//		yieldCurrentThread(); 
 	}
 }
 
-void FTNoIR_Tracker::Initialize( QFrame *videoframe )
+void FTNoIR_Tracker::StartTracker(QFrame* videoFrame)
 {
-	qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
-	loadSettings();
+    loadSettings();
+    //
+    // Create UDP-sockets if they don't exist already.
+    // They must be created here, because they must be in the new thread (FTNoIR_Tracker::run())
+    //
+    if (inSocket == 0) {
+        qDebug() << "FTNoIR_Tracker::Initialize() creating insocket";
+        inSocket = new QUdpSocket();
+        // Connect the inSocket to the port, to receive messages
 
-	//
-	// Create UDP-sockets if they don't exist already.
-	// They must be created here, because they must be in the new thread (FTNoIR_Tracker::run())
-	//
-	if (inSocket == 0) {
-		qDebug() << "FTNoIR_Tracker::Initialize() creating insocket";
-		inSocket = new QUdpSocket();
-		// Connect the inSocket to the port, to receive messages
-		
-		if (!inSocket->bind(QHostAddress::Any, (int) portAddress, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
-			delete inSocket;
-			inSocket = 0;
-		}
-	}
-
-	return;
-}
-
-void FTNoIR_Tracker::StartTracker( HWND parent_window )
-{
-	start( QThread::TimeCriticalPriority );
-	return;
-}
-
-void FTNoIR_Tracker::StopTracker( bool exit )
-{
-	//
-	// OK, the thread is not stopped, doing this. That might be dangerous anyway...
-	//
-	if (exit || !exit) return;
+        if (!inSocket->bind(QHostAddress::Any, (int) portAddress, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
+            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
+            delete inSocket;
+            inSocket = 0;
+        }
+    }
+	start();
 	return;
 }
 
 bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
+    mutex.lock();
 	if (bEnableX) {
 		data->x = newHeadPose.x;
 	}
@@ -165,15 +123,16 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	if (bEnableX) {
 		data->z = newHeadPose.z;
 	}
-	if (bEnableX) {
+    if (bEnableYaw) {
 		data->yaw = newHeadPose.yaw;
 	}
-	if (bEnableX) {
+    if (bEnablePitch) {
 		data->pitch = newHeadPose.pitch;
 	}
-	if (bEnableX) {
+    if (bEnableRoll) {
 		data->roll = newHeadPose.roll;
 	}
+    mutex.unlock();
 	return true;
 }
 
@@ -209,9 +168,9 @@ void FTNoIR_Tracker::loadSettings() {
 //   GetTracker     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
+//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Tracker;
+    return (ITracker*) new FTNoIR_Tracker;
 }

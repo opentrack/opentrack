@@ -30,17 +30,17 @@
 #ifndef INCLUDED_MOUSESERVER_H
 #define INCLUDED_MOUSESERVER_H
 
-//#include <Windows.h>
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "ui_FTNoIR_MOUSEcontrols.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ui_ftnoir_mousecontrols.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-
-#include "winable.h"
+#include <windows.h>
+#include <winuser.h>
+#include "facetracknoir/global-settings.h"
 
 #define MOUSE_AXIS_MIN 0
 #define MOUSE_AXIS_MAX 65535
@@ -69,7 +69,7 @@ public:
 	void Release();
     void Initialize();
 
-	bool checkServerInstallationOK( HANDLE handle );
+    bool checkServerInstallationOK();
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
@@ -133,7 +133,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
@@ -143,7 +143,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Mouse.ico"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/mouse.png"); };
 };
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
-    <height>661</height>
+    <width>718</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.ico</normaloff>images/FaceTrackNoIR.ico</iconset>
+    <normaloff>images/facetracknoir.png</normaloff>images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -38,7 +38,7 @@ color: black;
 
 /* Specials for individual widget(s) */
 QWidget#UICCurveConfigurationDialog {
-background-color: #484848;
+background-color: #dfdfdf;
 }
 
 QWidget#tabWidget {
@@ -99,398 +99,538 @@ color: rgb(255, 255, 255);
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="rotation_tab">
-        <attribute name="icon">
-         <iconset resource="FaceTrackNoIR.qrc">
-          <normaloff>:/images/rotation_DOFs.png</normaloff>:/images/rotation_DOFs.png</iconset>
-        </attribute>
+       <widget class="QWidget" name="tab">
         <attribute name="title">
-         <string>Rotations</string>
+         <string>rx</string>
         </attribute>
-        <widget class="QWidget" name="verticalLayoutWidget">
+        <widget class="QFunctionConfigurator" name="rxconfig">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>794</width>
-           <height>548</height>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>240</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="1">
-           <widget class="QFunctionConfigurator" name="qFunctionPitch">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>500</height>
-             </size>
-            </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>180</number>
-            </property>
-            <property name="pixPerEGU_Output" stdset="0">
-             <number>1</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>0</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Pitch Up (degr.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Pitch Up (degr.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QFunctionConfigurator" name="qFunctionRoll">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>500</height>
-             </size>
-            </property>
-            <property name="pixPerEGU_Output" stdset="0">
-             <number>1</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>0</red>
-              <green>255</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Roll (degr.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Roll (degr.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QFunctionConfigurator" name="qFunctionYaw">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>400</width>
-              <height>500</height>
-             </size>
-            </property>
-            <property name="pixPerEGU_Output" stdset="0">
-             <number>1</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>255</red>
-              <green>170</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Yaw (degr.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Yaw (degr.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QFunctionConfigurator" name="qFunctionPitchDown">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>500</height>
-             </size>
-            </property>
-            <property name="maxOutputEGU" stdset="0">
-             <number>90</number>
-            </property>
-            <property name="pixPerEGU_Output" stdset="0">
-             <number>2</number>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>0</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Input Pitch Down (degr.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Pitch Down (degr.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Left-click the graph to place a new point, right-click a point to remove. Left-click and drag to move a point.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QWidget" name="widget_3" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>170</width>
-              <height>140</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">image: url(:/images/rotation_DOFs.png);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="rx_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>166</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="rxconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>240</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="translation_tab">
-        <attribute name="icon">
-         <iconset resource="FaceTrackNoIR.qrc">
-          <normaloff>:/images/translation_DOFs.png</normaloff>:/images/translation_DOFs.png</iconset>
-        </attribute>
+       <widget class="QWidget" name="tab2">
         <attribute name="title">
-         <string>Translations</string>
+         <string>ry</string>
         </attribute>
-        <widget class="QWidget" name="verticalLayoutWidget_2">
+        <widget class="QFunctionConfigurator" name="ryconfig">
          <property name="geometry">
           <rect>
-           <x>30</x>
-           <y>10</y>
-           <width>794</width>
-           <height>390</height>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>240</height>
           </rect>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QFunctionConfigurator" name="qFunctionX">
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>255</red>
-              <green>255</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Left/Right Input X (cm.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output X (cm.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QFunctionConfigurator" name="qFunctionY">
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>85</red>
-              <green>0</green>
-              <blue>255</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Up/Down Input Y (cm.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Y (cm.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QFunctionConfigurator" name="qFunctionZ">
-            <property name="minimumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>260</width>
-              <height>240</height>
-             </size>
-            </property>
-            <property name="colorBezier">
-             <color>
-              <red>255</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </property>
-            <property name="colorBackground">
-             <color>
-              <red>192</red>
-              <green>192</green>
-              <blue>192</blue>
-             </color>
-            </property>
-            <property name="stringInputEGU" stdset="0">
-             <string>Forward/Backward Input Z (cm.)</string>
-            </property>
-            <property name="stringOutputEGU" stdset="0">
-             <string>Output Z (cm.)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Left-click the graph to place a new point, right-click a point to remove. Left-click and drag to move a point.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QWidget" name="widget_2" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>170</width>
-              <height>140</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">image: url(:/images/translation_DOFs.png);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="ry_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>199</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="ryconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>240</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab3">
+        <attribute name="title">
+         <string>rz</string>
+        </attribute>
+        <widget class="QFunctionConfigurator" name="rzconfig">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>240</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="rz_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>271</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="rzconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>240</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>180</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab4">
+        <attribute name="title">
+         <string>tx</string>
+        </attribute>
+        <widget class="QFunctionConfigurator" name="txconfig">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="tx_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>228</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="txconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab5">
+        <attribute name="title">
+         <string>ty</string>
+        </attribute>
+        <widget class="QFunctionConfigurator" name="tyconfig">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="ty_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>229</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="tyconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>255</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab6">
+        <attribute name="title">
+         <string>tz</string>
+        </attribute>
+        <widget class="QFunctionConfigurator" name="tzconfig">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="tz_altp">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>263</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use alternative</string>
+         </property>
+        </widget>
+        <widget class="QFunctionConfigurator" name="tzconfig_alt">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>340</y>
+           <width>595</width>
+           <height>260</height>
+          </rect>
+         </property>
+         <property name="maxInputEGU" stdset="0">
+          <number>60</number>
+         </property>
+         <property name="maxOutputEGU" stdset="0">
+          <number>200</number>
+         </property>
+         <property name="pixPerEGU_Input" stdset="0">
+          <number>9</number>
+         </property>
+         <property name="pixPerEGU_Output" stdset="0">
+          <number>1</number>
+         </property>
+         <property name="colorBezier">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground">
+          <color>
+           <red>200</red>
+           <green>200</green>
+           <blue>200</blue>
+          </color>
+         </property>
         </widget>
        </widget>
       </widget>
@@ -499,19 +639,6 @@ color: rgb(255, 255, 255);
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="1">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
      <item row="0" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="sizeConstraint">
@@ -527,7 +654,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>52</width>
+           <width>58</width>
            <height>0</height>
           </size>
          </property>
@@ -552,7 +679,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>52</width>
+           <width>58</width>
            <height>0</height>
           </size>
          </property>
@@ -569,17 +696,14 @@ color: rgb(255, 255, 255);
        </item>
       </layout>
      </item>
-     <item row="0" column="3">
-      <spacer name="horizontalSpacer">
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>10</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
@@ -596,9 +720,7 @@ color: rgb(255, 255, 255);
    <header>qfunctionconfigurator.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="FaceTrackNoIR.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

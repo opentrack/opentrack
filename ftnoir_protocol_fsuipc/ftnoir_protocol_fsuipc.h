@@ -31,6 +31,7 @@
 #include "Windows.h"
 #include <stdlib.h>
 #include "FSUIPC_User.h"
+#include "facetracknoir/global-settings.h"
 
 #include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
 #include "ui_FTNoIR_FSUIPCcontrols.h"
@@ -43,7 +44,6 @@
 #include <QFileDialog>
 
 static const char* FSUIPC_FILENAME = "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll";
-static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
 
 //
 // Define the structures necessary for the FSUIPC_Write calls
@@ -65,7 +65,7 @@ public:
 	void Release();
     void Initialize();
 
-	bool checkServerInstallationOK( HANDLE handle );
+    bool checkServerInstallationOK();
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
@@ -75,9 +75,6 @@ private:
 	QLibrary FSUIPCLib;
 	QString LocationOfDLL;
 	float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
-
-	bool blnConnectionActive;
-	HANDLE hMainWindow;										// Save the handle to FaceTrackNoIR main-window
 
 	static int scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
@@ -121,7 +118,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
@@ -131,7 +128,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FSUIPC"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft FS2004 protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FS9.ico"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FS9.png"); };
 };
 
 

@@ -30,30 +30,35 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QLineEdit>
-#include <QThread>
 #include <QPoint>
 #include <QWaitCondition>
 #include <QList>
 #include <QPainterPath>
 #include <QDebug>
+#include <QMutex>
+#include "global-settings.h"
 
-#define DIRECTINPUT_VERSION 0x0800
-#include <Dinput.h>
+//#define DIRECTINPUT_VERSION 0x0800
+//#include <Dinput.h>
+#undef FTNOIR_PROTOCOL_BASE_LIB
+#undef FTNOIR_TRACKER_BASE_LIB
+#undef FTNOIR_FILTER_BASE_LIB
+#undef FTNOIR_PROTOCOL_BASE_EXPORT
+#undef FTNOIR_TRACKER_BASE_EXPORT
+#undef FTNOIR_FILTER_BASE_EXPORT
+#define FTNOIR_PROTOCOL_BASE_EXPORT Q_DECL_IMPORT
+#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
+#define FTNOIR_FILTER_BASE_EXPORT Q_DECL_IMPORT
 
-#include "FunctionConfig.h"
-
-#include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
-#include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
-#include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
+#include <qfunctionconfigurator/functionconfig.h>
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "tracker_types.h"
 
-typedef ITrackerPtr (WINAPI *importGetTracker)(void);
-typedef IProtocolPtr (WINAPI *importGetProtocol)(void);
-typedef IFilterPtr (WINAPI *importGetFilter)(void);
-
 // include the DirectX Library files
-#pragma comment (lib, "dinput8.lib")
-#pragma comment (lib, "dxguid.lib")
+//#pragma comment (lib, "dinput8.lib")
+//#pragma comment (lib, "dxguid.lib")
 
 enum AngleName {
 	PITCH = 0,
@@ -88,127 +93,48 @@ enum FTNoIR_Tracker_Status {
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
+struct HeadPoseData;
+extern HeadPoseData* GlobalPose;
+
 //
 // Structure to hold all variables concerning one of 6 DOF's
 //
 class THeadPoseDOF {
 public:
+    THeadPoseDOF(QString primary, QString secondary, int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
+        QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");							// Registry settings (in HK_USER)
+        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+        QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
 
-	THeadPoseDOF(QString primary, QString secondary = "", int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
-		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");							// Registry settings (in HK_USER)
-		QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-		QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
-
-		curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
-		curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
-		if (secondary != "") {
-			curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
-			curvePtrAlt->loadSettings(iniFile);
-		}
-
-	}
-
-	void initHeadPoseData(){
-		headPos = 0.0f;
-		invert = 0.0f;
-		red = 0.0f;
-		rawList.clear();
-		maxItems = 10.0f;
-		prevPos = 0.0f;
-		prevRawPos = 0.0f;
-		NeutralZone = 0;
-		MaxInput = 0;
-		confidence = 0.0f;
-		newSample = FALSE;
-
-		qDebug() << "initHeadPoseData: " << curvePtr->getTitle();
-
-	}
+        curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
+        curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
+        if (secondary != "") {
+            curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
+            curvePtrAlt->loadSettings(iniFile);
+        }
+        headPos = 0.0f;
+        invert = 1;
+        altp = false;
+    }
 	float headPos;					// Current position (from faceTracker, radials or meters)
-	float invert;					// Invert measured value (= 1.0f or -1.0f)
-	float red;						// Reduction factor (used for EWMA-filtering, between 0.0f and 1.0f)
-	QList<float> rawList;			// List of 'n' headPos values (used for moving average)
-	int maxItems;					// Maximum number of elements in rawList
-	float prevPos;					// Previous Position
-	float prevRawPos;				// Previous Raw Position
-
+    float invert;					// Invert measured value (= 1.0f or -1.0f)
 	FunctionConfig* curvePtr;		// Function to translate input -> output
 	FunctionConfig* curvePtrAlt;
-
-	int NeutralZone;				// Neutral zone
-	int MaxInput;					// Maximum raw input
-	float confidence;				// Current confidence
-	bool newSample;					// Indicate new sample from tracker
-};
-
-//
-// Structure to hold keycode and CTRL, SHIFT, ALT for shortkeys
-//
-struct TShortKey {
-	BYTE keycode;					// Required Key
-	bool shift;						// Modifiers to examine
-	bool ctrl;
-	bool alt;
-	bool doPitch;					// Modifiers to act on axis
-	bool doYaw;
-	bool doRoll;
-	bool doX;
-	bool doY;
-	bool doZ;
+    bool altp;
 };
 
 class Tracker : public QThread {
 	Q_OBJECT
 
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
+    bool useAxisReverse;						// Use Axis Reverse
+    float YawAngle4ReverseAxis;				// Axis Reverse settings
+    float Z_Pos4ReverseAxis;
+    float Z_PosWhenReverseAxis;
+    
+    volatile bool inhibit_rx, inhibit_ry, inhibit_rz, inhibit_tx, inhibit_ty, inhibit_tz, inhibit_zero;
 
-	static T6DOF current_camera;					// Used for filtering
-	static T6DOF target_camera;
-	static T6DOF new_camera;
-	static T6DOF output_camera;
-
-	ITrackerPtr pTracker;							// Pointer to Tracker instance (in DLL)
-	ITrackerPtr pSecondTracker;						// Pointer to second Tracker instance (in DLL)
-	static IProtocolPtr pProtocol;					// Pointer to Protocol instance (in DLL)
-	static IFilterPtr pFilter;						// Pointer to Filter instance (in DLL)
-
-	static void addHeadPose( THeadPoseData head_pose );
-	static void addRaw2List ( QList<float> *rawList, float maxIndex, float raw );
-
-	static TShortKey CenterKey;						// ShortKey to Center headposition
-	static TShortKey StartStopKey;					// ShortKey to Start/stop tracking
-	static TShortKey InhibitKey;					// ShortKey to disable one or more axis during tracking
-	static TShortKey GameZeroKey;					// ShortKey to Set Game Zero
-//	static TShortKey AxisReverseKey;				// ShortKey to reverse axis during tracking
-
-	static int CenterMouseKey;						// ShortKey to Center headposition
-	static int StartStopMouseKey;					// ShortKey to Start/stop tracking
-	static int InhibitMouseKey;						// ShortKey to disable one or more axis during tracking
-	static int GameZeroMouseKey;					// ShortKey to Set Game Zero
-	static bool DisableBeep;						// Disable Beep when center is pressed
-
-	// Flags to start/stop/reset tracking
-	static bool confid;								// Tracker data is OK
-	static bool do_tracking;						// Start/stop tracking, using the shortkey
-	static bool do_center;							// Center head-position, using the shortkey
-	static bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
-	static bool do_game_zero;						// Set in-game zero, using the shortkey
-	static bool do_axis_reverse;					// Axis reverse, using the shortkey
-
-	static HANDLE hTrackMutex;						// Prevent reading/writing the headpose simultaneously
-
-	static bool setZero;							// Set to zero's, when OFF (one-shot)
-	static bool setEngineStop;						// Stop tracker->engine, when OFF
-
-	static bool useAxisReverse;						// Use Axis Reverse
-	static float YawAngle4ReverseAxis;				// Axis Reverse settings
-	static float Z_Pos4ReverseAxis;
-	static float Z_PosWhenReverseAxis;
-
-	FaceTrackNoIR *mainApp;
+    FaceTrackNoIR *mainApp;
 
 protected:
 	// qthread override run method 
@@ -216,67 +142,63 @@ protected:
 
 public:
 	Tracker( FaceTrackNoIR *parent );
-	~Tracker();
-
-	/** static member variables for saving the head pose **/
-	static THeadPoseDOF Pitch;						// Head-rotation X-direction (Up/Down)
-	static THeadPoseDOF Yaw;						// Head-rotation Y-direction ()
-	static THeadPoseDOF Roll;						// Head-rotation Z-direction ()
-	static THeadPoseDOF X;							// Head-movement X-direction (Left/Right)
-	static THeadPoseDOF Y;							// Head-movement Y-direction (Up/Down)
-	static THeadPoseDOF Z;							// Head-movement Z-direction (To/From camera)
-
-	void setup();
+    ~Tracker();
 
 //	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );
 	QString getGameProgramName();					// Get the ProgramName from the game and display it.
 	void loadSettings();							// Load settings from the INI-file
-	bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
-	bool isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate );
+    //bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
+    //bool isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate );
 
-	static bool getTrackingActive() { return do_tracking && confid; }
-	static bool getAxisReverse() { return do_axis_reverse; }
+    bool getTrackingActive() { return do_tracking && confid; }
+    bool getAxisReverse() { return do_axis_reverse; }
 
-	static bool getConfid() { return confid; }
+    bool getConfid() { return confid; }
 
-	static void setInvertPitch(bool invert) { Pitch.invert = invert?-1.0f:+1.0f; }
-	static void setInvertYaw(bool invert) { Yaw.invert = invert?-1.0f:+1.0f; }
-	static void setInvertRoll(bool invert) { Roll.invert = invert?-1.0f:+1.0f; }
-	static void setInvertX(bool invert) { X.invert = invert?-1.0f:+1.0f; }
-	static void setInvertY(bool invert) { Y.invert = invert?-1.0f:+1.0f; }
-	static void setInvertZ(bool invert) { Z.invert = invert?-1.0f:+1.0f; }
+    void setInvertPitch(bool invert);
+    void setInvertYaw(bool invert);
+    void setInvertRoll(bool invert);
+    void setInvertX(bool invert);
+    void setInvertY(bool invert);
+    void setInvertZ(bool invert);
 
-	static void getHeadPose(THeadPoseData *data);				// Return the current headpose data
-	static void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
-	static IFilterPtr getFilterPtr() { return pFilter; }		// Return the pointer for the active Filter
-	ITracker *getTrackerPtr() { return pTracker; }				// Return the pointer for the active Tracker
-	ITracker *getSecondTrackerPtr() { return pSecondTracker; }	// Return the pointer for the secondary Tracker
-	IProtocol *getProtocolPtr() { return pProtocol; }			// Return the pointer for the active Protocol
+    void getHeadPose(THeadPoseData *data);				// Return the current headpose data
+    void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
 
-	void doRefreshVideo() {										// Call the face-tracker-function RefreshVideo
-		if (pTracker) {
-			pTracker->refreshVideo();
-		}
-		if (pSecondTracker) {
-			pSecondTracker->refreshVideo();
-		}
-	};
+    float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
+    float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
+    volatile bool should_quit;
+    // following are now protected by hTrackMutex
+    volatile bool do_tracking;						// Start/stop tracking, using the shortkey
+    volatile bool do_center;							// Center head-position, using the shortkey
+    volatile bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
+    volatile bool do_game_zero;						// Set in-game zero, using the shortkey
+    volatile bool do_axis_reverse;					// Axis reverse, using the shortkey
+    
+    // Flags to start/stop/reset tracking
+    volatile bool confid;                                // Tracker data is OK;
+    
+    T6DOF output_camera;
+};
 
-	static float getSmoothFromList ( QList<float> *rawList );
-	static float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
-	static float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-
-	// For now, use one slider for all
-	void setSmoothing(int x) { 
-		Pitch.maxItems = x;
-		Yaw.maxItems = x;
-		Roll.maxItems = x;
-		X.maxItems = x;
-		Y.maxItems = x;
-		Z.maxItems = x;
-	}
-
+struct HeadPoseData {
+public:
+    THeadPoseDOF Pitch;
+    THeadPoseDOF Yaw;
+    THeadPoseDOF Roll;
+    THeadPoseDOF X;
+    THeadPoseDOF Y;
+    THeadPoseDOF Z;
+    HeadPoseData() :
+        Pitch("PitchUp", "PitchDown", 50, 180, 50, 90),
+        Yaw("Yaw", "YawAlt", 50, 180),
+        Roll("Roll", "RollAlt", 50, 180),
+        X("X","XAlt", 50, 180),
+        Y("Y","YAlt", 50, 180),
+        Z("Z","ZAlt", 50, 180)
+    {
+    }
 };
 
 #endif

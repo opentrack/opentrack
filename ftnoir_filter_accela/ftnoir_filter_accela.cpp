@@ -10,11 +10,15 @@
 					    Additional changes: I have added two parameters to the constructor of FunctionConfig and
 						renamed 3 member-functions (getFilterFullName is now called getFullName).
 */
-#include "ftnoir_filter_Accela.h"
+#include "ftnoir_filter_accela/ftnoir_filter_accela.h"
 #include "math.h"
 #include <QDebug>
-#include <windows.h>
 #include <float.h>
+#include "facetracknoir/global-settings.h"
+
+#if !defined(_WIN32) && !defined(__WIN32)
+#   define _isnan isnan
+#endif
 
 FTNoIR_Filter::FTNoIR_Filter() :
 	functionConfig("Accela-Scaling-Rotation", 4, 6),
@@ -32,8 +36,6 @@ FTNoIR_Filter::~FTNoIR_Filter()
 
 void FTNoIR_Filter::Initialize()
 {
-	loadSettings();
-	return;
 }
 
 void FTNoIR_Filter::loadSettings() {
@@ -45,24 +47,29 @@ void FTNoIR_Filter::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	defPoints.clear();
-	for (int i = 0; i < NUM_OF(defScaleRotation); i++) {		// Get the default points (hardcoded!)
+    for (int i = 0; i < defScaleRotation.size(); i++) {		// Get the default points (hardcoded!)
 		defPoints.append(defScaleRotation[i]);
 	}
 	functionConfig.loadSettings(iniFile, defPoints);
 
 	defPoints.clear();
-	for (int i = 0; i < NUM_OF(defScaleTranslation); i++) {		// Get the default points (hardcoded!)
+    for (int i = 0; i < defScaleTranslation.size(); i++) {		// Get the default points (hardcoded!)
 		defPoints.append(defScaleTranslation[i]);
 	}
 	translationFunctionConfig.loadSettings(iniFile, defPoints);
 
 	iniFile.beginGroup ( "Accela" );
 	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
+    kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
 	iniFile.endGroup ();
 
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
+void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
+                                       THeadPoseData *target_camera_position,
+                                       THeadPoseData *new_camera_position,
+                                       THeadPoseData *last_post_filter_values,
+                                       bool newTarget)
 {
 	double target[6];
 	double prev_output[6];
@@ -130,10 +137,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
 		// WVR: Added kMagicNumber for Patrick
-		double velocity = foo / 100.0;
-		if (kMagicNumber > 0.0f) {
-			double velocity = foo / kMagicNumber;
-		}
+        double velocity = foo / (kMagicNumber > 0 ? kMagicNumber : 100.0) * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values->z / 100));
 		double sum = start + velocity * sign;
 		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {
@@ -168,9 +172,8 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 //   GetFilter     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetFilter@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilter=_GetFilter@0")
 
-FTNOIR_FILTER_BASE_EXPORT IFilterPtr __stdcall GetFilter()
+extern "C" FTNOIR_FILTER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Filter;
+    return (IFilter*) new FTNoIR_Filter;
 }

@@ -14,7 +14,6 @@
 #include <QDebug>
 
 using namespace cv;
-using namespace boost;
 using namespace std;
 
 const float PI = 3.14159265358979323846f;
@@ -68,26 +67,27 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	get_d_order(points, d_order);
 }
 
+static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
+{
+    return a.first < b.first;
+}
+
 void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]) const
 {
 	// get sort indices with respect to d scalar product
 	vector< pair<float,int> > d_vals;
-	for (int i = 0; i<points.size(); ++i)
+    for (int i = 0; i<(int)points.size(); ++i)
 		d_vals.push_back(pair<float, int>(d.dot(points[i]), i));
 
-	struct
-	{
-		bool operator()(const pair<float, int>& a, const pair<float, int>& b) { return a.first < b.first; }
-	} comp;
-	sort(d_vals.begin(), d_vals.end(), comp);
+    sort(d_vals.begin(), d_vals.end(), d_vals_sort);
 
-	for (int i = 0; i<points.size(); ++i)
+    for (int i = 0; i<(int)points.size(); ++i)
 		d_order[i] = d_vals[i].second;
 }
 
 
 // ----------------------------------------------------------------------------
-PointTracker::PointTracker() : init_phase(true), dt_valid(0), dt_reset(1), v_t(0,0,0), v_r(0,0,0), dynamic_pose_resolution(true)
+PointTracker::PointTracker() : dynamic_pose_resolution(true), dt_reset(1), init_phase(true), dt_valid(0), v_t(0,0,0), v_r(0,0,0)
 {
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
@@ -120,7 +120,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 	}
 
 	// if there is a pointtracking problem, reset the velocities
-	if (!point_model || points.size() != PointModel::N_POINTS) 
+    if (!point_model.get() || (int) points.size() != PointModel::N_POINTS)
 	{
 		//qDebug()<<"Wrong number of points!";
 		reset_velocities();
@@ -141,7 +141,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 		return false;
 	}
 
-	int n_iter = POSIT(f);
+    (void) POSIT(f);
 	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
 
 	if (!init_phase)

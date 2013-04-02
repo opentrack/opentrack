@@ -9,7 +9,7 @@
 #define CAMERA_H
 
 #include <opencv2/opencv.hpp>
-#include "videoInput/videoInput.h"
+//#include "videoInput/videoInput.h"
 
 // ----------------------------------------------------------------------------
 struct CamInfo
@@ -27,7 +27,7 @@ struct CamInfo
 class Camera
 {
 public:
-	Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1), active(false) {}
+    Camera() : desired_index(0), active_index(-1), active(false), dt_valid(0), dt_mean(0) {}
 	virtual ~Camera() {}
 
 	// start/stop capturing
@@ -57,19 +57,19 @@ protected:
 	virtual void _set_fps() = 0;
 	virtual void _set_res() = 0;
 
+    int desired_index;
+    int active_index;
 	bool active;
-	int desired_index;
-	int active_index;
+    float dt_valid;
+    float dt_mean;
 	CamInfo cam_info;
 	CamInfo cam_desired;
-	float dt_valid;
-	float dt_mean;
 };
 
 
 // ----------------------------------------------------------------------------
 // OpenCV camera
-/*
+
 class CVCamera : public Camera
 {
 public:
@@ -86,12 +86,13 @@ protected:
 	void _set_fps();
 	void _set_res();
 
-	CvCapture* cap;
+	cv::VideoCapture* cap;
 };
-*/
+
 
 // ----------------------------------------------------------------------------
 // videoInput camera
+#if 0
 class VICamera : public Camera
 {
 public:
@@ -112,5 +113,6 @@ protected:
 	cv::Mat new_frame;
 	unsigned char* frame_buffer;
 };
+#endif
 
 #endif //CAMERA_H

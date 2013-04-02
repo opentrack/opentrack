@@ -20,7 +20,7 @@ public:
 
 	// conversions
 	void fromEuler(double yaw, double pitch, double roll);
-	void toEuler(double& yaw, double& pitch, double& roll);
+	void toEuler(volatile double& yaw, volatile double& pitch, volatile double& roll);
 	
 protected:
 	double a,b,c,d; // quaternion coefficients

@@ -11,6 +11,14 @@
 using namespace cv;
 using namespace std;
 
+struct BlobInfo
+{
+    BlobInfo() : m00(0), m10(0), m01(0) {}
+    long m00;
+    long m10;
+    long m01;
+};
+
 // ----------------------------------------------------------------------------
 const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool draw_output)
 {
@@ -39,13 +47,6 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 
 	// find connected components...
 	// extract blobs with floodfill
-	struct BlobInfo
-	{
-		BlobInfo() : m00(0), m10(0), m01(0) {}
-		long m00;
-		long m10;
-		long m01;
-	};
 	vector<BlobInfo> blobs;
     int blob_count = 1;
 

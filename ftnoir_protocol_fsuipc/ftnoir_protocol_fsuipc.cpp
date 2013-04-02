@@ -3,7 +3,7 @@
 *					gamers from Holland, who don't like to pay much for			*
 *					head-tracking.												*
 *																				*
-* Copyright (C) 2010-2013	Wim Vriend (Developing)								*
+* Copyright (C) 2010-2011	Wim Vriend (Developing)								*
 *							Ron Hendriks (Researching and Testing)				*
 *																				*
 * Homepage																		*
@@ -31,15 +31,13 @@
 					is called from run() of Tracker.cpp
 */
 #include "ftnoir_protocol_fsuipc.h"
+#include "facetracknoir/global-settings.h"
 
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
 	ProgramName = "Microsoft FS2004";
-
-	blnConnectionActive = false;
-	hMainWindow = NULL;
 
 	prevPosX = 0.0f;
 	prevPosY = 0.0f;
@@ -121,8 +119,6 @@ float virtRotX;
 float virtRotY;
 float virtRotZ;
 
-PDWORD_PTR MsgResult = 0;
-
 //	qDebug() << "FSUIPCServer::run() says: started!";
 
 	virtRotX = -1.0f * headpose->pitch;				// degrees
@@ -178,14 +174,6 @@ PDWORD_PTR MsgResult = 0;
 			if (result == FSUIPC_ERR_SENDMSG) {
 				FSUIPC_Close();							//timeout (1 second) so assume FS closed
 			}
-
-			if (!blnConnectionActive) {
-				blnConnectionActive = true;
-				if (hMainWindow != NULL) {
-					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-				}
-			}
-
 		}
 	}
 
@@ -200,11 +188,21 @@ PDWORD_PTR MsgResult = 0;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	qDebug() << "checkServerInstallationOK says: Starting Function";
 
-	hMainWindow = handle;
+	//
+	// Load the DLL.
+	//
+    FSUIPCLib.setFileName( LocationOfDLL );
+    if (FSUIPCLib.load() != true) {
+        qDebug() << "checkServerInstallationOK says: Error loading FSUIPC DLL";
+        return false;
+    }
+    else {
+        qDebug() << "checkServerInstallationOK says: FSUIPC DLL loaded.";
+    }
 
 	return true;
 }
@@ -214,7 +212,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "Microsoft FS2002/2004");
+	sprintf_s(dest, 99, "FS2002/2004");
 	return;
 }
 
@@ -225,9 +223,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor(void)
 {
-	return new FTNoIR_Protocol;
+    return (FTNoIR_Protocol*) new FTNoIR_Protocol;
 }

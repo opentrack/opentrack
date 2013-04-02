@@ -8,7 +8,7 @@
 #ifndef FTNOIR_TRACKER_PT_H
 #define FTNOIR_TRACKER_PT_H
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_pt_settings.h"
 #include "camera.h"
 #include "point_extractor.h"
@@ -20,18 +20,19 @@
 #include <QMutex>
 #include <QTime>
 #include <opencv2/opencv.hpp>
+#include <QFrame>
+#include <QTimer>
 
 //-----------------------------------------------------------------------------
-class Tracker : public ITracker, QThread
+class Tracker : public QThread, public ITracker
 {
+    Q_OBJECT
 public:
 	Tracker();
 	~Tracker();
 
 	// ITracker interface
-	void Initialize(QFrame *videoframe);
-	void StartTracker(HWND parent_window);
-	void StopTracker(bool exit);
+    void StartTracker(QFrame* videoFrame);
 	bool GiveHeadPoseData(THeadPoseData *data);
 
 	void refreshVideo();
@@ -40,6 +41,10 @@ public:
 	void center();
 	void reset();	// reset the trackers internal state variables
 	void run();
+    void WaitForExit() {
+        should_quit = true;
+        wait();
+    }
 
 	void get_pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.get_pose(); }
 	int get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
@@ -47,8 +52,6 @@ public:
 
 protected:	
 	FrameTrafo X_CH_0; // for centering
-
-	QMutex mutex;
 	cv::Mat frame;	// the output frame for display
 
 	enum Command {
@@ -57,9 +60,8 @@ protected:
 	};
 	void set_command(Command command);
 	void reset_command(Command command);
-	int commands;
 	
-	VICamera camera;
+    CVCamera camera;
 	PointExtractor point_extractor;
 	PointTracker point_tracker;
 	bool tracking_valid;
@@ -78,9 +80,17 @@ protected:
 	bool bEnableZ;
 	
 	long frame_count;
+    int commands;
 
 	VideoWidget* video_widget;
 	Timer time;
+    QMutex mutex;
+    volatile bool should_quit;
+    volatile bool fresh;
+    QTimer timer;
+    
+protected slots:
+    void paint_widget();
 };
 
 #endif // FTNOIR_TRACKER_PT_H

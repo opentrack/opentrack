@@ -68,45 +68,33 @@ bool Camera::get_frame(float dt, cv::Mat* frame)
 }
 
 // ----------------------------------------------------------------------------
-/*
 void CVCamera::start()
 {
-	cap = cvCreateCameraCapture(desired_index);
-	// extract camera info
-	if (cap)
-	{
-		active = true;
-		active_index = desired_index;
-		cam_info.res_x = cvGetCaptureProperty(cap, CV_CAP_PROP_FRAME_WIDTH);
-		cam_info.res_y = cvGetCaptureProperty(cap, CV_CAP_PROP_FRAME_HEIGHT);
-	}
+	cap = new VideoCapture(desired_index);
+// extract camera info
+    active = true;
+    active_index = desired_index;
+    cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
+    cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
 }
 
 void CVCamera::stop()
 {
-	if (cap) cvReleaseCapture(&cap);
+	if (cap) {
+        cap->release();
+        delete cap;
+        cap = NULL;
+    }
 	active = false;
 }
 
 bool CVCamera::_get_frame(Mat* frame)
 {
-    if (cap && cvGrabFrame(cap) != 0)
-	{
-		// retrieve frame
-		IplImage* _img = cvRetrieveFrame(cap, 0);
-		if(_img)
-		{
-			if(_img->origin == IPL_ORIGIN_TL)
-				*frame = Mat(_img);
-			else
-			{
-				Mat temp(_img);
-				flip(temp, *frame, 0);
-			}
-			return true;
-		}
-	}
-	return false;
+    Mat tmp;
+    bool ret = cap->read(tmp);
+    if (ret)
+        flip(tmp, *frame, 0);
+    return ret;
 }
 
 void CVCamera::_set_index()
@@ -121,21 +109,21 @@ void CVCamera::_set_f()
 
 void CVCamera::_set_fps()
 {
-	if (cap) cvSetCaptureProperty(cap, CV_CAP_PROP_FPS, cam_desired.fps);
+	if (cap) cap->set(CV_CAP_PROP_FPS, cam_desired.fps);
 }
 
 void CVCamera::_set_res()
 {
 	if (cap)
 	{
-		cvSetCaptureProperty(cap, CV_CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
-		cvSetCaptureProperty(cap, CV_CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
-		cam_info.res_x = cvGetCaptureProperty(cap, CV_CAP_PROP_FRAME_WIDTH);
-		cam_info.res_y = cvGetCaptureProperty(cap, CV_CAP_PROP_FRAME_HEIGHT);
+		cap->set(CV_CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
+		cap->set(CV_CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
+		cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
+		cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
 	}
 }
-*/
 
+#if 0
 // ----------------------------------------------------------------------------
 VICamera::VICamera() : frame_buffer(NULL)
 {
@@ -223,4 +211,4 @@ void VICamera::_set_res()
 {
 	if (active) restart();
 }
-
+#endif

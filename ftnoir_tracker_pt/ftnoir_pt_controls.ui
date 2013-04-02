@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
+    <width>451</width>
     <height>489</height>
    </rect>
   </property>
@@ -23,8 +23,8 @@
    <string>PointTracker Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ftnoir_tracker_pt.qrc">
-    <normaloff>:/Resources/icon.ico</normaloff>:/Resources/icon.ico</iconset>
+   <iconset>
+    <normaloff>:/Resources/icon.png</normaloff>:/Resources/icon.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -54,7 +54,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -561,6 +561,9 @@
                 <property name="toolTip">
                  <string>Desired capture framerate</string>
                 </property>
+                <property name="maximum">
+                 <number>300</number>
+                </property>
                </widget>
               </item>
              </layout>
@@ -959,7 +962,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/clip_side.png</pixmap>
+                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/clip_side.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="clip_theight_spin">
@@ -1082,7 +1085,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/clip_front.png</pixmap>
+                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/clip_front.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QLabel" name="label_53">
@@ -1137,7 +1140,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/cap_side.png</pixmap>
+                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/cap_side.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="cap_height_spin">
@@ -1247,7 +1250,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/cap_front.png</pixmap>
+                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/cap_front.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="cap_width_spin">
@@ -1656,7 +1659,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/Logo_IR.png</pixmap>
+        <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/logo_ir.png</pixmap>
        </property>
       </widget>
      </widget>

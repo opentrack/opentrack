@@ -32,6 +32,7 @@
 */
 #include "ftnoir_filter_ewma2.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 FTNoIR_FilterDll::FTNoIR_FilterDll() {
 }
@@ -48,9 +49,9 @@ FTNoIR_FilterDll::~FTNoIR_FilterDll()
 //   GetFilterDll     - Undecorated name, which can be easily used with GetProcAddress
 //						Win32 API function.
 //   _GetFilterDll@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilterDll=_GetFilterDll@0")
+//#pragma comment(linker, "/export:GetFilterDll=_GetFilterDll@0")
 
-FTNOIR_FILTER_BASE_EXPORT IFilterDllPtr __stdcall GetFilterDll()
+extern "C" FTNOIR_FILTER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new FTNoIR_FilterDll;
 }

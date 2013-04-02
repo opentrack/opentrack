@@ -33,36 +33,27 @@
 */
 #include "ftnoir_protocol_ftn.h"
 #include <QFile>
+#include "facetracknoir/global-settings.h"
 
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	loadSettings();
+    outSocket = 0;
 }
 
 /** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	if (inSocket != 0) {
-		inSocket->close();
-		delete inSocket;
-	}
-	
 	if (outSocket != 0) {
 		outSocket->close();
 		delete outSocket;
 	}
 }
 
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
-
 void FTNoIR_Protocol::Initialize()
 {
-	return;
+    loadSettings();
 }
 
 //
@@ -88,15 +79,13 @@ void FTNoIR_Protocol::loadSettings() {
 //
 void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
 int no_bytes;
-QHostAddress sender;
-quint16 senderPort;
+THeadPoseData TestData;
 
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	frame_counter += 1;
 	TestData = *headpose;
-	TestData.frame_number = frame_counter;
+    TestData.frame_number = 0;
 
 	//
 	// Try to send an UDP-message to the receiver
@@ -112,63 +101,14 @@ quint16 senderPort;
 			qDebug() << "FTNServer::writePendingDatagrams says: nothing sent!";
 		}
 	}
-
-	//
-	// Receiver may send data, so we must read that here.
-	//
-	if (inSocket != 0) {
-		while (inSocket->hasPendingDatagrams()) {
-
-			QByteArray datagram;
-			datagram.resize(inSocket->pendingDatagramSize());
-
-			inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
-
-			fg_cmd = cmd;									// Let's just accept that command for now...
-			if ( cmd > 0 ) {
-				qDebug() << "FTNServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
-//				headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
-			}
-		}
-	}
 }
 
 //
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-	// Init. the data
-	TestData.x = 0.0f;
-	TestData.y = 0.0f;
-	TestData.z = 0.0f;
-	TestData.yaw = 0.0f;
-	TestData.pitch = 0.0f;
-	TestData.roll = 0.0f;
-	fg_cmd = 1;
-
-	inSocket = 0;
-	outSocket = 0;
-
-	frame_counter = 0;
-
-	//
-	// Create UDP-sockets.
-	//
-	if (inSocket == 0) {
-		qDebug() << "FGServer::sendHeadposeToGame creating insocket";
-		inSocket = new QUdpSocket();
-
-		// Connect the inSocket to the port, to receive messages
-		if (!inSocket->bind(QHostAddress::Any, destPort+1, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
-			delete inSocket;
-			inSocket = 0;
-			return false;
-		}
-	}
-
 	if (outSocket == 0) {
 		outSocket = new QUdpSocket();
 	}
@@ -181,7 +121,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "FaceTrackNoIR");
+    sprintf(dest, "FaceTrackNoIR UDP");
 	return;
 }
 
@@ -192,9 +132,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Protocol;
+    return (IProtocol*) new FTNoIR_Protocol;
 }

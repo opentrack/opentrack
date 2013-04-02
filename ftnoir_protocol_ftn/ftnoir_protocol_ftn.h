@@ -29,15 +29,15 @@
 #ifndef INCLUDED_FTNSERVER_H
 #define INCLUDED_FTNSERVER_H
 
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
-#include "ui_FTNoIR_FTNcontrols.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ui_ftnoir_ftncontrols.h"
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QSettings>
-#include "Windows.h"
-#include "math.h"
+#include <math.h>
+#include "facetracknoir/global-settings.h"
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -45,24 +45,17 @@ public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
 
-	void Release();
     void Initialize();
 
-	bool checkServerInstallationOK( HANDLE handle );
+    bool checkServerInstallationOK();
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
 private:
-	THeadPoseData TestData;
-	long frame_counter;
-	QUdpSocket *inSocket;									// Receive from FaceTrackNoIR
 	QUdpSocket *outSocket;									// Send to FaceTrackNoIR
-	qint32 cmd;
-	qint32 fg_cmd;											// Command from FlightGear
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
 	void loadSettings();
-
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -77,12 +70,8 @@ public:
 
 	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
-	void registerProtocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
-	void unRegisterProtocol() {
-		theProtocol = NULL;									// Reset the pointer
-	};
+    void registerProtocol(IProtocol *protocol) {}
+    void unRegisterProtocol() {}
 
 private:
 	Ui::UICFTNControls ui;
@@ -91,28 +80,27 @@ private:
 
 	/** helper **/
 	bool settingsDirty;
-	FTNoIR_Protocol *theProtocol;
 
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
+    void settingChanged() { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); };
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); }
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FaceTrackNoIR.ico"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/facetracknoir.png"); }
 };
 
 #endif//INCLUDED_FTNSERVER_H

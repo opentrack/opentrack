@@ -25,7 +25,9 @@
 #include "ftnoir_filter_ewma2.h"
 #include "math.h"
 #include <QDebug>
-
+#include <QWidget>
+#include "facetracknoir/global-settings.h"
+#include <algorithm>
 //#define LOG_OUTPUT
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,11 +47,6 @@ FTNoIR_Filter::FTNoIR_Filter()
 FTNoIR_Filter::~FTNoIR_Filter()
 {
 
-}
-
-void FTNoIR_Filter::Release()
-{
-    delete this;
 }
 
 void FTNoIR_Filter::Initialize()
@@ -82,7 +79,7 @@ void FTNoIR_Filter::loadSettings() {
 
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget)
+void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter, bool newTarget)
 {
 	//non-optimised version for clarity
 	float prev_output[6];
@@ -149,7 +146,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	//normalise the deltas
 	for (i=0;i<6;i++)
 	{
-		norm_output_delta[i]=std::min(std::max(fabs(output_delta[i])/scale[i],0.0f),1.0f);
+        norm_output_delta[i]=std::min<double>(std::max<double>(fabs(output_delta[i])/scale[i],0.0),1.0);
 	}
 
 	//calculate the alphas
@@ -228,9 +225,9 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 //   GetFilter     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetFilter@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilter=_GetFilter@0")
+//#pragma comment(linker, "/export:GetFilter=_GetFilter@0")
 
-FTNOIR_FILTER_BASE_EXPORT IFilterPtr __stdcall GetFilter()
+extern "C" FTNOIR_FILTER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Filter;
+    return (IFilter*) new FTNoIR_Filter;
 }

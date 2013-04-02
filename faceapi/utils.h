@@ -2,6 +2,8 @@
 #define SM_API_TESTAPPCONSOLE_UTILS_H
 
 #include "lock.h"
+#include <exception>
+#include <iostream>
 
 #define THROW_ON_ERROR(x) \
 { \
@@ -10,7 +12,8 @@
     { \
         std::stringstream s; \
         s << "API error code: " << result; \
-        throw std::runtime_error(s.str()); \
+        std::cerr << s; \
+        throw std::exception(); \
     } \
 }
 

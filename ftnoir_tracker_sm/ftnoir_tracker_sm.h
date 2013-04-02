@@ -31,6 +31,8 @@
 #include <QProcess>
 #include "Windows.h"
 #include "math.h"
+#include "facetracknoir/global-settings.h"
+#include <QFrame>
 
 using namespace std;
 
@@ -40,10 +42,10 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void Initialize( QFrame *videoframe );
-    void StartTracker( HWND parent_window );
+    void StartTracker( QFrame* parent_window );
     void StopTracker( bool exit );
 	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
+    void WaitForExit();
 
 	void loadSettings();
 	bool SMCreateMapping();
@@ -137,7 +139,7 @@ signals:
 //*******************************************************************************************************
 // FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
 //*******************************************************************************************************
-class FTNoIR_TrackerDll : public ITrackerDll
+class FTNoIR_TrackerDll : public Metadata
 {
 public:
 	FTNoIR_TrackerDll();

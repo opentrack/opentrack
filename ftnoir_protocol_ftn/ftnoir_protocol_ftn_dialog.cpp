@@ -32,6 +32,7 @@
 */
 #include "ftnoir_protocol_ftn.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -58,8 +59,6 @@ QWidget()
 	connect(ui.spinIPThirdNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-
-	theProtocol = NULL;
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -186,9 +185,9 @@ void FTNControls::save() {
 //   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
+//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialogPtr __stdcall GetProtocolDialog( )
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new FTNControls;
+    return (IProtocolDialog*) new FTNControls;
 }

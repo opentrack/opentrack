@@ -11,7 +11,10 @@
 #include <QGLWidget>
 #include <QTime>
 #include <opencv2/opencv.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <QWidget>
+#include <QMutex>
+#include <QMutexLocker>
 
 // ----------------------------------------------------------------------------
 class VideoWidget : public QGLWidget
@@ -19,13 +22,18 @@ class VideoWidget : public QGLWidget
 	Q_OBJECT
 
 public:
-	VideoWidget(QWidget *parent) : QGLWidget(parent) {}
+    VideoWidget(QWidget *parent) : QGLWidget(parent) {
+#if !defined(_WIN32)
+        setAttribute(Qt::WA_NativeWindow, true);
+#endif
+	}
 
 	void initializeGL();
 	void resizeGL(int w, int h);
 	void paintGL();
 
-	void update(cv::Mat frame, boost::shared_ptr< std::vector<cv::Vec2f> > points);
+    void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> > points);
+    void update();
 
 private:
 	void resize_frame();
@@ -34,7 +42,8 @@ private:
 	QImage qframe;
 	QImage resized_qframe;
 
-	boost::shared_ptr< std::vector<cv::Vec2f> > points;
+    std::auto_ptr< std::vector<cv::Vec2f> > points;
+    QMutex mtx;
 };
 
 #endif // VIDEOWIDGET_H

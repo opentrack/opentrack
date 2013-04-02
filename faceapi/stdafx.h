@@ -1,8 +1,3 @@
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
@@ -12,10 +7,30 @@
 #include <stdio.h>
 #include <tchar.h>
 
-// TODO: reference additional headers your program requires here
+#ifndef _MSC_VER
+
+#include <inttypes.h>
+
+typedef uint64_t u_int64_t;
+typedef uint32_t u_int32_t;
+typedef uint16_t u_int16_t;
+typedef uint8_t u_int8_t;
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <cassert>
 #include <conio.h>
+#include <sm_api_configure.h>
+#ifdef SM_API
+#   undef SM_API
+#endif
+#ifdef STDCALL
+#   undef STDCALL
+#endif
+
+#define SM_API(type) type __declspec(dllimport) __stdcall
+#define STDCALL __stdcall
+
 #include <sm_api.h>

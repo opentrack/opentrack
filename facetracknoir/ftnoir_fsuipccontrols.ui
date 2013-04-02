@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>541</width>
-    <height>127</height>
+    <height>131</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.ico</normaloff>images/FaceTrackNoIR.ico</iconset>
+    <normaloff>images/facetracknoir.png</normaloff>images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>

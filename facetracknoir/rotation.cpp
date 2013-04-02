@@ -32,7 +32,7 @@ void Rotation::fromEuler(double yaw, double pitch, double roll)
 	d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
 }
 
-void Rotation::toEuler(double& yaw, double& pitch, double& roll)
+void Rotation::toEuler(volatile double& yaw, volatile double& pitch, volatile double& roll)
 {
 	roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
 	pitch = asin(2.0*(a*c - b*d));

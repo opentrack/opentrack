@@ -32,7 +32,7 @@
 */
 #include "ftnoir_protocol_ft.h"
 #include <QDebug>
-#include <QFileDialog>
+#include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -51,36 +51,12 @@ QWidget()
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
-	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.cbxSelectInterface, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-
-	ui.cbxSelectInterface->addItem("Enable both");
-	ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
-	ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
+//	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(chkTIRViewsChanged()));
 
 	theProtocol = NULL;
 
 	// Load the settings from the current .INI-file
 	loadSettings();
-
-
-	aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
-	if ( !QFile::exists( aFileName ) ) {
-		ui.chkTIRViews->setChecked( false );
-		ui.chkTIRViews->setEnabled ( false );
-
-		//
-		// Best do this save() last, or it will continually reset the settings... :-(
-		//
-		save();
-	}
-	else {
-		ui.chkTIRViews->setEnabled ( true );
-	}
-
-
 }
 
 //
@@ -88,6 +64,11 @@ QWidget()
 //
 FTControls::~FTControls() {
 	qDebug() << "~FTControls() says: started";
+}
+
+void FTControls::Release()
+{
+    delete this;
 }
 
 //
@@ -161,12 +142,7 @@ void FTControls::loadSettings() {
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "FT" );
-	ui.cbxSelectInterface->setCurrentIndex( iniFile.value ( "UsedInterface", 0 ).toInt() );
-	iniFile.endGroup ();
-
-	iniFile.beginGroup ( "FTIR" );
-	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
-	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 1 ).toBool());
+//	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -182,43 +158,11 @@ void FTControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FT" );
-	iniFile.setValue ( "UsedInterface", ui.cbxSelectInterface->currentIndex());
-	iniFile.endGroup ();
-
-	iniFile.beginGroup ( "FTIR" );
-	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
-	iniFile.setValue ( "useDummyExe", ui.chkStartDummy->isChecked() );
+//	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
 }
-
-//
-// Select a NPClient.dll file, to repair the Location in the Registry.
-// Several program distribute their own version of this file.
-//
-void FTControls::selectDLL() {
-	QFileDialog::Options options;
-	QFileDialog::FileMode mode;
-
-    options |= QFileDialog::DontUseNativeDialog;
-	mode = QFileDialog::ExistingFile;
-    QString selectedFilter;
-	QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
-
-	//
-	// Write the location of the file in the required Registry-key.
-	//
-	if (! fileName.isEmpty() ) {
-		if (fileName.endsWith("NPClient.dll", Qt::CaseInsensitive) ) {
-			QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");			// Registry settings (in HK_USER)
-			QString aLocation = fileName.left(fileName.length() - 12);							// Location of Client DLL
-
-			settingsTIR.setValue( "Path" , aLocation );
-		}
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol-settings dialog object.
@@ -227,9 +171,9 @@ void FTControls::selectDLL() {
 //   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
+//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialogPtr __stdcall GetProtocolDialog( )
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new FTControls;
+    return (IProtocolDialog*) new FTControls;
 }

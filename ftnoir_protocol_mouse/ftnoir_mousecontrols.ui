@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Protocol.qrc">
-    <normaloff>:/images/Mouse.ico</normaloff>:/images/Mouse.ico</iconset>
+    <normaloff>:/images/Mouse.png</normaloff>:/images/Mouse.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>

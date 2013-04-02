@@ -9,10 +9,11 @@
 
 #include <QMessageBox>
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 //-----------------------------------------------------------------------------
 TrackerDialog::TrackerDialog()
-	: settings_dirty(false), tracker(NULL), timer(this), trans_calib_running(false)
+    : settings_dirty(false), tracker(NULL), trans_calib_running(false), timer(this)
 {
 	qDebug()<<"TrackerDialog::TrackerDialog";
 	setAttribute(Qt::WA_DeleteOnClose, false);
@@ -328,9 +329,9 @@ void TrackerDialog::unRegisterTracker()
 }
 
 //-----------------------------------------------------------------------------
-#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
+//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new TrackerDialog;
+    return (ITrackerDialog*) new TrackerDialog;
 }

@@ -26,8 +26,10 @@
 #ifndef INCLUDED_FTN_FILTER_H
 #define INCLUDED_FTN_FILTER_H
 
-#include "..\ftnoir_filter_base\ftnoir_filter_base.h"
-#include "ui_FTNoIR_FilterControls.h"
+#include "ftnoir_filter_base/ftnoir_filter_base.h"
+#include "facetracknoir/global-settings.h"
+#include "ui_ftnoir_ewma_filtercontrols.h"
+#include <QWidget>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -38,12 +40,10 @@ class FTNoIR_Filter : public IFilter
 {
 public:
 	FTNoIR_Filter();
-	~FTNoIR_Filter();
+    ~FTNoIR_Filter();
 
-	void Release();
     void Initialize();
-    void StartFilter();
-	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
+    void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter, bool newTarget);
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
@@ -76,7 +76,7 @@ public:
 	void showEvent ( QShowEvent * event );
 
 	void Release();											// Member functions which are accessible from outside the DLL
-    void Initialize(QWidget *parent, IFilterPtr ptr);
+    void Initialize(QWidget *parent, IFilter* ptr);
 
 private:
 	Ui::UICFilterControls ui;
@@ -86,7 +86,7 @@ private:
 	/** helper **/
 	bool settingsDirty;
 
-	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+    IFilter* pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 
 private slots:
 	void doOK();
@@ -98,7 +98,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Filter DLL. Functions used to get general info on the Filter
 //*******************************************************************************************************
-class FTNoIR_FilterDll : public IFilterDll
+class FTNoIR_FilterDll : public Metadata
 {
 public:
 	FTNoIR_FilterDll();

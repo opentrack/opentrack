@@ -5,10 +5,11 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/global-settings.h"
 
 //-----------------------------------------------------------------------------
-class TrackerDll : public ITrackerDll
+class TrackerDll : public Metadata
 {
 	// ITrackerDll interface
 	void Initialize() {}

@@ -1,0 +1,10 @@
+{
+ global:
+  XPluginStart;
+  XPluginStop;
+  XPluginEnable;
+  XPluginDisable;
+  XPluginReceiveMessage;
+ local:
+   *;
+};

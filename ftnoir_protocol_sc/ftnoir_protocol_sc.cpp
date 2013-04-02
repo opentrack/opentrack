@@ -33,6 +33,7 @@
 					is called from run() of Tracker.cpp
 */
 #include "ftnoir_protocol_sc.h"
+#include "facetracknoir/global-settings.h"
 
 importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol::simconnect_set6DOF;
 HANDLE FTNoIR_Protocol::hSimConnect = 0;			// Handle to SimConnect
@@ -59,7 +60,6 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
 	hSimConnect = 0;
-	hMainWindow = 0;
 }
 
 /** destructor **/
@@ -76,17 +76,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 //	SCClientLib.unload(); Generates crash when tracker is ended...
 }
 
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
-
-void FTNoIR_Protocol::Initialize()
-{
-	return;
-}
-
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
@@ -101,7 +90,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData
 PDWORD_PTR MsgResult = 0;
 
 
-	virtSCRotX = -1.0f * headpose->pitch;					// degrees
+    virtSCRotX = -1.0f * headpose->pitch;					// degrees
 	virtSCRotY = -1.0f * headpose->yaw;
 	virtSCRotZ = headpose->roll;
 
@@ -113,25 +102,22 @@ PDWORD_PTR MsgResult = 0;
 	// It's only useful to send data, if the connection was made.
 	//
 	if (!blnSimConnectActive) {
-		if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: SimConnect active!";
+        if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
+            qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: SimConnect active!";
 
-			//set up the events we want to listen for
-			HRESULT hr;
+            //set up the events we want to listen for
+            HRESULT hr;
 
-			simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame"); 
+            simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
 
-			hr = simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
-			hr = simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
-			hr = simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-			////hr = SimConnect_MapInputEventToClientEvent(hSimConnect, INPUT0, "VK_COMMA", EVENT_INIT);
-			////hr = SimConnect_SetInputGroupState(hSimConnect, INPUT0, SIMCONNECT_STATE_ON);
+            hr = simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
+            hr = simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
+            hr = simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+            ////hr = SimConnect_MapInputEventToClientEvent(hSimConnect, INPUT0, "VK_COMMA", EVENT_INIT);
+            ////hr = SimConnect_SetInputGroupState(hSimConnect, INPUT0, SIMCONNECT_STATE_ON);
 
-			blnSimConnectActive = true;
-			if (hMainWindow != NULL) {
-				SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-			}
-		}
+            blnSimConnectActive = true;
+        }
 	}
 	else {
 		//
@@ -165,33 +151,29 @@ PDWORD_PTR MsgResult = 0;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	QString aFileName;														// File Path and Name
 
 	// Code to activate the context for the SimConnect DLL
-	ACTCTX act = { 0 };
+    ACTCTX act = { 0 };
 	HANDLE hctx;
 	ULONG_PTR ulCookie;
-
-	hMainWindow = handle;
 
 	qDebug() << "SCCheckClientDLL says: Starting Function";
 
 	try {
-
+#if 0
 		act.cbSize = sizeof(act);
 		act.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
+        char full_path[2048];
+        strcpy(full_path, QCoreApplication::applicationDirPath().toLatin1().constData());
+        strcat(full_path, "\\libftnoir-proto-simconnect.dll");
 
-		QString manifest(QCoreApplication::applicationDirPath());
-//		manifest += "\\FaceTrackNoIR.exe";
-		manifest += "\\FTNoIR_Protocol_SC.dll";
-		const wchar_t * encodedName = reinterpret_cast<const wchar_t *>(manifest.utf16());
-		
-		act.lpSource = encodedName;
-		act.lpResourceName = MAKEINTRESOURCE(101);
+        act.lpSource = full_path;
+        act.lpResourceName = MAKEINTRESOURCEA(101);
 
-		hctx = CreateActCtx (&act);
+        hctx = CreateActCtxA (&act);
 
 		if (hctx != INVALID_HANDLE_VALUE) { 
 			if (!ActivateActCtx(hctx, &ulCookie)) { 
@@ -203,31 +185,25 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 			qDebug() << "SCCheckClientDLL says: Error INVALID_HANDLE: " << GetLastError();
 			return false;
 		}
-
 		//
 		// Just try to load the DLL. Let Windows handle the PATH's and such trivialities...
 		//
-		aFileName = SC_CLIENT_FILENAME;
-						
-		//
-		// Load the DLL.
-		//
-		SCClientLib.setFileName(aFileName);
-		if (SCClientLib.load() != true) {
-			qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
-			return false;
-		}
-
 		//
 		// Deactivate the context again: the function-references should stay in-tact...
 		//
 		DeactivateActCtx(0, ulCookie);
 		ReleaseActCtx(hctx);
-
+#endif
 	} catch(...) {
 		qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
 		return false;
 	}
+
+    SCClientLib.setFileName(SC_CLIENT_FILENAME);
+    if (SCClientLib.load() != true) {
+        qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
+        return false;
+    }
 
 	//
 	// Get the functions from the DLL.
@@ -374,7 +350,7 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "Microsoft FSX");
+    sprintf(dest, "Microsoft FSX");
 	return;
 }
 
@@ -385,9 +361,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Protocol;
+    return (IProtocol*) new FTNoIR_Protocol;
 }
