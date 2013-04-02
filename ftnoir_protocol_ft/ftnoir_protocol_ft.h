@@ -28,21 +28,21 @@
 #ifndef INCLUDED_FTSERVER_H
 #define INCLUDED_FTSERVER_H
 
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
-#include "ui_ftnoir_ftcontrols.h"
-#include "fttypes.h"
+#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
+#include "ui_FTNoIR_FTcontrols.h"
+#include "FTTypes.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include <windows.h>
-// todo wine glue
+#include "Windows.h"
 //#include "math.h"
-#include "facetracknoir/global-settings.h"
 
-typedef char *(WINAPI *importProvider)(void);
+//typedef char *(WINAPI *importProvider)(void);
+typedef void (WINAPI *importTIRViewsStart)(void);
+typedef void (WINAPI *importTIRViewsStop)(void);
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -53,25 +53,35 @@ public:
 	void Release();
     void Initialize();
 
-    bool checkServerInstallationOK();
+	bool checkServerInstallationOK( HANDLE handle );
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
-    bool FTCreateMapping();
+	bool FTCreateMapping(HANDLE handle);
 	void FTDestroyMapping();
+
+	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+	importTIRViewsStop viewsStop;
 
 	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
 	HANDLE hFTMutex;
 
+	HANDLE hMainWindow;									// Save the handle to FaceTrackNoIR main-window
 	__int32 comhandle;									// Handle on x32, command on x64
 
 	// Private properties
 	QString ProgramName;
-	QLibrary FTClientLib;
+	QLibrary FTIRViewsLib;
+	QProcess *dummyTrackIR;
+	int intGameID;
+	int intUsedInterface;								// Determine which interface to use (or to hide from the game)
+	bool useTIRViews;									// Needs to be in the Settings dialog
+	bool useDummyExe;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
+	bool getGameData( QString gameID );
 	void loadSettings();
 
 };
@@ -105,25 +115,27 @@ private:
 	FTNoIR_Protocol *theProtocol;
 
 private slots:
+	void selectDLL();
 	void doOK();
 	void doCancel();
 	void settingChanged() { settingsDirty = true; };
+	void settingChanged(int) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public Metadata
+class FTNoIR_ProtocolDll : public IProtocolDll
 {
 public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack protocol"); };
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); };
 
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
 };
 
 
