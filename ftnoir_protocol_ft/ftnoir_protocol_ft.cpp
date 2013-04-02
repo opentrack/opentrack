@@ -505,9 +505,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Protocol;
+    return (IProtocol*) new FTNoIR_ProtocolDll;
 }

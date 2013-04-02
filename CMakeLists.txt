@@ -508,7 +508,6 @@ if(NOT SDK_FACEAPI_ONLY)
             )
         endif()
         install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
-        install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION .)
         if(SDK_SIMCONNECT)
         install(TARGETS ftnoir-proto-simconnect
                 RUNTIME DESTINATION .

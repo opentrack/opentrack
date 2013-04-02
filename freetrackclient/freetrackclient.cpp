@@ -30,20 +30,7 @@
 	
 */
 
-#ifdef WIN64
-#pragma comment(linker, "/export:FTGetData")
-#pragma comment(linker, "/export:FTReportName")
-#pragma comment(linker, "/export:FTGetDllVersion")
-#pragma comment(linker, "/export:FTProvider")
-#endif
-
-#ifdef WIN64
-#  define FT_DECLSPEC __declspec(dllexport)
-#else
-#  define FT_DECLSPEC 
-#endif
-
-#define FT_EXPORT(t) extern "C" t FT_DECLSPEC __stdcall
+#define FT_EXPORT(t) extern "C" t __declspec(dllexport) __stdcall
 #define	NP_AXIS_MAX				16383
 
 #include <stdarg.h>
@@ -53,7 +40,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#include "..\..\FTNOIR_PROTOCOL_FT\FTTypes.h"
+#include "ftnoir_protocol_ft\fttypes.h"
 
 //
 // Functions to create/open the file-mapping
@@ -64,7 +51,7 @@ void FTDestroyMapping();
 float scale2AnalogLimits( float x, float min_x, float max_x );
 float getDegreesFromRads ( float rads );
 
-#if 1
+#if 0
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
 #define dbg_report(...) if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fflush(debug_stream); }
 #else
