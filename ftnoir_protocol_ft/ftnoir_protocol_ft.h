@@ -54,12 +54,12 @@ public:
 	void Release();
     void Initialize();
 
-	bool checkServerInstallationOK( HANDLE handle );
+	bool checkServerInstallationOK(  );
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
-	bool FTCreateMapping(HANDLE handle);
+	bool FTCreateMapping();
 	void FTDestroyMapping();
 
 	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
@@ -136,7 +136,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/Freetrack.ico"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); };
 };
 
 
