@@ -220,8 +220,12 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
     if (shm->result.filled) {
         if (enableRX)
             data->yaw = shm->result.rotx;
-        if (enableRY)
+        if (enableRY) {
             data->pitch = shm->result.roty;
+            double sign = data->pitch >= 0 ? 1 : -1;
+            if (fabs(fabs(data->pitch) - 180) < fabs(data->pitch))
+                data->pitch = fabs(fabs(data->pitch) - 180) * sign;
+		}
         if (enableRZ) {
             data->roll = shm->result.rotz;
             double sign = data->roll >= 0 ? 1 : -1;
