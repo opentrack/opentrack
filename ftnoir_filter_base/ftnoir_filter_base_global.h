@@ -1,7 +1,7 @@
 #ifndef FTNOIR_FILTER_BASE_GLOBAL_H
 #define FTNOIR_FILTER_BASE_GLOBAL_H
 
-#include <Qt/qglobal.h>
+#include <QtGlobal>
 
 #ifdef FTNOIR_FILTER_BASE_LIB
 # define FTNOIR_FILTER_BASE_EXPORT Q_DECL_EXPORT

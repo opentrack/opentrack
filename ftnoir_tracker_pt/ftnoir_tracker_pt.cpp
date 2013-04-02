@@ -11,23 +11,22 @@
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
+#include "facetracknoir/global-settings.h"
 
 using namespace std;
 using namespace cv;
-using namespace boost;
 
 //#define PT_PERF_LOG	//log performance
 
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
-	: frame_count(0), commands(0), video_widget(NULL), tracking_valid(false)
+    : tracking_valid(false), frame_count(0), commands(0), video_widget(NULL), fresh(false)
 {
+    should_quit = false;
 	qDebug()<<"Tracker::Tracker";
 	TrackerSettings settings;
-	settings.load_ini();
+    settings.load_ini();
 	apply(settings);
-	camera.start();
-	start();
 }
 
 Tracker::~Tracker()
@@ -66,8 +65,12 @@ void Tracker::run()
 	forever
 	{
 		{	
+            
+            refreshVideo();
 			QMutexLocker lock(&mutex);
-			
+            if (should_quit)
+                break;
+
 			if (commands & ABORT) break;
 			if (commands & PAUSE) continue;
 			commands = 0;
@@ -105,7 +108,7 @@ void Tracker::apply(const TrackerSettings& settings)
 	point_extractor.threshold_val = settings.threshold;
 	point_extractor.min_size = settings.min_point_size;
 	point_extractor.max_size = settings.max_point_size;
-	point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
+	point_tracker.point_model = std::auto_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
 	point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
 	sleep_time = settings.sleep_time;
 	point_tracker.dt_reset = settings.reset_time / 1000.0;
@@ -138,57 +141,60 @@ void Tracker::center()
 	X_CH_0 = X_CM_0 * X_MH;
 }
 
-//-----------------------------------------------------------------------------
-// ITracker interface
-void Tracker::Initialize(QFrame *videoframe)
-{
-	const int VIDEO_FRAME_WIDTH = 252;
-	const int VIDEO_FRAME_HEIGHT = 189;
-
-	qDebug("Tracker::Initialize");
-	// setup video frame
-	videoframe->setAttribute(Qt::WA_NativeWindow);
-	videoframe->show();
-	video_widget = new VideoWidget(videoframe);
-	QHBoxLayout* layout = new QHBoxLayout();
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(video_widget);
-	if (videoframe->layout()) delete videoframe->layout();
-	videoframe->setLayout(layout);
-	video_widget->resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
-}
-
 void Tracker::refreshVideo()
 {	
 	if (video_widget)
 	{
 		Mat frame_copy;
-		shared_ptr< vector<Vec2f> > points;
+		std::auto_ptr< vector<Vec2f> > points;
 		{
 			QMutexLocker lock(&mutex);
 			if (!draw_frame || frame.empty()) return;
 		
 			// copy the frame and points from the tracker thread
 			frame_copy = frame.clone();
-			points = shared_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
+			points = std::auto_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
 		}
 		
-		video_widget->update(frame_copy, points);
+		video_widget->update_image(frame_copy, points);
+        fresh = true;
 	}
 }
 
-void Tracker::StartTracker(HWND parent_window)
+void Tracker::StartTracker(QFrame* videoframe)
 {
+    const int VIDEO_FRAME_WIDTH = 252;
+    const int VIDEO_FRAME_HEIGHT = 189;
+    TrackerSettings settings;
+    settings.load_ini();
+    apply(settings);
+    camera.start();
+    start();
+    qDebug("Tracker::Initialize");
+    // setup video frame
+    video_widget = new VideoWidget(videoframe);
+    QHBoxLayout* layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(video_widget);
+    if (videoframe->layout()) delete videoframe->layout();
+    videoframe->setLayout(layout);
+    video_widget->resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
+    videoframe->show();
 	reset_command(PAUSE);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()), Qt::QueuedConnection);
+    timer.start(40);
 }
 
-void Tracker::StopTracker(bool exit)
-{
-	set_command(PAUSE);
+void Tracker::paint_widget() {
+    if (fresh) {
+        fresh = false;
+        video_widget->update();
+    }
 }
 
 bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
+    refreshVideo();
 	const float rad2deg = 180.0/3.14159265;
 	const float deg2rad = 1.0/rad2deg;
 	{
@@ -249,9 +255,9 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 }
 
 //-----------------------------------------------------------------------------
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
+//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new Tracker;
+    return (ITracker*) new Tracker;
 }

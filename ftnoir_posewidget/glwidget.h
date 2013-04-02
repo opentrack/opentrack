@@ -29,10 +29,11 @@
 
 #include <QtGui>
 #include <QGLWidget>
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
 class QGLShaderProgram;
 
-class GLWidget : public QGLWidget
+class FTNOIR_TRACKER_BASE_EXPORT GLWidget : public QGLWidget
 {
     Q_OBJECT
 

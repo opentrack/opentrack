@@ -36,8 +36,9 @@
 
 //FaceAPI headers
 #include <sm_api.h>
-#include "ftnoir_tracker_sm_types.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_sm_types.h"
 #include "utils.h"
+#include <exception>
 
 //local headers
 #include "build_options.h"
@@ -171,7 +172,7 @@ smCameraHandle createFirstCamera()
 
     if (info_list.num_cameras == 0)
     {
-        throw runtime_error("No cameras were detected");
+        throw std::exception();
     }
     else
     {
@@ -211,7 +212,6 @@ smCameraHandle createFirstCamera()
 // The main function: setup a tracking engine and show a video window, then loop on the keyboard.
 void run()
 {
-	char msg[100];
 	int state;
 
 	// Capture control-C
@@ -377,11 +377,6 @@ void run()
 		//
 		if (ftnoirConnected && (pMemData != 0)) {
 
-			sprintf_s(msg, "Command: %d, \n", pMemData->command, pMemData->par_val_int);
-			OutputDebugStringA(msg);
-			std::cout << msg;
-
-			//
 			//
 			// Determine the trackers' state and send it to FaceTrackNoIR.
 			//

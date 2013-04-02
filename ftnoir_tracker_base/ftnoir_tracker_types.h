@@ -44,7 +44,7 @@ struct THeadPoseData {
 		: x(x), y(y), z(z), yaw(yaw), pitch(pitch), roll(roll), frame_number(0) {}
 
 	double x, y, z, yaw, pitch, roll;
-	long frame_number;
+    unsigned char frame_number;
 };
 #pragma pack(pop)
 

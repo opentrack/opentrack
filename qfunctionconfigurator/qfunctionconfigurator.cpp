@@ -40,7 +40,7 @@
 						After a 'Reset' this would disappear...
 		20120828 - WVR: Removed bSkipText, which was used to not show a number below each vertical gridline.
 */
-#include "qfunctionconfigurator.h"
+#include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPainterPathStroker>
@@ -59,8 +59,6 @@
 
 QFunctionConfigurator::~QFunctionConfigurator()
 {
-	WaitForSingleObject(_mutex, INFINITE);
-	CloseHandle(_mutex);
 	delete btnReset;
 }
 
@@ -101,7 +99,6 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 	_config = 0;
 	_points = QList<QPointF>();
 	_draw_points = QList<QPointF>();
-	_mutex = CreateMutex(NULL, false, NULL);
 	_draw_background = true;
 	_draw_function = true;
 
@@ -117,7 +114,6 @@ QPointF currentPoint;
 QPointF drawPoint;
 qreal x;
 
-	WaitForSingleObject(_mutex, INFINITE);
 	_config = config;
 	_points = config->getPoints();
 	strSettingsFile = settingsFile;													// Remember for Reset()
@@ -144,7 +140,6 @@ qreal x;
 		}
 	}
 	
-	ReleaseMutex(_mutex);
 	_draw_function = true;
 	this->update();
 }
@@ -157,12 +152,10 @@ void QFunctionConfigurator::loadSettings(QString settingsFile) {
 	QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
 	strSettingsFile = settingsFile;													// Remember for Reset()
 	qDebug() << "QFunctionConfigurator::loadSettings = " << settingsFile;
-	WaitForSingleObject(_mutex, INFINITE);
 	if (_config) {
 		_config->loadSettings(iniFile);
 		setConfig(_config, settingsFile);
 	}
-	ReleaseMutex(_mutex);
 }
 
 //
@@ -173,11 +166,9 @@ void QFunctionConfigurator::saveSettings(QString settingsFile) {
 	strSettingsFile = settingsFile;													// Remember for Reset()
 	qDebug() << "QFunctionConfigurator::saveSettings = " << settingsFile;
 
-	WaitForSingleObject(_mutex, INFINITE);
 	if (_config) {
 		_config->saveSettings(iniFile);
 	}
-	ReleaseMutex(_mutex);
 }
 
 //
@@ -276,7 +267,7 @@ QPointF currentPoint;
 	QPainter painter(&_function);
 
 	painter.save();
-	painter.setRenderHint(QPainter::Antialiasing, false);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
 	//
 	// Draw the handles for the Points
@@ -289,7 +280,7 @@ QPointF currentPoint;
 	}
 
 
-	QPen pen(colBezier, 2, Qt::SolidLine);
+    QPen pen(colBezier, 1.5, Qt::SolidLine);
 
 	prevPoint = graphicalizePoint( QPointF(0,0), "drawFunction lines" );		// Start at the Axis
 	double max = maxInputEGU();
@@ -339,7 +330,6 @@ int i;
 	//
 	// Draw the Points, that make up the Curve
 	//
-	WaitForSingleObject(_mutex, INFINITE);
 	if (_config) {
 
 		//
@@ -385,7 +375,6 @@ int i;
 		}
 
 	}
-	ReleaseMutex(_mutex);
 
 	//
 	// Draw the delimiters
@@ -396,7 +385,7 @@ int i;
 	drawLine(&p, QPoint(lastPoint.x(), range.top()), QPoint(lastPoint.x(), range.bottom()), pen);
 	drawLine(&p, QPoint(range.left(), lastPoint.y()), QPoint(range.right(), lastPoint.y()), pen);
 
-	QTimer::singleShot(250, this, SLOT(update()));
+    QTimer::singleShot(50, this, SLOT(update()));
 }
 
 //
@@ -438,7 +427,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 		//
 		bool bTouchingPoint = false;
 		movingPoint = -1;
-		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
 
 			for (int i = 0; i < _points.size(); i++) {
@@ -461,7 +449,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 				}
 			}
 		}
-		ReleaseMutex(_mutex);
 	}
 
 	//
@@ -474,7 +461,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 		//
 		moving = NULL;
 		movingPoint = -1;
-		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
 
 			for (int i = 0; i < _points.size(); i++) {
@@ -493,7 +479,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 				emit CurveChanged( true );
 			}
 		}
-		ReleaseMutex(_mutex);
 	}
 
 }
@@ -521,7 +506,6 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 		// Check to see if the cursor is touching one of the points.
 		//
 		bool bTouchingPoint = false;
-		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
 
 			for (int i = 0; i < _points.size(); i++) {
@@ -530,7 +514,6 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 				}
 			}
 		}
-		ReleaseMutex(_mutex);
 
 		if ( bTouchingPoint ) {
 			setCursor(Qt::OpenHandCursor);
@@ -551,13 +534,10 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 		//
 		// Update the Point in the _config
 		//
-		WaitForSingleObject(_mutex, INFINITE);
 		if (_config) {
 			_config->movePoint(movingPoint, normalizePoint(e->pos()));
 			setConfig(_config, strSettingsFile);
 		}
-		ReleaseMutex(_mutex);
-
 	}
 	setCursor(Qt::ArrowCursor);		
 	moving = NULL;
@@ -707,7 +687,6 @@ void QFunctionConfigurator::setCaption(QString cap)
 
 void QFunctionConfigurator::resizeEvent(QResizeEvent *e)
 {
-    QSize s = e->size();
 	range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
 
 	qDebug() << "QFunctionConfigurator::resizeEvent, name = " << strCaption << ",range = " << range;

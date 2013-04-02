@@ -28,12 +28,12 @@
 #ifndef __TRACKER_TYPES_H__
 #define __TRACKER_TYPES_H__
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_types.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 
 class T6DOF : public THeadPoseData
 {
 public:
-	T6DOF() : THeadPoseData() {}
+    T6DOF() : THeadPoseData() {}
 
 	T6DOF(double x, double y, double z, double yaw, double pitch, double roll) 
 		:  THeadPoseData(x,y,z, yaw,pitch,roll) {}

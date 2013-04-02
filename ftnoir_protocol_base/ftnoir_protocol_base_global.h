@@ -1,7 +1,7 @@
 #ifndef FTNOIR_PROTOCOL_BASE_GLOBAL_H
 #define FTNOIR_PROTOCOL_BASE_GLOBAL_H
 
-#include <Qt/qglobal.h>
+#include <QtGlobal>
 
 #ifdef FTNOIR_PROTOCOL_BASE_LIB
 # define FTNOIR_PROTOCOL_BASE_EXPORT Q_DECL_EXPORT

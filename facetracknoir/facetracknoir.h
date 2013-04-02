@@ -25,7 +25,13 @@
 #ifndef FaceTrackNoIR_H
 #define FaceTrackNoIR_H
 
-#include <tchar.h>
+#undef FTNOIR_PROTOCOL_BASE_LIB
+#undef FTNOIR_TRACKER_BASE_LIB
+#undef FTNOIR_FILTER_BASE_LIB
+#define FTNOIR_PROTOCOL_BASE_EXPORT Q_DECL_IMPORT
+#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
+#define FTNOIR_FILTER_BASE_EXPORT Q_DECL_IMPORT
+
 #include <QtGui/QMainWindow>
 #include <QApplication>
 #include <QFileDialog>
@@ -34,30 +40,58 @@
 #include <QWidget>
 #include <QDialog>
 #include <QUrl>
+#include <QList>
+#include <QKeySequence>
+#include <QtGui>
+#include <QString>
+#if !defined(_WIN32) && !defined(__WIN32)
+#	include <qxtglobalshortcut.h>
+#else
+#	include <windows.h>
+#endif
+#include <QThread>
+#include <QDebug>
+#include <QElapsedTimer>
 
-#include "../FTNoIR_PoseWidget/glwidget.h"
+#include "ftnoir_posewidget/glwidget.h"
 
-#include "ui_FaceTrackNoIR.h"
-#include "ui_FTNoIR_KeyboardShortcuts.h"
-#include "ui_FTNoIR_Preferences.h"
-#include "ui_FTNoIR_Curves.h"
+#include "ui_facetracknoir.h"
+#include "ui_ftnoir_keyboardshortcuts.h"
+#include "ui_ftnoir_preferences.h"
+#include "ui_ftnoir_curves.h"
 
-#include "..\ftnoir_protocol_base\FTNoIR_Protocol_base.h"
-#include "..\ftnoir_tracker_base\FTNoIR_Tracker_base.h"
-#include "..\ftnoir_filter_base\FTNoIR_Filter_base.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_filter_base/ftnoir_filter_base.h"
 
-typedef ITrackerDialogPtr (WINAPI *importGetTrackerDialog)(void);
-typedef ITrackerDllPtr (WINAPI *importGetTrackerDll)(void);
-typedef IProtocolDialogPtr (WINAPI *importGetProtocolDialog)(void);
-typedef IProtocolDllPtr (WINAPI *importGetProtocolDll)(void);
-typedef IFilterDialogPtr (WINAPI *importGetFilterDialog)(void);
-typedef IFilterDllPtr (WINAPI *importGetFilterDll)(void);
-
-#include <Dshow.h>
+#include "global-settings.h"
 
 class Tracker;				// pre-define class to avoid circular includes
+class FaceTrackNoIR;
 
-class FaceTrackNoIR : public QMainWindow
+class KeybindingWorker;
+
+#if defined(__WIN32) || defined(_WIN32)
+extern QList<int> global_windows_key_sequences;
+#include <dinput.h>
+struct Key {
+    BYTE keycode;
+    bool shift;
+    bool ctrl;
+    bool alt;
+    bool ever_pressed;
+    QElapsedTimer timer;
+public:
+    Key() : keycode(0), shift(false), ctrl(false), alt(false), ever_pressed(false)
+    {
+    }
+};
+#else
+typedef unsigned char BYTE;
+struct Key { int foo; };
+#endif
+
+class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 {
 	Q_OBJECT
 
@@ -65,29 +99,48 @@ public:
 	FaceTrackNoIR(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~FaceTrackNoIR();
 
-	void getGameProgramName();					// Get the ProgramName from the game and display it.
 	void updateSettings();						// Update the settings (let Tracker read INI-file).
 
-	QFrame *getVideoWidget();					// Get a pointer to the video-widget, to use in the DLL
-	QString getCurrentProtocolName();			// Get the name of the selected protocol
-	QString getCurrentFilterName();				// Get the name of the selected filter
-	QString getCurrentTrackerName();			// Get the name of the selected face-tracker
-	QString getSecondTrackerName();				// Get the name of the second face-tracker ("None" if no selection)
+    QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL
+    Tracker *tracker;
+    void bindKeyboardShortcuts();
+    DynamicLibrary* current_tracker1() {
+        return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), (DynamicLibrary*) NULL);
+    }
+    DynamicLibrary* current_tracker2() {
+        return dlopen_trackers.value(ui.cbxSecondTrackerSource->currentIndex() - 1, (DynamicLibrary*) NULL);
+    }
+    DynamicLibrary* current_protocol() {
+        return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), (DynamicLibrary*) NULL);
+    }
+    DynamicLibrary* current_filter() {
+        return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
+    }
+#if defined(_WIN32) || defined(__WIN32)
+    Key keyCenter, keyZero, keyStartStop, keyInhibit;
+    KeybindingWorker* keybindingWorker;
+#else 
+    QxtGlobalShortcut* keyCenter;
+    QxtGlobalShortcut* keyZero;
+    QxtGlobalShortcut* keyStartStop;
+    QxtGlobalShortcut* keyInhibit;
+#endif
+public slots:
+        void shortcutRecentered();
+        void shortcutZero();
+        void shortcutStartStop();
+        void shortcutInhibit();
 
 private:
 	Ui::FaceTrackNoIRClass ui;
-	Tracker *tracker;
 	QTimer *timMinimizeFTN;						// Timer to Auto-minimize
 	QTimer *timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
-	QStringList protocolFileList;				// List of Protocol-DLL-files, that are present in the program-folder
-	QStringList filterFileList;					// List of Filter-DLL-files, that are present in the program-folder
-	QStringList trackerFileList;				// List of Tracker-DLL-files, that are present in the program-folder
 
-	ITrackerDialogPtr pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
-	ITrackerDialogPtr pSecondTrackerDialog;		// Pointer to the second Tracker dialog instance (in DLL)
-	IProtocolDialogPtr pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
-	IFilterDialogPtr pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
+    ITrackerDialog* pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
+    ITrackerDialog* pSecondTrackerDialog;		// Pointer to the second Tracker dialog instance (in DLL)
+    IProtocolDialog* pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
+    IFilterDialog* pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
 	/** Widget variables **/
 	QVBoxLayout *l;
@@ -119,6 +172,12 @@ private:
 	void GetCameraNameDX();
 	void loadSettings();
 	void setupFaceTrackNoIR();
+
+    QList<DynamicLibrary*> dlopen_filters;
+    QList<DynamicLibrary*> dlopen_trackers;
+    QList<DynamicLibrary*> dlopen_protocols;
+
+    bool looping;
 
 	private slots:
 		//file menu
@@ -159,11 +218,9 @@ private:
 
 		void showHeadPose();
 
-		//smoothing slider
-		void setSmoothing( int smooth );
-
-		void startTracker();
+        void startTracker();
 		void stopTracker();
+
 };
 
 // Widget that has controls for FaceTrackNoIR Preferences.
@@ -209,9 +266,6 @@ private:
 	/** helper **/
 	bool settingsDirty;
 	FaceTrackNoIR *mainApp;
-	QList<QString> stringList;			// List of strings, that describe the keyboard-keys
-	QList<BYTE> keyList; 				// List of keys, with the values of the keyboard-keys
-	QList<QString> stringListMouse;		// List of strings, that describe the mouse-keys
 
 private slots:
 	void doOK();
@@ -242,8 +296,41 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void curveChanged( bool change ) { settingsDirty = true; };
+    void curveChanged( bool change ) { settingsDirty = true; }
+    void curveChanged( int change ) { settingsDirty = true; }
 };
 
-
 #endif // FaceTrackNoIR_H
+
+extern QList<QString> global_key_sequences;
+#if defined(__WIN32) || defined(_WIN32)
+class KeybindingWorkerDummy {
+private:
+    LPDIRECTINPUT8 din;
+    LPDIRECTINPUTDEVICE8 dinkeyboard;
+    Key kCenter, kInhibit, kStartStop, kZero;
+    FaceTrackNoIR& window;
+public:
+    volatile bool should_quit;
+    ~KeybindingWorkerDummy();
+    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero);
+	void run();
+};
+#else
+class KeybindingWorkerDummy {
+public:
+    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero);
+	void run() {}
+};
+#endif
+
+class KeybindingWorker : public QThread, public KeybindingWorkerDummy {
+	Q_OBJECT
+public:
+	KeybindingWorker(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero) : KeybindingWorkerDummy(w, keyCenter, keyInhibit, keyStartStop, keyZero)
+	{
+	}
+	void run() {
+		KeybindingWorkerDummy::run();
+	}
+};

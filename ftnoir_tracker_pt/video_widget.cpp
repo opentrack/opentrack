@@ -3,8 +3,6 @@
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
- * 20130312, WVR: Add 7 lines to resizeGL after resize_frame. This should lower CPU-load.
  */
 
 #include "video_widget.h"
@@ -13,7 +11,6 @@
 
 using namespace cv;
 using namespace std;
-using namespace boost;
 
 // ----------------------------------------------------------------------------
 void VideoWidget::initializeGL()
@@ -31,21 +28,20 @@ void VideoWidget::resizeGL(int w, int h)
 	glLoadIdentity();
 	glOrtho(0, w, 0, h, -1, 1);
 	resize_frame();
-	glDisable(GL_DEPTH_TEST);
-	glBegin(GL_QUADS);
-	glVertex2f(0,0);
-	glVertex2f(1,0);
-	glVertex2f(1,1);
-	glVertex2f(0,1);
-	glEnd(); 
+    glDisable(GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+    glVertex2f(0,0);
+    glVertex2f(1,0);
+    glVertex2f(1,1);
+    glVertex2f(0,1);
+    glEnd();
 }
 
 void VideoWidget::paintGL()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	if (!resized_qframe.isNull())
-	{
-		glDrawPixels(resized_qframe.width(), resized_qframe.height(), GL_RGBA, GL_UNSIGNED_BYTE, resized_qframe.bits());
+    QMutexLocker lck(&mtx);
+    if (resized_qframe.size() == size() || (resized_qframe.width() <= width() && resized_qframe.height() <= height())) {
+        glDrawPixels(resized_qframe.width(), resized_qframe.height(), GL_RGB, GL_UNSIGNED_BYTE, resized_qframe.bits());
 		
 		const int crosshair_radius = 10;
 		const int crosshair_thickness = 1;
@@ -69,30 +65,44 @@ void VideoWidget::paintGL()
 			glVertex2i(x, y+crosshair_radius);
 			glEnd();
 		}
-	}
-	glFlush();
+
+    } else {
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
+    glFlush();
 }
 
 
 void VideoWidget::resize_frame()
 {
-	if (!qframe.isNull())
-		resized_qframe = qframe.scaled(this->size(), Qt::KeepAspectRatio);
+    QMutexLocker lck(&mtx);
+#ifdef _WIN32
+    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
+        resized_qframe = qframe.mirrored();
+    else
+        resized_qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation).mirrored();
+#else
+    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
+        resized_qframe = qframe.copy();
+    else
+        resized_qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+#endif
 }
 
+void VideoWidget::update()
+{
+    updateGL();
+}
 
-void VideoWidget::update(Mat frame, shared_ptr< vector<Vec2f> > points)
+void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> > points)
 {
 	this->frame = frame;
 	this->points = points;
 
-	// convert to QImage
+	// convert to QImage 
 	if (frame.channels() == 3)
-		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.step, QImage::Format_RGB888).rgbSwapped();
+		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols * 3, QImage::Format_RGB888).rgbSwapped();
 	else if (frame.channels() == 1)
-		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.step, QImage::Format_Indexed8);
-	qframe = QGLWidget::convertToGLFormat(qframe);
-
+		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols, QImage::Format_Indexed8);
 	resize_frame();
-	updateGL();
 }

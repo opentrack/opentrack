@@ -33,6 +33,7 @@
 */
 #include "ftnoir_protocol_fg.h"
 #include <QFile>
+#include "facetracknoir/global-settings.h"
 
 // For Todd and Arda Kutlu
 //#define SEND_ASCII_DATA
@@ -42,7 +43,6 @@
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	blnConnectionActive = false;
-	hMainWindow = NULL;
 	loadSettings();
 }
 
@@ -103,7 +103,6 @@ void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
-PDWORD_PTR MsgResult = 0;
 
 #ifdef SEND_ASCII_DATA
 char data[100];
@@ -152,7 +151,7 @@ char data[100];
 	//! [1]
 //	no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), QHostAddress::LocalHost, 5550);
 	if (outSocket != 0) {
-		no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), destIP, destPort);
+        no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), destIP, destPort);
 		if ( no_bytes > 0) {
 	//		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
 		}
@@ -181,9 +180,6 @@ char data[100];
 
 			if (!blnConnectionActive) {
 				blnConnectionActive = true;
-				if (hMainWindow != NULL) {
-					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-				}
 			}
 		}
 	}
@@ -193,7 +189,7 @@ char data[100];
 // Check if the Client DLL exists and load it (to test it), if so.
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	// Init. the data
 	FlightData.x = 0.0f;
@@ -207,8 +203,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 
 	inSocket = 0;
 	outSocket = 0;
-
-	hMainWindow = handle;
 
 	//
 	// Create UDP-sockets.
@@ -238,7 +232,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "FlightGear");
+    sprintf(dest, "FlightGear");
 	return;
 }
 
@@ -249,9 +243,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Protocol;
+    return (IProtocol*) new FTNoIR_Protocol;
 }

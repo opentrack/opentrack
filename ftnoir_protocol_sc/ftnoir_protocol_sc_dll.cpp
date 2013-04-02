@@ -32,6 +32,7 @@
 */
 #include "ftnoir_protocol_SC.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 FTNoIR_ProtocolDll::FTNoIR_ProtocolDll() {
 }
@@ -50,7 +51,7 @@ FTNoIR_ProtocolDll::~FTNoIR_ProtocolDll()
 //   _GetProtocolDll@0  - Common name decoration for __stdcall functions in C language.
 #pragma comment(linker, "/export:GetProtocolDll=_GetProtocolDll@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDllPtr __stdcall GetProtocolDll()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new FTNoIR_ProtocolDll;
 }

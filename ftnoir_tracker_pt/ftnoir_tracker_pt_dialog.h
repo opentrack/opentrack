@@ -8,10 +8,10 @@
 #ifndef FTNOIR_TRACKER_PT_DIALOG_H
 #define FTNOIR_TRACKER_PT_DIALOG_H
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
-#include "ui_FTNoIR_PT_Controls.h"
+#include "ui_ftnoir_pt_controls.h"
 #include "trans_calib.h"
 
 #include <QTimer>

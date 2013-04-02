@@ -32,6 +32,7 @@
 */
 #include "ftnoir_tracker_udp.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 FTNoIR_TrackerDll::FTNoIR_TrackerDll() {
 	//populate the description strings
@@ -67,7 +68,7 @@ void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/images/FaceTrackNoIR.ico");
+    *icon = QIcon(":/images/facetracknoir.png");
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,9 +78,9 @@ void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 //   GetTrackerDll     - Undecorated name, which can be easily used with GetProcAddress
 //						Win32 API function.
 //   _GetTrackerDll@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
+//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDllPtr __stdcall GetTrackerDll()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new FTNoIR_TrackerDll;
 }

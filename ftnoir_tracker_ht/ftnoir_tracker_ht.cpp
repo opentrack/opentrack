@@ -1,13 +1,11 @@
 #include "stdafx.h"
-#include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
 #include "ui_trackercontrols.h"
-#include "../facetracknoir/global-settings.h"
-
-#define WIDGET_WIDTH 250
-#define WIDGET_HEIGHT 188
+#include "facetracknoir/global-settings.h"
+#include <cmath>
 
 #if defined(_WIN32) || defined(__WIN32)
 #include <dshow.h>
@@ -98,31 +96,48 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
 	iniFile.beginGroup( "HT-Tracker" );
-	config->classification_delay = 4000;
-	config->field_of_view = iniFile.value("fov", 69).toFloat();
+    config->classification_delay = 500;
+    config->field_of_view = iniFile.value("fov", 52).toFloat();
 	config->pyrlk_pyramids = 3;
-	config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-	config->max_keypoints = 250;
-	config->keypoint_quality = 12;
-	config->keypoint_distance = 2.3f;
-	config->keypoint_3distance = 6;
-	//config->force_width = 640;
-	//config->force_height = 480;
-	config->force_fps = iniFile.value("fps", 0).toInt();
-	config->camera_index = iniFile.value("camera-index", -1).toInt();
-	config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 6.5f;
-    config->ransac_max_inlier_error = 6.5f;
-    config->ransac_max_mean_error = 4.0f;
-    config->ransac_abs_max_mean_error = 7.0f;
-	config->debug = 0;
-	config->ransac_min_features = 0.75f;
+    config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
+    config->max_keypoints = 300;
+    config->keypoint_quality = 2;
+    config->keypoint_distance = 2.5;
+    config->keypoint_3distance = 6;
+    //config->force_width = 640;
+    //config->force_height = 480;
+    config->force_fps = iniFile.value("fps", 0).toInt();
+    config->camera_index = iniFile.value("camera-index", -1).toInt();
+    config->ransac_num_iters = 100;
+    config->ransac_max_reprojection_error = 3.63637;
+    config->ransac_max_inlier_error = 3;
+    config->ransac_max_mean_error = 3.5;
+    config->ransac_abs_max_mean_error = 7;
+    config->debug = 1;
+    config->ransac_min_features = 0.80;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
-	config->force_height = r.height;
+    config->force_height = r.height;
+    config->user_landmarks = iniFile.value("use-bashed-coords").toBool();
+    if (config->user_landmarks)
+    {
+        config->user_landmark_locations[0][0] = iniFile.value("b1").toDouble();
+        config->user_landmark_locations[1][0] = iniFile.value("b2").toDouble();
+        config->user_landmark_locations[2][0] = iniFile.value("b3").toDouble();
+        config->user_landmark_locations[0][1] = iniFile.value("b4").toDouble();
+        config->user_landmark_locations[1][1] = iniFile.value("b5").toDouble();
+        config->user_landmark_locations[2][1] = iniFile.value("b6").toDouble();
+        config->user_landmark_locations[0][2] = iniFile.value("b7").toDouble();
+        config->user_landmark_locations[1][2] = iniFile.value("b8").toDouble();
+        config->user_landmark_locations[2][2] = iniFile.value("b9").toDouble();
+        config->user_landmark_locations[0][3] = iniFile.value("b10").toDouble();
+        config->user_landmark_locations[1][3] = iniFile.value("b11").toDouble();
+        config->user_landmark_locations[2][3] = iniFile.value("b12").toDouble();
+    }
+    qDebug() << "width" << r.width << "height" << r.height;
 	if (tracker)
 	{
 		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
@@ -159,7 +174,6 @@ Tracker::~Tracker()
 
 void Tracker::StartTracker(QFrame* videoframe)
 {
-    videoframe->setAttribute(Qt::WA_NativeWindow);
     videoframe->show();
     videoWidget = new VideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
@@ -168,7 +182,6 @@ void Tracker::StartTracker(QFrame* videoframe)
     if (videoframe->layout())
         delete videoframe->layout();
     videoframe->setLayout(layout);
-    videoWidget->resize(WIDGET_WIDTH, WIDGET_HEIGHT);
     videoWidget->show();
     this->layout = layout;
     load_settings(&shm->config, this);
@@ -181,8 +194,8 @@ void Tracker::StartTracker(QFrame* videoframe)
 #else
     subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");
 #endif
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(15);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()), Qt::QueuedConnection);
+    timer.start(40);
 }
 
 void Tracker::paint_widget() {
@@ -209,8 +222,12 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
             data->yaw = shm->result.rotx;
         if (enableRY)
             data->pitch = shm->result.roty;
-        if (enableRZ)
+        if (enableRZ) {
             data->roll = shm->result.rotz;
+            double sign = data->roll >= 0 ? 1 : -1;
+            if (fabs(fabs(data->roll) - 180) < fabs(data->roll))
+                data->roll = fabs(fabs(data->roll) - 180) * sign;
+        }
         if (enableTX)
             data->x = shm->result.tx;
         if (enableTY)
@@ -227,7 +244,7 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = "HT 0.7";
+    *strToBeFilled = "HT 0.8";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
@@ -278,7 +295,6 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
-	loadSettings();
 	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
@@ -290,6 +306,7 @@ TrackerControls::TrackerControls()
 	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    loadSettings();
 	settingsDirty = false;
 }
 
@@ -303,6 +320,7 @@ void TrackerControls::showEvent(QShowEvent *event)
 
 void TrackerControls::Initialize(QWidget* parent)
 {
+    loadSettings();
 	show();
 }
 
@@ -343,6 +361,19 @@ void TrackerControls::loadSettings()
 	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
     ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
+    ui.groupBox_2->setChecked(iniFile.value("use-bashed-coords").toBool());
+    ui.doubleSpinBox_1->setValue(iniFile.value("b1", 0).toDouble());
+    ui.doubleSpinBox_2->setValue(iniFile.value("b2", 0).toDouble());
+    ui.doubleSpinBox_3->setValue(iniFile.value("b3", 0).toDouble());
+    ui.doubleSpinBox_4->setValue(iniFile.value("b4", 0).toDouble());
+    ui.doubleSpinBox_5->setValue(iniFile.value("b5", 0).toDouble());
+    ui.doubleSpinBox_6->setValue(iniFile.value("b6", 0).toDouble());
+    ui.doubleSpinBox_7->setValue(iniFile.value("b7", 0).toDouble());
+    ui.doubleSpinBox_8->setValue(iniFile.value("b8", 0).toDouble());
+    ui.doubleSpinBox_9->setValue(iniFile.value("b9", 0).toDouble());
+    ui.doubleSpinBox_10->setValue(iniFile.value("b10", 0).toDouble());
+    ui.doubleSpinBox_11->setValue(iniFile.value("b11", 0).toDouble());
+    ui.doubleSpinBox_12->setValue(iniFile.value("b12", 0).toDouble());
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -381,6 +412,19 @@ void TrackerControls::save()
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
+    iniFile.setValue("b1", ui.doubleSpinBox_1->value());
+    iniFile.setValue("b2", ui.doubleSpinBox_2->value());
+    iniFile.setValue("b3", ui.doubleSpinBox_3->value());
+    iniFile.setValue("b4", ui.doubleSpinBox_4->value());
+    iniFile.setValue("b5", ui.doubleSpinBox_5->value());
+    iniFile.setValue("b6", ui.doubleSpinBox_6->value());
+    iniFile.setValue("b7", ui.doubleSpinBox_7->value());
+    iniFile.setValue("b8", ui.doubleSpinBox_8->value());
+    iniFile.setValue("b9", ui.doubleSpinBox_9->value());
+    iniFile.setValue("b10", ui.doubleSpinBox_10->value());
+    iniFile.setValue("b11", ui.doubleSpinBox_11->value());
+    iniFile.setValue("b12", ui.doubleSpinBox_12->value());
+    iniFile.setValue("use-bashed-coords", ui.groupBox_2->isChecked());
 	iniFile.endGroup();
 	settingsDirty = false;
 }

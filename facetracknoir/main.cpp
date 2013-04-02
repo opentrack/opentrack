@@ -27,28 +27,28 @@
 						messages from the Game.
 */
 
-#include "FaceApp.h"
-#include "FaceTrackNoIR.h"
+#include "facetracknoir.h"
+#include "tracker.h"
 #include <QtGui/QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QList>
 
-int main(int argc, char *argv[])
+#if defined(_WIN32)
+#include <windows.h>
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+int main(int argc, char** argv)
 {
-////	QApplication a(argc, argv);
-	FaceApp a(argc, argv);
+    QApplication app(argc, argv);
     QFont font;
     font.setFamily(font.defaultFamily());
     font.setPointSize(9);
-    a.setFont(font);
-
+    app.setFont(font);
+    FaceTrackNoIR w;
 	//
 	// Create the Main Window and DeskTop and Exec!
 	//
-	FaceTrackNoIR w;
-	a.SetupEventFilter(&w);
-
 	QDesktopWidget desktop;
     w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
 	w.show();

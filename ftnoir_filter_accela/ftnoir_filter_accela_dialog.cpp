@@ -26,9 +26,10 @@
 	Modifications (last one on top):
 		20130102 - WVR: Added 'reduction factor' to accommodate Patrick's need for speed.
 */
-#include "ftnoir_filter_Accela.h"
+#include "ftnoir_filter_accela/ftnoir_filter_accela.h"
 #include "math.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter Settings-dialog.
@@ -51,7 +52,7 @@ FilterControls::FilterControls() :
 	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
 
 	// Connect slider for reduction
-	connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+    //connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 
 	qDebug() << "FilterControls() says: started";
 }
@@ -71,7 +72,7 @@ void FilterControls::Release()
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
+void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
 
 	//
 	// The dialog can be opened, while the Tracker is running.
@@ -79,6 +80,7 @@ void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
 	// This can be used to update settings, while Tracking and may also be handy to display logging-data and such...
 	//
 	pFilter = ptr;
+    loadSettings();
 	
 	QPoint offsetpos(100, 100);
 	if (parent) {
@@ -100,7 +102,6 @@ void FilterControls::doOK() {
 
 // override show event
 void FilterControls::showEvent ( QShowEvent * event ) {
-	loadSettings();
 }
 
 //
@@ -150,16 +151,16 @@ QList<QPointF> defPoints;
 	qDebug() << "FTNoIR_Filter::loadSettings2 says: iniFile = " << currentFile;
 
 
-	qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
+    //qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
 
 	defPoints.clear();
-	for (int i = 0; i < NUM_OF(defScaleRotation); i++) {		// Get the default points (hardcoded!)
+    for (int i = 0; i < defScaleRotation.size(); i++) {		// Get the default points (hardcoded!)
 		defPoints.append(defScaleRotation[i]);
 	}
 	functionConfig.loadSettings(iniFile, defPoints);
 
 	defPoints.clear();
-	for (int i = 0; i < NUM_OF(defScaleTranslation); i++) {		// Get the default points (hardcoded!)
+    for (int i = 0; i < defScaleTranslation.size(); i++) {		// Get the default points (hardcoded!)
 		defPoints.append(defScaleTranslation[i]);
 	}
 	translationFunctionConfig.loadSettings(iniFile, defPoints);
@@ -169,6 +170,7 @@ QList<QPointF> defPoints;
 
 	iniFile.beginGroup ( "Accela" );
 	ui.slideReduction->setValue (iniFile.value ( "Reduction", 100 ).toInt());
+    ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -187,6 +189,7 @@ void FilterControls::save() {
 
 	iniFile.beginGroup ( "Accela" );
 	iniFile.setValue ( "Reduction", ui.slideReduction->value() );
+    iniFile.setValue("zoom-slowness", ui.slideZoom->value());
 	iniFile.endGroup ();
 
 	functionConfig.saveSettings(iniFile);
@@ -202,9 +205,9 @@ void FilterControls::save() {
 //   GetFilterDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetFilterDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
+//#pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
 
-FTNOIR_FILTER_BASE_EXPORT IFilterDialogPtr __stdcall GetFilterDialog( )
+extern "C" FTNOIR_FILTER_BASE_EXPORT void* CALLING_CONVENTION GetDialog()
 {
-	return new FilterControls;
+    return (IFilterDialog*) new FilterControls;
 }

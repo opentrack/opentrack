@@ -26,39 +26,16 @@
 #ifndef INCLUDED_FTN_FILTER_H
 #define INCLUDED_FTN_FILTER_H
 
-#include "..\ftnoir_filter_base\ftnoir_filter_base.h"
-#include "ui_FTNoIR_FilterControls.h"
-#include <FunctionConfig.h>
+#undef FTNOIR_TRACKER_BASE_LIB
+#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
 
-const QPointF defScaleRotation[] =
-{
-    QPointF(0, 0),
-    QPointF(0.308900523560209, 0.0666666666666667),
-    QPointF(0.565445026178011, 0.226666666666667),
-    QPointF(0.769633507853403, 0.506666666666667),
-    QPointF(0.994764397905759, 1),
-    QPointF(1.23560209424084, 1.61333333333333),
-    QPointF(1.47643979057592, 2.37333333333333),
-    QPointF(1.66492146596859, 3.12),
-    QPointF(1.80628272251309, 3.92),
-    QPointF(1.91623036649215, 4.70666666666667),
-    QPointF(2.00523560209424, 5.44),
-    QPointF(2.07329842931937, 6)
-};
+#include "ftnoir_filter_base/ftnoir_filter_base.h"
+#include "ui_ftnoir_accela_filtercontrols.h"
+#include <qfunctionconfigurator/functionconfig.h>
+#include "facetracknoir/global-settings.h"
 
-const QPointF defScaleTranslation[] =
-{
-    QPointF(0, 0),
-    QPointF(0.282722513089005, 0.08),
-    QPointF(0.492146596858639, 0.306666666666667),
-    QPointF(0.764397905759162, 0.84),
-	QPointF(1.00523560209424, 1.62666666666667),
-	QPointF(1.17277486910995, 2.78666666666667),
-	QPointF(1.25130890052356, 3.6),
-	QPointF(1.31937172774869, 4.29333333333333),
-	QPointF(1.38219895287958, 4.90666666666667),
-    QPointF(1.43455497382199, 5.65333333333333)
-};
+extern const QList<QPointF> defScaleRotation;
+extern const QList<QPointF> defScaleTranslation;
 
 //
 // Macro to determine array-size
@@ -68,16 +45,14 @@ const QPointF defScaleTranslation[] =
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.
 //*******************************************************************************************************
-class FTNoIR_Filter : public IFilter
+class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
 	FTNoIR_Filter();
 	~FTNoIR_Filter();
 
-	void Release();
     void Initialize();
-    void StartFilter();
-	void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, bool newTarget);
+    void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter_values, bool newTarget);
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
@@ -86,7 +61,7 @@ private:
 	bool	first_run;
 	double kFactor, kFactorTranslation;
 	double kSensitivity, kSensitivityTranslation;
-	double kMagicNumber;									// Stanislaws' magic number (should be 100 according to him...)
+    double kMagicNumber, kZoomSlowness;		// Stanislaws' magic number (should be 100 according to him...)
 
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
@@ -97,7 +72,7 @@ private:
 //*******************************************************************************************************
 
 // Widget that has controls for FTNoIR protocol filter-settings.
-class FilterControls: public QWidget, Ui::UICFilterControls, public IFilterDialog
+class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, Ui::AccelaUICFilterControls, public IFilterDialog
 {
     Q_OBJECT
 public:
@@ -107,17 +82,17 @@ public:
 	void showEvent ( QShowEvent * event );
 
 	void Release();											// Member functions which are accessible from outside the DLL
-    void Initialize(QWidget *parent, IFilterPtr ptr);
+    void Initialize(QWidget *parent, IFilter *ptr);
 
 private:
-	Ui::UICFilterControls ui;
+    Ui::AccelaUICFilterControls ui;
 	void loadSettings();
 	void save();
 
 	/** helper **/
 	bool settingsDirty;
 
-	IFilterPtr pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+    IFilter* pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
 
@@ -131,17 +106,17 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Filter DLL. Functions used to get general info on the Filter
 //*******************************************************************************************************
-class FTNoIR_FilterDll : public IFilterDll
+class FTNoIR_FilterDll : public Metadata
 {
 public:
 	FTNoIR_FilterDll();
 	~FTNoIR_FilterDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk2"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk2"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk2"); };
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk2"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk2"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk2"); }
 
-	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	};
+    void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
 };
 
 

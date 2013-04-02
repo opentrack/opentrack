@@ -29,17 +29,17 @@
 #ifndef INCLUDED_FGSERVER_H
 #define INCLUDED_FGSERVER_H
 
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "ui_FTNoIR_FGcontrols.h"
-#include "FGTypes.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ui_ftnoir_fgcontrols.h"
+#include "fgtypes.h"
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QSettings>
-#include "Windows.h"
-#include "math.h"
+#include <math.h>
+#include "facetracknoir/global-settings.h"
 
-static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
+#define FT_PROGRAMID "FT_ProgramID"
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -50,14 +50,13 @@ public:
 	void Release();
     void Initialize();
 
-	bool checkServerInstallationOK( HANDLE handle );
+    bool checkServerInstallationOK();
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );						// Take care dest can handle up to 100 chars...
 
 private:
 
 	bool blnConnectionActive;
-	HANDLE hMainWindow;										// Save the handle to FaceTrackNoIR main-window
 
 	//	Tracker *headTracker;								// For upstream messages...
 	TFlightGearData FlightData;
@@ -81,7 +80,6 @@ public:
     virtual ~FGControls();
 	void showEvent ( QShowEvent * event );
 
-	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
@@ -109,7 +107,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
@@ -119,7 +117,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FlightGear.ico"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/flightgear.png"); };
 };
 
 

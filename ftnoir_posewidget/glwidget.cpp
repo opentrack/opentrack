@@ -28,10 +28,14 @@
 #include <QtOpenGL>
 
 #include "glwidget.h"
+#include <QWidget>
 
 GLWidget::GLWidget(QWidget *parent, QGLWidget *shareWidget)
     : QGLWidget(parent, shareWidget)
 {
+#if !defined(_WIN32)
+    setAttribute(Qt::WA_NativeWindow, true);
+#endif
     clearColor = Qt::black;
     xRot = 0;
     yRot = 0;
@@ -74,7 +78,7 @@ void GLWidget::initializeGL()
 {
     makeObject();
 
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 #ifndef QT_OPENGL_ES_2
     glEnable(GL_TEXTURE_2D);
@@ -117,16 +121,20 @@ void GLWidget::initializeGL()
 
     program->bind();
     program->setUniformValue("texture", 0);
-
+#else
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices.constData());
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords.constData());
 #endif
 }
 
 void GLWidget::paintGL()
 {
-    qglClearColor(clearColor);
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#if !defined(QT_OPENGL_ES_2)
+#if 1
 
     glLoadIdentity();
     glTranslatef(0.0f, 0.0f, -10.0f);
@@ -134,11 +142,6 @@ void GLWidget::paintGL()
 	glRotatef(xRot, 1.0f, 0.0f, 0.0f);
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
     glRotatef(-1.0f * zRot, 0.0f, 0.0f, 1.0f);
-
-    glVertexPointer(3, GL_FLOAT, 0, vertices.constData());
-    glTexCoordPointer(2, GL_FLOAT, 0, texCoords.constData());
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 #else
 
@@ -163,6 +166,7 @@ void GLWidget::paintGL()
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         glDrawArrays(GL_TRIANGLE_FAN, i * 4, 4);
     }
+    glFlush();
 }
 
 void GLWidget::resizeGL(int width, int height)

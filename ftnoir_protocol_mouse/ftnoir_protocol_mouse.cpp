@@ -33,6 +33,7 @@
 					is called from run() of Tracker.cpp
 */
 #include "ftnoir_protocol_mouse.h"
+#include "facetracknoir/global-settings.h"
 
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
@@ -106,9 +107,9 @@ void FTNoIR_Protocol::loadSettings() {
 // Update Headpose in Game.
 //
 void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
-float fMouse_X;							// The actual value
-float fMouse_Y;
-float fMouse_Wheel;
+float fMouse_X = 0;							// The actual value
+float fMouse_Y = 0;
+float fMouse_Wheel = 0;
 
 
 	//
@@ -214,39 +215,6 @@ float fMouse_Wheel;
 	}
 
 	//
-	// Determine which style is used.
-	//
-	SecureZeroMemory(&MouseStruct, sizeof(MouseStruct));
-	MouseStruct.type = INPUT_MOUSE;
-	switch (Mouse_Style) {
-		case FTN_ABSOLUTE:
-			MouseStruct.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL | MOUSEEVENTF_ABSOLUTE;
-			if (useVirtualDesk) {
-				MouseStruct.mi.dwFlags |= MOUSEEVENTF_VIRTUALDESK;
-			}
-			MouseStruct.mi.dx = scale2AnalogLimits(-1.0f * fMouse_X * mouse_X_factor, -150, 150);
-			MouseStruct.mi.dy = scale2AnalogLimits(fMouse_Y * mouse_Y_factor, -150, 150);
-			MouseStruct.mi.mouseData = mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
-
-			frame_delay = 9999;					// Seems no problem with Absolute positioning
-			break;
-
-		case FTN_RELATIVE:
-			MouseStruct.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_WHEEL;
-			MouseStruct.mi.dx = -1.0f * mouse_X_factor * (fMouse_X - prev_fMouse_X);
-			MouseStruct.mi.dy = mouse_Y_factor * (fMouse_Y - prev_fMouse_Y);
-			MouseStruct.mi.mouseData = - 1.0f * mouse_Wheel_factor * (fMouse_Wheel - prev_fMouse_Wheel);
-
-			frame_delay += 1;					// Add 1 to the counter
-			qDebug() << "sendHeadposeToGame(): FTN_RELATIVE x = " << MouseStruct.mi.dx << ", y = " << MouseStruct.mi.dy;
-			break;
-
-		default:
-			Mouse_Style = FTN_ABSOLUTE;			// Force to a valid value...
-			break;
-	}
-
-	//
 	// Only send Input, when it has changed.
 	// This releases the Mouse, when tracking is stopped (for a while).
 	//
@@ -264,7 +232,7 @@ float fMouse_Wheel;
 //
 // Returns 'true' if all seems OK.
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 
 	return true;
@@ -275,7 +243,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "Mouse");
+    sprintf(dest, "Mouse");
 	return;
 }
 
@@ -286,9 +254,9 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 //   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
 //                Win32 API function.
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolPtr __stdcall GetProtocol()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Protocol;
+    return (IProtocol*) new FTNoIR_Protocol;
 }

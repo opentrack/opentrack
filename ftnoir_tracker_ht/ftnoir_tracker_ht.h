@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanis³aw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -9,11 +9,11 @@
 #define FTNOIR_TRACKER_HT_H
 
 #include "stdafx.h"
-#include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ui_trackercontrols.h"
 #include "video_widget.h"
-#include "../compat/compat.h"
+#include "compat/compat.h"
 #include <QObject>
 #include <QTimer>
 

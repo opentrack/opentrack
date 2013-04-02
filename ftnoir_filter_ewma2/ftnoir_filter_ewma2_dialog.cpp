@@ -22,9 +22,11 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_filter_EWMA2.h"
+#include "ftnoir_filter_ewma2.h"
 #include "math.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
+#include "ui_ftnoir_ewma_filtercontrols.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter Settings-dialog.
@@ -72,7 +74,7 @@ void FilterControls::Release()
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent, IFilterPtr ptr) {
+void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
 
 	//
 	// The dialog can be opened, while the Tracker is running.
@@ -189,9 +191,9 @@ void FilterControls::save() {
 //   GetFilterDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetFilterDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
+//#pragma comment(linker, "/export:GetFilterDialog=_GetFilterDialog@0")
 
-FTNOIR_FILTER_BASE_EXPORT IFilterDialogPtr __stdcall GetFilterDialog( )
+extern "C" FTNOIR_FILTER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new FilterControls;
+    return (IFilterDialog*) new FilterControls;
 }

@@ -30,8 +30,9 @@
 						The ProtocolDll class solves this.
 						The functions to get the name(s) and icon were removed from the two other classes.
 */
-#include "ftnoir_protocol_MOUSE.h"
+#include "ftnoir_protocol_mouse.h"
 #include <QDebug>
+#include "facetracknoir/global-settings.h"
 
 FTNoIR_ProtocolDll::FTNoIR_ProtocolDll() {
 }
@@ -48,9 +49,9 @@ FTNoIR_ProtocolDll::~FTNoIR_ProtocolDll()
 //   GetProtocolDll     - Undecorated name, which can be easily used with GetProcAddress
 //						Win32 API function.
 //   _GetProtocolDll@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocolDll=_GetProtocolDll@0")
+//#pragma comment(linker, "/export:GetProtocolDll=_GetProtocolDll@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDllPtr __stdcall GetProtocolDll()
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new FTNoIR_ProtocolDll;
 }

@@ -24,6 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_tracker_sm.h"
 #include <QtGui>
+#include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
 // faceAPI Client Settings-dialog.
@@ -338,9 +339,9 @@ void TrackerControls::doCommand(int command, int value)
 //   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
+//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
+extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog()
 {
-	return new TrackerControls;
+	return (ITrackerDialog*) new TrackerControls;
 }

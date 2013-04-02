@@ -1,6 +1,8 @@
 #ifndef SM_API_TESTAPPCONSOLE_MUTEX_H
 #define SM_API_TESTAPPCONSOLE_MUTEX_H
 
+#include <exception>
+
 namespace sm
 {
     namespace faceapi
@@ -16,7 +18,7 @@ namespace sm
                 {
                     if (!InitializeCriticalSectionAndSpinCount(&_cs,0x80000400)) 
                     {
-                        throw std::runtime_error("Failed to initialize Mutex");
+                        throw std::exception();
                     }
                 }
                 ~Mutex()

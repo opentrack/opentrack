@@ -14,15 +14,14 @@
 #ifndef INCLUDED_FGTYPES_H
 #define INCLUDED_FGTYPES_H
 
-#include "Windows.h" 
-
 //
 // x,y,z position in metres, heading, pitch and roll in degrees...
 //
-#pragma pack(2)
+#pragma pack(push, 2)
 struct TFlightGearData {
 	double x, y, z, h, p, r;
 	int status;
 };
+#pragma pack(pop)
 
 #endif//INCLUDED_FGTYPES_H

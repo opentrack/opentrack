@@ -33,6 +33,7 @@
 */
 #include "ftnoir_protocol_fg.h"
 #include <QFile>
+#include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -72,11 +73,6 @@ QWidget()
 //
 FGControls::~FGControls() {
 	qDebug() << "~FGControls() says: started";
-}
-
-void FGControls::Release()
-{
-    delete this;
 }
 
 //
@@ -217,9 +213,9 @@ void FGControls::chkLocalPCOnlyChanged() {
 //   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
+//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialogPtr __stdcall GetProtocolDialog( )
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
-	return new FGControls;
+    return (IProtocolDialog*) new FGControls;
 }

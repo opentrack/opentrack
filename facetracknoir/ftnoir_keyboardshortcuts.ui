@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>687</width>
+    <width>591</width>
     <height>438</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.ico</normaloff>images/FaceTrackNoIR.ico</iconset>
+    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -28,45 +28,8 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="5" column="8">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Disables:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="8">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>When OFF:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="textLabel2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Center</string>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Axis Inhibitor</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="chkCenterShift">
+       <item row="5" column="3">
+        <widget class="QCheckBox" name="chkInhibitAlt">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -74,12 +37,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Shift</string>
+          <string>Alt</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="chkStartStopShift">
+       <item row="3" column="3">
+        <widget class="QCheckBox" name="chkStartStopAlt">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -87,25 +50,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Shift</string>
+          <string>Alt</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QCheckBox" name="chkInhibitShift">
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Shift</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QCheckBox" name="chkCenterCtrl">
+       <item row="5" column="2">
+        <widget class="QCheckBox" name="chkInhibitCtrl">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -130,8 +80,8 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="2">
-        <widget class="QCheckBox" name="chkInhibitCtrl">
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="chkCenterCtrl">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -143,8 +93,8 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="3">
-        <widget class="QCheckBox" name="chkStartStopAlt">
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="chkInhibitShift">
          <property name="maximumSize">
           <size>
            <width>50</width>
@@ -152,20 +102,17 @@
           </size>
          </property>
          <property name="text">
-          <string>Alt</string>
+          <string>Shift</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="3">
-        <widget class="QCheckBox" name="chkInhibitAlt">
-         <property name="maximumSize">
+       <item row="5" column="4">
+        <widget class="QComboBox" name="cbxInhibitKey">
+         <property name="minimumSize">
           <size>
-           <width>50</width>
-           <height>16777215</height>
+           <width>90</width>
+           <height>0</height>
           </size>
-         </property>
-         <property name="text">
-          <string>Alt</string>
          </property>
         </widget>
        </item>
@@ -185,27 +132,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="4">
-        <widget class="QComboBox" name="cbxStartStopKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="4">
-        <widget class="QComboBox" name="cbxInhibitKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="9">
+       <item row="5" column="6">
         <widget class="QGroupBox" name="groupBox">
          <property name="minimumSize">
           <size>
@@ -278,7 +205,7 @@
          </widget>
         </widget>
        </item>
-       <item row="3" column="9">
+       <item row="3" column="6">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="minimumSize">
           <size>
@@ -330,7 +257,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="10">
+       <item row="5" column="7">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="styleSheet">
           <string notr="true">color: rgb(0, 0, 0);</string>
@@ -393,48 +320,6 @@
           </property>
           <property name="text">
            <string>Z</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="3" column="10">
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: rgb(0, 0, 0);</string>
-         </property>
-         <property name="title">
-          <string>Engine tracker</string>
-         </property>
-         <widget class="QRadioButton" name="radioSetEngineStop">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>20</y>
-            <width>81</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Stop Engine</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="radioSetKeepTracking">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>40</y>
-            <width>91</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Keep tracking</string>
           </property>
          </widget>
         </widget>
@@ -542,139 +427,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="textLabel2_4">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Mouse</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="6">
-        <widget class="QComboBox" name="cbxCenterMouseKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Select Number</string>
-         </property>
-         <property name="insertPolicy">
-          <enum>QComboBox::InsertAlphabetically</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="6">
-        <widget class="QComboBox" name="cbxGameZeroMouseKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Select Number</string>
-         </property>
-         <property name="insertPolicy">
-          <enum>QComboBox::InsertAlphabetically</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="6">
-        <widget class="QComboBox" name="cbxStartStopMouseKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Select Number</string>
-         </property>
-         <property name="insertPolicy">
-          <enum>QComboBox::InsertAlphabetically</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="6">
-        <widget class="QComboBox" name="cbxInhibitMouseKey">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="5">
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5">
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="5">
-        <widget class="Line" name="line_7">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="7">
-        <widget class="Line" name="line_9">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="7">
-        <widget class="Line" name="line_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="7">
-        <widget class="Line" name="line_10">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="7">
-        <widget class="Line" name="line_11">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
         <widget class="Line" name="line_12">
          <property name="orientation">
@@ -682,16 +434,76 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="9">
-        <widget class="QCheckBox" name="chkDisableBeep">
+       <item row="3" column="4">
+        <widget class="QComboBox" name="cbxStartStopKey">
+         <property name="minimumSize">
+          <size>
+           <width>90</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="5">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Disables:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="5">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>When OFF:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="textLabel2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Center</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Axis Inhibitor</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chkCenterShift">
          <property name="maximumSize">
           <size>
-           <width>85</width>
+           <width>50</width>
            <height>16777215</height>
           </size>
          </property>
          <property name="text">
-          <string>Disable Beep</string>
+          <string>Shift</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="chkStartStopShift">
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Shift</string>
          </property>
         </widget>
        </item>

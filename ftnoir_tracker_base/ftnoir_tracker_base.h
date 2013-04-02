@@ -35,6 +35,9 @@
 #include "ftnoir_tracker_types.h"
 #include <QtGui/QWidget>
 #include <QtGui/QFrame>
+#include <QWaitCondition>
+#include <QMutex>
+#include <QFrame>
 
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef __cplusplus
@@ -52,28 +55,13 @@
 struct ITracker
 {
     virtual ~ITracker() {}
-	virtual void Initialize( QFrame *videoframe ) = 0;
-	virtual void StartTracker( HWND parent_window ) = 0;
-	virtual void StopTracker(bool exit) = 0;
-	virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
+    virtual void StartTracker( QFrame* frame ) = 0;
+    virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
 
-	virtual bool notifyZeroed() {
-		return false;
-	}
-	virtual void refreshVideo() {}
-	virtual void notifyCenter() {
-		return;
-	}
+    virtual void WaitForExit() = 0;
 };
 
 typedef ITracker* ITrackerPtr;
-
-// Factory function that creates instances of the Tracker object.
-EXTERN_C
-FTNOIR_TRACKER_BASE_EXPORT
-ITrackerPtr
-__stdcall
-GetTracker(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
@@ -83,20 +71,12 @@ GetTracker(void);
 // Instances are obtained via factory function.
 struct ITrackerDialog
 {
-	virtual ~ITrackerDialog() {}
+    virtual ~ITrackerDialog() {}
 	virtual void Initialize(QWidget *parent) = 0;
 	virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
 
-typedef ITrackerDialog* ITrackerDialogPtr;
-
-// Factory function that creates instances of the Tracker object.
-EXTERN_C
-FTNOIR_TRACKER_BASE_EXPORT
-ITrackerDialogPtr
-__stdcall
-GetTrackerDialog(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
@@ -114,15 +94,6 @@ struct ITrackerDll
 	virtual void getDescription(QString *strToBeFilled) = 0;
 	virtual void getIcon(QIcon *icon) = 0;
 };
-
-typedef ITrackerDll* ITrackerDllPtr;
-
-// Factory function that creates instances of the Tracker object.
-EXTERN_C
-FTNOIR_TRACKER_BASE_EXPORT
-ITrackerDllPtr
-__stdcall
-GetTrackerDll(void);
 
 
 #endif // FTNOIR_TRACKER_BASE_H

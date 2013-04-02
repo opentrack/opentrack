@@ -29,6 +29,7 @@
 #pragma once
 #ifndef INCLUDED_SCSERVER_H
 #define INCLUDED_SCSERVER_H
+#include "facetracknoir/global-settings.h"
 
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
@@ -59,8 +60,7 @@ typedef HRESULT (WINAPI *importSimConnect_MapClientEventToSimEvent)(HANDLE hSimC
 typedef HRESULT (WINAPI *importSimConnect_AddClientEventToNotificationGroup)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_CLIENT_EVENT_ID EventID, BOOL bMaskable);
 typedef HRESULT (WINAPI *importSimConnect_SetNotificationGroupPriority)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, DWORD uPriority);
 
-static const char* SC_CLIENT_FILENAME = "SimConnect.dll";
-static const char* FT_PROGRAMID = "FT_ProgramID";				// For message to FaceTrackNoIR main-window.
+#define SC_CLIENT_FILENAME "SimConnect.dll"
 
 enum GROUP_ID
 {
@@ -83,11 +83,8 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
-
-	void Release();
-    void Initialize();
-
-	bool checkServerInstallationOK( HANDLE handle );
+    void Initialize() {}
+    bool checkServerInstallationOK();
 	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
@@ -112,10 +109,9 @@ private:
 	static float prevSCRotY;
 	static float prevSCRotZ;
 
-	bool blnSimConnectActive;
-	HANDLE hMainWindow;												// Save the handle to FaceTrackNoIR main-window
+    bool blnSimConnectActive;
 
-	importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
+    importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;
 	static importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 	importSimConnect_CallDispatch simconnect_calldispatch;
@@ -166,7 +162,7 @@ private slots:
 //*******************************************************************************************************
 // FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
 //*******************************************************************************************************
-class FTNoIR_ProtocolDll : public IProtocolDll
+class FTNoIR_ProtocolDll : public Metadata
 {
 public:
 	FTNoIR_ProtocolDll();
@@ -176,7 +172,7 @@ public:
 	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("SimConnect"); };
 	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft SimConnect protocol"); };
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/FSX.ico"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fsx.png"); };
 };
 
 #endif//INCLUDED_SCSERVER_H
