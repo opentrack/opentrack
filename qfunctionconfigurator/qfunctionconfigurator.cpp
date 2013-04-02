@@ -280,12 +280,12 @@ QPointF currentPoint;
 	}
 
 
-    QPen pen(colBezier, 1.5, Qt::SolidLine);
+    QPen pen(colBezier, 1.2, Qt::SolidLine);
 
 	prevPoint = graphicalizePoint( QPointF(0,0), "drawFunction lines" );		// Start at the Axis
 	double max = maxInputEGU();
 	QPointF prev = graphicalizePoint(QPointF(0, 0));
-    double step = 1 / (double) pixPerEGU_Input();
+    double step = 1e-1 / (double) pixPerEGU_Input();
 	for (double i = 0; i < max; i += step) {
 	    double val = _config->getValue(i);
 	    QPointF cur = graphicalizePoint(QPointF(i, val));
