@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/fsx.png</file>
+    </qresource>
+</RCC>
