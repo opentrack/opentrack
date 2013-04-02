@@ -313,7 +313,7 @@ PDWORD_PTR MsgResult = 0;
 // Returns 'true' if all seems OK.
 //
 //
-bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
+bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
 	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
@@ -392,7 +392,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 	} catch(...) {
 		settings.~QSettings();
 	}
-	return FTCreateMapping( handle );
+	return FTCreateMapping();
 }
 
 //
@@ -400,7 +400,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK( HANDLE handle )
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTNoIR_Protocol::FTCreateMapping( HANDLE handle )
+bool FTNoIR_Protocol::FTCreateMapping()
 {
 bool bFirst = false;
 
@@ -442,8 +442,8 @@ bool bFirst = false;
 			if (bFirst) {
 				memset(pMemData, 0, sizeof(FTMemMap));			// Write zero's, if first...
 			}
-			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
-			hMainWindow = handle;
+			pMemData->handle = 0;	// The game uses the handle, to send a message that the Program-Name was set!
+			hMainWindow = 0;
 		}
 	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 	}
@@ -509,5 +509,5 @@ void FTNoIR_Protocol::getNameFromGame( char *dest )
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {
-    return (IProtocol*) new FTNoIR_ProtocolDll;
+    return (IProtocol*) new FTNoIR_Protocol;
 }
