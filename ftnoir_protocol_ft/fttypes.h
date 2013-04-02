@@ -4,7 +4,7 @@
 *					It was loosely translated from FTTypes.pas					*
 *					which was created by the FreeTrack-team.					*
 *																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
+* Copyright (C) 2013	Wim Vriend (Developing)									*
 *						Ron Hendriks (Testing and Research)						*
 *																				*
 * Homepage				<http://www.free-track.net>								*
@@ -25,23 +25,26 @@
 * We would like to extend our grattitude to the creators of SweetSpotter,		*
 * which has become the basis of this program: "Great work guys!"				*
 ********************************************************************************/
+/*
+	Modifications (last one on top):
+	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games. The memory-mapping was expanded for this purpose.
+*/
 #pragma once
 #ifndef INCLUDED_FTTYPES_H
 #define INCLUDED_FTTYPES_H
   
-#include <windows.h>
+#include "Windows.h" 
 #include <tchar.h>
 #include <stdio.h>
 
 //#include "Registry.h"
 
 //  static const char* FT_CLIENT_LOCATION = "Software\\Freetrack\\FreetrackClient";
-
-#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
-#define FT_MM_DATA "FT_SharedMem"
-#define FREETRACK "Freetrack"
-#define FREETRACK_MUTEX "FT_Mutext"
-#define FT_PROGRAMID "FT_ProgramID"
+  static const char* FT_CLIENT_FILENAME = "FreeTrackClient.Dll";
+  static const char* FT_MM_DATA = "FT_SharedMem";
+  static const char* FREETRACK = "Freetrack";
+  static const char* FREETRACK_MUTEX = "FT_Mutext";
+  static const char* FT_PROGRAMID = "FT_ProgramID";
 
 
 struct TFreeTrackData {
@@ -82,10 +85,20 @@ struct FTMemMap {
 #else
 	HANDLE handle;
 #endif
-    char ProgramName[100];
+    char ProgramName[100];		// The name of the game
+	char GameID[10];			// The international game-ID
+	char FTNID[30];				// The FaceTrackNoIR game-ID
+	char FTNVERSION[10];		// The version of FaceTrackNoIR, in which the game was first supported
 };
 typedef FTMemMap * PFTMemMap;
 
-extern bool (*FTGetData) (PFreetrackData data); 
+//extern bool (*FTGetData) (PFreetrackData data); 
+// DLL function signatures
+// These match those given in FTTypes.pas
+// WINAPI is macro for __stdcall defined somewhere in the depths of windows.h
+typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
+typedef char *(WINAPI *importGetDllVersion)(void);
+typedef void (WINAPI *importReportID)(int name);
+typedef char *(WINAPI *importProvider)(void);
 
 #endif//INCLUDED_FTTYPES_H
