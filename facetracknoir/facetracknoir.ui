@@ -10,26 +10,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>920</width>
+    <width>900</width>
     <height>441</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>0</height>
+    <width>900</width>
+    <height>441</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>476</height>
+    <width>900</width>
+    <height>441</height>
    </size>
   </property>
   <property name="contextMenuPolicy">
@@ -39,7 +39,7 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="main-facetracknoir.qrc">
+   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -138,10 +138,13 @@ QGroupBox {
   <property name="animated">
    <bool>true</bool>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="minimumSize">
     <size>
-     <width>920</width>
+     <width>890</width>
      <height>420</height>
     </size>
    </property>
@@ -1341,7 +1344,7 @@ background:none;</string>
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>93</y>
+      <y>89</y>
       <width>250</width>
       <height>187</height>
      </rect>
@@ -2016,7 +2019,7 @@ Support FaceTrackNoIR!</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>920</width>
+     <width>900</width>
      <height>21</height>
     </rect>
    </property>
@@ -2231,6 +2234,7 @@ Support FaceTrackNoIR!</string>
   <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
+  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
