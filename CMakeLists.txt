@@ -460,7 +460,7 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
     if(WIN32)
         install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
-		install(TARGETS freetrackclient DESTINATION .)
+		install(TARGETS freetrackclient RUNTIME DESTINATION .)
     endif()
 
     install(FILES "${CMAKE_SOURCE_DIR}/bin/npclient.dll" "${CMAKE_SOURCE_DIR}/bin/npclient64.dll" DESTINATION .)
