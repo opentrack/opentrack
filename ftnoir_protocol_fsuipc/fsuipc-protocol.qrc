@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/fs9.png</file>
+    </qresource>
+</RCC>
