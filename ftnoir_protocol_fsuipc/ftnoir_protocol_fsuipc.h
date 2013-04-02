@@ -43,7 +43,7 @@
 #include <QFile>
 #include <QFileDialog>
 
-static const char* FSUIPC_FILENAME = "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll";
+#define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"
 
 //
 // Define the structures necessary for the FSUIPC_Write calls

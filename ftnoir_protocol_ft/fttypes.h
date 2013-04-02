@@ -40,12 +40,11 @@
 //#include "Registry.h"
 
 //  static const char* FT_CLIENT_LOCATION = "Software\\Freetrack\\FreetrackClient";
-  static const char* FT_CLIENT_FILENAME = "FreeTrackClient.Dll";
-  static const char* FT_MM_DATA = "FT_SharedMem";
-  static const char* FREETRACK = "Freetrack";
-  static const char* FREETRACK_MUTEX = "FT_Mutext";
-  static const char* FT_PROGRAMID = "FT_ProgramID";
-
+#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
+#define FT_MM_DATA "FT_SharedMem"
+#define FREETRACK "Freetrack"
+#define FREETRACK_MUTEX "FT_Mutext"
+#define FT_PROGRAMID "FT_ProgramID"
 
 struct TFreeTrackData {
 	int DataID;
