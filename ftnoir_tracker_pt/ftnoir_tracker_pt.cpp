@@ -245,7 +245,7 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 			data->yaw   = rad2deg * alpha;
 		}
 		if (bEnablePitch) {
-			data->pitch = rad2deg * beta;
+            data->pitch = -rad2deg * beta;
 		}
 		if (bEnableRoll) {
 			data->roll  = rad2deg * gamma;
