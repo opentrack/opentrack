@@ -73,6 +73,8 @@ class KeybindingWorker;
 
 #if defined(__WIN32) || defined(_WIN32)
 extern QList<int> global_windows_key_sequences;
+#undef DIRECTINPUT_VERSION
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 struct Key {
     BYTE keycode;
