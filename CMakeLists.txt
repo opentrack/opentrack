@@ -251,7 +251,7 @@ if(NOT SDK_FACEAPI_ONLY)
 	
 # freetrack
 
-	file(GLOB ftnoir-freetrack-c "freetrackclient/*.c")
+	file(GLOB ftnoir-freetrack-c "freetrackclient/*.cpp")
 
     if(SDK_XPLANE)
         # probably librt already included
