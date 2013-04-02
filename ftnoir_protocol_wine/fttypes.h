@@ -1,44 +1,6 @@
-/********************************************************************************
-* FTTypes			FTTypes contains th specific type definitions for the		*
-*					FreeTrack protocol.						         			*
-*					It was loosely translated from FTTypes.pas					*
-*					which was created by the FreeTrack-team.					*
-*																				*
-* Copyright (C) 2010	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
-*																				*
-* Homepage				<http://www.free-track.net>								*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* We would like to extend our grattitude to the creators of SweetSpotter,		*
-* which has become the basis of this program: "Great work guys!"				*
-********************************************************************************/
-#ifndef INCLUDED_FTTYPES_H
-#define INCLUDED_FTTYPES_H
-
-#define WINE_SHM_NAME "facetracknoir-wine-shm"
-#define WINE_MTX_NAME "facetracknoir-wine-mtx"
-
-struct WineSHM {
-    float rx, ry, rz, tx, ty, tz;
-    bool stop;
-};
-
 struct TFreeTrackData {
-    int DataID;
-    int CamWidth;
+	int DataID;
+	int CamWidth;
     int CamHeight;
     // virtual pose
     float Yaw;   // positive yaw to the left
@@ -47,7 +9,7 @@ struct TFreeTrackData {
     float X;
     float Y;
     float Z;
-    // raw pose with no smoothing, sensitivity, response curve etc.
+    // raw pose with no smoothing, sensitivity, response curve etc. 
     float RawYaw;
     float RawPitch;
     float RawRoll;
@@ -64,5 +26,18 @@ struct TFreeTrackData {
     float X4;
     float Y4;
 };
+typedef TFreeTrackData * PFreetrackData;
 
-#endif//INCLUDED_FTTYPES_H
+struct FTMemMap {
+	TFreeTrackData data;
+
+#ifdef WIN64
+	__int32 command;
+#else
+	HANDLE handle;
+#endif
+    char ProgramName[100];		// The name of the game
+	char GameID[10];			// The international game-ID
+	char FTNID[30];				// The FaceTrackNoIR game-ID
+	char FTNVERSION[10];		// The version of FaceTrackNoIR, in which the game was first supported
+};

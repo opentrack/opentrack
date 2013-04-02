@@ -27,7 +27,7 @@ private:
 int main(void)
 {
 	ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-	ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(TFreeTrackData));
+    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTMemMap));
 	if(lck_posix.mem == (void*)-1) {
 		printf("Can't open posix map: %d\n", errno);
 		return 1;
@@ -37,7 +37,8 @@ int main(void)
 		return 1;
 	}
 	WineSHM* shm_posix = (WineSHM*) lck_posix.mem;
-	TFreeTrackData* shm_wine = (TFreeTrackData*) lck_wine.mem;
+    FTMemMap* shm_wine = (TFreeTrackData*) lck_wine.mem;
+    TFreeTrackData* data = &shm_wine->data;
 	while (!shm_posix->stop) {
 		(void) Sleep(10);
 		lck_posix.lock();
@@ -46,15 +47,15 @@ int main(void)
 			break;
 		}
 		lck_wine.lock();
-		shm_wine->Yaw = shm_posix->rx;
-		shm_wine->Pitch = shm_posix->ry;
-		shm_wine->Roll = shm_posix->rz;
-		shm_wine->X = shm_posix->tx;
-		shm_wine->Y = shm_posix->ty;
-		shm_wine->Z = shm_posix->tz;
-		shm_wine->DataID = 1;
-		shm_wine->CamWidth = 2;
-		shm_wine->CamHeight = 3;
+        data->Yaw = shm_posix->rx;
+        data->Pitch = shm_posix->ry;
+        data->Roll = shm_posix->rz;
+        data->X = shm_posix->tx;
+        data->Y = shm_posix->ty;
+        data->Z = shm_posix->tz;
+        data->DataID = 1;
+        data->CamWidth = 250;
+        data->CamHeight = 100;
 		lck_wine.unlock();
 		lck_posix.unlock();
 	}
