@@ -1,0 +1,5 @@
+The following people deserve thanks for their work on libheadtracker:
+
+The awesome head mesh, made using a 3D scanner was made by
+Jed Frechette. I cannot thank him enough, given how much it
+helped improve the program.
