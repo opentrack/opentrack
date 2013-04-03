@@ -92,10 +92,12 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     if(WIN32)
-      set(CMAKE_RC_COMPILER_INIT windres)
       ENABLE_LANGUAGE(RC)
       if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+        set(CMAKE_RC_COMPILER_INIT windres)
         SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+      else()
+        set(CMAKE_RC_COMPILER_INIT rc)
       endif()
     endif(WIN32)
 
