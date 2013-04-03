@@ -102,19 +102,19 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 300;
     config->keypoint_quality = 2;
-    config->keypoint_distance = 2.25;
-    config->keypoint_3distance = 5;
+    config->keypoint_distance = 1.2;
+    config->keypoint_3distance = 4;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
     config->ransac_max_reprojection_error = 3.63637;
-    config->ransac_max_inlier_error = 3;
+    config->ransac_max_inlier_error = 4.09;
     config->ransac_max_mean_error = 3.5;
     config->ransac_abs_max_mean_error = 7;
     config->debug = 1;
-    config->ransac_min_features = 0.85;
+    config->ransac_min_features = 0.8;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
