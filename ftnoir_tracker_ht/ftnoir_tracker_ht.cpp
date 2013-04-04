@@ -103,7 +103,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->max_keypoints = 300;
     config->keypoint_quality = 2;
     config->keypoint_distance = 1.9;
-    config->keypoint_3distance = 6;
+    config->keypoint_3distance = 7;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
@@ -114,7 +114,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_max_mean_error = 3.5;
     config->ransac_abs_max_mean_error = 7;
     config->debug = 0;
-    config->ransac_min_features = 0.83;
+    config->ransac_min_features = 0.87;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
