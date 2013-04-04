@@ -46,7 +46,7 @@ FTNoIR_Filter::FTNoIR_Filter() {
 void FTNoIR_Filter::Initialize() {
     kalman.init(12, 6, 0, CV_64F);
     double accel_variance = 1e-2;
-    kalman.transitionMatrix = *(cv::Mat_<double>(12, 12) <<
+    kalman.transitionMatrix = (cv::Mat_<double>(12, 12) <<
     1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
     0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
