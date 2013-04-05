@@ -68,9 +68,7 @@ private:
 	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
 	HANDLE hFTMutex;
-
-	HANDLE hMainWindow;									// Save the handle to FaceTrackNoIR main-window
-	__int32 comhandle;									// Handle on x32, command on x64
+    QString game_name;
 
 	// Private properties
 	QString ProgramName;
@@ -82,7 +80,7 @@ private:
 	bool useDummyExe;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-	bool getGameData( QString gameID );
+    void getGameData( QString gameID );
 	void loadSettings();
 
 };
