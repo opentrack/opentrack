@@ -141,7 +141,12 @@ void FTNoIR_Protocol::getGameData( QString gameID ){
                 QByteArray id = gameLine.at(7).toAscii();
                 int tmp[8];
                 int fuzz[3];
-                if (sscanf(id.constData(),
+                if (gameLine.at(3) == QString("V160"))
+                {
+                    qDebug() << "no table";
+                    memset(pMemData->table, 0, 8);
+                }
+                else if (sscanf(id.constData(),
                            "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
                            fuzz + 2,
                            fuzz + 0,
@@ -161,7 +166,7 @@ void FTNoIR_Protocol::getGameData( QString gameID ){
                 else
                     for (int i = 0; i < 8; i++)
                         pMemData->table[i] = tmp[i];
-                qDebug() << "game-id" << gameLine.at(7);
+                qDebug() << gameID << "game-id" << gameLine.at(7);
                 game_name = gameLine.at(1);
                 file.close();
                 return;
@@ -175,7 +180,7 @@ void FTNoIR_Protocol::getGameData( QString gameID ){
 	// If the gameID was NOT found, fill only the name "Unknown game connected"
 	//
     qDebug() << "Unknown game connected" << pMemData->GameID;
-	file.close();
+    file.close();
 }
 
 //
@@ -282,6 +287,7 @@ float headRotZ;
 		//
         if (intGameID != pMemData->GameID)
         {
+            memset(pMemData->table, 0, 8);
             QString gameID = QString::number(pMemData->GameID);
             getGameData(gameID);
             pMemData->GameID2 = pMemData->GameID;
