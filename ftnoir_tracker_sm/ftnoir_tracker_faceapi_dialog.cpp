@@ -237,10 +237,10 @@ bool TrackerControls::SMCreateMapping()
 	//
 	// Create a new FileMapping, Read/Write access
 	//
-	hSMMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) SM_MM_DATA );
+    hSMMemMap = OpenFileMappingA( FILE_MAP_WRITE , false , (LPCSTR) SM_MM_DATA );
 	if ( ( hSMMemMap != 0 ) ) {
 		qDebug() << "TrackerControls::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
-		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
+        pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
 		if (pMemData != NULL) {
 			qDebug() << "TrackerControls::FTCreateMapping says: MapViewOfFile OK.";
 //			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!

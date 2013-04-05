@@ -191,7 +191,7 @@ bool FTNoIR_Tracker::SMCreateMapping()
 	// Try to create a FileMapping to the Shared Memory.
 	// If one already exists: close it.
 	//
-	hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
+    hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 ,
 		                           sizeof( TFaceData ) + sizeof( HANDLE ) + 100, 
 								   (LPCSTR) SM_MM_DATA );
 
@@ -207,10 +207,10 @@ bool FTNoIR_Tracker::SMCreateMapping()
 	//
 	// Create a new FileMapping, Read/Write access
 	//
-	hSMMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) SM_MM_DATA );
+    hSMMemMap = OpenFileMappingA( PAGE_READWRITE , false , (LPCSTR) SM_MM_DATA );
 	if ( ( hSMMemMap != 0 ) ) {
 		qDebug() << "FTNoIR_Tracker::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
-		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
+        pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
 		if (pMemData != NULL) {
 			qDebug() << "FTNoIR_Tracker::FTCreateMapping says: MapViewOfFile OK.";
 //			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
