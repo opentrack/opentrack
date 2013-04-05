@@ -299,7 +299,7 @@ void Tracker::run() {
         }
 
         //for lower cpu load
-        usleep(10000);
+        usleep(1000);
     }
 
     GlobalPose->X.curvePtr->setTrackingActive( false );
