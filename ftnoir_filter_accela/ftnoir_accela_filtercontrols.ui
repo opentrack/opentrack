@@ -204,7 +204,7 @@ background:none;</string>
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>100</number>
+        <number>1000</number>
        </property>
        <property name="pageStep">
         <number>5</number>
@@ -238,7 +238,7 @@ background:none;</string>
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>100</number>
+        <number>1000</number>
        </property>
        <property name="value">
         <number>100</number>
@@ -373,7 +373,7 @@ background:none;</string>
   <customwidget>
    <class>QFunctionConfigurator</class>
    <extends>QWidget</extends>
-   <header>qfunctionconfigurator/qfunctionconfigurator.h</header>
+   <header>qfunctionconfigurator.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
