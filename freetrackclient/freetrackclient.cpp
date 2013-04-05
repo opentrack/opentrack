@@ -140,8 +140,7 @@ FT_EXPORT(bool) FTGetData(PFreetrackData data)
 		// Send the ID to FaceTrackNoIR, so it can display the game-name.
 		// This could be a FreeTrack-specific ID
 		//
-		sprintf_s(pMemData->GameID, 19, "%d", gameid );
-
+        pMemData->GameID = gameid;
 	}
 	ReleaseMutex(hFTMutex);
   }
@@ -194,7 +193,6 @@ extern "C" __declspec( dllexport ) char* FTProvider(void)
 bool FTCreateMapping()
 {
 	bool bMappingExists = false;
-	PDWORD_PTR MsgResult = 0;
 
 	//
 	// Memory-mapping already exists!
@@ -227,10 +225,10 @@ bool FTCreateMapping()
 	//
 	// Create a new FileMapping, Read/Write access
 	//
-	hFTMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FT_MM_DATA );
+    hFTMemMap = OpenFileMappingA( FILE_MAP_WRITE , false , (LPCSTR) FT_MM_DATA );
 	if ( ( hFTMemMap != 0 ) ) {
 		dbg_report("FTCreateMapping: Mapping opened.\n");
-		pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof( FTMemMap ) );
+        pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTMemMap ) );
 	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 	}
 	else {
