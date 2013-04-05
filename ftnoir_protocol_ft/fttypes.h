@@ -44,7 +44,6 @@
 #define FT_MM_DATA "FT_SharedMem"
 #define FREETRACK "Freetrack"
 #define FREETRACK_MUTEX "FT_Mutext"
-#define FT_PROGRAMID "FT_ProgramID"
 
 struct TFreeTrackData {
 	int DataID;
@@ -78,16 +77,9 @@ typedef TFreeTrackData * PFreetrackData;
 
 struct FTMemMap {
 	TFreeTrackData data;
-
-#ifdef WIN64
-	__int32 command;
-#else
-	HANDLE handle;
-#endif
-    char ProgramName[100];		// The name of the game
-	char GameID[10];			// The international game-ID
-	char FTNID[30];				// The FaceTrackNoIR game-ID
-	char FTNVERSION[10];		// The version of FaceTrackNoIR, in which the game was first supported
+    __int32 GameID;
+    unsigned char table[8];
+    __int32 GameID2;
 };
 typedef FTMemMap * PFTMemMap;
 

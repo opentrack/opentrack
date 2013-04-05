@@ -44,7 +44,6 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	comhandle = 0;
 	useTIRViews	= false;
 	useDummyExe	= false;
 	intUsedInterface = 0;
@@ -60,6 +59,8 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	dummyTrackIR = 0;
 	viewsStart = 0;
 	viewsStop = 0;
+
+    pMemData = NULL;
 
 }
 
@@ -108,9 +109,8 @@ void FTNoIR_Protocol::Initialize()
 //
 // Read the game-data from CSV
 //
-bool FTNoIR_Protocol::getGameData( QString gameID ){
-QStringList gameLine;
-
+void FTNoIR_Protocol::getGameData( QString gameID ){
+    QStringList gameLine;
 	qDebug() << "getGameData, ID = " << gameID;
 
 	//
@@ -118,18 +118,11 @@ QStringList gameLine;
 	//
 	QFile file(QCoreApplication::applicationDirPath() + "/Settings/FaceTrackNoIR Supported Games.csv");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-		QString strError( "Cannot load file: FaceTrackNoIR Supported Games.csv" );
-		sprintf_s(pMemData->ProgramName, 99, strError.toAscii());
-		sprintf_s(pMemData->FTNVERSION, 9, "V160");
-
-		//
-		// Return true anyway, because maybe it's V160 compatible.
-		//
-		return true;
+        return;
 	}
 	CSV csv(&file);
 	gameLine = csv.parseLine();
-	
+
 	while (gameLine.count() > 2) {
 		//qDebug() << "Column 0: " << gameLine.at(0);		// No.
 		//qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
@@ -145,13 +138,33 @@ QStringList gameLine;
 		//
 		if (gameLine.count() > 6) {
 			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
-				if (pMemData != NULL) {		
-					sprintf_s(pMemData->ProgramName, 99, gameLine.at(1).toAscii());
-					sprintf_s(pMemData->FTNVERSION, 9, gameLine.at(3).toAscii());
-					sprintf_s(pMemData->FTNID, 24, gameLine.at(7).toAscii());
-				}
-				file.close();
-				return true;
+                QByteArray id = gameLine.at(7).toAscii();
+                int tmp[8];
+                int fuzz[3];
+                if (sscanf(id.constData(),
+                           "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                           fuzz + 2,
+                           fuzz + 0,
+                           tmp + 3,
+                           tmp + 2,
+                           tmp + 1,
+                           tmp + 0,
+                           tmp + 7,
+                           tmp + 6,
+                           tmp + 5,
+                           tmp + 4,
+                           fuzz + 1) != 11 || fuzz[2] || fuzz[1] || fuzz[0] != gameLine.at(0).toInt())
+                {
+                    qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
+                    memset(pMemData->table, 0, 8);
+                }
+                else
+                    for (int i = 0; i < 8; i++)
+                        pMemData->table[i] = tmp[i];
+                qDebug() << "game-id" << gameLine.at(7);
+                game_name = gameLine.at(1);
+                file.close();
+                return;
 			}
 		}
 
@@ -161,10 +174,8 @@ QStringList gameLine;
 	//
 	// If the gameID was NOT found, fill only the name "Unknown game connected"
 	//
-	QString strUnknown("Unknown game connected (ID = " + gameID + ")");
-	sprintf_s(pMemData->ProgramName, 99, strUnknown.toAscii());
+    qDebug() << "Unknown game connected" << pMemData->GameID;
 	file.close();
-	return true;
 }
 
 //
@@ -209,10 +220,7 @@ float headRotX;
 float headRotY;
 float headRotZ;
 
-PDWORD_PTR MsgResult = 0;
-
-
-	//
+    //
 	// Scale the Raw measurements to the client measurements.
 	//
 	headRotX = getRadsFromDegrees(headpose->pitch);
@@ -269,37 +277,18 @@ PDWORD_PTR MsgResult = 0;
 		// Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
 		// If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
 		//
-		if (hMainWindow != pMemData->handle) {			// Handle in memory-mapping was changed!
-			comhandle = (__int32) pMemData->handle;		// Get the command from the Game.
-			if (comhandle == 1) {						// "Report Program Name"
-				SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-				pMemData->handle = 0;					// Reset the command, to enable future commands...
-			}
-		}
-
 		//
 		// The game-ID was changed?
 		//
-		QString gameID = QString(pMemData->GameID);
-	//QString gameID = QString("9999");
+        if (intGameID != pMemData->GameID)
+        {
+            QString gameID = QString::number(pMemData->GameID);
+            getGameData(gameID);
+            pMemData->GameID2 = pMemData->GameID;
+            intGameID = pMemData->GameID;
+        }
 
-//		qDebug() << "sendHeadposeToGame: gameID = " << gameID;
-		if (gameID.length() > 0) {
-			if ( gameID.toInt() != intGameID ) {
-				if (getGameData( gameID ) ) {
-					SendMessageTimeout( (HWND) hMainWindow, RegisterWindowMessageA(FT_PROGRAMID), 0, 0, 0, 2000, MsgResult);
-				}
-				intGameID = gameID.toInt();
-			}
-		}
-		else {
-			intGameID = 0;
-			pMemData->ProgramName[0] = NULL;
-			pMemData->FTNID[0] = NULL;
-			pMemData->FTNVERSION[0] = NULL;
-		}
-
-		ReleaseMutex(hFTMutex);
+        ReleaseMutex(hFTMutex);
 	}
 
 	pMemData->data.DataID += 1;
@@ -412,7 +401,7 @@ bool bFirst = false;
 	// Try to create a FileMapping to the Shared Memory.
 	// If one already exists: close it.
 	//
-	hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
+    hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 ,
 //		                           sizeof( TFreeTrackData ) + sizeof( HANDLE ) + 100, 
 		                           sizeof( FTMemMap ), 
 								   (LPCSTR) FT_MM_DATA );
@@ -431,34 +420,29 @@ bool bFirst = false;
 
 	//
 	// Create a new FileMapping, Read/Write access
-	//
-	hFTMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) FT_MM_DATA );
+    //
+    hFTMemMap = OpenFileMappingA( FILE_MAP_WRITE, false , (LPCSTR) FT_MM_DATA );
 	if ( ( hFTMemMap != 0 ) ) {
 		qDebug() << "FTCreateMapping says: FileMapping Opened:" << hFTMemMap;
-		pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_ALL_ACCESS, 0, 0, 
+        pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0,
 //					sizeof(TFreeTrackData) + sizeof(hFTMemMap) + 100);
 					sizeof(FTMemMap));
-		if (pMemData != NULL) {
-			if (bFirst) {
-				memset(pMemData, 0, sizeof(FTMemMap));			// Write zero's, if first...
-			}
-			pMemData->handle = 0;	// The game uses the handle, to send a message that the Program-Name was set!
-			hMainWindow = 0;
-		}
 	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 	}
-	else {
+
+
+    if (!hFTMemMap || !pMemData) {
 		QMessageBox::information(0, "FaceTrackNoIR error", QString("FTServer Error! \n"));
 		return false;
 	}
 
-	if (pMemData != NULL) {
-		pMemData->data.DataID = 1;
-		pMemData->data.CamWidth = 100;
-		pMemData->data.CamHeight = 250;
-	}
+    pMemData->data.DataID = 1;
+    pMemData->data.CamWidth = 100;
+    pMemData->data.CamHeight = 250;
+    pMemData->GameID2 = 0;
+    memset(pMemData->table, 0, 8);
 
-	return true;
+    return true;
 }
 
 //
@@ -481,20 +465,9 @@ void FTNoIR_Protocol::FTDestroyMapping()
 //
 void FTNoIR_Protocol::getNameFromGame( char *dest )
 {   
-	sprintf_s(dest, 99, "FreeTrack interface");
-
-	qDebug() << "FTNoIR_Protocol::getNameFromGame says: Started, pMemData = " << pMemData << ", mutex = " << hFTMutex;
-
-	//
-	// Check if the pointer is OK and wait for the Mutex.
-	//
-//	if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
-	if (pMemData != NULL) {
-		qDebug() << "FTNoIR_Protocol::getNameFromGame says: Inside MemData";
-		sprintf_s(dest, 99, "%s", pMemData->ProgramName);
-	}
-
-	return;
+    QByteArray foo = game_name.toUtf8();
+    memcpy(dest, foo.constData(), std::min<int>(foo.size(), 98));
+    dest[foo.size()] = 0;
 }
 
 
