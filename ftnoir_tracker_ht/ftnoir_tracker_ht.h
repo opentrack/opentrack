@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanis³aw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -11,7 +11,7 @@
 #include "stdafx.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
-#include "ui_trackercontrols.h"
+#include "ui_ht-trackercontrols.h"
 #include "video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
@@ -59,8 +59,8 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker) {};
-	void unRegisterTracker() {};
+    void registerTracker(ITracker *tracker) {}
+    void unRegisterTracker() {}
 
 private:
 	Ui::Form ui;
@@ -71,9 +71,10 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
-	void settingChanged(double) { settingsDirty = true; };
+    void settingChanged() { settingsDirty = true; }
+    void settingChanged(int) { settingsDirty = true; }
+    void settingChanged(double) { settingsDirty = true; }
+    void cameraSettings();
 };
 
 #endif
