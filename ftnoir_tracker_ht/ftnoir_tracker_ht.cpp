@@ -3,7 +3,7 @@
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
-#include "ui_trackercontrols.h"
+#include "ui_ht-trackercontrols.h"
 #include "facetracknoir/global-settings.h"
 #include <cmath>
 
@@ -12,6 +12,15 @@
 #else
 #include <unistd.h>
 #endif
+
+// delicious copypasta
+static void open_settings_dialog(int idx, void* parent) {
+#if defined(_WIN32) || defined(__WIN32)
+    qDebug() << "opening settings";
+    if (idx == 0)
+        idx = 1;
+#endif
+}
 
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
@@ -102,19 +111,19 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 100;
     config->keypoint_quality = 7;
-    config->keypoint_distance = 1;
-    config->keypoint_3distance = 5.5;
+    config->keypoint_distance = 1.5;
+    config->keypoint_3distance = 5.0;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 4.05;
-    config->ransac_max_inlier_error = 4.09;
+    config->ransac_max_reprojection_error = 3.75;
+    config->ransac_max_inlier_error = 3.8;
     config->ransac_max_mean_error = 4;
     config->ransac_abs_max_mean_error = 10;
     config->debug = 0;
-    config->ransac_min_features = 0.87;
+    config->ransac_min_features = 0.85;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -296,9 +305,20 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
     return (ITrackerDialog*) new TrackerControls;
 }
 
+void TrackerControls::cameraSettings() {
+    open_settings_dialog(ui.cameraName->currentIndex(),
+#if defined(_WIN32)
+        (HANDLE) winId()
+#else
+        NULL
+#endif
+    );
+}
+
 TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
+    setAttribute(Qt::WA_NativeWindow, true);
 	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
@@ -310,6 +330,7 @@ TrackerControls::TrackerControls()
 	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
     loadSettings();
 	settingsDirty = false;
 }
@@ -339,7 +360,7 @@ void TrackerControls::loadSettings()
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 	iniFile.beginGroup( "HT-Tracker" );
 	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
-	ui.cameraFOV->setValue(iniFile.value("fov", 69).toFloat());
+    ui.cameraFOV->setValue(iniFile.value("fov", 52).toFloat());
 	int fps;
 	switch (iniFile.value("fps", 0).toInt())
 	{

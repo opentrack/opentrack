@@ -60,7 +60,7 @@
     <double>180.000000000000000</double>
    </property>
    <property name="value">
-    <double>69.000000000000000</double>
+    <double>52.000000000000000</double>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -571,6 +571,19 @@
      <double>-99.000000000000000</double>
     </property>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="buttonSettings">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>130</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Camera settings</string>
+   </property>
   </widget>
  </widget>
  <resources/>
