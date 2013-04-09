@@ -203,7 +203,6 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(ftnoir-proto-win32-mouse-uih ${ftnoir-proto-win32-mouse-ui})
     QT4_ADD_RESOURCES(ftnoir-proto-win32-mouse-rcc ${ftnoir-proto-win32-mouse-rc})
 
-# TODO manifest problems :(
     file(GLOB ftnoir-proto-simconnect-c "ftnoir_protocol_sc/*.cpp")
     file(GLOB ftnoir-proto-simconnect-h "ftnoir_protocol_sc/*.h")
     QT4_WRAP_CPP(ftnoir-proto-simconnect-moc ${ftnoir-proto-simconnect-h})
@@ -344,6 +343,9 @@ endif()
         if(SDK_FSUIPC)
             add_library(ftnoir-proto-fsuipc SHARED ${ftnoir-proto-fsuipc-c} ${ftnoir-proto-fsuipc-moc} ${ftnoir-proto-fsuipc-uih} ${ftnoir-proto-fsuipc-rcc})
             target_link_libraries(ftnoir-proto-fsuipc ${MY_QT_LIBS} "${SDK_FSUIPC}/FSUIPC_User.lib")
+            if(MSVC)
+                    set_target_properties(ftnoir-proto-fsuipc PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc")
+            endif()
         endif()
 
         if(SDK_SIMCONNECT)
