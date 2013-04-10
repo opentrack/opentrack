@@ -109,28 +109,30 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->field_of_view = iniFile.value("fov", 52).toFloat();
 	config->pyrlk_pyramids = 3;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 100;
-    config->keypoint_quality = 5;
-    config->keypoint_distance = 1.5;
-    config->keypoint_3distance = 7;
+    config->max_keypoints = 200;
+    config->keypoint_quality = 11;
+    config->keypoint_distance = 1;
+    config->keypoint_3distance = 4;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 3.9;
-    config->ransac_max_inlier_error = 3.8;
-    config->ransac_max_mean_error = 3.7;
+    config->ransac_max_reprojection_error = 3.1;
+    config->ransac_max_inlier_error = 3.6;
+    config->ransac_max_mean_error = 3.8;
     config->ransac_abs_max_mean_error = 9;
-    config->debug = 0;
-    config->ransac_min_features = 0.85;
+    config->debug = 1;
+    config->ransac_min_features = 0.82;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
     config->force_height = r.height;
-    config->user_landmarks = iniFile.value("use-bashed-coords").toBool();
+    config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
+    config->flandmark_delay = 200;
+#if 0
     if (config->user_landmarks)
     {
         config->user_landmark_locations[0][0] = iniFile.value("b1").toDouble();
@@ -146,6 +148,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
         config->user_landmark_locations[1][3] = iniFile.value("b11").toDouble();
         config->user_landmark_locations[2][3] = iniFile.value("b12").toDouble();
     }
+#endif
     qDebug() << "width" << r.width << "height" << r.height;
 	if (tracker)
 	{
@@ -330,7 +333,7 @@ TrackerControls::TrackerControls()
 	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
+    //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
     loadSettings();
 	settingsDirty = false;
 }
@@ -386,6 +389,7 @@ void TrackerControls::loadSettings()
 	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
     ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
+#if 0
     ui.groupBox_2->setChecked(iniFile.value("use-bashed-coords").toBool());
     ui.doubleSpinBox_1->setValue(iniFile.value("b1", 0).toDouble());
     ui.doubleSpinBox_2->setValue(iniFile.value("b2", 0).toDouble());
@@ -399,6 +403,7 @@ void TrackerControls::loadSettings()
     ui.doubleSpinBox_10->setValue(iniFile.value("b10", 0).toDouble());
     ui.doubleSpinBox_11->setValue(iniFile.value("b11", 0).toDouble());
     ui.doubleSpinBox_12->setValue(iniFile.value("b12", 0).toDouble());
+#endif
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -437,6 +442,7 @@ void TrackerControls::save()
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
+#if 0
     iniFile.setValue("b1", ui.doubleSpinBox_1->value());
     iniFile.setValue("b2", ui.doubleSpinBox_2->value());
     iniFile.setValue("b3", ui.doubleSpinBox_3->value());
@@ -450,6 +456,7 @@ void TrackerControls::save()
     iniFile.setValue("b11", ui.doubleSpinBox_11->value());
     iniFile.setValue("b12", ui.doubleSpinBox_12->value());
     iniFile.setValue("use-bashed-coords", ui.groupBox_2->isChecked());
+#endif
 	iniFile.endGroup();
 	settingsDirty = false;
 }
