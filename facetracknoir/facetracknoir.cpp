@@ -566,8 +566,6 @@ void FaceTrackNoIR::saveAs()
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FaceTrackNoIR::loadSettings() {
-    if (looping)
-        return;
     looping = true;
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
@@ -1321,6 +1319,8 @@ void FaceTrackNoIR::trackingSourceSelected(int index)
 //
 void FaceTrackNoIR::profileSelected(int index)
 {
+    if (looping)
+        return;
 	//
 	// Read the current INI-file setting, to get the folder in which it's located...
 	//
