@@ -30,6 +30,7 @@ typedef struct ht_config {
     int   keypoint_quality;
     float keypoint_distance;
     float keypoint_3distance;
+    float keypoint_9distance;
     int   force_width;
     int   force_height;
     int   force_fps;
