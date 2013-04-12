@@ -92,8 +92,8 @@ bool CVCamera::_get_frame(Mat* frame)
 {
     Mat tmp;
     bool ret = cap->read(tmp);
-    if (ret)
-        flip(tmp, *frame, 0);
+    //if (ret)
+    //    flip(tmp, *frame, 0);
     return ret;
 }
 
