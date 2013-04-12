@@ -9,6 +9,7 @@
 #define CAMERA_H
 
 #include <opencv2/opencv.hpp>
+#include <opencv/highgui.h>
 //#include "videoInput/videoInput.h"
 
 // ----------------------------------------------------------------------------

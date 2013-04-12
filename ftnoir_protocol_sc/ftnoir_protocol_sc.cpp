@@ -153,12 +153,12 @@ PDWORD_PTR MsgResult = 0;
 //
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-	QString aFileName;														// File Path and Name
-
-	// Code to activate the context for the SimConnect DLL
-    ACTCTX act = { 0 };
+    // Code to activate the context for the SimConnect DLL
+    ACTCTXA act;
 	HANDLE hctx;
 	ULONG_PTR ulCookie;
+
+    memset(&act, 0, sizeof(act));
 
 	qDebug() << "SCCheckClientDLL says: Starting Function";
 
@@ -167,8 +167,9 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 		act.cbSize = sizeof(act);
 		act.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
         char full_path[2048];
-        strcpy(full_path, QCoreApplication::applicationDirPath().toLatin1().constData());
-        strcat(full_path, "\\libftnoir-proto-simconnect.dll");
+        QByteArray foo = QCoreApplication::applicationDirPath().toLatin1();
+        strcpy(full_path, foo.constData());
+        strcat(full_path, "/ftnoir-proto-simconnect.dll");
 
         act.lpSource = full_path;
         act.lpResourceName = MAKEINTRESOURCEA(101);
@@ -199,10 +200,23 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 		return false;
 	}
 
-    SCClientLib.setFileName(SC_CLIENT_FILENAME);
-    if (SCClientLib.load() != true) {
-        qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
-        return false;
+    const char* simconnect_paths[] = {
+        "SimConnect.DLL",
+        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.60905.0_none_dd92b94d8a196297\\SimConnect.DLL",
+        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.61242.0_none_e079b46b85043c20\\SimConnect.DLL",
+        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.61259.0_none_55f5ecdc14f60568\\SimConnect.DLL",
+        NULL
+    };
+
+    for (int i = 0; simconnect_paths[i]; i++)
+    {
+        SCClientLib.setFileName(simconnect_paths[i]);
+        if (!SCClientLib.load()) {
+            qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
+            qDebug() << SCClientLib.errorString();
+            continue;
+        }
+        break;
     }
 
 	//

@@ -66,7 +66,6 @@ void Tracker::run()
 	{
 		{	
             
-            refreshVideo();
 			QMutexLocker lock(&mutex);
             if (should_quit)
                 break;
@@ -84,14 +83,16 @@ void Tracker::run()
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, draw_frame);
 				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
+                fresh = true;
 			}
 #ifdef PT_PERF_LOG
 			log_stream<<"dt: "<<dt;
 			if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
 			log_stream<<"\n";
 #endif
+            refreshVideo();
 		}
-		msleep(sleep_time);
+        msleep(sleep_time);
 	}
 
 	qDebug()<<"Tracker:: Thread stopping";
@@ -143,12 +144,12 @@ void Tracker::center()
 
 void Tracker::refreshVideo()
 {	
-	if (video_widget)
+    if (video_widget && fresh)
 	{
 		Mat frame_copy;
 		std::auto_ptr< vector<Vec2f> > points;
 		{
-			QMutexLocker lock(&mutex);
+//QMutexLocker lock(&mutex);
 			if (!draw_frame || frame.empty()) return;
 		
 			// copy the frame and points from the tracker thread
@@ -157,8 +158,7 @@ void Tracker::refreshVideo()
 		}
 		
 		video_widget->update_image(frame_copy, points);
-        fresh = true;
-	}
+    }
 }
 
 void Tracker::StartTracker(QFrame* videoframe)
@@ -194,7 +194,6 @@ void Tracker::paint_widget() {
 
 bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
-    refreshVideo();
 	const float rad2deg = 180.0/3.14159265;
 	const float deg2rad = 1.0/rad2deg;
 	{
@@ -245,7 +244,7 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 			data->yaw   = rad2deg * alpha;
 		}
 		if (bEnablePitch) {
-            data->pitch = -rad2deg * beta;
+            data->pitch = rad2deg * beta;
 		}
 		if (bEnableRoll) {
 			data->roll  = rad2deg * gamma;
