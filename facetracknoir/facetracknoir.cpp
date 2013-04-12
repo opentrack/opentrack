@@ -740,6 +740,10 @@ void FaceTrackNoIR::startTracker( ) {
         delete tracker;
     }
 
+    if (GlobalPose)
+        delete GlobalPose;
+    GlobalPose = new HeadPoseData();
+
 	tracker = new Tracker ( this );
 
 	//
@@ -1840,52 +1844,41 @@ QWidget( parent , f)
 
 	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 
     ui.txconfig->setConfig(GlobalPose->X.curvePtr, currentFile);
-    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
-    ui.txconfig->setConfig(GlobalPose->X.curvePtr, currentFile);
-    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.tyconfig->setConfig(GlobalPose->Y.curvePtr, currentFile);
-    connect(ui.tyconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.tzconfig->setConfig(GlobalPose->Z.curvePtr, currentFile);
-    connect(ui.tzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.rxconfig->setConfig(GlobalPose->Yaw.curvePtr, currentFile);
-    connect(ui.rxconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.ryconfig->setConfig(GlobalPose->Pitch.curvePtr, currentFile);
-    connect(ui.ryconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.rzconfig->setConfig(GlobalPose->Roll.curvePtr, currentFile);
-    connect(ui.rzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.txconfig_alt->setConfig(GlobalPose->X.curvePtrAlt, currentFile);
-    connect(ui.txconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.tyconfig_alt->setConfig(GlobalPose->Y.curvePtrAlt, currentFile);
-    connect(ui.tyconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.tzconfig_alt->setConfig(GlobalPose->Z.curvePtrAlt, currentFile);
-    connect(ui.tzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.rxconfig_alt->setConfig(GlobalPose->Yaw.curvePtrAlt, currentFile);
-    connect(ui.rxconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.ryconfig_alt->setConfig(GlobalPose->Pitch.curvePtrAlt, currentFile);
-    connect(ui.ryconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
     ui.rzconfig_alt->setConfig(GlobalPose->Roll.curvePtrAlt, currentFile);
-    connect(ui.rzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
 
+	// Connect Qt signals to member-functions
+	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+
+    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+
+
+    connect(ui.tyconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.tzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.rxconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.ryconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.rzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.txconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.tyconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.tzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.rxconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.ryconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+    connect(ui.rzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
     connect(ui.rx_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
     connect(ui.ry_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
     connect(ui.rz_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
