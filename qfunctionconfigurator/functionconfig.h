@@ -28,7 +28,7 @@ private:
 	QString _title;
     float getValueInternal(int x);
 	QPointF lastValueTracked;								// The last input value requested by the Tracker, with it's output-value.
-	bool _tracking_active;
+    volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
 
