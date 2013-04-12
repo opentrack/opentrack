@@ -108,7 +108,8 @@ public:
 
         curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
         curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
-        if (secondary != "") {
+        if (secondary != "")
+        {
             curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
             curvePtrAlt->loadSettings(iniFile);
         }

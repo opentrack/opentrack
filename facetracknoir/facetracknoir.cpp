@@ -740,9 +740,22 @@ void FaceTrackNoIR::startTracker( ) {
         delete tracker;
     }
 
-    if (GlobalPose)
-        delete GlobalPose;
-    GlobalPose = new HeadPoseData();
+    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    GlobalPose->X.curvePtr->loadSettings(iniFile);
+    GlobalPose->Y.curvePtr->loadSettings(iniFile);
+    GlobalPose->Z.curvePtr->loadSettings(iniFile);
+    GlobalPose->Yaw.curvePtr->loadSettings(iniFile);
+    GlobalPose->Pitch.curvePtr->loadSettings(iniFile);
+    GlobalPose->Roll.curvePtr->loadSettings(iniFile);
+
+    GlobalPose->X.curvePtrAlt->loadSettings(iniFile);
+    GlobalPose->Y.curvePtrAlt->loadSettings(iniFile);
+    GlobalPose->Z.curvePtrAlt->loadSettings(iniFile);
+    GlobalPose->Yaw.curvePtrAlt->loadSettings(iniFile);
+    GlobalPose->Pitch.curvePtrAlt->loadSettings(iniFile);
+    GlobalPose->Roll.curvePtrAlt->loadSettings(iniFile);
 
 	tracker = new Tracker ( this );
 
@@ -788,11 +801,10 @@ void FaceTrackNoIR::startTracker( ) {
 	// Get the TimeOut value for minimizing FaceTrackNoIR
 	// Only start the Timer if value > 0
 	//
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	int timevalue = settings.value ( "AutoMinimizeTime", 0 ).toInt() * 1000;
+    int timevalue = iniFile.value ( "AutoMinimizeTime", 0 ).toInt() * 1000;
 	if (timevalue > 0) {
 
-		bool minimizeTaskBar = settings.value ( "MinimizeTaskBar", 1 ).toBool();
+        bool minimizeTaskBar = iniFile.value ( "MinimizeTaskBar", 1 ).toBool();
 		if (minimizeTaskBar) {
 			connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
 		}
@@ -1957,14 +1969,6 @@ void CurveConfigurationDialog::loadSettings() {
 
 	iniFile.beginGroup ( "Tracking" );
     iniFile.endGroup ();
-
-    ui.rxconfig->loadSettings(currentFile);
-    ui.ryconfig->loadSettings(currentFile);
-    ui.rzconfig->loadSettings(currentFile);
-
-    ui.rxconfig_alt->loadSettings(currentFile);
-    ui.ryconfig_alt->loadSettings(currentFile);
-    ui.rzconfig_alt->loadSettings(currentFile);
 
     GlobalPose->Yaw.altp = iniFile.value("rx_alt", false).toBool();
     GlobalPose->Pitch.altp = iniFile.value("ry_alt", false).toBool();

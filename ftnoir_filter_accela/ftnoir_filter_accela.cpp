@@ -21,8 +21,8 @@
 #endif
 
 FTNoIR_Filter::FTNoIR_Filter() :
-	functionConfig("Accela-Scaling-Rotation", 4, 6),
-	translationFunctionConfig("Accela-Scaling-Translation", 4, 6)
+    functionConfig("Accela-Scaling-Rotation", 4, 6),
+    translationFunctionConfig("Accela-Scaling-Translation", 4, 6)
 {
 	first_run = true;
 	kMagicNumber = 100.0f;
@@ -39,30 +39,18 @@ void FTNoIR_Filter::Initialize()
 }
 
 void FTNoIR_Filter::loadSettings() {
-	QList<QPointF> defPoints;
-
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	defPoints.clear();
-    for (int i = 0; i < defScaleRotation.size(); i++) {		// Get the default points (hardcoded!)
-		defPoints.append(defScaleRotation[i]);
-	}
-	functionConfig.loadSettings(iniFile, defPoints);
-
-	defPoints.clear();
-    for (int i = 0; i < defScaleTranslation.size(); i++) {		// Get the default points (hardcoded!)
-		defPoints.append(defScaleTranslation[i]);
-	}
-	translationFunctionConfig.loadSettings(iniFile, defPoints);
+    functionConfig.loadSettings(iniFile);
+    translationFunctionConfig.loadSettings(iniFile);
 
 	iniFile.beginGroup ( "Accela" );
 	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
     kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
 	iniFile.endGroup ();
-
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
@@ -92,8 +80,6 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
 
 	if (first_run)
 	{
-		functionConfig.setTrackingActive(true);
-		translationFunctionConfig.setTrackingActive(true);
 		new_camera_position->x=target[0];
 		new_camera_position->y=target[1];
 		new_camera_position->z=target[2];

@@ -34,9 +34,6 @@
 #include <qfunctionconfigurator/functionconfig.h>
 #include "facetracknoir/global-settings.h"
 
-extern const QList<QPointF> defScaleRotation;
-extern const QList<QPointF> defScaleTranslation;
-
 //
 // Macro to determine array-size
 //

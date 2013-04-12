@@ -169,6 +169,8 @@ void Tracker::run() {
         if (Libraries->pTracker) {
             bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(&newpose);
         }
+
+        confid = (bTracker1Confid || bTracker2Confid);
         
         bool newp = last.yaw != newpose.yaw ||
                                last.pitch != newpose.pitch ||
@@ -301,7 +303,6 @@ void Tracker::run() {
         }
 
         //for lower cpu load
-        confid = (bTracker1Confid || bTracker2Confid);
         usleep(1000);
     }
 

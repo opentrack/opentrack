@@ -6,6 +6,7 @@
  * notice appear in all copies.
  */
 
+#include <QCoreApplication>
 #include <QPointF>
 #include <QList>
 #include "functionconfig.h"
@@ -19,32 +20,21 @@
 //
 // Constructor with List of Points in argument.
 //
-FunctionConfig::FunctionConfig(QString title, QList<QPointF> points, int intMaxInput, int intMaxOutput) :
+FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput) :
     _mutex(QMutex::Recursive)
 {
 	_title = title;
-	_points = points;
+    _points = QList<QPointF>();
 	_data = 0;
 	_size = 0;
 	lastValueTracked = QPointF(0,0);
 	_tracking_active = false;
 	_max_Input = intMaxInput;					// Added WVR 20120805
 	_max_Output = intMaxOutput;
-	reload();
-}
-
-//
-// Constructor with only Title in arguments.
-//
-FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput) {
-	_title = title;
-	_points = QList<QPointF>();
-	_data = 0;
-	_size = 0;
-	lastValueTracked = QPointF(0,0);
-	_tracking_active = false;
-	_max_Input = intMaxInput;					// Added WVR 20120805
-	_max_Output = intMaxOutput;
+    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );
+    loadSettings(iniFile);
 	reload();
 }
 
@@ -223,12 +213,15 @@ QList<QPointF> FunctionConfig::getPoints() {
 // Settings for a specific Curve are loaded from their own Group in the INI-file.
 //
 void FunctionConfig::loadSettings(QSettings& settings) {
-QPointF newPoint;
+    QPointF newPoint;
 
 	QList<QPointF> points;
 	settings.beginGroup(QString("Curves-%1").arg(_title));
 	
     int max = settings.value("point-count", 0).toInt();
+
+    qDebug() << _title << "count" << max;
+
 	for (int i = 0; i < max; i++) {
         newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), (i + 1) * _max_Input/2).toFloat(),
                            settings.value(QString("point-%1-y").arg(i), (i + 1) * _max_Output/2).toFloat());
@@ -245,53 +238,6 @@ QPointF newPoint;
 		points.append(newPoint);
 	}
     settings.endGroup();
-    _mutex.lock();
-	_points = points;
-	reload();
-    _mutex.unlock();
-}
-
-//
-// Load the Points for the Function from the INI-file designated by settings.
-// Settings for a specific Curve are loaded from their own Group in the INI-file.
-//
-// A default List of points is available in defPoints, to be used if "point-count" is missing completely.
-//
-void FunctionConfig::loadSettings(QSettings& settings, QList<QPointF>& defPoints) {
-QPointF newPoint;
-
-	QList<QPointF> points;
-	settings.beginGroup(QString("Curves-%1").arg(_title));
-
-	qDebug() << "FunctionConfig::loadSettings2 title = " << _title;
-	
-	//
-	// Read the number of points, that was last saved. Default to defPoints, if key doesn't exist.
-	//
-	int max = settings.value("point-count", 0).toInt();
-	if (max <= 0) {
-		qDebug() << "FunctionConfig::loadSettings2 number of points = " << defPoints.count();
-		points = defPoints;
-	}
-	else {
-		qDebug() << "FunctionConfig::loadSettings2 max = " << max;
-		for (int i = 0; i < max; i++) {
-            newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), (i + 1) * _max_Input/2).toFloat(),
-                               settings.value(QString("point-%1-y").arg(i), (i + 1) * _max_Output/2).toFloat());
-			//
-			// Make sure the new Point fits in the Function Range.
-			// Maybe this can be improved?
-			//
-			if (newPoint.x() > _max_Input) {
-				newPoint.setX(_max_Input);
-			}
-			if (newPoint.y() > _max_Output) {
-				newPoint.setY(_max_Output);
-			}
-			points.append(newPoint);
-		}
-	}
-	settings.endGroup();
     _mutex.lock();
 	_points = points;
 	reload();
