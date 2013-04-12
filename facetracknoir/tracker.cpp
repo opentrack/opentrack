@@ -170,8 +170,6 @@ void Tracker::run() {
             bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(&newpose);
         }
         
-        confid = (bTracker1Confid || bTracker2Confid);
-        
         bool newp = last.yaw != newpose.yaw ||
                                last.pitch != newpose.pitch ||
                                last.roll != newpose.roll ||
@@ -291,13 +289,19 @@ void Tracker::run() {
             GlobalPose->Z.curvePtr->setTrackingActive( false );
             GlobalPose->Yaw.curvePtr->setTrackingActive( false );
             GlobalPose->Pitch.curvePtr->setTrackingActive( false );
-            GlobalPose->Pitch.curvePtrAlt->setTrackingActive( false );
             GlobalPose->Roll.curvePtr->setTrackingActive( false );
+            GlobalPose->X.curvePtrAlt->setTrackingActive( false );
+            GlobalPose->Y.curvePtrAlt->setTrackingActive( false );
+            GlobalPose->Z.curvePtrAlt->setTrackingActive( false );
+            GlobalPose->Yaw.curvePtrAlt->setTrackingActive( false );
+            GlobalPose->Pitch.curvePtrAlt->setTrackingActive( false );
+            GlobalPose->Roll.curvePtrAlt->setTrackingActive( false );
             if (Libraries->pFilter)
                 Libraries->pFilter->Initialize();
         }
 
         //for lower cpu load
+        confid = (bTracker1Confid || bTracker2Confid);
         usleep(1000);
     }
 

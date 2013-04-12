@@ -191,12 +191,12 @@ public:
     THeadPoseDOF Y;
     THeadPoseDOF Z;
     HeadPoseData() :
-        Pitch("PitchUp", "PitchDown", 60, 180, 60, 90),
-        Yaw("Yaw", "YawAlt", 60, 180, 60, 180),
-        Roll("Roll", "RollAlt", 60, 180, 60, 180),
-        X("X","XAlt", 60, 200, 60, 200),
-        Y("Y","YAlt", 60, 200, 60, 200),
-        Z("Z","ZAlt", 60, 200, 60, 200)
+        Pitch("ry", "ry_alt", 60, 180, 60, 90),
+        Yaw("rx", "rx_alt", 60, 180, 60, 180),
+        Roll("rz", "rz_alt", 60, 180, 60, 180),
+        X("tx","tx_alt", 60, 200, 60, 200),
+        Y("ty","ty_alt", 60, 200, 60, 200),
+        Z("tz","tz_alt", 60, 200, 60, 200)
     {
     }
 };
