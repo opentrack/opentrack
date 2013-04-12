@@ -517,11 +517,11 @@ bool SMCreateMapping()
 	//
 	// Open an existing FileMapping, Read/Write access
 	//
-	hSMMemMap = OpenFileMappingA( FILE_MAP_ALL_ACCESS , false , (LPCSTR) SM_MM_DATA );
+	hSMMemMap = OpenFileMappingA( FILE_MAP_WRITE , false , (LPCSTR) SM_MM_DATA );
 	if ( ( hSMMemMap != 0 ) ) {
 		ftnoirConnected = true;
 		OutputDebugString(_T("FTCreateMapping says: FileMapping opened successfully...\n"));
-		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(TFaceData));
+		pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
 		if (pMemData != NULL) {
 			OutputDebugString(_T("FTCreateMapping says: MapViewOfFile OK.\n"));
 			pMemData->state = 0;

@@ -207,7 +207,7 @@ bool FTNoIR_Tracker::SMCreateMapping()
 	//
 	// Create a new FileMapping, Read/Write access
 	//
-    hSMMemMap = OpenFileMappingA( PAGE_READWRITE , false , (LPCSTR) SM_MM_DATA );
+    hSMMemMap = OpenFileMappingA( FILE_MAP_WRITE, false , (LPCSTR) SM_MM_DATA );
 	if ( ( hSMMemMap != 0 ) ) {
 		qDebug() << "FTNoIR_Tracker::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
         pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
