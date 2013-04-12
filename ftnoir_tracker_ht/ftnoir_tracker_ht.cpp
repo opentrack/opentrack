@@ -228,6 +228,7 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
         videoWidget->updateImage(shm->frame.frame, shm->frame.width, shm->frame.height);
         //memcpy(foo, shm->frame.frame, shm->frame.width * shm->frame.height * 3);
         fresh = true;
+        shm->frame.width = 0;
     }
     if (shm->result.filled) {
         if (enableRX)

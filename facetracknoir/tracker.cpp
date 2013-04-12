@@ -143,15 +143,14 @@ void Tracker::run() {
     bool bTracker2Confid = false;
     
     THeadPoseData last;
+    THeadPoseData newpose;
+    THeadPoseData last_post_filter;
     
     forever
 	{
         if (should_quit)
             break;
 
-        // Check event for stop thread
-
-        THeadPoseData newpose;
         newpose.pitch = 0.0f;
         newpose.roll = 0.0f;
         newpose.yaw = 0.0f;
@@ -199,7 +198,7 @@ void Tracker::run() {
             //
             // Only copy valid values
             //
-            if (Tracker::confid) {
+            if (confid) {
                 offset_camera.x     = GlobalPose->X.headPos;
                 offset_camera.y     = GlobalPose->Y.headPos;
                 offset_camera.z     = GlobalPose->Z.headPos;
@@ -222,7 +221,7 @@ void Tracker::run() {
             do_game_zero = false;
         }
 
-        if (Tracker::do_tracking && Tracker::confid) {
+        if (do_tracking && confid) {
             // get values
             target_camera.x     = GlobalPose->X.headPos;
             target_camera.y     = GlobalPose->Y.headPos;
@@ -238,7 +237,7 @@ void Tracker::run() {
             // Use advanced filtering, when a filter was selected.
             //
             if (Libraries->pFilter) {
-                THeadPoseData last_post_filter = gameoutput_camera;
+                last_post_filter = gameoutput_camera;
                 Libraries->pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, &last_post_filter, newp);
             }
             else {
@@ -261,7 +260,7 @@ void Tracker::run() {
             //
             // Reverse Axis.
             //
-            if (Tracker::do_axis_reverse) {
+            if (do_axis_reverse) {
                 output_camera.z = Z_PosWhenReverseAxis;	// Set the desired Z-position
             }
 
