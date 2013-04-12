@@ -124,7 +124,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_max_mean_error = 2.7;
     config->ransac_abs_max_mean_error = 12;
     config->debug = 1;
-    config->ransac_min_features = 0.75;
+    config->ransac_min_features = 0.83;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
