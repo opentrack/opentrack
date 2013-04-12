@@ -757,6 +757,13 @@ void FaceTrackNoIR::startTracker( ) {
     GlobalPose->Pitch.curvePtrAlt->loadSettings(iniFile);
     GlobalPose->Roll.curvePtrAlt->loadSettings(iniFile);
 
+    GlobalPose->Yaw.altp = iniFile.value("rx_alt", false).toBool();
+    GlobalPose->Pitch.altp = iniFile.value("ry_alt", false).toBool();
+    GlobalPose->Roll.altp = iniFile.value("rz_alt", false).toBool();
+    GlobalPose->X.altp = iniFile.value("tx_alt", false).toBool();
+    GlobalPose->Y.altp = iniFile.value("ty_alt", false).toBool();
+    GlobalPose->Z.altp = iniFile.value("tz_alt", false).toBool();
+
 	tracker = new Tracker ( this );
 
 	//
@@ -1966,9 +1973,6 @@ void CurveConfigurationDialog::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "Tracking" );
-    iniFile.endGroup ();
 
     GlobalPose->Yaw.altp = iniFile.value("rx_alt", false).toBool();
     GlobalPose->Pitch.altp = iniFile.value("ry_alt", false).toBool();
