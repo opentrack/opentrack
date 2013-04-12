@@ -32,6 +32,7 @@
 #include "Windows.h"
 #include "math.h"
 #include "facetracknoir/global-settings.h"
+#include "compat/compat.h"
 #include <QFrame>
 
 using namespace std;
@@ -48,18 +49,15 @@ public:
     void WaitForExit();
 
 	void loadSettings();
-	bool SMCreateMapping();
 
 private:
 	//
 	// global variables
 	//
-	HANDLE hSMMemMap;
-	SMMemMap *pMemData;
-	HANDLE hSMMutex;
+    PortableLockedShm lck_shm;
+    SMMemMap *pMemData;
 	QProcess *faceAPI;
 
-//	int numTracker;
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;
