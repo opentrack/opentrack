@@ -26,17 +26,14 @@
 #include <QtGui>
 #include "facetracknoir/global-settings.h"
 
-FTNoIR_Tracker::FTNoIR_Tracker()
+FTNoIR_Tracker::FTNoIR_Tracker() : lck_shm(SM_MM_DATA, SM_MUTEX, sizeof(SMMemMap))
 {
+    pMemData = (SMMemMap*) lck_shm.mem;
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
 	qDebug() << "~FTNoIR_Tracker says: cleaning up";
-
-	if ( pMemData != NULL ) {
-		UnmapViewOfFile ( pMemData );
-	}
 
 	bEnableRoll = true;
 	bEnablePitch = true;
@@ -44,22 +41,11 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 	bEnableX = true;
 	bEnableY = true;
 	bEnableZ = true;
-
-	CloseHandle( hSMMutex );
-	CloseHandle( hSMMemMap );
-	hSMMemMap = 0;
 }
 
 void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
 {
     qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
-
-    if (SMCreateMapping()) {
-        qDebug() << "FTNoIR_Tracker::Initialize Mapping created.";
-    }
-    else {
-        QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
-    }
 
     loadSettings();
 
@@ -111,41 +97,37 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
-	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
+    lck_shm.lock();
 
-//		qDebug() << "FTNoIR_Tracker::GiveHeadPoseData says: Retrieving data.";
-		
-		//
-		// Copy the measurements to FaceTrackNoIR.
-		//
-		if (bEnableX) {
-			data->x     = pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
-		}
-		if (bEnableY) {
-			data->y     = pMemData->data.new_pose.head_pos.y * 100.0f;
-		}
-		if (bEnableZ) {
-			data->z     = pMemData->data.new_pose.head_pos.z * 100.0f;
-		}
-		if (bEnableYaw) {
-			data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
-		}
-		if (bEnablePitch) {
-			data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
-		}
-		if (bEnableRoll) {
-			data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
-		}
+    //
+    // Copy the measurements to FaceTrackNoIR.
+    //
+    if (bEnableX) {
+        data->x     = pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
+    }
+    if (bEnableY) {
+        data->y     = pMemData->data.new_pose.head_pos.y * 100.0f;
+    }
+    if (bEnableZ) {
+        data->z     = pMemData->data.new_pose.head_pos.z * 100.0f;
+    }
+    if (bEnableYaw) {
+        data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
+    }
+    if (bEnablePitch) {
+        data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
+    }
+    if (bEnableRoll) {
+        data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+    }
 
-		//
-		// Reset the handshake, to let faceAPI know we're still here!
-		//
-		pMemData->handshake = 0;
+    //
+    // Reset the handshake, to let faceAPI know we're still here!
+    //
+    pMemData->handshake = 0;
+    lck_shm.unlock();
 
-		ReleaseMutex(hSMMutex);
-		return ( pMemData->data.new_pose.confidence > 0 );
-	}
-	return false;
+    return ( pMemData->data.new_pose.confidence > 0 );
 }
 
 //
@@ -175,63 +157,6 @@ void FTNoIR_Tracker::loadSettings() {
 
 	iniFile.endGroup ();
 }
-
-//
-// Create a memory-mapping to the faceAPI data.
-// It contains the tracking data, a command-code from FaceTrackNoIR
-//
-//
-bool FTNoIR_Tracker::SMCreateMapping()
-{
-	qDebug() << "FTNoIR_Tracker::FTCreateMapping says: Starting Function";
-
-	//
-	// A FileMapping is used to create 'shared memory' between the faceAPI and FaceTrackNoIR.
-	//
-	// Try to create a FileMapping to the Shared Memory.
-	// If one already exists: close it.
-	//
-    hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 ,
-		                           sizeof( TFaceData ) + sizeof( HANDLE ) + 100, 
-								   (LPCSTR) SM_MM_DATA );
-
-	if ( hSMMemMap != 0 ) {
-		qDebug() << "FTNoIR_Tracker::FTCreateMapping says: FileMapping Created!";
-	}
-
-	if ( ( hSMMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		CloseHandle( hSMMemMap );
-		hSMMemMap = 0;
-	}
-
-	//
-	// Create a new FileMapping, Read/Write access
-	//
-    hSMMemMap = OpenFileMappingA( FILE_MAP_WRITE, false , (LPCSTR) SM_MM_DATA );
-	if ( ( hSMMemMap != 0 ) ) {
-		qDebug() << "FTNoIR_Tracker::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
-        pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
-		if (pMemData != NULL) {
-			qDebug() << "FTNoIR_Tracker::FTCreateMapping says: MapViewOfFile OK.";
-//			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
-		}
-	    hSMMutex = CreateMutexA(NULL, false, SM_MUTEX);
-	}
-	else {
-		qDebug() << "FTNoIR_Tracker::FTCreateMapping says: Error creating Shared Memory for faceAPI!";
-		return false;
-	}
-
-	//if (pMemData != NULL) {
-	//	pMemData->data.DataID = 1;
-	//	pMemData->data.CamWidth = 100;
-	//	pMemData->data.CamHeight = 250;
-	//}
-
-	return true;
-}
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker object.
