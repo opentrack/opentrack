@@ -36,8 +36,7 @@ public:
 	//
 	// Contructor(s) and destructor
 	//
-	FunctionConfig(QString title, QList<QPointF> points, int intMaxInput, int intMaxOutput);
-	FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
+    FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
 	virtual ~FunctionConfig();
 
     float getValue(float x);
@@ -62,7 +61,6 @@ public:
 	//
 	void saveSettings(QSettings& settings);
 	void loadSettings(QSettings& settings);
-	void loadSettings(QSettings& settings, QList<QPointF>& defPoints);
 
 	void setTrackingActive(bool blnActive) {
 		_tracking_active = blnActive;
