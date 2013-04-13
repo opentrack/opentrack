@@ -759,10 +759,21 @@ void FaceTrackNoIR::startTracker( ) {
         "rz_alt",
     };
 
+    static const char* invert_names[] = {
+        "invertX",
+        "invertY",
+        "invertZ",
+        "invertYaw",
+        "invertPitch",
+        "invertRoll"
+    };
+
     iniFile.beginGroup("Tracking");
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++) {
         GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
+        GlobalPose->axes[i].invert = iniFile.value(invert_names[i], false).toBool() ? 1 : -1;
+    }
 
     iniFile.endGroup();
 
