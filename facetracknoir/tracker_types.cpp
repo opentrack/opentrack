@@ -17,9 +17,9 @@ T6DOF operator-(const T6DOF& A, const T6DOF& B)
     C.axes[RY] *= R2D;
     C.axes[RZ] *= R2D;
 
-    C.axes[TX] = A.axes[TX] + B.axes[TX];
-    C.axes[TY] = A.axes[TY] + B.axes[TY];
-    C.axes[TZ] = A.axes[TZ] + B.axes[TZ];
+    C.axes[TX] = A.axes[TX] - B.axes[TX];
+    C.axes[TY] = A.axes[TY] - B.axes[TY];
+    C.axes[TZ] = A.axes[TZ] - B.axes[TZ];
 	//C.frame_number?
 	return C;
 }
