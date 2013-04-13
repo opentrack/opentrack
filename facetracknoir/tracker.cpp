@@ -157,7 +157,7 @@ void Tracker::run() {
             bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(newpose);
         }
 
-        confid = (bTracker1Confid || bTracker2Confid);
+        confid = bTracker1Confid || bTracker2Confid;
 
         if ( confid ) {
             for (int i = 0; i < 6; i++)
