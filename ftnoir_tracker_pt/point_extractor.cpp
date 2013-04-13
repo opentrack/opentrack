@@ -39,7 +39,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 
 	// convert to grayscale
 	Mat frame_bw;
-	cvtColor(frame, frame_bw, CV_RGB2GRAY);
+    cvtColor(frame, frame_bw, COLOR_BGR2GRAY);
 
 	// convert to binary
 	threshold(frame_bw, frame_bw, threshold_val, 255, THRESH_BINARY);
