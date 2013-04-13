@@ -172,8 +172,7 @@ private:
 	QPointF normalizePoint (QPointF point) const;						// Convert the graphical Point to a real-life Point
 	QPointF graphicalizePoint (QPointF point, QString source = "") const;	// Convert the Point to a graphical Point
 
-	QPointF *moving;
-	int     movingPoint;
+    int     movingPoint;
 
 	int MaxInput;					// Maximum input limit
 	int MaxOutput;					// Maximum output limit
