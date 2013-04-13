@@ -336,12 +336,12 @@ void Tracker::loadSettings() {
     Z_PosWhenReverseAxis = iniFile.value ( "RA_ToZPos", 80 ).toInt();
 
     static const char* names[] = {
-        "Inhibit_Yaw",
-        "Inhibit_Pitch",
-        "Inhibit_Roll",
         "Inhibit_X",
         "Inhibit_Y",
         "Inhibit_Z"
+        "Inhibit_Yaw",
+        "Inhibit_Pitch",
+        "Inhibit_Roll",
     };
 
     for (int i = 0; i < 6; i++)

@@ -117,10 +117,12 @@ public:
         {
             curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
             curvePtrAlt->loadSettings(iniFile);
+            iniFile.beginGroup("Tracking");
+            altp = iniFile.value(secondary).toBool();
+            iniFile.endGroup();
         }
         headPos = 0.0f;
         invert = 1;
-        altp = false;
     }
 	float headPos;					// Current position (from faceTracker, radials or meters)
     float invert;					// Invert measured value (= 1.0f or -1.0f)
