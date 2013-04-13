@@ -113,7 +113,7 @@ void FunctionConfig::reload() {
 		for (int k = 0; k < _points[0].x() * MEMOIZE_PRECISION; k++) {
             if (k < _size)
                 _data[k] = _points[0].y() * k / (_points[0].x() * MEMOIZE_PRECISION);
-		}
+        }
 
        for (int i = 0; i < _points.size(); i++) {
             QPointF p0 = ensureInBounds(_points, i - 1);
@@ -140,7 +140,7 @@ void FunctionConfig::reload() {
                                  (2 * p0.y() - 5 * p1.y() + 4 * p2.y() - p3.y()) * t2 +
                                  (-p0.y() + 3 * p1.y() - 3 * p2.y() + p3.y()) * t3);
 
-                if (x < _size)
+                if (x >= 0 && x < _size)
                     _data[x] = y;
             }
 		}
@@ -167,8 +167,11 @@ FunctionConfig::~FunctionConfig() {
 //
 void FunctionConfig::removePoint(int i) {
     _mutex.lock();
-	_points.removeAt(i);
-	reload();
+    if (i >= 0 && i < _points.size())
+    {
+        _points.removeAt(i);
+        reload();
+    }
     _mutex.unlock();
 }
 
@@ -189,8 +192,11 @@ void FunctionConfig::addPoint(QPointF pt) {
 //
 void FunctionConfig::movePoint(int idx, QPointF pt) {
     _mutex.lock();
-	_points[idx] = pt;
-	reload();
+    if (idx >= 0 && idx < _points.size())
+    {
+        _points[idx] = pt;
+        reload();
+    }
     _mutex.unlock();
 }
 
