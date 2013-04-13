@@ -1358,7 +1358,7 @@ QWidget( parent , f)
 
 	connect(ui.spinAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkAutoStartTracking, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.radioMinimize, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
+    connect(ui.radioMinimize, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
