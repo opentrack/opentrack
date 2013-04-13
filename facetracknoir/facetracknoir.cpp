@@ -751,18 +751,20 @@ void FaceTrackNoIR::startTracker( ) {
     }
 
     static const char* names[] = {
+        "tx_alt",
+        "ty_alt",
+        "tz_alt",
         "rx_alt",
         "ry_alt",
         "rz_alt",
-        "tx_alt",
-        "ty_alt",
-        "tz_alt"
     };
 
+    iniFile.beginGroup("Tracking");
+
     for (int i = 0; i < 6; i++)
-    {
         GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
-    }
+
+    iniFile.endGroup();
 
 	tracker = new Tracker ( this );
 
@@ -1942,24 +1944,28 @@ void CurveConfigurationDialog::loadSettings() {
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
     static const char* names[] = {
-        "rx_alt",
-        "ry_alt",
-        "rz_alt",
         "tx_alt",
         "ty_alt",
-        "tz_alt"
+        "tz_alt",
+        "rx_alt",
+        "ry_alt",
+        "rz_alt"
     };
+
+    iniFile.beginGroup("Tracking");
 
     for (int i = 0; i < 6; i++)
         GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
 
+    iniFile.endGroup();
+
     static QCheckBox* widgets[] = {
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp,
         ui.tx_altp,
         ui.ty_altp,
-        ui.tz_altp
+        ui.tz_altp,
+        ui.rx_altp,
+        ui.ry_altp,
+        ui.rz_altp
     };
 
     for (int i = 0; i < 6; i++)
@@ -1995,12 +2001,16 @@ void CurveConfigurationDialog::save() {
 
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+    iniFile.beginGroup("Tracking");
+
     iniFile.setValue("rx_alt", ui.rx_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("ry_alt", ui.ry_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("rz_alt", ui.rz_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("tx_alt", ui.tx_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("ty_alt", ui.ty_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("tz_alt", ui.tz_altp->checkState() != Qt::Unchecked);
+
+    iniFile.endGroup();
 
 	settingsDirty = false;
 
