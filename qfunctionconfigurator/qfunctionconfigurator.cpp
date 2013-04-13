@@ -84,8 +84,7 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 	range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
 
     setMouseTracking(true);
-    moving = NULL;						// Pointer to the curve-point, that's being moved
-	movingPoint = 1;				// Index of that same point
+    movingPoint = -1;				// Index of that same point
 
 	//
 	// Add a Reset-button
@@ -335,7 +334,7 @@ int i;
 		//
 		// When moving, also draw a sketched version of the Function.
 		//
-		if (moving) {
+        if (movingPoint >= 0 && movingPoint < _points.size()) {
 			prevPoint = graphicalizePoint( QPointF(0,0), "paintEvent moving" );				// Start at the Axis
 			for (i = 0; i < _points.size(); i++) {
 				currentPoint = graphicalizePoint( _points[i], "paintEvent moving" );		// Get the next point and convert it to Widget measures 
@@ -350,7 +349,7 @@ int i;
 			pen.setWidth(1);
 			pen.setColor( Qt::white );
 			pen.setStyle( Qt::DashLine );
-			actualPos = graphicalizePoint(*moving, "paintEvent moving help line(s)");
+            actualPos = graphicalizePoint(_points[movingPoint], "paintEvent moving help line(s)");
 			drawLine(&p, QPoint(range.left(), actualPos.y()), QPoint(actualPos.x(), actualPos.y()), pen);
 			drawLine(&p, QPoint(actualPos.x(), actualPos.y()), QPoint(actualPos.x(), range.bottom()), pen);
 		}
@@ -432,8 +431,8 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 			for (int i = 0; i < _points.size(); i++) {
 				if ( markContains( graphicalizePoint( _points[i], "mousePressEvent markContains" ), e->pos() ) ) {
 					bTouchingPoint = true;
-		            moving = &_points[i];
 					movingPoint = i;
+                    break;
 				}
 			}
 
@@ -444,7 +443,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 				if (withinRect(e->pos(), range)) {
 					_config->addPoint(normalizePoint(e->pos()));
 					setConfig(_config, strSettingsFile);
-					moving = NULL;
+                    movingPoint = -1;
 					emit CurveChanged( true );
 				}
 			}
@@ -459,28 +458,28 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 		//
 		// Check to see if the cursor is touching one of the points.
 		//
-		moving = NULL;
-		movingPoint = -1;
 		if (_config) {
 
 			for (int i = 0; i < _points.size(); i++) {
 				if ( markContains( graphicalizePoint( _points[i], "mousePressEvent RightButton" ), e->pos() ) ) {
 					movingPoint = i;
+                    break;
 				}
 			}
 
 			//
 			// If the Right Mouse-button was clicked while touching a Point, remove the Point
 			//
-			if (movingPoint >= 0) {
+            if (movingPoint >= 0 && movingPoint < _points.size()) {
 				_config->removePoint(movingPoint);
+                movingPoint = -1;
 				setConfig(_config, strSettingsFile);
-				movingPoint = -1;
 				emit CurveChanged( true );
 			}
-		}
+            else
+                movingPoint = -1;
+        }
 	}
-
 }
 
 //
@@ -490,14 +489,13 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
 
-	if (moving) {
+    if (movingPoint >= 0) {
 
 		setCursor(Qt::ClosedHandCursor);		
 
 		//
 		// Change the currently moving Point.
 		//
-		*moving = normalizePoint(e->pos());
 		update();
     }
 	else {
@@ -527,21 +525,22 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
-    //qDebug()<<"releasing";
-	if (moving > 0) {
-		emit CurveChanged( true );
+    if (e->button() == Qt::LeftButton) {
+        //qDebug()<<"releasing";
+        if (movingPoint >= 0 && movingPoint < _points.size()) {
+            emit CurveChanged( true );
 
-		//
-		// Update the Point in the _config
-		//
-		if (_config) {
-			_config->movePoint(movingPoint, normalizePoint(e->pos()));
-			setConfig(_config, strSettingsFile);
-		}
-	}
-	setCursor(Qt::ArrowCursor);		
-	moving = NULL;
-    movingPoint = 0;
+            //
+            // Update the Point in the _config
+            //
+            if (_config) {
+                _config->movePoint(movingPoint, normalizePoint(e->pos()));
+                setConfig(_config, strSettingsFile);
+            }
+        }
+        setCursor(Qt::ArrowCursor);
+        movingPoint = -1;
+    }
 }
 
 //
