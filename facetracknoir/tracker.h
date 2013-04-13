@@ -37,6 +37,7 @@
 #include <QDebug>
 #include <QMutex>
 #include "global-settings.h"
+#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
 //#define DIRECTINPUT_VERSION 0x0800
 //#include <Dinput.h>
@@ -101,13 +102,17 @@ extern HeadPoseData* GlobalPose;
 //
 class THeadPoseDOF {
 public:
-    THeadPoseDOF(QString primary, QString secondary, int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
+    THeadPoseDOF(QString primary = "", QString secondary= "", int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
         QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");							// Registry settings (in HK_USER)
         QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
         QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
 
-        curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
-        curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
+        if (primary != "")
+        {
+            curvePtr = new FunctionConfig(primary, maxInput1, maxOutput1);						// Create the Function-config for input-output translation
+            curvePtr->loadSettings(iniFile);													// Load the settings from the INI-file
+        }
+
         if (secondary != "")
         {
             curvePtrAlt = new FunctionConfig(secondary, maxInput2, maxOutput2);
@@ -133,7 +138,9 @@ private:
     float Z_Pos4ReverseAxis;
     float Z_PosWhenReverseAxis;
     
-    volatile bool inhibit_rx, inhibit_ry, inhibit_rz, inhibit_tx, inhibit_ty, inhibit_tz, inhibit_zero;
+
+    volatile bool inhibit[6];
+    volatile bool inhibit_zero;
 
     FaceTrackNoIR *mainApp;
 
@@ -157,15 +164,10 @@ public:
 
     bool getConfid() { return confid; }
 
-    void setInvertPitch(bool invert);
-    void setInvertYaw(bool invert);
-    void setInvertRoll(bool invert);
-    void setInvertX(bool invert);
-    void setInvertY(bool invert);
-    void setInvertZ(bool invert);
+    void setInvertAxis(Axis axis, bool invert);
 
-    void getHeadPose(THeadPoseData *data);				// Return the current headpose data
-    void getOutputHeadPose(THeadPoseData *data);			// Return the current (processed) headpose data
+    void getHeadPose(double *data);				// Return the current headpose data
+    void getOutputHeadPose(double *data);			// Return the current (processed) headpose data
 
     float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
     float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
@@ -185,20 +187,15 @@ public:
 
 struct HeadPoseData {
 public:
-    THeadPoseDOF Pitch;
-    THeadPoseDOF Yaw;
-    THeadPoseDOF Roll;
-    THeadPoseDOF X;
-    THeadPoseDOF Y;
-    THeadPoseDOF Z;
-    HeadPoseData() :
-        Pitch("ry", "ry_alt", 60, 180, 60, 90),
-        Yaw("rx", "rx_alt", 60, 180, 60, 180),
-        Roll("rz", "rz_alt", 60, 180, 60, 180),
-        X("tx","tx_alt", 60, 200, 60, 200),
-        Y("ty","ty_alt", 60, 200, 60, 200),
-        Z("tz","tz_alt", 60, 200, 60, 200)
+    THeadPoseDOF axes[6];
+    HeadPoseData()
     {
+        axes[TX] = THeadPoseDOF("tx","tx_alt", 60, 200, 60, 200);
+        axes[TY] = THeadPoseDOF("ty","ty_alt", 60, 200, 60, 200);
+        axes[TZ] = THeadPoseDOF("tz","tz_alt", 60, 200, 60, 200);
+        axes[RX] = THeadPoseDOF("rx", "rx_alt", 60, 180, 60, 180);
+        axes[RY] = THeadPoseDOF("ry", "ry_alt", 60, 180, 60, 90);
+        axes[RZ] = THeadPoseDOF("rz", "rz_alt", 60, 180, 60, 180);
     }
 };
 

@@ -16,7 +16,7 @@ public:
 	~FTNoIR_Tracker();
 
     void StartTracker( QFrame *videoframe );
-	bool GiveHeadPoseData(THeadPoseData *data);
+    bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
     void WaitForExit() {
@@ -34,7 +34,7 @@ private:
 	QHostAddress destIP;									// Destination IP-address
 	QHostAddress srcIP;										// Source IP-address
 
-	THeadPoseData newHeadPose;								// Structure with new headpose
+    double newHeadPose[6];								// Structure with new headpose
 
 	float portAddress;										// Port-number
 	bool bEnableRoll;

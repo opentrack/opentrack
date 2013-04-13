@@ -192,7 +192,7 @@ void Tracker::paint_widget() {
     }
 }
 
-bool Tracker::GiveHeadPoseData(THeadPoseData *data)
+bool Tracker::GiveHeadPoseData(double *data)
 {
 	const float rad2deg = 180.0/3.14159265;
 	const float deg2rad = 1.0/rad2deg;
@@ -217,13 +217,13 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 
 		// get translation(s)
 		if (bEnableX) {
-			data->x = t[0] / 10.0;	// convert to cm
+            data[TX] = t[0] / 10.0;	// convert to cm
 		}
 		if (bEnableY) {
-			data->y = t[1] / 10.0;
+            data[TY] = t[1] / 10.0;
 		}
 		if (bEnableZ) {
-			data->z = t[2] / 10.0;
+            data[TZ] = t[2] / 10.0;
 		}
 
 		// translate rotation matrix from opengl (G) to roll-pitch-yaw (R) frame
@@ -241,13 +241,13 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		gamma = atan2( R(2,1), R(2,2));		
 
 		if (bEnableYaw) {
-			data->yaw   = rad2deg * alpha;
+            data[RX]   = rad2deg * alpha;
 		}
 		if (bEnablePitch) {
-            data->pitch = rad2deg * beta;
+            data[RY] = rad2deg * beta;
 		}
 		if (bEnableRoll) {
-			data->roll  = rad2deg * gamma;
+            data[RZ]  = rad2deg * gamma;
 		}
 	}
 	return true;

@@ -30,22 +30,8 @@
 #ifndef FTNOIR_TRACKER_TYPES_H
 #define FTNOIR_TRACKER_TYPES_H
 
-//
-// x,y,z position in centimetres, yaw, pitch and roll in degrees...
-//
-#pragma pack(push, 2)
-struct THeadPoseData {
-
-	THeadPoseData()
-		: x(0.0), y(0.0), z(0.0), yaw(0.0), pitch(0.0), roll(0.0), frame_number(0) {}
-
-	THeadPoseData(double x, double y, double z, 
-		double yaw, double pitch, double roll ) 
-		: x(x), y(y), z(z), yaw(yaw), pitch(pitch), roll(roll), frame_number(0) {}
-
-	double x, y, z, yaw, pitch, roll;
-    unsigned char frame_number;
+enum Axis {
+    TX = 0, TY, TZ, RX, RY, RZ
 };
-#pragma pack(pop)
 
 #endif // FTNOIR_TRACKER_TYPES_H

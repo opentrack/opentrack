@@ -38,12 +38,8 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	bEnableZ = true;
 	portAddress = 5551;
 
-	newHeadPose.x = 0.0f;
-	newHeadPose.y = 0.0f;
-	newHeadPose.z = 0.0f;
-	newHeadPose.yaw   = 0.0f;
-	newHeadPose.pitch = 0.0f;
-	newHeadPose.roll  = 0.0f;
+    for (int i = 0; i < 6; i++)
+        newHeadPose[i] = 0;
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
@@ -111,26 +107,26 @@ void FTNoIR_Tracker::StartTracker(QFrame* videoFrame)
 	return;
 }
 
-bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
+bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
 {
     mutex.lock();
 	if (bEnableX) {
-		data->x = newHeadPose.x;
+        data[TX] = newHeadPose[TX];
 	}
 	if (bEnableX) {
-		data->y = newHeadPose.y;
+        data[TY] = newHeadPose[TY];
 	}
 	if (bEnableX) {
-		data->z = newHeadPose.z;
+        data[TZ] = newHeadPose[TZ];
 	}
     if (bEnableYaw) {
-		data->yaw = newHeadPose.yaw;
+        data[RX] = newHeadPose[RX];
 	}
     if (bEnablePitch) {
-		data->pitch = newHeadPose.pitch;
+        data[RY] = newHeadPose[RY];
 	}
     if (bEnableRoll) {
-		data->roll = newHeadPose.roll;
+        data[RZ] = newHeadPose[RZ];
 	}
     mutex.unlock();
 	return true;

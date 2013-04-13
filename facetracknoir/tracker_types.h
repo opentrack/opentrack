@@ -30,13 +30,9 @@
 
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 
-class T6DOF : public THeadPoseData
-{
+struct T6DOF {
 public:
-    T6DOF() : THeadPoseData() {}
-
-	T6DOF(double x, double y, double z, double yaw, double pitch, double roll) 
-		:  THeadPoseData(x,y,z, yaw,pitch,roll) {}
+    double axes[6];
 };
 
 T6DOF operator-(const T6DOF& A, const T6DOF& B); // get new pose with respect to reference pose B

@@ -59,7 +59,7 @@ struct IProtocol
 	virtual ~IProtocol() {}
 	virtual void Initialize() = 0;
     virtual bool checkServerInstallationOK() = 0;
-	virtual void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) = 0;
+    virtual void sendHeadposeToGame( double *headpose, double *rawheadpose ) = 0;
 	virtual void getNameFromGame( char *dest ) = 0;				// Take care dest can handle up to 100 chars...
 };
 

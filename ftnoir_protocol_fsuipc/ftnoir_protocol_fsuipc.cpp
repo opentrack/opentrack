@@ -104,7 +104,7 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
 DWORD result;
 TFSState pitch;
 TFSState yaw;
@@ -121,13 +121,13 @@ float virtRotZ;
 
 //	qDebug() << "FSUIPCServer::run() says: started!";
 
-	virtRotX = -1.0f * headpose->pitch;				// degrees
-	virtRotY = headpose->yaw;
-	virtRotZ = headpose->roll;
+    virtRotX = -headpose[RY];				// degrees
+    virtRotY = headpose[RX];
+    virtRotZ = headpose[RZ];
 
 	virtPosX = 0.0f;											// cm, X and Y are not working for FS2002/2004!
 	virtPosY = 0.0f;
-	virtPosZ = -1.0f * headpose->z;
+    virtPosZ = headpose[TZ];
 
 	//
 	// Init. the FSUIPC offsets (derived from Free-track...)

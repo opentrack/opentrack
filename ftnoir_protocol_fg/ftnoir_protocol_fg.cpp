@@ -34,6 +34,7 @@
 #include "ftnoir_protocol_fg.h"
 #include <QFile>
 #include "facetracknoir/global-settings.h"
+#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
 // For Todd and Arda Kutlu
 //#define SEND_ASCII_DATA
@@ -99,24 +100,20 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
 int no_bytes;
 QHostAddress sender;
 quint16 senderPort;
 
-#ifdef SEND_ASCII_DATA
-char data[100];
-#endif
-
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	FlightData.x = headpose->x;
-	FlightData.y = headpose->y;
-	FlightData.z = headpose->z;
-	FlightData.p = headpose->pitch;
-	FlightData.h = headpose->yaw;
-	FlightData.r = headpose->roll;
+    FlightData.x = headpose[TX];
+    FlightData.y = headpose[RY];
+    FlightData.z = headpose[TZ];
+    FlightData.p = headpose[TY];
+    FlightData.h = headpose[RX];
+    FlightData.r = headpose[RZ];
 	FlightData.status = fg_cmd;
 
 	//

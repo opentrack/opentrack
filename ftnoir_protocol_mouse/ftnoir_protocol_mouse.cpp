@@ -106,7 +106,7 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
 float fMouse_X = 0;							// The actual value
 float fMouse_Y = 0;
 float fMouse_Wheel = 0;
@@ -116,103 +116,25 @@ float fMouse_Wheel = 0;
 	// Determine which of the 6DOF's is used.
 	// The rotations are from -180 to +180 and the translations from -50cm to +50cm.
 	// Let's scale the translations to the degrees for simplicity sake...
-	//
-	switch (Mouse_X) {
-		case FTN_PITCH:
-			fMouse_X = headpose->pitch;
-			break;
+    //
 
-		case FTN_YAW:
-			fMouse_X = headpose->yaw;
-			break;
+    if (Mouse_X > 0 && Mouse_X < 6+1)
+        fMouse_X = headpose[Mouse_X-1];
 
-		case FTN_ROLL:
-			fMouse_X = headpose->roll;
-			break;
+    if (Mouse_X < 3+1 && Mouse_X > 0)
+        fMouse_X *= 3;
 
-		case FTN_X:
-			fMouse_X = headpose->x * 3.0f;
-			break;
+    if (Mouse_Y > 0 && Mouse_Y < 6+1)
+        fMouse_Y = headpose[Mouse_Y-1];
 
-		case FTN_Y:
-			fMouse_X = headpose->y * 3.0f;
-			break;
+    if (Mouse_Y < 3+1 && Mouse_Y > 0)
+        fMouse_Y *= 3;
 
-		case FTN_Z:
-			fMouse_X = headpose->z * 3.0f;
-			break;
+    if (Mouse_Wheel > 0 && Mouse_Wheel < 6+1)
+        fMouse_Wheel = headpose[Mouse_Wheel-1];
 
-		default:
-			break;
-	}
-
-	//
-	// Determine which of the 6DOF's is used.
-	// The rotations are from -180 to +180 and the translations from -50cm to +50cm.
-	// Let's scale the translations to the degrees for simplicity sake...
-	//
-	switch (Mouse_Y) {
-		case FTN_PITCH:
-			fMouse_Y = headpose->pitch;
-			break;
-
-		case FTN_YAW:
-			fMouse_Y = headpose->yaw;
-			break;
-
-		case FTN_ROLL:
-			fMouse_Y = headpose->roll;
-			break;
-
-		case FTN_X:
-			fMouse_Y = headpose->x * 3.0f;
-			break;
-
-		case FTN_Y:
-			fMouse_Y = headpose->y * 3.0f;
-			break;
-
-		case FTN_Z:
-			fMouse_Y = headpose->z * 3.0f;
-			break;
-
-		default:
-			break;
-	}
-
-	//
-	// Determine which of the 6DOF's is used.
-	// The rotations are from -180 to +180 and the translations from -50cm to +50cm.
-	// Let's scale the translations to the degrees for simplicity sake...
-	//
-	switch (Mouse_Wheel) {
-		case FTN_PITCH:
-			fMouse_Wheel = headpose->pitch;
-			break;
-
-		case FTN_YAW:
-			fMouse_Wheel = headpose->yaw;
-			break;
-
-		case FTN_ROLL:
-			fMouse_Wheel = headpose->roll;
-			break;
-
-		case FTN_X:
-			fMouse_Wheel = headpose->x * 3.0f;
-			break;
-
-		case FTN_Y:
-			fMouse_Wheel = headpose->y * 3.0f;
-			break;
-
-		case FTN_Z:
-			fMouse_Wheel = headpose->z * 3.0f;
-			break;
-
-		default:
-			break;
-	}
+    if (Mouse_Wheel < 3+1 && Mouse_Wheel > 0)
+        fMouse_Wheel *= 3;
 
 	//
 	// Only send Input, when it has changed.

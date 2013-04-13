@@ -92,7 +92,7 @@ void FTNoIR_Tracker::WaitForExit()
 	}
 }
 
-bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
+bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
 {
 	//
 	// Check if the pointer is OK and wait for the Mutex.
@@ -103,22 +103,22 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
     // Copy the measurements to FaceTrackNoIR.
     //
     if (bEnableX) {
-        data->x     = pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
+        data[TX]     = pMemData->data.new_pose.head_pos.x * 100.0f;						// From meters to centimeters
     }
     if (bEnableY) {
-        data->y     = pMemData->data.new_pose.head_pos.y * 100.0f;
+        data[TY]     = pMemData->data.new_pose.head_pos.y * 100.0f;
     }
     if (bEnableZ) {
-        data->z     = pMemData->data.new_pose.head_pos.z * 100.0f;
+        data[TZ]     = pMemData->data.new_pose.head_pos.z * 100.0f;
     }
     if (bEnableYaw) {
-        data->yaw   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
+        data[RX]   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
     }
     if (bEnablePitch) {
-        data->pitch = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
+        data[RY] = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
     }
     if (bEnableRoll) {
-        data->roll  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+        data[RZ]  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
     }
 
     //

@@ -33,7 +33,7 @@ public:
 
 	// ITracker interface
     void StartTracker(QFrame* videoFrame);
-	bool GiveHeadPoseData(THeadPoseData *data);
+    bool GiveHeadPoseData(double *data);
 
 	void refreshVideo();
 

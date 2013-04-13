@@ -49,11 +49,11 @@ public:
 	~FTNoIR_Filter();
 
     void Initialize();
-    void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter_values, bool newTarget);
+    void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter_values);
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
-	THeadPoseData newHeadPose;								// Structure with new headpose
+    double newHeadPose[6];								// Structure with new headpose
 
 	bool	first_run;
 	double kFactor, kFactorTranslation;

@@ -80,26 +80,18 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
     should_quit(false),
     do_tracking(true),
     do_center(false),
-    do_inhibit(false),
     do_game_zero(false),
-    do_axis_reverse(false),
-    inhibit_rx(false),
-    inhibit_ry(false),
-    inhibit_rz(false),
-    inhibit_tx(false),
-    inhibit_ty(false),
-    inhibit_tz(false)
+    do_axis_reverse(false)
 {
     // Retieve the pointer to the parent
 	mainApp = parent;
 	// Load the settings from the INI-file
 	loadSettings();
-    GlobalPose->Yaw.headPos = 0;
-    GlobalPose->Pitch.headPos = 0;
-    GlobalPose->Roll.headPos = 0;
-    GlobalPose->X.headPos = 0;
-    GlobalPose->Y.headPos = 0;
-    GlobalPose->Z.headPos = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        GlobalPose->axes[i].headPos = 0;
+        inhibit[i] = false;
+    }
 }
 
 Tracker::~Tracker()
@@ -142,53 +134,34 @@ void Tracker::run() {
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
     
-    THeadPoseData last;
-    THeadPoseData newpose;
-    THeadPoseData last_post_filter;
+    double newpose[6];
+    double last_post_filter[6];
     
     forever
 	{
         if (should_quit)
             break;
 
-        newpose.pitch = 0.0f;
-        newpose.roll = 0.0f;
-        newpose.yaw = 0.0f;
-        newpose.x = 0.0f;
-        newpose.y = 0.0f;
-        newpose.z = 0.0f;
+        for (int i = 0; i < 6; i++)
+            newpose[i] = 0;
 
         //
         // The second tracker serves as 'secondary'. So if an axis is written by the second tracker it CAN be overwritten by the Primary tracker.
         // This is enforced by the sequence below.
         //
         if (Libraries->pSecondTracker) {
-            bTracker2Confid = Libraries->pSecondTracker->GiveHeadPoseData(&newpose);
+            bTracker2Confid = Libraries->pSecondTracker->GiveHeadPoseData(newpose);
         }
 
         if (Libraries->pTracker) {
-            bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(&newpose);
+            bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(newpose);
         }
 
         confid = (bTracker1Confid || bTracker2Confid);
-        
-        bool newp = last.yaw != newpose.yaw ||
-                               last.pitch != newpose.pitch ||
-                               last.roll != newpose.roll ||
-                               last.x != newpose.x ||
-                               last.y != newpose.y ||
-                               last.z != newpose.z;
-        
-        if (newp)
-            last = newpose;
-                    
+
         if ( confid ) {
-            GlobalPose->Yaw.headPos = newpose.yaw;
-            GlobalPose->Pitch.headPos = newpose.pitch;
-            GlobalPose->Roll.headPos = newpose.roll;
-            GlobalPose->X.headPos = newpose.x;
-            GlobalPose->Y.headPos = newpose.y;
-            GlobalPose->Z.headPos = newpose.z;
+            for (int i = 0; i < 6; i++)
+                GlobalPose->axes[i].headPos = newpose[i];
         }
 
         //
@@ -199,12 +172,8 @@ void Tracker::run() {
             // Only copy valid values
             //
             if (confid) {
-                offset_camera.x     = GlobalPose->X.headPos;
-                offset_camera.y     = GlobalPose->Y.headPos;
-                offset_camera.z     = GlobalPose->Z.headPos;
-                offset_camera.pitch = GlobalPose->Pitch.headPos;
-                offset_camera.yaw   = GlobalPose->Yaw.headPos;
-                offset_camera.roll  = GlobalPose->Roll.headPos;
+                for (int i = 0; i < 6; i++)
+                    offset_camera.axes[i] = GlobalPose->axes[i].headPos;
             }
 
             Tracker::do_center = false;
@@ -212,8 +181,6 @@ void Tracker::run() {
             // for kalman
             if (Libraries->pFilter)
                 Libraries->pFilter->Initialize();
-            
-            last = newpose;
         }
         
         if (do_game_zero) {
@@ -223,12 +190,8 @@ void Tracker::run() {
 
         if (do_tracking && confid) {
             // get values
-            target_camera.x     = GlobalPose->X.headPos;
-            target_camera.y     = GlobalPose->Y.headPos;
-            target_camera.z     = GlobalPose->Z.headPos;
-            target_camera.pitch = GlobalPose->Pitch.headPos;
-            target_camera.yaw   = GlobalPose->Yaw.headPos;
-            target_camera.roll  = GlobalPose->Roll.headPos;
+            for (int i = 0; i < 6; i++)
+                target_camera.axes[i] = GlobalPose->axes[i].headPos;
 
             // do the centering
             target_camera = target_camera - offset_camera;
@@ -237,22 +200,19 @@ void Tracker::run() {
             // Use advanced filtering, when a filter was selected.
             //
             if (Libraries->pFilter) {
-                last_post_filter = gameoutput_camera;
-                Libraries->pFilter->FilterHeadPoseData(&current_camera, &target_camera, &new_camera, &last_post_filter, newp);
+                for (int i = 0; i < 6; i++)
+                    last_post_filter[i] = gameoutput_camera.axes[i];
+                Libraries->pFilter->FilterHeadPoseData(current_camera.axes, target_camera.axes, new_camera.axes, last_post_filter);
             }
             else {
                 new_camera = target_camera;
             }
 
-            get_curve(do_inhibit && inhibit_rx, inhibit_zero, new_camera.yaw, output_camera.yaw, GlobalPose->Yaw);
-            get_curve(do_inhibit && inhibit_ry, inhibit_zero, new_camera.pitch, output_camera.pitch, GlobalPose->Pitch);
-            get_curve(do_inhibit && inhibit_rz, inhibit_zero, new_camera.roll, output_camera.roll, GlobalPose->Roll);
-            get_curve(do_inhibit && inhibit_tx, inhibit_zero, new_camera.x, output_camera.x, GlobalPose->X);
-            get_curve(do_inhibit && inhibit_ty, inhibit_zero, new_camera.y, output_camera.y, GlobalPose->Y);
-            get_curve(do_inhibit && inhibit_tz, inhibit_zero, new_camera.z, output_camera.z, GlobalPose->Z);
+            for (int i = 0; i < 6; i++)
+                get_curve(do_inhibit && inhibit[i], inhibit_zero, new_camera.axes[i], output_camera.axes[i], GlobalPose->axes[i]);
 
             if (useAxisReverse) {
-                do_axis_reverse = ((fabs(output_camera.yaw) > YawAngle4ReverseAxis) && (output_camera.z < Z_Pos4ReverseAxis));
+                do_axis_reverse = ((fabs(output_camera.axes[RX]) > YawAngle4ReverseAxis) && (output_camera.axes[TZ] < Z_Pos4ReverseAxis));
             } else {
                 do_axis_reverse = false;
             }
@@ -261,7 +221,7 @@ void Tracker::run() {
             // Reverse Axis.
             //
             if (do_axis_reverse) {
-                output_camera.z = Z_PosWhenReverseAxis;	// Set the desired Z-position
+                output_camera.axes[TZ] = Z_PosWhenReverseAxis;	// Set the desired Z-position
             }
 
             //
@@ -269,7 +229,7 @@ void Tracker::run() {
             //
             if (Libraries->pProtocol) {
                 gameoutput_camera = output_camera + gamezero_camera;
-                Libraries->pProtocol->sendHeadposeToGame( &gameoutput_camera, &newpose );	// degrees & centimeters
+                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
             }
         }
         else {
@@ -277,27 +237,16 @@ void Tracker::run() {
             // Go to initial position
             //
             if (Libraries->pProtocol && inhibit_zero) {
-                output_camera.pitch = 0.0f;
-                output_camera.yaw = 0.0f;
-                output_camera.roll = 0.0f;
-                output_camera.x = 0.0f;
-                output_camera.y = 0.0f;
-                output_camera.z = 0.0f;
+                for (int i = 0; i < 6; i++)
+                    output_camera.axes[i] = 0;
                 gameoutput_camera = output_camera + gamezero_camera;
-                Libraries->pProtocol->sendHeadposeToGame( &gameoutput_camera, &newpose );				// degrees & centimeters
+                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );				// degrees & centimeters
             }
-            GlobalPose->X.curvePtr->setTrackingActive( false );
-            GlobalPose->Y.curvePtr->setTrackingActive( false );
-            GlobalPose->Z.curvePtr->setTrackingActive( false );
-            GlobalPose->Yaw.curvePtr->setTrackingActive( false );
-            GlobalPose->Pitch.curvePtr->setTrackingActive( false );
-            GlobalPose->Roll.curvePtr->setTrackingActive( false );
-            GlobalPose->X.curvePtrAlt->setTrackingActive( false );
-            GlobalPose->Y.curvePtrAlt->setTrackingActive( false );
-            GlobalPose->Z.curvePtrAlt->setTrackingActive( false );
-            GlobalPose->Yaw.curvePtrAlt->setTrackingActive( false );
-            GlobalPose->Pitch.curvePtrAlt->setTrackingActive( false );
-            GlobalPose->Roll.curvePtrAlt->setTrackingActive( false );
+            for (int i = 0; i < 6; i++)
+            {
+                GlobalPose->axes[i].curvePtr->setTrackingActive(false);
+                GlobalPose->axes[i].curvePtrAlt->setTrackingActive(false);
+            }
             if (Libraries->pFilter)
                 Libraries->pFilter->Initialize();
         }
@@ -306,13 +255,11 @@ void Tracker::run() {
         usleep(1000);
     }
 
-    GlobalPose->X.curvePtr->setTrackingActive( false );
-    GlobalPose->Y.curvePtr->setTrackingActive( false );
-    GlobalPose->Z.curvePtr->setTrackingActive( false );
-    GlobalPose->Yaw.curvePtr->setTrackingActive( false );
-    GlobalPose->Pitch.curvePtr->setTrackingActive( false );
-    GlobalPose->Pitch.curvePtrAlt->setTrackingActive( false );
-    GlobalPose->Roll.curvePtr->setTrackingActive( false );
+    for (int i = 0; i < 6; i++)
+    {
+        GlobalPose->axes[i].curvePtr->setTrackingActive(false);
+        GlobalPose->axes[i].curvePtrAlt->setTrackingActive(false);
+    }
 }
 
 //
@@ -352,27 +299,19 @@ bool Tracker::handleGameCommand ( int command ) {
 //
 // Get the raw headpose, so it can be displayed.
 //
-void Tracker::getHeadPose( THeadPoseData *data ) {
-    data->x = GlobalPose->X.headPos;				// centimeters
-    data->y = GlobalPose->Y.headPos;
-    data->z = GlobalPose->Z.headPos;
-
-    data->pitch = GlobalPose->Pitch.headPos;		// degrees
-    data->yaw = GlobalPose->Yaw.headPos;
-    data->roll = GlobalPose->Roll.headPos;
+void Tracker::getHeadPose( double *data ) {
+    for (int i = 0; i < 6; i++)
+    {
+        data[i] = GlobalPose->axes[i].headPos;
+    }
 }
 
 //
 // Get the output-headpose, so it can be displayed.
 //
-void Tracker::getOutputHeadPose( THeadPoseData *data ) {
-	data->x = output_camera.x;										// centimeters
-	data->y = output_camera.y;
-	data->z = output_camera.z;
-
-	data->pitch = output_camera.pitch;	// degrees
-	data->yaw   = output_camera.yaw;
-	data->roll  = output_camera.roll;
+void Tracker::getOutputHeadPose( double *data ) {
+    for (int i = 0; i < 6; i++)
+        data[i] = output_camera.axes[i];
 }
 
 //
@@ -395,19 +334,22 @@ void Tracker::loadSettings() {
     YawAngle4ReverseAxis = iniFile.value ( "RA_Yaw", 40 ).toInt();
     Z_Pos4ReverseAxis = iniFile.value ( "RA_ZPos", 50 ).toInt();
     Z_PosWhenReverseAxis = iniFile.value ( "RA_ToZPos", 80 ).toInt();
-    inhibit_rx = iniFile.value("Inhibit_Yaw", false).toBool();
-    inhibit_ry = iniFile.value("Inhibit_Pitch", false).toBool();
-    inhibit_rz = iniFile.value("Inhibit_Roll", false).toBool();
-    inhibit_tx = iniFile.value("Inhibit_X", false).toBool();
-    inhibit_ty = iniFile.value("Inhibit_Y", false).toBool();
-    inhibit_tz = iniFile.value("Inhibit_Z", false).toBool();
+
+    static const char* names[] = {
+        "Inhibit_Yaw",
+        "Inhibit_Pitch",
+        "Inhibit_Roll",
+        "Inhibit_X",
+        "Inhibit_Y",
+        "Inhibit_Z"
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        inhibit[i] = iniFile.value(names[i], false).toBool();
+    }
     inhibit_zero = iniFile.value("SetZero", false).toBool(); 
 	iniFile.endGroup ();
 }
 
-void Tracker::setInvertPitch(bool invert) { GlobalPose->Pitch.invert = invert?-1.0f:1.0f; }
-void Tracker::setInvertYaw(bool invert) { GlobalPose->Yaw.invert = invert?-1.0f:+1.0f; }
-void Tracker::setInvertRoll(bool invert) { GlobalPose->Roll.invert = invert?-1.0f:+1.0f; }
-void Tracker::setInvertX(bool invert) { GlobalPose->X.invert = invert?-1.0f:+1.0f; }
-void Tracker::setInvertY(bool invert) { GlobalPose->Y.invert = invert?-1.0f:+1.0f; }
-void Tracker::setInvertZ(bool invert) { GlobalPose->Z.invert = invert?-1.0f:+1.0f; }
+void Tracker::setInvertAxis(Axis axis, bool invert) { GlobalPose->axes[axis].invert = invert?-1.0f:1.0f; }

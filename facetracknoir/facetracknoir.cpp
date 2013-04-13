@@ -743,26 +743,26 @@ void FaceTrackNoIR::startTracker( ) {
     QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-    GlobalPose->X.curvePtr->loadSettings(iniFile);
-    GlobalPose->Y.curvePtr->loadSettings(iniFile);
-    GlobalPose->Z.curvePtr->loadSettings(iniFile);
-    GlobalPose->Yaw.curvePtr->loadSettings(iniFile);
-    GlobalPose->Pitch.curvePtr->loadSettings(iniFile);
-    GlobalPose->Roll.curvePtr->loadSettings(iniFile);
 
-    GlobalPose->X.curvePtrAlt->loadSettings(iniFile);
-    GlobalPose->Y.curvePtrAlt->loadSettings(iniFile);
-    GlobalPose->Z.curvePtrAlt->loadSettings(iniFile);
-    GlobalPose->Yaw.curvePtrAlt->loadSettings(iniFile);
-    GlobalPose->Pitch.curvePtrAlt->loadSettings(iniFile);
-    GlobalPose->Roll.curvePtrAlt->loadSettings(iniFile);
+    for (int i = 0; i < 6; i++)
+    {
+        GlobalPose->axes[i].curvePtr->loadSettings(iniFile);
+        GlobalPose->axes[i].curvePtrAlt->loadSettings(iniFile);
+    }
 
-    GlobalPose->Yaw.altp = iniFile.value("rx_alt", false).toBool();
-    GlobalPose->Pitch.altp = iniFile.value("ry_alt", false).toBool();
-    GlobalPose->Roll.altp = iniFile.value("rz_alt", false).toBool();
-    GlobalPose->X.altp = iniFile.value("tx_alt", false).toBool();
-    GlobalPose->Y.altp = iniFile.value("ty_alt", false).toBool();
-    GlobalPose->Z.altp = iniFile.value("tz_alt", false).toBool();
+    static const char* names[] = {
+        "rx_alt",
+        "ry_alt",
+        "rz_alt",
+        "tx_alt",
+        "ty_alt",
+        "tz_alt"
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
+    }
 
 	tracker = new Tracker ( this );
 
@@ -770,12 +770,12 @@ void FaceTrackNoIR::startTracker( ) {
 	// Setup the Tracker and send the settings.
 	// This is necessary, because the events are only triggered 'on change'
 	//
-	tracker->setInvertYaw (ui.chkInvertYaw->isChecked() );
-	tracker->setInvertPitch (ui.chkInvertPitch->isChecked() );
-	tracker->setInvertRoll (ui.chkInvertRoll->isChecked() );
-	tracker->setInvertX (ui.chkInvertX->isChecked() );
-	tracker->setInvertY (ui.chkInvertY->isChecked() );
-	tracker->setInvertZ (ui.chkInvertZ->isChecked() );
+    tracker->setInvertAxis(RX, ui.chkInvertYaw->isChecked() );
+    tracker->setInvertAxis(TY, ui.chkInvertPitch->isChecked() );
+    tracker->setInvertAxis(RZ, ui.chkInvertRoll->isChecked() );
+    tracker->setInvertAxis(TX, ui.chkInvertX->isChecked() );
+    tracker->setInvertAxis(TY, ui.chkInvertY->isChecked() );
+    tracker->setInvertAxis(TZ, ui.chkInvertZ->isChecked() );
 
     tracker->start();
 
@@ -930,50 +930,15 @@ void FaceTrackNoIR::stopTracker( ) {
 }
 
 /** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertYaw( int invert ) {
+void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
     if (tracker)
-        tracker->setInvertYaw ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertPitch( int invert ) {
-    if (tracker)
-        tracker->setInvertPitch ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertRoll( int invert ) {
-    if (tracker)
-        tracker->setInvertRoll ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertX( int invert ) {
-    if (tracker)
-        tracker->setInvertX ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertY( int invert ) {
-    if (tracker)
-        tracker->setInvertY ( (invert != 0)?true:false );
-	settingsDirty = true;
-}
-
-/** set the invert from the checkbox **/
-void FaceTrackNoIR::setInvertZ( int invert ) {
-    if (tracker)
-        tracker->setInvertZ ( (invert != 0)?true:false );
+        tracker->setInvertAxis (axis, (invert != 0)?true:false );
 	settingsDirty = true;
 }
 
 /** Show the headpose in the widget (triggered by timer) **/
 void FaceTrackNoIR::showHeadPose() {
-THeadPoseData newdata;
+    double newdata[6];
 
 	ui.lblX->setVisible(true);
 	ui.lblY->setVisible(true);
@@ -993,14 +958,14 @@ THeadPoseData newdata;
 	// Get the pose and also display it.
 	// Updating the pose from within the Tracker-class caused crashes...
 	//
-    tracker->getHeadPose(&newdata);
-	ui.lcdNumX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
-	ui.lcdNumY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
-	ui.lcdNumZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
+    tracker->getHeadPose(newdata);
+    ui.lcdNumX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
+    ui.lcdNumY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
+    ui.lcdNumZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
 
-	ui.lcdNumRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
-	ui.lcdNumRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
-	ui.lcdNumRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
+    ui.lcdNumRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
+    ui.lcdNumRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
+    ui.lcdNumRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
 
     ui.txtTracking->setVisible(tracker->getTrackingActive());
     ui.txtAxisReverse->setVisible(tracker->getAxisReverse());
@@ -1009,16 +974,16 @@ THeadPoseData newdata;
 	// Get the output-pose and also display it.
 	//
 	if (_pose_display) {
-        tracker->getOutputHeadPose(&newdata);
-		_pose_display->rotateBy(newdata.pitch, newdata.yaw, newdata.roll);
+        tracker->getOutputHeadPose(newdata);
+        _pose_display->rotateBy(newdata[RY], newdata[RX], newdata[RZ]);
 
-		ui.lcdNumOutputPosX->display(QString("%1").arg(newdata.x, 0, 'f', 1));
-		ui.lcdNumOutputPosY->display(QString("%1").arg(newdata.y, 0, 'f', 1));
-		ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata.z, 0, 'f', 1));
+        ui.lcdNumOutputPosX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
+        ui.lcdNumOutputPosY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
+        ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
 
-		ui.lcdNumOutputRotX->display(QString("%1").arg(newdata.yaw, 0, 'f', 1));
-		ui.lcdNumOutputRotY->display(QString("%1").arg(newdata.pitch, 0, 'f', 1));
-		ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata.roll, 0, 'f', 1));
+        ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
+        ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
+        ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
 	}
 }
 
@@ -1866,44 +1831,45 @@ QWidget( parent , f)
 	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 
-    ui.txconfig->setConfig(GlobalPose->X.curvePtr, currentFile);
-    ui.tyconfig->setConfig(GlobalPose->Y.curvePtr, currentFile);
-    ui.tzconfig->setConfig(GlobalPose->Z.curvePtr, currentFile);
-    ui.rxconfig->setConfig(GlobalPose->Yaw.curvePtr, currentFile);
-    ui.ryconfig->setConfig(GlobalPose->Pitch.curvePtr, currentFile);
-    ui.rzconfig->setConfig(GlobalPose->Roll.curvePtr, currentFile);
-    ui.txconfig_alt->setConfig(GlobalPose->X.curvePtrAlt, currentFile);
-    ui.tyconfig_alt->setConfig(GlobalPose->Y.curvePtrAlt, currentFile);
-    ui.tzconfig_alt->setConfig(GlobalPose->Z.curvePtrAlt, currentFile);
-    ui.rxconfig_alt->setConfig(GlobalPose->Yaw.curvePtrAlt, currentFile);
-    ui.ryconfig_alt->setConfig(GlobalPose->Pitch.curvePtrAlt, currentFile);
-    ui.rzconfig_alt->setConfig(GlobalPose->Roll.curvePtrAlt, currentFile);
+    QFunctionConfigurator* configs[6] = {
+        ui.txconfig,
+        ui.tyconfig,
+        ui.tzconfig,
+        ui.rxconfig,
+        ui.ryconfig,
+        ui.rzconfig
+    };
+
+    QFunctionConfigurator* alt_configs[6] = {
+        ui.txconfig_alt,
+        ui.tyconfig_alt,
+        ui.tzconfig_alt,
+        ui.rxconfig_alt,
+        ui.ryconfig_alt,
+        ui.rzconfig_alt
+    };
+
+    QCheckBox* checkboxes[6] = {
+        ui.rx_altp,
+        ui.ry_altp,
+        ui.rz_altp,
+        ui.tx_altp,
+        ui.ty_altp,
+        ui.tz_altp
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        configs[i]->setConfig(GlobalPose->axes[i].curvePtr, currentFile);
+        alt_configs[i]->setConfig(GlobalPose->axes[i].curvePtrAlt, currentFile);
+        connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+        connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+        connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
+    }
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.txconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-
-
-    connect(ui.tyconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.tzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.rxconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.ryconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.rzconfig, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.txconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.tyconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.tzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.rxconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.ryconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.rzconfig_alt, SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-    connect(ui.rx_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    connect(ui.ry_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    connect(ui.rz_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    connect(ui.tx_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    connect(ui.ty_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    connect(ui.tz_altp, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -1974,22 +1940,31 @@ void CurveConfigurationDialog::loadSettings() {
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
-    GlobalPose->Yaw.altp = iniFile.value("rx_alt", false).toBool();
-    GlobalPose->Pitch.altp = iniFile.value("ry_alt", false).toBool();
-    GlobalPose->Roll.altp = iniFile.value("rz_alt", false).toBool();
-    GlobalPose->X.altp = iniFile.value("tx_alt", false).toBool();
-    GlobalPose->Y.altp = iniFile.value("ty_alt", false).toBool();
-    GlobalPose->Z.altp = iniFile.value("tz_alt", false).toBool();
+    static const char* names[] = {
+        "rx_alt",
+        "ry_alt",
+        "rz_alt",
+        "tx_alt",
+        "ty_alt",
+        "tz_alt"
+    };
 
-    ui.rx_altp->setChecked(GlobalPose->Yaw.altp);
-    ui.ry_altp->setChecked(GlobalPose->Pitch.altp);
-    ui.rz_altp->setChecked(GlobalPose->Roll.altp);
-    ui.tx_altp->setChecked(GlobalPose->X.altp);
-    ui.ty_altp->setChecked(GlobalPose->Y.altp);
-    ui.tz_altp->setChecked(GlobalPose->Z.altp);
+    for (int i = 0; i < 6; i++)
+        GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
 
-	settingsDirty = false;
+    static QCheckBox* widgets[] = {
+        ui.rx_altp,
+        ui.ry_altp,
+        ui.rz_altp,
+        ui.tx_altp,
+        ui.ty_altp,
+        ui.tz_altp
+    };
 
+    for (int i = 0; i < 6; i++)
+        widgets[i]->setChecked(GlobalPose->axes[i].altp);
+
+    settingsDirty = false;
 }
 
 //

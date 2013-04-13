@@ -77,23 +77,21 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
-int no_bytes;
-THeadPoseData TestData;
-
+void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
+    int no_bytes;
+    double test_data[6];
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-	TestData = *headpose;
-    TestData.frame_number = 0;
-
+    for (int i = 0; i < 6; i++)
+        test_data[i] = headpose[i];
 	//
 	// Try to send an UDP-message to the receiver
 	//
 
 	//! [1]
 	if (outSocket != 0) {
-		no_bytes = outSocket->writeDatagram((const char *) &TestData, sizeof( TestData ), destIP, destPort);
+        no_bytes = outSocket->writeDatagram((const char *) test_data, sizeof( test_data ), destIP, destPort);
 		if ( no_bytes > 0) {
 //		qDebug() << "FTNServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
 		}
