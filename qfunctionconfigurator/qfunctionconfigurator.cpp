@@ -330,7 +330,6 @@ int i;
 	// Draw the Points, that make up the Curve
 	//
 	if (_config) {
-
 		//
 		// When moving, also draw a sketched version of the Function.
 		//
@@ -384,7 +383,7 @@ int i;
 	drawLine(&p, QPoint(lastPoint.x(), range.top()), QPoint(lastPoint.x(), range.bottom()), pen);
 	drawLine(&p, QPoint(range.left(), lastPoint.y()), QPoint(range.right(), lastPoint.y()), pen);
 
-    QTimer::singleShot(50, this, SLOT(update()));
+    //QTimer::singleShot(50, this, SLOT(update()));
 }
 
 //
@@ -489,13 +488,14 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
 
-    if (movingPoint >= 0) {
+    if (movingPoint >= 0 && movingPoint < _points.size()) {
 
 		setCursor(Qt::ClosedHandCursor);		
 
 		//
 		// Change the currently moving Point.
 		//
+        _points[movingPoint] = normalizePoint(e->pos());
 		update();
     }
 	else {
