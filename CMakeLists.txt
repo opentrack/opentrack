@@ -38,7 +38,7 @@ if(NOT SDK_FACEAPI_ONLY)
     if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
         add_definitions(/D FTNOIR_FILTER_BASE_LIB /D FTNOIR_TRACKER_BASE_LIB /D FTNOIR_PROTOCOL_BASE_LIB)
     else(MSVC)
-        add_definitions(-DFTNOIR_FILTER_BASE_LIB -DFTNOIR_TRACKER_BASE_LIB -DFTNOIR_PROTOCOL_BASE_LIB)
+        add_definitions(-DFTNOIR_FILTER_BASE_LIB -DFTNOIR_TRACKER_BASE_LIB -DFTNOIR_PROTOCOL_BASE_LIB -D_CRT_SECURE_NO_WARNINGS)
     endif(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
 
     if(NOT WIN32)
@@ -138,14 +138,6 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB ftnoir-filter-accela-rc "ftnoir_filter_accela/*.qrc")
     QT4_WRAP_UI(ftnoir-filter-accela-uih ${ftnoir-filter-accela-ui})
     QT4_ADD_RESOURCES(ftnoir-filter-accela-rcc ${ftnoir-filter-accela-rc})
-
-    file(GLOB ftnoir-filter-kalman-c "ftnoir_filter_kalman/*.cpp")
-    file(GLOB ftnoir-filter-kalman-h "ftnoir_filter_kalman/*.h")
-    QT4_WRAP_CPP(ftnoir-filter-kalman-moc ${ftnoir-filter-kalman-h})
-    file(GLOB ftnoir-filter-kalman-ui "ftnoir_filter_kalman/*.ui")
-    file(GLOB ftnoir-filter-kalman-rc "ftnoir_filter_kalman/*.qrc")
-    QT4_WRAP_UI(ftnoir-filter-kalman-uih ${ftnoir-filter-kalman-ui})
-    QT4_ADD_RESOURCES(ftnoir-kalman-accela-rcc ${ftnoir-filter-kalman-rc})
 
     file(GLOB ftnoir-filter-ewma-c "ftnoir_filter_ewma2/*.cpp")
     file(GLOB ftnoir-filter-ewma-h "ftnoir_filter_ewma2/*.h")
@@ -309,23 +301,6 @@ endif()
         PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
 
-    if(OpenCV_FOUND)
-        include_directories(${OPENCV_INCLUDE_DIRS})
-        include_directories("${OpenCV_DIR}/include")
-        include_directories("${OpenCV_CONFIG_PATH}/include")
-        add_library(ftnoir-filter-kalman SHARED ${ftnoir-filter-kalman-c} ${ftnoir-filter-kalman-moc} ${ftnoir-filter-kalman-uih} ${ftnoir-filter-kalman-rcc})
-        target_link_libraries(ftnoir-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
-        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-            SET_TARGET_PROPERTIES(ftnoir-filter-kalman
-            PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
-        endif()
-        if(WIN32)
-                SET(STATIC_EXT "lib")
-        else()
-                SET(STATIC_EXT "a")
-        endif()
-    endif()
-
     add_library(ftnoir-filter-ewma SHARED ${ftnoir-filter-ewma-uih} ${ftnoir-filter-ewma-c} ${ftnoir-filter-ewma-moc} ${ftnoir-filter-ewma-rcc})
     target_link_libraries(ftnoir-filter-ewma ${MY_QT_LIBS})
 
@@ -409,6 +384,12 @@ endif()
                       "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
                       "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib")
     endif()
+	
+	if(OpenCV_FOUND)
+		include_directories(${OPENCV_INCLUDE_DIRS})
+        include_directories("${OpenCV_DIR}/include")
+        include_directories("${OpenCV_CONFIG_PATH}/include")
+	endif()
 
     if(OpenCV_FOUND)
         add_library(ftnoir-tracker-pt SHARED ${ftnoir-tracker-pt-c} ${ftnoir-tracker-pt-moc} ${ftnoir-tracker-pt-uih} ${ftnoir-tracker-pt-rcc})
@@ -495,16 +476,6 @@ if(NOT SDK_FACEAPI_ONLY)
             LIBRARY DESTINATION .
             NAMELINK_SKIP
     )
-
-    if(OpenCV_FOUND)
-        install(TARGETS
-                ftnoir-tracker-pt
-            ftnoir-filter-kalman
-                RUNTIME DESTINATION .
-                LIBRARY DESTINATION .
-                NAMELINK_SKIP
-        )
-    endif()
 
     if(WIN32)
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
