@@ -218,7 +218,7 @@ void Tracker::paint_widget() {
     }
 }
 
-bool Tracker::GiveHeadPoseData(THeadPoseData* data)
+bool Tracker::GiveHeadPoseData(double *data)
 {
 	bool ret = false;
 
@@ -233,25 +233,25 @@ bool Tracker::GiveHeadPoseData(THeadPoseData* data)
     }
     if (shm->result.filled) {
         if (enableRX)
-            data->yaw = shm->result.rotx;
+            data[RX] = shm->result.rotx;
         if (enableRY) {
-            data->pitch = shm->result.roty;
-            double sign = data->pitch >= 0 ? 1 : -1;
-            if (fabs(fabs(data->pitch) - 180) < fabs(data->pitch))
-                data->pitch = fabs(fabs(data->pitch) - 180) * sign;
+            data[RY] = shm->result.roty;
+            double sign = data[RY] >= 0 ? 1 : -1;
+            if (fabs(fabs(data[RY]) - 180) < fabs(data[RY]))
+                data[RY] = fabs(fabs(data[RY]) - 180) * sign;
 		}
         if (enableRZ) {
-            data->roll = shm->result.rotz;
-            double sign = data->roll >= 0 ? 1 : -1;
-            if (fabs(fabs(data->roll) - 180) < fabs(data->roll))
-                data->roll = fabs(fabs(data->roll) - 180) * sign;
+            data[RZ] = shm->result.rotz;
+            double sign = data[RZ] >= 0 ? 1 : -1;
+            if (fabs(fabs(data[RZ]) - 180) < fabs(data[RZ]))
+                data[RZ] = fabs(fabs(data[RZ]) - 180) * sign;
         }
         if (enableTX)
-            data->x = shm->result.tx;
+            data[TX] = shm->result.tx;
         if (enableTY)
-            data->y = shm->result.ty;
+            data[TY] = shm->result.ty;
         if (enableTZ)
-            data->z = shm->result.tz;
+            data[TZ] = shm->result.tz;
         ret = true;
     }
     lck_shm.unlock();

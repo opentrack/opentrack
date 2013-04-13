@@ -43,22 +43,22 @@ public:
     ~FTNoIR_Filter();
 
     void Initialize();
-    void FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter, bool newTarget);
+    void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter);
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
-	THeadPoseData newHeadPose;								// Structure with new headpose
+    double newHeadPose;								// Structure with new headpose
 
 	bool	first_run;
-	float	smoothing_frames_range;
-	float	alpha_smoothing;
-	float	prev_alpha[6];
-	float	alpha[6];
-	float	smoothed_alpha[6];
+    double	smoothing_frames_range;
+    double	alpha_smoothing;
+    double	prev_alpha[6];
+    double	alpha[6];
+    double	smoothed_alpha[6];
 
-	float	kMinSmoothing;
-	float	kMaxSmoothing;
-	float	kSmoothingScaleCurve;
+    double	kMinSmoothing;
+    double	kMaxSmoothing;
+    double	kSmoothingScaleCurve;
 };
 
 //*******************************************************************************************************

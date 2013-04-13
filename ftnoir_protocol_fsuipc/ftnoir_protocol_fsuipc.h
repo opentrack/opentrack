@@ -66,7 +66,7 @@ public:
     void Initialize();
 
     bool checkServerInstallationOK();
-	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
+    void sendHeadposeToGame( double *headpose, double *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:

@@ -211,12 +211,7 @@ private:
 		void showKeyboardShortcuts();
 		void showCurveConfiguration();
 
-		void setInvertYaw( int invert );
-		void setInvertPitch( int invert );
-		void setInvertRoll( int invert );
-		void setInvertX( int invert );
-		void setInvertY( int invert );
-		void setInvertZ( int invert );
+        void setInvertAxis( Axis axis, int invert );
 
 		void showHeadPose();
 

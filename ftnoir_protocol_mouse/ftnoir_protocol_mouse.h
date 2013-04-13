@@ -46,12 +46,12 @@
 #define MOUSE_AXIS_MAX 65535
 
 enum FTN_AngleName {
-	FTN_PITCH = 1,
-	FTN_YAW = 2,
-	FTN_ROLL = 3,
-	FTN_X = 4,
-	FTN_Y = 5,
-	FTN_Z = 6
+    FTN_PITCH = RX,
+    FTN_YAW = TY,
+    FTN_ROLL = RZ,
+    FTN_X = TX,
+    FTN_Y = TY,
+    FTN_Z = TZ
 };
 
 enum FTN_MouseStyle {
@@ -70,7 +70,7 @@ public:
     void Initialize();
 
     bool checkServerInstallationOK();
-	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
+    void sendHeadposeToGame( double *headpose, double *rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:

@@ -45,7 +45,7 @@ public:
 
     void StartTracker( QFrame* parent_window );
     void StopTracker( bool exit );
-	bool GiveHeadPoseData(THeadPoseData *data);				// Returns true if confidence is good
+    bool GiveHeadPoseData(double *data);				// Returns true if confidence is good
     void WaitForExit();
 
 	void loadSettings();

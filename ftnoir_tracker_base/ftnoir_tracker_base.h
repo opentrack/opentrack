@@ -56,7 +56,7 @@ struct ITracker
 {
     virtual ~ITracker() {}
     virtual void StartTracker( QFrame* frame ) = 0;
-    virtual bool GiveHeadPoseData(THeadPoseData *data) = 0;
+    virtual bool GiveHeadPoseData(double *data) = 0;
 
     virtual void WaitForExit() = 0;
 };

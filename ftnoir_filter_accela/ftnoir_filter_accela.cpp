@@ -53,45 +53,31 @@ void FTNoIR_Filter::loadSettings() {
 	iniFile.endGroup ();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
-                                       THeadPoseData *target_camera_position,
-                                       THeadPoseData *new_camera_position,
-                                       THeadPoseData *last_post_filter_values,
-                                       bool newTarget)
+void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
+                                       double *target_camera_position,
+                                       double *new_camera_position,
+                                       double *last_post_filter_values)
 {
 	double target[6];
 	double prev_output[6];
 	float output[6];
-	int i=0;
 
-	prev_output[0]=current_camera_position->x;
-	prev_output[1]=current_camera_position->y;
-	prev_output[2]=current_camera_position->z;
-	prev_output[3]=current_camera_position->yaw;
-	prev_output[4]=current_camera_position->pitch;
-	prev_output[5]=current_camera_position->roll;
-
-	target[0]=target_camera_position->x;
-	target[1]=target_camera_position->y;
-	target[2]=target_camera_position->z;
-	target[3]=target_camera_position->yaw;
-	target[4]=target_camera_position->pitch;
-	target[5]=target_camera_position->roll;
+    for (int i = 0; i < 6; i++)
+    {
+        prev_output[i] = current_camera_position[i];
+        target[i] = target_camera_position[i];
+    }
 
 	if (first_run)
 	{
-		new_camera_position->x=target[0];
-		new_camera_position->y=target[1];
-		new_camera_position->z=target[2];
-		new_camera_position->yaw=target[3];
-		new_camera_position->pitch=target[4];
-		new_camera_position->roll=target[5];
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = target[i];
 
 		first_run=false;
 		return;
 	}
 
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
 		if (_isnan(target[i]))
 			return;
@@ -123,7 +109,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
 		// WVR: Added kMagicNumber for Patrick
-        double velocity = foo / (kMagicNumber > 0 ? kMagicNumber : 100.0) * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values->z / 100));
+        double velocity = foo / (kMagicNumber > 0 ? kMagicNumber : 100.0) * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values[TZ] / 100));
 		double sum = start + velocity * sign;
 		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {
@@ -136,19 +122,11 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position,
 			return;
 	}
 
-	new_camera_position->x=output[0];
-	new_camera_position->y=output[1];
-	new_camera_position->z=output[2];
-	new_camera_position->yaw=output[3];
-	new_camera_position->pitch=output[4];
-	new_camera_position->roll=output[5];
-
-	current_camera_position->x=output[0];
-	current_camera_position->y=output[1];
-	current_camera_position->z=output[2];
-	current_camera_position->yaw=output[3];
-	current_camera_position->pitch=output[4];
-	current_camera_position->roll=output[5];
+    for (int i = 0; i < 6; i++)
+    {
+        new_camera_position[i] = output[i];
+        current_camera_position[i] = output[i];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

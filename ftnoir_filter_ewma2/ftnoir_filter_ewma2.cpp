@@ -79,57 +79,33 @@ void FTNoIR_Filter::loadSettings() {
 
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, THeadPoseData *target_camera_position, THeadPoseData *new_camera_position, THeadPoseData *last_post_filter, bool newTarget)
+void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter)
 {
 	//non-optimised version for clarity
-	float prev_output[6];
-	float target[6];
-	float output_delta[6];
-	float scale[]={0.025f,0.025f,0.025f,6.0f,6.0f,6.0f};
-	float norm_output_delta[6];
-	float output[6];
-	int i=0;
+    double prev_output[6];
+    double target[6];
+    double output_delta[6];
+    double scale[]={0.025f,0.025f,0.025f,6.0f,6.0f,6.0f};
+    double norm_output_delta[6];
+    double output[6];
 
-	#if PRE_FILTER_SCALING
-	//compensate for any prefilter scaling
-	scale[0]*=X_POS_SCALE;
-	scale[1]*=Y_POS_SCALE;
-	scale[2]*=Z_POS_SCALE;
-	scale[3]*=X_ROT_SCALE;
-	scale[4]*=Y_ROT_SCALE;
-	scale[5]*=Z_ROT_SCALE;
-	#endif
-
-	//find out how far the head has moved
-	prev_output[0]=current_camera_position->x;
-	prev_output[1]=current_camera_position->y;
-	prev_output[2]=current_camera_position->z;
-	prev_output[3]=current_camera_position->yaw;
-	prev_output[4]=current_camera_position->pitch;
-	prev_output[5]=current_camera_position->roll;
-
-	target[0]=target_camera_position->x;
-	target[1]=target_camera_position->y;
-	target[2]=target_camera_position->z;
-	target[3]=target_camera_position->yaw;
-	target[4]=target_camera_position->pitch;
-	target[5]=target_camera_position->roll;
+    for (int i = 0; i < 6; i++)
+    {
+        prev_output[i] = current_camera_position[i];
+        target[i] = target_camera_position[i];
+    }
 
 	if (first_run==true)
 	{
 		//on the first run, output=target
-		for (i=0;i<6;i++)
+        for (int i=0;i<6;i++)
 		{
 			output[i]=target[i];
 			prev_alpha[i] = 0.0f;
 		}
 
-		new_camera_position->x=target[0];
-		new_camera_position->y=target[1];
-		new_camera_position->z=target[2];
-		new_camera_position->yaw=target[3];
-		new_camera_position->pitch=target[4];
-		new_camera_position->roll=target[5];
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = target[i];
 
 		first_run=false;
 		
@@ -138,13 +114,13 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	}
 
 	//how far does the camera need to move to catch up?
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
 		output_delta[i]=(target[i]-prev_output[i]);
 	}
 
 	//normalise the deltas
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
         norm_output_delta[i]=std::min<double>(std::max<double>(fabs(output_delta[i])/scale[i],0.0),1.0);
 	}
@@ -152,9 +128,9 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	//calculate the alphas
 	//work out the dynamic smoothing factors
 //	if (newTarget) {
-		for (i=0;i<6;i++)
+        for (int i=0;i<6;i++)
 		{
-			alpha[i]=1.0f/(kMinSmoothing+((1.0f-pow(norm_output_delta[i],kSmoothingScaleCurve))*smoothing_frames_range));
+            alpha[i]=1.0/(kMinSmoothing+((1.0-pow(norm_output_delta[i],kSmoothingScaleCurve))*smoothing_frames_range));
 			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
 		}
 //	}
@@ -165,7 +141,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	//use the same (largest) smoothed alpha for each channel
 	//NB: larger alpha = *less* lag (opposite to what you'd expect)
 	float largest_alpha=0.0f;
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
 		if (smoothed_alpha[i]>=largest_alpha)
 		{
@@ -174,7 +150,7 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	}
 
 	//move the camera
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
 		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
 //		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
@@ -193,25 +169,14 @@ void FTNoIR_Filter::FilterHeadPoseData(THeadPoseData *current_camera_position, T
 	}
 	#endif
 
-	new_camera_position->x=output[0];
-	new_camera_position->y=output[1];
-	new_camera_position->z=output[2];
-	new_camera_position->yaw=output[3];
-	new_camera_position->pitch=output[4];
-	new_camera_position->roll=output[5];
-
-	//
-	// Also update the 'current' position, for the next iteration.
-	//
-	current_camera_position->x=output[0];
-	current_camera_position->y=output[1];
-	current_camera_position->z=output[2];
-	current_camera_position->yaw=output[3];
-	current_camera_position->pitch=output[4];
-	current_camera_position->roll=output[5];
+    for (int i = 0; i < 6; i++)
+    {
+        new_camera_position[i] = output[i];
+        current_camera_position[i] = output[i];
+    }
 
 	//update filter memories ready for next sample
-	for (i=0;i<6;i++)
+    for (int i=0;i<6;i++)
 	{
 		prev_alpha[i]=smoothed_alpha[i];
 	}

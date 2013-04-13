@@ -86,17 +86,17 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
 PDWORD_PTR MsgResult = 0;
 
 
-    virtSCRotX = -1.0f * headpose->pitch;					// degrees
-	virtSCRotY = -1.0f * headpose->yaw;
-	virtSCRotZ = headpose->roll;
+    virtSCRotX = -headpose[RY];					// degrees
+    virtSCRotY = -headpose[RX];
+    virtSCRotZ = headpose[RZ];
 
-	virtSCPosX = headpose->x/100.f;						// cm to meters
-	virtSCPosY = headpose->y/100.f;
-	virtSCPosZ = -1.0f * headpose->z/100.f;
+    virtSCPosX = headpose[TX]/100.f;						// cm to meters
+    virtSCPosY = headpose[TY]/100.f;
+    virtSCPosZ = -headpose[TZ]/100.f;
 
 	//
 	// It's only useful to send data, if the connection was made.
