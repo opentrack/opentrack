@@ -998,6 +998,14 @@ void FaceTrackNoIR::showHeadPose() {
         ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
         ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
 	}
+
+    //
+    // Update the curves in the curve-configurator. This shows the ball with the red lines.
+    //
+    if (_curve_config) {
+        _curve_config->update();
+    }
+
 }
 
 /** toggles Video Widget **/
@@ -1692,7 +1700,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
         keyInhibit.keycode = global_windows_key_sequences[idxInhibit];
     if (idxStartStop > 0 && idxStartStop < global_windows_key_sequences.size())
         keyStartStop.keycode = global_windows_key_sequences[idxStartStop];
-    
+
     keyCenter.shift = iniFile.value("Shift_Center", false).toBool();
     keyCenter.alt = iniFile.value("Alt_Center", false).toBool();
     keyCenter.ctrl = iniFile.value("Ctrl_Center", false).toBool();
