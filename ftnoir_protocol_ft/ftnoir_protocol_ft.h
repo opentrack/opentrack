@@ -73,16 +73,19 @@ private:
 	// Private properties
 	QString ProgramName;
 	QLibrary FTIRViewsLib;
-	QProcess *dummyTrackIR;
+	QProcess dummyTrackIR;
 	int intGameID;
 	int intUsedInterface;								// Determine which interface to use (or to hide from the game)
 	bool useTIRViews;									// Needs to be in the Settings dialog
 	bool useDummyExe;
+    bool force_tirviews;
+    bool force_dummy;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-    void getGameData( QString gameID );
+    void getGameData(QString gameID , bool& tirviews, bool& dummy);
 	void loadSettings();
-
+    void start_tirviews();
+    void start_dummy();
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
