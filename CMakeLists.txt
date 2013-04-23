@@ -452,7 +452,7 @@ if(NOT SDK_FACEAPI_ONLY)
 		install(TARGETS freetrackclient RUNTIME DESTINATION .)
     endif()
 
-    install(FILES "${CMAKE_SOURCE_DIR}/bin/npclient.dll" "${CMAKE_SOURCE_DIR}/bin/npclient64.dll" DESTINATION .)
+    install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" DESTINATION .)
 
     if(NOT WIN32 AND SDK_WINE_PREFIX)
