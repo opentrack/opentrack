@@ -56,11 +56,12 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	ProgramName = "";
 	intGameID = 0;
 
-	dummyTrackIR = 0;
 	viewsStart = 0;
 	viewsStop = 0;
 
     pMemData = NULL;
+    force_dummy = false;
+    force_tirviews = false;
 
 }
 
@@ -80,22 +81,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	}
 
 	//
-	// Kill the dummy TrackIR process.
-	//
-	qDebug() << "~FTNoIR_Protocol() about to kill TrackIR.exe process";
-	try {
-		if (dummyTrackIR) {
-			qDebug() << "FTServer::~FTServer() about to kill TrackIR.exe process";
-//			dummyTrackIR->close();
-			dummyTrackIR->kill();
-		}
-	} 
-	catch (...)
-    {
-		qDebug() << "~FTServer says: some error occurred";
-	}
-
-	//
 	// Destroy the File-mapping
 	//
 	FTDestroyMapping();
@@ -109,7 +94,7 @@ void FTNoIR_Protocol::Initialize()
 //
 // Read the game-data from CSV
 //
-void FTNoIR_Protocol::getGameData( QString gameID ){
+void FTNoIR_Protocol::getGameData( QString gameID, bool& tirviews, bool& dummy){
     QStringList gameLine;
 	qDebug() << "getGameData, ID = " << gameID;
 
@@ -158,7 +143,7 @@ void FTNoIR_Protocol::getGameData( QString gameID ){
                            tmp + 6,
                            tmp + 5,
                            tmp + 4,
-                           fuzz + 1) != 11 || fuzz[2] || fuzz[1] || fuzz[0] != gameLine.at(0).toInt())
+                           fuzz + 1) != 11 || ((fuzz[2] << 8) | fuzz[0]) != gameLine.at(0).toInt())
                 {
                     qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
                     memset(pMemData->table, 0, 8);
@@ -168,6 +153,8 @@ void FTNoIR_Protocol::getGameData( QString gameID ){
                         pMemData->table[i] = tmp[i];
                 qDebug() << gameID << "game-id" << gameLine.at(7);
                 game_name = gameLine.at(1);
+                dummy = fuzz[1] & 0xf;
+                tirviews = fuzz[1] & 0xf0;
                 file.close();
                 return;
 			}
@@ -289,7 +276,12 @@ float headRotZ;
         {
             memset(pMemData->table, 0, 8);
             QString gameID = QString::number(pMemData->GameID);
-            getGameData(gameID);
+            bool tirviews = false, dummy = false;
+            getGameData(gameID, tirviews, dummy);
+            if (tirviews)
+                start_tirviews();
+            if (dummy)
+                start_dummy();
             pMemData->GameID2 = pMemData->GameID;
             intGameID = pMemData->GameID;
         }
@@ -308,6 +300,43 @@ float headRotZ;
 // Returns 'true' if all seems OK.
 //
 //
+
+void FTNoIR_Protocol::start_tirviews() {
+    QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
+    if ( QFile::exists( aFileName ) && !force_tirviews ) {
+        force_tirviews = true;
+        FTIRViewsLib.setFileName(aFileName);
+        FTIRViewsLib.load();
+
+        viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
+        if (viewsStart == NULL) {
+            qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
+        }
+        else {
+            qDebug() << "FTServer::run() says: TIRViewsStart executed!";
+            viewsStart();
+        }
+
+        //
+        // Load the Stop function from TIRViews.dll. Call it when terminating the thread.
+        //
+        viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
+        if (viewsStop == NULL) {
+            qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
+        }
+    }
+}
+
+void FTNoIR_Protocol::start_dummy() {
+    if (!force_dummy) {
+        force_dummy = true;
+        QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
+        dummyTrackIR.start(program);
+    
+        qDebug() << "FTServer::run() says: TrackIR.exe executed!";
+    }
+}
+
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
@@ -346,41 +375,14 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 		// TIRViews must be started first, or the NPClient DLL will never be loaded.
 		//
 		if (useTIRViews) {
-
-			QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
-			if ( QFile::exists( aFileName ) ) {
-
-				FTIRViewsLib.setFileName(aFileName);
-				FTIRViewsLib.load();
-
-				viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
-				if (viewsStart == NULL) {
-					qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
-				}
-				else {
-					qDebug() << "FTServer::run() says: TIRViewsStart executed!";
-					viewsStart();
-				}
-
-				//
-				// Load the Stop function from TIRViews.dll. Call it when terminating the thread.
-				//
-				viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
-				if (viewsStop == NULL) {
-					qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
-				}
-			}
+            start_tirviews();
 		}
 
 		//
 		// Check if TIRViews or dummy TrackIR.exe is required for this game
 		//
 		if (useDummyExe) {
-			QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
-			dummyTrackIR = new QProcess();
-			dummyTrackIR->start(program);
-
-			qDebug() << "FTServer::run() says: TrackIR.exe executed!";
+            start_dummy();
 		}
 
 
