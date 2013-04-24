@@ -80,7 +80,7 @@ protected:
 	bool bEnableZ;
 	
 	long frame_count;
-    int commands;
+    volatile int commands;
 
 	VideoWidget* video_widget;
 	Timer time;
