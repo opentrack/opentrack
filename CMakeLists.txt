@@ -386,9 +386,9 @@ endif()
     endif()
 	
 	if(OpenCV_FOUND)
-		include_directories(${OPENCV_INCLUDE_DIRS})
-        include_directories("${OpenCV_DIR}/include")
-        include_directories("${OpenCV_CONFIG_PATH}/include")
+            include_directories(${OpenCV_INCLUDE_DIRS})
+            include_directories(${OpenCV_DIR}/include)
+            include_directories(${OpenCV_CONFIG_PATH}/include)
 	endif()
 
     if(OpenCV_FOUND)
@@ -459,6 +459,10 @@ if(NOT SDK_FACEAPI_ONLY)
         install(FILES "${CMAKE_BINARY_DIR}/ftnoir-wrapper-wine.exe.so"
                 DESTINATION .)
         install(TARGETS ftnoir-proto-wine DESTINATION .)
+    endif()
+
+    if(OpenCV_FOUND)
+        install(TARGETS ftnoir-tracker-pt RUNTIME DESTINATION .)
     endif()
 
     install(TARGETS
