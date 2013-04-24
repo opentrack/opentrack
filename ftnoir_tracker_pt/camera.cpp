@@ -90,8 +90,7 @@ void CVCamera::stop()
 
 bool CVCamera::_get_frame(Mat* frame)
 {
-    Mat tmp;
-    bool ret = cap->read(tmp);
+    bool ret = cap->read(*frame);
     //if (ret)
     //    flip(tmp, *frame, 0);
     return ret;
