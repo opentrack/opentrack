@@ -39,13 +39,13 @@ Tracker::~Tracker()
 
 void Tracker::set_command(Command command)
 {
-	QMutexLocker lock(&mutex);
+	//QMutexLocker lock(&mutex);
 	commands |= command;
 }
 
 void Tracker::reset_command(Command command)
 {
-	QMutexLocker lock(&mutex);
+	//QMutexLocker lock(&mutex);
 	commands &= ~command;
 }
 
@@ -65,11 +65,10 @@ void Tracker::run()
 	forever
 	{
 		{	
-            
-			QMutexLocker lock(&mutex);
+            QMutexLocker lock(&mutex);
             if (should_quit)
                 break;
-
+            
 			if (commands & ABORT) break;
 			if (commands & PAUSE) continue;
 			commands = 0;
@@ -149,27 +148,25 @@ void Tracker::refreshVideo()
 		Mat frame_copy;
 		std::auto_ptr< vector<Vec2f> > points;
 		{
-//QMutexLocker lock(&mutex);
+            //QMutexLocker lock(&mutex);
 			if (!draw_frame || frame.empty()) return;
 		
 			// copy the frame and points from the tracker thread
 			frame_copy = frame.clone();
 			points = std::auto_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
 		}
-		
+	    //QMutexLocker lck(&mutex);	
 		video_widget->update_image(frame_copy, points);
     }
 }
 
 void Tracker::StartTracker(QFrame* videoframe)
 {
-    const int VIDEO_FRAME_WIDTH = 252;
-    const int VIDEO_FRAME_HEIGHT = 189;
+    const int VIDEO_FRAME_WIDTH = videoframe->width();
+    const int VIDEO_FRAME_HEIGHT = videoframe->height();
     TrackerSettings settings;
     settings.load_ini();
     apply(settings);
-    camera.start();
-    start();
     qDebug("Tracker::Initialize");
     // setup video frame
     video_widget = new VideoWidget(videoframe);
@@ -180,9 +177,11 @@ void Tracker::StartTracker(QFrame* videoframe)
     videoframe->setLayout(layout);
     video_widget->resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
     videoframe->show();
-	reset_command(PAUSE);
     connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()), Qt::QueuedConnection);
     timer.start(40);
+    camera.start();
+    start();
+    reset_command(PAUSE);
 }
 
 void Tracker::paint_widget() {
