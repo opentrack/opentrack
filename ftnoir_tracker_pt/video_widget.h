@@ -22,7 +22,7 @@ class VideoWidget : public QGLWidget
 	Q_OBJECT
 
 public:
-    VideoWidget(QWidget *parent) : QGLWidget(parent) {
+    VideoWidget(QWidget *parent) : QGLWidget(parent), mtx() {
 #if !defined(_WIN32)
         setAttribute(Qt::WA_NativeWindow, true);
 #endif
@@ -41,9 +41,9 @@ private:
 	cv::Mat frame;
 	QImage qframe;
 	QImage resized_qframe;
+    QMutex mtx;
 
     std::auto_ptr< std::vector<cv::Vec2f> > points;
-    QMutex mtx;
 };
 
 #endif // VIDEOWIDGET_H
