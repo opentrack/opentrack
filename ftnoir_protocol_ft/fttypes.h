@@ -29,20 +29,24 @@
 	Modifications (last one on top):
 	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games. The memory-mapping was expanded for this purpose.
 */
-#pragma once
 #ifndef INCLUDED_FTTYPES_H
 #define INCLUDED_FTTYPES_H
-  
-#include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
+
+#if !defined(_WIN32)
+#   include <inttypes.h>
+typedef int32_t my_32bit_int;
+#   define WINAPI
+#else
+#   include <windows.h>
+typedef __int32 my_32bit_int;
+#endif
 
 //#include "Registry.h"
 
 //  static const char* FT_CLIENT_LOCATION = "Software\\Freetrack\\FreetrackClient";
-#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
+//#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
 #define FT_MM_DATA "FT_SharedMem"
-#define FREETRACK "Freetrack"
+//#define FREETRACK "Freetrack"
 #define FREETRACK_MUTEX "FT_Mutext"
 
 struct TFreeTrackData {
@@ -77,9 +81,9 @@ typedef TFreeTrackData * PFreetrackData;
 
 struct FTMemMap {
 	TFreeTrackData data;
-    __int32 GameID;
+    my_32bit_int GameID;
     unsigned char table[8];
-    __int32 GameID2;
+    my_32bit_int GameID2;
 };
 typedef FTMemMap * PFTMemMap;
 
