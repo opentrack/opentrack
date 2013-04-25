@@ -38,8 +38,9 @@
 					FaceTrackNoIR only worked with an adapted DLL, with a putdata function.
 					Now it works direcly in shared memory!
 */
+#include <algorithm>
 #include "ftnoir_protocol_ft.h"
-#include "csv.h"
+#include "ftnoir_csv/csv.h"
 
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
@@ -94,82 +95,7 @@ void FTNoIR_Protocol::Initialize()
 //
 // Read the game-data from CSV
 //
-void FTNoIR_Protocol::getGameData( QString gameID, bool& tirviews, bool& dummy){
-    /* zero table first, in case unknown game is connecting */
-    memset(pMemData->table, 0, 8);
-    QStringList gameLine;
-	qDebug() << "getGameData, ID = " << gameID;
 
-	//
-	// Open the supported games list, to get the Name.
-	//
-	QFile file(QCoreApplication::applicationDirPath() + "/Settings/FaceTrackNoIR Supported Games.csv");
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return;
-	}
-	CSV csv(&file);
-	gameLine = csv.parseLine();
-
-	while (gameLine.count() > 2) {
-		//qDebug() << "Column 0: " << gameLine.at(0);		// No.
-		//qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
-		//qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
-		//qDebug() << "Column 3: " << gameLine.at(3);		// Supported since version
-		//qDebug() << "Column 4: " << gameLine.at(4);		// Verified
-		//qDebug() << "Column 5: " << gameLine.at(5);		// By
-		//qDebug() << "Column 6: " << gameLine.at(6);		// International ID
-		//qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
-		
-		//
-		// If the gameID was found, fill the shared memory
-		//
-		if (gameLine.count() > 6) {
-			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
-                QByteArray id = gameLine.at(7).toAscii();
-                int tmp[8];
-                int fuzz[3];
-                if (gameLine.at(3) == QString("V160"))
-                {
-                    qDebug() << "no table";
-                }
-                else if (sscanf(id.constData(),
-                           "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                           fuzz + 2,
-                           fuzz + 0,
-                           tmp + 3,
-                           tmp + 2,
-                           tmp + 1,
-                           tmp + 0,
-                           tmp + 7,
-                           tmp + 6,
-                           tmp + 5,
-                           tmp + 4,
-                           fuzz + 1) != 11 || ((fuzz[2] << 8) | fuzz[0]) != gameLine.at(0).toInt())
-                {
-                    qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
-                    memset(pMemData->table, 0, 8);
-                }
-                else
-                    for (int i = 0; i < 8; i++)
-                        pMemData->table[i] = tmp[i];
-                qDebug() << gameID << "game-id" << gameLine.at(7);
-                game_name = gameLine.at(1);
-                dummy = fuzz[1] & 0xf;
-                tirviews = fuzz[1] & 0xf0;
-                file.close();
-                return;
-			}
-		}
-
-		gameLine = csv.parseLine();
-	}
-
-	//
-	// If the gameID was NOT found, fill only the name "Unknown game connected"
-	//
-    qDebug() << "Unknown game connected" << pMemData->GameID;
-    file.close();
-}
 
 //
 // Load the current Settings from the currently 'active' INI-file.
@@ -275,10 +201,10 @@ float headRotZ;
 		//
         if (intGameID != pMemData->GameID)
         {
-            memset(pMemData->table, 0, 8);
             QString gameID = QString::number(pMemData->GameID);
             bool tirviews = false, dummy = false;
-            getGameData(gameID, tirviews, dummy);
+            QString gamename;
+            CSV::getGameData(gameID, tirviews, dummy, pMemData->table, gamename);
             if (tirviews)
                 start_tirviews();
             if (dummy)
