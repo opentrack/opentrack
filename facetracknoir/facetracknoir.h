@@ -212,7 +212,24 @@ private:
 		void showCurveConfiguration();
 
         void setInvertAxis( Axis axis, int invert );
-
+        void setInvertYaw(int invert) {
+            setInvertAxis(RX, invert);
+        }
+        void setInvertPitch(int invert) {
+            setInvertAxis(RY, invert);
+        }        
+        void setInvertRoll(int invert) {
+            setInvertAxis(RZ, invert);
+        }
+        void setInvertX(int invert) {
+            setInvertAxis(TX, invert);
+        }
+        void setInvertY(int invert) {
+            setInvertAxis(TY, invert);
+        }
+        void setInvertZ(int invert) {
+            setInvertAxis(TZ, invert);
+        }
 		void showHeadPose();
 
         void startTracker();
