@@ -95,6 +95,8 @@ void FTNoIR_Protocol::Initialize()
 // Read the game-data from CSV
 //
 void FTNoIR_Protocol::getGameData( QString gameID, bool& tirviews, bool& dummy){
+    /* zero table first, in case unknown game is connecting */
+    memset(pMemData->table, 0, 8);
     QStringList gameLine;
 	qDebug() << "getGameData, ID = " << gameID;
 
@@ -129,7 +131,6 @@ void FTNoIR_Protocol::getGameData( QString gameID, bool& tirviews, bool& dummy){
                 if (gameLine.at(3) == QString("V160"))
                 {
                     qDebug() << "no table";
-                    memset(pMemData->table, 0, 8);
                 }
                 else if (sscanf(id.constData(),
                            "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
