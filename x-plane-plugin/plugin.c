@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/file.h>
 #include <sys/mman.h>
@@ -12,6 +13,8 @@
 #include <XPLMCamera.h>
 #include <XPLMProcessing.h>
 
+#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
+
 // using Wine name to ease things
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
@@ -22,8 +25,10 @@ typedef struct PortableLockedShm {
 } PortableLockedShm;
 
 typedef struct WineSHM {
-    float rx, ry, rz, tx, ty, tz;
-    char stop;
+    double data[6];
+    int gameid, gameid2;
+    unsigned char table[8];
+    bool stop;
 } WineSHM;
 
 static PortableLockedShm* lck_posix = NULL;
@@ -80,11 +85,11 @@ int write_head_position(
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
-        XPLMSetDataf(view_x, shm_posix->tx * 1e-2 + offset_x);
-        XPLMSetDataf(view_y, shm_posix->ty * 1e-2 + offset_y);
-        XPLMSetDataf(view_z, shm_posix->tz * 1e-2 + offset_z);
-        XPLMSetDataf(view_heading, shm_posix->rx * 57.295781);
-        XPLMSetDataf(view_pitch, shm_posix->ry * 57.295781);
+        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-2 + offset_x);
+        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-2 + offset_y);
+        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-2 + offset_z);
+        XPLMSetDataf(view_heading, shm_posix->data[RX] * 57.295781);
+        XPLMSetDataf(view_pitch, shm_posix->data[RY] * 57.295781);
         PortableLockedShm_unlock(lck_posix);
     }
     return 1;
