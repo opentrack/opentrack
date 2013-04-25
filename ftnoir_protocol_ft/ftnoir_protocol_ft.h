@@ -38,6 +38,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
+#include <QString>
 #include <windows.h>
 //#include "math.h"
 
@@ -82,7 +83,6 @@ private:
     bool force_dummy;
 
 	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-    void getGameData(QString gameID , bool& tirviews, bool& dummy);
 	void loadSettings();
     void start_tirviews();
     void start_dummy();
