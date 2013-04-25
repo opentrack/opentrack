@@ -88,8 +88,8 @@ int write_head_position(
         XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-2 + offset_x);
         XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-2 + offset_y);
         XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-2 + offset_z);
-        XPLMSetDataf(view_heading, shm_posix->data[RX] * 57.295781);
-        XPLMSetDataf(view_pitch, shm_posix->data[RY] * 57.295781);
+        XPLMSetDataf(view_heading, shm_posix->data[RX]);
+        XPLMSetDataf(view_pitch, shm_posix->data[RY]);
         PortableLockedShm_unlock(lck_posix);
     }
     return 1;
