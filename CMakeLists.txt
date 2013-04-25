@@ -360,14 +360,15 @@ endif()
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
         endif()
         if(NOT SDK_WINE_NO_WRAPPER)
-            add_custom_command( TARGET ftnoir-proto-wine
-                    COMMAND
-                    "${SDK_WINE_PREFIX}/bin/wineg++" -g -O2 -m32 -o
-                    ftnoir-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
-                    "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-main.cxx"
-                    "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-posix.cxx"
-                    "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-windows.cxx"
-                    -lrt)
+            add_custom_command(
+              OUTPUT ftnoir-wrapper-wine.exe.so
+              COMMAND "${SDK_WINE_PREFIX}/bin/wineg++" -g -O2 -m32 -o
+                      ftnoir-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
+                      "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-main.cxx"
+                      "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-posix.cxx"
+                      "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/ftnoir-wrapper-wine-windows.cxx"
+                      -lrt)
+            add_custom_target(wine-wrapper ALL DEPENDS ftnoir-wrapper-wine.exe.so)
         endif()
     endif()
 
