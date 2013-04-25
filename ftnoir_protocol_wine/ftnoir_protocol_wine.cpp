@@ -35,16 +35,13 @@
 					Now it works direcly in shared memory!
 */
 #include "ftnoir_protocol_wine.h"
-#include "facetracknoir/global-settings.h"
-#include "fttypes.h"
-
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
 
 /** constructor **/
-FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL)
+FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
     if (lck_shm.mem != (void*) -1) {
         shm = (WineSHM*) lck_shm.mem;
@@ -68,16 +65,24 @@ void FTNoIR_Protocol::Initialize()
     wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/ftnoir-wrapper-wine.exe.so"));
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
     if (shm)
     {
         lck_shm.lock();
-        shm->rx = headpose->yaw / 57.295781;
-        shm->ry = headpose->pitch / 57.295781;
-        shm->rz = headpose->roll / 57.295781;
-        shm->tx = headpose->x * 10;
-        shm->ty = headpose->y * 10;
-        shm->tz = headpose->z * 10;
+        for (int i = 0; i < 3; i++)
+            shm->data[i] = headpose[i] / 57.295781;
+        for (int i = 3; i < 6; i++)
+            shm->data[i] = headpose[i] * 10;
+        if (shm->gameid != gameid)
+        {
+            QString id_str = QString::number(gameid);
+            QString gamename;
+            /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
+            /* memory-hacks DLL can't be loaded into a Linux process, either */
+            bool tmp1, tmp2;
+            CSV::getGameData(id_str, tmp1, tmp2, shm->table, gamename);
+            gameid = shm->gameid2 = shm->gameid;
+        }
         lck_shm.unlock();
     }
 }

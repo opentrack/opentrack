@@ -29,8 +29,9 @@
 #define INCLUDED_FTSERVER_H
 
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ftnoir_protocol_ft/fttypes.h"
+#include "ftnoir_csv/csv.h"
 #include "ui_ftnoir_winecontrols.h"
-#include "fttypes.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -39,6 +40,7 @@
 #include <QFile>
 #include "facetracknoir/global-settings.h"
 #include "compat/compat.h"
+#include "ftnoir_protocol_wine/wine-shm.h"
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -49,13 +51,14 @@ public:
     void Initialize();
 
     bool checkServerInstallationOK();
-	void sendHeadposeToGame( THeadPoseData *headpose, THeadPoseData *rawheadpose );
+	void sendHeadposeToGame(double* headpose, double* rawheadpose );
 	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
     PortableLockedShm lck_shm;
     WineSHM* shm;
     QProcess wrapper;
+    int gameid;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

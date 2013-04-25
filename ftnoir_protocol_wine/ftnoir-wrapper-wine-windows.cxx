@@ -2,6 +2,6 @@
 #define __WIN32
 #endif
 #define PortableLockedShm ShmWine
-#include "fttypes.h"
+#include "ftnoir_protocol_ft/fttypes.h"
 #include "compat/compat.h"
 #include "compat/compat.cpp"
