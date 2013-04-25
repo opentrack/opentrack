@@ -239,6 +239,8 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(ftnoir-tracker-faceapi-uih ${ftnoir-tracker-faceapi-ui})
     QT4_ADD_RESOURCES(ftnoir-tracker-faceapi-rcc ${ftnoir-tracker-faceapi-rc})
 
+    file(GLOB ftnoir-csv-c "ftnoir_csv/*.cpp")
+
 # compat lib for POSIX/win32
 
     file(GLOB ftnoir-compat-c "compat/*.cpp")
@@ -248,7 +250,7 @@ if(NOT SDK_FACEAPI_ONLY)
 	
 # freetrack
 
-	file(GLOB ftnoir-freetrack-c "freetrackclient/*.cpp")
+    file(GLOB ftnoir-freetrack-c "freetrackclient/*.cpp")
 
     if(SDK_XPLANE)
         # probably librt already included
@@ -282,12 +284,15 @@ endif()
         target_link_libraries(ftnoir-compat rt)
     endif()
 
-
     IF(CMAKE_BUILD_TYPE MATCHES DEBUG) 
         SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_DEBUG} ${QT_QTGUI_LIBRARY_DEBUG} ${QT_QTNETWORK_LIBRARY_DEBUG} ${QT_QTXML_LIBRARY_DEBUG} ${QT_QTOPENGL_LIBRARY_DEBUG})
     ELSE()
         SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_RELEASE} ${QT_QTGUI_LIBRARY_RELEASE} ${QT_QTNETWORK_LIBRARY_RELEASE} ${QT_QTXML_LIBRARY_RELEASE} ${QT_QTOPENGL_LIBRARY_RELEASE})
     ENDIF()
+
+    add_library(ftnoir-csv SHARED ${ftnoir-csv-c})
+    target_link_libraries(ftnoir-csv ${MY_QT_LIBS})
+
     add_library(ftnoir-pose-widget SHARED ${ftnoir-pose-widget-c} ${ftnoir-pose-widget-moc} ${ftnoir-pose-widget-rcc})
     target_link_libraries(ftnoir-pose-widget ${MY_QT_LIBS} ${OPENGL_gl_LIBRARY})
     add_library(ftnoir-spline-widget SHARED ${ftnoir-spline-widget-c} ${ftnoir-spline-widget-moc} ${MY_QT_LIBS})
@@ -333,7 +338,7 @@ endif()
         endif()
 
         add_library(ftnoir-proto-freetrack SHARED ${ftnoir-proto-freetrack-c} ${ftnoir-proto-freetrack-moc} ${ftnoir-proto-freetrack-uih} ${ftnoir-proto-freetrack-rcc})
-        target_link_libraries(ftnoir-proto-freetrack ${MY_QT_LIBS})
+        target_link_libraries(ftnoir-proto-freetrack ftnoir-csv ${MY_QT_LIBS})
 
         add_library(ftnoir-proto-win32-mouse SHARED ${ftnoir-proto-win32-mouse-c} ${ftnoir-proto-win32-mouse-moc} ${ftnoir-proto-win32-mouse-uih} ${ftnoir-proto-win32-mouse-rcc})
         target_link_libraries(ftnoir-proto-win32-mouse ${MY_QT_LIBS})
@@ -349,7 +354,7 @@ endif()
 
     if(NOT WIN32 AND SDK_WINE_PREFIX)
         add_library(ftnoir-proto-wine SHARED ${ftnoir-proto-wine-c} ${ftnoir-proto-wine-moc} ${ftnoir-proto-wine-uih} ${ftnoir-proto-wine-rcc})
-        target_link_libraries(ftnoir-proto-wine ${MY_QT_LIBS} ftnoir-compat)
+        target_link_libraries(ftnoir-proto-wine ${MY_QT_LIBS} ftnoir-compat ftnoir-csv)
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
             SET_TARGET_PROPERTIES(ftnoir-proto-wine
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
@@ -385,11 +390,11 @@ endif()
                       "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib")
     endif()
 	
-	if(OpenCV_FOUND)
-            include_directories(${OpenCV_INCLUDE_DIRS})
-            include_directories(${OpenCV_DIR}/include)
-            include_directories(${OpenCV_CONFIG_PATH}/include)
-	endif()
+    if(OpenCV_FOUND)
+        include_directories(${OpenCV_INCLUDE_DIRS})
+        include_directories(${OpenCV_DIR}/include)
+        include_directories(${OpenCV_CONFIG_PATH}/include)
+    endif()
 
     if(OpenCV_FOUND)
         add_library(ftnoir-tracker-pt SHARED ${ftnoir-tracker-pt-c} ${ftnoir-tracker-pt-moc} ${ftnoir-tracker-pt-uih} ${ftnoir-tracker-pt-rcc})
@@ -462,11 +467,12 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     if(OpenCV_FOUND)
-        install(TARGETS ftnoir-tracker-pt RUNTIME DESTINATION .)
+        install(TARGETS ftnoir-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
 
     install(TARGETS
             ftnoir-compat
+            ftnoir-csv
             ftnoir-pose-widget
             ftnoir-spline-widget
             ftnoir-filter-accela
