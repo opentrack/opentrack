@@ -66,7 +66,7 @@ private:
 //*******************************************************************************************************
 
 // Widget that has controls for FTNoIR protocol filter-settings.
-class FilterControls: public QWidget, Ui::UICFilterControls, public IFilterDialog
+class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
