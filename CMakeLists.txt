@@ -103,6 +103,8 @@ if(NOT SDK_FACEAPI_ONLY)
       endif()
     endif(WIN32)
 
+    set(SDK_HILLCREST "" CACHE PATH "Path to libfreespace")
+
 if(SDK_FSUIPC AND WIN32)
     include_directories("${SDK_FSUIPC}")
     link_directories("${SDK_FSUIPC}")
@@ -230,6 +232,14 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB ftnoir-tracker-udp-rc "ftnoir_tracker_udp/*.qrc")
     QT4_WRAP_UI(ftnoir-tracker-udp-uih ${ftnoir-tracker-udp-ui})
     QT4_ADD_RESOURCES(ftnoir-tracker-udp-rcc ${ftnoir-tracker-udp-rc})
+
+    file(GLOB ftnoir-tracker-hillcrest-c "ftnoir_tracker_hillcrest/*.cpp")
+    file(GLOB ftnoir-tracker-hillcrest-h "ftnoir_tracker_hillcrest/*.h")
+    QT4_WRAP_CPP(ftnoir-tracker-hillcrest-moc ${ftnoir-tracker-hillcrest-h})
+    file(GLOB ftnoir-tracker-hillcrest-ui "ftnoir_tracker_hillcrest/*.ui")
+    file(GLOB ftnoir-tracker-hillcrest-rc "ftnoir_tracker_hillcrest/*.qrc")
+    QT4_WRAP_UI(ftnoir-tracker-hillcrest-uih ${ftnoir-tracker-hillcrest-ui})
+    QT4_ADD_RESOURCES(ftnoir-tracker-hillcrest-rcc ${ftnoir-tracker-hillcrest-rc})
 
     file(GLOB ftnoir-tracker-faceapi-c "ftnoir_tracker_sm/*.cpp")
     file(GLOB ftnoir-tracker-faceapi-h "ftnoir_tracker_sm/*.h")
@@ -413,6 +423,31 @@ endif()
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
 
+    if(SDK_HILLCREST)
+        include_directories("${SDK_HILLCREST}/include")
+        if(WIN32)
+            set(HILLCREST_LIBDIR ${SDK_HILLCREST}/lib/Release)
+            if(MSVC)
+                set(HILLCREST_LIBNAME libfreespace.lib)
+            else()
+                set(HILLCREST_LIBNAME libfreespace.a)
+            endif()
+        else()
+            link_directories(${SDK_HILLCREST}/lib)
+        endif()
+        add_library(ftnoir-tracker-hillcrest SHARED ${ftnoir-tracker-hillcrest-c} ${ftnoir-tracker-hillcrest-moc} ${ftnoir-tracker-hillcrest-uih} ${ftnoir-tracker-hillcrest-rcc})
+        if(WIN32)
+            set(HILLCREST_LIB "${HILLCREST_LIBDIR}/${HILLCREST_LIBNAME}")
+        else()
+            set(HILLCREST_LIB freespace)
+        endif()
+        target_link_libraries(ftnoir-tracker-hillcrest ${MY_QT_LIBS} ${HILLCREST_LIB})
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(ftnoir-tracker-hillcrest
+                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+    endif()
+
     add_executable(ftnoir ${ftnoir-bin-c} ${ftnoir-bin-moc} ${ftnoir-bin-uih} ${ftnoir-bin-rcc})
     if(WIN32)
         target_link_libraries(ftnoir ftnoir-pose-widget ftnoir-spline-widget ${MY_QT_LIBS} "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib" "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib" "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib")
@@ -481,12 +516,21 @@ if(NOT SDK_FACEAPI_ONLY)
             ftnoir-proto-fgfs
             ftnoir-proto-udp
             ftnoir-tracker-ht
-        ftnoir-tracker-udp
+            ftnoir-tracker-udp
             ftnoir
             RUNTIME DESTINATION .
             LIBRARY DESTINATION .
             NAMELINK_SKIP
     )
+
+    if(SDK_HILLCREST)
+        install(
+            TARGETS ftnoir-tracker-hillcrest
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+            NAMELINK_SKIP
+        )
+    endif()
 
     if(WIN32)
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
@@ -562,6 +606,12 @@ if(WIN32 AND NOT SDK_FACEAPI_ONLY)
         LIBRARY DESTINATION .
         NAMELINK_SKIP
     )
+endif()
+
+if(SDK_HILLCREST)
+    if(WIN32)
+        install(FILES "${HILLCREST_LIBDIR}/libfreespace.dll" DESTINATION .)
+    endif()
 endif()
 
 if(WIN32 AND SDK_SM_FACEAPI_PATH)
