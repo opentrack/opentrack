@@ -17,7 +17,7 @@
 #include <QTimer>
 
 //-----------------------------------------------------------------------------
-class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDialog
+class TrackerDialog : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:

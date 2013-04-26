@@ -89,7 +89,7 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class FTControls: public QWidget, Ui::UICFTControls, public IProtocolDialog
+class FTControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:

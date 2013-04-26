@@ -47,7 +47,7 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class TrackerControls: public QWidget, Ui::UICFTNClientControls, public ITrackerDialog
+class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:

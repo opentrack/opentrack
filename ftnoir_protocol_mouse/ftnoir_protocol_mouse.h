@@ -97,7 +97,7 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class MOUSEControls: public QWidget, Ui::UICMOUSEControls, public IProtocolDialog
+class MOUSEControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:

@@ -69,7 +69,7 @@ private:
 //*******************************************************************************************************
 
 // Widget that has controls for FTNoIR protocol filter-settings.
-class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, Ui::AccelaUICFilterControls, public IFilterDialog
+class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:

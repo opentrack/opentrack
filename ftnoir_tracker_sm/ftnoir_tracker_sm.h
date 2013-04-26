@@ -67,7 +67,7 @@ private:
 };
 
 // Widget that has controls for SMoIR protocol client-settings.
-class TrackerControls: public QWidget, Ui::UICSMClientControls, public ITrackerDialog
+class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
