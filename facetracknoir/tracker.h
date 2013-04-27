@@ -156,7 +156,6 @@ public:
 
 //	void registerHeadPoseCallback();
 	bool handleGameCommand ( int command );
-	QString getGameProgramName();					// Get the ProgramName from the game and display it.
 	void loadSettings();							// Load settings from the INI-file
     //bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
     //bool isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate );

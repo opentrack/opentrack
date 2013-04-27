@@ -37,6 +37,7 @@
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
+#include <QMutexLocker>
 #include <QFile>
 #include "facetracknoir/global-settings.h"
 #include "compat/compat.h"
@@ -59,6 +60,12 @@ private:
     WineSHM* shm;
     QProcess wrapper;
     int gameid;
+    QString game_name;
+    QMutex game_name_mutex;
+    QString getGameName() {
+        QMutexLocker(&game_name_mutex);
+        return game_name;
+    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

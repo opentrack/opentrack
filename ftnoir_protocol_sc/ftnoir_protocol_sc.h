@@ -86,7 +86,9 @@ public:
     void Initialize() {}
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
-	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
+    QString getGameName() {
+        return "FS2004/FSX";
+    }
 
 private:
 	// Private properties
@@ -139,10 +141,10 @@ public:
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
+	}
 	void unRegisterProtocol() {
 		theProtocol = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICSCControls ui;

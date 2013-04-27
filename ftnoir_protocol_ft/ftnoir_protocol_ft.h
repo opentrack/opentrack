@@ -40,6 +40,8 @@
 #include <QFile>
 #include <QString>
 #include <windows.h>
+#include <QMutex>
+#include <QMutexLocker>
 //#include "math.h"
 
 //typedef char *(WINAPI *importProvider)(void);
@@ -57,7 +59,10 @@ public:
 
 	bool checkServerInstallationOK(  );
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
-	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
+    QString getGameName() {
+        QMutexLocker((QMutex*)&game_name_mutex);
+        return connected_game;
+    }
 
 private:
 	bool FTCreateMapping();
@@ -86,6 +91,9 @@ private:
 	void loadSettings();
     void start_tirviews();
     void start_dummy();
+    
+    QString connected_game;
+    QMutex game_name_mutex;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -102,10 +110,10 @@ public:
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
+	}
 	void unRegisterProtocol() {
 		theProtocol = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICFTControls ui;
@@ -120,8 +128,8 @@ private slots:
 	void selectDLL();
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
+	void settingChanged() { settingsDirty = true; }
+	void settingChanged(int) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
@@ -133,11 +141,11 @@ public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); };
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); }
 
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); };
+	void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); }
 };
 
 

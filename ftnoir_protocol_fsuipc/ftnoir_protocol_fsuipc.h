@@ -67,8 +67,9 @@ public:
 
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
-	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
-
+    QString getGameName() {
+        return "Microsoft Flight Simulator X";
+    }
 private:
 	// Private properties
 	QString ProgramName;
@@ -94,10 +95,10 @@ public:
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
+	}
 	void unRegisterProtocol() {
 		theProtocol = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICFSUIPCControls ui;

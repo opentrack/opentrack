@@ -359,15 +359,6 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 }
 
-//
-// Return a name, if present the name from the Game, that is connected...
-//
-void FTNoIR_Protocol::getNameFromGame( char *dest )
-{   
-    sprintf(dest, "Microsoft FSX");
-	return;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.
 
