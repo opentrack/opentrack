@@ -98,15 +98,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return lck_shm.mem != (void*)-1;
 }
 
-//
-// Return a name, if present the name from the Game, that is connected...
-//
-void FTNoIR_Protocol::getNameFromGame( char *dest )
-{   
-    sprintf(dest, "Wine glue");
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.
 
