@@ -16,20 +16,22 @@
 #include <QMutexLocker>
 #include <QLabel>
 #include <QPainter>
+#include <QPaintEvent>
 
 // ----------------------------------------------------------------------------
-class VideoWidget : public QLabel
+class VideoWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-    VideoWidget(QWidget *parent) : QLabel(parent), mtx() {
+    VideoWidget(QWidget *parent) : QWidget(parent), mtx() {
 	}
     void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> > points);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
-        setPixmap(pixmap);
-        QLabel::paintEvent(e);
+        QMutexLocker((QMutex*)&mtx);
+        QPainter painter(this);
+        painter.drawPixmap(e->rect(), pixmap);
     }
 
 private:

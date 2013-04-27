@@ -14,13 +14,10 @@ using namespace std;
 void VideoWidget::update_image(unsigned char *frame, int width, int height)
 {
     QMutexLocker((QMutex*)&mtx);
-    QImage qframe = QImage(frame, width, height, 3 * width, QImage::Format_RGB888).rgbSwapped().mirrored();
+    QImage qframe = QImage(frame, width, height, 3 * width, QImage::Format_RGB888).rgbSwapped();
     if (qframe.size() == size() || (qframe.width() <= this->width() && qframe.height() <= this->height()))
-        qframe = qframe.mirrored();
+        qframe = qframe;
     else
-        qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation).mirrored();
-    QPainter painter(&qframe);
-    painter.setPen(Qt::blue);
-    painter.setBrush(Qt::blue);
+        qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
     pixmap = QPixmap::fromImage(qframe);
 }
