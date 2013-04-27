@@ -37,6 +37,7 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	bEnableY = true;
 	bEnableZ = true;
 	portAddress = 5551;
+    should_quit = false;
 
     for (int i = 0; i < 6; i++)
         newHeadPose[i] = 0;
