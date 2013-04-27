@@ -26,7 +26,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
     QWidget::paintEvent(event);
     QPainter p(this);
     project_quad_texture();
-    p.drawPixmap(QRect(0, 0, width(), height()), pixmap);
+    p.drawPixmap(event->rect(), pixmap);
 }
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
@@ -48,7 +48,7 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
     matrix[2 * 3 + 0]= -sh*ca;
     matrix[2 * 3 + 1]= sh*sa*cb + ch*sb;
     matrix[2 * 3 + 2]= -sh*sa*sb + ch*cb;
-    repaint();
+    update();
 }
 
 static __inline double dot(const Vec2f& p1, const Vec2f& p2) {
