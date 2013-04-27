@@ -74,16 +74,17 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         newHeadPose[RY] =pitch;
         newHeadPose[RZ] = roll;
         newHeadPose[RX] = yaw;
-    
+#if 0
         if (bEnableX) {
             data[TX] = newHeadPose[TX];
         }
-        if (bEnableX) {
+        if (bEnableY) {
             data[TY] = newHeadPose[TY];
         }
-        if (bEnableX) {
+        if (bEnableY) {
             data[TZ] = newHeadPose[TZ];
         }
+#endif
         if (bEnableYaw) {
             data[RX] = newHeadPose[RX];
         }

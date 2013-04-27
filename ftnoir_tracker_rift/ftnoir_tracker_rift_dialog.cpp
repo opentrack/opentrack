@@ -44,10 +44,11 @@ QWidget()
 	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+#if 0
 	connect(ui.chkEnableX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-
+#endif
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -135,10 +136,11 @@ void TrackerControls::loadSettings() {
 	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
 	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
 	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
+#if 0
 	ui.chkEnableX->setChecked(iniFile.value ( "EnableX", 1 ).toBool());
 	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
 	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
-
+#endif
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -157,9 +159,11 @@ void TrackerControls::save() {
 	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
 	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
 	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
+#if 0
 	iniFile.setValue ( "EnableX", ui.chkEnableX->isChecked() );
 	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
 	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
+#endif
 	iniFile.endGroup ();
 
 	settingsDirty = false;
