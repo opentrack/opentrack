@@ -111,9 +111,9 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 200;
     config->keypoint_quality = 5;
-    config->keypoint_distance = 1.5;
-    config->keypoint_3distance = 3.5;
-    config->keypoint_9distance = 10;
+    config->keypoint_distance = 2;
+    config->keypoint_3distance = 5;
+    config->keypoint_9distance = 12;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
@@ -124,7 +124,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_abs_max_mean_error = 8;
     config->ransac_max_mean_error = 3.8;
     config->debug = 1;
-    config->ransac_min_features = 0.81;
+    config->ransac_min_features = 0.83;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
