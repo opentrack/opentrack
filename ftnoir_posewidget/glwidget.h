@@ -28,46 +28,89 @@
 #define GLWIDGET_H
 
 #include <QtGui>
-#include <QGLWidget>
+#include <QPixmap>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
-class QGLShaderProgram;
+struct Point {
+    Point(int x, int y) :
+            x(x), y(y)
+    {
+    }
+    Point() :
+            x(0), y(0)
+    {
+    }
+    int x, y;
+};
 
-class FTNOIR_TRACKER_BASE_EXPORT GLWidget : public QGLWidget
+struct Vec3f {
+    double x, y, z;
+    Vec3f(double x, double y, double z) :
+            x(x), y(y), z(z)
+    {
+    }
+    Vec3f() :
+            x(0), y(0), z(0)
+    {
+    }
+};
+
+struct Vec2f {
+    double x, y;
+    Vec2f(double x, double y) :
+            x(x), y(y)
+    {
+    }
+    Vec2f() :
+            x(0), y(0)
+    {
+    }
+};
+
+class FTNOIR_TRACKER_BASE_EXPORT GLWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    GLWidget(QWidget *parent = 0, QGLWidget *shareWidget = 0);
+    GLWidget(QWidget *parent);
     ~GLWidget();
-
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
-    void rotateBy(int xAngle, int yAngle, int zAngle);
-    void setClearColor(const QColor &color);
-
-signals:
-    void clicked();
-
+    void rotateBy(double xAngle, double yAngle, double zAngle);
+    
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int width, int height);
+    void paintEvent ( QPaintEvent * event );
 
 private:
-    void makeObject();
+    Point project(const Vec3f& point) {
+        Point rect;
 
-    QColor clearColor;
-    QPoint lastPos;
-    int xRot;
-    int yRot;
-    int zRot;
-    GLuint textures[6];
-    QVector<QVector3D> vertices;
-    QVector<QVector2D> texCoords;
-#ifdef QT_OPENGL_ES_2
-    QGLShaderProgram *program;
-#endif
+        rect.x = point.x * matrix[0]
+                 + point.y * matrix[1]
+                 + point.z * matrix[2];
+        rect.y = point.x * matrix[3]
+                 + point.y * matrix[4]
+                 + point.z * matrix[5];
+
+        return rect;
+    }
+    Vec3f project2(const Vec3f& point) {
+        Vec3f rect;
+
+        rect.x = point.x * matrix[0]
+                 + point.y * matrix[1]
+                 + point.z * matrix[2];
+        rect.y = point.x * matrix[3]
+                 + point.y * matrix[4]
+                 + point.z * matrix[5];
+        rect.z = point.x * matrix[6]
+                 + point.y * matrix[7]
+                 + point.z * matrix[8];
+        return rect;
+    }
+    void project_quad_texture();
+    double matrix[9];
+    QImage front;
+    QImage back;
+    QPixmap pixmap;
 };
 
 #endif

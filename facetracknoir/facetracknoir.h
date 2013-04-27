@@ -53,7 +53,6 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-#include "ftnoir_posewidget/glwidget.h"
 
 #include "ui_facetracknoir.h"
 #include "ui_ftnoir_keyboardshortcuts.h"
@@ -149,7 +148,6 @@ private:
 	QWidget *_preferences;
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
-	GLWidget *_pose_display;
 
 	/** QT objects **/
 	QDialog aboutDialog;	

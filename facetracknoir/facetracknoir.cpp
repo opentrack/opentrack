@@ -225,8 +225,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	}
 
     //Q_INIT_RESOURCE(PoseWidget);
-	_pose_display = new GLWidget(ui.widget4logo, 0);
-    _pose_display->rotateBy(0, 0, 0);
 
 	ui.lblX->setVisible(false);
 	ui.lblY->setVisible(false);
@@ -873,7 +871,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	// Stop displaying the head-pose.
 	//
 	timUpdateHeadPose->stop();
-    _pose_display->rotateBy(0, 0, 0);
+    ui.pose_display->rotateBy(0, 0, 0);
 
 	ui.lblX->setVisible(false);
 	ui.lblY->setVisible(false);
@@ -987,18 +985,16 @@ void FaceTrackNoIR::showHeadPose() {
 	//
 	// Get the output-pose and also display it.
 	//
-	if (_pose_display) {
-        tracker->getOutputHeadPose(newdata);
-        _pose_display->rotateBy(newdata[RY], newdata[RX], newdata[RZ]);
+    tracker->getOutputHeadPose(newdata);
+    ui.pose_display->rotateBy(newdata[RX], newdata[RZ], newdata[RY]);
 
-        ui.lcdNumOutputPosX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
-        ui.lcdNumOutputPosY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
-        ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
+    ui.lcdNumOutputPosX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
+    ui.lcdNumOutputPosY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
+    ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
 
-        ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
-        ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
-        ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
-	}
+    ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
+    ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
+    ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
 
     //
     // Update the curves in the curve-configurator. This shows the ball with the red lines.
