@@ -218,7 +218,7 @@ QRect scale;
 	//
 	// Draw the vertical guidelines
 	//
-	for (i = range.left(); i <= range.right(); i += gDistEGU_Input * pPerEGU_Input) {
+	for (i = range.left(); i <= range.right(); i += gDistEGU_Input * pPerEGU_Input * 2) {
 		drawLine(&painter, QPointF(i, range.top()), QPointF(i, range.bottom()), pen);
 		scale.setCoords(i - 10, range.bottom() + 2, i + 10, range.bottom() + 15);
 		painter.drawText(scale, Qt::AlignCenter, tr("%1").arg(abs(((range.left() - i))/pPerEGU_Input)));
