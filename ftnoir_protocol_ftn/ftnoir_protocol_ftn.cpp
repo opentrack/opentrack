@@ -114,15 +114,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	return true;
 }
 
-//
-// Return a name, if present the name from the Game, that is connected...
-//
-void FTNoIR_Protocol::getNameFromGame( char *dest )
-{   
-    sprintf(dest, "FaceTrackNoIR UDP");
-	return;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.
 
