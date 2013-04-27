@@ -211,6 +211,8 @@ float headRotZ;
                 start_dummy();
             pMemData->GameID2 = pMemData->GameID;
             intGameID = pMemData->GameID;
+            QMutexLocker((QMutex*)&this->game_name_mutex);
+            connected_game = gamename;
         }
 
         ReleaseMutex(hFTMutex);
@@ -394,17 +396,6 @@ void FTNoIR_Protocol::FTDestroyMapping()
 	hFTMemMap = 0;
 
 }
-
-//
-// Return a name, if present the name from the Game, that is connected...
-//
-void FTNoIR_Protocol::getNameFromGame( char *dest )
-{   
-    QByteArray foo = game_name.toUtf8();
-    memcpy(dest, foo.constData(), std::min<int>(foo.size(), 98));
-    dest[foo.size()] = 0;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Protocol object.

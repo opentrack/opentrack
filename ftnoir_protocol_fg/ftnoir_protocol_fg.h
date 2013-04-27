@@ -67,7 +67,9 @@ private:
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
 	void loadSettings();
-
+    QString getGameName() {
+        return "FlightGear";
+    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -83,10 +85,10 @@ public:
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
+	}
 	void unRegisterProtocol() {
 		theProtocol = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICFGControls ui;
@@ -101,7 +103,7 @@ private slots:
 	void doOK();
 	void doCancel();
 	void chkLocalPCOnlyChanged();
-	void settingChanged() { settingsDirty = true; };
+	void settingChanged() { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
@@ -113,11 +115,11 @@ public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); };
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); }
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); }
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); }
 
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/flightgear.png"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/flightgear.png"); }
 };
 
 

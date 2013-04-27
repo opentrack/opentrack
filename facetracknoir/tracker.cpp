@@ -263,21 +263,6 @@ void Tracker::run() {
 }
 
 //
-// Get the ProgramName from the Game and return it.
-//
-QString Tracker::getGameProgramName() {
-QString str;
-char dest[100];
-
-	str = QString("No protocol active?");
-    if (Libraries->pProtocol) {
-        Libraries->pProtocol->getNameFromGame( dest );
-		str = QString( dest );
-	}
-	return str;	
-}
-
-//
 // Handle the command, send upstream by the game.
 // Valid values are:
 //		1	= reset Headpose

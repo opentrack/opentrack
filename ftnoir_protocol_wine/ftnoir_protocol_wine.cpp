@@ -82,6 +82,8 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
             bool tmp1, tmp2;
             CSV::getGameData(id_str, tmp1, tmp2, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
+            QMutexLocker(&game_name_mutex);
+            connected_game = gamename;
         }
         lck_shm.unlock();
     }

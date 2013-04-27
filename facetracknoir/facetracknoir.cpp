@@ -857,7 +857,7 @@ void FaceTrackNoIR::startTracker( ) {
 
 /** stop tracking the face **/
 void FaceTrackNoIR::stopTracker( ) {	
-
+    ui.game_name->setText("Not connected");
 #if defined(_WIN32) || defined(__WIN32)
     if (keybindingWorker)
     {
@@ -1002,7 +1002,11 @@ void FaceTrackNoIR::showHeadPose() {
     if (_curve_config) {
         _curve_config->update();
     }
-
+    if (Libraries->pProtocol)
+    {
+        QString name = Libraries->pProtocol->getGameName();
+        ui.game_name->setText(name);
+    }
 }
 
 /** toggles Video Widget **/

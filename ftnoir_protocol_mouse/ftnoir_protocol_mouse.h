@@ -93,7 +93,9 @@ private:
 
 	long scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
-
+    QString getGameName() {
+        return "Mouse tracker";
+    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -110,10 +112,10 @@ public:
     void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	};
+	}
 	void unRegisterProtocol() {
 		theProtocol = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICMOUSEControls ui;
@@ -127,7 +129,7 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged( int setting ) { settingsDirty = true; };
+	void settingChanged( int setting ) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
@@ -139,11 +141,11 @@ public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); };
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); }
 
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/mouse.png"); };
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/mouse.png"); }
 };
 
 

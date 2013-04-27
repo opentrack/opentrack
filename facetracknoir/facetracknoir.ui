@@ -848,7 +848,7 @@ QGroupBox {
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>20</y>
+       <y>10</y>
        <width>400</width>
        <height>25</height>
       </rect>
@@ -1337,6 +1337,23 @@ background:none;</string>
      </property>
      <property name="text">
       <string>Roll</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="game_name">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>411</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:#ccc;
+background:none;</string>
+     </property>
+     <property name="text">
+      <string>Not connected</string>
      </property>
     </widget>
    </widget>
