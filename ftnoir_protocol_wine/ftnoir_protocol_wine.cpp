@@ -41,7 +41,7 @@
 #include <fcntl.h>           /* For O_* constants */
 
 /** constructor **/
-FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0), game_name_mutex()
+FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
     if (lck_shm.mem != (void*) -1) {
         shm = (WineSHM*) lck_shm.mem;
@@ -82,7 +82,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
             bool tmp1, tmp2;
             CSV::getGameData(id_str, tmp1, tmp2, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
-            QMutexLocker(&game_name_mutex);
+            QMutexLocker((QMutex*)&game_name_mutex);
             connected_game = gamename;
         }
         lck_shm.unlock();
