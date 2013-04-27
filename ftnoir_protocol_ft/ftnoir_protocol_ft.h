@@ -60,7 +60,7 @@ public:
 	bool checkServerInstallationOK(  );
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
     QString getGameName() {
-        QMutexLocker((QMutex*)&game_name_mutex);
+        QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }
 

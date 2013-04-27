@@ -13,7 +13,7 @@ using namespace std;
 
 void VideoWidget::update_image(unsigned char *frame, int width, int height)
 {
-    QMutexLocker((QMutex*)&mtx);
+    QMutexLocker foo(&mtx);
     QImage qframe = QImage(width, height, QImage::Format_RGB888);
     uchar* data = qframe.bits();
     const int pitch = qframe.bytesPerLine();
@@ -25,9 +25,6 @@ void VideoWidget::update_image(unsigned char *frame, int width, int height)
             data[y * pitch + x * 3 + 1] = frame[pos + 1];
             data[y * pitch + x * 3 + 2] = frame[pos + 0];
         }
-    if (qframe.size() == size() || (qframe.width() <= this->width() && qframe.height() <= this->height())) {
-    }
-    else
-        qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
     pixmap = QPixmap::fromImage(qframe);
 }
