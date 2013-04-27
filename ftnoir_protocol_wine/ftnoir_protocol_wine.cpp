@@ -41,7 +41,7 @@
 #include <fcntl.h>           /* For O_* constants */
 
 /** constructor **/
-FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
+FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0), game_name_mutex()
 {
     if (lck_shm.mem != (void*) -1) {
         shm = (WineSHM*) lck_shm.mem;

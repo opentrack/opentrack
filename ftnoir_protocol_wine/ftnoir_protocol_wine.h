@@ -60,11 +60,11 @@ private:
     WineSHM* shm;
     QProcess wrapper;
     int gameid;
-    QString game_name;
+    QString connected_game;
     QMutex game_name_mutex;
     QString getGameName() {
         QMutexLocker(&game_name_mutex);
-        return game_name;
+        return connected_game;
     }
 };
 
