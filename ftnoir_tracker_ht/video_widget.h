@@ -9,7 +9,6 @@
 #define VIDEOWIDGET_H
 
 #include <QTime>
-#include <memory>
 #include <QWidget>
 #include <QMutex>
 #include <QMutexLocker>

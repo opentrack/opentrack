@@ -207,7 +207,7 @@ void Tracker::StartTracker(QFrame* videoframe)
 #else
     subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");
 #endif
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()), Qt::QueuedConnection);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
     timer.start(40);
 }
 
