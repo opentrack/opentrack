@@ -16,6 +16,7 @@ endif()
 
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
+	SET(SDK_RIFT "" CACHE PATH "libOVR path")
 ENDIF()
 
 file(GLOB ftnoir-faceapi-wrapper-c "faceapi/*.cpp")
@@ -245,6 +246,14 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB ftnoir-tracker-hillcrest-rc "ftnoir_tracker_hillcrest/*.qrc")
     QT4_WRAP_UI(ftnoir-tracker-hillcrest-uih ${ftnoir-tracker-hillcrest-ui})
     QT4_ADD_RESOURCES(ftnoir-tracker-hillcrest-rcc ${ftnoir-tracker-hillcrest-rc})
+	
+	file(GLOB ftnoir-tracker-rift-c "ftnoir_tracker_rift/*.cpp")
+    file(GLOB ftnoir-tracker-rift-h "ftnoir_tracker_rift/*.h")
+    QT4_WRAP_CPP(ftnoir-tracker-rift-moc ${ftnoir-tracker-rift-h})
+    file(GLOB ftnoir-tracker-rift-ui "ftnoir_tracker_rift/*.ui")
+    file(GLOB ftnoir-tracker-rift-rc "ftnoir_tracker_rift/*.qrc")
+    QT4_WRAP_UI(ftnoir-tracker-rift-uih ${ftnoir-tracker-rift-ui})
+    QT4_ADD_RESOURCES(ftnoir-tracker-rift-rcc ${ftnoir-tracker-rift-rc})
 
     file(GLOB ftnoir-tracker-faceapi-c "ftnoir_tracker_sm/*.cpp")
     file(GLOB ftnoir-tracker-faceapi-h "ftnoir_tracker_sm/*.h")
@@ -427,6 +436,19 @@ endif()
         SET_TARGET_PROPERTIES(ftnoir-tracker-udp
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
+	
+	if(SDK_RIFT)
+		include_directories("${SDK_RIFT}/include")
+        add_library(ftnoir-tracker-rift SHARED ${ftnoir-tracker-rift-c} ${ftnoir-tracker-rift-moc} ${ftnoir-tracker-rift-uih} ${ftnoir-tracker-rift-rcc})
+        target_link_libraries(ftnoir-tracker-rift ${MY_QT_LIBS})
+		if(WIN32)
+			target_link_libraries(ftnoir-tracker-rift "${SDK_RIFT}/lib/win32/libovr.lib" winmm.lib)
+		endif()
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(ftnoir-tracker-rift
+                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+	endif()
 
     if(SDK_HILLCREST)
         include_directories("${SDK_HILLCREST}/include")
@@ -532,6 +554,15 @@ if(NOT SDK_FACEAPI_ONLY)
     if(SDK_HILLCREST)
         install(
             TARGETS ftnoir-tracker-hillcrest
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+            NAMELINK_SKIP
+        )
+    endif()
+	
+    if(SDK_RIFT)
+        install(
+            TARGETS ftnoir-tracker-rift
             RUNTIME DESTINATION .
             LIBRARY DESTINATION .
             NAMELINK_SKIP
