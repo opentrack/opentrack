@@ -98,6 +98,7 @@ KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Ke
         dinkeyboard = 0;
         din->Release();
         din = 0;
+        return;
     }
     
     if (dinkeyboard->SetCooperativeLevel(window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
