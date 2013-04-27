@@ -489,7 +489,7 @@ QGroupBox {
           <number>-1</number>
          </property>
          <property name="maxVisibleItems">
-          <number>5</number>
+          <number>42</number>
          </property>
         </widget>
         <widget class="QPushButton" name="btnShowEngineControls">
