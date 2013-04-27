@@ -37,6 +37,7 @@
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
+#include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
 #include "facetracknoir/global-settings.h"
@@ -53,7 +54,6 @@ public:
 
     bool checkServerInstallationOK();
 	void sendHeadposeToGame(double* headpose, double* rawheadpose );
-	void getNameFromGame( char *dest );					// Take care dest can handle up to 100 chars...
 
 private:
     PortableLockedShm lck_shm;
