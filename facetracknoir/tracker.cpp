@@ -92,6 +92,7 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
         GlobalPose->axes[i].headPos = 0;
         inhibit[i] = false;
     }
+    do_inhibit = false;
 }
 
 Tracker::~Tracker()
