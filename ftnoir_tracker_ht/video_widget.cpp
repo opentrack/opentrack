@@ -17,7 +17,6 @@ void VideoWidget::update_image(unsigned char *frame, int width, int height)
     QImage qframe = QImage(width, height, QImage::Format_RGB888);
     uchar* data = qframe.bits();
     const int pitch = qframe.bytesPerLine();
-    const int cn = 3;
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
         {
