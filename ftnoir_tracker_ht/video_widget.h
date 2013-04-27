@@ -8,35 +8,31 @@
 #ifndef VIDEOWIDGET_H
 #define VIDEOWIDGET_H
 
-#include <QGLWidget>
 #include <QTime>
-#include <QFrame>
-#include <QImage>
+#include <memory>
 #include <QWidget>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QLabel>
+#include <QPainter>
+
 // ----------------------------------------------------------------------------
-class VideoWidget : public QGLWidget
+class VideoWidget : public QLabel
 {
 	Q_OBJECT
 
 public:
-    VideoWidget(QWidget *parent) : QGLWidget(parent) {
-#if !defined(_WIN32)
-        setAttribute(Qt::WA_NativeWindow, true);
-#endif
+    VideoWidget(QWidget *parent) : QLabel(parent), mtx() {
 	}
-
-	void initializeGL();
-	void resizeGL(int w, int h);
-	void paintGL();
-
-    void updateImage(unsigned char* frame, int width, int height);
-    void update();
+    void update_image(unsigned char* frame, int width, int height);
+protected slots:
+    void paintEvent( QPaintEvent* e ) {
+        setPixmap(pixmap);
+        QLabel::paintEvent(e);
+    }
 private:
-    void resize_frame(QImage& qframe);
-    QImage resized_qframe;
     QMutex mtx;
+    QPixmap pixmap;
 };
 
 #endif // VIDEOWIDGET_H
