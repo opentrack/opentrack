@@ -192,12 +192,12 @@ public:
     THeadPoseDOF axes[6];
     HeadPoseData()
     {
-        axes[TX] = THeadPoseDOF("tx","tx_alt", 60, 200, 60, 200);
-        axes[TY] = THeadPoseDOF("ty","ty_alt", 60, 200, 60, 200);
-        axes[TZ] = THeadPoseDOF("tz","tz_alt", 60, 200, 60, 200);
-        axes[RX] = THeadPoseDOF("rx", "rx_alt", 60, 180, 60, 180);
-        axes[RY] = THeadPoseDOF("ry", "ry_alt", 60, 180, 60, 90);
-        axes[RZ] = THeadPoseDOF("rz", "rz_alt", 60, 180, 60, 180);
+        axes[TX] = THeadPoseDOF("tx","tx_alt", 100, 100, 100, 100);
+        axes[TY] = THeadPoseDOF("ty","ty_alt", 100, 100, 100, 100);
+        axes[TZ] = THeadPoseDOF("tz","tz_alt", 100, 100, 100, 100);
+        axes[RX] = THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180);
+        axes[RY] = THeadPoseDOF("ry", "ry_alt", 180, 180, 180, 180);
+        axes[RZ] = THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180);
     }
 };
 

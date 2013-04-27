@@ -24,7 +24,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 if(NOT SDK_FACEAPI_ONLY)
     find_package(OpenCV REQUIRED)
-    find_package(Qt4 COMPONENTS QtCore QtGui QtXml QtOpenGL QtNetwork REQUIRED)
+    find_package(Qt4 COMPONENTS QtCore QtGui QtDesigner QtXml QtOpenGL QtNetwork REQUIRED)
     macro(QT4_WRAP_CPP outfiles)
       # get include dirs
       QT4_GET_MOC_FLAGS(moc_flags)
@@ -65,9 +65,7 @@ if(NOT SDK_FACEAPI_ONLY)
             include_directories(${QXT_QXTGUI_INCLUDE_DIR}/QxtGui)
         endif()
     endif()
-    if(NOT WIN32)
-        INCLUDE_DIRECTORIES(${QT_QTDESIGNER_INCLUDE_DIR})
-    endif()
+    INCLUDE_DIRECTORIES(${QT_QTDESIGNER_INCLUDE_DIR})
 
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/qfunctionconfigurator)
@@ -319,7 +317,7 @@ endif()
 
     add_library(ftnoir-pose-widget SHARED ${ftnoir-pose-widget-c} ${ftnoir-pose-widget-moc} ${ftnoir-pose-widget-rcc})
     target_link_libraries(ftnoir-pose-widget ${MY_QT_LIBS} ${OPENGL_gl_LIBRARY})
-    add_library(ftnoir-spline-widget SHARED ${ftnoir-spline-widget-c} ${ftnoir-spline-widget-moc} ${MY_QT_LIBS})
+    add_library(ftnoir-spline-widget SHARED ${ftnoir-spline-widget-c} ${ftnoir-spline-widget-moc} ${MY_QT_LIBS} ${QT_QTDESIGNER_LIBRARY_RELEASE})
     target_link_libraries(ftnoir-spline-widget ${MY_QT_LIBS})
 
     add_library(ftnoir-filter-accela SHARED ${ftnoir-filter-accela-c} ${ftnoir-filter-accela-moc} ${ftnoir-filter-accela-uih} ${ftnoir-filter-accela-rcc})
