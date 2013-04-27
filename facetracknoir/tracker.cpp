@@ -311,8 +311,6 @@ void Tracker::loadSettings() {
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
-    iniFile.beginGroup ( "Tracking" );
-	iniFile.endGroup ();
 	iniFile.beginGroup ( "KB_Shortcuts" );
     // Reverse Axis
     useAxisReverse = iniFile.value ( "Enable_ReverseAxis", 0 ).toBool();
@@ -323,10 +321,10 @@ void Tracker::loadSettings() {
     static const char* names[] = {
         "Inhibit_X",
         "Inhibit_Y",
-        "Inhibit_Z"
+        "Inhibit_Z",
         "Inhibit_Yaw",
         "Inhibit_Pitch",
-        "Inhibit_Roll",
+        "Inhibit_Roll"
     };
 
     for (int i = 0; i < 6; i++)
