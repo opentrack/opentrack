@@ -32,8 +32,8 @@ void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> > points)
     else
         qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
     QPainter painter(&qframe);
-    painter.setPen(Qt::blue);
-    painter.setBrush(Qt::blue);
+    painter.setPen(Qt::red);
+    painter.setBrush(Qt::red);
     if (points.get() != NULL) {
         const int crosshair_radius = 10;
         for (vector<Vec2f>::iterator iter = points->begin();
