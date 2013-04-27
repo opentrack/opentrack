@@ -226,7 +226,7 @@ bool Tracker::GiveHeadPoseData(double *data)
     shm->timer = 0;
     if (shm->frame.width > 0)
     {
-        videoWidget->updateImage(shm->frame.frame, shm->frame.width, shm->frame.height);
+        videoWidget->update_image(shm->frame.frame, shm->frame.width, shm->frame.height);
         //memcpy(foo, shm->frame.frame, shm->frame.width * shm->frame.height * 3);
         fresh = true;
         shm->frame.width = 0;

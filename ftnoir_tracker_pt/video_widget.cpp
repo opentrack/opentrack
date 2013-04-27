@@ -12,98 +12,39 @@
 using namespace cv;
 using namespace std;
 
-// ----------------------------------------------------------------------------
-void VideoWidget::initializeGL()
-{
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
-void VideoWidget::resizeGL(int w, int h)
-{
-	// setup 1 to 1 projection
-	glViewport(0, 0, w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, w, 0, h, -1, 1);
-	resize_frame();
-    glDisable(GL_DEPTH_TEST);
-    glBegin(GL_QUADS);
-    glVertex2f(0,0);
-    glVertex2f(1,0);
-    glVertex2f(1,1);
-    glVertex2f(0,1);
-    glEnd();
-}
-
-void VideoWidget::paintGL()
-{
-    QMutexLocker((QMutex*)&mtx);
-    if (resized_qframe.size() == size() || (resized_qframe.width() <= width() && resized_qframe.height() <= height())) {
-        glDrawPixels(resized_qframe.width(), resized_qframe.height(), GL_RGB, GL_UNSIGNED_BYTE, resized_qframe.bits());
-        if (points.get() != NULL)
-        {
-            const int crosshair_radius = 10;
-            const int crosshair_thickness = 1;
-            
-            glColor3f(1.0, 0.0, 0.0);
-            glLineWidth(crosshair_thickness);
-            int x,y;
-            for (vector<Vec2f>::iterator iter = points->begin();
-                 iter != points->end();
-                 ++iter)
-            {
-                x = (*iter)[0] * resized_qframe.width() + resized_qframe.width()/2.0  + 0.5;
-                y = (*iter)[1] * resized_qframe.width() + resized_qframe.height()/2.0 + 0.5;
-                
-                glBegin(GL_LINES);
-                glVertex2i(x-crosshair_radius, y);
-                glVertex2i(x+crosshair_radius, y);
-                glEnd();
-                glBegin(GL_LINES);
-                glVertex2i(x, y-crosshair_radius);
-                glVertex2i(x, y+crosshair_radius);
-                glEnd();
-            }
-        }
-    } else {
-        glClear(GL_DEPTH_BUFFER_BIT);
-    }
-    glFlush();
-}
-
-
-void VideoWidget::resize_frame()
-{
-#ifdef _WIN32
-    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
-        resized_qframe = qframe.mirrored();
-    else
-        resized_qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation).mirrored();
-#else
-    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
-        resized_qframe = qframe.copy();
-    else
-        resized_qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-#endif
-}
-
-void VideoWidget::update()
-{
-    updateGL();
-}
-
 void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> > points)
 {
     QMutexLocker((QMutex*)&mtx);
 	this->frame = frame;
 	this->points = points;
+    
+    QImage qframe;
 
 	// convert to QImage 
 	if (frame.channels() == 3)
 		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols * 3, QImage::Format_RGB888).rgbSwapped();
 	else if (frame.channels() == 1)
-		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols, QImage::Format_Indexed8);
-	resize_frame();
+		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols, QImage::Format_Indexed8).convertToFormat(QImage::Format_RGB888);
+    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
+    {
+        ;;;
+    }
+    else
+        qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    QPainter painter(&qframe);
+    painter.setPen(Qt::blue);
+    painter.setBrush(Qt::blue);
+    if (points.get() != NULL) {
+        const int crosshair_radius = 10;
+        for (vector<Vec2f>::iterator iter = points->begin();
+             iter != points->end();
+             ++iter)
+        {
+            int x = (*iter)[0];
+            int y = (*iter)[1];
+            painter.drawLine(QLine(x-crosshair_radius, y, x+crosshair_radius, y));
+            painter.drawLine(QLine(x, y-crosshair_radius, x, y+crosshair_radius));
+        }
+    }
+    pixmap = QPixmap::fromImage(qframe);
 }

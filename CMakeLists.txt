@@ -24,7 +24,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 if(NOT SDK_FACEAPI_ONLY)
     find_package(OpenCV REQUIRED)
-    find_package(Qt4 COMPONENTS QtCore QtGui QtDesigner QtXml QtOpenGL QtNetwork REQUIRED)
+    find_package(Qt4 COMPONENTS QtCore QtGui QtDesigner QtXml QtNetwork REQUIRED)
     macro(QT4_WRAP_CPP outfiles)
       # get include dirs
       QT4_GET_MOC_FLAGS(moc_flags)
@@ -308,9 +308,9 @@ endif()
     endif()
 
     IF(CMAKE_BUILD_TYPE MATCHES DEBUG) 
-        SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_DEBUG} ${QT_QTGUI_LIBRARY_DEBUG} ${QT_QTNETWORK_LIBRARY_DEBUG} ${QT_QTXML_LIBRARY_DEBUG} ${QT_QTOPENGL_LIBRARY_DEBUG})
+        SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_DEBUG} ${QT_QTGUI_LIBRARY_DEBUG} ${QT_QTNETWORK_LIBRARY_DEBUG} ${QT_QTXML_LIBRARY_DEBUG})
     ELSE()
-        SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_RELEASE} ${QT_QTGUI_LIBRARY_RELEASE} ${QT_QTNETWORK_LIBRARY_RELEASE} ${QT_QTXML_LIBRARY_RELEASE} ${QT_QTOPENGL_LIBRARY_RELEASE})
+        SET(MY_QT_LIBS ${QT_QTCORE_LIBRARY_RELEASE} ${QT_QTGUI_LIBRARY_RELEASE} ${QT_QTNETWORK_LIBRARY_RELEASE} ${QT_QTXML_LIBRARY_RELEASE})
     ENDIF()
 
     add_library(ftnoir-csv SHARED ${ftnoir-csv-c})
@@ -613,7 +613,6 @@ if(NOT SDK_FACEAPI_ONLY)
             "${qt-dirname}/QtCore4.dll"
             "${qt-dirname}/QtGui4.dll"
             "${qt-dirname}/QtNetwork4.dll"
-            "${qt-dirname}/QtOpenGL4.dll"
             "${qt-dirname}/QtSvg4.dll"
             "${qt-dirname}/QtXml4.dll"
             DESTINATION .

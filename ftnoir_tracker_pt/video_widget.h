@@ -8,42 +8,35 @@
 #ifndef VIDEOWIDGET_H
 #define VIDEOWIDGET_H
 
-#include <QGLWidget>
 #include <QTime>
 #include <opencv2/opencv.hpp>
 #include <memory>
 #include <QWidget>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QLabel>
+#include <QPainter>
 
 // ----------------------------------------------------------------------------
-class VideoWidget : public QGLWidget
+class VideoWidget : public QLabel
 {
 	Q_OBJECT
 
 public:
-    VideoWidget(QWidget *parent) : QGLWidget(parent), mtx() {
-#if !defined(_WIN32)
-        setAttribute(Qt::WA_NativeWindow, true);
-#endif
+    VideoWidget(QWidget *parent) : QLabel(parent), mtx() {
 	}
-
-	void initializeGL();
-	void resizeGL(int w, int h);
-	void paintGL();
-
     void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> > points);
-    void update();
+protected slots:
+    void paintEvent( QPaintEvent* e ) {
+        setPixmap(pixmap);
+        QLabel::paintEvent(e);
+    }
 
 private:
-	void resize_frame();
-
 	cv::Mat frame;
-	QImage qframe;
-	QImage resized_qframe;
     QMutex mtx;
-
     std::auto_ptr< std::vector<cv::Vec2f> > points;
+    QPixmap pixmap;
 };
 
 #endif // VIDEOWIDGET_H
