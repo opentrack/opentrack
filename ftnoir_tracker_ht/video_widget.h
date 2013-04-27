@@ -27,7 +27,7 @@ public:
     void update_image(unsigned char* frame, int width, int height);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
-        QMutexLocker((QMutex*)&mtx);
+        QMutexLocker foo(&mtx);
         QPainter painter(this);
         painter.drawPixmap(e->rect(), pixmap);
     }

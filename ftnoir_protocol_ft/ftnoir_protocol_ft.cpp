@@ -211,7 +211,7 @@ float headRotZ;
                 start_dummy();
             pMemData->GameID2 = pMemData->GameID;
             intGameID = pMemData->GameID;
-            QMutexLocker((QMutex*)&this->game_name_mutex);
+            QMutexLocker foo(&this->game_name_mutex);
             connected_game = gamename;
         }
 

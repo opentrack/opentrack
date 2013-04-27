@@ -29,7 +29,7 @@ public:
     void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> >);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
-        QMutexLocker((QMutex*)&mtx);
+        QMutexLocker foo(&mtx);
         QPainter painter(this);
         painter.drawPixmap(e->rect(), pixmap);
     }

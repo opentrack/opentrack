@@ -14,7 +14,7 @@ using namespace std;
 
 void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> >)
 {
-    QMutexLocker((QMutex*)&mtx);
+    QMutexLocker foo(&mtx);
 
     if (frame.channels() != 3 && frame.channels() != 1)
         return;
@@ -47,9 +47,6 @@ void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> >)
                 data[y * pitch + x * 3 + 2] = src[pos];
             }
     }
-    if (qframe.size() == size() || (qframe.width() <= this->width() && qframe.height() <= this->height())) {
-    }
-    else
-        qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
     pixmap = QPixmap::fromImage(qframe);
 }

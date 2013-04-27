@@ -111,9 +111,9 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 200;
     config->keypoint_quality = 5;
-    config->keypoint_distance = 2;
-    config->keypoint_3distance = 5;
-    config->keypoint_9distance = 12;
+    config->keypoint_distance = 1;
+    config->keypoint_3distance = 4;
+    config->keypoint_9distance = 8;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
