@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>698</height>
+    <width>628</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,13 +113,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="colorBezier">
           <color>
@@ -159,13 +159,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="colorBezier">
           <color>
@@ -197,13 +197,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -246,13 +246,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -287,13 +287,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -336,13 +336,13 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>180</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>3</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -372,18 +372,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -421,18 +421,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>340</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -462,18 +462,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -511,18 +511,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>340</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -552,18 +552,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -601,18 +601,18 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>340</y>
-           <width>595</width>
-           <height>260</height>
+           <width>555</width>
+           <height>160</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>60</number>
+          <number>100</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>200</number>
+          <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>9</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
@@ -654,7 +654,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>58</width>
+           <width>54</width>
            <height>0</height>
           </size>
          </property>
@@ -679,7 +679,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>58</width>
+           <width>54</width>
            <height>0</height>
           </size>
          </property>
