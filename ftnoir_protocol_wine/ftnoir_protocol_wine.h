@@ -63,7 +63,7 @@ private:
     QString connected_game;
     QMutex game_name_mutex;
     QString getGameName() {
-        QMutexLocker(&game_name_mutex);
+        QMutexLocker((QMutex*)&game_name_mutex);
         return connected_game;
     }
 };
