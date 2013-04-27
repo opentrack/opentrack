@@ -88,13 +88,13 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         }
 #endif
         if (bEnableYaw) {
-            data[RX] = newHeadPose[RX];
+            data[RX] = newHeadPose[RX] * 57.295781f;
         }
         if (bEnablePitch) {
-            data[RY] = newHeadPose[RY];
+            data[RY] = newHeadPose[RY] * 57.295781f;
         }
         if (bEnableRoll) {
-            data[RZ] = newHeadPose[RZ];
+            data[RZ] = newHeadPose[RZ] * 57.295781f;
         }
     }
 	return pHMD.GetPtr() != NULL;
