@@ -39,8 +39,6 @@ if(NOT SDK_FACEAPI_ONLY)
       endforeach()
     endmacro()
 
-    find_package(OpenGL REQUIRED)
-
     if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
         add_definitions(/D FTNOIR_FILTER_BASE_LIB /D FTNOIR_TRACKER_BASE_LIB /D FTNOIR_PROTOCOL_BASE_LIB /D_CRT_SECURE_NO_WARNINGS)
     else(MSVC)
@@ -317,7 +315,7 @@ endif()
     target_link_libraries(ftnoir-csv ${MY_QT_LIBS})
 
     add_library(ftnoir-pose-widget SHARED ${ftnoir-pose-widget-c} ${ftnoir-pose-widget-moc} ${ftnoir-pose-widget-rcc})
-    target_link_libraries(ftnoir-pose-widget ${MY_QT_LIBS} ${OPENGL_gl_LIBRARY})
+    target_link_libraries(ftnoir-pose-widget ${MY_QT_LIBS})
     add_library(ftnoir-spline-widget SHARED ${ftnoir-spline-widget-c} ${ftnoir-spline-widget-moc} ${MY_QT_LIBS} ${QT_QTDESIGNER_LIBRARY_RELEASE})
     target_link_libraries(ftnoir-spline-widget ${MY_QT_LIBS})
 
@@ -401,7 +399,7 @@ endif()
     endif()
 
     add_library(ftnoir-tracker-ht SHARED ${ftnoir-tracker-ht-c} ${ftnoir-tracker-ht-moc} ${ftnoir-tracker-ht-uih} ${ftnoir-tracker-ht-rcc})
-    target_link_libraries(ftnoir-tracker-ht ${MY_QT_LIBS} ${OPENGL_gl_LIBRARY} ftnoir-compat)
+    target_link_libraries(ftnoir-tracker-ht ${MY_QT_LIBS} ftnoir-compat)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(ftnoir-tracker-ht
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
@@ -422,7 +420,7 @@ endif()
 
     if(OpenCV_FOUND)
         add_library(ftnoir-tracker-pt SHARED ${ftnoir-tracker-pt-c} ${ftnoir-tracker-pt-moc} ${ftnoir-tracker-pt-uih} ${ftnoir-tracker-pt-rcc})
-        target_link_libraries(ftnoir-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS} ${OPENGL_gl_LIBRARY})
+        target_link_libraries(ftnoir-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS})
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(ftnoir-tracker-pt
                 PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
