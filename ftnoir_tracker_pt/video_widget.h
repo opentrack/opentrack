@@ -26,7 +26,7 @@ class VideoWidget : public QWidget
 public:
     VideoWidget(QWidget *parent) : QWidget(parent), mtx() {
 	}
-    void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> > points);
+    void update_image(cv::Mat frame, std::auto_ptr< std::vector<cv::Vec2f> >);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
         QMutexLocker((QMutex*)&mtx);
@@ -35,9 +35,7 @@ protected slots:
     }
 
 private:
-	cv::Mat frame;
     QMutex mtx;
-    std::auto_ptr< std::vector<cv::Vec2f> > points;
     QPixmap pixmap;
 };
 

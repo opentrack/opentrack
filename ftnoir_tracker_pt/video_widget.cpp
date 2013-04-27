@@ -12,39 +12,44 @@
 using namespace cv;
 using namespace std;
 
-void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> > points)
+void VideoWidget::update_image(Mat frame, std::auto_ptr< vector<Vec2f> >)
 {
     QMutexLocker((QMutex*)&mtx);
-	this->frame = frame;
-	this->points = points;
-    
-    QImage qframe;
 
-	// convert to QImage 
-	if (frame.channels() == 3)
-		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols * 3, QImage::Format_RGB888).rgbSwapped();
-	else if (frame.channels() == 1)
-		qframe = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.cols, QImage::Format_Indexed8).convertToFormat(QImage::Format_RGB888);
-    if (qframe.size() == size() || (qframe.width() <= width() && qframe.height() <= height()))
+    if (frame.channels() != 3 && frame.channels() != 1)
+        return;
+    
+    int width = frame.cols, height = frame.rows;
+    unsigned char* src = frame.data;
+    
+    QImage qframe(width, height, QImage::Format_RGB888);
+    if (frame.channels() == 3)
     {
-        ;;;
+        uchar* data = qframe.bits();
+        const int pitch = qframe.bytesPerLine();
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+            {
+                const int pos = 3 * (y*width + x);
+                data[y * pitch + x * 3 + 0] = src[pos + 2];
+                data[y * pitch + x * 3 + 1] = src[pos + 1];
+                data[y * pitch + x * 3 + 2] = src[pos + 0];
+            }
+    } else {
+        uchar* data = qframe.bits();
+        const int pitch = qframe.bytesPerLine();
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+            {
+                const int pos = (y*width + x);
+                data[y * pitch + x * 3 + 0] = src[pos];
+                data[y * pitch + x * 3 + 1] = src[pos];
+                data[y * pitch + x * 3 + 2] = src[pos];
+            }
+    }
+    if (qframe.size() == size() || (qframe.width() <= this->width() && qframe.height() <= this->height())) {
     }
     else
         qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    QPainter painter(&qframe);
-    painter.setPen(Qt::red);
-    painter.setBrush(Qt::red);
-    if (points.get() != NULL) {
-        const int crosshair_radius = 10;
-        for (vector<Vec2f>::iterator iter = points->begin();
-             iter != points->end();
-             ++iter)
-        {
-            int x = (*iter)[0];
-            int y = (*iter)[1];
-            painter.drawLine(QLine(x-crosshair_radius, y, x+crosshair_radius, y));
-            painter.drawLine(QLine(x, y-crosshair_radius, x, y+crosshair_radius));
-        }
-    }
     pixmap = QPixmap::fromImage(qframe);
 }
