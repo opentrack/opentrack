@@ -32,9 +32,11 @@ private:
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;
+#if 0
 	bool bEnableX;
 	bool bEnableY;
 	bool bEnableZ;
+#endif
     QMutex mutex;
 };
 
