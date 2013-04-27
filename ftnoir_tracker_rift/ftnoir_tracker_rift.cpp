@@ -15,9 +15,11 @@ Rift_Tracker::Rift_Tracker()
 	bEnableRoll = true;
 	bEnablePitch = true;
 	bEnableYaw = true;
+#if 0
 	bEnableX = true;
 	bEnableY = true;
 	bEnableZ = true;
+#endif
 	should_quit = false;
     for (int i = 0; i < 6; i++)
         newHeadPose[i] = 0;
@@ -116,9 +118,11 @@ void Rift_Tracker::loadSettings() {
 	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
 	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
 	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
+#if 0
 	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
 	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
 	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
+#endif
 	iniFile.endGroup ();
 }
 
