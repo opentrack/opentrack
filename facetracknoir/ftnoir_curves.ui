@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
+    <width>1050</width>
     <height>667</height>
    </rect>
   </property>
@@ -103,12 +103,12 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>rx</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="rxconfig">
+        <widget class="QFunctionConfigurator" name="rxconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>595</width>
+           <width>921</width>
            <height>240</height>
           </rect>
          </property>
@@ -119,16 +119,16 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>0</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -149,12 +149,12 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="rxconfig_alt">
+        <widget class="QFunctionConfigurator" name="rxconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>340</y>
-           <width>595</width>
+           <width>921</width>
            <height>240</height>
           </rect>
          </property>
@@ -165,16 +165,16 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>0</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -187,7 +187,7 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>ry</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="ryconfig">
+        <widget class="QFunctionConfigurator" name="ryconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -203,19 +203,19 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>255</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -236,7 +236,7 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="ryconfig_alt">
+        <widget class="QFunctionConfigurator" name="ryconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -252,19 +252,19 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>255</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -277,7 +277,7 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>rz</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="rzconfig">
+        <widget class="QFunctionConfigurator" name="rzconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -293,19 +293,19 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>0</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -326,7 +326,7 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="rzconfig_alt">
+        <widget class="QFunctionConfigurator" name="rzconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -342,19 +342,19 @@ color: rgb(255, 255, 255);
           <number>180</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>0</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -367,7 +367,7 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>tx</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="txconfig">
+        <widget class="QFunctionConfigurator" name="txconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -383,19 +383,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>0</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -416,7 +416,7 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="txconfig_alt">
+        <widget class="QFunctionConfigurator" name="txconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -432,19 +432,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>0</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -457,7 +457,7 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>ty</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="tyconfig">
+        <widget class="QFunctionConfigurator" name="tyconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -473,19 +473,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>255</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -506,7 +506,7 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="tyconfig_alt">
+        <widget class="QFunctionConfigurator" name="tyconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -522,19 +522,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
            <green>255</green>
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -547,7 +547,7 @@ color: rgb(255, 255, 255);
         <attribute name="title">
          <string>tz</string>
         </attribute>
-        <widget class="QFunctionConfigurator" name="tzconfig">
+        <widget class="QFunctionConfigurator" name="tzconfig" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -563,19 +563,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>255</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
@@ -596,7 +596,7 @@ color: rgb(255, 255, 255);
           <string>Use alternative</string>
          </property>
         </widget>
-        <widget class="QFunctionConfigurator" name="tzconfig_alt">
+        <widget class="QFunctionConfigurator" name="tzconfig_alt" native="true">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -612,19 +612,19 @@ color: rgb(255, 255, 255);
           <number>100</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
           <number>1</number>
          </property>
-         <property name="colorBezier">
+         <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
            <green>255</green>
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground">
+         <property name="colorBackground" stdset="0">
           <color>
            <red>200</red>
            <green>200</green>
