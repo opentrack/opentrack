@@ -113,18 +113,18 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->keypoint_quality = 2;
     config->keypoint_distance = 2;
     config->keypoint_3distance = 5;
-    config->keypoint_9distance = 10;
+    config->keypoint_9distance = 12;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 50;
-    config->ransac_max_reprojection_error = 3.75;
-    config->ransac_max_inlier_error = 3.8;
+    config->ransac_max_reprojection_error = 3.7;
+    config->ransac_max_inlier_error = 4;
     config->ransac_abs_max_mean_error = 8;
     config->ransac_max_mean_error = 3.8;
     config->debug = 1;
-    config->ransac_min_features = 0.84;
+    config->ransac_min_features = 0.86;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -262,7 +262,7 @@ bool Tracker::GiveHeadPoseData(double *data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-    *strToBeFilled = "HT 0.8";
+    *strToBeFilled = "HT 0.9";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
