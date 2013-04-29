@@ -120,7 +120,7 @@ void TrackerControls::doCancel() {
 void TrackerControls::loadSettings() {
 
 //	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -140,7 +140,7 @@ void TrackerControls::loadSettings() {
 // Save the current Settings to the currently 'active' INI-file.
 //
 void TrackerControls::save() {
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)

@@ -100,7 +100,7 @@ static resolution_tuple resolution_choices[] = {
 
 static void load_settings(ht_config_t* config, Tracker* tracker)
 {
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
+	QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
@@ -360,7 +360,7 @@ void TrackerControls::loadSettings()
 	QList<QString> names = get_camera_names();
 	names.prepend("Any available");
 	ui.cameraName->addItems(names);
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
+	QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 	iniFile.beginGroup( "HT-Tracker" );
@@ -412,7 +412,7 @@ void TrackerControls::loadSettings()
 
 void TrackerControls::save()
 {
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");
+	QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
