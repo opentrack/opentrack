@@ -56,7 +56,6 @@
 
 #include "ui_facetracknoir.h"
 #include "ui_ftnoir_keyboardshortcuts.h"
-#include "ui_ftnoir_preferences.h"
 #include "ui_ftnoir_curves.h"
 
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
@@ -128,9 +127,6 @@ public:
 #endif
 public slots:
         void shortcutRecentered();
-        void shortcutZero();
-        void shortcutStartStop();
-        void shortcutInhibit();
 
 private:
 	Ui::FaceTrackNoIRClass ui;
@@ -185,12 +181,6 @@ private:
 		void save();
 		void saveAs();
 		void exit();
-
-		//about menu
-		void openurl_support();
-		void openurl_donation();
-		void about();
-
 //		void setIcon(int index);
 		void iconActivated(QSystemTrayIcon::ActivationReason reason);
 		void profileSelected(int index);
@@ -205,7 +195,6 @@ private:
 
 		void showServerControls();
 		void showFilterControls();
-		void showPreferences();
 		void showKeyboardShortcuts();
 		void showCurveConfiguration();
 
@@ -235,33 +224,6 @@ private:
 
 };
 
-// Widget that has controls for FaceTrackNoIR Preferences.
-class PreferencesDialog: public QWidget, public Ui::UICPreferencesDialog
-{
-    Q_OBJECT
-public:
-
-	explicit PreferencesDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
-    virtual ~PreferencesDialog();
-	void showEvent ( QShowEvent * event );
-
-private:
-	Ui::UICPreferencesDialog ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FaceTrackNoIR *mainApp;
-
-private slots:
-	void doOK();
-	void doCancel();
-    void keyChanged( int index ) { settingsDirty = true; }
-    void keyChanged( bool foo ) { settingsDirty = true; }
-};
-
-// Widget that has controls for Keyboard shortcuts.
 class KeyboardShortcutDialog: public QWidget, public Ui::UICKeyboardShortcutDialog
 {
     Q_OBJECT
@@ -283,8 +245,8 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void keyChanged( int index ) { settingsDirty = true; };
-	void keyChanged( bool index ) { settingsDirty = true; };
+	void keyChanged( int index ) { settingsDirty = true; }
+	void keyChanged( bool index ) { settingsDirty = true; }
 };
 
 // Widget that has controls for Keyboard shortcuts.
