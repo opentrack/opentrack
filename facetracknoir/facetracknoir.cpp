@@ -414,7 +414,7 @@ void FaceTrackNoIR::open() {
 	// If a file was selected, save it's name and read it's contents.
 	//
 	if (! fileName.isEmpty() ) {
-		QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+		QSettings settings("opentrack");	// Registry settings (in HK_USER)
         settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
 		loadSettings();
     }
@@ -425,7 +425,7 @@ void FaceTrackNoIR::open() {
 //
 void FaceTrackNoIR::save() {
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -480,7 +480,7 @@ void FaceTrackNoIR::saveAs()
 	//
 	// Get the current filename of the INI-file.
 	//
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 
 	//
@@ -529,7 +529,7 @@ void FaceTrackNoIR::saveAs()
 void FaceTrackNoIR::loadSettings() {
     looping = true;
 	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
@@ -672,7 +672,7 @@ void FaceTrackNoIR::startTracker( ) {
         delete tracker;
     }
 
-    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -1230,7 +1230,7 @@ void FaceTrackNoIR::profileSelected(int index)
 	//
 	// Read the current INI-file setting, to get the folder in which it's located...
 	//
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
 
@@ -1248,7 +1248,7 @@ void FaceTrackNoIR::filterSelected(int index)
 {
 	settingsDirty = true;
 
-	//QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	//QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -1351,7 +1351,7 @@ void KeyboardShortcutDialog::doCancel() {
 
 void FaceTrackNoIR::bindKeyboardShortcuts()
 {
-    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -1484,7 +1484,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
 //
 void KeyboardShortcutDialog::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -1512,7 +1512,7 @@ void KeyboardShortcutDialog::save() {
 
 	qDebug() << "save() says: started";
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -1548,7 +1548,7 @@ QWidget( parent , f)
 
 	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 
     QFunctionConfigurator* configs[6] = {
@@ -1653,7 +1653,7 @@ void CurveConfigurationDialog::doCancel() {
 //
 void CurveConfigurationDialog::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -1698,7 +1698,7 @@ void CurveConfigurationDialog::save() {
 
 	qDebug() << "save() says: started";
 
-    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 
