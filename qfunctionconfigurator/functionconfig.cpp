@@ -6,6 +6,7 @@
  * notice appear in all copies.
  */
 
+#include <QMutexLocker>
 #include <QCoreApplication>
 #include <QPointF>
 #include <QList>
@@ -20,9 +21,9 @@
 //
 // Constructor with List of Points in argument.
 //
-FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput) :
-    _mutex(QMutex::Recursive)
+FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
 {
+    _mutex = new QMutex(QMutex::Recursive);
 	_title = title;
     _points = QList<QPointF>();
 	_data = 0;
@@ -38,18 +39,28 @@ FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
 	reload();
 }
 
+FunctionConfig::FunctionConfig() :
+    _tracking_active(false),
+    _max_Input(0),
+    _max_Output(0),
+    _data(0),
+    _mutex(0),
+    _size(0)
+{
+    _mutex = new QMutex();
+}
+
 //
 // Calculate the value of the function, given the input 'x'.
 // Used to draw the curve and, most importantly, to translate input to output.
 // The return-value is also stored internally, so the Widget can show the current value, when the Tracker is running.
 //
 float FunctionConfig::getValue(float x) {
+    QMutexLocker foo(_mutex);
     int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
-    _mutex.lock();
     float ret = getValueInternal(x2);
 	lastValueTracked.setX(x);
 	lastValueTracked.setY(ret);
-    _mutex.unlock();
 	return ret;
 }
 
@@ -57,11 +68,8 @@ float FunctionConfig::getValue(float x) {
 // The return-value is also stored internally, so the Widget can show the current value, when the Tracker is running.
 //
 bool FunctionConfig::getLastPoint(QPointF& point ) {
-
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
 	point = lastValueTracked;
-    _mutex.unlock();
-	
 	return _tracking_active;
 }
 
@@ -159,6 +167,8 @@ void FunctionConfig::reload() {
 FunctionConfig::~FunctionConfig() {
 	if (_data)
         delete[] _data;
+    if (_mutex)
+        delete _mutex;
 }
 
 //
@@ -166,13 +176,12 @@ FunctionConfig::~FunctionConfig() {
 // Used by the Widget.
 //
 void FunctionConfig::removePoint(int i) {
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
     if (i >= 0 && i < _points.size())
     {
         _points.removeAt(i);
         reload();
     }
-    _mutex.unlock();
 }
 
 //
@@ -180,10 +189,9 @@ void FunctionConfig::removePoint(int i) {
 // Used by the Widget and by loadSettings.
 //
 void FunctionConfig::addPoint(QPointF pt) {
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
 	_points.append(pt);
 	reload();
-    _mutex.unlock();
 }
 
 //
@@ -191,13 +199,12 @@ void FunctionConfig::addPoint(QPointF pt) {
 // Used by the Widget.
 //
 void FunctionConfig::movePoint(int idx, QPointF pt) {
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
     if (idx >= 0 && idx < _points.size())
     {
         _points[idx] = pt;
         reload();
     }
-    _mutex.unlock();
 }
 
 //
@@ -206,11 +213,10 @@ void FunctionConfig::movePoint(int idx, QPointF pt) {
 //
 QList<QPointF> FunctionConfig::getPoints() {
 	QList<QPointF> ret;
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
 	for (int i = 0; i < _points.size(); i++) {
 		ret.append(_points[i]);
 	}
-    _mutex.unlock();
 	return ret;
 }
 
@@ -219,6 +225,7 @@ QList<QPointF> FunctionConfig::getPoints() {
 // Settings for a specific Curve are loaded from their own Group in the INI-file.
 //
 void FunctionConfig::loadSettings(QSettings& settings) {
+    QMutexLocker foo(_mutex);
     QPointF newPoint;
 
 	QList<QPointF> points;
@@ -244,10 +251,8 @@ void FunctionConfig::loadSettings(QSettings& settings) {
 		points.append(newPoint);
 	}
     settings.endGroup();
-    _mutex.lock();
 	_points = points;
 	reload();
-    _mutex.unlock();
 }
 
 //
@@ -256,7 +261,7 @@ void FunctionConfig::loadSettings(QSettings& settings) {
 // The number of Points is also saved, to make loading more convenient.
 //
 void FunctionConfig::saveSettings(QSettings& settings) {
-    _mutex.lock();
+    QMutexLocker foo(_mutex);
 	settings.beginGroup(QString("Curves-%1").arg(_title));
 	int max = _points.size();
 	settings.setValue("point-count", max);
@@ -274,5 +279,4 @@ void FunctionConfig::saveSettings(QSettings& settings) {
         settings.remove(QString("point-%1-y").arg(i));
     }
 	settings.endGroup();
-    _mutex.unlock();
 }

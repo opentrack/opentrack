@@ -63,6 +63,7 @@
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 
 #include "global-settings.h"
+#include "tracker.h"
 
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
@@ -116,6 +117,10 @@ public:
     DynamicLibrary* current_filter() {
         return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
     }
+    THeadPoseDOF& axis(int idx) {
+        return *pose.axes[idx];
+    }
+
 #if defined(_WIN32) || defined(__WIN32)
     Key keyCenter, keyZero, keyStartStop, keyInhibit;
     KeybindingWorker* keybindingWorker;
@@ -129,6 +134,7 @@ public slots:
         void shortcutRecentered();
 
 private:
+    HeadPoseData pose;
 	Ui::FaceTrackNoIRClass ui;
 	QTimer timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
@@ -207,7 +213,7 @@ private:
 
 };
 
-class KeyboardShortcutDialog: public QWidget, public Ui::UICKeyboardShortcutDialog
+class KeyboardShortcutDialog: public QWidget
 {
     Q_OBJECT
 public:
@@ -233,7 +239,7 @@ private slots:
 };
 
 // Widget that has controls for Keyboard shortcuts.
-class CurveConfigurationDialog: public QWidget, public Ui::UICCurveConfigurationDialog
+class CurveConfigurationDialog: public QWidget
 {
     Q_OBJECT
 public:

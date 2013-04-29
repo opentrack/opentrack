@@ -194,7 +194,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
     looping(false),
     timUpdateHeadPose(this)
 {	
-    GlobalPose = new HeadPoseData();
+    ui.setupUi(this);
 	cameraDetected = false;
 
 	//
@@ -227,8 +227,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 
 /** sets up all objects and connections to buttons */
 void FaceTrackNoIR::setupFaceTrackNoIR() {
-    ui.setupUi(this);
-
     // if we simply place a global variable with THeadPoseData,
     // it gets initialized and pulls in QSettings before
     // main() starts. program can and will crash.
@@ -650,8 +648,8 @@ void FaceTrackNoIR::startTracker( ) {
 
     for (int i = 0; i < 6; i++)
     {
-        GlobalPose->axes[i].curvePtr->loadSettings(iniFile);
-        GlobalPose->axes[i].curvePtrAlt->loadSettings(iniFile);
+        axis(i).curve.loadSettings(iniFile);
+        axis(i).curveAlt.loadSettings(iniFile);
     }
 
     static const char* names[] = {
@@ -675,8 +673,8 @@ void FaceTrackNoIR::startTracker( ) {
     iniFile.beginGroup("Tracking");
 
     for (int i = 0; i < 6; i++) {
-        GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
-        GlobalPose->axes[i].invert = iniFile.value(invert_names[i], false).toBool() ? 1 : -1;
+        axis(i).altp = iniFile.value(names[i], false).toBool();
+        axis(i).invert = iniFile.value(invert_names[i], false).toBool() ? 1 : -1;
     }
 
     iniFile.endGroup();
@@ -1483,8 +1481,8 @@ QWidget( parent , f)
     
     for (int i = 0; i < 6; i++)
     {
-        configs[i]->setConfig(GlobalPose->axes[i].curvePtr, currentFile);
-        alt_configs[i]->setConfig(GlobalPose->axes[i].curvePtrAlt, currentFile);
+        configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
+        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
         connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
         connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
         connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
@@ -1575,7 +1573,7 @@ void CurveConfigurationDialog::loadSettings() {
     iniFile.beginGroup("Tracking");
 
     for (int i = 0; i < 6; i++)
-        GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
+        mainApp->axis(i).altp = iniFile.value(names[i], false).toBool();
 
     QCheckBox* widgets[] = {
         ui.tx_altp,
@@ -1587,7 +1585,7 @@ void CurveConfigurationDialog::loadSettings() {
     };
 
     for (int i = 0; i < 6; i++)
-        widgets[i]->setChecked(GlobalPose->axes[i].altp);
+        widgets[i]->setChecked(mainApp->axis(i).altp);
 
     QDoubleSpinBox* widgets2[] = {
         ui.pos_tx,
