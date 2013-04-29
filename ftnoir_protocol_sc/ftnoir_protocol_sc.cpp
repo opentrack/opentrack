@@ -169,7 +169,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
         char full_path[2048];
         QByteArray foo = QCoreApplication::applicationDirPath().toLatin1();
         strcpy(full_path, foo.constData());
-        strcat(full_path, "/ftnoir-proto-simconnect.dll");
+        strcat(full_path, "/opentrack-proto-simconnect.dll");
 
         act.lpSource = full_path;
         act.lpResourceName = MAKEINTRESOURCEA(101);
