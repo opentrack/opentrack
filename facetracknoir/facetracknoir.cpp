@@ -187,10 +187,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 #if defined(__WIN32) || defined(_WIN32)
     keybindingWorker(NULL),
 #endif
-    keyCenter(),
-    keyZero(),
-    keyStartStop(),
-    keyInhibit(),
     looping(false),
     timUpdateHeadPose(this)
 {	
@@ -200,7 +196,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	//
 	// Initialize Widget handles, to prevent memory-access errors.
 	//
-	_keyboard_shortcuts = 0;
 	_keyboard_shortcuts = 0;
 	_curve_config = 0;
 
