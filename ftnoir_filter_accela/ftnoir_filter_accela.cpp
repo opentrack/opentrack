@@ -137,7 +137,7 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 //                Win32 API function.
 //   _GetFilter@0  - Common name decoration for __stdcall functions in C language.
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
+extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
 {
-    return (IFilter*) new FTNoIR_Filter;
+    return new FTNoIR_Filter;
 }

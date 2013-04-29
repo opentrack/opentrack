@@ -216,7 +216,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 //   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
 //#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor(void)
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT FTNoIR_Protocol* CALLING_CONVENTION GetConstructor(void)
 {
-    return (FTNoIR_Protocol*) new FTNoIR_Protocol;
+    return new FTNoIR_Protocol;
 }

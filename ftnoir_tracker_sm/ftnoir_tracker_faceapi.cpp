@@ -167,7 +167,7 @@ void FTNoIR_Tracker::loadSettings() {
 //   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
 //#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
+extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
-	return (ITracker*) new FTNoIR_Tracker;
+	return new FTNoIR_Tracker;
 }
