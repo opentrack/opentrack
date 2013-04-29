@@ -2075,6 +2075,6 @@ void FaceTrackNoIR::shortcutInhibit()
 {
     if (tracker)
     {
-        tracker->do_inhibit = true;
+        tracker->do_inhibit = !tracker->do_inhibit;
     }
 }
