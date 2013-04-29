@@ -123,12 +123,14 @@ public:
         }
         headPos = 0.0f;
         invert = 1;
+        zero = 0;
     }
 	float headPos;					// Current position (from faceTracker, radials or meters)
     float invert;					// Invert measured value (= 1.0f or -1.0f)
 	FunctionConfig* curvePtr;		// Function to translate input -> output
 	FunctionConfig* curvePtrAlt;
     bool altp;
+    float zero;
 };
 
 class Tracker : public QThread {
@@ -152,8 +154,6 @@ public:
     void getHeadPose(double *data);				// Return the current headpose data
     void getOutputHeadPose(double *data);			// Return the current (processed) headpose data
 
-    float getDegreesFromRads ( float rads ) { return (rads * 57.295781f); }
-    float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
     volatile bool should_quit;
     // following are now protected by hTrackMutex
     volatile bool do_center;							// Center head-position, using the shortkey
