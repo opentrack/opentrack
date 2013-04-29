@@ -140,8 +140,6 @@ private:
     IFilterDialog* pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
 	/** Widget variables **/
-	QVBoxLayout *l;
-	QWidget *_preferences;
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
 

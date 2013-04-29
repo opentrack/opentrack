@@ -206,8 +206,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	_curve_config = 0;
 
 	tracker = 0;
-//	_display = 0;
-	l = 0;
 	trayIcon = 0;
 
 	setupFaceTrackNoIR();
@@ -1056,7 +1054,7 @@ void FaceTrackNoIR::createIconGroupBox()
 	QDir settingsDir( QCoreApplication::applicationDirPath() );
 
     {
-        QStringList protocols = settingsDir.entryList( QStringList() << (LIB_PREFIX "ftnoir-proto-*." SONAME), QDir::Files, QDir::Name );
+        QStringList protocols = settingsDir.entryList( QStringList() << (LIB_PREFIX "opentrack-proto-*." SONAME), QDir::Files, QDir::Name );
         for ( int i = 0; i < protocols.size(); i++) {
             QIcon icon;
             QString longName;
@@ -1080,7 +1078,7 @@ void FaceTrackNoIR::createIconGroupBox()
 
     {
         ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
-        QStringList trackers = settingsDir.entryList( QStringList() << (LIB_PREFIX "ftnoir-tracker-*." SONAME), QDir::Files, QDir::Name );
+        QStringList trackers = settingsDir.entryList( QStringList() << (LIB_PREFIX "opentrack-tracker-*." SONAME), QDir::Files, QDir::Name );
         for ( int i = 0; i < trackers.size(); i++) {
             QIcon icon;
             QString longName;
@@ -1106,7 +1104,7 @@ void FaceTrackNoIR::createIconGroupBox()
     {
         dlopen_filters.push_back((DynamicLibrary*) NULL);
         ui.iconcomboFilter->addItem(QIcon(), "None");
-        QStringList filters = settingsDir.entryList( QStringList() << (LIB_PREFIX "ftnoir-filter-*." SONAME), QDir::Files, QDir::Name );
+        QStringList filters = settingsDir.entryList( QStringList() << (LIB_PREFIX "opentrack-filter-*." SONAME), QDir::Files, QDir::Name );
         for ( int i = 0; i < filters.size(); i++) {
             QIcon icon;
             QString fullName;
