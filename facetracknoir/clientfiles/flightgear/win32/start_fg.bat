@@ -1,1 +1,0 @@
-fgfs --generic=socket,in,25,localhost,5550,udp,headtracker --generic=socket,out,10,localhost,5551,udp,headtracker --prop:browser=/sim/headtracker "c:\Program Files\FlightGear\data\Nasal\headtracker.xml"
