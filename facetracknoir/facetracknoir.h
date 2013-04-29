@@ -142,21 +142,8 @@ private:
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
 
-	/** QT objects **/
-	QDialog aboutDialog;	
-	QDesktopWidget desktop;
-
-    QAction *minimizeAction;
-    QAction *restoreAction;
-    QAction *quitAction;
-
-    QSystemTrayIcon *trayIcon;
-    QMenu *trayIconMenu;
-
 	void createIconGroupBox();
 //	void createMessageGroupBox();
-	void createActions();
-	void createTrayIcon();
 
 	/** helper **/
 	bool cameraDetected;
@@ -179,7 +166,6 @@ private:
 		void saveAs();
 		void exit();
 //		void setIcon(int index);
-		void iconActivated(QSystemTrayIcon::ActivationReason reason);
 		void profileSelected(int index);
 		void protocolSelected(int index);
 		void filterSelected(int index);

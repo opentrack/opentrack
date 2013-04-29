@@ -184,8 +184,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-    trayIcon(NULL),
-    trayIconMenu(NULL),
 #if defined(__WIN32) || defined(_WIN32)
     keybindingWorker(NULL),
 #endif
@@ -207,7 +205,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	_curve_config = 0;
 
 	tracker = 0;
-	trayIcon = 0;
 
 	setupFaceTrackNoIR();
 
@@ -281,17 +278,9 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	
 	//Create the system-tray and connect the events for that.
 	createIconGroupBox();
-	createActions();
-	createTrayIcon();
 
-    if (trayIcon)
-        connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
-	//Load the tracker-settings, from the INI-file
+    //Load the tracker-settings, from the INI-file
 	loadSettings();
-
-    if (trayIcon)
-        trayIcon->show();
 
 	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
 	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
@@ -1123,62 +1112,6 @@ void FaceTrackNoIR::createIconGroupBox()
 }
 
 //
-// Create the Actions in the System tray and connect them to Application events
-//
-void FaceTrackNoIR::createActions()
-{
-    minimizeAction = new QAction(tr("Mi&nimize FaceTrackNoIR"), this);
-    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-
-    //maximizeAction = new QAction(tr("Ma&ximize"), this);
-    //connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-
-    restoreAction = new QAction(tr("&Restore FaceTrackNoIR"), this);
-    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-
-    quitAction = new QAction(tr("&Quit FaceTrackNoIR"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-}
-
-//
-// Create the SystemTray and set the default Icon
-//
-void FaceTrackNoIR::createTrayIcon()
-{
-	if (QSystemTrayIcon::isSystemTrayAvailable()) {
-		trayIconMenu = new QMenu(this);
-		trayIconMenu->addAction(minimizeAction);
-		trayIconMenu->addAction(restoreAction);
-		trayIconMenu->addSeparator();
-		trayIconMenu->addAction(quitAction);
-
-		trayIcon = new QSystemTrayIcon(this);
-		trayIcon->setContextMenu(trayIconMenu);
-
-        //trayIcon->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/images/FaceTrackNoIR.png"));
-	}
-}
-
-//
-// Handle SystemTray events
-//
-void FaceTrackNoIR::iconActivated(QSystemTrayIcon::ActivationReason reason)
-{
-     switch (reason) {
-     case QSystemTrayIcon::Trigger:
-     case QSystemTrayIcon::DoubleClick:
-         //ui.iconcomboProtocol->setCurrentIndex((ui.iconcomboProtocol->currentIndex() + 1)
-         //                              % ui.iconcomboProtocol->count());
-         break;
-     ////case QSystemTrayIcon::MiddleClick:
-     ////    showMessage();
-     ////    break;
-     default:
-         ;
-     }
- }
-
-//
 // Handle changes of the Protocol selection
 //
 void FaceTrackNoIR::protocolSelected(int index)
@@ -1186,17 +1119,6 @@ void FaceTrackNoIR::protocolSelected(int index)
 	settingsDirty = true;
 	ui.btnShowServerControls->setEnabled ( true );
 
-	//
-	// Set the Icon for the tray and update the Icon for the Settings button.
-	//
-	QIcon icon = ui.iconcomboProtocol->itemIcon(index);
-	if (trayIcon != 0) {
-		trayIcon->setIcon(icon);
-	    trayIcon->setToolTip(ui.iconcomboProtocol->itemText(index));
-		trayIcon->show();
-        QApplication::sendPostedEvents(trayIcon, QEventLoop::AllEvents);
-        trayIcon->showMessage( "FaceTrackNoIR", ui.iconcomboProtocol->itemText(index));
-	}
     //setWindowIcon(QIcon(":/images/FaceTrackNoIR.png"));
     //breaks with transparency -sh
     //ui.btnShowServerControls->setIcon(icon);]
