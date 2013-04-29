@@ -193,8 +193,8 @@ void Tracker::paint_widget() {
 
 bool Tracker::GiveHeadPoseData(double *data)
 {
-	const float rad2deg = 180.0/3.14159265;
-	const float deg2rad = 1.0/rad2deg;
+	const double rad2deg = 180.0/3.14159265;
+	const double deg2rad = 1.0/rad2deg;
 	{
 		QMutexLocker lock(&mutex);
 
@@ -233,7 +233,7 @@ bool Tracker::GiveHeadPoseData(double *data)
 		R = R_RG * R * R_RG.t();
 
 		// extract rotation angles
-		float alpha, beta, gamma;
+		double alpha, beta, gamma;
 		//beta = atan2( -R(2,0), sqrt(R(0,0)*R(0,0) + R(1,0)*R(1,0)) );
 		beta = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
 		alpha = atan2( R(1,0), R(0,0));
