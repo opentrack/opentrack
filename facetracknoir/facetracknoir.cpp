@@ -193,7 +193,8 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
     keyZero(),
     keyStartStop(),
     keyInhibit(),
-    looping(false)
+    looping(false),
+    timUpdateHeadPose(this)
 {	
     GlobalPose = new HeadPoseData();
 	cameraDetected = false;
@@ -297,13 +298,8 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
-	//Setup the timer for automatically minimizing after StartTracker.
-	timMinimizeFTN = new QTimer(this);
-    connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
-
 	//Setup the timer for showing the headpose.
-	timUpdateHeadPose = new QTimer(this);
-    connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
 	ui.txtTracking->setVisible(false);
     settingsDirty = false;
 }
@@ -752,7 +748,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
-    timUpdateHeadPose->start(40);
+    timUpdateHeadPose.start(40);
 
 	ui.lblX->setVisible(true);
 	ui.lblY->setVisible(true);
@@ -784,7 +780,7 @@ void FaceTrackNoIR::stopTracker( ) {
 	//
 	// Stop displaying the head-pose.
 	//
-	timUpdateHeadPose->stop();
+	timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
 
 	ui.lblX->setVisible(false);
@@ -847,11 +843,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.btnSave->setEnabled ( true );
 	ui.btnSaveAs->setEnabled ( true );
 	ui.btnShowFilterControls->setEnabled ( true );
-
-	//
-	// Stop the timer, so it won't go off again...
-	//
-	timMinimizeFTN->stop();
 }
 
 /** set the invert from the checkbox **/
