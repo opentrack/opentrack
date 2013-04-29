@@ -237,25 +237,12 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	ui.video_frame->hide();
 
 	// menu objects will be connected with the functions in FaceTrackNoIR class
-	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(open()));
 	connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
-	connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(save()));
 	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
-	connect(ui.actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
 	connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
-	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(exit()));
 
-	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
-	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
 	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
 	connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
-
-	connect(ui.actionSupport, SIGNAL(triggered()), this, SLOT(openurl_support()));
-	connect(ui.actionYour_Support, SIGNAL(triggered()), this, SLOT(openurl_donation()));
-	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-
-	connect(ui.actionVideoWidget, SIGNAL(triggered()), this, SLOT(showVideoWidget()));
-	connect(ui.actionHeadPoseWidget, SIGNAL(triggered()), this, SLOT(showHeadPoseWidget()));
 	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
 	connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
 	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
