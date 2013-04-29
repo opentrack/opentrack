@@ -103,6 +103,8 @@ extern HeadPoseData* GlobalPose;
 class THeadPoseDOF {
 public:
     THeadPoseDOF(QString primary = "", QString secondary= "", int maxInput1 = 50, int maxOutput1 = 180, int maxInput2 = 50, int maxOutput2 = 90) {
+        curvePtr = NULL;
+        curvePtrAlt = NULL;
         QSettings settings("opentrack");							// Registry settings (in HK_USER)
         QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
         QSettings iniFile( currentFile, QSettings::IniFormat );								// Application settings (in INI-file)
@@ -131,6 +133,12 @@ public:
 	FunctionConfig* curvePtrAlt;
     bool altp;
     float zero;
+    ~THeadPoseDOF() {
+        if (curvePtr)
+            delete curvePtr;
+        if (curvePtrAlt)
+            delete curvePtrAlt;
+    }
 };
 
 class Tracker : public QThread {
