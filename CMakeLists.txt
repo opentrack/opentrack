@@ -16,7 +16,8 @@ endif()
 
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
-	SET(SDK_RIFT "" CACHE PATH "libOVR path")
+    SET(SDK_RIFT "" CACHE PATH "libOVR path")
+    SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
 ENDIF()
 
 file(GLOB opentrack-faceapi-wrapper-c "faceapi/*.cpp")
@@ -210,6 +211,14 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(opentrack-proto-simconnect-uih ${opentrack-proto-simconnect-ui})
     QT4_ADD_RESOURCES(opentrack-proto-simconnect-rcc ${opentrack-proto-simconnect-rc})
 
+    file(GLOB opentrack-proto-vjoy-c "ftnoir_protocol_vjoy/*.cpp")
+    file(GLOB opentrack-proto-vjoy-h "ftnoir_protocol_vjoy/*.h")
+    QT4_WRAP_CPP(opentrack-proto-vjoy-moc ${opentrack-proto-vjoy-h})
+    file(GLOB opentrack-proto-vjoy-ui "ftnoir_protocol_vjoy/*.ui")
+    file(GLOB opentrack-proto-vjoy-rc "ftnoir_protocol_vjoy/*.qrc")
+    QT4_WRAP_UI(opentrack-proto-vjoy-uih ${opentrack-proto-vjoy-ui})
+    QT4_ADD_RESOURCES(opentrack-proto-vjoy-rcc ${opentrack-proto-vjoy-rc})
+
 # trackers
 
     file(GLOB opentrack-tracker-ht-c "ftnoir_tracker_ht/*.cpp")
@@ -340,6 +349,16 @@ endif()
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(opentrack-proto-fgfs
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+    endif()
+
+    if(WIN32 AND SDK_VJOY)
+        include_directories(${SDK_VJOY})
+        add_library(opentrack-proto-vjoy SHARED ${opentrack-proto-vjoy-c} ${opentrack-proto-vjoy-moc} ${opentrack-proto-vjoy-uih} ${opentrack-proto-vjoy-rcc})
+        target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/vjoy.lib")
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(opentrack-proto-vjoy
+                          PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
     endif()
 
     if(WIN32)
@@ -546,6 +565,14 @@ if(NOT SDK_FACEAPI_ONLY)
             LIBRARY DESTINATION .
             NAMELINK_SKIP
     )
+
+    if(SDK_VJOY)
+        install(TARGETS opentrack-proto-vjoy
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+            NAMELINK_SKIP)
+        install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
+    endif()
 
     if(SDK_HILLCREST)
         install(
