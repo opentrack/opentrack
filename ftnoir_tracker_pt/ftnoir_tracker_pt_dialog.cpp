@@ -331,7 +331,7 @@ void TrackerDialog::unRegisterTracker()
 //-----------------------------------------------------------------------------
 //#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
+extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
-    return (ITrackerDialog*) new TrackerDialog;
+    return new TrackerDialog;
 }

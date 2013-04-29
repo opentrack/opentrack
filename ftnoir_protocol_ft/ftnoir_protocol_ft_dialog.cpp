@@ -227,7 +227,7 @@ void FTControls::selectDLL() {
 //   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
 //                          Win32 API function.
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
-    return (IProtocolDialog*) new FTControls;
+    return new FTControls;
 }

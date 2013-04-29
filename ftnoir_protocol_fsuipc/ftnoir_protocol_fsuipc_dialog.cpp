@@ -192,7 +192,7 @@ void FSUIPCControls::getLocationOfDLL()
 //   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
 //#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog(void)
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog(void)
 {
-    return (IProtocolDialog*) new FSUIPCControls;
+    return new FSUIPCControls;
 }
