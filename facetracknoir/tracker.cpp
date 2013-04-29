@@ -68,8 +68,6 @@
 #include "tracker.h"
 #include "facetracknoir.h"
 
-HeadPoseData* GlobalPose = NULL;
-
 /** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
     confid(false),
@@ -89,14 +87,14 @@ Tracker::~Tracker()
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     bool altp = (pos < 0) && axis.altp;
     if (altp) {
-        out = axis.invert * axis.curvePtrAlt->getValue(pos);
-        axis.curvePtr->setTrackingActive( false );
-        axis.curvePtrAlt->setTrackingActive( true );
+        out = axis.invert * axis.curveAlt.getValue(pos);
+        axis.curve.setTrackingActive( false );
+        axis.curveAlt.setTrackingActive( true );
     }
     else {
-        out = axis.invert * axis.curvePtr->getValue(pos);
-        axis.curvePtr->setTrackingActive( true );
-        axis.curvePtrAlt->setTrackingActive( false );
+        out = axis.invert * axis.curve.getValue(pos);
+        axis.curve.setTrackingActive( true );
+        axis.curveAlt.setTrackingActive( false );
     }
     out += axis.zero;
 }
@@ -141,7 +139,7 @@ void Tracker::run() {
 
         if ( confid ) {
             for (int i = 0; i < 6; i++)
-                GlobalPose->axes[i].headPos = newpose[i];
+                mainApp->axis(i).headPos = newpose[i];
         }
 
         //
@@ -153,7 +151,7 @@ void Tracker::run() {
             //
             if (confid) {
                 for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = GlobalPose->axes[i].headPos;
+                    offset_camera.axes[i] = mainApp->axis(i).headPos;
             }
 
             Tracker::do_center = false;
@@ -166,7 +164,7 @@ void Tracker::run() {
         if (getTrackingActive()) {
             // get values
             for (int i = 0; i < 6; i++)
-                target_camera.axes[i] = GlobalPose->axes[i].headPos;
+                target_camera.axes[i] = mainApp->axis(i).headPos;
 
             // do the centering
             target_camera = target_camera - offset_camera;
@@ -184,7 +182,7 @@ void Tracker::run() {
             }
 
             for (int i = 0; i < 6; i++) {
-                get_curve(new_camera.axes[i], output_camera.axes[i], GlobalPose->axes[i]);
+                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
             }
 
             //
@@ -202,8 +200,8 @@ void Tracker::run() {
 
     for (int i = 0; i < 6; i++)
     {
-        GlobalPose->axes[i].curvePtr->setTrackingActive(false);
-        GlobalPose->axes[i].curvePtrAlt->setTrackingActive(false);
+        mainApp->axis(i).curve.setTrackingActive(false);
+        mainApp->axis(i).curveAlt.setTrackingActive(false);
     }
 }
 
@@ -213,7 +211,7 @@ void Tracker::run() {
 void Tracker::getHeadPose( double *data ) {
     for (int i = 0; i < 6; i++)
     {
-        data[i] = GlobalPose->axes[i].headPos;
+        data[i] = mainApp->axis(i).headPos;
     }
 }
 
@@ -249,9 +247,9 @@ void Tracker::loadSettings() {
     };
     
     for (int i = 0; i < 6; i++)
-        GlobalPose->axes[i].zero = iniFile.value(names2[i], 0).toDouble();
+        mainApp->axis(i).zero = iniFile.value(names2[i], 0).toDouble();
     
     iniFile.endGroup();
 }
 
-void Tracker::setInvertAxis(Axis axis, bool invert) { GlobalPose->axes[axis].invert = invert?-1.0f:1.0f; }
+void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert?-1.0f:1.0f; }

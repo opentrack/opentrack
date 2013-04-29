@@ -20,7 +20,7 @@
 
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
-    QMutex _mutex;
+    QMutex* _mutex;
 	QList<QPointF> _points;
 	void reload();
     float* _data;
@@ -31,11 +31,12 @@ private:
     volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
-
+    FunctionConfig(const FunctionConfig&) {}
 public:
 	//
 	// Contructor(s) and destructor
 	//
+    FunctionConfig();
     FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
 	virtual ~FunctionConfig();
 
