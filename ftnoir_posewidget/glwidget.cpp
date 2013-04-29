@@ -26,7 +26,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
     QWidget::paintEvent(event);
     QPainter p(this);
     project_quad_texture();
-    p.drawPixmap(event->rect(), pixmap);
+    p.drawPixmap(event->rect(), pixmap, event->rect());
 }
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
@@ -103,7 +103,7 @@ static __inline Vec3f cross(const Vec3f& p1, const Vec3f& p2)
 }
 
 void GLWidget::project_quad_texture() {
-    const int sx = 90, sy = 90;
+    const int sx = width(), sy = height();
     Point pt[4];
     static Vec3f corners[] = {
         Vec3f(0, 0, 0),
