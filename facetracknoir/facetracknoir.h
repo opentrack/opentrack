@@ -130,8 +130,7 @@ public slots:
 
 private:
 	Ui::FaceTrackNoIRClass ui;
-	QTimer *timMinimizeFTN;						// Timer to Auto-minimize
-	QTimer *timUpdateHeadPose;					// Timer to display headpose
+	QTimer timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
     ITrackerDialog* pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
