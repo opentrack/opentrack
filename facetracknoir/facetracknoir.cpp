@@ -539,7 +539,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "FaceTrackNoIR (1.8 pre-alpha) - " + pathInfo.fileName() );
+    setWindowTitle ( "opentrack (1.8 alpha) - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -573,7 +573,6 @@ void FaceTrackNoIR::loadSettings() {
 	ui.chkInvertZ->setChecked (iniFile.value ( "invertZ", 0 ).toBool());
 	iniFile.endGroup ();
 
-	//
 	// Read the currently selected Protocol from the INI-file.
 	// If the setting "DLL" isn't found (pre-1.7 version of INI), then the setting 'Selection' is evaluated.
 	//

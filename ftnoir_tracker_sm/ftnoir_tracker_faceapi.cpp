@@ -65,7 +65,7 @@ void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
     // XXX TODO isolate it into separate directory
     faceAPI = new QProcess();
     faceAPI->setWorkingDirectory(QCoreApplication::applicationDirPath() + "/faceapi");
-    faceAPI->start("\"" + QCoreApplication::applicationDirPath() + "/faceapi/ftnoir-faceapi-wrapper" + "\"");
+    faceAPI->start("\"" + QCoreApplication::applicationDirPath() + "/faceapi/opentrack-faceapi-wrapper" + "\"");
     // Show the video widget
     qDebug() << "FTNoIR_Tracker::Initialize says: videoframe = " << videoframe;
 
