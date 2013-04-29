@@ -3,12 +3,10 @@
         <file>uielements/tools.png</file>
         <file>images/settings16.png</file>
         <file>images/settingsopen16.png</file>
-        <file>uielements/donate.png</file>
         <file>uielements/curves.png</file>
         <file>images/rotation_dofs.png</file>
         <file>images/translation_dofs.png</file>
         <file>images/330px-6dof_en.png</file>
         <file>images/facetracknoir.png</file>
-        <file>uielements/aboutfacetracknoir.png</file>
     </qresource>
 </RCC>

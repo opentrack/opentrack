@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>890</width>
-    <height>431</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,13 +23,13 @@
   <property name="minimumSize">
    <size>
     <width>890</width>
-    <height>431</height>
+    <height>400</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>890</width>
-    <height>431</height>
+    <height>410</height>
    </size>
   </property>
   <property name="contextMenuPolicy">
@@ -39,7 +39,7 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
+   <iconset resource="main-facetracknoir.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -1450,7 +1450,7 @@ background:none;</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>50</y>
+       <y>20</y>
        <width>231</width>
        <height>169</height>
       </rect>
@@ -1698,23 +1698,6 @@ color: rgb(0, 255, 0);</string>
        <string>Tracking</string>
       </property>
      </widget>
-     <widget class="QLabel" name="txtAxisReverse">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>30</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color: rgb(0, 255, 0);</string>
-      </property>
-      <property name="text">
-       <string>Axis Reverse</string>
-      </property>
-     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="widget4logo" native="true">
@@ -1738,41 +1721,11 @@ color: rgb(0, 255, 0);</string>
       <height>90</height>
      </size>
     </property>
-    <widget class="QPushButton" name="btnDonate">
-     <property name="geometry">
-      <rect>
-       <x>5</x>
-       <y>0</y>
-       <width>151</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="toolTip">
-      <string>Please help us: make gaming fun...</string>
-     </property>
-     <property name="text">
-      <string>Click here to 
-Support FaceTrackNoIR!</string>
-     </property>
-     <property name="icon">
-      <iconset resource="main-facetracknoir.qrc">
-       <normaloff>:/uielements/donate.png</normaloff>:/uielements/donate.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>18</width>
-       <height>18</height>
-      </size>
-     </property>
-    </widget>
     <widget class="QLCDNumber" name="lcdNumOutputRotX">
      <property name="geometry">
       <rect>
        <x>101</x>
-       <y>30</y>
+       <y>19</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1800,7 +1753,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>101</x>
-       <y>48</y>
+       <y>37</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1828,7 +1781,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>101</x>
-       <y>66</y>
+       <y>55</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1856,7 +1809,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>17</x>
-       <y>30</y>
+       <y>19</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1884,7 +1837,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>17</x>
-       <y>48</y>
+       <y>37</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1912,7 +1865,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>17</x>
-       <y>66</y>
+       <y>55</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -1940,7 +1893,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>9</x>
-       <y>31</y>
+       <y>20</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1956,7 +1909,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>51</y>
+       <y>40</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1972,7 +1925,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
+       <y>59</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1988,7 +1941,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>69</x>
-       <y>70</y>
+       <y>59</y>
        <width>20</width>
        <height>16</height>
       </rect>
@@ -2004,7 +1957,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>71</x>
-       <y>31</y>
+       <y>20</y>
        <width>20</width>
        <height>16</height>
       </rect>
@@ -2020,7 +1973,7 @@ Support FaceTrackNoIR!</string>
      <property name="geometry">
       <rect>
        <x>69</x>
-       <y>51</y>
+       <y>40</y>
        <width>25</width>
        <height>16</height>
       </rect>
@@ -2055,57 +2008,6 @@ Support FaceTrackNoIR!</string>
      </size>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>890</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">b</string>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-    <addaction name="actionVideoWidget"/>
-   </widget>
-   <widget class="QMenu" name="menuOptions">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <addaction name="actionPreferences"/>
-    <addaction name="actionKeyboard_Shortcuts"/>
-    <addaction name="separator"/>
-    <addaction name="actionCurve_Configuration"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionSupport"/>
-    <addaction name="actionYour_Support"/>
-    <addaction name="separator"/>
-    <addaction name="actionAbout"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuView"/>
-   <addaction name="menuOptions"/>
-   <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -2283,7 +2185,6 @@ Support FaceTrackNoIR!</string>
   <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
-  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>

@@ -135,15 +135,6 @@ class Tracker : public QThread {
 	Q_OBJECT
 
 private:
-    bool useAxisReverse;						// Use Axis Reverse
-    float YawAngle4ReverseAxis;				// Axis Reverse settings
-    float Z_Pos4ReverseAxis;
-    float Z_PosWhenReverseAxis;
-    
-
-    volatile bool inhibit[6];
-    volatile bool inhibit_zero;
-
     FaceTrackNoIR *mainApp;
 
 protected:
@@ -153,17 +144,8 @@ protected:
 public:
 	Tracker( FaceTrackNoIR *parent );
     ~Tracker();
-
-//	void registerHeadPoseCallback();
-	bool handleGameCommand ( int command );
 	void loadSettings();							// Load settings from the INI-file
-    //bool isShortKeyPressed( TShortKey *key, BYTE *keystate );
-    //bool isMouseKeyPressed( int *key, DIMOUSESTATE *mousestate );
-
-    bool getTrackingActive() { return do_tracking && confid; }
-    bool getAxisReverse() { return do_axis_reverse; }
-
-    bool getConfid() { return confid; }
+    bool getTrackingActive() { return confid; }
 
     void setInvertAxis(Axis axis, bool invert);
 
@@ -174,12 +156,7 @@ public:
     float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
     volatile bool should_quit;
     // following are now protected by hTrackMutex
-    volatile bool do_tracking;						// Start/stop tracking, using the shortkey
     volatile bool do_center;							// Center head-position, using the shortkey
-    volatile bool do_inhibit;							// Inhibit DOF-axis, using the shortkey
-    volatile bool do_game_zero;						// Set in-game zero, using the shortkey
-    volatile bool do_axis_reverse;					// Axis reverse, using the shortkey
-    
     // Flags to start/stop/reset tracking
     volatile bool confid;                                // Tracker data is OK;
     

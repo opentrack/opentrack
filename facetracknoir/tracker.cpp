@@ -73,51 +73,30 @@ HeadPoseData* GlobalPose = NULL;
 /** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
     confid(false),
-    useAxisReverse(false),
-    YawAngle4ReverseAxis(40),
-    Z_Pos4ReverseAxis(-20.0f),
-    Z_PosWhenReverseAxis(50.0),
     should_quit(false),
-    do_tracking(true),
-    do_center(false),
-    do_game_zero(false),
-    do_axis_reverse(false)
+    do_center(false)
 {
     // Retieve the pointer to the parent
 	mainApp = parent;
 	// Load the settings from the INI-file
 	loadSettings();
-    for (int i = 0; i < 6; i++)
-    {
-        GlobalPose->axes[i].headPos = 0;
-        inhibit[i] = false;
-    }
-    do_inhibit = false;
 }
 
 Tracker::~Tracker()
 {
 }
 
-static void get_curve(bool inhibitp, bool inhibit_zerop, double pos, double& out, THeadPoseDOF& axis) {
-    if (inhibitp) {
-        if (inhibit_zerop)
-            out = 0;
-        axis.curvePtr->setTrackingActive( true );
-        axis.curvePtrAlt->setTrackingActive( false );
+static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
+    bool altp = (pos < 0) && axis.altp;
+    if (altp) {
+        out = axis.invert * axis.curvePtrAlt->getValue(pos);
+        axis.curvePtr->setTrackingActive( false );
+        axis.curvePtrAlt->setTrackingActive( true );
     }
     else {
-        bool altp = (pos < 0) && axis.altp;
-        if (altp) {
-            out = axis.invert * axis.curvePtrAlt->getValue(pos);
-            axis.curvePtr->setTrackingActive( false );
-            axis.curvePtrAlt->setTrackingActive( true );
-        }
-        else {
-            out = axis.invert * axis.curvePtr->getValue(pos);
-            axis.curvePtr->setTrackingActive( true );
-            axis.curvePtrAlt->setTrackingActive( false );
-        }
+        out = axis.invert * axis.curvePtr->getValue(pos);
+        axis.curvePtr->setTrackingActive( true );
+        axis.curvePtrAlt->setTrackingActive( false );
     }
 }
 
@@ -129,7 +108,6 @@ void Tracker::run() {
     
     /** Direct Input variables **/
     T6DOF offset_camera;
-    T6DOF gamezero_camera;
     T6DOF gameoutput_camera;
     
     bool bTracker1Confid = false;
@@ -183,13 +161,8 @@ void Tracker::run() {
             if (Libraries->pFilter)
                 Libraries->pFilter->Initialize();
         }
-        
-        if (do_game_zero) {
-            gamezero_camera = gameoutput_camera;
-            do_game_zero = false;
-        }
 
-        if (do_tracking && confid) {
+        if (getTrackingActive()) {
             // get values
             for (int i = 0; i < 6; i++)
                 target_camera.axes[i] = GlobalPose->axes[i].headPos;
@@ -210,26 +183,13 @@ void Tracker::run() {
             }
 
             for (int i = 0; i < 6; i++)
-                get_curve(do_inhibit && inhibit[i], inhibit_zero, new_camera.axes[i], output_camera.axes[i], GlobalPose->axes[i]);
-
-            if (useAxisReverse) {
-                do_axis_reverse = ((fabs(output_camera.axes[RX]) > YawAngle4ReverseAxis) && (output_camera.axes[TZ] < Z_Pos4ReverseAxis));
-            } else {
-                do_axis_reverse = false;
-            }
-
-            //
-            // Reverse Axis.
-            //
-            if (do_axis_reverse) {
-                output_camera.axes[TZ] = Z_PosWhenReverseAxis;	// Set the desired Z-position
-            }
+                get_curve(new_camera.axes[i], output_camera.axes[i], GlobalPose->axes[i]);
 
             //
             // Send the headpose to the game
             //
             if (Libraries->pProtocol) {
-                gameoutput_camera = output_camera + gamezero_camera;
+                gameoutput_camera = output_camera;
                 Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
             }
         }
@@ -237,10 +197,10 @@ void Tracker::run() {
             //
             // Go to initial position
             //
-            if (Libraries->pProtocol && inhibit_zero) {
+            if (Libraries->pProtocol) {
                 for (int i = 0; i < 6; i++)
                     output_camera.axes[i] = 0;
-                gameoutput_camera = output_camera + gamezero_camera;
+                gameoutput_camera = output_camera;
                 Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );				// degrees & centimeters
             }
             for (int i = 0; i < 6; i++)
@@ -261,25 +221,6 @@ void Tracker::run() {
         GlobalPose->axes[i].curvePtr->setTrackingActive(false);
         GlobalPose->axes[i].curvePtrAlt->setTrackingActive(false);
     }
-}
-
-//
-// Handle the command, send upstream by the game.
-// Valid values are:
-//		1	= reset Headpose
-//
-bool Tracker::handleGameCommand ( int command ) {
-
-	qDebug() << "handleGameCommand says: Command =" << command;
-
-	switch ( command ) {
-		case 1:										// reset headtracker
-			Tracker::do_center = true;
-			break;
-		default:
-			break;
-	}
-	return false;
 }
 
 //
@@ -311,29 +252,6 @@ void Tracker::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "KB_Shortcuts" );
-    // Reverse Axis
-    useAxisReverse = iniFile.value ( "Enable_ReverseAxis", 0 ).toBool();
-    YawAngle4ReverseAxis = iniFile.value ( "RA_Yaw", 40 ).toInt();
-    Z_Pos4ReverseAxis = iniFile.value ( "RA_ZPos", 50 ).toInt();
-    Z_PosWhenReverseAxis = iniFile.value ( "RA_ToZPos", 80 ).toInt();
-
-    static const char* names[] = {
-        "Inhibit_X",
-        "Inhibit_Y",
-        "Inhibit_Z",
-        "Inhibit_Yaw",
-        "Inhibit_Pitch",
-        "Inhibit_Roll"
-    };
-
-    for (int i = 0; i < 6; i++)
-    {
-        inhibit[i] = iniFile.value(names[i], false).toBool();
-    }
-    inhibit_zero = iniFile.value("SetZero", false).toBool(); 
-	iniFile.endGroup ();
 }
 
 void Tracker::setInvertAxis(Axis axis, bool invert) { GlobalPose->axes[axis].invert = invert?-1.0f:1.0f; }

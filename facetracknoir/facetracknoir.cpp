@@ -162,9 +162,6 @@ void KeybindingWorkerDummy::run() {
         }
         
         PROCESS_KEY(kCenter, shortcutRecentered);
-        PROCESS_KEY(kInhibit, shortcutInhibit);
-        PROCESS_KEY(kZero, shortcutZero);
-        PROCESS_KEY(kStartStop, shortcutStartStop);
         
         Sleep(25);
     }
@@ -205,7 +202,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	// Initialize Widget handles, to prevent memory-access errors.
 	//
 	_keyboard_shortcuts = 0;
-	_preferences = 0;
 	_keyboard_shortcuts = 0;
 	_curve_config = 0;
 
@@ -215,14 +211,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	trayIcon = 0;
 
 	setupFaceTrackNoIR();
-
-	//
-	// Read the AutoStartTracking value from the registry. If it is '1', start the Tracker and Minimize...
-	//
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	if (settings.value ( "AutoStartTracking", 0 ).toBool()) {
-		startTracker();
-	}
 
     //Q_INIT_RESOURCE(PoseWidget);
 
@@ -261,7 +249,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(exit()));
 
-	connect(ui.actionPreferences, SIGNAL(triggered()), this, SLOT(showPreferences()));
 	connect(ui.actionKeyboard_Shortcuts, SIGNAL(triggered()), this, SLOT(showKeyboardShortcuts()));
 	connect(ui.actionCurve_Configuration, SIGNAL(triggered()), this, SLOT(showCurveConfiguration()));
 	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
@@ -269,7 +256,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	connect(ui.actionSupport, SIGNAL(triggered()), this, SLOT(openurl_support()));
 	connect(ui.actionYour_Support, SIGNAL(triggered()), this, SLOT(openurl_donation()));
-	connect(ui.btnDonate, SIGNAL(clicked()), this, SLOT(openurl_donation()));
 	connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
 	connect(ui.actionVideoWidget, SIGNAL(triggered()), this, SLOT(showVideoWidget()));
@@ -321,7 +307,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 	timUpdateHeadPose = new QTimer(this);
     connect(timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
 	ui.txtTracking->setVisible(false);
-	ui.txtAxisReverse->setVisible(false);
     settingsDirty = false;
 }
 
@@ -332,28 +317,7 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 	// Stop the tracker, by simulating a button-push
 	//
 	stopTracker();
-
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard, QMessageBox::Discard );
-
-		switch (ret) {
-			case QMessageBox::Save:
-				saveAs();
-				break;
-			case QMessageBox::Discard:
-				// Don't Save was clicked
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
+    save();
 }
 
 //
@@ -673,34 +637,6 @@ void FaceTrackNoIR::loadSettings() {
     looping = false;
 }
 
-/** show support page in web-browser **/
-void FaceTrackNoIR::openurl_support() {
-	QDesktopServices::openUrl(QUrl("http://facetracknoir.sourceforge.net/manual/manual.htm", QUrl::TolerantMode));
-}
-
-/** show donations page in web-browser **/
-void FaceTrackNoIR::openurl_donation() {
-	QDesktopServices::openUrl(QUrl("http://facetracknoir.sourceforge.net/information_links/donate.htm", QUrl::TolerantMode));
-}
-
-/** show about dialog **/
-void FaceTrackNoIR::about() {
-
-	QPoint offsetpos(100, 100);
-	aboutDialog.move(this->pos() + offsetpos);
-	aboutDialog.show();
-
-	/** ABOUT DIALOG **/
-	aboutDialog.setBaseSize(270, 440);
-
-	aboutDialog.setMaximumWidth(270);
-	aboutDialog.setMaximumHeight(440);
-
-	aboutDialog.setMinimumWidth(270);
-	aboutDialog.setMinimumHeight(440);
-    aboutDialog.setStyleSheet("background:#fff url(:/uielements/aboutfacetracknoir.png) no-repeat;");
-}
-
 /** start tracking the face **/
 void FaceTrackNoIR::startTracker( ) {	
     bindKeyboardShortcuts();
@@ -817,25 +753,6 @@ void FaceTrackNoIR::startTracker( ) {
 	GetCameraNameDX();
 
 	//
-	// Get the TimeOut value for minimizing FaceTrackNoIR
-	// Only start the Timer if value > 0
-	//
-    int timevalue = iniFile.value ( "AutoMinimizeTime", 0 ).toInt() * 1000;
-	if (timevalue > 0) {
-
-        bool minimizeTaskBar = iniFile.value ( "MinimizeTaskBar", 1 ).toBool();
-		if (minimizeTaskBar) {
-			connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(showMinimized()));
-		}
-		else {
-			connect(timMinimizeFTN, SIGNAL(timeout()), this, SLOT(hide()));
-		}
-
-		timMinimizeFTN->setSingleShot( true );
-		timMinimizeFTN->start(timevalue);
-	}
-
-	//
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
     timUpdateHeadPose->start(40);
@@ -887,7 +804,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
 	ui.txtTracking->setVisible(false);
-	ui.txtAxisReverse->setVisible(false);
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -980,7 +896,6 @@ void FaceTrackNoIR::showHeadPose() {
     ui.lcdNumRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
 
     ui.txtTracking->setVisible(tracker->getTrackingActive());
-    ui.txtAxisReverse->setVisible(tracker->getAxisReverse());
 
 	//
 	// Get the output-pose and also display it.
@@ -1096,23 +1011,6 @@ void FaceTrackNoIR::showFilterControls() {
         }
     }
 }
-
-/** toggles FaceTrackNoIR Preferences Dialog **/
-void FaceTrackNoIR::showPreferences() {
-
-	// Create if new
-	if (!_preferences)
-    {
-        _preferences = new PreferencesDialog( this, this, Qt::Dialog );
-    }
-
-	// Show if already created
-	if (_preferences) {
-		_preferences->show();
-		_preferences->raise();
-	}
-}
-
 /** toggles Keyboard Shortcut Dialog **/
 void FaceTrackNoIR::showKeyboardShortcuts() {
 
@@ -1361,116 +1259,6 @@ void FaceTrackNoIR::filterSelected(int index)
 	ui.btnShowFilterControls->setEnabled ( true );
 }
 
-//
-// Constructor for FaceTrackNoIR=Preferences-dialog
-//
-PreferencesDialog::PreferencesDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
-{
-	ui.setupUi( this );
-
-	QPoint offsetpos(100, 100);
-	this->move(parent->pos() + offsetpos);
-
-	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
-
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-	connect(ui.spinAutoMinimizeTime, SIGNAL(valueChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkAutoStartTracking, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-    connect(ui.radioMinimize, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
-
-	// Load the settings from the current .INI-file
-	loadSettings();
-}
-
-//
-// Destructor for server-dialog
-//
-PreferencesDialog::~PreferencesDialog() {
-	qDebug() << "~PreferencesDialog() says: started";
-}
-
-//
-// OK clicked on server-dialog
-//
-void PreferencesDialog::doOK() {
-	save();
-	this->close();
-}
-
-// override show event
-void PreferencesDialog::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
-void PreferencesDialog::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void PreferencesDialog::loadSettings() {
-
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	ui.spinAutoMinimizeTime->setValue( settings.value ( "AutoMinimizeTime", 0 ).toInt() );
-	ui.chkAutoStartTracking->setChecked( settings.value ( "AutoStartTracking", 0 ).toBool() );
-	ui.radioMinimize->setChecked( settings.value ( "MinimizeTaskBar", 1 ).toBool() );
-
-	settingsDirty = false;
-
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void PreferencesDialog::save() {
-
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
-	settings.setValue( "AutoMinimizeTime", ui.spinAutoMinimizeTime->value() );
-	settings.setValue( "AutoStartTracking", ui.chkAutoStartTracking->isChecked() );
-	settings.setValue( "MinimizeTaskBar", ui.radioMinimize->isChecked() );
-
-	//
-	// Send a message to the main program, to update the Settings (for the tracker)
-	//
-	mainApp->updateSettings();
-
-	settingsDirty = false;
-}
-
 //**************************************************************************************************//
 //**************************************************************************************************//
 //
@@ -1495,30 +1283,6 @@ QWidget( parent , f)
 	connect(ui.chkCenterCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 	connect(ui.chkCenterAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
 
-	connect(ui.cbxGameZeroKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
-	connect(ui.chkGameZeroShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkGameZeroCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkGameZeroAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-
-	connect(ui.cbxStartStopKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
-	connect(ui.chkStartStopShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkStartStopCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkStartStopAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.radioSetZero, SIGNAL(toggled(bool)), this, SLOT(keyChanged(bool)));
-
-	connect(ui.cbxInhibitKey, SIGNAL(currentIndexChanged(int)), this, SLOT(keyChanged( int )));
-	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitCtrl, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitAlt, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-
-	// Also add events for the Axis-checkboxes
-	connect(ui.chkInhibitShift, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitYaw, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitRoll, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitX, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitY, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-	connect(ui.chkInhibitZ, SIGNAL(stateChanged(int)), this, SLOT(keyChanged(int)));
-
 	// Clear the Lists with key-descriptions and keycodes and build the Lists
 	// The strings will all be added to the ListBoxes for each Shortkey
 	//
@@ -1528,9 +1292,6 @@ QWidget( parent , f)
 
     for ( int i = 0; i < global_key_sequences.size(); i++) {
         ui.cbxCenterKey->addItem(global_key_sequences.at(i));
-        ui.cbxGameZeroKey->addItem(global_key_sequences.at(i));
-        ui.cbxStartStopKey->addItem(global_key_sequences.at(i));
-        ui.cbxInhibitKey->addItem(global_key_sequences.at(i));
 	}
 
 	// Load the settings from the current .INI-file
@@ -1741,38 +1502,6 @@ void KeyboardShortcutDialog::loadSettings() {
 
     ui.cbxCenterKey->setCurrentIndex(iniFile.value("Key_index_Center", 0).toInt());
 
-	ui.chkGameZeroShift->setChecked (iniFile.value ( "Shift_GameZero", 0 ).toBool());
-	ui.chkGameZeroCtrl->setChecked (iniFile.value ( "Ctrl_GameZero", 0 ).toBool());
-	ui.chkGameZeroAlt->setChecked (iniFile.value ( "Alt_GameZero", 0 ).toBool());
-    ui.cbxGameZeroKey->setCurrentIndex(iniFile.value("Key_index_GameZero", 0).toInt());
-
-	ui.chkStartStopShift->setChecked (iniFile.value ( "Shift_StartStop", 0 ).toBool());
-	ui.chkStartStopCtrl->setChecked (iniFile.value ( "Ctrl_StartStop", 0 ).toBool());
-	ui.chkStartStopAlt->setChecked (iniFile.value ( "Alt_StartStop", 0 ).toBool());
-    ui.cbxStartStopKey->setCurrentIndex(iniFile.value("Key_index_StartStop", 0).toInt());
-
-	ui.radioSetZero->setChecked (iniFile.value ( "SetZero", 1 ).toBool());
-	ui.radioSetFreeze->setChecked(!ui.radioSetZero->isChecked());
-
-	ui.chkInhibitShift->setChecked (iniFile.value ( "Shift_Inhibit", 0 ).toBool());
-	ui.chkInhibitCtrl->setChecked (iniFile.value ( "Ctrl_Inhibit", 0 ).toBool());
-	ui.chkInhibitAlt->setChecked (iniFile.value ( "Alt_Inhibit", 0 ).toBool());
-    ui.cbxInhibitKey->setCurrentIndex(iniFile.value("Key_index_Inhibit", 0).toInt());
-
-	ui.chkInhibitPitch->setChecked (iniFile.value ( "Inhibit_Pitch", 0 ).toBool());
-	ui.chkInhibitYaw->setChecked (iniFile.value ( "Inhibit_Yaw", 0 ).toBool());
-	ui.chkInhibitRoll->setChecked (iniFile.value ( "Inhibit_Roll", 0 ).toBool());
-	ui.chkInhibitX->setChecked (iniFile.value ( "Inhibit_X", 0 ).toBool());
-	ui.chkInhibitY->setChecked (iniFile.value ( "Inhibit_Y", 0 ).toBool());
-	ui.chkInhibitZ->setChecked (iniFile.value ( "Inhibit_Z", 0 ).toBool());
-
-
-	// Reverse Axis
-	ui.chkEnableReverseAxis->setChecked (iniFile.value ( "Enable_ReverseAxis", 0 ).toBool());
-	ui.spinYawAngle4ReverseAxis->setValue( iniFile.value ( "RA_Yaw", 40 ).toInt() );
-	ui.spinZ_Pos4ReverseAxis->setValue( iniFile.value ( "RA_ZPos", -20 ).toInt() );
-	ui.spinZ_PosWhenReverseAxis->setValue( iniFile.value ( "RA_ToZPos", 50 ).toInt() );
-
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -1796,35 +1525,6 @@ void KeyboardShortcutDialog::save() {
 	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
 	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
 	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
-
-    iniFile.setValue ( "Key_index_GameZero", ui.cbxGameZeroKey->currentIndex() );
-	iniFile.setValue ( "Shift_GameZero", ui.chkGameZeroShift->isChecked() );
-	iniFile.setValue ( "Ctrl_GameZero", ui.chkGameZeroCtrl->isChecked() );
-	iniFile.setValue ( "Alt_GameZero", ui.chkGameZeroAlt->isChecked() );
-
-    iniFile.setValue ( "Key_index_StartStop", ui.cbxStartStopKey->currentIndex() );
-	iniFile.setValue ( "Shift_StartStop", ui.chkStartStopShift->isChecked() );
-	iniFile.setValue ( "Ctrl_StartStop", ui.chkStartStopCtrl->isChecked() );
-	iniFile.setValue ( "Alt_StartStop", ui.chkStartStopAlt->isChecked() );
-	iniFile.setValue ( "SetZero", ui.radioSetZero->isChecked() );
-
-    iniFile.setValue ( "Key_index_Inhibit", ui.cbxInhibitKey->currentIndex() );
-	iniFile.setValue ( "Shift_Inhibit", ui.chkInhibitShift->isChecked() );
-	iniFile.setValue ( "Ctrl_Inhibit", ui.chkInhibitCtrl->isChecked() );
-	iniFile.setValue ( "Alt_Inhibit", ui.chkInhibitAlt->isChecked() );
-
-	iniFile.setValue ( "Inhibit_Pitch", ui.chkInhibitPitch->isChecked() );
-	iniFile.setValue ( "Inhibit_Yaw", ui.chkInhibitYaw->isChecked() );
-	iniFile.setValue ( "Inhibit_Roll", ui.chkInhibitRoll->isChecked() );
-	iniFile.setValue ( "Inhibit_X", ui.chkInhibitX->isChecked() );
-	iniFile.setValue ( "Inhibit_Y", ui.chkInhibitY->isChecked() );
-	iniFile.setValue ( "Inhibit_Z", ui.chkInhibitZ->isChecked() );
-
-	// Reverse Axis
-	iniFile.setValue ( "Enable_ReverseAxis", ui.chkEnableReverseAxis->isChecked() );
-	iniFile.setValue( "RA_Yaw", ui.spinYawAngle4ReverseAxis->value() );
-	iniFile.setValue( "RA_ZPos", ui.spinZ_Pos4ReverseAxis->value() );
-	iniFile.setValue( "RA_ToZPos", ui.spinZ_PosWhenReverseAxis->value() );
 
 	iniFile.endGroup ();
 
@@ -2051,30 +1751,5 @@ void FaceTrackNoIR::shortcutRecentered()
 #endif
         qDebug() << "Center";
         tracker->do_center = true;
-    }
-}
-
-void FaceTrackNoIR::shortcutZero()
-{
-    if (tracker)
-    {
-        tracker->do_game_zero = true;
-    }
-}
-
-void FaceTrackNoIR::shortcutStartStop()
-{
-    if (tracker)
-    {
-        tracker->do_tracking = !tracker->do_tracking;
-        qDebug() << "do-tracking" << tracker->do_tracking;
-    }
-}
-
-void FaceTrackNoIR::shortcutInhibit()
-{
-    if (tracker)
-    {
-        tracker->do_inhibit = !tracker->do_inhibit;
     }
 }
