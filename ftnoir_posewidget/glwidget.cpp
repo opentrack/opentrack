@@ -224,6 +224,6 @@ void GLWidget::project_quad_texture() {
                     break;
                 }
             }
-}
+        }
     pixmap = QPixmap::fromImage(texture);
 }
