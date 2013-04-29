@@ -104,7 +104,8 @@ DynamicLibrary::DynamicLibrary(const char* filename)
     Constructor = (NULLARY_DYNAMIC_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
     Metadata = (METADATA_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetMetadata" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
 #else
-    handle = dlopen(fullPath.toLatin1().constData(), RTLD_NOW |
+    QByteArray latin1 = fullPath.toLatin1();
+    handle = dlopen(latin1.constData(), RTLD_NOW |
 #   ifdef __linux
                     RTLD_DEEPBIND
 #   else
