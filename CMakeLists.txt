@@ -506,8 +506,6 @@ if(MSVC80 AND SDK_SM_FACEAPI_PATH)
     else()
         target_link_libraries(opentrack-faceapi-wrapper "${SDK_SM_FACEAPI_PATH}/bin/smft32.lib")
     endif()
-else()
-    MESSAGE(WARNING "Cannot build FaceAPI without MSVC 2005!")
 endif()
 
 if(NOT SDK_FACEAPI_ONLY)
