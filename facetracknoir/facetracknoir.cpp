@@ -1490,7 +1490,7 @@ QWidget( parent , f)
         ui.ty_altp,
         ui.tz_altp
     };
-
+    
     for (int i = 0; i < 6; i++)
     {
         configs[i]->setConfig(GlobalPose->axes[i].curvePtr, currentFile);
@@ -1587,9 +1587,7 @@ void CurveConfigurationDialog::loadSettings() {
     for (int i = 0; i < 6; i++)
         GlobalPose->axes[i].altp = iniFile.value(names[i], false).toBool();
 
-    iniFile.endGroup();
-
-    static QCheckBox* widgets[] = {
+    QCheckBox* widgets[] = {
         ui.tx_altp,
         ui.ty_altp,
         ui.tz_altp,
@@ -1601,6 +1599,29 @@ void CurveConfigurationDialog::loadSettings() {
     for (int i = 0; i < 6; i++)
         widgets[i]->setChecked(GlobalPose->axes[i].altp);
 
+    QDoubleSpinBox* widgets2[] = {
+        ui.pos_tx,
+        ui.pos_ty,
+        ui.pos_tz,
+        ui.pos_tx,
+        ui.pos_ry,
+        ui.pos_rz
+    };
+    
+    const char* names2[] = {
+        "zero_tx",
+        "zero_ty",
+        "zero_tz",
+        "zero_rx",
+        "zero_ry",
+        "zero_rz"
+    };
+    
+    for (int i = 0; i < 6; i++)
+        widgets2[i]->setValue(iniFile.value(names2[i], 0).toDouble());
+    
+    iniFile.endGroup();
+    
     settingsDirty = false;
 }
 
@@ -1639,6 +1660,27 @@ void CurveConfigurationDialog::save() {
     iniFile.setValue("tx_alt", ui.tx_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("ty_alt", ui.ty_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("tz_alt", ui.tz_altp->checkState() != Qt::Unchecked);
+    
+    QDoubleSpinBox* widgets2[] = {
+        ui.pos_tx,
+        ui.pos_ty,
+        ui.pos_tz,
+        ui.pos_tx,
+        ui.pos_ry,
+        ui.pos_rz
+    };
+    
+    const char* names2[] = {
+        "zero_tx",
+        "zero_ty",
+        "zero_tz",
+        "zero_rx",
+        "zero_ry",
+        "zero_rz"
+    };
+    
+    for (int i = 0; i < 6; i++)
+        iniFile.setValue(names2[i], widgets2[i]->value());
 
     iniFile.endGroup();
 

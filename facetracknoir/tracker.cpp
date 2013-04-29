@@ -98,6 +98,7 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
         axis.curvePtr->setTrackingActive( true );
         axis.curvePtrAlt->setTrackingActive( false );
     }
+    out += axis.zero;
 }
 
 /** QThread run method @override **/
@@ -182,8 +183,9 @@ void Tracker::run() {
                 new_camera = target_camera;
             }
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++) {
                 get_curve(new_camera.axes[i], output_camera.axes[i], GlobalPose->axes[i]);
+            }
 
             //
             // Send the headpose to the game
@@ -192,24 +194,6 @@ void Tracker::run() {
                 gameoutput_camera = output_camera;
                 Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
             }
-        }
-        else {
-            //
-            // Go to initial position
-            //
-            if (Libraries->pProtocol) {
-                for (int i = 0; i < 6; i++)
-                    output_camera.axes[i] = 0;
-                gameoutput_camera = output_camera;
-                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );				// degrees & centimeters
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                GlobalPose->axes[i].curvePtr->setTrackingActive(false);
-                GlobalPose->axes[i].curvePtrAlt->setTrackingActive(false);
-            }
-            if (Libraries->pFilter)
-                Libraries->pFilter->Initialize();
         }
 
         //for lower cpu load
@@ -251,7 +235,23 @@ void Tracker::loadSettings() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+    iniFile.beginGroup("Tracking");
+    
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
+    
+    const char* names2[] = {
+        "zero_tx",
+        "zero_ty",
+        "zero_tz",
+        "zero_rx",
+        "zero_ry",
+        "zero_rz"
+    };
+    
+    for (int i = 0; i < 6; i++)
+        GlobalPose->axes[i].zero = iniFile.value(names2[i], 0).toDouble();
+    
+    iniFile.endGroup();
 }
 
 void Tracker::setInvertAxis(Axis axis, bool invert) { GlobalPose->axes[axis].invert = invert?-1.0f:1.0f; }
