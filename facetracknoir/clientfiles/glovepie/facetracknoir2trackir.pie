@@ -1,0 +1,16 @@
+﻿//
+// 6 Degrees of Freedom Headtracking with FaceTrackNoIR
+// 2010 by Wim Vriend
+//
+pie.FrameRate = 120Hz
+var.multiply = 1.5
+var.R2D = 57.295781
+FakeTrackIR.pitch=(Joystick.pitch - 0.10) * var.R2D * var.multiply
+FakeTrackIR.yaw=(Joystick.yaw - 0.10) * var.R2D * var.multiply
+FakeTrackIR.roll=(Joystick.roll - 0.10) * var.R2D * var.multiply
+FakeTrackIR.x=(Joystick.x - 0.10) * var.R2D * var.multiply
+FakeTrackIR.y=(Joystick.y - 0.10) * var.R2D * var.multiply
+FakeTrackIR.z=(Joystick.z - 0.10) * var.R2D * var.multiply
+debug = 'pitch='+FakeTrackIR.pitch+' roll='+FakeTrackIR.roll+' yaw='+FakeTrackIR.yaw+' xyz=('+FakeTrackIR.x+','+FakeTrackIR.y+','+FakeTrackIR.z+')'
+//debug = FakeTrackIR.active
+
