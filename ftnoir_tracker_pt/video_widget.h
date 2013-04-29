@@ -31,7 +31,7 @@ protected slots:
     void paintEvent( QPaintEvent* e ) {
         QMutexLocker foo(&mtx);
         QPainter painter(this);
-        painter.drawPixmap(e->rect(), pixmap);
+        painter.drawPixmap(e->rect(), pixmap, e->rect());
     }
 
 private:
