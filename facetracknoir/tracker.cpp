@@ -159,6 +159,12 @@ void Tracker::run() {
             // for kalman
             if (Libraries->pFilter)
                 Libraries->pFilter->Initialize();
+            
+            if (Libraries->pTracker)
+                Libraries->pTracker->NotifyCenter();
+            
+            if (Libraries->pSecondTracker)
+                Libraries->pSecondTracker->NotifyCenter();
         }
 
         if (getTrackingActive()) {

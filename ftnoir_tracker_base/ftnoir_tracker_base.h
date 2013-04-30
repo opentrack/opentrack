@@ -59,6 +59,8 @@ struct ITracker
     virtual bool GiveHeadPoseData(double *data) = 0;
 
     virtual void WaitForExit() = 0;
+    
+    virtual void NotifyCenter() {}
 };
 
 typedef ITracker* ITrackerPtr;
