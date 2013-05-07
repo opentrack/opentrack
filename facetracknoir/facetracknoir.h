@@ -122,13 +122,10 @@ public:
     }
 
 #if defined(_WIN32) || defined(__WIN32)
-    Key keyCenter, keyZero, keyStartStop, keyInhibit;
+    Key keyCenter;
     KeybindingWorker* keybindingWorker;
 #else 
     QxtGlobalShortcut* keyCenter;
-    QxtGlobalShortcut* keyZero;
-    QxtGlobalShortcut* keyStartStop;
-    QxtGlobalShortcut* keyInhibit;
 #endif
 public slots:
         void shortcutRecentered();
@@ -272,18 +269,18 @@ class KeybindingWorkerDummy {
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-    Key kCenter, kInhibit, kStartStop, kZero;
+    Key kCenter;
     FaceTrackNoIR& window;
 public:
     volatile bool should_quit;
     ~KeybindingWorkerDummy();
-    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero);
+    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter);
 	void run();
 };
 #else
 class KeybindingWorkerDummy {
 public:
-    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero);
+    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter);
 	void run() {}
 };
 #endif
@@ -291,12 +288,10 @@ public:
 class KeybindingWorker : public QThread, public KeybindingWorkerDummy {
 	Q_OBJECT
 public:
-	KeybindingWorker(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero) : KeybindingWorkerDummy(w, keyCenter, keyInhibit, keyStartStop, keyZero)
+	KeybindingWorker(FaceTrackNoIR& w, Key keyCenter) : KeybindingWorkerDummy(w, keyCenter)
 	{
 	}
 	void run() {
 		KeybindingWorkerDummy::run();
 	}
-
-
 };
