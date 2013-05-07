@@ -119,10 +119,10 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 3.3;
+    config->ransac_max_reprojection_error = 3.4;
     config->ransac_max_inlier_error = 3;
     config->ransac_abs_max_mean_error = 8;
-    config->ransac_max_mean_error = 3.1;
+    config->ransac_max_mean_error = 3.35;
     config->debug = 0;
     config->ransac_min_features = 0.64;
     int res = iniFile.value("resolution", 0).toInt();
