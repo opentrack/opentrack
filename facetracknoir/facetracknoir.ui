@@ -11,7 +11,7 @@
     <x>0</x>
     <y>0</y>
     <width>890</width>
-    <height>400</height>
+    <height>380</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,13 +23,13 @@
   <property name="minimumSize">
    <size>
     <width>890</width>
-    <height>400</height>
+    <height>380</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>890</width>
-    <height>410</height>
+    <height>380</height>
    </size>
   </property>
   <property name="contextMenuPolicy">
@@ -39,7 +39,7 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="main-facetracknoir.qrc">
+   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -142,10 +142,16 @@ QGroupBox {
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>890</width>
-     <height>410</height>
+     <height>380</height>
     </size>
    </property>
    <property name="styleSheet">
@@ -440,9 +446,9 @@ QGroupBox {
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>220</y>
-       <width>623</width>
+       <x>20</x>
+       <y>200</y>
+       <width>611</width>
        <height>172</height>
       </rect>
      </property>
@@ -453,195 +459,6 @@ QGroupBox {
       <property name="verticalSpacing">
        <number>6</number>
       </property>
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="groupTrackerSource">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Tracker Source(1st = Master)</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboTrackerSource">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>42</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowEngineControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change tracker settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QGroupBox" name="groupGameProtocol">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Game protocol</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboProtocol">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>7</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowServerControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change game protocol settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QGroupBox" name="groupFilter">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>70</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Filter</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboFilter">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>7</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowFilterControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change game protocol settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
       <item row="1" column="2">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -722,8 +539,8 @@ QGroupBox {
         </item>
        </layout>
       </item>
-      <item row="1" column="1">
-       <widget class="QGroupBox" name="groupStartStop">
+      <item row="0" column="2">
+       <widget class="QGroupBox" name="groupGameProtocol">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -732,52 +549,181 @@ QGroupBox {
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>200</width>
           <height>80</height>
          </size>
         </property>
-        <property name="title">
-         <string>GO!</string>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
-        <widget class="QPushButton" name="btnStartTracker">
+        <property name="title">
+         <string>Game protocol</string>
+        </property>
+        <widget class="QComboBox" name="iconcomboProtocol">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>30</y>
-           <width>81</width>
-           <height>21</height>
+           <y>20</y>
+           <width>180</width>
+           <height>22</height>
           </rect>
-         </property>
-         <property name="toolTip">
-          <string>Start the Tracker</string>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
-         <property name="text">
-          <string>Start</string>
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="maxVisibleItems">
+          <number>7</number>
          </property>
         </widget>
-        <widget class="QPushButton" name="btnStopTracker">
+        <widget class="QPushButton" name="btnShowServerControls">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="geometry">
           <rect>
-           <x>100</x>
-           <y>30</y>
-           <width>81</width>
-           <height>21</height>
+           <x>10</x>
+           <y>50</y>
+           <width>180</width>
+           <height>23</height>
           </rect>
          </property>
          <property name="toolTip">
-          <string>Stop the Tracker</string>
+          <string>Change game protocol settings</string>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>Stop</string>
+          <string>Settings</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="groupTrackerSource">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="title">
+         <string>Tracker Source(1st = Master)</string>
+        </property>
+        <widget class="QComboBox" name="iconcomboTrackerSource">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>180</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="maxVisibleItems">
+          <number>42</number>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnShowEngineControls">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>180</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>Change tracker settings</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Settings</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QGroupBox" name="groupFilter">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>70</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="title">
+         <string>Filter</string>
+        </property>
+        <widget class="QComboBox" name="iconcomboFilter">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>180</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="maxVisibleItems">
+          <number>7</number>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnShowFilterControls">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>180</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>Change game protocol settings</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Settings</string>
          </property>
         </widget>
        </widget>
@@ -842,6 +788,66 @@ QGroupBox {
         </widget>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="QGroupBox" name="groupStartStop">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>GO!</string>
+        </property>
+        <widget class="QPushButton" name="btnStartTracker">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>81</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>Start the Tracker</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnStopTracker">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>30</y>
+           <width>81</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>Stop the Tracker</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QLabel" name="cameraName">
@@ -876,8 +882,8 @@ background:none;</string>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>71</y>
+       <x>340</x>
+       <y>70</y>
        <width>251</width>
        <height>121</height>
       </rect>
@@ -890,7 +896,7 @@ background:none;</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>71</y>
+       <y>70</y>
        <width>271</width>
        <height>120</height>
       </rect>
@@ -2026,6 +2032,7 @@ color: rgb(0, 255, 0);</string>
   <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
+  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
