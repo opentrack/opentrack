@@ -260,9 +260,9 @@ void FTNoIR_Protocol::start_dummy() {
     if (!force_dummy) {
         force_dummy = true;
         QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
-        dummyTrackIR.start(program);
+        dummyTrackIR.startDetached("\"" + program + "\"");
     
-        qDebug() << "FTServer::run() says: TrackIR.exe executed!";
+        qDebug() << "FTServer::run() says: TrackIR.exe executed!" << program;
     }
 }
 
