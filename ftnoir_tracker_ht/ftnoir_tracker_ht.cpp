@@ -109,22 +109,22 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->field_of_view = iniFile.value("fov", 52).toFloat();
 	config->pyrlk_pyramids = 3;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 150;
+    config->max_keypoints = 300;
     config->keypoint_quality = 2;
-    config->keypoint_distance = 3;
-    config->keypoint_3distance = 6;
-    config->keypoint_9distance = 9;
+    config->keypoint_distance = 1;
+    config->keypoint_3distance = 3.5;
+    config->keypoint_9distance = 8;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
-    config->ransac_num_iters = 35;
-    config->ransac_max_reprojection_error = 5;
-    config->ransac_max_inlier_error = 7;
+    config->ransac_num_iters = 100;
+    config->ransac_max_reprojection_error = 3.3;
+    config->ransac_max_inlier_error = 3;
     config->ransac_abs_max_mean_error = 8;
-    config->ransac_max_mean_error = 3.9;
-    config->debug = 1;
-    config->ransac_min_features = 0.8;
+    config->ransac_max_mean_error = 3.1;
+    config->debug = 0;
+    config->ransac_min_features = 0.64;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -132,7 +132,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->force_width = r.width;
     config->force_height = r.height;
     config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
-    config->flandmark_delay = 200;
+    config->flandmark_delay = 65;
 #if 0
     if (config->user_landmarks)
     {
@@ -262,7 +262,7 @@ bool Tracker::GiveHeadPoseData(double *data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-    *strToBeFilled = "HT 0.9";
+    *strToBeFilled = "HT 0.95";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
