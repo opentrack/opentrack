@@ -197,16 +197,16 @@ color: rgb(255, 255, 255);
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>180</number>
+          <number>90</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>180</number>
+          <number>90</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>10</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -241,21 +241,21 @@ color: rgb(255, 255, 255);
           <rect>
            <x>0</x>
            <y>340</y>
-           <width>595</width>
+           <width>1013</width>
            <height>240</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
-          <number>180</number>
+          <number>90</number>
          </property>
          <property name="maxOutputEGU" stdset="0">
-          <number>180</number>
+          <number>90</number>
          </property>
          <property name="pixPerEGU_Input" stdset="0">
-          <number>5</number>
+          <number>10</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -854,6 +854,19 @@ color: rgb(255, 255, 255);
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item row="0" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="sizeConstraint">
@@ -910,19 +923,6 @@ color: rgb(255, 255, 255);
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="0" column="1">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
