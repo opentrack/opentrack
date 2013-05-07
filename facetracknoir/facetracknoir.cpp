@@ -79,8 +79,8 @@ KeybindingWorkerDummy::~KeybindingWorkerDummy() {
         din->Release();
 }
 
-KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Key keyInhibit, Key keyStartStop, Key keyZero)
-: kCenter(keyCenter), kInhibit(keyInhibit), kStartStop(keyStartStop), kZero(keyZero), window(w), should_quit(true), din(0), dinkeyboard(0)
+KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter)
+: kCenter(keyCenter), window(w), should_quit(true), din(0), dinkeyboard(0)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
@@ -118,7 +118,6 @@ KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter, Ke
         qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
         return;
     }
-    qDebug() << "keycodes bound:" << kCenter.keycode << kInhibit.keycode << kStartStop.keycode << kZero.keycode;
     should_quit = false;
 }
 
@@ -179,14 +178,16 @@ void KeybindingWorkerDummy::run() {
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
+    #if defined(__WIN32) || defined(_WIN32)
+        keybindingWorker(NULL),
+    #else
+        keyCenter(0),
+    #endif
     QMainWindow(parent, flags),
     pTrackerDialog(NULL),
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-#if defined(__WIN32) || defined(_WIN32)
-    keybindingWorker(NULL),
-#endif
     looping(false),
     timUpdateHeadPose(this)
 {	
@@ -628,7 +629,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
     
 #if defined(_WIN32) || defined(__WIN32)
-    keybindingWorker = new KeybindingWorker(*this, keyCenter, keyInhibit, keyStartStop, keyZero);
+    keybindingWorker = new KeybindingWorker(*this, keyCenter);
     keybindingWorker->start();
 #endif
 
@@ -1253,29 +1254,11 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
     iniFile.beginGroup ( "KB_Shortcuts" );
     int idxCenter = iniFile.value("Key_index_Center", 0).toInt();
-    int idxGameZero = iniFile.value("Key_index_GameZero", 0).toInt();
-    int idxStartStop = iniFile.value("Key_index_StartStop", 0).toInt();
-    int idxInhibit = iniFile.value("Key_index_Inhibit", 0).toInt();
     
 #if !defined(_WIN32) && !defined(__WIN32)
     if (keyCenter) {
         delete keyCenter;
         keyCenter = NULL;
-    }
-
-    if (keyZero) {
-        delete keyZero;
-        keyZero = NULL;
-    }
-
-    if (keyStartStop) {
-        delete keyStartStop;
-        keyStartStop = NULL;
-    }
-
-    if (keyInhibit) {
-        delete keyInhibit;
-        keyInhibit = NULL;
     }
 
     if (idxCenter > 0)
@@ -1294,83 +1277,14 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
         }
     }
 
-    if (idxGameZero > 0)
-    {
-        QString seq(global_key_sequences.value(idxGameZero, ""));
-        if (!seq.isEmpty())
-        {
-            if (iniFile.value("Shift_GameZero", false).toBool())
-                seq = "Shift+" + seq;
-            if (iniFile.value("Alt_GameZero", false).toBool())
-                seq = "Alt+" + seq;
-            if (iniFile.value("Ctrl_GameZero", false).toBool())
-                seq = "Ctrl+" + seq;
-        }
-        keyZero = new QxtGlobalShortcut(QKeySequence(seq));
-        connect(keyZero, SIGNAL(activated()), this, SLOT(shortcutZero()));
-    }
-
-    if (idxStartStop > 0)
-    {
-        QString seq(global_key_sequences.value(idxStartStop, ""));
-        if (!seq.isEmpty())
-        {
-            if (iniFile.value("Shift_StartStop", false).toBool())
-                seq = "Shift+" + seq;
-            if (iniFile.value("Alt_StartStop", false).toBool())
-                seq = "Alt+" + seq;
-            if (iniFile.value("Ctrl_StartStop", false).toBool())
-                seq = "Ctrl+" + seq;
-        }
-        keyStartStop = new QxtGlobalShortcut(QKeySequence(seq));
-        connect(keyStartStop, SIGNAL(activated()), this, SLOT(shortcutStartStop()));
-    }
-
-    if (idxInhibit > 0)
-    {
-        QString seq(global_key_sequences.value(idxInhibit, ""));
-        if (!seq.isEmpty())
-        {
-            if (iniFile.value("Shift_Inhibit", false).toBool())
-                seq = "Shift+" + seq;
-            if (iniFile.value("Alt_Inhibit", false).toBool())
-                seq = "Alt+" + seq;
-            if (iniFile.value("Ctrl_Inhibit", false).toBool())
-                seq = "Ctrl+" + seq;
-        }
-        keyInhibit = new QxtGlobalShortcut(QKeySequence(seq));
-        connect(keyInhibit, SIGNAL(activated()), this, SLOT(shortcutInhibit()));
-    }
 #else
-    keyCenter.keycode = keyZero.keycode = keyInhibit.keycode = keyStartStop.keycode = 0;
+    keyCenter.keycode = 0;
     keyCenter.shift = keyCenter.alt = keyCenter.ctrl = 0;
-    keyZero.shift = keyZero.alt = keyZero.ctrl = 0;
-    keyInhibit.shift = keyInhibit.alt = keyInhibit.ctrl = 0;
-    keyStartStop.shift = keyStartStop.alt = keyStartStop.ctrl = 0;
     if (idxCenter > 0 && idxCenter < global_windows_key_sequences.size())
         keyCenter.keycode = global_windows_key_sequences[idxCenter];
-    if (idxGameZero > 0 && idxCenter < global_windows_key_sequences.size())
-        keyZero.keycode = global_windows_key_sequences[idxGameZero];
-    if (idxInhibit > 0 && idxInhibit < global_windows_key_sequences.size())
-        keyInhibit.keycode = global_windows_key_sequences[idxInhibit];
-    if (idxStartStop > 0 && idxStartStop < global_windows_key_sequences.size())
-        keyStartStop.keycode = global_windows_key_sequences[idxStartStop];
-
     keyCenter.shift = iniFile.value("Shift_Center", false).toBool();
     keyCenter.alt = iniFile.value("Alt_Center", false).toBool();
     keyCenter.ctrl = iniFile.value("Ctrl_Center", false).toBool();
-    
-    keyInhibit.shift = iniFile.value("Shift_Inhibit", false).toBool();
-    keyInhibit.alt = iniFile.value("Alt_Inhibit", false).toBool();
-    keyInhibit.ctrl = iniFile.value("Ctrl_Inhibit", false).toBool();
-    
-    keyZero.shift = iniFile.value("Shift_GameZero", false).toBool();
-    keyZero.alt = iniFile.value("Alt_GameZero", false).toBool();
-    keyZero.ctrl = iniFile.value("Ctrl_GameZero", false).toBool();
-    
-    keyStartStop.shift = iniFile.value("Shift_StartStop", false).toBool();
-    keyStartStop.alt = iniFile.value("Alt_StartStop", false).toBool();
-    keyStartStop.ctrl = iniFile.value("Ctrl_StartStop", false).toBool();
 #endif
     iniFile.endGroup ();
 }
