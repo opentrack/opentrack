@@ -3,6 +3,9 @@
 #include "ftnoir_protocol_ft/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
+
+void create_registry_key(void);
+
 class ShmPosix {
 public:
     ShmPosix(const char *shmName, const char *mutexName, int mapSize);
@@ -41,6 +44,7 @@ int main(void)
 	WineSHM* shm_posix = (WineSHM*) lck_posix.mem;
     FTMemMap* shm_wine = (FTMemMap*) lck_wine.mem;
     TFreeTrackData* data = &shm_wine->data;
+    create_registry_key();
 	while (1) {
 		(void) Sleep(10);
 		lck_posix.lock();
