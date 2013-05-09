@@ -57,11 +57,6 @@
 
 #include <math.h>
 
-QFunctionConfigurator::~QFunctionConfigurator()
-{
-	delete btnReset;
-}
-
 static const int pointSize = 5;
 
 QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
@@ -85,12 +80,6 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 
     setMouseTracking(true);
     movingPoint = -1;				// Index of that same point
-
-	//
-	// Add a Reset-button
-	//
-	btnReset = new QPushButton(QString("Reset"), this);
-	connect(btnReset, SIGNAL(clicked()), this, SLOT(resetCurve()));
 
 	//
 	// Variables for FunctionConfig
@@ -314,8 +303,6 @@ int i;
 		drawBackground(e->rect());						// Draw the static parts on a Pixmap
 		p.drawPixmap(0, 0, _background);				// Paint the background
 		_draw_background = false;
-
-		btnReset->move(e->rect().left(), e->rect().bottom() - btnReset->height() - 2);
 	}
 
 	if (_draw_function) {
