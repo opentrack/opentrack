@@ -119,11 +119,11 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 50;
     config->ransac_max_reprojection_error = 4;
-    config->ransac_max_inlier_error = 3.5;
+    config->ransac_max_inlier_error = 4;
     config->ransac_abs_max_mean_error = 7;
     config->ransac_max_mean_error = 3.8;
     config->debug = 0;
-    config->ransac_min_features = 0.55;
+    config->ransac_min_features = 0.625;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -131,7 +131,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->force_width = r.width;
     config->force_height = r.height;
     config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
-    config->flandmark_delay = 90;
+    config->flandmark_delay = 50;
 #if 0
     if (config->user_landmarks)
     {
