@@ -122,7 +122,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_max_reprojection_error = 3.5;
     config->ransac_max_inlier_error = 3.1;
     config->ransac_abs_max_mean_error = 7;
-    config->ransac_max_mean_error = 3.15;
+    config->ransac_max_mean_error = 3.4;
     config->debug = 0;
     config->ransac_min_features = 0.63;
     int res = iniFile.value("resolution", 0).toInt();
