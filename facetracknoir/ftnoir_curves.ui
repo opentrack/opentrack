@@ -24,27 +24,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">/* Customize any plain widget that is a child of a QMainWindow. */ 
-QMainWindow &gt; .QWidget {
-background-color: rgb(100, 100, 100);
-}
-
-/* Set the selection colors for all widgets. */
-QWidget {
-selection-color: black;
-selection-background-color: Silver;
-color: black;
-}
-
-/* Specials for individual widget(s) */
-QWidget#UICCurveConfigurationDialog {
-background-color: #dfdfdf;
-}
-
-QWidget#tabWidget {
-background-color: #595959;
-}
-
+   <string notr="true">background-color: rgb(240, 240, 240);
 /*
 QWidget#widgetTop {
 background-color: #595959;
@@ -130,9 +110,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -176,9 +156,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -217,9 +197,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -266,9 +246,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -307,9 +287,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -356,9 +336,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -373,7 +353,7 @@ color: rgb(255, 255, 255);
            <x>0</x>
            <y>0</y>
            <width>555</width>
-           <height>160</height>
+           <height>270</height>
           </rect>
          </property>
          <property name="maxInputEGU" stdset="0">
@@ -386,7 +366,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -397,9 +377,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -420,7 +400,7 @@ color: rgb(255, 255, 255);
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>340</y>
+           <y>310</y>
            <width>555</width>
            <height>160</height>
           </rect>
@@ -435,7 +415,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -446,9 +426,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -476,7 +456,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -487,9 +467,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -510,7 +490,7 @@ color: rgb(255, 255, 255);
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>340</y>
+           <y>310</y>
            <width>555</width>
            <height>160</height>
           </rect>
@@ -525,7 +505,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -536,9 +516,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -577,9 +557,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -600,7 +580,7 @@ color: rgb(255, 255, 255);
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>340</y>
+           <y>310</y>
            <width>555</width>
            <height>160</height>
           </rect>
@@ -615,7 +595,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
@@ -626,9 +606,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>200</red>
-           <green>200</green>
-           <blue>200</blue>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -882,7 +862,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>54</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
@@ -907,7 +887,7 @@ color: rgb(255, 255, 255);
          </property>
          <property name="minimumSize">
           <size>
-           <width>54</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
