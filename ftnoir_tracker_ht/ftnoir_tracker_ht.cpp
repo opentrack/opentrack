@@ -91,7 +91,6 @@ typedef struct {
 } resolution_tuple;
 
 static resolution_tuple resolution_choices[] = {
-    { 0, 0 },
 	{ 640, 480 },
 	{ 320, 240 },
 	{ 320, 200 },
@@ -126,7 +125,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->debug = 0;
     config->ransac_min_features = 0.63;
     int res = iniFile.value("resolution", 0).toInt();
-    if (res < 0 || res >= (int)(sizeof(*resolution_choices) / sizeof(resolution_tuple)))
+    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
