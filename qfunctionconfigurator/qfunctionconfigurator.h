@@ -119,7 +119,6 @@ class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 
 public:
 	QFunctionConfigurator(QWidget *parent = 0);
-	~QFunctionConfigurator();
 	FunctionConfig* config();
 
 	void setConfig(FunctionConfig* config, QString settingsFile);		// Connect the FunctionConfig to the Widget.
@@ -187,7 +186,6 @@ private:
 	QString strOutputEGU;			// Engineering Units output (horizontal axis)
 	QString strCaption;				// Caption of the graph
 	QString strSettingsFile;		// Name of last read INI-file
-	QPushButton *btnReset;			// Reset Curve
 
 	bool _draw_background;			// Flag to determine if the background should be (re-)drawn on the QPixmap
 	QPixmap _background;			// Image of the static parts (axis, lines, etc.)
