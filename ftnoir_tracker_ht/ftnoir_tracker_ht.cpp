@@ -110,9 +110,9 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 35;
     config->max_keypoints = 300;
     config->keypoint_quality = 31;
-    config->keypoint_distance = 2.1;
-    config->keypoint_3distance = 4;
-    config->keypoint_9distance = 9;
+    config->keypoint_distance = 2.8;
+    config->keypoint_3distance = 7;
+    config->keypoint_9distance = 11;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
@@ -120,10 +120,10 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_num_iters = 100;
     config->ransac_max_reprojection_error = 4.5;
     config->ransac_max_inlier_error = 4.5;
-    config->ransac_abs_max_mean_error = 12;
+    config->ransac_abs_max_mean_error = 10;
     config->ransac_max_mean_error = 4;
-    config->debug = 0;
-    config->ransac_min_features = 0.78;
+    config->debug = 1;
+    config->ransac_min_features = 0.77;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -131,7 +131,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->force_width = r.width;
     config->force_height = r.height;
     config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
-    config->flandmark_delay = 32;
+    config->flandmark_delay = 21;
 #if 0
     if (config->user_landmarks)
     {
