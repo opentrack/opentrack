@@ -6,8 +6,8 @@
 #define HT_SHM_NAME "ftnoir-tracker-ht-shm"
 #define HT_MUTEX_NAME "ftnoir-tracker-ht-mutex"
 
-#define HT_MAX_VIDEO_WIDTH 2048
-#define HT_MAX_VIDEO_HEIGHT 1536
+#define HT_MAX_VIDEO_WIDTH 640
+#define HT_MAX_VIDEO_HEIGHT 480
 #define HT_MAX_VIDEO_CHANNELS 3
 
 typedef struct {

@@ -107,23 +107,23 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->classification_delay = 500;
     config->field_of_view = iniFile.value("fov", 52).toFloat();
 	config->pyrlk_pyramids = 0;
-    config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
+    config->pyrlk_win_size_w = config->pyrlk_win_size_h = 35;
     config->max_keypoints = 300;
     config->keypoint_quality = 31;
-    config->keypoint_distance = 2;
-    config->keypoint_3distance = 5;
-    config->keypoint_9distance = 10;
+    config->keypoint_distance = 2.1;
+    config->keypoint_3distance = 4;
+    config->keypoint_9distance = 9;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 4;
-    config->ransac_max_inlier_error = 4;
-    config->ransac_abs_max_mean_error = 7;
-    config->ransac_max_mean_error = 3.9;
+    config->ransac_max_reprojection_error = 4.5;
+    config->ransac_max_inlier_error = 4.5;
+    config->ransac_abs_max_mean_error = 12;
+    config->ransac_max_mean_error = 4;
     config->debug = 0;
-    config->ransac_min_features = 0.75;
+    config->ransac_min_features = 0.78;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
@@ -131,7 +131,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->force_width = r.width;
     config->force_height = r.height;
     config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
-    config->flandmark_delay = 25;
+    config->flandmark_delay = 32;
 #if 0
     if (config->user_landmarks)
     {
