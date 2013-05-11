@@ -622,8 +622,8 @@ color: rgb(255, 255, 255);
           <rect>
            <x>10</x>
            <y>44</y>
-           <width>46</width>
-           <height>13</height>
+           <width>35</width>
+           <height>16</height>
           </rect>
          </property>
          <property name="text">
@@ -635,7 +635,7 @@ color: rgb(255, 255, 255);
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>41</width>
+           <width>34</width>
            <height>20</height>
           </rect>
          </property>
@@ -648,8 +648,8 @@ color: rgb(255, 255, 255);
           <rect>
            <x>9</x>
            <y>75</y>
-           <width>46</width>
-           <height>13</height>
+           <width>33</width>
+           <height>16</height>
           </rect>
          </property>
          <property name="text">
@@ -727,7 +727,7 @@ color: rgb(255, 255, 255);
           <rect>
            <x>209</x>
            <y>10</y>
-           <width>41</width>
+           <width>32</width>
            <height>20</height>
           </rect>
          </property>
@@ -806,8 +806,8 @@ color: rgb(255, 255, 255);
           <rect>
            <x>209</x>
            <y>44</y>
-           <width>46</width>
-           <height>13</height>
+           <width>32</width>
+           <height>16</height>
           </rect>
          </property>
          <property name="text">
@@ -819,8 +819,8 @@ color: rgb(255, 255, 255);
           <rect>
            <x>208</x>
            <y>75</y>
-           <width>46</width>
-           <height>13</height>
+           <width>35</width>
+           <height>16</height>
           </rect>
          </property>
          <property name="text">
