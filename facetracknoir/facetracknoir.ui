@@ -10,25 +10,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
+    <width>874</width>
     <height>380</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>890</width>
+    <width>874</width>
     <height>380</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>890</width>
+    <width>874</width>
     <height>380</height>
    </size>
   </property>
@@ -150,7 +150,7 @@ QGroupBox {
    </property>
    <property name="minimumSize">
     <size>
-     <width>890</width>
+     <width>874</width>
      <height>380</height>
     </size>
    </property>
@@ -443,413 +443,6 @@ QGroupBox {
     <property name="locale">
      <locale language="English" country="UnitedStates"/>
     </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>200</y>
-       <width>611</width>
-       <height>172</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="verticalSpacing">
-       <number>6</number>
-      </property>
-      <item row="1" column="2">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QPushButton" name="btnShortcuts">
-          <property name="minimumSize">
-           <size>
-            <width>54</width>
-            <height>38</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="toolTip">
-           <string>Edit the Keyboard and mouse shortcuts</string>
-          </property>
-          <property name="text">
-           <string>Shortkeys</string>
-          </property>
-          <property name="icon">
-           <iconset resource="main-facetracknoir.qrc">
-            <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnEditCurves">
-          <property name="minimumSize">
-           <size>
-            <width>54</width>
-            <height>38</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="toolTip">
-           <string>Edit the Curve settings</string>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background:none;</string>
-          </property>
-          <property name="text">
-           <string>Curves</string>
-          </property>
-          <property name="icon">
-           <iconset resource="main-facetracknoir.qrc">
-            <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>120</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="2">
-       <widget class="QGroupBox" name="groupGameProtocol">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Game protocol</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboProtocol">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>7</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowServerControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change game protocol settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="groupTrackerSource">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Tracker Source(1st = Master)</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboTrackerSource">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>42</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowEngineControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change tracker settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QGroupBox" name="groupFilter">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>70</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="title">
-         <string>Filter</string>
-        </property>
-        <widget class="QComboBox" name="iconcomboFilter">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>7</number>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnShowFilterControls">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change game protocol settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QGroupBox" name="groupBox_3">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Tracker Source (2nd)</string>
-        </property>
-        <widget class="QPushButton" name="btnShowSecondTrackerSettings">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>180</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Change tracker settings</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-        </widget>
-        <widget class="QComboBox" name="cbxSecondTrackerSource">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>180</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="currentIndex">
-          <number>-1</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>5</number>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QGroupBox" name="groupStartStop">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>80</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>GO!</string>
-        </property>
-        <widget class="QPushButton" name="btnStartTracker">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>30</y>
-           <width>81</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Start the Tracker</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="btnStopTracker">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>100</x>
-           <y>30</y>
-           <width>81</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="toolTip">
-          <string>Stop the Tracker</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Stop</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="QLabel" name="cameraName">
      <property name="geometry">
       <rect>
@@ -876,26 +469,372 @@ QGroupBox {
 background:none;</string>
      </property>
      <property name="text">
-      <string>Camera Name</string>
+      <string/>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_4">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>320</x>
        <y>70</y>
-       <width>251</width>
+       <width>221</width>
        <height>121</height>
       </rect>
      </property>
      <property name="title">
       <string>Axis inversion</string>
      </property>
+     <widget class="QLabel" name="lblInvert1_2">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>24</y>
+        <width>30</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Invert</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblInvert1_3">
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>24</y>
+        <width>30</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Invert</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensX">
+      <property name="geometry">
+       <rect>
+        <x>108</x>
+        <y>52</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>X</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensPitch">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>71</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Pitch</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertPitch">
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>71</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensY">
+      <property name="geometry">
+       <rect>
+        <x>108</x>
+        <y>71</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Y</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensZ">
+      <property name="geometry">
+       <rect>
+        <x>108</x>
+        <y>90</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Z</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertZ">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>90</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertY">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>71</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertRoll">
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>90</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertX">
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>52</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensYaw">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>52</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Yaw</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkInvertYaw">
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>52</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:none;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblSensRoll">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>25</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>25</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:#ccc;
+background:none;</string>
+      </property>
+      <property name="text">
+       <string>Roll</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupProfile">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>20</x>
        <y>70</y>
        <width>271</width>
        <height>120</height>
@@ -999,352 +938,6 @@ background:none;</string>
       </property>
      </widget>
     </widget>
-    <widget class="QLabel" name="lblInvert1_2">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>92</y>
-       <width>30</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>30</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Invert</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertRoll">
-     <property name="geometry">
-      <rect>
-       <x>433</x>
-       <y>158</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensZ">
-     <property name="geometry">
-      <rect>
-       <x>469</x>
-       <y>158</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Z</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertZ">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>158</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensPitch">
-     <property name="geometry">
-      <rect>
-       <x>371</x>
-       <y>139</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Pitch</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertPitch">
-     <property name="geometry">
-      <rect>
-       <x>433</x>
-       <y>139</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensY">
-     <property name="geometry">
-      <rect>
-       <x>469</x>
-       <y>139</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Y</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertY">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>139</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensYaw">
-     <property name="geometry">
-      <rect>
-       <x>371</x>
-       <y>120</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Yaw</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertYaw">
-     <property name="geometry">
-      <rect>
-       <x>433</x>
-       <y>120</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensX">
-     <property name="geometry">
-      <rect>
-       <x>469</x>
-       <y>120</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>X</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="chkInvertX">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>120</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblInvert1_3">
-     <property name="geometry">
-      <rect>
-       <x>433</x>
-       <y>92</y>
-       <width>30</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>30</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Invert</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblSensRoll">
-     <property name="geometry">
-      <rect>
-       <x>371</x>
-       <y>158</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>25</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Roll</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="game_name">
      <property name="geometry">
       <rect>
@@ -1360,6 +953,439 @@ background:none;</string>
      </property>
      <property name="text">
       <string>Not connected</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupGameProtocol">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>201</y>
+       <width>180</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>180</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>180</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="title">
+      <string>Game protocol</string>
+     </property>
+     <widget class="QComboBox" name="iconcomboProtocol">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>161</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>7</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnShowServerControls">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>161</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Change game protocol settings</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Settings</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupTrackerSource">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>201</y>
+       <width>200</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="title">
+      <string>Tracker Source(1st = Master)</string>
+     </property>
+     <widget class="QComboBox" name="iconcomboTrackerSource">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>180</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>42</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnShowEngineControls">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>180</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Change tracker settings</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Settings</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupFilter">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>201</y>
+       <width>200</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="title">
+      <string>Filter</string>
+     </property>
+     <widget class="QComboBox" name="iconcomboFilter">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>180</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>7</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnShowFilterControls">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>180</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Change game protocol settings</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Settings</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>289</y>
+       <width>200</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Tracker Source (2nd)</string>
+     </property>
+     <widget class="QPushButton" name="btnShowSecondTrackerSettings">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>180</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Change tracker settings</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Settings</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbxSecondTrackerSource">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>180</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>5</number>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupStartStop">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>289</y>
+       <width>200</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>GO!</string>
+     </property>
+     <widget class="QPushButton" name="btnStartTracker">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Start the Tracker</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnStopTracker">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>30</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Stop the Tracker</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="btnShortcuts">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>288</y>
+       <width>181</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>54</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>Edit the Keyboard and mouse shortcuts</string>
+     </property>
+     <property name="text">
+      <string>Shortkeys</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main-facetracknoir.qrc">
+       <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnEditCurves">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>332</y>
+       <width>181</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>54</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="toolTip">
+      <string>Edit the Curve settings</string>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:none;</string>
+     </property>
+     <property name="text">
+      <string>Curves</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main-facetracknoir.qrc">
+       <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>120</width>
+       <height>24</height>
+      </size>
      </property>
     </widget>
    </widget>
