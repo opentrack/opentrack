@@ -39,8 +39,8 @@
 //
 FilterControls::FilterControls() :
 	QWidget(),
-    functionConfig("Accela-Scaling-Rotation", 4, 8),
-    translationFunctionConfig("Accela-Scaling-Translation", 4, 8)
+    functionConfig("Accela-Scaling-Rotation", 6, 8),
+    translationFunctionConfig("Accela-Scaling-Translation", 6, 8)
 {
 	ui.setupUi( this );
 
@@ -156,6 +156,7 @@ void FilterControls::loadSettings() {
 	iniFile.beginGroup ( "Accela" );
 	ui.slideReduction->setValue (iniFile.value ( "Reduction", 100 ).toInt());
     ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
+    ui.smoothingFactor->setValue(iniFile.value("smoothing-factor", 1).toFloat());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -175,6 +176,7 @@ void FilterControls::save() {
 	iniFile.beginGroup ( "Accela" );
 	iniFile.setValue ( "Reduction", ui.slideReduction->value() );
     iniFile.setValue("zoom-slowness", ui.slideZoom->value());
+    iniFile.setValue("smoothing-factor", ui.smoothingFactor->value());
 	iniFile.endGroup ();
 
 	functionConfig.saveSettings(iniFile);

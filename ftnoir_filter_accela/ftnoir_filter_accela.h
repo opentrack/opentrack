@@ -59,6 +59,7 @@ private:
 	double kFactor, kFactorTranslation;
 	double kSensitivity, kSensitivityTranslation;
     double kMagicNumber, kZoomSlowness;		// Stanislaws' magic number (should be 100 according to him...)
+    double kSmoothingFactor;
 
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
