@@ -21,8 +21,8 @@
 #endif
 
 FTNoIR_Filter::FTNoIR_Filter() :
-    functionConfig("Accela-Scaling-Rotation", 4, 6),
-    translationFunctionConfig("Accela-Scaling-Translation", 4, 6)
+    functionConfig("Accela-Scaling-Rotation", 6, 8),
+    translationFunctionConfig("Accela-Scaling-Translation", 6, 8)
 {
 	first_run = true;
 	kMagicNumber = 100.0f;
@@ -50,6 +50,7 @@ void FTNoIR_Filter::loadSettings() {
 	iniFile.beginGroup ( "Accela" );
 	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
     kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
+    kSmoothingFactor = iniFile.value("smoothing-factor", 1).toFloat();
 	iniFile.endGroup ();
 }
 
@@ -89,13 +90,13 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 		double start = prev_output[i];
 		double vec = e2 - start;
 		int sign = vec < 0 ? -1 : 1;
-		double x = fabs(vec);
+		double x = fabs(vec) / kSmoothingFactor;
 		QList<QPointF> points = (i >= 3 ? functionConfig : translationFunctionConfig).getPoints();
 		int extrapolatep = 0;
 		double ratio;
 		double maxx;
 		double add;
-		// extrapolation of a spline
+		// linear extrapolation of a spline
 		if (points.size() > 1) {
 			QPointF last = points[points.size() - 1];
 			QPointF penultimate = points[points.size() - 2];

@@ -70,16 +70,16 @@
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
-        <number>4</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
         <number>6</number>
        </property>
+       <property name="maxOutputEGU" stdset="0">
+        <number>8</number>
+       </property>
        <property name="pixPerEGU_Input" stdset="0">
-        <number>191</number>
+        <number>127</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
-        <number>75</number>
+        <number>57</number>
        </property>
        <property name="gridDistEGU_Input" stdset="0">
         <number>1</number>
@@ -126,16 +126,16 @@
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
-        <number>4</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
         <number>6</number>
        </property>
+       <property name="maxOutputEGU" stdset="0">
+        <number>8</number>
+       </property>
        <property name="pixPerEGU_Input" stdset="0">
-        <number>191</number>
+        <number>127</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
-        <number>75</number>
+        <number>57</number>
        </property>
        <property name="gridDistEGU_Input" stdset="0">
         <number>1</number>
@@ -318,6 +318,26 @@ background:none;</string>
        </property>
        <property name="value">
         <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Smoothing:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="smoothingFactor">
+       <property name="minimum">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>1.000000000000000</double>
        </property>
       </widget>
      </item>
