@@ -330,11 +330,17 @@ background:none;</string>
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="smoothingFactor">
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
         <double>0.100000000000000</double>
        </property>
        <property name="maximum">
         <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
        </property>
        <property name="value">
         <double>1.000000000000000</double>
