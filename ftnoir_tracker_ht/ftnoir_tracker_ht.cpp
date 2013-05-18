@@ -106,49 +106,28 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	iniFile.beginGroup( "HT-Tracker" );
     config->classification_delay = 500;
     config->field_of_view = iniFile.value("fov", 52).toFloat();
-	config->pyrlk_pyramids = 0;
-    config->pyrlk_win_size_w = config->pyrlk_win_size_h = 35;
-    config->max_keypoints = 300;
-    config->keypoint_quality = 31;
-    config->keypoint_distance = 2.8;
-    config->keypoint_3distance = 7;
-    config->keypoint_9distance = 11;
+	config->pyrlk_pyramids = 3;
+    config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
+    config->max_keypoints = 150;
+    config->keypoint_distance = 3.6;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
     config->camera_index = iniFile.value("camera-index", -1).toInt();
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 4.5;
-    config->ransac_max_inlier_error = 4.5;
-    config->ransac_abs_max_mean_error = 10;
-    config->ransac_max_mean_error = 4;
-    config->debug = 1;
-    config->ransac_min_features = 0.77;
+    config->ransac_max_reprojection_error = 3.35;
+    config->ransac_max_inlier_error = 3.4;
+    config->ransac_abs_max_mean_error = 5;
+    config->ransac_max_mean_error = 3.1;
+    config->debug = 0;
+    config->ransac_min_features = 0.85;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
     config->force_height = r.height;
-    config->user_landmarks = false; //iniFile.value("use-bashed-coords").toBool();
-    config->flandmark_delay = 21;
-#if 0
-    if (config->user_landmarks)
-    {
-        config->user_landmark_locations[0][0] = iniFile.value("b1").toDouble();
-        config->user_landmark_locations[1][0] = iniFile.value("b2").toDouble();
-        config->user_landmark_locations[2][0] = iniFile.value("b3").toDouble();
-        config->user_landmark_locations[0][1] = iniFile.value("b4").toDouble();
-        config->user_landmark_locations[1][1] = iniFile.value("b5").toDouble();
-        config->user_landmark_locations[2][1] = iniFile.value("b6").toDouble();
-        config->user_landmark_locations[0][2] = iniFile.value("b7").toDouble();
-        config->user_landmark_locations[1][2] = iniFile.value("b8").toDouble();
-        config->user_landmark_locations[2][2] = iniFile.value("b9").toDouble();
-        config->user_landmark_locations[0][3] = iniFile.value("b10").toDouble();
-        config->user_landmark_locations[1][3] = iniFile.value("b11").toDouble();
-        config->user_landmark_locations[2][3] = iniFile.value("b12").toDouble();
-    }
-#endif
+    config->flandmark_delay = 250;
     qDebug() << "width" << r.width << "height" << r.height;
 	if (tracker)
 	{
@@ -235,15 +214,9 @@ bool Tracker::GiveHeadPoseData(double *data)
             data[RX] = shm->result.rotx;
         if (enableRY) {
             data[RY] = shm->result.roty;
-            double sign = data[RY] >= 0 ? 1 : -1;
-            if (fabs(fabs(data[RY]) - 180) < fabs(data[RY]))
-                data[RY] = fabs(fabs(data[RY]) - 180) * sign;
 		}
         if (enableRZ) {
             data[RZ] = shm->result.rotz;
-            double sign = data[RZ] >= 0 ? 1 : -1;
-            if (fabs(fabs(data[RZ]) - 180) < fabs(data[RZ]))
-                data[RZ] = fabs(fabs(data[RZ]) - 180) * sign;
         }
         if (enableTX)
             data[TX] = shm->result.tx;
@@ -261,7 +234,7 @@ bool Tracker::GiveHeadPoseData(double *data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-    *strToBeFilled = "HT 0.97";
+    *strToBeFilled = "HT 0.98";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
