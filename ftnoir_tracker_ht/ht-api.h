@@ -38,6 +38,7 @@ typedef struct ht_config {
     float ransac_max_mean_error;
     float ransac_abs_max_mean_error;
     float flandmark_delay;
+    double dist_coeffs[5];
 } ht_config_t;
 
 typedef struct {
