@@ -61,17 +61,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	}
 }
 
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
-
-void FTNoIR_Protocol::Initialize()
-{
-	return;
-}
-
 //
 // Load the current Settings from the currently 'active' INI-file.
 //

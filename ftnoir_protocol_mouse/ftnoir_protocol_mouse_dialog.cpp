@@ -102,11 +102,6 @@ MOUSEControls::~MOUSEControls() {
 	qDebug() << "~MOUSEControls() says: started";
 }
 
-void MOUSEControls::Release()
-{
-    delete this;
-}
-
 //
 // Initialize tracker-client-dialog
 //

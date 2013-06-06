@@ -47,8 +47,6 @@ class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 public:
 	FTNoIR_Filter();
 	~FTNoIR_Filter();
-
-    void Initialize();
     void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter_values);
 
 private:
@@ -78,8 +76,6 @@ public:
 	explicit FilterControls();
     virtual ~FilterControls();
 	void showEvent ( QShowEvent * event );
-
-	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent, IFilter *ptr);
 
 private:

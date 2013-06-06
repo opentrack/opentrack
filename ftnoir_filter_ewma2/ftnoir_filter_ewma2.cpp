@@ -49,13 +49,6 @@ FTNoIR_Filter::~FTNoIR_Filter()
 
 }
 
-void FTNoIR_Filter::Initialize()
-{
-	qDebug() << "FTNoIR_Filter::Initialize says: Starting ";
-	loadSettings();
-	return;
-}
-
 //
 // Load the current Settings from the currently 'active' INI-file.
 //

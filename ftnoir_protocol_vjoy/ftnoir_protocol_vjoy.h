@@ -44,9 +44,6 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
-
-    void Initialize();
-
     bool checkServerInstallationOK() {
         return true;
     }

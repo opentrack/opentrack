@@ -64,11 +64,6 @@ SCControls::~SCControls() {
 	qDebug() << "~SCControls() says: started";
 }
 
-void SCControls::Release()
-{
-    delete this;
-}
-
 //
 // Initialize tracker-client-dialog
 //

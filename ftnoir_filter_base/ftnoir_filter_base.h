@@ -26,7 +26,6 @@
 struct IFilter
 {
 	virtual ~IFilter() {}
-	virtual void Initialize() = 0;
     virtual void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter) = 0;
 };
 

@@ -51,11 +51,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	}
 }
 
-void FTNoIR_Protocol::Initialize()
-{
-    loadSettings();
-}
-
 //
 // Load the current Settings from the currently 'active' INI-file.
 //

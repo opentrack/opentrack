@@ -85,12 +85,6 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
         pSecondTracker->StartTracker( mainApp->get_video_widget() );
     }
 
-    if (pFilter)
-        pFilter->Initialize();
-
-    if (pProtocol)
-        pProtocol->Initialize();
-
     correct = true;
 }
 

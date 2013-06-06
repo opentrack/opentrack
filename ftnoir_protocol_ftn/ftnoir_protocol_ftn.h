@@ -44,9 +44,6 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
-
-    void Initialize();
-
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
     QString getGameName() {
@@ -69,8 +66,6 @@ public:
 	explicit FTNControls();
     virtual ~FTNControls();
 	void showEvent ( QShowEvent * event );
-
-	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent);
     void registerProtocol(IProtocol *protocol) {}
     void unRegisterProtocol() {}

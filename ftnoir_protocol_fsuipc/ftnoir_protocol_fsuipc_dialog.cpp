@@ -63,11 +63,6 @@ FSUIPCControls::~FSUIPCControls() {
 	qDebug() << "~FSUIPCControls() says: started";
 }
 
-void FSUIPCControls::Release()
-{
-    delete this;
-}
-
 //
 // Initialize tracker-client-dialog
 //

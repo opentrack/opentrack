@@ -71,11 +71,6 @@ FTNControls::~FTNControls() {
 	qDebug() << "~FTNControls() says: started";
 }
 
-void FTNControls::Release()
-{
-    delete this;
-}
-
 //
 // Initialize tracker-client-dialog
 //

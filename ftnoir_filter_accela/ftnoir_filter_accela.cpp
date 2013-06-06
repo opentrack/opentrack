@@ -34,10 +34,6 @@ FTNoIR_Filter::~FTNoIR_Filter()
 
 }
 
-void FTNoIR_Filter::Initialize()
-{
-}
-
 void FTNoIR_Filter::loadSettings() {
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 

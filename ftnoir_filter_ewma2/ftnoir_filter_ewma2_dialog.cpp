@@ -66,11 +66,6 @@ FilterControls::~FilterControls() {
 	qDebug() << "~FilterControls() says: started";
 }
 
-void FilterControls::Release()
-{
-    delete this;
-}
-
 //
 // Initialize tracker-client-dialog
 //
@@ -98,9 +93,6 @@ void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
 //
 void FilterControls::doOK() {
 	save();
-	if (pFilter) {
-		pFilter->Initialize();
-	}
 	this->close();
 }
 

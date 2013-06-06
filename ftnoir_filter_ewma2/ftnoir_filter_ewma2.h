@@ -42,7 +42,6 @@ public:
 	FTNoIR_Filter();
     ~FTNoIR_Filter();
 
-    void Initialize();
     void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter);
 
 private:
@@ -74,8 +73,6 @@ public:
 	explicit FilterControls();
     virtual ~FilterControls();
 	void showEvent ( QShowEvent * event );
-
-	void Release();											// Member functions which are accessible from outside the DLL
     void Initialize(QWidget *parent, IFilter* ptr);
 
 private:
@@ -103,15 +100,11 @@ class FTNoIR_FilterDll : public Metadata
 public:
 	FTNoIR_FilterDll();
 	~FTNoIR_FilterDll();
+	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); }
+	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
+	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }
 
-	void Release();
-    void Initialize();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); };
-
-	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	};
+	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
 };
 
 #endif						//INCLUDED_FTN_FILTER_H

@@ -79,11 +79,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	}
 }
 
-void FTNoIR_Protocol::Initialize()
-{
-	return;
-}
-
 //
 // Read the game-data from CSV
 //
