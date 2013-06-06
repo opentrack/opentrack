@@ -79,15 +79,14 @@ public:
     void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker) {
 		theTracker = (FTNoIR_Tracker *) tracker;			// Accept the pointer to the Tracker
-	};
+	}
 	void unRegisterTracker() {
 		theTracker = NULL;									// Reset the pointer
-	};
+	}
 
 private:
 	Ui::UICSMClientControls ui;
 	void loadSettings();
-	bool SMCreateMapping();
 	void doCommand( int command );
 	void doCommand( int command, int value );
 
@@ -98,19 +97,19 @@ private:
 	//
 	// global variables
 	//
-	HANDLE hSMMemMap;
 	SMMemMap *pMemData;
-	HANDLE hSMMutex;
+    
     smEngineHandle *engine_handle;
 	QTimer *timUpdateSettings;								// Timer to display current settings
 
 	FTNoIR_Tracker *theTracker;
+    PortableLockedShm shm;
 
 private slots:
 	void doOK();
 	void doCancel();
 	void save();
-	void settingChanged() { settingsDirty = true; };
+	void settingChanged() { settingsDirty = true; }
 	void doTimUpdate();
 	void showSettings( int newState );
 	void doStartEngine(){
@@ -127,7 +126,7 @@ private slots:
 	}
 	void settingChanged(int dummy) { 
 		settingsDirty = true;
-	};
+	}
 
 signals:
      void stateChanged(int newState);

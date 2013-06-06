@@ -34,8 +34,11 @@
 // Constructor for server-settings-dialog
 //
 TrackerControls::TrackerControls() :
-QWidget()
+    QWidget(),
+    shm(SM_MM_DATA, SM_MUTEX, sizeof(TFaceData))
 {
+    pMemData = (SMMemMap*) shm.mem;
+    
 	ui.setupUi( this );
 
 	theTracker = NULL;
@@ -54,13 +57,6 @@ QWidget()
 	connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
 	connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
 
-	if (SMCreateMapping()) {
-		qDebug() << "TrackerControls::Initialize Mapping created.";
-	}
-	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error","Memory mapping not created!",QMessageBox::Ok,QMessageBox::NoButton);
-	}
-
 	//Setup the timer for showing the headpose.
 	timUpdateSettings = new QTimer(this);
     connect(timUpdateSettings, SIGNAL(timeout()), this, SLOT(doTimUpdate()));
@@ -73,7 +69,6 @@ QWidget()
 	connect(ui.chkEnableX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnableZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-
 }
 
 //
@@ -206,62 +201,6 @@ void TrackerControls::save() {
 	settingsDirty = false;
 }
 
-//
-// Create a memory-mapping to the faceAPI data.
-// It contains the tracking data, a command-code from FaceTrackNoIR
-//
-//
-bool TrackerControls::SMCreateMapping()
-{
-	qDebug() << "TrackerControls::FTCreateMapping says: Starting Function";
-
-	//
-	// A FileMapping is used to create 'shared memory' between the faceAPI and FaceTrackNoIR.
-	//
-	// Try to create a FileMapping to the Shared Memory.
-	// If one already exists: close it.
-	//
-	hSMMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( TFaceData ) + sizeof( HANDLE ) + 100, 
-								   (LPCSTR) SM_MM_DATA );
-
-	if ( hSMMemMap != 0 ) {
-		qDebug() << "TrackerControls::FTCreateMapping says: FileMapping Created!";
-	}
-
-	if ( ( hSMMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		CloseHandle( hSMMemMap );
-		hSMMemMap = 0;
-	}
-
-	//
-	// Create a new FileMapping, Read/Write access
-	//
-    hSMMemMap = OpenFileMappingA( FILE_MAP_WRITE , false , (LPCSTR) SM_MM_DATA );
-	if ( ( hSMMemMap != 0 ) ) {
-		qDebug() << "TrackerControls::FTCreateMapping says: FileMapping Created again..." << hSMMemMap;
-        pMemData = (SMMemMap *) MapViewOfFile(hSMMemMap, FILE_MAP_WRITE, 0, 0, sizeof(TFaceData));
-		if (pMemData != NULL) {
-			qDebug() << "TrackerControls::FTCreateMapping says: MapViewOfFile OK.";
-//			pMemData->handle = handle;	// The game uses the handle, to send a message that the Program-Name was set!
-		}
-	    hSMMutex = CreateMutexA(NULL, false, SM_MUTEX);
-	}
-	else {
-		qDebug() << "TrackerControls::FTCreateMapping says: Error creating Shared Memory for faceAPI!";
-		return false;
-	}
-
-	//if (pMemData != NULL) {
-	//	pMemData->data.DataID = 1;
-	//	pMemData->data.CamWidth = 100;
-	//	pMemData->data.CamHeight = 250;
-	//}
-
-	return true;
-}
-
-//
 // Show the current engine-settings etc.
 //
 void TrackerControls::doTimUpdate()
@@ -312,11 +251,9 @@ void TrackerControls::showSettings( int newState )
 //
 void TrackerControls::doCommand(int command)
 {
-	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
-		pMemData->command = command;					// Send command
-		ReleaseMutex(hSMMutex);
-	}
-	return;
+    shm.lock();
+    pMemData->command = command;
+    shm.unlock();
 }
 
 //
@@ -324,12 +261,10 @@ void TrackerControls::doCommand(int command)
 //
 void TrackerControls::doCommand(int command, int value)
 {
-	if ( (pMemData != NULL) && (WaitForSingleObject(hSMMutex, 100) == WAIT_OBJECT_0) ) {
-		pMemData->command = command;					// Send command
-		pMemData->par_val_int = value;
-		ReleaseMutex(hSMMutex);
-	}
-	return;
+    shm.lock();
+    pMemData->command = command;					// Send command
+    pMemData->par_val_int = value;
+    shm.unlock();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
