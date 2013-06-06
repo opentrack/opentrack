@@ -42,6 +42,7 @@
 #include <windows.h>
 #include <QMutex>
 #include <QMutexLocker>
+#include "compat/compat.h"
 //#include "math.h"
 
 //typedef char *(WINAPI *importProvider)(void);
@@ -65,16 +66,12 @@ public:
     }
 
 private:
-	bool FTCreateMapping();
-	void FTDestroyMapping();
-
 	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
 	importTIRViewsStop viewsStop;
 
-	HANDLE hFTMemMap;
 	FTMemMap *pMemData;
-	HANDLE hFTMutex;
     QString game_name;
+    PortableLockedShm shm;
 
 	// Private properties
 	QString ProgramName;

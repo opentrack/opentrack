@@ -365,7 +365,7 @@ endif()
         endif()
 
         add_library(opentrack-proto-freetrack SHARED ${opentrack-proto-freetrack-c} ${opentrack-proto-freetrack-moc} ${opentrack-proto-freetrack-uih} ${opentrack-proto-freetrack-rcc})
-        target_link_libraries(opentrack-proto-freetrack opentrack-csv ${MY_QT_LIBS})
+        target_link_libraries(opentrack-proto-freetrack opentrack-csv ${MY_QT_LIBS} opentrack-compat)
 
         add_library(opentrack-proto-win32-mouse SHARED ${opentrack-proto-win32-mouse-c} ${opentrack-proto-win32-mouse-moc} ${opentrack-proto-win32-mouse-uih} ${opentrack-proto-win32-mouse-rcc})
         target_link_libraries(opentrack-proto-win32-mouse ${MY_QT_LIBS})
