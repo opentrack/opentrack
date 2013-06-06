@@ -43,24 +43,21 @@
 #include "ftnoir_csv/csv.h"
 
 /** constructor **/
-FTNoIR_Protocol::FTNoIR_Protocol()
+FTNoIR_Protocol::FTNoIR_Protocol() :
+    shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTMemMap))
 {
+    pMemData = (FTMemMap*) shm.mem;
 	useTIRViews	= false;
 	useDummyExe	= false;
-	intUsedInterface = 0;
-
-	//
-	// Load the INI-settings.
-	//
-	loadSettings();
+    intUsedInterface = 0;
+	
+    loadSettings();
 
 	ProgramName = "";
 	intGameID = 0;
 
 	viewsStart = 0;
 	viewsStop = 0;
-
-    pMemData = NULL;
     force_dummy = false;
     force_tirviews = false;
 
@@ -80,11 +77,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 		viewsStop();
 		FTIRViewsLib.unload();
 	}
-
-	//
-	// Destroy the File-mapping
-	//
-	FTDestroyMapping();
 }
 
 void FTNoIR_Protocol::Initialize()
@@ -156,79 +148,63 @@ float headRotZ;
     virtPosY = headpose[TY] * 10;
     virtPosZ = headpose[TZ] * 10;
 
-	//
-	// Check if the pointer is OK and wait for the Mutex.
-	//
-	if ( (pMemData != NULL) && (WaitForSingleObject(hFTMutex, 100) == WAIT_OBJECT_0) ) {
+    shm.lock();
+    
+    pMemData->data.RawX = headPosX;
+    pMemData->data.RawY = headPosY;
+    pMemData->data.RawZ = headPosZ;
+    pMemData->data.RawPitch = headRotX;
+    pMemData->data.RawYaw = headRotY;
+    pMemData->data.RawRoll = headRotZ;
 
-		//
-		// Copy the Raw measurements directly to the client.
-		//
-		pMemData->data.RawX = headPosX;
-		pMemData->data.RawY = headPosY;
-		pMemData->data.RawZ = headPosZ;
-		pMemData->data.RawPitch = headRotX;
-		pMemData->data.RawYaw = headRotY;
-		pMemData->data.RawRoll = headRotZ;
+    //
+    //
+    pMemData->data.X = virtPosX;
+    pMemData->data.Y = virtPosY;
+    pMemData->data.Z = virtPosZ;
+    pMemData->data.Pitch = virtRotX;
+    pMemData->data.Yaw = virtRotY;
+    pMemData->data.Roll = virtRotZ;
 
-		//
-		//
-		pMemData->data.X = virtPosX;
-		pMemData->data.Y = virtPosY;
-		pMemData->data.Z = virtPosZ;
-		pMemData->data.Pitch = virtRotX;
-		pMemData->data.Yaw = virtRotY;
-		pMemData->data.Roll = virtRotZ;
+    //
+    // Leave some values 0 yet...
+    //
+    pMemData->data.X1 = pMemData->data.DataID + 10;
+    pMemData->data.X2 = 0;
+    pMemData->data.X3 = 0;
+    pMemData->data.X4 = 0;
+    pMemData->data.Y1 = 0;
+    pMemData->data.Y2 = 0;
+    pMemData->data.Y3 = 0;
+    pMemData->data.Y4 = 0;
 
-		//
-		// Leave some values 0 yet...
-		//
-		pMemData->data.X1 = pMemData->data.DataID + 10;
-		pMemData->data.X2 = 0;
-		pMemData->data.X3 = 0;
-		pMemData->data.X4 = 0;
-		pMemData->data.Y1 = 0;
-		pMemData->data.Y2 = 0;
-		pMemData->data.Y3 = 0;
-		pMemData->data.Y4 = 0;
-
-		//
-		// Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
-		// If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
-		//
-		//
-		// The game-ID was changed?
-		//
-        if (intGameID != pMemData->GameID)
-        {
-            QString gameID = QString::number(pMemData->GameID);
-            bool tirviews = false, dummy = false;
-            QString gamename;
-            CSV::getGameData(gameID, tirviews, dummy, pMemData->table, gamename);
-            if (tirviews)
-                start_tirviews();
-            if (dummy)
-                start_dummy();
-            pMemData->GameID2 = pMemData->GameID;
-            intGameID = pMemData->GameID;
-            QMutexLocker foo(&this->game_name_mutex);
-            connected_game = gamename;
-        }
-
-        ReleaseMutex(hFTMutex);
-	}
+    //
+    // Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
+    // If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
+    //
+    //
+    // The game-ID was changed?
+    //
+    if (intGameID != pMemData->GameID)
+    {
+        QString gameID = QString::number(pMemData->GameID);
+        bool tirviews = false, dummy = false;
+        QString gamename;
+        CSV::getGameData(gameID, tirviews, dummy, pMemData->table, gamename);
+        if (tirviews)
+            start_tirviews();
+        if (dummy)
+            start_dummy();
+        pMemData->GameID2 = pMemData->GameID;
+        intGameID = pMemData->GameID;
+        QMutexLocker foo(&this->game_name_mutex);
+        connected_game = gamename;
+    }
 
 	pMemData->data.DataID += 1;
+    
+    shm.unlock();
 }
-
-//
-// Set the Path variables and load the memory-mapping.
-// Simplified function: No need to check if the DLL's actually exist. The are installed by the installer.
-// If they are absent, something went terribly wrong anyway...
-//
-// Returns 'true' if all seems OK.
-//
-//
 
 void FTNoIR_Protocol::start_tirviews() {
     QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
@@ -311,83 +287,17 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     if (useDummyExe) {
         start_dummy();
     }
-	return FTCreateMapping();
-}
-
-//
-// Create a memory-mapping to the FreeTrack data.
-// It contains the tracking data, a handle to the main-window and the program-name of the Game!
-//
-//
-bool FTNoIR_Protocol::FTCreateMapping()
-{
-bool bFirst = false;
-
-	qDebug() << "FTCreateMapping says: Starting Function";
-
-	//
-	// A FileMapping is used to create 'shared memory' between the FTServer and the FTClient.
-	//
-	// Try to create a FileMapping to the Shared Memory.
-	// If one already exists: close it.
-	//
-    hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 ,
-//		                           sizeof( TFreeTrackData ) + sizeof( HANDLE ) + 100, 
-		                           sizeof( FTMemMap ), 
-								   (LPCSTR) FT_MM_DATA );
-
-	if ( hFTMemMap != 0 ) {
-		bFirst = true;
-		qDebug() << "FTCreateMapping says: FileMapping Created!" << hFTMemMap;
-	}
-
-	if ( ( hFTMemMap != 0 ) && ( (long) GetLastError == ERROR_ALREADY_EXISTS ) ) {
-		bFirst = false;
-		qDebug() << "FTCreateMapping says: FileMapping already exists!" << hFTMemMap;
-		CloseHandle( hFTMemMap );
-		hFTMemMap = 0;
-	}
-
-	//
-	// Create a new FileMapping, Read/Write access
-    //
-    hFTMemMap = OpenFileMappingA( FILE_MAP_WRITE, false , (LPCSTR) FT_MM_DATA );
-	if ( ( hFTMemMap != 0 ) ) {
-		qDebug() << "FTCreateMapping says: FileMapping Opened:" << hFTMemMap;
-        pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0,
-//					sizeof(TFreeTrackData) + sizeof(hFTMemMap) + 100);
-					sizeof(FTMemMap));
-	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
-	}
-
-
-    if (!hFTMemMap || !pMemData) {
-		QMessageBox::information(0, "FaceTrackNoIR error", QString("FTServer Error! \n"));
-		return false;
-	}
-
+    
+    if (shm.mem == (void*) 0 || shm.mem == (void*) -1)
+        return false;
+    
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
     pMemData->GameID2 = 0;
     memset(pMemData->table, 0, 8);
-
-    return true;
-}
-
-//
-// Destory the FileMapping to the shared memory
-//
-void FTNoIR_Protocol::FTDestroyMapping()
-{
-	if ( pMemData != NULL ) {
-		UnmapViewOfFile ( pMemData );
-	}
-	
-	CloseHandle( hFTMutex );
-	CloseHandle( hFTMemMap );
-	hFTMemMap = 0;
-
+    
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
