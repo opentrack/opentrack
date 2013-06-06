@@ -274,50 +274,43 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 
 	qDebug() << "checkServerInstallationOK says: Starting Function";
 
-	try {
+    //
+    // Write the path in the registry (for FreeTrack and FreeTrack20), for the game(s).
+    //
+    aLocation =  QCoreApplication::applicationDirPath() + "/";
 
-		//
-		// Write the path in the registry (for FreeTrack and FreeTrack20), for the game(s).
-		//
-		aLocation =  QCoreApplication::applicationDirPath() + "/";
+    qDebug() << "checkServerInstallationOK says: used interface = " << intUsedInterface;
+    switch (intUsedInterface) {
+        case 0:									// Use both interfaces
+            settings.setValue( "Path" , aLocation );
+            settingsTIR.setValue( "Path" , aLocation );
+            break;
+        case 1:									// Use FreeTrack, disable TrackIR
+            settings.setValue( "Path" , aLocation );
+            settingsTIR.setValue( "Path" , "" );
+            break;
+        case 2:									// Use TrackIR, disable FreeTrack
+            settings.setValue( "Path" , "" );
+            settingsTIR.setValue( "Path" , aLocation );
+            break;
+        default:
+            // should never be reached
+        break;
+    }
 
-		qDebug() << "checkServerInstallationOK says: used interface = " << intUsedInterface;
-		switch (intUsedInterface) {
-			case 0:									// Use both interfaces
-				settings.setValue( "Path" , aLocation );
-				settingsTIR.setValue( "Path" , aLocation );
-				break;
-			case 1:									// Use FreeTrack, disable TrackIR
-				settings.setValue( "Path" , aLocation );
-				settingsTIR.setValue( "Path" , "" );
-				break;
-			case 2:									// Use TrackIR, disable FreeTrack
-				settings.setValue( "Path" , "" );
-				settingsTIR.setValue( "Path" , aLocation );
-				break;
-			default:
-				// should never be reached
-			break;
-		}
+    //
+    // TIRViews must be started first, or the NPClient DLL will never be loaded.
+    //
+    if (useTIRViews) {
+        start_tirviews();
+    }
 
-		//
-		// TIRViews must be started first, or the NPClient DLL will never be loaded.
-		//
-		if (useTIRViews) {
-            start_tirviews();
-		}
-
-		//
-		// Check if TIRViews or dummy TrackIR.exe is required for this game
-		//
-		if (useDummyExe) {
-            start_dummy();
-		}
-
-
-	} catch(...) {
-		settings.~QSettings();
-	}
+    //
+    // Check if TIRViews or dummy TrackIR.exe is required for this game
+    //
+    if (useDummyExe) {
+        start_dummy();
+    }
 	return FTCreateMapping();
 }
 
