@@ -56,17 +56,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	FSUIPCLib.unload();
 }
 
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
-
-void FTNoIR_Protocol::Initialize()
-{
-	return;
-}
-
 //
 // Scale the measured value to the Joystick values
 //

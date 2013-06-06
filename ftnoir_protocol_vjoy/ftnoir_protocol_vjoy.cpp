@@ -14,10 +14,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     VJoy_Shutdown();
 }
 
-void FTNoIR_Protocol::Initialize()
-{
-}
-
 void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
     JOYSTICK_STATE state[2] = { 0 };
 

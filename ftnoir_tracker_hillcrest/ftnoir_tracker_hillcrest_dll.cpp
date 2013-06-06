@@ -41,10 +41,6 @@ FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
 {
 }
 
-void FTNoIR_TrackerDll::Initialize()
-{
-}
-
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
     *strToBeFilled = "Hillcrest";

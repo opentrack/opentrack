@@ -156,10 +156,6 @@ void Tracker::run() {
 
             Tracker::do_center = false;
             
-            // for kalman
-            if (Libraries->pFilter)
-                Libraries->pFilter->Initialize();
-            
             if (Libraries->pTracker)
                 Libraries->pTracker->NotifyCenter();
             

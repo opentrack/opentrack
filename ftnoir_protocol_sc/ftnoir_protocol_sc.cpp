@@ -153,52 +153,7 @@ PDWORD_PTR MsgResult = 0;
 //
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-    // Code to activate the context for the SimConnect DLL
-    ACTCTXA act;
-	HANDLE hctx;
-	ULONG_PTR ulCookie;
-
-    memset(&act, 0, sizeof(act));
-
 	qDebug() << "SCCheckClientDLL says: Starting Function";
-
-	try {
-#if 0
-		act.cbSize = sizeof(act);
-		act.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-        char full_path[2048];
-        QByteArray foo = QCoreApplication::applicationDirPath().toLatin1();
-        strcpy(full_path, foo.constData());
-        strcat(full_path, "/opentrack-proto-simconnect.dll");
-
-        act.lpSource = full_path;
-        act.lpResourceName = MAKEINTRESOURCEA(101);
-
-        hctx = CreateActCtxA (&act);
-
-		if (hctx != INVALID_HANDLE_VALUE) { 
-			if (!ActivateActCtx(hctx, &ulCookie)) { 
-				ReleaseActCtx(hctx);
-				qDebug() << "SCCheckClientDLL says: Error activating SimConnect manifest";
-			}
-		}
-		else {
-			qDebug() << "SCCheckClientDLL says: Error INVALID_HANDLE: " << GetLastError();
-			return false;
-		}
-		//
-		// Just try to load the DLL. Let Windows handle the PATH's and such trivialities...
-		//
-		//
-		// Deactivate the context again: the function-references should stay in-tact...
-		//
-		DeactivateActCtx(0, ulCookie);
-		ReleaseActCtx(hctx);
-#endif
-	} catch(...) {
-		qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
-		return false;
-	}
 
     const char* simconnect_paths[] = {
         "SimConnect.DLL",

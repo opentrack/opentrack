@@ -46,30 +46,25 @@ FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
 
 }
 
-void FTNoIR_TrackerDll::Initialize()
-{
-	return;
-}
-
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = trackerFullName;
-};
+}
 
 void FTNoIR_TrackerDll::getShortName(QString *strToBeFilled)
 {
 	*strToBeFilled = trackerShortName;
-};
+}
 
 void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 {
 	*strToBeFilled = trackerDescription;
-};
+}
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 {
     *icon = QIcon(":/images/facetracknoir.png");
-};
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker object.

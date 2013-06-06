@@ -42,31 +42,12 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 	prev_fMouse_Y = 0.0f;
 	prev_fMouse_Wheel = 0.0f;
 	frame_delay = 0;
-
 	loadSettings();
 }
 
 /** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-}
-
-/** helper to Auto-destruct **/
-void FTNoIR_Protocol::Release()
-{
-    delete this;
-}
-
-void FTNoIR_Protocol::Initialize()
-{
-int ScreenX, ScreenY;
-
-	ScreenX = GetSystemMetrics(SM_CXSCREEN);
-	ScreenY = GetSystemMetrics(SM_CYSCREEN);
-
-	qDebug() << "Initialize(): Screen width (x) = " << ScreenX << ", height (y) = " << ScreenY;
-
-	return;
 }
 
 //

@@ -46,10 +46,6 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
-
-	void Release();
-    void Initialize();
-
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
 private:
