@@ -546,7 +546,7 @@ color: rgb(255, 255, 255);
           <number>7</number>
          </property>
          <property name="pixPerEGU_Output" stdset="0">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="colorBezier" stdset="0">
           <color>
