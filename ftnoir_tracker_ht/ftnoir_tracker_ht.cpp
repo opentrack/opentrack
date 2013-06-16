@@ -108,7 +108,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->field_of_view = iniFile.value("fov", 52).toFloat();
 	config->pyrlk_pyramids = 3;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 250;
+    config->max_keypoints = 300;
     config->keypoint_distance = 3.5;
     //config->force_width = 640;
     //config->force_height = 480;
