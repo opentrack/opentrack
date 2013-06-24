@@ -17,7 +17,7 @@ endif()
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
     SET(SDK_RIFT "" CACHE PATH "libOVR path")
-    SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
+    SET(SDK_HYDRA "" CACHE PATH "libSixense path")    SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
 ENDIF()
 
 file(GLOB opentrack-faceapi-wrapper-c "faceapi/*.cpp")
@@ -240,13 +240,21 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(opentrack-tracker-hillcrest-uih ${opentrack-tracker-hillcrest-ui})
     QT4_ADD_RESOURCES(opentrack-tracker-hillcrest-rcc ${opentrack-tracker-hillcrest-rc})
 	
-	file(GLOB opentrack-tracker-rift-c "ftnoir_tracker_rift/*.cpp")
+    file(GLOB opentrack-tracker-rift-c "ftnoir_tracker_rift/*.cpp")
     file(GLOB opentrack-tracker-rift-h "ftnoir_tracker_rift/*.h")
     QT4_WRAP_CPP(opentrack-tracker-rift-moc ${opentrack-tracker-rift-h})
     file(GLOB opentrack-tracker-rift-ui "ftnoir_tracker_rift/*.ui")
     file(GLOB opentrack-tracker-rift-rc "ftnoir_tracker_rift/*.qrc")
     QT4_WRAP_UI(opentrack-tracker-rift-uih ${opentrack-tracker-rift-ui})
     QT4_ADD_RESOURCES(opentrack-tracker-rift-rcc ${opentrack-tracker-rift-rc})
+
+    file(GLOB opentrack-tracker-hydra-c "ftnoir_tracker_hydra/*.cpp")
+    file(GLOB opentrack-tracker-hydra-h "ftnoir_tracker_hydra/*.h")
+    QT4_WRAP_CPP(opentrack-tracker-hydra-moc ${opentrack-tracker-hydra-h})
+    file(GLOB opentrack-tracker-hydra-ui "ftnoir_tracker_hydra/*.ui")
+    file(GLOB opentrack-tracker-hydra-rc "ftnoir_tracker_hydra/*.qrc")
+    QT4_WRAP_UI(opentrack-tracker-hydra-uih ${opentrack-tracker-hydra-ui})
+    QT4_ADD_RESOURCES(opentrack-tracker-hydra-rcc ${opentrack-tracker-hydra-rc})
 
     file(GLOB opentrack-tracker-faceapi-c "ftnoir_tracker_sm/*.cpp")
     file(GLOB opentrack-tracker-faceapi-h "ftnoir_tracker_sm/*.h")
@@ -453,6 +461,19 @@ endif()
         endif()
 	endif()
 
+	if(SDK_HYDRA)
+		include_directories("${SDK_HYDRA}/include")
+		include_directories("${SDK_HYDRA}/include/sixense_utils")
+        add_library(opentrack-tracker-hydra SHARED ${opentrack-tracker-hydra-c} ${opentrack-tracker-hydra-moc} ${opentrack-tracker-hydra-uih} ${opentrack-tracker-hydra-rcc})
+        target_link_libraries(opentrack-tracker-hydra ${MY_QT_LIBS})
+		if(WIN32)
+			target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/win32/release_static/sixense_s.lib" "${SDK_HYDRA}/lib/win32/release_static/sixense_utils_s.lib")
+		endif()
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(opentrack-tracker-hydra
+                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+	endif()
     if(SDK_HILLCREST)
         include_directories("${SDK_HILLCREST}/include")
         if(WIN32)
@@ -573,6 +594,15 @@ if(NOT SDK_FACEAPI_ONLY)
     if(SDK_RIFT)
         install(
             TARGETS opentrack-tracker-rift
+            RUNTIME DESTINATION .
+            LIBRARY DESTINATION .
+            NAMELINK_SKIP
+        )
+    endif()
+
+    if(SDK_HYDRA)
+        install(
+            TARGETS opentrack-tracker-hydra
             RUNTIME DESTINATION .
             LIBRARY DESTINATION .
             NAMELINK_SKIP
