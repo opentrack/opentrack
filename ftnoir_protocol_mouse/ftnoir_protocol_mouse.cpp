@@ -68,10 +68,10 @@ void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose )
     float fMouse_X = 0;
     float fMouse_Y = 0;
 	
-    if (Mouse_X > 0 && Mouse_X < 6)
+    if (Mouse_X > 0 && Mouse_X <= 6)
         fMouse_X = headpose[Mouse_X-1] / (Mouse_X < 3 ? 100 : 180);
 
-    if (Mouse_Y > 0 && Mouse_Y < 6)
+    if (Mouse_Y > 0 && Mouse_Y <= 6)
         fMouse_Y = headpose[Mouse_Y-1] / (Mouse_Y < 3 ? 100 : 180);
     
     RECT desktop;
