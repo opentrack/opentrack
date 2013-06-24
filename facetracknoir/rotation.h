@@ -7,7 +7,7 @@
 
 #ifndef ROTATION_H
 #define ROTATION_H
-
+#include <cmath>
 // ----------------------------------------------------------------------------
 class Rotation {
 	friend Rotation operator*(const Rotation& A, const Rotation& B);
@@ -16,16 +16,46 @@ public:
 	Rotation(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
 	Rotation(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
 
-	Rotation inv();	// inverse
+	Rotation inv(){	// inverse
+		return Rotation(a,-b,-c,-d);
+	}
+
 
 	// conversions
-	void fromEuler(double yaw, double pitch, double roll);
-	void toEuler(volatile double& yaw, volatile double& pitch, volatile double& roll);
-	
+	// see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+	void fromEuler(double yaw, double pitch, double roll)
+	{
+		double sin_phi = sin(roll/2.0);
+		double cos_phi = cos(roll/2.0);
+		double sin_the = sin(pitch/2.0);
+		double cos_the = cos(pitch/2.0);
+		double sin_psi = sin(yaw/2.0);
+		double cos_psi = cos(yaw/2.0);
+
+		a = cos_phi*cos_the*cos_psi + sin_phi*sin_the*sin_psi;
+		b = sin_phi*cos_the*cos_psi - cos_phi*sin_the*sin_psi;
+		c = cos_phi*sin_the*cos_psi + sin_phi*cos_the*sin_psi;
+		d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
+	}
+
+	void Rotation::toEuler(double& yaw, double& pitch, double& roll)
+	{
+		roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
+		pitch = asin(2.0*(a*c - b*d));
+		yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
+	}
+
 protected:
 	double a,b,c,d; // quaternion coefficients
 };
 
-Rotation operator*(const Rotation& A, const Rotation& B); // composition of rotations
 
+
+Rotation operator*(const Rotation& A, const Rotation& B)
+{
+	return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+				    A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+				    A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+				    A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
+}
 #endif //ROTATION_H
