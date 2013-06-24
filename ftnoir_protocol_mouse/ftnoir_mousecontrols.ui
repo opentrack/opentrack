@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
-    <height>299</height>
+    <width>250</width>
+    <height>99</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MouseLook settings FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="Protocol.qrc">
+   <iconset>
     <normaloff>:/images/Mouse.png</normaloff>:/images/Mouse.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -26,27 +26,8 @@
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="textLabel2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Mouse style:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="cbxSelectMouseStyle">
+     <item row="1" column="1">
+      <widget class="QComboBox" name="cbxSelectMouse_Y">
        <property name="maximumSize">
         <size>
          <width>80</width>
@@ -62,41 +43,6 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="textLabel2_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Map mouse X to:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="cbxSelectMouse_X">
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Select Number</string>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAlphabetically</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
       <widget class="QLabel" name="textLabel2_3">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -115,8 +61,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="textLabel2_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="textLabel2_2">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -124,7 +70,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Map mouse Wheel to:</string>
+        <string>Map mouse X to:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -134,8 +80,8 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="cbxSelectMouse_Y">
+     <item row="0" column="1">
+      <widget class="QComboBox" name="cbxSelectMouse_X">
        <property name="maximumSize">
         <size>
          <width>80</width>
@@ -147,165 +93,6 @@
        </property>
        <property name="insertPolicy">
         <enum>QComboBox::InsertAlphabetically</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="cbxSelectMouse_Wheel">
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Select Number</string>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAlphabetically</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QSlider" name="slideSensX">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSlider" name="slideSensY">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QSlider" name="slideSensWheel">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Sensitivity (10=1x):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QSpinBox" name="spinSensX">
-       <property name="maximum">
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QSpinBox" name="spinSensY">
-       <property name="maximum">
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="QSpinBox" name="spinSensWheel">
-       <property name="maximum">
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="textLabel2_5">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Use Virtual Desk:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QCheckBox" name="chkUseVirtualDesk">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Most games (like First Person Shooters) support 'relative' mouse look.</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Mouse sensitivity can also be influenced via the Windows Mouse settings.</string>
        </property>
       </widget>
      </item>
@@ -403,107 +190,8 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="Protocol.qrc"/>
- </resources>
- <connections>
-  <connection>
-   <sender>slideSensX</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinSensX</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>445</x>
-     <y>46</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slideSensY</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinSensY</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>338</x>
-     <y>73</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>450</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slideSensWheel</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinSensWheel</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>98</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>445</x>
-     <y>96</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinSensX</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideSensX</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>440</x>
-     <y>37</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>364</x>
-     <y>41</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinSensY</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideSensY</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>441</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>347</x>
-     <y>73</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinSensWheel</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideSensWheel</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>459</x>
-     <y>99</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>350</x>
-     <y>99</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <resources/>
+ <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>

@@ -46,19 +46,13 @@
 #define MOUSE_AXIS_MAX 65535
 
 enum FTN_AngleName {
-    FTN_PITCH = RX,
-    FTN_YAW = TY,
+    FTN_YAW = RX,
+    FTN_PITCH = RY,
     FTN_ROLL = RZ,
     FTN_X = TX,
     FTN_Y = TY,
     FTN_Z = TZ
 };
-
-enum FTN_MouseStyle {
-	FTN_ABSOLUTE = 0,
-	FTN_RELATIVE = 1	
-};
-
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -75,18 +69,6 @@ private:
 	FTN_AngleName Mouse_X;			// Map one of the 6DOF's to this Mouse direction
 	FTN_AngleName Mouse_Y;
 	FTN_AngleName Mouse_Wheel;
-	FTN_MouseStyle Mouse_Style;		// AutoPan, Absolute or Relative?
-	bool useVirtualDesk;			// Extend the mouse-range beyond the standard
-	float prev_fMouse_X;			// The previous value(s)
-	float mouse_X_factor;			// Sensitivity factor
-	float prev_fMouse_Y;
-	float mouse_Y_factor;			// Sensitivity factor
-	float prev_fMouse_Wheel;
-	float mouse_Wheel_factor;		// Sensitivity factor
-
-	int frame_delay;				// Number of frames to delay SendInput (too fast, too furious?)
-
-	long scale2AnalogLimits( float x, float min_x, float max_x );
 	void loadSettings();
     QString getGameName() {
         return "Mouse tracker";

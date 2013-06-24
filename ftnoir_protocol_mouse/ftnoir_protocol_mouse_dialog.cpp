@@ -45,52 +45,27 @@ MOUSEControls::MOUSEControls() :
 QWidget()
 {
 	ui.setupUi( this );
-
-	//
-	// Setup the choices
-	//
-	ui.cbxSelectMouseStyle->addItem("Absolute");
-	ui.cbxSelectMouseStyle->addItem("Relative");
-
 	ui.cbxSelectMouse_X->addItem("None");
-	ui.cbxSelectMouse_X->addItem("Pitch");
-	ui.cbxSelectMouse_X->addItem("Yaw");
-	ui.cbxSelectMouse_X->addItem("Roll");
-	ui.cbxSelectMouse_X->addItem("X");
+    ui.cbxSelectMouse_X->addItem("X");
 	ui.cbxSelectMouse_X->addItem("Y");
 	ui.cbxSelectMouse_X->addItem("Z");
+	ui.cbxSelectMouse_X->addItem("Yaw");
+    ui.cbxSelectMouse_X->addItem("Pitch");
+	ui.cbxSelectMouse_X->addItem("Roll");
 
 	ui.cbxSelectMouse_Y->addItem("None");
-	ui.cbxSelectMouse_Y->addItem("Pitch");
-	ui.cbxSelectMouse_Y->addItem("Yaw");
-	ui.cbxSelectMouse_Y->addItem("Roll");
 	ui.cbxSelectMouse_Y->addItem("X");
 	ui.cbxSelectMouse_Y->addItem("Y");
 	ui.cbxSelectMouse_Y->addItem("Z");
-
-	ui.cbxSelectMouse_Wheel->addItem("None");
-	ui.cbxSelectMouse_Wheel->addItem("Pitch");
-	ui.cbxSelectMouse_Wheel->addItem("Yaw");
-	ui.cbxSelectMouse_Wheel->addItem("Roll");
-	ui.cbxSelectMouse_Wheel->addItem("X");
-	ui.cbxSelectMouse_Wheel->addItem("Y");
-	ui.cbxSelectMouse_Wheel->addItem("Z");
-
+    ui.cbxSelectMouse_Y->addItem("Yaw");
+	ui.cbxSelectMouse_Y->addItem("Pitch");
+	ui.cbxSelectMouse_Y->addItem("Roll");
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.cbxSelectMouse_X, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
 	connect(ui.cbxSelectMouse_Y, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-	connect(ui.cbxSelectMouse_Wheel, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-
-	connect(ui.spinSensX, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.spinSensY, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.spinSensWheel, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-
-	connect(ui.chkUseVirtualDesk, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-
 	theProtocol = NULL;
-
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
@@ -173,17 +148,8 @@ void MOUSEControls::loadSettings() {
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "Mouse" );
-	ui.cbxSelectMouseStyle->setCurrentIndex(iniFile.value ( "Style", 1 ).toInt() - 1);
-	ui.cbxSelectMouse_X->setCurrentIndex(iniFile.value ( "Mouse_X", 1 ).toInt() - 1);
-	ui.cbxSelectMouse_Y->setCurrentIndex(iniFile.value ( "Mouse_Y", 1 ).toInt() - 1);
-	ui.cbxSelectMouse_Wheel->setCurrentIndex(iniFile.value ( "Mouse_Wheel", 1 ).toInt() - 1);
-
-	ui.slideSensX->setValue(iniFile.value("SensX", 10).toInt());
-	ui.slideSensY->setValue(iniFile.value("SensY", 10).toInt());
-	ui.slideSensWheel->setValue(iniFile.value("SensWheel", 10).toInt());
-
-	ui.chkUseVirtualDesk->setChecked( iniFile.value ( "useVirtualDesk", 0 ).toBool() );
-
+	ui.cbxSelectMouse_X->setCurrentIndex(iniFile.value ( "Mouse_X", 0 ).toInt() );
+	ui.cbxSelectMouse_Y->setCurrentIndex(iniFile.value ( "Mouse_Y", 0 ).toInt() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -201,16 +167,8 @@ void MOUSEControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Mouse" );
-	iniFile.setValue ( "Style", ui.cbxSelectMouseStyle->currentIndex() + 1 );
-	iniFile.setValue ( "Mouse_X", ui.cbxSelectMouse_X->currentIndex() + 1 );
-	iniFile.setValue ( "Mouse_Y", ui.cbxSelectMouse_Y->currentIndex() + 1 );
-	iniFile.setValue ( "Mouse_Wheel", ui.cbxSelectMouse_Wheel->currentIndex() + 1 );
-
-	iniFile.setValue ( "SensX", ui.slideSensX->value() );
-	iniFile.setValue ( "SensY", ui.slideSensY->value() );
-	iniFile.setValue ( "SensWheel", ui.slideSensWheel->value() );
-
-	iniFile.setValue( "useVirtualDesk", ui.chkUseVirtualDesk->isChecked() );
+	iniFile.setValue ( "Mouse_X", ui.cbxSelectMouse_X->currentIndex() );
+	iniFile.setValue ( "Mouse_Y", ui.cbxSelectMouse_Y->currentIndex() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
