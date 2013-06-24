@@ -38,26 +38,12 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	prev_fMouse_X = 0.0f;
-	prev_fMouse_Y = 0.0f;
-	prev_fMouse_Wheel = 0.0f;
-	frame_delay = 0;
 	loadSettings();
 }
 
 /** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-}
-
-//
-// Scale the measured value to the Joystick values
-//
-long FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
-double y;
-
-	y = ((MOUSE_AXIS_MAX - MOUSE_AXIS_MIN)/(max_x - min_x)) * x + ((MOUSE_AXIS_MAX - MOUSE_AXIS_MIN)/2) + MOUSE_AXIS_MIN;
-	return (long) y;
 }
 
 //
@@ -70,17 +56,8 @@ void FTNoIR_Protocol::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Mouse" );
-	Mouse_Style = (FTN_MouseStyle) (iniFile.value ( "Style", 1 ).toInt() - 1);
-	Mouse_X = (FTN_AngleName) (iniFile.value ( "Mouse_X", 1 ).toInt() - 1);
-	Mouse_Y = (FTN_AngleName) (iniFile.value ( "Mouse_Y", 1 ).toInt() - 1);
-	Mouse_Wheel = (FTN_AngleName) (iniFile.value ( "Mouse_Wheel", 1 ).toInt() - 1);
-
-	mouse_X_factor = iniFile.value("SensX", 10).toFloat() / 10.0f;
-	mouse_Y_factor = iniFile.value("SensY", 10).toFloat() / 10.0f;
-	mouse_Wheel_factor = iniFile.value("SensWheel", 10).toFloat() / 10.0f;
-
-	useVirtualDesk = iniFile.value ( "useVirtualDesk", 0 ).toBool();
-
+	Mouse_X = (FTN_AngleName) (iniFile.value ( "Mouse_X", 0 ).toInt());
+	Mouse_Y = (FTN_AngleName) (iniFile.value ( "Mouse_Y", 0 ).toInt());
 	iniFile.endGroup ();
 }
 
@@ -88,48 +65,22 @@ void FTNoIR_Protocol::loadSettings() {
 // Update Headpose in Game.
 //
 void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
-float fMouse_X = 0;							// The actual value
-float fMouse_Y = 0;
-float fMouse_Wheel = 0;
+    float fMouse_X = 0;
+    float fMouse_Y = 0;
+	
+    if (Mouse_X > 0 && Mouse_X < 6)
+        fMouse_X = headpose[Mouse_X-1] / (Mouse_X < 3 ? 100 : 180);
 
-
-	//
-	// Determine which of the 6DOF's is used.
-	// The rotations are from -180 to +180 and the translations from -50cm to +50cm.
-	// Let's scale the translations to the degrees for simplicity sake...
-    //
-
-    if (Mouse_X > 0 && Mouse_X < 6+1)
-        fMouse_X = headpose[Mouse_X-1];
-
-    if (Mouse_X < 3+1 && Mouse_X > 0)
-        fMouse_X *= 3;
-
-    if (Mouse_Y > 0 && Mouse_Y < 6+1)
-        fMouse_Y = headpose[Mouse_Y-1];
-
-    if (Mouse_Y < 3+1 && Mouse_Y > 0)
-        fMouse_Y *= 3;
-
-    if (Mouse_Wheel > 0 && Mouse_Wheel < 6+1)
-        fMouse_Wheel = headpose[Mouse_Wheel-1];
-
-    if (Mouse_Wheel < 3+1 && Mouse_Wheel > 0)
-        fMouse_Wheel *= 3;
-
-	//
-	// Only send Input, when it has changed.
-	// This releases the Mouse, when tracking is stopped (for a while).
-	//
-	if (frame_delay > 10) {
-		if ((prev_fMouse_X != fMouse_X) || (prev_fMouse_Y != fMouse_Y) || (prev_fMouse_Wheel != fMouse_Wheel)) {
-			SendInput(1, &MouseStruct, sizeof(MouseStruct));
-		}
-
-		prev_fMouse_X = fMouse_X;
-		prev_fMouse_Y = fMouse_Y;
-		prev_fMouse_Wheel = fMouse_Wheel;
-	}
+    if (Mouse_Y > 0 && Mouse_Y < 6)
+        fMouse_Y = headpose[Mouse_Y-1] / (Mouse_Y < 3 ? 100 : 180);
+    
+    RECT desktop;
+    const HWND hDesktop = GetDesktopWindow();
+    if (hDesktop != NULL && GetWindowRect(hDesktop, &desktop)) {
+        fMouse_X *= desktop.right;
+        fMouse_Y *= desktop.bottom;
+        SetCursorPos(fMouse_X + desktop.right/2, fMouse_Y + desktop.bottom/2);
+    }
 }
 
 //
