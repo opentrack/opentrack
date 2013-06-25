@@ -3,9 +3,20 @@
 #include "facetracknoir/global-settings.h"
 	#include "OVR.h"
 #include <cstdio>
+#define SIXENSE_STATIC_LIB
+#define SIXENSE_UTILS_STATIC_LIB
+#include <sixense.h>
+#include <sixense_math.hpp>
+#ifdef WIN32
+#include <sixense_utils/mouse_pointer.hpp>
+#endif
+#include <sixense_utils/derivatives.hpp>
+#include <sixense_utils/button_states.hpp>
+#include <sixense_utils/event_triggers.hpp>
+#include <sixense_utils/controller_manager/controller_manager.hpp>
+
 using namespace OVR;
 
-bool Rift_Tracker::isInitialised = false;
 
 Rift_Tracker::Rift_Tracker()
 {
@@ -27,11 +38,26 @@ Rift_Tracker::Rift_Tracker()
 
 Rift_Tracker::~Rift_Tracker()
 {
+	
+	sixenseExit();
     pSensor.Clear();
 	pHMD.Clear();
 	pManager.Clear();
+	System::Destroy();
 }
 
+/*
+void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_step step ) {
+	
+		QMessageBox::warning(0,"OpenTrack Info", "controller manager callback",QMessageBox::Ok,QMessageBox::NoButton);
+	if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
+		// Ask the controller manager what the next instruction string should be.
+		std::string controller_manager_text_string = sixenseUtils::getTheControllerManager()->getStepString();
+		QMessageBox::warning(0,"OpenTrack Info", controller_manager_text_string.c_str(),QMessageBox::Ok,QMessageBox::NoButton);
+		// We could also load the supplied controllermanager textures using the filename: sixenseUtils::getTheControllerManager()->getTextureFileName();
+
+	}
+}*/
 
 void Rift_Tracker::StartTracker(QFrame* videoFrame)
 {
@@ -40,11 +66,7 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
     //
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
     //
-	if(!isInitialised){
-	    System::Init(Log::ConfigureDefaultLog(LogMask_All));
-		isInitialised = true;
-	}
-
+	System::Init(Log::ConfigureDefaultLog(LogMask_All));
 	pManager = *DeviceManager::Create();
     DeviceEnumerator<HMDDevice>& enumerator = pManager->EnumerateDevices<HMDDevice>();
     if (enumerator.IsAvailable())
@@ -58,34 +80,75 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
         }else{
             QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
-        SFusion.SetYawCorrectionEnabled(true);
-        SFusion.SetMagReference();
-    }
+		isCalibrated = false;
+		MagCal.BeginAutoCalibration(SFusion);
+		SFusion.SetMagReference(SFusion.GetOrientation());
 
+    }
+		// Init sixense
+	//QMessageBox::warning(0,"OpenTrack Info", "sixense init",QMessageBox::Ok,QMessageBox::NoButton);
+	sixenseInit();
+	//QMessageBox::warning(0,"OpenTrack Info", "sixense init complete, setting controller manager",QMessageBox::Ok,QMessageBox::NoButton);
+	// Init the controller manager. This makes sure the controllers are present, assigned to left and right hands, and that
+	// the hemisphere calibration is complete.
+	//sixenseUtils::getTheControllerManager()->setGameType( sixenseUtils::ControllerManager::ONE_PLAYER_TWO_CONTROLLER );
+	//sixenseUtils::getTheControllerManager()->registerSetupCallback( controller_manager_setup_callback );
+	//QMessageBox::warning(0,"OpenTrack Info", "controller manager callback registered",QMessageBox::Ok,QMessageBox::NoButton);
 	return;
 }
+
 
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
     if (pHMD.GetPtr() != NULL) {
+
+		 if (SFusion.IsMagReady() && !isCalibrated ){
+            SFusion.SetYawCorrectionEnabled(true);
+			QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
+		}else{
+			if(isCalibrated){
+				isCalibrated = false;
+				QMessageBox::warning(0,"OpenTrack Info", "Lost magnetic calibration",QMessageBox::Ok,QMessageBox::NoButton);
+			}
+        }
+
+		// Magnetometer calibration procedure
+		MagCal.UpdateAutoCalibration(SFusion);
         Quatf hmdOrient = SFusion.GetOrientation();
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
-        hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
+        //hmdOrient.GetEulerAngles< Axis_X, Axis_Y, Axis_Z>(&pitch, &yaw, &roll);
+		//hmdOrient.GetEulerAngles< Axis_X, Axis_Z, Axis_Y>(&pitch, &roll, &yaw);
+		hmdOrient.GetEulerAngles< Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+		//hmdOrient.GetEulerAngles< Axis_Y, Axis_Z, Axis_X>(&yaw, &roll, &pitch);
+		//hmdOrient.GetEulerAngles< Axis_Z, Axis_X, Axis_Y>(&roll, &pitch, &yaw);
+		//hmdOrient.GetEulerAngles< Axis_Z, Axis_Y, Axis_X>(&roll, &yaw, &pitch);
         newHeadPose[RY] =pitch;
         newHeadPose[RZ] = roll;
         newHeadPose[RX] = yaw;
-#if 0
-        if (bEnableX) {
+
+
+		sixenseSetActiveBase(0);
+		sixenseAllControllerData acd;
+		sixenseGetAllNewestData( &acd );
+		//sixenseUtils::getTheControllerManager()->update( &acd );
+#if 1
+		sixenseControllerData cd;
+	
+		newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
+		newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
+		newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
+		
+		//if (bEnableX) {
             data[TX] = newHeadPose[TX];
-        }
-        if (bEnableY) {
+        //}
+        //if (bEnableY) {
             data[TY] = newHeadPose[TY];
-        }
-        if (bEnableY) {
+        //}
+        //if (bEnableY) {
             data[TZ] = newHeadPose[TZ];
-        }
+        //}
 #endif
         if (bEnableYaw) {
             data[RX] = newHeadPose[RX] * 57.295781f;
