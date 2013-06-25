@@ -10,7 +10,7 @@
 #include <cmath>
 // ----------------------------------------------------------------------------
 class Rotation {
-	friend Rotation operator*(const Rotation& A, const Rotation& B);
+
 public:
 	Rotation() : a(1.0),b(0.0),c(0.0),d(0.0) {}
 	Rotation(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
@@ -38,11 +38,29 @@ public:
 		d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
 	}
 
-	void Rotation::toEuler(double& yaw, double& pitch, double& roll)
+	void toEuler(double& yaw, double& pitch, double& roll)
 	{
 		roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
 		pitch = asin(2.0*(a*c - b*d));
 		yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
+	}
+	
+/*	 const Rotation operator*(const Rotation& A, const Rotation& B)
+	{
+		return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+						A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+						A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+						A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
+	}*/
+
+
+		 const Rotation operator*(const Rotation& B)
+	{
+		const Rotation& A = *this;
+		return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+						A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+						A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+						A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
 	}
 
 protected:
@@ -51,11 +69,4 @@ protected:
 
 
 
-Rotation operator*(const Rotation& A, const Rotation& B)
-{
-	return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
-				    A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
-				    A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
-				    A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
-}
 #endif //ROTATION_H

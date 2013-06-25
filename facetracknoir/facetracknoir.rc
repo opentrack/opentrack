@@ -1,2 +1,2 @@
-#include "resource.h"
+#include <windows.h>
 IDI_ICON1               ICON                    "facetracknoir.ico"
