@@ -240,13 +240,13 @@ bool Tracker::GiveHeadPoseData(double *data)
 		gamma = atan2( R(2,1), R(2,2));		
 
 		if (bEnableYaw) {
-            data[RX]   = rad2deg * alpha;
+            data[Yaw]   = rad2deg * alpha;
 		}
 		if (bEnablePitch) {
-            data[RY] = rad2deg * beta;
+            data[Pitch] = rad2deg * beta;
 		}
 		if (bEnableRoll) {
-            data[RZ]  = rad2deg * gamma;
+            data[Roll]  = rad2deg * gamma;
 		}
 	}
 	return true;

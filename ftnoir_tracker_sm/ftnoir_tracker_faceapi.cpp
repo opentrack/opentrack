@@ -112,13 +112,13 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
         data[TZ]     = pMemData->data.new_pose.head_pos.z * 100.0f;
     }
     if (bEnableYaw) {
-        data[RX]   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
+        data[Yaw]   = pMemData->data.new_pose.head_rot.y_rads * 57.295781f;			// From rads to degrees
     }
     if (bEnablePitch) {
-        data[RY] = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
+        data[Pitch] = pMemData->data.new_pose.head_rot.x_rads * 57.295781f;
     }
     if (bEnableRoll) {
-        data[RZ]  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
+        data[Roll]  = pMemData->data.new_pose.head_rot.z_rads * 57.295781f;
     }
 
     //

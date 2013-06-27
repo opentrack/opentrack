@@ -186,13 +186,13 @@ private:
 
         void setInvertAxis( Axis axis, int invert );
         void setInvertYaw(int invert) {
-            setInvertAxis(RX, invert);
+            setInvertAxis(Yaw, invert);
         }
         void setInvertPitch(int invert) {
-            setInvertAxis(RY, invert);
+            setInvertAxis(Pitch, invert);
         }        
         void setInvertRoll(int invert) {
-            setInvertAxis(RZ, invert);
+            setInvertAxis(Roll, invert);
         }
         void setInvertX(int invert) {
             setInvertAxis(TX, invert);

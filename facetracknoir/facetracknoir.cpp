@@ -681,9 +681,9 @@ void FaceTrackNoIR::startTracker( ) {
 	// Setup the Tracker and send the settings.
 	// This is necessary, because the events are only triggered 'on change'
 	//
-    tracker->setInvertAxis(RX, ui.chkInvertYaw->isChecked() );
+    tracker->setInvertAxis(Yaw, ui.chkInvertYaw->isChecked() );
     tracker->setInvertAxis(TY, ui.chkInvertPitch->isChecked() );
-    tracker->setInvertAxis(RZ, ui.chkInvertRoll->isChecked() );
+    tracker->setInvertAxis(Roll, ui.chkInvertRoll->isChecked() );
     tracker->setInvertAxis(TX, ui.chkInvertX->isChecked() );
     tracker->setInvertAxis(TY, ui.chkInvertY->isChecked() );
     tracker->setInvertAxis(TZ, ui.chkInvertZ->isChecked() );
@@ -849,9 +849,9 @@ void FaceTrackNoIR::showHeadPose() {
     ui.lcdNumY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
     ui.lcdNumZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
 
-    ui.lcdNumRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
-    ui.lcdNumRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
-    ui.lcdNumRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
+    ui.lcdNumRotX->display(QString("%1").arg(newdata[Yaw], 0, 'f', 1));
+    ui.lcdNumRotY->display(QString("%1").arg(newdata[Pitch], 0, 'f', 1));
+    ui.lcdNumRotZ->display(QString("%1").arg(newdata[Roll], 0, 'f', 1));
 
     ui.txtTracking->setVisible(tracker->getTrackingActive());
 
@@ -859,15 +859,15 @@ void FaceTrackNoIR::showHeadPose() {
 	// Get the output-pose and also display it.
 	//
     tracker->getOutputHeadPose(newdata);
-    ui.pose_display->rotateBy(newdata[RX], newdata[RZ], newdata[RY]);
+    ui.pose_display->rotateBy(newdata[Yaw], newdata[Roll], newdata[Pitch]);
 
     ui.lcdNumOutputPosX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
     ui.lcdNumOutputPosY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
     ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
 
-    ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[RX], 0, 'f', 1));
-    ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[RY], 0, 'f', 1));
-    ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[RZ], 0, 'f', 1));
+    ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[Yaw], 0, 'f', 1));
+    ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[Pitch], 0, 'f', 1));
+    ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[Roll], 0, 'f', 1));
 
     //
     // Update the curves in the curve-configurator. This shows the ball with the red lines.

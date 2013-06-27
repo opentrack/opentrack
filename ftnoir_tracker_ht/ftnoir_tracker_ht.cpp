@@ -109,7 +109,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	config->pyrlk_pyramids = 3;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 200;
-    config->keypoint_distance = 5;
+    config->keypoint_distance = 4.5;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
@@ -215,12 +215,12 @@ bool Tracker::GiveHeadPoseData(double *data)
     }
     if (shm->result.filled) {
         if (enableRX)
-            data[RX] = shm->result.rotx;
+            data[Yaw] = shm->result.rotx;
         if (enableRY) {
-            data[RY] = shm->result.roty;
+            data[Pitch] = shm->result.roty;
 		}
         if (enableRZ) {
-            data[RZ] = shm->result.rotz;
+            data[Roll] = shm->result.rotz;
         }
         if (enableTX)
             data[TX] = shm->result.tx;
