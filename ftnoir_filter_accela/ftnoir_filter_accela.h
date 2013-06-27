@@ -48,6 +48,7 @@ public:
 	FTNoIR_Filter();
 	~FTNoIR_Filter();
     void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter_values);
+    void Initialize() {}
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
@@ -93,8 +94,8 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged(bool) { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
+	void settingChanged(bool) { settingsDirty = true; }
+	void settingChanged(int) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************

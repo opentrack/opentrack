@@ -132,6 +132,14 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(opentrack-filter-accela-uih ${opentrack-filter-accela-ui})
     QT4_ADD_RESOURCES(opentrack-filter-accela-rcc ${opentrack-filter-accela-rc})
 
+    file(GLOB opentrack-filter-kalman-c "ftnoir_filter_kalman/*.cpp")
+    file(GLOB opentrack-filter-kalman-h "ftnoir_filter_kalman/*.h")
+    QT4_WRAP_CPP(opentrack-filter-kalman-moc ${opentrack-filter-kalman-h})
+    file(GLOB opentrack-filter-kalman-ui "ftnoir_filter_kalman/*.ui")
+    file(GLOB opentrack-filter-kalman-rc "ftnoir_filter_kalman/*.qrc")
+    QT4_WRAP_UI(opentrack-filter-kalman-uih ${opentrack-filter-kalman-ui})
+    QT4_ADD_RESOURCES(opentrack-filter-kalman-rcc ${opentrack-filter-kalman-rc})
+
     file(GLOB opentrack-filter-ewma-c "ftnoir_filter_ewma2/*.cpp")
     file(GLOB opentrack-filter-ewma-h "ftnoir_filter_ewma2/*.h")
     QT4_WRAP_CPP(opentrack-filter-ewma-moc ${opentrack-filter-ewma-h})
@@ -317,6 +325,11 @@ endif()
 
     add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-moc} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
     target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS} opentrack-spline-widget)
+
+    if(OpenCV_FOUND)
+        add_library(opentrack-filter-kalman SHARED ${opentrack-filter-kalman-c} ${opentrack-filter-kalman-moc} ${opentrack-filter-kalman-uih} ${opentrack-filter-kalman-rcc})
+        target_link_libraries(opentrack-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
+    endif()
 
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(opentrack-filter-accela
@@ -533,7 +546,7 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     if(OpenCV_FOUND)
-        install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
+        install(TARGETS opentrack-tracker-pt opentrack-filter-kalman RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
 
     install(TARGETS

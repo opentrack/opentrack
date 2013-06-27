@@ -27,6 +27,7 @@ struct IFilter
 {
 	virtual ~IFilter() {}
     virtual void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter) = 0;
+    virtual void Initialize() = 0;
 };
 
 // Factory function that creates instances of the Filter object.

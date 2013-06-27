@@ -161,6 +161,9 @@ void Tracker::run() {
             
             if (Libraries->pSecondTracker)
                 Libraries->pSecondTracker->NotifyCenter();
+            
+            if (Libraries->pFilter)
+                Libraries->pFilter->Initialize();
         }
 
         if (getTrackingActive()) {
