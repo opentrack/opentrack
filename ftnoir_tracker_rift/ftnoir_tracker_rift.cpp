@@ -66,8 +66,7 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
         }else{
             QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
-        isCalibrated = false;
-        MagCal.BeginAutoCalibration(SFusion);
+        //MagCal.BeginAutoCalibration(SFusion);
         SFusion.SetMagReference(SFusion.GetOrientation());
     }
 }
@@ -89,7 +88,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
 #endif
 
 		// Magnetometer calibration procedure
-		MagCal.UpdateAutoCalibration(SFusion);
+		//MagCal.UpdateAutoCalibration(SFusion);
         Quatf hmdOrient = SFusion.GetOrientation();
         float yaw = 0.0f;
         float pitch = 0.0f;

@@ -16,9 +16,7 @@ public:
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
-	void WaitForExit() {
-		return;
-    }
+	void WaitForExit() {}
 protected:
 	void run();												// qthread override run method
 
@@ -51,8 +49,8 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker) {};
-	void unRegisterTracker() {};
+	void registerTracker(ITracker *tracker) {}
+	void unRegisterTracker() {}
 
 private:
 	Ui::UIRiftControls ui;
@@ -65,8 +63,8 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
+	void settingChanged() { settingsDirty = true; }
+	void settingChanged(int) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
