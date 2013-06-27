@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/filter-16-ac.png</file>
+    </qresource>
+</RCC>
