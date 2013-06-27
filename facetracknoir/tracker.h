@@ -142,9 +142,9 @@ public:
         axes[TX] = new THeadPoseDOF("tx","tx_alt", 100, 100, 100, 100);
         axes[TY] = new THeadPoseDOF("ty","ty_alt", 100, 100, 100, 100);
         axes[TZ] = new THeadPoseDOF("tz","tz_alt", 100, 100, 100, 100);
-        axes[RX] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180);
-        axes[RY] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90);
-        axes[RZ] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180);
+        axes[Yaw] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180);
+        axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90);
+        axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180);
     }
 };
 

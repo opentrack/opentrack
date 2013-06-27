@@ -46,9 +46,9 @@
 #define MOUSE_AXIS_MAX 65535
 
 enum FTN_AngleName {
-    FTN_YAW = RX,
-    FTN_PITCH = RY,
-    FTN_ROLL = RZ,
+    FTN_YAW = Yaw,
+    FTN_PITCH = Pitch,
+    FTN_ROLL = Roll,
     FTN_X = TX,
     FTN_Y = TY,
     FTN_Z = TZ

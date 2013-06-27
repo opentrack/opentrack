@@ -110,9 +110,9 @@ float virtRotZ;
 
 //	qDebug() << "FSUIPCServer::run() says: started!";
 
-    virtRotX = -headpose[RY];				// degrees
-    virtRotY = headpose[RX];
-    virtRotZ = headpose[RZ];
+    virtRotX = -headpose[Pitch];				// degrees
+    virtRotY = headpose[Yaw];
+    virtRotZ = headpose[Roll];
 
 	virtPosX = 0.0f;											// cm, X and Y are not working for FS2002/2004!
 	virtPosY = 0.0f;

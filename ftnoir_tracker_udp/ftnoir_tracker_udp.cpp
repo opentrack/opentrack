@@ -121,13 +121,13 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
         data[TZ] = newHeadPose[TZ];
 	}
     if (bEnableYaw) {
-        data[RX] = newHeadPose[RX];
+        data[Yaw] = newHeadPose[Yaw];
 	}
     if (bEnablePitch) {
-        data[RY] = newHeadPose[RY];
+        data[Pitch] = newHeadPose[Pitch];
 	}
     if (bEnableRoll) {
-        data[RZ] = newHeadPose[RZ];
+        data[Roll] = newHeadPose[Roll];
 	}
     mutex.unlock();
 	return true;

@@ -73,9 +73,9 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         float pitch = 0.0f;
         float roll = 0.0f;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-        newHeadPose[RY] =pitch;
-        newHeadPose[RZ] = roll;
-        newHeadPose[RX] = yaw;
+        newHeadPose[Pitch] =pitch;
+        newHeadPose[Roll] = roll;
+        newHeadPose[Yaw] = yaw;
 #if 0
         if (bEnableX) {
             data[TX] = newHeadPose[TX];
@@ -88,13 +88,13 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         }
 #endif
         if (bEnableYaw) {
-            data[RX] = newHeadPose[RX] * 57.295781f;
+            data[Yaw] = newHeadPose[Yaw] * 57.295781f;
         }
         if (bEnablePitch) {
-            data[RY] = newHeadPose[RY] * 57.295781f;
+            data[Pitch] = newHeadPose[Pitch] * 57.295781f;
         }
         if (bEnableRoll) {
-            data[RZ] = newHeadPose[RZ] * 57.295781f;
+            data[Roll] = newHeadPose[Roll] * 57.295781f;
         }
     }
 	return pHMD.GetPtr() != NULL;

@@ -213,11 +213,11 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
         freespace_perform();
         body = cachedBodyFrame;
         if (bEnableYaw)
-            data[RX] = body.angularVelZ * TO_DEG;
+            data[Yaw] = body.angularVelZ * TO_DEG;
         if (bEnablePitch)
-            data[RY] = body.angularVelY * TO_DEG;
+            data[Pitch] = body.angularVelY * TO_DEG;
         if (bEnableRoll)
-            data[RZ] = body.angularVelX * TO_DEG;
+            data[Roll] = body.angularVelX * TO_DEG;
     }
 	return device != -1;
 }

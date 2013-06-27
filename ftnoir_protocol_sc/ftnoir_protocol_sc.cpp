@@ -90,9 +90,9 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
 PDWORD_PTR MsgResult = 0;
 
 
-    virtSCRotX = -headpose[RY];					// degrees
-    virtSCRotY = -headpose[RX];
-    virtSCRotZ = headpose[RZ];
+    virtSCRotX = -headpose[Pitch];					// degrees
+    virtSCRotY = -headpose[Yaw];
+    virtSCRotZ = headpose[Roll];
 
     virtSCPosX = headpose[TX]/100.f;						// cm to meters
     virtSCPosY = headpose[TY]/100.f;

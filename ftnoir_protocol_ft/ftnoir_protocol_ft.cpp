@@ -129,16 +129,16 @@ float headRotZ;
     //
 	// Scale the Raw measurements to the client measurements.
 	//
-    headRotX = getRadsFromDegrees(headpose[RY]);
-    headRotY = getRadsFromDegrees(headpose[RX]);
-    headRotZ = getRadsFromDegrees(headpose[RZ]);
+    headRotX = getRadsFromDegrees(headpose[Pitch]);
+    headRotY = getRadsFromDegrees(headpose[Yaw]);
+    headRotZ = getRadsFromDegrees(headpose[Roll]);
     headPosX = headpose[TX] * 10;
     headPosY = headpose[TY] * 10;
     headPosZ = headpose[TZ] * 10;
 
-    virtRotX = getRadsFromDegrees(headpose[RY]);
-    virtRotY = getRadsFromDegrees(headpose[RX]);
-    virtRotZ = getRadsFromDegrees(headpose[RZ]);
+    virtRotX = getRadsFromDegrees(headpose[Pitch]);
+    virtRotY = getRadsFromDegrees(headpose[Yaw]);
+    virtRotZ = getRadsFromDegrees(headpose[Roll]);
     virtPosX = headpose[TX] * 10;
     virtPosY = headpose[TY] * 10;
     virtPosZ = headpose[TZ] * 10;

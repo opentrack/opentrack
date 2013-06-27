@@ -98,11 +98,11 @@ quint16 senderPort;
 	// Copy the Raw measurements directly to the client.
 	//
     FlightData.x = headpose[TX];
-    FlightData.y = headpose[RY];
+    FlightData.y = headpose[Pitch];
     FlightData.z = headpose[TZ];
     FlightData.p = headpose[TY];
-    FlightData.h = headpose[RX];
-    FlightData.r = headpose[RZ];
+    FlightData.h = headpose[Yaw];
+    FlightData.r = headpose[Roll];
 	FlightData.status = fg_cmd;
 
 	//

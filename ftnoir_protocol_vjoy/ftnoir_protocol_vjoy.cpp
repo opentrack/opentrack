@@ -17,9 +17,9 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
     JOYSTICK_STATE state[2] = { 0 };
 
-    state[0].XAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[RX] * VJOY_AXIS_MAX / 180.0));
-    state[0].YAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[RY] * VJOY_AXIS_MAX / 180.0));
-    state[0].ZAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[RZ] * VJOY_AXIS_MAX / 180.0));
+    state[0].XAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[Yaw] * VJOY_AXIS_MAX / 180.0));
+    state[0].YAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[Pitch] * VJOY_AXIS_MAX / 180.0));
+    state[0].ZAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[Roll] * VJOY_AXIS_MAX / 180.0));
     state[0].XRotation = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[TX] * VJOY_AXIS_MAX / 100.0));
     state[0].YRotation = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[TY] * VJOY_AXIS_MAX / 100.0));
     state[0].ZRotation = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[TZ] * VJOY_AXIS_MAX / 100.0));
