@@ -95,8 +95,6 @@ if(NOT SDK_FACEAPI_ONLY)
       endif()
     endif(WIN32)
 
-    set(SDK_HILLCREST "" CACHE PATH "Path to libfreespace")
-
 if(SDK_FSUIPC AND WIN32)
     include_directories("${SDK_FSUIPC}")
     link_directories("${SDK_FSUIPC}")
@@ -240,14 +238,6 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB opentrack-tracker-udp-rc "ftnoir_tracker_udp/*.qrc")
     QT4_WRAP_UI(opentrack-tracker-udp-uih ${opentrack-tracker-udp-ui})
     QT4_ADD_RESOURCES(opentrack-tracker-udp-rcc ${opentrack-tracker-udp-rc})
-
-    file(GLOB opentrack-tracker-hillcrest-c "ftnoir_tracker_hillcrest/*.cpp")
-    file(GLOB opentrack-tracker-hillcrest-h "ftnoir_tracker_hillcrest/*.h")
-    QT4_WRAP_CPP(opentrack-tracker-hillcrest-moc ${opentrack-tracker-hillcrest-h})
-    file(GLOB opentrack-tracker-hillcrest-ui "ftnoir_tracker_hillcrest/*.ui")
-    file(GLOB opentrack-tracker-hillcrest-rc "ftnoir_tracker_hillcrest/*.qrc")
-    QT4_WRAP_UI(opentrack-tracker-hillcrest-uih ${opentrack-tracker-hillcrest-ui})
-    QT4_ADD_RESOURCES(opentrack-tracker-hillcrest-rcc ${opentrack-tracker-hillcrest-rc})
 	
     file(GLOB opentrack-tracker-rift-c "ftnoir_tracker_rift/*.cpp")
     file(GLOB opentrack-tracker-rift-h "ftnoir_tracker_rift/*.h")
@@ -488,30 +478,6 @@ endif()
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
         endif()
 	endif()
-    if(SDK_HILLCREST)
-        include_directories("${SDK_HILLCREST}/include")
-        if(WIN32)
-            set(HILLCREST_LIBDIR ${SDK_HILLCREST}/lib/Release)
-            if(MSVC)
-                set(HILLCREST_LIBNAME libfreespace.lib)
-            else()
-                set(HILLCREST_LIBNAME libfreespace.a)
-            endif()
-        else()
-            link_directories(${SDK_HILLCREST}/lib)
-        endif()
-        add_library(opentrack-tracker-hillcrest SHARED ${opentrack-tracker-hillcrest-c} ${opentrack-tracker-hillcrest-moc} ${opentrack-tracker-hillcrest-uih} ${opentrack-tracker-hillcrest-rcc})
-        if(WIN32)
-            set(HILLCREST_LIB "${HILLCREST_LIBDIR}/${HILLCREST_LIBNAME}")
-        else()
-            set(HILLCREST_LIB freespace)
-        endif()
-        target_link_libraries(opentrack-tracker-hillcrest ${MY_QT_LIBS} ${HILLCREST_LIB})
-        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-            SET_TARGET_PROPERTIES(opentrack-tracker-hillcrest
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
-        endif()
-    endif()
     
     if(WIN32 AND NOT SDK_CONSOLE_DEBUG)
         set(opentrack-win32-executable WIN32)
@@ -596,15 +562,6 @@ if(NOT SDK_FACEAPI_ONLY)
         install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
     endif()
 
-    if(SDK_HILLCREST)
-        install(
-            TARGETS opentrack-tracker-hillcrest
-            RUNTIME DESTINATION .
-            LIBRARY DESTINATION .
-            NAMELINK_SKIP
-        )
-    endif()
-	
     if(SDK_RIFT)
         install(
             TARGETS opentrack-tracker-rift
@@ -696,12 +653,6 @@ if(WIN32 AND NOT SDK_FACEAPI_ONLY)
         LIBRARY DESTINATION .
         NAMELINK_SKIP
     )
-endif()
-
-if(SDK_HILLCREST)
-    if(WIN32)
-        install(FILES "${HILLCREST_LIBDIR}/libfreespace.dll" DESTINATION .)
-    endif()
 endif()
 
 if(WIN32 AND SDK_SM_FACEAPI_PATH)
