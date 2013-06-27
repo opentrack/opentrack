@@ -1,11 +1,10 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift.h"
 #include "facetracknoir/global-settings.h"
-	#include "OVR.h"
+#include "OVR.h"
 #include <cstdio>
-using namespace OVR;
 
-bool Rift_Tracker::isInitialised = false;
+using namespace OVR;
 
 Rift_Tracker::Rift_Tracker()
 {
@@ -30,27 +29,36 @@ Rift_Tracker::~Rift_Tracker()
     pSensor.Clear();
 	pHMD.Clear();
 	pManager.Clear();
+	System::Destroy();
 }
 
+/*
+void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_step step ) {
+
+		QMessageBox::warning(0,"OpenTrack Info", "controller manager callback",QMessageBox::Ok,QMessageBox::NoButton);
+	if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
+		// Ask the controller manager what the next instruction string should be.
+		std::string controller_manager_text_string = sixenseUtils::getTheControllerManager()->getStepString();
+		QMessageBox::warning(0,"OpenTrack Info", controller_manager_text_string.c_str(),QMessageBox::Ok,QMessageBox::NoButton);
+		// We could also load the supplied controllermanager textures using the filename: sixenseUtils::getTheControllerManager()->getTextureFileName();
+
+	}
+}*/
 
 void Rift_Tracker::StartTracker(QFrame* videoFrame)
 {
-	//QMessageBox::warning(0,"FaceTrackNoIR Notification", "Tracking loading settings...",QMessageBox::Ok,QMessageBox::NoButton);
+    //QMessageBox::warning(0,"FaceTrackNoIR Notification", "Tracking loading settings...",QMessageBox::Ok,QMessageBox::NoButton);
     loadSettings();
     //
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
     //
-	if(!isInitialised){
-	    System::Init(Log::ConfigureDefaultLog(LogMask_All));
-		isInitialised = true;
-	}
-
-	pManager = *DeviceManager::Create();
+    System::Init(Log::ConfigureDefaultLog(LogMask_All));
+    pManager = *DeviceManager::Create();
     DeviceEnumerator<HMDDevice>& enumerator = pManager->EnumerateDevices<HMDDevice>();
     if (enumerator.IsAvailable())
     {
         pHMD = *enumerator.CreateDevice();
-    
+        
         pSensor = *pHMD->GetSensor();
         
         if (pSensor){
@@ -58,34 +66,60 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
         }else{
             QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
-        SFusion.SetYawCorrectionEnabled(true);
-        SFusion.SetMagReference();
+        isCalibrated = false;
+        MagCal.BeginAutoCalibration(SFusion);
+        SFusion.SetMagReference(SFusion.GetOrientation());
     }
-
-	return;
 }
+
 
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
     if (pHMD.GetPtr() != NULL) {
+#if 0
+		 if (SFusion.IsMagReady() && !isCalibrated ){
+            SFusion.SetYawCorrectionEnabled(true);
+			QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
+		}else{
+			if(isCalibrated){
+				isCalibrated = false;
+				QMessageBox::warning(0,"OpenTrack Info", "Lost magnetic calibration",QMessageBox::Ok,QMessageBox::NoButton);
+			}
+        }
+#endif
+
+		// Magnetometer calibration procedure
+		MagCal.UpdateAutoCalibration(SFusion);
         Quatf hmdOrient = SFusion.GetOrientation();
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
+        //hmdOrient.GetEulerAngles< Axis_X, Axis_Y, Axis_Z>(&pitch, &yaw, &roll);
+		//hmdOrient.GetEulerAngles< Axis_X, Axis_Z, Axis_Y>(&pitch, &roll, &yaw);
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-        newHeadPose[Pitch] =pitch;
-        newHeadPose[Roll] = roll;
-        newHeadPose[Yaw] = yaw;
+		//hmdOrient.GetEulerAngles< Axis_Y, Axis_Z, Axis_X>(&yaw, &roll, &pitch);
+		//hmdOrient.GetEulerAngles< Axis_Z, Axis_X, Axis_Y>(&roll, &pitch, &yaw);
+		//hmdOrient.GetEulerAngles< Axis_Z, Axis_Y, Axis_X>(&roll, &yaw, &pitch);
+        newHeadPose[Pitch] = pitch;
+        newHeadPose[Roll]  = roll;
+        newHeadPose[Yaw]   = yaw;
+
 #if 0
-        if (bEnableX) {
+		sixenseControllerData cd;
+	
+		newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
+		newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
+		newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
+		
+		//if (bEnableX) {
             data[TX] = newHeadPose[TX];
-        }
-        if (bEnableY) {
+        //}
+        //if (bEnableY) {
             data[TY] = newHeadPose[TY];
-        }
-        if (bEnableY) {
+        //}
+        //if (bEnableY) {
             data[TZ] = newHeadPose[TZ];
-        }
+        //}
 #endif
         if (bEnableYaw) {
             data[Yaw] = newHeadPose[Yaw] * 57.295781f;
