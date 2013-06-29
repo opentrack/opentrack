@@ -683,7 +683,8 @@ void FaceTrackNoIR::startTracker( ) {
 	//
     tracker->setInvertAxis(Yaw, ui.chkInvertYaw->isChecked() );
     tracker->setInvertAxis(Pitch, ui.chkInvertPitch->isChecked() );
-    tracker->setInvertAxis(Roll, ui.chkInvertRoll->isChecked() );    tracker->setInvertAxis(TX, ui.chkInvertX->isChecked() );
+    tracker->setInvertAxis(Roll, ui.chkInvertRoll->isChecked() );
+    tracker->setInvertAxis(TX, ui.chkInvertX->isChecked() );
     tracker->setInvertAxis(TY, ui.chkInvertY->isChecked() );
     tracker->setInvertAxis(TZ, ui.chkInvertZ->isChecked() );
 
