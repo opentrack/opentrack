@@ -74,41 +74,42 @@ bool Hydra_Tracker::GiveHeadPoseData(double *data)
 	//sixenseUtils::getTheControllerManager()->update( &acd );
 
 	//sixenseControllerData cd;
-	Rotation quat = Rotation(acd.controllers[0].rot_quat[0],acd.controllers[0].rot_quat[1],acd.controllers[0].rot_quat[2],acd.controllers[0].rot_quat[3]);
+	//Rotation quat = Rotation(acd.controllers[0].rot_quat[1],acd.controllers[0].rot_quat[2],acd.controllers[0].rot_quat[3],acd.controllers[0].rot_quat[0]);
+	sixenseMath::Matrix4 mat = sixenseMath::Matrix4(acd.controllers[0].rot_mat);// sixenseMath::Quat(acd.controllers[0].rot_quat[1],acd.controllers[0].rot_quat[2],acd.controllers[0].rot_quat[3],acd.controllers[0].rot_quat[0]);
+
     double yaw =  0.0f;
     double pitch = 0.0f;
     double roll = 0.0f;
-
-	quat.toEuler(yaw, pitch, roll);
-
-    newHeadPose[RY] = pitch;
-    newHeadPose[RZ] = roll;
-    newHeadPose[RX] = yaw;
-
+	float ypr[3];
+	
+	mat.getEulerAngles().fill(ypr);
+    newHeadPose[Yaw] = ypr[0];
+    newHeadPose[Pitch] = ypr[1];
+	newHeadPose[Roll] = ypr[2];
 
 	
 	newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
 	newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
 	newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
 		
-	//if (bEnableX) {
+	if (bEnableX) {
         data[TX] = newHeadPose[TX];
-    //}
-    //if (bEnableY) {
+    }
+    if (bEnableY) {
         data[TY] = newHeadPose[TY];
-    //}
-    //if (bEnableY) {
+    }
+    if (bEnableY) {
         data[TZ] = newHeadPose[TZ];
-    //}
+    }
 
     if (bEnableYaw) {
-        data[RX] = newHeadPose[RX] * 57.295781f;
+        data[Yaw] = newHeadPose[Yaw] * 57.295781f;
     }
     if (bEnablePitch) {
-        data[RY] = newHeadPose[RY] * 57.295781f;
+        data[Pitch] = newHeadPose[Pitch] * 57.295781f;
     }
     if (bEnableRoll) {
-        data[RZ] = newHeadPose[RZ] * 57.295781f;
+        data[Roll] = newHeadPose[Roll] * 57.295781f;
     }
     
 	return true;

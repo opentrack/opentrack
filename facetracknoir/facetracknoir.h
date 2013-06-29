@@ -186,8 +186,7 @@ private:
 
         void setInvertAxis( Axis axis, int invert );
         void setInvertYaw(int invert) {
-            setInvertAxis(Yaw, invert);
-        }
+            setInvertAxis(Yaw, invert);        }
         void setInvertPitch(int invert) {
             setInvertAxis(Pitch, invert);
         }        

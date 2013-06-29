@@ -13,10 +13,10 @@ T6DOF operator-(const T6DOF& A, const T6DOF& B)
 
 	T6DOF C;
     R_C.toEuler(C.axes[Yaw], C.axes[Pitch], C.axes[Roll]);
+    R_C.toEuler(C.axes[Yaw], C.axes[Pitch], C.axes[Roll]);
     C.axes[Yaw] *= R2D;
     C.axes[Pitch] *= R2D;
     C.axes[Roll] *= R2D;
-
     C.axes[TX] = A.axes[TX] - B.axes[TX];
     C.axes[TY] = A.axes[TY] - B.axes[TY];
     C.axes[TZ] = A.axes[TZ] - B.axes[TZ];

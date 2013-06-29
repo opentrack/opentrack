@@ -6,6 +6,7 @@
 #include <math.h>
 #include "facetracknoir/global-settings.h"
 #include "OVR.h"
+#include "Util/Util_MagCalibration.h"
 class Rift_Tracker : public ITracker
 {
 public:
@@ -26,6 +27,10 @@ private:
 	OVR::Ptr<OVR::HMDDevice> pHMD;
 	OVR::Ptr<OVR::SensorDevice> pSensor;
 	OVR::SensorFusion SFusion;
+    // Magnetometer calibration and yaw correction
+    OVR::Util::MagCalibration MagCal;
+	bool isCalibrated;
+
     double newHeadPose[6];								// Structure with new headpose
 	bool bEnableRoll;
 	bool bEnablePitch;
