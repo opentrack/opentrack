@@ -30,8 +30,8 @@
 #ifndef FTNOIR_TRACKER_TYPES_H
 #define FTNOIR_TRACKER_TYPES_H
 
+
 enum Axis {
-    TX = 0, TY, TZ, Yaw, Pitch, Roll
-};
+    TX = 0, TY, TZ, Yaw, Pitch, Roll};
 
 #endif // FTNOIR_TRACKER_TYPES_H

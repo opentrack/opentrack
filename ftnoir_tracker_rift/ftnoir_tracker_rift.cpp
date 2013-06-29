@@ -66,7 +66,8 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
         }else{
             QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
-        //MagCal.BeginAutoCalibration(SFusion);
+		isCalibrated = false;
+		MagCal.BeginAutoCalibration(SFusion);
         SFusion.SetMagReference(SFusion.GetOrientation());
     }
 }
@@ -79,32 +80,27 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
 		 if (SFusion.IsMagReady() && !isCalibrated ){
             SFusion.SetYawCorrectionEnabled(true);
 			QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
+			isCalibrated = true;
 		}else{
 			if(isCalibrated){
 				isCalibrated = false;
 				QMessageBox::warning(0,"OpenTrack Info", "Lost magnetic calibration",QMessageBox::Ok,QMessageBox::NoButton);
 			}
         }
-#endif
 
 		// Magnetometer calibration procedure
-		//MagCal.UpdateAutoCalibration(SFusion);
+		MagCal.UpdateAutoCalibration(SFusion);
+#endif
         Quatf hmdOrient = SFusion.GetOrientation();
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
-        //hmdOrient.GetEulerAngles< Axis_X, Axis_Y, Axis_Z>(&pitch, &yaw, &roll);
-		//hmdOrient.GetEulerAngles< Axis_X, Axis_Z, Axis_Y>(&pitch, &roll, &yaw);
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-		//hmdOrient.GetEulerAngles< Axis_Y, Axis_Z, Axis_X>(&yaw, &roll, &pitch);
-		//hmdOrient.GetEulerAngles< Axis_Z, Axis_X, Axis_Y>(&roll, &pitch, &yaw);
-		//hmdOrient.GetEulerAngles< Axis_Z, Axis_Y, Axis_X>(&roll, &yaw, &pitch);
-        newHeadPose[Pitch] = pitch;
-        newHeadPose[Roll]  = roll;
-        newHeadPose[Yaw]   = yaw;
+        newHeadPose[Yaw] = yaw;
+        newHeadPose[Pitch] =pitch;
+        newHeadPose[Roll] = roll;
 
 #if 0
-		sixenseControllerData cd;
 	
 		newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
 		newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
