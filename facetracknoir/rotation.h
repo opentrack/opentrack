@@ -12,12 +12,12 @@
 class Rotation {
 
 public:
-	Rotation() : w(1.0),x(0.0),y(0.0),z(0.0) {}
+	Rotation() : a(1.0),b(0.0),c(0.0),d(0.0) {}
 	Rotation(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
-	Rotation(double x, double y, double z, double w) : x(x),y(y),z(z),w(w) {}
+	Rotation(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
 
 	Rotation inv(){	// inverse
-		return Rotation(-x,-y,-z, w);
+		return Rotation(a,-b,-c,-d);
 	}
 
 
@@ -25,48 +25,46 @@ public:
 	// see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 	void fromEuler(double yaw, double pitch, double roll)
 	{
-		// Assuming the angles are in radians.
-		double c1 = cos(yaw);
-		double s1 = sin(yaw);
-		double c2 = cos(roll);
-		double s2 = sin(roll);
-		double c3 = cos(pitch);
-		double s3 = sin(pitch);
-		w = sqrt(1.0 + c1 * c2 + c1*c3 - s1 * s2 * s3 + c2*c3) / 2.0;
-		double w4 = (4.0 * w);
-		x = (c2 * s3 + c1 * s3 + s1 * s2 * c3) / w4 ;
-		y = (s1 * c2 + s1 * c3 + c1 * s2 * s3) / w4 ;
-		z = (-s1 * s3 + c1 * s2 * c3 +s2) / w4 ;
+		double sin_phi = sin(roll/2.0);
+		double cos_phi = cos(roll/2.0);
+		double sin_the = sin(pitch/2.0);
+		double cos_the = cos(pitch/2.0);
+		double sin_psi = sin(yaw/2.0);
+		double cos_psi = cos(yaw/2.0);
+
+		a = cos_phi*cos_the*cos_psi + sin_phi*sin_the*sin_psi;
+		b = sin_phi*cos_the*cos_psi - cos_phi*sin_the*sin_psi;
+		c = cos_phi*sin_the*cos_psi + sin_phi*cos_the*sin_psi;
+		d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
 	}
 
 	void toEuler(double& yaw, double& pitch, double& roll)
 	{
-		
-		yaw =  atan2(2.0*(y*w - x*z), 1.0 - 2.0*(y*y + z*z));
-		roll = asin(2.0*(x*y + z*w));
-		pitch = atan2(2.0*(x*w - y*z), 1.0 - 2.0*(x*x + z*z));
+		roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
+		pitch = asin(2.0*(a*c - b*d));
+		yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
 	}
 	
 /*	 const Rotation operator*(const Rotation& A, const Rotation& B)
 	{
-		return Rotation(A.w*B.w - A.x*B.x - A.y*B.y - A.z*B.z,	// quaternion multiplication
-						A.w*B.x + A.x*B.w + A.y*B.z - A.z*B.y,
-						A.w*B.y - A.x*B.z + A.y*B.w + A.z*B.x,
-						A.w*B.z + A.x*B.y - A.y*B.x + A.z*B.w);
+		return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+						A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+						A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+						A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
 	}*/
 
 
 		 const Rotation operator*(const Rotation& B)
 	{
 		const Rotation& A = *this;
-		return Rotation(A.w*B.w - A.x*B.x - A.y*B.y - A.z*B.z,	// quaternion multiplication
-						A.w*B.x + A.x*B.w + A.y*B.z - A.z*B.y,
-						A.w*B.y - A.x*B.z + A.y*B.w + A.z*B.x,
-						A.w*B.z + A.x*B.y - A.y*B.x + A.z*B.w);
+		return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+						A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+						A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+						A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
 	}
 
 protected:
-	double w,x,y,z; // quaternion coefficients
+	double a,b,c,d; // quaternion coefficients
 };
 
 
