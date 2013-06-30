@@ -40,6 +40,9 @@
 #endif
 int main(int argc, char** argv)
 {
+#if defined(_WIN32)
+    (void) timeBeginPeriod(1);
+#endif
     QApplication app(argc, argv);
     QFont font;
     font.setFamily(font.defaultFamily());
