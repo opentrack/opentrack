@@ -58,9 +58,6 @@ FTNoIR_Protocol::FTNoIR_Protocol() :
 
 	viewsStart = 0;
 	viewsStop = 0;
-    force_dummy = false;
-    force_tirviews = false;
-
 }
 
 /** destructor **/
@@ -182,14 +179,8 @@ float headRotZ;
     //
     if (intGameID != pMemData->GameID)
     {
-        QString gameID = QString::number(pMemData->GameID);
-        bool tirviews = false, dummy = false;
         QString gamename;
-        CSV::getGameData(gameID, tirviews, dummy, pMemData->table, gamename);
-        if (tirviews)
-            start_tirviews();
-        if (dummy)
-            start_dummy();
+        CSV::getGameData(pMemData->GameID, pMemData->table, gamename);
         pMemData->GameID2 = pMemData->GameID;
         intGameID = pMemData->GameID;
         QMutexLocker foo(&this->game_name_mutex);
@@ -203,8 +194,7 @@ float headRotZ;
 
 void FTNoIR_Protocol::start_tirviews() {
     QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
-    if ( QFile::exists( aFileName ) && !force_tirviews ) {
-        force_tirviews = true;
+    if ( QFile::exists( aFileName )) {
         FTIRViewsLib.setFileName(aFileName);
         FTIRViewsLib.load();
 
@@ -228,13 +218,10 @@ void FTNoIR_Protocol::start_tirviews() {
 }
 
 void FTNoIR_Protocol::start_dummy() {
-    if (!force_dummy) {
-        force_dummy = true;
-        QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
-        dummyTrackIR.startDetached("\"" + program + "\"");
-    
-        qDebug() << "FTServer::run() says: TrackIR.exe executed!" << program;
-    }
+    QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
+    dummyTrackIR.startDetached("\"" + program + "\"");
+
+    qDebug() << "FTServer::run() says: TrackIR.exe executed!" << program;
 }
 
 bool FTNoIR_Protocol::checkServerInstallationOK()

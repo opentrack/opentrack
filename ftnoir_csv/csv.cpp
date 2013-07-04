@@ -102,8 +102,10 @@ QStringList CSV::parseLine(QString line){
 	return list;
 }
 
-void CSV::getGameData( const QString& gameID, bool& tirviews, bool& dummy, unsigned char* table, QString& gamename)
+void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 {
+    QString gameID = QString::number(id);
+    
     /* zero table first, in case unknown game is connecting */
     memset(table, 0, 8);
     QStringList gameLine;
@@ -162,8 +164,6 @@ void CSV::getGameData( const QString& gameID, bool& tirviews, bool& dummy, unsig
                         table[i] = tmp[i];
                 qDebug() << gameID << "game-id" << gameLine.at(7);
                 gamename = gameLine.at(1);
-                dummy = fuzz[1] & 0xf;
-                tirviews = fuzz[1] & 0xf0;
                 file.close();
                 return;
 			}
