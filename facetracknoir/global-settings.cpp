@@ -88,7 +88,7 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     correct = true;
 }
 
-DynamicLibrary::DynamicLibrary(const char* filename)
+DynamicLibrary::DynamicLibrary(const QString& filename)
 {
     this->filename = filename;
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
@@ -98,7 +98,7 @@ DynamicLibrary::DynamicLibrary(const char* filename)
     Constructor = (NULLARY_DYNAMIC_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
     Metadata = (METADATA_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetMetadata" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
 #else
-    QByteArray latin1 = fullPath.toLatin1();
+    QByteArray latin1 = QFile::encodeName(filename);
     handle = dlopen(latin1.constData(), RTLD_NOW |
 #   ifdef __linux
                     RTLD_DEEPBIND
