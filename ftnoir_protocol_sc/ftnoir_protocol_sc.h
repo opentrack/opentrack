@@ -30,7 +30,6 @@
 #ifndef INCLUDED_SCSERVER_H
 #define INCLUDED_SCSERVER_H
 #include "facetracknoir/global-settings.h"
-
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
@@ -38,11 +37,11 @@
 #define SIMCONNECT_H_NOMANIFEST 
 #define _WIN32_WINNT 0x0502
 
-#include "Windows.h"
-#include "SimConnect.h"
+#include <Windows.h>
+#include <SimConnect.h>
 
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "ui_FTNoIR_SCcontrols.h"
+#include <..\ftnoir_protocol_base\ftnoir_protocol_base.h>
+#include <ui_FTNoIR_SCcontrols.h>
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -92,7 +91,6 @@ public:
 private:
 	// Private properties
 	QString ProgramName;
-	QLibrary SCClientLib;
 
 	static float virtSCPosX;
 	static float virtSCPosY;
@@ -121,7 +119,7 @@ private:
 	importSimConnect_AddClientEventToNotificationGroup simconnect_addclienteventtonotificationgroup;
 	importSimConnect_SetNotificationGroupPriority simconnect_setnotificationgrouppriority;
 
-	static HANDLE hSimConnect;										// Handle to SimConnect
+	static HANDLE hSimConnect;						// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
 	void loadSettings();
 };

@@ -1,2 +1,2 @@
-#include "winuser.h"
-2 RT_MANIFEST scserver.manifest
+#include <winuser.h>
+142 RT_MANIFEST scserver.manifest
