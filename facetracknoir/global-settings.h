@@ -50,7 +50,7 @@ extern "C" typedef void* (CALLING_CONVENTION* SETTINGS_FUNCTION)(void);
 
 class DynamicLibrary {
 public:
-    DynamicLibrary(const char* filename);
+    DynamicLibrary(const QString& filename);
     virtual ~DynamicLibrary();
     SETTINGS_FUNCTION Dialog;
     NULLARY_DYNAMIC_FUNCTION Constructor;

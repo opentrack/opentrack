@@ -36,7 +36,7 @@
 
 #if defined(_WIN32)
 #include <windows.h>
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+//#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
 #endif
 int main(int argc, char** argv)
 {
