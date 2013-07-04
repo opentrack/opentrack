@@ -54,6 +54,8 @@ float FTNoIR_Protocol::prevSCRotX = 0.0f;
 float FTNoIR_Protocol::prevSCRotY = 0.0f;
 float FTNoIR_Protocol::prevSCRotZ = 0.0f;
 
+static QLibrary SCClientLib;
+
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
@@ -139,7 +141,7 @@ PDWORD_PTR MsgResult = 0;
 //		prevRotY = virtRotY;
 //		prevRotZ = virtRotZ;
 
-		if SUCCEEDED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL)) {
+		if (SUCCEEDED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL))) {
 			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: Dispatching";
 		}
 		else {
@@ -153,25 +155,39 @@ PDWORD_PTR MsgResult = 0;
 //
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-	qDebug() << "SCCheckClientDLL says: Starting Function";
-
-    const char* simconnect_paths[] = {
-        "SimConnect.DLL",
-        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.60905.0_none_dd92b94d8a196297\\SimConnect.DLL",
-        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.61242.0_none_e079b46b85043c20\\SimConnect.DLL",
-        "C:\\Windows\\WinSxS\\x86_microsoft.flightsimulator.simconnect_67c7c14424d61b5b_10.0.61259.0_none_55f5ecdc14f60568\\SimConnect.DLL",
-        NULL
-    };
-
-    for (int i = 0; simconnect_paths[i]; i++)
+    HANDLE hactctx = INVALID_HANDLE_VALUE;
+    ULONG_PTR actctx_cookie = NULL;
+    if (!SCClientLib.isLoaded())                           
     {
-        SCClientLib.setFileName(simconnect_paths[i]);
-        if (!SCClientLib.load()) {
-            qDebug() << "SCCheckClientDLL says: Error loading SimConnect DLL";
-            qDebug() << SCClientLib.errorString();
-            continue;
+        ACTCTXA actx = {0};
+        actx.cbSize = sizeof(ACTCTXA);
+        actx.lpResourceName = MAKEINTRESOURCEA(142);
+        actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
+        QString path = QCoreApplication::applicationDirPath() + "/opentrack-proto-simconnect.dll";
+        QByteArray name = QFile::encodeName(path);
+        actx.lpSource = name.constData();
+        hactctx = CreateActCtxA(&actx);
+        actctx_cookie = 0;
+        if (hactctx != INVALID_HANDLE_VALUE) {
+            if (!ActivateActCtx(hactctx, &actctx_cookie)) {
+                qDebug() << "SC: can't set win32 activation context" << GetLastError();
+                ReleaseActCtx(hactctx);
+                hactctx = INVALID_HANDLE_VALUE;
+            }
+        } else {
+            qDebug() << "SC: can't create win32 activation context";
         }
-        break;
+        
+        qDebug() << "SCCheckClientDLL says: Starting Function";
+        
+        SCClientLib.setFileName("SimConnect.DLL");
+        
+        if (!SCClientLib.load()) {
+            qDebug() << "SC load" << SCClientLib.errorString();
+            return false;
+        }
+    } else {
+        qDebug() << "SimConnect already loaded";
     }
 
 	//
@@ -226,6 +242,12 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	}
 
 	qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
+    
+    if (hactctx != INVALID_HANDLE_VALUE)
+    {
+        DeactivateActCtx(0, actctx_cookie);
+        ReleaseActCtx(hactctx);
+    }
 
 	return true;
 }

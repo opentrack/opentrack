@@ -189,7 +189,7 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(opentrack-proto-win32-mouse-uih ${opentrack-proto-win32-mouse-ui})
     QT4_ADD_RESOURCES(opentrack-proto-win32-mouse-rcc ${opentrack-proto-win32-mouse-rc})
 
-    file(GLOB opentrack-proto-simconnect-c "ftnoir_protocol_sc/*.cpp")
+    file(GLOB opentrack-proto-simconnect-c "ftnoir_protocol_sc/*.cpp" "ftnoir_protocol_sc/ftnoir-protocol-sc.rc")
     file(GLOB opentrack-proto-simconnect-h "ftnoir_protocol_sc/*.h")
     QT4_WRAP_CPP(opentrack-proto-simconnect-moc ${opentrack-proto-simconnect-h})
     file(GLOB opentrack-proto-simconnect-ui "ftnoir_protocol_sc/*.ui")
