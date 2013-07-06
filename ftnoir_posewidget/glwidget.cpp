@@ -51,35 +51,39 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
     update();
 }
 
-static __inline double dot(const Vec2f& p1, const Vec2f& p2) {
-    return p1.x * p2.x + p1.y * p2.y;
-}
-
-static bool barycentric_coords(const Vec2f& p1,
-                               const Vec2f& p2,
-                               const Vec2f& p3,
-                               const Vec2f& px,
-                               Vec2f& uv)
-{
-    Vec2f v0(p3.x - p1.x, p3.y - p1.y);
-    Vec2f v1(p2.x - p1.x, p2.y - p1.y);
-    Vec2f v2(px.x - p1.x, px.y - p1.y);
-
-    double dot00 = dot(v0, v0);
-    double dot01 = dot(v0, v1);
-    double dot02 = dot(v0, v2);
-    double dot11 = dot(v1, v1);
-    double dot12 = dot(v1, v2);
-
-    double invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
-    double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-    double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-
-    uv.x = u;
-    uv.y = v;
-
-    return (u >= 0) && (v >= 0) && (u + v <= 1);
-}
+class Triangle {
+public:
+    Triangle(const Vec2f& p1,
+             const Vec2f& p2,
+             const Vec2f& p3)
+    {
+        origin = p1;
+        v0 = Vec2f(p3.x - p1.x, p3.y - p1.y);
+        v1 = Vec2f(p2.x - p1.x, p2.y - p1.y);
+        dot00 = dot(v0, v0);
+        dot01 = dot(v0, v1);
+        dot11 = dot(v1, v1);
+        invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+    }
+    bool barycentric_coords(const Vec2f& px, Vec2f& uv) const
+    {
+        Vec2f v2(px.x - origin.x, px.y - origin.y);
+        double dot12 = dot(v1, v2);
+        double dot02 = dot(v0, v2);
+        double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+        uv.x = u;
+        uv.y = v;
+        return (u >= 0) && (v >= 0) && (u + v <= 1);
+    }
+    
+private:
+    double dot00, dot01, dot11, invDenom;
+    Vec2f v0, v1, origin;
+    double dot(const Vec2f& p1, const Vec2f& p2) const {
+        return p1.x * p2.x + p1.y * p2.y;
+    }
+};
 
 static __inline Vec3f normal(const Vec3f& p1, const Vec3f& p2, const Vec3f& p3)
 {
@@ -146,8 +150,11 @@ void GLWidget::project_quad_texture() {
         { Vec2f(0, 0), Vec2f(ow-1, 0), Vec2f(0, oh-1) },
         { Vec2f(ow-1, oh-1), Vec2f(ow-1, 0), Vec2f(0, oh-1) }
     };
+    const Triangle triangles[2] = {
+        Triangle(projected[0][0], projected[0][1], projected[0][2]),
+        Triangle(projected[1][0], projected[1][1], projected[1][2])
+    };
   
-    double sqrt2 = std::sqrt(2.0);
     int orig_pitch = tex.bytesPerLine();
     int dest_pitch = texture.bytesPerLine();
     
@@ -168,11 +175,7 @@ void GLWidget::project_quad_texture() {
             pos.y = y;
             for (int i = 0; i < 2; i++) {
                 Vec2f coords;
-                if (barycentric_coords(projected[i][0],
-                                       projected[i][1],
-                                       projected[i][2],
-                                       pos,
-                                       coords))
+                if (triangles[i].barycentric_coords(pos, coords))
                 {
                     double qx = origs[i][0].x
                                 + coords.x * (origs[i][2].x - origs[i][0].x)
@@ -190,10 +193,10 @@ void GLWidget::project_quad_texture() {
                     double dx2 = qx2 - qx;
                     double dy2 = qy2 - qy;
 
-                    double d1 = sqrt2 - std::sqrt(dx1 * dx1 + dy1 * dy1);
-                    double d2 = sqrt2 - std::sqrt(dx2 * dx2 + dy2 * dy2);
-                    double d3 = sqrt2 - std::sqrt(dx2 * dx2 + dy1 * dy1);
-                    double d4 = sqrt2 - std::sqrt(dx1 * dx1 + dy2 * dy2);
+                    double d1 = 2 - (dx1 * dx1 + dy1 * dy1);
+                    double d2 = 2 - (dx2 * dx2 + dy2 * dy2);
+                    double d3 = 2 - (dx2 * dx2 + dy1 * dy1);
+                    double d4 = 2 - (dx1 * dx1 + dy2 * dy2);
 
                     double inv_norm = 1. / (d1 + d2 + d3 + d4);
 
