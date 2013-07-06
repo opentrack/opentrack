@@ -119,6 +119,8 @@ void Tracker::run() {
 	{
         if (should_quit)
             break;
+        
+        QMutexLocker foo(&mtx);
 
         for (int i = 0; i < 6; i++)
             newpose[i] = 0;
@@ -214,6 +216,7 @@ void Tracker::run() {
 // Get the raw headpose, so it can be displayed.
 //
 void Tracker::getHeadPose( double *data ) {
+    QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
     {
         data[i] = mainApp->axis(i).headPos;
@@ -224,6 +227,7 @@ void Tracker::getHeadPose( double *data ) {
 // Get the output-headpose, so it can be displayed.
 //
 void Tracker::getOutputHeadPose( double *data ) {
+    QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
         data[i] = output_camera.axes[i];
 }
