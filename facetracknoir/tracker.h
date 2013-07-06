@@ -109,6 +109,7 @@ class Tracker : public QThread {
 
 private:
     FaceTrackNoIR *mainApp;
+    QMutex mtx;
 
 protected:
 	// qthread override run method 
