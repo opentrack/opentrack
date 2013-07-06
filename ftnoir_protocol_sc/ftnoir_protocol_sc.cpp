@@ -150,18 +150,14 @@ PDWORD_PTR MsgResult = 0;
 	}
 }
 
-//
-// Returns 'true' if all seems OK.
-//
-bool FTNoIR_Protocol::checkServerInstallationOK()
-{   
-    HANDLE hactctx = INVALID_HANDLE_VALUE;
-    ULONG_PTR actctx_cookie = NULL;
-    if (!SCClientLib.isLoaded())                           
-    {
+class ActivationContext {
+public:
+    ActivationContext(const int resid) {
+        hactctx = INVALID_HANDLE_VALUE;
+        actctx_cookie = NULL;
         ACTCTXA actx = {0};
         actx.cbSize = sizeof(ACTCTXA);
-        actx.lpResourceName = MAKEINTRESOURCEA(142);
+        actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
         QString path = QCoreApplication::applicationDirPath() + "/opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
@@ -177,10 +173,31 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
         } else {
             qDebug() << "SC: can't create win32 activation context";
         }
-        
+    }
+    ~ActivationContext() {
+        if (hactctx != INVALID_HANDLE_VALUE)
+        {
+            DeactivateActCtx(0, actctx_cookie);
+            ReleaseActCtx(hactctx);
+        }
+    }
+private:
+    ULONG_PTR actctx_cookie;
+    HANDLE hactctx;
+};
+
+//
+// Returns 'true' if all seems OK.
+//
+bool FTNoIR_Protocol::checkServerInstallationOK()
+{   
+    if (!SCClientLib.isLoaded())                           
+    {
         qDebug() << "SCCheckClientDLL says: Starting Function";
         
         SCClientLib.setFileName("SimConnect.DLL");
+        
+        ActivationContext ctx(142);
         
         if (!SCClientLib.load()) {
             qDebug() << "SC load" << SCClientLib.errorString();
@@ -242,12 +259,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	}
 
 	qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
-    
-    if (hactctx != INVALID_HANDLE_VALUE)
-    {
-        DeactivateActCtx(0, actctx_cookie);
-        ReleaseActCtx(hactctx);
-    }
 
 	return true;
 }
