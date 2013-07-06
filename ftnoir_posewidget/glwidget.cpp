@@ -85,25 +85,23 @@ private:
     }
 };
 
-static __inline Vec3f normal(const Vec3f& p1, const Vec3f& p2, const Vec3f& p3)
-{
-    Vec3f u(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
-    Vec3f v(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
-     
-    Vec3f tmp(u.y * v.z - u.z * v.y,
-              u.z * v.x - u.x * v.z,
-              u.x * v.y - u.y * v.x);
-    
-    double i = 1./sqrt(tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z);
-    
-    return Vec3f(i * tmp.x, i * tmp.y, i * tmp.z);
-}
-
 static __inline Vec3f cross(const Vec3f& p1, const Vec3f& p2)
 {
     return Vec3f(p1.y * p2.z - p2.y * p1.z,
                  p2.x * p1.z - p1.x * p2.z,
                  p1.x * p2.y - p1.y * p2.x);
+}
+
+static __inline Vec3f normal(const Vec3f& p1, const Vec3f& p2, const Vec3f& p3)
+{
+    Vec3f u(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+    Vec3f v(p3.x - p1.x, p3.y - p1.y, p3.z - p1.z);
+     
+    Vec3f tmp = cross(u, v);
+    
+    double i = 1./sqrt(tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z);
+    
+    return Vec3f(i * tmp.x, i * tmp.y, i * tmp.z);
 }
 
 void GLWidget::project_quad_texture() {
