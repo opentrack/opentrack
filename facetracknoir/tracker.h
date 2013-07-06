@@ -96,12 +96,12 @@ public:
         altp = iniFile.value(secondary).toBool();
         iniFile.endGroup();
     }
-	float headPos;					// Current position (from faceTracker, radials or meters)
+	double headPos;					// Current position (from faceTracker, radials or meters)
     float invert;					// Invert measured value (= 1.0f or -1.0f)
 	FunctionConfig curve;		// Function to translate input -> output
 	FunctionConfig curveAlt;
     bool altp;
-    float zero;
+    double zero;
 };
 
 class Tracker : public QThread {
