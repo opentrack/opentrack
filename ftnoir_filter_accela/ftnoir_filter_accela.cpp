@@ -21,8 +21,8 @@
 #endif
 
 FTNoIR_Filter::FTNoIR_Filter() :
-    functionConfig("Accela-Scaling-Rotation", 6, 8),
-    translationFunctionConfig("Accela-Scaling-Translation", 6, 8)
+    functionConfig("Accela-Scaling-Rotation", 10, 10),
+    translationFunctionConfig("Accela-Scaling-Translation", 10, 10)
 {
 	first_run = true;
 	kMagicNumber = 100.0f;

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
-    <height>673</height>
+    <width>868</width>
+    <height>729</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,18 +44,100 @@
      <property name="minimumSize">
       <size>
        <width>850</width>
-       <height>574</height>
+       <height>650</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>300</width>
-       <height>574</height>
+       <height>650</height>
       </size>
      </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Preset</string>
+      </attribute>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Rotation smoothing</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Translation smoothing</string>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="rotationCircle">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>10</y>
+         <width>81</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>3.000000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="translationCircle">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>40</y>
+         <width>81</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>10.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.750000000000000</double>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="resetCircle">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>70</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Set curves</string>
+       </property>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tab">
       <attribute name="title">
        <string>Rotation</string>
@@ -64,19 +146,19 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>20</y>
+         <y>10</y>
          <width>819</width>
-         <height>510</height>
+         <height>571</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
+        <number>10</number>
        </property>
        <property name="pixPerEGU_Input" stdset="0">
-        <number>127</number>
+        <number>57</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
         <number>57</number>
@@ -120,19 +202,19 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>20</y>
+         <y>10</y>
          <width>819</width>
-         <height>510</height>
+         <height>581</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
-        <number>6</number>
+        <number>10</number>
        </property>
        <property name="maxOutputEGU" stdset="0">
-        <number>8</number>
+        <number>10</number>
        </property>
        <property name="pixPerEGU_Input" stdset="0">
-        <number>127</number>
+        <number>57</number>
        </property>
        <property name="pixPerEGU_Output" stdset="0">
         <number>57</number>
@@ -318,32 +400,6 @@ background:none;</string>
        </property>
        <property name="value">
         <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Smoothing:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="smoothingFactor">
-       <property name="decimals">
-        <number>3</number>
-       </property>
-       <property name="minimum">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>100.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.010000000000000</double>
-       </property>
-       <property name="value">
-        <double>1.000000000000000</double>
        </property>
       </widget>
      </item>
