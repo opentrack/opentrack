@@ -86,7 +86,6 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 	//
 	_config = 0;
 	_points = QList<QPointF>();
-	_draw_points = QList<QPointF>();
 	_draw_background = true;
 	_draw_function = true;
 
@@ -113,7 +112,6 @@ qreal x;
 	// Get the Function Points, one for each pixel in the horizontal range.
 	// If the curve does not change, there is no need to run this code every time (it slows down drawing).
 	//
-	_draw_points.clear();
 	for (int j = 0; j < MaxInput * pPerEGU_Input; j++) {
 		//
 		// Weird: not casting to float causes C++ to round the number...
@@ -122,10 +120,10 @@ qreal x;
 		currentPoint.setX ( x );
 		currentPoint.setY (_config->getValue( x ));
 		drawPoint = graphicalizePoint(currentPoint, "setConfig");
-		if (withinRect(drawPoint, range)) {
-			_draw_points.append(drawPoint);
+		//if (withinRect(drawPoint, range)) {
+			//_draw_points.append(drawPoint);
 //	qDebug() << "QFunctionConfigurator::setConfig _draw_Point to add = " << drawPoint;
-		}
+		//}
 	}
 	
 	_draw_function = true;

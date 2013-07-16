@@ -198,7 +198,6 @@ private:
 	QString _title;								// Title do display in Widget and to load Settings
 	FunctionConfig* _config;
 	QList<QPointF> _points;			// Function-points
-	QList<QPointF> _draw_points;	// Curve-points needed for drawing
 };
 
 #endif // QFUNCTIONCONFIGURATOR_H
