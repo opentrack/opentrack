@@ -47,6 +47,12 @@ public:
 	// Functions to manipulate the Function
 	//
 	void removePoint(int i);
+    void removeAllPoints() {
+        QMutexLocker foo(_mutex);
+        _points.clear();
+        reload();
+    }
+
 	void addPoint(QPointF pt);
 	void movePoint(int idx, QPointF pt);
 	QList<QPointF> getPoints();
