@@ -27,8 +27,9 @@
 		20130102 - WVR: Added 'reduction factor' to accommodate Patrick's need for speed.
 */
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
-#include "math.h"
+#include <math.h>
 #include <QDebug>
+#include <algorithm>
 #include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
@@ -39,8 +40,8 @@
 //
 FilterControls::FilterControls() :
 	QWidget(),
-    functionConfig("Accela-Scaling-Rotation", 6, 8),
-    translationFunctionConfig("Accela-Scaling-Translation", 6, 8)
+    functionConfig("Accela-Scaling-Rotation", 10, 10),
+    translationFunctionConfig("Accela-Scaling-Translation", 10, 10)
 {
 	ui.setupUi( this );
 
@@ -50,6 +51,7 @@ FilterControls::FilterControls() :
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.scalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
 	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
+    connect(ui.resetCircle, SIGNAL(clicked()), this, SLOT(resetCircle()));
 
 	// Connect slider for reduction
     //connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
@@ -148,10 +150,61 @@ void FilterControls::loadSettings() {
 	iniFile.beginGroup ( "Accela" );
 	ui.slideReduction->setValue (iniFile.value ( "Reduction", 100 ).toInt());
     ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
-    ui.smoothingFactor->setValue(iniFile.value("smoothing-factor", 1).toFloat());
+    ui.rotationCircle->setValue(iniFile.value("preset-rotation", 3).toDouble());
+    ui.translationCircle->setValue(iniFile.value("preset-translation", 0.75).toDouble());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
+}
+
+void FilterControls::resetCircle()
+{
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    iniFile.beginGroup ( "Accela" );
+    iniFile.setValue("preset-rotation", ui.rotationCircle->value());
+    iniFile.setValue("preset-translation", ui.translationCircle->value());
+    iniFile.endGroup();
+    
+    // essentially unit circles elongated on the X axis
+    double elongations[] = {
+        ui.rotationCircle->value(), ui.translationCircle->value()
+    };
+    
+    FunctionConfig* configs[] = {
+        &functionConfig, &translationFunctionConfig
+    };
+    
+    QFunctionConfigurator* widgets[] = {
+        ui.scalingConfig, ui.translationScalingConfig
+    };
+    
+    for (int i = 0; i < 2; i++)
+    {
+        FunctionConfig& cfg = *configs[i];
+        double sz = elongations[i];
+        
+        cfg.removeAllPoints();
+        
+        for (double x = 0; x <= sz+1e-1; x += 1e-1)
+        {
+            double sq = sz*sz-x*x;
+            double val;
+            if (sq <= 1e-4)
+                val = 0;
+            else
+                val = std::min<double>(sqrt(sq), sz);
+            
+            cfg.addPoint(QPointF(x, 10*(sz-val)/sz));
+        }
+        
+        cfg.saveSettings(iniFile);
+        
+        widgets[i]->setConfig(&cfg, currentFile);
+    }
+    
+    settingsDirty = false;
 }
 
 //
@@ -168,7 +221,6 @@ void FilterControls::save() {
 	iniFile.beginGroup ( "Accela" );
 	iniFile.setValue ( "Reduction", ui.slideReduction->value() );
     iniFile.setValue("zoom-slowness", ui.slideZoom->value());
-    iniFile.setValue("smoothing-factor", ui.smoothingFactor->value());
 	iniFile.endGroup ();
 
 	functionConfig.saveSettings(iniFile);
