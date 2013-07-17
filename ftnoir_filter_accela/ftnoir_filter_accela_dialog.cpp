@@ -52,6 +52,7 @@ FilterControls::FilterControls() :
 	connect(ui.scalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
 	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
     connect(ui.resetCircle, SIGNAL(clicked()), this, SLOT(resetCircle()));
+    connect(ui.removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 
 	// Connect slider for reduction
     //connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
@@ -155,6 +156,11 @@ void FilterControls::loadSettings() {
 	iniFile.endGroup ();
 
 	settingsDirty = false;
+}
+
+void FilterControls::removeAll() {
+    translationFunctionConfig.removeAllPoints();
+    functionConfig.removeAllPoints();
 }
 
 void FilterControls::resetCircle()

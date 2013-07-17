@@ -96,6 +96,7 @@ private slots:
 	void settingChanged(bool) { settingsDirty = true; }
 	void settingChanged(int) { settingsDirty = true; }
     void resetCircle();
+    void removeAll();
 };
 
 //*******************************************************************************************************
