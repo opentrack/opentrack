@@ -38,31 +38,22 @@ public:
 		c = cos_phi*sin_the*cos_psi + sin_phi*cos_the*sin_psi;
 		d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
 	}
-
-	void Rotation::toEuler(double& yaw, double& pitch, double& roll)
-	{
-		roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
-		pitch = asin(2.0*(a*c - b*d));
-		yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
-	}
-	
-/*	 const Rotation operator*(const Rotation& A, const Rotation& B)
-	{
-		return Rotation(A.w*B.w - A.x*B.x - A.y*B.y - A.z*B.z,	// quaternion multiplication
-						A.w*B.x + A.x*B.w + A.y*B.z - A.z*B.y,
-						A.w*B.y - A.x*B.z + A.y*B.w + A.z*B.x,
-						A.w*B.z + A.x*B.y - A.y*B.x + A.z*B.w);
-	}*/
-
-
-		 const Rotation operator*(const Rotation& B)
-	{
-		const Rotation& A = *this;
-return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
-						A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
-						A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
-						A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
-	}
+    
+    void toEuler(double& yaw, double& pitch, double& roll)
+    {
+        roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
+        pitch = asin(2.0*(a*c - b*d));
+        yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
+    }
+    
+    const Rotation operator*(const Rotation& B)
+    {
+        const Rotation& A = *this;
+        return Rotation(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+                        A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
+                        A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
+                        A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
+    }
 
 protected:
 	double a,b,c,d; // quaternion coefficients
