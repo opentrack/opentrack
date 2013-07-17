@@ -46,7 +46,6 @@ void FTNoIR_Filter::loadSettings() {
 	iniFile.beginGroup ( "Accela" );
 	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
     kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
-    kSmoothingFactor = iniFile.value("smoothing-factor", 1).toFloat();
 	iniFile.endGroup ();
 }
 
@@ -68,7 +67,10 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 	if (first_run)
 	{
         for (int i = 0; i < 6; i++)
+        {
             new_camera_position[i] = target[i];
+            current_camera_position[i] = target[i];
+        }
 
 		first_run=false;
 		return;
@@ -86,7 +88,7 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 		double start = prev_output[i];
 		double vec = e2 - start;
 		int sign = vec < 0 ? -1 : 1;
-		double x = fabs(vec) / kSmoothingFactor;
+		double x = fabs(vec);
 		QList<QPointF> points = (i >= 3 ? functionConfig : translationFunctionConfig).getPoints();
 		int extrapolatep = 0;
 		double ratio;

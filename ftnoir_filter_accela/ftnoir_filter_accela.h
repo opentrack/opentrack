@@ -48,17 +48,16 @@ public:
 	FTNoIR_Filter();
 	~FTNoIR_Filter();
     void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter_values);
-    void Initialize() {}
+    void Initialize() {
+        first_run = true;
+    }
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
     double newHeadPose[6];								// Structure with new headpose
 
 	bool	first_run;
-	double kFactor, kFactorTranslation;
-	double kSensitivity, kSensitivityTranslation;
     double kMagicNumber, kZoomSlowness;		// Stanislaws' magic number (should be 100 according to him...)
-    double kSmoothingFactor;
 
 	FunctionConfig functionConfig;
 	FunctionConfig translationFunctionConfig;
