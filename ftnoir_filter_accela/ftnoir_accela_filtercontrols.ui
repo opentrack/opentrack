@@ -127,7 +127,7 @@
       <widget class="QPushButton" name="resetCircle">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>140</x>
          <y>70</y>
          <width>75</width>
          <height>23</height>
@@ -135,6 +135,19 @@
        </property>
        <property name="text">
         <string>Set curves</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="removeAllButton">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>70</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Remove all</string>
        </property>
       </widget>
      </widget>
