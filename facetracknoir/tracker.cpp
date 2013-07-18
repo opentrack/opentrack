@@ -119,8 +119,6 @@ void Tracker::run() {
 	{
         if (should_quit)
             break;
-        
-        QMutexLocker foo(&mtx);
 
         for (int i = 0; i < 6; i++)
             newpose[i] = 0;
@@ -169,6 +167,8 @@ void Tracker::run() {
         }
 
         if (getTrackingActive()) {
+            QMutexLocker foo(&mtx);
+            
             // get values
             for (int i = 0; i < 6; i++)
                 target_camera.axes[i] = mainApp->axis(i).headPos;
