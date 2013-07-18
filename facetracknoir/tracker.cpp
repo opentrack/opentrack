@@ -135,72 +135,73 @@ void Tracker::run() {
             bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(newpose);
         }
 
-        confid = bTracker1Confid || bTracker2Confid;
-
-        if ( confid ) {
-            for (int i = 0; i < 6; i++)
-                mainApp->axis(i).headPos = newpose[i];
-        }
-
-        //
-        // If Center is pressed, copy the current values to the offsets.
-        //
-        if (do_center)  {
-            //
-            // Only copy valid values
-            //
-            if (confid) {
-                for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = mainApp->axis(i).headPos;
-            }
-
-            Tracker::do_center = false;
-            
-            if (Libraries->pTracker)
-                Libraries->pTracker->NotifyCenter();
-            
-            if (Libraries->pSecondTracker)
-                Libraries->pSecondTracker->NotifyCenter();
-            
-            if (Libraries->pFilter)
-                Libraries->pFilter->Initialize();
-        }
-
-        if (getTrackingActive()) {
+        {
             QMutexLocker foo(&mtx);
+            confid = bTracker1Confid || bTracker2Confid;
             
-            // get values
-            for (int i = 0; i < 6; i++)
-                target_camera.axes[i] = mainApp->axis(i).headPos;
-
-            // do the centering
-            target_camera = target_camera - offset_camera;
-
-            //
-            // Use advanced filtering, when a filter was selected.
-            //
-            if (Libraries->pFilter) {
+            if ( confid ) {
                 for (int i = 0; i < 6; i++)
-                    last_post_filter[i] = gameoutput_camera.axes[i];
-                Libraries->pFilter->FilterHeadPoseData(current_camera.axes, target_camera.axes, new_camera.axes, last_post_filter);
+                    mainApp->axis(i).headPos = newpose[i];
             }
-            else {
-                new_camera = target_camera;
-            }
-
-            for (int i = 0; i < 6; i++) {
-                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
-            }
-
+            
             //
-            // Send the headpose to the game
+            // If Center is pressed, copy the current values to the offsets.
             //
-            if (Libraries->pProtocol) {
-                gameoutput_camera = output_camera;
-                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
+            if (do_center)  {
+                //
+                // Only copy valid values
+                //
+                if (confid) {
+                    for (int i = 0; i < 6; i++)
+                        offset_camera.axes[i] = mainApp->axis(i).headPos;
+                }
+                
+                Tracker::do_center = false;
+                
+                if (Libraries->pTracker)
+                    Libraries->pTracker->NotifyCenter();
+                
+                if (Libraries->pSecondTracker)
+                    Libraries->pSecondTracker->NotifyCenter();
+                
+                if (Libraries->pFilter)
+                    Libraries->pFilter->Initialize();
+            }
+            
+            if (getTrackingActive()) {
+                // get values
+                for (int i = 0; i < 6; i++)
+                    target_camera.axes[i] = mainApp->axis(i).headPos;
+                
+                // do the centering
+                target_camera = target_camera - offset_camera;
+                
+                //
+                // Use advanced filtering, when a filter was selected.
+                //
+                if (Libraries->pFilter) {
+                    for (int i = 0; i < 6; i++)
+                        last_post_filter[i] = gameoutput_camera.axes[i];
+                    Libraries->pFilter->FilterHeadPoseData(current_camera.axes, target_camera.axes, new_camera.axes, last_post_filter);
+                }
+                else {
+                    new_camera = target_camera;
+                }
+                
+                for (int i = 0; i < 6; i++) {
+                    get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
+                }
+                
+                //
+                // Send the headpose to the game
+                //
+                if (Libraries->pProtocol) {
+                    gameoutput_camera = output_camera;
+                    Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
+                }
             }
         }
-
+        
         //for lower cpu load
         msleep(1);
     }
