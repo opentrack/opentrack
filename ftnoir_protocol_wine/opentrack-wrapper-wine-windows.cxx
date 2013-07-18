@@ -10,7 +10,7 @@
 void create_registry_key(void) {
     char dir[8192];
     
-    if (GetCurrentDirectoryA(8192, dir) < 8192)
+    if (GetCurrentDirectoryA(8192, dir) < 8190)
     {
         HKEY hkpath;
         if (RegCreateKeyExA(HKEY_CURRENT_USER,
@@ -26,6 +26,7 @@ void create_registry_key(void) {
             for (int i = 0; dir[i]; i++)
                 if (dir[i] == '\\')
                     dir[i] = '/';
+            strcat(dir, "/");
             (void) RegSetValueExA(hkpath, "Path", 0, REG_SZ, (BYTE*) dir, strlen(dir) + 1);
             RegCloseKey(hkpath);
         }

@@ -47,6 +47,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeo
         shm = (WineSHM*) lck_shm.mem;
         memset(shm, 0, sizeof(*shm));
     }
+    wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/opentrack-wrapper-wine.exe.so"));
 }
 
 /** destructor **/
@@ -58,11 +59,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     }
     wrapper.kill();
     shm_unlink("/" WINE_SHM_NAME);
-}
-
-void FTNoIR_Protocol::Initialize()
-{
-    wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/opentrack-wrapper-wine.exe.so"));
 }
 
 void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {

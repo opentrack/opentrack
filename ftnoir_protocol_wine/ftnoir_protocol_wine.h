@@ -50,8 +50,6 @@ public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
 
-    void Initialize();
-
     bool checkServerInstallationOK();
 	void sendHeadposeToGame(double* headpose, double* rawheadpose );
 
