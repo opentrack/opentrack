@@ -75,6 +75,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
             shm->data[i] = headpose[i] * 10;
         if (shm->gameid != gameid)
         {
+            QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
             /* memory-hacks DLL can't be loaded into a Linux process, either */
