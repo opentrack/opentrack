@@ -59,7 +59,7 @@ int main(void)
         data->X = shm_posix->data[TX];
         data->Y = shm_posix->data[TY];
         data->Z = shm_posix->data[TZ];
-        data->DataID = 1;
+        data->DataID++;
         data->CamWidth = 250;
         data->CamHeight = 100;
         shm_wine->GameID2 = shm_posix->gameid2;

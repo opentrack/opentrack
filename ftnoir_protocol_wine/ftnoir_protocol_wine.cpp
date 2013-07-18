@@ -65,9 +65,9 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
     if (shm)
     {
         lck_shm.lock();
-        for (int i = 0; i < 3; i++)
-            shm->data[i] = headpose[i] / 57.295781;
         for (int i = 3; i < 6; i++)
+            shm->data[i] = headpose[i] / 57.295781;
+        for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
         if (shm->gameid != gameid)
         {
@@ -75,7 +75,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
             /* memory-hacks DLL can't be loaded into a Linux process, either */
-            CSV::getGameData(gameid, shm->table, gamename);
+            CSV::getGameData(shm->gameid, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
