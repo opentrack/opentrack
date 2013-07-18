@@ -166,6 +166,9 @@ void Tracker::run() {
                 
                 if (Libraries->pFilter)
                     Libraries->pFilter->Initialize();
+
+                if (Libraries->pProtocol)
+                   Libraries->pProtocol->Initialize();
             }
             
             if (getTrackingActive()) {
