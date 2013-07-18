@@ -75,14 +75,11 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
             shm->data[i] = headpose[i] * 10;
         if (shm->gameid != gameid)
         {
-            QString id_str = QString::number(gameid);
-            QString gamename;
+            QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
             /* memory-hacks DLL can't be loaded into a Linux process, either */
-            bool tmp1, tmp2;
-            CSV::getGameData(id_str, tmp1, tmp2, shm->table, gamename);
+            CSV::getGameData(gameid, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
-            QMutexLocker((QMutex*)&game_name_mutex);
             connected_game = gamename;
         }
         lck_shm.unlock();
