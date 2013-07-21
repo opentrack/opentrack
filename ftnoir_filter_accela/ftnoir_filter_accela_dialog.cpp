@@ -193,7 +193,7 @@ void FilterControls::resetCircle()
         
         cfg.removeAllPoints();
         
-        for (double x = 0; x <= sz+1e-1; x += 1e-1)
+        for (double x = 0; x <= sz+1e-2; x += 1e-1)
         {
             double sq = sz*sz-x*x;
             double val;
