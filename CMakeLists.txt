@@ -647,6 +647,11 @@ if(WIN32 AND NOT SDK_FACEAPI_ONLY)
     )
 endif()
 
+if(MSVC)
+    file(GLOB pdbs "${CMAKE_BINARY_DIR}/*.pdb")
+    install(FILES ${pdbs} DESTINATION .)
+endif()
+
 if(WIN32 AND SDK_SM_FACEAPI_PATH)
     if(MSVC80)
         install(TARGETS opentrack-faceapi-wrapper
