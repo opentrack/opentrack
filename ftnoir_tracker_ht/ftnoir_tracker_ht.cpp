@@ -14,15 +14,6 @@
 #endif
 
 // delicious copypasta
-static void open_settings_dialog(int idx, void* parent) {
-#if defined(_WIN32) || defined(__WIN32)
-    qDebug() << "opening settings";
-    if (idx == 0)
-        idx = 1;
-#endif
-}
-
-// delicious copypasta
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
 #if defined(_WIN32) || defined(__WIN32)
@@ -284,16 +275,6 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructo
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
     return new TrackerControls;
-}
-
-void TrackerControls::cameraSettings() {
-    open_settings_dialog(ui.cameraName->currentIndex(),
-#if defined(_WIN32)
-        (HANDLE) winId()
-#else
-        NULL
-#endif
-    );
 }
 
 TrackerControls::TrackerControls()

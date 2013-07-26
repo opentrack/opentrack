@@ -74,7 +74,6 @@ private slots:
     void settingChanged() { settingsDirty = true; }
     void settingChanged(int) { settingsDirty = true; }
     void settingChanged(double) { settingsDirty = true; }
-    void cameraSettings();
 };
 
 #endif
