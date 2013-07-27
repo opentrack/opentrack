@@ -58,6 +58,8 @@ if(NOT SDK_FACEAPI_ONLY)
     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/qfunctionconfigurator)
     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/ftnoir_posewidget)
 
+    set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Path to Aruco static library")
+
     SET(SDK_OPENCV_STATIC FALSE CACHE BOOL "Whether OpenCV is statically linked")
     if (WIN32)
         SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
@@ -214,6 +216,14 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB opentrack-tracker-ht-rc "ftnoir_tracker_ht/*.qrc")
     QT4_WRAP_UI(opentrack-tracker-ht-uih ${opentrack-tracker-ht-ui})
     QT4_ADD_RESOURCES(opentrack-tracker-ht-rcc ${opentrack-tracker-ht-rc})
+
+    file(GLOB opentrack-tracker-aruco-c "ftnoir_tracker_aruco/*.cpp")
+    file(GLOB opentrack-tracker-aruco-h "ftnoir_tracker_aruco/*.h")
+    QT4_WRAP_CPP(opentrack-tracker-aruco-moc ${opentrack-tracker-aruco-h})
+    file(GLOB opentrack-tracker-aruco-ui "ftnoir_tracker_aruco/*.ui")
+    file(GLOB opentrack-tracker-aruco-rc "ftnoir_tracker_aruco/*.qrc")
+    QT4_WRAP_UI(opentrack-tracker-aruco-uih ${opentrack-tracker-aruco-ui})
+    QT4_ADD_RESOURCES(opentrack-tracker-aruco-rcc ${opentrack-tracker-aruco-rc})
 
     file(GLOB opentrack-tracker-pt-c "ftnoir_tracker_pt/*.cpp")
     file(GLOB opentrack-tracker-pt-h "ftnoir_tracker_pt/*.h")
@@ -410,6 +420,16 @@ endif()
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
 
+    if(SDK_ARUCO_LIBPATH)
+        include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
+        add_library(opentrack-tracker-aruco SHARED ${opentrack-tracker-aruco-c} ${opentrack-tracker-aruco-moc} ${opentrack-tracker-aruco-uih} ${opentrack-tracker-aruco-rcc})
+        target_link_libraries(opentrack-tracker-aruco ${MY_QT_LIBS} ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(opentrack-tracker-aruco
+                          PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+    endif()
+
     if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
         target_link_libraries(opentrack-tracker-ht
                       "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
@@ -527,6 +547,10 @@ if(NOT SDK_FACEAPI_ONLY)
 
     if(OpenCV_FOUND)
         install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
+    endif()
+
+    if(SDK_ARUCO_LIBPATH)
+        install(TARGETS opentrack-tracker-aruco RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
 
     install(TARGETS
