@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/aruco.png</file>
+    </qresource>
+</RCC>
