@@ -186,7 +186,7 @@ void Tracker::run()
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
     
-    cv::Mat color, grayscale;
+    cv::Mat color, grayscale, rvec, tvec;
   
     while (!stop)
     {
@@ -206,29 +206,44 @@ void Tracker::run()
         for (int i = 0; i < 5; i++)
             dist_coeffs.at<float>(i) = dc[i];
         
-        aruco::CameraParameters params(intrinsics, dist_coeffs, cv::Size(grayscale.cols, grayscale.rows));
-        
         std::vector< aruco::Marker > markers;
         
-        detector.detect(grayscale, markers, params, marker_size / 100., false);
+        detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         
         QMutexLocker lck(&mtx);
         
-        if (markers.size() == 1) {
+        if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
+            const float halfSize = 1;
+            
+            cv::Mat ObjPoints(4,3,CV_32FC1);
+            ObjPoints.at<float>(1,0)=-halfSize;
+            ObjPoints.at<float>(1,1)=-halfSize;
+            ObjPoints.at<float>(1,2)=0;
+            ObjPoints.at<float>(2,0)=halfSize;
+            ObjPoints.at<float>(2,1)=-halfSize;
+            ObjPoints.at<float>(2,2)=0;
+            ObjPoints.at<float>(3,0)=halfSize;
+            ObjPoints.at<float>(3,1)=halfSize;
+            ObjPoints.at<float>(3,2)=0;
+            ObjPoints.at<float>(0,0)=-halfSize;
+            ObjPoints.at<float>(0,1)=halfSize;
+            ObjPoints.at<float>(0,2)=0;
+            
+            cv::solvePnP(ObjPoints, m, intrinsics, dist_coeffs, rvec, tvec, tvec.rows == 3 || tvec.cols == 3);
             
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             
             cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
         
-            cv::Rodrigues(m.Rvec, rotation_matrix);
+            cv::Rodrigues(rvec, rotation_matrix);
         
             cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
             
             for (int i = 0; i < 3; i++)
             {
                 pose[i+3] = foo[i];
-                pose[i] = m.Tvec.at<float>(i);
+                pose[i] = tvec.at<double>(i);
             }
         }
         
@@ -402,8 +417,6 @@ void TrackerControls::loadSettings()
     ui.doubleSpinBox_4->setValue(iniFile.value("dc3").toDouble());
     ui.doubleSpinBox_5->setValue(iniFile.value("dc4").toDouble());
     
-    ui.markerSize->setValue(iniFile.value("marker-size", 10).toInt());
-    
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -448,8 +461,6 @@ void TrackerControls::save()
     iniFile.setValue("dc2", ui.doubleSpinBox_3->value());
     iniFile.setValue("dc3", ui.doubleSpinBox_4->value());
     iniFile.setValue("dc4", ui.doubleSpinBox_5->value());
-    
-    iniFile.setValue("marker-size", ui.markerSize->value());
     
 	iniFile.endGroup();
 	settingsDirty = false;
