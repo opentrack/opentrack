@@ -442,41 +442,6 @@
     <double>0.000000000000000</double>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>100</y>
-     <width>58</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Marker size</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="markerSize">
-   <property name="geometry">
-    <rect>
-     <x>455</x>
-     <y>97</y>
-     <width>70</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="suffix">
-    <string> cm</string>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>100</number>
-   </property>
-   <property name="value">
-    <number>10</number>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections/>
