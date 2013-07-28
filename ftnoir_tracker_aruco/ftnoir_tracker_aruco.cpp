@@ -156,7 +156,7 @@ void Tracker::StartTracker(QFrame* videoframe)
     this->layout = layout;
     load_settings();
     connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(40);
+    timer.start(50);
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
@@ -184,13 +184,14 @@ void Tracker::run()
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    cv::Mat color, grayscale, rvec, tvec;
+    cv::Mat color, grayscale, rvec, tvec, tmp;
   
     while (!stop)
     {
         if (!camera.read(color))
             break;
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+        cv::cvtColor(color, tmp, cv::COLOR_BGR2GRAY);
+        cv::resize(tmp, grayscale, cv::Size(color.cols*0.5, color.rows*0.5), cv::INTER_AREA);
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
@@ -208,7 +209,13 @@ void Tracker::run()
         
         detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         
-        QMutexLocker lck(&mtx);
+        frame = color;
+        
+        if (frame.rows > 0 && !fresh)
+        {
+            videoWidget->update_image(frame.data, frame.cols, frame.rows);
+            fresh = true;
+        }
         
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
@@ -238,6 +245,8 @@ void Tracker::run()
         
             cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
             
+            QMutexLocker lck(&mtx);
+            
             for (int i = 0; i < 3; i++)
                 pose[i] = tvec.at<double>(i);
             
@@ -248,8 +257,6 @@ void Tracker::run()
             pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
             pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
         }
-        
-        frame = color.clone();
     }
 }
 
@@ -257,11 +264,6 @@ bool Tracker::GiveHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     
-    if (frame.rows > 0)
-    {
-        videoWidget->update_image(frame.data, frame.cols, frame.rows);
-        fresh = true;
-    }
     if (enableRX)
         data[Yaw] = pose[Yaw];
     if (enableRY)
