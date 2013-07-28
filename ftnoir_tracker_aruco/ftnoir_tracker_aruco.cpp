@@ -244,6 +244,9 @@ void Tracker::run()
             pose[Yaw] = foo[1];
             pose[Pitch] = -foo[0];
             pose[Roll] = foo[2];
+            
+            pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
+            pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
         }
         
         frame = color.clone();
@@ -252,8 +255,6 @@ void Tracker::run()
 
 bool Tracker::GiveHeadPoseData(double *data)
 {
-	bool ret = false;
-    
     QMutexLocker lck(&mtx);
     
     if (frame.rows > 0)
