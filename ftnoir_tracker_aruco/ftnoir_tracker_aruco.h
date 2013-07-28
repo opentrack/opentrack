@@ -47,7 +47,6 @@ private:
     int force_fps, force_width, force_height;
     void load_settings();
     double pose[6];
-    int marker_size;
     cv::Mat frame;
 private slots:
     void paint_widget();
