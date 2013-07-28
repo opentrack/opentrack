@@ -119,7 +119,6 @@ void Tracker::load_settings()
 	enableTX = iniFile.value("enable-tx", true).toBool();
 	enableTY = iniFile.value("enable-ty", true).toBool();
 	enableTZ = iniFile.value("enable-tz", true).toBool();
-    marker_size = iniFile.value("marker-size", 10).toInt();
     for (int i = 0; i < 5; i++)
         dc[i] = iniFile.value(QString("dc%1").arg(i), 0).toFloat();
 	iniFile.endGroup();
@@ -185,7 +184,6 @@ void Tracker::run()
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    
     cv::Mat color, grayscale, rvec, tvec;
   
     while (!stop)
@@ -214,23 +212,23 @@ void Tracker::run()
         
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
-            const float halfSize = 1;
+            const float size = 7;
             
-            cv::Mat ObjPoints(4,3,CV_32FC1);
-            ObjPoints.at<float>(1,0)=-halfSize;
-            ObjPoints.at<float>(1,1)=-halfSize;
-            ObjPoints.at<float>(1,2)=0;
-            ObjPoints.at<float>(2,0)=halfSize;
-            ObjPoints.at<float>(2,1)=-halfSize;
-            ObjPoints.at<float>(2,2)=0;
-            ObjPoints.at<float>(3,0)=halfSize;
-            ObjPoints.at<float>(3,1)=halfSize;
-            ObjPoints.at<float>(3,2)=0;
-            ObjPoints.at<float>(0,0)=-halfSize;
-            ObjPoints.at<float>(0,1)=halfSize;
-            ObjPoints.at<float>(0,2)=0;
+            cv::Mat obj_points(4,3,CV_32FC1);
+            obj_points.at<float>(1,0)=-size;
+            obj_points.at<float>(1,1)=-size;
+            obj_points.at<float>(1,2)=0;
+            obj_points.at<float>(2,0)=size;
+            obj_points.at<float>(2,1)=-size;
+            obj_points.at<float>(2,2)=0;
+            obj_points.at<float>(3,0)=size;
+            obj_points.at<float>(3,1)=size;
+            obj_points.at<float>(3,2)=0;
+            obj_points.at<float>(0,0)=-size;
+            obj_points.at<float>(0,1)=size;
+            obj_points.at<float>(0,2)=0;
             
-            cv::solvePnP(ObjPoints, m, intrinsics, dist_coeffs, rvec, tvec, tvec.rows == 3 || tvec.cols == 3);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !rvec.empty(), cv::ITERATIVE);
             
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             
@@ -241,10 +239,11 @@ void Tracker::run()
             cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
             
             for (int i = 0; i < 3; i++)
-            {
-                pose[i+3] = foo[i];
                 pose[i] = tvec.at<double>(i);
-            }
+            
+            pose[Yaw] = foo[1];
+            pose[Pitch] = -foo[0];
+            pose[Roll] = foo[2];
         }
         
         frame = color.clone();
