@@ -191,7 +191,7 @@ void Tracker::run()
         if (!camera.read(color))
             break;
         cv::cvtColor(color, tmp, cv::COLOR_BGR2GRAY);
-        cv::resize(tmp, grayscale, cv::Size(color.cols*0.5, color.rows*0.5), cv::INTER_AREA);
+        cv::resize(tmp, grayscale, cv::Size(color.cols*0.75, color.rows*0.75), cv::INTER_AREA);
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
