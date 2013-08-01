@@ -537,7 +537,7 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
-    install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" DESTINATION .)
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetracknoir/clientfiles" DESTINATION .)
 
     if(NOT WIN32 AND SDK_WINE_PREFIX)
         install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
