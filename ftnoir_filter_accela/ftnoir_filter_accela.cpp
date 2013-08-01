@@ -25,7 +25,7 @@ FTNoIR_Filter::FTNoIR_Filter() :
     translationFunctionConfig("Accela-Scaling-Translation", 10, 10)
 {
 	first_run = true;
-	kMagicNumber = 100.0f;
+	kMagicNumber = 1000;
 	loadSettings();					// Load the Settings
 }
 
@@ -44,7 +44,7 @@ void FTNoIR_Filter::loadSettings() {
     translationFunctionConfig.loadSettings(iniFile);
 
 	iniFile.beginGroup ( "Accela" );
-	kMagicNumber = iniFile.value ( "Reduction", 100 ).toFloat();
+	kMagicNumber = iniFile.value ( "Reduction", 1000 ).toFloat();
     kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
 	iniFile.endGroup ();
 }
@@ -108,7 +108,7 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 		// useful for filtering, as skipping them would result in jerky output.
 		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
 		// WVR: Added kMagicNumber for Patrick
-        double velocity = foo / (kMagicNumber > 0 ? kMagicNumber : 100.0) * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values[TZ] / 100));
+        double velocity = foo / kMagicNumber * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values[TZ] / 100));
 		double sum = start + velocity * sign;
 		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
 		if (done) {

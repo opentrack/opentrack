@@ -149,7 +149,7 @@ void FilterControls::loadSettings() {
 	ui.scalingConfig->setConfig(&functionConfig, currentFile);
 
 	iniFile.beginGroup ( "Accela" );
-	ui.slideReduction->setValue (iniFile.value ( "Reduction", 100 ).toInt());
+	ui.slideReduction->setValue (iniFile.value ( "Reduction", 1000 ).toInt());
     ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
     ui.rotationCircle->setValue(iniFile.value("preset-rotation", 3).toDouble());
     ui.translationCircle->setValue(iniFile.value("preset-translation", 0.75).toDouble());
