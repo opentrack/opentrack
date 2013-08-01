@@ -235,7 +235,7 @@ void Tracker::run()
             obj_points.at<float>(0,1)=size;
             obj_points.at<float>(0,2)=0;
             
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !rvec.empty(), cv::ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
             
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             
