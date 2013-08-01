@@ -123,7 +123,7 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position, double *
 //	if (newTarget) {
         for (int i=0;i<6;i++)
 		{
-            alpha[i]=1.0/(kMinSmoothing+((1.0-pow(norm_output_delta[i],kSmoothingScaleCurve))*smoothing_frames_range));
+            alpha[i]=1.0/(kMinSmoothing+((1.0-pow(norm_output_delta[i],kSmoothingScaleCurve))*(kMaxSmoothing - kMinSmoothing)));
 			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
 		}
 //	}
