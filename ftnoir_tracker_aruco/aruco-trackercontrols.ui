@@ -442,6 +442,41 @@
     <double>0.000000000000000</double>
    </property>
   </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>325</x>
+     <y>133</y>
+     <width>253</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>The ARUCO Library has been developed by
+the Ava group of the Univeristy of Cordoba(Spain)
+Contact to
+Rafael Muñoz Salinas &lt;rmsalinas@uco.es&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>200</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>https://github.com/rmsalinas/aruco</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
