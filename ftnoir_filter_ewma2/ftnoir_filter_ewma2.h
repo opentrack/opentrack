@@ -50,7 +50,6 @@ private:
     double newHeadPose;								// Structure with new headpose
 
 	bool	first_run;
-    double	smoothing_frames_range;
     double	alpha_smoothing;
     double	prev_alpha[6];
     double	alpha[6];
