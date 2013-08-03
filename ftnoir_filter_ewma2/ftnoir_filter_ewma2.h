@@ -39,25 +39,26 @@
 class FTNoIR_Filter : public IFilter
 {
 public:
-	FTNoIR_Filter();
+    FTNoIR_Filter();
     ~FTNoIR_Filter();
     void Initialize() {}
 
-    void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter);
+    void FilterHeadPoseData(double *current_camera_position,
+                            double *target_camera_position,
+                            double *new_camera_position,
+                            double *last_post_filter);
 
 private:
-	void loadSettings();									// Load the settings from the INI-file
-    double newHeadPose;								// Structure with new headpose
+    void loadSettings();  // Load the settings from the INI-file
+    double newHeadPose;   // Structure with new headpose
 
-	bool	first_run;
-    double	alpha_smoothing;
-    double	prev_alpha[6];
-    double	alpha[6];
-    double	smoothed_alpha[6];
+    bool first_run;
+    double alpha_smoothing;
+    double alpha[6];
 
-    double	kMinSmoothing;
-    double	kMaxSmoothing;
-    double	kSmoothingScaleCurve;
+    double kMinSmoothing;
+    double kMaxSmoothing;
+    double kSmoothingScaleCurve;
 };
 
 //*******************************************************************************************************
@@ -69,27 +70,26 @@ class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
-
-	explicit FilterControls();
+    explicit FilterControls();
     virtual ~FilterControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent ( QShowEvent * event );
     void Initialize(QWidget *parent, IFilter* ptr);
 
 private:
-	Ui::UICFilterControls ui;
-	void loadSettings();
-	void save();
+    Ui::UICFilterControls ui;
+    void loadSettings();
+    void save();
 
-	/** helper **/
-	bool settingsDirty;
+    /** helper **/
+    bool settingsDirty;
 
-    IFilter* pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+    IFilter* pFilter;  // If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
 
 private slots:
-	void doOK();
-	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged( int ) { settingsDirty = true; };
+    void doOK();
+    void doCancel();
+    void settingChanged() { settingsDirty = true; };
+    void settingChanged( int ) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************
@@ -98,15 +98,13 @@ private slots:
 class FTNoIR_FilterDll : public Metadata
 {
 public:
-	FTNoIR_FilterDll();
-	~FTNoIR_FilterDll();
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); }
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }
-
-	void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
+    FTNoIR_FilterDll();
+    ~FTNoIR_FilterDll();
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }
+    void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
 };
 
 #endif						//INCLUDED_FTN_FILTER_H
 //END
-
