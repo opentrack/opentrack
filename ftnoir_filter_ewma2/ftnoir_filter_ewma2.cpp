@@ -38,142 +38,112 @@
 
 FTNoIR_Filter::FTNoIR_Filter()
 {
-	first_run = true;
-	alpha_smoothing = 0.02f;		// this is a constant for now, might be a parameter later
-	loadSettings();					// Load the Settings
-
+    first_run = true;
+    alpha_smoothing = 0.02f;  // this is a constant for now, might be a parameter later
+    loadSettings();  // Load the Settings
 }
 
 FTNoIR_Filter::~FTNoIR_Filter()
 {
-
 }
 
 //
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTNoIR_Filter::loadSettings() {
-	qDebug() << "FTNoIR_Filter::loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    qDebug() << "FTNoIR_Filter::loadSettings says: Starting ";
+    QSettings settings("opentrack");  // Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );  // Application settings (in INI-file)
 
-	qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
+    qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
 
-	//
-	// The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
-	//
-	iniFile.beginGroup ( "Tracking" );
-	kMinSmoothing = iniFile.value ( "minSmooth", 15 ).toInt();
-	kMaxSmoothing = iniFile.value ( "maxSmooth", 50 ).toInt();
-	kSmoothingScaleCurve = iniFile.value ( "powCurve", 10 ).toInt();
-	iniFile.endGroup ();
-
+    //
+    // The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
+    //
+    iniFile.beginGroup ( "Tracking" );
+    kMinSmoothing = iniFile.value ( "minSmooth", 15 ).toInt();
+    kMaxSmoothing = iniFile.value ( "maxSmooth", 50 ).toInt();
+    kSmoothingScaleCurve = iniFile.value ( "powCurve", 10 ).toInt();
+    iniFile.endGroup ();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter)
+void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
+                                       double *target_camera_position,
+                                       double *new_camera_position,
+                                       double *last_post_filter)
 {
-	//non-optimised version for clarity
-    double prev_output[6];
-    double target[6];
-    double output_delta[6];
+    double delta;
+    double new_alpha;
     double scale[]={0.025f,0.025f,0.025f,6.0f,6.0f,6.0f};
-    double norm_output_delta[6];
-    double output[6];
 
-    for (int i = 0; i < 6; i++)
-    {
-        prev_output[i] = current_camera_position[i];
-        target[i] = target_camera_position[i];
+    //On the first run, initialize to output=target and return.
+    if (first_run==true) {
+        for (int i=0;i<6;i++) {
+            new_camera_position[i] = target_camera_position[i];
+            current_camera_position[i] = target_camera_position[i];
+            alpha[i] = 0.0f;
+        }
+        first_run=false;
+        return;
     }
 
-	if (first_run==true)
-	{
-		//on the first run, output=target
-        for (int i=0;i<6;i++)
-		{
-			output[i]=target[i];
-			prev_alpha[i] = 0.0f;
-		}
-
-        for (int i = 0; i < 6; i++)
-            new_camera_position[i] = target[i];
-
-		first_run=false;
-		
-		//we can bail
-		return;
-	}
-
-	//how far does the camera need to move to catch up?
-    for (int i=0;i<6;i++)
-	{
-		output_delta[i]=(target[i]-prev_output[i]);
-	}
-
-	//normalise the deltas
-    for (int i=0;i<6;i++)
-	{
-        norm_output_delta[i]=std::min<double>(std::max<double>(fabs(output_delta[i])/scale[i],0.0),1.0);
-	}
-
-	//calculate the alphas
-	//work out the dynamic smoothing factors
-//	if (newTarget) {
-        for (int i=0;i<6;i++)
-		{
-            alpha[i]=1.0/(kMinSmoothing+((1.0-pow(norm_output_delta[i],kSmoothingScaleCurve))*(kMaxSmoothing - kMinSmoothing)));
-			smoothed_alpha[i]=(alpha_smoothing*alpha[i])+((1.0f-alpha_smoothing)*prev_alpha[i]);
-		}
-//	}
-
-	//qDebug() << "FTNoIR_Filter::FilterHeadPoseData() smoothing frames = " << smoothing_frames_range;
-	//qDebug() << "FTNoIR_Filter::FilterHeadPoseData() alpha[3] = " << alpha[3];
-
-	//use the same (largest) smoothed alpha for each channel
-	//NB: larger alpha = *less* lag (opposite to what you'd expect)
-	float largest_alpha=0.0f;
-    for (int i=0;i<6;i++)
-	{
-		if (smoothed_alpha[i]>=largest_alpha)
-		{
-			largest_alpha=smoothed_alpha[i];
-		}
-	}
-
-	//move the camera
-    for (int i=0;i<6;i++)
-	{
-		output[i]=(largest_alpha*target[i])+((1.0f-largest_alpha)*prev_output[i]);
-//		output[i]=(smoothed_alpha[i]*target[i])+((1.0f-smoothed_alpha[i])*prev_output[i]);
-	}
-
-
-	#ifdef LOG_OUTPUT
-	//	Use this for some debug-output to file...
-	QFile data(QCoreApplication::applicationDirPath() + "\\EWMA_output.txt");
-	if (data.open(QFile::WriteOnly | QFile::Append)) {
-		QTextStream out(&data);
-		out << "output:\t" << output[0] << "\t" << output[1] << "\t" << output[2] << "\t" << output[3] << "\t" << output[4] << "\t" << output[5] << '\n';
-		out << "target:\t" << target[0] << "\t" << target[1] << "\t" << target[2] << "\t" << target[3] << "\t" << target[4] << "\t" << target[5] << '\n';
-		out << "prev_output:\t" << prev_output[0] << "\t" << prev_output[1] << "\t" << prev_output[2] << "\t" << prev_output[3] << "\t" << prev_output[4] << "\t" << prev_output[5] << '\n';
-		out << "largest_alpha:\t" << largest_alpha << '\n';
-	}
-	#endif
-
-    for (int i = 0; i < 6; i++)
-    {
-        new_camera_position[i] = output[i];
-        current_camera_position[i] = output[i];
+    for (int i=0;i<6;i++) {
+        // Calculate the delta.
+        delta=target_camera_position[i]-current_camera_position[i];
+        // Normalise the delta.
+        delta=std::min<double>(std::max<double>(fabs(delta)/scale[i],0.0),1.0);
+        // Calculate the new alpha from the normalized delta.
+        new_alpha=1.0/(kMinSmoothing+((1.0-pow(delta,kSmoothingScaleCurve))*(kMaxSmoothing-kMinSmoothing)));
+        // Update the smoothed alpha.
+        alpha[i]=(alpha_smoothing*new_alpha)+((1.0f-alpha_smoothing)*alpha[i]);
     }
 
-	//update filter memories ready for next sample
-    for (int i=0;i<6;i++)
-	{
-		prev_alpha[i]=smoothed_alpha[i];
-	}
-	return;
+    // Use the same (largest) smoothed alpha for each channel
+    //NB: larger alpha = *less* lag (opposite to what you'd expect)
+    float largest_alpha=0.0f;
+    for (int i=0;i<6;i++) {
+        largest_alpha=std::max<double>(largest_alpha, alpha[i]);
+    }
+
+    // Calculate the new camera position.
+    for (int i=0;i<6;i++) {
+        new_camera_position[i]=(largest_alpha*target_camera_position[i])+((1.0f-largest_alpha)*current_camera_position[i]);
+        //new_camera_position[i]=(alpha[i]*target_camera_position[i])+((1.0f-alpha[i])*current_camera_position[i]);
+    }
+
+#ifdef LOG_OUTPUT
+    //	Use this for some debug-output to file...
+    QFile data(QCoreApplication::applicationDirPath() + "\\EWMA_output.txt");
+    if (data.open(QFile::WriteOnly | QFile::Append)) {
+        QTextStream out(&data);
+        out << "current:\t" << current_camera_position[0]
+            << "\t" << current_camera_position[1]
+            << "\t" << current_camera_position[2]
+            << "\t" << current_camera_position[3]
+            << "\t" << current_camera_position[4]
+            << "\t" << current_camera_position[5] << '\n';
+        out << "target:\t" << target_camera_position[0]
+            << "\t" << target_camera_position[1]
+            << "\t" << target_camera_position[2]
+            << "\t" << target_camera_position[3]
+            << "\t" << target_camera_position[4]
+            << "\t" << target_camera_position[5] << '\n';
+        out << "output:\t" << new_camera_position[0]
+            << "\t" << new_camera_position[1]
+            << "\t" << new_camera_position[2]
+            << "\t" << new_camera_position[3]
+            << "\t" << new_camera_position[4]
+            << "\t" << new_camera_position[5] << '\n';
+        out << "largest_alpha:\t" << largest_alpha << '\n';
+    }
+#endif
+
+    // Update the current camera position to the new position.
+    for (int i = 0; i < 6; i++) {
+        current_camera_position[i] = new_camera_position[i];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
