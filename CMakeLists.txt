@@ -63,9 +63,6 @@ if(NOT SDK_FACEAPI_ONLY)
     SET(SDK_OPENCV_STATIC FALSE CACHE BOOL "Whether OpenCV is statically linked")
     if (WIN32)
         SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
-		if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-			set(SDK_MINGW_PATH "" CACHE PATH "MinGW path")
-		endif()
         set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
         set(SDK_DIRECTX "" CACHE PATH "Path to DirectX SDK")
         set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
@@ -597,14 +594,6 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     if(WIN32)
-        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-            file(GLOB mingw-libgcc-s "${SDK_MINGW_PATH}/bin/libgcc_s_*.dll")
-            install(FILES
-                "${mingw-libgcc-s}"
-                "${SDK_MINGW_PATH}/lib32/libstdc++-6.dll"
-                DESTINATION .
-            )
-        endif()
         install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
         if(SDK_SIMCONNECT)
         install(TARGETS opentrack-proto-simconnect
