@@ -25,7 +25,7 @@ file(GLOB opentrack-faceapi-wrapper-c "faceapi/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR})
 
 if(NOT SDK_FACEAPI_ONLY)
-    find_package(OpenCV REQUIRED)
+    find_package(OpenCV)
     find_package(Qt4 COMPONENTS QtCore QtGui QtDesigner QtXml QtNetwork REQUIRED)
 
     if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
