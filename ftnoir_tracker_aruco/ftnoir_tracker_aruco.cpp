@@ -184,14 +184,14 @@ void Tracker::run()
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    cv::Mat color, grayscale, rvec, tvec, tmp;
+    detector.setThresholdParams(11, 6);
+    cv::Mat color, grayscale, rvec, tvec;
   
     while (!stop)
     {
         if (!camera.read(color))
             break;
-        cv::cvtColor(color, tmp, cv::COLOR_BGR2GRAY);
-        cv::GaussianBlur(tmp, grayscale, cv::Size(5, 5), 0);
+        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
@@ -208,6 +208,12 @@ void Tracker::run()
         std::vector< aruco::Marker > markers;
         
         detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
+        
+        if (markers.size() == 1 && markers[0].size() == 4) {
+            const aruco::Marker& m = markers.at(0);
+            for (int i = 0; i < 4; i++)
+                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 4);
+        }
         
         frame = color;
         
