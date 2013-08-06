@@ -184,7 +184,7 @@ void Tracker::run()
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    detector.setThresholdParams(11, 6);
+    detector.setThresholdParams(11, 5);
     cv::Mat color, grayscale, rvec, tvec;
   
     while (!stop)
