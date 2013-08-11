@@ -508,15 +508,13 @@ endif()
 
 if(SDK_SM_FACEAPI_PATH)
     include_directories("${SDK_SM_FACEAPI_PATH}/include")
-endif() 
-if(WIN32 AND NOT SDK_FACEAPI_ONLY)
-    add_library(opentrack-tracker-faceapi SHARED ${opentrack-tracker-faceapi-c} ${opentrack-tracker-faceapi-moc} ${opentrack-tracker-faceapi-uih} ${opentrack-tracker-faceapi-rcc})
-    target_link_libraries(opentrack-tracker-faceapi ${MY_QT_LIBS} opentrack-compat)
-endif()
-if((MSVC80 OR MINGW) AND SDK_SM_FACEAPI_PATH)
+    if(WIN32 AND NOT SDK_FACEAPI_ONLY)
+        add_library(opentrack-tracker-faceapi SHARED ${opentrack-tracker-faceapi-c} ${opentrack-tracker-faceapi-moc} ${opentrack-tracker-faceapi-uih} ${opentrack-tracker-faceapi-rcc})
+        target_link_libraries(opentrack-tracker-faceapi ${MY_QT_LIBS} opentrack-compat)
+    endif()
     add_executable(opentrack-faceapi-wrapper ${opentrack-faceapi-wrapper-c})
     target_link_libraries(opentrack-faceapi-wrapper "${SDK_SM_FACEAPI_PATH}/bin/smft32.lib")
-endif()
+endif() 
 
 if(NOT SDK_FACEAPI_ONLY)
     if(SDK_XPLANE)
@@ -646,7 +644,7 @@ if(NOT SDK_FACEAPI_ONLY)
 
     endif()
 endif()
-if(WIN32 AND NOT SDK_FACEAPI_ONLY)
+if(SDK_SM_FACEAPI_PATH AND NOT SDK_FACEAPI_ONLY)
     install(TARGETS opentrack-tracker-faceapi
         RUNTIME DESTINATION .
         LIBRARY DESTINATION .
@@ -660,13 +658,11 @@ if(MSVC)
 endif()
 
 if(WIN32 AND SDK_SM_FACEAPI_PATH)
-    if(MSVC80)
-        install(TARGETS opentrack-faceapi-wrapper
-            RUNTIME DESTINATION faceapi
-            LIBRARY DESTINATION faceapi
-            NAMELINK_SKIP
-        )
-    endif()
+    install(TARGETS opentrack-faceapi-wrapper
+        RUNTIME DESTINATION faceapi
+        LIBRARY DESTINATION faceapi
+        NAMELINK_SKIP
+    )
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION faceapi)
     install(FILES
         "${SDK_SM_FACEAPI_PATH}/bin/computation6.0.dll"
