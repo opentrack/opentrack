@@ -53,8 +53,10 @@ private:
     double newHeadPose;   // Structure with new headpose
 
     bool first_run;
-    double alpha_smoothing;
-    double alpha[6];
+    double delta_smoothing;
+    double noise_smoothing;
+    double delta[6];
+    double noise[6];
 
     double kMinSmoothing;
     double kMaxSmoothing;
