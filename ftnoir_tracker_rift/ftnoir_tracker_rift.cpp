@@ -19,6 +19,7 @@ Rift_Tracker::Rift_Tracker()
 	bEnableY = true;
 	bEnableZ = true;
 #endif
+	isCalibrated = false;
 	should_quit = false;
     for (int i = 0; i < 6; i++)
         newHeadPose[i] = 0;
@@ -68,7 +69,7 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
         }
 		isCalibrated = false;
 		MagCal.BeginAutoCalibration(SFusion);
-        SFusion.SetMagReference(SFusion.GetOrientation());
+       
     }
 }
 
@@ -76,22 +77,25 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
     if (pHMD.GetPtr() != NULL) {
-#if 0
-		 if (SFusion.IsMagReady() && !isCalibrated ){
-            SFusion.SetYawCorrectionEnabled(true);
-			QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
-			isCalibrated = true;
-		}else{
-			if(isCalibrated){
-				isCalibrated = false;
-				QMessageBox::warning(0,"OpenTrack Info", "Lost magnetic calibration",QMessageBox::Ok,QMessageBox::NoButton);
-			}
-        }
 
-		// Magnetometer calibration procedure
-		MagCal.UpdateAutoCalibration(SFusion);
-#endif
+		if (MagCal.IsAutoCalibrating())
+		{
+			MagCal.UpdateAutoCalibration(SFusion);
+			if (MagCal.IsCalibrated())
+			{
+				if(isCalibrated == false){
+					//QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
+					//fprintf(stderr,"magnetic calibration complete\n");
+			  		isCalibrated = true;
+				}
+				//Vector3f mc = MagCal.GetMagCenter();
+				//SetAdjustMessage("Magnetometer Calibration Complete\nCenter: %f %f %f",mc.x,mc.y,mc.z);
+			}
+			//SetAdjustMessage("Mag has been successfully calibrated");
+		}
+
         Quatf hmdOrient = SFusion.GetOrientation();
+		
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
