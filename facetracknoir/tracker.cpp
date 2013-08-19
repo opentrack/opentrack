@@ -203,7 +203,7 @@ void Tracker::run() {
         }
         
         //for lower cpu load
-        msleep(1);
+        msleep(16);
     }
 
     for (int i = 0; i < 6; i++)
