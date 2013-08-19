@@ -39,9 +39,7 @@
 // Constructor for server-settings-dialog
 //
 FilterControls::FilterControls() :
-	QWidget(),
-    functionConfig("Accela-Scaling-Rotation", 10, 10),
-    translationFunctionConfig("Accela-Scaling-Translation", 10, 10)
+	QWidget()
 {
 	ui.setupUi( this );
 
@@ -49,13 +47,11 @@ FilterControls::FilterControls() :
 	loadSettings();
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.scalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
-	connect(ui.translationScalingConfig, SIGNAL(CurveChanged(bool)), this, SLOT(settingChanged(bool)));
-    connect(ui.resetCircle, SIGNAL(clicked()), this, SLOT(resetCircle()));
-    connect(ui.removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
+    connect(ui.rotation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(int)));
+    connect(ui.translation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(int)));
 
-	// Connect slider for reduction
-    //connect(ui.slideReduction, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.slideZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.spinZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 
 	qDebug() << "FilterControls() says: started";
 }
@@ -71,13 +67,6 @@ FilterControls::~FilterControls() {
 // Initialize tracker-client-dialog
 //
 void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
-
-	//
-	// The dialog can be opened, while the Tracker is running.
-	// In that case, ptr will point to the active Filter-instance.
-	// This can be used to update settings, while Tracking and may also be handy to display logging-data and such...
-	//
-	pFilter = ptr;
     loadSettings();
 	
 	QPoint offsetpos(100, 100);
@@ -145,72 +134,14 @@ void FilterControls::loadSettings() {
 
     //qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
 
-	ui.translationScalingConfig->setConfig(&translationFunctionConfig, currentFile);
-	ui.scalingConfig->setConfig(&functionConfig, currentFile);
-
 	iniFile.beginGroup ( "Accela" );
-	ui.slideReduction->setValue (iniFile.value ( "Reduction", 1000 ).toInt());
     ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
-    ui.rotationCircle->setValue(iniFile.value("preset-rotation", 3).toDouble());
-    ui.translationCircle->setValue(iniFile.value("preset-translation", 0.75).toDouble());
+    ui.spinZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
+    ui.rotation_alpha->setValue(iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble());
+    ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
-}
-
-void FilterControls::removeAll() {
-    translationFunctionConfig.removeAllPoints();
-    functionConfig.removeAllPoints();
-}
-
-void FilterControls::resetCircle()
-{
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-    iniFile.beginGroup ( "Accela" );
-    iniFile.setValue("preset-rotation", ui.rotationCircle->value());
-    iniFile.setValue("preset-translation", ui.translationCircle->value());
-    iniFile.endGroup();
-    
-    // essentially unit circles elongated on the X axis
-    double elongations[] = {
-        ui.rotationCircle->value(), ui.translationCircle->value()
-    };
-    
-    FunctionConfig* configs[] = {
-        &functionConfig, &translationFunctionConfig
-    };
-    
-    QFunctionConfigurator* widgets[] = {
-        ui.scalingConfig, ui.translationScalingConfig
-    };
-    
-    for (int i = 0; i < 2; i++)
-    {
-        FunctionConfig& cfg = *configs[i];
-        double sz = elongations[i];
-        
-        cfg.removeAllPoints();
-        
-        for (double x = 0; x <= sz+1e-2; x += 1e-1)
-        {
-            double sq = sz*sz-x*x;
-            double val;
-            if (sq <= 1e-4)
-                val = 0;
-            else
-                val = std::min<double>(sqrt(sq), sz);
-            
-            cfg.addPoint(QPointF(x, 10*(sz-val)/sz));
-        }
-        
-        cfg.saveSettings(iniFile);
-        
-        widgets[i]->setConfig(&cfg, currentFile);
-    }
-    
-    settingsDirty = false;
 }
 
 //
@@ -225,12 +156,10 @@ void FilterControls::save() {
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "Accela" );
-	iniFile.setValue ( "Reduction", ui.slideReduction->value() );
     iniFile.setValue("zoom-slowness", ui.slideZoom->value());
+    iniFile.setValue("rotation-alpha", ui.rotation_alpha->value());
+    iniFile.setValue("translation-alpha", ui.translation_alpha->value());
 	iniFile.endGroup ();
-
-	functionConfig.saveSettings(iniFile);
-	translationFunctionConfig.saveSettings(iniFile);
 
 	settingsDirty = false;
 }

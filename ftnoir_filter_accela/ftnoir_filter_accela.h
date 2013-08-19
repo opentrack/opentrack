@@ -31,13 +31,10 @@
 
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_accela_filtercontrols.h"
-#include <qfunctionconfigurator/functionconfig.h>
 #include "facetracknoir/global-settings.h"
 
-//
-// Macro to determine array-size
-//
-#define NUM_OF(x) (sizeof (x) / sizeof *(x))
+#define ACCELA_SMOOTHING_ROTATION 6.0
+#define ACCELA_SMOOTHING_TRANSLATION 3.0
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.
@@ -54,13 +51,8 @@ public:
 
 private:
 	void loadSettings();									// Load the settings from the INI-file
-    double newHeadPose[6];								// Structure with new headpose
-
-	bool	first_run;
-    double kMagicNumber, kZoomSlowness;		// Stanislaws' magic number (should be 100 according to him...)
-
-	FunctionConfig functionConfig;
-	FunctionConfig translationFunctionConfig;
+	bool first_run;
+    double rotation_alpha, translation_alpha, zoom_factor;
 };
 
 //*******************************************************************************************************
@@ -82,21 +74,12 @@ private:
     Ui::AccelaUICFilterControls ui;
 	void loadSettings();
 	void save();
-
-	/** helper **/
 	bool settingsDirty;
-
-    IFilter* pFilter;										// If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
-	FunctionConfig functionConfig;
-	FunctionConfig translationFunctionConfig;
-
 private slots:
 	void doOK();
 	void doCancel();
 	void settingChanged(bool) { settingsDirty = true; }
 	void settingChanged(int) { settingsDirty = true; }
-    void resetCircle();
-    void removeAll();
 };
 
 //*******************************************************************************************************
@@ -108,9 +91,9 @@ public:
 	FTNoIR_FilterDll();
 	~FTNoIR_FilterDll();
 
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk2"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk2"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk2"); }
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk3"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk3"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk3"); }
 
     void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
 };
