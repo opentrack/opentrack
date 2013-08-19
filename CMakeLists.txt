@@ -320,7 +320,7 @@ endif()
     target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
     add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-moc} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
-    target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS} opentrack-spline-widget)
+    target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
 
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(opentrack-filter-accela

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>868</width>
-    <height>729</height>
+    <width>570</width>
+    <height>71</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,482 +29,193 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="_vertical_layout">
-   <item>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>850</width>
-       <height>650</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>300</width>
-       <height>650</height>
-      </size>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>Preset</string>
-      </attribute>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Rotation smoothing</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>111</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Translation smoothing</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="rotationCircle">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>10</y>
-         <width>81</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>3.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="translationCircle">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>40</y>
-         <width>81</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.750000000000000</double>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="resetCircle">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>70</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Set curves</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="removeAllButton">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>70</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Remove all</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Rotation</string>
-      </attribute>
-      <widget class="QFunctionConfigurator" name="scalingConfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>819</width>
-         <height>571</height>
-        </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>57</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>57</number>
-       </property>
-       <property name="gridDistEGU_Input" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="gridDistEGU_Output" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>170</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>192</red>
-         <green>192</green>
-         <blue>192</blue>
-        </color>
-       </property>
-       <property name="stringInputEGU" stdset="0">
-        <string>Input</string>
-       </property>
-       <property name="stringOutputEGU" stdset="0">
-        <string>Output</string>
-       </property>
-       <property name="stringCaption" stdset="0">
-        <string>Translation</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Translation</string>
-      </attribute>
-      <widget class="QFunctionConfigurator" name="translationScalingConfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>819</width>
-         <height>581</height>
-        </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>57</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>57</number>
-       </property>
-       <property name="gridDistEGU_Input" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="gridDistEGU_Output" stdset="0">
-        <number>1</number>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>85</red>
-         <green>255</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>192</red>
-         <green>192</green>
-         <blue>192</blue>
-        </color>
-       </property>
-       <property name="stringInputEGU" stdset="0">
-        <string>Input</string>
-       </property>
-       <property name="stringOutputEGU" stdset="0">
-        <string>Output</string>
-       </property>
-      </widget>
-     </widget>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="lblSensYaw_4">
-       <property name="minimumSize">
-        <size>
-         <width>25</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color:#0;
+  <widget class="QLabel" name="lblSensYaw_5">
+   <property name="geometry">
+    <rect>
+     <x>243</x>
+     <y>10</y>
+     <width>76</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>25</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>150</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:#0;
 background:none;</string>
-       </property>
-       <property name="text">
-        <string>Reduction factor:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSlider" name="slideReduction">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>15</height>
-        </size>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="pageStep">
-        <number>5</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spinReduction">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background:none;</string>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblSensYaw_5">
-       <property name="minimumSize">
-        <size>
-         <width>25</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color:#0;
-background:none;</string>
-       </property>
-       <property name="text">
-        <string>Zoom slowness:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSlider" name="slideZoom">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>15</height>
-        </size>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>200</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spinZoom">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background:none;</string>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>200</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="spacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnOK">
-       <property name="text">
-        <string>OK</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnCancel">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+   </property>
+   <property name="text">
+    <string>Zoom slowness:</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="translation_alpha">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>40</y>
+     <width>81</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>0.100000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>65535.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="rotation_alpha">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>10</y>
+     <width>81</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>0.100000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>65535.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Rotation smoothing</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="slideZoom">
+   <property name="geometry">
+    <rect>
+     <x>325</x>
+     <y>13</y>
+     <width>189</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>50</width>
+     <height>15</height>
+    </size>
+   </property>
+   <property name="minimum">
+    <number>0</number>
+   </property>
+   <property name="maximum">
+    <number>200</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>100</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::NoTicks</enum>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="spinZoom">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>10</y>
+     <width>42</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>35</width>
+     <height>22</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:none;</string>
+   </property>
+   <property name="readOnly">
+    <bool>false</bool>
+   </property>
+   <property name="minimum">
+    <number>0</number>
+   </property>
+   <property name="maximum">
+    <number>200</number>
+   </property>
+   <property name="value">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Translation smoothing</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOK">
+   <property name="geometry">
+    <rect>
+     <x>409</x>
+     <y>40</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnCancel">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>40</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QFunctionConfigurator</class>
-   <extends>QWidget</extends>
-   <header>qfunctionconfigurator.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>slideReduction</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinReduction</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>620</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>310</x>
-     <y>622</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinReduction</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slideReduction</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>315</x>
-     <y>613</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>170</x>
-     <y>621</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>slideZoom</sender>
    <signal>valueChanged(int)</signal>
@@ -512,12 +223,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>547</x>
-     <y>602</y>
+     <x>463</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
-     <x>667</x>
-     <y>602</y>
+     <x>537</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -528,12 +239,12 @@ background:none;</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>663</x>
-     <y>602</y>
+     <x>533</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>537</x>
-     <y>602</y>
+     <x>426</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
