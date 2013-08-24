@@ -37,7 +37,7 @@ void FTNoIR_Filter::loadSettings() {
 static double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
-    return a1 * a1 * x * x;
+    return a1 * x * x;
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
