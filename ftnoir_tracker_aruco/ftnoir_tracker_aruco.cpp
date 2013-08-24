@@ -15,6 +15,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
 #include <vector>
+#include <cstdio>
 
 #if defined(_WIN32) || defined(__WIN32)
 #include <dshow.h>
@@ -185,12 +186,19 @@ void Tracker::run()
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
     detector.setThresholdParams(11, 5);
-    cv::Mat color, grayscale, rvec, tvec;
+    cv::Mat color, color_, grayscale, rvec, tvec;
+    
+    if (!camera.isOpened())
+    {
+        fprintf(stderr, "aruco tracker: can't open camera\n");
+        return;
+    }
   
     while (!stop)
     {
-        if (!camera.read(color))
-            break;
+        if (!camera.read(color_))
+            continue;
+        color_.copyTo(color);
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
