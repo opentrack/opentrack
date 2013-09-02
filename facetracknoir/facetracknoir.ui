@@ -1482,7 +1482,7 @@ background:none;</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
+       <y>12</y>
        <width>231</width>
        <height>169</height>
       </rect>
@@ -1695,39 +1695,6 @@ color:white;</string>
       </property>
       <property name="numDigits">
        <number>5</number>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>231</width>
-       <height>50</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Status</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <widget class="QLabel" name="txtTracking">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>10</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color: rgb(0, 255, 0);</string>
-      </property>
-      <property name="text">
-       <string>Tracking</string>
       </property>
      </widget>
     </widget>

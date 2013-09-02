@@ -270,7 +270,6 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
 
 	//Setup the timer for showing the headpose.
     connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
-	ui.txtTracking->setVisible(false);
     settingsDirty = false;
 }
 
@@ -766,7 +765,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
-	ui.txtTracking->setVisible(false);
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -853,8 +851,6 @@ void FaceTrackNoIR::showHeadPose() {
     ui.lcdNumRotX->display(QString("%1").arg(newdata[Yaw], 0, 'f', 1));
     ui.lcdNumRotY->display(QString("%1").arg(newdata[Pitch], 0, 'f', 1));
     ui.lcdNumRotZ->display(QString("%1").arg(newdata[Roll], 0, 'f', 1));
-
-    ui.txtTracking->setVisible(tracker->getTrackingActive());
 
 	//
 	// Get the output-pose and also display it.
