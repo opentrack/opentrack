@@ -119,7 +119,6 @@ public:
 	Tracker( FaceTrackNoIR *parent );
     ~Tracker();
 	void loadSettings();							// Load settings from the INI-file
-    bool getTrackingActive() { return confid; }
 
     void setInvertAxis(Axis axis, bool invert);
 
@@ -129,8 +128,6 @@ public:
     volatile bool should_quit;
     // following are now protected by hTrackMutex
     volatile bool do_center;							// Center head-position, using the shortkey
-    // Flags to start/stop/reset tracking
-    volatile bool confid;                                // Tracker data is OK;
     
     T6DOF output_camera;
 };

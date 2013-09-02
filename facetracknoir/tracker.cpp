@@ -70,7 +70,6 @@
 
 /** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
-    confid(false),
     should_quit(false),
     do_center(false)
 {
@@ -137,7 +136,7 @@ void Tracker::run() {
 
         {
             QMutexLocker foo(&mtx);
-            confid = bTracker1Confid || bTracker2Confid;
+            const bool confid = bTracker1Confid || bTracker2Confid;
             
             if ( confid ) {
                 for (int i = 0; i < 6; i++)
@@ -151,10 +150,8 @@ void Tracker::run() {
                 //
                 // Only copy valid values
                 //
-                if (confid) {
-                    for (int i = 0; i < 6; i++)
-                        offset_camera.axes[i] = mainApp->axis(i).headPos;
-                }
+                for (int i = 0; i < 6; i++)
+                    offset_camera.axes[i] = mainApp->axis(i).headPos;
                 
                 Tracker::do_center = false;
                 
@@ -168,7 +165,7 @@ void Tracker::run() {
                     Libraries->pFilter->Initialize();
             }
             
-            if (getTrackingActive()) {
+            if (confid) {
                 // get values
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
