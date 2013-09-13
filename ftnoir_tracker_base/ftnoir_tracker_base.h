@@ -59,7 +59,6 @@ struct ITracker
     virtual bool GiveHeadPoseData(double *data) = 0;
 
     virtual void WaitForExit() = 0;
-    
     virtual void NotifyCenter() {}
 };
 
@@ -78,24 +77,5 @@ struct ITrackerDialog
 	virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
-struct ITrackerDll
-{
-	virtual ~ITrackerDll() {}
-	virtual void Initialize() = 0;
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
-};
-
 
 #endif // FTNOIR_TRACKER_BASE_H

@@ -62,22 +62,6 @@ struct IProtocol
     virtual QString getGameName() = 0;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
-struct IProtocolDll
-{
-	virtual ~IProtocolDll() {}
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
-};
-
 struct IProtocolDialog
 {
     virtual ~IProtocolDialog() {}
