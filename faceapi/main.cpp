@@ -21,15 +21,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20130105 - WVR: Set engine state to TERMINATED, when EXIT.
-		20110501 - WVR: Added some command to be handled from FaceTrackNoIR (settings dialog).
-		20110322 - WVR: Somehow the video-widget of faceAPI version 3.2.6. does not
-					    work with FaceTrackNoIR (Qt issue?!). To be able to use 
-						release 3.2.6 of faceAPI anyway, this console-app is used.
-						It exchanges data with FaceTrackNoIR via shared-memory...
-*/
 
 //Precompiled header
 #include "stdafx.h"

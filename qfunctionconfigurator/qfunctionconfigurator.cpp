@@ -32,14 +32,6 @@
 * provided that the above copyright notice and this permission					*
 * notice appear in all copies.													*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120830 - WVR: Changed functionality a bit. Now only draw the handles, when the function is drawn.
-						Only check mouseMoves, when they occur 'in range'. Redraw the curve, when a resize occurs.
-						Somehow, the curve was not drawn correctly, when this was not done (all points were too high). 
-						After a 'Reset' this would disappear...
-		20120828 - WVR: Removed bSkipText, which was used to not show a number below each vertical gridline.
-*/
 #include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>
 #include <QPaintEvent>

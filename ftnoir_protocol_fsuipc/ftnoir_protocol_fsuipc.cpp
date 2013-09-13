@@ -24,12 +24,6 @@
 * FSUIPCServer		FSUIPCServer is the Class, that communicates headpose-data	*
 *					to games, using the FSUIPC.dll.			         			*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
-	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
-					is called from run() of Tracker.cpp
-*/
 #include "ftnoir_protocol_fsuipc.h"
 #include "facetracknoir/global-settings.h"
 

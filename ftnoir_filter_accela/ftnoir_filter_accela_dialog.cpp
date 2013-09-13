@@ -22,10 +22,6 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-		20130102 - WVR: Added 'reduction factor' to accommodate Patrick's need for speed.
-*/
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
 #include <math.h>
 #include <QDebug>

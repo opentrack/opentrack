@@ -21,11 +21,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20100520 - WVR: Added class FaceApp, to override winEventFilter. It receives 
-						messages from the Game.
-*/
 
 #include "facetracknoir.h"
 #include "tracker.h"

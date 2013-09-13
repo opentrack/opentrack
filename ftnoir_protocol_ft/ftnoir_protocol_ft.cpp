@@ -24,20 +24,6 @@
 * FTServer		FTServer is the Class, that communicates headpose-data			*
 *				to games, using the FreeTrackClient.dll.	         			*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-	20130209 - WVR: Some games support both interfaces and cause trouble. Added ComboBox to fix this (hide one interface 
-					by clearing the appropriate Registry-setting).
-	20130203 - WVR: Added Tirviews and dummy checkboxes to the Settings dialog. This is necessary for CFS3 etc.
-	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games.
-	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
-	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
-					is called from run() of Tracker.cpp
-	20100601 - WVR: Added Mutex-bit in run(). Thought it wasn't so important (still do...). 
-	20100523 - WVR: Implemented the Freetrack-protocol just like Freetrack does. Earlier 
-					FaceTrackNoIR only worked with an adapted DLL, with a putdata function.
-					Now it works direcly in shared memory!
-*/
 #include <algorithm>
 #include "ftnoir_protocol_ft.h"
 #include "ftnoir_csv/csv.h"

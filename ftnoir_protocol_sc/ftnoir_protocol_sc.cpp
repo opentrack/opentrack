@@ -26,12 +26,6 @@
 *				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
 *				must be treated as such...										*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
-	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
-					is called from run() of Tracker.cpp
-*/
 #include "ftnoir_protocol_sc.h"
 #include "facetracknoir/global-settings.h"
 
