@@ -51,10 +51,9 @@ static double parabola(const double a, const double x)
     return a1 * x * x;
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
-                                       double *target_camera_position,
+void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                                        double *new_camera_position,
-                                       double *last_post_filter_values)
+                                       const double* last_post_filter_values)
 {
 	if (first_run)
 	{

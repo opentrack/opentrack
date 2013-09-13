@@ -56,7 +56,6 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF current_camera;                   // Used for filtering
     T6DOF target_camera;
     T6DOF new_camera;
     
@@ -135,7 +134,7 @@ void Tracker::run() {
                 if (Libraries->pFilter) {
                     for (int i = 0; i < 6; i++)
                         last_post_filter[i] = gameoutput_camera.axes[i];
-                    Libraries->pFilter->FilterHeadPoseData(current_camera.axes, target_camera.axes, new_camera.axes, last_post_filter);
+                    Libraries->pFilter->FilterHeadPoseData(target_camera.axes, new_camera.axes, last_post_filter);
                 }
                 else {
                     new_camera = target_camera;
