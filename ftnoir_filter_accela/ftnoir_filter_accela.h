@@ -34,8 +34,8 @@
 #include "facetracknoir/global-settings.h"
 #include <QMutex>
 
-#define ACCELA_SMOOTHING_ROTATION 6.0
-#define ACCELA_SMOOTHING_TRANSLATION 3.0
+#define ACCELA_SMOOTHING_ROTATION 60.0
+#define ACCELA_SMOOTHING_TRANSLATION 40.0
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.
