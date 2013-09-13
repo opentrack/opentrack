@@ -1278,6 +1278,21 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     keyCenter.ctrl = iniFile.value("Ctrl_Center", false).toBool();
 #endif
     iniFile.endGroup ();
+    
+    if (tracker) /* running already */
+    {
+#if defined(_WIN32) || defined(__WIN32)
+    if (keybindingWorker)
+    {
+        keybindingWorker->should_quit = true;
+        keybindingWorker->wait();
+        delete keybindingWorker;
+        keybindingWorker = NULL;
+    }
+    keybindingWorker = new KeybindingWorker(*this, keyCenter);
+    keybindingWorker->start();
+#endif
+    }
 }
 
 //
