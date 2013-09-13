@@ -1002,7 +1002,7 @@ static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
     return true;
 }
 
-static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx)
+static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx, QComboBox* cbx2)
 {
     QDir settingsDir( QCoreApplication::applicationDirPath() );
     QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
@@ -1020,6 +1020,8 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
         }
         list.push_back(lib);
         cbx->addItem(icon, longName);
+        if (cbx2)
+            cbx2->addItem(icon, longName);
     }
 }
 
@@ -1032,9 +1034,9 @@ void FaceTrackNoIR::createIconGroupBox()
     dlopen_filters.push_back((DynamicLibrary*) NULL);
     ui.iconcomboFilter->addItem(QIcon(), "None");
     
-    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol);
-    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource);
-    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter);
+    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol, NULL);
+    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
+    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter, NULL);
 
 	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
     connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
