@@ -39,7 +39,7 @@
 // Constructor for server-settings-dialog
 //
 FilterControls::FilterControls() :
-	QWidget()
+    QWidget(), accela_filter(NULL)
 {
 	ui.setupUi( this );
 
@@ -66,14 +66,24 @@ FilterControls::~FilterControls() {
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
+void FilterControls::Initialize(QWidget *parent) {
     loadSettings();
-	
+    
 	QPoint offsetpos(100, 100);
 	if (parent) {
 		this->move(parent->pos() + offsetpos);
 	}
 	show();
+}
+
+void FilterControls::registerFilter(IFilter* filter)
+{
+    accela_filter = (FTNoIR_Filter*) filter;
+}
+
+void FilterControls::unregisterFilter()
+{
+    accela_filter = NULL;
 }
 
 //
@@ -154,14 +164,19 @@ void FilterControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
+    
+    double rot, trans, zoom;
 
 	iniFile.beginGroup ( "Accela" );
-    iniFile.setValue("zoom-slowness", ui.slideZoom->value());
-    iniFile.setValue("rotation-alpha", ui.rotation_alpha->value());
-    iniFile.setValue("translation-alpha", ui.translation_alpha->value());
+    iniFile.setValue("zoom-slowness", zoom = ui.slideZoom->value());
+    iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
+    iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
+    
+    if (accela_filter)
+        accela_filter->receiveSettings(rot, trans, zoom);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

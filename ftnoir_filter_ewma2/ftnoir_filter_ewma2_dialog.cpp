@@ -35,7 +35,7 @@
 // Constructor for server-settings-dialog
 //
 FilterControls::FilterControls() :
-QWidget()
+    QWidget(), pFilter(NULL)
 {
 	ui.setupUi( this );
 
@@ -69,15 +69,7 @@ FilterControls::~FilterControls() {
 //
 // Initialize tracker-client-dialog
 //
-void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
-
-	//
-	// The dialog can be opened, while the Tracker is running.
-	// In that case, ptr will point to the active Filter-instance.
-	// This can be used to update settings, while Tracking and may also be handy to display logging-data and such...
-	//
-	pFilter = ptr;
-	
+void FilterControls::Initialize(QWidget *parent) {
 	//
 	//
 	//
@@ -86,6 +78,16 @@ void FilterControls::Initialize(QWidget *parent, IFilter* ptr) {
 		this->move(parent->pos() + offsetpos);
 	}
 	show();
+}
+
+void FilterControls::registerFilter(IFilter* flt)
+{
+    pFilter = (FTNoIR_Filter*) flt;
+}
+
+void FilterControls::unregisterFilter()
+{
+    pFilter = NULL;
 }
 
 //
@@ -166,14 +168,19 @@ void FilterControls::save() {
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    
+    double smooth_min, smooth_max, smooth_expt;
 
 	iniFile.beginGroup ( "Tracking" );
-	iniFile.setValue ( "minSmooth", ui.minSmooth->value() );
-	iniFile.setValue ( "powCurve", ui.powCurve->value() );
-	iniFile.setValue ( "maxSmooth", ui.maxSmooth->value() );
+	iniFile.setValue ( "minSmooth", smooth_min = ui.minSmooth->value() );
+	iniFile.setValue ( "powCurve", smooth_expt = ui.powCurve->value() );
+	iniFile.setValue ( "maxSmooth", smooth_max = ui.maxSmooth->value() );
 	iniFile.endGroup ();
 
 	settingsDirty = false;
+    
+    if (pFilter)
+        pFilter->receiveSettings(smooth_min, smooth_max, smooth_expt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

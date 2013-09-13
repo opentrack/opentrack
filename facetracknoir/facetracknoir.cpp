@@ -610,7 +610,7 @@ void FaceTrackNoIR::startTracker( ) {
 	ui.btnLoad->setEnabled ( false );
 	ui.btnSave->setEnabled ( false );
 	ui.btnSaveAs->setEnabled ( false );
-	ui.btnShowFilterControls->setEnabled ( false );
+	ui.btnShowFilterControls->setEnabled ( true );
 
 	//
 	// Create the Tracker and setup
@@ -687,14 +687,17 @@ void FaceTrackNoIR::startTracker( ) {
     tracker->setInvertAxis(TY, ui.chkInvertY->isChecked() );
     tracker->setInvertAxis(TZ, ui.chkInvertZ->isChecked() );
 
-    tracker->start();
-
 	//
 	// Register the Tracker instance with the Tracker Dialog (if open)
 	//
     if (pTrackerDialog && Libraries->pTracker) {
         pTrackerDialog->registerTracker( Libraries->pTracker );
 	}
+    
+    if (pFilterDialog && Libraries->pFilter)
+        pFilterDialog->registerFilter(Libraries->pFilter);
+    
+    tracker->start();
 
 	ui.headPoseWidget->show();
 
@@ -776,7 +779,7 @@ void FaceTrackNoIR::stopTracker( ) {
         pProtocolDialog->unRegisterProtocol();
     }
     if (pFilterDialog)
-        pFilterDialog->Initialize(this, NULL);
+        pFilterDialog->unregisterFilter();
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -911,9 +914,9 @@ void FaceTrackNoIR::showTrackerSettings() {
     if (lib) {
         pTrackerDialog = (ITrackerDialog*) lib->Dialog();
         if (pTrackerDialog) {
-            pTrackerDialog->Initialize(this);
             if (Libraries && Libraries->pTracker)
                 pTrackerDialog->registerTracker(Libraries->pTracker);
+            pTrackerDialog->Initialize(this);
         }
     }
 }
@@ -930,9 +933,9 @@ void FaceTrackNoIR::showSecondTrackerSettings() {
     if (lib) {
         pSecondTrackerDialog = (ITrackerDialog*) lib->Dialog();
         if (pSecondTrackerDialog) {
-            pSecondTrackerDialog->Initialize(this);
             if (Libraries && Libraries->pSecondTracker)
                 pSecondTrackerDialog->registerTracker(Libraries->pSecondTracker);
+            pSecondTrackerDialog->Initialize(this);
         }
     }
 }
@@ -966,7 +969,9 @@ void FaceTrackNoIR::showFilterControls() {
     if (lib && lib->Dialog) {
         pFilterDialog = (IFilterDialog*) lib->Dialog();
         if (pFilterDialog) {
-            pFilterDialog->Initialize(this, Libraries ? Libraries->pFilter : NULL);
+            pFilterDialog->Initialize(this);
+            if (Libraries && Libraries->pFilter)
+                pFilterDialog->registerFilter(Libraries->pFilter);
         }
     }
 }
