@@ -33,7 +33,9 @@ struct IFilter
 struct IFilterDialog
 {
     virtual ~IFilterDialog() {}
-    virtual void Initialize(QWidget *parent, IFilter* ptr) = 0;
+    virtual void Initialize(QWidget *parent) = 0;
+    virtual void registerFilter(IFilter* tracker) = 0;
+    virtual void unregisterFilter() = 0;
 };
 
 #endif // FTNOIR_FILTER_BASE_H

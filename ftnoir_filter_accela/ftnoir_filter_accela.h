@@ -32,6 +32,7 @@
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_accela_filtercontrols.h"
 #include "facetracknoir/global-settings.h"
+#include <QMutex>
 
 #define ACCELA_SMOOTHING_ROTATION 6.0
 #define ACCELA_SMOOTHING_TRANSLATION 3.0
@@ -48,9 +49,10 @@ public:
     void Initialize() {
         first_run = true;
     }
-
+    void receiveSettings(double rot, double trans, double zoom_fac);
 private:
-	void loadSettings();									// Load the settings from the INI-file
+    QMutex mutex;
+	void loadSettings();
 	bool first_run;
     double rotation_alpha, translation_alpha, zoom_factor;
 };
@@ -64,17 +66,18 @@ class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDi
 {
     Q_OBJECT
 public:
-
 	explicit FilterControls();
     virtual ~FilterControls();
 	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent, IFilter *ptr);
-
+    void Initialize(QWidget *parent);
+    void registerFilter(IFilter* filter);
+    void unregisterFilter();
 private:
     Ui::AccelaUICFilterControls ui;
 	void loadSettings();
 	void save();
 	bool settingsDirty;
+    FTNoIR_Filter* accela_filter;
 private slots:
 	void doOK();
 	void doCancel();

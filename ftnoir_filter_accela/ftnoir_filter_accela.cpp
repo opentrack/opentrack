@@ -5,10 +5,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
-#include "math.h"
+#include <cmath>
 #include <QDebug>
-#include <float.h>
+#include <QMutexLocker>
 #include "facetracknoir/global-settings.h"
+
+using namespace std;
 
 FTNoIR_Filter::FTNoIR_Filter()
 {
@@ -34,6 +36,15 @@ void FTNoIR_Filter::loadSettings() {
 	iniFile.endGroup ();
 }
 
+void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
+{
+    QMutexLocker foo(&mutex);
+    
+    rotation_alpha = rot;
+    translation_alpha = trans;
+    zoom_factor = zoom_fac;
+}
+
 static double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
@@ -56,6 +67,8 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
 		first_run = false;
 		return;
 	}
+    
+    QMutexLocker foo(&mutex);
 
     for (int i=0;i<6;i++)
 	{

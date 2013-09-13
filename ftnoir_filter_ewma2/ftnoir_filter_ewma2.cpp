@@ -28,6 +28,7 @@
 #include <QWidget>
 #include "facetracknoir/global-settings.h"
 #include <algorithm>
+#include <QMutexLocker>
 //#define LOG_OUTPUT
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +46,15 @@ FTNoIR_Filter::FTNoIR_Filter()
 
 FTNoIR_Filter::~FTNoIR_Filter()
 {
+}
+
+void FTNoIR_Filter::receiveSettings(double smin, double smax, double sexpt)
+{
+    QMutexLocker foo(&mutex);
+    
+    kMinSmoothing = smin;
+    kMaxSmoothing = smax;
+    kSmoothingScaleCurve = sexpt;
 }
 
 //
@@ -88,6 +98,8 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
         first_run=false;
         return;
     }
+    
+    QMutexLocker foo(&mutex);
 
     for (int i=0;i<6;i++) {
         // Calculate the delta.

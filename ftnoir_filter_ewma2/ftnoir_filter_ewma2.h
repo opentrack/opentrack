@@ -30,6 +30,7 @@
 #include "facetracknoir/global-settings.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
+#include <QMutex>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -47,6 +48,7 @@ public:
                             double *target_camera_position,
                             double *new_camera_position,
                             double *last_post_filter);
+    void receiveSettings(double smin, double smax, double sexpt);
 
 private:
     void loadSettings();  // Load the settings from the INI-file
@@ -59,6 +61,8 @@ private:
     double kMinSmoothing;
     double kMaxSmoothing;
     double kSmoothingScaleCurve;
+    
+    QMutex mutex;
 };
 
 //*******************************************************************************************************
@@ -73,7 +77,9 @@ public:
     explicit FilterControls();
     virtual ~FilterControls();
     void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent, IFilter* ptr);
+    void Initialize(QWidget *parent);
+    void registerFilter(IFilter* flt);
+    void unregisterFilter();
 
 private:
     Ui::UICFilterControls ui;
@@ -83,13 +89,13 @@ private:
     /** helper **/
     bool settingsDirty;
 
-    IFilter* pFilter;  // If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+    FTNoIR_Filter* pFilter;
 
 private slots:
     void doOK();
     void doCancel();
-    void settingChanged() { settingsDirty = true; };
-    void settingChanged( int ) { settingsDirty = true; };
+    void settingChanged() { settingsDirty = true; }
+    void settingChanged( int ) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
