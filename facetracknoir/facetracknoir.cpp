@@ -988,6 +988,20 @@ void FaceTrackNoIR::exit() {
 	QCoreApplication::exit(0);
 }
 
+static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
+{
+    Metadata* meta;
+    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
+    {
+        delete lib;
+        return false;
+    }
+    meta->getFullName(&longName);
+    meta->getIcon(&icon);
+    delete meta;
+    return true;
+}
+
 //
 // Setup the icons for the comboBoxes
 //
@@ -1004,15 +1018,8 @@ void FaceTrackNoIR::createIconGroupBox()
             DynamicLibrary* lib = new DynamicLibrary(str);
             qDebug() << "Loading" << str;
             std::cout.flush();
-            Metadata* meta;
-            if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-            {
-                delete lib;
+            if (!get_metadata(lib, longName, icon))
                 continue;
-            }
-            meta->getFullName(&longName);
-            meta->getIcon(&icon);
-            delete meta;
             dlopen_protocols.push_back(lib);
             ui.iconcomboProtocol->addItem(icon, longName);
         }
@@ -1028,15 +1035,8 @@ void FaceTrackNoIR::createIconGroupBox()
             DynamicLibrary* lib = new DynamicLibrary(str);
             qDebug() << "Loading" << str;
             std::cout.flush();
-            Metadata* meta;
-            if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-            {
-                delete lib;
+            if (!get_metadata(lib, longName, icon))
                 continue;
-            }
-            meta->getFullName(&longName);
-            meta->getIcon(&icon);
-            delete meta;
             dlopen_trackers.push_back(lib);
             ui.iconcomboTrackerSource->addItem(icon, longName);
             ui.cbxSecondTrackerSource->addItem(icon, longName);
@@ -1049,22 +1049,15 @@ void FaceTrackNoIR::createIconGroupBox()
         QStringList filters = settingsDir.entryList( QStringList() << (LIB_PREFIX "opentrack-filter-*." SONAME), QDir::Files, QDir::Name );
         for ( int i = 0; i < filters.size(); i++) {
             QIcon icon;
-            QString fullName;
+            QString longName;
             QString str = filters.at(i);
             DynamicLibrary* lib = new DynamicLibrary(str);
             qDebug() << "Loading" << str;
             std::cout.flush();
-            Metadata* meta;
-            if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-            {
-                delete lib;
+            if (!get_metadata(lib, longName, icon))
                 continue;
-            }
-            meta->getFullName(&fullName);
-            meta->getIcon(&icon);
-            delete meta;
             dlopen_filters.push_back(lib);
-            ui.iconcomboFilter->addItem(icon, fullName);
+            ui.iconcomboFilter->addItem(icon, longName);
         }
     }
 
