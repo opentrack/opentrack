@@ -259,8 +259,6 @@ private slots:
     void curveChanged( int change ) { settingsDirty = true; }
 };
 
-#endif // FaceTrackNoIR_H
-
 extern QList<QString> global_key_sequences;
 #if defined(__WIN32) || defined(_WIN32)
 class KeybindingWorkerDummy {
@@ -293,3 +291,5 @@ public:
 		KeybindingWorkerDummy::run();
 	}
 };
+
+#endif // FaceTrackNoIR_H
