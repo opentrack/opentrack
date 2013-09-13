@@ -765,6 +765,18 @@ void FaceTrackNoIR::stopTracker( ) {
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
+    
+    //
+    // UnRegister the Tracker instance with the Tracker Dialog (if open)
+    //
+    if (pTrackerDialog) {
+        pTrackerDialog->unRegisterTracker();
+    }
+    if (pProtocolDialog) {
+        pProtocolDialog->unRegisterProtocol();
+    }
+    if (pFilterDialog)
+        pFilterDialog->Initialize(this, NULL);
 
 	//
 	// Delete the tracker (after stopping things and all).
@@ -783,16 +795,6 @@ void FaceTrackNoIR::stopTracker( ) {
             Libraries = NULL;
         }
 	}
-
-    //
-    // UnRegister the Tracker instance with the Tracker Dialog (if open)
-    //
-    if (pTrackerDialog) {
-        pTrackerDialog->unRegisterTracker();
-    }
-    if (pProtocolDialog) {
-        pProtocolDialog->unRegisterProtocol();
-    }
 	ui.btnStartTracker->setEnabled ( true );
 	ui.btnStopTracker->setEnabled ( false );
 //	ui.btnShowEngineControls->setEnabled ( false );
