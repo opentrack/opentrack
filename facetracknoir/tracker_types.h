@@ -20,11 +20,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120924 - C14: Moved tracker types only used by Tracker to this file (should not be part of public interface)
-		                Modified operators to represent correct frame transitions
-*/
 #ifndef __TRACKER_TYPES_H__
 #define __TRACKER_TYPES_H__
 

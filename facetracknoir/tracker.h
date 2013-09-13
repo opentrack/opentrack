@@ -20,10 +20,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
-*/
 #ifndef __TRACKER_H__
 #define __TRACKER_H__
 

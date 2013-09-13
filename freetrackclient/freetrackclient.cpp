@@ -23,12 +23,6 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-
-	20130208 - WVR: The old DLL from FreeTrack seems to crash ArmA2. And we need 64-bit support.
-	
-*/
 
 #define FT_EXPORT(t) extern "C" t __declspec(dllexport) __stdcall
 #define	NP_AXIS_MAX				16383

@@ -21,50 +21,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20121215 - WVR: Fixed crash after message: protocol not installed correctly... by terminating the thread.
-		20120921 - WVR: Fixed centering when no filter is selected.
-		20120917 - WVR: Added Mouse-buttons to ShortKeys.
-		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
-		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
-						uses the Curve(s). ToDo: make the ranges configurable by the user. Development on the Toradex IMU makes us realize, that
-						a fixed input-range may not be so handy after all..
-		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled �statically�. Now, a Dir() of the
-						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
-		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
-						was changed accordingly.
-						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
-						requested by Stanislaw.
-		20110411 - WVR: Finished moving all Protocols to separate C++ projects. Every protocol now
-						has it's own Class, that's inside it's own DLL. This reduces the size of the program,
-						makes it more structured and enables a more sophisticated installer.
-		20110328 - WVR: Changed the camera-structs into class-instances. This makes initialisation
-						easier and hopefully solves the remaining 'start-up problem'.
-		20110313 - WVR: Removed 'set_initial'. Less is more.
-		20110109 - WVR: Added setZero option to define behaviour after STOP tracking via shortkey.
-		20110104 - WVR: Removed a few nasty bugs (it was impossible to stop tracker without crash).
-		20101224 - WVR: Removed the QThread inheritance of the Base Class for the protocol-servers.
-						Again, this drastically simplifies the code in the protocols.
-		20101217 - WVR: Created Base Class for the protocol-servers. This drastically simplifies
-						the code needed here.
-		20101024 - WVR: Added shortkey to disable/enable one or more axis during tracking.
-		20101021 - WVR: Added FSUIPC server for FS2004.
-		20101011 - WVR: Added SimConnect server.
-		20101007 - WVR: Created 6DOF-curves and drastically changed the tracker for that.
-						Also eliminated a 'glitch' in the process.
-		20100607 - WVR: Re-installed Rotation Neutral Zone and improved reaction
-						after 'start/stop'. MessageBeep when confidence is back...
-		20100604 - WVR: Created structure for DOF-data and changed timing of
-						ReceiveHeadPose end run().
-		20100602 - WVR: Implemented EWMA-filtering, according to the example of
-						Melchior Franz. Works like a charm...
-		20100601 - WVR: Added DirectInput keyboard-handling. '=' used for center,
-						'BACK' for start (+center)/stop.
-		20100517 - WVR: Added upstream command(s) from FlightGear
-		20100523 - WVR: Checkboxes to invert 6DOF's was implemented. Multiply by
-						1 or (-1).
-*/
 #include "tracker.h"
 #include "facetracknoir.h"
 

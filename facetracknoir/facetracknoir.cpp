@@ -21,30 +21,6 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20130101 - WVR: Added "None" to filter-listbox to remove "use advanced filtering".
-		20121209 - WVR: Pre-v170 DLLs will not be added to the Listbox. Initial selection was changed (made case-insensitive).
-		20121014 - WVR: Added second Tracker Source for Arduino solution. The two will be mutually exclusive.
-		20120929 - WVR: Disable button Filter-settings when StartTracker.
-		20120918 - WVR: When AutoStart is TRUE, the program is not directly minimized any more.
-						This now depends on the AutoMinimize time. Fixed the 'not showing' of the MIB.
-						Also disable combo and buttons after 'Start'.
-		20120917 - WVR: Added Mouse-buttons to ShortKeys.
-		20120717 - WVR: FunctionConfig is now used for the Curves, instead of BezierConfig.
-        20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled 'statically'. Now, a Dir() of the
-						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
-		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
-						was changed accordingly. The save() and LoadSettings() functions were adapted.
-						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
-						requested by Stanislaw.
-		20110813 - WVR: Changed the presentation of the raw inputs: now a decimal digit will even show when '0'.
-		20110404 - WVR: Migrated the FlightGear protocol to a separate DLL. The rest must follow...
-		20110401 - WVR: The about-dialog was shown 'misplaced'. It was corrected.
-		20110328 - WVR: Added the display for output-pose.
-		20110207 - WVR: RadioButtons for 'Stop engine' added. It is now possible to choose Stop or Keep tracking.
-		20110109 - WVR: Added minimizeTaskBar option added. It is now possible to choose minimized or tray.
-*/
 #include "facetracknoir.h"
 #include "tracker.h"
 #include <ftnoir_tracker_ht/ht-api.h>
