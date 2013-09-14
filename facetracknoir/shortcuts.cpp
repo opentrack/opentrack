@@ -179,10 +179,6 @@ KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter)
     should_quit = false;
 }
 
-#define PROCESS_KEY(k, s) \
-    if (isKeyPressed(&k, keystate) && (!k.ever_pressed ? (k.timer.start(), k.ever_pressed = true) : k.timer.restart() > 100)) \
-        window.s();
-
 static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
     bool shift;
     bool ctrl;
@@ -208,6 +204,10 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
     return false;
 }
 
+#define PROCESS_KEY(k, s) \
+    if (isKeyPressed(&k, keystate) && (!k.ever_pressed ? (k.timer.start(), k.ever_pressed = true) : k.timer.restart() > 100)) \
+        window.s();
+
 void KeybindingWorkerImpl::run() {
     BYTE keystate[256];
     while (!should_quit)
@@ -223,5 +223,6 @@ void KeybindingWorkerImpl::run() {
         Sleep(25);
     }
 }
+
 #else
 #endif
