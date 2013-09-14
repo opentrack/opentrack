@@ -48,6 +48,43 @@
 #   define LIB_PREFIX "lib"
 #endif
 
+static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
+{
+    Metadata* meta;
+    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
+    {
+        delete lib;
+        return false;
+    }
+    meta->getFullName(&longName);
+    meta->getIcon(&icon);
+    delete meta;
+    return true;
+}
+
+static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx, QComboBox* cbx2)
+{
+    QDir settingsDir( QCoreApplication::applicationDirPath() );
+    QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
+    for ( int i = 0; i < filenames.size(); i++) {
+        QIcon icon;
+        QString longName;
+        QString str = filenames.at(i);
+        DynamicLibrary* lib = new DynamicLibrary(str);
+        qDebug() << "Loading" << str;
+        std::cout.flush();
+        if (!get_metadata(lib, longName, icon))
+        {
+            delete lib;
+            continue;
+        }
+        list.push_back(lib);
+        cbx->addItem(icon, longName);
+        if (cbx2)
+            cbx2->addItem(icon, longName);
+    }
+}
+
 //
 // Setup the Main Dialog
 //
@@ -75,7 +112,63 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 
 	tracker = 0;
 
-	setupFaceTrackNoIR();
+    // this is needed for Wine plugin subprocess
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    // if we simply place a global variable with THeadPoseData,
+    // it gets initialized and pulls in QSettings before
+    // main() starts. program can and will crash.
+
+    ui.headPoseWidget->show();
+    ui.video_frame->hide();
+
+    // menu objects will be connected with the functions in FaceTrackNoIR class
+    connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
+    connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
+    connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
+
+    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
+    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
+    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
+    connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
+    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
+    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
+
+    // Connect checkboxes
+    connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
+    connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
+    connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(setInvertPitch(int)));
+    connect(ui.chkInvertX, SIGNAL(stateChanged(int)), this, SLOT(setInvertX(int)));
+    connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
+    connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
+
+    // button methods connect with methods in this class
+    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
+    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
+
+    //read the camera-name, using DirectShow
+    GetCameraNameDX();
+
+    ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
+    dlopen_filters.push_back((DynamicLibrary*) NULL);
+    ui.iconcomboFilter->addItem(QIcon(), "None");
+
+    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol, NULL);
+    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
+    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter, NULL);
+
+    connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
+    connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+    connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
+    connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
+
+    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+
+    //Setup the timer for showing the headpose.
+    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+
+    //Load the tracker-settings, from the INI-file
+    loadSettings();
 
     //Q_INIT_RESOURCE(PoseWidget);
 
@@ -92,57 +185,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
-}
-
-/** sets up all objects and connections to buttons */
-void FaceTrackNoIR::setupFaceTrackNoIR() {
-    // this is needed for Wine plugin subprocess
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-    // if we simply place a global variable with THeadPoseData,
-    // it gets initialized and pulls in QSettings before
-    // main() starts. program can and will crash.
-
-	ui.headPoseWidget->show();
-	ui.video_frame->hide();
-
-	// menu objects will be connected with the functions in FaceTrackNoIR class
-	connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
-	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
-	connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
-
-	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
-	connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
-	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
-	connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
-	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
-	connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
-
-	// Connect checkboxes
-	connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
-	connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
-	connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(setInvertPitch(int)));
-	connect(ui.chkInvertX, SIGNAL(stateChanged(int)), this, SLOT(setInvertX(int)));
-	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
-	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
-
-	// button methods connect with methods in this class
-	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
-	connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-
-	//read the camera-name, using DirectShow
-	GetCameraNameDX();
-	
-	//Create the system-tray and connect the events for that.
-	createIconGroupBox();
-
-    //Load the tracker-settings, from the INI-file
-	loadSettings();
-
-	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
-
-	//Setup the timer for showing the headpose.
-    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -893,62 +935,6 @@ void FaceTrackNoIR::showCurveConfiguration() {
 /** exit application **/
 void FaceTrackNoIR::exit() {
 	QCoreApplication::exit(0);
-}
-
-static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
-{
-    Metadata* meta;
-    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-    {
-        delete lib;
-        return false;
-    }
-    meta->getFullName(&longName);
-    meta->getIcon(&icon);
-    delete meta;
-    return true;
-}
-
-static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx, QComboBox* cbx2)
-{
-    QDir settingsDir( QCoreApplication::applicationDirPath() );
-    QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
-    for ( int i = 0; i < filenames.size(); i++) {
-        QIcon icon;
-        QString longName;
-        QString str = filenames.at(i);
-        DynamicLibrary* lib = new DynamicLibrary(str);
-        qDebug() << "Loading" << str;
-        std::cout.flush();
-        if (!get_metadata(lib, longName, icon))
-        {
-            delete lib;
-            continue;
-        }
-        list.push_back(lib);
-        cbx->addItem(icon, longName);
-        if (cbx2)
-            cbx2->addItem(icon, longName);
-    }
-}
-
-//
-// Setup the icons for the comboBoxes
-//
-void FaceTrackNoIR::createIconGroupBox()
-{   
-    ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
-    dlopen_filters.push_back((DynamicLibrary*) NULL);
-    ui.iconcomboFilter->addItem(QIcon(), "None");
-    
-    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol, NULL);
-    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
-    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter, NULL);
-
-	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
-    connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-    connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
-	connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
 }
 
 //
