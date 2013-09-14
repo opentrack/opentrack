@@ -198,6 +198,9 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 
 /** sets up all objects and connections to buttons */
 void FaceTrackNoIR::setupFaceTrackNoIR() {
+    // this is needed for Wine plugin subprocess
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
     // if we simply place a global variable with THeadPoseData,
     // it gets initialized and pulls in QSettings before
     // main() starts. program can and will crash.
@@ -354,8 +357,10 @@ void FaceTrackNoIR::open() {
 	// If a file was selected, save it's name and read it's contents.
 	//
 	if (! fileName.isEmpty() ) {
-		QSettings settings("opentrack");	// Registry settings (in HK_USER)
-        settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
+        {
+            QSettings settings("opentrack");	// Registry settings (in HK_USER)
+            settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
+        }
 		loadSettings();
     }
 }
@@ -570,12 +575,18 @@ void FaceTrackNoIR::loadSettings() {
 		}
 	}
 
+    for (int i = 0; i < 6; i++)
+    {
+        axis(i).curve.loadSettings(iniFile);
+        axis(i).curveAlt.loadSettings(iniFile);
+    }
+
     if (!_curve_config)
     {
         _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
     }
 
-    ((CurveConfigurationDialog*) _curve_config)->loadSettings();
+    ((CurveConfigurationDialog*)_curve_config)->loadSettings();
 
 	settingsDirty = false;
     looping = false;
@@ -1323,45 +1334,6 @@ QWidget( parent , f)
 
 	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-
-    QFunctionConfigurator* configs[6] = {
-        ui.txconfig,
-        ui.tyconfig,
-        ui.tzconfig,
-        ui.rxconfig,
-        ui.ryconfig,
-        ui.rzconfig
-    };
-
-    QFunctionConfigurator* alt_configs[6] = {
-        ui.txconfig_alt,
-        ui.tyconfig_alt,
-        ui.tzconfig_alt,
-        ui.rxconfig_alt,
-        ui.ryconfig_alt,
-        ui.rzconfig_alt
-    };
-
-    QCheckBox* checkboxes[6] = {
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp,
-        ui.tx_altp,
-        ui.ty_altp,
-        ui.tz_altp
-    };
-    
-    for (int i = 0; i < 6; i++)
-    {
-        configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
-        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
-        connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-        connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-        connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    }
-
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
@@ -1427,13 +1399,13 @@ void CurveConfigurationDialog::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void CurveConfigurationDialog::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
+    qDebug() << "CurveConfigurationDialog::loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
+    qDebug() << "CurveConfigurationDialog::loadSettings says: iniFile = " << currentFile;
 
     static const char* names[] = {
         "tx_alt",
@@ -1478,11 +1450,48 @@ void CurveConfigurationDialog::loadSettings() {
         "zero_ry",
         "zero_rz"
     };
-    
+
+
     for (int i = 0; i < 6; i++)
         widgets2[i]->setValue(iniFile.value(names2[i], 0).toDouble());
     
     iniFile.endGroup();
+
+    QFunctionConfigurator* configs[6] = {
+        ui.txconfig,
+        ui.tyconfig,
+        ui.tzconfig,
+        ui.rxconfig,
+        ui.ryconfig,
+        ui.rzconfig
+    };
+
+    QFunctionConfigurator* alt_configs[6] = {
+        ui.txconfig_alt,
+        ui.tyconfig_alt,
+        ui.tzconfig_alt,
+        ui.rxconfig_alt,
+        ui.ryconfig_alt,
+        ui.rzconfig_alt
+    };
+
+    QCheckBox* checkboxes[6] = {
+        ui.rx_altp,
+        ui.ry_altp,
+        ui.rz_altp,
+        ui.tx_altp,
+        ui.ty_altp,
+        ui.tz_altp
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
+        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
+        connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+        connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
+        connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
+    }
     
     settingsDirty = false;
 }

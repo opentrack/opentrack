@@ -89,16 +89,22 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 // Attach an existing FunctionConfig to the Widget.
 //
 void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFile) {
-QPointF currentPoint;
-QPointF drawPoint;
-qreal x;
+    QPointF currentPoint;
+    QPointF drawPoint;
+    qreal x;
 
-	_config = config;
-	_points = config->getPoints();
-	strSettingsFile = settingsFile;													// Remember for Reset()
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    config->loadSettings(iniFile);
 
-	qDebug() << "QFunctionConfigurator::setConfig" << config->getTitle();
-	setCaption(config->getTitle());
+    _config = config;
+
+    _points = config->getPoints();
+    strSettingsFile = settingsFile;													// Remember for Reset()
+
+    qDebug() << "QFunctionConfigurator::setConfig" << config->getTitle();
+    setCaption(config->getTitle());
 
 	//
 	// Get the Function Points, one for each pixel in the horizontal range.
@@ -132,7 +138,6 @@ void QFunctionConfigurator::loadSettings(QString settingsFile) {
 	qDebug() << "QFunctionConfigurator::loadSettings = " << settingsFile;
 	if (_config) {
 		_config->loadSettings(iniFile);
-		setConfig(_config, settingsFile);
 	}
 }
 
