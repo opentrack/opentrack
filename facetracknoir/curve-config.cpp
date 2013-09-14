@@ -239,5 +239,5 @@ void CurveConfigurationDialog::save() {
 	//
 	// Send a message to the main program, to update the Settings (for the tracker)
 	//
-	mainApp->updateSettings();
+    mainApp->update_tracker_settings();
 }

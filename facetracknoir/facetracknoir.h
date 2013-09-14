@@ -76,7 +76,7 @@ public:
 	FaceTrackNoIR(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~FaceTrackNoIR();
 
-	void updateSettings();						// Update the settings (let Tracker read INI-file).
+    void update_tracker_settings();						// Update the settings (let Tracker read INI-file).
 
     QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL
     Tracker *tracker;
