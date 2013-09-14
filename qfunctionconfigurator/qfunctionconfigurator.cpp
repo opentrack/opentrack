@@ -447,11 +447,12 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
     QList<QPointF> points = _config->getPoints();
+    const int refresh_delay = 50;
 
     if (movingPoint >= 0 && movingPoint < points.size()) {
         setCursor(Qt::ClosedHandCursor);
 
-        if (timer.isValid() && timer.elapsed() > 100)
+        if (timer.isValid() && timer.elapsed() > refresh_delay)
         {
             timer.restart();
             QPointF new_pt = normalizePoint(e->pos());
