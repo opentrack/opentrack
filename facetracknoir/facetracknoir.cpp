@@ -200,7 +200,7 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 //
 // Update the Settings, after a value has changed. This way, the Tracker does not have to re-start.
 //
-void FaceTrackNoIR::updateSettings() {
+void FaceTrackNoIR::update_tracker_settings() {
 	if ( tracker != NULL ) {
 		tracker->loadSettings();
 	}
