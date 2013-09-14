@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 {
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
-#elif defined(Q_OS_UNIX)
+#elif defined(Q_WS_X11)
     XInitThreads();
 #endif
     QApplication app(argc, argv);
