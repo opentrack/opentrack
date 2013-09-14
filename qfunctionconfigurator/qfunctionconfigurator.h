@@ -143,11 +143,6 @@ public slots:
     void setOutputEGU(QString);
     void setCaption(QString);
 
-	void resetCurve() {
-		qDebug() << "QFunctionConfigurator::resetCurve = " << strSettingsFile;
-		loadSettings( strSettingsFile );
-	}
-
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
@@ -193,10 +188,6 @@ private:
 	bool _draw_function;			// Flag to determine if the function should be (re-)drawn on the QPixmap
 	QPixmap _function;				// Image of the function (static unless edited by the user)
 
-	//
-	// Properties of the CurveConfigurator Widget
-	//
-	QString _title;								// Title do display in Widget and to load Settings
 	FunctionConfig* _config;
 };
 
