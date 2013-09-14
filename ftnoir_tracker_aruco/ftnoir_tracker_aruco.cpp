@@ -17,7 +17,7 @@
 #include <vector>
 #include <cstdio>
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #include <dshow.h>
 #else
 #include <unistd.h>
@@ -26,7 +26,7 @@
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;

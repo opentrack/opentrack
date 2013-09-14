@@ -7,7 +7,7 @@
 #include "facetracknoir/global-settings.h"
 #include <cmath>
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #include <dshow.h>
 #else
 #include <unistd.h>
@@ -16,7 +16,7 @@
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;
@@ -175,7 +175,7 @@ void Tracker::StartTracker(QFrame* videoframe)
     shm->pause = shm->terminate = shm->running = false;
     shm->timer = 0;
     subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir" + "\"");
 #else
     subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");

@@ -34,7 +34,7 @@ private slots:
 
 extern QList<QString> global_key_sequences;
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 extern QList<int> global_windows_key_sequences;
 #   undef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x0800
@@ -60,7 +60,7 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 class KeybindingWorkerImpl {
 private:
     LPDIRECTINPUT8 din;

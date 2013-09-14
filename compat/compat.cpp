@@ -7,7 +7,7 @@
 #define IN_FTNOIR_COMPAT
 #include "compat.h"
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 
 PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName, int mapSize)
 {
