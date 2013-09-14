@@ -30,7 +30,7 @@ void FTNoIR_Filter::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Accela" );
-    zoom_factor = iniFile.value("zoom-slowness", 0).toDouble();
+    zoom_factor = iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toDouble();
     rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
     translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
 	iniFile.endGroup ();
