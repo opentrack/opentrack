@@ -122,42 +122,7 @@ PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDes
     return 0;
 }
 
-#if 0
-static int camera_callback(XPLMCameraPosition_t* outCameraPosition, int inIsLosingControl, void* inRefCon) {
-    if (!inIsLosingControl && XPLMGetCycleNumber() > 0) {
-        //XPLMReadCameraPosition(outCameraPosition);
-        PortableLockedShm_lock(lck_posix);
-        outCameraPosition->heading = shm_posix->rx * 57.295781;
-        outCameraPosition->pitch = shm_posix->ry * 57.295781;
-        outCameraPosition->roll = shm_posix->rz * 57.295781;
-        outCameraPosition->x = XPLMGetDataf(view_x);
-        outCameraPosition->y = XPLMGetDataf(view_y);
-        outCameraPosition->z = XPLMGetDataf(view_z);
-        PortableLockedShm_unlock(lck_posix);
-        return 1;
-    }
-    return 0;
-}
-static float flight_loop (
-    float                inElapsedSinceLastCall,    
-    float                inElapsedTimeSinceLastFlightLoop,    
-    int                  inCounter,    
-    void *               inRefcon)
-{
-    XPLMControlCamera(xplm_ControlCameraForever, camera_callback, NULL);
-    // don't want it called anymore
-    return 0;
-}
-#endif
-
 PLUGIN_API void XPluginStop ( void ) {
-#if 0
-    // crashes due to race
-    if (lck_posix)
-        PortableLockedShm_free(lck_posix);
-    lck_posix = NULL;
-    shm_posix = NULL;
-#endif
 }
 
 PLUGIN_API void XPluginEnable ( void ) {
@@ -173,11 +138,6 @@ PLUGIN_API void XPluginDisable ( void ) {
     XPLMSetDataf(view_x, offset_x);
     XPLMSetDataf(view_y, offset_y);
     XPLMSetDataf(view_z, offset_z);
-#if 0
-    XPLMUnregisterFlightLoopCallback(flight_loop, NULL);
-    if (XPLMIsCameraBeingControlled(NULL))
-        XPLMDontControlCamera();
-#endif
 }
 
 PLUGIN_API void XPluginReceiveMessage(
