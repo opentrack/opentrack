@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
+    <width>620</width>
     <height>71</height>
    </rect>
   </property>
@@ -34,7 +34,7 @@
     <rect>
      <x>243</x>
      <y>10</y>
-     <width>76</width>
+     <width>111</width>
      <height>22</height>
     </rect>
    </property>
@@ -55,7 +55,7 @@
 background:none;</string>
    </property>
    <property name="text">
-    <string>Zoom slowness:</string>
+    <string>Zoom slowness</string>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="translation_alpha">
@@ -112,7 +112,7 @@ background:none;</string>
   <widget class="QSlider" name="slideZoom">
    <property name="geometry">
     <rect>
-     <x>325</x>
+     <x>346</x>
      <y>13</y>
      <width>189</width>
      <height>15</height>
@@ -146,7 +146,7 @@ background:none;</string>
   <widget class="QSpinBox" name="spinZoom">
    <property name="geometry">
     <rect>
-     <x>520</x>
+     <x>541</x>
      <y>10</y>
      <width>42</width>
      <height>22</height>
@@ -190,7 +190,7 @@ background:none;</string>
   <widget class="QPushButton" name="btnOK">
    <property name="geometry">
     <rect>
-     <x>409</x>
+     <x>430</x>
      <y>40</y>
      <width>75</width>
      <height>23</height>
@@ -203,7 +203,7 @@ background:none;</string>
   <widget class="QPushButton" name="btnCancel">
    <property name="geometry">
     <rect>
-     <x>490</x>
+     <x>511</x>
      <y>40</y>
      <width>75</width>
      <height>23</height>
