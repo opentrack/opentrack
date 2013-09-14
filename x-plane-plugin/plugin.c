@@ -132,9 +132,6 @@ PLUGIN_API void XPluginStop ( void ) {
 PLUGIN_API void XPluginEnable ( void ) {
     reinit_offset();
     XPLMRegisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
-#if 0
-    XPLMRegisterFlightLoopCallback(flight_loop, -1, NULL);
-#endif
 }
 
 PLUGIN_API void XPluginDisable ( void ) {
