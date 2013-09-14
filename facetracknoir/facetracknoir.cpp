@@ -965,11 +965,6 @@ void FaceTrackNoIR::createIconGroupBox()
 void FaceTrackNoIR::protocolSelected(int index)
 {
 	settingsDirty = true;
-	ui.btnShowServerControls->setEnabled ( true );
-
-    //setWindowIcon(QIcon(":/images/FaceTrackNoIR.png"));
-    //breaks with transparency -sh
-    //ui.btnShowServerControls->setIcon(icon);]
 }
 
 //
@@ -977,8 +972,7 @@ void FaceTrackNoIR::protocolSelected(int index)
 //
 void FaceTrackNoIR::trackingSourceSelected(int index)
 {
-	settingsDirty = true;
-	ui.btnShowEngineControls->setEnabled ( true );
+    settingsDirty = true;
 }
 
 //
@@ -998,7 +992,7 @@ void FaceTrackNoIR::profileSelected(int index)
 	//
 	// Save the name of the INI-file in the Registry.
 	//
-    settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.value(ui.iconcomboProfile->currentIndex(), ""));
+    settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.value(index, ""));
 	loadSettings();
 }
 
@@ -1008,101 +1002,6 @@ void FaceTrackNoIR::profileSelected(int index)
 void FaceTrackNoIR::filterSelected(int index)
 {
 	settingsDirty = true;
-
-	//QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	ui.btnShowFilterControls->setEnabled ( true );
-}
-
-//**************************************************************************************************//
-//**************************************************************************************************//
-//
-// Constructor for Keyboard-shortcuts-dialog
-//
-KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
-{
-	ui.setupUi( this );
-
-	QPoint offsetpos(100, 100);
-	this->move(parent->pos() + offsetpos);
-
-	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
-
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-	// Clear the Lists with key-descriptions and keycodes and build the Lists
-	// The strings will all be added to the ListBoxes for each Shortkey
-	//
-
-	// Add strings to the Listboxes.
-	//
-
-    for ( int i = 0; i < global_key_sequences.size(); i++) {
-        ui.cbxCenterKey->addItem(global_key_sequences.at(i));
-	}
-
-	// Load the settings from the current .INI-file
-	loadSettings();
-}
-
-//
-// Destructor for server-dialog
-//
-KeyboardShortcutDialog::~KeyboardShortcutDialog() {
-	qDebug() << "~KeyboardShortcutDialog() says: started";
-}
-
-//
-// OK clicked on server-dialog
-//
-void KeyboardShortcutDialog::doOK() {
-	save();
-	this->close();
-    mainApp->bindKeyboardShortcuts();
-}
-
-// override show event
-void KeyboardShortcutDialog::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
-void KeyboardShortcutDialog::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
 }
 
 void FaceTrackNoIR::bindKeyboardShortcuts()
@@ -1161,60 +1060,6 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     keybindingWorker->start();
 #endif
     }
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void KeyboardShortcutDialog::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "KB_Shortcuts" );
-	
-    ui.chkCenterShift->setChecked (iniFile.value ( "Shift_Center", 0 ).toBool());
-	ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
-	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
-
-    ui.cbxCenterKey->setCurrentIndex(iniFile.value("Key_index_Center", 0).toInt());
-
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void KeyboardShortcutDialog::save() {
-
-	qDebug() << "save() says: started";
-
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "KB_Shortcuts" );
-    iniFile.setValue ( "Key_index_Center", ui.cbxCenterKey->currentIndex() );
-	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
-	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
-	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
-
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-
-	//
-	// Send a message to the main program, to update the Settings (for the tracker)
-	//
-	mainApp->updateSettings();
 }
 
 void FaceTrackNoIR::shortcutRecentered()

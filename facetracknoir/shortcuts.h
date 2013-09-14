@@ -2,6 +2,10 @@
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QThread>
+#include <QMessageBox>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QSettings>
 #include "ui_ftnoir_keyboardshortcuts.h"
 
 class FaceTrackNoIR;
