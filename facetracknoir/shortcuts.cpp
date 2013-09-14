@@ -1,8 +1,8 @@
 #include "facetracknoir/facetracknoir.h"
 #include "facetracknoir/shortcuts.h"
 
-KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
+KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent )
+    : QWidget( parent, Qt::Dialog)
 {
     ui.setupUi( this );
 

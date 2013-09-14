@@ -511,7 +511,7 @@ void FaceTrackNoIR::loadSettings() {
 
     if (!_curve_config)
     {
-        _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
+        _curve_config = new CurveConfigurationDialog( this, this );
     }
 
     ((CurveConfigurationDialog*)_curve_config)->loadSettings();
@@ -900,7 +900,7 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
 	// Create if new
 	if (!_keyboard_shortcuts)
     {
-        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this, Qt::Dialog );
+        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this );
     }
 
 	// Show if already created
@@ -916,7 +916,7 @@ void FaceTrackNoIR::showCurveConfiguration() {
 	// Create if new
 	if (!_curve_config)
     {
-        _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
+        _curve_config = new CurveConfigurationDialog( this, this );
     }
 
 	// Show if already created
