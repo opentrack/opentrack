@@ -79,10 +79,9 @@ void FTNoIR_Filter::loadSettings() {
     iniFile.endGroup ();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
-                                       double *target_camera_position,
+void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
                                        double *new_camera_position,
-                                       double *last_post_filter)
+                                       const double *last_post_filter)
 {
     double delta;
     double new_alpha;

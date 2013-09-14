@@ -44,10 +44,9 @@ public:
     ~FTNoIR_Filter();
     void Initialize() {}
 
-    void FilterHeadPoseData(double *current_camera_position,
-                            double *target_camera_position,
+    void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position,
-                            double *last_post_filter);
+                            const double *last_post_filter);
     void receiveSettings(double smin, double smax, double sexpt);
 
 private:
@@ -61,7 +60,7 @@ private:
     double kMinSmoothing;
     double kMaxSmoothing;
     double kSmoothingScaleCurve;
-    
+    double current_camera_position[6];
     QMutex mutex;
 };
 
