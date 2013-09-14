@@ -39,6 +39,7 @@
 #include <QtGui>
 #include <QtDesigner/QDesignerExportWidget>
 #include <QPointF>
+#include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
@@ -171,6 +172,7 @@ private:
     QPointF graphicalizePoint (QPointF point) const;	// Convert the Point to a graphical Point
 
     int     movingPoint;
+    QElapsedTimer timer;
 
 	int MaxInput;					// Maximum input limit
 	int MaxOutput;					// Maximum output limit

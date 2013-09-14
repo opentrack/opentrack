@@ -136,10 +136,8 @@ void QFunctionConfigurator::saveSettings(QString settingsFile) {
 //
 void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
 {
-int i;
-QRect scale;
-
-    qDebug() << "QFunctionConfigurator::drawBackground.";
+    int i;
+    QRect scale;
 
     _background = QPixmap(fullRect.width(), fullRect.height());
     QPainter painter(&_background);
@@ -393,6 +391,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                 if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
                     bTouchingPoint = true;
                     movingPoint = i;
+                    timer.restart();
                     break;
                 }
             }
@@ -450,40 +449,40 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
     QList<QPointF> points = _config->getPoints();
 
     if (movingPoint >= 0 && movingPoint < points.size()) {
-
         setCursor(Qt::ClosedHandCursor);
 
-        //
-        // Change the currently moving Point.
-        //
-        QPointF new_pt = normalizePoint(e->pos());
-        points[movingPoint] = new_pt;
-        _config->movePoint(movingPoint, new_pt);
-        _draw_function = _draw_background = true;
-        update();
+        if (timer.isValid() && timer.elapsed() > 100)
+        {
+            timer.restart();
+            QPointF new_pt = normalizePoint(e->pos());
+            points[movingPoint] = new_pt;
+            _config->movePoint(movingPoint, new_pt);
+            _draw_function = _draw_background = true;
+            update();
+        }
     }
     else {
-
-        //
-        // Check to see if the cursor is touching one of the points.
-        //
-        bool bTouchingPoint = false;
-        if (_config) {
-
-            for (int i = 0; i < points.size(); i++) {
-                if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
-                    bTouchingPoint = true;
+        if (withinRect(e->pos(), rect()))
+        {
+            //
+            // Check to see if the cursor is touching one of the points.
+            //
+            bool bTouchingPoint = false;
+            if (_config) {
+                for (int i = 0; i < points.size(); i++) {
+                    if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
+                        bTouchingPoint = true;
+                    }
                 }
             }
-        }
 
-        if ( bTouchingPoint ) {
-            setCursor(Qt::OpenHandCursor);
+            if ( bTouchingPoint ) {
+                setCursor(Qt::OpenHandCursor);
+            }
+            else {
+                setCursor(Qt::ArrowCursor);
+            }
         }
-        else {
-            setCursor(Qt::ArrowCursor);
-        }
-
     }
 }
 
@@ -492,6 +491,7 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     QList<QPointF> points = _config->getPoints();
 
     if (e->button() == Qt::LeftButton) {
+        timer.invalidate();
         //qDebug()<<"releasing";
         if (movingPoint >= 0 && movingPoint < points.size()) {
             emit CurveChanged( true );
