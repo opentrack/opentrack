@@ -168,7 +168,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
     timUpdateHeadPose(this)
 {	
     ui.setupUi(this);
-	cameraDetected = false;
 
 	//
 	// Initialize Widget handles, to prevent memory-access errors.
@@ -570,6 +569,13 @@ void FaceTrackNoIR::loadSettings() {
 			break;
 		}
 	}
+
+    if (!_curve_config)
+    {
+        _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
+    }
+
+    ((CurveConfigurationDialog*) _curve_config)->loadSettings();
 
 	settingsDirty = false;
     looping = false;
