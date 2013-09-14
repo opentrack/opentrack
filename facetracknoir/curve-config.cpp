@@ -1,11 +1,6 @@
 #include "facetracknoir/facetracknoir.h"
 #include "facetracknoir/curve-config.h"
 #include <QDebug>
-//**************************************************************************************************//
-//**************************************************************************************************//
-//
-// Constructor for Curve-configuration-dialog
-//
 CurveConfigurationDialog::CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
 QWidget( parent , f)
 {
