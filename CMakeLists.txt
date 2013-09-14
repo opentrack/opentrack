@@ -430,7 +430,7 @@ endif()
         endif()
     endif()
 
-    if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
+    if(WIN32)
         target_link_libraries(opentrack-tracker-ht
                       "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
                       "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
