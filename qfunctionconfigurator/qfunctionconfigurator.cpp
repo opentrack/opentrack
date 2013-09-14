@@ -402,7 +402,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
             if (!bTouchingPoint) {
                 if (withinRect(e->pos(), range)) {
                     _config->addPoint(normalizePoint(e->pos()));
-                    movingPoint = -1;
                     emit CurveChanged( true );
                 }
             }
