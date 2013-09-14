@@ -15,6 +15,10 @@
 
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 
+#ifndef PLUGIN_API
+#define PLUGIN_API
+#endif
+
 // using Wine name to ease things
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
