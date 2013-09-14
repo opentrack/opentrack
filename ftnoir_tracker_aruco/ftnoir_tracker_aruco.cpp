@@ -79,7 +79,7 @@ static QList<QString> get_camera_names(void) {
         if (access(buf, R_OK | W_OK) == 0) {
             ret.append(buf);
         } else {
-            break;
+            continue;
         }
     }
 #endif
