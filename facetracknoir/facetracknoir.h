@@ -122,10 +122,6 @@ private:
 	QWidget *_curve_config;
 
 	void createIconGroupBox();
-//	void createMessageGroupBox();
-
-	/** helper **/
-	bool settingsDirty;
 
 	void GetCameraNameDX();
 	void loadSettings();
@@ -145,9 +141,6 @@ private slots:
 	void exit();
 //		void setIcon(int index);
 	void profileSelected(int index);
-	void protocolSelected(int index);
-	void filterSelected(int index);
-	void trackingSourceSelected(int index);
 
 	void showVideoWidget();
 	void showHeadPoseWidget();

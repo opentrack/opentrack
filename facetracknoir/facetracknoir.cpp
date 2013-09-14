@@ -139,14 +139,10 @@ void FaceTrackNoIR::setupFaceTrackNoIR() {
     //Load the tracker-settings, from the INI-file
 	loadSettings();
 
-	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
 	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
-	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
 
 	//Setup the timer for showing the headpose.
     connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
-    settingsDirty = false;
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -309,8 +305,6 @@ void FaceTrackNoIR::save() {
         iniFile.setValue ( "DLL",  filter == NULL ? "" : filter->filename);
     }
 	iniFile.endGroup ();
-
-	settingsDirty = false;
 }
 
 //
@@ -486,7 +480,6 @@ void FaceTrackNoIR::loadSettings() {
 
     ((CurveConfigurationDialog*)_curve_config)->loadSettings();
 
-	settingsDirty = false;
     looping = false;
 }
 
@@ -713,7 +706,6 @@ void FaceTrackNoIR::stopTracker( ) {
 void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
     if (tracker)
         tracker->setInvertAxis (axis, (invert != 0)?true:false );
-	settingsDirty = true;
 }
 
 /** Show the headpose in the widget (triggered by timer) **/
@@ -960,22 +952,6 @@ void FaceTrackNoIR::createIconGroupBox()
 }
 
 //
-// Handle changes of the Protocol selection
-//
-void FaceTrackNoIR::protocolSelected(int index)
-{
-	settingsDirty = true;
-}
-
-//
-// Handle changes of the Tracking Source selection
-//
-void FaceTrackNoIR::trackingSourceSelected(int index)
-{
-    settingsDirty = true;
-}
-
-//
 // Handle changes of the Profile selection
 //
 void FaceTrackNoIR::profileSelected(int index)
@@ -994,14 +970,6 @@ void FaceTrackNoIR::profileSelected(int index)
 	//
     settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.value(index, ""));
 	loadSettings();
-}
-
-//
-// Handle changes of the Filter selection
-//
-void FaceTrackNoIR::filterSelected(int index)
-{
-	settingsDirty = true;
 }
 
 void FaceTrackNoIR::bindKeyboardShortcuts()
