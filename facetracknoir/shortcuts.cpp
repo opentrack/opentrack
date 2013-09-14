@@ -123,11 +123,6 @@ void KeyboardShortcutDialog::save() {
     iniFile.endGroup ();
 
     settingsDirty = false;
-
-    //
-    // Send a message to the main program, to update the Settings (for the tracker)
-    //
-    mainApp->updateSettings();
 }
 
 #if defined(__WIN32) || defined(_WIN32)
