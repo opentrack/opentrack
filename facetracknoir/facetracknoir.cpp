@@ -347,7 +347,7 @@ void FaceTrackNoIR::open() {
 	 QString fileName = dialog.getOpenFileName(
 								this,
                                  tr("Select one FTNoir settings file"),
-								 QCoreApplication::applicationDirPath() + "/Settings/",
+								 QCoreApplication::applicationDirPath() + "/settings/",
                                  tr("Settings file (*.ini);;All Files (*)"),
                                                NULL);
 
@@ -368,7 +368,7 @@ void FaceTrackNoIR::save() {
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Tracking" );
@@ -422,14 +422,14 @@ void FaceTrackNoIR::saveAs()
 	// Get the current filename of the INI-file.
 	//
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
 	//
 	// Get the new filename of the INI-file.
 	//
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
 													oldFile,
-//													QCoreApplication::applicationDirPath() + "/Settings",
+//													QCoreApplication::applicationDirPath() + "/settings",
 													tr("Settings file (*.ini);;All Files (*)"));
 	if (!fileName.isEmpty()) {
 
@@ -472,7 +472,7 @@ void FaceTrackNoIR::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -614,7 +614,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
 
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     for (int i = 0; i < 6; i++)
@@ -1077,7 +1077,7 @@ void FaceTrackNoIR::profileSelected(int index)
 	// Read the current INI-file setting, to get the folder in which it's located...
 	//
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
 
 	//
@@ -1096,7 +1096,7 @@ void FaceTrackNoIR::filterSelected(int index)
 
 	//QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	ui.btnShowFilterControls->setEnabled ( true );
@@ -1194,7 +1194,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
 {
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
     iniFile.beginGroup ( "KB_Shortcuts" );
     int idxCenter = iniFile.value("Key_index_Center", 0).toInt();
@@ -1255,7 +1255,7 @@ void KeyboardShortcutDialog::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
@@ -1283,7 +1283,7 @@ void KeyboardShortcutDialog::save() {
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "KB_Shortcuts" );
@@ -1318,7 +1318,7 @@ QWidget( parent , f)
 	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
     QFunctionConfigurator* configs[6] = {
         ui.txconfig,
@@ -1424,7 +1424,7 @@ void CurveConfigurationDialog::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
@@ -1490,7 +1490,7 @@ void CurveConfigurationDialog::save() {
 
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
     ui.rxconfig->saveSettings(currentFile);
     ui.ryconfig->saveSettings(currentFile);

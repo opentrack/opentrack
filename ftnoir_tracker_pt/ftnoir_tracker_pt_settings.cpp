@@ -15,7 +15,7 @@ void TrackerSettings::load_ini()
 	qDebug("TrackerSettings::load_ini()");
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup( "PointTracker" );
@@ -58,7 +58,7 @@ void TrackerSettings::save_ini() const
 	qDebug("TrackerSettings::save_ini()");
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "PointTracker" );
@@ -102,7 +102,7 @@ void TrackerDialogSettings::load_ini()
 	qDebug("TrackerDialogSettings::load_ini()");
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup( "PointTrackerDialog" );
@@ -128,7 +128,7 @@ void TrackerDialogSettings::save_ini() const
 	qDebug("TrackerDialogSettings::save_ini()");
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "PointTrackerDialog" );
