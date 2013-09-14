@@ -91,7 +91,7 @@ static resolution_tuple resolution_choices[] = {
 static void load_settings(ht_config_t* config, Tracker* tracker)
 {
 	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
 	iniFile.beginGroup( "HT-Tracker" );
@@ -318,7 +318,7 @@ void TrackerControls::loadSettings()
 	names.prepend("Any available");
 	ui.cameraName->addItems(names);
 	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 	iniFile.beginGroup( "HT-Tracker" );
 	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
@@ -362,7 +362,7 @@ void TrackerControls::loadSettings()
 void TrackerControls::save()
 {
 	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
 
 	iniFile.beginGroup( "HT-Tracker" );
