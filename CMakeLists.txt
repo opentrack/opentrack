@@ -81,13 +81,13 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
 
     if(WIN32)
-      ENABLE_LANGUAGE(RC)
       if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-        set(CMAKE_RC_COMPILER_INIT windres)
+        #set(CMAKE_RC_COMPILER_INIT windres)
         SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
       else()
-        set(CMAKE_RC_COMPILER_INIT rc)
+        #set(CMAKE_RC_COMPILER_INIT rc)
       endif()
+      ENABLE_LANGUAGE(RC)
     endif(WIN32)
 
 if(SDK_FSUIPC AND WIN32)
@@ -371,7 +371,14 @@ endif()
 
         add_library(opentrack-proto-win32-mouse SHARED ${opentrack-proto-win32-mouse-c} ${opentrack-proto-win32-mouse-moc} ${opentrack-proto-win32-mouse-uih} ${opentrack-proto-win32-mouse-rcc})
         target_link_libraries(opentrack-proto-win32-mouse ${MY_QT_LIBS})
-		add_library(freetrackclient SHARED ${opentrack-freetrack-c})
+        add_library(freetrackclient SHARED ${opentrack-freetrack-c})
+        if(CMAKE_COMPILER_IS_GNUCC)
+            set_target_properties(freetrackclient PROPERTIES
+                                  LINK_FLAGS "-Wl,--kill-at"
+                                  LIBRARY_OUTPUT_NAME "freetrackclient.dll"
+                                  PREFIX "" SUFFIX ""
+            )
+        endif()
     endif()
 
     add_library(opentrack-proto-udp SHARED ${opentrack-proto-udp-c} ${opentrack-proto-udp-moc} ${opentrack-proto-udp-uih} ${opentrack-proto-udp-rcc})
