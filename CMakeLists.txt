@@ -432,7 +432,8 @@ endif()
         target_link_libraries(opentrack-tracker-ht
                       "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
                       "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib")
+                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+                      uuid)
     endif()
 	
     if(OpenCV_FOUND)
