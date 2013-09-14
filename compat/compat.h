@@ -21,8 +21,10 @@
 
 #if defined(IN_FTNOIR_COMPAT) && defined(_WIN32)
 #	define COMPAT_EXPORT __declspec(dllexport)
+#elif defined(_WIN32)
+#	define COMPAT_EXPORT __declspec(dllimport)
 #else
-#	define COMPAT_EXPORT
+#   define COMPAT_EXPORT
 #endif
 
 class COMPAT_EXPORT PortableLockedShm {
