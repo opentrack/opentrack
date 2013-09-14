@@ -56,7 +56,6 @@
 
 #include "ui_facetracknoir.h"
 #include "ui_ftnoir_keyboardshortcuts.h"
-#include "ui_ftnoir_curves.h"
 
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
@@ -64,6 +63,7 @@
 
 #include "global-settings.h"
 #include "tracker.h"
+#include "facetracknoir/curve-config.h"
 
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
@@ -161,27 +161,27 @@ private:
 
     bool looping;
 
-	private slots:
-		//file menu
-		void open();
-		void save();
-		void saveAs();
-		void exit();
+private slots:
+	//file menu
+	void open();
+	void save();
+	void saveAs();
+	void exit();
 //		void setIcon(int index);
-		void profileSelected(int index);
-		void protocolSelected(int index);
-		void filterSelected(int index);
-		void trackingSourceSelected(int index);
+	void profileSelected(int index);
+	void protocolSelected(int index);
+	void filterSelected(int index);
+	void trackingSourceSelected(int index);
 
-		void showVideoWidget();
-		void showHeadPoseWidget();
-		void showTrackerSettings();
-		void showSecondTrackerSettings();
+	void showVideoWidget();
+	void showHeadPoseWidget();
+	void showTrackerSettings();
+	void showSecondTrackerSettings();
 
-		void showServerControls();
-		void showFilterControls();
-		void showKeyboardShortcuts();
-		void showCurveConfiguration();
+	void showServerControls();
+	void showFilterControls();
+	void showKeyboardShortcuts();
+	void showCurveConfiguration();
 
         void setInvertAxis( Axis axis, int invert );
         void setInvertYaw(int invert) {
@@ -230,31 +230,6 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-};
-
-// Widget that has controls for Keyboard shortcuts.
-class CurveConfigurationDialog: public QWidget
-{
-    Q_OBJECT
-public:
-
-	explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
-    virtual ~CurveConfigurationDialog();
-	void showEvent ( QShowEvent * event );
-    void loadSettings();
-private:
-	Ui::UICCurveConfigurationDialog ui;
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FaceTrackNoIR *mainApp;
-
-private slots:
-	void doOK();
-	void doCancel();
-    void curveChanged( bool change ) { settingsDirty = true; }
-    void curveChanged( int change ) { settingsDirty = true; }
 };
 
 extern QList<QString> global_key_sequences;
