@@ -125,7 +125,7 @@ void KeyboardShortcutDialog::save() {
     settingsDirty = false;
 }
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 
 KeybindingWorkerImpl::~KeybindingWorkerImpl() {

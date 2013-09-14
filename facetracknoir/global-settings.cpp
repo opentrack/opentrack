@@ -1,6 +1,6 @@
 #include "global-settings.h"
 
-#if !(defined(__WIN32) || defined(_WIN32))
+#if !(defined(_WIN32))
 #   include <dlfcn.h>
 #endif
 
@@ -92,7 +92,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
 {
     this->filename = filename;
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
     handle = new QLibrary(fullPath);
     Dialog = (SETTINGS_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetDialog" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
     Constructor = (NULLARY_DYNAMIC_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
@@ -128,7 +128,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
 
 DynamicLibrary::~DynamicLibrary()
 {
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
     handle->unload();
 #else
     if (handle)

@@ -27,14 +27,14 @@
 #include <ftnoir_tracker_ht/ht-api.h>
 #include <QDebug>
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 #   include <windows.h>
 #   include <dshow.h>
 #endif
 
 #if defined(__APPLE__)
 #   define SONAME "dylib"
-#elif defined(_WIN32) || defined(__WIN32)
+#elif defined(_WIN32)
 #   define SONAME "dll"
 #else
 #   define SONAME "so"
@@ -86,7 +86,7 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
-    #if defined(__WIN32) || defined(_WIN32)
+    #if defined(_WIN32)
         keybindingWorker(NULL),
     #else
         keyCenter(0),
@@ -544,7 +544,7 @@ void FaceTrackNoIR::startTracker( ) {
         return;
     }
     
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     keybindingWorker = new KeybindingWorker(*this, keyCenter);
     keybindingWorker->start();
 #endif
@@ -657,7 +657,7 @@ void FaceTrackNoIR::startTracker( ) {
 /** stop tracking the face **/
 void FaceTrackNoIR::stopTracker( ) {	
     ui.game_name->setText("Not connected");
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     if (keybindingWorker)
     {
         keybindingWorker->should_quit = true;
@@ -958,7 +958,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     iniFile.beginGroup ( "KB_Shortcuts" );
     int idxCenter = iniFile.value("Key_index_Center", 0).toInt();
     
-#if !defined(_WIN32) && !defined(__WIN32)
+#if !defined(_WIN32)
     if (keyCenter) {
         delete keyCenter;
         keyCenter = NULL;
@@ -979,7 +979,6 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
             connect(keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
         }
     }
-
 #else
     keyCenter.keycode = 0;
     keyCenter.shift = keyCenter.alt = keyCenter.ctrl = 0;
@@ -993,7 +992,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     
     if (tracker) /* running already */
     {
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     if (keybindingWorker)
     {
         keybindingWorker->should_quit = true;
@@ -1011,7 +1010,7 @@ void FaceTrackNoIR::shortcutRecentered()
 {
     if (tracker)
     {
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
         MessageBeep(MB_OK);
 #else
         QApplication::beep();

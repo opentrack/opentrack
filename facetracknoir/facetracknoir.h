@@ -44,7 +44,7 @@
 #include <QKeySequence>
 #include <QtGui>
 #include <QString>
-#if !defined(_WIN32) && !defined(__WIN32)
+#if !defined(_WIN32)
 #	include <qxtglobalshortcut.h>
 #else
 #	include <windows.h>
@@ -97,7 +97,7 @@ public:
         return *pose.axes[idx];
     }
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     Key keyCenter;
     KeybindingWorker* keybindingWorker;
 #else 
