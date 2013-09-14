@@ -128,7 +128,7 @@ void KeyboardShortcutDialog::save() {
 #if defined(__WIN32) || defined(_WIN32)
 #include <windows.h>
 
-KeybindingWorkerDummy::~KeybindingWorkerDummy() {
+KeybindingWorkerImpl::~KeybindingWorkerImpl() {
     if (dinkeyboard) {
         dinkeyboard->Unacquire();
         dinkeyboard->Release();
@@ -137,7 +137,7 @@ KeybindingWorkerDummy::~KeybindingWorkerDummy() {
         din->Release();
 }
 
-KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter)
+KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter)
 : kCenter(keyCenter), window(w), should_quit(true), din(0), dinkeyboard(0)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
@@ -208,7 +208,7 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
     return false;
 }
 
-void KeybindingWorkerDummy::run() {
+void KeybindingWorkerImpl::run() {
     BYTE keystate[256];
     while (!should_quit)
     {
