@@ -46,7 +46,7 @@ class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 public:
 	FTNoIR_Filter();
 	~FTNoIR_Filter();
-    void FilterHeadPoseData(double *current_camera_position, double *target_camera_position, double *new_camera_position, double *last_post_filter_values);
+    void FilterHeadPoseData(const double *target_camera_position, double *new_camera_position, const double *last_post_filter_values);
     void Initialize() {
         first_run = true;
     }
@@ -56,6 +56,7 @@ private:
 	void loadSettings();
 	bool first_run;
     double rotation_alpha, translation_alpha, zoom_factor;
+    double current_camera_position[6];
 };
 
 //*******************************************************************************************************
