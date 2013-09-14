@@ -52,10 +52,7 @@ static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
 {
     Metadata* meta;
     if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-    {
-        delete lib;
         return false;
-    }
     meta->getFullName(&longName);
     meta->getIcon(&icon);
     delete meta;
