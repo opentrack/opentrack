@@ -9,7 +9,7 @@ class CurveConfigurationDialog: public QWidget
     Q_OBJECT
 public:
 
-    explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
+    explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
     virtual ~CurveConfigurationDialog();
     void showEvent ( QShowEvent * event );
     void loadSettings();

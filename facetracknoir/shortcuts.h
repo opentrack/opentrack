@@ -15,7 +15,7 @@ class KeyboardShortcutDialog: public QWidget
     Q_OBJECT
 public:
 
-	explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
+    explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
     virtual ~KeyboardShortcutDialog();
 	void showEvent ( QShowEvent * event );
 

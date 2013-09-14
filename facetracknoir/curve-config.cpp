@@ -1,8 +1,8 @@
 #include "facetracknoir/facetracknoir.h"
 #include "facetracknoir/curve-config.h"
 #include <QDebug>
-CurveConfigurationDialog::CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
+CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidget *parent) :
+QWidget( parent, Qt::Dialog )
 {
 	ui.setupUi( this );
 
