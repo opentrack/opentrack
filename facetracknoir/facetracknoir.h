@@ -62,6 +62,7 @@
 #include "global-settings.h"
 #include "tracker.h"
 #include "facetracknoir/curve-config.h"
+#include "facetracknoir/shortcuts.h"
 
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
