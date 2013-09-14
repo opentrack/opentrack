@@ -149,7 +149,6 @@ private:
 //	void createMessageGroupBox();
 
 	/** helper **/
-	bool cameraDetected;
 	bool settingsDirty;
 
 	void GetCameraNameDX();
@@ -242,10 +241,9 @@ public:
 	explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
     virtual ~CurveConfigurationDialog();
 	void showEvent ( QShowEvent * event );
-
+    void loadSettings();
 private:
 	Ui::UICCurveConfigurationDialog ui;
-	void loadSettings();
 	void save();
 
 	/** helper **/
