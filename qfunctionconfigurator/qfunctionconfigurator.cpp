@@ -244,7 +244,7 @@ QPointF currentPoint;
     prevPoint = graphicalizePoint( QPointF(0,0) );		// Start at the Axis
     double max = maxInputEGU();
     QPointF prev = graphicalizePoint(QPointF(0, 0));
-    double step = 1e-1 / (double) pixPerEGU_Input();
+    const double step = 1.01;
     for (double i = 0; i < max; i += step) {
         double val = _config->getValue(i);
         QPointF cur = graphicalizePoint(QPointF(i, val));
