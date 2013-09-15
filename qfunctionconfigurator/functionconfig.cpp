@@ -138,20 +138,20 @@ void FunctionConfig::reload() {
             int start = p1.x() * MEMOIZE_PRECISION;
 
             for (int j = start; j < end && j < _size; j++) {
-                float t = (j - start) / (float) (end - start);
-                float t2 = t*t;
-                float t3 = t*t*t;
+                double t = (j - start) / (double) (end - start);
+                double t2 = t*t;
+                double t3 = t*t*t;
 
-                int x = .5 * ((2 * p1.x()) +
+                int x = .5 * ((2. * p1.x()) +
                               (-p0.x() + p2.x()) * t +
-                              (2 * p0.x() - 5 * p1.x() + 4 * p2.x() - p3.x()) * t2 +
-                              (-p0.x() + 3 * p1.x() - 3 * p2.x() + p3.x()) * t3)
+                              (2. * p0.x() - 5. * p1.x() + 4. * p2.x() - p3.x()) * t2 +
+                              (-p0.x() + 3. * p1.x() - 3. * p2.x() + p3.x()) * t3)
                         * MEMOIZE_PRECISION;
 
-                float y = .5 * ((2 * p1.y()) +
+                float y = .5 * ((2. * p1.y()) +
                                  (-p0.y() + p2.y()) * t +
-                                 (2 * p0.y() - 5 * p1.y() + 4 * p2.y() - p3.y()) * t2 +
-                                 (-p0.y() + 3 * p1.y() - 3 * p2.y() + p3.y()) * t3);
+                                 (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
+                                 (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
 
                 if (x >= 0 && x < _size)
                     _data[x] = y;
