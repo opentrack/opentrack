@@ -494,7 +494,12 @@ endif()
     endif()
     add_executable(opentrack ${opentrack-win32-executable} ${opentrack-bin-c} ${opentrack-bin-moc} ${opentrack-bin-uih} ${opentrack-bin-rcc})
     if(WIN32)
-        target_link_libraries(opentrack "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib" "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib" "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib" winmm)
+        target_link_libraries(opentrack "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
+                                        "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
+                                        "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+                                        winmm
+                                        uuid
+        )
     else()
         target_link_libraries(opentrack X11)
     endif()
