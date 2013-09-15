@@ -1,6 +1,6 @@
 #include "facetracknoir/facetracknoir.h"
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 #include <strmif.h>
 #include <dshow.h>

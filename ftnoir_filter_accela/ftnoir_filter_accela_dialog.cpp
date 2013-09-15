@@ -133,7 +133,7 @@ void FilterControls::doCancel() {
 void FilterControls::loadSettings() {
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Filter::loadSettings2 says: iniFile = " << currentFile;
@@ -141,8 +141,8 @@ void FilterControls::loadSettings() {
     //qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
 
 	iniFile.beginGroup ( "Accela" );
-    ui.slideZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
-    ui.spinZoom->setValue(iniFile.value("zoom-slowness", 0).toInt());
+    ui.slideZoom->setValue(iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toInt());
+    ui.spinZoom->setValue(iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toInt());
     ui.rotation_alpha->setValue(iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble());
     ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
 	iniFile.endGroup ();
@@ -156,7 +156,7 @@ void FilterControls::loadSettings() {
 void FilterControls::save() {
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;

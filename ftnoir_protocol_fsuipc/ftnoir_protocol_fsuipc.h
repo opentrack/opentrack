@@ -28,13 +28,12 @@
 #ifndef INCLUDED_FSUIPCSERVER_H
 #define INCLUDED_FSUIPCSERVER_H
 
-#include "Windows.h"
+#include <windows.h>
 #include <stdlib.h>
 #include "FSUIPC_User.h"
 #include "facetracknoir/global-settings.h"
-
-#include "..\ftnoir_protocol_base\ftnoir_protocol_base.h"
-#include "ui_FTNoIR_FSUIPCcontrols.h"
+#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "ui_ftnoir_fsuipccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>

@@ -3,14 +3,14 @@
  <class>UICPTClientControls</class>
  <widget class="QWidget" name="UICPTClientControls">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
-    <height>489</height>
+    <width>468</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -962,7 +962,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/clip_side.png</pixmap>
+                  <pixmap>:/resources/clip_side.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="clip_theight_spin">
@@ -1085,7 +1085,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/clip_front.png</pixmap>
+                  <pixmap>:/resources/clip_front.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QLabel" name="label_53">
@@ -1140,7 +1140,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/cap_side.png</pixmap>
+                  <pixmap>:/resources/cap_side.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="cap_height_spin">
@@ -1250,7 +1250,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/cap_front.png</pixmap>
+                  <pixmap>:/resources/cap_front.png</pixmap>
                  </property>
                 </widget>
                 <widget class="QSpinBox" name="cap_width_spin">
@@ -1659,7 +1659,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="ftnoir_tracker_pt.qrc">:/resources/logo_ir.png</pixmap>
+        <pixmap>:/resources/logo_ir.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -1738,9 +1738,7 @@
   <tabstop>ok_button</tabstop>
   <tabstop>cancel_button</tabstop>
  </tabstops>
- <resources>
-  <include location="ftnoir_tracker_pt.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>dynpose_check</sender>
