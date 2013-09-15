@@ -4,10 +4,6 @@ Open Track
 Modular headtracking program that supports multiple face-trackers, filters and game-protocols. Among the trackers are the SM FaceAPI, AIC Inertial Head Tracker and PointTracker (IR-tracker derived from FreeTrack). Movements of the head are registered by a simple web cam: no additional hardware is required! 
 
 
-Objective
-------------------
-
-We actually only have one objective: make gaming fun!
 
 Supported Protocols
 ---------------------
@@ -33,13 +29,13 @@ Know issues
 
 * 
 
-To-Do
------------------
-
-* 
 
 Contributors
 -------------------
 
 * Ron Hendriks
+* Wim Vriend
+* Ron Hendriks
 * [Stanislaw Halik](https://github.com/sthalik)
+
+
