@@ -158,7 +158,7 @@ void FTControls::loadSettings() {
 
 	iniFile.beginGroup ( "FTIR" );
 	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
-	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 1 ).toBool());
+	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 0 ).toBool());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
