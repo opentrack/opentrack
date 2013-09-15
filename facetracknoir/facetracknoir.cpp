@@ -401,7 +401,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "opentrack (1.8 alpha) - " + pathInfo.fileName() );
+    setWindowTitle ( "opentrack 2.0a1 - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
