@@ -46,7 +46,6 @@ public:
 	virtual void Initialize(QFrame *videoframe);
 #ifdef OPENTRACK_API
     virtual void StartTracker(QFrame* parent_window);
-    virtual void WaitForExit() {}
     virtual bool GiveHeadPoseData(double* data);
 #else
 	virtual void StartTracker(HWND parent_window);

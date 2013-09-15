@@ -137,6 +137,8 @@ Tracker::Tracker()
 
 Tracker::~Tracker()
 {
+    stop = true;
+    wait();
 	if (layout)
 		delete layout;
 	if (videoWidget)
