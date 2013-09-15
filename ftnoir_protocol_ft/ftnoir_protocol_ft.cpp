@@ -85,7 +85,7 @@ void FTNoIR_Protocol::loadSettings() {
 	//
 	iniFile.beginGroup ( "FTIR" );
 	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
-	useDummyExe	= iniFile.value ( "useDummyExe", 1 ).toBool();
+	useDummyExe	= iniFile.value ( "useDummyExe", 0 ).toBool();
 	iniFile.endGroup ();
 }
 
