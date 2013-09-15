@@ -190,15 +190,6 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 }
 
 //
-// Update the Settings, after a value has changed. This way, the Tracker does not have to re-start.
-//
-void FaceTrackNoIR::update_tracker_settings() {
-	if ( tracker != NULL ) {
-		tracker->loadSettings();
-	}
-}
-
-//
 // Get a pointer to the video-widget, to use in the DLL
 //
 QFrame *FaceTrackNoIR::get_video_widget() {

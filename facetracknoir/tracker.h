@@ -99,7 +99,6 @@ protected:
 public:
 	Tracker( FaceTrackNoIR *parent );
     ~Tracker();
-	void loadSettings();							// Load settings from the INI-file
 
     void setInvertAxis(Axis axis, bool invert);
 
