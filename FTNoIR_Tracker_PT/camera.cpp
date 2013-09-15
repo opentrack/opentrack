@@ -14,6 +14,11 @@ using namespace cv;
 #include <unistd.h>
 #endif
 
+#if defined(OPENTRACK_API) && defined(_WIN32)
+#include <windows.h>
+#include <dshow.h>
+#endif
+
 #ifdef OPENTRACK_API
 void get_camera_device_names(std::vector<std::string>& device_names) {
 #   if defined(_WIN32)
@@ -23,7 +28,7 @@ void get_camera_device_names(std::vector<std::string>& device_names) {
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
     {
-        return ret;
+        return;
     }
     // Obtain a class enumerator for the video compressor category.
     IEnumMoniker *pEnumCat = NULL;
