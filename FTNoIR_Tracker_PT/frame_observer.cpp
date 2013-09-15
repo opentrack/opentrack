@@ -11,7 +11,7 @@
 FrameProvider::~FrameProvider()
 {
 	QMutexLocker lock(&observer_mutex);
-	for (auto iter=frame_observers.begin(); iter!=frame_observers.end(); ++iter)
+    for (std::set<FrameObserver*>::iterator iter=frame_observers.begin(); iter!=frame_observers.end(); ++iter)
 	{
 		(*iter)->on_frame_provider_destroy();
 	}

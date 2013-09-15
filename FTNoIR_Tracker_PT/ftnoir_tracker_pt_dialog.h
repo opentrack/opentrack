@@ -8,7 +8,11 @@
 #ifndef FTNOIR_TRACKER_PT_DIALOG_H
 #define FTNOIR_TRACKER_PT_DIALOG_H
 
+#ifdef OPENTRACK_API
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#else
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#endif
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "trans_calib.h"

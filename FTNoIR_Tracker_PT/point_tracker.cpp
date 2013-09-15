@@ -69,6 +69,13 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	get_d_order(points, d_order);
 }
 
+#ifdef OPENTRACK_API
+static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
+{
+    return a.first < b.first;
+}
+#endif
+
 void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]) const
 {
 	// get sort indices with respect to d scalar product
@@ -77,10 +84,17 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 		d_vals.push_back(pair<float, int>(d.dot(points[i]), i));
 
 	struct
-	{
-		bool operator()(const pair<float, int>& a, const pair<float, int>& b) { return a.first < b.first; }
-	} comp;
-	sort(d_vals.begin(), d_vals.end(), comp);
+    {
+        bool operator()(const pair<float, int>& a, const pair<float, int>& b) { return a.first < b.first; }
+    } comp;
+    std::sort(d_vals.begin(),
+              d_vals.end(),
+#ifdef OPENTRACK_API
+              d_vals_sort
+#else
+              comp
+#endif
+              );
 
 	for (int i = 0; i<points.size(); ++i)
 		d_order[i] = d_vals[i].second;
@@ -126,8 +140,15 @@ bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 		reset();
 	}
 
+    bool no_model =
+#ifdef OPENTRACK_API
+        point_model.get() == NULL;
+#else
+        !point_model;
+#endif
+
 	// if there is a pointtracking problem, reset the velocities
-	if (!point_model || points.size() != PointModel::N_POINTS) 
+    if (no_model || points.size() != PointModel::N_POINTS)
 	{
 		//qDebug()<<"Wrong number of points!";
 		reset_velocities();
