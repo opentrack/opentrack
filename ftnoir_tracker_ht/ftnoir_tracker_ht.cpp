@@ -149,6 +149,10 @@ Tracker::Tracker() : lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)), fres
 
 Tracker::~Tracker()
 {
+    if (shm) {
+        shm->terminate = true;
+        subprocess.waitForFinished(5000);
+    }
     subprocess.kill();
     if (shm)
         shm->terminate = true;

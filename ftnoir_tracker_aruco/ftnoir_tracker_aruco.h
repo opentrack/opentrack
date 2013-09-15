@@ -27,13 +27,6 @@ public:
     void StartTracker(QFrame* frame);
     bool GiveHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
-    bool NeedsTimeToFinish() {
-        return true;
-    }
-    void WaitForExit() {
-        stop = true;
-        wait();
-    }
     void run();
 private:
     QMutex mtx;

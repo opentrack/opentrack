@@ -45,6 +45,8 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
+    should_quit = true;
+    wait();
 	if (inSocket) {
 		inSocket->close();
 		delete inSocket;

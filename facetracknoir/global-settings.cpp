@@ -9,13 +9,6 @@ SelectedLibraries* Libraries = NULL;
 SelectedLibraries::~SelectedLibraries()
 {
     if (pTracker) {
-        pTracker->WaitForExit();
-    }
-    if (pSecondTracker) {
-        pSecondTracker->WaitForExit();
-    }
-
-    if (pTracker) {
         delete pTracker;
         pTracker = NULL;
     }

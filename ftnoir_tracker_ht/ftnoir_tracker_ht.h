@@ -27,16 +27,6 @@ public:
     bool GiveHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
 	ht_shm_t* shm;
-    bool NeedsTimeToFinish() {
-        return true;
-    }
-    void WaitForExit() {
-        if (shm) {
-            shm->terminate = true;
-            subprocess.waitForFinished(5000);
-        }
-        subprocess.kill();
-    }
 private:
     QTimer timer;
     PortableLockedShm lck_shm;
