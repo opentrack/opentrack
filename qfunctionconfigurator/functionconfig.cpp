@@ -39,6 +39,11 @@ FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
 	reload();
 }
 
+void FunctionConfig::setTrackingActive(bool blnActive)
+{
+    _tracking_active = blnActive;
+}
+
 FunctionConfig::FunctionConfig() :
     _tracking_active(false),
     _max_Input(0),

@@ -28,8 +28,6 @@ if(NOT SDK_FACEAPI_ONLY)
     find_package(OpenCV)
     find_package(Qt4 COMPONENTS QtCore QtGui QtDesigner QtXml QtNetwork REQUIRED)
 
-    add_definitions(-DFTNOIR_FILTER_BASE_LIB -DFTNOIR_TRACKER_BASE_LIB -DFTNOIR_PROTOCOL_BASE_LIB)
-
     if(NOT WIN32)
         if(NOT QXT_QXTGUI_LIB_RELEASE)
             find_package(Qxt COMPONENTS QxtGui REQUIRED)
@@ -297,7 +295,6 @@ endif()
         SET (CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS_INIT} -rdynamic CACHE STRING "Flags used by the linker during the creation of modules.")
     endif()
 
-
     add_library(opentrack-compat SHARED ${opentrack-compat-c})
     if(NOT WIN32)
         target_link_libraries(opentrack-compat rt)
@@ -314,8 +311,8 @@ endif()
 
     add_library(opentrack-pose-widget SHARED ${opentrack-pose-widget-c} ${opentrack-pose-widget-moc} ${opentrack-pose-widget-rcc})
     target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
-    add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c} ${opentrack-spline-widget-moc} ${MY_QT_LIBS} ${QT_QTDESIGNER_LIBRARY_RELEASE})
-    target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
+    add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c} ${opentrack-spline-widget-moc})
+    target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS} ${QT_QTDESIGNER_LIBRARY_RELEASE})
 
     add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-moc} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
     target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
@@ -508,6 +505,7 @@ endif()
     if(NOT WIN32)
         target_link_libraries(opentrack dl)
     endif()
+    set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 endif()
 
 # make install

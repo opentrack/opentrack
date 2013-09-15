@@ -6,15 +6,14 @@
  * notice appear in all copies.
  */
 
+#pragma once
+
 #include <QList>
 #include <QPointF>
 #include <QString>
 #include <QSettings>
 #include <QMutex>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-
-#ifndef FUNCTION_CONFIG_H
-#define FUNCTION_CONFIG_H
 
 #define MEMOIZE_PRECISION 500
 
@@ -69,10 +68,6 @@ public:
 	void saveSettings(QSettings& settings);
 	void loadSettings(QSettings& settings);
 
-	void setTrackingActive(bool blnActive) {
-		_tracking_active = blnActive;
-	}
+	void setTrackingActive(bool blnActive);
     QString getTitle() { return _title; }
 };
-
-#endif

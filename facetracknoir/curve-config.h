@@ -8,7 +8,6 @@ class CurveConfigurationDialog: public QWidget
 {
     Q_OBJECT
 public:
-
     explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
     virtual ~CurveConfigurationDialog();
     void showEvent ( QShowEvent * event );

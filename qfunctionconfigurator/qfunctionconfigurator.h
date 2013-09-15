@@ -50,9 +50,11 @@
 // The Function is coded in a separate Class and can exists, without the Widget. When the widget is displayed (therefore 'created'), the Function can be attached to the
 // Widget and the Widget used to change the Function.
 //
+
 class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
+    
     Q_PROPERTY(int maxInputEGU READ maxInputEGU WRITE setmaxInputEGU)
     Q_PROPERTY(int maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU)
     Q_PROPERTY(int pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input)

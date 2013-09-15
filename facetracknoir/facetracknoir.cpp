@@ -24,7 +24,7 @@
 #include "facetracknoir.h"
 #include "shortcuts.h"
 #include "tracker.h"
-#include <ftnoir_tracker_ht/ht-api.h>
+#include "curve-config.h"
 #include <QDebug>
 
 #if defined(_WIN32)
