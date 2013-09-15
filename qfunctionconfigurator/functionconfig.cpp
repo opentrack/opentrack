@@ -33,7 +33,7 @@ FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
 	_max_Input = intMaxInput;					// Added WVR 20120805
 	_max_Output = intMaxOutput;
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );
     loadSettings(iniFile);
 	reload();

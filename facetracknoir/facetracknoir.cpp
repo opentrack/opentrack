@@ -22,17 +22,19 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
 #include "facetracknoir.h"
+#include "shortcuts.h"
 #include "tracker.h"
 #include <ftnoir_tracker_ht/ht-api.h>
 #include <QDebug>
 
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
 #   include <windows.h>
+#   include <dshow.h>
 #endif
 
 #if defined(__APPLE__)
 #   define SONAME "dylib"
-#elif defined(_WIN32) || defined(__WIN32)
+#elif defined(_WIN32)
 #   define SONAME "dll"
 #else
 #   define SONAME "so"
@@ -40,121 +42,51 @@
 
 #include <iostream>
 
-#if defined(__WIN32) || defined(_WIN32)
-#undef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x0800
-#include <dshow.h>
-#include <dinput.h>
-
-KeybindingWorkerDummy::~KeybindingWorkerDummy() {
-    if (dinkeyboard) {
-        dinkeyboard->Unacquire();
-        dinkeyboard->Release();
-    }
-    if (din)
-        din->Release();
-}
-
-KeybindingWorkerDummy::KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter)
-: kCenter(keyCenter), window(w), should_quit(true), din(0), dinkeyboard(0)
-{
-    if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
-        qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
-        return;
-    }
-    if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
-        din->Release();
-        din = 0;
-        qDebug() << "setup CreateDevice function failed!" << GetLastError();
-        return;
-    }
-    if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
-        qDebug() << "setup SetDataFormat function failed!" << GetLastError();
-        dinkeyboard->Release();
-        dinkeyboard = 0;
-        din->Release();
-        din = 0;
-        return;
-    }
-    
-    if (dinkeyboard->SetCooperativeLevel(window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
-        dinkeyboard->Release();
-        din->Release();
-        din = 0;
-        dinkeyboard = 0;
-        qDebug() << "setup SetCooperativeLevel function failed!" << GetLastError();
-        return;
-    }
-    if (dinkeyboard->Acquire() != DI_OK)
-    {
-        dinkeyboard->Release();
-        din->Release();
-        din = 0;
-        dinkeyboard = 0;
-        qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
-        return;
-    }
-    should_quit = false;
-}
-
-#define PROCESS_KEY(k, s) \
-    if (isKeyPressed(&k, keystate) && (!k.ever_pressed ? (k.timer.start(), k.ever_pressed = true) : k.timer.restart() > 100)) \
-        window.s();
-
-static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
-    bool shift;
-    bool ctrl;
-    bool alt;
-
-    if (keystate[key->keycode] & 0x80) {
-        shift = ( (keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80) );
-        ctrl  = ( (keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80) );
-        alt   = ( (keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80) );
-
-        //
-        // If one of the modifiers is needed and not pressed, return false.
-        //
-        if (key->shift && !shift) return false;
-        if (key->ctrl && !ctrl) return false;
-        if (key->alt && !alt) return false;
-
-        //
-        // All is well!
-        //
-        return true;
-    }
-    return false;
-}
-
-void KeybindingWorkerDummy::run() {
-    BYTE keystate[256];
-    while (!should_quit)
-    {
-        if (dinkeyboard->GetDeviceState(256, (LPVOID)keystate) != DI_OK) {
-            qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
-            Sleep(25);
-            continue;
-        }
-        
-        PROCESS_KEY(kCenter, shortcutRecentered);
-        
-        Sleep(25);
-    }
-}
-#else
-#endif
-
 #ifdef _MSC_VER
 #   define LIB_PREFIX ""
 #else
 #   define LIB_PREFIX "lib"
 #endif
 
+static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
+{
+    Metadata* meta;
+    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
+        return false;
+    meta->getFullName(&longName);
+    meta->getIcon(&icon);
+    delete meta;
+    return true;
+}
+
+static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx, QComboBox* cbx2)
+{
+    QDir settingsDir( QCoreApplication::applicationDirPath() );
+    QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
+    for ( int i = 0; i < filenames.size(); i++) {
+        QIcon icon;
+        QString longName;
+        QString str = filenames.at(i);
+        DynamicLibrary* lib = new DynamicLibrary(str);
+        qDebug() << "Loading" << str;
+        std::cout.flush();
+        if (!get_metadata(lib, longName, icon))
+        {
+            delete lib;
+            continue;
+        }
+        list.push_back(lib);
+        cbx->addItem(icon, longName);
+        if (cbx2)
+            cbx2->addItem(icon, longName);
+    }
+}
+
 //
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
-    #if defined(__WIN32) || defined(_WIN32)
+    #if defined(_WIN32)
         keybindingWorker(NULL),
     #else
         keyCenter(0),
@@ -168,7 +100,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
     timUpdateHeadPose(this)
 {	
     ui.setupUi(this);
-	cameraDetected = false;
 
 	//
 	// Initialize Widget handles, to prevent memory-access errors.
@@ -178,7 +109,58 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 
 	tracker = 0;
 
-	setupFaceTrackNoIR();
+    // this is needed for Wine plugin subprocess
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    // if we simply place a global variable with THeadPoseData,
+    // it gets initialized and pulls in QSettings before
+    // main() starts. program can and will crash.
+
+    ui.headPoseWidget->show();
+    ui.video_frame->hide();
+
+    // menu objects will be connected with the functions in FaceTrackNoIR class
+    connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
+    connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
+    connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
+
+    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
+    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
+    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
+    connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
+    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
+    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
+
+    // Connect checkboxes
+    connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
+    connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
+    connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(setInvertPitch(int)));
+    connect(ui.chkInvertX, SIGNAL(stateChanged(int)), this, SLOT(setInvertX(int)));
+    connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
+    connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
+
+    // button methods connect with methods in this class
+    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
+    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
+
+    //read the camera-name, using DirectShow
+    GetCameraNameDX();
+
+    ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
+    dlopen_filters.push_back((DynamicLibrary*) NULL);
+    ui.iconcomboFilter->addItem(QIcon(), "None");
+
+    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol, NULL);
+    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
+    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter, NULL);
+
+    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+
+    //Setup the timer for showing the headpose.
+    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+
+    //Load the tracker-settings, from the INI-file
+    loadSettings();
 
     //Q_INIT_RESOURCE(PoseWidget);
 
@@ -197,58 +179,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) :
 	ui.lcdNumOutputRotZ->setVisible(false);
 }
 
-/** sets up all objects and connections to buttons */
-void FaceTrackNoIR::setupFaceTrackNoIR() {
-    // if we simply place a global variable with THeadPoseData,
-    // it gets initialized and pulls in QSettings before
-    // main() starts. program can and will crash.
-
-	ui.headPoseWidget->show();
-	ui.video_frame->hide();
-
-	// menu objects will be connected with the functions in FaceTrackNoIR class
-	connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
-	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
-	connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
-
-	connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
-	connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
-	connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
-	connect(ui.btnShowSecondTrackerSettings, SIGNAL(clicked()), this, SLOT(showSecondTrackerSettings()));
-	connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
-	connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
-
-	// Connect checkboxes
-	connect(ui.chkInvertYaw, SIGNAL(stateChanged(int)), this, SLOT(setInvertYaw(int)));
-	connect(ui.chkInvertRoll, SIGNAL(stateChanged(int)), this, SLOT(setInvertRoll(int)));
-	connect(ui.chkInvertPitch, SIGNAL(stateChanged(int)), this, SLOT(setInvertPitch(int)));
-	connect(ui.chkInvertX, SIGNAL(stateChanged(int)), this, SLOT(setInvertX(int)));
-	connect(ui.chkInvertY, SIGNAL(stateChanged(int)), this, SLOT(setInvertY(int)));
-	connect(ui.chkInvertZ, SIGNAL(stateChanged(int)), this, SLOT(setInvertZ(int)));
-
-	// button methods connect with methods in this class
-	connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
-	connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-
-	//read the camera-name, using DirectShow
-	GetCameraNameDX();
-	
-	//Create the system-tray and connect the events for that.
-	createIconGroupBox();
-
-    //Load the tracker-settings, from the INI-file
-	loadSettings();
-
-	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
-	connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
-	connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-	connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
-
-	//Setup the timer for showing the headpose.
-    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
-    settingsDirty = false;
-}
-
 /** destructor stops the engine and quits the faceapi **/
 FaceTrackNoIR::~FaceTrackNoIR() {
 
@@ -262,7 +192,7 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 //
 // Update the Settings, after a value has changed. This way, the Tracker does not have to re-start.
 //
-void FaceTrackNoIR::updateSettings() {
+void FaceTrackNoIR::update_tracker_settings() {
 	if ( tracker != NULL ) {
 		tracker->loadSettings();
 	}
@@ -347,7 +277,7 @@ void FaceTrackNoIR::open() {
 	 QString fileName = dialog.getOpenFileName(
 								this,
                                  tr("Select one FTNoir settings file"),
-								 QCoreApplication::applicationDirPath() + "/Settings/",
+								 QCoreApplication::applicationDirPath() + "/settings/",
                                  tr("Settings file (*.ini);;All Files (*)"),
                                                NULL);
 
@@ -355,8 +285,10 @@ void FaceTrackNoIR::open() {
 	// If a file was selected, save it's name and read it's contents.
 	//
 	if (! fileName.isEmpty() ) {
-		QSettings settings("opentrack");	// Registry settings (in HK_USER)
-        settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
+        {
+            QSettings settings("opentrack");	// Registry settings (in HK_USER)
+            settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
+        }
 		loadSettings();
     }
 }
@@ -368,7 +300,7 @@ void FaceTrackNoIR::save() {
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Tracking" );
@@ -407,8 +339,6 @@ void FaceTrackNoIR::save() {
         iniFile.setValue ( "DLL",  filter == NULL ? "" : filter->filename);
     }
 	iniFile.endGroup ();
-
-	settingsDirty = false;
 }
 
 //
@@ -422,14 +352,14 @@ void FaceTrackNoIR::saveAs()
 	// Get the current filename of the INI-file.
 	//
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
 	//
 	// Get the new filename of the INI-file.
 	//
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
 													oldFile,
-//													QCoreApplication::applicationDirPath() + "/Settings",
+//													QCoreApplication::applicationDirPath() + "/settings",
 													tr("Settings file (*.ini);;All Files (*)"));
 	if (!fileName.isEmpty()) {
 
@@ -472,7 +402,7 @@ void FaceTrackNoIR::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -571,7 +501,13 @@ void FaceTrackNoIR::loadSettings() {
 		}
 	}
 
-	settingsDirty = false;
+    if (!_curve_config)
+    {
+        _curve_config = new CurveConfigurationDialog( this, this );
+    }
+
+    ((CurveConfigurationDialog*)_curve_config)->loadSettings();
+
     looping = false;
 }
 
@@ -603,7 +539,7 @@ void FaceTrackNoIR::startTracker( ) {
         return;
     }
     
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     keybindingWorker = new KeybindingWorker(*this, keyCenter);
     keybindingWorker->start();
 #endif
@@ -614,7 +550,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
 
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     for (int i = 0; i < 6; i++)
@@ -716,7 +652,7 @@ void FaceTrackNoIR::startTracker( ) {
 /** stop tracking the face **/
 void FaceTrackNoIR::stopTracker( ) {	
     ui.game_name->setText("Not connected");
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     if (keybindingWorker)
     {
         keybindingWorker->should_quit = true;
@@ -798,7 +734,6 @@ void FaceTrackNoIR::stopTracker( ) {
 void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
     if (tracker)
         tracker->setInvertAxis (axis, (invert != 0)?true:false );
-	settingsDirty = true;
 }
 
 /** Show the headpose in the widget (triggered by timer) **/
@@ -957,7 +892,7 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
 	// Create if new
 	if (!_keyboard_shortcuts)
     {
-        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this, Qt::Dialog );
+        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this );
     }
 
 	// Show if already created
@@ -973,7 +908,7 @@ void FaceTrackNoIR::showCurveConfiguration() {
 	// Create if new
 	if (!_curve_config)
     {
-        _curve_config = new CurveConfigurationDialog( this, this, Qt::Dialog );
+        _curve_config = new CurveConfigurationDialog( this, this );
     }
 
 	// Show if already created
@@ -988,82 +923,6 @@ void FaceTrackNoIR::exit() {
 	QCoreApplication::exit(0);
 }
 
-static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
-{
-    Metadata* meta;
-    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-    {
-        delete lib;
-        return false;
-    }
-    meta->getFullName(&longName);
-    meta->getIcon(&icon);
-    delete meta;
-    return true;
-}
-
-static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox* cbx)
-{
-    QDir settingsDir( QCoreApplication::applicationDirPath() );
-    QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
-    for ( int i = 0; i < filenames.size(); i++) {
-        QIcon icon;
-        QString longName;
-        QString str = filenames.at(i);
-        DynamicLibrary* lib = new DynamicLibrary(str);
-        qDebug() << "Loading" << str;
-        std::cout.flush();
-        if (!get_metadata(lib, longName, icon))
-        {
-            delete lib;
-            continue;
-        }
-        list.push_back(lib);
-        cbx->addItem(icon, longName);
-    }
-}
-
-//
-// Setup the icons for the comboBoxes
-//
-void FaceTrackNoIR::createIconGroupBox()
-{   
-    ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
-    dlopen_filters.push_back((DynamicLibrary*) NULL);
-    ui.iconcomboFilter->addItem(QIcon(), "None");
-    
-    fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol);
-    fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource);
-    fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter);
-
-	connect(ui.iconcomboProtocol, SIGNAL(currentIndexChanged(int)), this, SLOT(protocolSelected(int)));
-    connect(ui.iconcomboTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-    connect(ui.iconcomboFilter, SIGNAL(currentIndexChanged(int)), this, SLOT(filterSelected(int)));
-	connect(ui.cbxSecondTrackerSource, SIGNAL(currentIndexChanged(int)), this, SLOT(trackingSourceSelected(int)));
-}
-
-//
-// Handle changes of the Protocol selection
-//
-void FaceTrackNoIR::protocolSelected(int index)
-{
-	settingsDirty = true;
-	ui.btnShowServerControls->setEnabled ( true );
-
-    //setWindowIcon(QIcon(":/images/FaceTrackNoIR.png"));
-    //breaks with transparency -sh
-    //ui.btnShowServerControls->setIcon(icon);]
-}
-
-//
-// Handle changes of the Tracking Source selection
-//
-void FaceTrackNoIR::trackingSourceSelected(int index)
-{
-	settingsDirty = true;
-	ui.btnShowEngineControls->setEnabled ( true );
-}
-
 //
 // Handle changes of the Profile selection
 //
@@ -1075,129 +934,26 @@ void FaceTrackNoIR::profileSelected(int index)
 	// Read the current INI-file setting, to get the folder in which it's located...
 	//
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
 
 	//
 	// Save the name of the INI-file in the Registry.
 	//
-    settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.value(ui.iconcomboProfile->currentIndex(), ""));
+    settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + iniFileList.value(index, ""));
 	loadSettings();
-}
-
-//
-// Handle changes of the Filter selection
-//
-void FaceTrackNoIR::filterSelected(int index)
-{
-	settingsDirty = true;
-
-	//QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	//QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	//QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	ui.btnShowFilterControls->setEnabled ( true );
-}
-
-//**************************************************************************************************//
-//**************************************************************************************************//
-//
-// Constructor for Keyboard-shortcuts-dialog
-//
-KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
-{
-	ui.setupUi( this );
-
-	QPoint offsetpos(100, 100);
-	this->move(parent->pos() + offsetpos);
-
-	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
-
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-	// Clear the Lists with key-descriptions and keycodes and build the Lists
-	// The strings will all be added to the ListBoxes for each Shortkey
-	//
-
-	// Add strings to the Listboxes.
-	//
-
-    for ( int i = 0; i < global_key_sequences.size(); i++) {
-        ui.cbxCenterKey->addItem(global_key_sequences.at(i));
-	}
-
-	// Load the settings from the current .INI-file
-	loadSettings();
-}
-
-//
-// Destructor for server-dialog
-//
-KeyboardShortcutDialog::~KeyboardShortcutDialog() {
-	qDebug() << "~KeyboardShortcutDialog() says: started";
-}
-
-//
-// OK clicked on server-dialog
-//
-void KeyboardShortcutDialog::doOK() {
-	save();
-	this->close();
-    mainApp->bindKeyboardShortcuts();
-}
-
-// override show event
-void KeyboardShortcutDialog::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
-void KeyboardShortcutDialog::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
 }
 
 void FaceTrackNoIR::bindKeyboardShortcuts()
 {
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
     iniFile.beginGroup ( "KB_Shortcuts" );
     int idxCenter = iniFile.value("Key_index_Center", 0).toInt();
     
-#if !defined(_WIN32) && !defined(__WIN32)
+#if !defined(_WIN32)
     if (keyCenter) {
         delete keyCenter;
         keyCenter = NULL;
@@ -1218,7 +974,6 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
             connect(keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
         }
     }
-
 #else
     keyCenter.keycode = 0;
     keyCenter.shift = keyCenter.alt = keyCenter.ctrl = 0;
@@ -1232,7 +987,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     
     if (tracker) /* running already */
     {
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     if (keybindingWorker)
     {
         keybindingWorker->should_quit = true;
@@ -1246,311 +1001,11 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     }
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void KeyboardShortcutDialog::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "KB_Shortcuts" );
-	
-    ui.chkCenterShift->setChecked (iniFile.value ( "Shift_Center", 0 ).toBool());
-	ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
-	ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
-
-    ui.cbxCenterKey->setCurrentIndex(iniFile.value("Key_index_Center", 0).toInt());
-
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void KeyboardShortcutDialog::save() {
-
-	qDebug() << "save() says: started";
-
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "KB_Shortcuts" );
-    iniFile.setValue ( "Key_index_Center", ui.cbxCenterKey->currentIndex() );
-	iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
-	iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
-	iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
-
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-
-	//
-	// Send a message to the main program, to update the Settings (for the tracker)
-	//
-	mainApp->updateSettings();
-}
-
-//**************************************************************************************************//
-//**************************************************************************************************//
-//
-// Constructor for Curve-configuration-dialog
-//
-CurveConfigurationDialog::CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent, Qt::WindowFlags f ) :
-QWidget( parent , f)
-{
-	ui.setupUi( this );
-
-	QPoint offsetpos(120, 30);
-	this->move(parent->pos() + offsetpos);
-
-	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
-
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-
-    QFunctionConfigurator* configs[6] = {
-        ui.txconfig,
-        ui.tyconfig,
-        ui.tzconfig,
-        ui.rxconfig,
-        ui.ryconfig,
-        ui.rzconfig
-    };
-
-    QFunctionConfigurator* alt_configs[6] = {
-        ui.txconfig_alt,
-        ui.tyconfig_alt,
-        ui.tzconfig_alt,
-        ui.rxconfig_alt,
-        ui.ryconfig_alt,
-        ui.rzconfig_alt
-    };
-
-    QCheckBox* checkboxes[6] = {
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp,
-        ui.tx_altp,
-        ui.ty_altp,
-        ui.tz_altp
-    };
-    
-    for (int i = 0; i < 6; i++)
-    {
-        configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
-        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
-        connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-        connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)));
-        connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
-    }
-
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-
-	// Load the settings from the current .INI-file
-	loadSettings();
-}
-
-//
-// Destructor for server-dialog
-//
-CurveConfigurationDialog::~CurveConfigurationDialog() {
-	qDebug() << "~CurveConfigurationDialog() says: started";
-}
-
-//
-// OK clicked on server-dialog
-//
-void CurveConfigurationDialog::doOK() {
-	save();
-	this->close();
-}
-
-// override show event
-void CurveConfigurationDialog::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
-void CurveConfigurationDialog::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void CurveConfigurationDialog::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-    static const char* names[] = {
-        "tx_alt",
-        "ty_alt",
-        "tz_alt",
-        "rx_alt",
-        "ry_alt",
-        "rz_alt"
-    };
-
-    iniFile.beginGroup("Tracking");
-
-    for (int i = 0; i < 6; i++)
-        mainApp->axis(i).altp = iniFile.value(names[i], false).toBool();
-
-    QCheckBox* widgets[] = {
-        ui.tx_altp,
-        ui.ty_altp,
-        ui.tz_altp,
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp
-    };
-
-    for (int i = 0; i < 6; i++)
-        widgets[i]->setChecked(mainApp->axis(i).altp);
-
-    QDoubleSpinBox* widgets2[] = {
-        ui.pos_tx,
-        ui.pos_ty,
-        ui.pos_tz,
-        ui.pos_tx,
-        ui.pos_ry,
-        ui.pos_rz
-    };
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-    
-    for (int i = 0; i < 6; i++)
-        widgets2[i]->setValue(iniFile.value(names2[i], 0).toDouble());
-    
-    iniFile.endGroup();
-    
-    settingsDirty = false;
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void CurveConfigurationDialog::save() {
-
-	qDebug() << "save() says: started";
-
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-
-    ui.rxconfig->saveSettings(currentFile);
-    ui.ryconfig->saveSettings(currentFile);
-    ui.rzconfig->saveSettings(currentFile);
-    ui.txconfig->saveSettings(currentFile);
-    ui.tyconfig->saveSettings(currentFile);
-    ui.tzconfig->saveSettings(currentFile);
-
-    ui.txconfig_alt->saveSettings(currentFile);
-    ui.tyconfig_alt->saveSettings(currentFile);
-    ui.tzconfig_alt->saveSettings(currentFile);
-    ui.rxconfig_alt->saveSettings(currentFile);
-    ui.ryconfig_alt->saveSettings(currentFile);
-    ui.rzconfig_alt->saveSettings(currentFile);
-
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    iniFile.beginGroup("Tracking");
-
-    iniFile.setValue("rx_alt", ui.rx_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("ry_alt", ui.ry_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("rz_alt", ui.rz_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("tx_alt", ui.tx_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("ty_alt", ui.ty_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("tz_alt", ui.tz_altp->checkState() != Qt::Unchecked);
-    
-    QDoubleSpinBox* widgets2[] = {
-        ui.pos_tx,
-        ui.pos_ty,
-        ui.pos_tz,
-        ui.pos_tx,
-        ui.pos_ry,
-        ui.pos_rz
-    };
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-    
-    for (int i = 0; i < 6; i++)
-        iniFile.setValue(names2[i], widgets2[i]->value());
-
-    iniFile.endGroup();
-
-	settingsDirty = false;
-
-	//
-	// Send a message to the main program, to update the Settings (for the tracker)
-	//
-	mainApp->updateSettings();
-}
-
 void FaceTrackNoIR::shortcutRecentered()
 {
     if (tracker)
     {
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
         MessageBeep(MB_OK);
 #else
         QApplication::beep();

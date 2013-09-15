@@ -39,6 +39,7 @@
 #include <QtGui>
 #include <QtDesigner/QDesignerExportWidget>
 #include <QPointF>
+#include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
@@ -52,18 +53,18 @@
 class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
-    Q_PROPERTY(int maxInputEGU READ maxInputEGU WRITE setmaxInputEGU);
-    Q_PROPERTY(int maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU);
-    Q_PROPERTY(int pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input);
-    Q_PROPERTY(int pixPerEGU_Output READ pixPerEGU_Output WRITE setpixPerEGU_Output);
-    Q_PROPERTY(int gridDistEGU_Input READ gridDistEGU_Input WRITE setgridDistEGU_Input);
-    Q_PROPERTY(int gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output);
+    Q_PROPERTY(int maxInputEGU READ maxInputEGU WRITE setmaxInputEGU)
+    Q_PROPERTY(int maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU)
+    Q_PROPERTY(int pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input)
+    Q_PROPERTY(int pixPerEGU_Output READ pixPerEGU_Output WRITE setpixPerEGU_Output)
+    Q_PROPERTY(int gridDistEGU_Input READ gridDistEGU_Input WRITE setgridDistEGU_Input)
+    Q_PROPERTY(int gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output)
 
-	Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier);
-    Q_PROPERTY(QColor colorBackground READ colorBackground WRITE setColorBackground);
-    Q_PROPERTY(QString stringInputEGU READ stringInputEGU WRITE setInputEGU);
-    Q_PROPERTY(QString stringOutputEGU READ stringOutputEGU WRITE setOutputEGU);
-    Q_PROPERTY(QString stringCaption READ stringCaption WRITE setCaption);
+    Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
+    Q_PROPERTY(QColor colorBackground READ colorBackground WRITE setColorBackground)
+    Q_PROPERTY(QString stringInputEGU READ stringInputEGU WRITE setInputEGU)
+    Q_PROPERTY(QString stringOutputEGU READ stringOutputEGU WRITE setOutputEGU)
+    Q_PROPERTY(QString stringCaption READ stringCaption WRITE setCaption)
 
 	// Return the current value to Designer
 	int maxInputEGU() const
@@ -142,11 +143,6 @@ public slots:
     void setOutputEGU(QString);
     void setCaption(QString);
 
-	void resetCurve() {
-		qDebug() << "QFunctionConfigurator::resetCurve = " << strSettingsFile;
-		loadSettings( strSettingsFile );
-	}
-
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
@@ -159,7 +155,6 @@ protected:
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
 	bool markContains(const QPointF &pt, const QPointF &coord) const;
-//	bool withinRange( const QPointF &coord ) const;
 	bool withinRect( const QPointF &coord, const QRectF &rect ) const;
 
 protected:
@@ -169,9 +164,10 @@ private:
 	QRectF  range;														// The actual rectangle for the Bezier-curve
 	QPointF lastPoint;													// The right-most point of the Function
 	QPointF normalizePoint (QPointF point) const;						// Convert the graphical Point to a real-life Point
-	QPointF graphicalizePoint (QPointF point, QString source = "") const;	// Convert the Point to a graphical Point
+    QPointF graphicalizePoint (QPointF point) const;	// Convert the Point to a graphical Point
 
     int     movingPoint;
+    QElapsedTimer timer;
 
 	int MaxInput;					// Maximum input limit
 	int MaxOutput;					// Maximum output limit
@@ -192,12 +188,7 @@ private:
 	bool _draw_function;			// Flag to determine if the function should be (re-)drawn on the QPixmap
 	QPixmap _function;				// Image of the function (static unless edited by the user)
 
-	//
-	// Properties of the CurveConfigurator Widget
-	//
-	QString _title;								// Title do display in Widget and to load Settings
 	FunctionConfig* _config;
-	QList<QPointF> _points;			// Function-points
 };
 
 #endif // QFUNCTIONCONFIGURATOR_H

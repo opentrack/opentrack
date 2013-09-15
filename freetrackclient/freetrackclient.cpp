@@ -34,7 +34,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#include "ftnoir_protocol_ft\fttypes.h"
+#include "ftnoir_protocol_ft/fttypes.h"
 
 //
 // Functions to create/open the file-mapping
@@ -58,8 +58,8 @@ static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
 static HANDLE hFTMemMap = 0;
 static FTMemMap *pMemData = 0;
 static HANDLE hFTMutex = 0;
-static char* dllVersion = "1.0.0.0";
-static char* dllProvider = "FreeTrack";
+static const char* dllVersion = "1.0.0.0";
+static const char* dllProvider = "FreeTrack";
 
 static unsigned short gameid = 0;
 
@@ -92,13 +92,13 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 /******************************************************************
  *		FTGetData (FreeTrackClient.1)
  */
+
 #pragma comment(linker, "/export:FTGetData@4=FTGetData")
 FT_EXPORT(bool) FTGetData(PFreetrackData data)
 {
-  static int frame = 0;
   static int prevDataID = 0;
   static int dlyTrackingOff = 0;
-  static int tracking = 0;
+
 
 //  dbg_report("NP_GetData called.");
   if (FTCreateMapping() == false) return false;
@@ -117,7 +117,6 @@ FT_EXPORT(bool) FTGetData(PFreetrackData data)
 			dlyTrackingOff++;
 			if (dlyTrackingOff > 20) {
 				dlyTrackingOff = 100;
-				tracking = false;
 			}
 		}
 		prevDataID = pMemData->data.DataID;
@@ -161,7 +160,7 @@ FT_EXPORT(void) FTReportName( int name )
  *		FTGetDllVersion (FreeTrackClient.3)
  */
 #pragma comment(linker, "/export:FTGetDllVersion@0=FTGetDllVersion")
-extern "C" __declspec( dllexport ) char* FTGetDllVersion(void)
+extern "C" __declspec( dllexport ) const char* FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
 
@@ -172,7 +171,7 @@ extern "C" __declspec( dllexport ) char* FTGetDllVersion(void)
  *		FTProvider (FreeTrackClient.4)
  */
 #pragma comment(linker, "/export:FTProvider@0=FTProvider")
-extern "C" __declspec( dllexport ) char* FTProvider(void)
+extern "C" __declspec( dllexport ) const char* FTProvider(void)
 {
     dbg_report("FTProvider request.\n");
 
@@ -186,8 +185,6 @@ extern "C" __declspec( dllexport ) char* FTProvider(void)
 //
 bool FTCreateMapping()
 {
-	bool bMappingExists = false;
-
 	//
 	// Memory-mapping already exists!
 	//
@@ -211,7 +208,6 @@ bool FTCreateMapping()
 
 	if ( ( hFTMemMap != 0 ) && ( GetLastError() == ERROR_ALREADY_EXISTS ) ) {
 		dbg_report("FTCreateMapping: Mapping already exists.\n");
-		bMappingExists = true;				// So the server was (probably) already started!
 		CloseHandle( hFTMemMap );
 		hFTMemMap = 0;
 	}

@@ -30,13 +30,17 @@
 #include <QList>
 
 #if defined(_WIN32)
-#include <windows.h>
+#   include <windows.h>
 //#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
+#elif defined(Q_OS_UNIX)
+#include <X11/Xlib.h>
 #endif
 int main(int argc, char** argv)
 {
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
+#elif defined(Q_WS_X11)
+    XInitThreads();
 #endif
     QApplication app(argc, argv);
     QFont font;

@@ -44,7 +44,7 @@
 #include <QKeySequence>
 #include <QtGui>
 #include <QString>
-#if !defined(_WIN32) && !defined(__WIN32)
+#if !defined(_WIN32)
 #	include <qxtglobalshortcut.h>
 #else
 #	include <windows.h>
@@ -53,10 +53,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-
 #include "ui_facetracknoir.h"
-#include "ui_ftnoir_keyboardshortcuts.h"
-#include "ui_ftnoir_curves.h"
 
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
@@ -64,33 +61,13 @@
 
 #include "global-settings.h"
 #include "tracker.h"
+#include "facetracknoir/curve-config.h"
+#include "facetracknoir/shortcuts.h"
 
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
 
 class KeybindingWorker;
-
-#if defined(__WIN32) || defined(_WIN32)
-extern QList<int> global_windows_key_sequences;
-#undef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
-struct Key {
-    BYTE keycode;
-    bool shift;
-    bool ctrl;
-    bool alt;
-    bool ever_pressed;
-    QElapsedTimer timer;
-public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false), ever_pressed(false)
-    {
-    }
-};
-#else
-typedef unsigned char BYTE;
-struct Key { int foo; };
-#endif
 
 class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 {
@@ -100,7 +77,7 @@ public:
 	FaceTrackNoIR(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~FaceTrackNoIR();
 
-	void updateSettings();						// Update the settings (let Tracker read INI-file).
+    void update_tracker_settings();						// Update the settings (let Tracker read INI-file).
 
     QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL
     Tracker *tracker;
@@ -121,7 +98,7 @@ public:
         return *pose.axes[idx];
     }
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     Key keyCenter;
     KeybindingWorker* keybindingWorker;
 #else 
@@ -146,11 +123,6 @@ private:
 	QWidget *_curve_config;
 
 	void createIconGroupBox();
-//	void createMessageGroupBox();
-
-	/** helper **/
-	bool cameraDetected;
-	bool settingsDirty;
 
 	void GetCameraNameDX();
 	void loadSettings();
@@ -162,27 +134,24 @@ private:
 
     bool looping;
 
-	private slots:
-		//file menu
-		void open();
-		void save();
-		void saveAs();
-		void exit();
+private slots:
+	//file menu
+	void open();
+	void save();
+	void saveAs();
+	void exit();
 //		void setIcon(int index);
-		void profileSelected(int index);
-		void protocolSelected(int index);
-		void filterSelected(int index);
-		void trackingSourceSelected(int index);
+	void profileSelected(int index);
 
-		void showVideoWidget();
-		void showHeadPoseWidget();
-		void showTrackerSettings();
-		void showSecondTrackerSettings();
+	void showVideoWidget();
+	void showHeadPoseWidget();
+	void showTrackerSettings();
+	void showSecondTrackerSettings();
 
-		void showServerControls();
-		void showFilterControls();
-		void showKeyboardShortcuts();
-		void showCurveConfiguration();
+	void showServerControls();
+	void showFilterControls();
+	void showKeyboardShortcuts();
+	void showCurveConfiguration();
 
         void setInvertAxis( Axis axis, int invert );
         void setInvertYaw(int invert) {
@@ -208,88 +177,6 @@ private:
         void startTracker();
 		void stopTracker();
 
-};
-
-class KeyboardShortcutDialog: public QWidget
-{
-    Q_OBJECT
-public:
-
-	explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
-    virtual ~KeyboardShortcutDialog();
-	void showEvent ( QShowEvent * event );
-
-private:
-	Ui::UICKeyboardShortcutDialog ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FaceTrackNoIR *mainApp;
-
-private slots:
-	void doOK();
-	void doCancel();
-};
-
-// Widget that has controls for Keyboard shortcuts.
-class CurveConfigurationDialog: public QWidget
-{
-    Q_OBJECT
-public:
-
-	explicit CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent=0, Qt::WindowFlags f=0 );
-    virtual ~CurveConfigurationDialog();
-	void showEvent ( QShowEvent * event );
-
-private:
-	Ui::UICCurveConfigurationDialog ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FaceTrackNoIR *mainApp;
-
-private slots:
-	void doOK();
-	void doCancel();
-    void curveChanged( bool change ) { settingsDirty = true; }
-    void curveChanged( int change ) { settingsDirty = true; }
-};
-
-extern QList<QString> global_key_sequences;
-#if defined(__WIN32) || defined(_WIN32)
-class KeybindingWorkerDummy {
-private:
-    LPDIRECTINPUT8 din;
-    LPDIRECTINPUTDEVICE8 dinkeyboard;
-    Key kCenter;
-    FaceTrackNoIR& window;
-public:
-    volatile bool should_quit;
-    ~KeybindingWorkerDummy();
-    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter);
-	void run();
-};
-#else
-class KeybindingWorkerDummy {
-public:
-    KeybindingWorkerDummy(FaceTrackNoIR& w, Key keyCenter);
-	void run() {}
-};
-#endif
-
-class KeybindingWorker : public QThread, public KeybindingWorkerDummy {
-	Q_OBJECT
-public:
-	KeybindingWorker(FaceTrackNoIR& w, Key keyCenter) : KeybindingWorkerDummy(w, keyCenter)
-	{
-	}
-	void run() {
-		KeybindingWorkerDummy::run();
-	}
 };
 
 #endif // FaceTrackNoIR_H

@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 #else
 #include <stdio.h>
@@ -19,10 +19,12 @@
 #include <sys/types.h>
 #endif
 
-#if defined(IN_FTNOIR_COMPAT) && (defined(_WIN32) || defined(__WIN32))
+#if defined(IN_FTNOIR_COMPAT) && defined(_WIN32)
 #	define COMPAT_EXPORT __declspec(dllexport)
+#elif defined(_WIN32)
+#	define COMPAT_EXPORT __declspec(dllimport)
 #else
-#	define COMPAT_EXPORT
+#   define COMPAT_EXPORT
 #endif
 
 class COMPAT_EXPORT PortableLockedShm {
@@ -33,7 +35,7 @@ public:
     void unlock();
     void* mem;
 private:
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     HANDLE hMutex, hMapFile;
 #else
     int fd, size;

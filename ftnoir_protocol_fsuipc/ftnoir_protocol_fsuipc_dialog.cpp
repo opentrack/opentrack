@@ -121,7 +121,7 @@ void FSUIPCControls::loadSettings() {
 	qDebug() << "loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "loadSettings says: iniFile = " << currentFile;
@@ -142,7 +142,7 @@ void FSUIPCControls::save() {
 
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "FSUIPC" );

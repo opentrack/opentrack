@@ -36,6 +36,7 @@
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
 #define ACCELA_SMOOTHING_TRANSLATION 40.0
+#define ACCELA_ZOOM_SLOWNESS 35
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.

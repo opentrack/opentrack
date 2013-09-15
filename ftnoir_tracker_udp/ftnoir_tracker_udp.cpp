@@ -141,7 +141,7 @@ void FTNoIR_Tracker::loadSettings() {
 	qDebug() << "FTNoIR_Tracker::loadSettings says: Starting ";
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Tracker::loadSettings says: iniFile = " << currentFile;
