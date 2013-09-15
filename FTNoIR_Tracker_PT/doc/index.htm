@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+ <title>FTNoIR PointTracker Help</title>
+
+ <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+ <meta name="author"
+         content="Patrick Ruoff (C14)"/>
+ <meta name="keywords"
+         content="facetracknoir infrared point model tracker plugin"/>
+ <meta name="description"
+         content="Pointtracker plugin for FaceTrackNoIR"/>
+		 
+ <link rel="shortcut icon" href="ptrack.ico" type="image/vnd.microsoft.icon" />
+ <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+<div id="navbar">
+<ul class="navbar">
+<li class="navbar"><a class="navbar" href="#about">About</a></li>
+<li class="navbar"><a class="navbar" href="#settings">Settings</a></li>
+<li class="navbar"><a class="navbar" href="#setup">Filter Setup</a></li>
+<li class="navbar"><a class="navbar" href="#support">Support</a></li>
+<li class="navbar"><a class="navbar" href="#changelog">ChangeLog</a></li>
+<li class="navbar"><a class="navbar" href="#build_instructions">Build Instructions</a></li>
+</ul>
+</div>
+
+<div id="content">
+<div style="text-align:center"><h1>FaceTrackNoIR PointTracker Plugin</h1><img src="logo.png" alt="PointTracker Plugin Logo" /></div>
+
+<a class="nav" id="about"></a>
+<h2>About</h2>
+<div class="indent">
+<p>
+PointTracker is a plugin for the free head tracking software <a href="http://facetracknoir.sourceforge.net">FaceTrackNoIR</a>
+which introduces the capability to track a (typically IR-) point model comprising 3 bright points to FaceTrackNoIR,
+much like the popular free tracking software <a href="http://www.free-track.net/">Freetrack</a> does.<br/>
+It was created as a stable modular alternative to Freetrack, which has some stability issues with newer systems and seems to be no longer actively developped.
+</p>
+</div>
+
+<a class="nav" id="settings"></a>
+<h2>Settings</h2>
+<div class="indent">
+<p>
+This section desribes the various settings of the PointTracker plugin in detail.
+</p>
+
+<img src="settings1.png" alt="Settings Pane 1"/>
+<dl>
+<dt>Show VideoWidget</dt><dd>Whether the video widget is updated or not. It may save some performance to turn this off when not needed</dd>
+<dt>Sleep time</dt><dd>Time the tracking thread sleeps after each processed image. It's inverse should be below the framefrate you want to achieve.
+(check the framerate in the status region when tracker is active, in case the sleep time is too high, the framerate will decrease).
+Low values will result in more CPU-load.</dd>
+<dt>Dynamic Pose Resolution</dt><dd>Whether the point correspondence and pose ambiquity is resolved using a more sophisticated dynamic algorithm (constant velocity prediction) or a simple static resolution. 
+Dynamic pose resolution can capture more extreme poses but may occasionally get stuck in a wrong pose estimates so that a reset of the internal state becomes neccessary.</dd>
+<dt>Auto-reset time</dt><dd>If no valid tracking result can be found when using dynamic pose resolution, the tracker will automatically reset its internal state (used for resolving the pose ambiguity and point correspondence)
+and return to a fail-safe initialization phase that assumes a neutral pose after this time.
+Decrease this time, if you get stuck in a wrong pose too often.</dd>
+<dt>Reset</dt><dd>Manually reset the trackers internal state used for dynamic pose resolution and return to a fail-safe initialization phase that assumes a neutral pose.
+You may use this in case you get stuck in a wrong pose.</dd>
+<dt>Enable Axis ...</dt><dd>Which axis to use for FTNoIR.</dd>
+</dl>
+
+<img src="settings2.png" alt="Settings Pane 2"/>
+<dl>
+<dt>Device</dt><dd>The camera used for tracking.</dd>
+<dt>Resolution</dt><dd>The desired capture resolution. If your camera does not support the entered resolution the true output resolution may be different or even invalid.
+You may check the true capture resolution in the status area while the tracker is running. A higher resolution results in more accurate point positions and will increase the
+stability of the tracking result, as long as the signal/noise ratio is sufficiently high.</dd>
+<dt>FPS</dt><dd>The desired capture framerate. Again, if your camera does not support the entered framerate, the true caputre framerate may be different or invalid.
+You may check the true processing framerate in the status area while the tracker is running.</dd>
+<dt>F/W</dt><dd>The focal length of the camera divided by the sensor width (of course in the same units).
+In case you don't have access to your camera's specifications, you can measure this yourself by placing a plane object of known width (for example a piece of cardboard) in front of the camera until it fills the whole image width.
+Then measure the distance between the object and the camera and divide by the object width.</dd>
+<dt>VideoWidget</dt><dd>Shows a resizable stand-alone video widget that shows the same content as the integrated video widget in FTNoIR.
+Update rate is only 10 fps and may lag behind a bit. Mainly useful during calibration of the point extraction. Same as for the integrated wiget, to save resources, this widget should only be shown when needed.</dd>
+<dt>Roll Pitch Yaw...</dt><dd>The orientation of the camera relative to the reference frame.
+If these angles are setup properly, the direction of translations may not be correct.
+Roll is treated in a special way since it is implemented as a frame rotation by +/- 90 deg that is transparent to the rest of the processing pipeline.
+</dd>
+<dt>Threshold</dt><dd>The threshold for point recognition. Areas above the threshold are shown in blue in the VideoWidget.
+Since point accuracy is best if the points are as big as possible in pixels, the theshold should be chosen as low as possible (stop before the contour of the points becomes "noisy").
+If small reflections are being falsely classified as points, increasing the minimum point diameter (see below) may help.</dd>
+<dt>Min Diameter</dt><dd>Minimum diameter of blobs to be classified as a pointmodel-point.</dd>
+<dt>Max Diameter</dt><dd>Maximum diameter of blobs to be classified as a pointmodel-point.</dd>
+<dt>Status</dt><dd>The tracker's status is shown in this area while the tracker is running.
+The FPS shown here correspond to the framerate of the whole tracker processing chain and may be lower than what your camera is able to provide, when<br/>
+1. The processing gets not enough CPU time<br/>
+2. The sleep time of the tracking thread is set too high<br/></dd>
+</dl>
+
+<img src="settings3.png" alt="Settings Pane 3"/>
+<dl>
+<dt>Model Selection and Dimensions ...</dt><dd>
+First select your model type (point, clip, custom), then enter the dimensions of your model in milimeters here.<br/>
+For the custom setting, the coordinates of the two remaining model points have to be entered (reference point M0 is at (0,0,0)) in a pose where the model roughly faces the camera.
+For orientation, the coordinates for the standard Freetrack clip are (0,40,-30), (0,-70,-80) and the ones for the cap (40,-60,-100), (-40,-60,-100).<br/>
+When using a custom point-model configuration, the following restrictions should be observed:<br/>
+The plane in which the 3 points lie should never be parallel to the image plane, M0-M1 and M0-M2 should be roughly perpendicular.</dd>
+
+<dt>Model Position</dt><dd>The vector from the model to the center of the head in the model frame. Can be calibrated automatically.</dd>
+<dt>Calibrate</dt><dd>In order to automatically calibrate the model-head offset, do the following:<br/>Press the Calibrate button, then look around while not moving your shoulder. (i.e. only rotation, no translation).
+Do not stay in one pose for too long. The current translation estimate will be updated in real time. As soon as the values stabilized sufficiently, press the Calibrate button again to stop the calibration process.</dd>
+</dl>
+</div>
+
+<a class="nav" id="setup"></a>
+<h2>Filter Setup</h2>
+<div class="indent">
+<p>
+This section desribes how the FTNoIR filter work and what the recommended settings for PointTracker are.
+</p>
+<p>
+Filtering is always a tradeoff between stability, accuracy and responsiveness.
+</p>
+<p>
+The <q>Smoothing</q> filter in FTNoIR is just a simple average over the last n samples.
+Since this filter produces input lag no matter how fast the head-movements are, it is recommended to turn it off by setting samples to 1.
+</p>
+<p>
+In the filter tab, it is recommended to select <q>Accela Filter Mk2</q>.
+Accela is a non-linear filter that works as follows:<br/>
+It looks at the difference between the new raw values <i>new_val</i> from the tracker and the last filtered value <i>old_val</i>
+and maps this difference via the customizable response function <i>f</i> via:<br/>
+</p>
+<p style="text-align: center">
+<i>new_val = old_val + f(new_val - old_val) / reduction_factor</i>
+</p>
+<p>
+So by setting <i>f(x) = reduction_factor * x</i>, one will get no filtering at all.<br/>
+If you set lower values for small x, small deviations (usually noise) will get dampened.
+This results in a dynamic dead-zone around the current position.
+</p>
+<p>
+The last two points are used by accela to extrapolate for large deviations.
+So in order to get a fast unfiltered response for large deviations, the line connecting the last two points should have a slope >= <i>reduction_factor</i>.
+</p>
+<p>
+More aggressive accela settings than the default FTNoIR accela settings are recommended in order to decrease the filtering lag and fully use the potential of point tracking.<br/>
+My current settings are:
+</p>
+<pre class="indent"><code>
+[Accela]
+Reduction=20
+
+[Curves-Accela-Scaling-Rotation]
+point-count=4
+point-0-x=0.1
+point-0-y=0
+point-1-x=1.43
+point-1-y=2.45
+point-2-x=2.0
+point-2-y=5.44
+point-3-x=2.06
+point-3-y=6
+</code></pre>
+<p>
+The curve is not too different from the standard one (except that I like a small dynamic dead zone for steady aiming, that's why the curve has a slope of 0 at the beginning).<br/>
+However, the reduction factor is decreased to a value of 20 (compared to the standard value of 100). This implies that each value of the curve is effectively 5 times higher than in standard FTNoIR (see formula above), which means higher responsiveness but can also lead to jitter/shaking.<br/>
+Keep in mind that there are no <q>best filter settings</q>. Since filtering is always a compromise it's a matter of personal taste and
+playing around with the filter settings is highly recommended.
+</p>
+</div>
+
+<a class="nav" id="support"></a>
+<h2>Support</h2>
+<div class="indent">
+<p>
+For questions/feedback about the plugin, post to the <a href="https://sourceforge.net/projects/facetracknoir/forums">FTNoIR-Forum</a>.<br/>
+In case you like this plugin and would like to support the author, you may consider making a donation.
+</p>
+<div style="text-align:center">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<fieldset class="blind">
+<input type="hidden" name="cmd" value="_s-xclick"/>
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+"/>
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
+<img alt="" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1"/>
+</fieldset>
+</form>
+</div>
+</div>
+
+<a class="nav" id="changelog"></a>
+<h2>ChangeLog</h2>
+<div class="indent">
+<h3>1.1</h3>
+<ul>
+<li>Added camera yaw and roll correction (intended for vertically mounted cameras)</li>
+<li>Improved point extraction algorithm, thanks to Michael Welter</li>
+<li>UI improvements: Select camera by device name, different VideoWidget architecture</li>
+<li>Bugfixes: Removed 99 FPS limitation</li>
+</ul>
+
+<h3>1.0</h3>
+<ul>
+<li>Added camera pitch correction</li>
+<li>Better communication with FTNoIR: output axis configuration, status report</li>
+</ul>
+
+<h3>1.0 beta</h3>
+<ul>
+<li>Switchted to videoInput library for capture. Desired capture resolution and fps can now be customized</li>
+<li>Introduced dynamic point-correspondence and POSIT-ambiguity resolution, which allows for the reconstruction of more extreme poses</li>
+<li>More convenient freetrack-like model dimension GUI</li>
+<li>Bugfixes: VideoWidget skipping frames, Timer resolution too low for accurate FPS measurement</li>
+</ul>
+</div>
+
+<a class="nav" id="build_instructions"></a>
+<h2>Build Instructions</h2>
+<div class="indent">
+<p>
+This section describes what you need to do in order to build PointTracker yourself.<br/>
+You can find the sources at the <a href="https://sourceforge.net/projects/ftnoirpt/">project site</a>
+or as part of the <a href="https://sourceforge.net/projects/facetracknoir/">FTNoIR sources</a>.
+</p>
+<p> The project was created with Visual Studio. </p>
+
+<h3>Dependencies</h3>
+<ul>
+<li>Qt 4.8.2 library</li>
+<li>Qt plugin for Visual studio</li>
+<li>OpenCV 2.4 prebuilt for Windows</li>
+<li>Boost 1.47</li>
+</ul>
+
+<h3>Details</h3>
+<div class="indent">
+<h4>Common</h4>
+<ul>
+<li>setup environment variable "QTDIR" (example value "D:\Devel\Libs\Qt\4.8.2")</li>
+<li>add "%QTDIR%\bin" to PATH</li>
+<li>setup environment variable "BOOST_DIR" (example value "D:\Devel\Libs\boost_1_47_0")</li>
+<li>setup environment variable "OPENCV_DIR" (example value "D:\Devel\Libs\opencv\build")</li>
+</ul>
+<h4>Debug</h4>
+<p>opencv linked dynamically:</p>
+<ul>
+<li>add "%OPENCV_DIR%\x86\vc9\bin" to PATH</li>
+</ul>
+<p>(in case of different Visual studio, change PATH and linker dependencies accordingly)</p>
+<h4>Release</h4> 
+<p>opencv linked statically:</p>
+<ul>
+<li>custom build a statically linked version of opencv with the buil-option BUILD_WITH_STATIC_CRT set to OFF!</li>
+<li>copy resulting libaries to "%OPENCV_DIR%\x86\vc9\static_lib"</li>
+</ul>
+<p>(in case of different Visual studio, change PATH and linker dependencies accordingly)</p>
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
