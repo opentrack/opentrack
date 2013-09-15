@@ -2,11 +2,14 @@
 <ui version="4.0">
  <class>UICFilterControls</class>
  <widget class="QWidget" name="UICFilterControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>371</width>
+    <width>374</width>
     <height>380</height>
    </rect>
   </property>
@@ -21,6 +24,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
+    <normaloff>
+    images/facetracknoir.png
+   </normaloff>
     images/facetracknoir.png
    </iconset>
   </property>

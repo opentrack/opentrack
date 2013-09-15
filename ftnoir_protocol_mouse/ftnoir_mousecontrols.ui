@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>UICMOUSEControls</class>
  <widget class="QWidget" name="UICMOUSEControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>99</height>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">

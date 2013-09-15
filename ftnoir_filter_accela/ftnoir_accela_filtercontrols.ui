@@ -3,7 +3,7 @@
  <class>AccelaUICFilterControls</class>
  <widget class="QWidget" name="AccelaUICFilterControls">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>

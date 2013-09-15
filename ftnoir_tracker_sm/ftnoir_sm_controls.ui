@@ -2,11 +2,14 @@
 <ui version="4.0">
  <class>UICSMClientControls</class>
  <widget class="QWidget" name="UICSMClientControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
+    <width>399</width>
     <height>313</height>
    </rect>
   </property>
@@ -109,7 +112,7 @@
         <x>10</x>
         <y>20</y>
         <width>55</width>
-        <height>110</height>
+        <height>122</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">

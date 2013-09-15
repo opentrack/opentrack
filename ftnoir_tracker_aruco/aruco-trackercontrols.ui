@@ -3,7 +3,7 @@
  <class>Form</class>
  <widget class="QWidget" name="Form">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -464,14 +464,17 @@ Rafael Muñoz Salinas &lt;rmsalinas@uco.es&gt;</string>
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>327</x>
      <y>200</y>
-     <width>181</width>
+     <width>255</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string>https://github.com/rmsalinas/aruco</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
    <property name="readOnly">
     <bool>true</bool>

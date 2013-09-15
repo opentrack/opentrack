@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>UICFTNClientControls</class>
  <widget class="QWidget" name="UICFTNClientControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>210</height>
+    <height>222</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,7 +78,7 @@
         <x>10</x>
         <y>20</y>
         <width>143</width>
-        <height>60</height>
+        <height>64</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
