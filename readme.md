@@ -5,7 +5,7 @@ Modular headtracking program that supports multiple face-trackers, filters and g
 
 
 #Objective
-_____________
+
 
 We actually only have one objective: make gaming fun!
 
