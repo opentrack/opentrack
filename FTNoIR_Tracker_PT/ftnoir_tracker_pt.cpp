@@ -12,6 +12,10 @@
 #include <QFile>
 #include <QCoreApplication>
 
+#ifdef OPENTRACK_API
+#   define VideoWidget VideoWidget2
+#endif
+
 using namespace std;
 using namespace cv;
 using namespace boost;
@@ -92,6 +96,9 @@ void Tracker::run()
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, has_observers());
 				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
+#ifdef OPENTRACK_API
+                video_widget->update_image(frame);
+#endif
 			}
 #ifdef PT_PERF_LOG
 			log_stream<<"dt: "<<dt;
@@ -113,12 +120,16 @@ void Tracker::apply(const TrackerSettings& settings)
 	camera.set_res(settings.cam_res_x, settings.cam_res_y);	
 	camera.set_fps(settings.cam_fps);
 	camera.set_f(settings.cam_f);
-	frame_rotation.rotation = static_cast<FrameRotation::Rotation>(settings.cam_roll);
+    frame_rotation.rotation = static_cast<RotationType>(settings.cam_roll);
 	point_extractor.threshold_val = settings.threshold;
 	point_extractor.min_size = settings.min_point_size;
-	point_extractor.max_size = settings.max_point_size;
-	point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
-	point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
+    point_extractor.max_size = settings.max_point_size;
+#ifdef OPENTRACK_API
+    point_tracker.point_model.reset(new PointModel(settings.M01, settings.M02));
+#else
+    point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
+#endif
+    point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
 	sleep_time = settings.sleep_time;
 	point_tracker.dt_reset = settings.reset_time / 1000.0;
 	show_video_widget = settings.video_widget;
@@ -181,7 +192,6 @@ void Tracker::update_show_video_widget()
 	{
 		const int VIDEO_FRAME_WIDTH  = 252;
 		const int VIDEO_FRAME_HEIGHT = 189;
-
 		video_widget = new VideoWidget(video_frame, this);
 		QHBoxLayout* video_layout = new QHBoxLayout();
 		video_layout->setContentsMargins(0, 0, 0, 0);
@@ -208,15 +218,28 @@ void Tracker::refreshVideo()
 	if (video_widget) video_widget->update_frame_and_points();
 }
 
+#ifdef OPENTRACK_API
+void Tracker::StartTracker(QFrame *parent_window)
+#else
 void Tracker::StartTracker(HWND parent_window)
+#endif
 {
+#ifdef OPENTRACK_API
+    Initialize(parent_window);
+#endif
 	reset_command(PAUSE);
 }
 
+#ifndef OPENTRACK_API
 void Tracker::StopTracker(bool exit)
 {
 	set_command(PAUSE);
 }
+#endif
+
+#ifdef OPENTRACK_API
+#define THeadPoseData double
+#endif
 
 bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
@@ -228,14 +251,20 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		FrameTrafo X_CM = point_tracker.get_pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
 		FrameTrafo X_GH = R_GC * X_CM * X_MH;
-		Matx33f R = X_GH.R * X_GH_0.R.t(); 
+        Matx33f R = X_GH.R * X_GH_0.R.t();
 		Vec3f   t = X_GH.t - X_GH_0.t;		
 
+#ifndef OPENTRACK_API
 		// get translation(s)
 		if (bEnableX) data->x = t[0] / 10.0;	// convert to cm
 		if (bEnableY) data->y = t[1] / 10.0;
 		if (bEnableZ) data->z = t[2] / 10.0;
-
+#else
+        // get translation(s)
+        if (bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
+        if (bEnableY) data[TY] = t[1] / 10.0;
+        if (bEnableZ) data[TZ] = t[2] / 10.0;
+#endif
 		// translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
 		// -z -> x, y -> z, x -> -y
 		Matx33f R_EG( 0, 0,-1,
@@ -249,17 +278,26 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
+#ifndef OPENTRACK_API
 		if (bEnableYaw)   data->yaw   =   rad2deg * alpha;
 		if (bEnablePitch) data->pitch = - rad2deg * beta;	// FTNoIR expects a minus here
 		if (bEnableRoll)  data->roll  =   rad2deg * gamma;
+#else
+        if (bEnableYaw)   data[Yaw]  =   rad2deg * alpha;
+        if (bEnablePitch) data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
+        if (bEnableRoll)  data[Roll]  =   rad2deg * gamma;
+#endif
 	}
 	return true;
 }
 
 //-----------------------------------------------------------------------------
+#ifdef OPENTRACK_API
+extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+#else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-
 FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+#endif
 {
 	return new Tracker;
 }

@@ -8,7 +8,12 @@
 #ifndef FTNOIR_TRACKER_PT_H
 #define FTNOIR_TRACKER_PT_H
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#ifdef OPENTRACK_API
+#   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#   include "facetracknoir/global-settings.h"
+#else
+#   include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#endif
 #include "ftnoir_tracker_pt_settings.h"
 #include "frame_observer.h"
 #include "camera.h"
@@ -19,9 +24,14 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QMutexLocker>
 #include <QTime>
 #include <opencv2/opencv.hpp>
-#include <boost/shared_ptr.hpp>
+#ifndef OPENTRACK_API
+#   include <boost/shared_ptr.hpp>
+#else
+#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#endif
 #include <vector>
 
 //-----------------------------------------------------------------------------
@@ -34,10 +44,16 @@ public:
 
 	// --- ITracker interface ---
 	virtual void Initialize(QFrame *videoframe);
+#ifdef OPENTRACK_API
+    virtual void StartTracker(QFrame* parent_window);
+    virtual void WaitForExit() {}
+    virtual bool GiveHeadPoseData(double* data);
+#else
 	virtual void StartTracker(HWND parent_window);
-	virtual void StopTracker(bool exit);
-	virtual bool GiveHeadPoseData(THeadPoseData *data);
-	virtual void refreshVideo();
+    virtual void StopTracker(bool exit);
+    virtual bool GiveHeadPoseData(THeadPoseData *data);
+#endif
+    virtual void refreshVideo();
 
 	void apply(const TrackerSettings& settings);
 	void center();
@@ -66,7 +82,12 @@ protected:
 	int sleep_time;	
 
 	// --- tracking chain ---
+#ifdef OPENTRACK_API
+#define VideoWidget VideoWidget2
+    CVCamera       camera;
+#else
 	VICamera       camera;
+#endif
 	FrameRotation  frame_rotation;
 	PointExtractor point_extractor;
 	PointTracker   point_tracker;
@@ -95,5 +116,7 @@ protected:
 	long frame_count;
 	Timer time;
 };
+
+#undef VideoWidget
 
 #endif // FTNOIR_TRACKER_PT_H

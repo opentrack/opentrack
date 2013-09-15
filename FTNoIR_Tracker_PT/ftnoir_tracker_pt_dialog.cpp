@@ -10,7 +10,11 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <opencv2/opencv.hpp>
-#include <boost/shared_ptr.hpp>
+#ifndef OPENTRACK_API
+#   include <boost/shared_ptr.hpp>
+#else
+#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#endif
 #include <vector>
 
 using namespace std;
@@ -39,7 +43,7 @@ TrackerDialog::TrackerDialog()
 
 	vector<string> device_names;
 	get_camera_device_names(device_names);
-	for (auto iter = device_names.begin(); iter != device_names.end(); ++iter)
+    for (vector<string>::iterator iter = device_names.begin(); iter != device_names.end(); ++iter)
 	{
 		ui.camdevice_combo->addItem(iter->c_str());
 	}
@@ -398,9 +402,12 @@ void TrackerDialog::unRegisterTracker()
 }
 
 //-----------------------------------------------------------------------------
+#ifdef OPENTRACK_API
+extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+#else
 #pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
-
 FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
+#endif
 {
 	return new TrackerDialog;
 }

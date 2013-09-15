@@ -9,8 +9,13 @@
 #define CAMERA_H
 
 #include <opencv2/opencv.hpp>
-#include "videoInput/videoInput.h"
-#include <boost/shared_ptr.hpp>
+#ifndef OPENTRACK_API
+#   include <boost/shared_ptr.hpp>
+#else
+#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <opencv2/highgui.hpp>
+#   include <opencv2/highgui/highgui_c.h>
+#endif
 #include <string>
 
 // ----------------------------------------------------------------------------
@@ -33,50 +38,50 @@ struct CamInfo
 class Camera
 {
 public:
-	Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1), active(false) {}
-	virtual ~Camera() {}
+        Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1), active(false) {}
+        virtual ~Camera() {}
 
-	// start/stop capturing
-	virtual void start() = 0;
-	virtual void stop() = 0;
-	void restart() { stop(); start(); }
+        // start/stop capturing
+        virtual void start() = 0;
+        virtual void stop() = 0;
+        void restart() { stop(); start(); }
 
-	// calls corresponding template methods and reinitializes frame rate calculation
-	void set_device_index(int index);
-	void set_f(float f);
-	void set_fps(int fps);
-	void set_res(int x_res, int y_res);
+        // calls corresponding template methods and reinitializes frame rate calculation
+        void set_device_index(int index);
+        void set_f(float f);
+        void set_fps(int fps);
+        void set_res(int x_res, int y_res);
 
-	// gets a frame from the camera, dt: time since last call in seconds
-	bool get_frame(float dt, cv::Mat* frame);
+        // gets a frame from the camera, dt: time since last call in seconds
+        bool get_frame(float dt, cv::Mat* frame);
 
-	// WARNING: returned references are valid as long as object
-	const CamInfo& get_info() const    { return cam_info; }
-	const CamInfo& get_desired() const { return cam_desired; }
+        // WARNING: returned references are valid as long as object
+        const CamInfo& get_info() const    { return cam_info; }
+        const CamInfo& get_desired() const { return cam_desired; }
 
 protected:
-	// get a frame from the camera
-	virtual bool _get_frame(cv::Mat* frame) = 0;
+        // get a frame from the camera
+        virtual bool _get_frame(cv::Mat* frame) = 0;
 
-	// update the camera using cam_desired, write res and f to cam_info if successful
-	virtual void _set_device_index() = 0;
-	virtual void _set_f() = 0;
-	virtual void _set_fps() = 0;
-	virtual void _set_res() = 0;
+        // update the camera using cam_desired, write res and f to cam_info if successful
+        virtual void _set_device_index() = 0;
+        virtual void _set_f() = 0;
+        virtual void _set_fps() = 0;
+        virtual void _set_res() = 0;
 
-	bool active;
-	int desired_index;
-	int active_index;
-	CamInfo cam_info;
-	CamInfo cam_desired;
-	float dt_valid;
-	float dt_mean;
+        bool active;
+        int desired_index;
+        int active_index;
+        CamInfo cam_info;
+        CamInfo cam_desired;
+        float dt_valid;
+        float dt_mean;
 };
 
 
 // ----------------------------------------------------------------------------
 // camera based on OpenCV's videoCapture
-/*
+#ifdef OPENTRACK_API
 class CVCamera : public Camera
 {
 public:
@@ -92,11 +97,11 @@ protected:
 	virtual void _set_f();
 	virtual void _set_fps();
 	virtual void _set_res();
+    virtual void _set_device_index();
 
-	CvCapture* cap;
+    cv::VideoCapture* cap;
 };
-*/
-
+#else
 // ----------------------------------------------------------------------------
 // Camera based on the videoInput library
 class VICamera : public Camera
@@ -119,19 +124,20 @@ protected:
 	cv::Mat new_frame;
 	unsigned char* frame_buffer;
 };
+#endif
 
+enum RotationType
+{
+    CLOCKWISE = -1,
+    ZERO = 0,
+    COUNTER_CLOCKWISE = 1
+};
 
 // ----------------------------------------------------------------------------
 class FrameRotation 
 {
 public:
-	typedef enum Rotation
-	{
-		CLOCKWISE = -1,
-		ZERO = 0,
-		COUNTER_CLOCKWISE = 1
-	};
-	Rotation rotation;
+    RotationType rotation;
 
 	cv::Mat rotate_frame(cv::Mat frame);
 };

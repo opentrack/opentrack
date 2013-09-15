@@ -5,13 +5,25 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#if defined(OPENTRACK_API)
+#   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#   include "facetracknoir/global-settings.h"
+#else
+#   include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
+#endif
 
 //-----------------------------------------------------------------------------
-class TrackerDll : public ITrackerDll
+class TrackerDll :
+#if defined(OPENTRACK_API)
+        public Metadata
+#else
+        public ITrackerDll
+#endif
 {
 	// ITrackerDll interface
+#ifndef OPENTRACK_API
 	void Initialize() {}
+#endif
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);

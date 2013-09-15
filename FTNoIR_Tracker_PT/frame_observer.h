@@ -10,7 +10,11 @@
 
 #include <QMutex>
 #include <opencv2/opencv.hpp>
-#include <boost/shared_ptr.hpp>
+#ifndef OPENTRACK_API
+#   include <boost/shared_ptr.hpp>
+#else
+#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#endif
 #include <set>
 
 //-----------------------------------------------------------------------------

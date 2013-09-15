@@ -22,7 +22,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 
 	// convert to grayscale
 	Mat frame_gray;
-	cvtColor(frame, frame_gray, CV_RGB2GRAY);
+    cvtColor(frame, frame_gray, CV_RGB2GRAY);
 
 	// convert to binary
 	Mat frame_bin;

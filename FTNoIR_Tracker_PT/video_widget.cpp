@@ -14,8 +14,10 @@
 
 using namespace cv;
 using namespace std;
+#ifndef OPENTRACK_API
 using namespace boost;
-
+#endif
+#ifndef OPENTRACK_API
 // ----------------------------------------------------------------------------
 void VideoWidget::initializeGL()
 {
@@ -100,20 +102,44 @@ void VideoWidget::update_frame_and_points()
 	updateGL();
 }
 
-// ----------------------------------------------------------------------------
-VideoWidgetDialog::VideoWidgetDialog(QWidget *parent, FrameProvider* provider) 
-	: QDialog(parent),
-	  video_widget(NULL)
+#else
+void VideoWidget2::update_image(const cv::Mat& frame)
 {
-	const int VIDEO_FRAME_WIDTH  = 640;
-	const int VIDEO_FRAME_HEIGHT = 480;
+    QMutexLocker foo(&mtx);
+    QImage qframe = QImage(frame.cols, frame.rows, QImage::Format_RGB888);
+    uchar* data = qframe.bits();
+    const int pitch = qframe.bytesPerLine();
+    for (int y = 0; y < frame.rows; y++)
+        for (int x = 0; x < frame.cols; x++)
+        {
+            const int pos = 3 * (y*frame.cols + x);
+            data[y * pitch + x * 3 + 0] = frame.data[pos + 2];
+            data[y * pitch + x * 3 + 1] = frame.data[pos + 1];
+            data[y * pitch + x * 3 + 2] = frame.data[pos + 0];
+        }
+    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    pixmap = QPixmap::fromImage(qframe);
+}
+#endif
 
-	video_widget = new VideoWidget(this, provider);
+// ----------------------------------------------------------------------------
+VideoWidgetDialog::VideoWidgetDialog(QWidget *parent, FrameProvider* provider)
+    : QDialog(parent),
+      video_widget(NULL)
+{
+    const int VIDEO_FRAME_WIDTH  = 640;
+    const int VIDEO_FRAME_HEIGHT = 480;
 
-	QHBoxLayout* layout = new QHBoxLayout();
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(video_widget);
-	if (this->layout()) delete this->layout();
-	setLayout(layout);
-	resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
+#ifdef OPENTRACK_API
+    video_widget = new VideoWidget2(this, provider);
+#else
+    video_widget = new VideoWidget(this, provider);
+#endif
+
+    QHBoxLayout* layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(video_widget);
+    if (this->layout()) delete this->layout();
+    setLayout(layout);
+    resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
 }

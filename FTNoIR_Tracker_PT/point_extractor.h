@@ -9,6 +9,7 @@
 #define POINTEXTRACTOR_H
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 
 // ----------------------------------------------------------------------------
 // Extracts points from an opencv image

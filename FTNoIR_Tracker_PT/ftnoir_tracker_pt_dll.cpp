@@ -6,7 +6,6 @@
  */
 
 #include "ftnoir_tracker_pt_dll.h"
-
 #include <QIcon>
 
 //-----------------------------------------------------------------------------
@@ -31,10 +30,13 @@ void TrackerDll::getIcon(QIcon *icon)
 }
 
 
-//-----------------------------------------------------------------------------
-#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
-
+#ifdef OPENTRACK_API
+#   include "facetracknoir/global-settings.h"
+extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+#else
+#   pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerDllPtr __stdcall GetTrackerDll()
+#endif
 {
 	return new TrackerDll;
 }
