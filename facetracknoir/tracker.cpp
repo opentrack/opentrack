@@ -36,7 +36,6 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
     // Retieve the pointer to the parent
 	mainApp = parent;
 	// Load the settings from the INI-file
-	loadSettings();
 }
 
 Tracker::~Tracker()
@@ -194,35 +193,6 @@ void Tracker::getOutputHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
         data[i] = output_camera.axes[i];
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void Tracker::loadSettings() {
-	qDebug() << "Tracker::loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    iniFile.beginGroup("Tracking");
-    
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-    
-    for (int i = 0; i < 6; i++)
-        mainApp->axis(i).zero = iniFile.value(names2[i], 0).toDouble();
-    
-    iniFile.endGroup();
 }
 
 void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert?-1.0f:1.0f; }

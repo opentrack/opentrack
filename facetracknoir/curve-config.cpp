@@ -230,14 +230,12 @@ void CurveConfigurationDialog::save() {
     };
     
     for (int i = 0; i < 6; i++)
+    {
         iniFile.setValue(names2[i], widgets2[i]->value());
+        mainApp->axis(i).zero = widgets2[i]->value();
+    }
 
     iniFile.endGroup();
 
 	settingsDirty = false;
-
-	//
-	// Send a message to the main program, to update the Settings (for the tracker)
-	//
-    mainApp->update_tracker_settings();
 }
