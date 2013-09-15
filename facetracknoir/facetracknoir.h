@@ -25,13 +25,6 @@
 #ifndef FaceTrackNoIR_H
 #define FaceTrackNoIR_H
 
-#undef FTNOIR_PROTOCOL_BASE_LIB
-#undef FTNOIR_TRACKER_BASE_LIB
-#undef FTNOIR_FILTER_BASE_LIB
-#define FTNOIR_PROTOCOL_BASE_EXPORT Q_DECL_IMPORT
-#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
-#define FTNOIR_FILTER_BASE_EXPORT Q_DECL_IMPORT
-
 #include <QtGui/QMainWindow>
 #include <QApplication>
 #include <QFileDialog>
@@ -55,14 +48,13 @@
 
 #include "ui_facetracknoir.h"
 
+#include "global-settings.h"
+#include "tracker.h"
+#include "facetracknoir/shortcuts.h"
+
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
-
-#include "global-settings.h"
-#include "tracker.h"
-#include "facetracknoir/curve-config.h"
-#include "facetracknoir/shortcuts.h"
 
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
@@ -105,7 +97,7 @@ public:
     QxtGlobalShortcut* keyCenter;
 #endif
 public slots:
-        void shortcutRecentered();
+    void shortcutRecentered();
 
 private:
     HeadPoseData pose;
@@ -133,50 +125,50 @@ private:
     QList<DynamicLibrary*> dlopen_protocols;
 
     bool looping;
-
+    
 private slots:
-	//file menu
-	void open();
-	void save();
-	void saveAs();
-	void exit();
-//		void setIcon(int index);
-	void profileSelected(int index);
-
-	void showVideoWidget();
-	void showHeadPoseWidget();
-	void showTrackerSettings();
-	void showSecondTrackerSettings();
-
-	void showServerControls();
-	void showFilterControls();
-	void showKeyboardShortcuts();
-	void showCurveConfiguration();
-
-        void setInvertAxis( Axis axis, int invert );
-        void setInvertYaw(int invert) {
-            setInvertAxis(Yaw, invert);
-        }
-        void setInvertPitch(int invert) {
-            setInvertAxis(Pitch, invert);
-        }        
-        void setInvertRoll(int invert) {
-            setInvertAxis(Roll, invert);
-        }
-        void setInvertX(int invert) {
-            setInvertAxis(TX, invert);
-        }
-        void setInvertY(int invert) {
-            setInvertAxis(TY, invert);
-        }
-        void setInvertZ(int invert) {
-            setInvertAxis(TZ, invert);
-        }
-		void showHeadPose();
-
-        void startTracker();
-		void stopTracker();
-
+    //file menu
+    void open();
+    void save();
+    void saveAs();
+    void exit();
+    //		void setIcon(int index);
+    void profileSelected(int index);
+    
+    void showVideoWidget();
+    void showHeadPoseWidget();
+    void showTrackerSettings();
+    void showSecondTrackerSettings();
+    
+    void showServerControls();
+    void showFilterControls();
+    void showKeyboardShortcuts();
+    void showCurveConfiguration();
+    
+    void setInvertAxis( Axis axis, int invert );
+    void setInvertYaw(int invert) {
+        setInvertAxis(Yaw, invert);
+    }
+    void setInvertPitch(int invert) {
+        setInvertAxis(Pitch, invert);
+    }        
+    void setInvertRoll(int invert) {
+        setInvertAxis(Roll, invert);
+    }
+    void setInvertX(int invert) {
+        setInvertAxis(TX, invert);
+    }
+    void setInvertY(int invert) {
+        setInvertAxis(TY, invert);
+    }
+    void setInvertZ(int invert) {
+        setInvertAxis(TZ, invert);
+    }
+    void showHeadPose();
+    
+    void startTracker();
+    void stopTracker();
+    
 };
 
 #endif // FaceTrackNoIR_H

@@ -22,12 +22,6 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 * This class implements a tracker-base											*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-	    20122109 - C14: Replaced Release with virtual destructor
-		20120009 - WVR: Removed AutoClosePtr (seemed like it didn't work OK)
-		20110415 - WVR: Added overloaded operator - and -=
-*/
 #ifndef FTNOIR_TRACKER_BASE_H
 #define FTNOIR_TRACKER_BASE_H
 

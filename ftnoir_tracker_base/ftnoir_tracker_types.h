@@ -22,11 +22,6 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 * This class implements a tracker-base											*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120924 - C14: Moved T6DOF to separate file (not pulic interface)
-		20110415 - WVR: Added overloaded operator - and -=
-*/
 #ifndef FTNOIR_TRACKER_TYPES_H
 #define FTNOIR_TRACKER_TYPES_H
 
