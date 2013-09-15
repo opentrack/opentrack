@@ -2,6 +2,12 @@
 <ui version="4.0">
  <class>UICFTControls</class>
  <widget class="QWidget" name="UICFTControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>

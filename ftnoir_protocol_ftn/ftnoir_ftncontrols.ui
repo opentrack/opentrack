@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>UICFTNControls</class>
  <widget class="QWidget" name="UICFTNControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>156</height>
+    <height>162</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/facetracknoir.png</iconset>
+    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>

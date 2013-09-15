@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>UIHydraControls</class>
  <widget class="QWidget" name="UIHydraControls">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>142</height>
+    <height>145</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,210 +48,150 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-
-
-
-
-
-
-
-
-        <item row="0" column="0">
-          <widget class="QLabel" name="label_61">
-            <property name="text">
-              <string>Pitch:</string>
-            </property>
-          </widget>
-        </item>
-
-        <item row="0" column="1">
-          <widget class="QCheckBox" name="chkEnablePitch">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-              <string notr="true"/>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-        <item row="1" column="0">
-          <widget class="QLabel" name="label_91">
-            <property name="text">
-              <string>Yaw:</string>
-            </property>
-          </widget>
-        </item>
-
-
-        <item row="1" column="1">
-          <widget class="QCheckBox" name="chkEnableYaw">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-
-
-        <item row="2" column="0">
-          <widget class="QLabel" name="label_111">
-            <property name="text">
-              <string>Roll:</string>
-            </property>
-          </widget>
-        </item>
-
-        <item row="2" column="1">
-          <widget class="QCheckBox" name="chkEnableRoll">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <item row="0" column="2">
-          <widget class="QLabel" name="label_6">
-            <property name="text">
-              <string>X:</string>
-            </property>
-          </widget>
-        </item>
-
-        <item row="0" column="3">
-          <widget class="QCheckBox" name="chkEnableX">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-              <string notr="true"/>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-        <item row="1" column="2">
-          <widget class="QLabel" name="label_9">
-            <property name="text">
-              <string>Y:</string>
-            </property>
-          </widget>
-        </item>
-
-
-        <item row="1" column="3">
-          <widget class="QCheckBox" name="chkEnableY">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-
-
-        <item row="2" column="2">
-          <widget class="QLabel" name="label_11">
-            <property name="text">
-              <string>Z:</string>
-            </property>
-          </widget>
-        </item>
-
-        <item row="2" column="3">
-          <widget class="QCheckBox" name="chkEnableZ">
-            <property name="maximumSize">
-              <size>
-                <width>20</width>
-                <height>16777215</height>
-              </size>
-            </property>
-            <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-              <string/>
-            </property>
-          </widget>
-        </item>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_61">
+         <property name="text">
+          <string>Pitch:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="chkEnablePitch">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_91">
+         <property name="text">
+          <string>Yaw:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chkEnableYaw">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_111">
+         <property name="text">
+          <string>Roll:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="chkEnableRoll">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>X:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QCheckBox" name="chkEnableX">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Y:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QCheckBox" name="chkEnableY">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Z:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QCheckBox" name="chkEnableZ">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
