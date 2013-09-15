@@ -24,6 +24,10 @@
 #include "tracker.h"
 #include "facetracknoir.h"
 
+#if defined(_WIN32)
+#   include <windows.h>
+#endif
+
 /** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
     should_quit(false),
@@ -69,7 +73,11 @@ void Tracker::run() {
     double newpose[6];
     double last_post_filter[6];
     
-    forever
+#if defined(_WIN32)
+    (void) timeBeginPeriod(1);
+#endif
+    
+    for (;;)
 	{
         if (should_quit)
             break;
@@ -157,6 +165,9 @@ void Tracker::run() {
         //for lower cpu load
         msleep(8);
     }
+#if defined(_WIN32)
+    (void) timeEndPeriod(1);
+#endif
 
     for (int i = 0; i < 6; i++)
     {
