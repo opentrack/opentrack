@@ -55,7 +55,7 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
     //
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
     pManager = *DeviceManager::Create();
-    DeviceEnumerator<HMDDevice>& enumerator = pManager->EnumerateDevices<HMDDevice>();
+    DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
     if (enumerator.IsAvailable())
     {
         pHMD = *enumerator.CreateDevice();

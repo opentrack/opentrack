@@ -22,7 +22,7 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_protocol_SC.h"
+#include "ftnoir_protocol_sc.h"
 #include <QDebug>
 #include "facetracknoir/global-settings.h"
 

@@ -37,11 +37,11 @@
 #define SIMCONNECT_H_NOMANIFEST 
 #define _WIN32_WINNT 0x0502
 
-#include <Windows.h>
+#include <windows.h>
 #include <SimConnect.h>
 
-#include <..\ftnoir_protocol_base\ftnoir_protocol_base.h>
-#include <ui_FTNoIR_SCcontrols.h>
+#include <ftnoir_protocol_base/ftnoir_protocol_base.h>
+#include <ui_ftnoir_sccontrols.h>
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>

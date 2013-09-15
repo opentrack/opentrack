@@ -28,8 +28,8 @@
 #pragma once
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_vjoy_controls.h"
-#include <Windows.h>
-#include <VJoy.h>
+#include <windows.h>
+
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
@@ -92,3 +92,30 @@ public:
 
     void getIcon(QIcon *icon) { *icon = QIcon(":/images/vjoy.png"); }
 };
+
+#define VJOY_AXIS_MIN   -32768
+#define VJOY_AXIS_NIL   0
+#define VJOY_AXIS_MAX   32767
+
+#include <pshpack1.h>
+
+typedef struct _JOYSTICK_STATE
+{
+        UCHAR ReportId;                         // Report Id
+        SHORT XAxis;                            // X Axis
+        SHORT YAxis;                            // Y Axis
+        SHORT ZAxis;                            // Z Axis
+        SHORT XRotation;                        // X Rotation
+        SHORT YRotation;                        // Y Rotation
+        SHORT ZRotation;                        // Z Rotation
+        SHORT Slider;                           // Slider
+        SHORT Dial;                                     // Dial
+        USHORT POV;                                     // POV
+        UINT32 Buttons;                         // 32 Buttons
+} JOYSTICK_STATE, * PJOYSTICK_STATE;
+
+#include <poppack.h>
+
+extern "C" BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
+extern "C" VOID __stdcall VJoy_Shutdown();
+extern "C" BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);
