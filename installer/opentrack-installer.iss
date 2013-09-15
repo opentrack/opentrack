@@ -24,11 +24,15 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=opentrack-setup
 SetupIconFile=C:\Users\Administrator\Projects\opentrack\facetracknoir\facetracknoir.ico
-Compression=lzma
+Compression=lzma/ultra64
 SolidCompression=yes
 DisableWelcomePage=True
 DisableReadyPage=True
 DisableReadyMemo=True
+RestartIfNeededByRun=False
+InternalCompressLevel=ultra
+CompressionThreads=2
+MinVersion=0,5.01sp2
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -44,5 +48,5 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\redist\vc80redist_x86.exe"; Parameters: "/q:a"; Flags: postinstall waituntilterminated; Description: "Install MSVC 8.0 runtime for FaceAPI"
+Filename: "{app}\redist\vc80redist_x86.exe"; Parameters: "/q:a"; Flags: waituntilterminated; Description: "Install MSVC 8.0 runtime for FaceAPI"
 Filename: "{app}\{#MyAppExeName}"; Flags: nowait postinstall skipifsilent; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"
