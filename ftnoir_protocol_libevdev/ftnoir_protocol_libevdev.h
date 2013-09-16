@@ -49,7 +49,7 @@ public:
 	void unRegisterProtocol() {}
 
 private:
-	Ui::UICVJoyControls ui;
+    Ui::UICLibevdevControls ui;
 	void save();
 
 private slots:
