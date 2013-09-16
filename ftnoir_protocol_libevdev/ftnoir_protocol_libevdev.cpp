@@ -9,8 +9,8 @@
 
 #define CHECK_LIBEVDEV(expr) if (error = (expr) != 0) goto error;
 
-static const int max_input = 8192;
-static const int mid_input = 4096;
+static const int max_input = 65535;
+static const int mid_input = 32767;
 static const int min_input = 0;
 
 #define HT_PI 3.1415926535
@@ -34,8 +34,8 @@ FTNoIR_Protocol::FTNoIR_Protocol() : dev(NULL), uidev(NULL)
     absinfo.maximum = max_input;
     absinfo.resolution = 1;
     absinfo.value = mid_input;
-    absinfo.flat = 8192 / 180;
-    absinfo.fuzz = 1;
+    absinfo.flat = 1;
+    absinfo.fuzz = 0;
 
     CHECK_LIBEVDEV(libevdev_enable_event_type(dev, EV_ABS));
     CHECK_LIBEVDEV(libevdev_enable_event_code(dev, EV_ABS, ABS_X, &absinfo));
@@ -78,20 +78,19 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
         /* translation goes first */
         ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ
     };
-    static const int ranges[] = {
-        2,
-        2,
-        2,
-        2,
-        1, /* |pitch| only goes to 90 */
-        2
-    };
 
-    const int max_euler = 90;
+    static const int max_value[] = {
+        100,
+        100,
+        100,
+        180,
+        90,
+        180
+    };
 
     for (int i = 0; i < 6; i++)
     {
-        int value = headpose[i] * mid_input / (max_euler * ranges[i]) + mid_input;
+        int value = headpose[i] * mid_input / max_value[i] + mid_input;
         int normalized = std::max(std::min(max_input, value), min_input);
         (void) libevdev_uinput_write_event(uidev, EV_ABS, axes[i], normalized);
     }
