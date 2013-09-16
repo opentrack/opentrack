@@ -46,6 +46,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() : dev(NULL), uidev(NULL)
 
     CHECK_LIBEVDEV(libevdev_enable_event_code(dev, EV_ABS, ABS_RZ, &absinfo));
 
+    /* do not remove next 2 lines or udev scripts won't assign 0664 permissions -sh */
     CHECK_LIBEVDEV(libevdev_enable_event_type(dev, EV_KEY));
     CHECK_LIBEVDEV(libevdev_enable_event_code(dev, EV_KEY, BTN_JOYSTICK, NULL));
 
