@@ -81,7 +81,7 @@ color: rgb(255, 255, 255);
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
-         <string>rx</string>
+         <string>Yaw</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="rxconfig" native="true">
          <property name="geometry">
@@ -165,7 +165,7 @@ color: rgb(255, 255, 255);
        </widget>
        <widget class="QWidget" name="tab2">
         <attribute name="title">
-         <string>ry</string>
+         <string>Pitch</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="ryconfig" native="true">
          <property name="geometry">
@@ -255,7 +255,7 @@ color: rgb(255, 255, 255);
        </widget>
        <widget class="QWidget" name="tab3">
         <attribute name="title">
-         <string>rz</string>
+         <string>Roll</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="rzconfig" native="true">
          <property name="geometry">
@@ -345,7 +345,7 @@ color: rgb(255, 255, 255);
        </widget>
        <widget class="QWidget" name="tab4">
         <attribute name="title">
-         <string>tx</string>
+         <string>X</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="txconfig" native="true">
          <property name="geometry">
@@ -435,7 +435,7 @@ color: rgb(255, 255, 255);
        </widget>
        <widget class="QWidget" name="tab5">
         <attribute name="title">
-         <string>ty</string>
+         <string>Y</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="tyconfig" native="true">
          <property name="geometry">
@@ -525,7 +525,7 @@ color: rgb(255, 255, 255);
        </widget>
        <widget class="QWidget" name="tab6">
         <attribute name="title">
-         <string>tz</string>
+         <string>Z</string>
         </attribute>
         <widget class="QFunctionConfigurator" name="tzconfig" native="true">
          <property name="geometry">
