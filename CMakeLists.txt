@@ -9,6 +9,9 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
 
 add_definitions(-DOPENTRACK_API)
 
+if(UNIX)
+    set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
+endif()
 if(WIN32)
     SET(SDK_FACEAPI_ONLY FALSE CACHE BOOL "FaceAPI only (MSVC 2005)")
 endif()
@@ -200,6 +203,14 @@ if(NOT SDK_FACEAPI_ONLY)
     QT4_WRAP_UI(opentrack-proto-vjoy-uih ${opentrack-proto-vjoy-ui})
     QT4_ADD_RESOURCES(opentrack-proto-vjoy-rcc ${opentrack-proto-vjoy-rc})
 
+    file(GLOB opentrack-proto-libevdev-c "ftnoir_protocol_libevdev/*.cpp")
+    file(GLOB opentrack-proto-libevdev-h "ftnoir_protocol_libevdev/*.h")
+    QT4_WRAP_CPP(opentrack-proto-libevdev-moc ${opentrack-proto-libevdev-h})
+    file(GLOB opentrack-proto-libevdev-ui "ftnoir_protocol_libevdev/*.ui")
+    file(GLOB opentrack-proto-libevdev-rc "ftnoir_protocol_libevdev/*.qrc")
+    QT4_WRAP_UI(opentrack-proto-libevdev-uih ${opentrack-proto-libevdev-ui})
+    QT4_ADD_RESOURCES(opentrack-proto-libevdev-rcc ${opentrack-proto-libevdev-rc})
+
 # trackers
 
     file(GLOB opentrack-tracker-ht-c "ftnoir_tracker_ht/*.cpp")
@@ -347,6 +358,16 @@ endif()
             SET_TARGET_PROPERTIES(opentrack-proto-vjoy
                           PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt -Wl,--enable-stdcall-fixup")
         endif()
+    endif()
+
+    if(UNIX AND SDK_ENABLE_LIBEVDEV)
+        add_library(opentrack-proto-libevdev SHARED ${opentrack-proto-libevdev-c} ${opentrack-proto-libevdev-moc} ${opentrack-proto-libevdev-uih} ${opentrack-proto-libevdev-rcc})
+        target_link_libraries(opentrack-proto-libevdev ${MY_QT_LIBS} evdev)
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(opentrack-proto-libevdev
+                          PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+        install(TARGETS opentrack-proto-libevdev DESTINATION .)
     endif()
 
     if(WIN32)
