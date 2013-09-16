@@ -48,10 +48,10 @@ public:
         return true;
     }
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
-private:
     QString getGameName() {
         return "Virtual joystick";
     }
+private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
