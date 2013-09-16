@@ -12,8 +12,10 @@
 #include <QSettings>
 #include "facetracknoir/global-settings.h"
 
-#include <libevdev-1.0/libevdev/libevdev.h>
-#include <libevdev-1.0/libevdev/libevdev-uinput.h>
+extern "C" {
+#   include <libevdev-1.0/libevdev/libevdev.h>
+#   include <libevdev-1.0/libevdev/libevdev-uinput.h>
+}
 
 class FTNoIR_Protocol : public IProtocol
 {
