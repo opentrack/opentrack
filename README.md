@@ -9,7 +9,7 @@ movements and relaying them to games and flight simulation software.
 
 # Tracking sources
 
-- SeeingMachines FaceAPI <http://seeingmachines.com/>
+- SeeingMachines FaceAPI <http://seeingmachines.com/> (Windows)
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift (Linux testers welcome!)
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
