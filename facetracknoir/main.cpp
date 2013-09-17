@@ -49,9 +49,7 @@ int main(int argc, char** argv)
     font.setStyleStrategy(QFont::PreferAntialias);
     app.setFont(font);
     FaceTrackNoIR w;
-	//
-	// Create the Main Window and DeskTop and Exec!
-	//
+
 	QDesktopWidget desktop;
     w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
 	w.show();
