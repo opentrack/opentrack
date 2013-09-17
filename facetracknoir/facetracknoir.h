@@ -37,6 +37,7 @@
 #include <QKeySequence>
 #include <QtGui>
 #include <QString>
+#include <QByteArray>
 #if !defined(_WIN32)
 #	include <qxtglobalshortcut.h>
 #else
