@@ -37,8 +37,8 @@ Don't be afraid to submit an issue/feature request if the need arises.
 
 # Credits
 
-- mm0zct
 - Stanisław Halik
+- Chris Thompson (aka mm0zct)
 - Donovan Baarda
 - Patrick Ruoff (merging)
 - Wim Vriend (historically)
