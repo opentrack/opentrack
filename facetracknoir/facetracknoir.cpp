@@ -48,6 +48,10 @@
 #   define LIB_PREFIX "lib"
 #endif
 
+#if defined(__unix) || defined(__linux)
+#   include <unistd.h>
+#endif
+
 static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
 {
     Metadata* meta;
@@ -288,7 +292,6 @@ void FaceTrackNoIR::open() {
 // Save the current Settings to the currently 'active' INI-file.
 //
 void FaceTrackNoIR::save() {
-
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
@@ -330,6 +333,16 @@ void FaceTrackNoIR::save() {
         iniFile.setValue ( "DLL",  filter == NULL ? "" : filter->filename);
     }
 	iniFile.endGroup ();
+
+#if defined(__unix) || defined(__linux)
+    QByteArray bytes = currentFile.toUtf8();
+    const char* filename_as_asciiz = bytes.constData();
+
+    if (access(filename_as_asciiz, R_OK | W_OK))
+    {
+        QMessageBox::warning(this, "Something went wrong", "Check permissions and ownership for your .ini file!", QMessageBox::Ok, QMessageBox::NoButton);
+    }
+#endif
 }
 
 //
