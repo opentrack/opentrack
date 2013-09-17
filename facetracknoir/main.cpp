@@ -33,24 +33,23 @@
 #if defined(_WIN32)
 #   include <windows.h>
 //#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
-#elif defined(Q_OS_UNIX)
-#include <X11/Xlib.h>
 #endif
 
 int main(int argc, char** argv)
 {
-#if defined(Q_WS_X11)
-    XInitThreads();
-#endif
+    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
+
     QApplication app(argc, argv);
+
     QFont font;
     font.setFamily(font.defaultFamily());
     font.setPointSize(9);
     font.setStyleStrategy(QFont::PreferAntialias);
     app.setFont(font);
-    FaceTrackNoIR w;
 
+    FaceTrackNoIR w;
 	QDesktopWidget desktop;
+
     w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
 	w.show();
     qApp->exec();

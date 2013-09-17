@@ -536,8 +536,6 @@ endif()
                                         winmm
                                         uuid
         )
-    else()
-        target_link_libraries(opentrack X11)
     endif()
     if(MSVC)
         SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
