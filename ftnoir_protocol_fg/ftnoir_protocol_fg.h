@@ -48,6 +48,9 @@ public:
 	~FTNoIR_Protocol();
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    QString getGameName() {
+        return "FlightGear";
+    }
 private:
 
 	bool blnConnectionActive;
@@ -61,9 +64,6 @@ private:
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
 	void loadSettings();
-    QString getGameName() {
-        return "FlightGear";
-    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
