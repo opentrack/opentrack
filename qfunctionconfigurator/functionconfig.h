@@ -19,7 +19,7 @@
 
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
-    QMutex* _mutex;
+    QMutex _mutex;
 	QList<QPointF> _points;
 	void reload();
     float* _data;
@@ -47,7 +47,7 @@ public:
 	//
 	void removePoint(int i);
     void removeAllPoints() {
-        QMutexLocker foo(_mutex);
+        QMutexLocker foo(&_mutex);
         _points.clear();
         reload();
     }
