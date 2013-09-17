@@ -19,10 +19,14 @@
 #include <sys/types.h>
 #endif
 
-#if defined(IN_FTNOIR_COMPAT) && defined(_WIN32)
-#	define COMPAT_EXPORT __declspec(dllexport)
-#elif defined(_WIN32)
-#	define COMPAT_EXPORT __declspec(dllimport)
+#if !defined(OPENTRACK_COMPAT_BUNDLED)
+#   if defined(IN_FTNOIR_COMPAT) && defined(_WIN32)
+#       define COMPAT_EXPORT __declspec(dllexport)
+#   elif defined(_WIN32)
+#       define COMPAT_EXPORT __declspec(dllimport)
+#   else
+#       define COMPAT_EXPORT
+#   endif
 #else
 #   define COMPAT_EXPORT
 #endif
