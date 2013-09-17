@@ -108,19 +108,19 @@ PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDes
     if (view_x && view_y && view_z && view_heading && view_pitch) {
         lck_posix = PortableLockedShm_init(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
         if (lck_posix->mem == (void*)-1) {
-            fprintf(stderr, "FTNOIR failed to init SHM #1!\n");
+            fprintf(stderr, "opentrack failed to init SHM #1!\n");
             return 0;
         }
         if (lck_posix->mem == NULL) {
-            fprintf(stderr, "FTNOIR failed to init SHM #2!\n");
+            fprintf(stderr, "opentrack failed to init SHM #2!\n");
             return 0;
         }
         shm_posix = (WineSHM*) lck_posix->mem;
         memset(shm_posix, 0, sizeof(WineSHM));
-        strcpy(outName, "FaceTrackNoIR");
-        strcpy(outSignature, "FaceTrackNoIR - FreeTrack lives!");
-        strcpy(outDescription, "Face tracking view control");
-        fprintf(stderr, "FTNOIR init complete\n");
+        strcpy(outName, "opentrack");
+        strcpy(outSignature, "opentrack - freetrack lives!");
+        strcpy(outDescription, "head tracking view control");
+        fprintf(stderr, "opentrack init complete\n");
         return 1;
     }
     return 0;
