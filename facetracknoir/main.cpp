@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
     w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
 	w.show();
-    qApp->exec();
+    app.exec();
 
 	return 0;
 }
