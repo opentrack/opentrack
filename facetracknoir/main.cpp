@@ -28,6 +28,7 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QList>
+#include <QFont>
 
 #if defined(_WIN32)
 #   include <windows.h>
@@ -35,6 +36,7 @@
 #elif defined(Q_OS_UNIX)
 #include <X11/Xlib.h>
 #endif
+
 int main(int argc, char** argv)
 {
 #if defined(Q_WS_X11)
@@ -44,6 +46,7 @@ int main(int argc, char** argv)
     QFont font;
     font.setFamily(font.defaultFamily());
     font.setPointSize(9);
+    font.setStyleStrategy(QFont::PreferAntialias);
     app.setFont(font);
     FaceTrackNoIR w;
 	//
