@@ -61,10 +61,10 @@ public:
                  int maxOutput1,
                  int maxInput2,
                  int maxOutput2) :
-        curve(primary, maxInput1, maxOutput1),
-        curveAlt(secondary, maxInput2, maxOutput2),
         headPos(0),
         invert(1),
+        curve(primary, maxInput1, maxOutput1),
+        curveAlt(secondary, maxInput2, maxOutput2),
         zero(0)
     {
         QSettings settings("opentrack");							// Registry settings (in HK_USER)
