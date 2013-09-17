@@ -86,18 +86,18 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
+    QMainWindow(parent, flags),
     #if defined(_WIN32)
         keybindingWorker(NULL),
     #else
         keyCenter(0),
     #endif
-    QMainWindow(parent, flags),
+    timUpdateHeadPose(this),
     pTrackerDialog(NULL),
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-    looping(false),
-    timUpdateHeadPose(this)
+    looping(false)
 {	
     ui.setupUi(this);
 
