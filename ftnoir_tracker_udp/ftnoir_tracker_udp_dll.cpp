@@ -28,9 +28,9 @@
 
 FTNoIR_TrackerDll::FTNoIR_TrackerDll() {
 	//populate the description strings
-	trackerFullName = "FaceTrackNoIR UDP";
+    trackerFullName = "UDP";
 	trackerShortName = "UDP";
-	trackerDescription = "FaceTrackNoIR UDP";
+    trackerDescription = "opentrack UDP client";
 }
 
 FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
