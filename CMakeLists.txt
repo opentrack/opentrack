@@ -416,6 +416,9 @@ endif()
         if(NOT SDK_WINE_NO_WRAPPER)
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
+              DEPENDS "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
+                      "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx"
+                      "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx"
               COMMAND "${SDK_WINE_PREFIX}/bin/wineg++" -g -O2 -m32 -o
                       opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
                       "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
@@ -423,6 +426,7 @@ endif()
                       "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx"
                       -lrt)
             add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
+            add_dependencies(wine-wrapper opentrack-compat opentrack-proto-wine)
         endif()
     endif()
 
