@@ -52,7 +52,10 @@ public:
 
     bool checkServerInstallationOK();
 	void sendHeadposeToGame(double* headpose, double* rawheadpose );
-
+    QString getGameName() {
+        QMutexLocker foo(&game_name_mutex);
+        return connected_game;
+    }
 private:
     PortableLockedShm lck_shm;
     WineSHM* shm;
@@ -60,10 +63,6 @@ private:
     int gameid;
     QString connected_game;
     QMutex game_name_mutex;
-    QString getGameName() {
-        QMutexLocker((QMutex*)&game_name_mutex);
-        return connected_game;
-    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
