@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define CHECK_LIBEVDEV(expr) if (error = (expr) != 0) goto error;
+#define CHECK_LIBEVDEV(expr) if ((error = (expr)) != 0) goto error;
 
 static const int max_input = 65535;
 static const int mid_input = 32767;
