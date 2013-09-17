@@ -335,7 +335,7 @@ void FaceTrackNoIR::save() {
 	iniFile.endGroup ();
 
 #if defined(__unix) || defined(__linux)
-    QByteArray bytes = currentFile.toUtf8();
+    QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
 
     if (access(filename_as_asciiz, R_OK | W_OK))
