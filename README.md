@@ -17,7 +17,7 @@ movements and relaying them to games and flight simulation software.
 - Razer Hydra (Windows only)
 - Relaying via UDP from a different computer
 
-# Protocols
+# Output
 
 - FlightGear Nasal script
 - FSUIPC for Microsoft FSX (Windows)
