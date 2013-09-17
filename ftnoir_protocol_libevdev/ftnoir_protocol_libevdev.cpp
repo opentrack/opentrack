@@ -93,6 +93,8 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
         int normalized = std::max(std::min(max_input, value), min_input);
         (void) libevdev_uinput_write_event(uidev, EV_ABS, axes[i], normalized);
     }
+
+    (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
