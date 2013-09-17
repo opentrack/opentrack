@@ -29,14 +29,14 @@
 #pragma once
 #ifndef INCLUDED_SCSERVER_H
 #define INCLUDED_SCSERVER_H
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0502
 #include "facetracknoir/global-settings.h"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
 //
 #define SIMCONNECT_H_NOMANIFEST 
-#define _WIN32_WINNT 0x0502
-
 #include <windows.h>
 #include <SimConnect.h>
 
