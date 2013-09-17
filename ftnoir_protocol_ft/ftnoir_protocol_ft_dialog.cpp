@@ -190,13 +190,7 @@ void FTControls::save() {
 // Several program distribute their own version of this file.
 //
 void FTControls::selectDLL() {
-	QFileDialog::Options options;
-	QFileDialog::FileMode mode;
-
-    options |= QFileDialog::DontUseNativeDialog;
-	mode = QFileDialog::ExistingFile;
-    QString selectedFilter;
-	QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
+    QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
 
 	//
 	// Write the location of the file in the required Registry-key.
