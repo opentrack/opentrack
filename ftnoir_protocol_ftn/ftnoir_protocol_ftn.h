@@ -93,9 +93,9 @@ public:
 	FTNoIR_ProtocolDll();
 	~FTNoIR_ProtocolDll();
 
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); }
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("opentrack UDP protocol"); }
 
     void getIcon(QIcon *icon) { *icon = QIcon(":/images/facetracknoir.png"); }
 };
