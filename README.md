@@ -7,7 +7,7 @@ Source code access available at <http://github.com/opentrack/opentrack/>
 **opentrack** is an application dedicated to tracking user's head
 movements and relaying them to games and flight simulation software.
 
-** Tracking sources
+# Tracking sources
 
 - SeeingMachines FaceAPI <http://seeingmachines.com/>
 - PointTracker by Patrick Ruoff, freetrack-like light sources
@@ -17,7 +17,7 @@ movements and relaying them to games and flight simulation software.
 - Razer Hydra (Windows only)
 - Relaying via UDP from a different computer
 
-** Protocols
+# Protocols
 
 - FlightGear Nasal script
 - FSUIPC for Microsoft FSX (Windows)
@@ -28,14 +28,14 @@ movements and relaying them to games and flight simulation software.
 - Wine freetrack glue protocol (Linux)
 - Tablet-like coordinate output (Windows)
 
-** Configuration
+# Configuration
 
 **opentrack** offers output shaping, filtering, is buildable on
 both MS Windows and GNU/Linux.
 
 Don't be afraid to submit an issue/feature request if the need arises.
 
-** Credits
+# Credits
 
 - mm0zct
 - Stanisław Halik
@@ -44,7 +44,7 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Wim Vriend (historically)
 - Ron Hendriks (historically)
 
-** Licensing information
+# Licensing information
 
 The code originally licensed under GPLv3, new code is required to be
 compatible with it unless resides in separate address space.
