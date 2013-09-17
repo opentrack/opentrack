@@ -559,9 +559,13 @@ if(SDK_SM_FACEAPI_PATH)
         add_library(opentrack-tracker-faceapi SHARED ${opentrack-tracker-faceapi-c} ${opentrack-tracker-faceapi-moc} ${opentrack-tracker-faceapi-uih} ${opentrack-tracker-faceapi-rcc})
         target_link_libraries(opentrack-tracker-faceapi ${MY_QT_LIBS} opentrack-compat)
     endif()
-    if(MSVC80)
+    if(MSVC80 OR MINGW)
         add_executable(opentrack-faceapi-wrapper ${opentrack-faceapi-wrapper-c})
         target_link_libraries(opentrack-faceapi-wrapper "${SDK_SM_FACEAPI_PATH}/bin/smft32.lib")
+        if(CMAKE_COMPILER_IS_GNUCXX)
+                #target_link_libraries(opentrack-faceapi-wrapper msvcr80)
+                SET_TARGET_PROPERTIES(opentrack-faceapi-wrapper PROPERTIES LINK_FLAGS "-mdll")
+        endif()
     endif()
 endif() 
 
@@ -608,7 +612,7 @@ if(NOT SDK_FACEAPI_ONLY)
             NAMELINK_SKIP
     )
 
-    if(SDK_VJOY)
+    if(WIN32 AND SDK_VJOY)
         install(TARGETS opentrack-proto-vjoy
             RUNTIME DESTINATION .
             LIBRARY DESTINATION .

@@ -22,14 +22,14 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
-#include "..\ftnoir_tracker_base\ftnoir_tracker_sm_types.h"
-#include "ui_FTNoIR_SM_controls.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_sm_types.h"
+#include "ui_ftnoir_sm_controls.h"
 
 #include <QMessageBox>
 #include <QSettings>
 #include <QProcess>
-#include "Windows.h"
+#include <windows.h>
 #include "math.h"
 #include "facetracknoir/global-settings.h"
 #include "compat/compat.h"
