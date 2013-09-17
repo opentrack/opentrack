@@ -61,7 +61,9 @@ public:
 	~FTNoIR_Protocol();
     bool checkServerInstallationOK();
     void sendHeadposeToGame( double *headpose, double *rawheadpose );
-
+    QString getGameName() {
+        return "Mouse tracker";
+    }
 private:
 	HANDLE h;
 	INPUT MouseStruct;
@@ -70,9 +72,6 @@ private:
 	FTN_AngleName Mouse_Y;
 	FTN_AngleName Mouse_Wheel;
 	void loadSettings();
-    QString getGameName() {
-        return "Mouse tracker";
-    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
