@@ -13,8 +13,6 @@ static const int max_input = 65535;
 static const int mid_input = 32767;
 static const int min_input = 0;
 
-#define HT_PI 3.1415926535
-
 FTNoIR_Protocol::FTNoIR_Protocol() : dev(NULL), uidev(NULL)
 {
     int error = 0;
