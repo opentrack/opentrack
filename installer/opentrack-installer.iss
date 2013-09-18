@@ -23,7 +23,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=opentrack-setup
-SetupIconFile=C:\Users\Administrator\Projects\opentrack\facetracknoir\facetracknoir.ico
+SetupIconFile=C:\Users\Administrator\SDK\opentrack\facetracknoir\facetracknoir.ico
 Compression=lzma/ultra64
 SolidCompression=yes
 DisableWelcomePage=True
@@ -41,7 +41,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Administrator\Projects\opentrack\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "C:\Users\Administrator\SDK\opentrack\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
