@@ -706,7 +706,7 @@ if(MSVC)
     install(FILES ${pdbs} DESTINATION .)
 endif()
 
-if(WIN32 AND SDK_SM_FACEAPI_PATH AND MSVC80)
+if(SDK_SM_FACEAPI_PATH AND (MSVC80 OR MINGW))
     install(TARGETS opentrack-faceapi-wrapper
         RUNTIME DESTINATION faceapi
         LIBRARY DESTINATION faceapi
