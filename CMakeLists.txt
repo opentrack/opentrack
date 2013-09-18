@@ -667,22 +667,17 @@ if(NOT SDK_FACEAPI_ONLY)
                 )
                 install(FILES ${opentrack-opencv-files} DESTINATION .)
         endif()
-        get_filename_component(opentrack-qt-bin "${QT_QMAKE_EXECUTABLE}" PATH)
         if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
-        GET_FILENAME_COMPONENT(qt-dirname "${QT_QTCORE_LIBRARY_RELEASE}" PATH)
-        SET(qt-dirname "${qt-dirname}/../bin/")
-        if(NOT EXISTS "${qt-dirname}/../bin/")
             GET_FILENAME_COMPONENT(qt-dirname "${QT_QTCORE_LIBRARY_RELEASE}" PATH)
             SET(qt-dirname "${qt-dirname}/../bin/")
-        endif()
-        install(FILES
-            "${qt-dirname}/QtCore4.dll"
-            "${qt-dirname}/QtGui4.dll"
-            "${qt-dirname}/QtNetwork4.dll"
-            "${qt-dirname}/QtSvg4.dll"
-            "${qt-dirname}/QtXml4.dll"
-            DESTINATION .
-        )
+            install(FILES
+                "${qt-dirname}/QtCore4.dll"
+                "${qt-dirname}/QtGui4.dll"
+                "${qt-dirname}/QtNetwork4.dll"
+                "${qt-dirname}/QtSvg4.dll"
+                "${qt-dirname}/QtXml4.dll"
+                DESTINATION .
+            )
         endif()
         install(TARGETS
                 opentrack-proto-freetrack
