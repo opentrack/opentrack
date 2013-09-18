@@ -13,7 +13,7 @@ movements and relaying them to games and flight simulation software.
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift (Windows; Linux testers welcome!)
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
-- HT tracker <https://github.com/sthalik/headtracker>>
+- HT tracker <https://github.com/sthalik/headtracker>
 - Razer Hydra (Windows only)
 - Relaying via UDP from a different computer
 
