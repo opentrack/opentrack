@@ -13,7 +13,7 @@
 #   include <boost/shared_ptr.hpp>
 #else
 #   include "FTNoIR_Tracker_PT/boost-compat.h"
-#   include <opencv2/highgui.hpp>
+#   include <opencv2/highgui/highgui.hpp>
 #   include <opencv2/highgui/highgui_c.h>
 #endif
 #include <string>
