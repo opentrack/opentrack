@@ -705,7 +705,7 @@ if(SDK_SM_FACEAPI_PATH AND NOT SDK_FACEAPI_ONLY)
 endif()
 
 if(MSVC)
-    file(GLOB pdbs "${CMAKE_BINARY_DIR}/*.pdb")
+    file(GLOB pdbs "${CMAKE_BINARY_DIR}/*.pdb" "${CMAKE_BINARY_DIR}/release/*.pdb")
     install(FILES ${pdbs} DESTINATION .)
 endif()
 
