@@ -571,6 +571,8 @@ if(SDK_SM_FACEAPI_PATH)
     endif()
 endif() 
 
+install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION .)
+
 if(NOT SDK_FACEAPI_ONLY)
     if(SDK_XPLANE)
         install(TARGETS opentrack-xplane-plugin LIBRARY DESTINATION .  NAMELINK_SKIP)
