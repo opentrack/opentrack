@@ -459,7 +459,7 @@ endif()
                       "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
                       uuid)
     endif()
-	
+
     if(OpenCV_FOUND)
         include_directories(${OpenCV_INCLUDE_DIRS})
         include_directories(${OpenCV_DIR}/include)
@@ -472,6 +472,14 @@ endif()
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         SET_TARGET_PROPERTIES(opentrack-tracker-pt
                 PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+
+        if(WIN32)
+            target_link_libraries(opentrack-tracker-pt
+                          "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
+                          "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
+                          "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+                          uuid)
         endif()
     endif()
 
