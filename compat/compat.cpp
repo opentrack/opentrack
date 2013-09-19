@@ -61,15 +61,6 @@ PortableLockedShm::PortableLockedShm(const char *shmName, const char *mutexName,
         mem = (void*) -1;
 }
 
-bool PortableLockedShm::success()
-{
-#ifndef _WIN32
-    return (void*) mem != (void*) -1;
-#else
-    return (void*) mem != NULL;
-#endif
-}
-
 PortableLockedShm::~PortableLockedShm()
 {
     //(void) shm_unlink(shm_filename);
@@ -88,6 +79,13 @@ void PortableLockedShm::unlock()
     flock(fd, LOCK_UN);
 }
 
-
-
 #endif
+
+bool PortableLockedShm::success()
+{
+#ifndef _WIN32
+    return (void*) mem != (void*) -1;
+#else
+    return (void*) mem != NULL;
+#endif
+}
