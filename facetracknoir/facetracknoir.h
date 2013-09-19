@@ -134,8 +134,6 @@ private slots:
     //		void setIcon(int index);
     void profileSelected(int index);
     
-    void showVideoWidget();
-    void showHeadPoseWidget();
     void showTrackerSettings();
     void showSecondTrackerSettings();
     
