@@ -12,6 +12,7 @@ public:
     ~ShmPosix();
     void lock();
     void unlock();
+    bool success();
     void* mem;
 private:
     int fd, size;
@@ -23,6 +24,7 @@ public:
     ~ShmWine();
     void lock();
     void unlock();
+    bool success();
     void* mem;
 private:
     void *hMutex, *hMapFile;
@@ -33,11 +35,11 @@ int main(void)
 {
 	ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
     ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTMemMap));
-	if(lck_posix.mem == (void*)-1) {
+	if(!lck_posix.success()) {
 		printf("Can't open posix map: %d\n", errno);
 		return 1;
 	}
-	if(lck_wine.mem == NULL) {
+	if(!lck_wine.success()) {
 		printf("Can't open Wine map\n");
 		return 1;
 	}
