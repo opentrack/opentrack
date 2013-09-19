@@ -43,8 +43,8 @@ FilterControls::FilterControls() :
 	loadSettings();
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-    connect(ui.rotation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(int)));
-    connect(ui.translation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(int)));
+    connect(ui.rotation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+    connect(ui.translation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
 
     connect(ui.slideZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
     connect(ui.spinZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
