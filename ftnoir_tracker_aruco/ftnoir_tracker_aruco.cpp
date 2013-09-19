@@ -299,7 +299,6 @@ bool Tracker::GiveHeadPoseData(double *data)
 class TrackerDll : public Metadata
 {
 	// ITrackerDll interface
-	void Initialize() {}
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
