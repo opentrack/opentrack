@@ -256,7 +256,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
         start_dummy();
     }
     
-    if (shm.mem == (void*) 0 || shm.mem == (void*) -1)
+    if (!shm.success())
         return false;
     
     pMemData->data.DataID = 1;
