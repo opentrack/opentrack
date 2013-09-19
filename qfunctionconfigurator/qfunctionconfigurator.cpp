@@ -208,7 +208,7 @@ void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
 //
 // Draw the Function for the graph, on a Pixmap.
 //
-void QFunctionConfigurator::drawFunction(const QRectF &fullRect)
+void QFunctionConfigurator::drawFunction()
 {
     if (!_config)
         return;
@@ -277,7 +277,7 @@ int i;
     }
 
     if (_draw_function) {
-        drawFunction(e->rect());						// Draw the Function on a Pixmap
+        drawFunction();						// Draw the Function on a Pixmap
         _draw_function = false;
     }
     p.drawPixmap(0, 0, _function);						// Always draw the background and the function
@@ -650,7 +650,7 @@ void QFunctionConfigurator::setCaption(QString cap)
     update();
 }
 
-void QFunctionConfigurator::resizeEvent(QResizeEvent *e)
+void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
     range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
 

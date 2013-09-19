@@ -153,7 +153,7 @@ protected slots:
       
 protected:
 	void drawBackground(const QRectF &rect);
-	void drawFunction(const QRectF &rect);
+	void drawFunction();
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
 	bool markContains(const QPointF &pt, const QPointF &coord) const;
