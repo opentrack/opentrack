@@ -115,7 +115,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
     //NB: larger alpha = *less* lag (opposite to what you'd expect)
     float largest_alpha=0.0f;
     for (int i=0;i<6;i++) {
-        largest_alpha=std::max<double>(largest_alpha, alpha[i]);
+        largest_alpha=std::min<double>(largest_alpha, alpha[i]);
     }
 
     // Calculate the new camera position.
