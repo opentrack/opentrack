@@ -37,6 +37,7 @@ public:
     ~PortableLockedShm();
     void lock();
     void unlock();
+    bool success();
     void* mem;
 private:
 #if defined(_WIN32)
