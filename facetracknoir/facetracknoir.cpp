@@ -744,33 +744,17 @@ void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
 void FaceTrackNoIR::showHeadPose() {
     double newdata[6];
 
-	ui.lblX->setVisible(true);
-	ui.lblY->setVisible(true);
-	ui.lblZ->setVisible(true);
-	ui.lblRotX->setVisible(true);
-	ui.lblRotY->setVisible(true);
-	ui.lblRotZ->setVisible(true);
-
-	ui.lcdNumOutputPosX->setVisible(true);
-	ui.lcdNumOutputPosY->setVisible(true);
-	ui.lcdNumOutputPosZ->setVisible(true);
-	ui.lcdNumOutputRotX->setVisible(true);
-	ui.lcdNumOutputRotY->setVisible(true);
-	ui.lcdNumOutputRotZ->setVisible(true);
-
-	//
-	// Get the pose and also display it.
-	// Updating the pose from within the Tracker-class caused crashes...
-	//
+    const QString format("%1");
+    
     tracker->getHeadPose(newdata);
-    ui.lcdNumX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
-    ui.lcdNumY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
-    ui.lcdNumZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
+    ui.lcdNumX->display(format.arg(newdata[TX], 0, 'f', 1));
+    ui.lcdNumY->display(format.arg(newdata[TY], 0, 'f', 1));
+    ui.lcdNumZ->display(format.arg(newdata[TZ], 0, 'f', 1));
 
 
-    ui.lcdNumRotX->display(QString("%1").arg(newdata[Yaw], 0, 'f', 1));
-    ui.lcdNumRotY->display(QString("%1").arg(newdata[Pitch], 0, 'f', 1));
-    ui.lcdNumRotZ->display(QString("%1").arg(newdata[Roll], 0, 'f', 1));
+    ui.lcdNumRotX->display(format.arg(newdata[Yaw], 0, 'f', 1));
+    ui.lcdNumRotY->display(format.arg(newdata[Pitch], 0, 'f', 1));
+    ui.lcdNumRotZ->display(format.arg(newdata[Roll], 0, 'f', 1));
 
 	//
 	// Get the output-pose and also display it.
@@ -779,24 +763,20 @@ void FaceTrackNoIR::showHeadPose() {
 
     ui.pose_display->rotateBy(newdata[Yaw], newdata[Roll], newdata[Pitch]);
 
-    ui.lcdNumOutputPosX->display(QString("%1").arg(newdata[TX], 0, 'f', 1));
-    ui.lcdNumOutputPosY->display(QString("%1").arg(newdata[TY], 0, 'f', 1));
-    ui.lcdNumOutputPosZ->display(QString("%1").arg(newdata[TZ], 0, 'f', 1));
+    ui.lcdNumOutputPosX->display(format.arg(newdata[TX], 0, 'f', 1));
+    ui.lcdNumOutputPosY->display(format.arg(newdata[TY], 0, 'f', 1));
+    ui.lcdNumOutputPosZ->display(format.arg(newdata[TZ], 0, 'f', 1));
 
+    ui.lcdNumOutputRotX->display(format.arg(newdata[Yaw], 0, 'f', 1));
+    ui.lcdNumOutputRotY->display(format.arg(newdata[Pitch], 0, 'f', 1));
+    ui.lcdNumOutputRotZ->display(format.arg(newdata[Roll], 0, 'f', 1));
 
-    ui.lcdNumOutputRotX->display(QString("%1").arg(newdata[Yaw], 0, 'f', 1));
-    ui.lcdNumOutputRotY->display(QString("%1").arg(newdata[Pitch], 0, 'f', 1));
-    ui.lcdNumOutputRotZ->display(QString("%1").arg(newdata[Roll], 0, 'f', 1));
-
-    //
-    // Update the curves in the curve-configurator. This shows the ball with the red lines.
-    //
     if (_curve_config) {
         _curve_config->update();
     }
     if (Libraries->pProtocol)
     {
-        QString name = Libraries->pProtocol->getGameName();
+        const QString name = Libraries->pProtocol->getGameName();
         ui.game_name->setText(name);
     }
 }
