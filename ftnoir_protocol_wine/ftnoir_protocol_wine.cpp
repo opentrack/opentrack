@@ -7,7 +7,7 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
-    if (lck_shm.mem != (void*) -1) {
+    if (lck_shm.success()) {
         shm = (WineSHM*) lck_shm.mem;
         memset(shm, 0, sizeof(*shm));
     }
@@ -53,7 +53,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose 
 //
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {
-    return lck_shm.mem != (void*)-1;
+    return lck_shm.success();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
