@@ -117,12 +117,6 @@ void Tracker::run() {
                 
                 Tracker::do_center = false;
                 
-                if (Libraries->pTracker)
-                    Libraries->pTracker->NotifyCenter();
-                
-                if (Libraries->pSecondTracker)
-                    Libraries->pSecondTracker->NotifyCenter();
-                
                 if (Libraries->pFilter)
                     Libraries->pFilter->Initialize();
             }
