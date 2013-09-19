@@ -27,7 +27,7 @@
 
 //FaceAPI headers
 #include <sm_api.h>
-#include "ftnoir_tracker_base/ftnoir_tracker_sm_types.h"
+#include "ftnoir_tracker_sm/ftnoir_tracker_sm_types.h"
 #include "utils.h"
 #include <exception>
 
