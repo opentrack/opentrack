@@ -44,7 +44,7 @@ void PortableLockedShm::unlock()
 }
 
 #else
-PortableLockedShm::PortableLockedShm(const char *shmName, const char *mutexName, int mapSize) : size(mapSize)
+PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
     char shm_filename[NAME_MAX];
     shm_filename[0] = '/';
