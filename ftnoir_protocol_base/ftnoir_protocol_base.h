@@ -36,24 +36,7 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 #include <QtGui/QWidget>
 #include <QtGui/QFrame>
-//#include "winbase.h"
 
-//#include "windows.h"
-//#include "winable.h"
-
-////////////////////////////////////////////////////////////////////////////////
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
-
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
 struct IProtocol
 {
 	virtual ~IProtocol() {}
