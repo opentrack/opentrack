@@ -15,11 +15,6 @@ FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
 
 }
 
-void FTNoIR_TrackerDll::Initialize()
-{
-	return;
-}
-
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = trackerFullName;

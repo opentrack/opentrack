@@ -74,8 +74,6 @@ public:
 	FTNoIR_TrackerDll();
 	~FTNoIR_TrackerDll();
 
-    void Initialize();
-
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
