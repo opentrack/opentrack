@@ -781,22 +781,6 @@ void FaceTrackNoIR::showHeadPose() {
     }
 }
 
-/** toggles Video Widget **/
-void FaceTrackNoIR::showVideoWidget() {
-	if(ui.video_frame->isHidden())
-		ui.video_frame->show();
-	else
-		ui.video_frame->hide();
-}
-
-/** toggles Video Widget **/
-void FaceTrackNoIR::showHeadPoseWidget() {
-	if(ui.headPoseWidget->isHidden())
-		ui.headPoseWidget->show();
-	else
-		ui.headPoseWidget->hide();
-}
-
 /** toggles Engine Controls Dialog **/
 void FaceTrackNoIR::showTrackerSettings() {
 	if (pTrackerDialog) {
