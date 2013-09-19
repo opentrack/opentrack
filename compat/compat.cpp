@@ -61,10 +61,10 @@ PortableLockedShm::PortableLockedShm(const char *shmName, const char *mutexName,
         mem = (void*) -1;
 }
 
-PortableLockedShm::success()
+bool PortableLockedShm::success()
 {
 #ifndef _WIN32
-    return (void*) mem != (void*) -1
+    return (void*) mem != (void*) -1;
 #else
     return (void*) mem != NULL;
 #endif
