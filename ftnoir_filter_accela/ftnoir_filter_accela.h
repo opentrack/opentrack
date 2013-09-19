@@ -82,6 +82,7 @@ private slots:
 	void doCancel();
 	void settingChanged(bool) { settingsDirty = true; }
 	void settingChanged(int) { settingsDirty = true; }
+    void settingChanged(double) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
