@@ -39,8 +39,6 @@ extern QList<int> global_windows_key_sequences;
 #   undef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x0800
 #   include <windows.h>
-#   undef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x0800
 #   include <dinput.h>
 
 struct Key {
