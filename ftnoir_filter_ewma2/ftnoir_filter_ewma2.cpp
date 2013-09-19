@@ -108,7 +108,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         // Calculate the new alpha from the normalized delta.
         new_alpha=1.0/(kMinSmoothing+((1.0-pow(delta,kSmoothingScaleCurve))*(kMaxSmoothing-kMinSmoothing)));
         // Update the smoothed alpha.
-        alpha[i]=(alpha_smoothing*new_alpha)+((1.0f-alpha_smoothing)*alpha[i]);
+        alpha[i]=(alpha_smoothing*new_alpha)+((1.0-alpha_smoothing)*alpha[i]);
     }
 
     // Use the same (largest) smoothed alpha for each channel
@@ -120,7 +120,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
 
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
-        new_camera_position[i]=(largest_alpha*target_camera_position[i])+((1.0f-largest_alpha)*current_camera_position[i]);
+        new_camera_position[i]=(largest_alpha*target_camera_position[i])+((1.0-largest_alpha)*current_camera_position[i]);
         //new_camera_position[i]=(alpha[i]*target_camera_position[i])+((1.0f-alpha[i])*current_camera_position[i]);
     }
 

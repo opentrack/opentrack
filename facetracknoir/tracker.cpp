@@ -189,4 +189,4 @@ void Tracker::getOutputHeadPose( double *data ) {
         data[i] = output_camera.axes[i];
 }
 
-void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert?-1.0f:1.0f; }
+void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert? -1.0 : 1.0; }
