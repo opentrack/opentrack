@@ -29,4 +29,4 @@
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll};
 
-#endif // FTNOIR_TRACKER_TYPES_H
+#endif /*FTNOIR_TRACKER_TYPES_H*/
