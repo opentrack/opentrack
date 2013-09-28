@@ -20,7 +20,8 @@ movements and relaying them to games and flight simulation software.
 # Output
 
 - FlightGear Nasal script
-- FSUIPC for Microsoft FSX (Windows)
+- FSUIPC for Microsoft Flight Simulator (Windows)
+- SimConnect for newer Microsoft Flight Simulator (Windows)
 - freetrack emulation (Windows)
 - Relaying udp to another computer
 - Joystick support via freedesktop.org libevdev (Linux)
