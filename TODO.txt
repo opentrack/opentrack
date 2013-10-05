@@ -1,0 +1,4 @@
+20131005 sh
+    what do you think about boost 1.54 for property maps -> qsettings?
+    also, boost concepts
+    and qt5
