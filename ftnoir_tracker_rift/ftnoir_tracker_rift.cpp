@@ -6,6 +6,9 @@
 
 using namespace OVR;
 
+//used to turn on the re-centre spring effect
+//#define OPENTRACK_RIFT_RECENTRE_SPRING
+
 Rift_Tracker::Rift_Tracker()
 {
     pSensor.Clear();
@@ -14,6 +17,7 @@ Rift_Tracker::Rift_Tracker()
 	bEnableRoll = true;
 	bEnablePitch = true;
 	bEnableYaw = true;
+	old_yaw = 0.0;
 #if 0
 	bEnableX = true;
 	bEnableY = true;
@@ -100,7 +104,14 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         float pitch = 0.0f;
         float roll = 0.0f;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-        newHeadPose[Yaw] = yaw;
+#ifdef OPENTRACK_RIFT_RECENTRE_SPRING
+        newHeadPose[Yaw] = newHeadPose[Yaw]*0.99999 + (yaw-old_yaw);
+		if(newHeadPose[Yaw]>0.02)newHeadPose[Yaw]-= 0.000005;
+		if(newHeadPose[Yaw]<-0.02)newHeadPose[Yaw]+= 0.000005;
+			old_yaw=yaw;
+#else
+		newHeadPose[Yaw] = yaw;
+#endif
         newHeadPose[Pitch] =pitch;
         newHeadPose[Roll] = roll;
 

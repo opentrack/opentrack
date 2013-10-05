@@ -30,7 +30,7 @@ private:
     // Magnetometer calibration and yaw correction
     OVR::Util::MagCalibration MagCal;
 	bool isCalibrated;
-
+	double old_yaw;
     double newHeadPose[6];								// Structure with new headpose
 	bool bEnableRoll;
 	bool bEnablePitch;
