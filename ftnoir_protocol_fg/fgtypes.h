@@ -17,7 +17,7 @@
 //
 // x,y,z position in metres, heading, pitch and roll in degrees...
 //
-#pragma pack(push, 1)
+#pragma pack(push, 2)
 struct TFlightGearData {
 	double x, y, z, h, p, r;
 	int status;

@@ -11,57 +11,44 @@
 			<chunk>
 				<name>x</name>
 				<type>double</type>
-				<node>/sim/headtracker/x-m</node>
+				<node>/sim/current-view/x-offset-m</node>
 			</chunk>
 
 			<chunk>
 				<name>y</name>
 				<type>double</type>
-				<node>/sim/headtracker/y-m</node>
+				<node>/sim/current-view/y-offset-m</node>
 			</chunk>
 
 			<chunk>
 				<name>z</name>
 				<type>double</type>
-				<node>/sim/headtracker/z-m</node>
+				<node>/sim/current-view/z-offset-m</node>
 			</chunk>
 
 			<chunk>
 				<name>heading</name>
 				<type>double</type>
-				<node>/sim/headtracker/heading-deg</node>
+				<node>/sim/current-view/heading-offset-deg</node>
 			</chunk>
 
 			<chunk>
 				<name>pitch</name>
 				<type>double</type>
-				<node>/sim/headtracker/pitch-deg</node>
+				<node>/sim/current-view/pitch-offset-deg</node>
 			</chunk>
 
 			<chunk>
 				<name>roll</name>
 				<type>double</type>
-				<node>/sim/headtracker/roll-deg</node>
+				<node>/sim/current-view/roll-offset-deg</node>
 			</chunk>
 
 			<chunk>
 				<name>status</name>
 				<type>int</type>
-				<node>/sim/headtracker/status</node>
+				<node>/sim/current-view/headtracker-debug-status</node>
 			</chunk>
 		</input>
-
-		<output>
-			<binary_mode>true</binary_mode>
-			<binary_footer>none</binary_footer>
-			<byte_order>host</byte_order>
-			<record_length>4</record_length>
-
-			<chunk>
-				<name>control</name>
-				<type>int</type>
-				<node>/sim/headtracker/control</node>
-			</chunk>
-		</output>
 	</generic>
 </PropertyList>

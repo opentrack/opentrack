@@ -36,7 +36,6 @@
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QSettings>
-#include <math.h>
 #include "facetracknoir/global-settings.h"
 
 #define FT_PROGRAMID "FT_ProgramID"
@@ -52,15 +51,8 @@ public:
         return "FlightGear";
     }
 private:
-
-	bool blnConnectionActive;
-
-	//	Tracker *headTracker;								// For upstream messages...
-	TFlightGearData FlightData;
-	QUdpSocket *inSocket;									// Receive from FligthGear
-	QUdpSocket *outSocket;									// Send to FligthGear
-	qint32 cmd;
-	qint32 fg_cmd;											// Command from FlightGear
+    TFlightGearData FlightData;
+    QUdpSocket outSocket;									// Send to FligthGear
 	QHostAddress destIP;									// Destination IP-address
 	int destPort;											// Destination port-number
 	void loadSettings();
