@@ -31,33 +31,16 @@
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
 // For Todd and Arda Kutlu
-//#define SEND_ASCII_DATA
-//#define LOG_OUTPUT
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	blnConnectionActive = false;
-	loadSettings();
+    loadSettings();
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	if (inSocket != 0) {
-		inSocket->close();
-		delete inSocket;
-	}
-	
-	if (outSocket != 0) {
-		outSocket->close();
-		delete outSocket;
-	}
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
 void FTNoIR_Protocol::loadSettings() {
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
@@ -68,7 +51,7 @@ void FTNoIR_Protocol::loadSettings() {
 
 	bool blnLocalPC = iniFile.value ( "LocalPCOnly", 1 ).toBool();
 	if (blnLocalPC) {
-		destIP = QHostAddress::LocalHost;
+        destIP = QHostAddress::LocalHost;
 	}
 	else {
 		QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
@@ -80,87 +63,19 @@ void FTNoIR_Protocol::loadSettings() {
 
 }
 
-//
-// Update Headpose in Game.
-//
 void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
-int no_bytes;
-QHostAddress sender;
-quint16 senderPort;
+    int no_bytes;
+    QHostAddress sender;
+    quint16 senderPort;
 
-	//
-	// Copy the Raw measurements directly to the client.
-	//
     FlightData.x = headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;
     FlightData.p = headpose[Pitch];
     FlightData.h = headpose[Yaw];
     FlightData.r = headpose[Roll];
-	FlightData.status = fg_cmd;
-
-	//
-	// Try to send an UDP-message to the FlightGear
-	//
-
-#ifdef SEND_ASCII_DATA
-	sprintf_s(data, "%.2f %.2f %.2f %.2f %.2f %.2f\n\0", FlightData.x, FlightData.y, FlightData.z, FlightData.p, FlightData.h, FlightData.r);
-
-	if (outSocket != 0) {
-		no_bytes = outSocket->writeDatagram((const char *) &data, strlen( data ), destIP, destPort);
-		if ( no_bytes > 0) {
-		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << data;
-		}
-		else {
-			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
-		}
-	}
-
-#endif
-
-	#ifdef LOG_OUTPUT
-	//	Use this for some debug-output to file...
-	QFile datafile(QCoreApplication::applicationDirPath() + "\\FG_output.txt");
-	if (datafile.open(QFile::WriteOnly | QFile::Append)) {
-		QTextStream out(&datafile);
-		out << "output:\t" << FlightData.x << "\t" << FlightData.y << "\t" << FlightData.z << "\t" << FlightData.p << "\t" << FlightData.h << "\t" << FlightData.r << '\n';
-	}
-	#endif
-
-	#ifndef SEND_ASCII_DATA
-	//! [1]
-	if (outSocket != 0) {
-        no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), destIP, destPort);
-		if ( no_bytes > 0) {
-		}
-		else {
-			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
-		}
-	}
-	#endif
-
-	//
-	// FlightGear keeps sending data, so we must read that here.
-	//
-	if (inSocket != 0) {
-		while (inSocket->hasPendingDatagrams()) {
-
-			QByteArray datagram;
-			datagram.resize(inSocket->pendingDatagramSize());
-
-			inSocket->readDatagram( (char * ) &cmd, sizeof(cmd), &sender, &senderPort);
-
-			fg_cmd = cmd;									// Let's just accept that command for now...
-			if ( cmd > 0 ) {
-				qDebug() << "FGServer::sendHeadposeToGame hasPendingDatagrams, cmd = " << cmd;
-//				headTracker->handleGameCommand ( cmd );		// Send it upstream, for the Tracker to handle
-			}
-
-			if (!blnConnectionActive) {
-				blnConnectionActive = true;
-			}
-		}
-	}
+    FlightData.status = 1;
+    (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(destPort));
 }
 
 //
@@ -169,50 +84,8 @@ quint16 senderPort;
 //
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-	// Init. the data
-	FlightData.x = 0.0f;
-	FlightData.y = 0.0f;
-	FlightData.z = 0.0f;
-	FlightData.h = 0.0f;
-	FlightData.p = 0.0f;
-	FlightData.r = 0.0f;
-	FlightData.status = 0;
-	fg_cmd = 1;
-
-	inSocket = 0;
-	outSocket = 0;
-
-	//
-	// Create UDP-sockets.
-	//
-	if (inSocket == 0) {
-		qDebug() << "FGServer::sendHeadposeToGame creating insocket";
-		inSocket = new QUdpSocket();
-
-		// Connect the inSocket to the port, to receive messages
-		if (!inSocket->bind(QHostAddress::Any, destPort+1)) {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to bind UDP-port",QMessageBox::Ok,QMessageBox::NoButton);
-			delete inSocket;
-			inSocket = 0;
-			return false;
-		}
-	}
-
-	if (outSocket == 0) {
-		outSocket = new QUdpSocket();
-	}
-
-	return true;
+    return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {
