@@ -161,6 +161,15 @@ void CurveConfigurationDialog::loadSettings() {
         ui.tz_altp
     };
 
+    QDoubleSpinBox* widgets3[] = {
+        ui.pos_tx,
+        ui.pos_ty,
+        ui.pos_tz,
+        ui.pos_tx,
+        ui.pos_ry,
+        ui.pos_rz
+    };
+
     for (int i = 0; i < 6; i++)
     {
         configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
@@ -170,6 +179,7 @@ void CurveConfigurationDialog::loadSettings() {
         connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
         connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
         connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)), Qt::UniqueConnection);
+        mainApp->axis(i).zero = widgets3[i]->value();
     }
     
     settingsDirty = false;
