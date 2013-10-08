@@ -6,3 +6,6 @@
     respect hier(7) with regard to shared object installation.
     install them inside ../lib/opentrack relative to ./bin where
     the main program oughta reside.
+20131008 sh
+    during the switch to qt5, recreate widgets, this time with layouts.
+    the original layouts were pretty crappy, hence the original breakage.
