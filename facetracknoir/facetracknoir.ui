@@ -10,7 +10,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
+    <width>880</width>
     <height>380</height>
    </rect>
   </property>
@@ -22,13 +22,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>874</width>
+    <width>880</width>
     <height>380</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>874</width>
+    <width>880</width>
     <height>380</height>
    </size>
   </property>
@@ -165,7 +165,7 @@ QGroupBox {
      <rect>
       <x>250</x>
       <y>0</y>
-      <width>671</width>
+      <width>738</width>
       <height>431</height>
      </rect>
     </property>
@@ -477,77 +477,19 @@ background:none;</string>
       <rect>
        <x>320</x>
        <y>70</y>
-       <width>221</width>
-       <height>121</height>
+       <width>231</width>
+       <height>101</height>
       </rect>
      </property>
      <property name="title">
       <string>Axis inversion</string>
      </property>
-     <widget class="QLabel" name="lblInvert1_2">
-      <property name="geometry">
-       <rect>
-        <x>169</x>
-        <y>24</y>
-        <width>30</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Invert</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblInvert1_3">
-      <property name="geometry">
-       <rect>
-        <x>72</x>
-        <y>24</y>
-        <width>30</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Invert</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="lblSensX">
       <property name="geometry">
        <rect>
-        <x>108</x>
-        <y>52</y>
-        <width>25</width>
+        <x>130</x>
+        <y>29</y>
+        <width>41</width>
         <height>16</height>
        </rect>
       </property>
@@ -577,21 +519,21 @@ background:none;</string>
      <widget class="QLabel" name="lblSensPitch">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>71</y>
-        <width>25</width>
+        <x>20</x>
+        <y>50</y>
+        <width>61</width>
         <height>16</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>25</width>
+        <width>40</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>150</width>
+        <width>65536</width>
         <height>16777215</height>
        </size>
       </property>
@@ -609,8 +551,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertPitch">
       <property name="geometry">
        <rect>
-        <x>72</x>
-        <y>71</y>
+        <x>90</x>
+        <y>50</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -625,9 +567,9 @@ background:none;</string>
      <widget class="QLabel" name="lblSensY">
       <property name="geometry">
        <rect>
-        <x>108</x>
-        <y>71</y>
-        <width>25</width>
+        <x>130</x>
+        <y>48</y>
+        <width>41</width>
         <height>16</height>
        </rect>
       </property>
@@ -657,9 +599,9 @@ background:none;</string>
      <widget class="QLabel" name="lblSensZ">
       <property name="geometry">
        <rect>
-        <x>108</x>
-        <y>90</y>
-        <width>25</width>
+        <x>130</x>
+        <y>67</y>
+        <width>41</width>
         <height>16</height>
        </rect>
       </property>
@@ -689,8 +631,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertZ">
       <property name="geometry">
        <rect>
-        <x>169</x>
-        <y>90</y>
+        <x>192</x>
+        <y>67</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -705,8 +647,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertY">
       <property name="geometry">
        <rect>
-        <x>169</x>
-        <y>71</y>
+        <x>192</x>
+        <y>48</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -721,8 +663,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertRoll">
       <property name="geometry">
        <rect>
-        <x>72</x>
-        <y>90</y>
+        <x>90</x>
+        <y>69</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -737,8 +679,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertX">
       <property name="geometry">
        <rect>
-        <x>169</x>
-        <y>52</y>
+        <x>192</x>
+        <y>29</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -753,21 +695,21 @@ background:none;</string>
      <widget class="QLabel" name="lblSensYaw">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>52</y>
-        <width>25</width>
+        <x>20</x>
+        <y>31</y>
+        <width>61</width>
         <height>16</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>25</width>
+        <width>40</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>150</width>
+        <width>65536</width>
         <height>16777215</height>
        </size>
       </property>
@@ -785,8 +727,8 @@ background:none;</string>
      <widget class="QCheckBox" name="chkInvertYaw">
       <property name="geometry">
        <rect>
-        <x>72</x>
-        <y>52</y>
+        <x>90</x>
+        <y>31</y>
         <width>16</width>
         <height>16</height>
        </rect>
@@ -801,21 +743,21 @@ background:none;</string>
      <widget class="QLabel" name="lblSensRoll">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>90</y>
-        <width>25</width>
+        <x>20</x>
+        <y>69</y>
+        <width>61</width>
         <height>16</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>25</width>
+        <width>40</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>150</width>
+        <width>65536</width>
         <height>16777215</height>
        </size>
       </property>
@@ -1098,20 +1040,20 @@ background:none;</string>
       <rect>
        <x>230</x>
        <y>201</y>
-       <width>200</width>
+       <width>180</width>
        <height>80</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>200</width>
-       <height>70</height>
+       <width>180</width>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>200</width>
-       <height>80</height>
+       <width>180</width>
+       <height>65536</height>
       </size>
      </property>
      <property name="styleSheet">
@@ -1125,7 +1067,7 @@ background:none;</string>
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>180</width>
+        <width>161</width>
         <height>22</height>
        </rect>
       </property>
@@ -1147,7 +1089,7 @@ background:none;</string>
        <rect>
         <x>10</x>
         <y>50</y>
-        <width>180</width>
+        <width>161</width>
         <height>23</height>
        </rect>
       </property>
@@ -1234,13 +1176,13 @@ background:none;</string>
        <x>230</x>
        <y>289</y>
        <width>200</width>
-       <height>80</height>
+       <height>61</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
        <width>200</width>
-       <height>80</height>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -1299,7 +1241,7 @@ background:none;</string>
       <rect>
        <x>440</x>
        <y>288</y>
-       <width>181</width>
+       <width>171</width>
        <height>38</height>
       </rect>
      </property>
@@ -1311,7 +1253,7 @@ background:none;</string>
      </property>
      <property name="minimumSize">
       <size>
-       <width>54</width>
+       <width>64</width>
        <height>38</height>
       </size>
      </property>
@@ -1346,13 +1288,13 @@ background:none;</string>
       <rect>
        <x>440</x>
        <y>332</y>
-       <width>181</width>
+       <width>171</width>
        <height>38</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>54</width>
+       <width>64</width>
        <height>38</height>
       </size>
      </property>
@@ -1893,7 +1835,7 @@ color:white;</string>
       <rect>
        <x>9</x>
        <y>20</y>
-       <width>16</width>
+       <width>31</width>
        <height>16</height>
       </rect>
      </property>
@@ -1909,7 +1851,7 @@ color:white;</string>
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>16</width>
+       <width>31</width>
        <height>16</height>
       </rect>
      </property>
@@ -1925,7 +1867,7 @@ color:white;</string>
       <rect>
        <x>10</x>
        <y>59</y>
-       <width>16</width>
+       <width>31</width>
        <height>16</height>
       </rect>
      </property>
@@ -1940,8 +1882,8 @@ color:white;</string>
      <property name="geometry">
       <rect>
        <x>69</x>
-       <y>59</y>
-       <width>20</width>
+       <y>60</y>
+       <width>51</width>
        <height>16</height>
       </rect>
      </property>
@@ -1956,8 +1898,8 @@ color:white;</string>
      <property name="geometry">
       <rect>
        <x>71</x>
-       <y>20</y>
-       <width>20</width>
+       <y>21</y>
+       <width>51</width>
        <height>16</height>
       </rect>
      </property>
@@ -1972,8 +1914,8 @@ color:white;</string>
      <property name="geometry">
       <rect>
        <x>69</x>
-       <y>40</y>
-       <width>25</width>
+       <y>41</y>
+       <width>51</width>
        <height>16</height>
       </rect>
      </property>
