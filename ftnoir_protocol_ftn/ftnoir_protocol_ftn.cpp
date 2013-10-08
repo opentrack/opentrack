@@ -58,7 +58,7 @@ void FTNoIR_Protocol::loadSettings() {
 
 	QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
 	destIP = QHostAddress( destAddr );
-	destPort = iniFile.value ( "PortNumber", 5550 ).toInt();
+    destPort = iniFile.value ( "PortNumber", 5550 ).toInt();
 
 	iniFile.endGroup ();
 }

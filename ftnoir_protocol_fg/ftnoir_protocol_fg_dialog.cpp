@@ -147,7 +147,7 @@ void FGControls::loadSettings() {
 	ui.spinIPThirdNibble->setValue( iniFile.value ( "IP-3", 2 ).toInt() );
 	ui.spinIPFourthNibble->setValue( iniFile.value ( "IP-4", 1 ).toInt() );
 
-	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
+    ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5542 ).toInt() );
 	iniFile.endGroup ();
 
 	chkLocalPCOnlyChanged();	

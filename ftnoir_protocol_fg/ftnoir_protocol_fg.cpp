@@ -74,7 +74,7 @@ void FTNoIR_Protocol::loadSettings() {
 		QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
 		destIP = QHostAddress( destAddr );
 	}
-	destPort = iniFile.value ( "PortNumber", 5550 ).toInt();
+    destPort = iniFile.value ( "PortNumber", 5542 ).toInt();
 
 	iniFile.endGroup ();
 
@@ -91,10 +91,10 @@ quint16 senderPort;
 	//
 	// Copy the Raw measurements directly to the client.
 	//
-    FlightData.x = headpose[TX];
-    FlightData.y = headpose[Pitch];
-    FlightData.z = headpose[TZ];
-    FlightData.p = headpose[TY];
+    FlightData.x = headpose[TX] * 1e-2;
+    FlightData.y = headpose[TY] * 1e-2;
+    FlightData.z = headpose[TZ] * 1e-2;
+    FlightData.p = headpose[Pitch];
     FlightData.h = headpose[Yaw];
     FlightData.r = headpose[Roll];
 	FlightData.status = fg_cmd;
@@ -129,11 +129,9 @@ quint16 senderPort;
 
 	#ifndef SEND_ASCII_DATA
 	//! [1]
-//	no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), QHostAddress::LocalHost, 5550);
 	if (outSocket != 0) {
         no_bytes = outSocket->writeDatagram((const char *) &FlightData, sizeof( FlightData ), destIP, destPort);
 		if ( no_bytes > 0) {
-	//		qDebug() << "FGServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
 		}
 		else {
 			qDebug() << "FGServer::writePendingDatagrams says: nothing sent!";
