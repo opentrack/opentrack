@@ -1,0 +1,6 @@
+fgfs --generic=socket,in,25,localhost,5542,udp,headtracker ~/opt/fgdata/Nasal/headtracker.xml
+
+Adjust paths as necessary.
+
+cheers,
+-sh 20131008
