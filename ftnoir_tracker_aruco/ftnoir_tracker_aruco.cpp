@@ -188,7 +188,7 @@ void Tracker::run()
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
     detector.setThresholdParams(11, 5);
-    cv::Mat color, color_, grayscale, rvec, tvec;
+    cv::Mat color, color_, grayscale, grayscale2, rvec, tvec;
     
     if (!camera.isOpened())
     {
@@ -201,7 +201,12 @@ void Tracker::run()
         if (!camera.read(color_))
             continue;
         color_.copyTo(color);
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+        cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
+        const int kernel = grayscale2.cols > 480 ? 7 : 5;
+        int kernel2 = kernel * grayscale2.rows / grayscale2.cols;
+        if ((kernel2 % 2) == 0)
+            kernel2++;
+        cv::GaussianBlur(grayscale2, grayscale, cv::Size(kernel, kernel2), 0, 0);
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
