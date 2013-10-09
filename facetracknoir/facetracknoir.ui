@@ -484,6 +484,9 @@ background:none;</string>
      <property name="title">
       <string>Axis inversion</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <widget class="QLabel" name="lblSensX">
       <property name="geometry">
        <rect>
@@ -797,6 +800,9 @@ background:none;</string>
      <property name="title">
       <string>Profile</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
      <widget class="QComboBox" name="iconcomboProfile">
       <property name="geometry">
        <rect>
@@ -924,6 +930,9 @@ background:none;</string>
      <property name="title">
       <string>Game protocol</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <widget class="QComboBox" name="iconcomboProtocol">
       <property name="geometry">
        <rect>
@@ -991,7 +1000,10 @@ background:none;</string>
       <string notr="true"/>
      </property>
      <property name="title">
-      <string>Tracker Source(1st = Master)</string>
+      <string>Tracker Source</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <widget class="QComboBox" name="iconcomboTrackerSource">
       <property name="geometry">
@@ -1062,6 +1074,9 @@ background:none;</string>
      <property name="title">
       <string>Filter</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <widget class="QComboBox" name="iconcomboFilter">
       <property name="geometry">
        <rect>
@@ -1126,7 +1141,10 @@ background:none;</string>
       </size>
      </property>
      <property name="title">
-      <string>Tracker Source (2nd)</string>
+      <string>Tracker Source #2</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <widget class="QPushButton" name="btnShowSecondTrackerSettings">
       <property name="enabled">
@@ -1193,6 +1211,9 @@ background:none;</string>
      </property>
      <property name="title">
       <string>GO!</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <widget class="QPushButton" name="btnStartTracker">
       <property name="geometry">
