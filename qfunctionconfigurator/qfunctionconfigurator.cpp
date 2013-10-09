@@ -140,15 +140,14 @@ void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
     QRect scale;
 
     _background = QPixmap(fullRect.width(), fullRect.height());
+    QColor bgColor = palette().color(QPalette::Normal, QPalette::Background);
     QPainter painter(&_background);
-
-    painter.save();
+    painter.fillRect(fullRect, bgColor);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(fullRect, colBackground);
     QColor bg_color(112, 154, 209);
     painter.fillRect(range, bg_color);
 
-    QFont font("ComicSans", 4);
+    QFont font;
     font.setPointSize(8);
     painter.setFont(font);
 
@@ -200,8 +199,6 @@ void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
     pen.setColor( Qt::black );
     drawLine(&painter, range.topLeft() - QPointF(2,0), range.bottomLeft() - QPointF(2,0), pen);
     drawLine(&painter, range.bottomLeft(), range.bottomRight(), pen);
-
-    painter.restore();
 }
 
 
@@ -626,11 +623,6 @@ void QFunctionConfigurator::setgridDistEGU_Output(int value)
 void QFunctionConfigurator::setColorBezier(QColor color)
 {
     colBezier = color;
-    update();
-}
-void QFunctionConfigurator::setColorBackground(QColor color)
-{
-    colBackground = color;
     update();
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1050</width>
-    <height>667</height>
+    <width>1042</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,49 +24,9 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(240, 240, 240);
-/*
-QWidget#widgetTop {
-background-color: #595959;
-border-bottom: 1px solid #000;
-}
-*/
+   <string notr="true">
 
-/* Make text in message boxes selectable. */
-QMessageBox {
-/* LinksAccessibleByMouse | TextSelectableByMouse */
-messagebox-text-interaction-flags: 5;
-}
-/* Make the entire row selected in item views. */
-QAbstractItemView {
-show-decoration-selected: 1;
-}
-
-/* Nice WindowsXP-style password character for password line edits. */
-QLineEdit[echoMode=&quot;2&quot;] {
-lineedit-password-character: 9679;
-}
-
-/* Customize tooltips. */
-QToolTip {
-background-color: rgb(170, 255, 127);
-opacity: 200;
-}
-
-/* Customize push buttons and comboboxes. Our read-only combobox
-is very similar to a push button, so they share the same border image. */
-
-QPushButton {
-min-width: 4em;
-}
-
-QPushButton:disabled {
-color: rgb(128, 128, 128);
-}
-
-QGroupBox {
-color: rgb(255, 255, 255);
-}</string>
+</string>
   </property>
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
@@ -156,9 +116,9 @@ color: rgb(255, 255, 255);
          </property>
          <property name="colorBackground" stdset="0">
           <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
           </color>
          </property>
         </widget>
