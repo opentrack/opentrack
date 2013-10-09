@@ -63,7 +63,6 @@ class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
     Q_PROPERTY(int gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output)
 
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
-    Q_PROPERTY(QColor colorBackground READ colorBackground WRITE setColorBackground)
     Q_PROPERTY(QString stringInputEGU READ stringInputEGU WRITE setInputEGU)
     Q_PROPERTY(QString stringOutputEGU READ stringOutputEGU WRITE setOutputEGU)
     Q_PROPERTY(QString stringCaption READ stringCaption WRITE setCaption)
@@ -94,27 +93,18 @@ class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
         return gDistEGU_Output;
     }
 
-	// Return the current color to Designer
 	QColor colorBezier() const
     {
         return colBezier;
     }
-	// Return the current color to Designer
-	QColor colorBackground() const
-    {
-        return colBackground;
-    }
-	// Return the current string to Designer
 	QString stringInputEGU() const
     {
         return strInputEGU;
     }
-	// Return the current string to Designer
 	QString stringOutputEGU() const
     {
         return strOutputEGU;
     }
-	// Return the current string to Designer
 	QString stringCaption() const
     {
         return strCaption;
@@ -140,7 +130,6 @@ public slots:
     void setgridDistEGU_Output(int);
 
     void setColorBezier(QColor);
-    void setColorBackground(QColor);
     void setInputEGU(QString);
     void setOutputEGU(QString);
     void setCaption(QString);
@@ -179,7 +168,6 @@ private:
 	int gDistEGU_Output;			// Distance of the grid, in EGU of Output
 
 	QColor colBezier;				// Color of Bezier curve
-	QColor colBackground;			// Color of widget background
 	QString strInputEGU;			// Engineering Units input (vertical axis)
 	QString strOutputEGU;			// Engineering Units output (horizontal axis)
 	QString strCaption;				// Caption of the graph
