@@ -21,11 +21,13 @@ endif()
 
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
-    SET(SDK_RIFT "" CACHE PATH "libOVR path")
-    SET(SDK_RIFT_RECENTRE_SPRING TRUE CACHE BOOL "recenter yaw aggressively")
     SET(SDK_HYDRA "" CACHE PATH "libSixense path")
     SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
 ENDIF()
+
+SET(SDK_RIFT "" CACHE PATH "libOVR path")
+
+SET(SDK_RIFT_RECENTRE_SPRING TRUE CACHE BOOL "recenter yaw aggressively")
 
 if(SDK_RIFT_RECENTRE_SPRING)
     add_definitions(-DOPENTRACK_RIFT_RECENTRE_SPRING)
