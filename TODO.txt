@@ -9,3 +9,9 @@
 20131008 sh
     during the switch to qt5, recreate widgets, this time with layouts.
     the original layouts were pretty crappy, hence the original breakage.
+20131011 sh
+    low-hanging fruit: default saving profiles to a directory in user home,
+    not into global stuffies
+
+    as for build system, low-hangin fruit is writing functions/macrology
+    for all the repetition out there.
