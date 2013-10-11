@@ -21,9 +21,10 @@ endif()
 
 IF(WIN32)
     SET(SDK_SM_FACEAPI_PATH "" CACHE PATH "SeeingMachines FaceAPI SDK path")
-    SET(SDK_HYDRA "" CACHE PATH "libSixense path")
     SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
 ENDIF()
+SET(SDK_HYDRA "" CACHE PATH "libSixense path")
+SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether target is amd64 (else ia-32)")
 
 SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
@@ -526,9 +527,18 @@ endif()
                     target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib" "${SDK_HYDRA}/lib/win32/release_dll/sixense_utils.lib")
                     install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll" "${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
                             DESTINATION .)
-                else()
-                    target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/win32/release_static/sixense_s.lib" "${SDK_HYDRA}/lib/win32/release_static/sixense_utils_s.lib")
                 endif()
+        else()
+            if(SDK_HYDRA_AMD64)
+                set(underscore-sixtyfour _x64)
+            else()
+                set(underscore-sixtyfour)
+            endif()
+            if (APPLE)
+                target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/osx${underscore-sixtyfour}/release_dll/libsixense${underscore-sixtyfour}.dylib" "${SDK_HYDRA}/lib/osx${underscore-sixtyfour}/release_dll/libsixense_utils${underscore-sixtyfour}.dylib")
+            else() # NB assume linux binary-compat, e.g. freebsd
+                target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/linux${underscore-sixtyfour}/release_dll/libsixense${underscore-sixtyfour}.so" "${SDK_HYDRA}/lib/linux${underscore-sixtyfour}/release_dll/libsixense_utils${underscore-sixtyfour}.so")
+            endif()
         endif()
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
             SET_TARGET_PROPERTIES(opentrack-tracker-hydra
