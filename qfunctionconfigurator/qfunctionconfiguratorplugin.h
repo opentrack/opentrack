@@ -1,3 +1,9 @@
+/* Copyright (c) 2011-2012 Stanislaw Halik <sthalik@misaki.pl>
+ *                         Adapted to FaceTrackNoIR by Wim Vriend.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
 #ifndef QFUNCTIONCONFIGURATORPLUGIN_H
 #define QFUNCTIONCONFIGURATORPLUGIN_H
 

@@ -1,29 +1,22 @@
-/********************************************************************************
-* FreeTrackClientDll Implements the FreeTrack 2.0 interface for FT-enabled		*
-*					games.														*
-*					It uses the FreeTrack protocol (memory mapping) to			*
-*					receive data from FaceTrackNoIR (or FreeTrack, or ...).		*
-*																				*
-* Copyright (C) 2013	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
-*																				*
-* Homepage				<http://facetracknoir.sourceforge.net/home/default.htm>	*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-********************************************************************************/
-
+/***********************************************************************************
+ * * FTTypes            FTTypes contains the specific type definitions for the      *
+ * *                    FreeTrack protocol.                                         *
+ * *                    It was loosely translated from FTTypes.pas                  *
+ * *                    which was created by the FreeTrack-team.                    *
+ * *                                                                                *
+ * * Wim Vriend (Developing)                                                        *
+ * * Ron Hendriks (Testing and Research)                                            *
+ * *                                                                                *
+ * * Homepage               <http://facetracknoir.sourceforge.net/home/default.htm> *
+ * *                                                                                *
+ * * This program is distributed in the hope that it will be useful, but            *
+ * * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY     *
+ * * or FITNESS FOR A PARTICULAR PURPOSE.                                           *
+ * *                                                                                *
+ * *                                                                                *
+ * * The FreeTrackClient sources were translated from the original Delphi sources   *
+ * * created by the FreeTrack developers.                                           *
+ */
 #define FT_EXPORT(t) extern "C" t __declspec(dllexport) __stdcall
 #define	NP_AXIS_MAX				16383
 

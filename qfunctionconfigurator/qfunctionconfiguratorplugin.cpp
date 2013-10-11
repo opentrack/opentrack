@@ -1,37 +1,9 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of some enthusiastic		*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2012	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage	http://facetracknoir.sourceforge.net/home/default.htm				*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* The FunctionConfigurator was made by Stanislaw Halik, and adapted to          *
-* FaceTrackNoIR.																*
-*																				*
-* All credits for this nice piece of code should go to Stanislaw.				*
-*																				*
-* Copyright (c) 2011-2012, Stanislaw Halik <sthalik@misaki.pl>					*
-* Permission to use, copy, modify, and/or distribute this						*
-* software for any purpose with or without fee is hereby granted,				*
-* provided that the above copyright notice and this permission					*
-* notice appear in all copies.													*
-********************************************************************************/
+/* Copyright (c) 2011-2012 Stanislaw Halik <sthalik@misaki.pl>
+ *                         Adapted to FaceTrackNoIR by Wim Vriend.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
 #include "qfunctionconfigurator.h"
 
 #include <QtCore/QtPlugin>
