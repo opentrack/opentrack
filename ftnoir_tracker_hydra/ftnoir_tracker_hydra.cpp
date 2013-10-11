@@ -3,8 +3,10 @@
 #include "facetracknoir/global-settings.h"
 #include "facetracknoir/rotation.h"
 #include <cstdio>
-#define SIXENSE_STATIC_LIB
-#define SIXENSE_UTILS_STATIC_LIB
+#ifdef _WIN32
+#   define SIXENSE_STATIC_LIB
+#   define SIXENSE_UTILS_STATIC_LIB
+#endif
 #include <sixense.h>
 #include <sixense_math.hpp>
 #ifdef WIN32
