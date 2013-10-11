@@ -1,34 +1,21 @@
-/********************************************************************************
-* FTTypes			FTTypes contains th specific type definitions for the		*
-*					FreeTrack protocol.						         			*
-*					It was loosely translated from FTTypes.pas					*
-*					which was created by the FreeTrack-team.					*
-*																				*
-* Copyright (C) 2013	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
-*																				*
-* Homepage				<http://www.free-track.net>								*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* We would like to extend our grattitude to the creators of SweetSpotter,		*
-* which has become the basis of this program: "Great work guys!"				*
-********************************************************************************/
-/*
-	Modifications (last one on top):
-	20130125 - WVR: Upgraded to FT2.0: now the FreeTrack protocol supports all TIR-enabled games. The memory-mapping was expanded for this purpose.
-*/
+/************************************************************************************
+ * * FTTypes            FTTypes contains the specific type definitions for the      *
+ * *                    FreeTrack protocol.                                         *
+ * *                    It was loosely translated from FTTypes.pas                  *
+ * *                    which was created by the FreeTrack-team.                    *
+ * *                                                                                *
+ * * Wim Vriend (Developing)                                                        *
+ * * Ron Hendriks (Testing and Research)                                            *
+ * *                                                                                *
+ * * Homepage               <http://facetracknoir.sourceforge.net/home/default.htm> *
+ * *                                                                                *
+ * * This program is distributed in the hope that it will be useful, but            *
+ * * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY     *
+ * * or FITNESS FOR A PARTICULAR PURPOSE.                                           *
+ * *                                                                                *
+ * * The FTTypes sources were translated from the original Delphi sources           *
+ * * created by the FreeTrack developers.                                           *
+ */
 #ifndef INCLUDED_FTTYPES_H
 #define INCLUDED_FTTYPES_H
 
@@ -50,8 +37,8 @@ typedef __int32 my_32bit_int;
 #define FREETRACK_MUTEX "FT_Mutext"
 
 struct TFreeTrackData {
-	int DataID;
-	int CamWidth;
+    int DataID;
+    int CamWidth;
     int CamHeight;
     // virtual pose
     float Yaw;   // positive yaw to the left
@@ -80,7 +67,7 @@ struct TFreeTrackData {
 typedef TFreeTrackData * PFreetrackData;
 
 struct FTMemMap {
-	TFreeTrackData data;
+    TFreeTrackData data;
     my_32bit_int GameID;
     unsigned char table[8];
     my_32bit_int GameID2;
