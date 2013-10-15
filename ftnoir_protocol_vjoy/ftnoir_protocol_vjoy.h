@@ -28,14 +28,13 @@
 #pragma once
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_vjoy_controls.h"
-#include <windows.h>
-
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QSettings>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
+#include <windows.h>
 
 #define FT_PROGRAMID "FT_ProgramID"
 
