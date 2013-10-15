@@ -504,9 +504,10 @@ endif()
         target_link_libraries(opentrack-tracker-hydra ${MY_QT_LIBS})
         if(WIN32)
                 if(CMAKE_COMPILER_IS_GNUCXX)
-                    target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib" "${SDK_HYDRA}/lib/win32/release_dll/sixense_utils.lib")
-                    install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll" "${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
-                            DESTINATION .)
+                    target_link_libraries(opentrack-tracker-hydra
+                        "${SDK_HYDRA}/lib/win32/release_static/sixense_s.slib"
+                        "${SDK_HYDRA}/lib/win32/release_static/sixense_utils_s.lib")
+                    set_target_properties (opentrack-tracker-hydra PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libcmt.lib")
                 endif()
         else()
             if(SDK_HYDRA_AMD64)
