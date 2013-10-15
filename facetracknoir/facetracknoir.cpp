@@ -89,7 +89,7 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 //
 // Setup the Main Dialog
 //
-FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WFlags flags) : 
+FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     QMainWindow(parent, flags),
     #if defined(_WIN32)
         keybindingWorker(NULL),
@@ -938,7 +938,7 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
                 seq = "Alt+" + seq;
             if (iniFile.value("Ctrl_Center", false).toBool())
                 seq = "Ctrl+" + seq;
-            keyCenter = new QxtGlobalShortcut(QKeySequence(seq));
+            keyCenter = new QxtGlobalShortcut(QKeySequence(seq), this);
             connect(keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
         }
     }

@@ -25,7 +25,7 @@
 #ifndef FaceTrackNoIR_H
 #define FaceTrackNoIR_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include <QApplication>
 #include <QFileDialog>
 #include <QListView>
@@ -39,7 +39,7 @@
 #include <QString>
 #include <QByteArray>
 #if !defined(_WIN32)
-#	include <qxtglobalshortcut.h>
+#	include "qxt-mini/QxtGlobalShortcut"
 #else
 #	include <windows.h>
 #endif
@@ -67,7 +67,7 @@ class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 	Q_OBJECT
 
 public:
-	FaceTrackNoIR(QWidget *parent = 0, Qt::WFlags flags = 0);
+    FaceTrackNoIR(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~FaceTrackNoIR();
 
     QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL

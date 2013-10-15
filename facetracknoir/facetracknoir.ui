@@ -1480,8 +1480,8 @@ background:none;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="numDigits">
-       <number>6</number>
+      <property name="digitCount">
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumRotX">
@@ -1496,8 +1496,8 @@ background:none;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="numDigits">
-       <number>6</number>
+      <property name="digitCount">
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_4">
@@ -1546,6 +1546,9 @@ color:white;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="digitCount">
+       <number>2</number>
+      </property>
      </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
@@ -1575,6 +1578,9 @@ border:none;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="digitCount">
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_7">
@@ -1640,8 +1646,8 @@ color:white;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="numDigits">
-       <number>6</number>
+      <property name="digitCount">
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumX">
@@ -1656,8 +1662,8 @@ color:white;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="numDigits">
-       <number>5</number>
+      <property name="digitCount">
+       <number>2</number>
       </property>
      </widget>
     </widget>
@@ -1704,8 +1710,8 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
-      <number>5</number>
+     <property name="digitCount">
+      <number>1</number>
      </property>
      <property name="segmentStyle">
       <enum>QLCDNumber::Flat</enum>
@@ -1732,8 +1738,8 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
-      <number>5</number>
+     <property name="digitCount">
+      <number>1</number>
      </property>
      <property name="segmentStyle">
       <enum>QLCDNumber::Flat</enum>
@@ -1760,8 +1766,8 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
-      <number>5</number>
+     <property name="digitCount">
+      <number>1</number>
      </property>
      <property name="segmentStyle">
       <enum>QLCDNumber::Flat</enum>
@@ -1788,7 +1794,7 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
+     <property name="digitCount">
       <number>5</number>
      </property>
      <property name="segmentStyle">
@@ -1816,7 +1822,7 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
+     <property name="digitCount">
       <number>5</number>
      </property>
      <property name="segmentStyle">
@@ -1844,7 +1850,7 @@ color:white;</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="numDigits">
+     <property name="digitCount">
       <number>5</number>
      </property>
      <property name="segmentStyle">
