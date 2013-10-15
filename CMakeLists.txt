@@ -695,14 +695,14 @@ if(NOT SDK_FACEAPI_ONLY)
                 install(FILES ${opentrack-opencv-files} DESTINATION .)
         endif()
         if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
-            GET_FILENAME_COMPONENT(qt-dirname "${QT_QTCORE_LIBRARY_RELEASE}" PATH)
-            SET(qt-dirname "${qt-dirname}/../bin/")
+            GET_FILENAME_COMPONENT(qt-dirname "${Qt5Core_DIR}" PATH)
+            SET(qt-dirname "${qt-dirname}/../../bin")
             install(FILES
-                "${qt-dirname}/QtCore4.dll"
-                "${qt-dirname}/QtGui4.dll"
-                "${qt-dirname}/QtNetwork4.dll"
-                "${qt-dirname}/QtSvg4.dll"
-                "${qt-dirname}/QtXml4.dll"
+                "${qt-dirname}/Qt5Core.dll"
+                "${qt-dirname}/Qt5Gui.dll"
+				"${qt-dirname}/Qt5Widgets.dll"
+                "${qt-dirname}/Qt5Network.dll"
+                "${qt-dirname}/Qt5Xml.dll"
                 DESTINATION .
             )
         endif()
