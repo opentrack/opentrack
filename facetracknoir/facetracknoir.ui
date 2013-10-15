@@ -1274,7 +1274,7 @@ background:none;</string>
      </property>
      <property name="minimumSize">
       <size>
-       <width>64</width>
+       <width>62</width>
        <height>38</height>
       </size>
      </property>
@@ -1315,7 +1315,7 @@ background:none;</string>
      </property>
      <property name="minimumSize">
       <size>
-       <width>64</width>
+       <width>62</width>
        <height>38</height>
       </size>
      </property>
@@ -1462,8 +1462,15 @@ background:none;</string>
        <height>0</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">* {
+	text-color: white;
+	color: white;
+}
+</string>
+     </property>
      <property name="title">
-      <string>Raw Input</string>
+      <string>Raw data</string>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -1480,8 +1487,20 @@ background:none;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
+      </property>
       <property name="digitCount">
        <number>2</number>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumRotX">
@@ -1496,8 +1515,20 @@ background:none;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
+      </property>
       <property name="digitCount">
        <number>2</number>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLabel" name="label_4">
@@ -1546,8 +1577,20 @@ color:white;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
+      </property>
       <property name="digitCount">
        <number>2</number>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
@@ -1579,8 +1622,20 @@ border:none;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
+      </property>
       <property name="digitCount">
        <number>2</number>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLabel" name="label_7">
@@ -1646,8 +1701,20 @@ color:white;</string>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
+      </property>
       <property name="digitCount">
        <number>2</number>
+      </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumX">
@@ -1659,14 +1726,43 @@ color:white;</string>
         <height>21</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: white;
+text-color: white;</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>true</bool>
       </property>
       <property name="digitCount">
        <number>2</number>
       </property>
+      <property name="segmentStyle">
+       <enum>QLCDNumber::Flat</enum>
+      </property>
      </widget>
     </widget>
+    <zorder>groupBox</zorder>
+    <zorder>lcdNumZ</zorder>
+    <zorder>lcdNumY</zorder>
+    <zorder>label_8</zorder>
+    <zorder>label_9</zorder>
+    <zorder>lcdNumRotY</zorder>
+    <zorder>label_4</zorder>
+    <zorder>lcdNumRotX</zorder>
+    <zorder>label_7</zorder>
+    <zorder>lcdNumRotZ</zorder>
+    <zorder>lcdNumX</zorder>
+    <zorder>label_5</zorder>
+    <zorder>label_6</zorder>
    </widget>
    <widget class="QWidget" name="widget4logo" native="true">
     <property name="geometry">
