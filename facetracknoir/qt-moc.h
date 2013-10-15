@@ -6,5 +6,5 @@ class AutomocMe {
   Q_OBJECT
 private:
   virtual void foo() = 0;
-  AutomocMe() = delete;
+  AutomocMe() {}
 };
