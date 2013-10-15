@@ -159,7 +159,7 @@ KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter)
         return;
     }
 
-    if (dinkeyboard->SetCooperativeLevel(window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
+    if (dinkeyboard->SetCooperativeLevel((HWND) window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         din->Release();
         din = 0;
