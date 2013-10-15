@@ -148,7 +148,7 @@ Tracker::~Tracker()
 void Tracker::StartTracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new VideoWidget(videoframe);
+    videoWidget = new ArucoVideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(videoWidget);

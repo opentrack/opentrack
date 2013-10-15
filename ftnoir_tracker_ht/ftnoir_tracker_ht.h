@@ -12,7 +12,7 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ui_ht-trackercontrols.h"
-#include "video_widget.h"
+#include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
 #include <QTimer>
@@ -31,7 +31,7 @@ private:
     QTimer timer;
     PortableLockedShm lck_shm;
 	QProcess subprocess;
-	VideoWidget* videoWidget;
+    HTVideoWidget* videoWidget;
 	QHBoxLayout* layout;
     volatile bool fresh;
 private slots:

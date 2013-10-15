@@ -26,6 +26,7 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #include "ftnoir_protocol_fg.h"
+#include <QObject>
 #include <QFile>
 #include "facetracknoir/global-settings.h"
 

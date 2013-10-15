@@ -5,13 +5,13 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "video_widget.h"
+#include "ht_video_widget.h"
 
 #include <QDebug>
 
 using namespace std;
 
-void VideoWidget::update_image(unsigned char *frame, int width, int height)
+void HTVideoWidget::update_image(unsigned char *frame, int width, int height)
 {
     QMutexLocker foo(&mtx);
     QImage qframe = QImage(width, height, QImage::Format_RGB888);

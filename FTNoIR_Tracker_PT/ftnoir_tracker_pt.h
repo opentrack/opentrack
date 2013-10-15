@@ -11,15 +11,13 @@
 #ifdef OPENTRACK_API
 #   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #   include "facetracknoir/global-settings.h"
-#else
-#   include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #endif
 #include "ftnoir_tracker_pt_settings.h"
 #include "frame_observer.h"
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
-#include "video_widget.h"
+#include "pt_video_widget.h"
 #include "timer.h"
 
 #include <QThread>
@@ -82,7 +80,6 @@ protected:
 
 	// --- tracking chain ---
 #ifdef OPENTRACK_API
-#define VideoWidget VideoWidget2
     CVCamera       camera;
 #else
 	VICamera       camera;
@@ -101,7 +98,9 @@ protected:
 
 	void update_show_video_widget();
 	bool show_video_widget;
-	VideoWidget* video_widget;
+#ifdef OPENTRACK_API
+    PTVideoWidget* video_widget;
+#endif
 	QFrame*      video_frame;
 
 	// --- misc ---

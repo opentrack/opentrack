@@ -16,7 +16,7 @@
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "trans_calib.h"
-#include "video_widget.h"
+#include "pt_video_widget.h"
 #include "ui_FTNoIR_PT_Controls.h"
 
 #include <QTimer>

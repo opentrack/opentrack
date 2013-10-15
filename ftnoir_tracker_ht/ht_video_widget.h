@@ -17,12 +17,12 @@
 #include <QPaintEvent>
 
 // ----------------------------------------------------------------------------
-class VideoWidget : public QWidget
+class HTVideoWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-    VideoWidget(QWidget *parent) : QWidget(parent), mtx() {
+    HTVideoWidget(QWidget *parent) : QWidget(parent), mtx() {
 	}
     void update_image(unsigned char* frame, int width, int height);
 protected slots:
