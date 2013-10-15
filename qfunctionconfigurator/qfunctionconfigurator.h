@@ -9,7 +9,6 @@
 
 #include <QWidget>
 #include <QtGui>
-#include <QtDesigner/QDesignerExportWidget>
 #include <QPointF>
 #include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"

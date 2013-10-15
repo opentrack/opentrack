@@ -34,8 +34,8 @@
 
 #include "ftnoir_protocol_base_global.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
-#include <QtGui/QWidget>
-#include <QtGui/QFrame>
+#include <QWidget>
+#include <QFrame>
 
 struct IProtocol
 {

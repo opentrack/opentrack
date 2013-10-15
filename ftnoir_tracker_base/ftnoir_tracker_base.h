@@ -27,8 +27,8 @@
 
 #include "ftnoir_tracker_base_global.h"
 #include "ftnoir_tracker_types.h"
-#include <QtGui/QWidget>
-#include <QtGui/QFrame>
+#include <QWidget>
+#include <QFrame>
 #include <QWaitCondition>
 #include <QMutex>
 #include <QFrame>
