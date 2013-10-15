@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
-#include <tchar.h>
+//#include <tchar.h>
 
 #include "ftnoir_protocol_ft/fttypes.h"
 
