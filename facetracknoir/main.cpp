@@ -24,7 +24,7 @@
 
 #include "facetracknoir.h"
 #include "tracker.h"
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QList>
