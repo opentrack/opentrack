@@ -69,9 +69,7 @@ private:
 // Widget that has controls for SMoIR protocol client-settings.
 class TrackerControls: public QWidget, public ITrackerDialog
 {
-    Q_OBJECT
 public:
-
 	explicit TrackerControls();
     virtual ~TrackerControls();
 	void showEvent ( QShowEvent * event );
@@ -128,8 +126,10 @@ private slots:
 		settingsDirty = true;
 	}
 
-signals:
-     void stateChanged(int newState);
+public slots:
+     void stateChanged(int newState) {
+		 settingsDirty = true;
+	 }
 
 };
 

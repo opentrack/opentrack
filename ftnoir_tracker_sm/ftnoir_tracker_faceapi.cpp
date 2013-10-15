@@ -52,7 +52,7 @@ void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
     if ( pMemData != NULL ) {
         pMemData->command = 0;							// Reset any and all commands
         if (videoframe != NULL) {
-            pMemData->handle = videoframe->winId();		// Handle of Videoframe widget
+            pMemData->handle = (HWND) videoframe->winId();		// Handle of Videoframe widget
         }
         else {
             pMemData->handle = NULL;					// reset Handle of Videoframe widget
