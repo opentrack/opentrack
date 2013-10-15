@@ -34,13 +34,6 @@
 #include <QFrame>
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
-
-////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
 // Method calls are dispatched via virtual table.
