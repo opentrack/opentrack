@@ -10,12 +10,13 @@
 
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_aruco-trackercontrols.h"
-#include "video_widget.h"
+#include "ar_video_widget.h"
 #include <QObject>
 #include <QTimer>
 #include <QThread>
 #include <QMutex>
 #include <QHBoxLayout>
+#include <QDialog>
 #include <opencv2/opencv.hpp>
 
 class Tracker : public QThread, public ITracker
@@ -31,7 +32,7 @@ public:
 private:
     QMutex mtx;
     QTimer timer;
-	VideoWidget* videoWidget;
+	ArucoVideoWidget* videoWidget;
 	QHBoxLayout* layout;
     volatile bool fresh, stop;
     float fov;

@@ -12,10 +12,6 @@
 #include <QFile>
 #include <QCoreApplication>
 
-#ifdef OPENTRACK_API
-#   define VideoWidget VideoWidget2
-#endif
-
 using namespace std;
 using namespace cv;
 using namespace boost;
@@ -192,7 +188,7 @@ void Tracker::update_show_video_widget()
 	{
 		const int VIDEO_FRAME_WIDTH  = 252;
 		const int VIDEO_FRAME_HEIGHT = 189;
-		video_widget = new VideoWidget(video_frame, this);
+        video_widget = new PTVideoWidget(video_frame, this);
 		QHBoxLayout* video_layout = new QHBoxLayout();
 		video_layout->setContentsMargins(0, 0, 0, 0);
 		video_layout->addWidget(video_widget);
