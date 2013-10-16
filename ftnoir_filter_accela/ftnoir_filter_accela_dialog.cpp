@@ -91,7 +91,7 @@ void FilterControls::doOK() {
 }
 
 // override show event
-void FilterControls::showEvent ( QShowEvent * event ) {
+void FilterControls::showEvent ( QShowEvent *  ) {
 }
 
 //

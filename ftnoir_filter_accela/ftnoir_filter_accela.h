@@ -67,7 +67,7 @@ class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDi
 public:
 	explicit FilterControls();
     virtual ~FilterControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
     void Initialize(QWidget *parent);
     void registerFilter(IFilter* filter);
     void unregisterFilter();
