@@ -137,7 +137,7 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 		if (gameLine.count() > 6) {
 			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
                 QByteArray id = gameLine.at(7).toLatin1();
-                int tmp[8];
+                unsigned int tmp[8];
                 int fuzz[3];
                 if (gameLine.at(3) == QString("V160"))
                 {

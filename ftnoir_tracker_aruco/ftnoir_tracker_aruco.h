@@ -57,7 +57,7 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent);
-    void registerTracker(ITracker *tracker) {}
+    void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 
 private:
