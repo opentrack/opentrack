@@ -950,9 +950,9 @@ static void bind_keyboard_shortcut(Key& key, const QString label, QSettings& ini
         key.shift = key.alt = key.ctrl = 0;
         if (idx < global_windows_key_sequences.size())
             key.keycode = global_windows_key_sequences[idx];
-        key.shift = iniFile.value(QString("Shift_").arg(label), false).toBool();
-        key.alt = iniFile.value(QString("Alt_").arg(label), false).toBool();
-        key.ctrl = iniFile.value(QString("Ctrl_").arg(label), false).toBool();
+        key.shift = iniFile.value(QString("Shift_%1").arg(label), false).toBool();
+        key.alt = iniFile.value(QString("Alt_%1").arg(label), false).toBool();
+        key.ctrl = iniFile.value(QString("Ctrl_%1").arg(label), false).toBool();
     }
 }
 #endif
