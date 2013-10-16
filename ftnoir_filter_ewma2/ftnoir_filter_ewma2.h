@@ -45,8 +45,7 @@ public:
     void Initialize() {}
 
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position,
-                            const double *last_post_filter);
+                            double *new_camera_position, const double *);
     void receiveSettings(double smin, double smax, double sexpt);
 
 private:
@@ -75,7 +74,7 @@ class FilterControls: public QWidget, public IFilterDialog
 public:
     explicit FilterControls();
     virtual ~FilterControls();
-    void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
     void Initialize(QWidget *parent);
     void registerFilter(IFilter* flt);
     void unregisterFilter();
