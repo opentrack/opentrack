@@ -38,7 +38,7 @@
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.
 //*******************************************************************************************************
-class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
+class FTNoIR_Filter : public IFilter
 {
 public:
 	FTNoIR_Filter();
@@ -61,7 +61,7 @@ private:
 //*******************************************************************************************************
 
 // Widget that has controls for FTNoIR protocol filter-settings.
-class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDialog
+class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
