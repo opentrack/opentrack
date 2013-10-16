@@ -17,10 +17,9 @@
 #include <QImage>
 #include <QPixmap>
 #include <QTimer>
-
 #include <QtDebug>
-
-#include <math.h>
+#include <cmath>
+#include <QTabWidget>
 
 static const int pointSize = 5;
 
@@ -111,9 +110,8 @@ void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
 {
     int i;
     QRect scale;
-
     _background = QPixmap(fullRect.width(), fullRect.height());
-    QColor bgColor = palette().color(QPalette::Normal, QPalette::Background);
+    auto bgColor = palette().button();
     QPainter painter(&_background);
     painter.fillRect(fullRect, bgColor);
     painter.setRenderHint(QPainter::Antialiasing);
