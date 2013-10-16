@@ -122,7 +122,7 @@ void Tracker::run() {
                     Libraries->pFilter->Initialize();
             }
             
-            if (confid) {
+            if (confid && enabled) {
                 // get values
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
@@ -147,7 +147,7 @@ void Tracker::run() {
                 }
                 
                 // Send the headpose to the game
-                if (Libraries->pProtocol && enabled) {
+                if (Libraries->pProtocol) {
                     gameoutput_camera = output_camera;
                     Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
                 }
