@@ -31,7 +31,8 @@
 /** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
     should_quit(false),
-    do_center(false)
+    do_center(false),
+    enabled(true)
 {
     // Retieve the pointer to the parent
 	mainApp = parent;
@@ -145,17 +146,14 @@ void Tracker::run() {
                     get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
                 }
                 
-                //
                 // Send the headpose to the game
-                //
-                if (Libraries->pProtocol) {
+                if (Libraries->pProtocol && enabled) {
                     gameoutput_camera = output_camera;
                     Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
                 }
             }
         }
         
-        //for lower cpu load
         msleep(8);
     }
 #if defined(_WIN32)
