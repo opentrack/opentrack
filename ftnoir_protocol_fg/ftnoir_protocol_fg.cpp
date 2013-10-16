@@ -63,11 +63,7 @@ void FTNoIR_Protocol::loadSettings() {
 
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
-    int no_bytes;
-    QHostAddress sender;
-    quint16 senderPort;
-
+void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     FlightData.x = headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;

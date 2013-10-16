@@ -84,7 +84,7 @@ void FTNControls::doOK() {
 }
 
 // override show event
-void FTNControls::showEvent ( QShowEvent * event ) {
+void FTNControls::showEvent ( QShowEvent *  ) {
 	loadSettings();
 }
 

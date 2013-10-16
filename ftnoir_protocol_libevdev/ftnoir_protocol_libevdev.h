@@ -25,7 +25,7 @@ public:
     bool checkServerInstallationOK() {
         return dev != NULL;
     }
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame(const double *headpose);
     QString getGameName() {
         return "Virtual joystick for Linux";
     }
@@ -45,7 +45,7 @@ public:
     void showEvent ( QShowEvent *) {}
 
     void Initialize(QWidget *);
-    void registerProtocol(IProtocol *l) {}
+    void registerProtocol(IProtocol *) {}
 	void unRegisterProtocol() {}
 
 private:

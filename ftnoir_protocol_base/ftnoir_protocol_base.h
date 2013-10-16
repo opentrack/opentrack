@@ -41,7 +41,7 @@ struct IProtocol
 {
 	virtual ~IProtocol() {}
     virtual bool checkServerInstallationOK() = 0;
-    virtual void sendHeadposeToGame( double *headpose, double *rawheadpose ) = 0;
+    virtual void sendHeadposeToGame( const double* headpose ) = 0;
     virtual QString getGameName() = 0;
 };
 
