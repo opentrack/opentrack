@@ -35,7 +35,7 @@ void CurveConfigurationDialog::doOK() {
 }
 
 // override show event
-void CurveConfigurationDialog::showEvent ( QShowEvent * event ) {
+void CurveConfigurationDialog::showEvent ( QShowEvent * ) {
 	loadSettings();
 }
 
