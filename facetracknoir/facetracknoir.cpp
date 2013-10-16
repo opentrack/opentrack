@@ -183,8 +183,10 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
 
+#ifndef _WIN32
     connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
     connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
+#endif
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -548,7 +550,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
     
 #if defined(_WIN32)
-    keybindingWorker = new KeybindingWorker(*this, &keyCenter, &keyToggle);
+    keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
     keybindingWorker->start();
 #endif
 
@@ -939,7 +941,7 @@ void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString
     }
 }
 #else
-static void bind_keyboard_shotcut(Key& key, const QString label, QSettings& iniFile)
+static void bind_keyboard_shortcut(Key& key, const QString label, QSettings& iniFile)
 {
     const int idx = iniFile.value("Key_index_" + label, 0).toInt();
     if (idx > 0)
@@ -967,8 +969,8 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     bind_keyboard_shortcut(keyCenter, "Center", iniFile);
     bind_keyboard_shortcut(keyToggle, "Toggle", iniFile);
 #else
-    bind_keyboard_shortcut(&keyCenter, "Center", iniFile));
-    bind_keyboard_shortcut(&keyToggle, "Toggle", iniFile));
+    bind_keyboard_shortcut(keyCenter, "Center", iniFile);
+    bind_keyboard_shortcut(keyToggle, "Toggle", iniFile);
 #endif
     iniFile.endGroup ();
 

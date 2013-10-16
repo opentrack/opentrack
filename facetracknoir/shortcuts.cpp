@@ -197,7 +197,7 @@ KeybindingWorkerImpl::~KeybindingWorkerImpl() {
 }
 
 KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter, Key keyToggle)
-: din(0), dinkeyboard(0), kCenter(keyCenter), ktoggle(keyTogle), window(w), should_quit(true)
+: din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), window(w), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
