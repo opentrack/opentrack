@@ -264,6 +264,15 @@ void FaceTrackNoIR::GetCameraNameDX() {
 		pEnumCat->Release();
 	}
 	pSysDevEnum->Release();
+#else
+    for (int i = 0; i < 16; i++) {
+        char buf[128];
+        sprintf(buf, "/dev/video%d", i);
+        if (access(buf, R_OK | W_OK) == 0) {
+            ui.cameraName->setText(QString(buf));
+            break;
+        }
+    }
 #endif
 }
 
@@ -753,14 +762,14 @@ void FaceTrackNoIR::showHeadPose() {
     const QString format("%1");
     
     tracker->getHeadPose(newdata);
-    ui.lcdNumX->display(format.arg(newdata[TX], 0, 'f', 1));
-    ui.lcdNumY->display(format.arg(newdata[TY], 0, 'f', 1));
-    ui.lcdNumZ->display(format.arg(newdata[TZ], 0, 'f', 1));
+    ui.lcdNumX->display(newdata[TX]);
+    ui.lcdNumY->display(newdata[TY]);
+    ui.lcdNumZ->display(newdata[TZ]);
 
 
-    ui.lcdNumRotX->display(format.arg(newdata[Yaw], 0, 'f', 1));
-    ui.lcdNumRotY->display(format.arg(newdata[Pitch], 0, 'f', 1));
-    ui.lcdNumRotZ->display(format.arg(newdata[Roll], 0, 'f', 1));
+    ui.lcdNumRotX->display(newdata[Yaw]);
+    ui.lcdNumRotY->display(newdata[Pitch]);
+    ui.lcdNumRotZ->display(newdata[Roll]);
 
 	//
 	// Get the output-pose and also display it.
@@ -769,13 +778,13 @@ void FaceTrackNoIR::showHeadPose() {
 
     ui.pose_display->rotateBy(newdata[Yaw], newdata[Roll], newdata[Pitch]);
 
-    ui.lcdNumOutputPosX->display(format.arg(newdata[TX], 0, 'f', 1));
-    ui.lcdNumOutputPosY->display(format.arg(newdata[TY], 0, 'f', 1));
-    ui.lcdNumOutputPosZ->display(format.arg(newdata[TZ], 0, 'f', 1));
+    ui.lcdNumOutputPosX->display(newdata[TX]);
+    ui.lcdNumOutputPosY->display(newdata[TY]);
+    ui.lcdNumOutputPosZ->display(newdata[TZ]);
 
-    ui.lcdNumOutputRotX->display(format.arg(newdata[Yaw], 0, 'f', 1));
-    ui.lcdNumOutputRotY->display(format.arg(newdata[Pitch], 0, 'f', 1));
-    ui.lcdNumOutputRotZ->display(format.arg(newdata[Roll], 0, 'f', 1));
+    ui.lcdNumOutputRotX->display(newdata[Yaw]);
+    ui.lcdNumOutputRotY->display(newdata[Pitch]);
+    ui.lcdNumOutputRotZ->display(newdata[Roll]);
 
     if (_curve_config) {
         _curve_config->update();
