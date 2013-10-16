@@ -94,8 +94,8 @@ public:
     Key keyToggle;
     KeybindingWorker* keybindingWorker;
 #else 
-    QxtGlobalShortcut* keyCenter;
-    QxtGlobalShortcut* keyToggle;
+    QxtGlobalShortcut keyCenter;
+    QxtGlobalShortcut keyToggle;
 #endif
 public slots:
     void shortcutRecentered();
@@ -112,7 +112,6 @@ private:
     IProtocolDialog* pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
     IFilterDialog* pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
 
-	/** Widget variables **/
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
 
@@ -120,11 +119,14 @@ private:
 
 	void GetCameraNameDX();
 	void loadSettings();
-	void setupFaceTrackNoIR();
 
     QList<DynamicLibrary*> dlopen_filters;
     QList<DynamicLibrary*> dlopen_trackers;
     QList<DynamicLibrary*> dlopen_protocols;
+
+#ifndef _WIN32
+    void bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString label, QSettings& iniFile);
+#endif
 
     bool looping;
     

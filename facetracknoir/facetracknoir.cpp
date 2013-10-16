@@ -91,12 +91,12 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     QMainWindow(parent, flags),
-    #if defined(_WIN32)
-        keybindingWorker(NULL),
-    #else
-        keyCenter(0),
-        keyToggle(0),
-    #endif
+#if defined(_WIN32)
+    keybindingWorker(NULL),
+#else
+    keyCenter(this),
+    keyToggle(this),
+#endif
     timUpdateHeadPose(this),
     pTrackerDialog(NULL),
     pSecondTrackerDialog(NULL),
@@ -182,6 +182,9 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
 	ui.lcdNumOutputRotX->setVisible(false);
 	ui.lcdNumOutputRotY->setVisible(false);
 	ui.lcdNumOutputRotZ->setVisible(false);
+
+    connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
+    connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -545,7 +548,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
     
 #if defined(_WIN32)
-    keybindingWorker = new KeybindingWorker(*this, keyCenter);
+    keybindingWorker = new KeybindingWorker(*this, &keyCenter, &keyToggle);
     keybindingWorker->start();
 #endif
 
@@ -913,6 +916,45 @@ void FaceTrackNoIR::profileSelected(int index)
 	loadSettings();
 }
 
+#if !defined(_WIN32)
+void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString label, QSettings& iniFile)
+{
+    const int idx = iniFile.value("Key_index_" + label, 0).toInt();
+    key.setShortcut(QKeySequence::fromString(""));
+    key.setDisabled();
+    QString seq(global_key_sequences.value(idx, ""));
+    if (idx > 0)
+    {
+        if (!seq.isEmpty())
+        {
+            if (iniFile.value(QString("Shift_%1").arg(label), false).toBool())
+                seq = "Shift+" + seq;
+            if (iniFile.value(QString("Alt_%1").arg(label), false).toBool())
+                seq = "Alt+" + seq;
+            if (iniFile.value(QString("Ctrl_%1").arg(label), false).toBool())
+                seq = "Ctrl+" + seq;
+            key.setShortcut(QKeySequence::fromString(seq, QKeySequence::NativeText));
+            key.setEnabled();
+        }
+    }
+}
+#else
+static void bind_keyboard_shotcut(Key& key, const QString label, QSettings& iniFile)
+{
+    const int idx = iniFile.value("Key_index_" + label, 0).toInt();
+    if (idx > 0)
+    {
+        key.keycode = 0;
+        key.shift = key.alt = key.ctrl = 0;
+        if (idx < global_windows_key_sequences.size())
+            key.keycode = global_windows_key_sequences[idx];
+        key.shift = iniFile.value(QString("Shift_").arg(label), false).toBool();
+        key.alt = iniFile.value(QString("Alt_").arg(label), false).toBool();
+        key.ctrl = iniFile.value(QString("Ctrl_").arg(label), false).toBool();
+    }
+}
+#endif
+
 void FaceTrackNoIR::bindKeyboardShortcuts()
 {
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
@@ -920,72 +962,51 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
     iniFile.beginGroup ( "KB_Shortcuts" );
-    int idxCenter = iniFile.value("Key_index_Center", 0).toInt();
     
 #if !defined(_WIN32)
-    if (keyCenter) {
-        delete keyCenter;
-        keyCenter = NULL;
-    }
-
-    if (idxCenter > 0)
-    {
-        QString seq(global_key_sequences.value(idxCenter, ""));
-        if (!seq.isEmpty())
-        {
-            if (iniFile.value("Shift_Center", false).toBool())
-                seq = "Shift+" + seq;
-            if (iniFile.value("Alt_Center", false).toBool())
-                seq = "Alt+" + seq;
-            if (iniFile.value("Ctrl_Center", false).toBool())
-                seq = "Ctrl+" + seq;
-            keyCenter = new QxtGlobalShortcut(QKeySequence(seq), this);
-            connect(keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
-        }
-    }
+    bind_keyboard_shortcut(keyCenter, "Center", iniFile);
+    bind_keyboard_shortcut(keyToggle, "Toggle", iniFile);
 #else
-    keyCenter.keycode = 0;
-    keyCenter.shift = keyCenter.alt = keyCenter.ctrl = 0;
-    if (idxCenter > 0 && idxCenter < global_windows_key_sequences.size())
-        keyCenter.keycode = global_windows_key_sequences[idxCenter];
-    keyCenter.shift = iniFile.value("Shift_Center", false).toBool();
-    keyCenter.alt = iniFile.value("Alt_Center", false).toBool();
-    keyCenter.ctrl = iniFile.value("Ctrl_Center", false).toBool();
+    bind_keyboard_shortcut(&keyCenter, "Center", iniFile));
+    bind_keyboard_shortcut(&keyToggle, "Toggle", iniFile));
 #endif
     iniFile.endGroup ();
-    
+
     if (tracker) /* running already */
     {
 #if defined(_WIN32)
-    if (keybindingWorker)
-    {
-        keybindingWorker->should_quit = true;
-        keybindingWorker->wait();
-        delete keybindingWorker;
-        keybindingWorker = NULL;
-    }
-    keybindingWorker = new KeybindingWorker(*this, keyCenter);
-    keybindingWorker->start();
+        if (keybindingWorker)
+        {
+            keybindingWorker->should_quit = true;
+            keybindingWorker->wait();
+            delete keybindingWorker;
+            keybindingWorker = NULL;
+        }
+        const int idx_center = iniFile.value("Key_index_Center", 0).toInt();
+        const int idx_toggle = iniFile.value("Key_index_Toggle", 0).toInt();
+        keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
+        keybindingWorker->start();
 #endif
     }
 }
 
 void FaceTrackNoIR::shortcutRecentered()
 {
+    QApplication::beep();
+
+    qDebug() << "Center";
     if (tracker)
     {
-        QApplication::beep();
-        qDebug() << "Center";
         tracker->do_center = true;
     }
 }
 
 void FaceTrackNoIR::shortcutToggled()
 {
+    QApplication::beep();
+    qDebug() << "Toggle";
     if (tracker)
     {
-        QApplication::beep();
-        qDebug() << "Toggle";
         tracker->enabled = !tracker->enabled;
     }
 }
