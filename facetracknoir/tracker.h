@@ -108,6 +108,7 @@ public:
     volatile bool should_quit;
     // following are now protected by hTrackMutex
     volatile bool do_center;							// Center head-position, using the shortkey
+    volatile bool enabled;
     
     T6DOF output_camera;
 };

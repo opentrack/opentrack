@@ -91,12 +91,15 @@ public:
 
 #if defined(_WIN32)
     Key keyCenter;
+    Key keyToggle;
     KeybindingWorker* keybindingWorker;
 #else 
     QxtGlobalShortcut* keyCenter;
+    QxtGlobalShortcut* keyToggle;
 #endif
 public slots:
     void shortcutRecentered();
+    void shortcutToggled();
 
 private:
     HeadPoseData pose;

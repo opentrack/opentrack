@@ -17,6 +17,7 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
 
     for ( int i = 0; i < global_key_sequences.size(); i++) {
         ui.cbxCenterKey->addItem(global_key_sequences.at(i));
+        ui.cbxToggleKey->addItem(global_key_sequences.at(i));
     }
 
     loadSettings();
@@ -38,7 +39,6 @@ void KeyboardShortcutDialog::doOK() {
     mainApp->bindKeyboardShortcuts();
 }
 
-// override show event
 void KeyboardShortcutDialog::showEvent ( QShowEvent * event ) {
     loadSettings();
 }
@@ -76,11 +76,7 @@ void KeyboardShortcutDialog::doCancel() {
     }
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
 void KeyboardShortcutDialog::loadSettings() {
-    qDebug() << "loadSettings says: Starting ";
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
@@ -90,24 +86,82 @@ void KeyboardShortcutDialog::loadSettings() {
 
     iniFile.beginGroup ( "KB_Shortcuts" );
 
-    ui.chkCenterShift->setChecked (iniFile.value ( "Shift_Center", 0 ).toBool());
-    ui.chkCenterCtrl->setChecked (iniFile.value ( "Ctrl_Center", 0 ).toBool());
-    ui.chkCenterAlt->setChecked (iniFile.value ( "Alt_Center", 0 ).toBool());
+    const char* names[] = {
+        "Center", "Togggle"
+    };
 
-    ui.cbxCenterKey->setCurrentIndex(iniFile.value("Key_index_Center", 0).toInt());
+    QComboBox* checkboxen[] = {
+        ui.cbxCenterKey,
+        ui.cbxToggleKey
+    };
+
+    QCheckBox* boxen[2][3] = {
+        {
+            ui.chkCenterShift,
+            ui.chkCenterCtrl,
+            ui.chkCenterAlt
+        },
+        {
+            ui.chkToggleShift,
+            ui.chkToggleCtrl,
+            ui.chkToggleAlt
+        }
+    };
+
+    const char* modnames[] = {
+        "Shift", "Ctrl", "Alt"
+    };
+
+    const char* keynames[] = {
+        "Center", "Toggle"
+    };
+
+    const int KEY_COUNT = 2;
+    const int MODIFIERS = 3;
+
+    for (int i = 0; i < KEY_COUNT; i++)
+    {
+        for (int m = 0; i < MODIFIERS; i++)
+        {
+            boxen[i][m]->setChecked (iniFile.value ( modnames[m] + QString("_") + QString(keynames[i]), 0 ).toBool());
+        }
+        checkboxen[i]->setCurrentIndex(iniFile.value("Key_index_" + QString(names[i]), 0).toInt());
+    }
 
     iniFile.endGroup ();
 
     settingsDirty = false;
-
 }
 
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
 void KeyboardShortcutDialog::save() {
+    const char* keynames[] = {
+        "Center", "Toggle"
+    };
 
-    qDebug() << "save() says: started";
+    QComboBox* checkboxen[] = {
+        ui.cbxCenterKey,
+        ui.cbxToggleKey
+    };
+
+    const char* modnames[] = {
+        "Shift", "Ctrl", "Alt"
+    };
+
+    QCheckBox* boxen[2][3] = {
+        {
+            ui.chkCenterShift,
+            ui.chkCenterCtrl,
+            ui.chkCenterAlt
+        },
+        {
+            ui.chkToggleShift,
+            ui.chkToggleCtrl,
+            ui.chkToggleAlt
+        }
+    };
+
+    const int MODIFIERS = 3;
+    const int KEY_COUNT = 2;
 
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
@@ -115,12 +169,18 @@ void KeyboardShortcutDialog::save() {
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     iniFile.beginGroup ( "KB_Shortcuts" );
-    iniFile.setValue ( "Key_index_Center", ui.cbxCenterKey->currentIndex() );
-    iniFile.setValue ( "Shift_Center", ui.chkCenterShift->isChecked() );
-    iniFile.setValue ( "Ctrl_Center", ui.chkCenterCtrl->isChecked() );
-    iniFile.setValue ( "Alt_Center", ui.chkCenterAlt->isChecked() );
 
-    iniFile.endGroup ();
+    for (int i = 0; i < KEY_COUNT; i++)
+    {
+        iniFile.setValue ( "Key_index_" + QString(keynames[i]),
+                           checkboxen[i]->currentIndex() );
+        for (int m = 0; i < MODIFIERS; i++)
+        {
+            iniFile.setValue(modnames[m] + QString("_") + keynames[i], !!boxen[i][m]->isChecked());
+        }
+    }
+
+    iniFile.endGroup();
 
     settingsDirty = false;
 }
@@ -137,8 +197,8 @@ KeybindingWorkerImpl::~KeybindingWorkerImpl() {
         din->Release();
 }
 
-KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter)
-: din(0), dinkeyboard(0), kCenter(keyCenter), window(w), should_quit(true)
+KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter, Key keyToggle)
+: din(0), dinkeyboard(0), kCenter(keyCenter), ktoggle(keyTogle), window(w), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
@@ -219,6 +279,7 @@ void KeybindingWorkerImpl::run() {
         }
 
         PROCESS_KEY(kCenter, shortcutRecentered);
+        PROCESS_KEY(kToggle, shortcutToggled);
 
         Sleep(25);
     }

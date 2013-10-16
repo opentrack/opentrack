@@ -95,6 +95,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
         keybindingWorker(NULL),
     #else
         keyCenter(0),
+        keyToggle(0),
     #endif
     timUpdateHeadPose(this),
     pTrackerDialog(NULL),
@@ -973,12 +974,18 @@ void FaceTrackNoIR::shortcutRecentered()
 {
     if (tracker)
     {
-#if defined(_WIN32)
-        MessageBeep(MB_OK);
-#else
         QApplication::beep();
-#endif
         qDebug() << "Center";
         tracker->do_center = true;
+    }
+}
+
+void FaceTrackNoIR::shortcutToggled()
+{
+    if (tracker)
+    {
+        QApplication::beep();
+        qDebug() << "Toggle";
+        tracker->enabled = !tracker->enabled;
     }
 }

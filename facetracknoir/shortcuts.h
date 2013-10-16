@@ -64,17 +64,18 @@ private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     Key kCenter;
+    Key kToggle;
     FaceTrackNoIR& window;
 public:
     volatile bool should_quit;
     ~KeybindingWorkerImpl();
-    KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter);
+    KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter, Key keyToggle);
 	void run();
 };
 #else
 class KeybindingWorkerImpl {
 public:
-    KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter);
+    KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter, Key keyToggle);
 	void run() {}
 };
 #endif
@@ -82,7 +83,7 @@ public:
 class KeybindingWorker : public QThread, public KeybindingWorkerImpl {
 	Q_OBJECT
 public:
-	KeybindingWorker(FaceTrackNoIR& w, Key keyCenter) : KeybindingWorkerImpl(w, keyCenter)
+    KeybindingWorker(FaceTrackNoIR& w, Key keyCenter, Key keyToggle) : KeybindingWorkerImpl(w, keyCenter, keyToggle)
 	{
 	}
 	void run() {
