@@ -22,6 +22,6 @@ private:
 private slots:
     void doOK();
     void doCancel();
-    void curveChanged( bool change ) { settingsDirty = true; }
-    void curveChanged( int change ) { settingsDirty = true; }
+    void curveChanged( bool ) { settingsDirty = true; }
+    void curveChanged( int ) { settingsDirty = true; }
 };
