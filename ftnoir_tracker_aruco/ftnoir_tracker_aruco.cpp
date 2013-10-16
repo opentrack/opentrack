@@ -385,11 +385,11 @@ TrackerControls::~TrackerControls()
 {
 }
 
-void TrackerControls::showEvent(QShowEvent *event)
+void TrackerControls::showEvent(QShowEvent *)
 {
 }
 
-void TrackerControls::Initialize(QWidget* parent)
+void TrackerControls::Initialize(QWidget*)
 {
     loadSettings();
 	show();

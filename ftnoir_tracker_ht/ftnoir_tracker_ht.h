@@ -46,10 +46,10 @@ public:
 
 	explicit TrackerControls();
     virtual ~TrackerControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
 
-    void Initialize(QWidget *parent);
-    void registerTracker(ITracker *tracker) {}
+    void Initialize(QWidget *);
+    void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 
 private:
