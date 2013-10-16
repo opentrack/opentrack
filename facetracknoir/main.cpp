@@ -28,7 +28,6 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QList>
-#include <QFont>
 
 #if defined(_WIN32)
 #   include <windows.h>
@@ -40,14 +39,6 @@ int main(int argc, char** argv)
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
 
     QApplication app(argc, argv);
-#if 0
-
-    QFont font;
-    font.setFamily(font.defaultFamily());
-    font.setPointSize(9);
-    font.setStyleStrategy(QFont::PreferAntialias);
-    app.setFont(font);
-#endif
 
     FaceTrackNoIR w;
 	QDesktopWidget desktop;
