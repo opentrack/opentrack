@@ -139,9 +139,9 @@ void GLWidget::project_quad_texture() {
 
     for (int i = 0; i < 4; i++)
         p2[i] = Vec2f(pt[i].x, pt[i].y);
-    
     QImage texture(QSize(sx, sy), QImage::Format_RGB888);
-    texture.fill(Qt::black);
+    QColor bgColor = palette().color(QPalette::Normal, QPalette::Background);
+    texture.fill(bgColor);
     
     const Vec2f projected[2][3] = { { p2[0], p2[1], p2[2] }, { p2[3], p2[1], p2[2] } };
     const Vec2f origs[2][3] = {
