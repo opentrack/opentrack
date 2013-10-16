@@ -39,95 +39,11 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
+   <iconset resource="main-facetracknoir.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
    <string/>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">/* Customize any plain widget that is a child of a QMainWindow. */
-QMainWindow &gt; .QWidget {
-	background-color: rgb(100, 100, 100);
-}
-
-/* Set the selection colors for all widgets. */
-QWidget {
-    selection-color: black;
-    selection-background-color: Silver;
-    color: black;
-}
-
-/* Specials for individual widget(s) */
-QWidget#widget {
-/*	background-color: #484848;*/
-	background-color: #595959;
-	border-left: 1px solid #000;
-}
-
-/* Specials for individual widget(s) */
-QWidget#widget4logo {
-	background-color: #000000;
-}
-
-/* Specials for individual widget(s) */
-QWidget#headPoseWidget {
-	background-color: #595959;
-}
-
-QWidget#widget4video {
-/*	background-color: #595959;*/
-}
-
-QWidget#Leftwidget {
-	background-color: ;
-}
-
-QWidget#widgetTop {
-	background-color: #595959;
-	border-bottom: 1px solid #000;
-}
-
-/* Make text in message boxes selectable. */
-QMessageBox {
-    /* LinksAccessibleByMouse | TextSelectableByMouse */
-    messagebox-text-interaction-flags: 5;
-}
-   
-/* Make the entire row selected in item views. */
-QAbstractItemView {
-    show-decoration-selected: 1;
-}
-
-/* Nice WindowsXP-style password character for password line edits. */
-QLineEdit[echoMode=&quot;2&quot;] {
-    lineedit-password-character: 9679;
-}
-
-/* Customize tooltips. */
-QToolTip {
-	background-color: rgb(170, 255, 127);
-	opacity: 200;
-}
-
-/* Customize push buttons and comboboxes. Our read-only combobox
-   is very similar to a push button, so they share the same border image. */
-
-QPushButton {
-    min-width: 4em;
-}
-
-QCheckBox {
-    background:none;
-}
-
-QPushButton:disabled {
-	color: rgb(128, 128, 128);
-}
-
-QGroupBox {
-	color: rgb(255, 255, 255);
-}</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -211,10 +127,6 @@ QGroupBox {
        <height>30</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
      <property name="text">
       <string/>
      </property>
@@ -233,6 +145,12 @@ background:none;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
      </property>
      <widget class="QLabel" name="lblSensX">
       <property name="geometry">
@@ -257,10 +175,6 @@ background:none;</string>
       </property>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
       </property>
       <property name="text">
        <string>X</string>
@@ -289,10 +203,6 @@ background:none;</string>
       </property>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
       </property>
       <property name="text">
        <string>Pitch</string>
@@ -338,10 +248,6 @@ background:none;</string>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
       <property name="text">
        <string>Y</string>
       </property>
@@ -369,10 +275,6 @@ background:none;</string>
       </property>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
       </property>
       <property name="text">
        <string>Z</string>
@@ -466,10 +368,6 @@ background:none;</string>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
       <property name="text">
        <string>Yaw</string>
       </property>
@@ -514,10 +412,6 @@ background:none;</string>
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
       <property name="text">
        <string>Roll</string>
       </property>
@@ -548,7 +442,7 @@ background:none;</string>
       <string>Profile</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
      <widget class="QComboBox" name="iconcomboProfile">
       <property name="geometry">
@@ -641,10 +535,6 @@ background:none;</string>
        <width>411</width>
        <height>16</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
      </property>
      <property name="text">
       <string>Not connected</string>
@@ -747,7 +637,7 @@ background:none;</string>
       <string notr="true"/>
      </property>
      <property name="title">
-      <string>Tracker Source</string>
+      <string>Main tracker</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -888,7 +778,7 @@ background:none;</string>
       </size>
      </property>
      <property name="title">
-      <string>Tracker Source #2</string>
+      <string>Auxiliary tracker</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -1209,12 +1099,6 @@ background:none;</string>
        <height>0</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">* {
-	color: white;
-}
-</string>
-     </property>
      <property name="title">
       <string>Raw data</string>
      </property>
@@ -1222,13 +1106,19 @@ background:none;</string>
       <bool>true</bool>
      </property>
      <widget class="QLCDNumber" name="lcdNumRotZ">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>160</x>
         <y>60</y>
-        <width>71</width>
+        <width>81</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1240,23 +1130,32 @@ background:none;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumRotX">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>160</x>
         <y>20</y>
-        <width>71</width>
+        <width>81</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1268,10 +1167,13 @@ background:none;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
@@ -1286,10 +1188,6 @@ background:none;</string>
         <height>16</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white</string>
-      </property>
       <property name="text">
        <string>X</string>
       </property>
@@ -1303,22 +1201,24 @@ color:white</string>
         <height>16</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
-      </property>
       <property name="text">
        <string>Y</string>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumZ">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>40</x>
         <y>60</y>
-        <width>61</width>
+        <width>71</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1330,10 +1230,13 @@ color:white;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
@@ -1348,22 +1251,24 @@ color:white;</string>
         <height>16</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">color:white;
-border:none;</string>
-      </property>
       <property name="text">
        <string>Z</string>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumY">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>40</x>
         <y>40</y>
-        <width>61</width>
+        <width>71</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1375,10 +1280,13 @@ border:none;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
@@ -1387,15 +1295,11 @@ border:none;</string>
      <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
-        <x>108</x>
+        <x>120</x>
         <y>58</y>
         <width>31</width>
         <height>20</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
       </property>
       <property name="text">
        <string>roll</string>
@@ -1404,15 +1308,11 @@ color:white;</string>
      <widget class="QLabel" name="label_8">
       <property name="geometry">
        <rect>
-        <x>109</x>
+        <x>121</x>
         <y>38</y>
         <width>31</width>
         <height>20</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:white;
-border:none;</string>
       </property>
       <property name="text">
        <string>pitch</string>
@@ -1421,28 +1321,30 @@ border:none;</string>
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>108</x>
+        <x>120</x>
         <y>18</y>
         <width>31</width>
         <height>20</height>
        </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
       </property>
       <property name="text">
        <string>yaw</string>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumRotY">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>160</x>
         <y>40</y>
-        <width>71</width>
+        <width>81</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1454,26 +1356,32 @@ color:white;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
       </property>
      </widget>
      <widget class="QLCDNumber" name="lcdNumX">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>40</x>
         <y>20</y>
-        <width>61</width>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">color: white; </string>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -1485,10 +1393,13 @@ color:white;</string>
        <number>0</number>
       </property>
       <property name="smallDecimalPoint">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="numDigits">
+       <number>7</number>
       </property>
       <property name="digitCount">
-       <number>2</number>
+       <number>7</number>
       </property>
       <property name="segmentStyle">
        <enum>QLCDNumber::Flat</enum>
@@ -1517,166 +1428,35 @@ color:white;</string>
       <height>90</height>
      </size>
     </property>
-    <widget class="QLCDNumber" name="lcdNumOutputRotX">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>19</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="digitCount">
-      <number>1</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputRotY">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>37</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="digitCount">
-      <number>1</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputRotZ">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>55</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="digitCount">
-      <number>1</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
     <widget class="QLCDNumber" name="lcdNumOutputPosX">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>17</x>
-       <y>19</y>
-       <width>50</width>
+       <x>21</x>
+       <y>21</y>
+       <width>51</width>
        <height>21</height>
       </rect>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Plain</enum>
      </property>
-     <property name="digitCount">
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
       <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputPosY">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>37</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="digitCount">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputPosZ">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>55</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
      </property>
      <property name="digitCount">
       <number>5</number>
@@ -1688,46 +1468,49 @@ color:white;</string>
     <widget class="QLabel" name="lblX">
      <property name="geometry">
       <rect>
-       <x>9</x>
-       <y>20</y>
+       <x>5</x>
+       <y>21</y>
        <width>31</width>
        <height>16</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
      </property>
      <property name="text">
       <string>X</string>
      </property>
     </widget>
     <widget class="QLabel" name="lblY">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>40</y>
+       <x>5</x>
+       <y>41</y>
        <width>31</width>
        <height>16</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <property name="text">
       <string>Y</string>
      </property>
     </widget>
     <widget class="QLabel" name="lblZ">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>59</y>
+       <x>5</x>
+       <y>61</y>
        <width>31</width>
        <height>16</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <property name="text">
       <string>Z</string>
@@ -1737,13 +1520,10 @@ color:white;</string>
      <property name="geometry">
       <rect>
        <x>69</x>
-       <y>60</y>
+       <y>61</y>
        <width>51</width>
        <height>16</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
      </property>
      <property name="text">
       <string>roll</string>
@@ -1758,9 +1538,6 @@ color:white;</string>
        <height>16</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
      <property name="text">
       <string>yaw</string>
      </property>
@@ -1774,11 +1551,193 @@ color:white;</string>
        <height>16</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
      <property name="text">
       <string>pitch</string>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumOutputPosY">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>21</x>
+       <y>41</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>5</number>
+     </property>
+     <property name="digitCount">
+      <number>5</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumOutputPosZ">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>21</x>
+       <y>61</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>5</number>
+     </property>
+     <property name="digitCount">
+      <number>5</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumOutputRotZ">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>102</x>
+       <y>61</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>5</number>
+     </property>
+     <property name="digitCount">
+      <number>5</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumOutputRotX">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>102</x>
+       <y>21</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>5</number>
+     </property>
+     <property name="digitCount">
+      <number>5</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+    </widget>
+    <widget class="QLCDNumber" name="lcdNumOutputRotY">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>102</x>
+       <y>41</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>5</number>
+     </property>
+     <property name="digitCount">
+      <number>5</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
      </property>
     </widget>
    </widget>
@@ -1822,7 +1781,6 @@ color:white;</string>
   <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
-  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
