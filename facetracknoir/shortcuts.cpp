@@ -87,7 +87,7 @@ void KeyboardShortcutDialog::loadSettings() {
     iniFile.beginGroup ( "KB_Shortcuts" );
 
     const char* names[] = {
-        "Center", "Togggle"
+        "Center", "Toggle"
     };
 
     QComboBox* checkboxen[] = {
