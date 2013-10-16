@@ -39,7 +39,7 @@
    <string>FaceTrackNoIR</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="main-facetracknoir.qrc">
+   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -1781,6 +1781,7 @@
   <tabstop>iconcomboProtocol</tabstop>
  </tabstops>
  <resources>
+  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
