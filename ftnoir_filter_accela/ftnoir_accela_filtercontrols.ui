@@ -9,9 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>71</height>
+    <width>615</width>
+    <height>68</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>616</width>
+    <height>68</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Filter settings</string>
