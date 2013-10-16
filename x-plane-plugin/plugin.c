@@ -83,8 +83,8 @@ static void reinit_offset() {
 }
 
 int write_head_position(
-    XPLMDrawingPhase     inPhase,    
-    int                  inIsBefore,    
+    XPLMDrawingPhase     inPhase,
+    int                  inIsBefore,
     void *               inRefcon)
 {
     if (lck_posix != NULL && shm_posix != NULL) {
