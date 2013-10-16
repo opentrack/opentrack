@@ -149,7 +149,7 @@ void Tracker::run() {
                 // Send the headpose to the game
                 if (Libraries->pProtocol) {
                     gameoutput_camera = output_camera;
-                    Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
+                    Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes );	// degrees & centimeters
                 }
             }
         }

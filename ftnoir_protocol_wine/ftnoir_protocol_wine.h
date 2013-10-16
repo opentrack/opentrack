@@ -51,7 +51,7 @@ public:
 	~FTNoIR_Protocol();
 
     bool checkServerInstallationOK();
-	void sendHeadposeToGame(double* headpose, double* rawheadpose );
+    void sendHeadposeToGame(const double* headpose);
     QString getGameName() {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
@@ -72,9 +72,9 @@ class FTControls: public QWidget, public IProtocolDialog
 public:
 
     FTControls();
-    void showEvent ( QShowEvent * event ) {show();}
-    void Initialize(QWidget *parent) {show();}
-    void registerProtocol(IProtocol *protocol) {}
+    void showEvent ( QShowEvent *  ) {show();}
+    void Initialize(QWidget *) {show();}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 
 private:

@@ -45,7 +45,7 @@ public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
     bool checkServerInstallationOK();
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame(const double *headpose);
     QString getGameName() {
         return "UDP Tracker";
     }
@@ -65,9 +65,9 @@ public:
 
 	explicit FTNControls();
     virtual ~FTNControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
     void Initialize(QWidget *parent);
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 
 private:

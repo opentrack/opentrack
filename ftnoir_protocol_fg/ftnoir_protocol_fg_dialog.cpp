@@ -91,7 +91,7 @@ void FGControls::doOK() {
 }
 
 // override show event
-void FGControls::showEvent ( QShowEvent * event ) {
+void FGControls::showEvent ( QShowEvent * ) {
 	loadSettings();
 }
 
