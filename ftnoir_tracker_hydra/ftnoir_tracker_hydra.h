@@ -11,7 +11,7 @@ public:
 	Hydra_Tracker();
 	~Hydra_Tracker();
 
-    void StartTracker( QFrame *videoframe );
+    void StartTracker(QFrame *);
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
@@ -44,11 +44,11 @@ public:
 
 	explicit TrackerControls();
     ~TrackerControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
 
     void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker) {};
-	void unRegisterTracker() {};
+    void registerTracker(ITracker *) {}
+    void unRegisterTracker() {}
 
 private:
 	Ui::UIHydraControls ui;

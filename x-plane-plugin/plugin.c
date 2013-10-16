@@ -40,7 +40,13 @@ static WineSHM* shm_posix = NULL;
 static void *view_x, *view_y, *view_z, *view_heading, *view_pitch;
 static float offset_x, offset_y, offset_z;
 
-PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *mutexName, int mapSize)
+#ifdef __GNUC__
+#   define OT_UNUSED(varname) varname __attribute__((__unused__))
+#else
+#   define OT_UNUSED(varname) varname
+#endif
+
+PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *OT_UNUSED(mutexName), int mapSize)
 {
     PortableLockedShm* self = malloc(sizeof(PortableLockedShm));
     char shm_filename[NAME_MAX];
@@ -83,9 +89,9 @@ static void reinit_offset() {
 }
 
 int write_head_position(
-    XPLMDrawingPhase     inPhase,
-    int                  inIsBefore,
-    void *               inRefcon)
+    XPLMDrawingPhase     OT_UNUSED(inPhase),
+    int                  OT_UNUSED(inIsBefore),
+    void *               OT_UNUSED(inRefcon))
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
@@ -140,9 +146,9 @@ PLUGIN_API void XPluginDisable ( void ) {
 }
 
 PLUGIN_API void XPluginReceiveMessage(
-    XPLMPluginID    inFromWho,
-    int             inMessage,
-    void *          inParam)
+    XPLMPluginID    OT_UNUSED(inFromWho),
+    int             OT_UNUSED(inMessage),
+    void *          OT_UNUSED(inParam))
 {
     if (inMessage == XPLM_MSG_AIRPORT_LOADED)
         reinit_offset();

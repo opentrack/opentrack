@@ -48,7 +48,7 @@ void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_s
 	}
 }*/
 
-void Hydra_Tracker::StartTracker(QFrame* videoFrame)
+void Hydra_Tracker::StartTracker(QFrame*)
 {
 	//QMessageBox::warning(0,"FaceTrackNoIR Notification", "Tracking loading settings...",QMessageBox::Ok,QMessageBox::NoButton);
     loadSettings();
@@ -78,9 +78,6 @@ bool Hydra_Tracker::GiveHeadPoseData(double *data)
 	//Rotation quat = Rotation(acd.controllers[0].rot_quat[1],acd.controllers[0].rot_quat[2],acd.controllers[0].rot_quat[3],acd.controllers[0].rot_quat[0]);
 	sixenseMath::Matrix4 mat = sixenseMath::Matrix4(acd.controllers[0].rot_mat);// sixenseMath::Quat(acd.controllers[0].rot_quat[1],acd.controllers[0].rot_quat[2],acd.controllers[0].rot_quat[3],acd.controllers[0].rot_quat[0]);
 
-    double yaw =  0.0f;
-    double pitch = 0.0f;
-    double roll = 0.0f;
 	float ypr[3];
 	
 	mat.getEulerAngles().fill(ypr);

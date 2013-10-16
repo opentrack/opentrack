@@ -353,9 +353,5 @@ private:
     void draw(cv::Mat out,const std::vector<Marker> &markers );
 
 };
-
-
-
-
-};
+}
 #endif

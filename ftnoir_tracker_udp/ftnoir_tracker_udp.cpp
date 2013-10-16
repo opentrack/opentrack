@@ -88,7 +88,7 @@ quint16 senderPort;
 	}
 }
 
-void FTNoIR_Tracker::StartTracker(QFrame* videoFrame)
+void FTNoIR_Tracker::StartTracker(QFrame*)
 {
     loadSettings();
     //

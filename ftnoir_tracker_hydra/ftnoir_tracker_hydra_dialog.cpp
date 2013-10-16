@@ -81,7 +81,7 @@ void TrackerControls::doOK() {
 }
 
 // override show event
-void TrackerControls::showEvent ( QShowEvent * event ) {
+void TrackerControls::showEvent ( QShowEvent *  ) {
 	loadSettings();
 }
 
