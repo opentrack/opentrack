@@ -39,7 +39,7 @@ void KeyboardShortcutDialog::doOK() {
     mainApp->bindKeyboardShortcuts();
 }
 
-void KeyboardShortcutDialog::showEvent ( QShowEvent * event ) {
+void KeyboardShortcutDialog::showEvent ( QShowEvent * ) {
     loadSettings();
 }
 
@@ -90,7 +90,7 @@ void KeyboardShortcutDialog::loadSettings() {
         "Center", "Toggle"
     };
 
-    QComboBox* checkboxen[] = {
+    QComboBox* comboboxen[] = {
         ui.cbxCenterKey,
         ui.cbxToggleKey
     };
@@ -121,11 +121,11 @@ void KeyboardShortcutDialog::loadSettings() {
 
     for (int i = 0; i < KEY_COUNT; i++)
     {
-        for (int m = 0; i < MODIFIERS; i++)
+        for (int m = 0; m < MODIFIERS; m++)
         {
-            boxen[i][m]->setChecked (iniFile.value ( modnames[m] + QString("_") + QString(keynames[i]), 0 ).toBool());
+            boxen[i][m]->setChecked (iniFile.value ( QString("%1_%2").arg(modnames[m], keynames[i]), 0).toBool());
         }
-        checkboxen[i]->setCurrentIndex(iniFile.value("Key_index_" + QString(names[i]), 0).toInt());
+        comboboxen[i]->setCurrentIndex(iniFile.value(QString("Key_index_%1").arg(names[i]), 0).toInt());
     }
 
     iniFile.endGroup ();
@@ -138,7 +138,7 @@ void KeyboardShortcutDialog::save() {
         "Center", "Toggle"
     };
 
-    QComboBox* checkboxen[] = {
+    QComboBox* comboboxen[] = {
         ui.cbxCenterKey,
         ui.cbxToggleKey
     };
@@ -172,12 +172,11 @@ void KeyboardShortcutDialog::save() {
 
     for (int i = 0; i < KEY_COUNT; i++)
     {
-        iniFile.setValue ( "Key_index_" + QString(keynames[i]),
-                           checkboxen[i]->currentIndex() );
-        for (int m = 0; i < MODIFIERS; i++)
+        for (int m = 0; m < MODIFIERS; m++)
         {
-            iniFile.setValue(modnames[m] + QString("_") + keynames[i], !!boxen[i][m]->isChecked());
+            iniFile.setValue(QString("%1_%2").arg(modnames[m], keynames[i]), boxen[i][m]->isChecked());
         }
+        iniFile.setValue(QString("Key_index_%1").arg(keynames[i]), comboboxen[i]->currentIndex());
     }
 
     iniFile.endGroup();
