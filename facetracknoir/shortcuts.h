@@ -17,7 +17,7 @@ public:
 
     explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
     virtual ~KeyboardShortcutDialog();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
 
 private:
 	Ui::UICKeyboardShortcutDialog ui;
