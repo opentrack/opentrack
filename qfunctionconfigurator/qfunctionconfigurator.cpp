@@ -20,6 +20,7 @@
 #include <QtDebug>
 #include <cmath>
 #include <QTabWidget>
+#include <QTabBar>
 
 static const int pointSize = 5;
 
@@ -111,9 +112,8 @@ void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
     int i;
     QRect scale;
     _background = QPixmap(fullRect.width(), fullRect.height());
-    auto bgColor = palette().button();
     QPainter painter(&_background);
-    painter.fillRect(fullRect, bgColor);
+    painter.fillRect(fullRect, QColor::fromRgb(204, 204, 204));
     painter.setRenderHint(QPainter::Antialiasing);
     QColor bg_color(112, 154, 209);
     painter.fillRect(range, bg_color);

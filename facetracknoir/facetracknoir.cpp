@@ -105,6 +105,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     looping(false)
 {	
     ui.setupUi(this);
+    setFixedSize(size());
 
 	//
 	// Initialize Widget handles, to prevent memory-access errors.
