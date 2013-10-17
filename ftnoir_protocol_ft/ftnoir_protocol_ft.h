@@ -55,7 +55,7 @@ public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
 	bool checkServerInstallationOK(  );
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame( const double *headpose );
     QString getGameName() {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
