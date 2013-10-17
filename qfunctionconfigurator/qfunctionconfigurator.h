@@ -112,7 +112,7 @@ protected slots:
 	void mouseReleaseEvent(QMouseEvent *e);
       
 protected:
-    void drawBackground(const QRectF &);
+    void drawBackground();
 	void drawFunction();
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);

@@ -43,7 +43,6 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     // This will require the Curve-Dialog to be higher (which was the reason it was reversed in the first place..)
     range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
 
-    setMouseTracking(true);
     movingPoint = -1;				// Index of that same point
 
     //
@@ -107,13 +106,13 @@ void QFunctionConfigurator::saveSettings(QString settingsFile) {
 // Draw the Background for the graph, the gridlines and the gridpoints.
 // The static objects are drawn on a Pixmap, so it does not have to be repeated every paintEvent. Hope this speeds things up...
 //
-void QFunctionConfigurator::drawBackground(const QRectF &fullRect)
+void QFunctionConfigurator::drawBackground()
 {
     int i;
     QRect scale;
-    _background = QPixmap(fullRect.width(), fullRect.height());
+    _background = QPixmap(width(), height());
     QPainter painter(&_background);
-    painter.fillRect(fullRect, QColor::fromRgb(204, 204, 204));
+    painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
     painter.setRenderHint(QPainter::Antialiasing);
     QColor bg_color(112, 154, 209);
     painter.fillRect(range, bg_color);
@@ -236,11 +235,10 @@ int i;
 
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
-    p.setClipRect(e->rect());
 
     if (_draw_background) {
-        drawBackground(e->rect());						// Draw the static parts on a Pixmap
-        p.drawPixmap(0, 0, _background);				// Paint the background
+        drawBackground();						// Draw the static parts on a Pixmap
+        p.drawPixmap(e->rect(), _background);				// Paint the background
         _draw_background = false;
     }
 
@@ -248,14 +246,13 @@ int i;
         drawFunction();						// Draw the Function on a Pixmap
         _draw_function = false;
     }
-    p.drawPixmap(0, 0, _function);						// Always draw the background and the function
-
-    QPen pen(Qt::white, 1, Qt::SolidLine);
+    p.drawPixmap(e->rect(), _function);						// Always draw the background and the function
 
     //
     // Draw the Points, that make up the Curve
     //
     if (_config) {
+        QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
         //
         // When moving, also draw a sketched version of the Function.
@@ -304,12 +301,13 @@ int i;
     //
     // Draw the delimiters
     //
+#if 0
     pen.setWidth(1);
     pen.setColor( Qt::white );
     pen.setStyle( Qt::SolidLine );
     drawLine(&p, QPoint(lastPoint.x(), range.top()), QPoint(lastPoint.x(), range.bottom()), pen);
     drawLine(&p, QPoint(range.left(), lastPoint.y()), QPoint(range.right(), lastPoint.y()), pen);
-
+#endif
     //QTimer::singleShot(50, this, SLOT(update()));
 }
 
@@ -360,6 +358,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                     bTouchingPoint = true;
                     movingPoint = i;
                     timer.restart();
+                    setMouseTracking(true);
                     break;
                 }
             }
@@ -400,9 +399,9 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                 emit CurveChanged( true );
             }
             movingPoint = -1;
+            setMouseTracking(false);
         }
     }
-
     _draw_function = _draw_background = true;
     update();
 }
@@ -459,6 +458,7 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     QList<QPointF> points = _config->getPoints();
 
     if (e->button() == Qt::LeftButton) {
+        setMouseTracking(false);
         timer.invalidate();
         //qDebug()<<"releasing";
         if (movingPoint >= 0 && movingPoint < points.size()) {
