@@ -121,9 +121,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     // it gets initialized and pulls in QSettings before
     // main() starts. program can and will crash.
 
-    ui.headPoseWidget->show();
-    ui.video_frame->hide();
-
     // menu objects will be connected with the functions in FaceTrackNoIR class
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
@@ -202,8 +199,8 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 //
 // Get a pointer to the video-widget, to use in the DLL
 //
-QFrame *FaceTrackNoIR::get_video_widget() {
-	return ui.video_frame;
+QFrame* FaceTrackNoIR::get_video_widget() {
+    return ui.video_frame;
 }
 
 /** read the name of the first video-capturing device at start up **/
@@ -630,7 +627,7 @@ void FaceTrackNoIR::startTracker( ) {
     
     tracker->start();
 
-	ui.headPoseWidget->show();
+    ui.video_frame->show();
 
 	// 
 	ui.btnStartTracker->setEnabled ( false );

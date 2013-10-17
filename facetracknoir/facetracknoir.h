@@ -103,7 +103,7 @@ public slots:
 
 private:
     HeadPoseData pose;
-	Ui::FaceTrackNoIRClass ui;
+    Ui::OpentrackUI ui;
 	QTimer timUpdateHeadPose;					// Timer to display headpose
 	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
