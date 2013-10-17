@@ -2,14 +2,12 @@
 #include "facetracknoir/curve-config.h"
 #include <QDebug>
 CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidget *parent) :
-QWidget( parent, Qt::Dialog )
+    QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
 	ui.setupUi( this );
 
-	QPoint offsetpos(120, 30);
+    QPoint offsetpos(120, 30);
 	this->move(parent->pos() + offsetpos);
-
-	mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));

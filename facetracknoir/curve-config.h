@@ -1,5 +1,6 @@
 #pragma once
 #include <QWidget>
+#include <QPalette>
 #include "ui_ftnoir_curves.h"
 
 class FaceTrackNoIR;
