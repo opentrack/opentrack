@@ -46,7 +46,7 @@ public:
     bool checkServerInstallationOK() {
         return true;
     }
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame( const double *headpose );
     QString getGameName() {
         return "Virtual joystick";
     }

@@ -83,7 +83,7 @@ public:
 	FTNoIR_Protocol();
 	~FTNoIR_Protocol();
     bool checkServerInstallationOK();
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame(const double* headpose);
     QString getGameName() {
         return "FS2004/FSX";
     }

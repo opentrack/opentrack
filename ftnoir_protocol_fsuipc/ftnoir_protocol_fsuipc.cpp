@@ -87,7 +87,7 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
 DWORD result;
 TFSState pitch;
 TFSState yaw;

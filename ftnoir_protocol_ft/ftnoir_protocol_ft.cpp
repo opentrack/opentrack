@@ -92,39 +92,28 @@ void FTNoIR_Protocol::loadSettings() {
 //
 // Update Headpose in Game.
 //
-void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
-float virtPosX;
-float virtPosY;
-float virtPosZ;
+void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
+    float virtPosX;
+    float virtPosY;
+    float virtPosZ;
 
-float virtRotX;
-float virtRotY;
-float virtRotZ;
+    float virtRotX;
+    float virtRotY;
+    float virtRotZ;
 
-float headPosX;
-float headPosY;
-float headPosZ;
+    float headPosX;
+    float headPosY;
+    float headPosZ;
 
-float headRotX;
-float headRotY;
-float headRotZ;
-
-    //
-	// Scale the Raw measurements to the client measurements.
-	//
-    headRotX = getRadsFromDegrees(rawheadpose[Pitch]);
-    headRotY = getRadsFromDegrees(rawheadpose[Yaw]);
-    headRotZ = getRadsFromDegrees(rawheadpose[Roll]);
-    headPosX = rawheadpose[TX] * 10;
-    headPosY = rawheadpose[TY] * 10;
-    headPosZ = rawheadpose[TZ] * 10;
-
-    virtRotX = getRadsFromDegrees(headpose[Pitch]);
-    virtRotY = getRadsFromDegrees(headpose[Yaw]);
-    virtRotZ = getRadsFromDegrees(headpose[Roll]);
-    virtPosX = headpose[TX] * 10;
-    virtPosY = headpose[TY] * 10;
-    virtPosZ = headpose[TZ] * 10;
+    float headRotX;
+    float headRotY;
+    float headRotZ;
+    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]);
+    headRotY = virtRotY = getRadsFromDegrees(headpose[Yaw]);
+    headRotZ = virtRotZ = getRadsFromDegrees(headpose[Roll]);
+    headPosX = virtPosX = headpose[TX] * 10;
+    headPosY = virtPosY = headpose[TY] * 10;
+    headPosZ = virtPosZ = headpose[TZ] * 10;
 
     shm.lock();
     

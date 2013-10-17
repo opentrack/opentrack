@@ -14,7 +14,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     VJoy_Shutdown();
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
+void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     JOYSTICK_STATE state[2] = { 0 };
 
     state[0].XAxis = std::min<int>(VJOY_AXIS_MAX, std::max<int>(VJOY_AXIS_MIN, headpose[Yaw] * VJOY_AXIS_MAX / 180.0));
