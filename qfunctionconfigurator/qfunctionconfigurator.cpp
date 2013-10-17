@@ -486,7 +486,7 @@ bool QFunctionConfigurator::markContains(const QPointF &pos, const QPointF &coor
 {
     QRectF rect(pos.x() - pointSize,
                 pos.y() - pointSize,
-                pointSize*2, pointSize*2);
+                pointSize*3, pointSize*3);
     QPainterPath path;
     path.addEllipse(rect);
     return path.contains(coord);
