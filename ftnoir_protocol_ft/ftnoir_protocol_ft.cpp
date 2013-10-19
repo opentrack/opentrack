@@ -32,7 +32,6 @@
 FTNoIR_Protocol::FTNoIR_Protocol() :
     shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTMemMap))
 {
-	fprintf(stderr,"calling constructor\n");
     pMemData = (FTMemMap*) shm.mem;
 	useTIRViews	= false;
 	useDummyExe	= false;
