@@ -60,6 +60,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 		viewsStop();
 		FTIRViewsLib.unload();
 	}
+    dummyTrackIR.kill();
 }
 
 //
