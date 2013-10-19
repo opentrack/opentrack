@@ -41,7 +41,7 @@
 // Instances are obtained via factory function.
 struct ITracker
 {
-    virtual ~ITracker() {}
+    virtual ~ITracker() = 0;
     virtual void StartTracker( QFrame* frame ) = 0;
     virtual bool GiveHeadPoseData(double *data) = 0;
 };
