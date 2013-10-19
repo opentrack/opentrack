@@ -125,6 +125,13 @@ public:
         axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90);
         axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180);
     }
+    ~HeadPoseData()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            delete[] axes[i];
+        }
+    }
 };
 
 #endif
