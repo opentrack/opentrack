@@ -39,11 +39,13 @@
 
 struct IProtocol
 {
-	virtual ~IProtocol() {}
+    virtual ~IProtocol() = 0;
     virtual bool checkServerInstallationOK() = 0;
     virtual void sendHeadposeToGame( const double* headpose ) = 0;
     virtual QString getGameName() = 0;
 };
+
+inline IProtocol::~IProtocol() { }
 
 struct IProtocolDialog
 {

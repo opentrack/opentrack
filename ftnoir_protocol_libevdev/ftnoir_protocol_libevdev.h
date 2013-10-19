@@ -21,7 +21,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
+    virtual ~FTNoIR_Protocol();
     bool checkServerInstallationOK() {
         return dev != NULL;
     }

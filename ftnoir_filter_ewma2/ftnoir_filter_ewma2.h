@@ -41,7 +41,7 @@ class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    ~FTNoIR_Filter();
+    virtual ~FTNoIR_Filter();
     void Initialize() {}
 
     void FilterHeadPoseData(const double *target_camera_position,
