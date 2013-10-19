@@ -37,7 +37,7 @@ public:
 	//
     FunctionConfig();
     FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
-	virtual ~FunctionConfig();
+    ~FunctionConfig();
 
     float getValue(float x);
 	bool getLastPoint(QPointF& point);						// Get the last Point that was requested.

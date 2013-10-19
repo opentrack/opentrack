@@ -129,7 +129,7 @@ public:
     {
         for (int i = 0; i < 6; i++)
         {
-            delete[] axes[i];
+            delete axes[i];
         }
     }
 };
