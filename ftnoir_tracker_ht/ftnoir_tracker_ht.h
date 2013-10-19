@@ -22,7 +22,7 @@ class Tracker : public QObject, public ITracker
     Q_OBJECT
 public:
 	Tracker();
-    virtual ~Tracker() override;
+    virtual ~Tracker();
     void StartTracker(QFrame* frame);
     bool GiveHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
