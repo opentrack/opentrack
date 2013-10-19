@@ -1,7 +1,7 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8)
 
-if(NOT CMAKE_VERSION LESS "2.10.0")
+if(CMAKE_VERSION VERSION_GREATER "2.10.0")
     cmake_policy(SET CMP0020 NEW)
 endif()
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
