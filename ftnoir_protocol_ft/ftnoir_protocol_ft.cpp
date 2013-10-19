@@ -32,6 +32,7 @@
 FTNoIR_Protocol::FTNoIR_Protocol() :
     shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTMemMap))
 {
+	fprintf(stderr,"calling constructor\n");
     pMemData = (FTMemMap*) shm.mem;
 	useTIRViews	= false;
 	useDummyExe	= false;
@@ -51,7 +52,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 
 	qDebug()<< "~FTNoIR_Protocol: Destructor started.";
-
+	
 	//
 	// Stop if started
 	//
@@ -60,8 +61,10 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 		viewsStop();
 		FTIRViewsLib.unload();
 	}
+	dummyTrackIR.terminate();
     dummyTrackIR.kill();
-    dummyTrackIR.waitForFinished(5);
+    dummyTrackIR.waitForFinished(50);
+
 }
 
 //
@@ -195,8 +198,11 @@ void FTNoIR_Protocol::start_tirviews() {
 }
 
 void FTNoIR_Protocol::start_dummy() {
+
+
     QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
-    dummyTrackIR.startDetached("\"" + program + "\"");
+    dummyTrackIR.setProgram("\"" + program + "\"");
+    dummyTrackIR.start();
 
     qDebug() << "FTServer::run() says: TrackIR.exe executed!" << program;
 }
