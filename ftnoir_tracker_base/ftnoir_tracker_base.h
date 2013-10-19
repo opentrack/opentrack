@@ -46,6 +46,8 @@ struct ITracker
     virtual bool GiveHeadPoseData(double *data) = 0;
 };
 
+inline ITracker::~ITracker() { }
+
 typedef ITracker* ITrackerPtr;
 
 ////////////////////////////////////////////////////////////////////////////////
