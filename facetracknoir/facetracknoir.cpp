@@ -195,6 +195,8 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 	//
 	stopTracker();
     save();
+    if (Libraries)
+        delete Libraries;
 }
 
 //
