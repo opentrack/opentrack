@@ -951,7 +951,7 @@
         </size>
        </property>
        <property name="text">
-        <string>TX</string>
+        <string>TY</string>
        </property>
       </widget>
      </item>
@@ -1045,7 +1045,7 @@
         </size>
        </property>
        <property name="text">
-        <string>TX</string>
+        <string>TZ</string>
        </property>
       </widget>
      </item>
