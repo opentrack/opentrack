@@ -38,7 +38,7 @@ class Tracker : public ITracker, QThread, public FrameProvider
 {
 public:
 	Tracker();
-	~Tracker();
+    virtual ~Tracker() override;
 
 	// --- ITracker interface ---
 	virtual void Initialize(QFrame *videoframe);
