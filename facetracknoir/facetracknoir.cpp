@@ -651,21 +651,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
-    timUpdateHeadPose.start(40);
-
-	ui.lblX->setVisible(true);
-	ui.lblY->setVisible(true);
-	ui.lblZ->setVisible(true);
-	ui.lblRotX->setVisible(true);
-	ui.lblRotY->setVisible(true);
-	ui.lblRotZ->setVisible(true);
-
-	ui.lcdNumOutputPosX->setVisible(true);
-	ui.lcdNumOutputPosY->setVisible(true);
-	ui.lcdNumOutputPosZ->setVisible(true);
-	ui.lcdNumOutputRotX->setVisible(true);
-	ui.lcdNumOutputRotY->setVisible(true);
-	ui.lcdNumOutputRotZ->setVisible(true);
+    timUpdateHeadPose.start(50);
 }
 
 /** stop tracking the face **/
@@ -759,8 +745,6 @@ void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
 void FaceTrackNoIR::showHeadPose() {
     double newdata[6];
 
-    const QString format("%1");
-    
     tracker->getHeadPose(newdata);
     ui.lcdNumX->display(newdata[TX]);
     ui.lcdNumY->display(newdata[TY]);
