@@ -1,3 +1,7 @@
+20131020 sh
+    Add unit testing by means of batch execution, protocol/filter that does
+    nothing, add separate executables for readers of specific protocols,
+    and run continuous integration every time commit happens that day.
 20131019 sh
     Add a joystick tracker source, with selectable axes.
 20131019 mm0zct
@@ -5,7 +9,7 @@
     There are two main user bases, HMD and traditional monitor+webcam users,
     each wants a drastically different curve profile (HMD is 1:1 on all axes)
     Also re:boost, I'd rather avoid extra library dependences if possible.
-    
+
     Rift tracker could do with positional estimation using intertial sensors.
     Rift could do with a return-yaw-to-centre hotkey that's not the global all-axis option.
     Hydra is really just a hack just now, could be improved a lot.
