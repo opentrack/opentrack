@@ -97,10 +97,10 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	iniFile.beginGroup( "HT-Tracker" );
     config->classification_delay = 500;
     config->field_of_view = iniFile.value("fov", 52).toFloat();
-	config->pyrlk_pyramids = 3;
+	config->pyrlk_pyramids = 2;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 200;
-    config->keypoint_distance = 4.5;
+    config->max_keypoints = 250;
+    config->keypoint_distance = 4.2;
     //config->force_width = 640;
     //config->force_height = 480;
     config->force_fps = iniFile.value("fps", 0).toInt();
@@ -111,14 +111,14 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
     config->ransac_abs_max_mean_error = 15;
     config->ransac_max_mean_error = 4.5;
     config->debug = 0;
-    config->ransac_min_features = 0.8;
+    config->ransac_min_features = 0.78;
     int res = iniFile.value("resolution", 0).toInt();
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
     config->force_height = r.height;
-    config->flandmark_delay = 200;
+    config->flandmark_delay = 250;
     qDebug() << "width" << r.width << "height" << r.height;
 	if (tracker)
 	{
