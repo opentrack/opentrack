@@ -11,29 +11,19 @@ using namespace OVR;
 
 Rift_Tracker::Rift_Tracker()
 {
-    pSensor.Clear();
-	pHMD.Clear();
-	pManager.Clear();
 	bEnableRoll = true;
 	bEnablePitch = true;
 	bEnableYaw = true;
-	old_yaw = 0.0;
 #if 0
 	bEnableX = true;
 	bEnableY = true;
 	bEnableZ = true;
 #endif
-	isCalibrated = false;
 	should_quit = false;
-    for (int i = 0; i < 6; i++)
-        newHeadPose[i] = 0;
 }
 
 Rift_Tracker::~Rift_Tracker()
 {
-    pSensor.Clear();
-	pHMD.Clear();
-	pManager.Clear();
 	System::Destroy();
 }
 
@@ -58,78 +48,64 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
     //
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
-    pManager = *DeviceManager::Create();
-    DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
-    if (enumerator.IsAvailable())
-    {
-        pHMD = *enumerator.CreateDevice();
+	auto ptr_manager = DeviceManager::Create();
+	if (ptr_manager != nullptr)
+	{
+		pManager = *ptr_manager;
+		DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
+		if (enumerator.IsAvailable())
+		{
+			auto ptr_hmd = enumerator.CreateDevice();
+
+			if (ptr_hmd != nullptr)
+			{
+				pHMD = *ptr_hmd;
+				auto ptr_sensor = pHMD->GetSensor();
+				if (ptr_sensor != 0)
+					pSensor = *ptr_sensor;
+			}
         
-        pSensor = *pHMD->GetSensor();
-        
-        if (pSensor){
-            SFusion.AttachToSensor(pSensor);
-        }else{
-            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
-        }
-		isCalibrated = false;
-		MagCal.BeginAutoCalibration(SFusion);
-       
-    }
+			if (pSensor){
+				SFusion.reset(new OVR::SensorFusion());
+				SFusion->AttachToSensor(pSensor);
+			}else{
+				QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+			}
+			//isCalibrated = false;
+			//MagCal.BeginAutoCalibration(SFusion);
+		}
+	}
 }
 
 
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
-    if (pHMD.GetPtr() != NULL) {
-
-		if (MagCal.IsAutoCalibrating())
-		{
-			MagCal.UpdateAutoCalibration(SFusion);
-			if (MagCal.IsCalibrated())
-			{
-				if(isCalibrated == false){
-					//QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
-					//fprintf(stderr,"magnetic calibration complete\n");
-			  		isCalibrated = true;
-				}
-				//Vector3f mc = MagCal.GetMagCenter();
-				//SetAdjustMessage("Magnetometer Calibration Complete\nCenter: %f %f %f",mc.x,mc.y,mc.z);
-			}
-			//SetAdjustMessage("Mag has been successfully calibrated");
-		}
-
-        Quatf hmdOrient = SFusion.GetOrientation();
+    if (SFusion != nullptr) {
+        Quatf hmdOrient = SFusion->GetOrientation();
+		float newHeadPose[6];
 		
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-#ifdef OPENTRACK_RIFT_RECENTRE_SPRING
-        newHeadPose[Yaw] = newHeadPose[Yaw]*0.99999 + (yaw-old_yaw);
-		if(newHeadPose[Yaw]>0.02)newHeadPose[Yaw]-= 0.000005;
-		if(newHeadPose[Yaw]<-0.02)newHeadPose[Yaw]+= 0.000005;
-			old_yaw=yaw;
-#else
 		newHeadPose[Yaw] = yaw;
-#endif
         newHeadPose[Pitch] =pitch;
         newHeadPose[Roll] = roll;
 
 #if 0
-	
 		newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
 		newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
 		newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
 		
-		//if (bEnableX) {
+		if (bEnableX) {
             data[TX] = newHeadPose[TX];
-        //}
-        //if (bEnableY) {
+        }
+        if (bEnableY) {
             data[TY] = newHeadPose[TY];
-        //}
-        //if (bEnableY) {
+        }
+        if (bEnableY) {
             data[TZ] = newHeadPose[TZ];
-        //}
+        }
 #endif
         if (bEnableYaw) {
             data[Yaw] = newHeadPose[Yaw] * 57.295781f;
