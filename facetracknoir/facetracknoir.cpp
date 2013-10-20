@@ -167,20 +167,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
 
     //Q_INIT_RESOURCE(PoseWidget);
 
-	ui.lblX->setVisible(false);
-	ui.lblY->setVisible(false);
-	ui.lblZ->setVisible(false);
-	ui.lblRotX->setVisible(false);
-	ui.lblRotY->setVisible(false);
-	ui.lblRotZ->setVisible(false);
-
-	ui.lcdNumOutputPosX->setVisible(false);
-	ui.lcdNumOutputPosY->setVisible(false);
-	ui.lcdNumOutputPosZ->setVisible(false);
-	ui.lcdNumOutputRotX->setVisible(false);
-	ui.lcdNumOutputRotY->setVisible(false);
-	ui.lcdNumOutputRotZ->setVisible(false);
-
 #ifndef _WIN32
     connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
     connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
@@ -672,21 +658,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
 
-	ui.lblX->setVisible(false);
-	ui.lblY->setVisible(false);
-	ui.lblZ->setVisible(false);
-	ui.lblRotX->setVisible(false);
-	ui.lblRotY->setVisible(false);
-	ui.lblRotZ->setVisible(false);
-
-	ui.lcdNumOutputPosX->setVisible(false);
-	ui.lcdNumOutputPosY->setVisible(false);
-	ui.lcdNumOutputPosZ->setVisible(false);
-	ui.lcdNumOutputRotX->setVisible(false);
-	ui.lcdNumOutputRotY->setVisible(false);
-	ui.lcdNumOutputRotZ->setVisible(false);
-    
-    //
     // UnRegister the Tracker instance with the Tracker Dialog (if open)
     //
     if (pTrackerDialog) {
