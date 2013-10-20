@@ -15,9 +15,6 @@ public:
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
-	void WaitForExit() {
-		return;
-    }
 protected:
 	void run();												// qthread override run method
 
