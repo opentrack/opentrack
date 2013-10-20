@@ -2,6 +2,11 @@
     Add unit testing by means of batch execution, protocol/filter that does
     nothing, add separate executables for readers of specific protocols,
     and run continuous integration every time commit happens that day.
+
+    Add statically-typed settings trees, convert result to qsettings-enabled
+    ini files. Use metadata props in order to get class name for ini section.
+    Required here are also arrays of settings. Use QList<T> for template
+    specialization.
 20131019 sh
     Add a joystick tracker source, with selectable axes.
 20131019 mm0zct
@@ -13,10 +18,6 @@
     Rift tracker could do with positional estimation using intertial sensors.
     Rift could do with a return-yaw-to-centre hotkey that's not the global all-axis option.
     Hydra is really just a hack just now, could be improved a lot.
-20131005 sh
-    what do you think about boost 1.54 for property maps -> qsettings?
-    also, boost concepts
-    and qt5
 20131011 sh
     low-hanging fruit: default saving profiles to a directory in user home,
     not into global stuffies
