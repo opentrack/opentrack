@@ -224,6 +224,12 @@ bool Tracker::GiveHeadPoseData(double *data)
         if (enableTZ)
             data[TZ] = shm->result.tz;
         ret = true;
+        if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
+        {
+            shm->pause = true;
+        }
+    } else {
+        shm->pause = false;
     }
     lck_shm.unlock();
 
