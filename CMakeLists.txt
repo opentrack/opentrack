@@ -1,9 +1,6 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8)
 
-if(CMAKE_VERSION VERSION_GREATER "2.10.0")
-    cmake_policy(SET CMP0020 NEW)
-endif()
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -47,18 +44,13 @@ SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether target is amd64 (else ia-32)")
 
 SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
-SET(SDK_RIFT_RECENTRE_SPRING TRUE CACHE BOOL "recenter yaw aggressively")
-
-if(SDK_RIFT_RECENTRE_SPRING)
-    add_definitions(-DOPENTRACK_RIFT_RECENTRE_SPRING)
-endif()
-
 file(GLOB opentrack-faceapi-wrapper-c "faceapi/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR})
 
 if(NOT SDK_FACEAPI_ONLY)
     find_package(OpenCV)
     find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
+	cmake_policy(SET CMP0020 NEW)
     include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
@@ -313,7 +305,12 @@ endif()
         target_link_libraries(opentrack-compat rt)
     endif()
 
-    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES})
+	# hack to avoid breakage on buildbot
+	set(my-qt-deps)
+	if(WIN32)
+		set(my-qt-deps ws2_32)
+	endif()
+    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
 
     add_library(opentrack-csv SHARED ${opentrack-csv-c})
     target_link_libraries(opentrack-csv ${MY_QT_LIBS})
@@ -516,38 +513,34 @@ endif()
         target_link_libraries(opentrack-tracker-hydra ${MY_QT_LIBS})
         if(WIN32)
             target_link_libraries(opentrack-tracker-hydra
-                "${SDK_HYDRA}/lib/win32/release_static/sixense_s.lib"
-                "${SDK_HYDRA}/lib/win32/release_static/sixense_utils_s.lib")
-            set_target_properties (opentrack-tracker-hydra PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libcmt.lib")
-        else()
-            if(SDK_HYDRA_AMD64)
-                set(underscore-sixtyfour _x64)
-            else()
-                set(underscore-sixtyfour)
-            endif()
-            if(APPLE)
-                set(underscore-dll _dll)
-                set(soext dylib)
-                set(sixense-plat osx)
-            else()
-                set(underscore-dll)
-                set(soext so)
-                set(sixense-plat linux)
-            endif()
-            install(FILES
-                    "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
-                    "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
-                    DESTINATION .)
-            target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
+                "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib"
+                "${SDK_HYDRA}/lib/win32/release_dll/sixense_utils.lib")
+			install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll" "${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll" DESTINATION .)
+		else()
+			if(SDK_HYDRA_AMD64)
+				set(underscore-sixtyfour _x64)
+			else()
+				set(underscore-sixtyfour)
+			endif()
+			if(APPLE)
+				set(underscore-dll _dll)
+				set(soext dylib)
+				set(sixense-plat osx)
+			else()
+				set(underscore-dll)
+				set(soext so)
+				set(sixense-plat linux)
+			endif()
+			install(FILES
+					"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
+					"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
+					DESTINATION .)
+			target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
         endif()
         if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
             SET_TARGET_PROPERTIES(opentrack-tracker-hydra
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
-        else()
-            if(MSVC)
-                SET_TARGET_PROPERTIES(opentrack-tracker-hydra PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libcmt.lib")
-            endif()
-        endif()
+		endif()
     endif()
     
     if(WIN32 AND NOT SDK_CONSOLE_DEBUG)

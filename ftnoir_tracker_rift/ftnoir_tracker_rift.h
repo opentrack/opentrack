@@ -6,18 +6,17 @@
 #include <math.h>
 #include "facetracknoir/global-settings.h"
 #include "OVR.h"
-#include "Util/Util_MagCalibration.h"
+#include <memory>
 class Rift_Tracker : public ITracker
 {
 public:
 	Rift_Tracker();
-	~Rift_Tracker();
+	virtual ~Rift_Tracker();
 
     void StartTracker( QFrame *videoframe );
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
-	void WaitForExit() {}
 protected:
 	void run();												// qthread override run method
 
@@ -26,12 +25,8 @@ private:
 	OVR::Ptr<OVR::DeviceManager> pManager;
 	OVR::Ptr<OVR::HMDDevice> pHMD;
 	OVR::Ptr<OVR::SensorDevice> pSensor;
-	OVR::SensorFusion SFusion;
+	std::unique_ptr<OVR::SensorFusion> SFusion;
     // Magnetometer calibration and yaw correction
-    OVR::Util::MagCalibration MagCal;
-	bool isCalibrated;
-	double old_yaw;
-    double newHeadPose[6];								// Structure with new headpose
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;

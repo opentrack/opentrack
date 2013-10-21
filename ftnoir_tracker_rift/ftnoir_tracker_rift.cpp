@@ -11,43 +11,36 @@ using namespace OVR;
 
 Rift_Tracker::Rift_Tracker()
 {
-    pSensor.Clear();
-	pHMD.Clear();
-	pManager.Clear();
-	bEnableRoll = true;
-	bEnablePitch = true;
-	bEnableYaw = true;
-	old_yaw = 0.0;
+    bEnableRoll = true;
+    bEnablePitch = true;
+    bEnableYaw = true;
 #if 0
-	bEnableX = true;
-	bEnableY = true;
-	bEnableZ = true;
+    bEnableX = true;
+    bEnableY = true;
+    bEnableZ = true;
 #endif
-	isCalibrated = false;
-	should_quit = false;
-    for (int i = 0; i < 6; i++)
-        newHeadPose[i] = 0;
+    should_quit = false;
 }
 
 Rift_Tracker::~Rift_Tracker()
 {
     pSensor.Clear();
-	pHMD.Clear();
-	pManager.Clear();
-	System::Destroy();
+    pHMD.Clear();
+    pManager.Clear();
+    System::Destroy();
 }
 
 /*
 void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_step step ) {
 
-		QMessageBox::warning(0,"OpenTrack Info", "controller manager callback",QMessageBox::Ok,QMessageBox::NoButton);
-	if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
-		// Ask the controller manager what the next instruction string should be.
-		std::string controller_manager_text_string = sixenseUtils::getTheControllerManager()->getStepString();
-		QMessageBox::warning(0,"OpenTrack Info", controller_manager_text_string.c_str(),QMessageBox::Ok,QMessageBox::NoButton);
-		// We could also load the supplied controllermanager textures using the filename: sixenseUtils::getTheControllerManager()->getTextureFileName();
+        QMessageBox::warning(0,"OpenTrack Info", "controller manager callback",QMessageBox::Ok,QMessageBox::NoButton);
+    if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
+        // Ask the controller manager what the next instruction string should be.
+        std::string controller_manager_text_string = sixenseUtils::getTheControllerManager()->getStepString();
+        QMessageBox::warning(0,"OpenTrack Info", controller_manager_text_string.c_str(),QMessageBox::Ok,QMessageBox::NoButton);
+        // We could also load the supplied controllermanager textures using the filename: sixenseUtils::getTheControllerManager()->getTextureFileName();
 
-	}
+    }
 }*/
 
 void Rift_Tracker::StartTracker(QFrame* videoFrame)
@@ -58,78 +51,64 @@ void Rift_Tracker::StartTracker(QFrame* videoFrame)
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
     //
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
-    pManager = *DeviceManager::Create();
-    DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
-    if (enumerator.IsAvailable())
+    auto ptr_manager = DeviceManager::Create();
+    if (ptr_manager != nullptr)
     {
-        pHMD = *enumerator.CreateDevice();
+        pManager = *ptr_manager;
+        DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
+        if (enumerator.IsAvailable())
+        {
+            auto ptr_hmd = enumerator.CreateDevice();
+
+            if (ptr_hmd != nullptr)
+            {
+                pHMD = *ptr_hmd;
+                auto ptr_sensor = pHMD->GetSensor();
+                if (ptr_sensor != 0)
+                    pSensor = *ptr_sensor;
+            }
         
-        pSensor = *pHMD->GetSensor();
-        
-        if (pSensor){
-            SFusion.AttachToSensor(pSensor);
-        }else{
-            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+            if (pSensor){
+                SFusion.reset(new OVR::SensorFusion());
+                SFusion->AttachToSensor(pSensor);
+            }else{
+                QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+            }
+            //isCalibrated = false;
+            //MagCal.BeginAutoCalibration(SFusion);
         }
-		isCalibrated = false;
-		MagCal.BeginAutoCalibration(SFusion);
-       
     }
 }
 
 
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
-    if (pHMD.GetPtr() != NULL) {
-
-		if (MagCal.IsAutoCalibrating())
-		{
-			MagCal.UpdateAutoCalibration(SFusion);
-			if (MagCal.IsCalibrated())
-			{
-				if(isCalibrated == false){
-					//QMessageBox::warning(0,"OpenTrack Info", "Calibrated magnetic sensor",QMessageBox::Ok,QMessageBox::NoButton);
-					//fprintf(stderr,"magnetic calibration complete\n");
-			  		isCalibrated = true;
-				}
-				//Vector3f mc = MagCal.GetMagCenter();
-				//SetAdjustMessage("Magnetometer Calibration Complete\nCenter: %f %f %f",mc.x,mc.y,mc.z);
-			}
-			//SetAdjustMessage("Mag has been successfully calibrated");
-		}
-
-        Quatf hmdOrient = SFusion.GetOrientation();
-		
+    if (SFusion != nullptr) {
+        Quatf hmdOrient = SFusion->GetOrientation();
+        float newHeadPose[6];
+        
         float yaw = 0.0f;
         float pitch = 0.0f;
         float roll = 0.0f;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-#ifdef OPENTRACK_RIFT_RECENTRE_SPRING
-        newHeadPose[Yaw] = newHeadPose[Yaw]*0.99999 + (yaw-old_yaw);
-		if(newHeadPose[Yaw]>0.02)newHeadPose[Yaw]-= 0.000005;
-		if(newHeadPose[Yaw]<-0.02)newHeadPose[Yaw]+= 0.000005;
-			old_yaw=yaw;
-#else
-		newHeadPose[Yaw] = yaw;
-#endif
+        newHeadPose[Yaw] = yaw;
         newHeadPose[Pitch] =pitch;
         newHeadPose[Roll] = roll;
 
 #if 0
-	
-		newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
-		newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
-		newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
-		
-		//if (bEnableX) {
+        newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
+        newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
+        newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
+        
+        if (bEnableX) {
             data[TX] = newHeadPose[TX];
-        //}
-        //if (bEnableY) {
+        }
+        if (bEnableY) {
             data[TY] = newHeadPose[TY];
-        //}
-        //if (bEnableY) {
+        }
+        if (bEnableY) {
             data[TZ] = newHeadPose[TZ];
-        //}
+        }
 #endif
         if (bEnableYaw) {
             data[Yaw] = newHeadPose[Yaw] * 57.295781f;
@@ -141,7 +120,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
             data[Roll] = newHeadPose[Roll] * 57.295781f;
         }
     }
-	return pHMD.GetPtr() != NULL;
+    return pHMD.GetPtr() != NULL;
 }
 
 
@@ -150,24 +129,24 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
 //
 void Rift_Tracker::loadSettings() {
 
-	qDebug() << "FTNoIR_Tracker::loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    qDebug() << "FTNoIR_Tracker::loadSettings says: Starting ";
+    QSettings settings("opentrack");    // Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );     // Application settings (in INI-file)
 
-	qDebug() << "FTNoIR_Tracker::loadSettings says: iniFile = " << currentFile;
+    qDebug() << "FTNoIR_Tracker::loadSettings says: iniFile = " << currentFile;
 
-	iniFile.beginGroup ( "Rift" );
-	bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
-	bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
-	bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
+    iniFile.beginGroup ( "Rift" );
+    bEnableRoll = iniFile.value ( "EnableRoll", 1 ).toBool();
+    bEnablePitch = iniFile.value ( "EnablePitch", 1 ).toBool();
+    bEnableYaw = iniFile.value ( "EnableYaw", 1 ).toBool();
 #if 0
-	bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
-	bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
-	bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
+    bEnableX = iniFile.value ( "EnableX", 1 ).toBool();
+    bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
+    bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
 #endif
-	iniFile.endGroup ();
+    iniFile.endGroup ();
 }
 
 
