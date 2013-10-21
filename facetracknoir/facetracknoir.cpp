@@ -102,7 +102,8 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-    looping(false)
+    looping(false),
+    kbd_quit(QKeySequence("Ctrl+Q"), this)
 {	
     ui.setupUi(this);
     setFixedSize(size());
@@ -167,24 +168,13 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
 
     //Q_INIT_RESOURCE(PoseWidget);
 
-	ui.lblX->setVisible(false);
-	ui.lblY->setVisible(false);
-	ui.lblZ->setVisible(false);
-	ui.lblRotX->setVisible(false);
-	ui.lblRotY->setVisible(false);
-	ui.lblRotZ->setVisible(false);
-
-	ui.lcdNumOutputPosX->setVisible(false);
-	ui.lcdNumOutputPosY->setVisible(false);
-	ui.lcdNumOutputPosZ->setVisible(false);
-	ui.lcdNumOutputRotX->setVisible(false);
-	ui.lcdNumOutputRotY->setVisible(false);
-	ui.lcdNumOutputRotZ->setVisible(false);
-
 #ifndef _WIN32
     connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
     connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
 #endif
+
+    connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
+    kbd_quit.setEnabled(true);
 }
 
 /** destructor stops the engine and quits the faceapi **/
@@ -429,7 +419,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "opentrack 2.0a3 - " + pathInfo.fileName() );
+    setWindowTitle ( "opentrack 2.0a4 - " + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
@@ -651,21 +641,7 @@ void FaceTrackNoIR::startTracker( ) {
 	//
 	// Start the timer to update the head-pose (digits and 'man in black')
 	//
-    timUpdateHeadPose.start(40);
-
-	ui.lblX->setVisible(true);
-	ui.lblY->setVisible(true);
-	ui.lblZ->setVisible(true);
-	ui.lblRotX->setVisible(true);
-	ui.lblRotY->setVisible(true);
-	ui.lblRotZ->setVisible(true);
-
-	ui.lcdNumOutputPosX->setVisible(true);
-	ui.lcdNumOutputPosY->setVisible(true);
-	ui.lcdNumOutputPosZ->setVisible(true);
-	ui.lcdNumOutputRotX->setVisible(true);
-	ui.lcdNumOutputRotY->setVisible(true);
-	ui.lcdNumOutputRotZ->setVisible(true);
+    timUpdateHeadPose.start(50);
 }
 
 /** stop tracking the face **/
@@ -686,21 +662,6 @@ void FaceTrackNoIR::stopTracker( ) {
 	timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
 
-	ui.lblX->setVisible(false);
-	ui.lblY->setVisible(false);
-	ui.lblZ->setVisible(false);
-	ui.lblRotX->setVisible(false);
-	ui.lblRotY->setVisible(false);
-	ui.lblRotZ->setVisible(false);
-
-	ui.lcdNumOutputPosX->setVisible(false);
-	ui.lcdNumOutputPosY->setVisible(false);
-	ui.lcdNumOutputPosZ->setVisible(false);
-	ui.lcdNumOutputRotX->setVisible(false);
-	ui.lcdNumOutputRotY->setVisible(false);
-	ui.lcdNumOutputRotZ->setVisible(false);
-    
-    //
     // UnRegister the Tracker instance with the Tracker Dialog (if open)
     //
     if (pTrackerDialog) {
@@ -759,8 +720,6 @@ void FaceTrackNoIR::setInvertAxis(Axis axis, int invert ) {
 void FaceTrackNoIR::showHeadPose() {
     double newdata[6];
 
-    const QString format("%1");
-    
     tracker->getHeadPose(newdata);
     ui.lcdNumX->display(newdata[TX]);
     ui.lcdNumY->display(newdata[TY]);
