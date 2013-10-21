@@ -6,6 +6,7 @@
  */
 
 #include "camera.h"
+#include <string>
 #include <QDebug>
 
 using namespace cv;
@@ -48,7 +49,9 @@ void get_camera_device_names(std::vector<std::string>& device_names) {
                 hr = pPropBag->Read(L"FriendlyName", &varName, 0);
                 if (SUCCEEDED(hr))
                 {
-                    device_names.push_back(std::string(reinterpret_cast<char const*>(varName.bstrVal)));
+					auto wstr = std::wstring(varName.bstrVal);
+					auto str = std::string(wstr.begin(), wstr.end());
+                    device_names.push_back(str);
                 }
                 VariantClear(&varName);
 
@@ -71,8 +74,6 @@ void get_camera_device_names(std::vector<std::string>& device_names) {
         sprintf(buf, "/dev/video%d", i);
         if (access(buf, R_OK | W_OK) == 0) {
             device_names.push_back(std::string(buf));
-        } else {
-            continue;
         }
     }
 #   endif
@@ -162,10 +163,6 @@ void CVCamera::start()
         cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
         cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
 	}
-    else {
-        delete cap;
-        cap = NULL;
-    }
 }
 
 void CVCamera::stop()
@@ -180,7 +177,7 @@ void CVCamera::stop()
 
 bool CVCamera::_get_frame(Mat* frame)
 {
-    if (cap)
+    if (cap && cap->isOpened())
 	{
         Mat img;
         /*
@@ -188,8 +185,11 @@ bool CVCamera::_get_frame(Mat* frame)
          *     frames and then some every once in a while
          * -sh
          */
-        while (!cap->read(img))\
+        while (!cap->read(img))
             ;;
+
+		if (img.empty())
+			return false;
 
         *frame = img;
         return true;
