@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "opentrack"
-#define MyAppVersion "2.0a3"
+#define MyAppVersion "2.0a4"
 #define MyAppPublisher "opentrack"
 #define MyAppURL "http://github.com/opentrack/opentrack"
 #define MyAppExeName "opentrack.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=opentrack-setup-{#MyAppVersion}
-SetupIconFile=C:\Users\Administrator\SDK\opentrack\facetracknoir\facetracknoir.ico
+SetupIconFile=d:\opentrack-win32-sdk\opentrack\facetracknoir\facetracknoir.ico
 Compression=lzma/ultra64
 SolidCompression=yes
 DisableWelcomePage=True
@@ -41,7 +41,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Administrator\SDK\opentrack\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "d:\opentrack-win32-sdk\opentrack\build\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
