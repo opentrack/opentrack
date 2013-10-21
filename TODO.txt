@@ -18,6 +18,20 @@
     Rift tracker could do with positional estimation using intertial sensors.
     Rift could do with a return-yaw-to-centre hotkey that's not the global all-axis option.
     Hydra is really just a hack just now, could be improved a lot.
+
+    Add per-tracker hotkey support
+
+20131005 sh
+    what do you think about boost 1.54 for property maps -> qsettings?
+    also, boost concepts
+    and qt5
+20131007 sh
+    respect hier(7) with regard to shared object installation.
+    install them inside ../lib/opentrack relative to ./bin where
+    the main program oughta reside.
+20131008 sh
+    during the switch to qt5, recreate widgets, this time with layouts.
+    the original layouts were pretty crappy, hence the original breakage.
 20131011 sh
     low-hanging fruit: default saving profiles to a directory in user home,
     not into global stuffies
