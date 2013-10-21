@@ -6,9 +6,6 @@
 
 using namespace OVR;
 
-//used to turn on the re-centre spring effect
-//#define OPENTRACK_RIFT_RECENTRE_SPRING
-
 Rift_Tracker::Rift_Tracker()
 {
     bEnableRoll = true;
@@ -20,71 +17,67 @@ Rift_Tracker::Rift_Tracker()
     bEnableZ = true;
 #endif
     should_quit = false;
+	pManager = NULL;
+	pHMD = NULL;
+	pSensor = NULL;
+	pSFusion = NULL;
 }
 
 Rift_Tracker::~Rift_Tracker()
 {
-    pSensor.Clear();
-    pHMD.Clear();
-    pManager.Clear();
+    pSensor->Release();
+	delete pSFusion;
+    pHMD->Release();
+    pManager->Release();
     System::Destroy();
 }
 
-/*
-void controller_manager_setup_callback( sixenseUtils::ControllerManager::setup_step step ) {
 
-        QMessageBox::warning(0,"OpenTrack Info", "controller manager callback",QMessageBox::Ok,QMessageBox::NoButton);
-    if( sixenseUtils::getTheControllerManager()->isMenuVisible() ) {
-        // Ask the controller manager what the next instruction string should be.
-        std::string controller_manager_text_string = sixenseUtils::getTheControllerManager()->getStepString();
-        QMessageBox::warning(0,"OpenTrack Info", controller_manager_text_string.c_str(),QMessageBox::Ok,QMessageBox::NoButton);
-        // We could also load the supplied controllermanager textures using the filename: sixenseUtils::getTheControllerManager()->getTextureFileName();
-
-    }
-}*/
 
 void Rift_Tracker::StartTracker(QFrame* videoFrame)
 {
-    //QMessageBox::warning(0,"FaceTrackNoIR Notification", "Tracking loading settings...",QMessageBox::Ok,QMessageBox::NoButton);
+
     loadSettings();
     //
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
     //
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
-    auto ptr_manager = DeviceManager::Create();
-    if (ptr_manager != nullptr)
+    pManager = DeviceManager::Create();
+    if (pManager != NULL)
     {
-        pManager = *ptr_manager;
         DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
         if (enumerator.IsAvailable())
         {
-            auto ptr_hmd = enumerator.CreateDevice();
+            pHMD = enumerator.CreateDevice();
 
-            if (ptr_hmd != nullptr)
+            if (pHMD != NULL)
             {
-                pHMD = *ptr_hmd;
-                auto ptr_sensor = pHMD->GetSensor();
-                if (ptr_sensor != 0)
-                    pSensor = *ptr_sensor;
-            }
-        
-            if (pSensor){
-                SFusion.reset(new OVR::SensorFusion());
-                SFusion->AttachToSensor(pSensor);
+                pSensor = pHMD->GetSensor();
             }else{
                 QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
             }
-            //isCalibrated = false;
-            //MagCal.BeginAutoCalibration(SFusion);
+        
+            if (pSensor){
+				pSFusion = new OVR::SensorFusion();
+                pSFusion->Reset();
+                pSFusion->AttachToSensor(pSensor);
+            }else{
+                QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to create Rift sensor",QMessageBox::Ok,QMessageBox::NoButton);
+            }
+
+        }else{
+            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
-    }
+    }else{
+		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+	}
 }
 
 
 bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
-    if (SFusion != nullptr) {
-        Quatf hmdOrient = SFusion->GetOrientation();
+    if (pSFusion != NULL) {
+        Quatf hmdOrient = pSFusion->GetOrientation();
         float newHeadPose[6];
         
         float yaw = 0.0f;
@@ -120,7 +113,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
             data[Roll] = newHeadPose[Roll] * 57.295781f;
         }
     }
-    return pHMD.GetPtr() != NULL;
+    return pHMD != NULL;
 }
 
 

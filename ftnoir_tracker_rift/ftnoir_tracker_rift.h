@@ -22,11 +22,10 @@ protected:
 
 private:
 	static bool isInitialised;
-	OVR::Ptr<OVR::DeviceManager> pManager;
-	OVR::Ptr<OVR::HMDDevice> pHMD;
-	OVR::Ptr<OVR::SensorDevice> pSensor;
-	std::unique_ptr<OVR::SensorFusion> SFusion;
-    // Magnetometer calibration and yaw correction
+	OVR::DeviceManager* pManager;
+	OVR::HMDDevice* pHMD;
+	OVR::SensorDevice* pSensor;
+	OVR::SensorFusion* pSFusion;
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;
@@ -35,7 +34,7 @@ private:
 	bool bEnableY;
 	bool bEnableZ;
 #endif
-    QMutex mutex;
+
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
