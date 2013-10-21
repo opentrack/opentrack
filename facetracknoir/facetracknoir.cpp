@@ -102,7 +102,8 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-    looping(false)
+    looping(false),
+    kbd_quit(QKeySequence("Ctrl+Q"), this)
 {	
     ui.setupUi(this);
     setFixedSize(size());
@@ -171,6 +172,9 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
     connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
     connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
 #endif
+
+    connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
+    kbd_quit.setEnabled(true);
 }
 
 /** destructor stops the engine and quits the faceapi **/

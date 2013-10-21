@@ -38,6 +38,7 @@
 #include <QtGui>
 #include <QString>
 #include <QByteArray>
+#include <QShortcut>
 #if !defined(_WIN32)
 #	include "qxt-mini/QxtGlobalShortcut"
 #else
@@ -123,6 +124,7 @@ private:
     QList<DynamicLibrary*> dlopen_filters;
     QList<DynamicLibrary*> dlopen_trackers;
     QList<DynamicLibrary*> dlopen_protocols;
+    QShortcut kbd_quit;
 
 #ifndef _WIN32
     void bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString label, QSettings& iniFile);
