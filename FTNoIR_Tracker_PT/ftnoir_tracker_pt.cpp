@@ -30,11 +30,6 @@ Tracker::Tracker()
 	  tracking_valid(false)
 {
 	qDebug()<<"Tracker::Tracker";
-	TrackerSettings settings;
-	settings.load_ini();
-	apply(settings);
-	camera.start();
-	start();
 }
 
 Tracker::~Tracker()
@@ -207,6 +202,11 @@ void Tracker::Initialize(QFrame *video_frame)
 	video_frame->setAttribute(Qt::WA_NativeWindow);
 	video_frame->show();
 	update_show_video_widget();
+	TrackerSettings settings;
+	settings.load_ini();
+	apply(settings);
+	camera.start();
+	start();
 }
 
 void Tracker::refreshVideo()
