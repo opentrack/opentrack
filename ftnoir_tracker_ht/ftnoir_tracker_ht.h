@@ -31,7 +31,6 @@ private:
 	QProcess subprocess;
     HTVideoWidget* videoWidget;
 	QHBoxLayout* layout;
-    volatile bool fresh;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

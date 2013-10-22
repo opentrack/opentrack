@@ -136,7 +136,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	iniFile.endGroup();
 }
 
-Tracker::Tracker() : lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)), fresh(false)
+Tracker::Tracker() : lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t))
 {
 	videoWidget = NULL;
 	layout = NULL;
@@ -196,7 +196,6 @@ bool Tracker::GiveHeadPoseData(double *data)
     {
         videoWidget->update_image(shm->frame.frame, shm->frame.width, shm->frame.height);
         //memcpy(foo, shm->frame.frame, shm->frame.width * shm->frame.height * 3);
-        fresh = true;
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
