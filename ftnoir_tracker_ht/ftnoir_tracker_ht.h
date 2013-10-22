@@ -15,7 +15,6 @@
 #include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
-#include <QTimer>
 
 class Tracker : public QObject, public ITracker
 {
@@ -28,14 +27,11 @@ public:
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
 	ht_shm_t* shm;
 private:
-    QTimer timer;
     PortableLockedShm lck_shm;
 	QProcess subprocess;
     HTVideoWidget* videoWidget;
 	QHBoxLayout* layout;
     volatile bool fresh;
-private slots:
-    void paint_widget();
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
