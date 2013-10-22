@@ -25,6 +25,7 @@
 #include "shortcuts.h"
 #include "tracker.h"
 #include "curve-config.h"
+#include "opentrack-version.h"
 #include <QDebug>
 
 #if defined(_WIN32)
@@ -419,7 +420,7 @@ void FaceTrackNoIR::loadSettings() {
 	// Put the filename in the window-title.
 	//
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle ( "opentrack 2.0a6 - " + pathInfo.fileName() );
+    setWindowTitle ( ("opentrack  " OPENTRACK_VERSION) + pathInfo.fileName() );
 
 	//
 	// Get a List of all the INI-files in the (currently active) Settings-folder.
