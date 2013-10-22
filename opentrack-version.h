@@ -1,0 +1,1 @@
+#define OPENTRACK_VERSION "2.0a6"
