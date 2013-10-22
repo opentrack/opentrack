@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "opentrack"
-#define MyAppVersion "2.0a5"
+#define MyAppVersion "2.0a6"
 #define MyAppPublisher "opentrack"
 #define MyAppURL "http://github.com/opentrack/opentrack"
 #define MyAppExeName "opentrack.exe"
