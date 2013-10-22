@@ -127,7 +127,6 @@ void Tracker::load_settings()
 
 Tracker::Tracker()
 {
-    fresh = false;
     stop = false;
 	videoWidget = NULL;
 	layout = NULL;
@@ -158,18 +157,9 @@ void Tracker::StartTracker(QFrame* videoframe)
     videoWidget->show();
     this->layout = layout;
     load_settings();
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(50);
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
-}
-
-void Tracker::paint_widget() {
-    if (fresh) {
-        fresh = false;
-        videoWidget->update();
-    }
 }
 
 #define HT_PI 3.1415926535
@@ -232,10 +222,9 @@ void Tracker::run()
         
         frame = color;
         
-        if (frame.rows > 0 && !fresh)
+        if (frame.rows > 0)
         {
             videoWidget->update_image(frame.data, frame.cols, frame.rows);
-            fresh = true;
         }
         
         if (markers.size() == 1 && markers[0].size() == 4) {

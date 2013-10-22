@@ -12,7 +12,6 @@
 #include "ui_aruco-trackercontrols.h"
 #include "ar_video_widget.h"
 #include <QObject>
-#include <QTimer>
 #include <QThread>
 #include <QMutex>
 #include <QHBoxLayout>
@@ -31,10 +30,9 @@ public:
     void run();
 private:
     QMutex mtx;
-    QTimer timer;
 	ArucoVideoWidget* videoWidget;
 	QHBoxLayout* layout;
-    volatile bool fresh, stop;
+    volatile bool stop;
     float fov;
     int camera_index;
     float dc[5];
@@ -42,8 +40,6 @@ private:
     void load_settings();
     double pose[6];
     cv::Mat frame;
-private slots:
-    void paint_widget();
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
