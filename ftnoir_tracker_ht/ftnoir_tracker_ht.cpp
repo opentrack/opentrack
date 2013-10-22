@@ -184,15 +184,6 @@ void Tracker::StartTracker(QFrame* videoframe)
 #else
     subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");
 #endif
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(40);
-}
-
-void Tracker::paint_widget() {
-    if (fresh) {
-        fresh = false;
-        videoWidget->update();
-    }
 }
 
 bool Tracker::GiveHeadPoseData(double *data)

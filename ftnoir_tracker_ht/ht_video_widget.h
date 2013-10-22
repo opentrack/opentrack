@@ -15,15 +15,18 @@
 #include <QLabel>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTimer>
 
 // ----------------------------------------------------------------------------
 class HTVideoWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-    HTVideoWidget(QWidget *parent) : QWidget(parent), mtx() {
-	}
+    HTVideoWidget(QWidget *parent) : QWidget(parent), width(0), height(0), fb{0} {
+        connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
+        timer.start(60);
+    }
     void update_image(unsigned char* frame, int width, int height);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
@@ -31,9 +34,14 @@ protected slots:
         QPainter painter(this);
         painter.drawPixmap(e->rect(), pixmap, e->rect());
     }
+    void update_and_repaint();
+
 private:
     QMutex mtx;
     QPixmap pixmap;
+    QTimer timer;
+    char fb[2048*2048*3];
+    int width,height;
 };
 
 #endif // VIDEOWIDGET_H
