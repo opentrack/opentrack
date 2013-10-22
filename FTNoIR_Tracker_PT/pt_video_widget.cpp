@@ -18,19 +18,7 @@ using namespace std;
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    QImage qframe = QImage(frame.cols, frame.rows, QImage::Format_RGB888);
-    uchar* data = qframe.bits();
-    const int pitch = qframe.bytesPerLine();
-    for (int y = 0; y < frame.rows; y++)
-        for (int x = 0; x < frame.cols; x++)
-        {
-            const int pos = 3 * (y*frame.cols + x);
-            data[y * pitch + x * 3 + 0] = frame.data[pos + 2];
-            data[y * pitch + x * 3 + 1] = frame.data[pos + 1];
-            data[y * pitch + x * 3 + 2] = frame.data[pos + 0];
-        }
-    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    pixmap = QPixmap::fromImage(qframe);
+    _frame = frame;
 }
 
 // ----------------------------------------------------------------------------
@@ -49,4 +37,25 @@ VideoWidgetDialog::VideoWidgetDialog(QWidget *parent, FrameProvider* provider)
     if (this->layout()) delete this->layout();
     setLayout(layout);
     resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
+}
+
+void PTVideoWidget::update_and_repaint()
+{
+    QMutexLocker foo(&mtx);
+    if (_frame.empty())
+        return;
+    QImage qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
+    uchar* data = qframe.bits();
+    const int pitch = qframe.bytesPerLine();
+    for (int y = 0; y < _frame.rows; y++)
+        for (int x = 0; x < _frame.cols; x++)
+        {
+            const int pos = 3 * (y*_frame.cols + x);
+            data[y * pitch + x * 3 + 0] = _frame.data[pos + 2];
+            data[y * pitch + x * 3 + 1] = _frame.data[pos + 1];
+            data[y * pitch + x * 3 + 2] = _frame.data[pos + 0];
+        }
+    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    pixmap = QPixmap::fromImage(qframe);
+    update();
 }
