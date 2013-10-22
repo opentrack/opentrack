@@ -31,7 +31,7 @@ class PTVideoWidget : public QWidget, public FrameObserver
 
 public:
     PTVideoWidget(QWidget *parent, FrameProvider* provider) : QWidget(parent), /* to avoid linker errors */ FrameObserver(provider) {
-        connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
+        connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
         timer.start(45);
     }
     void update_image(const cv::Mat &frame);
@@ -42,10 +42,12 @@ protected slots:
         QPainter painter(this);
         painter.drawPixmap(e->rect(), pixmap, e->rect());
     }
+    void update_and_repaint();
 private:
     QMutex mtx;
     QPixmap pixmap;
     QTimer timer;
+    cv::Mat _frame;
 };
 
 // ----------------------------------------------------------------------------

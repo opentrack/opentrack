@@ -15,6 +15,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTimer>
 
 // ----------------------------------------------------------------------------
 class ArucoVideoWidget : public QWidget
@@ -22,7 +23,9 @@ class ArucoVideoWidget : public QWidget
 	Q_OBJECT
 
 public:
-    ArucoVideoWidget(QWidget *parent) : QWidget(parent), mtx() {
+    ArucoVideoWidget(QWidget *parent) : QWidget(parent), width(0), height(0), fb{0} {
+        connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
+        timer.start(60);
 	}
     void update_image(unsigned char* frame, int width, int height);
 protected slots:
@@ -31,9 +34,14 @@ protected slots:
         QPainter painter(this);
         painter.drawPixmap(e->rect(), pixmap, e->rect());
     }
+    void update_and_repaint();
+
 private:
     QMutex mtx;
     QPixmap pixmap;
+    QTimer timer;
+    char fb[2048*2048*3];
+    int width,height;
 };
 
 #endif // VIDEOWIDGET_H
