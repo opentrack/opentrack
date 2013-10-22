@@ -23,7 +23,7 @@ class HTVideoWidget : public QWidget
     Q_OBJECT
 
 public:
-    HTVideoWidget(QWidget *parent) : QWidget(parent), width(0), height(0), fb{0} {
+    HTVideoWidget(QWidget *parent) : QWidget(parent), width(0), height(0), fb() {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
         timer.start(60);
     }
