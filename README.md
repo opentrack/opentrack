@@ -7,6 +7,8 @@ Source code access available at <http://github.com/opentrack/opentrack/>
 **opentrack** is an application dedicated to tracking user's head
 movements and relaying them to games and flight simulation software.
 
+Not to be confused with railway planning software <http://opentrack.ch> 
+
 # Tracking sources
 
 - SeeingMachines FaceAPI <http://seeingmachines.com/> (Windows)
