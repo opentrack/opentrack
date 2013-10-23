@@ -9,20 +9,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>225</height>
+    <width>410</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>290</width>
+    <height>300</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
-    <width>458</width>
-    <height>225</height>
+    <width>443</width>
+    <height>360</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -41,18 +47,24 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QFormLayout" name="formLayout_2">
    <property name="sizeConstraint">
     <enum>QLayout::SetMaximumSize</enum>
    </property>
    <property name="horizontalSpacing">
-    <number>4</number>
+    <number>-1</number>
    </property>
    <property name="verticalSpacing">
     <number>0</number>
    </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupbox2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Basic settings</string>
      </property>
@@ -199,7 +211,7 @@ background:none;</string>
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
        <horstretch>150</horstretch>
        <verstretch>100</verstretch>
       </sizepolicy>
@@ -218,7 +230,7 @@ background:none;</string>
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>20</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
        <number>7</number>
@@ -238,6 +250,12 @@ background:none;</string>
       </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>4</number>
         </property>
@@ -264,6 +282,12 @@ background:none;</string>
       </item>
       <item row="1" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>4</number>
         </property>
@@ -290,6 +314,12 @@ background:none;</string>
       </item>
       <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>4</number>
         </property>
@@ -316,6 +346,12 @@ background:none;</string>
       </item>
       <item row="4" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="accelerated">
          <bool>false</bool>
         </property>
@@ -345,6 +381,12 @@ background:none;</string>
       </item>
       <item row="5" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="accelerated">
          <bool>false</bool>
         </property>
@@ -374,6 +416,12 @@ background:none;</string>
       </item>
       <item row="6" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="accelerated">
          <bool>false</bool>
         </property>
@@ -395,6 +443,47 @@ background:none;</string>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="text">
+      <string>Accela filter by Stanisław Halik
+With kind help from Donovan Baarda.
+2012-2013</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item row="1" column="1">
@@ -438,44 +527,6 @@ background:none;</string>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_9">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="text">
-      <string>Accela filter by Stanisław Halik
-With kind help from Donovan Baarda.
-2012-2013</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::AutoText</enum>
-     </property>
-     <property name="scaledContents">
-      <bool>false</bool>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignBottom|Qt::AlignJustify</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
