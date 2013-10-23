@@ -186,8 +186,6 @@ void FilterControls::loadSettings() {
     }
     iniFile.endGroup();
 
-
-
 	settingsDirty = false;
 }
 
