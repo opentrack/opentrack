@@ -1,3 +1,6 @@
+20131023 sh
+    Low-hanging fruit: Go through all forms and replace ok/cancel with
+    QButtonBox which works better with layouts.
 20131020 sh
     Add unit testing by means of batch execution, protocol/filter that does
     nothing, add separate executables for readers of specific protocols,
