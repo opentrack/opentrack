@@ -25,6 +25,16 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
 endif()
 
+if(WIN32)
+	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
+endif()
+
+if(SDK_GOOGLE_BREAKPAD)
+	add_definitions(-DOPENTRACK_BREAKPAD)
+	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
+	include_directories("${SDK_GOOGLE_BREAKPAD}/src/")
+endif()
+
 if(UNIX)
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
 endif()
@@ -579,6 +589,11 @@ endif()
     if(NOT WIN32)
         target_link_libraries(opentrack dl)
     endif()
+	if(SDK_GOOGLE_BREAKPAD AND MSVC)
+		target_link_libraries(opentrack "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
+										"${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
+										"${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
+	endif()
     set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 endif()
 

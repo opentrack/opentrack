@@ -31,12 +31,29 @@
 
 #if defined(_WIN32)
 #   include <windows.h>
-//#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
+#	ifdef OPENTRACK_BREAKPAD
+#		include <exception_handler.h>
+using namespace google_breakpad;
+bool dumpCallback(const wchar_t* dump_path,
+                                 const wchar_t* minidump_id,
+                                 void* context,
+                                 EXCEPTION_POINTERS* exinfo,
+                                 MDRawAssertionInfo* assertion,
+                                 bool succeeded)
+{
+	return succeeded;
+}
+
+#	endif
 #endif
 
 int main(int argc, char** argv)
 {
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
+	
+#ifdef OPENTRACK_BREAKPAD
+	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
+#endif
 
     QApplication app(argc, argv);
 
