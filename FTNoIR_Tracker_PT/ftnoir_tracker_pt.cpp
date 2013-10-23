@@ -88,7 +88,7 @@ void Tracker::run()
 				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
 				frame_count++;
 #ifdef OPENTRACK_API
-                video_widget->update_image(frame);
+                video_widget->update_image(frame.clone());
 #endif
 			}
 #ifdef PT_PERF_LOG
@@ -206,6 +206,7 @@ void Tracker::Initialize(QFrame *video_frame)
 	settings.load_ini();
 	apply(settings);
 	camera.start();
+    apply(settings);
 	start();
 }
 
