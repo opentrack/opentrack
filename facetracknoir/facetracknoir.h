@@ -70,7 +70,10 @@ class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 	Q_OBJECT
 
 public:
-    volatile const char* __opentrack_version__ = "$OPENTRACK_VERSION=" OPENTRACK_VERSION "$";
+#ifndef _MSC_VER
+    volatile
+#endif
+    const char* __opentrack_version__ = "$OPENTRACK_VERSION=" OPENTRACK_VERSION "$";
     FaceTrackNoIR(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~FaceTrackNoIR();
 
