@@ -768,6 +768,8 @@ void FaceTrackNoIR::showTrackerSettings() {
     if (lib) {
         pTrackerDialog = (ITrackerDialog*) lib->Dialog();
         if (pTrackerDialog) {
+            auto foo = dynamic_cast<QWidget*>(pTrackerDialog);
+            foo->setFixedSize(foo->size());
             if (Libraries && Libraries->pTracker)
                 pTrackerDialog->registerTracker(Libraries->pTracker);
             pTrackerDialog->Initialize(this);
@@ -787,6 +789,8 @@ void FaceTrackNoIR::showSecondTrackerSettings() {
     if (lib) {
         pSecondTrackerDialog = (ITrackerDialog*) lib->Dialog();
         if (pSecondTrackerDialog) {
+            auto foo = dynamic_cast<QWidget*>(pSecondTrackerDialog);
+            foo->setFixedSize(foo->size());
             if (Libraries && Libraries->pSecondTracker)
                 pSecondTrackerDialog->registerTracker(Libraries->pSecondTracker);
             pSecondTrackerDialog->Initialize(this);
@@ -806,6 +810,8 @@ void FaceTrackNoIR::showServerControls() {
     if (lib && lib->Dialog) {
         pProtocolDialog = (IProtocolDialog*) lib->Dialog();
         if (pProtocolDialog) {
+            auto foo = dynamic_cast<QWidget*>(pProtocolDialog);
+            foo->setFixedSize(foo->size());
             pProtocolDialog->Initialize(this);
         }
     }
@@ -823,6 +829,8 @@ void FaceTrackNoIR::showFilterControls() {
     if (lib && lib->Dialog) {
         pFilterDialog = (IFilterDialog*) lib->Dialog();
         if (pFilterDialog) {
+            auto foo = dynamic_cast<QWidget*>(pFilterDialog);
+            foo->setFixedSize(foo->size());
             pFilterDialog->Initialize(this);
             if (Libraries && Libraries->pFilter)
                 pFilterDialog->registerFilter(Libraries->pFilter);
