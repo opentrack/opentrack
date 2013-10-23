@@ -44,7 +44,8 @@ bool dumpCallback(const wchar_t* dump_path,
     MessageBoxA(GetDesktopWindow(),
         "Generating crash dump!\r\n"
         "Please send the .dmp file to <sthalik@misaki.pl> to help us improve the code.",
-        "opentrack crashed :(");
+        "opentrack crashed :(",
+        MB_OK | MB_ICONERROR);
 	return succeeded;
 }
 
