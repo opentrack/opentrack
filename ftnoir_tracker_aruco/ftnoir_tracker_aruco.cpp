@@ -193,7 +193,7 @@ void Tracker::run()
         color_.copyTo(color);
         cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
         const int kernel = grayscale2.cols > 480 ? 7 : 5;
-        int kernel2 = kernel * grayscale2.rows / grayscale2.cols;
+        int kernel2 = kernel * grayscale2.rows / grayscale2.cols - 1;
         if ((kernel2 % 2) == 0)
             kernel2++;
         cv::GaussianBlur(grayscale2, grayscale, cv::Size(kernel, kernel2), 0, 0);
