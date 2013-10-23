@@ -26,6 +26,7 @@
 #include <math.h>
 #include <QDebug>
 #include <algorithm>
+#include <QDoubleSpinBox>
 #include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
@@ -48,6 +49,20 @@ FilterControls::FilterControls() :
 
     connect(ui.slideZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
     connect(ui.spinZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+
+    QDoubleSpinBox* boxen[] = {
+        ui.doubleSpinBox,
+        ui.doubleSpinBox_2,
+        ui.doubleSpinBox_3,
+        ui.doubleSpinBox_4,
+        ui.doubleSpinBox_5,
+        ui.doubleSpinBox_6,
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        connect(boxen[i], SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+    }
 
 	qDebug() << "FilterControls() says: started";
 }
@@ -147,6 +162,34 @@ void FilterControls::loadSettings() {
     ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
 	iniFile.endGroup ();
 
+    iniFile.beginGroup("Accela-Scaling");
+    // bigger means less filtering
+    static const double init_scaling[] = {
+        1.5, // X
+        1.5, // Y
+        1,   // Z
+        0.8, // Yaw
+        0.9, // Pitch
+        1.25 // Roll
+    };
+
+    QDoubleSpinBox* boxen[] = {
+        ui.doubleSpinBox,
+        ui.doubleSpinBox_2,
+        ui.doubleSpinBox_3,
+        ui.doubleSpinBox_4,
+        ui.doubleSpinBox_5,
+        ui.doubleSpinBox_6,
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        boxen[i]->setValue(iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble());
+    }
+    iniFile.endGroup();
+
+
+
 	settingsDirty = false;
 }
 
@@ -168,6 +211,23 @@ void FilterControls::save() {
     iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
     iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
 	iniFile.endGroup ();
+
+    iniFile.beginGroup("Accela-Scaling");
+
+    QDoubleSpinBox* boxen[] = {
+        ui.doubleSpinBox,
+        ui.doubleSpinBox_2,
+        ui.doubleSpinBox_3,
+        ui.doubleSpinBox_4,
+        ui.doubleSpinBox_5,
+        ui.doubleSpinBox_6,
+    };
+
+    for (int i = 0; i < 6; i++)
+    {
+        iniFile.setValue(QString("axis-%1").arg(QString::number(i)), boxen[i]->value());
+    }
+    iniFile.endGroup();
 
 	settingsDirty = false;
     

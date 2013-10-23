@@ -34,6 +34,22 @@ void FTNoIR_Filter::loadSettings() {
     rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
     translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
 	iniFile.endGroup ();
+
+    iniFile.beginGroup("Accela-Scaling");
+    // bigger means less filtering
+    static const double init_scaling[] = {
+        1.5, // X
+        1.5, // Y
+        1,   // Z
+        0.8, // Yaw
+        0.9, // Pitch
+        1.25 // Roll
+    };
+    for (int i = 0; i < 6; i++)
+    {
+        scaling[i] = iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble();
+    }
+    iniFile.endGroup();
 }
 
 void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
@@ -69,14 +85,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
     
     QMutexLocker foo(&mutex);
 
-    static const double scaling[] = {
-        1.5,
-        1.5,
-        1,
-        1,
-        1,
-        1
-    };
+
 
     for (int i=0;i<6;i++)
 	{
