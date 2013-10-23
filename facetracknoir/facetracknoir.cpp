@@ -91,6 +91,7 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 // Setup the Main Dialog
 //
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent, Qt::WindowFlags flags) :
+    __opentrack_version__(OPENTRACK_VERSION),
     QMainWindow(parent, flags),
 #if defined(_WIN32)
     keybindingWorker(NULL),
