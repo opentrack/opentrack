@@ -41,6 +41,10 @@ bool dumpCallback(const wchar_t* dump_path,
                                  MDRawAssertionInfo* assertion,
                                  bool succeeded)
 {
+    MessageBoxA(GetDesktopWindow(),
+        "Generating crash dump!\r\n"
+        "Please send the .dmp file to <sthalik@misaki.pl> to help us improve the code.",
+        "opentrack crashed :(");
 	return succeeded;
 }
 

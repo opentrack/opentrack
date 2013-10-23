@@ -58,6 +58,8 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 
+#include "opentrack-version.h"
+
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
 
@@ -68,6 +70,7 @@ class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 	Q_OBJECT
 
 public:
+    volatile const char* __opentrack_version__ = "$OPENTRACK_VERSION=" OPENTRACK_VERSION "$";
     FaceTrackNoIR(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~FaceTrackNoIR();
 

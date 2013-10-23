@@ -1,1 +1,3 @@
-#define OPENTRACK_VERSION "2.0a6"
+#ifndef OPENTRACK_VERSION
+#   define OPENTRACK_VERSION "Mourns-For-Trees"
+#endif
