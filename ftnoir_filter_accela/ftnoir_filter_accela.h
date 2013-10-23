@@ -54,6 +54,7 @@ private:
 	bool first_run;
     double rotation_alpha, translation_alpha, zoom_factor;
     double current_camera_position[6];
+    double scaling[6];
 };
 
 //*******************************************************************************************************
