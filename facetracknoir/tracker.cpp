@@ -116,7 +116,7 @@ void Tracker::run() {
                 for (int i = 0; i < 6; i++)
                     offset_camera.axes[i] = mainApp->axis(i).headPos;
                 
-                Tracker::do_center = false;
+                do_center = false;
                 
                 if (Libraries->pFilter)
                     Libraries->pFilter->Initialize();
