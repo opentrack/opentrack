@@ -25,11 +25,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
 endif()
 
-if(WIN32)
+if(WIN32 AND MSVC)
 	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
 endif()
 
-if(SDK_GOOGLE_BREAKPAD)
+if(SDK_GOOGLE_BREAKPAD AND MSVC)
 	add_definitions(-DOPENTRACK_BREAKPAD)
 	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
 	include_directories("${SDK_GOOGLE_BREAKPAD}/src/")
