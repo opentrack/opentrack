@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
-#include <math.h>
+#include <cmath>
 #include <QDebug>
 #include <algorithm>
 #include <QDoubleSpinBox>
@@ -38,7 +38,7 @@
 FilterControls::FilterControls() :
     QWidget(), accela_filter(NULL)
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
 	// Load the settings from the current .INI-file
 	loadSettings();
