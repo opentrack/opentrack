@@ -42,8 +42,8 @@ FilterControls::FilterControls() :
 
 	// Load the settings from the current .INI-file
 	loadSettings();
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.rotation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
     connect(ui.translation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
 
