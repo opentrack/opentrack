@@ -45,7 +45,7 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
     zoom_factor = zoom_fac;
 }
 
-static double parabola(const double a, const double x)
+static inline double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
     return a1 * x * x;
@@ -69,6 +69,15 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
     
     QMutexLocker foo(&mutex);
 
+    static const double scaling[] = {
+        1.5,
+        1.5,
+        1,
+        1,
+        1,
+        1
+    };
+
     for (int i=0;i<6;i++)
 	{
         const double vec = target_camera_position[i] - current_camera_position[i];
@@ -76,7 +85,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 		const double x = fabs(vec);
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
         const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
-        const double velocity = parabola(a, x) * reduction;
+        const double velocity = parabola(a, x * scaling[i]) * reduction;
 		const double result = current_camera_position[i] + velocity * sign;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = current_camera_position[i] = done ? target_camera_position[i] : result;
