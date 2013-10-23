@@ -58,9 +58,9 @@ double Timer::elapsed()
     if(running)
         gettimeofday(&endCount, NULL);
 
-    startTime = (startCount.tv_sec * 1e3) + startCount.tv_usec;
-    endTime = (endCount.tv_sec * 1e3) + endCount.tv_usec;
+    startTime = (startCount.tv_sec) + startCount.tv_usec * 1e-6;
+    endTime = (endCount.tv_sec) + endCount.tv_usec * 1e-6;
 #endif
 
-    return endTime - startTime;
+    return (endTime - startTime) * 1e3;
 }
