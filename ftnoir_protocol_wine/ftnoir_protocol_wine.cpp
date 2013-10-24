@@ -19,9 +19,14 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 {
     if (shm) {
         shm->stop = true;
-        wrapper.waitForFinished(2000);
+        wrapper.waitForFinished(100);
     }
-    wrapper.kill();
+    wrapper.terminate();
+    if (!wrapper.waitForFinished(100))
+    {
+        wrapper.kill();
+        wrapper.waitForFinished(42);
+    }
     shm_unlink("/" WINE_SHM_NAME);
 }
 
