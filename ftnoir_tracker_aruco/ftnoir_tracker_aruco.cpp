@@ -363,9 +363,11 @@ TrackerControls::TrackerControls()
 	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    //connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    //connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
     //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     loadSettings();
 	settingsDirty = false;
 }
