@@ -70,7 +70,7 @@ void Tracker::run() {
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
     
-    double newpose[6];
+    double newpose[6] = {0};
     double last_post_filter[6];
     
 #if defined(_WIN32)
@@ -81,9 +81,6 @@ void Tracker::run() {
 	{
         if (should_quit)
             break;
-
-        for (int i = 0; i < 6; i++)
-            newpose[i] = 0;
 
         //
         // The second tracker serves as 'secondary'. So if an axis is written by the second tracker it CAN be overwritten by the Primary tracker.
