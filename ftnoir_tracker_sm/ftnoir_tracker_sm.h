@@ -22,10 +22,8 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "ftnoir_tracker_sm/ftnoir_tracker_sm_types.h"
-#include "ui_ftnoir_sm_controls.h"
-
+#include <QObject>
+#include <QWidget>
 #include <QMessageBox>
 #include <QSettings>
 #include <QProcess>
@@ -34,6 +32,9 @@
 #include "facetracknoir/global-settings.h"
 #include "compat/compat.h"
 #include <QFrame>
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "ftnoir_tracker_sm/ftnoir_tracker_sm_types.h"
+#include "ui_ftnoir_sm_controls.h"
 
 using namespace std;
 
@@ -73,9 +74,9 @@ private:
 	bool started;
 };
 
-// Widget that has controls for SMoIR protocol client-settings.
 class TrackerControls: public QWidget, public ITrackerDialog
 {
+	Q_OBJECT
 public:
 	explicit TrackerControls();
     virtual ~TrackerControls();
@@ -86,25 +87,16 @@ public:
 	}
 	void unRegisterTracker() {
 	}
-
-private:
-	Ui::UICSMClientControls ui;
-	void loadSettings();
-	bool settingsDirty;
-
-private slots:
+protected slots:
 	void doOK();
 	void doCancel();
 	void save();
 	void settingChanged() { settingsDirty = true; }
-	void showSettings( int newState );
-public slots:
-     void stateChanged(int) {
-		 settingsDirty = true;
-	 }
-	void settingChanged(int) { 
-		settingsDirty = true;
-	}
+	void settingChanged(int) { settingsDirty = true; }
+private:
+	Ui::UICSMClientControls ui;
+	void loadSettings();
+	bool settingsDirty;
 };
 
 //*******************************************************************************************************

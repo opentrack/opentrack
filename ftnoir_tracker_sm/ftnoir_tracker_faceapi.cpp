@@ -22,11 +22,11 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_tracker_sm.h"
 #include <QtGui>
 #include <QMessageBox>
 #include "facetracknoir/global-settings.h"
 #include <QThread>
+#include "ftnoir_tracker_sm/ftnoir_tracker_sm.h"
 
 FTNoIR_Tracker::FTNoIR_Tracker() : shm(SM_MM_DATA, SM_MUTEX, sizeof(SMMemMap)), started(false)
 {
