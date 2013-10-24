@@ -35,8 +35,8 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
     enabled(true)
 {
     // Retieve the pointer to the parent
-	mainApp = parent;
-	// Load the settings from the INI-file
+    mainApp = parent;
+    // Load the settings from the INI-file
 }
 
 Tracker::~Tracker()
@@ -60,12 +60,7 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF target_camera;
-    T6DOF new_camera;
-    
-    /** Direct Input variables **/
-    T6DOF offset_camera;
-    T6DOF gameoutput_camera;
+    T6DOF offset_camera, new_camera, gameoutput_camera, target_camera, target_camera2;
     
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
@@ -78,14 +73,10 @@ void Tracker::run() {
 #endif
     
     for (;;)
-	{
+    {
         if (should_quit)
             break;
 
-        //
-        // The second tracker serves as 'secondary'. So if an axis is written by the second tracker it CAN be overwritten by the Primary tracker.
-        // This is enforced by the sequence below.
-        //
         if (Libraries->pSecondTracker) {
             bTracker2Confid = Libraries->pSecondTracker->GiveHeadPoseData(newpose);
         }
@@ -97,57 +88,45 @@ void Tracker::run() {
         {
             QMutexLocker foo(&mtx);
             const bool confid = bTracker1Confid || bTracker2Confid;
-            
+
             if ( confid ) {
                 for (int i = 0; i < 6; i++)
                     mainApp->axis(i).headPos = newpose[i];
             }
-            
-            //
-            // If Center is pressed, copy the current values to the offsets.
-            //
+
             if (do_center)  {
-                //
-                // Only copy valid values
-                //
                 for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = mainApp->axis(i).headPos;
-                
+                    offset_camera.axes[i] = target_camera.axes[i];
+
                 do_center = false;
-                
+
                 if (Libraries->pFilter)
                     Libraries->pFilter->Initialize();
             }
-            
-            if (confid && enabled) {
-                // get values
+
+            if (enabled && confid)
+            {
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
-                
-                // do the centering
-                target_camera = target_camera - offset_camera;
-                
-                //
-                // Use advanced filtering, when a filter was selected.
-                //
-                if (Libraries->pFilter) {
-                    for (int i = 0; i < 6; i++)
-                        last_post_filter[i] = gameoutput_camera.axes[i];
-                    Libraries->pFilter->FilterHeadPoseData(target_camera.axes, new_camera.axes, last_post_filter);
-                }
-                else {
-                    new_camera = target_camera;
-                }
-                
-                for (int i = 0; i < 6; i++) {
-                    get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
-                }
-                
-                // Send the headpose to the game
-                if (Libraries->pProtocol) {
-                    gameoutput_camera = output_camera;
-                    Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes );	// degrees & centimeters
-                }
+
+                target_camera2 = target_camera - offset_camera;
+            }
+
+            if (Libraries->pFilter) {
+                for (int i = 0; i < 6; i++)
+                    last_post_filter[i] = gameoutput_camera.axes[i];
+                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes, last_post_filter);
+            } else {
+                new_camera = target_camera2;
+            }
+
+            for (int i = 0; i < 6; i++) {
+                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
+            }
+
+            if (Libraries->pProtocol) {
+                gameoutput_camera = output_camera;
+                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes );	// degrees & centimeters
             }
         }
         
