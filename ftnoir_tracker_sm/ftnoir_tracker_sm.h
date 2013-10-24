@@ -47,14 +47,20 @@ public:
     void StopTracker( bool exit );
     bool GiveHeadPoseData(double *data);				// Returns true if confidence is good
     void WaitForExit();
-
+	void doCommand(int foo);
+	void doCommand(int foo, int bar);
+	void doStartEngine(){
+		doCommand(FT_SM_START);
+		doCommand(FT_SM_SET_PAR_FILTER, 0);
+		//doCommand(FT_SM_SHOW_CAM);
+	}
 	void loadSettings();
 
 private:
 	//
 	// global variables
 	//
-    PortableLockedShm lck_shm;
+    PortableLockedShm shm;
     SMMemMap *pMemData;
 	QProcess *faceAPI;
 
@@ -64,6 +70,7 @@ private:
 	bool bEnableX;
 	bool bEnableY;
 	bool bEnableZ;
+	bool started;
 };
 
 // Widget that has controls for SMoIR protocol client-settings.
@@ -76,59 +83,28 @@ public:
 
     void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker) {
-		theTracker = (FTNoIR_Tracker *) tracker;			// Accept the pointer to the Tracker
 	}
 	void unRegisterTracker() {
-		theTracker = NULL;									// Reset the pointer
 	}
 
 private:
 	Ui::UICSMClientControls ui;
 	void loadSettings();
-	void doCommand( int command );
-	void doCommand( int command, int value );
-
-	/** helper **/
 	bool settingsDirty;
-	int prev_state;											// Previous engine state
-
-	//
-	// global variables
-	//
-	SMMemMap *pMemData;
-    
-    smEngineHandle *engine_handle;
-	FTNoIR_Tracker *theTracker;
-    PortableLockedShm shm;
 
 private slots:
 	void doOK();
 	void doCancel();
 	void save();
 	void settingChanged() { settingsDirty = true; }
-	void doTimUpdate();
 	void showSettings( int newState );
-	void doStartEngine(){
-		doCommand(FT_SM_START);
-	}
-	void doStopEngine(){
-		doCommand(FT_SM_STOP);
-	}
-	void doShowCam(){
-		doCommand(FT_SM_SHOW_CAM);
-	}
-	void doSetFilter(int value){
-		doCommand(FT_SM_SET_PAR_FILTER, value);
-	}
-	void settingChanged(int dummy) { 
-		settingsDirty = true;
-	}
-
 public slots:
-     void stateChanged(int newState) {
+     void stateChanged(int) {
 		 settingsDirty = true;
 	 }
-
+	void settingChanged(int) { 
+		settingsDirty = true;
+	}
 };
 
 //*******************************************************************************************************

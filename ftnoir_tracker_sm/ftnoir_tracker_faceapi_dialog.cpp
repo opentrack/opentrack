@@ -33,16 +33,9 @@
 //
 // Constructor for server-settings-dialog
 //
-TrackerControls::TrackerControls() :
-    QWidget(),
-    shm(SM_MM_DATA, SM_MUTEX, sizeof(TFaceData))
+TrackerControls::TrackerControls() : QWidget()
 {
-    pMemData = (SMMemMap*) shm.mem;
-    
 	ui.setupUi( this );
-
-	theTracker = NULL;
-	prev_state = -1;
 
     //connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
     //connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
@@ -93,7 +86,6 @@ void TrackerControls::doOK() {
 
 // override show event
 void TrackerControls::showEvent ( QShowEvent * event ) {
-	prev_state = -1;
 	loadSettings();
 }
 
@@ -144,8 +136,6 @@ void TrackerControls::loadSettings() {
 //	qDebug() << "loadSettings says: iniFile = " << currentFile;
 
 	iniFile.beginGroup ( "SMTracker" );
-	ui.cbxFilterSetting->setCurrentIndex(iniFile.value ( "FilterLevel", 1 ).toInt());
-
 	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
 	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
 	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
@@ -169,8 +159,6 @@ void TrackerControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "SMTracker" );
-	iniFile.setValue ( "FilterLevel", ui.cbxFilterSetting->currentIndex() );
-
 	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
 	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
 	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
@@ -180,70 +168,10 @@ void TrackerControls::save() {
 
 	iniFile.endGroup ();
 
-	//
-	// If the Tracker is active, let it load the new Settings.
-	//
-	if (theTracker) {
-		theTracker->loadSettings();
-	}
-
 	settingsDirty = false;
 }
 
-//
-// Show the current engine-settings etc.
-//
-void TrackerControls::showSettings( int newState )
-{
-	qDebug() << "TrackerControls::showSettings says: Starting Function";
-    switch (newState)
-    {
-    case SM_API_ENGINE_STATE_TERMINATED:
-        ui._engine_state_label->setText("TERMINATED");
-        break;
-    case SM_API_ENGINE_STATE_INVALID:
-        ui._engine_state_label->setText("INVALID");
-        break;
-    case SM_API_ENGINE_STATE_IDLE:
-        ui._engine_state_label->setText("IDLE");
-        break;
-    case SM_API_ENGINE_STATE_HT_INITIALIZING:
-        ui._engine_state_label->setText("INITIALIZING");
-        break;
-    case SM_API_ENGINE_STATE_HT_TRACKING:
-        ui._engine_state_label->setText("TRACKING");
-        break;
-    case SM_API_ENGINE_STATE_HT_SEARCHING:
-        ui._engine_state_label->setText("SEARCHING");
-        break;
-    default:
-        ui._engine_state_label->setText("Unknown State!");
-        break;
-    }
 
-	ui.cbxFilterSetting->setEnabled( (newState == SM_API_ENGINE_STATE_IDLE) );
-}
-
-//
-// Send a command without parameter-value to the tracking Engine.
-//
-void TrackerControls::doCommand(int command)
-{
-    shm.lock();
-    pMemData->command = command;
-    shm.unlock();
-}
-
-//
-// Send a command with integer parameter-value to the tracking Engine.
-//
-void TrackerControls::doCommand(int command, int value)
-{
-    shm.lock();
-    pMemData->command = command;					// Send command
-    pMemData->par_val_int = value;
-    shm.unlock();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker-settings dialog object.

@@ -26,10 +26,51 @@
 #include <QtGui>
 #include <QMessageBox>
 #include "facetracknoir/global-settings.h"
+#include <QThread>
 
-FTNoIR_Tracker::FTNoIR_Tracker() : lck_shm(SM_MM_DATA, SM_MUTEX, sizeof(SMMemMap))
+FTNoIR_Tracker::FTNoIR_Tracker() : shm(SM_MM_DATA, SM_MUTEX, sizeof(SMMemMap)), started(false)
 {
-    pMemData = (SMMemMap*) lck_shm.mem;
+    pMemData = (SMMemMap*) shm.mem;
+}
+
+static void wait_for_cmd(SMMemMap *pMemData, PortableLockedShm& shm) {
+	qDebug() << "faceapi: waiting for cmd";
+	for (int _ = 0; _ < 3000; _++)
+	{
+		bool br = false;
+		shm.lock();
+		if (pMemData->command == 0)
+		{
+			br = true;
+		}
+		shm.unlock();
+		if (br)
+			break;
+		QThread::msleep(1);
+	}
+	qDebug() << "faceapi: done waiting for cmd";
+}
+
+// Send a command without parameter-value to the tracking Engine.
+//
+void FTNoIR_Tracker::doCommand(int command)
+{
+    shm.lock();
+    pMemData->command = command;
+    shm.unlock();
+	wait_for_cmd(pMemData, shm);
+}
+
+//
+// Send a command with integer parameter-value to the tracking Engine.
+//
+void FTNoIR_Tracker::doCommand(int command, int value)
+{
+    shm.lock();
+    pMemData->command = command;					// Send command
+    pMemData->par_val_int = value;
+    shm.unlock();
+	wait_for_cmd(pMemData, shm);
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
@@ -47,7 +88,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
 {
     qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
-    QMessageBox::warning(this,
+    QMessageBox::warning(videoframe,
                          "Tracker deprecation",
                          "Non-free SM FaceAPI is deprecated, hence this annoying message.\n"
                          "It'll be removed for 2.0-final.",
@@ -74,12 +115,8 @@ void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
     faceAPI->start("\"" + QCoreApplication::applicationDirPath() + "/faceapi/opentrack-faceapi-wrapper" + "\"");
     // Show the video widget
     qDebug() << "FTNoIR_Tracker::Initialize says: videoframe = " << videoframe;
-
     if (videoframe != NULL) {
         videoframe->show();
-    }
-	if ( pMemData != NULL ) {
-		pMemData->command = FT_SM_START;				// Start command
 	}
 }
 
@@ -100,10 +137,13 @@ void FTNoIR_Tracker::WaitForExit()
 
 bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
 {
+	if (!started)
+		doStartEngine();
+	started = true;
 	//
 	// Check if the pointer is OK and wait for the Mutex.
 	//
-    lck_shm.lock();
+    shm.lock();
 
     //
     // Copy the measurements to FaceTrackNoIR.
@@ -131,7 +171,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
     // Reset the handshake, to let faceAPI know we're still here!
     //
     pMemData->handshake = 0;
-    lck_shm.unlock();
+    shm.unlock();
 
     return ( pMemData->data.new_pose.confidence > 0 );
 }
