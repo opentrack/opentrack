@@ -599,7 +599,7 @@ endif()
     endif()
 
     if(MSVC)
-        SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT")
+        SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT.lib")
     endif()
 
     if(UNIX)
@@ -787,8 +787,9 @@ if(SDK_SM_FACEAPI_PATH AND NOT SDK_FACEAPI_ONLY)
 endif()
 
 if(MSVC)
-    file(GLOB pdbs "${CMAKE_BINARY_DIR}/Release/*.pdb")
-    install(FILES ${pdbs} DESTINATION .)
+    file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
+    file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
+    install(FILES ${pdbs} ${pdbs2} DESTINATION .)
 endif()
 
 if(SDK_SM_FACEAPI_PATH AND (MSVC80 OR MINGW))
