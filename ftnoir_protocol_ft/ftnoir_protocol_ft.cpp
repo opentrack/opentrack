@@ -112,7 +112,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     float headRotX;
     float headRotY;
     float headRotZ;
-    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]);
+    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]) * (useDummyExe ? 2.0 : 1.0);
     headRotY = virtRotY = getRadsFromDegrees(headpose[Yaw]);
     headRotZ = virtRotZ = getRadsFromDegrees(headpose[Roll]);
     headPosX = virtPosX = headpose[TX] * 10;
