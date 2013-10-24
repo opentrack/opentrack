@@ -21,9 +21,9 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
     mtx(QMutex::Recursive)
 {
     for (int i = 0; i < 6; i++)
-        axes[i] = -1;
-    GUID foo = {0};
-    preferred = foo;
+        axes[i] = min_[i] = max_[i] = 0;
+    GUID bar = {0};
+    preferred = bar;
 }
 
 void FTNoIR_Tracker::reload()
@@ -68,15 +68,19 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
-        diprg.lMin = -AXIS_MAX;
-        diprg.lMax = AXIS_MAX;
 
         // Set the range for the axis
-        if( FAILED( self->g_pJoystick->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
+
+        if( FAILED( self->g_pJoystick->GetProperty( DIPROP_RANGE, &diprg.diph ) ) )
             return DIENUM_STOP;
+
+        self->min_[self->iter] = diprg.lMin;
+        self->max_[self->iter] = diprg.lMax;
+        qDebug() << "axis" << self->iter << diprg.lMin << diprg.lMax;
+        self->iter++;
     }
 
-    return DIENUM_CONTINUE;
+    return self->iter == 8 ? DIENUM_STOP : DIENUM_CONTINUE;
 }
 
 static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
@@ -94,6 +98,7 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
 void FTNoIR_Tracker::StartTracker(QFrame* frame)
 {
     QMutexLocker foo(&mtx);
+    this->frame = frame;
     iter = 0;
     loadSettings();
     auto hr = CoInitialize( nullptr );
@@ -134,7 +139,7 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
         goto fail;
     }
 
-    if (FAILED(g_pJoystick->SetDataFormat(&c_dfDIJoystick2)))
+    if (FAILED(g_pJoystick->SetDataFormat(&c_dfDIJoystick)))
     {
         qDebug() << "format";
         goto fail;
@@ -145,6 +150,8 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
         qDebug() << "coop";
         goto fail;
     }
+
+    iter = 0;
 
     if( FAILED( hr = g_pJoystick->EnumObjects( EnumObjectsCallback,
                                                ( VOID* )this, DIDFT_ALL )))
@@ -171,9 +178,9 @@ fail:
 bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
 {
     QMutexLocker foo(&mtx);
-    DIJOYSTATE2 js;
+    DIJOYSTATE js = {0};
 
-    if( !g_pJoystick)
+    if( !g_pDI || !g_pJoystick)
         return false;
 
 start:
@@ -186,21 +193,21 @@ start:
         goto start;
     }
 
-    if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( DIJOYSTATE2 ), &js ) ) )
+    if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( js ), &js ) ) )
         return false;
 
     const LONG values[] = {
-        js.lX,
-        js.lY,
-        js.lZ,
         js.lRx,
         js.lRy,
         js.lRz,
+        js.lX,
+        js.lY,
+        js.lZ,
         js.rglSlider[0],
         js.rglSlider[1]
     };
 
-    const double max[] = {
+    const double limits[] = {
         100,
         100,
         100,
@@ -217,7 +224,12 @@ start:
             data[i] = 0;
         }
         else {
-            data[i] = values[i] * max[i] / (double) AXIS_MAX;
+            auto mid = (min_[idx] + max_[idx]) / 2;
+            auto val = values[idx] - mid;
+
+            auto max = (max_[idx] - min_[idx]) / 2;
+            auto min = (min_[idx] - max_[idx]) / -2;
+            data[i] = val * limits[i] / (double) (val >= 0 ? max : min);
         }
     }
 
