@@ -25,10 +25,14 @@ Rift_Tracker::Rift_Tracker()
 
 Rift_Tracker::~Rift_Tracker()
 {
-    pSensor->Release();
-	delete pSFusion;
-    pHMD->Release();
-    pManager->Release();
+    if (pSensor)
+        pSensor->Release();
+    if (pSFusion)
+        delete pSFusion;
+    if (pHMD)
+        pHMD->Release();
+    if (pManager)
+        pManager->Release();
     System::Destroy();
 }
 
@@ -36,7 +40,6 @@ Rift_Tracker::~Rift_Tracker()
 
 void Rift_Tracker::StartTracker(QFrame* videoFrame)
 {
-
     loadSettings();
     //
     // Startup the Oculus SDK device handling, use the first Rift sensor we find.
