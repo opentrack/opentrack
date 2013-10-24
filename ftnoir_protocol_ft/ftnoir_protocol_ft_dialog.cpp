@@ -41,8 +41,8 @@ QWidget()
 	ui.setupUi( this );
 
 	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
 	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));

@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>328</height>
+    <width>407</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,287 +41,178 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <widget class="QPushButton" name="btnCancel">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>320</x>
-     <y>300</y>
-     <width>80</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnOK">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>230</x>
-     <y>300</y>
-     <width>80</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>OK</string>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>6</y>
-     <width>401</width>
-     <height>70</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>70</height>
-    </size>
-   </property>
-   <property name="title">
-    <string>TIRViews</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <widget class="QCheckBox" name="chkTIRViews">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>40</y>
-      <width>78</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="text">
-     <string>TRViews</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>30</y>
-      <width>281</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Only for very old and buggy old games such as CFS3.</string>
-    </property>
-    <property name="scaledContents">
-     <bool>false</bool>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>68</y>
-     <width>401</width>
-     <height>70</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>70</height>
-    </size>
-   </property>
-   <property name="title">
-    <string>TrackIR.exe</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <widget class="QCheckBox" name="chkStartDummy">
-    <property name="geometry">
-     <rect>
-      <x>8</x>
-      <y>30</y>
-      <width>100</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="text">
-     <string>Using EZCA</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>23</y>
-      <width>250</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Spawn a useless &quot;dummy&quot; process called TrackIR.exe in order to fool EZCA.</string>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_3">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>144</y>
-     <width>401</width>
-     <height>70</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>70</height>
-    </size>
-   </property>
-   <property name="title">
-    <string>Select interface</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>23</y>
-      <width>275</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Disable one of the protocols if games are confused by presence of both at the same time.</string>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbxSelectInterface">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>95</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_4">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>220</y>
-     <width>401</width>
-     <height>70</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>70</height>
-    </size>
-   </property>
-   <property name="title">
-    <string>Repair NPClient location</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>23</y>
-      <width>278</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Replace the registry entry if you want to use other software with the TrackIR protocol and it doesn't work automatically.</string>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="bntLocateNPClient">
-    <property name="geometry">
-     <rect>
-      <x>8</x>
-      <y>23</y>
-      <width>93</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Locate DLL</string>
-    </property>
-   </widget>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>TIRViews</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="chkTIRViews">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>TRViews</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Only for very old and buggy old games such as CFS3.</string>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>TrackIR.exe</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="chkStartDummy">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Using EZCA</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Spawn a useless &quot;dummy&quot; process called TrackIR.exe in order to fool EZCA.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Select interface</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::ExpandingFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QComboBox" name="cbxSelectInterface"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Disable one of the protocols if games are confused by presence of both at the same time.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Repair NPClient location</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="bntLocateNPClient">
+        <property name="text">
+         <string>Locate DLL</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Replace the registry entry if you want to use other software with the TrackIR protocol and it doesn't work automatically.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
