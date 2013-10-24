@@ -89,9 +89,10 @@ void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
 {
     qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
     QMessageBox::warning(videoframe,
-                         "Tracker deprecation",
-                         "Non-free SM FaceAPI is deprecated, hence this annoying message.\n"
-                         "It'll be removed for 2.0-final.",
+                         "Non-free software deprecation",
+                         "SM FaceAPI is deprecated, hence this annoying message.\n"
+                         "It'll be removed for 2.0-final.\n"
+                         "The goal is to have only open-source software available.",
                          QMessageBox::Ok, QMessageBox::NoButton);
 
     loadSettings();
