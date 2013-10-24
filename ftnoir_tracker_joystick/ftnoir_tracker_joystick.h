@@ -70,11 +70,10 @@ public:
         tracker = NULL;
     }
     QList<GUID> guids;
-private:
     Ui::UIJoystickControls ui;
-	void loadSettings();
+    void loadSettings();
 	void save();
-	bool settingsDirty;
+    bool settingsDirty;
     FTNoIR_Tracker* tracker;
 
 private slots:
