@@ -24,6 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_tracker_sm.h"
 #include <QtGui>
+#include <QMessageBox>
 #include "facetracknoir/global-settings.h"
 
 FTNoIR_Tracker::FTNoIR_Tracker() : lck_shm(SM_MM_DATA, SM_MUTEX, sizeof(SMMemMap))
@@ -46,6 +47,11 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 void FTNoIR_Tracker::StartTracker(QFrame *videoframe )
 {
     qDebug() << "FTNoIR_Tracker::Initialize says: Starting ";
+    QMessageBox::warning(this,
+                         "Tracker deprecation",
+                         "Non-free SM FaceAPI is deprecated, hence this annoying message.\n"
+                         "It'll be removed for 2.0-final.",
+                         QMessageBox::Ok, QMessageBox::NoButton);
 
     loadSettings();
 
