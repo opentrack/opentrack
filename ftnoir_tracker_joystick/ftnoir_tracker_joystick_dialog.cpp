@@ -100,18 +100,18 @@ void TrackerControls::doCancel() {
 
 void TrackerControls::loadSettings() {
 
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     QComboBox* boxen[] = {
-        ui.comboBox,
-        ui.comboBox_2,
-        ui.comboBox_3,
         ui.comboBox_4,
         ui.comboBox_5,
         ui.comboBox_6,
+        ui.comboBox,
+        ui.comboBox_2,
+        ui.comboBox_3,
     };
 
     iniFile.beginGroup ( "tracker-joy" );
@@ -120,33 +120,35 @@ void TrackerControls::loadSettings() {
         boxen[i]->setCurrentIndex(iniFile.value(QString("axis-%1").arg(i), 0).toInt());
     }
     ui.joylist->setCurrentIndex(iniFile.value("joyid", -1).toInt());
-	iniFile.endGroup ();
+    iniFile.endGroup ();
 
-	settingsDirty = false;
+    settingsDirty = false;
 }
 
 void TrackerControls::save() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    QComboBox* boxen[] = {
-        ui.comboBox,
-        ui.comboBox_2,
-        ui.comboBox_3,
-        ui.comboBox_4,
-        ui.comboBox_5,
-        ui.comboBox_6,
-    };
-
-    iniFile.beginGroup ( "tracker-joy" );
-    for (int i = 0; i < 6; i++)
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     {
-        iniFile.setValue(QString("axis-%1").arg(i), boxen[i]->currentIndex());
+        QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+        QComboBox* boxen[] = {
+            ui.comboBox_4,
+            ui.comboBox_5,
+            ui.comboBox_6,
+            ui.comboBox,
+            ui.comboBox_2,
+            ui.comboBox_3,
+        };
+
+        iniFile.beginGroup ( "tracker-joy" );
+        for (int i = 0; i < 6; i++)
+        {
+            iniFile.setValue(QString("axis-%1").arg(i), boxen[i]->currentIndex());
+        }
+        iniFile.setValue("joyid", ui.joylist->currentIndex());
+        iniFile.endGroup ();
     }
-    iniFile.setValue("joyid", ui.joylist->currentIndex());
-	iniFile.endGroup ();
 
     if(tracker)
     {

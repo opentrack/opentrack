@@ -28,8 +28,6 @@
 #include <oleauto.h>
 #include <shellapi.h>
 
-#define AXIS_MAX 16383
-
 struct DI_ENUM_CONTEXT
 {
     GUID preferred_instance;
@@ -49,6 +47,7 @@ public:
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
     int axes[6];
+    int min_[8], max_[8];
     GUID preferred;
     int joyid;
     QMutex mtx;
