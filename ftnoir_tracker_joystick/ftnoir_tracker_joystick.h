@@ -22,7 +22,7 @@
 #include <oleauto.h>
 #include <shellapi.h>
 
-#define AXIS_MAX 8192
+#define AXIS_MAX 16383
 
 struct DI_ENUM_CONTEXT
 {
