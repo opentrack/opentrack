@@ -618,15 +618,16 @@ endif()
         target_link_libraries(opentrack dl)
     endif()
 	if(SDK_GOOGLE_BREAKPAD)
-        if(MSVC)
-    		target_link_libraries(opentrack "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
-	    									"${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
-		    								"${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
-        else()
-            target_link_libraries(opentrack "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad_client.a"
-                                            "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad.a")
+            if(MSVC)
+                target_link_libraries(opentrack
+                    "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
+                    "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
+                    "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
+            else()
+                target_link_libraries(opentrack "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad_client.a"
+                                                "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad.a")
+            endif()
         endif()
-	endif()
     set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 endif()
 
@@ -642,7 +643,7 @@ if(SDK_SM_FACEAPI_PATH)
         add_executable(opentrack-faceapi-wrapper ${opentrack-faceapi-wrapper-c} ${opentrack-faceapi-wrapper-h})
         target_link_libraries(opentrack-faceapi-wrapper "${SDK_SM_FACEAPI_PATH}/bin/smft32.lib")
     endif()
-endif() 
+endif()
 
 install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION .)
 
@@ -652,9 +653,9 @@ if(NOT SDK_FACEAPI_ONLY)
     endif()
     if(WIN32)
         install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
-		install(TARGETS freetrackclient RUNTIME DESTINATION .)
+                install(TARGETS freetrackclient RUNTIME DESTINATION .)
     endif()
-	install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
+        install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 
     install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetracknoir/clientfiles" DESTINATION .)
@@ -751,7 +752,7 @@ if(NOT SDK_FACEAPI_ONLY)
             install(FILES
                 "${qt-dirname}/Qt5Core.dll"
                 "${qt-dirname}/Qt5Gui.dll"
-				"${qt-dirname}/Qt5Widgets.dll"
+                                "${qt-dirname}/Qt5Widgets.dll"
                 "${qt-dirname}/Qt5Network.dll"
                 "${qt-dirname}/Qt5Xml.dll"
                 DESTINATION .
