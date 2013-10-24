@@ -32,7 +32,6 @@
 
 struct DI_ENUM_CONTEXT
 {
-    DIDEVICEINSTANCE* pPreferredJoyCfg;
     GUID preferred_instance;
     LPDIRECTINPUTDEVICE8* g_pJoystick;
     LPDIRECTINPUT8 g_pDI;

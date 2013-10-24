@@ -115,7 +115,6 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
         goto fail;
     }
 
-    enumContext.pPreferredJoyCfg = &def;
     enumContext.g_pDI = g_pDI;
     enumContext.g_pJoystick = &g_pJoystick;
     enumContext.preferred_instance = def.guidInstance;
