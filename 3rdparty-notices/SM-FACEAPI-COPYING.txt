@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------------
+FaceTrackingAPI Version 3.2.6 - August 2010
+Copyright (C) 2010 Seeing Machines Limited
+--------------------------------------------------------------------------------
+
+The use of this API is strictly governed by the terms of a mandatory 
+prior license agreement between the user and Seeing Machines Ltd.
+
+--------------------------------------------------------------------------------
