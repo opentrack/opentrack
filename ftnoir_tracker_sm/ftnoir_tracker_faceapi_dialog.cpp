@@ -44,24 +44,13 @@ TrackerControls::TrackerControls() :
 	theTracker = NULL;
 	prev_state = -1;
 
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.btnEngineStart, SIGNAL(clicked()), this, SLOT(doStartEngine()));
-	connect(ui.btnEngineStop, SIGNAL(clicked()), this, SLOT(doStopEngine()));
-	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
-
-	ui.cbxFilterSetting->addItem("None");
-	ui.cbxFilterSetting->addItem("Normal");
-	ui.cbxFilterSetting->addItem("High");
-	connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
-	connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
+    //connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
+    //connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
 
 	//Setup the timer for showing the headpose.
-	timUpdateSettings = new QTimer(this);
-    connect(timUpdateSettings, SIGNAL(timeout()), this, SLOT(doTimUpdate()));
-	timUpdateSettings->start(100);
 	connect(this, SIGNAL(stateChanged( int )), this, SLOT(showSettings( int )));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
 	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
@@ -199,17 +188,6 @@ void TrackerControls::save() {
 	}
 
 	settingsDirty = false;
-}
-
-// Show the current engine-settings etc.
-//
-void TrackerControls::doTimUpdate()
-{
-	int state = pMemData->state;
-	if ( state != prev_state) {
-		emit stateChanged(state);
-		prev_state = state;
-	}
 }
 
 //
