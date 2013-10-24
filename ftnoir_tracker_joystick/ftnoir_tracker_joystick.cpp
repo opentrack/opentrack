@@ -198,6 +198,15 @@ start:
         js.rglSlider[1]
     };
 
+    const double max[] = {
+        100,
+        100,
+        100,
+        180,
+        90,
+        180
+    };
+
     for (int i = 0; i < 6; i++)
     {
         auto idx = axes[i] - 1;
@@ -206,7 +215,7 @@ start:
             data[i] = 0;
         }
         else {
-            data[i] = values[i] / (double) AXIS_MAX;
+            data[i] = values[i] * max[i] / (double) AXIS_MAX;
         }
     }
 

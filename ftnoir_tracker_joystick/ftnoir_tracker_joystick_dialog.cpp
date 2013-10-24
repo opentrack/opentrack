@@ -6,12 +6,13 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
     auto self = ( TrackerControls* )pContext;
 
     self->guids.push_back(pdidInstance->guidInstance);
+    self->ui.joylist->addItem(QString(pdidInstance->tszInstanceName));
 
     return DIENUM_CONTINUE;
 }
 
 TrackerControls::TrackerControls() :
-QWidget()
+    QWidget(), tracker(nullptr), settingsDirty(false)
 {
 	ui.setupUi( this );
 
@@ -19,7 +20,7 @@ QWidget()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    connect(ui.spinBox, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.joylist, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
     connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
     connect(ui.comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
     connect(ui.comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
@@ -118,7 +119,7 @@ void TrackerControls::loadSettings() {
     {
         boxen[i]->setCurrentIndex(iniFile.value(QString("axis-%1").arg(i), 0).toInt());
     }
-    ui.spinBox->setValue(iniFile.value("joyid", -1).toInt());
+    ui.joylist->setCurrentIndex(iniFile.value("joyid", -1).toInt());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -144,6 +145,7 @@ void TrackerControls::save() {
     {
         iniFile.setValue(QString("axis-%1").arg(i), boxen[i]->currentIndex());
     }
+    iniFile.setValue("joyid", ui.joylist->currentIndex());
 	iniFile.endGroup ();
 
     if(tracker)
