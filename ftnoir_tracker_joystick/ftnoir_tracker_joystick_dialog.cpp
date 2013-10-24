@@ -1,21 +1,51 @@
 #include "ftnoir_tracker_joystick.h"
 #include "facetracknoir/global-settings.h"
 
+static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
+{
+    auto self = ( TrackerControls* )pContext;
+
+    self->guids.push_back(pdidInstance->guidInstance);
+
+    return DIENUM_CONTINUE;
+}
+
 TrackerControls::TrackerControls() :
 QWidget()
 {
 	ui.setupUi( this );
 
 	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.spinBox, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox_4, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+
+    {
+        auto hr = CoInitialize( nullptr );
+        LPDIRECTINPUT8 g_pDI = nullptr;
+
+        if( FAILED( hr = DirectInput8Create( GetModuleHandle( NULL ), DIRECTINPUT_VERSION,
+                                             IID_IDirectInput8, ( VOID** )&g_pDI, NULL ) ) )
+            goto fin;
+
+        if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
+                                             EnumJoysticksCallback,
+                                             this,
+                                             DIEDFL_ATTACHEDONLY )))
+            goto fin;
+
+fin:
+        if (g_pDI)
+            g_pDI->Release();
+    }
+
 	loadSettings();
 }
 
@@ -74,13 +104,21 @@ void TrackerControls::loadSettings() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+    QComboBox* boxen[] = {
+        ui.comboBox,
+        ui.comboBox_2,
+        ui.comboBox_3,
+        ui.comboBox_4,
+        ui.comboBox_5,
+        ui.comboBox_6,
+    };
+
     iniFile.beginGroup ( "tracker-joy" );
-	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
-	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
-	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
-	ui.chkEnableX->setChecked(iniFile.value ( "EnableX", 1 ).toBool());
-	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
-	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
+    for (int i = 0; i < 6; i++)
+    {
+        boxen[i]->setCurrentIndex(iniFile.value(QString("axis-%1").arg(i), 0).toInt());
+    }
+    ui.spinBox->setValue(iniFile.value("joyid", -1).toInt());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -92,14 +130,26 @@ void TrackerControls::save() {
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
+    QComboBox* boxen[] = {
+        ui.comboBox,
+        ui.comboBox_2,
+        ui.comboBox_3,
+        ui.comboBox_4,
+        ui.comboBox_5,
+        ui.comboBox_6,
+    };
+
     iniFile.beginGroup ( "tracker-joy" );
-	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
-	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
-	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
-	iniFile.setValue ( "EnableX", ui.chkEnableX->isChecked() );
-	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
-	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
+    for (int i = 0; i < 6; i++)
+    {
+        iniFile.setValue(QString("axis-%1").arg(i), boxen[i]->currentIndex());
+    }
 	iniFile.endGroup ();
+
+    if(tracker)
+    {
+        tracker->reload();
+    }
 
 	settingsDirty = false;
 }

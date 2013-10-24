@@ -1,13 +1,37 @@
+#pragma once
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "ui_ftnoir_ftnclientcontrols.h"
-#include <QThread>
-#include <QUdpSocket>
+#include "ui_ftnoir_tracker_joystick_controls.h"
+#include <QComboBox>
+#include <QCheckBox>
+#include <QSpinBox>
 #include <QMessageBox>
 #include <QSettings>
+#include <QList>
 #include <QMutex>
-#include <QWaitCondition>
+#include <QFrame>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
+#ifndef DIRECTINPUT_VERSION
+#   define DIRECTINPUT_VERSION 0x800
+#endif
+#include <windows.h>
+#include <commctrl.h>
+#include <basetsd.h>
+#include <dinput.h>
+#include <dinputd.h>
+#include <oleauto.h>
+#include <shellapi.h>
+
+#define AXIS_MAX 8192
+
+struct DI_ENUM_CONTEXT
+{
+    DIJOYCONFIG* pPreferredJoyCfg;
+    bool bPreferredJoyCfgValid;
+    GUID preferred_instance;
+    LPDIRECTINPUTDEVICE8* g_pJoystick;
+    LPDIRECTINPUT8 g_pDI;
+};
 
 class FTNoIR_Tracker : public ITracker
 {
@@ -15,16 +39,17 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void StartTracker(QFrame *);
+    void StartTracker(QFrame *win);
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
-private:
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
+    LPDIRECTINPUT8          g_pDI;
+    LPDIRECTINPUTDEVICE8    g_pJoystick;
+    int axes[6];
+    GUID preferred;
+    int joyid;
+    QMutex mtx;
+    QFrame* frame;
+    void reload();
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -32,20 +57,24 @@ class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
 	explicit TrackerControls();
     ~TrackerControls();
     void showEvent (QShowEvent *);
 
     void Initialize(QWidget *parent);
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
-
+    void registerTracker(ITracker *foo) {
+        tracker = dynamic_cast<FTNoIR_Tracker*>(foo);
+    }
+    void unRegisterTracker() {
+        tracker = NULL;
+    }
+    QList<GUID> guids;
 private:
-	Ui::UICFTNClientControls ui;
+    Ui::UIJoystickControls ui;
 	void loadSettings();
 	void save();
 	bool settingsDirty;
+    FTNoIR_Tracker* tracker;
 
 private slots:
 	void doOK();
