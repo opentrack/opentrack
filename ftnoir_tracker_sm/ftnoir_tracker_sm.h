@@ -98,8 +98,6 @@ private:
 	SMMemMap *pMemData;
     
     smEngineHandle *engine_handle;
-	QTimer *timUpdateSettings;								// Timer to display current settings
-
 	FTNoIR_Tracker *theTracker;
     PortableLockedShm shm;
 
