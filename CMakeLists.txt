@@ -786,7 +786,7 @@ endif()
 if(MSVC)
     file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
     file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
-    install(FILES ${pdbs} ${pdbs2} DESTINATION .)
+    install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
 endif()
 
 if(SDK_SM_FACEAPI_PATH AND (MSVC80 OR MINGW))
