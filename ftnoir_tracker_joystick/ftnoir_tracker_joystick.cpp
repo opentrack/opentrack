@@ -4,10 +4,21 @@
 #include <cassert>
 #include <QMutexLocker>
 
+static BOOL CALLBACK EnumJoysticksCallback2( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
+{
+    auto self = ( FTNoIR_Tracker* )pContext;
+
+    self->def = *pdidInstance;
+
+    return self->iter++ == self->joyid ? DIENUM_STOP : DIENUM_CONTINUE;
+}
+
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
     g_pJoystick(nullptr),
-    joyid(-1)
+    joyid(-1),
+    iter(-1),
+    mtx(QMutex::Recursive)
 {
     for (int i = 0; i < 6; i++)
         axes[i] = -1;
@@ -72,55 +83,75 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
     if (!IsEqualGUID(pEnumContext->preferred_instance, pdidInstance->guidInstance))
         return DIENUM_CONTINUE;
 
-    if (SUCCEEDED(pEnumContext->g_pDI->CreateDevice( pdidInstance->guidInstance,
-                                                     pEnumContext->g_pJoystick, NULL )))
-        pEnumContext->bPreferredJoyCfgValid = true;
+    (void) pEnumContext->g_pDI->CreateDevice( pdidInstance->guidInstance, pEnumContext->g_pJoystick, NULL);
 
     return DIENUM_STOP;
 }
 
-void FTNoIR_Tracker::StartTracker(QFrame* win)
+void FTNoIR_Tracker::StartTracker(QFrame* frame)
 {
     QMutexLocker foo(&mtx);
-    frame = win;
+    iter = 0;
     loadSettings();
     auto hr = CoInitialize( nullptr );
-    IDirectInputJoyConfig8* pJoyConfig = nullptr;
-    DIJOYCONFIG PreferredJoyCfg = {0};
     DI_ENUM_CONTEXT enumContext = {0};
-    enumContext.pPreferredJoyCfg = &PreferredJoyCfg;
-    enumContext.bPreferredJoyCfgValid = false;
-    enumContext.g_pJoystick = &g_pJoystick;
 
     if( FAILED( hr = DirectInput8Create( GetModuleHandle( NULL ), DIRECTINPUT_VERSION,
                                          IID_IDirectInput8, ( VOID** )&g_pDI, NULL ) ) )
+    {
+        qDebug() << "create";
         goto fail;
+    }
+
+    if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
+                                         EnumJoysticksCallback2,
+                                         this,
+                                         DIEDFL_ATTACHEDONLY)))
+    {
+        qDebug() << "enum2";
+        goto fail;
+    }
+
+    enumContext.pPreferredJoyCfg = &def;
+    enumContext.g_pDI = g_pDI;
+    enumContext.g_pJoystick = &g_pJoystick;
+    enumContext.preferred_instance = def.guidInstance;
 
     if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
                                          EnumJoysticksCallback,
-                                         &enumContext, DIEDFL_ATTACHEDONLY ) ) )
-        goto fail;
-
-    PreferredJoyCfg.dwSize = sizeof( PreferredJoyCfg );
-    if( SUCCEEDED( pJoyConfig->GetConfig( 0, &PreferredJoyCfg, DIJC_GUIDINSTANCE ) ) )
-        enumContext.bPreferredJoyCfgValid = true;
-    if (pJoyConfig)
+                                         &enumContext,
+                                         DIEDFL_ATTACHEDONLY)))
     {
-        pJoyConfig->Release();
-        pJoyConfig = nullptr;
+        qDebug() << "enum1";
+        goto fail;
     }
 
-    assert((!!enumContext.bPreferredJoyCfgValid) == !!(g_pJoystick != nullptr));
+    if (!g_pJoystick)
+    {
+        qDebug() << "ENODEV";
+        goto fail;
+    }
 
     if (FAILED(g_pJoystick->SetDataFormat(&c_dfDIJoystick2)))
+    {
+        qDebug() << "format";
         goto fail;
+    }
 
-    if (FAILED(g_pJoystick->SetCooperativeLevel((HWND) win->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+    if (FAILED(g_pJoystick->SetCooperativeLevel((HWND) frame->window()->winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+    {
+        qDebug() << "coop";
         goto fail;
+    }
 
     if( FAILED( hr = g_pJoystick->EnumObjects( EnumObjectsCallback,
-                                               ( VOID* )this, DIDFT_ALL ) ) )
+                                               ( VOID* )this, DIDFT_ALL )))
+    {
+        qDebug() << "enum axes";
         goto fail;
+    }
+
+    qDebug() << "joy init success";
 
     return;
 
@@ -131,6 +162,8 @@ fail:
         g_pDI->Release();
     g_pJoystick = nullptr;
     g_pDI = nullptr;
+
+    qDebug() << "joy init failure";
 }
 
 bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
@@ -143,7 +176,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
 
 start:
     auto hr = g_pJoystick->Poll();
-    if( FAILED( hr ) )
+    if( FAILED( hr ))
     {
         hr = g_pJoystick->Acquire();
         while( hr == DIERR_INPUTLOST )
@@ -182,6 +215,7 @@ start:
 
 void FTNoIR_Tracker::loadSettings() {
 
+    QMutexLocker foo(&mtx);
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)

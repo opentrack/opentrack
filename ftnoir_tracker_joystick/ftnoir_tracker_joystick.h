@@ -26,8 +26,7 @@
 
 struct DI_ENUM_CONTEXT
 {
-    DIJOYCONFIG* pPreferredJoyCfg;
-    bool bPreferredJoyCfgValid;
+    DIDEVICEINSTANCE* pPreferredJoyCfg;
     GUID preferred_instance;
     LPDIRECTINPUTDEVICE8* g_pJoystick;
     LPDIRECTINPUT8 g_pDI;
@@ -39,7 +38,7 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-    void StartTracker(QFrame *win);
+    void StartTracker(QFrame *frame);
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     LPDIRECTINPUT8          g_pDI;
@@ -49,7 +48,9 @@ public:
     int joyid;
     QMutex mtx;
     QFrame* frame;
+    DIDEVICEINSTANCE def;
     void reload();
+    int iter; // XXX bad style
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
