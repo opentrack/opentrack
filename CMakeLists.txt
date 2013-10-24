@@ -239,7 +239,7 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB opentrack-tracker-aruco-h "ftnoir_tracker_aruco/*.h")
     file(GLOB opentrack-tracker-aruco-ui "ftnoir_tracker_aruco/*.ui")
     file(GLOB opentrack-tracker-aruco-rc "ftnoir_tracker_aruco/*.qrc")
-    QT5_WRAP_UI(opentrack-tracker-aruco-uih ${opentrack-tracker-aruco-ui})
+    QT5_WRAP_UI(opentracktracker-aruco-uih ${opentrack-tracker-aruco-ui})
     QT5_ADD_RESOURCES(opentrack-tracker-aruco-rcc ${opentrack-tracker-aruco-rc})
 
     file(GLOB opentrack-tracker-pt-c "FTNoIR_Tracker_PT/*.cpp")
@@ -255,6 +255,13 @@ if(NOT SDK_FACEAPI_ONLY)
     file(GLOB opentrack-tracker-udp-rc "ftnoir_tracker_udp/*.qrc")
     QT5_WRAP_UI(opentrack-tracker-udp-uih ${opentrack-tracker-udp-ui})
     QT5_ADD_RESOURCES(opentrack-tracker-udp-rcc ${opentrack-tracker-udp-rc})
+
+    file(GLOB opentrack-tracker-joystick-c "ftnoir_tracker_joystick/*.cpp")
+    file(GLOB opentrack-tracker-joystick-h "ftnoir_tracker_joystick/*.h")
+    file(GLOB opentrack-tracker-joystick-ui "ftnoir_tracker_joystick/*.ui")
+    file(GLOB opentrack-tracker-joystick-rc "ftnoir_tracker_joystick/*.qrc")
+    QT5_WRAP_UI(opentrack-tracker-joystick-uih ${opentrack-tracker-joystick-ui})
+    QT5_ADD_RESOURCES(opentrack-tracker-joystick-rcc ${opentrack-tracker-joystick-rc})
 	
     file(GLOB opentrack-tracker-rift-c "ftnoir_tracker_rift/*.cpp")
     file(GLOB opentrack-tracker-rift-h "ftnoir_tracker_rift/*.h")
@@ -419,6 +426,15 @@ endif()
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
 
+    if(WIN32)
+        add_library(opentrack-tracker-joystick SHARED ${opentrack-tracker-joystick-c} ${opentrack-tracker-joystick-h} ${opentrack-tracker-joystick-moc} ${opentrack-tracker-joystick-uih} ${opentrack-tracker-joystick-rcc})
+        target_link_libraries(opentrack-tracker-joystick ${MY_QT_LIBS})
+        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+            SET_TARGET_PROPERTIES(opentrack-tracker-joystick
+                          PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+        endif()
+    endif()
+
     if(NOT WIN32 AND SDK_WINE_PREFIX)
         add_library(opentrack-proto-wine SHARED ${opentrack-proto-wine-c} ${opentrack-proto-wine-h} ${opentrack-proto-wine-moc} ${opentrack-proto-wine-uih} ${opentrack-proto-wine-rcc})
         target_link_libraries(opentrack-proto-wine ${MY_QT_LIBS} opentrack-compat opentrack-csv)
@@ -467,6 +483,11 @@ endif()
 
     if(WIN32)
         target_link_libraries(opentrack-tracker-ht
+                      "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
+                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+                      uuid)
+        target_link_libraries(opentrack-tracker-joystick
+                      "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
                       "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
                       "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
                       uuid)
@@ -668,6 +689,10 @@ if(NOT SDK_FACEAPI_ONLY)
             LIBRARY DESTINATION .
             NAMELINK_SKIP
     )
+
+    if(WIN32)
+        install(TARGETS opentrack-tracker-joystick RUNTIME DESTINATION . LIBRARY DESTINATION . NAMELINK_SKIP)
+    endif()
 
     if(WIN32 AND SDK_VJOY)
         install(TARGETS opentrack-proto-vjoy
