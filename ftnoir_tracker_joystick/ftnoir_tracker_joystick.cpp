@@ -37,6 +37,9 @@ void FTNoIR_Tracker::reload()
     if (g_pDI)
         g_pDI->Release();
 
+    g_pJoystick = nullptr;
+    g_pDI = nullptr;
+
     StartTracker(frame);
 }
 
