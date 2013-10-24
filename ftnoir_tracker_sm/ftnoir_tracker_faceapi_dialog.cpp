@@ -22,8 +22,8 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-#include "ftnoir_tracker_sm.h"
 #include <QtGui>
+#include "ftnoir_tracker_sm/ftnoir_tracker_sm.h"
 #include "facetracknoir/global-settings.h"
 
 //*******************************************************************************************************
@@ -33,24 +33,24 @@
 //
 // Constructor for server-settings-dialog
 //
-TrackerControls::TrackerControls() : QWidget()
+TrackerControls::TrackerControls() : settingsDirty(false)
 {
 	ui.setupUi( this );
 
     //connect(ui.cbxFilterSetting, SIGNAL(currentIndexChanged(int)), this, SLOT(doSetFilter( int )));
     //connect(ui.btnCameraSettings, SIGNAL(clicked()), this, SLOT(doShowCam()));
 
-	//Setup the timer for showing the headpose.
-	connect(this, SIGNAL(stateChanged( int )), this, SLOT(showSettings( int )));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-	connect(ui.chkEnableRoll, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnablePitch, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableYaw, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableX, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableY, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.chkEnableZ, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableRoll, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnablePitch, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableYaw, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableX, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableY, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.chkEnableZ, SIGNAL(setChecked(int)), this, SLOT(settingChanged(int)));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOk()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doOCancel()));
 }
 
 //
