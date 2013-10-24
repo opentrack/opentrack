@@ -199,12 +199,13 @@ void FilterControls::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
-    
-    double rot, trans, zoom;
 
-	iniFile.beginGroup ( "Accela" );
+    double rot, trans, zoom;
+    
+    iniFile.beginGroup ( "Accela" );
     iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
     iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
+    iniFile.setValue("zoom-slowness", zoom = ui.spinZoom->value());
 	iniFile.endGroup ();
 
     iniFile.beginGroup("Accela-Scaling");
