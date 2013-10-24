@@ -15,7 +15,7 @@
 #include <QList>
 #include <QMutex>
 #include <QFrame>
-#include <math.h>
+#include <cmath>
 #include "facetracknoir/global-settings.h"
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
