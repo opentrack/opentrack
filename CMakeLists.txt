@@ -598,6 +598,10 @@ endif()
         target_link_libraries(opentrack opentrack-qxt-mini)
     endif()
 
+    if(MSVC)
+        SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT")
+    endif()
+
     if(UNIX)
         install(TARGETS opentrack-qxt-mini DESTINATION .)
     endif()
