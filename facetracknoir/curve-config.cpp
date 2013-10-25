@@ -13,6 +13,7 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
 	// Connect Qt signals to member-functions
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -182,8 +183,6 @@ void CurveConfigurationDialog::loadSettings() {
         connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)), Qt::UniqueConnection);
         mainApp->axis(i).zero = widgets3[i]->value();
     }
-
-    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
     
     settingsDirty = false;
 }
