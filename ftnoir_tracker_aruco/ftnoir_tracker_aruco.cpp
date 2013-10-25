@@ -185,6 +185,12 @@ void Tracker::run()
         fprintf(stderr, "aruco tracker: can't open camera\n");
         return;
     }
+
+    auto freq = cv::getTickFrequency();
+    auto last_time = cv::getTickCount();
+    auto prev_time = last_time;
+    int fps = 0;
+    int last_fps = 0;
   
     while (!stop)
     {
@@ -204,7 +210,7 @@ void Tracker::run()
         intrinsics.at<float> (1, 1) = focal_length_h;
         intrinsics.at<float> (0, 2) = grayscale.cols/2;
         intrinsics.at<float> (1, 2) = grayscale.rows/2;
-        
+
         cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
         
         for (int i = 0; i < 5; i++)
@@ -219,9 +225,27 @@ void Tracker::run()
             for (int i = 0; i < 4; i++)
                 cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 4);
         }
-        
+
+        auto time = cv::getTickCount();
+
+        if ((long) (time / freq) != (long) (last_time / freq))
+        {
+            last_fps = fps;
+            fps = 0;
+            last_time = time;
+        }
+
+        fps++;
+
+        char buf[128];
+
+        std::sprintf(buf, "Hz: %ld", last_fps);
+        cv::putText(frame, buf, cv::Point(10, 30), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
+        std::sprintf(buf, "Delay: %ld ms", (long) (1000 * (time - prev_time) / freq));
+        cv::putText(frame, buf, cv::Point(10, 50), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
+        prev_time = time;
+
         frame = color;
-        
         if (frame.rows > 0)
         {
             videoWidget->update_image(frame.data, frame.cols, frame.rows);
