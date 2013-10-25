@@ -191,6 +191,7 @@ void Tracker::run()
     auto prev_time = last_time;
     int fps = 0;
     int last_fps = 0;
+    double error = 0;
     std::vector<cv::Point2f> reprojection;
   
     while (!stop)
@@ -250,9 +251,11 @@ void Tracker::run()
         char buf[128];
 
         std::sprintf(buf, "Hz: %ld", last_fps);
-        cv::putText(frame, buf, cv::Point(10, 30), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
+        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
         std::sprintf(buf, "Delay: %ld ms", (long) (1000 * (time - prev_time) / freq));
-        cv::putText(frame, buf, cv::Point(10, 50), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
+        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(80, 255, 0), 2);
+        std::sprintf(buf, "Error: %f px", error);
+        cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(80, 255, 0), 2);
         prev_time = time;
 
         frame = color;
@@ -301,6 +304,14 @@ void Tracker::run()
             reprojection.clear();
             reprojection.resize(4);
             cv::projectPoints(obj_points, rvec, tvec, intrinsics, dist_coeffs, reprojection);
+
+            error = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                double x = reprojection[i].x - m[i].x;
+                double y = reprojection[i].y - m[i].y;
+                error += std::sqrt(x * x + y * y);
+            }
 
             //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
             //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
