@@ -191,6 +191,7 @@ void Tracker::run()
     auto prev_time = last_time;
     int fps = 0;
     int last_fps = 0;
+    std::vector<cv::Point2f> reprojection;
   
     while (!stop)
     {
@@ -223,7 +224,16 @@ void Tracker::run()
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
             for (int i = 0; i < 4; i++)
-                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 4);
+                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 3);
+        }
+
+        for (int i = 0; i < reprojection.size(); i++)
+        {
+            cv::circle(frame,
+                       reprojection[i],
+                       6,
+                       cv::Scalar(0, 255, 128),
+                       3);
         }
 
         auto time = cv::getTickCount();
@@ -287,7 +297,11 @@ void Tracker::run()
             pose[Yaw] = foo[1];
             pose[Pitch] = -foo[0];
             pose[Roll] = foo[2];
-            
+
+            reprojection.clear();
+            reprojection.resize(4);
+            cv::projectPoints(obj_points, rvec, tvec, intrinsics, dist_coeffs, reprojection);
+
             //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
             //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
         }
