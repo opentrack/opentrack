@@ -206,7 +206,6 @@ void Tracker::Initialize(QFrame *video_frame)
 	settings.load_ini();
 	apply(settings);
 	camera.start();
-    apply(settings);
 	start();
 }
 
