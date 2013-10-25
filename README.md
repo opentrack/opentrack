@@ -15,8 +15,9 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - Oculus Rift (Windows; Linux testers welcome!)
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
 - HT tracker <https://github.com/sthalik/headtracker>
-- Razer Hydra (Windows only)
+- Razer Hydra (Windows; Linux testers welcome!)
 - Relaying via UDP from a different computer
+- Joystick analog axes (Windows only)
 
 # Output
 
