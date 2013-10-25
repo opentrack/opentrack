@@ -64,7 +64,7 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
 static inline double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
-    return a1 * x * x;
+    return a1 * pow(x, 2.2);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
