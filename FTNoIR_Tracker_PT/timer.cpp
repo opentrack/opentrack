@@ -54,13 +54,13 @@ double Timer::elapsed()
 
     startTime = startCount.QuadPart * (1e3 / frequency.QuadPart);
     endTime = endCount.QuadPart * (1e3 / frequency.QuadPart);
+    return endTime - startTime;
 #else
     if(running)
         gettimeofday(&endCount, NULL);
 
     startTime = (startCount.tv_sec) + startCount.tv_usec * 1e-6;
     endTime = (endCount.tv_sec) + endCount.tv_usec * 1e-6;
-#endif
-
     return (endTime - startTime) * 1e3;
+#endif
 }
