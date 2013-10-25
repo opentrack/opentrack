@@ -185,7 +185,7 @@ bool CVCamera::_get_frame(Mat* frame)
          *     frames and then some every once in a while
          * -sh
          */
-        while (!cap->read(img))
+        for (int i = 0; i < 100 && !cap->read(img); i++)
             ;;
 
 		if (img.empty())
