@@ -578,10 +578,10 @@
      <string>Game protocol</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="checkable">
      <bool>false</bool>
@@ -736,10 +736,10 @@
      <string>Filter</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="checkable">
      <bool>false</bool>
@@ -819,10 +819,10 @@
      <string>Main tracker</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="checkable">
      <bool>false</bool>
@@ -1088,10 +1088,10 @@
      <string>Auxiliary tracker</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="checkable">
      <bool>false</bool>
@@ -1168,10 +1168,10 @@
      <string>GO!</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <layout class="QGridLayout" name="gridLayout_9" rowstretch="0" columnstretch="0,0" rowminimumheight="0" columnminimumwidth="0,0">
      <property name="sizeConstraint">
@@ -1295,10 +1295,10 @@
      <string>Profile</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <layout class="QGridLayout" name="gridLayout_5" rowstretch="6,6,6" columnstretch="6,6" rowminimumheight="6,6,6" columnminimumwidth="6,6">
      <property name="sizeConstraint">
@@ -1407,7 +1407,7 @@
      <set>Qt::AlignBottom|Qt::AlignHCenter</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <layout class="QFormLayout" name="formLayout">
      <property name="sizeConstraint">
@@ -1638,7 +1638,7 @@
      <set>Qt::AlignBottom|Qt::AlignHCenter</set>
     </property>
     <property name="flat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <layout class="QFormLayout" name="formLayout_2">
      <property name="sizeConstraint">
