@@ -16,7 +16,6 @@
 #include <QSettings>
 #include <math.h>
 #include <QPixmap>
-#include <QDebug>
 
 //
 // Constructor with List of Points in argument.
@@ -234,8 +233,6 @@ void FunctionConfig::loadSettings(QSettings& settings) {
 	settings.beginGroup(QString("Curves-%1").arg(_title));
 	
     int max = settings.value("point-count", 0).toInt();
-
-    qDebug() << _title << "count" << max;
 
 	for (int i = 0; i < max; i++) {
         newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), (i + 1) * _max_Input/2).toFloat(),
