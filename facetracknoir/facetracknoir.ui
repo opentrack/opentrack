@@ -39,7 +39,7 @@
    <string>opentrack</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
+   <iconset resource="main-facetracknoir.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -141,10 +141,10 @@
    <widget class="QGroupBox" name="groupBox4logo">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>60</y>
-      <width>203</width>
-      <height>97</height>
+      <x>110</x>
+      <y>50</y>
+      <width>229</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -170,20 +170,33 @@
     </property>
     <layout class="QGridLayout" name="gridLayout_8">
      <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
+      <enum>QLayout::SetMinimumSize</enum>
      </property>
-     <property name="leftMargin">
-      <number>2</number>
+     <property name="horizontalSpacing">
+      <number>10</number>
      </property>
-     <property name="topMargin">
-      <number>2</number>
+     <property name="margin">
+      <number>0</number>
      </property>
-     <property name="rightMargin">
-      <number>2</number>
-     </property>
-     <property name="bottomMargin">
-      <number>6</number>
-     </property>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>TZ</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="3">
       <widget class="QLCDNumber" name="lcdNumOutputRotX">
        <property name="enabled">
@@ -194,6 +207,11 @@
          <width>65536</width>
          <height>65536</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -221,6 +239,74 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblX">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TX</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLCDNumber" name="lcdNumOutputPosX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="numDigits">
+        <number>5</number>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="lblRotX">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>yaw</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1">
       <widget class="QLCDNumber" name="lcdNumOutputPosY">
        <property name="enabled">
@@ -231,6 +317,53 @@
          <width>65536</width>
          <height>65536</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="numDigits">
+        <number>5</number>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLCDNumber" name="lcdNumOutputPosZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -271,6 +404,25 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>TY</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="2">
       <widget class="QLabel" name="lblRotY">
        <property name="maximumSize">
@@ -295,42 +447,10 @@
          <height>65536</height>
         </size>
        </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>1</number>
-       </property>
-       <property name="smallDecimalPoint">
-        <bool>false</bool>
-       </property>
-       <property name="numDigits">
-        <number>5</number>
-       </property>
-       <property name="digitCount">
-        <number>5</number>
-       </property>
-       <property name="segmentStyle">
-        <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLCDNumber" name="lcdNumOutputPosX">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -369,84 +489,10 @@
          <height>65536</height>
         </size>
        </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>1</number>
-       </property>
-       <property name="smallDecimalPoint">
-        <bool>false</bool>
-       </property>
-       <property name="numDigits">
-        <number>5</number>
-       </property>
-       <property name="digitCount">
-        <number>5</number>
-       </property>
-       <property name="segmentStyle">
-        <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblX">
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
-       </property>
        <property name="font">
         <font>
-         <pointsize>9</pointsize>
+         <pointsize>13</pointsize>
         </font>
-       </property>
-       <property name="text">
-        <string>X</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lblY">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Y</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLCDNumber" name="lcdNumOutputPosZ">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
        </property>
        <property name="autoFillBackground">
         <bool>false</bool>
@@ -471,43 +517,6 @@
        </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="lblZ">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Z</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="lblRotX">
-       <property name="maximumSize">
-        <size>
-         <width>65536</width>
-         <height>65536</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>yaw</string>
        </property>
       </widget>
      </item>
@@ -678,10 +687,16 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>36</y>
+      <y>30</y>
       <width>651</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="maximumSize">
      <size>
@@ -863,10 +878,16 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>10</y>
+      <y>0</y>
       <width>651</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="minimumSize">
      <size>
@@ -1373,10 +1394,10 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>420</y>
-      <width>131</width>
-      <height>111</height>
+      <width>141</width>
+      <height>106</height>
      </rect>
     </property>
     <property name="title">
@@ -1402,18 +1423,9 @@
       <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
      </property>
      <property name="formAlignment">
-      <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+      <set>Qt::AlignHCenter|Qt::AlignTop</set>
      </property>
-     <property name="leftMargin">
-      <number>6</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item row="0" column="0">
@@ -1613,9 +1625,9 @@
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>420</y>
-      <width>131</width>
+      <width>161</width>
       <height>111</height>
      </rect>
     </property>
@@ -1642,18 +1654,9 @@
       <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
      </property>
      <property name="formAlignment">
-      <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+      <set>Qt::AlignHCenter|Qt::AlignTop</set>
      </property>
-     <property name="leftMargin">
-      <number>6</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item row="0" column="0">
@@ -1867,7 +1870,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
