@@ -1,6 +1,7 @@
 #include "facetracknoir/facetracknoir.h"
 #include "facetracknoir/curve-config.h"
 #include <QDebug>
+#include <QCheckBox>
 CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidget *parent) :
     QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
@@ -93,6 +94,8 @@ void CurveConfigurationDialog::loadSettings() {
 
     iniFile.beginGroup("Tracking");
 
+    ui.checkBox->setChecked(iniFile.value("compensation", true).toBool());
+
     for (int i = 0; i < 6; i++)
         mainApp->axis(i).altp = iniFile.value(names[i], false).toBool();
 
@@ -179,6 +182,8 @@ void CurveConfigurationDialog::loadSettings() {
         connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)), Qt::UniqueConnection);
         mainApp->axis(i).zero = widgets3[i]->value();
     }
+
+    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
     
     settingsDirty = false;
 }
@@ -211,6 +216,13 @@ void CurveConfigurationDialog::save() {
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     iniFile.beginGroup("Tracking");
+
+    bool compensate = true;
+
+    iniFile.setValue("compensation", compensate = (bool) !!ui.checkBox->isChecked());
+
+    if (mainApp->tracker)
+        mainApp->tracker->compensate = compensate;
 
     iniFile.setValue("rx_alt", ui.rx_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("ry_alt", ui.ry_altp->checkState() != Qt::Unchecked);
