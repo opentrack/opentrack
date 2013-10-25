@@ -183,14 +183,14 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
     if( !g_pDI || !g_pJoystick)
         return false;
 
-start:
     auto hr = g_pJoystick->Poll();
     if( FAILED( hr ))
     {
         hr = g_pJoystick->Acquire();
-        while( hr == DIERR_INPUTLOST )
+        for (int i = 0; hr == DIERR_INPUTLOST && i < 200; i++)
             hr = g_pJoystick->Acquire();
-        goto start;
+        if (hr != DI_OK)
+            return false;
     }
 
     if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( js ), &js ) ) )
