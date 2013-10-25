@@ -257,6 +257,7 @@ void FaceTrackNoIR::save() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );	
 
 	iniFile.beginGroup ( "Tracking" );
+
 	iniFile.setValue ( "invertYaw", ui.chkInvertYaw->isChecked() );
 	iniFile.setValue ( "invertPitch", ui.chkInvertPitch->isChecked() );
 	iniFile.setValue ( "invertRoll", ui.chkInvertRoll->isChecked() );
@@ -488,6 +489,8 @@ void FaceTrackNoIR::startTracker( ) {
     iniFile.endGroup();
 
 	tracker = new Tracker ( this );
+
+    tracker->compensate = iniFile.value("compensate", true).toBool();
 
     tracker->setInvertAxis(Yaw, ui.chkInvertYaw->isChecked() );
     tracker->setInvertAxis(Pitch, ui.chkInvertPitch->isChecked() );

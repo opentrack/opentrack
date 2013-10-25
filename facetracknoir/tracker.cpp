@@ -23,16 +23,18 @@
 *********************************************************************************/
 #include "tracker.h"
 #include "facetracknoir.h"
+#include <opencv2/core/core.hpp>
+#include <cmath>
 
 #if defined(_WIN32)
 #   include <windows.h>
 #endif
 
-/** constructor **/
 Tracker::Tracker( FaceTrackNoIR *parent ) :
     should_quit(false),
     do_center(false),
-    enabled(true)
+    enabled(true),
+    compensate(true)
 {
     // Retieve the pointer to the parent
     mainApp = parent;
@@ -122,6 +124,41 @@ void Tracker::run() {
 
             for (int i = 0; i < 6; i++) {
                 get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
+            }
+
+            if (compensate)
+            {
+                const auto H = output_camera.axes[Yaw] * M_PI / 180;
+                const auto P = output_camera.axes[Pitch] * M_PI / 180;
+                const auto B = output_camera.axes[Roll] * M_PI / 180;
+
+                const auto cosH = cos(H);
+                const auto sinH = sin(H);
+                const auto cosP = cos(P);
+                const auto sinP = sin(P);
+                const auto cosB = cos(B);
+                const auto sinB = sin(B);
+
+                double foo[] = {
+                    cosH * cosB - sinH * sinP * sinB,
+                    - sinB * cosP,
+                    sinH * cosB + cosH * sinP * sinB,
+                    cosH * sinB + sinH * sinP * cosB,
+                    cosB * cosP,
+                    sinB * sinH - cosH * sinP * cosB,
+                    - sinH * cosP,
+                    - sinP,
+                    cosH * cosP,
+                };
+
+                cv::Mat rmat(3, 3, CV_64F, foo);
+                cv::Mat tvec(3, 1, CV_64F, output_camera.axes);
+                cv::Mat ret = rmat * tvec;
+
+                cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
+
+                for (int i = 0; i < 3; i++)
+                    output_camera.axes[i] = ret.at<double>(i);
             }
 
             if (Libraries->pProtocol) {
