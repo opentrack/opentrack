@@ -11,7 +11,6 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 
 # Tracking sources
 
-- SeeingMachines FaceAPI <http://seeingmachines.com/> (Windows)
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift (Windows; Linux testers welcome!)
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
