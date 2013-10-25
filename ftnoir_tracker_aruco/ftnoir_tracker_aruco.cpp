@@ -193,18 +193,20 @@ void Tracker::run()
     int last_fps = 0;
     double error = 0;
     std::vector<cv::Point2f> reprojection;
-  
+    auto kernel = cv::createGaussianFilter(CV_8U, cv::Size(5, 5), 0);
     while (!stop)
     {
         if (!camera.read(color_))
             continue;
         color_.copyTo(color);
         cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
-        const int kernel = grayscale2.cols > 480 ? 5 : 3;
-        int kernel2 = kernel * grayscale2.rows / grayscale2.cols - 1;
-        if ((kernel2 % 2) == 0)
-            kernel2++;
-        cv::GaussianBlur(grayscale2, grayscale, cv::Size(kernel, kernel2), 0, 0);
+        if (grayscale.empty())
+            grayscale = grayscale2.clone();
+
+        kernel->apply(grayscale2, grayscale);
+
+        const int scale = frame.cols > 480 ? 2 : 1;
+
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
@@ -225,7 +227,7 @@ void Tracker::run()
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
             for (int i = 0; i < 4; i++)
-                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 3);
+                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale);
         }
 
         for (int i = 0; i < reprojection.size(); i++)
@@ -251,11 +253,11 @@ void Tracker::run()
         char buf[128];
 
         std::sprintf(buf, "Hz: %ld", last_fps);
-        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 255, 0), 2);
+        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
         std::sprintf(buf, "Delay: %ld ms", (long) (1000 * (time - prev_time) / freq));
-        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(80, 255, 0), 2);
+        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         std::sprintf(buf, "Error: %f px", error);
-        cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(80, 255, 0), 2);
+        cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         prev_time = time;
 
         frame = color;
