@@ -58,7 +58,7 @@ SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-    find_package(OpenCV)
+    find_package(OpenCV REQUIRED)
     find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
 	cmake_policy(SET CMP0020 NEW)
     include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
@@ -477,26 +477,22 @@ if(WIN32)
                   uuid)
 endif()
 
-if(OpenCV_FOUND)
-    include_directories(${OpenCV_INCLUDE_DIRS})
-    include_directories(${OpenCV_DIR}/include)
-    include_directories(${OpenCV_CONFIG_PATH}/include)
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${OpenCV_DIR}/include)
+include_directories(${OpenCV_CONFIG_PATH}/include)
+
+add_library(opentrack-tracker-pt SHARED ${opentrack-tracker-pt-c} ${opentrack-tracker-pt-h} ${opentrack-tracker-pt-moc} ${opentrack-tracker-pt-uih} ${opentrack-tracker-pt-rcc})
+target_link_libraries(opentrack-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS})
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+SET_TARGET_PROPERTIES(opentrack-tracker-pt
+        PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
 endif()
 
-if(OpenCV_FOUND)
-    add_library(opentrack-tracker-pt SHARED ${opentrack-tracker-pt-c} ${opentrack-tracker-pt-h} ${opentrack-tracker-pt-moc} ${opentrack-tracker-pt-uih} ${opentrack-tracker-pt-rcc})
-    target_link_libraries(opentrack-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS})
-    if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-    SET_TARGET_PROPERTIES(opentrack-tracker-pt
-            PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
-    endif()
-
-    if(WIN32)
-        target_link_libraries(opentrack-tracker-pt
-                      "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                      uuid)
-    endif()
+if(WIN32)
+    target_link_libraries(opentrack-tracker-pt
+                  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
+                  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+                  uuid)
 endif()
 
 add_library(opentrack-tracker-udp SHARED ${opentrack-tracker-udp-c} ${opentrack-tracker-udp-h} ${opentrack-tracker-udp-moc} ${opentrack-tracker-udp-uih} ${opentrack-tracker-udp-rcc})
@@ -581,6 +577,7 @@ set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION
 if(UNIX)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
+target_link_libraries(opentrack ${OpenCV_LIBS})
 
 if(UNIX)
     install(TARGETS opentrack-qxt-mini DESTINATION .)
@@ -636,9 +633,7 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
     install(TARGETS opentrack-proto-wine DESTINATION .)
 endif()
 
-if(OpenCV_FOUND)
-    install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
-endif()
+install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
 
 if(SDK_ARUCO_LIBPATH)
     install(TARGETS opentrack-tracker-aruco RUNTIME DESTINATION . LIBRARY DESTINATION .)
@@ -699,7 +694,7 @@ if(WIN32)
             LIBRARY DESTINATION .
             NAMELINK_SKIP)
     endif()
-    if(OpenCV_FOUND AND NOT SDK_OPENCV_STATIC)
+    if(NOT SDK_OPENCV_STATIC)
         get_filename_component(opentrack-opencv-dir "${OpenCV_LIB_DIR_OPT}" PATH)
         if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
             set(LIB-PREFIX "../bin/Release/")
