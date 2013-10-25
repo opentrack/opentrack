@@ -39,14 +39,14 @@ public:
 		d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
 	}
     
-    void toEuler(double& yaw, double& pitch, double& roll)
+    void toEuler(double& yaw, double& pitch, double& roll) const
     {
         roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
         pitch = asin(2.0*(a*c - b*d));
         yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
     }
     
-    const RotationType operator*(const RotationType& B)
+    const RotationType operator*(const RotationType& B) const
     {
         const RotationType& A = *this;
         return RotationType(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
