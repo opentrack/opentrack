@@ -29,71 +29,6 @@
   <property name="styleSheet">
    <string notr="true">background-color: #ccc;</string>
   </property>
-  <widget class="QPushButton" name="btnOK">
-   <property name="geometry">
-    <rect>
-     <x>810</x>
-     <y>625</y>
-     <width>72</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="text">
-    <string>OK</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnCancel">
-   <property name="geometry">
-    <rect>
-     <x>886</x>
-     <y>625</y>
-     <width>69</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
@@ -880,6 +815,19 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>630</y>
+     <width>164</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
   </widget>
  </widget>
  <customwidgets>

@@ -11,8 +11,8 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
 	this->move(parent->pos() + offsetpos);
 
 	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
 
 	// Load the settings from the current .INI-file
