@@ -14,15 +14,15 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>0</height>
+    <width>347</width>
+    <height>268</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -47,18 +47,12 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QFormLayout" name="formLayout_3">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::ExpandingFieldsGrow</enum>
-   </property>
-   <property name="horizontalSpacing">
-    <number>4</number>
-   </property>
-   <property name="verticalSpacing">
-    <number>4</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
     <number>6</number>
+   </property>
+   <property name="spacing">
+    <number>4</number>
    </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupbox2">
@@ -66,7 +60,7 @@
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -84,24 +78,6 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::ExpandingFieldsGrow</enum>
-      </property>
-      <property name="rowWrapPolicy">
-       <enum>QFormLayout::DontWrapRows</enum>
-      </property>
-      <property name="labelAlignment">
-       <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-      </property>
-      <property name="formAlignment">
-       <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-      </property>
-      <property name="horizontalSpacing">
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing">
-       <number>2</number>
-      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="sizePolicy">
@@ -121,7 +97,7 @@
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="rotation_alpha">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -162,7 +138,7 @@
       <item row="1" column="1">
        <widget class="QDoubleSpinBox" name="translation_alpha">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -216,14 +192,14 @@ background:none;</string>
       <item row="2" column="1">
        <widget class="QSpinBox" name="spinZoom">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>96</width>
+          <width>20</width>
           <height>22</height>
          </size>
         </property>
@@ -259,7 +235,7 @@ background:none;</string>
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -529,7 +505,7 @@ background:none;</string>
      </layout>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="1" column="1">
     <widget class="QLabel" name="label_9">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -574,7 +550,7 @@ background:none;</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="2" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
