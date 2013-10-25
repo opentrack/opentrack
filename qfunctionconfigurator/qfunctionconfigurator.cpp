@@ -69,7 +69,6 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFi
 
     strSettingsFile = settingsFile;													// Remember for Reset()
 
-    qDebug() << "QFunctionConfigurator::setConfig" << config->getTitle();
     setCaption(config->getTitle());
 
     _draw_function = _draw_background = true;
@@ -83,7 +82,6 @@ void QFunctionConfigurator::loadSettings(QString settingsFile) {
 
     QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
     strSettingsFile = settingsFile;													// Remember for Reset()
-    qDebug() << "QFunctionConfigurator::loadSettings = " << settingsFile;
     if (_config) {
         _config->loadSettings(iniFile);
     }
@@ -95,7 +93,6 @@ void QFunctionConfigurator::loadSettings(QString settingsFile) {
 void QFunctionConfigurator::saveSettings(QString settingsFile) {
     QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
     strSettingsFile = settingsFile;													// Remember for Reset()
-    qDebug() << "QFunctionConfigurator::saveSettings = " << settingsFile;
 
     if (_config) {
         _config->saveSettings(iniFile);
@@ -616,8 +613,6 @@ void QFunctionConfigurator::setCaption(QString cap)
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
     range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
-
-    qDebug() << "QFunctionConfigurator::resizeEvent, name = " << strCaption << ",range = " << range;
 
     _draw_background = true;
     _draw_function = true;
