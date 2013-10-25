@@ -200,7 +200,7 @@ void Tracker::run()
             continue;
         color_.copyTo(color);
         cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
-        const int kernel = grayscale2.cols > 480 ? 7 : 5;
+        const int kernel = grayscale2.cols > 480 ? 5 : 3;
         int kernel2 = kernel * grayscale2.rows / grayscale2.cols - 1;
         if ((kernel2 % 2) == 0)
             kernel2++;
