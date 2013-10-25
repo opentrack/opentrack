@@ -254,7 +254,7 @@ void Tracker::run()
             cv::Rodrigues(rvec, rotation_matrix);
         
             cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
-            
+
             QMutexLocker lck(&mtx);
             
             for (int i = 0; i < 3; i++)
@@ -264,8 +264,8 @@ void Tracker::run()
             pose[Pitch] = -foo[0];
             pose[Roll] = foo[2];
             
-            pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
-            pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
+            //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
+            //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
         }
     }
 }
