@@ -177,8 +177,8 @@ void Tracker::update_show_video_widget()
 	}
 	else if (video_frame && show_video_widget && !video_widget)
 	{
-		const int VIDEO_FRAME_WIDTH  = 252;
-		const int VIDEO_FRAME_HEIGHT = 189;
+        const int VIDEO_FRAME_WIDTH  = 320;
+        const int VIDEO_FRAME_HEIGHT = 240;
         video_widget = new PTVideoWidget(video_frame, this);
 		QHBoxLayout* video_layout = new QHBoxLayout();
 		video_layout->setContentsMargins(0, 0, 0, 0);
