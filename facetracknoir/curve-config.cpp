@@ -6,6 +6,7 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
 	ui.setupUi( this );
+    setFont(qApp->font());
 
     QPoint offsetpos(120, 30);
 	this->move(parent->pos() + offsetpos);
