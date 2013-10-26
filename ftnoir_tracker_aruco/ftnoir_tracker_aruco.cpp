@@ -120,8 +120,11 @@ void Tracker::load_settings()
 	enableTX = iniFile.value("enable-tx", true).toBool();
 	enableTY = iniFile.value("enable-ty", true).toBool();
 	enableTZ = iniFile.value("enable-tz", true).toBool();
-    for (int i = 0; i < 5; i++)
-        dc[i] = iniFile.value(QString("dc%1").arg(i), 0).toFloat();
+
+    for (int i = 0; i < 3; i++)
+    {
+        headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
+    }
 	iniFile.endGroup();
 }
 
@@ -194,6 +197,7 @@ void Tracker::run()
     double error = 0;
     std::vector<cv::Point2f> reprojection;
     auto kernel = cv::createGaussianFilter(CV_8U, cv::Size(5, 5), 0);
+    cv::Point2f last_centroid;
     while (!stop)
     {
         if (!camera.read(color_))
@@ -218,7 +222,7 @@ void Tracker::run()
         cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
         
         for (int i = 0; i < 5; i++)
-            dist_coeffs.at<float>(i) = dc[i];
+            dist_coeffs.at<float>(i) = 0;
         
         std::vector< aruco::Marker > markers;
         
@@ -238,6 +242,8 @@ void Tracker::run()
                        cv::Scalar(0, 255, 128),
                        3);
         }
+
+        cv::circle(frame, last_centroid, 4, cv::Scalar(0, 0, 0), -1);
 
         auto time = cv::getTickCount();
 
@@ -271,18 +277,18 @@ void Tracker::run()
             const float size = 7;
             
             cv::Mat obj_points(4,3,CV_32FC1);
-            obj_points.at<float>(1,0)=-size;
-            obj_points.at<float>(1,1)=-size;
-            obj_points.at<float>(1,2)=0;
-            obj_points.at<float>(2,0)=size;
-            obj_points.at<float>(2,1)=-size;
-            obj_points.at<float>(2,2)=0;
-            obj_points.at<float>(3,0)=size;
-            obj_points.at<float>(3,1)=size;
-            obj_points.at<float>(3,2)=0;
-            obj_points.at<float>(0,0)=-size;
-            obj_points.at<float>(0,1)=size;
-            obj_points.at<float>(0,2)=0;
+            obj_points.at<float>(1,0)=-size + headpos[0];
+            obj_points.at<float>(1,1)=-size + headpos[1];
+            obj_points.at<float>(1,2)=0 + headpos[2];
+            obj_points.at<float>(2,0)=size + headpos[0];
+            obj_points.at<float>(2,1)=-size + headpos[1];
+            obj_points.at<float>(2,2)=0 + headpos[2];
+            obj_points.at<float>(3,0)=size + headpos[0];
+            obj_points.at<float>(3,1)=size + headpos[1];
+            obj_points.at<float>(3,2)=0 + headpos[2];
+            obj_points.at<float>(0,0)=-size + headpos[0];
+            obj_points.at<float>(0,1)=size + headpos[1];
+            obj_points.at<float>(0,2)=0 + headpos[2];
             
             cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
             
@@ -314,6 +320,14 @@ void Tracker::run()
                 double y = reprojection[i].y - m[i].y;
                 error += std::sqrt(x * x + y * y);
             }
+
+            reprojection.clear();
+            reprojection.resize(1);
+            std::vector<cv::Point3f> centroid;
+            centroid.push_back(cv::Point3f(0, 0, 0));
+            cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, reprojection);
+
+            last_centroid = reprojection[0];
 
             //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
             //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
@@ -414,6 +428,9 @@ TrackerControls::TrackerControls()
 	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+    connect(ui.cx, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+    connect(ui.cy, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+    connect(ui.cz, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
     //connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
     //connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
     //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
@@ -474,13 +491,18 @@ void TrackerControls::loadSettings()
 	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
     ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
-    
-    ui.doubleSpinBox->setValue(iniFile.value("dc0").toDouble());
-    ui.doubleSpinBox_2->setValue(iniFile.value("dc1").toDouble());
-    ui.doubleSpinBox_3->setValue(iniFile.value("dc2").toDouble());
-    ui.doubleSpinBox_4->setValue(iniFile.value("dc3").toDouble());
-    ui.doubleSpinBox_5->setValue(iniFile.value("dc4").toDouble());
-    
+
+    QDoubleSpinBox* headpos[] = {
+        ui.cx,
+        ui.cy,
+        ui.cz
+    };
+
+    for (int i = 0; i < 3; i++)
+    {
+        headpos[i]->setValue(iniFile.value(QString("headpos-%1").arg(i)).toDouble());
+    }
+
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -519,13 +541,17 @@ void TrackerControls::save()
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
-    
-    iniFile.setValue("dc0", ui.doubleSpinBox->value());
-    iniFile.setValue("dc1", ui.doubleSpinBox_2->value());
-    iniFile.setValue("dc2", ui.doubleSpinBox_3->value());
-    iniFile.setValue("dc3", ui.doubleSpinBox_4->value());
-    iniFile.setValue("dc4", ui.doubleSpinBox_5->value());
-    
+
+    QDoubleSpinBox* headpos[] = {
+        ui.cx,
+        ui.cy,
+        ui.cz
+    };
+
+    for (int i = 0; i < 3; i++)
+    {
+        iniFile.setValue(QString("headpos-%1").arg(i), headpos[i]->value());
+    }
 	iniFile.endGroup();
 	settingsDirty = false;
 }

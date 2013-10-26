@@ -35,11 +35,11 @@ private:
     volatile bool stop;
     float fov;
     int camera_index;
-    float dc[5];
     int force_fps, force_width, force_height;
     void load_settings();
     double pose[6];
     cv::Mat frame;
+    double headpos[3];
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
