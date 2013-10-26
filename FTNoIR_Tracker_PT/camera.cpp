@@ -132,6 +132,7 @@ void Camera::set_res(int x_res, int y_res)
 		cam_desired.res_x = x_res;
 		cam_desired.res_y = y_res;
 		_set_res();
+        _set_fps();
 	}
 }
 
