@@ -71,7 +71,7 @@ class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
 
 public:
     volatile const char* __opentrack_version__;
-    FaceTrackNoIR(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    FaceTrackNoIR(QWidget *parent = 0);
 	~FaceTrackNoIR();
 
     QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL
