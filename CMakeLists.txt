@@ -231,7 +231,7 @@ file(GLOB opentrack-tracker-aruco-c "ftnoir_tracker_aruco/*.cpp")
 file(GLOB opentrack-tracker-aruco-h "ftnoir_tracker_aruco/*.h")
 file(GLOB opentrack-tracker-aruco-ui "ftnoir_tracker_aruco/*.ui")
 file(GLOB opentrack-tracker-aruco-rc "ftnoir_tracker_aruco/*.qrc")
-QT5_WRAP_UI(opentracktracker-aruco-uih ${opentrack-tracker-aruco-ui})
+QT5_WRAP_UI(opentrack-tracker-aruco-uih ${opentrack-tracker-aruco-ui})
 QT5_ADD_RESOURCES(opentrack-tracker-aruco-rcc ${opentrack-tracker-aruco-rc})
 
 file(GLOB opentrack-tracker-pt-c "FTNoIR_Tracker_PT/*.cpp")
