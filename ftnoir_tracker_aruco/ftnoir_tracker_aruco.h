@@ -28,6 +28,7 @@ public:
     bool GiveHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
     void run();
+    void load_settings();
 private:
     QMutex mtx;
 	ArucoVideoWidget* videoWidget;
@@ -36,10 +37,10 @@ private:
     float fov;
     int camera_index;
     int force_fps, force_width, force_height;
-    void load_settings();
     double pose[6];
     cv::Mat frame;
     double headpos[3];
+    volatile bool reset;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -53,14 +54,19 @@ public:
     void showEvent (QShowEvent *);
 
     void Initialize(QWidget *);
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    void registerTracker(ITracker * x) {
+        tracker = dynamic_cast<Tracker*>(x);
+    }
+    void unRegisterTracker() {
+        tracker = nullptr;
+    }
 
 private:
 	Ui::Form ui;
 	void loadSettings();
 	void save();
 	bool settingsDirty;
+    Tracker* tracker;
 
 private slots:
 	void doOK();
