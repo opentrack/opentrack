@@ -167,7 +167,7 @@ void Tracker::run() {
             }
         }
         
-        msleep(4);
+        msleep(15);
     }
 #if defined(_WIN32)
     (void) timeEndPeriod(1);
