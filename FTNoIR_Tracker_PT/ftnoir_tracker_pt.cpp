@@ -115,11 +115,7 @@ void Tracker::apply(const TrackerSettings& settings)
 	point_extractor.threshold_val = settings.threshold;
 	point_extractor.min_size = settings.min_point_size;
     point_extractor.max_size = settings.max_point_size;
-#ifdef OPENTRACK_API
-    point_tracker.point_model.reset(new PointModel(settings.M01, settings.M02));
-#else
     point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
-#endif
     point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
 	sleep_time = settings.sleep_time;
 	point_tracker.dt_reset = settings.reset_time / 1000.0;
