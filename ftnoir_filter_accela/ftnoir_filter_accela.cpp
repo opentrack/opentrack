@@ -49,6 +49,7 @@ void FTNoIR_Filter::loadSettings() {
     {
         scaling[i] = iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble();
     }
+
     iniFile.endGroup();
 }
 
@@ -64,7 +65,7 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
 static inline double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
-    return a1 * pow(x, 2.2);
+    return a1 * pow(x, 2.025);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
