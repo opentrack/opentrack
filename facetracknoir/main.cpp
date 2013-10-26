@@ -55,14 +55,18 @@ bool dumpCallback(const wchar_t* dump_path,
 int main(int argc, char** argv)
 {
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
-	
 #ifdef OPENTRACK_BREAKPAD
 	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
 #endif
 
     QApplication app(argc, argv);
-
     FaceTrackNoIR w;
+    QFont font;
+    font.setFamily(font.defaultFamily());
+    font.setPointSize(10);
+    font.setPixelSize(10*4/3);
+    w.setFont(font);
+    app.setFont(font);
 	QDesktopWidget desktop;
 
     w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
