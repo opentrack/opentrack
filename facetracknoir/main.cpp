@@ -57,14 +57,13 @@ int main(int argc, char** argv)
 #ifdef OPENTRACK_BREAKPAD
 	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
 #endif
-
+    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
     QFont font;
     font.setFamily(font.defaultFamily());
     font.setPointSize(10);
     font.setPixelSize(10*4/3);
     QApplication::setFont(font);
-    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     FaceTrackNoIR w;
     QDesktopWidget desktop;
 
