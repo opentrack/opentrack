@@ -64,6 +64,7 @@ int main(int argc, char** argv)
     font.setPointSize(10);
     font.setPixelSize(10*4/3);
     QApplication::setFont(font);
+    qApp->setFont(font);
     FaceTrackNoIR w;
     QDesktopWidget desktop;
 
