@@ -16,6 +16,7 @@
 #include <opencv/highgui.h>
 #include <vector>
 #include <cstdio>
+#include <memory>
 
 #if defined(_WIN32)
 #include <dshow.h>
@@ -100,6 +101,7 @@ static resolution_tuple resolution_choices[] = {
 
 void Tracker::load_settings()
 {
+    QMutexLocker foo(&mtx);
 	QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );
@@ -126,6 +128,8 @@ void Tracker::load_settings()
         headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
     }
 	iniFile.endGroup();
+
+    reset = true;
 }
 
 Tracker::Tracker()
@@ -149,6 +153,7 @@ Tracker::~Tracker()
 
 void Tracker::StartTracker(QFrame* videoframe)
 {
+    reset = false;
     videoframe->show();
     videoWidget = new ArucoVideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
@@ -169,25 +174,31 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 void Tracker::run()
 {
-    cv::VideoCapture camera(camera_index);
+start:
+    reset = false;
+    std::unique_ptr<cv::VideoCapture> camera(new cv::VideoCapture(camera_index));
     
     if (force_width)
-        camera.set(CV_CAP_PROP_FRAME_WIDTH, force_width);
+        camera->set(CV_CAP_PROP_FRAME_WIDTH, force_width);
     if (force_height)
-        camera.set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
+        camera->set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
     if (force_fps)
-        camera.set(CV_CAP_PROP_FPS, force_fps);
+        camera->set(CV_CAP_PROP_FPS, force_fps);
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
     detector.setThresholdParams(11, 5);
     cv::Mat color, color_, grayscale, grayscale2, rvec, tvec;
     
-    if (!camera.isOpened())
+    if (!camera->isOpened())
     {
         fprintf(stderr, "aruco tracker: can't open camera\n");
         return;
     }
+
+    while (!stop)
+        if(camera->read(color_))
+            break;
 
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
@@ -200,7 +211,12 @@ void Tracker::run()
     cv::Point2f last_centroid;
     while (!stop)
     {
-        if (!camera.read(color_))
+        if (reset)
+        {
+            camera.reset(nullptr);
+            goto start;
+        }
+        if (!camera->read(color_))
             continue;
         color_.copyTo(color);
         cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
@@ -416,6 +432,7 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 
 TrackerControls::TrackerControls()
 {
+    tracker = nullptr;
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
 	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
@@ -553,6 +570,8 @@ void TrackerControls::save()
     }
 	iniFile.endGroup();
 	settingsDirty = false;
+    if (tracker)
+        tracker->load_settings();
 }
 
 void TrackerControls::doOK()
