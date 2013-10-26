@@ -243,7 +243,7 @@ void Tracker::run()
                        3);
         }
 
-        cv::circle(frame, last_centroid, 4, cv::Scalar(0, 0, 0), -1);
+        cv::circle(frame, last_centroid, 7, cv::Scalar(255, 255, 0), -1);
 
         auto time = cv::getTickCount();
 
@@ -321,13 +321,12 @@ void Tracker::run()
                 error += std::sqrt(x * x + y * y);
             }
 
-            reprojection.clear();
-            reprojection.resize(1);
+            std::vector<cv::Point2f> repr2;
             std::vector<cv::Point3f> centroid;
             centroid.push_back(cv::Point3f(0, 0, 0));
-            cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, reprojection);
+            cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
 
-            last_centroid = reprojection[0];
+            last_centroid = repr2[0];
 
             //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
             //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
