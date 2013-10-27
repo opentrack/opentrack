@@ -38,21 +38,23 @@ void FTNoIR_Filter::loadSettings() {
     deadzone = iniFile.value("deadzone", 0.0).toDouble();
     // bigger means less filtering
     static const double init_scaling[] = {
-        1.5, // X
-        1.5, // Y
+        1,   // X
+        1,   // Y
         1,   // Z
-        0.8, // Yaw
-        0.9, // Pitch
-        1.25 // Roll
+        1,   // Yaw
+        1,   // Pitch
+        1    // Roll
     };
     for (int i = 0; i < 6; i++)
     {
         scaling[i] = iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble();
     }
+    expt = iniFile.value("exponent", 2.0).toDouble();
+
     iniFile.endGroup();
 }
 
-void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, double dz)
+void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, double dz, double exponent)
 {
     QMutexLocker foo(&mutex);
     
@@ -60,12 +62,13 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, d
     translation_alpha = trans;
     zoom_factor = zoom_fac;
     deadzone = dz;
+    expt = exponent;
 }
 
-static inline double parabola(const double a, const double x, const double dz)
+static inline double parabola(const double a, const double x, const double dz, const double expt)
 {
     const double a1 = 1./a;
-    return a1 * pow(std::max<double>(x - dz, 1e-3), 1.975);
+    return a1 * pow(std::max<double>(x - dz, 1e-3), expt);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
@@ -93,7 +96,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 		const double x = fabs(vec);
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
         const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
-        const double velocity = parabola(a, x * scaling[i], deadzone) * reduction;
+        const double velocity = parabola(a, x * scaling[i], deadzone, expt) * reduction;
 		const double result = current_camera_position[i] + velocity * sign;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = current_camera_position[i] = done ? target_camera_position[i] : result;
