@@ -63,6 +63,8 @@ FilterControls::FilterControls() :
         connect(boxen[i], SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
     }
 
+    connect(ui.expt, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
+
 	qDebug() << "FilterControls() says: started";
 }
 
@@ -184,6 +186,8 @@ void FilterControls::loadSettings() {
         boxen[i]->setValue(iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble());
     }
 
+    ui.expt->setValue(iniFile.value("exponent", 2.0).toDouble());
+
     iniFile.endGroup();
 
 	settingsDirty = false;
@@ -200,13 +204,14 @@ void FilterControls::save() {
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
 
-    double rot, trans, zoom, deadzone;
+    double rot, trans, zoom, deadzone, expt;
     
     iniFile.beginGroup ( "Accela" );
     iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
     iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
     iniFile.setValue("zoom-slowness", zoom = ui.spinZoom->value());
     iniFile.setValue("deadzone", deadzone = ui.deadzone->value());
+    iniFile.setValue("exponent", expt = ui.expt->value());
 
     QDoubleSpinBox* boxen[] = {
         ui.doubleSpinBox,
@@ -226,7 +231,7 @@ void FilterControls::save() {
 	settingsDirty = false;
     
     if (accela_filter)
-        accela_filter->receiveSettings(rot, trans, zoom, deadzone);
+        accela_filter->receiveSettings(rot, trans, zoom, deadzone, expt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
