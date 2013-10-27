@@ -59,12 +59,6 @@ int main(int argc, char** argv)
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
-    QFont font;
-    font.setFamily(font.defaultFamily());
-    font.setPointSize(10);
-    font.setPixelSize(10*4/3);
-    QApplication::setFont(font);
-    qApp->setFont(font);
     FaceTrackNoIR w;
     QDesktopWidget desktop;
 
