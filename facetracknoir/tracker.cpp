@@ -131,8 +131,6 @@ void Tracker::run() {
                 const double yi = mainApp->axis(Yaw).invert;
                 const double pi = mainApp->axis(Pitch).invert;
                 const double ri = mainApp->axis(Roll).invert;
-                output_camera.axes[Yaw] += atan2(target_camera2.axes[TX] * yi, target_camera2.axes[TZ]);
-                output_camera.axes[Pitch] += atan2(target_camera2.axes[TY] * pi, target_camera2.axes[TZ]);
                 const auto H = output_camera.axes[Yaw] * M_PI / 180 * yi;
                 const auto P = output_camera.axes[Pitch] * M_PI / 180 * pi;
                 const auto B = output_camera.axes[Roll] * M_PI / 180 * ri;
@@ -164,6 +162,9 @@ void Tracker::run() {
 
                 for (int i = 0; i < 3; i++)
                     output_camera.axes[i] = ret.at<double>(i);
+
+                output_camera.axes[Yaw] += atan2(output_camera.axes[TZ], output_camera.axes[TX]) * yi;
+                output_camera.axes[Pitch] -= atan2(output_camera.axes[TZ], output_camera.axes[TY]) * pi;
             }
 
             if (Libraries->pProtocol) {
