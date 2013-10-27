@@ -187,7 +187,9 @@ start:
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    detector.setThresholdParams(11, 5);
+    detector.setMinMaxSize(0.06, 0.4);
+    detector.setThresholdParams(11, 7);
+
     cv::Mat color, color_, grayscale, grayscale2, rvec, tvec;
     
     if (!camera->isOpened())
@@ -203,11 +205,12 @@ start:
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
     auto prev_time = last_time;
+    double last_delay = -1;
     int fps = 0;
     int last_fps = 0;
     double error = 0;
     std::vector<cv::Point2f> reprojection;
-    auto kernel = cv::createGaussianFilter(CV_8U, cv::Size(5, 5), 0);
+    auto kernel = cv::createGaussianFilter(CV_8U, cv::Size(3, 3), 0);
     cv::Point2f last_centroid;
     while (!stop)
     {
@@ -218,6 +221,7 @@ start:
         }
         if (!camera->read(color_))
             continue;
+        auto tm = cv::getTickCount();
         color_.copyTo(color);
         cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
         if (grayscale.empty())
@@ -276,7 +280,7 @@ start:
 
         std::sprintf(buf, "Hz: %ld", last_fps);
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
-        std::sprintf(buf, "Delay: %ld ms", (long) (1000 * (time - prev_time) / freq));
+        std::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         std::sprintf(buf, "Error: %f px", error);
         cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
