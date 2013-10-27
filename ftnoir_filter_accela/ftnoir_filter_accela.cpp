@@ -5,6 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
+#include <algorithm>
 #include <cmath>
 #include <QDebug>
 #include <QMutexLocker>
@@ -65,7 +66,7 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
 static inline double parabola(const double a, const double x)
 {
     const double a1 = 1./a;
-    return a1 * pow(x, 2.025);
+    return a1 * pow(std::max<double>(x - 0.175, 1e-5), 2.2);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
