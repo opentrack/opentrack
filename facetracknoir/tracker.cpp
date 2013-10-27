@@ -158,8 +158,6 @@ void Tracker::run() {
                 cv::Mat tvec(3, 1, CV_64F, output_camera.axes);
                 cv::Mat ret = rmat * tvec;
 
-                cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
-
                 for (int i = 0; i < 3; i++)
                     output_camera.axes[i] = ret.at<double>(i);
 
