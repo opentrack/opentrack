@@ -190,7 +190,7 @@ start:
     detector.setMinMaxSize(0.06, 0.4);
     detector.setThresholdParams(11, 7);
 
-    cv::Mat color, color_, grayscale, grayscale2, rvec, tvec;
+    cv::Mat color, color_, grayscale, rvec, tvec;
     
     if (!camera->isOpened())
     {
@@ -210,7 +210,6 @@ start:
     int last_fps = 0;
     double error = 0;
     std::vector<cv::Point2f> reprojection;
-    auto kernel = cv::createGaussianFilter(CV_8U, cv::Size(3, 3), 0);
     cv::Point2f last_centroid;
     while (!stop)
     {
@@ -223,11 +222,7 @@ start:
             continue;
         auto tm = cv::getTickCount();
         color_.copyTo(color);
-        cv::cvtColor(color, grayscale2, cv::COLOR_BGR2GRAY);
-        if (grayscale.empty())
-            grayscale = grayscale2.clone();
-
-        kernel->apply(grayscale2, grayscale);
+        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
         const int scale = frame.cols > 480 ? 2 : 1;
 
