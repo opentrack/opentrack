@@ -34,9 +34,8 @@ void FTNoIR_Filter::loadSettings() {
     zoom_factor = iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toDouble();
     rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
     translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
-	iniFile.endGroup ();
 
-    iniFile.beginGroup("Accela-Scaling");
+    deadzone = iniFile.value("deadzone", 0.0).toDouble();
     // bigger means less filtering
     static const double init_scaling[] = {
         1.5, // X
@@ -50,23 +49,23 @@ void FTNoIR_Filter::loadSettings() {
     {
         scaling[i] = iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble();
     }
-
     iniFile.endGroup();
 }
 
-void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac)
+void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, double dz)
 {
     QMutexLocker foo(&mutex);
     
     rotation_alpha = rot;
     translation_alpha = trans;
     zoom_factor = zoom_fac;
+    deadzone = dz;
 }
 
-static inline double parabola(const double a, const double x)
+static inline double parabola(const double a, const double x, const double dz)
 {
     const double a1 = 1./a;
-    return a1 * pow(std::max<double>(x - 0.175, 1e-5), 2.2);
+    return a1 * pow(std::max<double>(x - dz, 1e-3), 1.975);
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
@@ -94,7 +93,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 		const double x = fabs(vec);
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
         const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
-        const double velocity = parabola(a, x * scaling[i]) * reduction;
+        const double velocity = parabola(a, x * scaling[i], deadzone) * reduction;
 		const double result = current_camera_position[i] + velocity * sign;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = current_camera_position[i] = done ? target_camera_position[i] : result;

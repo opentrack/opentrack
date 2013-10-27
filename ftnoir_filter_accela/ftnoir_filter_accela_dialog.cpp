@@ -158,9 +158,8 @@ void FilterControls::loadSettings() {
     ui.spinZoom->setValue(iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toInt());
     ui.rotation_alpha->setValue(iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble());
     ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
-	iniFile.endGroup ();
+    ui.deadzone->setValue(iniFile.value("deadzone", 0).toDouble());
 
-    iniFile.beginGroup("Accela-Scaling");
     // bigger means less filtering
     static const double init_scaling[] = {
         1.5, // X
@@ -184,6 +183,7 @@ void FilterControls::loadSettings() {
     {
         boxen[i]->setValue(iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble());
     }
+
     iniFile.endGroup();
 
 	settingsDirty = false;
@@ -200,15 +200,13 @@ void FilterControls::save() {
 
 	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
 
-    double rot, trans, zoom;
+    double rot, trans, zoom, deadzone;
     
     iniFile.beginGroup ( "Accela" );
     iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
     iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
     iniFile.setValue("zoom-slowness", zoom = ui.spinZoom->value());
-	iniFile.endGroup ();
-
-    iniFile.beginGroup("Accela-Scaling");
+    iniFile.setValue("deadzone", deadzone = ui.deadzone->value());
 
     QDoubleSpinBox* boxen[] = {
         ui.doubleSpinBox,
@@ -228,7 +226,7 @@ void FilterControls::save() {
 	settingsDirty = false;
     
     if (accela_filter)
-        accela_filter->receiveSettings(rot, trans, zoom);
+        accela_filter->receiveSettings(rot, trans, zoom, deadzone);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

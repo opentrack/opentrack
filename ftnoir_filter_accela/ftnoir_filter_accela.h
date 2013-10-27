@@ -47,7 +47,7 @@ public:
     void Initialize() {
         first_run = true;
     }
-    void receiveSettings(double rot, double trans, double zoom_fac);
+    void receiveSettings(double rot, double trans, double zoom_fac, double deadzone);
 private:
     QMutex mutex;
 	void loadSettings();
@@ -55,6 +55,7 @@ private:
     double rotation_alpha, translation_alpha, zoom_factor;
     double current_camera_position[6];
     double scaling[6];
+    double deadzone;
 };
 
 //*******************************************************************************************************
