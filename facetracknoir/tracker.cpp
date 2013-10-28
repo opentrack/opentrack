@@ -160,9 +160,6 @@ void Tracker::run() {
 
                 for (int i = 0; i < 3; i++)
                     output_camera.axes[i] = ret.at<double>(i);
-
-                output_camera.axes[Yaw] += atan2(output_camera.axes[TZ], output_camera.axes[TX]) * yi;
-                output_camera.axes[Pitch] -= atan2(output_camera.axes[TZ], output_camera.axes[TY]) * pi;
             }
 
             if (Libraries->pProtocol) {
