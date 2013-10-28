@@ -24,7 +24,7 @@
 #include <commctrl.h>
 #include <basetsd.h>
 #include <dinput.h>
-#include <dinputd.h>
+//#include <dinputd.h>
 #include <oleauto.h>
 #include <shellapi.h>
 
