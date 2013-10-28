@@ -41,7 +41,7 @@ if(SDK_GOOGLE_BREAKPAD AND WIN32)
 	include_directories("${SDK_GOOGLE_BREAKPAD}/src/")
 endif()
 
-if (WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
+if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
 		find_path (WIN8_SDK_ROOT_DIR
 				Include/um/windows.h
 				PATHS
@@ -50,10 +50,9 @@ if (WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
 						DOC "Windows 8 SDK root directory"
 		)
 
-		if (WIN8_SDK_ROOT_DIR)
+                if(WIN8_SDK_ROOT_DIR)
 		  SET(CMAKE_LIBRARY_PATH "${WIN8_SDK_ROOT_DIR}/Lib/win8/um/x86")
-		endif ()
-	endif ()
+                endif()
 endif()
 
 if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
