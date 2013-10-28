@@ -128,9 +128,9 @@ void Tracker::run() {
 
             if (compensate)
             {
-                const double yi = mainApp->axis(Yaw).invert;
-                const double pi = mainApp->axis(Pitch).invert;
-                const double ri = mainApp->axis(Roll).invert;
+                const double yi = mainApp->axis(Yaw).invert * mainApp->axis(TX).invert;
+                const double pi = mainApp->axis(Pitch).invert * mainApp->axis(TY).invert;
+                const double ri = mainApp->axis(Roll).invert * mainApp->axis(TZ).invert;
                 const auto H = output_camera.axes[Yaw] * M_PI / 180 * yi;
                 const auto P = output_camera.axes[Pitch] * M_PI / 180 * pi;
                 const auto B = output_camera.axes[Roll] * M_PI / 180 * ri;
