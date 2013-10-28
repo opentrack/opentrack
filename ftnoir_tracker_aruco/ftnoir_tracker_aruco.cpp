@@ -19,9 +19,10 @@
 #include <memory>
 
 #if defined(_WIN32)
-#include <dshow.h>
+#   define NO_DSHOW_STRSAFE
+#   include <dshow.h>
 #else
-#include <unistd.h>
+#   include <unistd.h>
 #endif
 
 // delicious copypasta
@@ -273,11 +274,11 @@ start:
 
         char buf[128];
 
-        std::sprintf(buf, "Hz: %ld", last_fps);
+        ::sprintf(buf, "Hz: %d", last_fps);
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
-        std::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
+        ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
-        std::sprintf(buf, "Error: %f px", error);
+        ::sprintf(buf, "Error: %f px", error);
         cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         prev_time = time;
 
