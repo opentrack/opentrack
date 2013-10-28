@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <QList>
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(_MSC_VER)
 #   include <windows.h>
 #	ifdef OPENTRACK_BREAKPAD
 #		include <exception_handler.h>
@@ -54,7 +54,7 @@ bool dumpCallback(const wchar_t* dump_path,
 
 int main(int argc, char** argv)
 {
-#ifdef OPENTRACK_BREAKPAD
+#if defined(OPENTRACK_BREAKPAD) && defined(_MSC_VER)
 	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
