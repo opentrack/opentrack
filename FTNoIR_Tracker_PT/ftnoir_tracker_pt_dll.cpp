@@ -26,7 +26,7 @@ void TrackerDll::getDescription(QString *strToBeFilled)
 
 void TrackerDll::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/Resources/icon.ico");
+    *icon = QIcon(":/Resources/Logo_IR.png");
 }
 
 
