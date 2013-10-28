@@ -35,6 +35,10 @@ if(WIN32 AND MSVC)
 	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
 endif()
 
+if(MINGW)
+    set(SDK_MINGW_PREFIX "" CACHE PATH "mingw prefix")
+endif()
+
 if(SDK_GOOGLE_BREAKPAD AND WIN32)
 	add_definitions(-DOPENTRACK_BREAKPAD)
 	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
@@ -77,6 +81,14 @@ SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether target is amd64 (else ia-32)")
 SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
 include_directories(${CMAKE_SOURCE_DIR})
+
+if(MINGW)
+    # qt scripts are broken
+    set(Qt5Gui_user32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libuser32.a)
+    set(Qt5Gui_opengl32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libopengl32.a)
+    set(Qt5Gui_glu32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libglu32.a)
+    set(Qt5Gui_gdi32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libgdi32.a)
+endif()
 
     find_package(OpenCV REQUIRED)
     find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
@@ -760,8 +772,8 @@ if(WIN32)
 endif()
 
 if(MSVC)
-file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
-file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
-install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
+    file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
+    file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
+    install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
 endif()
 
