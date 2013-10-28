@@ -31,7 +31,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
 endif()
 
-if(WIN32)
+if(WIN32 AND MSVC)
 	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
 endif()
 
@@ -117,8 +117,8 @@ include_directories(${CMAKE_SOURCE_DIR})
 
     if(WIN32)
       if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-        #set(CMAKE_RC_COMPILER_INIT windres)
-        SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+        set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
+        SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
       else()
         #set(CMAKE_RC_COMPILER_INIT rc)
       endif()
@@ -626,9 +626,6 @@ endif()
                 "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
                 "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
                 "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
-        else()
-            target_link_libraries(opentrack "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad_client.a"
-                                            "${SDK_GOOGLE_BREAKPAD}/lib/libbreakpad.a")
         endif()
     endif()
 set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
