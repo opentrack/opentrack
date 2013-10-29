@@ -1,26 +1,15 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2012	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage:			http://facetracknoir.sourceforge.net/home/default.htm		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*********************************************************************************/
+/* Copyright (c) 2012-2013 Stanislaw Halik <sthalik@misaki.pl>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
+/*
+ * this file appeared originally in facetracknoir, was rewritten completely
+ * following opentrack fork.
+ */
+
 #include "tracker.h"
 #include "facetracknoir.h"
 #include <opencv2/core/core.hpp>
@@ -36,9 +25,7 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
     enabled(true),
     compensate(true)
 {
-    // Retieve the pointer to the parent
     mainApp = parent;
-    // Load the settings from the INI-file
 }
 
 Tracker::~Tracker()
@@ -68,7 +55,7 @@ void Tracker::run() {
     bool bTracker2Confid = false;
 
     double newpose[6] = {0};
-    double last_post_filter[6];
+    double last_post_filter[6] ;
 
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
@@ -181,9 +168,6 @@ void Tracker::run() {
     }
 }
 
-//
-// Get the raw headpose, so it can be displayed.
-//
 void Tracker::getHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
@@ -192,9 +176,6 @@ void Tracker::getHeadPose( double *data ) {
     }
 }
 
-//
-// Get the output-headpose, so it can be displayed.
-//
 void Tracker::getOutputHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
