@@ -18,9 +18,6 @@
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
-//
-// Structure to hold all variables concerning one of 6 DOF's
-//
 class THeadPoseDOF {
 private:
     THeadPoseDOF(const THeadPoseDOF &) {}
