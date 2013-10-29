@@ -83,9 +83,6 @@ void FTNoIR_Protocol::loadSettings() {
 // Update Headpose in Game.
 //
 void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
-PDWORD_PTR MsgResult = 0;
-
-
     virtSCRotX = -headpose[Pitch];					// degrees
     virtSCRotY = -headpose[Yaw];
     virtSCRotZ = headpose[Roll];
