@@ -84,8 +84,8 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
 DynamicLibrary::DynamicLibrary(const QString& filename)
 {
     this->filename = filename;
-    QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
 #if defined(_WIN32)
+    QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
     handle = new QLibrary(fullPath);
     Dialog = (SETTINGS_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetDialog" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
     Constructor = (NULLARY_DYNAMIC_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
