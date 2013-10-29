@@ -21,6 +21,7 @@ class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 class THeadPoseDOF {
 private:
     THeadPoseDOF(const THeadPoseDOF &) {}
+    THeadPoseDOF& operator=(const THeadPoseDOF&) { return *this; }
 public:
     THeadPoseDOF() :
         headPos(0),
