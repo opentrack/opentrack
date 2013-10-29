@@ -62,18 +62,18 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera, new_camera, gameoutput_camera, target_camera, target_camera2;
-    
+    T6DOF offset_camera, gameoutput_camera;
+
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
-    
+
     double newpose[6] = {0};
     double last_post_filter[6];
-    
+
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
 #endif
-    
+
     for (;;)
     {
         if (should_quit)
@@ -88,6 +88,7 @@ void Tracker::run() {
         }
 
         {
+            T6DOF target_camera;
             QMutexLocker foo(&mtx);
             const bool confid = bTracker1Confid || bTracker2Confid;
 
@@ -105,6 +106,8 @@ void Tracker::run() {
                 if (Libraries->pFilter)
                     Libraries->pFilter->Initialize();
             }
+
+            T6DOF target_camera2, new_camera;
 
             if (enabled && confid)
             {
@@ -164,7 +167,7 @@ void Tracker::run() {
                 Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes );	// degrees & centimeters
             }
         }
-        
+
         msleep(15);
     }
 #if defined(_WIN32)
