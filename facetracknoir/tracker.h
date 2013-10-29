@@ -1,25 +1,3 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2010 - 2012	Wim Vriend (Developing)								*
-*							Ron Hendriks (Researching and Testing)				*
-*																				*
-* Homepage																		*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*********************************************************************************/
 #ifndef __TRACKER_H__
 #define __TRACKER_H__
 
@@ -67,7 +45,7 @@ public:
         curveAlt(secondary, maxInput2, maxOutput2),
         zero(0)
     {
-        QSettings settings("opentrack");							// Registry settings (in HK_USER)
+        QSettings settings("opentrack");
         QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
         QSettings iniFile( currentFile, QSettings::IniFormat );
         curve.loadSettings(iniFile);
@@ -77,9 +55,9 @@ public:
         altp = iniFile.value(secondary).toBool();
         iniFile.endGroup();
     }
-    volatile double headPos;					// Current position (from faceTracker, radials or meters)
-    volatile float invert;					// Invert measured value (= 1.0f or -1.0f)
-	FunctionConfig curve;		// Function to translate input -> output
+    volatile double headPos;
+    volatile float invert;
+    FunctionConfig curve;
 	FunctionConfig curveAlt;
     volatile bool altp;
     volatile double zero;
@@ -93,7 +71,6 @@ private:
     QMutex mtx;
 
 protected:
-	// qthread override run method 
 	void run();
 
 public:
@@ -102,12 +79,11 @@ public:
 
     void setInvertAxis(Axis axis, bool invert);
 
-    void getHeadPose(double *data);				// Return the current headpose data
-    void getOutputHeadPose(double *data);			// Return the current (processed) headpose data
+    void getHeadPose(double *data);
+    void getOutputHeadPose(double *data);
 
     volatile bool should_quit;
-    // following are now protected by hTrackMutex
-    volatile bool do_center;							// Center head-position, using the shortkey
+    volatile bool do_center;
     volatile bool enabled;
     volatile bool compensate;
     
