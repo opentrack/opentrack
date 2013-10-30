@@ -1,9 +1,10 @@
+#pragma once
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_rift_clientcontrols.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QWaitCondition>
-#include <math.h>
+#include <cmath>
 #include "facetracknoir/global-settings.h"
 #include "OVR.h"
 #include <memory>
@@ -13,7 +14,7 @@ public:
 	Rift_Tracker();
 	virtual ~Rift_Tracker();
 
-    void StartTracker( QFrame *videoframe );
+    void StartTracker(QFrame *);
     bool GiveHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
@@ -48,7 +49,7 @@ public:
 	void showEvent ( QShowEvent * event );
 
     void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker) {}
+    void registerTracker(ITracker *) {}
 	void unRegisterTracker() {}
 
 private:

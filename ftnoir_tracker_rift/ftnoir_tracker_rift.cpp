@@ -38,7 +38,7 @@ Rift_Tracker::~Rift_Tracker()
 
 
 
-void Rift_Tracker::StartTracker(QFrame* videoFrame)
+void Rift_Tracker::StartTracker(QFrame*)
 {
     loadSettings();
     //
