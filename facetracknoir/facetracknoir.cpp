@@ -88,7 +88,6 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
 }
 
 FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
-    __opentrack_version__(OPENTRACK_VERSION),
     QMainWindow(parent),
 #if defined(_WIN32)
     keybindingWorker(NULL),
@@ -101,8 +100,8 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     pSecondTrackerDialog(NULL),
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
-    looping(false),
-    kbd_quit(QKeySequence("Ctrl+Q"), this)
+    kbd_quit(QKeySequence("Ctrl+Q"), this),
+    looping(false)
 {	
     ui.setupUi(this);
     setFixedSize(size());
