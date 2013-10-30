@@ -40,6 +40,12 @@ static WineSHM* shm_posix = NULL;
 static void *view_x, *view_y, *view_z, *view_heading, *view_pitch;
 static float offset_x, offset_y, offset_z;
 
+static void reinit_offset() {
+    offset_x = XPLMGetDataf(view_x);
+    offset_y = XPLMGetDataf(view_y);
+    offset_z = XPLMGetDataf(view_z);
+}
+
 #ifdef __GNUC__
 #   define OT_UNUSED(varname) varname __attribute__((__unused__))
 #else
@@ -82,33 +88,27 @@ void PortableLockedShm_unlock(PortableLockedShm* self)
     flock(self->fd, LOCK_UN);
 }
 
-static void reinit_offset() {
-    offset_x = XPLMGetDataf(view_x);
-    offset_y = XPLMGetDataf(view_y);
-    offset_z = XPLMGetDataf(view_z);
-}
-
 int write_head_position(
-    XPLMDrawingPhase     OT_UNUSED(inPhase),
-    int                  OT_UNUSED(inIsBefore),
-    void *               OT_UNUSED(inRefcon))
+        XPLMDrawingPhase     OT_UNUSED(inPhase),
+        int                  OT_UNUSED(inIsBefore),
+        void *               OT_UNUSED(inRefcon))
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
-        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-2 + offset_x);
-        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-2 + offset_y);
-        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-2 + offset_z);
-        XPLMSetDataf(view_heading, shm_posix->data[Yaw]);
-        XPLMSetDataf(view_pitch, shm_posix->data[Pitch]);
+        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3);
+        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3);
+        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3);
+        XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / 3.141592654);
+        XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / 3.141592654);
         PortableLockedShm_unlock(lck_posix);
     }
     return 1;
 }
 
 PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
-    view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
-    view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
-    view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
+    view_x = XPLMFindDataRef("sim/graphics/view/pilots_head_x");
+    view_y = XPLMFindDataRef("sim/graphics/view/pilots_head_y");
+    view_z = XPLMFindDataRef("sim/graphics/view/pilots_head_z");
     view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
     view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
     if (view_x && view_y && view_z && view_heading && view_pitch) {
@@ -134,21 +134,17 @@ PLUGIN_API void XPluginStop ( void ) {
 }
 
 PLUGIN_API void XPluginEnable ( void ) {
-    reinit_offset();
     XPLMRegisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
 }
 
 PLUGIN_API void XPluginDisable ( void ) {
     XPLMUnregisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
-    XPLMSetDataf(view_x, offset_x);
-    XPLMSetDataf(view_y, offset_y);
-    XPLMSetDataf(view_z, offset_z);
 }
 
 PLUGIN_API void XPluginReceiveMessage(
-    XPLMPluginID    OT_UNUSED(inFromWho),
-    int             OT_UNUSED(inMessage),
-    void *          OT_UNUSED(inParam))
+        XPLMPluginID    OT_UNUSED(inFromWho),
+        int             OT_UNUSED(inMessage),
+        void *          OT_UNUSED(inParam))
 {
     if (inMessage == XPLM_MSG_AIRPORT_LOADED)
         reinit_offset();
