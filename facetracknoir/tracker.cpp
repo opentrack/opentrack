@@ -49,7 +49,7 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera, gameoutput_camera;
+    T6DOF offset_camera, gameoutput_camera, target_camera;
 
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
@@ -75,7 +75,6 @@ void Tracker::run() {
         }
 
         {
-            T6DOF target_camera;
             QMutexLocker foo(&mtx);
             const bool confid = bTracker1Confid || bTracker2Confid;
 
