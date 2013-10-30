@@ -95,9 +95,9 @@ int write_head_position(
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
-        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3);
-        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3);
-        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3);
+        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
+        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
+        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
         XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / 3.141592654);
         XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / 3.141592654);
         PortableLockedShm_unlock(lck_posix);
@@ -106,9 +106,9 @@ int write_head_position(
 }
 
 PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
-    view_x = XPLMFindDataRef("sim/graphics/view/pilots_head_x");
-    view_y = XPLMFindDataRef("sim/graphics/view/pilots_head_y");
-    view_z = XPLMFindDataRef("sim/graphics/view/pilots_head_z");
+    view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
+    view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
+    view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
     view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
     view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
     if (view_x && view_y && view_z && view_heading && view_pitch) {
