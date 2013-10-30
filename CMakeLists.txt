@@ -154,8 +154,8 @@ else()
 endif()
 # main app
 
-file(GLOB opentrack-lib-c "opentrack-api/*.cpp")
-file(GLOB opentrack-lib-h "opentrack-api/*.h")
+file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp")
+file(GLOB opentrack-lib-h "opentrack-api/*.h" "facetracknoir/global-settings.h")
 
 file(GLOB opentrack-bin-c "facetracknoir/*.cpp" "facetracknoir/*.rc")
 file(GLOB opentrack-bin-h "facetracknoir/*.h")
@@ -614,9 +614,12 @@ configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/op
 
 add_library(opentrack-api SHARED ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-    SET_TARGET_PROPERTIES(opentrack-api
-    PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt")
+if(CMAKE_COMPILER_IS_GNUCXX)
+    SET_TARGET_PROPERTIES(opentrack-api PROPERTIES
+        LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt"
+        COMPILE_FLAGS "-fvisibility=protected  -fvisibility-inlines-hidden"
+        COMPILE_DEFINITIONS IN_OPENTRACK_API
+    )
 endif()
 
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")

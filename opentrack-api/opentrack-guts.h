@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "facetracknoir/global-settings.h"
-#include <QString>
+#ifdef __GNUC__
+#   pragma GCC visibility push(protected)
+#endif
+
 #include <QDir>
 #include <QList>
 #include <QStringList>
@@ -10,16 +11,13 @@
 #include <QIcon>
 #include <iostream>
 #include <cstring>
-
-#ifdef __GNUC__
-#   define OPENTRACK_HIDDEN __attribute__((visibility ("hidden")))
-#else
-#   define OPENTRACK_HIDDEN
-#endif
+#include <QString>
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/global-settings.h"
 
 typedef ITracker* opentrack_tracker;
 
-class OPENTRACK_HIDDEN opentrack_meta {
+class opentrack_meta {
 public:
     Metadata* meta;
     QString path;
@@ -35,7 +33,7 @@ public:
     }
 };
 
-typedef class OPENTRACK_HIDDEN opentrack_ctx {
+typedef class opentrack_ctx {
 public:
     QDir dir;
     char** list;
@@ -44,3 +42,7 @@ public:
     opentrack_ctx(QDir& dir);
     ~opentrack_ctx();
 } *opentrack;
+
+#ifdef __GNUC__
+#   pragma GCC visibility pop
+#endif
