@@ -17,7 +17,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions(-DOPENTRACK_API)
+add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
 
 if(MSVC)
     add_definitions(-DNOMINMAX)
@@ -153,6 +153,9 @@ else()
     endif()
 endif()
 # main app
+
+file(GLOB opentrack-lib-c "opentrack-api/*.cpp")
+file(GLOB opentrack-lib-h "opentrack-api/*.h")
 
 file(GLOB opentrack-bin-c "facetracknoir/*.cpp" "facetracknoir/*.rc")
 file(GLOB opentrack-bin-h "facetracknoir/*.h")
@@ -608,6 +611,12 @@ add_executable(opentrack ${opentrack-win32-executable} ${opentrack-bin-c} ${open
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 set(OPENTRACK_COMMIT_VERSION \"${OPENTRACK__COMMIT}\")
 configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/opentrack-version.h" @ONLY NEWLINE_STYLE UNIX)
+
+add_library(opentrack-api ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
+target_link_libraries(opentrack-api ${MY_QT_LIBS})
+
+set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
+
 if(UNIX)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
@@ -631,15 +640,16 @@ endif()
 target_link_libraries(opentrack opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
+    target_link_libraries(opentrack-api dl)
 endif()
-    if(SDK_GOOGLE_BREAKPAD)
-        if(MSVC)
-            target_link_libraries(opentrack
-                "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
-                "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
-                "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
-        endif()
+if(SDK_GOOGLE_BREAKPAD)
+    if(MSVC)
+        target_link_libraries(opentrack
+            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
+            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
+            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
     endif()
+endif()
 set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 
 # make install
