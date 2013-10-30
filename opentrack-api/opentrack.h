@@ -45,9 +45,9 @@ void opentrack_finalize_ctx(opentrack self);
 const char** opentrack_enum_trackers(opentrack self);
 
 /*
-     * don't `opentrack_tracker_tick an unstarted tracker, it's invalid to do so
-     * it's also invalid to start a finalized tracker
-     */
+ * don't `opentrack_tracker_tick an unstarted tracker, it's invalid to do so
+ * it's also invalid to start a finalized tracker
+ */
 opentrack_tracker opentrack_make_tracker(opentrack ctx, const char* name);
 void opentrack_tracker_start(opentrack self, opentrack_tracker tracker);
 int opentrack_tracker_tick(opentrack_tracker tracker, double* headpose);
