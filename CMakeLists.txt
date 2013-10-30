@@ -325,7 +325,7 @@ if(SDK_XPLANE)
             PROPERTIES LINK_FLAGS
             "-Wl,--version-script=${CMAKE_SOURCE_DIR}/x-plane-plugin/version-script.txt -shared -rdynamic -nodefaultlibs -undefined_warning -fPIC"
             COMPILE_FLAGS "-Wall -O2 -pipe -fPIC -DLIN -DXPLM210"
-            LIBRARY_OUTPUT_NAME "facetracknoir.xpl"
+            LIBRARY_OUTPUT_NAME "opentrack.xpl"
             PREFIX "" SUFFIX "")
     endif()
     if(UNIX)
