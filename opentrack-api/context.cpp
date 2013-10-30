@@ -45,7 +45,7 @@ static QList<opentrack_meta> list_files(QDir& dir, QString filter)
             continue;
         }
         QString prefix(LIB_PREFIX + filter);
-        QString suffix("*." SONAME);
+        QString suffix("." SONAME);
         if (str.size() > prefix.size() + suffix.size() && str.startsWith(prefix) && str.endsWith(suffix))
         {
             auto str2 = str.mid(prefix.size(), str.size() - prefix.size() - suffix.size());
