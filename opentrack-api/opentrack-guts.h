@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QFrame>
 #include <QDir>
 #include <QList>
 #include <QStringList>
@@ -8,33 +9,39 @@
 #include <iostream>
 #include <cstring>
 #include <QString>
+#include <QApplication>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "facetracknoir/global-settings.h"
+#include <memory>
 
 typedef ITracker* opentrack_tracker;
 
 class opentrack_meta {
 public:
-    Metadata* meta;
     QString path;
-    DynamicLibrary* lib;
+    std::shared_ptr<DynamicLibrary> lib;
 
-    opentrack_meta(Metadata* meta, QString& path, DynamicLibrary* lib) :
-        meta(meta), path(path), lib(lib)
+    opentrack_meta(QString& path, DynamicLibrary* lib) :
+        path(path), lib(lib)
     {}
-    ~opentrack_meta()
+};
+
+class MyFrame : public QFrame {
+    Q_OBJECT
+public:
+    MyFrame(void* parent)
     {
-        delete meta;
-        delete lib;
+        create((WId) parent);
     }
+    explicit MyFrame() {}
 };
 
 typedef class opentrack_ctx {
 public:
-    QDir dir;
+    QApplication app;
     char** list;
     QList<opentrack_meta> meta_list;
-    QFrame fake_frame;
-    opentrack_ctx(QDir& dir);
+    MyFrame fake_frame;
+    opentrack_ctx(int argc, char** argv, void* window_parent);
     ~opentrack_ctx();
 } *opentrack;

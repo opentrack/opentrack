@@ -6,9 +6,9 @@ extern "C" {
 #ifndef IN_OPENTRACK
 /* opaque pointers, forward definitions */
 struct opentrack_opaque_ctx;
-typedef opentrack_opaque_ctx* opentrack;
+typedef struct opentrack_opaque_ctx* opentrack;
 struct opentrack_opaque_tracker;
-typedef opentrack_opaque_tracker* opentrack_tracker;
+typedef struct opentrack_opaque_tracker* opentrack_tracker;
 #endif
 
 #ifdef IN_OPENTRACK
@@ -42,7 +42,7 @@ enum opentrack_dof {
 };
 #endif
 
-opentrack opentrack_make_ctx(const char* dir);
+opentrack opentrack_make_ctx(int argc, char** argv, void* window_parent);
 void opentrack_finalize_ctx(opentrack self);
 
 /* no need to free the return value; invalid to modify it */
