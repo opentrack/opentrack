@@ -11,9 +11,15 @@
 #include <iostream>
 #include <cstring>
 
+#ifdef __GNUC__
+#   define OPENTRACK_HIDDEN __attribute__((visibility ("hidden")))
+#else
+#   define OPENTRACK_HIDDEN
+#endif
+
 typedef ITracker* opentrack_tracker;
 
-class opentrack_meta {
+class OPENTRACK_HIDDEN opentrack_meta {
 public:
     Metadata* meta;
     QString path;
@@ -29,7 +35,7 @@ public:
     }
 };
 
-typedef class opentrack_ctx {
+typedef class OPENTRACK_HIDDEN opentrack_ctx {
 public:
     QDir dir;
     char** list;
