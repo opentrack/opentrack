@@ -614,6 +614,10 @@ configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/op
 
 add_library(opentrack-api SHARED ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+    SET_TARGET_PROPERTIES(opentrack-api
+    PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt")
+endif()
 
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
