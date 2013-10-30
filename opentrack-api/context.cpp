@@ -83,9 +83,9 @@ opentrack_ctx::~opentrack_ctx()
 {
     for (int i = 0; list[i]; i++)
     {
-        delete list[i];
+        delete[] list[i];
     }
-    delete list;
+    delete[] list;
 }
 
 extern "C"
