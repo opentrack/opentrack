@@ -800,8 +800,6 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
             delete keybindingWorker;
             keybindingWorker = NULL;
         }
-        const int idx_center = iniFile.value("Key_index_Center", 0).toInt();
-        const int idx_toggle = iniFile.value("Key_index_Toggle", 0).toInt();
         keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
         keybindingWorker->start();
 #endif
