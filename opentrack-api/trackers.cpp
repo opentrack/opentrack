@@ -5,13 +5,12 @@ extern "C" {
 
 opentrack_tracker OPENTRACK_EXPORT opentrack_make_tracker(opentrack ctx, const char* name)
 {
-    QString n(name);
     for (int i = 0; i < ctx->meta_list.size(); i++)
     {
-        auto meta = ctx->meta_list[i];
+        auto meta = ctx->meta_list.at(i);
         if (ctx->meta_list.at(i).path == name)
         {
-            ITracker* foo = reinterpret_cast<ITracker*>(meta.lib->Constructor());
+            ITracker* foo = static_cast<ITracker*>(meta.lib->Constructor());
             return foo;
         }
     }
@@ -32,7 +31,9 @@ void OPENTRACK_EXPORT opentrack_tracker_start(opentrack self, opentrack_tracker 
 
 int OPENTRACK_EXPORT opentrack_tracker_tick(opentrack_tracker tracker, double* headpose)
 {
-    return tracker->GiveHeadPoseData(headpose);
+    int ret = tracker->GiveHeadPoseData(headpose);
+    QApplication::processEvents(0, 5);
+    return ret;
 }
 
 }

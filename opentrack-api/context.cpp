@@ -27,10 +27,12 @@ static Metadata* get_metadata(DynamicLibrary* lib, QString& longName, QIcon& ico
     return meta;
 }
 
-static QList<opentrack_meta> list_files(QDir& dir, QString filter)
+static QList<opentrack_meta> list_files(QString filter)
 {
     QList<opentrack_meta> ret;
-    QStringList filenames = dir.entryList( QStringList() << (LIB_PREFIX + filter + ("*." SONAME)), QDir::Files, QDir::Name );
+    QStringList filenames = QDir((qApp->applicationDirPath())).entryList(
+                QStringList() << (LIB_PREFIX + filter + ("*." SONAME)),
+                QDir::Files, QDir::Name );
     for ( int i = 0; i < filenames.size(); i++) {
         QIcon icon;
         QString long_name;
@@ -49,7 +51,7 @@ static QList<opentrack_meta> list_files(QDir& dir, QString filter)
         if (str.size() > prefix.size() + suffix.size() && str.startsWith(prefix) && str.endsWith(suffix))
         {
             auto str2 = str.mid(prefix.size(), str.size() - prefix.size() - suffix.size());
-            opentrack_meta item(meta, str2, lib);
+            opentrack_meta item(str2, lib);
             ret.push_back(item);
         }
     }
@@ -57,9 +59,10 @@ static QList<opentrack_meta> list_files(QDir& dir, QString filter)
     return ret;
 }
 
-opentrack_ctx::opentrack_ctx(QDir& dir) :
-    dir(dir),
-    meta_list(list_files(dir, "opentrack-tracker-"))
+opentrack_ctx::opentrack_ctx(int argc, char** argv, void* window_parent) :
+    app(argc, argv),
+    meta_list(list_files("opentrack-tracker-")),
+    fake_frame(window_parent)
 {
     const int count = meta_list.size();
     list = new char*[count + 1];
@@ -93,10 +96,9 @@ const char** opentrack_enum_trackers(opentrack ctx)
     return const_cast<const char**>(ctx->list);
 }
 
-opentrack opentrack_make_ctx(const char *dir)
+opentrack opentrack_make_ctx(int argc, char** argv, void* window_parent)
 {
-    QDir d(dir);
-    return new opentrack_ctx(d);
+    return new opentrack_ctx(argc, argv, window_parent);
 }
 
 void opentrack_finalize_ctx(opentrack foo)
