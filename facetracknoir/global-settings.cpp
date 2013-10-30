@@ -4,12 +4,6 @@
 #   include <dlfcn.h>
 #endif
 
-#ifdef IN_OPENTRACK_API
-#   ifdef __GNUC__
-#       pragma GCC visibility push(protected)
-#   endif
-#endif
-
 SelectedLibraries* Libraries = NULL;
 
 SelectedLibraries::~SelectedLibraries()
@@ -134,9 +128,3 @@ DynamicLibrary::~DynamicLibrary()
         (void) dlclose(handle);
 #endif
 }
-
-#ifdef IN_OPENTRACK_API
-#   ifdef __GNUC__
-#       pragma GCC visibility pop
-#   endif
-#endif

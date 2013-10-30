@@ -14,12 +14,6 @@
 
 #include <cstdio>
 
-#ifdef IN_OPENTRACK_API
-#   ifdef __GNUC__
-#       pragma GCC visibility push(protected)
-#   endif
-#endif
-
 #include <QWidget>
 #include <QDebug>
 #include <QString>
@@ -91,10 +85,3 @@ public:
     virtual DynamicLibrary* current_filter() = 0;
     virtual QFrame* get_video_widget() = 0;
 };
-
-
-#ifdef IN_OPENTRACK_API
-#   ifdef __GNUC__
-#       pragma GCC visibility pop
-#   endif
-#endif

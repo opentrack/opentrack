@@ -17,10 +17,6 @@
 #   define LIB_PREFIX "lib"
 #endif
 
-#ifdef __GNUC__
-#   pragma GCC visibility push(protected)
-#endif
-
 static Metadata* get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
 {
     Metadata* meta;
@@ -110,6 +106,3 @@ void opentrack_finalize_ctx(opentrack foo)
 
 }
 
-#ifdef __GNUC__
-#   pragma GCC visibility pop
-#endif
