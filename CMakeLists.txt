@@ -328,6 +328,9 @@ if(SDK_XPLANE)
             LIBRARY_OUTPUT_NAME "facetracknoir.xpl"
             PREFIX "" SUFFIX "")
     endif()
+    if(UNIX)
+        target_link_libraries(opentrack-xplane-plugin rt)
+    endif()
 endif()
 
 # some boilerplate
