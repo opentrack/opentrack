@@ -46,6 +46,8 @@ static QList<opentrack_meta> list_files(QString filter)
             delete lib;
             continue;
         }
+        /* TODO perhaps return full name and somesuch */
+        delete meta;
         QString prefix(LIB_PREFIX + filter);
         QString suffix("." SONAME);
         if (str.size() > prefix.size() + suffix.size() && str.startsWith(prefix) && str.endsWith(suffix))
