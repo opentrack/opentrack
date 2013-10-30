@@ -48,8 +48,6 @@ struct ITracker
 
 inline ITracker::~ITracker() { }
 
-typedef ITracker* ITrackerPtr;
-
 ////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
 // This interface doesn't require __declspec(dllexport/dllimport) specifier.
