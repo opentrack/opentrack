@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef __GNUC__
-#   pragma GCC visibility push(protected)
-#endif
-
 #include <QDir>
 #include <QList>
 #include <QStringList>
@@ -42,7 +38,3 @@ public:
     opentrack_ctx(QDir& dir);
     ~opentrack_ctx();
 } *opentrack;
-
-#ifdef __GNUC__
-#   pragma GCC visibility pop
-#endif
