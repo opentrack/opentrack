@@ -46,7 +46,7 @@ public:
 
 	explicit TrackerControls();
     ~TrackerControls();
-	void showEvent ( QShowEvent * event );
+    void showEvent (QShowEvent *);
 
     void Initialize(QWidget *parent);
     void registerTracker(ITracker *) {}
