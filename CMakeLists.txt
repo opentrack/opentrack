@@ -612,7 +612,7 @@ set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION
 set(OPENTRACK_COMMIT_VERSION \"${OPENTRACK__COMMIT}\")
 configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/opentrack-version.h" @ONLY NEWLINE_STYLE UNIX)
 
-add_library(opentrack-api ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
+add_library(opentrack-api SHARED ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
 
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
@@ -692,6 +692,7 @@ install(TARGETS
         opentrack-tracker-ht
         opentrack-tracker-udp
         opentrack
+        opentrack-api
         RUNTIME DESTINATION .
         LIBRARY DESTINATION .
         NAMELINK_SKIP
