@@ -15,7 +15,11 @@ typedef opentrack_opaque_tracker* opentrack_tracker;
 #   ifdef _WIN32
 #       define OPENTRACK_EXPORT __declspec(dllexport)
 #   else
-#       define OPENTRACK_EXPORT
+#       ifdef __GNUC__
+#           define OPENTRACK_EXPORT __attribute__((visibility ("default")))
+#       else
+#           define OPENTRACK_EXPORT
+#       endif
 #   endif
 #else
 #   ifdef _WIN32
@@ -55,3 +59,4 @@ void opentrack_finalize_tracker(opentrack_tracker tracker);
 #ifdef __cplusplus
 }
 #endif
+

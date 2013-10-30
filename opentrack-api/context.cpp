@@ -17,7 +17,10 @@
 #   define LIB_PREFIX "lib"
 #endif
 
-// shamelessly copied from core
+#ifdef __GNUC__
+#   pragma GCC visibility push(protected)
+#endif
+
 static Metadata* get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
 {
     Metadata* meta;
@@ -89,20 +92,24 @@ opentrack_ctx::~opentrack_ctx()
 extern "C"
 {
 
-const char** OPENTRACK_EXPORT opentrack_enum_trackers(opentrack ctx)
+const char** opentrack_enum_trackers(opentrack ctx)
 {
     return const_cast<const char**>(ctx->list);
 }
 
-opentrack OPENTRACK_EXPORT opentrack_make_ctx(const char *dir)
+opentrack opentrack_make_ctx(const char *dir)
 {
     QDir d(dir);
     return new opentrack_ctx(d);
 }
 
-void OPENTRACK_EXPORT opentrack_finalize_ctx(opentrack foo)
+void opentrack_finalize_ctx(opentrack foo)
 {
     delete foo;
 }
 
 }
+
+#ifdef __GNUC__
+#   pragma GCC visibility pop
+#endif
