@@ -8,6 +8,8 @@
 /*
  * this file appeared originally in facetracknoir, was rewritten completely
  * following opentrack fork.
+ *
+ * originally written by Wim Vriend.
  */
 
 #include "tracker.h"
