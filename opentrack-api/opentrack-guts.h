@@ -36,6 +36,7 @@ public:
         {
             show();
             setVisible(false);
+            hide();
         }
         else
         {
