@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QIcon>
+#include <QShowEvent>
 #include <iostream>
 #include <cstring>
 #include <QString>
@@ -31,7 +32,15 @@ class MyFrame : public QFrame {
 public:
     MyFrame(void* parent)
     {
-        create((WId) parent);
+        if (parent == (void*) -1)
+        {
+            show();
+            setVisible(false);
+        }
+        else
+        {
+            create((WId) parent);
+        }
     }
     explicit MyFrame() {}
 };
