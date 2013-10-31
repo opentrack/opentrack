@@ -93,17 +93,17 @@ opentrack_ctx::~opentrack_ctx()
 extern "C"
 {
 
-const char** opentrack_enum_trackers(opentrack ctx)
+const char** OPENTRACK_EXPORT opentrack_enum_trackers(opentrack ctx)
 {
     return const_cast<const char**>(ctx->list);
 }
 
-opentrack opentrack_make_ctx(int argc, char** argv, void* window_parent)
+opentrack OPENTRACK_EXPORT opentrack_make_ctx(int argc, char** argv, void* window_parent)
 {
     return new opentrack_ctx(argc, argv, window_parent);
 }
 
-void opentrack_finalize_ctx(opentrack foo)
+void OPENTRACK_EXPORT opentrack_finalize_ctx(opentrack foo)
 {
     delete foo;
 }
