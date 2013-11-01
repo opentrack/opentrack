@@ -82,7 +82,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
 {
     if (pSFusion != NULL) {
         Quatf hmdOrient = pSFusion->GetOrientation();
-        float newHeadPose[6];
+        double newHeadPose[6];
         
         float yaw = 0.0f;
         float pitch = 0.0f;
