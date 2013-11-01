@@ -18,7 +18,6 @@ Rift_Tracker::Rift_Tracker()
 #endif
     should_quit = false;
 	pManager = NULL;
-	pHMD = NULL;
 	pSensor = NULL;
 	pSFusion = NULL;
     old_yaw = 0;
@@ -30,8 +29,6 @@ Rift_Tracker::~Rift_Tracker()
         pSensor->Release();
     if (pSFusion)
         delete pSFusion;
-    if (pHMD)
-        pHMD->Release();
     if (pManager)
         pManager->Release();
     System::Destroy();
@@ -49,20 +46,13 @@ void Rift_Tracker::StartTracker(QFrame*)
     pManager = DeviceManager::Create();
     if (pManager != NULL)
     {
-        DeviceEnumerator<HMDDevice> enumerator = pManager->EnumerateDevices<HMDDevice>();
+        DeviceEnumerator<OVR::SensorDevice> enumerator = pManager->EnumerateDevices<OVR::SensorDevice>();
         if (enumerator.IsAvailable())
         {
-            pHMD = enumerator.CreateDevice();
-
-            if (pHMD != NULL)
-            {
-                pSensor = pHMD->GetSensor();
-            }else{
-                QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
-            }
-        
+            pSensor = enumerator.CreateDevice();
+          
             if (pSensor){
-				pSFusion = new OVR::SensorFusion();
+		pSFusion = new OVR::SensorFusion();
                 pSFusion->Reset();
                 pSFusion->AttachToSensor(pSensor);
             }else{
@@ -70,7 +60,7 @@ void Rift_Tracker::StartTracker(QFrame*)
             }
 
         }else{
-            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to find Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to enumerate Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
     }else{
 		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
@@ -123,7 +113,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
             data[Roll] = newHeadPose[Roll] * 57.295781f;
         }
     }
-    return pHMD != NULL;
+    return pSensor != NULL;
 }
 
 
