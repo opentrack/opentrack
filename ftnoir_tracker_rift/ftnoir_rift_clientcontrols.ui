@@ -175,6 +175,12 @@
       </item>
       <item row="1" column="1">
        <widget class="QDoubleSpinBox" name="persistence">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>5</number>
         </property>
@@ -198,6 +204,12 @@
       </item>
       <item row="2" column="1">
        <widget class="QDoubleSpinBox" name="constantDrift">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>5</number>
         </property>
@@ -221,6 +233,12 @@
       </item>
       <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="deadzone">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="decimals">
          <number>5</number>
         </property>
