@@ -93,7 +93,7 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         newHeadPose[Yaw] = yaw;
         if (useYawSpring)
         {
-            newHeadPose[Yaw] = yaw*persistence + (yaw-old_yaw);
+            newHeadPose[Yaw] = old_yaw*persistence + (yaw-old_yaw);
             if(newHeadPose[Yaw]>deadzone)newHeadPose[Yaw]-= constant_drift;
             if(newHeadPose[Yaw]<-deadzone)newHeadPose[Yaw]+= constant_drift;
             old_yaw=yaw;
