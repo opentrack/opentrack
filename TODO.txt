@@ -10,8 +10,6 @@
     ini files. Use metadata props in order to get class name for ini section.
     Required here are also arrays of settings. Use QList<T> for template
     specialization.
-20131019 sh
-    Add a joystick tracker source, with selectable axes.
 20131019 mm0zct
     Ship more then one profile for configuring the curves etc.
     There are two main user bases, HMD and traditional monitor+webcam users,
