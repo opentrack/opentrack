@@ -21,6 +21,7 @@ Rift_Tracker::Rift_Tracker()
 	pHMD = NULL;
 	pSensor = NULL;
 	pSFusion = NULL;
+    old_yaw = 0;
 }
 
 Rift_Tracker::~Rift_Tracker()
@@ -87,9 +88,17 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
         float pitch = 0.0f;
         float roll = 0.0f;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-        newHeadPose[Yaw] = yaw;
-        newHeadPose[Pitch] =pitch;
+        newHeadPose[Pitch] = pitch;
         newHeadPose[Roll] = roll;
+        newHeadPose[Yaw] = yaw;
+        if (useYawSpring)
+        {
+            newHeadPose[Yaw] = newHeadPose[Yaw]*persistence + (yaw-old_yaw);
+            if(newHeadPose[Yaw]>deadzone)newHeadPose[Yaw]-= constant_drift;
+            if(newHeadPose[Yaw]<-deadzone)newHeadPose[Yaw]+= constant_drift;
+            old_yaw=yaw;
+        }
+        else
 
 #if 0
         newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
@@ -142,6 +151,10 @@ void Rift_Tracker::loadSettings() {
     bEnableY = iniFile.value ( "EnableY", 1 ).toBool();
     bEnableZ = iniFile.value ( "EnableZ", 1 ).toBool();
 #endif
+    useYawSpring = iniFile.value("yaw-spring", false).toBool();
+    constant_drift = iniFile.value("constant-drift", 0.000005).toDouble();
+    persistence = iniFile.value("persistence", 0.99999).toDouble();
+    deadzone = iniFile.value("deadzone", 0.02).toDouble();
     iniFile.endGroup ();
 }
 
