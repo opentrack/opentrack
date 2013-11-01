@@ -117,6 +117,10 @@ void TrackerControls::loadSettings() {
 	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
 	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
 #endif
+    ui.yawSpring->setChecked(iniFile.value("yaw-spring", true).toBool());
+    ui.deadzone->setValue(iniFile.value("deadzone", 0.02).toDouble());
+    ui.constantDrift->setValue(iniFile.value("constant-drift", 0.000005).toDouble());
+    ui.persistence->setValue(iniFile.value("persistence", 0.9999).toDouble());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
@@ -140,6 +144,10 @@ void TrackerControls::save() {
 	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
 	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
 #endif
+    iniFile.setValue("yaw-spring", ui.yawSpring->isChecked());
+    iniFile.setValue("deadzone", ui.deadzone->value());
+    iniFile.setValue("constant-drift", ui.constantDrift->value());
+    iniFile.setValue("persistence", ui.persistence->value());
 	iniFile.endGroup ();
 
 	settingsDirty = false;
