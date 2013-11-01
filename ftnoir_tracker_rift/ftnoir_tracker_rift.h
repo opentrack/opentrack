@@ -24,7 +24,6 @@ protected:
 private:
 	static bool isInitialised;
 	OVR::DeviceManager* pManager;
-	OVR::HMDDevice* pHMD;
 	OVR::SensorDevice* pSensor;
 	OVR::SensorFusion* pSFusion;
 	bool bEnableRoll;
