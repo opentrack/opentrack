@@ -96,7 +96,6 @@ endif()
     include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
-    INCLUDE_DIRECTORIES(${QT_QTDESIGNER_INCLUDE_DIR})
 
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/qfunctionconfigurator)
@@ -363,7 +362,7 @@ target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 add_library(opentrack-pose-widget SHARED ${opentrack-pose-widget-c} ${opentrack-pose-widget-h} ${opentrack-pose-widget-moc} ${opentrack-pose-widget-rcc})
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c} ${opentrack-spline-widget-h} ${opentrack-spline-widget-moc})
-target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS} ${QT_QTDESIGNER_LIBRARY_RELEASE})
+target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
 add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-h} ${opentrack-filter-accela-moc} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
 target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
