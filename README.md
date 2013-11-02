@@ -12,7 +12,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift (Windows; Linux testers welcome!)
+- Oculus Rift (Linux, Windows)
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
 - HT tracker <https://github.com/sthalik/headtracker>
 - Razer Hydra (Windows; Linux testers welcome!)
