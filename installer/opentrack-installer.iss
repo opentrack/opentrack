@@ -23,8 +23,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename={#MyAppVersion}-setup.exe
-SetupIconFile=d:\opentrack-win32-sdk\opentrack\facetracknoir\facetracknoir.ico
+OutputBaseFilename={#MyAppVersion}-setup
+SetupIconFile=d:\opentrack\facetracknoir\facetracknoir.ico
 Compression=lzma2/ultra64
 SolidCompression=yes
 DisableWelcomePage=True
@@ -42,7 +42,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "d:\opentrack-win32-sdk\opentrack\build\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "d:\opentrack\build-mingw-w64\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
