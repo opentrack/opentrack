@@ -8,7 +8,7 @@
 #ifndef VIDEOWIDGET_H
 #define VIDEOWIDGET_H
 
-#include <QTime>
+#include <QTimer>
 #include <QWidget>
 #include <QMutex>
 #include <QMutexLocker>
@@ -23,7 +23,7 @@ class ArucoVideoWidget : public QWidget
 	Q_OBJECT
 
 public:
-    ArucoVideoWidget(QWidget *parent) : QWidget(parent), width(0), height(0), fb() {
+    ArucoVideoWidget(QWidget *parent) : QWidget(parent), fb(), width(0), height(0) {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
         timer.start(60);
 	}
