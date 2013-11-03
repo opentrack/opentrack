@@ -11,7 +11,7 @@
 
 using namespace cv;
 
-#if defined(OPENTRACK_API) && (defined(__unix) || defined(__linux))
+#if defined(OPENTRACK_API) && (defined(__unix) || defined(__linux) || defined(__APPLE__))
 #include <unistd.h>
 #endif
 

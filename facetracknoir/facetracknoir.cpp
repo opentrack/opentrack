@@ -49,7 +49,7 @@
 #   define LIB_PREFIX "lib"
 #endif
 
-#if defined(__unix) || defined(__linux)
+#if defined(__unix) || defined(__linux) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
 
