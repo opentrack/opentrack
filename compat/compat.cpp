@@ -6,6 +6,8 @@
  */
 #define IN_FTNOIR_COMPAT
 #include "compat.h"
+#include <string>
+#include <sstream>
 
 #if defined(_WIN32)
 
@@ -46,19 +48,18 @@ void PortableLockedShm::unlock()
 #else
 PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
-    char shm_filename[NAME_MAX];
-    shm_filename[0] = '/';
-    strncpy(shm_filename+1, shmName, NAME_MAX-2);
-    sprintf(shm_filename + strlen(shm_filename), "%ld\n", (long) getuid());
-    shm_filename[NAME_MAX-1] = '\0';
-
+    std::string filename;
+    filename.append("/");
+    filename.append(shmName);
     //(void) shm_unlink(shm_filename);
 
-    fd = shm_open(shm_filename, O_RDWR | O_CREAT, 0600);
-    if (ftruncate(fd, mapSize) == 0)
-        mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANON, fd, (off_t)0);
-    else
-        mem = (void*) -1;
+    fd = shm_open(filename.c_str(), O_RDWR | O_CREAT, 0600);
+    if (ftruncate(fd, mapSize) == 0) { ;; }
+    else {
+        fprintf(stderr, "oh, bother, ftruncate: %s\n", strerror(errno));
+        //mem = (void*) -1;
+    }
+    mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANON, fd, (off_t)0);
 }
 
 PortableLockedShm::~PortableLockedShm()
