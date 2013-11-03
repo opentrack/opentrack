@@ -118,7 +118,7 @@ endif()
         set(SDK_WINE_PREFIX "" CACHE PATH "Path where Wine is installed")
         set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "Don't build wrapper, for instance X-Plane is native Linux app")
     endif()
-    IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+    IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR APPLE)
         set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
     endif()
 
@@ -319,13 +319,18 @@ file(GLOB opentrack-freetrack-c "freetrackclient/*.cpp")
 if(SDK_XPLANE)
     # probably librt already included
     add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
-    if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+    if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin
             PROPERTIES LINK_FLAGS
             "-Wl,--version-script=${CMAKE_SOURCE_DIR}/x-plane-plugin/version-script.txt -shared -rdynamic -nodefaultlibs -undefined_warning -fPIC"
             COMPILE_FLAGS "-Wall -O2 -pipe -fPIC -DLIN -DXPLM210"
             LIBRARY_OUTPUT_NAME "opentrack.xpl"
             PREFIX "" SUFFIX "")
+    endif()
+    if(APPLE)
+        SET_TARGET_PROPERTIES(opentrack-xplane-plugin
+                              COMPILE_FLAGS "-DAPL -DXPLM210 -framework XPLM -framework XPWidgets"
+                              LINK_FLAGS "-framework XPLM -framework XPWidgets")
     endif()
     if(UNIX AND NOT APPLE)
         target_link_libraries(opentrack-xplane-plugin rt)
@@ -349,17 +354,13 @@ if(NOT WIN32 AND NOT APPLE)
     target_link_libraries(opentrack-compat rt)
 endif()
 
-    # hack to avoid breakage on buildbot
-    set(my-qt-deps)
-    if(WIN32)
-            set(my-qt-deps ws2_32)
-    endif()
-if(APPLE)
-    link_directories(${CMAKE_INSTALL_PREFIX})
-    SET(MY_QT_LIBS QtWidgets QtGui QtNetwork QtXml QtCore)
-else()
-    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
+# hack to avoid breakage on buildbot
+set(my-qt-deps)
+if(WIN32)
+    set(my-qt-deps ws2_32)
 endif()
+
+SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
 
 add_library(opentrack-csv SHARED ${opentrack-csv-c} ${opentrack-csv-h})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
@@ -817,3 +818,10 @@ if(MSVC)
     install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
 endif()
 
+if(APPLE)
+    set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
+    set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
+    set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
+endif()
