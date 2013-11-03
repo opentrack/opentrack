@@ -96,7 +96,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
 #   ifdef __linux
                     RTLD_DEEPBIND
 #   elif defined(__APPLE__)
-                    RTLD_LOCAL
+                    RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
                     0
 #   endif
