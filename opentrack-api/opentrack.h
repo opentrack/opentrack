@@ -38,20 +38,20 @@ enum opentrack_dof {
 };
 #endif
 
-opentrack OPENTRACK_EXPORT opentrack_make_ctx(int argc, char** argv, void* window_parent);
-void OPENTRACK_EXPORT opentrack_finalize_ctx(opentrack self);
+OPENTRACK_EXPORT opentrack opentrack_make_ctx(int argc, char** argv, void* window_parent);
+OPENTRACK_EXPORT void opentrack_finalize_ctx(opentrack self);
 
 /* no need to free the return value; invalid to modify it */
-const char** OPENTRACK_EXPORT opentrack_enum_trackers(opentrack self);
+OPENTRACK_EXPORT const char** opentrack_enum_trackers(opentrack self);
 
 /*
  * don't `opentrack_tracker_tick an unstarted tracker, it's invalid to do so
  * it's also invalid to start a finalized tracker
  */
-opentrack_tracker OPENTRACK_EXPORT opentrack_make_tracker(opentrack ctx, const char* name);
-void OPENTRACK_EXPORT opentrack_tracker_start(opentrack self, opentrack_tracker tracker);
-int OPENTRACK_EXPORT opentrack_tracker_tick(opentrack_tracker tracker, double* headpose);
-void OPENTRACK_EXPORT opentrack_finalize_tracker(opentrack_tracker tracker);
+OPENTRACK_EXPORT opentrack_tracker opentrack_make_tracker(opentrack ctx, const char* name);
+OPENTRACK_EXPORT void  opentrack_tracker_start(opentrack self, opentrack_tracker tracker);
+OPENTRACK_EXPORT int opentrack_tracker_tick(opentrack_tracker tracker, double* headpose);
+OPENTRACK_EXPORT void opentrack_finalize_tracker(opentrack_tracker tracker);
 #ifdef __cplusplus
 }
 #endif
