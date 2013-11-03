@@ -6,8 +6,7 @@
  */
 #define IN_FTNOIR_COMPAT
 #include "compat.h"
-#include <string>
-#include <sstream>
+#include <string.h>
 
 #if defined(_WIN32)
 
@@ -48,17 +47,11 @@ void PortableLockedShm::unlock()
 #else
 PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
-    std::string filename;
-    filename.append("/");
-    filename.append(shmName);
-    //(void) shm_unlink(shm_filename);
-
-    fd = shm_open(filename.c_str(), O_RDWR | O_CREAT, 0600);
-    if (ftruncate(fd, mapSize) == 0) { ;; }
-    else {
-        fprintf(stderr, "oh, bother, ftruncate: %s\n", strerror(errno));
-        //mem = (void*) -1;
-    }
+    char filename[512] = {0};
+    strcpy(filename, "/");
+    strcat(filename, shmName);
+    fd = shm_open(filename, O_RDWR | O_CREAT, 0600);
+    (void) ftruncate(fd, mapSize);
     mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
 }
 

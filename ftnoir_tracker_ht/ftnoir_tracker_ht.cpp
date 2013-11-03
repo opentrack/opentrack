@@ -62,7 +62,7 @@ static QList<QString> get_camera_names(void) {
 		pEnumCat->Release();
 	}
 	pSysDevEnum->Release();
-#else
+#elsif !defined(__APPLE__)
     for (int i = 0; i < 16; i++) {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
@@ -281,15 +281,15 @@ TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
-	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.cameraName, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.cameraFPS, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.rx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ry, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.rz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.rx, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.ry, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.rz, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.tx, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.ty, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
+	connect(ui.tz, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
 	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
     //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));

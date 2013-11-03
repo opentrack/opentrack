@@ -9,7 +9,7 @@ if(GIT_FOUND)
 endif()
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_SKIP_INSTALL_RPATH FALSE)
 SET(CMAKE_SKIP_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
@@ -23,8 +23,12 @@ if(MSVC)
     add_definitions(-DNOMINMAX)
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions(-std=c++11)
+if(NOT APPLE)
+	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	    add_definitions(-std=c++11)
+	endif()
+else()
+	set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -92,7 +96,7 @@ endif()
 
     find_package(OpenCV REQUIRED)
     find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
-	cmake_policy(SET CMP0020 NEW)
+    cmake_policy(SET CMP0020 NEW)
     include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
@@ -328,9 +332,9 @@ if(SDK_XPLANE)
             PREFIX "" SUFFIX "")
     endif()
     if(APPLE)
-        SET_TARGET_PROPERTIES(opentrack-xplane-plugin
-                              COMPILE_FLAGS "-DAPL -DXPLM210 -framework XPLM -framework XPWidgets"
-                              LINK_FLAGS "-framework XPLM -framework XPWidgets")
+        SET_TARGET_PROPERTIES(opentrack-xplane-plugin PROPERTIES
+                              COMPILE_FLAGS "-iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM210 -framework XPLM -framework XPWidgets"
+                              LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets")
     endif()
     if(UNIX AND NOT APPLE)
         target_link_libraries(opentrack-xplane-plugin rt)
@@ -360,7 +364,12 @@ if(WIN32)
     set(my-qt-deps ws2_32)
 endif()
 
-SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
+if(APPLE)
+    link_directories(${CMAKE_INSTALL_PREFIX})
+    set(MY_QT_LIBS Qt5Widgets Qt5Gui Qt5Network Qt5Xml Qt5Core ${my-qt-deps})
+else()
+    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
+endif()
 
 add_library(opentrack-csv SHARED ${opentrack-csv-c} ${opentrack-csv-h})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
@@ -470,6 +479,10 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
     if(NOT SDK_WINE_NO_WRAPPER)
+	set(my-rt -lrt)
+	if(APPLE)
+		set(my-rt)
+	endif()
         add_custom_command(
           OUTPUT opentrack-wrapper-wine.exe.so
           DEPENDS "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
@@ -480,7 +493,7 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx"
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx"
-                  -lrt)
+                  ${my-rt})
         add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
         add_dependencies(wine-wrapper opentrack-compat opentrack-proto-wine)
     endif()
