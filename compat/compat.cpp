@@ -59,7 +59,7 @@ PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexNam
         fprintf(stderr, "oh, bother, ftruncate: %s\n", strerror(errno));
         //mem = (void*) -1;
     }
-    mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANON, fd, (off_t)0);
+    mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
 }
 
 PortableLockedShm::~PortableLockedShm()
