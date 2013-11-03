@@ -95,6 +95,8 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
     handle = dlopen(latin1.constData(), RTLD_NOW |
 #   ifdef __linux
                     RTLD_DEEPBIND
+#   elif defined(__APPLE__)
+                    RTLD_LOCAL
 #   else
                     0
 #   endif
