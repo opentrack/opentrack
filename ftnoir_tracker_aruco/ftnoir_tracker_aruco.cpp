@@ -188,10 +188,13 @@ start:
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    detector.setMinMaxSize(0.06, 0.4);
-    detector.setThresholdParams(11, 7);
+    detector.setThresholdParams(11, 6);
+
+    cv::Rect last_roi(65535, 65535, 0, 0);
 
     cv::Mat color, color_, grayscale, rvec, tvec;
+
+    const double stateful_coeff = 0.81;
     
     if (!camera->isOpened())
     {
@@ -205,12 +208,8 @@ start:
 
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
-    auto prev_time = last_time;
-    double last_delay = -1;
     int fps = 0;
     int last_fps = 0;
-    double error = 0;
-    std::vector<cv::Point2f> reprojection;
     cv::Point2f last_centroid;
     while (!stop)
     {
@@ -241,25 +240,32 @@ start:
             dist_coeffs.at<float>(i) = 0;
         
         std::vector< aruco::Marker > markers;
-        
-        detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
-        
+
+        if (last_roi.width > 0 &&
+                (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
+                 markers.size() == 1 && markers[0].size() == 4))
+        {
+            detector.setMinMaxSize(std::max(0.2, 0.08 * grayscale.cols / last_roi.width),
+                                   std::min(1.0, 0.39 * grayscale.cols / last_roi.width));
+            auto& m = markers.at(0);
+            for (int i = 0; i < 4; i++)
+            {
+                auto& p = m.at(i);
+                p.x += last_roi.x;
+                p.y += last_roi.y;
+            }
+        }
+        else
+        {
+            detector.setMinMaxSize(0.09, 0.4);
+            detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
+        }
+
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
             for (int i = 0; i < 4; i++)
-                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale);
+                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale, 8);
         }
-
-        for (int i = 0; i < reprojection.size(); i++)
-        {
-            cv::circle(frame,
-                       reprojection[i],
-                       6,
-                       cv::Scalar(0, 255, 128),
-                       3);
-        }
-
-        cv::circle(frame, last_centroid, 7, cv::Scalar(255, 255, 0), -1);
 
         auto time = cv::getTickCount();
 
@@ -278,15 +284,8 @@ start:
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
         ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
-        ::sprintf(buf, "Error: %f px", error);
-        cv::putText(frame, buf, cv::Point(10, 76), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
-        prev_time = time;
 
         frame = color;
-        if (frame.rows > 0)
-        {
-            videoWidget->update_image(frame.data, frame.cols, frame.rows);
-        }
         
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
@@ -305,6 +304,29 @@ start:
             obj_points.at<float>(0,0)=-size + headpos[0];
             obj_points.at<float>(0,1)=size + headpos[1];
             obj_points.at<float>(0,2)=0 + headpos[2];
+
+            last_roi = cv::Rect(65535, 65535, 0, 0);
+
+            for (int i = 0; i < 4; i++)
+            {
+                auto foo = m.at(i);
+                last_roi.x = std::min<int>(foo.x, last_roi.x);
+                last_roi.y = std::min<int>(foo.y, last_roi.y);
+                last_roi.width = std::max<int>(foo.x, last_roi.width);
+                last_roi.height = std::max<int>(foo.y, last_roi.height);
+            }
+            {
+                last_roi.width -= last_roi.x;
+                last_roi.height -= last_roi.y;
+                last_roi.x -= last_roi.width * stateful_coeff;
+                last_roi.y -= last_roi.height * stateful_coeff;
+                last_roi.width *= stateful_coeff * 3;
+                last_roi.height *= stateful_coeff * 3;
+                last_roi.x = std::max<int>(0, last_roi.x);
+                last_roi.y = std::max<int>(0, last_roi.y);
+                last_roi.width = std::min<int>(grayscale.cols - last_roi.x, last_roi.width);
+                last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
+            }
             
             cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
             
@@ -316,25 +338,15 @@ start:
         
             cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
-            QMutexLocker lck(&mtx);
-            
-            for (int i = 0; i < 3; i++)
-                pose[i] = tvec.at<double>(i);
-            
-            pose[Yaw] = foo[1];
-            pose[Pitch] = -foo[0];
-            pose[Roll] = foo[2];
-
-            reprojection.clear();
-            reprojection.resize(4);
-            cv::projectPoints(obj_points, rvec, tvec, intrinsics, dist_coeffs, reprojection);
-
-            error = 0;
-            for (int i = 0; i < 4; i++)
             {
-                double x = reprojection[i].x - m[i].x;
-                double y = reprojection[i].y - m[i].y;
-                error += std::sqrt(x * x + y * y);
+                QMutexLocker lck(&mtx);
+
+                for (int i = 0; i < 3; i++)
+                    pose[i] = tvec.at<double>(i);
+
+                pose[Yaw] = foo[1];
+                pose[Pitch] = -foo[0];
+                pose[Roll] = foo[2];
             }
 
             std::vector<cv::Point2f> repr2;
@@ -343,10 +355,14 @@ start:
             cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
 
             last_centroid = repr2[0];
-
-            //pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
-            //pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
         }
+        else
+        {
+            last_roi = cv::Rect(65535, 65535, 0, 0);
+        }
+
+        if (frame.rows > 0)
+            videoWidget->update_image(frame.data, frame.cols, frame.rows);
     }
 }
 
