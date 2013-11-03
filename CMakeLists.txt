@@ -8,6 +8,15 @@ if(GIT_FOUND)
     git_describe(OPENTRACK__COMMIT --tags --always)
 endif()
 
+if(APPLE)
+    set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
+    set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
+    set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
+    set(CMAKE_CXX_FLAGS " -stdlib=libc++ -std=c++11 ${CMAKE_CXX_FLAGS}")
+endif()
+
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_SKIP_INSTALL_RPATH FALSE)
@@ -21,14 +30,6 @@ add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
 
 if(MSVC)
     add_definitions(-DNOMINMAX)
-endif()
-
-if(NOT APPLE)
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	    add_definitions(-std=c++11)
-	endif()
-else()
-	set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -533,16 +534,18 @@ if(WIN32)
                   uuid)
 endif()
 
-include_directories(${OpenCV_INCLUDE_DIRS})
-include_directories(${OpenCV_DIR}/include)
-include_directories(${OpenCV_CONFIG_PATH}/include)
-
 add_library(opentrack-tracker-pt SHARED ${opentrack-tracker-pt-c} ${opentrack-tracker-pt-h} ${opentrack-tracker-pt-moc} ${opentrack-tracker-pt-uih} ${opentrack-tracker-pt-rcc})
 target_link_libraries(opentrack-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-SET_TARGET_PROPERTIES(opentrack-tracker-pt
-        PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+
+if(APPLE)
+	SET_TARGET_PROPERTIES(opentrack-tracker-pt PROPERTIES COMPILE_FLAGS "-std=c++11")
 endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+	SET_TARGET_PROPERTIES(opentrack-tracker-pt
+		PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
+endif()
+
 
 if(WIN32)
     target_link_libraries(opentrack-tracker-pt
@@ -664,6 +667,7 @@ if(UNIX)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
 target_link_libraries(opentrack ${OpenCV_LIBS})
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(UNIX)
     install(TARGETS opentrack-qxt-mini DESTINATION .)
@@ -829,12 +833,4 @@ if(MSVC)
     file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
     file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
     install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
-endif()
-
-if(APPLE)
-    set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
-    set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
 endif()
