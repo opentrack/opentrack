@@ -337,6 +337,8 @@ void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, co
 //
 void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 {
+    if (!_config)
+        return;
     QList<QPointF> points = _config->getPoints();
 
     //
@@ -409,6 +411,8 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 //
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
+    if (!_config)
+        return;
     QList<QPointF> points = _config->getPoints();
     const int refresh_delay = 50;
 
@@ -452,6 +456,8 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
+    if (!_config)
+        return;
     QList<QPointF> points = _config->getPoints();
 
     if (e->button() == Qt::LeftButton) {
