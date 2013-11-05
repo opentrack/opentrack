@@ -62,7 +62,7 @@ static QList<QString> get_camera_names(void) {
 		pEnumCat->Release();
 	}
 	pSysDevEnum->Release();
-#elsif !defined(__APPLE__)
+#elif !defined(__APPLE__)
     for (int i = 0; i < 16; i++) {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
