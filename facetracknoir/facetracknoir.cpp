@@ -332,6 +332,8 @@ void FaceTrackNoIR::saveAs()
 }
 
 void FaceTrackNoIR::loadSettings() {
+    if (looping)
+        return;
     looping = true;
 	qDebug() << "loadSettings says: Starting ";
     QSettings settings("opentrack");
