@@ -132,7 +132,7 @@ private:
     void bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString label, QSettings& iniFile);
 #endif
 
-    bool looping;
+    volatile bool looping;
     
 private slots:
     //file menu
