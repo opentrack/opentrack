@@ -7,8 +7,7 @@
 #pragma once
 
 #if defined(_WIN32)
-#include <winbase.h>
-#include <winreg.h>
+#include <windows.h>
 #else
 #include <stdio.h>
 #include <string.h>
