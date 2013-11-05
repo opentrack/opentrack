@@ -410,12 +410,17 @@ void FaceTrackNoIR::loadSettings() {
 		}
 	}
 
+    CurveConfigurationDialog* ccd = nullptr;
+
     if (!_curve_config)
     {
-        _curve_config = new CurveConfigurationDialog( this, this );
+        ccd = new CurveConfigurationDialog( this, this );
+        _curve_config = ccd;
+    } else {
+        ccd = dynamic_cast<CurveConfigurationDialog*>(_curve_config);
     }
 
-    ((CurveConfigurationDialog*)_curve_config)->loadSettings();
+    ccd->loadSettings();
 
     looping = false;
 }
