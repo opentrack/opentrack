@@ -410,7 +410,7 @@ void FaceTrackNoIR::loadSettings() {
 		}
 	}
 
-    CurveConfigurationDialog* ccd = nullptr;
+    CurveConfigurationDialog* ccd;
 
     if (!_curve_config)
     {
