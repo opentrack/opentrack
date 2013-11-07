@@ -50,10 +50,11 @@ void PTVideoWidget::update_and_repaint()
     for (int y = 0; y < _frame.rows; y++)
         for (int x = 0; x < _frame.cols; x++)
         {
-            const int pos = 3 * (y*_frame.cols + x);
-            data[y * pitch + x * 3 + 0] = _frame.data[pos + 2];
-            data[y * pitch + x * 3 + 1] = _frame.data[pos + 1];
-            data[y * pitch + x * 3 + 2] = _frame.data[pos + 0];
+            const auto& elt = _frame.at<Vec3b>(y, x);
+            const CvScalar elt2 = elt;
+            data[y * pitch + x * 3 + 0] = elt2.val[2];
+            data[y * pitch + x * 3 + 1] = elt2.val[1];
+            data[y * pitch + x * 3 + 2] = elt2.val[0];
         }
     qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
     pixmap = QPixmap::fromImage(qframe);
