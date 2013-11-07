@@ -280,12 +280,12 @@ start:
 
         char buf[128];
 
+        frame = color.clone();
+
         ::sprintf(buf, "Hz: %d", last_fps);
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
         ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
-
-        frame = color;
         
         if (markers.size() == 1 && markers[0].size() == 4) {
             const aruco::Marker& m = markers.at(0);
@@ -362,7 +362,7 @@ start:
         }
 
         if (frame.rows > 0)
-            videoWidget->update_image(frame.data, frame.cols, frame.rows);
+            videoWidget->update_image(frame);
     }
 }
 

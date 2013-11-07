@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
+#include <opencv/cv.hpp>
 
 // ----------------------------------------------------------------------------
 class ArucoVideoWidget : public QWidget
@@ -23,11 +24,11 @@ class ArucoVideoWidget : public QWidget
 	Q_OBJECT
 
 public:
-    ArucoVideoWidget(QWidget *parent) : QWidget(parent), fb(), width(0), height(0) {
+    ArucoVideoWidget(QWidget *parent) : QWidget(parent) {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
         timer.start(60);
 	}
-    void update_image(unsigned char* frame, int width, int height);
+    void update_image(const cv::Mat& frame);
 protected slots:
     void paintEvent( QPaintEvent* e ) {
         QMutexLocker foo(&mtx);
@@ -40,8 +41,7 @@ private:
     QMutex mtx;
     QPixmap pixmap;
     QTimer timer;
-    char fb[2048*2048*3];
-    int width,height;
+    cv::Mat _frame;
 };
 
 #endif // VIDEOWIDGET_H

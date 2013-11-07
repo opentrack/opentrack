@@ -11,31 +11,29 @@
 
 using namespace std;
 
-void ArucoVideoWidget::update_image(unsigned char *frame, int width, int height)
+void ArucoVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    memcpy(fb, frame, width * height * 3);
-    this->width = width;
-    this->height = height;
+    _frame = frame;
 }
 
 void ArucoVideoWidget::update_and_repaint()
 {
     QMutexLocker foo(&mtx);
-    if (width*height <= 0)
+    if (_frame.cols*_frame.rows <= 0)
         return;
-    QImage qframe = QImage(width, height, QImage::Format_RGB888);
+    QImage qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
     uchar* data = qframe.bits();
     const int pitch = qframe.bytesPerLine();
-    for (int y = 0; y < height; y++)
+    for (int y = 0; y < _frame.rows; y++)
     {
-        const int part = y*width;
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < _frame.cols; x++)
         {
-            const int pos = 3 * (part + x);
-            data[y * pitch + x * 3 + 0] = fb[pos + 2];
-            data[y * pitch + x * 3 + 1] = fb[pos + 1];
-            data[y * pitch + x * 3 + 2] = fb[pos + 0];
+            const auto& elt = _frame.at<cv::Vec3b>(y, x);
+            const CvScalar elt2 = elt;
+            data[y * pitch + x * 3 + 0] = elt2.val[2];
+            data[y * pitch + x * 3 + 1] = elt2.val[1];
+            data[y * pitch + x * 3 + 2] = elt2.val[0];
         }
     }
     auto qframe2 = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
