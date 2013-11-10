@@ -144,6 +144,7 @@ Tracker::Tracker()
 
 Tracker::~Tracker()
 {
+    QMutexLocker foo(&mtx);
     stop = true;
     wait();
 	if (layout)
@@ -364,10 +365,6 @@ start:
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
-
-    camera->release();
-    camera.release();
-    camera = nullptr;
 }
 
 bool Tracker::GiveHeadPoseData(double *data)
