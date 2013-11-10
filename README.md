@@ -43,6 +43,7 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Stanisław Halik
 - Chris Thompson (aka mm0zct)
 - Donovan Baarda
+- Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (merging)
 - Wim Vriend (historically)
 - Ron Hendriks (historically)
