@@ -4,7 +4,11 @@
 #include <QtGlobal>
 
 #ifndef OPENTRACK_MAIN
-# define FTNOIR_FILTER_BASE_EXPORT Q_DECL_EXPORT
+# if !defined(_MSC_VER)
+#   define FTNOIR_FILTER_BASE_EXPORT __attribute__ ((visibility ("default")))
+# else
+#   define FTNOIR_FILTER_BASE_EXPORT Q_DECL_EXPORT
+#endif
 #else
 # define FTNOIR_FILTER_BASE_EXPORT Q_DECL_IMPORT
 #endif

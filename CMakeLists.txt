@@ -14,7 +14,7 @@ if(APPLE)
     set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_CXX_FLAGS " -stdlib=libc++ -std=c++11 ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS " -stdlib=libc++ -std=c++11 ${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 endif()
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
