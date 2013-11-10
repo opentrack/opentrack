@@ -135,9 +135,9 @@ void Tracker::load_settings()
 
 Tracker::Tracker()
 {
+    layout = nullptr;
     stop = false;
 	videoWidget = NULL;
-	layout = NULL;
 	enableRX = enableRY = enableRZ = enableTX = enableTY = enableTZ = true;
 	load_settings();
 }
@@ -147,10 +147,10 @@ Tracker::~Tracker()
     QMutexLocker foo(&mtx);
     stop = true;
     wait();
-	if (layout)
-		delete layout;
 	if (videoWidget)
 		delete videoWidget;
+    if(layout)
+        delete layout;
 }
 
 void Tracker::StartTracker(QFrame* videoframe)
@@ -165,11 +165,11 @@ void Tracker::StartTracker(QFrame* videoframe)
         delete videoframe->layout();
     videoframe->setLayout(layout);
     videoWidget->show();
-    this->layout = layout;
     load_settings();
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
+    this->layout = layout;
 }
 
 #define HT_PI 3.1415926535
