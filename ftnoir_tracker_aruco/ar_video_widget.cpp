@@ -14,7 +14,7 @@ using namespace std;
 void ArucoVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    _frame = frame;
+    _frame = frame.clone();
 }
 
 void ArucoVideoWidget::update_and_repaint()
