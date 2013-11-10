@@ -30,7 +30,7 @@ void ArucoVideoWidget::update_and_repaint()
         for (int x = 0; x < _frame.cols; x++)
         {
             const auto& elt = _frame.at<cv::Vec3b>(y, x);
-            const cv::Scalar elt2 = elt;
+            const cv::Scalar elt2 = static_cast<cv::Scalar>(elt);
             data[y * pitch + x * 3 + 0] = elt2.val[2];
             data[y * pitch + x * 3 + 1] = elt2.val[1];
             data[y * pitch + x * 3 + 2] = elt2.val[0];
