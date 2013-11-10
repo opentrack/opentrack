@@ -145,7 +145,7 @@ class ActivationContext {
 public:
     ActivationContext(const int resid) {
         hactctx = INVALID_HANDLE_VALUE;
-        actctx_cookie = NULL;
+        actctx_cookie = 0;
         ACTCTXA actx = {0};
         actx.cbSize = sizeof(ACTCTXA);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
