@@ -25,7 +25,7 @@
 #   elif defined(_WIN32)
 #       define COMPAT_EXPORT __declspec(dllimport)
 #   else
-#       define COMPAT_EXPORT
+#       define COMPAT_EXPORT __attribute__ ((visibility ("default")))
 #   endif
 #else
 #   define COMPAT_EXPORT
