@@ -364,6 +364,10 @@ start:
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
+
+    camera->release();
+    camera.release();
+    camera = nullptr;
 }
 
 bool Tracker::GiveHeadPoseData(double *data)
