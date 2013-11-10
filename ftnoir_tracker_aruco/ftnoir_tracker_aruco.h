@@ -18,7 +18,7 @@
 #include <QDialog>
 #include <opencv2/opencv.hpp>
 
-class Tracker : public QThread, public ITracker
+class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
 public:
