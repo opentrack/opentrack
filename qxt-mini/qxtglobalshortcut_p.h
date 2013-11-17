@@ -40,6 +40,9 @@
 #include <QAbstractNativeEventFilter>
 #endif
 
+#ifdef Q_OS_DARWIN
+#   include <Cocoa/Cocoa.h>
+#endif
 
 class QxtGlobalShortcutPrivate : public QxtPrivate<QxtGlobalShortcut>
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -68,7 +71,17 @@ public:
     virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
 # endif // QT_VERSION < QT_VERSION_CHECK(5,0,0)
 # else
-    virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) {}
+    virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) {
+        EventRef Event = reinterpret_cast<EventRef>(message);
+        UInt32 EventClass = GetEventClass (Event);
+        UInt32 EventKind = GetEventKind (Event);
+        if (kEventClassKeyboard && EventKind == kEventRawKeyDown)
+        {
+            UInt32 keyPressed;
+            GetEventParameter(Event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyPressed); 
+            return keyPressed == nativeKeycode(key);
+        }
+    }
 #endif // Q_WS_MAC
 
     static void activateShortcut(quint32 nativeKey, quint32 nativeMods);
