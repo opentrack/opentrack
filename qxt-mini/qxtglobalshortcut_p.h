@@ -75,11 +75,19 @@ public:
         EventRef Event = reinterpret_cast<EventRef>(message);
         UInt32 EventClass = GetEventClass (Event);
         UInt32 EventKind = GetEventKind (Event);
+        UInt32 eventModifiers = 0;
+        GetEventParameter(Event,
+                          kEventParamKeyModifiers,
+                          typeUInt32,
+                          NULL,
+                          sizeof(UInt32),
+                          NULL,
+                          &eventModifiers);
         if (kEventClassKeyboard && EventKind == kEventRawKeyDown)
         {
-            UInt32 keyPressed;
+            UInt32 keyPressed = -1;
             GetEventParameter(Event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyPressed); 
-            return keyPressed == nativeKeycode(key);
+            return keyPressed == nativeKeycode(key) && nativeModifiers(mods) == eventModifiers;
         }
     }
 #endif // Q_WS_MAC
