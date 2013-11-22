@@ -40,10 +40,6 @@
 #include <QAbstractNativeEventFilter>
 #endif
 
-#ifdef Q_OS_DARWIN
-#   include <Cocoa/Cocoa.h>
-#endif
-
 class QxtGlobalShortcutPrivate : public QxtPrivate<QxtGlobalShortcut>
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
         ,public QAbstractNativeEventFilter
@@ -62,35 +58,13 @@ public:
     bool unsetShortcut();
 
     static bool error;
-#ifndef Q_OS_DARWIN
     static int ref;
 # if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     static QAbstractEventDispatcher::EventFilter prevEventFilter;
-    static bool eventFilter(void* message);
 # else
+    static bool eventFilter(void* message);
     virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result);
 # endif // QT_VERSION < QT_VERSION_CHECK(5,0,0)
-# else
-    virtual bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) {
-        EventRef Event = reinterpret_cast<EventRef>(message);
-        UInt32 EventClass = GetEventClass (Event);
-        UInt32 EventKind = GetEventKind (Event);
-        UInt32 eventModifiers = 0;
-        GetEventParameter(Event,
-                          kEventParamKeyModifiers,
-                          typeUInt32,
-                          NULL,
-                          sizeof(UInt32),
-                          NULL,
-                          &eventModifiers);
-        if (kEventClassKeyboard && EventKind == kEventRawKeyDown)
-        {
-            UInt32 keyPressed = -1;
-            GetEventParameter(Event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyPressed); 
-            return keyPressed == nativeKeycode(key) && nativeModifiers(mods) == eventModifiers;
-        }
-    }
-#endif // Q_WS_MAC
 
     static void activateShortcut(quint32 nativeKey, quint32 nativeMods);
 
