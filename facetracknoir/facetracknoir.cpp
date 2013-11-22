@@ -758,9 +758,11 @@ void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString
                 seq = "Alt+" + seq;
             if (iniFile.value(QString("Ctrl_%1").arg(label), false).toBool())
                 seq = "Ctrl+" + seq;
-            key.setShortcut(QKeySequence::fromString(seq));
+            key.setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
             key.setEnabled();
-        }
+        } else {
+	    key.setDisabled();
+	}
     }
 }
 #else
