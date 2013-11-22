@@ -36,7 +36,8 @@ KeyboardShortcutDialog::~KeyboardShortcutDialog() {
 void KeyboardShortcutDialog::doOK() {
     save();
     this->close();
-    mainApp->bindKeyboardShortcuts();
+    if (mainApp->tracker)
+        mainApp->bindKeyboardShortcuts();
 }
 
 void KeyboardShortcutDialog::showEvent ( QShowEvent * ) {
