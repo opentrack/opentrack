@@ -178,14 +178,14 @@ void Tracker::run()
 {
 start:
     reset = false;
-    std::unique_ptr<cv::VideoCapture> camera(new cv::VideoCapture(camera_index));
+    cv::VideoCapture camera(camera_index);
     
     if (force_width)
-        camera->set(CV_CAP_PROP_FRAME_WIDTH, force_width);
+        camera.set(CV_CAP_PROP_FRAME_WIDTH, force_width);
     if (force_height)
-        camera->set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
+        camera.set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
     if (force_fps)
-        camera->set(CV_CAP_PROP_FPS, force_fps);
+        camera.set(CV_CAP_PROP_FPS, force_fps);
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
@@ -197,14 +197,14 @@ start:
 
     const double stateful_coeff = 0.81;
     
-    if (!camera->isOpened())
+    if (!camera.isOpened())
     {
         fprintf(stderr, "aruco tracker: can't open camera\n");
         return;
     }
 
     while (!stop)
-        if(camera->read(color_))
+        if(camera.read(color_))
             break;
 
     auto freq = cv::getTickFrequency();
@@ -216,10 +216,9 @@ start:
     {
         if (reset)
         {
-            camera.reset(nullptr);
             goto start;
         }
-        if (!camera->read(color_))
+        if (!camera.read(color_))
             continue;
         auto tm = cv::getTickCount();
         color_.copyTo(color);
