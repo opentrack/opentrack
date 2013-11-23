@@ -40,7 +40,6 @@ private:
     double pose[6];
     cv::Mat frame;
     double headpos[3];
-    volatile bool reset;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
