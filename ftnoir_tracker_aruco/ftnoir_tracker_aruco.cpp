@@ -129,8 +129,6 @@ void Tracker::load_settings()
         headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
     }
 	iniFile.endGroup();
-
-    reset = true;
 }
 
 Tracker::Tracker()
@@ -144,7 +142,6 @@ Tracker::Tracker()
 
 Tracker::~Tracker()
 {
-    QMutexLocker foo(&mtx);
     stop = true;
     wait();
 	if (videoWidget)
@@ -155,7 +152,6 @@ Tracker::~Tracker()
 
 void Tracker::StartTracker(QFrame* videoframe)
 {
-    reset = false;
     videoframe->show();
     videoWidget = new ArucoVideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
@@ -176,8 +172,6 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 void Tracker::run()
 {
-start:
-    reset = false;
     cv::VideoCapture camera(camera_index);
     
     if (force_width)
@@ -214,10 +208,6 @@ start:
     cv::Point2f last_centroid;
     while (!stop)
     {
-        if (reset)
-        {
-            goto start;
-        }
         if (!camera.read(color_))
             continue;
         auto tm = cv::getTickCount();
@@ -364,6 +354,9 @@ start:
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
+    qDebug() << "releasing camera, brace for impact";
+    camera.release();
+    qDebug() << "all done!";
 }
 
 bool Tracker::GiveHeadPoseData(double *data)
