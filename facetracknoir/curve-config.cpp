@@ -96,7 +96,7 @@ void CurveConfigurationDialog::loadSettings() {
 
     iniFile.beginGroup("Tracking");
 
-    ui.checkBox->setChecked(iniFile.value("compensation", true).toBool());
+    ui.checkBox->setChecked(iniFile.value("compensate", true).toBool());
 
     for (int i = 0; i < 6; i++)
         mainApp->axis(i).altp = iniFile.value(names[i], false).toBool();
@@ -219,7 +219,7 @@ void CurveConfigurationDialog::save() {
 
     bool compensate = true;
 
-    iniFile.setValue("compensation", compensate = (bool) !!ui.checkBox->isChecked());
+    iniFile.setValue("compensate", compensate = (bool) !!ui.checkBox->isChecked());
 
     if (mainApp->tracker)
         mainApp->tracker->compensate = compensate;
