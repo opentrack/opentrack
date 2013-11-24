@@ -492,11 +492,11 @@ void FaceTrackNoIR::startTracker( ) {
         axis(i).invert = iniFile.value(invert_names[i], false).toBool() ? 1 : -1;
     }
 
-    iniFile.endGroup();
-
-	tracker = new Tracker ( this );
+    tracker = new Tracker ( this );
 
     tracker->compensate = iniFile.value("compensate", true).toBool();
+
+    iniFile.endGroup();
 
     tracker->setInvertAxis(Yaw, ui.chkInvertYaw->isChecked() );
     tracker->setInvertAxis(Pitch, ui.chkInvertPitch->isChecked() );
