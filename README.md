@@ -12,10 +12,10 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift (Linux, Windows)
+- Oculus Rift
 - AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
 - HT tracker <https://github.com/sthalik/headtracker>
-- Razer Hydra (Windows; Linux testers welcome!)
+- Razer Hydra
 - Relaying via UDP from a different computer
 - Joystick analog axes (Windows only)
 
@@ -28,7 +28,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - Relaying udp to another computer
 - Joystick support via freedesktop.org libevdev (Linux)
 - Joystick support via VJoy (Windows)
-- Wine freetrack glue protocol (Linux)
+- Wine freetrack glue protocol (Linux, OSX)
 - Tablet-like coordinate output (Windows)
 
 # Configuration
