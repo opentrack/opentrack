@@ -61,10 +61,6 @@ int main(int argc, char** argv)
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
-#ifdef __APPLE__
-    QDir dir(QCoreApplication::applicationDirPath());
-    QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
-#endif
     FaceTrackNoIR w;
     QDesktopWidget desktop;
 
