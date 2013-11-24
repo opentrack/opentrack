@@ -4,7 +4,7 @@ test -n "$1" || exit 1
 
 dir="$1"
 
-for i in "$dir"/*.dylib; do
+for i in "$dir"/*.dylib "$dir"/opentrack; do
 	echo ---- $i ----
 
 	install_name_tool -id "@executable_path/$(basename -- "$i")" "$i"
