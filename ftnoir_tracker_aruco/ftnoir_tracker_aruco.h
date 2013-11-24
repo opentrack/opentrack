@@ -17,6 +17,7 @@
 #include <QHBoxLayout>
 #include <QDialog>
 #include <opencv2/opencv.hpp>
+#include <opencv/highgui.h>
 
 class Tracker : protected QThread, public ITracker
 {
@@ -40,6 +41,7 @@ private:
     double pose[6];
     cv::Mat frame;
     double headpos[3];
+    cv::VideoCapture camera;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

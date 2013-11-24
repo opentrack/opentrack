@@ -148,6 +148,9 @@ Tracker::~Tracker()
 		delete videoWidget;
     if(layout)
         delete layout;
+    qDebug() << "releasing camera, brace for impact";
+    camera.release();
+    qDebug() << "all done!";
 }
 
 void Tracker::StartTracker(QFrame* videoframe)
@@ -172,8 +175,7 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 void Tracker::run()
 {
-    cv::VideoCapture camera(camera_index);
-    
+    camera = cv::VideoCapture(camera_index);  
     if (force_width)
         camera.set(CV_CAP_PROP_FRAME_WIDTH, force_width);
     if (force_height)
@@ -354,9 +356,6 @@ void Tracker::run()
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
-    qDebug() << "releasing camera, brace for impact";
-    camera.release();
-    qDebug() << "all done!";
 }
 
 bool Tracker::GiveHeadPoseData(double *data)
