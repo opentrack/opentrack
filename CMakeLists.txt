@@ -433,6 +433,8 @@ if(WIN32)
         target_link_libraries(opentrack-proto-fsuipc ${MY_QT_LIBS} "${SDK_FSUIPC}/FSUIPC_User.lib")
         if(MSVC)
                 set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc")
+        else()
+                set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "-Wl,--exclude-all-symbols")
         endif()
     endif()
 
