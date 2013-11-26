@@ -88,11 +88,23 @@ bool Rift_Tracker::GiveHeadPoseData(double *data)
             if(newHeadPose[Yaw]<-deadzone)newHeadPose[Yaw]+= constant_drift;
             old_yaw=yaw;
         }
-#if 0
-        newHeadPose[TX] = acd.controllers[0].pos[0]/50.0f;
-        newHeadPose[TY] = acd.controllers[0].pos[1]/50.0f;
-        newHeadPose[TZ] = acd.controllers[0].pos[2]/50.0f;
-        
+#if 1
+
+        double dt = 0.015;
+
+        OVR::Vector3f acc = pSFusion->GetAcceleration();
+	old_x = old_x*persistence + vx*dt + 0.5*(acc.x*acc.x);
+	vx = vx*persistence + acc.x*dt;
+        newHeadPose[TX] = old_x;
+
+        old_y = old_y*persistence + vy*dt + 0.5*(acc.y*acc.y);
+	vy = vy*persistence + acc.y*dt;
+        newHeadPose[TY] = old_y;
+
+        old_z = old_z*persistence + vz*dt + 0.5*(acc.z*acc.z);
+	vz = vz*persistence + acc.z*dt;
+        newHeadPose[TZ] = old_z;
+
         if (bEnableX) {
             data[TX] = newHeadPose[TX];
         }
