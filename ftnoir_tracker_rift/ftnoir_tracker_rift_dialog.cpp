@@ -112,7 +112,7 @@ void TrackerControls::loadSettings() {
 	ui.chkEnableRoll->setChecked(iniFile.value ( "EnableRoll", 1 ).toBool());
 	ui.chkEnablePitch->setChecked(iniFile.value ( "EnablePitch", 1 ).toBool());
 	ui.chkEnableYaw->setChecked(iniFile.value ( "EnableYaw", 1 ).toBool());
-#if 0
+#if 1
 	ui.chkEnableX->setChecked(iniFile.value ( "EnableX", 1 ).toBool());
 	ui.chkEnableY->setChecked(iniFile.value ( "EnableY", 1 ).toBool());
 	ui.chkEnableZ->setChecked(iniFile.value ( "EnableZ", 1 ).toBool());
@@ -139,7 +139,7 @@ void TrackerControls::save() {
 	iniFile.setValue ( "EnableRoll", ui.chkEnableRoll->isChecked() );
 	iniFile.setValue ( "EnablePitch", ui.chkEnablePitch->isChecked() );
 	iniFile.setValue ( "EnableYaw", ui.chkEnableYaw->isChecked() );
-#if 0
+#if 1
 	iniFile.setValue ( "EnableX", ui.chkEnableX->isChecked() );
 	iniFile.setValue ( "EnableY", ui.chkEnableY->isChecked() );
 	iniFile.setValue ( "EnableZ", ui.chkEnableZ->isChecked() );
