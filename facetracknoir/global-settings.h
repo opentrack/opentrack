@@ -12,6 +12,12 @@
 #   define MAYBE_STDCALL_UNDERSCORE ""
 #endif
 
+#ifdef _MSC_VER
+#   define virt_override
+#else
+#   define virt_override override
+#endif
+
 #include <cstdio>
 
 #include <QWidget>
