@@ -12,11 +12,12 @@ class Rift_Tracker : public ITracker
 {
 public:
 	Rift_Tracker();
-	virtual ~Rift_Tracker();
+    virtual ~Rift_Tracker() virt_override;
 
-    void StartTracker(QFrame *);
-    bool GiveHeadPoseData(double *data);
-	void loadSettings();
+    void StartTracker(QFrame *) virt_override;
+    bool GiveHeadPoseData(double *data) virt_override;
+    void loadSettings();
+    virtual int preferredHz() virt_override { return 250; }
     volatile bool should_quit;
 protected:
 	void run();												// qthread override run method

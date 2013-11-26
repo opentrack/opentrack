@@ -9,11 +9,11 @@ class Hydra_Tracker : public ITracker
 {
 public:
 	Hydra_Tracker();
-	~Hydra_Tracker();
+    ~Hydra_Tracker();
 
-    void StartTracker(QFrame *);
-    bool GiveHeadPoseData(double *data);
-	void loadSettings();
+    void StartTracker(QFrame *) virt_override;
+    bool GiveHeadPoseData(double *data) virt_override;
+    void loadSettings();
     volatile bool should_quit;
 protected:
 	void run();												// qthread override run method
@@ -31,6 +31,8 @@ private:
 	bool bEnableZ;
 
     QMutex mutex;
+
+    virtual int preferredHz() virt_override { return 250; }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -58,8 +60,8 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
+    void settingChanged() { settingsDirty = true; }
+    void settingChanged(int) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
