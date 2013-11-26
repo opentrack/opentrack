@@ -16,6 +16,7 @@
 #include "facetracknoir.h"
 #include <opencv2/core/core.hpp>
 #include <cmath>
+#include <algorithm>
 
 #if defined(_WIN32)
 #   include <windows.h>
@@ -58,6 +59,16 @@ void Tracker::run() {
 
     double newpose[6] = {0};
     double last_post_filter[6] ;
+
+    int sleep_ms = 15;
+
+    if (Libraries->pTracker)
+        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pTracker->preferredHz());
+
+    if (Libraries->pSecondTracker)
+        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pSecondTracker->preferredHz());
+
+    qDebug() << "tracker Hz:" << 1000 / sleep_ms;
 
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
@@ -156,7 +167,7 @@ void Tracker::run() {
             }
         }
 
-        msleep(15);
+        msleep(sleep_ms);
     }
 #if defined(_WIN32)
     (void) timeEndPeriod(1);
