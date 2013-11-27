@@ -432,7 +432,7 @@ if(UNIX AND SDK_ENABLE_LIBEVDEV)
         SET_TARGET_PROPERTIES(opentrack-proto-libevdev
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
-    install(TARGETS opentrack-proto-libevdev DESTINATION .)
+    install(TARGETS opentrack-proto-libevdev RUNTIME DESTINATION .)
 endif()
 
 if(WIN32)
@@ -534,11 +534,11 @@ endif()
 
 add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-h} ${opentrack-tracker-hatire-moc} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
 target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS})
+install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION .)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     SET_TARGET_PROPERTIES(opentrack-tracker-hatire
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
 endif()
-install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION . LIBRARY DESTINATION .)
 
 if(WIN32)
     target_link_libraries(opentrack-tracker-ht
@@ -636,9 +636,10 @@ if(SDK_HYDRA)
                             set(sixense-plat linux)
                     endif()
                     install(FILES
-                                    "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
-                                    "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
-                                    DESTINATION .)
+                            "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
+                            "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
+                            DESTINATION .
+                    )
                     target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
     endif()
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
@@ -688,7 +689,7 @@ target_link_libraries(opentrack ${OpenCV_LIBS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(UNIX)
-    install(TARGETS opentrack-qxt-mini DESTINATION .)
+    install(TARGETS opentrack-qxt-mini RUNTIME DESTINATION .)
 endif()
 
 if(WIN32)
@@ -722,11 +723,11 @@ set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION .)
 
 if(SDK_XPLANE)
-    install(TARGETS opentrack-xplane-plugin LIBRARY DESTINATION .  NAMELINK_SKIP)
+    install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION .)
 endif()
 if(WIN32)
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
-            install(TARGETS freetrackclient RUNTIME DESTINATION .)
+    install(TARGETS freetrackclient RUNTIME DESTINATION .)
 endif()
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 
@@ -736,7 +737,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetr
 if(NOT WIN32 AND SDK_WINE_PREFIX)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
             DESTINATION .)
-    install(TARGETS opentrack-proto-wine DESTINATION .)
+        install(TARGETS opentrack-proto-wine RUNTIME DESTINATION .)
 endif()
 
 install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .)
@@ -759,47 +760,32 @@ install(TARGETS
         opentrack
         opentrack-api
         RUNTIME DESTINATION .
-        LIBRARY DESTINATION .
-        NAMELINK_SKIP
 )
 
 if(WIN32)
-    install(TARGETS opentrack-tracker-joystick RUNTIME DESTINATION . LIBRARY DESTINATION . NAMELINK_SKIP)
+    install(TARGETS opentrack-tracker-joystick RUNTIME DESTINATION .)
 endif()
 
 if(WIN32 AND SDK_VJOY)
-    install(TARGETS opentrack-proto-vjoy
-        RUNTIME DESTINATION .
-        LIBRARY DESTINATION .
-        NAMELINK_SKIP)
+    install(TARGETS opentrack-proto-vjoy RUNTIME DESTINATION .)
     install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
 endif()
 
 if(SDK_RIFT)
-    install(
-        TARGETS opentrack-tracker-rift
-        RUNTIME DESTINATION .
-        LIBRARY DESTINATION .
-        NAMELINK_SKIP
-    )
+    install(TARGETS opentrack-tracker-rift RUNTIME DESTINATION .)
 endif()
 
 if(SDK_HYDRA)
     install(
         TARGETS opentrack-tracker-hydra
         RUNTIME DESTINATION .
-        LIBRARY DESTINATION .
-        NAMELINK_SKIP
     )
 endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
     if(SDK_SIMCONNECT)
-    install(TARGETS opentrack-proto-simconnect
-            RUNTIME DESTINATION .
-            LIBRARY DESTINATION .
-            NAMELINK_SKIP)
+        install(TARGETS opentrack-proto-simconnect RUNTIME DESTINATION .)
     endif()
     if(NOT SDK_OPENCV_STATIC)
         get_filename_component(opentrack-opencv-dir "${OpenCV_LIB_DIR_OPT}" PATH)
@@ -818,31 +804,14 @@ if(WIN32)
             )
             install(FILES ${opentrack-opencv-files} DESTINATION .)
     endif()
-    if(WIN32 AND NOT CMAKE_COMPILER_IS_GNUCC)
-        GET_FILENAME_COMPONENT(qt-dirname "${Qt5Core_DIR}" PATH)
-        SET(qt-dirname "${qt-dirname}/../../bin")
-        install(FILES
-            "${qt-dirname}/Qt5Core.dll"
-            "${qt-dirname}/Qt5Gui.dll"
-                            "${qt-dirname}/Qt5Widgets.dll"
-            "${qt-dirname}/Qt5Network.dll"
-            "${qt-dirname}/Qt5Xml.dll"
-            DESTINATION .
-        )
-    endif()
     install(TARGETS
             opentrack-proto-freetrack
             opentrack-proto-win32-mouse
             #opentrack-proto-simconnect
             RUNTIME DESTINATION .
-            LIBRARY DESTINATION .
-            NAMELINK_SKIP
     )
     if(SDK_FSUIPC)
-        install(TARGETS opentrack-proto-fsuipc
-                RUNTIME DESTINATION .
-                LIBRARY DESTINATION .
-                NAMELINK_SKIP)
+        install(TARGETS opentrack-proto-fsuipc RUNTIME DESTINATION .)
     endif()
 
 endif()
