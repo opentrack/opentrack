@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/hat.ico</normaloff>images/hat.ico</iconset>
+    <normaloff>images/hat.png</normaloff>images/hat.png</iconset>
   </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
@@ -57,15 +57,15 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="usesScrollButtons">
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab_config">
       <attribute name="icon">
-       <iconset resource="ftnoir_hat.qrc">
-        <normaloff>:/images/hat.ico</normaloff>:/images/hat.ico</iconset>
+       <iconset>
+        <normaloff>:/images/hat.png</normaloff>:/images/hat.png</iconset>
       </attribute>
       <attribute name="title">
        <string>General</string>
