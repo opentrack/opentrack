@@ -374,9 +374,10 @@ endif()
 
 if(APPLE)
     link_directories(${CMAKE_INSTALL_PREFIX})
-    set(MY_QT_LIBS Qt5Widgets Qt5Gui Qt5Network Qt5Xml Qt5Core ${my-qt-deps})
+    set(MY_QT_LIBS Qt5Widgets Qt5Gui Qt5Network Qt5Xml Qt5Core Qt5SerialPort ${my-qt-deps})
 else()
-    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
+    SET(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
+        ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5SerialPort_LIBRARIES} ${my-qt-deps})
 endif()
 
 add_library(opentrack-csv SHARED ${opentrack-csv-c} ${opentrack-csv-h})
@@ -532,7 +533,7 @@ if(SDK_ARUCO_LIBPATH)
 endif()
 
 add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-h} ${opentrack-tracker-hatire-moc} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
-target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS} Qt5SerialPort)
+target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS})
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     SET_TARGET_PROPERTIES(opentrack-tracker-hatire
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
