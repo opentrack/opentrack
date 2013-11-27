@@ -29,7 +29,7 @@ void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 {
-	*icon = QIcon(":/images/hat.ico");
+    *icon = QIcon(":/images/hat.png");
 }
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
