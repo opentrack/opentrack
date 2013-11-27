@@ -1,33 +1,28 @@
 #ifndef FTNOIR_TRACKER_HAT_H
 #define FTNOIR_TRACKER_HAT_H
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "facetracknoir/global-settings.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_arduino_type.h"
 
-#include <QExtSerialPort\qextserialport.h>
-#include <QExtSerialPort\qextserialenumerator.h>
+#include <QtSerialPort/QSerialPort>
 #include <QThread>
-#include <QReadWriteLock>
 #include <QTimer>
 #include <QSettings>
-#include "Windows.h"
-#include "math.h"
-
-class QextSerialPort;
-class QExtSerialEnumerator;
+#include <QMutex>
+#include <QMutexLocker>
+#include <cmath>
 
 class FTNoIR_Tracker : public ITracker, QThread
 { 
 
 public:
 	FTNoIR_Tracker();
-	~FTNoIR_Tracker();
+    virtual ~FTNoIR_Tracker() virt_override;
 
-    void Initialize( QFrame *videoframe );
-    void StartTracker( HWND parent_window );
-    void StopTracker( bool exit );
-	bool GiveHeadPoseData(THeadPoseData *data);
+    virtual void StartTracker( QFrame* frame ) virt_override;
+    virtual bool GiveHeadPoseData(double *data) virt_override;
 
 	void applysettings(const TrackerSettings& settings);
 	void notifyCenter();
@@ -39,18 +34,12 @@ public:
 protected:
 	void run();												// qthread override run method
 
-
 private:
-	// Handles to neatly terminate thread...
-	HANDLE m_StopThread;
-	HANDLE m_WaitThread;
-
     TArduinoData ArduinoData, HAT ;                              // Trame from Arduino
     QByteArray datagram;
- 	QextSerialPort *SerialPort;
-	QReadWriteLock rwlock;
-	QList<QString>* ListErrInf ;
-    int waitTimeout;
+    QSerialPort* SerialPort;
+    volatile bool stop;
+    QMutex lock;
 	QString sSerialPortName;									// Port serial name
 	bool bEnableRoll;
 	bool bEnablePitch;
@@ -67,28 +56,22 @@ private:
 	bool bInvertZ;
 
 
-	int iRollAxe;
-	int iPitchAxe;
-	int iYawAxe;
-	int iXAxe;
-	int iYAxe;
-	int iZAxe;
+    int iRollAxis;
+    int iPitchAxis;
+    int iYawAxis;
+    int iXAxis;
+    int iYAxis;
+    int iZAxis;
 
 };
 
-
-//*******************************************************************************************************
-// FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
-//*******************************************************************************************************
-class FTNoIR_TrackerDll : public ITrackerDll
+class FTNoIR_TrackerDll : public Metadata
 {
 public:
 	FTNoIR_TrackerDll();
 	~FTNoIR_TrackerDll();
 
-    void Initialize();
-
-	void getFullName(QString *strToBeFilled);
+    void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);

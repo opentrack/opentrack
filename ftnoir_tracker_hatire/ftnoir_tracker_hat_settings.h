@@ -8,6 +8,7 @@
 #ifndef FTNOIR_TRACKER_HAT_SETTINGS_H
 #define FTNOIR_TRACKER_HAT_SETTINGS_H
 
+#include <QString>
 
 //-----------------------------------------------------------------------------
 struct TrackerSettings
@@ -29,16 +30,15 @@ struct TrackerSettings
 	bool InvertZ;
 
 
-	int RollAxe;
-	int PitchAxe;
-	int YawAxe;
-	int XAxe;
-	int YAxe;
-	int ZAxe;
+    int RollAxis;
+    int PitchAxis;
+    int YawAxis;
+    int XAxis;
+    int YAxis;
+    int ZAxis;
 
 	void load_ini();
 	void save_ini() const;
 };
-
 
 #endif //FTNOIR_TRACKER_HAT_SETTINGS_H

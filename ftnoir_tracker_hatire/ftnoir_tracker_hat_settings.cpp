@@ -1,27 +1,3 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of some enthusiastic		*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2012	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage:			http://facetracknoir.sourceforge.net/home/default.htm		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-********************************************************************************/
 #include <QCoreApplication>
 #include <QSettings>
 
@@ -54,12 +30,12 @@ void TrackerSettings::load_ini()
 	InvertZ = iniFile.value( "InvertZ", 0 ).toBool();
 
 
-	RollAxe=iniFile.value("RollAxe",1).toInt();
-	PitchAxe=iniFile.value("PitchAxe",2).toInt();
-	YawAxe=iniFile.value("YawAxe",0).toInt();
-	XAxe=iniFile.value("XAxe",1).toInt();
-	YAxe=iniFile.value("YAxe",2).toInt();
-	ZAxe=iniFile.value("ZAxe",0).toInt();
+    RollAxis=iniFile.value("RollAxis",1).toInt();
+    PitchAxis=iniFile.value("PitchAxis",2).toInt();
+    YawAxis=iniFile.value("YawAxis",0).toInt();
+    XAxis=iniFile.value("XAxis",1).toInt();
+    YAxis=iniFile.value("YAxis",2).toInt();
+    ZAxis=iniFile.value("ZAxis",0).toInt();
 
 	iniFile.endGroup();
 }
@@ -91,12 +67,12 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue( "InvertY", InvertY );
 	iniFile.setValue( "InvertZ", InvertZ );
 
-	iniFile.setValue ( "RollAxe", RollAxe );
-	iniFile.setValue ( "PitchAxe", PitchAxe );
-	iniFile.setValue ( "YawAxe",YawAxe );
-	iniFile.setValue ( "XAxe", XAxe );
-	iniFile.setValue ( "YAxe", YAxe );
-	iniFile.setValue ( "ZAxe", ZAxe );
+    iniFile.setValue ( "RollAxis", RollAxis );
+    iniFile.setValue ( "PitchAxis", PitchAxis );
+    iniFile.setValue ( "YawAxis",YawAxis );
+    iniFile.setValue ( "XAxis", XAxis );
+    iniFile.setValue ( "YAxis", YAxis );
+    iniFile.setValue ( "ZAxis", ZAxis );
 
 	iniFile.endGroup();
 }
