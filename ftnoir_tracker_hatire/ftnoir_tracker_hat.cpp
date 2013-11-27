@@ -1,217 +1,501 @@
 /********************************************************************************
- * Copyright (C) 2012    FuraX49 (HAT Tracker plugins)                          *
- *  Homepage:            http://hatire.sourceforge.net                          *
- *                                                                              *
- * This program is free software; you can redistribute it and/or modify it      *
- * under the terms of the GNU General Public License as published by the        *
- * Free Software Foundation; either version 3 of the License, or (at your       *
- * option) any later version.                                                   *
- *                                                                              *
- * This program is distributed in the hope that it will be useful, but          *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY   *
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for  *
- * more details.                                                                *
- *                                                                              *
- * You should have received a copy of the GNU General Public License along      *
- * with this program; if not, see <http://www.gnu.org/licenses/>.               *
- *                                                                              *
- ********************************************************************************/
-
+* FaceTrackNoIR		This program is a private project of some enthusiastic		*
+*					gamers from Holland, who don't like to pay much for			*
+*					head-tracking.												*
+*																				*
+* Copyright (C) 2012	Wim Vriend (Developing)									*
+*						Ron Hendriks (Researching and Testing)					*
+* Homepage:			http://facetracknoir.sourceforge.net/home/default.htm		*
+*																				*
+* Copyright (C) 2012	FuraX49 (HAT Tracker plugins)	    	     			*
+* Homepage:			http://hatire.sourceforge.net								*
+*																				*
+*																				*
+* This program is free software; you can redistribute it and/or modify it		*
+* under the terms of the GNU General Public License as published by the			*
+* Free Software Foundation; either version 3 of the License, or (at your		*
+* option) any later version.													*
+*																				*
+* This program is distributed in the hope that it will be useful, but			*
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
+* more details.																	*
+*																				*
+* You should have received a copy of the GNU General Public License along		*
+* with this program; if not, see <http://www.gnu.org/licenses/>.				*
+*																				*
+********************************************************************************/
 
 #include "ftnoir_tracker_hat.h"
-#include "facetracknoir/global-settings.h"
-#include <QMessageBox>
-#include <QDebug>
 
-FTNoIR_Tracker::FTNoIR_Tracker() :
-    SerialPort(nullptr),
-    stop(false)
+FTNoIR_Tracker::FTNoIR_Tracker()
 {
-    TrackerSettings settings;
-    settings.load_ini();
-    applysettings(settings);
+	ComPort =   NULL;
 
-    //ListErrInf  = new QList<QString>();
+	HAT.Rot[0]=0;
+	HAT.Rot[1]=0;
+	HAT.Rot[2]=0;
+	HAT.Trans[0]=0;
+	HAT.Trans[1]=0;
+	HAT.Trans[2]=0;
 
-    datagram.reserve(30);
-    qDebug() << "FTNoIR_Tracker::Initialize() Open SerialPort";
-    SerialPort = new QSerialPort(sSerialPortName);
-    if (SerialPort->open(QIODevice::ReadWrite | QIODevice::Unbuffered  ) == true) {
-        SerialPort->flush();
-        SerialPort->setBaudRate(115200);
-        SerialPort->setParity(QSerialPort::NoParity);
-        SerialPort->setDataBits(QSerialPort::Data8);
-        SerialPort->setStopBits(QSerialPort::OneStop);
-        SerialPort->setFlowControl(QSerialPort::NoFlowControl);
-        //SerialPort->setTimeout(waitTimeout);
-        //SerialPort->setQueryMode(QextSerialPort::EventDriven); //Polling
-        SerialPort->putChar('S');
-    }
-    else {
-        QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open SerialPort",QMessageBox::Ok,QMessageBox::NoButton);
-        delete SerialPort;
-        SerialPort = NULL;
-    }
+
+	// prepare & reserve QByteArray
+	dataRead.resize(4096);
+	dataRead.clear();
+	Begin.append((char) 0xAA);
+	Begin.append((char) 0xAA);
+	End.append((char) 0x55);
+	End.append((char) 0x55);
+
+	settings.load_ini();
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
-    stop = true;
-    wait();
-    if (SerialPort!=NULL) {
-        if (SerialPort->isOpen() ) {
-            SerialPort->putChar('s'); //Send STOP to Arduino
-            SerialPort->close();
-        }
-        delete SerialPort;
-        SerialPort=NULL;
-    }
-
+	if (ComPort!=NULL) {
+		if (ComPort->isOpen() ) {
+			ComPort->close();
+		}
+		delete ComPort;
+		ComPort=NULL;
+	}
 }
 
 //send CENTER to Arduino
 void FTNoIR_Tracker::notifyCenter() {
-    if (SerialPort!=NULL) {
-        if (SerialPort->isOpen() ) {
-            SerialPort->putChar('C');
-        }
-    }
+	sendcmd(sCmdCenter);
+}
+
+//send ZERO to Arduino
+bool FTNoIR_Tracker::notifyZeroed() {
+	sendcmd(sCmdZero);
+	return true;
 }
 
 
-
-//send CENTER to Arduino
-void FTNoIR_Tracker::center() {
-    if (SerialPort!=NULL) {
-        if (SerialPort->isOpen() ) {
-            SerialPort->putChar('C');
-        }
-    }
-}
 
 //send RESET to Arduino
 void FTNoIR_Tracker::reset() {
-    if (SerialPort!=NULL) {
-        if (SerialPort->isOpen() ) {
-            SerialPort->putChar('R');
-        }
-    }
+	sendcmd(sCmdReset);
 }
+
+
+// Info SerialPort
+void FTNoIR_Tracker::SerialInfo() {
+	QByteArray Msg;
+	if (ComPort!=NULL) {
+		if (ComPort->isOpen() ) {
+			Msg.append("\r\n");
+			Msg.append(ComPort->portName());
+			Msg.append("\r\n");
+			Msg.append("BAUDRATE :");
+			Msg.append(QString::number(ComPort->baudRate()));
+			Msg.append("\r\n");
+			Msg.append("DataBits :");
+			Msg.append(QString::number(ComPort->dataBits()));
+			Msg.append("\r\n");
+			Msg.append("Parity :");
+			switch (ComPort->parity()) {
+				case 0:  Msg.append("No parity");
+					break; 
+				case 2:  Msg.append("Even parity");
+					break; 
+				case 3:  Msg.append("Odd parity");
+					break; 
+				case 4:  Msg.append("Space parity");
+					break; 
+				case 5:  Msg.append("Mark parity");
+					break; 
+				default:  Msg.append("Unknown parity");
+					break; 
+			}
+			Msg.append("\r\n");
+			Msg.append("Stop Bits :");
+			switch (ComPort->stopBits()) {
+				Msg.append(QString::number(ComPort->stopBits()));
+				case 1:  Msg.append("1 stop bit.");
+					break; 
+				case 2:  Msg.append("2 stop bits.");
+					break; 
+				case 3:  Msg.append("1.5 stop bits.");
+					break; 
+				default:  Msg.append("Unknown number of stop bit.");
+					break; 
+			}
+			Msg.append("\r\n");
+			Msg.append("Flow Control :");
+			switch (ComPort->flowControl()) {
+				case 0:  Msg.append("No flow control");
+					break; 
+				case 1:  Msg.append("Hardware flow control (RTS/CTS)");
+					break; 
+				case 2:  Msg.append("Software flow control (XON/XOFF)");
+					break; 
+				default:  Msg.append("Unknown flow control");
+					break; 
+			}
+			emit sendMsgInfo(Msg);
+
+		}
+	}
+}
+
 
 //send command  to Arduino
-void FTNoIR_Tracker::sendcmd(QString* cmd) {
-    QMutexLocker locker(&lock);
-    QByteArray bytes;
-    if (SerialPort!=NULL) {
-        if (SerialPort->isOpen() ) {
-            bytes.append(cmd->toLatin1());
-            SerialPort->write(bytes);
-        }
-    }
+void FTNoIR_Tracker::sendcmd(const QByteArray &cmd) {
+	QByteArray Msg;
+	if (cmd.length()>0) {
+		if (ComPort->isOpen() ) 
+		{
+			ComPort->write(cmd);
+			if (!ComPort->waitForBytesWritten(1000)) {
+				emit sendMsgInfo("TimeOut in writing CMD");
+			} else  {
+				Msg.append("\r\n");
+				Msg.append("SEND '");
+				Msg.append(cmd);
+				Msg.append("'\r\n");
+			}
+			if  ( !ComPort->waitForReadyRead(1000)) {
+				emit sendMsgInfo("TimeOut in response to CMD") ;
+			} else {
+				emit sendMsgInfo(Msg);
+			}
+		} else {
+			emit sendMsgInfo("ComPort not open")  ;
+		}
+	}
 }
 
-// return FPS and last status
-void FTNoIR_Tracker::get_info(QString*, int* tps ){
-    QMutexLocker locker(&lock);
-    *tps=HAT.Code;
-#if 0
-    if (ListErrInf->size()>0)  {
-        *info=ListErrInf->takeFirst();
-    } else {
-        *info= QString();
-    }
+
+// return FPS 
+void FTNoIR_Tracker::get_info( int *tps ){
+	*tps=frame_cnt;
+	frame_cnt=0;
+}
+
+void FTNoIR_Tracker::SerialRead()
+{
+    QMutexLocker lck(&mutex);
+	dataRead+=ComPort->readAll();
+}
+
+#ifndef OPENTRACK_API
+void FTNoIR_Tracker::Initialize( QFrame *videoframe )
+{
+	CptError=0;
+	dataRead.clear();
+	frame_cnt=0;
+
+	settings.load_ini();
+	applysettings(settings);
+	ComPort =  new QSerialPort(this);
+	ComPort->setPortName(sSerialPortName); 
+	if (ComPort->open(QIODevice::ReadWrite ) == true) { 
+		connect(ComPort, SIGNAL(readyRead()), this, SLOT(SerialRead()));
+		if (  
+			ComPort->setBaudRate((QSerialPort::BaudRate)iBaudRate)
+			&& ComPort->setDataBits((QSerialPort::DataBits)iDataBits) 
+			&& ComPort->setParity((QSerialPort::Parity)iParity) 
+			&& ComPort->setStopBits((QSerialPort::StopBits)iStopBits)  
+			&& ComPort->setFlowControl((QSerialPort::FlowControl)iFlowControl)  
+			&& ComPort->clear(QSerialPort::AllDirections)
+			&& ComPort->setDataErrorPolicy(QSerialPort::IgnorePolicy)
+			) {
+				// Wait init arduino sequence 
+				for (int i = 1; i <=iDelayInit;  i+=50) {
+					if (ComPort->waitForReadyRead(50)) break;
+				}
+				sendcmd(sCmdInit);
+				// Wait init MPU sequence 
+				for (int i = 1; i <=iDelayStart;  i+=50) {
+					if (ComPort->waitForReadyRead(50)) break;
+				}
+
+		} else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
+	else {
+		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort",QMessageBox::Ok,QMessageBox::NoButton);
+		delete ComPort;
+		ComPort = NULL;
+	} 
+	return;
+}
+
+
+
+void FTNoIR_Tracker::StartTracker(HWND parent_window)
+{
+	// Send  START cmd to IMU
+	sendcmd(sCmdStart);
+	// Wait start MPU sequence 
+	for (int i = 1; i <=iDelaySeq;  i+=50) {
+		if (ComPort->waitForReadyRead(50)) break;
+	}
+	return;
+}
+
+
+void FTNoIR_Tracker::StopTracker( bool exit )
+{
+	QByteArray Msg;
+	if (sCmdStop.length()>0) {
+		if (ComPort->isOpen() ) 
+		{
+			ComPort->write(sCmdStop);
+			if (!ComPort->waitForBytesWritten(1000)) {
+				emit sendMsgInfo("TimeOut in writing CMD");
+			} else  {
+				Msg.append("\r\n");
+				Msg.append("SEND '");
+				Msg.append(sCmdStop);
+				Msg.append("'\r\n");
+			}	
+			emit sendMsgInfo(Msg);
+		}
+	}
+	// OK, the thread is not stopped, doing this. That might be dangerous anyway...
+	//
+	if (exit || !exit) return;
+	return;
+}
+
+#else
+void FTNoIR_Tracker::StartTracker(QFrame*)
+{
+	CptError=0;
+	dataRead.clear();
+	frame_cnt=0;
+
+	settings.load_ini();
+	applysettings(settings);
+	ComPort =  new QSerialPort(this);
+	ComPort->setPortName(sSerialPortName); 
+	if (ComPort->open(QIODevice::ReadWrite ) == true) { 
+		connect(ComPort, SIGNAL(readyRead()), this, SLOT(SerialRead()));
+		if (  
+			ComPort->setBaudRate((QSerialPort::BaudRate)iBaudRate)
+			&& ComPort->setDataBits((QSerialPort::DataBits)iDataBits) 
+			&& ComPort->setParity((QSerialPort::Parity)iParity) 
+			&& ComPort->setStopBits((QSerialPort::StopBits)iStopBits)  
+			&& ComPort->setFlowControl((QSerialPort::FlowControl)iFlowControl)  
+			&& ComPort->clear(QSerialPort::AllDirections)
+			&& ComPort->setDataErrorPolicy(QSerialPort::IgnorePolicy)
+			) {
+				// Wait init arduino sequence 
+				for (int i = 1; i <=iDelayInit;  i+=50) {
+					if (ComPort->waitForReadyRead(50)) break;
+				}
+				sendcmd(sCmdInit);
+				// Wait init MPU sequence 
+				for (int i = 1; i <=iDelayStart;  i+=50) {
+					if (ComPort->waitForReadyRead(50)) break;
+				}
+				// Send  START cmd to IMU
+				sendcmd(sCmdStart);
+
+				// Wait start MPU sequence 
+				for (int i = 1; i <=iDelaySeq;  i+=50) {
+					if (ComPort->waitForReadyRead(50)) break;
+				}
+		} else {
+			QMessageBox::warning(0,"FaceTrackNoIR Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
+		}
+	}
+	else {
+		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort",QMessageBox::Ok,QMessageBox::NoButton);
+		delete ComPort;
+		ComPort = NULL;
+	} 
+	return;
+
+}
 #endif
-}
 
 
-/** QThread run @override **/
-void FTNoIR_Tracker::run() {
-    if (!SerialPort)
-        return;
-    while (!stop)
-    {
-        if (SerialPort->bytesAvailable()>=30)
-        {
-            QMutexLocker locker(&lock);
-            datagram.clear();
-            datagram=SerialPort->read(30);
-            QDataStream datastream(datagram);
-            datastream >> ArduinoData;
-            if (ArduinoData.Begin==0xAAAA && ArduinoData.End==0x5555 )
-            {
-                if (ArduinoData.Code <= 1000)
-                {
-                    HAT=ArduinoData;
-                }
-            } else {
-                SerialPort->read(1);
-            }
-        }
-        msleep(10);
-    }
-}
+//
+// Return 6DOF info
+//
+#ifdef OPENTRACK_API
+#define THeadPoseData double
+#endif
 
-void FTNoIR_Tracker::StartTracker( QFrame* )
+bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
-    start( QThread::TimeCriticalPriority );
-    return;
+    QMutexLocker lck(&mutex);
+	while  (dataRead.length()>=30) {
+		if ((dataRead.startsWith(Begin) &&  ( dataRead.mid(28,2)==End )) )  { // .Begin==0xAAAA .End==0x5555
+			QDataStream  datastream(dataRead.left(30));
+			if (bBigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
+			else datastream.setByteOrder(QDataStream::LittleEndian );
+			datastream>>ArduinoData;
+			frame_cnt++;
+			if (ArduinoData.Code <= 1000) {
+				HAT=ArduinoData;
+			} else {
+				emit sendMsgInfo(dataRead.mid(4,24))  ;
+			}
+			dataRead.remove(0,30);
+		} else {
+			// resynchro trame 
+			int index =	dataRead.indexOf(Begin);
+			if (index==-1) {
+				index=dataRead.length();
+			} 
+			emit sendMsgInfo(dataRead.mid(0,index))  ;
+			dataRead.remove(0,index);
+			CptError++;
+		}
+	}
+
+	if (CptError>50) {
+		emit sendMsgInfo("Can't find HAT frame")  ;
+		CptError=0;
+		return false;
+	}
+#ifdef OPENTRACK_API
+	data[frame_cnt] = (long) HAT.Code;
+
+	if (bEnableYaw) {
+		if (bInvertYaw )	data[Yaw] = (double)  HAT.Rot[iYawAxe] *  -1.0f;
+		else 	data[Yaw] = (double) HAT.Rot[iYawAxe];
+	}	
+
+	if (bEnablePitch) {
+		if (bInvertPitch) data[Pitch] = (double) HAT.Rot[iPitchAxe] *  -1.0f;
+		else data[Pitch] = (double) HAT.Rot[iPitchAxe];
+	}
+
+	if (bEnableRoll) {
+		if (bInvertRoll) data[Roll] = (double) HAT.Rot[iRollAxe] *  -1.0f; 
+		else data[Roll] = (double) HAT.Rot[iRollAxe];
+	}
+
+	if (bEnableX) {
+		if (bInvertX) data[TX] =(double)  HAT.Trans[iXAxe]*  -1.0f;
+		else data[TX] =  HAT.Trans[iXAxe];
+	}
+
+	if (bEnableY) {
+		if (bInvertY) data[TY] =(double) HAT.Trans[iYAxe]*  -1.0f;
+		else data[TY] =  HAT.Trans[iYAxe];
+	}
+
+	if (bEnableZ) {
+		if (bInvertZ)  data[TZ] =  HAT.Trans[iZAxe]*  -1.0f;
+		else data[TZ] =  HAT.Trans[iZAxe];
+	}
+#else
+	data->frame_number =  (long) HAT.Code;
+
+	if (bEnableYaw) {
+		if (bInvertYaw )	data->yaw = (double) HAT.Rot[iYawAxe] *  -1.0f;
+		else 	data->yaw = (double) HAT.Rot[iYawAxe];
+	}	
+
+	if (bEnablePitch) {
+		if (bInvertPitch)data->pitch = (double) HAT.Rot[iPitchAxe] *  -1.0f;
+		else data->pitch = (double) HAT.Rot[iPitchAxe];
+	}
+
+	if (bEnableRoll) {
+		if (bInvertRoll) data->roll = (double) HAT.Rot[iRollAxe] *  -1.0f; 
+		else data->roll = (double) HAT.Rot[iRollAxe];
+	}
+
+	if (bEnableX) {
+		if (bInvertX) data->x = (double) HAT.Trans[iXAxe]*  -1.0f;
+		else data->x = (double) HAT.Trans[iXAxe];
+	}
+
+	if (bEnableY) {
+		if (bInvertY) data->y = (double) HAT.Trans[iYAxe]*  -1.0f;
+		else data->y = (double) HAT.Trans[iYAxe];
+	}
+
+	if (bEnableZ) {
+		if (bInvertZ)  data->z = (double) HAT.Trans[iZAxe]*  -1.0f;
+		else data->z = (double) HAT.Trans[iZAxe];
+	}
+#endif
+
+	// For debug
+	//data->x=dataRead.length();
+	//data->y=CptError;
+
+	return true;
+
 }
 
-bool FTNoIR_Tracker::GiveHeadPoseData(double* data)
-{
-    QMutexLocker locker(&lock);
 
-    const bool inversions[] = {
-        bInvertX, bInvertY, bInvertZ, bInvertYaw, bInvertPitch, bInvertRoll
-    };
 
-    const bool enablement[] = {
-        bEnableX, bEnableY, bEnableZ, bEnableYaw, bEnablePitch, bEnableRoll
-    };
-
-    const int axes[] = {
-        iXAxis, iYAxis, iZAxis, iYawAxis, iPitchAxis, iRollAxis
-    };
-
-    for (int i = 0; i < 6; i++)
-    {
-        if (enablement[i])
-            data[i] = HAT.Gyro[axes[i]] * (inversions[i] ? -1 : 1);
-    }
-
-    return true;
-}
-
+//
+// Apply modification Settings 
+//
 void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
-    qDebug()<<"Tracker:: Applying settings";
+    QMutexLocker lck(&mutex);
+	sSerialPortName= settings.SerialPortName;
 
-    QMutexLocker locker(&lock);
-    sSerialPortName= settings.SerialPortName;
+	bEnableRoll = settings.EnableRoll;
+	bEnablePitch = settings.EnablePitch;
+	bEnableYaw = settings.EnableYaw;
+	bEnableX = settings.EnableX;
+	bEnableY = settings.EnableY;
+	bEnableZ = settings.EnableZ;
 
-    bEnableRoll = settings.EnableRoll;
-    bEnablePitch = settings.EnablePitch;
-    bEnableYaw = settings.EnableYaw;
-    bEnableX = settings.EnableX;
-    bEnableY = settings.EnableY;
-    bEnableZ = settings.EnableZ;
+	bInvertRoll = settings.InvertRoll;
+	bInvertPitch = settings.InvertPitch;
+	bInvertYaw = settings.InvertYaw;
+	bInvertX = settings.InvertX;
+	bInvertY = settings.InvertY;
+	bInvertZ = settings.InvertZ;
 
-    bInvertRoll = settings.InvertRoll;
-    bInvertPitch = settings.InvertPitch;
-    bInvertYaw = settings.InvertYaw;
-    bInvertX = settings.InvertX;
-    bInvertY = settings.InvertY;
-    bInvertZ = settings.InvertZ;
+	iRollAxe= settings.RollAxe;
+	iPitchAxe= settings.PitchAxe;
+	iYawAxe= settings.YawAxe;
+	iXAxe= settings.XAxe;
+	iYAxe= settings.YAxe;
+	iZAxe= settings.ZAxe;
 
+	iBaudRate=settings.pBaudRate;
+	iDataBits=settings.pDataBits;
+	iParity=settings.pParity;
+	iStopBits=settings.pStopBits;
+	iFlowControl=settings.pFlowControl;
 
-    iRollAxis= settings.RollAxis;
-    iPitchAxis= settings.PitchAxis;
-    iYawAxis= settings.YawAxis;
-    iXAxis= settings.XAxis;
-    iYAxis= settings.YAxis;
-    iZAxis= settings.ZAxis;
+	sCmdStart= settings.CmdStart.toLatin1();
+	sCmdStop= settings.CmdStop.toLatin1();
+	sCmdInit= settings.CmdInit.toLatin1();
+	sCmdReset= settings.CmdReset.toLatin1();
+	sCmdCenter= settings.CmdCenter.toLatin1();
+	sCmdZero= settings.CmdZero.toLatin1();
+
+	iDelayInit=settings.DelayInit;
+	iDelayStart=settings.DelayStart;
+	iDelaySeq=settings.DelaySeq;
+
+	bBigEndian=settings.BigEndian;
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Factory function that creates instances if the Tracker object.
+
+// Export both decorated and undecorated names.
+//   GetTracker     - Undecorated name, which can be easily used with GetProcAddress
+//                Win32 API function.
+//   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
+////////////////////////////////////////////////////////////////////////////////
+#ifdef OPENTRACK_API
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+#else
+#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
+FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+#endif
 {
-    return new FTNoIR_Tracker;
+	return new FTNoIR_Tracker;
 }
