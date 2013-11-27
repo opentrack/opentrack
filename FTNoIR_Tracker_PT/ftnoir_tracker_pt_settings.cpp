@@ -14,7 +14,7 @@ void TrackerSettings::load_ini()
 {
 	qDebug("TrackerSettings::load_ini()");
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -59,7 +59,7 @@ void TrackerSettings::save_ini() const
 {
 	qDebug("TrackerSettings::save_ini()");
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -105,7 +105,7 @@ void TrackerDialogSettings::load_ini()
 {
 	qDebug("TrackerDialogSettings::load_ini()");
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
@@ -131,7 +131,7 @@ void TrackerDialogSettings::save_ini() const
 {
 	qDebug("TrackerDialogSettings::save_ini()");
 
-	QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
