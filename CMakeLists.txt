@@ -96,7 +96,7 @@ if(MINGW)
 endif()
 
     find_package(OpenCV REQUIRED)
-    find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
+    find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui SerialPort QUIET)
     cmake_policy(SET CMP0020 NEW)
     include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
@@ -307,6 +307,13 @@ file(GLOB opentrack-tracker-hydra-ui "ftnoir_tracker_hydra/*.ui")
 file(GLOB opentrack-tracker-hydra-rc "ftnoir_tracker_hydra/*.qrc")
 QT5_WRAP_UI(opentrack-tracker-hydra-uih ${opentrack-tracker-hydra-ui})
 QT5_ADD_RESOURCES(opentrack-tracker-hydra-rcc ${opentrack-tracker-hydra-rc})
+
+file(GLOB opentrack-tracker-hatire-c "ftnoir_tracker_hatire/*.cpp")
+file(GLOB opentrack-tracker-hatire-h "ftnoir_tracker_hatire/*.h")
+file(GLOB opentrack-tracker-hatire-ui "ftnoir_tracker_hatire/*.ui")
+file(GLOB opentrack-tracker-hatire-rc "ftnoir_tracker_hatire/*.qrc")
+QT5_WRAP_UI(opentrack-tracker-hatire-uih ${opentrack-tracker-hatire-ui})
+QT5_ADD_RESOURCES(opentrack-tracker-hatire-rcc ${opentrack-tracker-hatire-rc})
 
 file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp")
 
@@ -522,6 +529,13 @@ if(SDK_ARUCO_LIBPATH)
         SET_TARGET_PROPERTIES(opentrack-tracker-aruco
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
+endif()
+
+add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-h} ${opentrack-tracker-hatire-moc} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
+target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS} Qt5SerialPort)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+    SET_TARGET_PROPERTIES(opentrack-tracker-hatire
+                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
 endif()
 
 if(WIN32)

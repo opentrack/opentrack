@@ -1,0 +1,35 @@
+  Frame exchange protocol fixed size of 30 bytes like this :
+    
+ typedef struct  {
+  int16_t  Begin  ;   // 2  Debut
+  uint16_t Cpt ;      // 2  Compteur trame or Code
+  float    gyro[3];   // 12 [Y, P, R]    gyro
+  float    acc[3];    // 12 [x, y, z]    Acc
+  int16_t  End ;      // 2  Fin
+} _hatire;
+_hat hat;
+
+
+void setup() {
+  Serial.begin(115200);
+  // header frame
+  hatire.Begin=0xAAAA;
+  // Frame Number or Error code
+  hat.Cpt=0;
+  // footer frame
+  hat.End=0x5555;
+}
+
+ 
+ void loop() {
+   mpu.dmpGetYawPitchRoll(hatire.gyro);
+   mpu.dmpAccXYZ(hatire.acc);
+   // Send Trame to HATIRE PC
+   Serial.write((byte*)&hatire,30);
+   hatire.Cpt++;
+   if (hatire.Cpt>999) {
+       hatire.Cpt=0;
+   }
+   delay(1);      
+}      
+
