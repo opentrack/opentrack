@@ -537,6 +537,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     SET_TARGET_PROPERTIES(opentrack-tracker-hatire
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
 endif()
+install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION . LIBRARY DESTINATION .)
 
 if(WIN32)
     target_link_libraries(opentrack-tracker-ht
