@@ -129,7 +129,7 @@ void FTNoIR_Tracker::run() {
 				SerialPort->read(1);
 			}
 		}
-		usleep(10000);
+        msleep(10);
 	}
 }
 
