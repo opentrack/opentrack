@@ -163,7 +163,10 @@ void CVCamera::start()
 		active_index = desired_index;
         cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
         cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
-	}
+    } else {
+        delete cap;
+        cap = nullptr;
+    }
 }
 
 void CVCamera::stop()
