@@ -8,13 +8,15 @@
 #ifndef FTNOIR_TRACKER_HAT_SETTINGS_H
 #define FTNOIR_TRACKER_HAT_SETTINGS_H
 
-#include <QString>
+#include <QtSerialPort/QSerialPort>
 
 //-----------------------------------------------------------------------------
 struct TrackerSettings
 {	
 
-	QString SerialPortName;
+	void load_ini();
+	void save_ini() const;
+
 	bool EnableRoll;
 	bool EnablePitch;
 	bool EnableYaw;
@@ -30,15 +32,34 @@ struct TrackerSettings
 	bool InvertZ;
 
 
-    int RollAxis;
-    int PitchAxis;
-    int YawAxis;
-    int XAxis;
-    int YAxis;
-    int ZAxis;
+	int RollAxe;
+	int PitchAxe;
+	int YawAxe;
+	int XAxe;
+	int YAxe;
+	int ZAxe;
 
-	void load_ini();
-	void save_ini() const;
+	QString  CmdStart;
+	QString  CmdStop;
+	QString  CmdInit;
+	QString  CmdReset;
+	QString  CmdCenter;
+	QString  CmdZero;
+
+	int DelayInit;
+	int DelayStart;
+	int DelaySeq;
+
+	bool BigEndian;
+
+	QString SerialPortName;
+	QSerialPort::BaudRate pBaudRate;
+	QSerialPort::DataBits pDataBits;
+	QSerialPort::Parity pParity;
+	QSerialPort::StopBits pStopBits;
+	QSerialPort::FlowControl pFlowControl;
+
 };
+
 
 #endif //FTNOIR_TRACKER_HAT_SETTINGS_H
