@@ -1,4 +1,22 @@
-/* code by Furax49, awaiting copyright information */
+/********************************************************************************
+ * Copyright (C) 2012    FuraX49 (HAT Tracker plugins)                          *
+ *  Homepage:            http://hatire.sourceforge.net                          *
+ *                                                                              *
+ * This program is free software; you can redistribute it and/or modify it      *
+ * under the terms of the GNU General Public License as published by the        *
+ * Free Software Foundation; either version 3 of the License, or (at your       *
+ * option) any later version.                                                   *
+ *                                                                              *
+ * This program is distributed in the hope that it will be useful, but          *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY   *
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for  *
+ * more details.                                                                *
+ *                                                                              *
+ * You should have received a copy of the GNU General Public License along      *
+ * with this program; if not, see <http://www.gnu.org/licenses/>.               *
+ *                                                                              *
+ ********************************************************************************/
+
 
 #include "ftnoir_tracker_hat.h"
 #include "facetracknoir/global-settings.h"
@@ -9,13 +27,13 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
     SerialPort(nullptr),
     stop(false)
 {
-	TrackerSettings settings;
-	settings.load_ini();
-	applysettings(settings);
+    TrackerSettings settings;
+    settings.load_ini();
+    applysettings(settings);
 
     //ListErrInf  = new QList<QString>();
 
-	datagram.reserve(30);
+    datagram.reserve(30);
     qDebug() << "FTNoIR_Tracker::Initialize() Open SerialPort";
     SerialPort = new QSerialPort(sSerialPortName);
     if (SerialPort->open(QIODevice::ReadWrite | QIODevice::Unbuffered  ) == true) {
@@ -40,68 +58,68 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 {
     stop = true;
     wait();
-	if (SerialPort!=NULL) {
-		if (SerialPort->isOpen() ) {
-			SerialPort->putChar('s'); //Send STOP to Arduino
-			SerialPort->close();
-		}
-		delete SerialPort;
-		SerialPort=NULL;
-	}
+    if (SerialPort!=NULL) {
+        if (SerialPort->isOpen() ) {
+            SerialPort->putChar('s'); //Send STOP to Arduino
+            SerialPort->close();
+        }
+        delete SerialPort;
+        SerialPort=NULL;
+    }
 
 }
 
 //send CENTER to Arduino
 void FTNoIR_Tracker::notifyCenter() {
-	if (SerialPort!=NULL) {
-		if (SerialPort->isOpen() ) {
-			SerialPort->putChar('C');
-		}
-	}
+    if (SerialPort!=NULL) {
+        if (SerialPort->isOpen() ) {
+            SerialPort->putChar('C');
+        }
+    }
 }
 
 
 
 //send CENTER to Arduino
 void FTNoIR_Tracker::center() {
-	if (SerialPort!=NULL) {
-		if (SerialPort->isOpen() ) {
-			SerialPort->putChar('C');
-		}
-	}
+    if (SerialPort!=NULL) {
+        if (SerialPort->isOpen() ) {
+            SerialPort->putChar('C');
+        }
+    }
 }
 
 //send RESET to Arduino
 void FTNoIR_Tracker::reset() {
-	if (SerialPort!=NULL) {
-		if (SerialPort->isOpen() ) {
-			SerialPort->putChar('R');
-		}
-	}
+    if (SerialPort!=NULL) {
+        if (SerialPort->isOpen() ) {
+            SerialPort->putChar('R');
+        }
+    }
 }
 
 //send command  to Arduino
 void FTNoIR_Tracker::sendcmd(QString* cmd) {
     QMutexLocker locker(&lock);
-	QByteArray bytes;
-	if (SerialPort!=NULL) {
-		if (SerialPort->isOpen() ) {
+    QByteArray bytes;
+    if (SerialPort!=NULL) {
+        if (SerialPort->isOpen() ) {
             bytes.append(cmd->toLatin1());
             SerialPort->write(bytes);
-		}
-	}
+        }
+    }
 }
 
 // return FPS and last status
 void FTNoIR_Tracker::get_info(QString*, int* tps ){
     QMutexLocker locker(&lock);
-	*tps=HAT.Code;
+    *tps=HAT.Code;
 #if 0
-	if (ListErrInf->size()>0)  {
-		*info=ListErrInf->takeFirst();
-	} else {
-		*info= QString();
-	}
+    if (ListErrInf->size()>0)  {
+        *info=ListErrInf->takeFirst();
+    } else {
+        *info= QString();
+    }
 #endif
 }
 
@@ -115,28 +133,28 @@ void FTNoIR_Tracker::run() {
         if (SerialPort->bytesAvailable()>=30)
         {
             QMutexLocker locker(&lock);
-			datagram.clear();
-			datagram=SerialPort->read(30);
+            datagram.clear();
+            datagram=SerialPort->read(30);
             QDataStream datastream(datagram);
             datastream >> ArduinoData;
             if (ArduinoData.Begin==0xAAAA && ArduinoData.End==0x5555 )
             {
                 if (ArduinoData.Code <= 1000)
                 {
-					HAT=ArduinoData;
+                    HAT=ArduinoData;
                 }
-			} else { 
-				SerialPort->read(1);
-			}
-		}
+            } else {
+                SerialPort->read(1);
+            }
+        }
         msleep(10);
-	}
+    }
 }
 
 void FTNoIR_Tracker::StartTracker( QFrame* )
 {
-	start( QThread::TimeCriticalPriority );
-	return;
+    start( QThread::TimeCriticalPriority );
+    return;
 }
 
 bool FTNoIR_Tracker::GiveHeadPoseData(double* data)
@@ -165,24 +183,24 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double* data)
 }
 
 void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
-	qDebug()<<"Tracker:: Applying settings";
+    qDebug()<<"Tracker:: Applying settings";
 
     QMutexLocker locker(&lock);
-	sSerialPortName= settings.SerialPortName;
+    sSerialPortName= settings.SerialPortName;
 
-	bEnableRoll = settings.EnableRoll;
-	bEnablePitch = settings.EnablePitch;
-	bEnableYaw = settings.EnableYaw;
-	bEnableX = settings.EnableX;
-	bEnableY = settings.EnableY;
-	bEnableZ = settings.EnableZ;
+    bEnableRoll = settings.EnableRoll;
+    bEnablePitch = settings.EnablePitch;
+    bEnableYaw = settings.EnableYaw;
+    bEnableX = settings.EnableX;
+    bEnableY = settings.EnableY;
+    bEnableZ = settings.EnableZ;
 
-	bInvertRoll = settings.InvertRoll;
-	bInvertPitch = settings.InvertPitch;
-	bInvertYaw = settings.InvertYaw;
-	bInvertX = settings.InvertX;
-	bInvertY = settings.InvertY;
-	bInvertZ = settings.InvertZ;
+    bInvertRoll = settings.InvertRoll;
+    bInvertPitch = settings.InvertPitch;
+    bInvertYaw = settings.InvertYaw;
+    bInvertX = settings.InvertX;
+    bInvertY = settings.InvertY;
+    bInvertZ = settings.InvertZ;
 
 
     iRollAxis= settings.RollAxis;
@@ -195,5 +213,5 @@ void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
-	return new FTNoIR_Tracker;
+    return new FTNoIR_Tracker;
 }
