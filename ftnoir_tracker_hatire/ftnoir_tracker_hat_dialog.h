@@ -1,7 +1,7 @@
 #ifndef FTNOIR_TRACKER_HAT_DIALOG_H
 #define FTNOIR_TRACKER_HAT_DIALOG_H
 
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_tracker_hat.h"
 #include "ui_ftnoir_hatcontrols.h"
@@ -9,32 +9,25 @@
 #include <QTimer>
 #include <QMessageBox>
 
-// Widget that has controls for FTNoIR protocol client-settings.
-class TrackerControls: public QWidget, Ui::UIHATControls, public ITrackerDialog
+class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 
 public:
 	explicit TrackerControls();
-    virtual ~TrackerControls();
+    virtual ~TrackerControls() virt_override;
 
-    void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker);
-	void unRegisterTracker() ;
+    void Initialize(QWidget *parent) virt_override;
+    void registerTracker(ITracker *tracker) virt_override;
+    void unRegisterTracker() virt_override;
 
 private:
 	Ui::UIHATControls ui;
-	int pre_trame;
+    int pre_frame;
 	FTNoIR_Tracker *theTracker;
 
 protected slots:
-
-	/*
-	void set_mod_port(int val)	 {  settings.SerialPortName = ui.cbSerialPort->itemText(val);    
-	                                QMessageBox::warning(this,"FaceTrackNoIR Error", settings.SerialPortName);
-	                                settings_changed(); }
-*/
-	void set_mod_port(const QString & val)	 {  settings.SerialPortName =val;    
+    void set_mod_port(const QString & val)	 {  settings.SerialPortName =val;
 	                                QMessageBox::warning(this,"FaceTrackNoIR Error", settings.SerialPortName);
 	                                settings_changed(); }
 	void set_ena_roll(bool val)	 { settings.EnableRoll = val;    settings_changed(); }
@@ -52,12 +45,12 @@ protected slots:
 	void set_inv_z(bool val)	 { settings.InvertZ = val;       settings_changed(); }
 
 
-	void set_rot_roll(int val)	 { settings.RollAxe = val;    settings_changed(); }
-	void set_rot_pitch(int val)	 { settings.PitchAxe = val;   settings_changed(); }
-	void set_rot_yaw(int val)	 { settings.YawAxe = val;     settings_changed(); }
-	void set_acc_x(int val)		 { settings.XAxe = val;       settings_changed(); }
-	void set_acc_y(int val)		 { settings.YAxe = val;       settings_changed(); }
-	void set_acc_z(int val)		 { settings.ZAxe = val;       settings_changed(); }
+    void set_rot_roll(int val)	 { settings.RollAxis = val;    settings_changed(); }
+    void set_rot_pitch(int val)	 { settings.PitchAxis = val;   settings_changed(); }
+    void set_rot_yaw(int val)	 { settings.YawAxis = val;     settings_changed(); }
+    void set_acc_x(int val)		 { settings.XAxis = val;       settings_changed(); }
+    void set_acc_y(int val)		 { settings.YAxis = val;       settings_changed(); }
+    void set_acc_z(int val)		 { settings.ZAxis = val;       settings_changed(); }
 
 	void doOK();
 	void doCancel();
