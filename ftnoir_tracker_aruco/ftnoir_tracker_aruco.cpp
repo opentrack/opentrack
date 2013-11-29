@@ -331,7 +331,7 @@ void Tracker::run()
             cv::Rodrigues(rvec, rotation_matrix);
         
             {
-                const double beta = headpitch * M_PI / 180;
+                const double beta = headpitch * HT_PI / 180;
                 double pitch[] = {
                     1, 0, 0,
                     0, cos(beta), -sin(beta),
