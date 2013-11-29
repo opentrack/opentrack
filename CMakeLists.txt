@@ -14,7 +14,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    if(MINGW32)
+    if(MINGW)
         set(version-script mingw)
     else()
         set(version-script posix)
