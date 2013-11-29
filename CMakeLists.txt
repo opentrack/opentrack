@@ -432,7 +432,7 @@ if(UNIX AND SDK_ENABLE_LIBEVDEV)
         SET_TARGET_PROPERTIES(opentrack-proto-libevdev
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
     endif()
-    install(TARGETS opentrack-proto-libevdev DESTINATION .)
+    install(TARGETS opentrack-proto-libevdev RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 if(WIN32)
@@ -534,7 +534,7 @@ endif()
 
 add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-h} ${opentrack-tracker-hatire-moc} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
 target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS})
-install(TARGETS opentrack-tracker-hatire DESTINATION .)
+install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT WIN32)
     SET_TARGET_PROPERTIES(opentrack-tracker-hatire
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/posix-version-script.txt")
@@ -689,7 +689,7 @@ target_link_libraries(opentrack ${OpenCV_LIBS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(UNIX)
-    install(TARGETS opentrack-qxt-mini DESTINATION .)
+    install(TARGETS opentrack-qxt-mini RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 if(WIN32)
@@ -723,11 +723,11 @@ set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION .)
 
 if(SDK_XPLANE)
-    install(TARGETS opentrack-xplane-plugin DESTINATION .)
+    install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 if(WIN32)
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
-    install(TARGETS freetrackclient DESTINATION .)
+    install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 
@@ -737,64 +737,67 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetr
 if(NOT WIN32 AND SDK_WINE_PREFIX)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
             DESTINATION .)
-        install(TARGETS opentrack-proto-wine DESTINATION .)
+        install(TARGETS opentrack-proto-wine RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
-install(TARGETS opentrack-tracker-pt DESTINATION .)
+install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 
 if(SDK_ARUCO_LIBPATH)
-    install(TARGETS opentrack-tracker-aruco DESTINATION .)
+    install(TARGETS opentrack-tracker-aruco RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 install(TARGETS
+        opentrack-proto-fgfs
+        opentrack-proto-udp
+        opentrack-api
         opentrack-compat
         opentrack-csv
         opentrack-pose-widget
         opentrack-spline-widget
         opentrack-filter-accela
         opentrack-filter-ewma
-        opentrack-proto-fgfs
-        opentrack-proto-udp
         opentrack-tracker-ht
         opentrack-tracker-udp
+        RUNTIME DESTINATION . LIBRARY DESTINATION .  )
+
+install(TARGETS
         opentrack
-        opentrack-api
         DESTINATION .
 )
 
 if(WIN32)
-    install(TARGETS opentrack-tracker-joystick DESTINATION .)
+    install(TARGETS opentrack-tracker-joystick RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 if(WIN32 AND SDK_VJOY)
-    install(TARGETS opentrack-proto-vjoy DESTINATION .)
+    install(TARGETS opentrack-proto-vjoy RUNTIME DESTINATION . LIBRARY DESTINATION .  )
     install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
 endif()
 
 if(SDK_RIFT)
-    install(TARGETS opentrack-tracker-rift DESTINATION .)
+    install(TARGETS opentrack-tracker-rift RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 if(SDK_HYDRA)
     install(
         TARGETS opentrack-tracker-hydra
-        DESTINATION .
+        RUNTIME DESTINATION . LIBRARY DESTINATION .  
     )
 endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
     if(SDK_SIMCONNECT)
-        install(TARGETS opentrack-proto-simconnect DESTINATION .)
+        install(TARGETS opentrack-proto-simconnect RUNTIME DESTINATION . LIBRARY DESTINATION .  )
     endif()
     install(TARGETS
             opentrack-proto-freetrack
             opentrack-proto-win32-mouse
             #opentrack-proto-simconnect
-            DESTINATION .
+            RUNTIME DESTINATION . LIBRARY DESTINATION .  
     )
     if(SDK_FSUIPC)
-        install(TARGETS opentrack-proto-fsuipc DESTINATION .)
+        install(TARGETS opentrack-proto-fsuipc RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
 
 endif()
