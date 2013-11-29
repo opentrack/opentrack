@@ -40,7 +40,7 @@ private:
     int force_fps, force_width, force_height;
     double pose[6];
     cv::Mat frame;
-    double headpos[3];
+    double headpos[3], headpitch;
     cv::VideoCapture camera;
 };
 

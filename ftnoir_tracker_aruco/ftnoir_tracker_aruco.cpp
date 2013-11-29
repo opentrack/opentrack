@@ -128,6 +128,8 @@ void Tracker::load_settings()
     {
         headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
     }
+    headpitch = iniFile.value("pitch", 0).toDouble();
+
 	iniFile.endGroup();
 }
 
@@ -328,23 +330,38 @@ void Tracker::run()
         
             cv::Rodrigues(rvec, rotation_matrix);
         
-            cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
-
             {
+                const double beta = headpitch * M_PI / 180;
+                double pitch[] = {
+                    1, 0, 0,
+                    0, cos(beta), -sin(beta),
+                    0, sin(beta), cos(beta)
+                };
+                cv::Mat rot(3, 3, CV_64F, pitch);
+                tvec = rot * tvec;
+                rotation_matrix = rot * rotation_matrix;
+
+                cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
+
                 QMutexLocker lck(&mtx);
 
                 for (int i = 0; i < 3; i++)
                     pose[i] = tvec.at<double>(i);
 
-                pose[Yaw] = foo[1];
-                pose[Pitch] = -foo[0];
-                pose[Roll] = foo[2];
+                pose[Yaw] = euler[1];
+                pose[Pitch] = -euler[0];
+                pose[Roll] = euler[2];
             }
 
             std::vector<cv::Point2f> repr2;
             std::vector<cv::Point3f> centroid;
             centroid.push_back(cv::Point3f(0, 0, 0));
             cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
+
+            {
+                auto s = cv::Scalar(255, 0, 255);
+                cv::circle(frame, repr2.at(0), 4, s, -1);
+            }
 
             last_centroid = repr2[0];
         }
@@ -527,6 +544,8 @@ void TrackerControls::loadSettings()
         headpos[i]->setValue(iniFile.value(QString("headpos-%1").arg(i)).toDouble());
     }
 
+    ui.pitch_deg->setValue(iniFile.value("pitch", 0).toDouble());
+
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -565,6 +584,7 @@ void TrackerControls::save()
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
+    iniFile.setValue("pitch", ui.pitch_deg->value());
 
     QDoubleSpinBox* headpos[] = {
         ui.cx,

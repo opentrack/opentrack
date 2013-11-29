@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>704</width>
-    <height>273</height>
+    <height>308</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -291,6 +291,32 @@
         </property>
         <property name="maximum">
          <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Pitch</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QDoubleSpinBox" name="pitch_deg">
+        <property name="suffix">
+         <string>°</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="minimum">
+         <double>-60.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>60.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000000000000000</double>
         </property>
        </widget>
       </item>
