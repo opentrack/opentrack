@@ -135,8 +135,6 @@ endif()
       if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
         SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
-      else()
-        #set(CMAKE_RC_COMPILER_INIT rc)
       endif()
       ENABLE_LANGUAGE(RC)
     endif(WIN32)
@@ -592,7 +590,7 @@ if(SDK_RIFT)
                 else()
                     if (NOT APPLE)
                         target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
-                    else() # crapintosh
+                    else()
                         target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
                     endif()
                 endif()
@@ -793,7 +791,6 @@ if(WIN32)
     install(TARGETS
             opentrack-proto-freetrack
             opentrack-proto-win32-mouse
-            #opentrack-proto-simconnect
             RUNTIME DESTINATION . LIBRARY DESTINATION .  
     )
     if(SDK_FSUIPC)
