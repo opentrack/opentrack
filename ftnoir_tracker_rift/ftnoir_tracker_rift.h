@@ -30,13 +30,13 @@ private:
 	bool bEnableRoll;
 	bool bEnablePitch;
 	bool bEnableYaw;
-#if 1
+#if 0
 	bool bEnableX;
 	bool bEnableY;
 	bool bEnableZ;
 #endif
     bool useYawSpring;
-    double old_yaw, constant_drift, persistence, deadzone, old_x, old_y, old_z, vx, vy, vz;
+    double old_yaw, constant_drift, persistence, deadzone;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
