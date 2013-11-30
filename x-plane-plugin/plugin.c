@@ -129,7 +129,11 @@ PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDes
 
 PLUGIN_API void XPluginStop ( void ) {
     if (lck_posix)
+    {
         PortableLockedShm_free(lck_posix);
+        lck_posix = NULL;
+        shm_posix = NULL;
+    }
 }
 
 PLUGIN_API void XPluginEnable ( void ) {
