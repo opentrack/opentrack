@@ -59,7 +59,6 @@ PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *OT_UN
     shm_filename[0] = '/';
     strncpy(shm_filename+1, shmName, NAME_MAX-2);
     shm_filename[NAME_MAX-1] = '\0';
-    sprintf(shm_filename + strlen(shm_filename), "%ld\n", (long) getuid());
     /* (void) shm_unlink(shm_filename); */
     
     self->fd = shm_open(shm_filename, O_RDWR | O_CREAT, 0600);
