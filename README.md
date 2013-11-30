@@ -44,7 +44,8 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Chris Thompson (aka mm0zct)
 - Donovan Baarda
 - Ryan Spicer (OSX tester, contributor)
-- Patrick Ruoff (merging)
+- Patrick Ruoff (PT tracker)
+- FuraX49 (hatire arduino tracker)
 - Wim Vriend (historically)
 - Ron Hendriks (historically)
 
