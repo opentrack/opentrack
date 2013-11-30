@@ -27,7 +27,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
         wrapper.kill();
         wrapper.waitForFinished(42);
     }
-    shm_unlink("/" WINE_SHM_NAME);
+    //shm_unlink("/" WINE_SHM_NAME);
 }
 
 void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
