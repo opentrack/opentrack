@@ -68,8 +68,9 @@ void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, d
 
 static inline double parabola(const double a, const double x, const double dz, const double expt)
 {
+    const double sign = x > 0 ? 1 : -1;
     const double a1 = 1./a;
-    return a1 * pow(std::max<double>(x - dz, 1e-3), expt);
+    return a1 * pow(std::max<double>(fabs(x) - dz, 1e-3), expt) * sign;
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
@@ -95,19 +96,18 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
     for (int i=0;i<6;i++)
 	{
         const double vec = target_camera_position[i] - current_camera_position[i];
+        const double vec2 = target_camera_position[i] - current_camera_position_2[i];
+        const double vec3 = target_camera_position[i] - current_camera_position_3[i];
 		const int sign = vec < 0 ? -1 : 1;
-		const double x = fabs(vec);
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
         const double a2 = a * second_order_alpha;
         const double a3 = a * third_order_alpha;
-        const double x2 = fabs(target_camera_position[i] - current_camera_position_2[i]);
-        const double x3 = fabs(target_camera_position[i] - current_camera_position_3[i]);
         const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
         const double velocity =
-                parabola(a, x * scaling[i], deadzone, expt) * reduction +
-                parabola(a2, x2 * scaling[i], deadzone, expt) * reduction +
-                parabola(a3, x3 * scaling[i], deadzone, expt) * reduction;
-		const double result = current_camera_position[i] + velocity * sign;
+                parabola(a, vec * scaling[i], deadzone, expt) * reduction +
+                parabola(a2, vec2 * scaling[i], deadzone, expt) * reduction +
+                parabola(a3, vec3 * scaling[i], deadzone, expt) * reduction;
+        const double result = current_camera_position[i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         current_camera_position_3[i] = current_camera_position_2[i];
         current_camera_position_2[i] = current_camera_position[i];
