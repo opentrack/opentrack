@@ -783,18 +783,18 @@
   <tabstop>pos_rx</tabstop>
   <tabstop>pos_ry</tabstop>
   <tabstop>pos_rz</tabstop>
-  <tabstop>pos_tx</tabstop>
-  <tabstop>pos_ty</tabstop>
-  <tabstop>pos_tz</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>tz_altp</tabstop>
-  <tabstop>ty_altp</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>ry_altp</tabstop>
-  <tabstop>buttonBox</tabstop>
   <tabstop>rz_altp</tabstop>
-  <tabstop>rx_altp</tabstop>
   <tabstop>tx_altp</tabstop>
+  <tabstop>ty_altp</tabstop>
+  <tabstop>tz_altp</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>pos_tx</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>pos_ty</tabstop>
+  <tabstop>rx_altp</tabstop>
+  <tabstop>pos_tz</tabstop>
  </tabstops>
  <resources/>
  <connections/>
