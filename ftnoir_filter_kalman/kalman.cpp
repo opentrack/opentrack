@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <math.h>
 
-void kalman_load_settings(FTNoIR_Filter& self) {
+void kalman_load_settings(FTNoIR_Filter&) {
     QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
     
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -19,7 +19,7 @@ void kalman_load_settings(FTNoIR_Filter& self) {
     iniFile.endGroup();
 }
 
-void kalman_save_settings(FilterControls& self) {
+void kalman_save_settings(FilterControls&) {
     QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
     
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
@@ -37,8 +37,8 @@ FTNoIR_Filter::FTNoIR_Filter() {
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
 void FTNoIR_Filter::Initialize() {
-    const double accel_variance = 1e-4;
-    const double noise_variance = 1e1;
+    const double accel_variance = 1e-3;
+    const double noise_variance = 5e2;
     kalman.init(12, 6, 0, CV_64F);
     kalman.transitionMatrix = (cv::Mat_<double>(12, 12) <<
     1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
@@ -73,13 +73,28 @@ void FTNoIR_Filter::Initialize() {
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
     for (int i = 0; i < 6; i++)
+    {
         prev_position[i] = 0;
+        prev2_filter_pos[i] = 0;
+        prev_filter_pos[i] = 0;
+        timedelta = 1;
+        timer.invalidate();
+    }
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
-                                       double *target_camera_position,
+template<typename T>
+static inline T clamp(const T min, const T max, const T value)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
+}
+
+void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                                        double *new_camera_position,
-                                       double *last_post_filter_values)
+                                       const double *)
 {
     bool new_target = false;
     
@@ -89,23 +104,34 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
             new_target = true;
             break;
         }
-    
-    cv::Mat output = kalman.predict();
-    
+
     if (new_target) {
+        cv::Mat output = kalman.predict();
         cv::Mat measurement(6, 1, CV_64F);
         for (int i = 0; i < 3; i++) {
             measurement.at<double>(i) = target_camera_position[i+3];
             measurement.at<double>(i+3) = target_camera_position[i];
         }
         kalman.correct(measurement);
-    }
-    
-    for (int i = 0; i < 3; i++) {
-        new_camera_position[i] = output.at<double>(i+3);
-        new_camera_position[i+3] = output.at<double>(i);
-        prev_position[i] = target_camera_position[i];
-        prev_position[i+3] = target_camera_position[i+3];
+        for (int i = 0; i < 6; i++)
+        {
+            prev_position[i] = target_camera_position[i];
+        }
+        if (timer.isValid())
+            timedelta = timer.elapsed();
+        else
+            timedelta = 1;
+        for (int i = 0; i < 6; i++)
+        {
+            prev2_filter_pos[i] = prev_filter_pos[i];
+            prev_filter_pos[i] = new_camera_position[i] = output.at<double>((i + 3) % 6);
+        }
+        timer.start();
+    } else {
+        auto d = timer.isValid() ? timer.elapsed() : 1;
+        auto c = clamp(0.0, 1.0, d / (double) timedelta);
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = prev2_filter_pos[i] + (prev_filter_pos[i] - prev2_filter_pos[i]) * c;
     }
 }
 

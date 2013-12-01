@@ -34,7 +34,8 @@ void FTNoIR_Filter::loadSettings() {
     zoom_factor = iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toDouble();
     rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
     translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
-
+    second_order_alpha = iniFile.value("second-order-alpha", ACCELA_SECOND_ORDER_ALPHA).toDouble();
+    third_order_alpha = iniFile.value("third-order-alpha", ACCELA_THIRD_ORDER_ALPHA).toDouble();
     deadzone = iniFile.value("deadzone", 0.0).toDouble();
     // bigger means less filtering
     static const double init_scaling[] = {
@@ -81,6 +82,8 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         {
             new_camera_position[i] = target_camera_position[i];
             current_camera_position[i] = target_camera_position[i];
+            current_camera_position_2[i] = target_camera_position[i];
+            current_camera_position_3[i] = target_camera_position[i];
         }
 
 		first_run = false;
@@ -95,10 +98,19 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 		const int sign = vec < 0 ? -1 : 1;
 		const double x = fabs(vec);
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
+        const double a2 = a * second_order_alpha;
+        const double a3 = a * third_order_alpha;
+        const double x2 = fabs(target_camera_position[i] - current_camera_position_2[i]);
+        const double x3 = fabs(target_camera_position[i] - current_camera_position_3[i]);
         const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
-        const double velocity = parabola(a, x * scaling[i], deadzone, expt) * reduction;
+        const double velocity =
+                parabola(a, x * scaling[i], deadzone, expt) * reduction +
+                parabola(a2, x2 * scaling[i], deadzone, expt) * reduction +
+                parabola(a3, x3 * scaling[i], deadzone, expt) * reduction;
 		const double result = current_camera_position[i] + velocity * sign;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
+        current_camera_position_3[i] = current_camera_position_2[i];
+        current_camera_position_2[i] = current_camera_position[i];
         new_camera_position[i] = current_camera_position[i] = done ? target_camera_position[i] : result;
 	}
 }

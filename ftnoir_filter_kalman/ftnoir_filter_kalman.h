@@ -19,25 +19,29 @@
 #include <QString>
 #include <QIcon>
 #include <QWidget>
+#include <QElapsedTimer>
 #include <QObject>
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    virtual ~FTNoIR_Filter() {
+    ~FTNoIR_Filter() virt_override {
     }
-    void Initialize();
-    void FilterHeadPoseData(double *current_camera_position,
-                            double *target_camera_position,
+    void Initialize() virt_override;
+    void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position,
-                            double *last_post_filter_values);
+                            const double *) virt_override;
     cv::KalmanFilter kalman;
     double prev_position[6];
+    double prev2_filter_pos[6];
+    double prev_filter_pos[6];
+    QElapsedTimer timer;
+    qint64 timedelta;
 };
 
-void kalman_load_settings(FTNoIR_Filter& self);
-void kalman_save_settings(FTNoIR_Filter& self);
+void kalman_load_settings(FTNoIR_Filter&);
+void kalman_save_settings(FTNoIR_Filter&);
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_FilterDll : public Metadata
 {
@@ -48,7 +52,7 @@ public:
     void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
 };
 
-class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, Ui::KalmanUICFilterControls, public IFilterDialog
+class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
@@ -65,21 +69,24 @@ public:
         connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
         show();
     }
-    virtual ~FilterControls() {}
-    void showEvent ( QShowEvent * event ) {
+    ~FilterControls() {}
+    void showEvent ( QShowEvent * ) virt_override {
         show();
     }
     
-    void Initialize(QWidget *parent, IFilter* ptr) {
+    void Initialize(QWidget *) virt_override {
+        show();
+        raise();
     }
     
     bool settingsDirty;
     Ui::KalmanUICFilterControls ui;
-    
+    virtual void registerFilter(IFilter*) virt_override {}
+    virtual void unregisterFilter() virt_override {}
 public slots:
     void doOK();
     void doCancel();
-    void settingsChanged(double unused) {
+    void settingsChanged(double) {
         settingsDirty = true;
     }
 };
