@@ -196,6 +196,13 @@ file(GLOB opentrack-filter-accela-rc "ftnoir_filter_accela/*.qrc")
 QT5_WRAP_UI(opentrack-filter-accela-uih ${opentrack-filter-accela-ui})
 QT5_ADD_RESOURCES(opentrack-filter-accela-rcc ${opentrack-filter-accela-rc})
 
+file(GLOB opentrack-filter-kalman-c "ftnoir_filter_kalman/*.cpp")
+file(GLOB opentrack-filter-kalman-h "ftnoir_filter_kalman/*.h")
+file(GLOB opentrack-filter-kalman-ui "ftnoir_filter_kalman/*.ui")
+file(GLOB opentrack-filter-kalman-rc "ftnoir_filter_kalman/*.qrc")
+QT5_WRAP_UI(opentrack-filter-kalman-uih ${opentrack-filter-kalman-ui})
+QT5_ADD_RESOURCES(opentrack-filter-kalman-rcc ${opentrack-filter-kalman-rc})
+
 file(GLOB opentrack-filter-ewma-c "ftnoir_filter_ewma2/*.cpp")
 file(GLOB opentrack-filter-ewma-h "ftnoir_filter_ewma2/*.h")
 file(GLOB opentrack-filter-ewma-ui "ftnoir_filter_ewma2/*.ui")
@@ -401,6 +408,14 @@ target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
 add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-h} ${opentrack-filter-accela-moc} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
 target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
+
+add_library(opentrack-filter-kalman SHARED ${opentrack-filter-kalman-c} ${opentrack-filter-kalman-h} ${opentrack-filter-kalman-moc} ${opentrack-filter-kalman-uih} ${opentrack-filter-kalman-rcc})
+target_link_libraries(opentrack-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    SET_TARGET_PROPERTIES(opentrack-filter-kalman
+    PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     SET_TARGET_PROPERTIES(opentrack-filter-accela
@@ -766,6 +781,7 @@ install(TARGETS
         opentrack-pose-widget
         opentrack-spline-widget
         opentrack-filter-accela
+        opentrack-filter-kalman
         opentrack-filter-ewma
         opentrack-tracker-ht
         opentrack-tracker-udp
