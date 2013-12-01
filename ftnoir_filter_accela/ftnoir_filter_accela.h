@@ -33,7 +33,9 @@
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
 #define ACCELA_SMOOTHING_TRANSLATION 40.0
-#define ACCELA_ZOOM_SLOWNESS 35
+#define ACCELA_ZOOM_SLOWNESS 0
+#define ACCELA_SECOND_ORDER_ALPHA 100.0
+#define ACCELA_THIRD_ORDER_ALPHA 180.0
 
 //*******************************************************************************************************
 // FaceTrackNoIR Filter class.
@@ -53,7 +55,10 @@ private:
 	void loadSettings();
 	bool first_run;
     double rotation_alpha, translation_alpha, zoom_factor;
+    double second_order_alpha, third_order_alpha;
     double current_camera_position[6];
+    double current_camera_position_2[6];
+    double current_camera_position_3[6];
     double scaling[6];
     double deadzone;
     double expt;

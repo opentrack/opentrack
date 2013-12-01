@@ -160,6 +160,8 @@ void FilterControls::loadSettings() {
     ui.spinZoom->setValue(iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toInt());
     ui.rotation_alpha->setValue(iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble());
     ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
+    ui.order_2nd->setValue(iniFile.value("second-order-alpha", ACCELA_SECOND_ORDER_ALPHA).toDouble());
+    ui.order_3rd->setValue(iniFile.value("third-order-alpha", ACCELA_THIRD_ORDER_ALPHA).toDouble());
     ui.deadzone->setValue(iniFile.value("deadzone", 0).toDouble());
 
     // bigger means less filtering
@@ -212,6 +214,8 @@ void FilterControls::save() {
     iniFile.setValue("zoom-slowness", zoom = ui.spinZoom->value());
     iniFile.setValue("deadzone", deadzone = ui.deadzone->value());
     iniFile.setValue("exponent", expt = ui.expt->value());
+    iniFile.setValue("second-order-alpha", rot = ui.order_2nd->value());
+    iniFile.setValue("third-order-alpha", rot = ui.order_3rd->value());
 
     QDoubleSpinBox* boxen[] = {
         ui.doubleSpinBox,
