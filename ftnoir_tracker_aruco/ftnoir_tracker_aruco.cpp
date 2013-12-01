@@ -338,7 +338,7 @@ void Tracker::run()
                     0, sin(beta), cos(beta)
                 };
                 cv::Mat rot(3, 3, CV_64F, pitch);
-                tvec = rot * tvec;
+                cv::Mat tvec2 = rot * tvec;
                 rotation_matrix = rot * rotation_matrix;
 
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
@@ -346,7 +346,7 @@ void Tracker::run()
                 QMutexLocker lck(&mtx);
 
                 for (int i = 0; i < 3; i++)
-                    pose[i] = tvec.at<double>(i);
+                    pose[i] = tvec2.at<double>(i);
 
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
