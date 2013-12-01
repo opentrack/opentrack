@@ -715,6 +715,22 @@ background:none;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rotation_alpha</tabstop>
+  <tabstop>translation_alpha</tabstop>
+  <tabstop>order_2nd</tabstop>
+  <tabstop>order_3rd</tabstop>
+  <tabstop>spinZoom</tabstop>
+  <tabstop>deadzone</tabstop>
+  <tabstop>expt</tabstop>
+  <tabstop>doubleSpinBox</tabstop>
+  <tabstop>doubleSpinBox_2</tabstop>
+  <tabstop>doubleSpinBox_3</tabstop>
+  <tabstop>doubleSpinBox_4</tabstop>
+  <tabstop>doubleSpinBox_5</tabstop>
+  <tabstop>doubleSpinBox_6</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <slots>

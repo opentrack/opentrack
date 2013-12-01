@@ -29,8 +29,8 @@
   <property name="styleSheet">
    <string notr="true">background-color: #ccc;</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="styleSheet">
       <string notr="true">background-color: #ccc;</string>
@@ -763,7 +763,7 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -779,6 +779,23 @@
    <header>qfunctionconfigurator.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>pos_rx</tabstop>
+  <tabstop>pos_ry</tabstop>
+  <tabstop>pos_rz</tabstop>
+  <tabstop>pos_tx</tabstop>
+  <tabstop>pos_ty</tabstop>
+  <tabstop>pos_tz</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>tz_altp</tabstop>
+  <tabstop>ty_altp</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>ry_altp</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>rz_altp</tabstop>
+  <tabstop>rx_altp</tabstop>
+  <tabstop>tx_altp</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <slots>
