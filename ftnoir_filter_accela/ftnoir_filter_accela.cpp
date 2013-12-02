@@ -70,7 +70,7 @@ static inline double parabola(const double a, const double x, const double dz, c
 {
     const double sign = x > 0 ? 1 : -1;
     const double a1 = 1./a;
-    return a1 * pow(std::max<double>(fabs(x) - dz, 1e-3), expt) * sign;
+    return a1 * pow(std::max<double>(fabs(x) - dz, 0), expt) * sign;
 }
 
 template<typename T>
