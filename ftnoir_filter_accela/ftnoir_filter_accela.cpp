@@ -123,7 +123,6 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
     } else {
         auto d = timer.elapsed();
         double c = clamp(0.0, 1.0, d / (double) frame_delta);
-        QMutexLocker foo(&mutex);
         for (int i = 0; i < 6; i++)
             new_camera_position[i] =
                     last_output[1][i] + (last_output[0][i] - last_output[1][i]) * c;
