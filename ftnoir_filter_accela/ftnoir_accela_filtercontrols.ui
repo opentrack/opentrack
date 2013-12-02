@@ -254,7 +254,7 @@ background:none;</string>
 background:none;</string>
         </property>
         <property name="text">
-         <string>Deadzone</string>
+         <string>Deadband</string>
         </property>
        </widget>
       </item>
