@@ -57,6 +57,6 @@ void PTVideoWidget::update_and_repaint()
             data[y * pitch + x * 3 + 2] = elt2.val[0];
         }
     qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    pixmap = QPixmap::fromImage(qframe);
+    texture = qframe;
     update();
 }

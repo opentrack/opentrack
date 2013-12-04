@@ -33,13 +33,13 @@ protected slots:
     void paintEvent( QPaintEvent* e ) {
         QMutexLocker foo(&mtx);
         QPainter painter(this);
-        painter.drawPixmap(e->rect(), pixmap, e->rect());
+        painter.drawImage(e->rect(), texture);
     }
     void update_and_repaint();
 
 private:
     QMutex mtx;
-    QPixmap pixmap;
+    QImage texture;
     QTimer timer;
     cv::Mat _frame;
 };
