@@ -26,7 +26,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
     QWidget::paintEvent(event);
     QPainter p(this);
     project_quad_texture();
-    p.drawPixmap(event->rect(), pixmap, event->rect());
+    p.drawImage(event->rect(), texture);
 }
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
@@ -226,5 +226,5 @@ void GLWidget::project_quad_texture() {
                 }
             }
         }
-    pixmap = QPixmap::fromImage(texture);
+    this->texture = texture;
 }

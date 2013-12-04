@@ -91,7 +91,7 @@ private:
     double matrix[9];
     QImage front;
     QImage back;
-    QPixmap pixmap;
+    QImage texture;
 };
 
 #endif

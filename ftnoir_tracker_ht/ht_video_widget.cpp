@@ -39,6 +39,6 @@ void HTVideoWidget::update_and_repaint()
         }
     }
     auto qframe2 = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    pixmap = QPixmap::fromImage(qframe2);
+    texture = qframe2;
     update();
 }
