@@ -55,15 +55,11 @@ void FTNoIR_Filter::loadSettings() {
     iniFile.endGroup();
 }
 
-void FTNoIR_Filter::receiveSettings(double rot, double trans, double zoom_fac, double dz, double exponent)
+void FTNoIR_Filter::receiveSettings()
 {
     QMutexLocker foo(&mutex);
     
-    rotation_alpha = rot;
-    translation_alpha = trans;
-    zoom_factor = zoom_fac;
-    deadzone = dz;
-    expt = exponent;
+    loadSettings();
 }
 
 static inline double parabola(const double a, const double x, const double dz, const double expt)

@@ -202,40 +202,40 @@ void FilterControls::save() {
 	QSettings settings("opentrack");	// Registry settings (in HK_USER)
 
 	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
-
-    double rot, trans, zoom, deadzone, expt;
-    
-    iniFile.beginGroup ( "Accela" );
-    iniFile.setValue("rotation-alpha", rot = ui.rotation_alpha->value());
-    iniFile.setValue("translation-alpha", trans = ui.translation_alpha->value());
-    iniFile.setValue("zoom-slowness", zoom = ui.spinZoom->value());
-    iniFile.setValue("deadzone", deadzone = ui.deadzone->value());
-    iniFile.setValue("exponent", expt = ui.expt->value());
-    iniFile.setValue("second-order-alpha", rot = ui.order_2nd->value());
-    iniFile.setValue("third-order-alpha", rot = ui.order_3rd->value());
-
-    QDoubleSpinBox* boxen[] = {
-        ui.doubleSpinBox,
-        ui.doubleSpinBox_2,
-        ui.doubleSpinBox_3,
-        ui.doubleSpinBox_4,
-        ui.doubleSpinBox_5,
-        ui.doubleSpinBox_6,
-    };
-
-    for (int i = 0; i < 6; i++)
     {
-        iniFile.setValue(QString("axis-%1").arg(QString::number(i)), boxen[i]->value());
+        QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
+        qDebug() << "FTNoIR_Filter::save() says: iniFile = " << currentFile;
+
+        iniFile.beginGroup ( "Accela" );
+        iniFile.setValue("rotation-alpha", ui.rotation_alpha->value());
+        iniFile.setValue("translation-alpha", ui.translation_alpha->value());
+        iniFile.setValue("zoom-slowness", ui.spinZoom->value());
+        iniFile.setValue("deadzone", ui.deadzone->value());
+        iniFile.setValue("exponent", ui.expt->value());
+        iniFile.setValue("second-order-alpha", ui.order_2nd->value());
+        iniFile.setValue("third-order-alpha", ui.order_3rd->value());
+
+        QDoubleSpinBox* boxen[] = {
+            ui.doubleSpinBox,
+            ui.doubleSpinBox_2,
+            ui.doubleSpinBox_3,
+            ui.doubleSpinBox_4,
+            ui.doubleSpinBox_5,
+            ui.doubleSpinBox_6,
+        };
+
+        for (int i = 0; i < 6; i++)
+        {
+            iniFile.setValue(QString("axis-%1").arg(QString::number(i)), boxen[i]->value());
+        }
+        iniFile.endGroup();
     }
-    iniFile.endGroup();
 
 	settingsDirty = false;
     
     if (accela_filter)
-        accela_filter->receiveSettings(rot, trans, zoom, deadzone, expt);
+        accela_filter->receiveSettings();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
