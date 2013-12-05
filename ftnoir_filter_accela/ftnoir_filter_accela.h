@@ -50,7 +50,7 @@ public:
     void Initialize() {
         first_run = true;
     }
-    void receiveSettings(double rot, double trans, double zoom_fac, double deadzone, double expt);
+    void receiveSettings();
 private:
     QMutex mutex;
 	void loadSettings();
