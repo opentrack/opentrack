@@ -175,7 +175,7 @@ fail:
     qDebug() << "joy init failure";
 }
 
-void FTNoIR_Tracker::GiveHeadPoseData(double *data)
+void FTNoIR_Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker foo(&mtx);
     DIJOYSTATE js = {0};

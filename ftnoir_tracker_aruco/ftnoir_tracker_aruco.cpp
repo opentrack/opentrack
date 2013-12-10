@@ -375,7 +375,7 @@ void Tracker::run()
     }
 }
 
-void Tracker::GiveHeadPoseData(double *data)
+void Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     

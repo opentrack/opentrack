@@ -44,11 +44,11 @@ public:
 	virtual void Initialize(QFrame *videoframe);
 #ifdef OPENTRACK_API
     virtual void StartTracker(QFrame* parent_window);
-    virtual void GiveHeadPoseData(double* data);
+    virtual void GetHeadPoseData(double* data);
 #else
 	virtual void StartTracker(HWND parent_window);
     virtual void StopTracker(bool exit);
-    virtual bool GiveHeadPoseData(THeadPoseData *data);
+    virtual bool GetHeadPoseData(THeadPoseData *data);
 #endif
     virtual void refreshVideo();
 

@@ -323,7 +323,7 @@ void FTNoIR_Tracker::StartTracker(QFrame*)
 #define THeadPoseData double
 #endif
 
-void FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
+void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
 {
     QMutexLocker lck(&mutex);
 	while  (dataRead.length()>=30) {

@@ -16,7 +16,7 @@ public:
 	~FTNoIR_Tracker();
 
     void StartTracker(QFrame *);
-    void GiveHeadPoseData(double *data);
+    void GetHeadPoseData(double *data);
 	void loadSettings();
     volatile bool should_quit;
 protected:

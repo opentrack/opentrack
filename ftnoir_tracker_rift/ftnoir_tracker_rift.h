@@ -15,7 +15,7 @@ public:
     virtual ~Rift_Tracker() virt_override;
 
     void StartTracker(QFrame *) virt_override;
-    void GiveHeadPoseData(double *data) virt_override;
+    void GetHeadPoseData(double *data) virt_override;
     void loadSettings();
     virtual int preferredHz() virt_override { return 250; }
     volatile bool should_quit;

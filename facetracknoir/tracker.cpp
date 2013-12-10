@@ -108,11 +108,11 @@ void Tracker::run() {
             break;
 
         if (Libraries->pSecondTracker) {
-            Libraries->pSecondTracker->GiveHeadPoseData(newpose);
+            Libraries->pSecondTracker->GetHeadPoseData(newpose);
         }
 
         if (Libraries->pTracker) {
-            Libraries->pTracker->GiveHeadPoseData(newpose);
+            Libraries->pTracker->GetHeadPoseData(newpose);
         }
 
         {

@@ -186,7 +186,7 @@ void Tracker::StartTracker(QFrame* videoframe)
 #endif
 }
 
-void Tracker::GiveHeadPoseData(double *data)
+void Tracker::GetHeadPoseData(double *data)
 {
     lck_shm.lock();
     shm->timer = 0;

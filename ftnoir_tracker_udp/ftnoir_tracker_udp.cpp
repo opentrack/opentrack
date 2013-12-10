@@ -110,7 +110,7 @@ void FTNoIR_Tracker::StartTracker(QFrame*)
 	return;
 }
 
-void FTNoIR_Tracker::GiveHeadPoseData(double *data)
+void FTNoIR_Tracker::GetHeadPoseData(double *data)
 {
     mutex.lock();
 	if (bEnableX) {
