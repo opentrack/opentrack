@@ -181,10 +181,10 @@ void GLWidget::project_quad_texture() {
                     double qy = origs[i][0].y
                                 + coords.x * (origs[i][2].y - origs[i][0].y)
                                 + coords.y * (origs[i][1].y - origs[i][0].y);
-                    int qx1 = std::min<int>(ow - 1, std::max<int>(0, qx - 0.5));
-                    int qy1 = std::min<int>(oh - 1, std::max<int>(0, qy - 0.5));
-                    int qx2 = std::min<int>(ow - 1, std::max<int>(0, qx + 0.5));
-                    int qy2 = std::min<int>(oh - 1, std::max<int>(0, qy + 0.5));
+                    int qx1 = std::min<int>(ow - 1, std::max<int>(0, qx));
+                    int qy1 = std::min<int>(oh - 1, std::max<int>(0, qy));
+                    int qx2 = std::min<int>(ow - 1, std::max<int>(0, qx + 1.0));
+                    int qy2 = std::min<int>(oh - 1, std::max<int>(0, qy + 1.0));
 
                     double dx1 = qx1 - qx;
                     double dy1 = qy1 - qy;
