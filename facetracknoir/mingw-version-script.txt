@@ -1,0 +1,8 @@
+{
+ global:
+	GetDialog?0;
+	GetConstructor?0;
+	GetMetadata?0;
+ local:
+   *;
+};
