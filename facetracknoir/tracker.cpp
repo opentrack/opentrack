@@ -85,7 +85,7 @@ static void t_compensate(double* input, double* output)
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera, gameoutput_camera, target_camera;
+    T6DOF offset_camera;
 
     bool bTracker1Confid = false;
     bool bTracker2Confid = false;
@@ -139,7 +139,7 @@ void Tracker::run() {
                     Libraries->pFilter->Initialize();
             }
 
-            T6DOF target_camera2, new_camera;
+            T6DOF target_camera, target_camera2, new_camera;
 
             if (enabled && confid)
             {
@@ -148,6 +148,8 @@ void Tracker::run() {
 
                 target_camera2 = target_camera - offset_camera;
             }
+
+            T6DOF gameoutput_camera;
 
             if (Libraries->pFilter) {
                 for (int i = 0; i < 6; i++)
