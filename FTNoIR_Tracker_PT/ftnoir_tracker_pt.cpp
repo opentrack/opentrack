@@ -113,6 +113,7 @@ void Tracker::apply(const TrackerSettings& settings)
 	camera.set_f(settings.cam_f);
     frame_rotation.rotation = static_cast<RotationType>(settings.cam_roll);
 	point_extractor.threshold_val = settings.threshold;
+	point_extractor.threshold_secondary_val = settings.threshold_secondary;
 	point_extractor.min_size = settings.min_point_size;
     point_extractor.max_size = settings.max_point_size;
     point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));

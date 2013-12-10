@@ -28,6 +28,8 @@ struct TrackerSettings
 
 	// point extraction
 	int threshold;
+	int threshold_secondary;
+	
 	int min_point_size;
 	int max_point_size;
 

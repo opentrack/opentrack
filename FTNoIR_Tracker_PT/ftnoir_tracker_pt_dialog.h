@@ -54,6 +54,7 @@ protected slots:
 	void set_min_point_size(int val) { settings.min_point_size = val; settings_changed(); }
 	void set_max_point_size(int val) { settings.max_point_size = val; settings_changed(); }
 	void set_threshold(int val)      { settings.threshold = val;      settings_changed(); }
+	void set_threshold_secondary(int val)      { settings.threshold_secondary = val;      settings_changed(); }
 	void set_ena_roll(bool val)		 { settings.bEnableRoll = val;    settings_changed(); }
 	void set_ena_pitch(bool val)	 { settings.bEnablePitch = val;   settings_changed(); }
 	void set_ena_yaw(bool val)		 { settings.bEnableYaw = val;     settings_changed(); }
