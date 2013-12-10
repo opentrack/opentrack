@@ -63,6 +63,7 @@ TrackerDialog::TrackerDialog()
 	ui.campitch_spin->setValue(settings.cam_pitch);
 	ui.camyaw_spin->setValue(settings.cam_yaw);
 	ui.threshold_slider->setValue(settings.threshold);
+	ui.threshold_secondary_slider->setValue(settings.threshold_secondary);
 
 	ui.chkEnableRoll->setChecked(settings.bEnableRoll);
 	ui.chkEnablePitch->setChecked(settings.bEnablePitch);
@@ -105,6 +106,7 @@ TrackerDialog::TrackerDialog()
 	connect( ui.campitch_spin,SIGNAL(valueChanged(int)),          this,SLOT(set_cam_pitch(int)) );
 	connect( ui.camyaw_spin,SIGNAL(valueChanged(int)),            this,SLOT(set_cam_yaw(int)) );
 	connect( ui.threshold_slider,SIGNAL(sliderMoved(int)),        this,SLOT(set_threshold(int)) );
+	connect( ui.threshold_secondary_slider,SIGNAL(sliderMoved(int)),        this,SLOT(set_threshold_secondary(int)) );
 															      
 	connect( ui.chkEnableRoll,SIGNAL(toggled(bool)),		      this,SLOT(set_ena_roll(bool)) );
 	connect( ui.chkEnablePitch,SIGNAL(toggled(bool)),		      this,SLOT(set_ena_pitch(bool)) );
