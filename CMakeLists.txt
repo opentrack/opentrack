@@ -13,7 +13,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_GNUCXX TRUE)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     if(MINGW)
         set(version-script mingw)
     else()
@@ -45,7 +45,7 @@ if(MSVC)
     add_definitions(-DNOMINMAX)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     add_definitions(-std=c++11)
 endif()
 
@@ -412,12 +412,12 @@ target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
 add_library(opentrack-filter-kalman SHARED ${opentrack-filter-kalman-c} ${opentrack-filter-kalman-h} ${opentrack-filter-kalman-moc} ${opentrack-filter-kalman-uih} ${opentrack-filter-kalman-rcc})
 target_link_libraries(opentrack-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-filter-kalman
     PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-filter-accela
     PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -425,14 +425,14 @@ endif()
 add_library(opentrack-filter-ewma SHARED ${opentrack-filter-ewma-uih} ${opentrack-filter-ewma-c} ${opentrack-filter-ewma-h} ${opentrack-filter-ewma-moc} ${opentrack-filter-ewma-rcc})
 target_link_libraries(opentrack-filter-ewma ${MY_QT_LIBS})
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-filter-ewma
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
 
 add_library(opentrack-proto-fgfs SHARED ${opentrack-proto-fgfs-c} ${opentrack-proto-fgfs-h} ${opentrack-proto-fgfs-moc} ${opentrack-proto-fgfs-uih} ${opentrack-proto-fgfs-rcc})
 target_link_libraries(opentrack-proto-fgfs ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-proto-fgfs
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -445,7 +445,7 @@ if(WIN32 AND SDK_VJOY)
     else()
         target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
     endif()
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-proto-vjoy
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt -Wl,--enable-stdcall-fixup")
     endif()
@@ -454,7 +454,7 @@ endif()
 if(UNIX AND SDK_ENABLE_LIBEVDEV)
     add_library(opentrack-proto-libevdev SHARED ${opentrack-proto-libevdev-c} ${opentrack-proto-libevdev-h} ${opentrack-proto-libevdev-moc} ${opentrack-proto-libevdev-uih} ${opentrack-proto-libevdev-rcc})
     target_link_libraries(opentrack-proto-libevdev ${MY_QT_LIBS} evdev)
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-proto-libevdev
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
     endif()
@@ -494,7 +494,7 @@ endif()
 
 add_library(opentrack-proto-udp SHARED ${opentrack-proto-udp-c} ${opentrack-proto-udp-h} ${opentrack-proto-udp-moc} ${opentrack-proto-udp-uih} ${opentrack-proto-udp-rcc})
 target_link_libraries(opentrack-proto-udp ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-proto-udp
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -502,7 +502,7 @@ endif()
 if(WIN32)
     add_library(opentrack-tracker-joystick SHARED ${opentrack-tracker-joystick-c} ${opentrack-tracker-joystick-h} ${opentrack-tracker-joystick-moc} ${opentrack-tracker-joystick-uih} ${opentrack-tracker-joystick-rcc})
     target_link_libraries(opentrack-tracker-joystick ${MY_QT_LIBS})
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-tracker-joystick
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
     endif()
@@ -511,7 +511,7 @@ endif()
 if(NOT WIN32 AND SDK_WINE_PREFIX)
     add_library(opentrack-proto-wine SHARED ${opentrack-proto-wine-c} ${opentrack-proto-wine-h} ${opentrack-proto-wine-moc} ${opentrack-proto-wine-uih} ${opentrack-proto-wine-rcc})
     target_link_libraries(opentrack-proto-wine ${MY_QT_LIBS} opentrack-compat opentrack-csv)
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-proto-wine
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
     endif()
@@ -536,14 +536,14 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
     endif()
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-proto-fgfs
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
 
 add_library(opentrack-tracker-ht SHARED ${opentrack-tracker-ht-c} ${opentrack-tracker-ht-h} ${opentrack-tracker-ht-moc} ${opentrack-tracker-ht-uih} ${opentrack-tracker-ht-rcc})
 target_link_libraries(opentrack-tracker-ht ${MY_QT_LIBS} opentrack-compat)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-tracker-ht
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -552,7 +552,7 @@ if(SDK_ARUCO_LIBPATH)
     include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
     add_library(opentrack-tracker-aruco SHARED ${opentrack-tracker-aruco-c} ${opentrack-tracker-aruco-h} ${opentrack-tracker-aruco-moc} ${opentrack-tracker-aruco-uih} ${opentrack-tracker-aruco-rcc})
     target_link_libraries(opentrack-tracker-aruco ${MY_QT_LIBS} ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-tracker-aruco
                       PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
     endif()
@@ -567,7 +567,7 @@ endif()
 add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-h} ${opentrack-tracker-hatire-moc} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
 target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS})
 install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-tracker-hatire
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -591,7 +591,7 @@ if(APPLE)
 	SET_TARGET_PROPERTIES(opentrack-tracker-pt PROPERTIES COMPILE_FLAGS "-std=c++11")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
 	SET_TARGET_PROPERTIES(opentrack-tracker-pt
 		PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -606,7 +606,7 @@ endif()
 
 add_library(opentrack-tracker-udp SHARED ${opentrack-tracker-udp-c} ${opentrack-tracker-udp-h} ${opentrack-tracker-udp-moc} ${opentrack-tracker-udp-uih} ${opentrack-tracker-udp-rcc})
 target_link_libraries(opentrack-tracker-udp ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-tracker-udp
               PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
 endif()
@@ -630,7 +630,7 @@ if(SDK_RIFT)
                     endif()
                 endif()
             endif()
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-tracker-rift
                   PROPERTIES
                   LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
@@ -675,7 +675,7 @@ if(SDK_HYDRA)
                     )
                     target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
     endif()
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-tracker-hydra
                   PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
             endif()
@@ -705,7 +705,7 @@ endif()
 
 add_library(opentrack-api SHARED ${opentrack-lib-c} ${opentrack-lib-h} ${opentrack-lib-moc})
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     SET_TARGET_PROPERTIES(opentrack-api PROPERTIES
         LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt"
         COMPILE_FLAGS "-fvisibility=protected  -fvisibility-inlines-hidden"
@@ -715,7 +715,7 @@ endif()
 
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
-if(UNIX)
+if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
 target_link_libraries(opentrack ${OpenCV_LIBS})
