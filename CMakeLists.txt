@@ -721,7 +721,7 @@ endif()
 target_link_libraries(opentrack ${OpenCV_LIBS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-if(UNIX)
+if(UNIX OR APPLE)
     install(TARGETS opentrack-qxt-mini RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
