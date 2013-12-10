@@ -1,3 +1,4 @@
+
 Windows binary builds are available at <http://ananke.laggy.pk/opentrack/>
 
 Source code access available at <http://github.com/opentrack/opentrack/>
@@ -56,3 +57,9 @@ compatible with it unless resides in separate address space.
 
 It's recommended to submit new code under ISC license, it's a shorter
 boilerplate header than MIT/X11 or new BSD.
+
+# this fork/branch: usrusr/opentrack feature/pt-hysteresis
+
+Per pixel hysteresis for point tracker: sacrifice some precision, cpu and sensitivity to minor movements for greatly reduced jitter from pixel noise at full responsivity (usable without postprocessing filters!)
+-- Ulf Schreiber
+Ulf Schreiber
