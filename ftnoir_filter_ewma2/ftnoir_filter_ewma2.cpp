@@ -80,8 +80,7 @@ void FTNoIR_Filter::loadSettings() {
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
-                                       double *new_camera_position,
-                                       const double *)
+                                       double *new_camera_position)
 {
     double delta;
     double new_alpha;

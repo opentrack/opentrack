@@ -31,7 +31,6 @@ void FTNoIR_Filter::loadSettings() {
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "Accela" );
-    zoom_factor = iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toDouble();
     rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
     translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
     second_order_alpha = iniFile.value("second-order-alpha", ACCELA_SECOND_ORDER_ALPHA).toDouble();
@@ -80,8 +79,7 @@ static inline T clamp(const T min, const T max, const T value)
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
-                                       double *new_camera_position,
-                                       const double* last_post_filter_values)
+                                       double *new_camera_position)
 {
 	if (first_run)
 	{
@@ -136,11 +134,10 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         const double a = i >= 3 ? rotation_alpha : translation_alpha;
         const double a2 = a * second_order_alpha;
         const double a3 = a * third_order_alpha;
-        const double reduction = 1. / std::max(1., 1. + zoom_factor * -last_post_filter_values[TZ] / 1000);
         const double velocity =
-                parabola(a, vec * scaling[i], deadzone, expt) * reduction +
-                parabola(a2, vec2 * scaling[i], deadzone, expt) * reduction +
-                parabola(a3, vec3 * scaling[i], deadzone, expt) * reduction;
+                parabola(a, vec * scaling[i], deadzone, expt) +
+                parabola(a2, vec2 * scaling[i], deadzone, expt) +
+                parabola(a3, vec3 * scaling[i], deadzone, expt);
         const double result = last_output[0][i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = done ? target_camera_position[i] : result;

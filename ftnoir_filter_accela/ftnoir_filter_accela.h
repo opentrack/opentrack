@@ -34,7 +34,6 @@
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
 #define ACCELA_SMOOTHING_TRANSLATION 40.0
-#define ACCELA_ZOOM_SLOWNESS 0
 #define ACCELA_SECOND_ORDER_ALPHA 100.0
 #define ACCELA_THIRD_ORDER_ALPHA 180.0
 
@@ -46,7 +45,7 @@ class FTNoIR_Filter : public IFilter
 public:
 	FTNoIR_Filter();
     virtual ~FTNoIR_Filter();
-    void FilterHeadPoseData(const double* target_camera_position, double *new_camera_position, const double* last_post_filter_values);
+    void FilterHeadPoseData(const double* target_camera_position, double *new_camera_position);
     void Initialize() {
         first_run = true;
     }
@@ -55,7 +54,7 @@ private:
     QMutex mutex;
 	void loadSettings();
 	bool first_run;
-    double rotation_alpha, translation_alpha, zoom_factor;
+    double rotation_alpha, translation_alpha;
     double second_order_alpha, third_order_alpha;
     double scaling[6];
     double deadzone;

@@ -93,8 +93,7 @@ static inline T clamp(const T min, const T max, const T value)
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
-                                       double *new_camera_position,
-                                       const double *)
+                                       double *new_camera_position)
 {
     bool new_target = false;
     

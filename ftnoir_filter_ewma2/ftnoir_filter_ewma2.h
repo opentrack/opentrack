@@ -45,7 +45,7 @@ public:
     void Initialize() {}
 
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position, const double *);
+                            double *new_camera_position);
     void receiveSettings(double smin, double smax, double sexpt);
 
 private:

@@ -30,8 +30,7 @@ public:
     }
     void Initialize() virt_override;
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position,
-                            const double *) virt_override;
+                            double *new_camera_position) virt_override;
     cv::KalmanFilter kalman;
     double prev_position[6];
     double prev2_filter_pos[6];
