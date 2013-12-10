@@ -85,7 +85,7 @@ static void t_compensate(double* input, double* output)
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera;
+    T6DOF offset_camera, gameoutput_camera;
 
     double newpose[6] = {0};
     double last_post_filter[6] ;
@@ -135,15 +135,13 @@ void Tracker::run() {
 
             T6DOF target_camera, target_camera2, new_camera;
 
-            if (enabled && confid)
+            if (enabled)
             {
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
 
                 target_camera2 = target_camera - offset_camera;
             }
-
-            T6DOF gameoutput_camera;
 
             if (Libraries->pFilter) {
                 for (int i = 0; i < 6; i++)
