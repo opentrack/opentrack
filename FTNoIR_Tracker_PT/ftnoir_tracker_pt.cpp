@@ -233,12 +233,12 @@ void Tracker::StopTracker(bool exit)
 #define THeadPoseData double
 #endif
 
-bool Tracker::GiveHeadPoseData(THeadPoseData *data)
+void Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
 	{
 		QMutexLocker lock(&mutex);
 
-		if (!tracking_valid) return false;
+        if (!tracking_valid) return;
 
 		FrameTrafo X_CM = point_tracker.get_pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
@@ -280,7 +280,9 @@ bool Tracker::GiveHeadPoseData(THeadPoseData *data)
         if (bEnableRoll)  data[Roll]  =   rad2deg * gamma;
 #endif
 	}
-	return true;
+#ifndef OPENTRACK_API
+    return true;
+#endif
 }
 
 //-----------------------------------------------------------------------------

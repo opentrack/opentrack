@@ -323,7 +323,7 @@ void FTNoIR_Tracker::StartTracker(QFrame*)
 #define THeadPoseData double
 #endif
 
-bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
+void FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
     QMutexLocker lck(&mutex);
 	while  (dataRead.length()>=30) {
@@ -354,7 +354,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	if (CptError>50) {
 		emit sendMsgInfo("Can't find HAT frame")  ;
 		CptError=0;
-		return false;
+        return;
 	}
 #ifdef OPENTRACK_API
 	data[frame_cnt] = (long) HAT.Code;
@@ -425,9 +425,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	// For debug
 	//data->x=dataRead.length();
 	//data->y=CptError;
-
-	return true;
-
 }
 
 

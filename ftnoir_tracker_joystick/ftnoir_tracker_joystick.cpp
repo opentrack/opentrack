@@ -175,13 +175,13 @@ fail:
     qDebug() << "joy init failure";
 }
 
-bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
+void FTNoIR_Tracker::GiveHeadPoseData(double *data)
 {
     QMutexLocker foo(&mtx);
     DIJOYSTATE js = {0};
 
     if( !g_pDI || !g_pJoystick)
-        return false;
+        return;
 
     auto hr = g_pJoystick->Poll();
     if( FAILED( hr ))
@@ -190,11 +190,11 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
         for (int i = 0; hr == DIERR_INPUTLOST && i < 200; i++)
             hr = g_pJoystick->Acquire();
         if (hr != DI_OK)
-            return false;
+            return;
     }
 
     if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( js ), &js ) ) )
-        return false;
+        return;
 
     const LONG values[] = {
         js.lRx,
@@ -232,8 +232,6 @@ bool FTNoIR_Tracker::GiveHeadPoseData(double *data)
             data[i] = val * limits[i] / (double) (val >= 0 ? max : min);
         }
     }
-
-	return true;
 }
 
 void FTNoIR_Tracker::loadSettings() {

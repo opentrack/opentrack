@@ -50,7 +50,7 @@ OPENTRACK_EXPORT const char** opentrack_enum_trackers(opentrack self);
  */
 OPENTRACK_EXPORT opentrack_tracker opentrack_make_tracker(opentrack ctx, const char* name);
 OPENTRACK_EXPORT void  opentrack_tracker_start(opentrack self, opentrack_tracker tracker);
-OPENTRACK_EXPORT int opentrack_tracker_tick(opentrack_tracker tracker, double* headpose);
+OPENTRACK_EXPORT void opentrack_tracker_tick(opentrack_tracker tracker, double* headpose);
 OPENTRACK_EXPORT void opentrack_finalize_tracker(opentrack_tracker tracker);
 #ifdef __cplusplus
 }

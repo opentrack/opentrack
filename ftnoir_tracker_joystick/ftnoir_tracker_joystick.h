@@ -42,7 +42,7 @@ public:
 	~FTNoIR_Tracker();
 
     void StartTracker(QFrame *frame);
-    bool GiveHeadPoseData(double *data);
+    void GiveHeadPoseData(double *data);
 	void loadSettings();
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;

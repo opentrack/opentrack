@@ -186,10 +186,8 @@ void Tracker::StartTracker(QFrame* videoframe)
 #endif
 }
 
-bool Tracker::GiveHeadPoseData(double *data)
+void Tracker::GiveHeadPoseData(double *data)
 {
-	bool ret = false;
-
     lck_shm.lock();
     shm->timer = 0;
     if (shm->frame.width > 0)
@@ -213,7 +211,6 @@ bool Tracker::GiveHeadPoseData(double *data)
             data[TY] = shm->result.ty;
         if (enableTZ)
             data[TZ] = shm->result.tz;
-        ret = true;
         if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
         {
             shm->pause = true;
@@ -222,8 +219,6 @@ bool Tracker::GiveHeadPoseData(double *data)
         shm->pause = false;
     }
     lck_shm.unlock();
-
-	return ret;
 }
 
 //-----------------------------------------------------------------------------

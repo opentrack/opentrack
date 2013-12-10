@@ -23,7 +23,7 @@ public:
 	Tracker();
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
-    bool GiveHeadPoseData(double *data);
+    void GiveHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
 	ht_shm_t* shm;
 private:

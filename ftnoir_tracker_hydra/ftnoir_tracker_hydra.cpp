@@ -66,7 +66,7 @@ void Hydra_Tracker::StartTracker(QFrame*)
 }
 
 
-bool Hydra_Tracker::GiveHeadPoseData(double *data)
+void Hydra_Tracker::GiveHeadPoseData(double *data)
 {
     
 	sixenseSetActiveBase(0);
@@ -109,8 +109,6 @@ bool Hydra_Tracker::GiveHeadPoseData(double *data)
     if (bEnableRoll) {
         data[Roll] = newHeadPose[Roll] * 57.295781f;
     }
-    
-	return true;
 }
 
 
