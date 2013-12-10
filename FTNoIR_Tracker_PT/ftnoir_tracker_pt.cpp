@@ -233,7 +233,7 @@ void Tracker::StopTracker(bool exit)
 #define THeadPoseData double
 #endif
 
-void Tracker::GiveHeadPoseData(THeadPoseData *data)
+void Tracker::GetHeadPoseData(THeadPoseData *data)
 {
 	{
 		QMutexLocker lock(&mutex);

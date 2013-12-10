@@ -26,7 +26,7 @@ public:
 	Tracker();
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
-    void GiveHeadPoseData(double *data);
+    void GetHeadPoseData(double *data);
 	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
     void run();
     void load_settings();

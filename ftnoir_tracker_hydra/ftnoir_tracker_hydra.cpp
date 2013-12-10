@@ -66,7 +66,7 @@ void Hydra_Tracker::StartTracker(QFrame*)
 }
 
 
-void Hydra_Tracker::GiveHeadPoseData(double *data)
+void Hydra_Tracker::GetHeadPoseData(double *data)
 {
     
 	sixenseSetActiveBase(0);

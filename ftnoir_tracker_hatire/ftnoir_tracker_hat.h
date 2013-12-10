@@ -29,12 +29,12 @@ public:
 
 #ifdef OPENTRACK_API
     virtual void StartTracker(QFrame*);
-    virtual void GiveHeadPoseData(double* data);
+    virtual void GetHeadPoseData(double* data);
 #else
     void Initialize( QFrame *videoframe );
 	virtual void StartTracker(HWND parent_window);
     virtual void StopTracker(bool exit);
-    virtual bool GiveHeadPoseData(THeadPoseData *data);
+    virtual bool GetHeadPoseData(THeadPoseData *data);
 #endif
 	void applysettings(const TrackerSettings& settings);
 	void notifyCenter();

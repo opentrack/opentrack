@@ -31,7 +31,7 @@ void OPENTRACK_EXPORT opentrack_tracker_start(opentrack self, opentrack_tracker 
 
 void OPENTRACK_EXPORT opentrack_tracker_tick(opentrack_tracker tracker, double* headpose)
 {
-    tracker->GiveHeadPoseData(headpose);
+    tracker->GetHeadPoseData(headpose);
     QApplication::processEvents(0, 5);
 }
 

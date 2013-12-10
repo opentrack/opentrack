@@ -68,7 +68,7 @@ void Rift_Tracker::StartTracker(QFrame*)
 }
 
 
-void Rift_Tracker::GiveHeadPoseData(double *data)
+void Rift_Tracker::GetHeadPoseData(double *data)
 {
     if (pSFusion != NULL && pSensor != NULL) {
         Quatf hmdOrient = pSFusion->GetOrientation();

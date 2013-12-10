@@ -12,7 +12,7 @@ public:
     ~Hydra_Tracker();
 
     void StartTracker(QFrame *) virt_override;
-    void GiveHeadPoseData(double *data) virt_override;
+    void GetHeadPoseData(double *data) virt_override;
     void loadSettings();
     volatile bool should_quit;
 protected:
