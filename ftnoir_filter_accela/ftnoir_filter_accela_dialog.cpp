@@ -47,8 +47,6 @@ FilterControls::FilterControls() :
     connect(ui.rotation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
     connect(ui.translation_alpha, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
 
-    connect(ui.spinZoom, SIGNAL(valueChanged(int)), this, SLOT(settingChanged(int)));
-
     QDoubleSpinBox* boxen[] = {
         ui.doubleSpinBox,
         ui.doubleSpinBox_2,
@@ -157,7 +155,6 @@ void FilterControls::loadSettings() {
     //qDebug() << "FTNoIR_Filter::loadSettings2 says: size = " << NUM_OF(defScaleRotation);
 
 	iniFile.beginGroup ( "Accela" );
-    ui.spinZoom->setValue(iniFile.value("zoom-slowness", ACCELA_ZOOM_SLOWNESS).toInt());
     ui.rotation_alpha->setValue(iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble());
     ui.translation_alpha->setValue(iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble());
     ui.order_2nd->setValue(iniFile.value("second-order-alpha", ACCELA_SECOND_ORDER_ALPHA).toDouble());
@@ -210,7 +207,6 @@ void FilterControls::save() {
         iniFile.beginGroup ( "Accela" );
         iniFile.setValue("rotation-alpha", ui.rotation_alpha->value());
         iniFile.setValue("translation-alpha", ui.translation_alpha->value());
-        iniFile.setValue("zoom-slowness", ui.spinZoom->value());
         iniFile.setValue("deadzone", ui.deadzone->value());
         iniFile.setValue("exponent", ui.expt->value());
         iniFile.setValue("second-order-alpha", ui.order_2nd->value());

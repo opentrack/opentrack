@@ -85,11 +85,9 @@ static void t_compensate(double* input, double* output)
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera, gameoutput_camera;
+    T6DOF offset_camera;
 
     double newpose[6] = {0};
-    double last_post_filter[6] ;
-
     int sleep_ms = 15;
 
     if (Libraries->pTracker)
@@ -144,9 +142,7 @@ void Tracker::run() {
             }
 
             if (Libraries->pFilter) {
-                for (int i = 0; i < 6; i++)
-                    last_post_filter[i] = gameoutput_camera.axes[i];
-                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes, last_post_filter);
+                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
             } else {
                 new_camera = target_camera2;
             }
@@ -159,8 +155,7 @@ void Tracker::run() {
                 t_compensate(output_camera.axes, output_camera.axes);
 
             if (Libraries->pProtocol) {
-                gameoutput_camera = output_camera;
-                Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes );	// degrees & centimeters
+                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
             }
         }
 
