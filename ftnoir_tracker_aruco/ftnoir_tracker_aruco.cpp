@@ -375,7 +375,7 @@ void Tracker::run()
     }
 }
 
-bool Tracker::GiveHeadPoseData(double *data)
+void Tracker::GiveHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     
@@ -391,8 +391,6 @@ bool Tracker::GiveHeadPoseData(double *data)
         data[TY] = pose[TY];
     if (enableTZ)
         data[TZ] = pose[TZ];
-    
-	return true;
 }
 
 class TrackerDll : public Metadata

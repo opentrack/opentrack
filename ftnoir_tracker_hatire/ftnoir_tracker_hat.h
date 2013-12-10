@@ -29,7 +29,7 @@ public:
 
 #ifdef OPENTRACK_API
     virtual void StartTracker(QFrame*);
-    virtual bool GiveHeadPoseData(double* data);
+    virtual void GiveHeadPoseData(double* data);
 #else
     void Initialize( QFrame *videoframe );
 	virtual void StartTracker(HWND parent_window);

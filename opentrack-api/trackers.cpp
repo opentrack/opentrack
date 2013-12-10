@@ -29,11 +29,10 @@ void OPENTRACK_EXPORT opentrack_tracker_start(opentrack self, opentrack_tracker 
     return tracker->StartTracker(&self->fake_frame);
 }
 
-int OPENTRACK_EXPORT opentrack_tracker_tick(opentrack_tracker tracker, double* headpose)
+void OPENTRACK_EXPORT opentrack_tracker_tick(opentrack_tracker tracker, double* headpose)
 {
-    int ret = tracker->GiveHeadPoseData(headpose);
+    tracker->GiveHeadPoseData(headpose);
     QApplication::processEvents(0, 5);
-    return ret;
 }
 
 }
