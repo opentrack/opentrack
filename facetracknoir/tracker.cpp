@@ -131,7 +131,7 @@ void Tracker::run() {
 
             if (do_center)  {
                 for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = target_camera.axes[i];
+                    offset_camera.axes[i] = mainApp->axis(i).headPos;
 
                 do_center = false;
 
