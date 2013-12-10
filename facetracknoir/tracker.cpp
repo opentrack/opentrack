@@ -50,6 +50,39 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     out += axis.zero;
 }
 
+static void t_compensate(double* input, double* output)
+{
+    const auto H = input[Yaw] * M_PI / 180;
+    const auto P = input[Pitch] * M_PI / 180;
+    const auto B = input[Roll] * M_PI / 180;
+
+    const auto cosH = cos(H);
+    const auto sinH = sin(H);
+    const auto cosP = cos(P);
+    const auto sinP = sin(P);
+    const auto cosB = cos(B);
+    const auto sinB = sin(B);
+
+    double foo[] = {
+        cosH * cosB - sinH * sinP * sinB,
+        - sinB * cosP,
+        sinH * cosB + cosH * sinP * sinB,
+        cosH * sinB + sinH * sinP * cosB,
+        cosB * cosP,
+        sinB * sinH - cosH * sinP * cosB,
+        - sinH * cosP,
+        - sinP,
+        cosH * cosP,
+    };
+
+    cv::Mat rmat(3, 3, CV_64F, foo);
+    const cv::Mat tvec(3, 1, CV_64F, input);
+    cv::Mat ret = rmat * tvec;
+
+    for (int i = 0; i < 3; i++)
+        output[i] = ret.at<double>(i);
+}
+
 /** QThread run method @override **/
 void Tracker::run() {
     T6DOF offset_camera, gameoutput_camera, target_camera;
@@ -129,37 +162,7 @@ void Tracker::run() {
             }
 
             if (compensate)
-            {
-                const auto H = output_camera.axes[Yaw] * M_PI / 180;
-                const auto P = output_camera.axes[Pitch] * M_PI / 180;
-                const auto B = output_camera.axes[Roll] * M_PI / 180;
-
-                const auto cosH = cos(H);
-                const auto sinH = sin(H);
-                const auto cosP = cos(P);
-                const auto sinP = sin(P);
-                const auto cosB = cos(B);
-                const auto sinB = sin(B);
-
-                double foo[] = {
-                    cosH * cosB - sinH * sinP * sinB,
-                    - sinB * cosP,
-                    sinH * cosB + cosH * sinP * sinB,
-                    cosH * sinB + sinH * sinP * cosB,
-                    cosB * cosP,
-                    sinB * sinH - cosH * sinP * cosB,
-                    - sinH * cosP,
-                    - sinP,
-                    cosH * cosP,
-                };
-
-                cv::Mat rmat(3, 3, CV_64F, foo);
-                cv::Mat tvec(3, 1, CV_64F, output_camera.axes);
-                cv::Mat ret = rmat * tvec;
-
-                for (int i = 0; i < 3; i++)
-                    output_camera.axes[i] = ret.at<double>(i);
-            }
+                t_compensate(output_camera.axes, output_camera.axes);
 
             if (Libraries->pProtocol) {
                 gameoutput_camera = output_camera;
