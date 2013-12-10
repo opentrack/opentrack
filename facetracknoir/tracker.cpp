@@ -87,9 +87,6 @@ static void t_compensate(double* input, double* output)
 void Tracker::run() {
     T6DOF offset_camera;
 
-    bool bTracker1Confid = false;
-    bool bTracker2Confid = false;
-
     double newpose[6] = {0};
     double last_post_filter[6] ;
 
@@ -113,21 +110,18 @@ void Tracker::run() {
             break;
 
         if (Libraries->pSecondTracker) {
-            bTracker2Confid = Libraries->pSecondTracker->GiveHeadPoseData(newpose);
+            Libraries->pSecondTracker->GiveHeadPoseData(newpose);
         }
 
         if (Libraries->pTracker) {
-            bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(newpose);
+            Libraries->pTracker->GiveHeadPoseData(newpose);
         }
 
         {
             QMutexLocker foo(&mtx);
-            const bool confid = bTracker1Confid || bTracker2Confid;
 
-            if ( confid ) {
-                for (int i = 0; i < 6; i++)
-                    mainApp->axis(i).headPos = newpose[i];
-            }
+            for (int i = 0; i < 6; i++)
+                mainApp->axis(i).headPos = newpose[i];
 
             if (do_center)  {
                 for (int i = 0; i < 6; i++)
