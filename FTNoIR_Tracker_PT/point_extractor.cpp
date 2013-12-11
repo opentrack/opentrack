@@ -8,14 +8,26 @@
 #include "point_extractor.h"
 #include <QDebug>
 
+
 using namespace cv;
 using namespace std;
 
+
+PointExtractor::PointExtractor(){
+	first = true;
+
+	
+	//if (!AllocConsole()){}
+	//else SetConsoleTitle("debug");
+	//freopen("CON", "w", stdout);
+	//freopen("CON", "w", stderr);
+}
 // ----------------------------------------------------------------------------
 const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool draw_output)
 {
 	const int W = frame.cols;
 	const int H = frame.rows; 
+
 
 	// clear old points
 	points.clear();
@@ -24,10 +36,41 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 	Mat frame_gray;
     cvtColor(frame, frame_gray, CV_RGB2GRAY);
 
-	// convert to binary
+	int secondary = threshold_secondary_val;
+	
+	// mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
 	Mat frame_bin;
-	threshold(frame_gray, frame_bin, threshold_val, 255, THRESH_BINARY);
+	// only used if draw_output
+	Mat frame_bin_copy;
+	// mask for everything that passes
+	Mat frame_bin_low;
+	// mask for lower-threshold && combined result of last, needs to remain in scope until drawing, but is only used if secondary != 0
+	Mat frame_last_and_low;
 
+	if(secondary==0){
+		threshold(frame_gray, frame_bin, threshold_val, 255, THRESH_BINARY);
+	}else{
+		// we recombine a number of buffers, this might be slower than a single loop of per-pixel logic
+		// but it might as well be faster if openCV makes good use of SIMD
+		float t = threshold_val;
+		//float hyst = float(threshold_secondary_val)/512.;
+		//threshold(frame_gray, frame_bin, (t + ((255.-t)*hyst)), 255, THRESH_BINARY);
+		float hyst = float(threshold_secondary_val)/256.;
+		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY);
+		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
+
+		if(draw_output) frame_bin.copyTo(frame_bin_copy);
+		if(first){
+			frame_bin.copyTo(frame_last);
+			first = false;
+		}else{
+			// keep pixels from last if they are above lower threshold
+			bitwise_and(frame_last, frame_bin_low, frame_last_and_low);
+			// union of pixels >= higher threshold and pixels >= lower threshold
+			bitwise_or(frame_bin, frame_last_and_low, frame_last);
+			frame_last.copyTo(frame_bin);
+		}
+	}
 	unsigned int region_size_min = 3.14*min_size*min_size/4.0;
 	unsigned int region_size_max = 3.14*max_size*max_size/4.0;
 
@@ -42,6 +85,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 			// find connected components with floodfill
 			if (frame_bin.at<unsigned char>(y,x) != 255) continue;
 			Rect rect;
+
 			floodFill(frame_bin, Point(x,y), Scalar(blob_index), &rect, Scalar(0), Scalar(0), FLOODFILL_FIXED_RANGE);
 			blob_index++;
 
@@ -70,9 +114,17 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 				for (int j=rect.x; j < (rect.x+rect.width); j++)
 				{
 					if (frame_bin.at<unsigned char>(i,j) != blob_index-1) continue;
-					float val = frame_gray.at<unsigned char>(i,j);
-					val = float(val - threshold_val)/(256 - threshold_val);
-					val = val*val; // makes it more stable (less emphasis on low values, more on the peak)
+					float val;
+
+					if(secondary==0){
+						val = frame_gray.at<unsigned char>(i,j);
+						val = float(val - threshold_val)/(256 - threshold_val);
+						val = val*val; // makes it more stable (less emphasis on low values, more on the peak)
+					}else{
+						//hysteresis point detection gets stability from ignoring pixel noise so we decidedly leave the actual pixel values out of the picture
+						val = frame_last.at<unsigned char>(i,j) / 256.;
+					}
+
 					m  +=     val;
 					mx += j * val;
 					my += i * val; 
@@ -83,6 +135,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 			Vec2f c;
 			c[0] =  (mx/m - W/2)/W;
 			c[1] = -(my/m - H/2)/W;
+			//qDebug()<<blob_index<<"  => "<<c[0]<<" "<<c[1];
 			points.push_back(c);
 		}
 	}
@@ -90,10 +143,19 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 	// draw output image
 	if (draw_output) {
 		vector<Mat> channels;
-		frame_bin.setTo(170, frame_bin);
-		channels.push_back(frame_gray + frame_bin);
-		channels.push_back(frame_gray - frame_bin);
-		channels.push_back(frame_gray - frame_bin);
+		if(secondary==0){
+			frame_bin.setTo(170, frame_bin);
+			channels.push_back(frame_gray + frame_bin);
+			channels.push_back(frame_gray - frame_bin);
+			channels.push_back(frame_gray - frame_bin);
+		}else{
+			frame_bin_copy.setTo(120, frame_bin_copy);
+			frame_bin_low.setTo(90, frame_bin_low);
+			channels.push_back(frame_gray + frame_bin_copy);
+			channels.push_back(frame_gray + frame_last_and_low);
+			channels.push_back(frame_gray + frame_bin_low);
+			//channels.push_back(frame_gray + frame_bin);
+		}
 		merge(channels, frame);
 	}
 
