@@ -47,6 +47,7 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (PT tracker)
 - FuraX49 (hatire arduino tracker)
+- Ulf Schreiber (PT tracker)
 - Wim Vriend (historically)
 - Ron Hendriks (historically)
 
@@ -57,9 +58,3 @@ compatible with it unless resides in separate address space.
 
 It's recommended to submit new code under ISC license, it's a shorter
 boilerplate header than MIT/X11 or new BSD.
-
-# this fork/branch: usrusr/opentrack feature/pt-hysteresis
-
-Per pixel hysteresis for point tracker: sacrifice some precision, cpu and sensitivity to minor movements for greatly reduced jitter from pixel noise at full responsivity (usable without postprocessing filters!)
--- Ulf Schreiber
-Ulf Schreiber
