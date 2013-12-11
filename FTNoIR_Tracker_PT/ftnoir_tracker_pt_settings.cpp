@@ -29,6 +29,7 @@ void TrackerSettings::load_ini()
 	cam_pitch      = iniFile.value("CameraPitch",  0).toInt();
 	cam_yaw        = iniFile.value("CameraYaw",    0).toInt();
 	threshold      = iniFile.value("PointExtractThreshold", 128).toInt();
+	threshold_secondary      = iniFile.value("PointExtractThresholdSecondary", 128).toInt();
 	min_point_size = iniFile.value("PointExtractMinSize", 2).toInt();
 	max_point_size = iniFile.value("PointExtractMaxSize", 50).toInt();
 	M01[0]  = iniFile.value("PointModelM01x",   0).toFloat();
@@ -74,6 +75,7 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue("CameraPitch",    cam_pitch);
 	iniFile.setValue("CameraYaw",      cam_yaw);
 	iniFile.setValue("PointExtractThreshold", threshold);
+	iniFile.setValue("PointExtractThresholdSecondary", threshold_secondary);
 	iniFile.setValue("PointExtractMinSize", min_point_size);
 	iniFile.setValue("PointExtractMaxSize", max_point_size);
 	iniFile.setValue("PointModelM01x", M01[0]);
