@@ -84,6 +84,7 @@ public:
     volatile bool do_center;
     volatile bool enabled;
     volatile bool compensate;
+    volatile bool tcomp_rz;
     
     T6DOF output_camera;
 };

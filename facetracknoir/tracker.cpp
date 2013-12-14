@@ -26,7 +26,8 @@ Tracker::Tracker( FaceTrackNoIR *parent ) :
     should_quit(false),
     do_center(false),
     enabled(true),
-    compensate(true)
+    compensate(true),
+    tcomp_rz(false)
 {
     mainApp = parent;
 }
@@ -50,8 +51,9 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     out += axis.zero;
 }
 
-static void t_compensate(double* input, double* output)
+static void t_compensate(double* input, double* output, bool rz)
 {
+    double z = rz ? -1 : 1;
     const auto H = input[Yaw] * M_PI / 180;
     const auto P = input[Pitch] * M_PI / 180;
     const auto B = input[Roll] * M_PI / 180;
@@ -60,8 +62,8 @@ static void t_compensate(double* input, double* output)
     const auto sinH = sin(H);
     const auto cosP = cos(P);
     const auto sinP = sin(P);
-    const auto cosB = cos(B);
-    const auto sinB = sin(B);
+    const auto cosB = cos(B * z);
+    const auto sinB = sin(B * z);
 
     double foo[] = {
         cosH * cosB - sinH * sinP * sinB,
@@ -152,7 +154,7 @@ void Tracker::run() {
             }
 
             if (compensate)
-                t_compensate(output_camera.axes, output_camera.axes);
+                t_compensate(output_camera.axes, output_camera.axes, tcomp_rz);
 
             if (Libraries->pProtocol) {
                 Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
