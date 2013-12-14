@@ -96,6 +96,7 @@ void CurveConfigurationDialog::loadSettings() {
 
     iniFile.beginGroup("Tracking");
 
+    ui.tcomp_rz->setChecked(iniFile.value("tcomp-rz", false).toBool());
     ui.checkBox->setChecked(iniFile.value("compensate", true).toBool());
 
     for (int i = 0; i < 6; i++)
@@ -184,7 +185,7 @@ void CurveConfigurationDialog::loadSettings() {
         connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)), Qt::UniqueConnection);
         mainApp->axis(i).zero = widgets3[i]->value();
     }
-    
+
     settingsDirty = false;
 }
 
@@ -213,16 +214,20 @@ void CurveConfigurationDialog::save() {
     ui.ryconfig_alt->saveSettings(currentFile);
     ui.rzconfig_alt->saveSettings(currentFile);
 
+    bool tcomp_rz = false, compensate = true;
+
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
     iniFile.beginGroup("Tracking");
 
-    bool compensate = true;
-
+    iniFile.setValue("tcomp-rz", tcomp_rz = ui.tcomp_rz->checkState() != Qt::Unchecked);
     iniFile.setValue("compensate", compensate = (bool) !!ui.checkBox->isChecked());
 
     if (mainApp->tracker)
+    {
         mainApp->tracker->compensate = compensate;
+        mainApp->tracker->tcomp_rz = tcomp_rz;
+    }
 
     iniFile.setValue("rx_alt", ui.rx_altp->checkState() != Qt::Unchecked);
     iniFile.setValue("ry_alt", ui.ry_altp->checkState() != Qt::Unchecked);
