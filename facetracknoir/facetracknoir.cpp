@@ -495,6 +495,7 @@ void FaceTrackNoIR::startTracker( ) {
     tracker = new Tracker ( this );
 
     tracker->compensate = iniFile.value("compensate", true).toBool();
+    tracker->tcomp_rz = iniFile.value("tcomp-rz", false).toBool();
 
     iniFile.endGroup();
 
