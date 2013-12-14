@@ -53,7 +53,6 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 static void t_compensate(double* input, double* output, bool rz)
 {
-    double z = rz ? -1 : 1;
     const auto H = input[Yaw] * M_PI / 180;
     const auto P = input[Pitch] * M_PI / 180;
     const auto B = input[Roll] * M_PI / 180;
@@ -62,8 +61,8 @@ static void t_compensate(double* input, double* output, bool rz)
     const auto sinH = sin(H);
     const auto cosP = cos(P);
     const auto sinP = sin(P);
-    const auto cosB = cos(B * z);
-    const auto sinB = sin(B * z);
+    const auto cosB = cos(B);
+    const auto sinB = sin(B);
 
     double foo[] = {
         cosH * cosB - sinH * sinP * sinB,
@@ -81,7 +80,9 @@ static void t_compensate(double* input, double* output, bool rz)
     const cv::Mat tvec(3, 1, CV_64F, input);
     cv::Mat ret = rmat * tvec;
 
-    for (int i = 0; i < 3; i++)
+    const int max = !rz ? 3 : 2;
+
+    for (int i = 0; i < max; i++)
         output[i] = ret.at<double>(i);
 }
 

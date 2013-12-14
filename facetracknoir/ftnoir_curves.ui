@@ -746,7 +746,7 @@
         <rect>
          <x>10</x>
          <y>140</y>
-         <width>211</width>
+         <width>291</width>
          <height>81</height>
         </rect>
        </property>
@@ -782,7 +782,7 @@
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>Reverse Z axis</string>
+           <string>Disable Z axis compensation</string>
           </property>
          </widget>
         </item>
