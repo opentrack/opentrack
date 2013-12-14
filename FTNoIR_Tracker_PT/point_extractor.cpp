@@ -14,9 +14,6 @@ using namespace std;
 
 
 PointExtractor::PointExtractor(){
-	first = true;
-
-	
 	//if (!AllocConsole()){}
 	//else SetConsoleTitle("debug");
 	//freopen("CON", "w", stdout);
@@ -28,6 +25,10 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 	const int W = frame.cols;
 	const int H = frame.rows; 
 
+    if (frame_last.cols != W || frame_last.rows != H)
+    {
+        frame_last = cv::Mat();
+    }
 
 	// clear old points
 	points.clear();
@@ -60,9 +61,8 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool dr
 		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
 
 		if(draw_output) frame_bin.copyTo(frame_bin_copy);
-		if(first){
+        if(frame_last.empty()){
 			frame_bin.copyTo(frame_last);
-			first = false;
 		}else{
 			// keep pixels from last if they are above lower threshold
 			bitwise_and(frame_last, frame_bin_low, frame_last_and_low);

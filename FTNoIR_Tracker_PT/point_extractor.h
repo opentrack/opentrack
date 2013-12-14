@@ -30,9 +30,6 @@ public:
 protected:
 	std::vector<cv::Vec2f> points;
 	cv::Mat frame_last;
-
-
-	bool first;
 };
 
 #endif //POINTEXTRACTOR_H
