@@ -192,7 +192,7 @@ void Tracker::run()
 
     cv::Mat color, color_, grayscale, rvec, tvec;
 
-    const double stateful_coeff = 0.81;
+    const double stateful_coeff = 0.86;
     
     if (!camera.isOpened())
     {
@@ -218,7 +218,7 @@ void Tracker::run()
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
         const int scale = frame.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(scale > 1 ? 11 : 7, 7);
+        detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
 
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
