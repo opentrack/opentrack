@@ -52,6 +52,8 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     _draw_background = true;
     _draw_function = true;
 
+    setMouseTracking(true);
+
 //	qDebug() << "QFunctionConfigurator::QFunctionConfigurator object created.";
 
 }
@@ -357,7 +359,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                     bTouchingPoint = true;
                     movingPoint = i;
                     timer.restart();
-                    setMouseTracking(true);
                     break;
                 }
             }
@@ -398,7 +399,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                 emit CurveChanged( true );
             }
             movingPoint = -1;
-            setMouseTracking(false);
         }
     }
     _draw_function = _draw_background = true;
@@ -461,7 +461,6 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     QList<QPointF> points = _config->getPoints();
 
     if (e->button() == Qt::LeftButton) {
-        setMouseTracking(false);
         timer.invalidate();
         //qDebug()<<"releasing";
         if (movingPoint >= 0 && movingPoint < points.size()) {
@@ -489,7 +488,7 @@ bool QFunctionConfigurator::markContains(const QPointF &pos, const QPointF &coor
 {
     QRectF rect(pos.x() - pointSize,
                 pos.y() - pointSize,
-                pointSize*3, pointSize*3);
+                pointSize*M_PI, pointSize*M_PI);
     QPainterPath path;
     path.addEllipse(rect);
     return path.contains(coord);
