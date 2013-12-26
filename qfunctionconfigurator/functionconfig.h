@@ -15,7 +15,7 @@
 #include <QMutex>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
-#define MEMOIZE_PRECISION 500
+#define MEMOIZE_PRECISION 100
 
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
