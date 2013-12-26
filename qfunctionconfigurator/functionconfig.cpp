@@ -235,8 +235,8 @@ void FunctionConfig::loadSettings(QSettings& settings) {
     int max = settings.value("point-count", 0).toInt();
 
 	for (int i = 0; i < max; i++) {
-        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), (i + 1) * _max_Input/2).toFloat(),
-                           settings.value(QString("point-%1-y").arg(i), (i + 1) * _max_Output/2).toFloat());
+        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
+                           settings.value(QString("point-%1-y").arg(i), 0).toFloat());
         //
 		// Make sure the new Point fits in the Function Range.
 		// Maybe this can be improved?
