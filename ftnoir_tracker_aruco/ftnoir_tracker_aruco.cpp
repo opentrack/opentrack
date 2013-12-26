@@ -192,7 +192,7 @@ void Tracker::run()
 
     cv::Mat color, color_, grayscale, rvec, tvec;
 
-    const double stateful_coeff = 0.75;
+    const double stateful_coeff = 0.9;
     
     if (!camera.isOpened())
     {
