@@ -26,12 +26,12 @@ class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
     
-    Q_PROPERTY(int maxInputEGU READ maxInputEGU WRITE setmaxInputEGU)
-    Q_PROPERTY(int maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU)
-    Q_PROPERTY(int pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input)
-    Q_PROPERTY(int pixPerEGU_Output READ pixPerEGU_Output WRITE setpixPerEGU_Output)
-    Q_PROPERTY(int gridDistEGU_Input READ gridDistEGU_Input WRITE setgridDistEGU_Input)
-    Q_PROPERTY(int gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output)
+    Q_PROPERTY(double maxInputEGU READ maxInputEGU WRITE setmaxInputEGU)
+    Q_PROPERTY(double maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU)
+    Q_PROPERTY(double pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input)
+    Q_PROPERTY(double pixPerEGU_Output READ pixPerEGU_Output WRITE setpixPerEGU_Output)
+    Q_PROPERTY(double gridDistEGU_Input READ gridDistEGU_Input WRITE setgridDistEGU_Input)
+    Q_PROPERTY(double gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output)
 
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
     Q_PROPERTY(QString stringInputEGU READ stringInputEGU WRITE setInputEGU)
@@ -39,27 +39,27 @@ class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
     Q_PROPERTY(QString stringCaption READ stringCaption WRITE setCaption)
 
 	// Return the current value to Designer
-	int maxInputEGU() const
+    double maxInputEGU() const
     {
         return MaxInput;
     }
-	int maxOutputEGU() const
+    double maxOutputEGU() const
     {
         return MaxOutput;
     }
-	int pixPerEGU_Input() const
+    double pixPerEGU_Input() const
     {
         return pPerEGU_Input;
     }
-	int pixPerEGU_Output() const
+    double pixPerEGU_Output() const
     {
         return pPerEGU_Output;
     }
-	int gridDistEGU_Input() const
+    double gridDistEGU_Input() const
     {
         return gDistEGU_Input;
     }
-	int gridDistEGU_Output() const
+    double gridDistEGU_Output() const
     {
         return gDistEGU_Output;
     }
@@ -131,12 +131,12 @@ private:
     int     movingPoint;
     QElapsedTimer timer;
 
-	int MaxInput;					// Maximum input limit
-	int MaxOutput;					// Maximum output limit
-	int pPerEGU_Input;				// Number of pixels, per EGU of Input
-	int pPerEGU_Output;				// Number of pixels, per EGU of Output
-	int gDistEGU_Input;				// Distance of the grid, in EGU of Input
-	int gDistEGU_Output;			// Distance of the grid, in EGU of Output
+    double MaxInput;					// Maximum input limit
+    double MaxOutput;					// Maximum output limit
+    double pPerEGU_Input;				// Number of pixels, per EGU of Input
+    double pPerEGU_Output;				// Number of pixels, per EGU of Output
+    double gDistEGU_Input;				// Distance of the grid, in EGU of Input
+    double gDistEGU_Output;			// Distance of the grid, in EGU of Output
 
 	QColor colBezier;				// Color of Bezier curve
 	QString strInputEGU;			// Engineering Units input (vertical axis)
