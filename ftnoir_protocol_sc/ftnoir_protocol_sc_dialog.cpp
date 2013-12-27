@@ -39,8 +39,8 @@ QWidget()
 	ui.setupUi( this );
 
 	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 	//connect(ui.cbxSelectPPJoyNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(virtualJoystickSelected( int )));
 
 	theProtocol = NULL;
@@ -118,7 +118,13 @@ void SCControls::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void SCControls::loadSettings() {
-
+    QSettings settings("opentrack");
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    iniFile.beginGroup ( "FSX" );
+    int act = iniFile.value("version", 0).toInt();
+    iniFile.endGroup();
+    ui.comboBox->setCurrentIndex(act);
 	settingsDirty = false;
 }
 
@@ -126,7 +132,12 @@ void SCControls::loadSettings() {
 // Save the current Settings to the currently 'active' INI-file.
 //
 void SCControls::save() {
-
+    QSettings settings("opentrack");
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    iniFile.beginGroup ( "FSX" );
+    iniFile.setValue("version", ui.comboBox->currentIndex());
+    iniFile.endGroup();
 	settingsDirty = false;
 }
 

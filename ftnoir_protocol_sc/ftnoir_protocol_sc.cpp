@@ -76,7 +76,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 // Load the current Settings from the currently 'active' INI-file.
 //
 void FTNoIR_Protocol::loadSettings() {
-// None yet...
 }
 
 //
@@ -186,9 +185,14 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     {
         qDebug() << "SCCheckClientDLL says: Starting Function";
         
-        SCClientLib.setFileName("SimConnect.DLL");
+        QSettings settings("opentrack");
+        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+        QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+        iniFile.beginGroup ( "FSX" );
+        int act = iniFile.value("version", 0).toInt();
+        iniFile.endGroup();
         
-        ActivationContext ctx(142);
+        ActivationContext ctx(142 + act);
         
         if (!SCClientLib.load()) {
             qDebug() << "SC load" << SCClientLib.errorString();
