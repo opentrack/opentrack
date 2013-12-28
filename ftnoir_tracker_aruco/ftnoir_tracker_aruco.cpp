@@ -242,14 +242,14 @@ void Tracker::run()
         color_.copyTo(color);
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
-        if (first_run)
-        {
-            first_run = false;
-            for (int i = 0; i < N_hyst; i++)
-                lasts[i] = grayscale;
-        }
         if (N_hyst > 0)
         {
+            if (first_run)
+            {
+                first_run = false;
+                for (int i = 0; i < N_hyst; i++)
+                    lasts[i] = grayscale;
+            }
             cv::Mat hyst(grayscale.rows, grayscale.cols, CV_32F);
             hyst.setTo(0);
             for (int i = 0; i < N_hyst-1; i++)
