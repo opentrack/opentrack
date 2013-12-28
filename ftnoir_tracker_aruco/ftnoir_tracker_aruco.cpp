@@ -282,8 +282,8 @@ void Tracker::run()
         
         std::vector< aruco::Marker > markers;
 
-        const double size_min = 0.08;
-        const double size_max = 0.39;
+        const double size_min = 0.04;
+        const double size_max = 0.38;
 
         if (last_roi.width > 0 &&
                 (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
