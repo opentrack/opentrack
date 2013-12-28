@@ -239,7 +239,7 @@ void Tracker::run()
                 (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                  markers.size() == 1 && markers[0].size() == 4))
         {
-            detector.setMinMaxSize(std::max(0.2, 0.08 * grayscale.cols / last_roi.width),
+            detector.setMinMaxSize(std::max(0.1, 0.08 * grayscale.cols / last_roi.width),
                                    std::min(1.0, 0.39 * grayscale.cols / last_roi.width));
             auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
@@ -251,7 +251,7 @@ void Tracker::run()
         }
         else
         {
-            detector.setMinMaxSize(0.09, 0.4);
+            detector.setMinMaxSize(0.08, 0.39);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
 
