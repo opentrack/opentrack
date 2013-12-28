@@ -221,7 +221,7 @@ void Tracker::run()
 
     vector<float> weights;
     {
-        const float a = 0.32;
+        const float a = 0.25;
         float sum = 0;
         float k = 1;
         for (int i = 0; i < N_hyst; i++)
