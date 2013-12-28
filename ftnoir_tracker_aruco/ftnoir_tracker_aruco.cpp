@@ -258,7 +258,7 @@ void Tracker::run()
             for (int i = 0; i < N_hyst; i++)
                 for (int y = 0; y < grayscale.rows; y++)
                     for (int x = 0; x < grayscale.cols; x++)
-                        hyst.at<float>(y, x) += (float) lasts[i].at<unsigned char>(y, x) * weights[i];
+                        hyst.at<float>(y, x) += lasts[i].at<unsigned char>(y, x) * weights[i];
             hyst.convertTo(grayscale, CV_8U);
         }
 
