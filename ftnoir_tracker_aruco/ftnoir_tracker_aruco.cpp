@@ -282,12 +282,15 @@ void Tracker::run()
         
         std::vector< aruco::Marker > markers;
 
+        const double size_min = 0.08;
+        const double size_max = 0.39;
+
         if (last_roi.width > 0 &&
                 (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                  markers.size() == 1 && markers[0].size() == 4))
         {
-            detector.setMinMaxSize(std::max(0.1, 0.08 * grayscale.cols / last_roi.width),
-                                   std::min(1.0, 0.39 * grayscale.cols / last_roi.width));
+            detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
+                                   std::min(1.0, size_max * grayscale.cols / last_roi.width));
             auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
             {
@@ -298,7 +301,7 @@ void Tracker::run()
         }
         else
         {
-            detector.setMinMaxSize(0.08, 0.39);
+            detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
 
