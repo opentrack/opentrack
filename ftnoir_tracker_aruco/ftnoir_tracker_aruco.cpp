@@ -16,7 +16,7 @@
 #include <opencv/highgui.h>
 #include <vector>
 #include <cstdio>
-#include <memory>
+#include <vector>
 
 #if defined(_WIN32)
 #   define NO_DSHOW_STRSAFE
@@ -129,12 +129,14 @@ void Tracker::load_settings()
         headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
     }
     headpitch = iniFile.value("pitch", 0).toDouble();
+    N_hyst = iniFile.value("ewma", 0).toInt();
 
 	iniFile.endGroup();
 }
 
 Tracker::Tracker()
 {
+    N_hyst = 0;
     layout = nullptr;
     stop = false;
 	videoWidget = NULL;
@@ -192,7 +194,7 @@ void Tracker::run()
 
     cv::Mat color, color_, grayscale, rvec, tvec;
 
-    const double stateful_coeff = 0.9;
+    const double stateful_coeff = 0.88;
     
     if (!camera.isOpened())
     {
@@ -209,6 +211,29 @@ void Tracker::run()
     int fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
+
+    bool first_run = true;
+
+    std::vector<cv::Mat> lasts;
+
+    for (int i = 0; i < N_hyst; i++)
+        lasts.push_back(cv::Mat());
+
+    vector<float> weights;
+    {
+        const float a = 0.32;
+        float sum = 0;
+        float k = 1;
+        for (int i = 0; i < N_hyst; i++)
+        {
+            sum += k;
+            weights.push_back(k);
+            k *= 1./(a*N_hyst);
+        }
+        for (int i = 0; i < N_hyst; i++)
+            qDebug() << i << "w" << (weights[i] /= sum);
+    }
+
     while (!stop)
     {
         if (!camera.read(color_))
@@ -216,6 +241,28 @@ void Tracker::run()
         auto tm = cv::getTickCount();
         color_.copyTo(color);
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+
+        if (first_run)
+        {
+            first_run = false;
+            for (int i = 0; i < N_hyst; i++)
+                lasts[i] = grayscale;
+        }
+        if (N_hyst > 0)
+        {
+            cv::Mat hyst(grayscale.rows, grayscale.cols, CV_32F);
+            hyst.setTo(0);
+            for (int i = 0; i < N_hyst-1; i++)
+                lasts[i] = lasts[i+1];
+            lasts[N_hyst-1] = grayscale;
+            for (int i = 0; i < N_hyst; i++)
+                for (int y = 0; y < grayscale.rows; y++)
+                    for (int x = 0; x < grayscale.cols; x++)
+                        hyst.at<float>(y, x) += (float) lasts[i].at<unsigned char>(y, x) * weights[i];
+            hyst.convertTo(grayscale, CV_8U);
+        }
+
+        cv::cvtColor(grayscale, color, cv::COLOR_GRAY2BGR);
 
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
@@ -543,6 +590,7 @@ void TrackerControls::loadSettings()
     }
 
     ui.pitch_deg->setValue(iniFile.value("pitch", 0).toDouble());
+    ui.ewma->setCurrentIndex(iniFile.value("ewma", 0).toInt());
 
 	iniFile.endGroup();
 	settingsDirty = false;
@@ -583,6 +631,7 @@ void TrackerControls::save()
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
     iniFile.setValue("pitch", ui.pitch_deg->value());
+    iniFile.setValue("ewma", ui.ewma->currentIndex());
 
     QDoubleSpinBox* headpos[] = {
         ui.cx,
