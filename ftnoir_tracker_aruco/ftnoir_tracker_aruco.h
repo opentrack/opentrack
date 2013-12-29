@@ -42,6 +42,7 @@ private:
     cv::Mat frame;
     double headpos[3], headpitch;
     cv::VideoCapture camera;
+    volatile bool red_only;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
