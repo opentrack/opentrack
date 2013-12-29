@@ -128,6 +128,7 @@ void Tracker::load_settings()
         headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
     }
     headpitch = iniFile.value("pitch", 0).toDouble();
+    red_only = iniFile.value("red-only", true).toBool();
 
 	iniFile.endGroup();
 }
@@ -215,7 +216,13 @@ void Tracker::run()
             continue;
         auto tm = cv::getTickCount();
         color_.copyTo(color);
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+        if (red_only)
+        {
+            cv::Mat channel[3];
+            cv::split(color, channel);
+            grayscale = channel[2];
+        } else
+            cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
@@ -546,7 +553,7 @@ void TrackerControls::loadSettings()
     }
 
     ui.pitch_deg->setValue(iniFile.value("pitch", 0).toDouble());
-
+    ui.red_only->setChecked(iniFile.value("red-only", true).toBool());
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -597,6 +604,7 @@ void TrackerControls::save()
     {
         iniFile.setValue(QString("headpos-%1").arg(i), headpos[i]->value());
     }
+    iniFile.setValue("red-only", ui.red_only->isChecked());
 	iniFile.endGroup();
 	settingsDirty = false;
     if (tracker)
