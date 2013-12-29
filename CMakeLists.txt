@@ -499,11 +499,9 @@ if(WIN32)
 
     add_library(opentrack-proto-win32-mouse SHARED ${opentrack-proto-win32-mouse-c} ${opentrack-proto-win32-mouse-h} ${opentrack-proto-win32-mouse-moc} ${opentrack-proto-win32-mouse-uih} ${opentrack-proto-win32-mouse-rcc})
     target_link_libraries(opentrack-proto-win32-mouse ${MY_QT_LIBS})
+    add_library(freetrackclient SHARED ${opentrack-freetrack-c} ${opentrack-freetrack-h})
     if(CMAKE_COMPILER_IS_GNUCC)
-        add_library(freetrackclient SHARED ${opentrack-freetrack-c} ${opentrack-freetrack-h} "${CMAKE_SOURCE_DIR}/freetrackclient/freetrackclient.def")
-        set_target_properties(freetrackclient PROPERTIES LINK_FLAGS "-Wl,--enable-stdcall-fixup")
-    else()
-        add_library(freetrackclient SHARED ${opentrack-freetrack-c} ${opentrack-freetrack-h})
+        set_target_properties(freetrackclient PROPERTIES LINK_FLAGS "-Wl,--enable-stdcall-fixup -fno-lto -Wl,-kill-at" PREFIX "" COMPILE_FLAGS "-fno-lto")
     endif()
 endif()
 

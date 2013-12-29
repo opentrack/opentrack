@@ -17,7 +17,6 @@
  * * The FreeTrackClient sources were translated from the original Delphi sources   *
  * * created by the FreeTrack developers.                                           *
  */
-#define FT_EXPORT(t) extern "C" t __declspec(dllexport) __stdcall
 #define	NP_AXIS_MAX				16383
 
 #include <stdarg.h>
@@ -29,14 +28,15 @@
 
 #include "ftnoir_protocol_ft/fttypes.h"
 
+#define FT_EXPORT(t) extern "C" __declspec(dllexport) t __stdcall
+
 //
 // Functions to create/open the file-mapping
 // and to destroy it again.
 //
-bool FTCreateMapping();
-void FTDestroyMapping();
-float scale2AnalogLimits( float x, float min_x, float max_x );
-float getDegreesFromRads ( float rads );
+static float scale2AnalogLimits( float x, float min_x, float max_x );
+static float getDegreesFromRads ( float rads );
+FT_EXPORT(bool) FTCreateMapping(void);
 
 #if 0
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
@@ -153,7 +153,7 @@ FT_EXPORT(void) FTReportName( int name )
  *		FTGetDllVersion (FreeTrackClient.3)
  */
 #pragma comment(linker, "/export:FTGetDllVersion@0=FTGetDllVersion")
-extern "C" __declspec( dllexport ) const char* FTGetDllVersion(void)
+FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
 
@@ -164,7 +164,7 @@ extern "C" __declspec( dllexport ) const char* FTGetDllVersion(void)
  *		FTProvider (FreeTrackClient.4)
  */
 #pragma comment(linker, "/export:FTProvider@0=FTProvider")
-extern "C" __declspec( dllexport ) const char* FTProvider(void)
+FT_EXPORT(const char*) FTProvider(void)
 {
     dbg_report("FTProvider request.\n");
 
@@ -176,7 +176,7 @@ extern "C" __declspec( dllexport ) const char* FTProvider(void)
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTCreateMapping()
+FT_EXPORT(bool) FTCreateMapping(void)
 {
 	//
 	// Memory-mapping already exists!
@@ -223,7 +223,7 @@ bool FTCreateMapping()
 //
 // Destory the FileMapping to the shared memory
 //
-void FTDestroyMapping()
+FT_EXPORT(void) FTDestroyMapping(void)
 {
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
@@ -238,14 +238,14 @@ void FTDestroyMapping()
 //
 // 4 convenience
 //
-float getDegreesFromRads ( float rads ) { 
+static float getDegreesFromRads ( float rads ) { 
 	return (rads * 57.295781f); 
 }
 
 //
 // Scale the measured value to the TIR values
 //
-float scale2AnalogLimits( float x, float min_x, float max_x ) {
+static float scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 double local_x;
 	
