@@ -79,6 +79,10 @@ namespace options {
         {
             map[s] = d;
         }
+        bool contains(const QString& s)
+        {
+            return map.contains(s);
+        }
     };
 
     class bundle {
@@ -106,6 +110,10 @@ namespace options {
             modified = true;
             transient.put(name, datum);
         }
+        bool contains(const QString& name)
+        {
+            return transient.contains(name);
+        }
         template<typename T>
         T get(QString& name) {
             transient.get<T>(name);
@@ -131,13 +139,18 @@ namespace options {
     template<typename T>
     class value : public QCruft {
     private:
-        const QString self_name;
+        QString self_name;
         pbundle b;
     public:
-        value(const pbundle& b, const QString& name) :
+        value(const pbundle& b, const QString& name, T def) :
             self_name(name),
             b(b)
         {
+            if (!b->contains(name))
+            {
+                QVariant cruft(def);
+                b->store(self_name, cruft);
+            }
         }
         operator T() { return b->get<T>(self_name); }
         T& operator=(const T& datum) {
