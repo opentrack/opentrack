@@ -18,6 +18,26 @@
 #include "facetracknoir/options.hpp"
 using namespace options;
 
+struct settings {
+    pbundle b;
+    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
+    value<double> fov;
+    value<int> fps, camera_idx, resolution;
+    settings() :
+        b(bundle("HT-Tracker")),
+        enableTX(b, "enable-tx", true),
+        enableTY(b, "enable-ty", true),
+        enableTZ(b, "enable-tz", true),
+        enableRX(b, "enable-rx", true),
+        enableRY(b, "enable-ry", true),
+        enableRZ(b, "enable-rz", true),
+        fov(b, "fov", 56),
+        fps(b, "fps", 0),
+        camera_idx(b, "camera-index", 0),
+        resolution(b, "resolution", 0)
+    {}
+};
+
 class Tracker : public QObject, public ITracker
 {
     Q_OBJECT
@@ -26,12 +46,9 @@ public:
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
-    pbundle b;
-    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
-    value<double> fov;
-    value<int> fps, camera_idx, resolution;
     void load_settings(ht_config_t* config);
 private:
+    settings s;
     PortableLockedShm lck_shm;
     ht_shm_t* shm;
 	QProcess subprocess;
@@ -51,10 +68,7 @@ public:
 
 private:
 	Ui::Form ui;
-    pbundle b;
-    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
-    value<double> fov;
-    value<int> fps, camera_idx, resolution;
+    settings s;
 
 private slots:
 	void doOK();
