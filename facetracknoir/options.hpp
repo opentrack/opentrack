@@ -101,7 +101,7 @@ namespace options {
             assert(s.format() == QSettings::IniFormat);
             return std::make_shared<bundle>(name, s);
         }
-        void store(QString& name, QVariant& datum)
+        void store(const QString& name, QVariant& datum)
         {
             modified = true;
             transient.put(name, datum);
