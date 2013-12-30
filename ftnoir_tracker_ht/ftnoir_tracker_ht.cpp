@@ -131,7 +131,7 @@ static void load_settings(ht_config_t* config, Tracker* tracker)
 	}
     
     for (int i = 0; i < 5; i++)
-        config->dist_coeffs[i] = iniFile.value(QString("dc%1").arg(i), 0).toDouble();
+        config->dist_coeffs[i] = 0;
                 
 	iniFile.endGroup();
 }
@@ -285,8 +285,8 @@ TrackerControls::TrackerControls()
 	connect(ui.tx, SIGNAL(clicked()), this, SLOT(settingChanged()));
 	connect(ui.ty, SIGNAL(clicked()), this, SLOT(settingChanged()));
 	connect(ui.tz, SIGNAL(clicked()), this, SLOT(settingChanged()));
-	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
     loadSettings();
 	settingsDirty = false;
@@ -344,12 +344,6 @@ void TrackerControls::loadSettings()
 	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
     ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
     
-    ui.doubleSpinBox->setValue(iniFile.value("dc0").toDouble());
-    ui.doubleSpinBox_2->setValue(iniFile.value("dc1").toDouble());
-    ui.doubleSpinBox_3->setValue(iniFile.value("dc2").toDouble());
-    ui.doubleSpinBox_4->setValue(iniFile.value("dc3").toDouble());
-    ui.doubleSpinBox_5->setValue(iniFile.value("dc4").toDouble());
-    
 	iniFile.endGroup();
 	settingsDirty = false;
 }
@@ -388,12 +382,6 @@ void TrackerControls::save()
 	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
 	iniFile.setValue("resolution", ui.resolution->currentIndex());
-    
-    iniFile.setValue("dc0", ui.doubleSpinBox->value());
-    iniFile.setValue("dc1", ui.doubleSpinBox_2->value());
-    iniFile.setValue("dc2", ui.doubleSpinBox_3->value());
-    iniFile.setValue("dc3", ui.doubleSpinBox_4->value());
-    iniFile.setValue("dc4", ui.doubleSpinBox_5->value());
     
 	iniFile.endGroup();
 	settingsDirty = false;
