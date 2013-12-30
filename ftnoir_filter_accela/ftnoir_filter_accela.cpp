@@ -12,15 +12,7 @@
 #include "facetracknoir/global-settings.h"
 using namespace std;
 
-FTNoIR_Filter::FTNoIR_Filter() :
-    first_run(true),
-    b(bundle("Accela")),
-    rotation_alpha(b, "rotation-alpha", ACCELA_SMOOTHING_ROTATION),
-    translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
-    second_order_alpha(b, "second-order-alpha", ACCELA_SECOND_ORDER_ALPHA),
-    third_order_alpha(b, "third-order-alpha", ACCELA_THIRD_ORDER_ALPHA),
-    deadzone(b, "deadzone", 0),
-    expt(b, "exponent", 2)
+FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
 }
 
@@ -94,13 +86,13 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         const double vec2 = target_camera_position[i] - last_output[1][i];
         const double vec3 = target_camera_position[i] - last_output[2][i];
 		const int sign = vec < 0 ? -1 : 1;
-        const double a = i >= 3 ? rotation_alpha : translation_alpha;
-        const double a2 = a * second_order_alpha;
-        const double a3 = a * third_order_alpha;
+        const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
+        const double a2 = a * s.second_order_alpha;
+        const double a3 = a * s.third_order_alpha;
         const double velocity =
-                parabola(a, vec, deadzone, expt) +
-                parabola(a2, vec2, deadzone, expt) +
-                parabola(a3, vec3, deadzone, expt);
+                parabola(a, vec, s.deadzone, s.expt) +
+                parabola(a2, vec2, s.deadzone, s.expt) +
+                parabola(a3, vec3, s.deadzone, s.expt);
         const double result = last_output[0][i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = done ? target_camera_position[i] : result;

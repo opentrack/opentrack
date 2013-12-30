@@ -6,26 +6,18 @@
 #include "facetracknoir/global-settings.h"
 
 FilterControls::FilterControls() :
-    accela_filter(NULL),
-    b(bundle("Accela")),
-    rotation_alpha(b, "rotation-alpha", ACCELA_SMOOTHING_ROTATION),
-    translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
-    second_order_alpha(b, "second-order-alpha", ACCELA_SECOND_ORDER_ALPHA),
-    third_order_alpha(b, "third-order-alpha", ACCELA_THIRD_ORDER_ALPHA),
-    deadzone(b, "deadzone", 0),
-    expt(b, "exponent", 2)
-
+    accela_filter(nullptr)
 {
     ui.setupUi( this );
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(rotation_alpha, ui.rotation_alpha);
-    tie_setting(translation_alpha, ui.translation_alpha);
-    tie_setting(second_order_alpha, ui.order_2nd);
-    tie_setting(third_order_alpha, ui.order_3rd);
-    tie_setting(deadzone, ui.deadzone);
-    tie_setting(expt, ui.expt);
+    tie_setting(s.rotation_alpha, ui.rotation_alpha);
+    tie_setting(s.translation_alpha, ui.translation_alpha);
+    tie_setting(s.second_order_alpha, ui.order_2nd);
+    tie_setting(s.third_order_alpha, ui.order_3rd);
+    tie_setting(s.deadzone, ui.deadzone);
+    tie_setting(s.expt, ui.expt);
 }
 
 void FilterControls::Initialize(QWidget *) {
@@ -48,7 +40,7 @@ void FilterControls::doOK() {
 }
 
 void FilterControls::doCancel() {
-    if (!b->modifiedp())
+    if (!s.b->modifiedp())
     {
         close();
         return;
@@ -77,11 +69,11 @@ void FilterControls::doCancel() {
 
 void FilterControls::discard()
 {
-    b->revert();
+    s.b->revert();
 }
 
 void FilterControls::save() {
-    b->save();
+    s.b->save();
     if (accela_filter)
         accela_filter->receiveSettings();
 }
