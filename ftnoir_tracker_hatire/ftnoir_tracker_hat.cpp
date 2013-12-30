@@ -39,7 +39,6 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	HAT.Trans[1]=0;
 	HAT.Trans[2]=0;
 
-
 	// prepare & reserve QByteArray
 	dataRead.resize(4096);
 	dataRead.clear();
@@ -47,8 +46,6 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	Begin.append((char) 0xAA);
 	End.append((char) 0x55);
 	End.append((char) 0x55);
-
-	settings.load_ini();
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
@@ -64,20 +61,18 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 
 //send CENTER to Arduino
 void FTNoIR_Tracker::notifyCenter() {
-	sendcmd(sCmdCenter);
+    sendcmd(static_cast<QString>(settings.CmdCenter).toLatin1());
 }
 
 //send ZERO to Arduino
 bool FTNoIR_Tracker::notifyZeroed() {
-	sendcmd(sCmdZero);
+    sendcmd(static_cast<QString>(settings.CmdZero).toLatin1());
 	return true;
 }
 
-
-
 //send RESET to Arduino
 void FTNoIR_Tracker::reset() {
-	sendcmd(sCmdReset);
+        sendcmd(static_cast<QString>(settings.CmdReset).toLatin1());
 }
 
 
@@ -266,39 +261,91 @@ void FTNoIR_Tracker::StopTracker( bool exit )
 #else
 void FTNoIR_Tracker::StartTracker(QFrame*)
 {
+    static const int databits_lookup[] = {
+        5,
+        6,
+        7,
+        8,
+        -1
+    };
+
+    struct Local {
+        static int idx(int max, int value)
+        {
+            if (value < 0)
+                return 0;
+            if (max > value)
+                return value;
+            return max - 1;
+        }
+    };
+
+    static const int parity_lookup[] = {
+        QSerialPort::NoParity,
+        QSerialPort::EvenParity,
+        QSerialPort::OddParity,
+        QSerialPort::SpaceParity,
+        QSerialPort::MarkParity,
+        QSerialPort::UnknownParity
+    };
+
+    static const int stopbits_lookup[] = {
+        QSerialPort::OneStop,
+        QSerialPort::OneAndHalfStop,
+        QSerialPort::TwoStop,
+        QSerialPort::UnknownStopBits
+    };
+
+    static const int flowctl_lookup[] = {
+        QSerialPort::NoFlowControl,
+        QSerialPort::HardwareControl,
+        QSerialPort::SoftwareControl,
+    };
+
+    static const int baudrate_lookup[] = {
+        QSerialPort::Baud1200,
+        QSerialPort::Baud2400,
+        QSerialPort::Baud4800,
+        QSerialPort::Baud9600,
+        QSerialPort::Baud19200,
+        QSerialPort::Baud38400,
+        QSerialPort::Baud57600,
+        QSerialPort::Baud115200,
+        QSerialPort::UnknownBaud
+    };
+
 	CptError=0;
 	dataRead.clear();
 	frame_cnt=0;
-
-	settings.load_ini();
-	applysettings(settings);
 	ComPort =  new QSerialPort(this);
-	ComPort->setPortName(sSerialPortName); 
-	if (ComPort->open(QIODevice::ReadWrite ) == true) { 
+    {
+        ComPort->setPortName(QSerialPortInfo::availablePorts().value(settings.SerialPortName).portName());
+    }
+    if (ComPort->open(QIODevice::ReadWrite ) == true) {
 		connect(ComPort, SIGNAL(readyRead()), this, SLOT(SerialRead()));
 		if (  
-			ComPort->setBaudRate((QSerialPort::BaudRate)iBaudRate)
-			&& ComPort->setDataBits((QSerialPort::DataBits)iDataBits) 
-			&& ComPort->setParity((QSerialPort::Parity)iParity) 
-			&& ComPort->setStopBits((QSerialPort::StopBits)iStopBits)  
-			&& ComPort->setFlowControl((QSerialPort::FlowControl)iFlowControl)  
+            ComPort->setBaudRate(baudrate_lookup[Local::idx(8, settings.pBaudRate)])
+            && ComPort->setDataBits((QSerialPort::DataBits)databits_lookup[Local::idx(4, settings.pDataBits)])
+            && ComPort->setParity((QSerialPort::Parity)parity_lookup[Local::idx(5, settings.pParity)])
+            && ComPort->setStopBits((QSerialPort::StopBits)stopbits_lookup[Local::idx(3, settings.pStopBits)])
+            && ComPort->setFlowControl((QSerialPort::FlowControl)flowctl_lookup[Local::idx(3, settings.pFlowControl)])
 			&& ComPort->clear(QSerialPort::AllDirections)
-			&& ComPort->setDataErrorPolicy(QSerialPort::IgnorePolicy)
-			) {
+            && ComPort->setDataErrorPolicy(QSerialPort::IgnorePolicy)
+        ){
 				// Wait init arduino sequence 
-				for (int i = 1; i <=iDelayInit;  i+=50) {
+                for (int i = 1; i <=settings.DelayInit;  i+=50) {
 					if (ComPort->waitForReadyRead(50)) break;
 				}
-				sendcmd(sCmdInit);
+                sendcmd(static_cast<QString>(settings.CmdInit).toLatin1());
 				// Wait init MPU sequence 
-				for (int i = 1; i <=iDelayStart;  i+=50) {
+                for (int i = 1; i <=settings.DelayStart;  i+=50) {
 					if (ComPort->waitForReadyRead(50)) break;
 				}
 				// Send  START cmd to IMU
-				sendcmd(sCmdStart);
+                sendcmd(static_cast<QString>(settings.CmdStart).toLatin1());
 
 				// Wait start MPU sequence 
-				for (int i = 1; i <=iDelaySeq;  i+=50) {
+                for (int i = 1; i <=settings.DelaySeq;  i+=50) {
 					if (ComPort->waitForReadyRead(50)) break;
 				}
 		} else {
@@ -329,7 +376,7 @@ void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
 	while  (dataRead.length()>=30) {
 		if ((dataRead.startsWith(Begin) &&  ( dataRead.mid(28,2)==End )) )  { // .Begin==0xAAAA .End==0x5555
 			QDataStream  datastream(dataRead.left(30));
-			if (bBigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
+            if (settings.BigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
 			else datastream.setByteOrder(QDataStream::LittleEndian );
 			datastream>>ArduinoData;
 			frame_cnt++;
@@ -359,34 +406,45 @@ void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
 #ifdef OPENTRACK_API
 	data[frame_cnt] = (long) HAT.Code;
 
-	if (bEnableYaw) {
-		if (bInvertYaw )	data[Yaw] = (double)  HAT.Rot[iYawAxe] *  -1.0f;
-		else 	data[Yaw] = (double) HAT.Rot[iYawAxe];
+    struct Fun {
+        static int clamp3(int foo)
+        {
+            if (foo > 2)
+                return 2;
+            if (foo < 0)
+                return 0;
+            return foo;
+        }
+    };
+
+    if (settings.EnableYaw) {
+        if (settings.InvertYaw)	data[Yaw] = (double)  HAT.Rot[Fun::clamp3(settings.YawAxe)] *  -1.0f;
+        else 	data[Yaw] = (double) HAT.Rot[Fun::clamp3(settings.YawAxe)];
 	}	
 
-	if (bEnablePitch) {
-		if (bInvertPitch) data[Pitch] = (double) HAT.Rot[iPitchAxe] *  -1.0f;
-		else data[Pitch] = (double) HAT.Rot[iPitchAxe];
+    if (settings.EnablePitch) {
+        if (settings.InvertPitch) data[Pitch] = (double) HAT.Rot[Fun::clamp3(settings.PitchAxe)] *  -1.0f;
+        else data[Pitch] = (double) HAT.Rot[Fun::clamp3(settings.InvertPitch)];
 	}
 
-	if (bEnableRoll) {
-		if (bInvertRoll) data[Roll] = (double) HAT.Rot[iRollAxe] *  -1.0f; 
-		else data[Roll] = (double) HAT.Rot[iRollAxe];
+    if (settings.EnableRoll) {
+        if (settings.InvertRoll) data[Roll] = (double) HAT.Rot[Fun::clamp3(settings.RollAxe)] *  -1.0f;
+        else data[Roll] = (double) HAT.Rot[Fun::clamp3(settings.RollAxe)];
 	}
 
-	if (bEnableX) {
-		if (bInvertX) data[TX] =(double)  HAT.Trans[iXAxe]*  -1.0f;
-		else data[TX] =  HAT.Trans[iXAxe];
+    if (settings.EnableX) {
+        if (settings.InvertX) data[TX] =(double)  HAT.Trans[Fun::clamp3(settings.XAxe)]*  -1.0f;
+        else data[TX] =  HAT.Trans[Fun::clamp3(settings.XAxe)];
 	}
 
-	if (bEnableY) {
-		if (bInvertY) data[TY] =(double) HAT.Trans[iYAxe]*  -1.0f;
-		else data[TY] =  HAT.Trans[iYAxe];
+    if (settings.EnableY) {
+        if (settings.InvertY) data[TY] =(double) HAT.Trans[Fun::clamp3(settings.YAxe)]*  -1.0f;
+        else data[TY] =  HAT.Trans[Fun::clamp3(settings.YAxe)];
 	}
 
-	if (bEnableZ) {
-		if (bInvertZ)  data[TZ] =  HAT.Trans[iZAxe]*  -1.0f;
-		else data[TZ] =  HAT.Trans[iZAxe];
+    if (settings.EnableZ) {
+        if (settings.InvertZ)  data[TZ] =  HAT.Trans[Fun::clamp3(settings.ZAxe)]*  -1.0f;
+        else data[TZ] =  HAT.Trans[Fun::clamp3(settings.ZAxe)];
 	}
 #else
 	data->frame_number =  (long) HAT.Code;
@@ -421,72 +479,13 @@ void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
 		else data->z = (double) HAT.Trans[iZAxe];
 	}
 #endif
-
-	// For debug
-	//data->x=dataRead.length();
-	//data->y=CptError;
 }
 
-
-
-//
-// Apply modification Settings 
-//
 void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
     QMutexLocker lck(&mutex);
-	sSerialPortName= settings.SerialPortName;
-
-	bEnableRoll = settings.EnableRoll;
-	bEnablePitch = settings.EnablePitch;
-	bEnableYaw = settings.EnableYaw;
-	bEnableX = settings.EnableX;
-	bEnableY = settings.EnableY;
-	bEnableZ = settings.EnableZ;
-
-	bInvertRoll = settings.InvertRoll;
-	bInvertPitch = settings.InvertPitch;
-	bInvertYaw = settings.InvertYaw;
-	bInvertX = settings.InvertX;
-	bInvertY = settings.InvertY;
-	bInvertZ = settings.InvertZ;
-
-	iRollAxe= settings.RollAxe;
-	iPitchAxe= settings.PitchAxe;
-	iYawAxe= settings.YawAxe;
-	iXAxe= settings.XAxe;
-	iYAxe= settings.YAxe;
-	iZAxe= settings.ZAxe;
-
-	iBaudRate=settings.pBaudRate;
-	iDataBits=settings.pDataBits;
-	iParity=settings.pParity;
-	iStopBits=settings.pStopBits;
-	iFlowControl=settings.pFlowControl;
-
-	sCmdStart= settings.CmdStart.toLatin1();
-	sCmdStop= settings.CmdStop.toLatin1();
-	sCmdInit= settings.CmdInit.toLatin1();
-	sCmdReset= settings.CmdReset.toLatin1();
-	sCmdCenter= settings.CmdCenter.toLatin1();
-	sCmdZero= settings.CmdZero.toLatin1();
-
-	iDelayInit=settings.DelayInit;
-	iDelayStart=settings.DelayStart;
-	iDelaySeq=settings.DelaySeq;
-
-	bBigEndian=settings.BigEndian;
+    settings.b->reload();
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker object.
-
-// Export both decorated and undecorated names.
-//   GetTracker     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
-////////////////////////////////////////////////////////////////////////////////
 #ifdef OPENTRACK_API
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 #else

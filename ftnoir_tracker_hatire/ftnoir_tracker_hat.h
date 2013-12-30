@@ -62,51 +62,7 @@ private:
 	int frame_cnt;
 
     TrackerSettings settings;
-
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
-
-	bool bInvertRoll;
-	bool bInvertPitch;
-	bool bInvertYaw;
-	bool bInvertX;
-	bool bInvertY;
-	bool bInvertZ;
-
-	int iRollAxe;
-	int iPitchAxe;
-	int iYawAxe;
-	int iXAxe;
-	int iYAxe;
-	int iZAxe;
-
-	QByteArray  sCmdStart;
-	QByteArray  sCmdStop;
-	QByteArray  sCmdInit;
-	QByteArray  sCmdReset;
-	QByteArray  sCmdCenter;
-	QByteArray  sCmdZero;
-
-	int iDelayInit;
-	int iDelayStart;
-	int iDelaySeq;
-
-	bool bBigEndian;
-
-	QString sSerialPortName;
-	QSerialPort::BaudRate iBaudRate;
-	QSerialPort::DataBits iDataBits;
-	QSerialPort::Parity iParity;
-	QSerialPort::StopBits iStopBits;
-	QSerialPort::FlowControl iFlowControl;
-
     int CptError;
-
-
 };
 
 

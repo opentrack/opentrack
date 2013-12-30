@@ -5,61 +5,81 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_HAT_SETTINGS_H
-#define FTNOIR_TRACKER_HAT_SETTINGS_H
+#pragma once
 
 #include <QtSerialPort/QSerialPort>
+#include "facetracknoir/options.hpp"
+#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
+using namespace options;
 
-//-----------------------------------------------------------------------------
 struct TrackerSettings
 {	
-
-	void load_ini();
-	void save_ini() const;
-
-	bool EnableRoll;
-	bool EnablePitch;
-	bool EnableYaw;
-	bool EnableX;
-	bool EnableY;
-	bool EnableZ;
-
-	bool InvertRoll;
-	bool InvertPitch;
-	bool InvertYaw;
-	bool InvertX;
-	bool InvertY;
-	bool InvertZ;
-
-
-	int RollAxe;
-	int PitchAxe;
-	int YawAxe;
-	int XAxe;
-	int YAxe;
-	int ZAxe;
-
-	QString  CmdStart;
-	QString  CmdStop;
-	QString  CmdInit;
-	QString  CmdReset;
-	QString  CmdCenter;
-	QString  CmdZero;
-
-	int DelayInit;
-	int DelayStart;
-	int DelaySeq;
-
-	bool BigEndian;
-
-	QString SerialPortName;
-	QSerialPort::BaudRate pBaudRate;
-	QSerialPort::DataBits pDataBits;
-	QSerialPort::Parity pParity;
-	QSerialPort::StopBits pStopBits;
-	QSerialPort::FlowControl pFlowControl;
-
+    pbundle b;
+    value<bool> EnableRoll,
+                EnablePitch,
+                EnableYaw,
+                EnableX,
+                EnableY,
+                EnableZ,
+                InvertRoll,
+                InvertPitch,
+                InvertYaw,
+                InvertX,
+                InvertY,
+                InvertZ;
+    value<int> RollAxe,
+               PitchAxe,
+               YawAxe,
+               XAxe,
+               YAxe,
+               ZAxe;
+    value<bool> BigEndian;
+    value<QString> CmdStart,
+                   CmdStop,
+                   CmdInit,
+                   CmdReset,
+                   CmdCenter,
+                   CmdZero;
+    value<int> SerialPortName, DelayInit, DelayStart, DelaySeq;
+    // unfortunately, no way to distinguish this and enum type
+    // hence, string type used -sh
+    value<int> pBaudRate, pDataBits, pParity, pStopBits, pFlowControl;
+    TrackerSettings() :
+        b(bundle("HAT")),
+        EnableRoll(b, "EnableRoll", true),
+        EnablePitch(b, "EnablePitch", true),
+        EnableYaw(b, "EnableYaw", true),
+        EnableX(b, "EnableX", true),
+        EnableY(b, "EnableY", true),
+        EnableZ(b, "EnableZ", true),
+        InvertRoll(b, "InvertRoll", false),
+        InvertPitch(b, "InvertPitch", false),
+        InvertYaw(b, "InvertYaw", false),
+        InvertX(b, "InvertX", false),
+        InvertY(b, "InvertY", false),
+        InvertZ(b, "InvertZ", false),
+        RollAxe(b, "RollAe", 2),
+        PitchAxe(b, "PitchAxe", 1),
+        YawAxe(b, "YawAxe", 0),
+        XAxe(b, "XAxe", 0),
+        YAxe(b, "YAxe", 1),
+        ZAxe(b, "ZAxe", 2),
+        BigEndian(b, "BigEndian", false),
+        CmdStart(b, "CmdStart", ""),
+        CmdStop(b, "CmdStop", ""),
+        CmdInit(b, "CmdInit", ""),
+        CmdReset(b, "CmdReset", ""),
+        CmdCenter(b, "CmdCenter", ""),
+        CmdZero(b, "CmdZero", ""),
+        SerialPortName(b, "PortName", 0),
+        DelayInit(b, "DelayInit", 0),
+        DelayStart(b, "DelayStart", 0),
+        DelaySeq(b, "DelaySeq", 0),
+        pBaudRate(b, "BaudRate", 0),
+        pDataBits(b, "DataBits", 0),
+        pParity(b, "Parity", 0),
+        pStopBits(b, "StopBits", 0),
+        pFlowControl(b, "FlowControl", 0)
+    {
+    }
 };
-
-
-#endif //FTNOIR_TRACKER_HAT_SETTINGS_H
