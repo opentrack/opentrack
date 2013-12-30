@@ -15,6 +15,8 @@
 #include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
+#include "facetracknoir/options.hpp"
+using namespace options;
 
 class Tracker : public QObject, public ITracker
 {
@@ -24,10 +26,14 @@ public:
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
-	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
-	ht_shm_t* shm;
+    pbundle b;
+    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
+    value<double> fov;
+    value<int> fps, camera_idx, resolution;
+    void load_settings(ht_config_t* config);
 private:
     PortableLockedShm lck_shm;
+    ht_shm_t* shm;
 	QProcess subprocess;
     HTVideoWidget* videoWidget;
 	QHBoxLayout* layout;
@@ -38,27 +44,21 @@ class TrackerControls : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
 	explicit TrackerControls();
-    virtual ~TrackerControls();
-    void showEvent (QShowEvent *);
-
     void Initialize(QWidget *);
     void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 
 private:
 	Ui::Form ui;
-	void loadSettings();
-	void save();
-	bool settingsDirty;
+    pbundle b;
+    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
+    value<double> fov;
+    value<int> fps, camera_idx, resolution;
 
 private slots:
 	void doOK();
 	void doCancel();
-    void settingChanged() { settingsDirty = true; }
-    void settingChanged(int) { settingsDirty = true; }
-    void settingChanged(double) { settingsDirty = true; }
 };
 
 #endif
