@@ -262,11 +262,11 @@ void FTNoIR_Tracker::StopTracker( bool exit )
 void FTNoIR_Tracker::StartTracker(QFrame*)
 {
     static const int databits_lookup[] = {
-        5,
-        6,
-        7,
-        8,
-        -1
+        QSerialPort::Data5,
+        QSerialPort::Data6,
+        QSerialPort::Data7,
+        QSerialPort::Data8,
+        QSerialPort::UnknownDataBits
     };
 
     struct Local {
