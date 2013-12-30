@@ -10,55 +10,18 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include "facetracknoir/global-settings.h"
-
 using namespace std;
 
-FTNoIR_Filter::FTNoIR_Filter()
+FTNoIR_Filter::FTNoIR_Filter() :
+    first_run(true),
+    b(bundle("Accela")),
+    rotation_alpha(b, "rotation-alpha", ACCELA_SMOOTHING_ROTATION),
+    translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
+    second_order_alpha(b, "second-order-alpha", ACCELA_SECOND_ORDER_ALPHA),
+    third_order_alpha(b, "third-order-alpha", ACCELA_THIRD_ORDER_ALPHA),
+    deadzone(b, "deadzone", 0),
+    expt(b, "exponent", 2)
 {
-	first_run = true;
-	loadSettings();
-}
-
-FTNoIR_Filter::~FTNoIR_Filter()
-{
-
-}
-
-void FTNoIR_Filter::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "Accela" );
-    rotation_alpha = iniFile.value("rotation-alpha", ACCELA_SMOOTHING_ROTATION).toDouble();
-    translation_alpha = iniFile.value("translation-alpha", ACCELA_SMOOTHING_TRANSLATION).toDouble();
-    second_order_alpha = iniFile.value("second-order-alpha", ACCELA_SECOND_ORDER_ALPHA).toDouble();
-    third_order_alpha = iniFile.value("third-order-alpha", ACCELA_THIRD_ORDER_ALPHA).toDouble();
-    deadzone = iniFile.value("deadzone", 0.0).toDouble();
-    // bigger means less filtering
-    static const double init_scaling[] = {
-        1,   // X
-        1,   // Y
-        1,   // Z
-        1,   // Yaw
-        1,   // Pitch
-        1    // Roll
-    };
-    for (int i = 0; i < 6; i++)
-    {
-        scaling[i] = iniFile.value(QString("axis-%1").arg(QString::number(i)), init_scaling[i]).toDouble();
-    }
-    expt = iniFile.value("exponent", 2.0).toDouble();
-
-    iniFile.endGroup();
-}
-
-void FTNoIR_Filter::receiveSettings()
-{
-    QMutexLocker foo(&mutex);
-    
-    loadSettings();
 }
 
 static inline double parabola(const double a, const double x, const double dz, const double expt)
@@ -135,9 +98,9 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         const double a2 = a * second_order_alpha;
         const double a3 = a * third_order_alpha;
         const double velocity =
-                parabola(a, vec * scaling[i], deadzone, expt) +
-                parabola(a2, vec2 * scaling[i], deadzone, expt) +
-                parabola(a3, vec3 * scaling[i], deadzone, expt);
+                parabola(a, vec, deadzone, expt) +
+                parabola(a2, vec2, deadzone, expt) +
+                parabola(a3, vec3, deadzone, expt);
         const double result = last_output[0][i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = done ? target_camera_position[i] : result;
