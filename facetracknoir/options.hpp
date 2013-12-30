@@ -43,6 +43,12 @@ namespace options {
         return t.toDouble();
     }
 
+    template<>
+    inline QVariant qcruft_to_t<QVariant>(const QVariant& t)
+    {
+        return t;
+    }
+
     // snapshot of qsettings group at given time
     class group {
     private:
@@ -115,8 +121,11 @@ namespace options {
         }
         void store(const QString& name, const QVariant& datum)
         {
-            modified = true;
-            transient.put(name, datum);
+            if (!transient.contains(name) || datum != transient.get<QVariant>(name))
+            {
+                modified = true;
+                transient.put(name, datum);
+            }
         }
         bool contains(const QString& name)
         {
