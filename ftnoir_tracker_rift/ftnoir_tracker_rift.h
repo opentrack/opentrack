@@ -8,6 +8,25 @@
 #include "facetracknoir/global-settings.h"
 #include "OVR.h"
 #include <memory>
+#include "facetracknoir/options.hpp"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<bool> bEnableYaw, bEnablePitch, bEnableRoll, useYawSpring;
+    value<double> constant_drift, persistence, deadzone;
+    settings() :
+        b(bundle("Rift")),
+        bEnableYaw(b, "EnableYaw", true),
+        bEnablePitch(b, "EnablePitch", true),
+        bEnableRoll(b, "EnableRoll", true),
+        useYawSpring(b, "yaw-spring", false),
+        constant_drift(b, "constant-drift", 0.000005),
+        persistence(b, "persistence", 0.99999),
+        deadzone(b, "deadzone", 0.02)
+    {}
+};
+
 class Rift_Tracker : public ITracker
 {
 public:
@@ -16,7 +35,6 @@ public:
 
     void StartTracker(QFrame *) virt_override;
     void GetHeadPoseData(double *data) virt_override;
-    void loadSettings();
     virtual int preferredHz() virt_override { return 250; }
     volatile bool should_quit;
 protected:
@@ -27,16 +45,8 @@ private:
 	OVR::DeviceManager* pManager;
 	OVR::SensorDevice* pSensor;
 	OVR::SensorFusion* pSFusion;
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-#if 0
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
-#endif
-    bool useYawSpring;
-    double old_yaw, constant_drift, persistence, deadzone;
+    settings s;
+    double old_yaw;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -44,10 +54,7 @@ class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
 	explicit TrackerControls();
-    ~TrackerControls();
-    void showEvent (QShowEvent *);
 
     void Initialize(QWidget *parent);
     void registerTracker(ITracker *) {}
@@ -55,17 +62,10 @@ public:
 
 private:
 	Ui::UIRiftControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; }
-	void settingChanged(int) { settingsDirty = true; }
 };
 
 //*******************************************************************************************************
