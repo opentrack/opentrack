@@ -43,28 +43,31 @@ namespace options {
         return t.toDouble();
     }
 
-    template<>
-    inline float qcruft_to_t<float>(const QVariant& t)
-    {
-        return t.toFloat();
-    }
-
     // snapshot of qsettings group at given time
     class group {
     private:
         QMap<QString, QVariant> map;
         QString name;
     public:
-        group(const QString& name, QSettings& s) : name(name)
+        group(const QString& name) : name(name)
         {
-            s.beginGroup(name);
-            for (auto& k : s.childKeys())
-                map[k] = s.value(k);
-            s.endGroup();
+            QSettings settings(group::org);
+            QString currentFile =
+                    settings.value("SettingsFile",
+                                   QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+            QSettings iniFile(currentFile, QSettings::IniFormat);
+            iniFile.beginGroup(name);
+            for (auto& k : iniFile.childKeys())
+                map[k] = iniFile.value(k);
+            iniFile.endGroup();
         }
         static constexpr const char* org = "opentrack";
         void save() {
-            QSettings s(org);
+            QSettings settings(group::org);
+            QString currentFile =
+                    settings.value("SettingsFile",
+                                   QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+            QSettings s(currentFile, QSettings::IniFormat);
             s.beginGroup(name);
             for (auto& k : map.keys())
                 s.setValue(k, map[k]);
@@ -85,27 +88,32 @@ namespace options {
         }
     };
 
-    class bundle {
+    class impl_bundle {
     private:
         const QString group_name;
         group saved;
         group transient;
-        bundle(const bundle&) = delete;
-        bundle& operator=(const bundle&) = delete;
+        impl_bundle(const impl_bundle&) = delete;
+        impl_bundle& operator=(const impl_bundle&) = delete;
         bool modified;
     public:
-        bundle(const QString& group_name, QSettings& s) :
+        impl_bundle(const QString& group_name) :
             group_name(group_name),
-            saved(group_name, s),
+            saved(group_name),
             transient(saved),
             modified(false)
         {
         }
-        std::shared_ptr<bundle> make(const QString& name, QSettings& s) {
-            assert(s.format() == QSettings::IniFormat);
-            return std::make_shared<bundle>(name, s);
+        /* keep in mind doesn't fire signals */
+        void reload() {
+            saved = group(group_name);
+            transient = saved;
         }
-        void store(const QString& name, QVariant& datum)
+
+        std::shared_ptr<impl_bundle> make(const QString& name) {
+            return std::make_shared<impl_bundle>(name);
+        }
+        void store(const QString& name, const QVariant& datum)
         {
             modified = true;
             transient.put(name, datum);
@@ -116,7 +124,7 @@ namespace options {
         }
         template<typename T>
         T get(QString& name) {
-            transient.get<T>(name);
+            return transient.get<T>(name);
         }
         void save()
         {
@@ -129,15 +137,32 @@ namespace options {
             modified = false;
             transient = saved;
         }
+
+        bool modifiedp() const { return modified; }
     };
 
-    typedef std::shared_ptr<bundle> pbundle;
+    typedef std::shared_ptr<impl_bundle> pbundle;
 
-    class QCruft : public QObject {
+    class base_value : public QObject {
+        Q_OBJECT
+    public:
+        virtual QVariant operator=(const QVariant& datum) = 0;
+    public slots:
+#define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(datum); }
+        DEFINE_SLOT(double)
+        DEFINE_SLOT(int)
+        DEFINE_SLOT(QString)
+        DEFINE_SLOT(bool)
+    signals:
+#define DEFINE_SIGNAL(t) void valueChanged(t);
+        DEFINE_SIGNAL(double)
+        DEFINE_SIGNAL(int)
+        DEFINE_SIGNAL(QString)
+        DEFINE_SIGNAL(bool)
     };
 
     template<typename T>
-    class value : public QCruft {
+    class value : public base_value {
     private:
         QString self_name;
         pbundle b;
@@ -153,61 +178,64 @@ namespace options {
             }
         }
         operator T() { return b->get<T>(self_name); }
-        T& operator=(const T& datum) {
+        QVariant operator=(const QVariant& datum) {
             b->store(self_name, datum);
-            emit valueChanged(datum);
-            return datum;
+            switch (datum.type())
+            {
+#define BRANCH_ON(e, m) case QVariant::e: return valueChanged(datum.m()), datum
+            BRANCH_ON(Int, toInt);
+            BRANCH_ON(Double, toDouble);
+            BRANCH_ON(String, toString);
+            BRANCH_ON(Bool, toBool);
+            default: abort();
+            }
         }
-    public slots:
-        void setValue(const T datum) {
-            this->operator =(datum);
-        }
-    signals:
-        void valueChanged(T datum);
     };
 
     template<typename T, typename Q>
-    inline void tie(value<T>&, Q*);
+    inline void tie_setting(value<T>&, Q*);
 
     template<>
-    inline void tie<int, QComboBox>(value<int>& v, QComboBox* cb)
+    inline void tie_setting(value<int>& v, QComboBox* cb)
     {
-        QObject::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)));
-        QObject::connect(&v, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
+        base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)));
+        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)));
+        cb->setCurrentIndex(v);
     }
 
     template<>
-    inline void tie<QString, QComboBox>(value<QString>& v, QComboBox* cb)
+    inline void tie_setting(value<bool>& v, QCheckBox* cb)
     {
-        QObject::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)));
-        QObject::connect(&v, SIGNAL(valueChanged(QString)), &v, SLOT(setValue(QString)));
+        base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)));
+        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)));
+        cb->setChecked(v);
     }
 
     template<>
-    inline void tie<bool, QCheckBox>(value<bool>& v, QCheckBox* cb)
+    inline void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
     {
-        QObject::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)));
-        QObject::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)));
+        base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)));
+        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)));
+        dsb->setValue(v);
     }
 
     template<>
-    inline void tie<double, QDoubleSpinBox>(value<double>& v, QDoubleSpinBox* dsb)
+    inline void tie_setting(value<int>& v, QSpinBox* sb)
     {
-        QObject::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)));
-        QObject::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)));
+        base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)));
+        sb->setValue(v);
     }
 
     template<>
-    inline void tie<int, QSpinBox>(value<int>& v, QSpinBox* sb)
+    inline void tie_setting(value<int>& v, QSlider* sl)
     {
-        QObject::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
-        QObject::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)));
+        base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)));
+        sl->setValue(v);
     }
 
-    template<>
-    inline void tie<int, QSlider>(value<int>& v, QSlider* sl)
-    {
-        QObject::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
-        QObject::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)));
+    inline pbundle bundle(const QString& group) {
+        return std::make_shared<impl_bundle>(group);
     }
 }
