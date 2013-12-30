@@ -91,7 +91,7 @@ static resolution_tuple resolution_choices[] = {
 void Tracker::load_settings(ht_config_t* config)
 {
     int nframes = 0;
-    switch (static_cast<int>(fps))
+    switch (static_cast<int>(s.fps))
     {
     default:
     case 0:
@@ -109,13 +109,13 @@ void Tracker::load_settings(ht_config_t* config)
     }
 
     config->classification_delay = 500;
-    config->field_of_view = fov;
+    config->field_of_view = s.fov;
     config->pyrlk_pyramids = 0;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 350;
     config->keypoint_distance = 3.4;
     config->force_fps = nframes;
-    config->camera_index = camera_idx - 1;
+    config->camera_index = s.camera_idx - 1;
     config->ransac_num_iters = 100;
     config->ransac_max_reprojection_error = 8;
     config->ransac_max_inlier_error = 8;
@@ -123,7 +123,7 @@ void Tracker::load_settings(ht_config_t* config)
     config->ransac_max_mean_error = 6.5;
     config->debug = 0;
     config->ransac_min_features = 0.72;
-    int res = resolution;
+    int res = s.resolution;
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
@@ -135,17 +135,6 @@ void Tracker::load_settings(ht_config_t* config)
 }
 
 Tracker::Tracker() :
-    b(bundle("HT-Tracker")),
-    enableTX(b, "enable-tx", true),
-    enableTY(b, "enable-ty", true),
-    enableTZ(b, "enable-tz", true),
-    enableRX(b, "enable-rx", true),
-    enableRY(b, "enable-ry", true),
-    enableRZ(b, "enable-rz", true),
-    fov(b, "fov", 56),
-    fps(b, "fps", 0),
-    camera_idx(b, "camera-index", 0),
-    resolution(b, "resolution", 0),
     lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)),
     shm(reinterpret_cast<ht_shm_t*>(lck_shm.mem)),
     videoWidget(nullptr),
@@ -205,19 +194,19 @@ void Tracker::GetHeadPoseData(double *data)
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
-        if (enableRX)
+        if (s.enableRX)
             data[Yaw] = shm->result.rotx;
-        if (enableRY) {
+        if (s.enableRY) {
             data[Pitch] = shm->result.roty;
 		}
-        if (enableRZ) {
+        if (s.enableRZ) {
             data[Roll] = shm->result.rotz;
         }
-        if (enableTX)
+        if (s.enableTX)
             data[TX] = shm->result.tx;
-        if (enableTY)
+        if (s.enableTY)
             data[TY] = shm->result.ty;
-        if (enableTZ)
+        if (s.enableTZ)
             data[TZ] = shm->result.tz;
         if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
         {
@@ -265,34 +254,23 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
     return new TrackerControls;
 }
 
-TrackerControls::TrackerControls() :
-    b(bundle("HT-Tracker")),
-    enableTX(b, "enable-tx", true),
-    enableTY(b, "enable-ty", true),
-    enableTZ(b, "enable-tz", true),
-    enableRX(b, "enable-rx", true),
-    enableRY(b, "enable-ry", true),
-    enableRZ(b, "enable-rz", true),
-    fov(b, "fov", 56),
-    fps(b, "fps", 0),
-    camera_idx(b, "camera-index", 0),
-    resolution(b, "resolution", 0)
+TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
     ui.cameraName->clear();
     QList<QString> names = get_camera_names();
     names.prepend("Any available");
     ui.cameraName->addItems(names);
-    tie_setting(camera_idx, ui.cameraName);
-    tie_setting(fps, ui.cameraFPS);
-    tie_setting(fov, ui.cameraFOV);
-    tie_setting(enableTX, ui.tx);
-    tie_setting(enableTY, ui.ty);
-    tie_setting(enableTZ, ui.tz);
-    tie_setting(enableRX, ui.rx);
-    tie_setting(enableRY, ui.ry);
-    tie_setting(enableRZ, ui.rz);
-    tie_setting(resolution, ui.resolution);
+    tie_setting(s.camera_idx, ui.cameraName);
+    tie_setting(s.fps, ui.cameraFPS);
+    tie_setting(s.fov, ui.cameraFOV);
+    tie_setting(s.enableTX, ui.tx);
+    tie_setting(s.enableTY, ui.ty);
+    tie_setting(s.enableTZ, ui.tz);
+    tie_setting(s.enableRX, ui.rx);
+    tie_setting(s.enableRY, ui.ry);
+    tie_setting(s.enableRZ, ui.rz);
+    tie_setting(s.resolution, ui.resolution);
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
 }
@@ -304,13 +282,13 @@ void TrackerControls::Initialize(QWidget*)
 
 void TrackerControls::doOK()
 {
-    b->save();
+    s.b->save();
 	this->close();
 }
 
 void TrackerControls::doCancel()
 {
-    if (!b->modifiedp())
+    if (!s.b->modifiedp())
     {
         close();
         return;
@@ -322,11 +300,11 @@ void TrackerControls::doCancel()
 
     switch (ret) {
         case QMessageBox::Save:
-            b->save();
+            s.b->save();
             this->close();
             break;
         case QMessageBox::Discard:
-            b->revert();
+            s.b->revert();
             this->close();
             break;
         default:
