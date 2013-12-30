@@ -180,7 +180,7 @@ file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.c
 file(GLOB opentrack-lib-h "opentrack-api/*.h" "facetracknoir/global-settings.h")
 
 file(GLOB opentrack-bin-c "facetracknoir/*.cpp" "facetracknoir/*.rc")
-file(GLOB opentrack-bin-h "facetracknoir/*.h")
+file(GLOB opentrack-bin-h "facetracknoir/*.h" "facetracknoir/*.hpp")
 file(GLOB opentrack-bin-ui "facetracknoir/*.ui")
 file(GLOB opentrack-bin-rc "facetracknoir/*.qrc")
 QT5_WRAP_UI(opentrack-bin-uih ${opentrack-bin-ui})
