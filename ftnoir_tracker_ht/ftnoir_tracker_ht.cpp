@@ -250,30 +250,15 @@ void TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/ht.png");
 }
 
-
-//-----------------------------------------------------------------------------
-//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
-
 extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new TrackerDll;
 }
 
-//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Tracker;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
@@ -310,7 +295,6 @@ TrackerControls::TrackerControls() :
     tie_setting(resolution, ui.resolution);
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
 }
 
 void TrackerControls::Initialize(QWidget*)
@@ -334,8 +318,7 @@ void TrackerControls::doCancel()
     int ret = QMessageBox::question ( this,
                                       "Settings have changed",
                                       "Do you want to save the settings?",
-                                      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-                                      QMessageBox::Discard );
+                                      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
     switch (ret) {
         case QMessageBox::Save:
