@@ -183,7 +183,7 @@ namespace options {
         QString self_name;
         pbundle b;
     public:
-        value(const pbundle& b, const QString& name, T def) :
+        value(pbundle& b, const QString& name, T def) :
             self_name(name),
             b(b)
         {
@@ -217,6 +217,14 @@ namespace options {
         base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)));
         base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)));
         cb->setCurrentIndex(v);
+    }
+
+    template<>
+    inline void tie_setting(value<QString>& v, QComboBox* cb)
+    {
+        base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(int)));
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)));
+        cb->setCurrentText(v);
     }
 
     template<>
