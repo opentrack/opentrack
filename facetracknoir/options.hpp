@@ -20,15 +20,22 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 #include <QSlider>
+#include <QLineEdit>
 
 namespace options {
     template<typename T>
-    inline T qcruft_to_t(const QVariant& t);
+    inline T qcruft_to_t (const QVariant& t);
 
     template<>
     inline int qcruft_to_t<int>(const QVariant& t)
     {
         return t.toInt();
+    }
+
+    template<>
+    inline QString qcruft_to_t<QString>(const QVariant& t)
+    {
+        return t.toString();
     }
 
     template<>
@@ -242,6 +249,14 @@ namespace options {
         base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
         base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)));
         sl->setValue(v);
+    }
+
+    template<>
+    inline void tie_setting(value<QString>& v, QLineEdit* le)
+    {
+        base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)));
+        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)));
+        le->setText(v);
     }
 
     inline pbundle bundle(const QString& group) {
