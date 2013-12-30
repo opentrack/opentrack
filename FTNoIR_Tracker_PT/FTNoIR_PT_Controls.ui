@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
+    <width>459</width>
     <height>590</height>
    </rect>
   </property>
@@ -69,11 +69,39 @@
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="0">
+            <item row="1" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QSpinBox" name="reset_spin">
+                <property name="toolTip">
+                 <string>Time until automatic reset of tracker's internal state when no valid tracking result is found</string>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_42">
+                <property name="text">
+                 <string>ms</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="3">
              <widget class="QCheckBox" name="dynpose_check">
               <property name="toolTip">
                <string/>
               </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="label_17">
               <property name="text">
                <string>Dynamic Pose Resolution</string>
               </property>
@@ -86,6 +114,16 @@
               </property>
               <property name="buddy">
                <cstring>sleep_spin</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="label_43">
+              <property name="text">
+               <string>Auto-reset time</string>
+              </property>
+              <property name="buddy">
+               <cstring>reset_spin</cstring>
               </property>
              </widget>
             </item>
@@ -113,74 +151,7 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="label_43">
-              <property name="text">
-               <string>Auto-reset time</string>
-              </property>
-              <property name="buddy">
-               <cstring>reset_spin</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <widget class="QSpinBox" name="reset_spin">
-                <property name="toolTip">
-                 <string>Time until automatic reset of tracker's internal state when no valid tracking result is found</string>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_42">
-                <property name="text">
-                 <string>ms</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="videowidget_check">
-              <property name="toolTip">
-               <string>Whether to update the content of the VideoWidget</string>
-              </property>
-              <property name="text">
-               <string>Show VideoWidget</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="1">
-             <spacer name="horizontalSpacer_11">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="0">
+            <item row="3" column="3">
              <widget class="QPushButton" name="reset_button">
               <property name="enabled">
                <bool>false</bool>
@@ -635,40 +606,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QPushButton" name="videowidget_button">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>130</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="locale">
-               <locale language="English" country="UnitedStates"/>
-              </property>
-              <property name="text">
-               <string>VideoWidget</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_12">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           <layout class="QHBoxLayout" name="horizontalLayout_7"/>
           </item>
          </layout>
         </widget>
@@ -848,38 +786,36 @@
             </item>
            </layout>
           </item>
-
-           <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_secondary">
-               <item>
-                 <widget class="QLabel" name="label_secondary">
-                   <property name="text">
-                     <string>Hysteresis</string>
-                   </property>
-                   <property name="buddy">
-                     <cstring>threshold_secondary_slider</cstring>
-                   </property>
-                 </widget>
-               </item>
-               <item>
-                 <widget class="QSlider" name="threshold_secondary_slider">
-                   <property name="toolTip">
-                     <string>Per pixel hysteresis width (leave left if there is little difference between dot and non-dot, move right for increased stability against pixel noise)</string>
-                   </property>
-                   <property name="maximum">
-                     <number>255</number>
-                   </property>
-                   <property name="value">
-                     <number>100</number>
-                   </property> 
-                   <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                   </property>
-                 </widget>
-               </item>
-             </layout>
-           </item>           
-           
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_secondary">
+            <item>
+             <widget class="QLabel" name="label_secondary">
+              <property name="text">
+               <string>Hysteresis</string>
+              </property>
+              <property name="buddy">
+               <cstring>threshold_secondary_slider</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="threshold_secondary_slider">
+              <property name="toolTip">
+               <string>Per pixel hysteresis width (leave left if there is little difference between dot and non-dot, move right for increased stability against pixel noise)</string>
+              </property>
+              <property name="maximum">
+               <number>255</number>
+              </property>
+              <property name="value">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
@@ -1778,6 +1714,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
+      <widget class="QPushButton" name="btnApply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_6">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -1816,11 +1759,8 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>videowidget_check</tabstop>
   <tabstop>sleep_spin</tabstop>
-  <tabstop>dynpose_check</tabstop>
   <tabstop>reset_spin</tabstop>
-  <tabstop>reset_button</tabstop>
   <tabstop>chkEnableRoll</tabstop>
   <tabstop>chkEnablePitch</tabstop>
   <tabstop>chkEnableYaw</tabstop>

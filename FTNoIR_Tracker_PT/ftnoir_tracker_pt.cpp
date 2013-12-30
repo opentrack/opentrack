@@ -23,8 +23,7 @@ const float deg2rad = 1.0/rad2deg;
 
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
-	: frame_count(0),
-	  commands(0), 
+    : commands(0),
 	  video_widget(NULL), 
 	  video_frame(NULL),
 	  tracking_valid(false)
@@ -38,9 +37,10 @@ Tracker::~Tracker()
 	// terminate tracker thread
 	set_command(ABORT);
 	wait();
-	// destroy video widget
-	show_video_widget = false;
-	update_show_video_widget();
+    s.video_widget = false;
+    delete video_widget;
+    video_widget = NULL;
+    if (video_frame->layout()) delete video_frame->layout();
 }
 
 void Tracker::set_command(Command command)
@@ -86,10 +86,7 @@ void Tracker::run()
 				frame = frame_rotation.rotate_frame(frame);
 				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, has_observers());
 				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
-				frame_count++;
-#ifdef OPENTRACK_API
                 video_widget->update_image(frame.clone());
-#endif
 			}
 #ifdef PT_PERF_LOG
 			log_stream<<"dt: "<<dt;
@@ -97,45 +94,39 @@ void Tracker::run()
 			log_stream<<"\n";
 #endif
 		}
-		msleep(sleep_time);
+        msleep(s.sleep_time);
 	}
 
 	qDebug()<<"Tracker:: Thread stopping";
 }
 
-void Tracker::apply(const TrackerSettings& settings)
+void Tracker::apply(settings& s)
 {
 	qDebug()<<"Tracker:: Applying settings";
 	QMutexLocker lock(&mutex);
-	camera.set_device_index(settings.cam_index);
-	camera.set_res(settings.cam_res_x, settings.cam_res_y);	
-	camera.set_fps(settings.cam_fps);
-	camera.set_f(settings.cam_f);
-    frame_rotation.rotation = static_cast<RotationType>(settings.cam_roll);
-	point_extractor.threshold_val = settings.threshold;
-	point_extractor.threshold_secondary_val = settings.threshold_secondary;
-	point_extractor.min_size = settings.min_point_size;
-    point_extractor.max_size = settings.max_point_size;
-    point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(settings.M01, settings.M02));
-    point_tracker.dynamic_pose_resolution = settings.dyn_pose_res;
-	sleep_time = settings.sleep_time;
-	point_tracker.dt_reset = settings.reset_time / 1000.0;
-	show_video_widget = settings.video_widget;
-	update_show_video_widget();
-	bEnableRoll  = settings.bEnableRoll;
-	bEnablePitch = settings.bEnablePitch;
-	bEnableYaw   = settings.bEnableYaw;
-	bEnableX     = settings.bEnableX;
-	bEnableY     = settings.bEnableY;
-	bEnableZ     = settings.bEnableZ;
-
-	t_MH = settings.t_MH;
-	R_GC =  Matx33f( cos(deg2rad*settings.cam_yaw), 0, sin(deg2rad*settings.cam_yaw),
+    camera.set_device_index(s.cam_index);
+    camera.set_res(s.cam_res_x, s.cam_res_y);
+    camera.set_fps(s.cam_fps);
+    camera.set_f(s.cam_f);
+    frame_rotation.rotation = static_cast<RotationType>(static_cast<int>(s.cam_roll));
+    point_extractor.threshold_val = s.threshold;
+    point_extractor.threshold_secondary_val = s.threshold_secondary;
+    point_extractor.min_size = s.min_point_size;
+    point_extractor.max_size = s.max_point_size;
+    {
+        cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
+        cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
+        point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(M01, M02));
+    }
+    point_tracker.dynamic_pose_resolution = s.dyn_pose_res;
+    point_tracker.dt_reset = s.reset_time / 1000.0;
+    t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
+    R_GC =  Matx33f( cos(deg2rad*s.cam_yaw), 0, sin(deg2rad*s.cam_yaw),
 		                                         0, 1,                             0,
-		            -sin(deg2rad*settings.cam_yaw), 0, cos(deg2rad*settings.cam_yaw));
+                    -sin(deg2rad*s.cam_yaw), 0, cos(deg2rad*s.cam_yaw));
 	R_GC = R_GC * Matx33f( 1,                                0,                               0,
-		                   0,  cos(deg2rad*settings.cam_pitch), sin(deg2rad*settings.cam_pitch),
-		                   0, -sin(deg2rad*settings.cam_pitch), cos(deg2rad*settings.cam_pitch));
+                           0,  cos(deg2rad*s.cam_pitch), sin(deg2rad*s.cam_pitch),
+                           0, -sin(deg2rad*s.cam_pitch), cos(deg2rad*s.cam_pitch));
 
 	FrameTrafo X_MH(Matx33f::eye(), t_MH);
 	X_GH_0 = R_GC * X_MH;
@@ -169,58 +160,27 @@ bool Tracker::get_frame_and_points(cv::Mat& frame_copy, boost::shared_ptr< std::
 	return true;
 }
 
-void Tracker::update_show_video_widget()
-{
-	if (!show_video_widget && video_widget) {
-		delete video_widget;
-		video_widget = NULL;
-		if (video_frame->layout()) delete video_frame->layout();
-	}
-	else if (video_frame && show_video_widget && !video_widget)
-	{
-        const int VIDEO_FRAME_WIDTH  = 320;
-        const int VIDEO_FRAME_HEIGHT = 240;
-        video_widget = new PTVideoWidget(video_frame, this);
-		QHBoxLayout* video_layout = new QHBoxLayout();
-		video_layout->setContentsMargins(0, 0, 0, 0);
-		video_layout->addWidget(video_widget);
-		video_frame->setLayout(video_layout);
-		video_widget->resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
-	}
-}
-
-//-----------------------------------------------------------------------------
-// ITracker interface
-void Tracker::Initialize(QFrame *video_frame)
-{
-	qDebug("Tracker::Initialize");
-	// setup video frame	
-	this->video_frame = video_frame;
-	video_frame->setAttribute(Qt::WA_NativeWindow);
-	video_frame->show();
-	update_show_video_widget();
-	TrackerSettings settings;
-	settings.load_ini();
-    camera.start();
-    apply(settings);
-	start();
-}
-
 void Tracker::refreshVideo()
 {	
 	if (video_widget) video_widget->update_frame_and_points();
 }
 
-#ifdef OPENTRACK_API
 void Tracker::StartTracker(QFrame *parent_window)
-#else
-void Tracker::StartTracker(HWND parent_window)
-#endif
 {
-#ifdef OPENTRACK_API
-    Initialize(parent_window);
-#endif
-	reset_command(PAUSE);
+    this->video_frame = parent_window;
+    video_frame->setAttribute(Qt::WA_NativeWindow);
+    video_frame->show();
+    apply(s);
+    video_widget = new PTVideoWidget(video_frame, this);
+    QHBoxLayout* video_layout = new QHBoxLayout(parent_window);
+    video_layout->setContentsMargins(0, 0, 0, 0);
+    video_layout->addWidget(video_widget);
+    video_frame->setLayout(video_layout);
+    video_widget->resize(video_frame->width(), video_frame->height());
+    start();
+    camera.start();
+    start();
+    reset_command(PAUSE);
 }
 
 #ifndef OPENTRACK_API
@@ -247,18 +207,12 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
         Matx33f R = X_GH.R * X_GH_0.R.t();
 		Vec3f   t = X_GH.t - X_GH_0.t;		
 
-#ifndef OPENTRACK_API
-		// get translation(s)
-		if (bEnableX) data->x = t[0] / 10.0;	// convert to cm
-		if (bEnableY) data->y = t[1] / 10.0;
-		if (bEnableZ) data->z = t[2] / 10.0;
-#else
         // get translation(s)
-        if (bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
-        if (bEnableY) data[TY] = t[1] / 10.0;
-        if (bEnableZ) data[TZ] = t[2] / 10.0;
-#endif
-		// translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
+        if (s.bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
+        if (s.bEnableY) data[TY] = t[1] / 10.0;
+        if (s.bEnableZ) data[TZ] = t[2] / 10.0;
+
+        // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
 		// -z -> x, y -> z, x -> -y
 		Matx33f R_EG( 0, 0,-1,
 		             -1, 0, 0,
@@ -271,19 +225,10 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
-#ifndef OPENTRACK_API
-		if (bEnableYaw)   data->yaw   =   rad2deg * alpha;
-		if (bEnablePitch) data->pitch = - rad2deg * beta;	// FTNoIR expects a minus here
-		if (bEnableRoll)  data->roll  =   rad2deg * gamma;
-#else
-        if (bEnableYaw)   data[Yaw]  =   rad2deg * alpha;
-        if (bEnablePitch) data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
-        if (bEnableRoll)  data[Roll]  =   rad2deg * gamma;
-#endif
+        if (s.bEnableYaw)   data[Yaw]  =   rad2deg * alpha;
+        if (s.bEnablePitch) data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
+        if (s.bEnableRoll)  data[Roll]  =   rad2deg * gamma;
 	}
-#ifndef OPENTRACK_API
-    return true;
-#endif
 }
 
 //-----------------------------------------------------------------------------
