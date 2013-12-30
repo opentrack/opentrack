@@ -13,6 +13,25 @@
 #include "facetracknoir/options.hpp"
 using namespace options;
 
+struct settings {
+    pbundle b;
+    value<double> rotation_alpha,
+                  translation_alpha,
+                  second_order_alpha,
+                  third_order_alpha,
+                  deadzone,
+                  expt;
+    settings() :
+        b(bundle("Accela")),
+        rotation_alpha(b, "rotation-alpha", ACCELA_SMOOTHING_ROTATION),
+        translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
+        second_order_alpha(b, "second-order-alpha", ACCELA_SECOND_ORDER_ALPHA),
+        third_order_alpha(b, "third-order-alpha", ACCELA_THIRD_ORDER_ALPHA),
+        deadzone(b, "deadzone", 0),
+        expt(b, "exponent", 2)
+    {}
+};
+
 class FTNoIR_Filter : public IFilter
 {
 public:
@@ -22,19 +41,13 @@ public:
         first_run = true;
     }
     void receiveSettings() {
-        b->reload();
+        s.b->reload();
     }
 
 private:
+    settings s;
     QMutex mutex;
 	bool first_run;
-    pbundle b;
-    value<double> rotation_alpha,
-                  translation_alpha,
-                  second_order_alpha,
-                  third_order_alpha,
-                  deadzone,
-                  expt;
     double last_input[6];
     double last_output[3][6];
     QElapsedTimer timer;
@@ -59,13 +72,7 @@ private:
     void discard();
 	void save();
     FTNoIR_Filter* accela_filter;
-    pbundle b;
-    value<double> rotation_alpha,
-                  translation_alpha,
-                  second_order_alpha,
-                  third_order_alpha,
-                  deadzone,
-                  expt;
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
