@@ -1,13 +1,6 @@
 #include "ftnoir_tracker_rift.h"
 #include "facetracknoir/global-settings.h"
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
 TrackerControls::TrackerControls() :
 QWidget()
 {
@@ -36,17 +29,11 @@ void TrackerControls::Initialize(QWidget *parent) {
 	show();
 }
 
-//
-// OK clicked on server-dialog
-//
 void TrackerControls::doOK() {
     s.b->save();
 	this->close();
 }
 
-//
-// Cancel clicked on server-dialog
-//
 void TrackerControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved

@@ -49,7 +49,6 @@ private:
     double old_yaw;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
@@ -68,9 +67,6 @@ private slots:
 	void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
-//*******************************************************************************************************
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
