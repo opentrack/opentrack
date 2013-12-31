@@ -22,14 +22,13 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker( FaceTrackNoIR *parent ) :
+Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
+    mainApp(parent),
+    s(s),
     should_quit(false),
     do_center(false),
-    enabled(true),
-    compensate(true),
-    tcomp_rz(false)
+    enabled(true)
 {
-    mainApp = parent;
 }
 
 Tracker::~Tracker()
@@ -37,18 +36,18 @@ Tracker::~Tracker()
 }
 
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
-    bool altp = (pos < 0) && axis.altp;
+    bool altp = (pos < 0) && axis.opts.altp;
     if (altp) {
-        out = axis.invert * axis.curveAlt.getValue(pos);
+        out = (axis.opts.invert ? -1 : 1) * axis.curveAlt.getValue(pos);
         axis.curve.setTrackingActive( false );
         axis.curveAlt.setTrackingActive( true );
     }
     else {
-        out = axis.invert * axis.curve.getValue(pos);
+        out = (axis.opts.invert ? -1 : 1) * axis.curve.getValue(pos);
         axis.curve.setTrackingActive( true );
         axis.curveAlt.setTrackingActive( false );
     }
-    out += axis.zero;
+    out += axis.opts.zero;
 }
 
 static void t_compensate(double* input, double* output, bool rz)
@@ -131,7 +130,7 @@ void Tracker::run() {
                 do_center = false;
 
                 if (Libraries->pFilter)
-                    Libraries->pFilter->Initialize();
+                    Libraries->pFilter->reset();
             }
 
             T6DOF target_camera, target_camera2, new_camera;
@@ -154,8 +153,8 @@ void Tracker::run() {
                 get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
             }
 
-            if (compensate)
-                t_compensate(output_camera.axes, output_camera.axes, tcomp_rz);
+            if (mainApp->s.tcomp_p)
+                t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
 
             if (Libraries->pProtocol) {
                 Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
@@ -188,5 +187,3 @@ void Tracker::getOutputHeadPose( double *data ) {
     for (int i = 0; i < 6; i++)
         data[i] = output_camera.axes[i];
 }
-
-void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert? -1.0 : 1.0; }

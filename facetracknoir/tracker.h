@@ -12,53 +12,43 @@
 #include <QMutex>
 #include "global-settings.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
+#include <vector>
 
 #include <qfunctionconfigurator/functionconfig.h>
 #include "tracker_types.h"
+#include "facetracknoir/main-settings.hpp"
+#include "facetracknoir/options.hpp"
+using namespace options;
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
 
 class THeadPoseDOF {
 private:
-    THeadPoseDOF(const THeadPoseDOF &) {}
-    THeadPoseDOF& operator=(const THeadPoseDOF&) { return *this; }
+    THeadPoseDOF(const THeadPoseDOF &) = delete;
+    THeadPoseDOF& operator=(const THeadPoseDOF&) = delete;
 public:
-    THeadPoseDOF() :
-        headPos(0),
-        invert(0),
-        altp(false),
-        zero(0)
-    {
-    }
-
     THeadPoseDOF(QString primary,
                  QString secondary,
                  int maxInput1,
                  int maxOutput1,
                  int maxInput2,
-                 int maxOutput2) :
+                 int maxOutput2,
+                 axis_opts* opts) :
         headPos(0),
-        invert(1),
         curve(primary, maxInput1, maxOutput1),
         curveAlt(secondary, maxInput2, maxOutput2),
-        zero(0)
+        opts(*opts)
     {
         QSettings settings("opentrack");
         QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
         QSettings iniFile( currentFile, QSettings::IniFormat );
         curve.loadSettings(iniFile);
         curveAlt.loadSettings(iniFile);
-        
-        iniFile.beginGroup("Tracking");
-        altp = iniFile.value(secondary).toBool();
-        iniFile.endGroup();
     }
     volatile double headPos;
-    volatile float invert;
     FunctionConfig curve;
 	FunctionConfig curveAlt;
-    volatile bool altp;
-    volatile double zero;
+    axis_opts& opts;
 };
 
 class Tracker : public QThread {
@@ -67,15 +57,14 @@ class Tracker : public QThread {
 private:
     FaceTrackNoIR *mainApp;
     QMutex mtx;
+    main_settings& s;
 
 protected:
 	void run();
 
 public:
-	Tracker( FaceTrackNoIR *parent );
+    Tracker( FaceTrackNoIR *parent, main_settings& s);
     ~Tracker();
-
-    void setInvertAxis(Axis axis, bool invert);
 
     void getHeadPose(double *data);
     void getOutputHeadPose(double *data);
@@ -83,8 +72,6 @@ public:
     volatile bool should_quit;
     volatile bool do_center;
     volatile bool enabled;
-    volatile bool compensate;
-    volatile bool tcomp_rz;
     
     T6DOF output_camera;
 };
@@ -92,14 +79,14 @@ public:
 class HeadPoseData {
 public:
     THeadPoseDOF* axes[6];
-    HeadPoseData()
+    HeadPoseData(std::vector<axis_opts*> opts)
     {
-        axes[TX] = new THeadPoseDOF("tx","tx_alt", 25, 100, 25, 100);
-        axes[TY] = new THeadPoseDOF("ty","ty_alt", 25, 100, 25, 100);
-        axes[TZ] = new THeadPoseDOF("tz","tz_alt", 25, 100, 25, 100);
-        axes[Yaw] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180);
-        axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90);
-        axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180);
+        axes[TX] = new THeadPoseDOF("tx","tx_alt", 25, 100, 25, 100, opts[TX]);
+        axes[TY] = new THeadPoseDOF("ty","ty_alt", 25, 100, 25, 100, opts[TY]);
+        axes[TZ] = new THeadPoseDOF("tz","tz_alt", 25, 100, 25, 100, opts[TZ]);
+        axes[Yaw] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180, opts[Yaw]);
+        axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90, opts[Pitch]);
+        axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180, opts[Roll]);
     }
     ~HeadPoseData()
     {

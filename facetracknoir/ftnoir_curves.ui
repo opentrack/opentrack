@@ -761,7 +761,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="tcomp_enable">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -816,7 +816,7 @@
   <tabstop>tx_altp</tabstop>
   <tabstop>ty_altp</tabstop>
   <tabstop>tz_altp</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>tcomp_enable</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pos_tx</tabstop>
   <tabstop>buttonBox</tabstop>
