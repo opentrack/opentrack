@@ -26,13 +26,6 @@
 #include <QDebug>
 #include "facetracknoir/global-settings.h"
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
 SCControls::SCControls() :
 QWidget()
 {
@@ -41,84 +34,37 @@ QWidget()
 	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-	//connect(ui.cbxSelectPPJoyNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(virtualJoystickSelected( int )));
 
-	theProtocol = NULL;
-
-	// Load the settings from the current .INI-file
-	loadSettings();
+    tie_setting(s.sxs_manifest, ui.comboBox);
 }
 
 void SCControls::doOK() {
-	save();
+    s.b->save();
 	this->close();
 }
 
 void SCControls::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+    if (s.b->modifiedp()) {
+        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
+        switch (ret) {
+        case QMessageBox::Save:
+            s.b->save();
+            this->close();
+            break;
+        case QMessageBox::Discard:
+            s.b->revert();
+            this->close();
+            break;
+        case QMessageBox::Cancel:
+        default:
+            break;
+        }
+    }
+    else {
+        this->close();
+    }
 }
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void SCControls::loadSettings() {
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-    iniFile.beginGroup ( "FSX" );
-    int act = iniFile.value("version", 0).toInt();
-    iniFile.endGroup();
-    ui.comboBox->setCurrentIndex(act);
-	settingsDirty = false;
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void SCControls::save() {
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-    iniFile.beginGroup ( "FSX" );
-    iniFile.setValue("version", ui.comboBox->currentIndex());
-    iniFile.endGroup();
-	settingsDirty = false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
