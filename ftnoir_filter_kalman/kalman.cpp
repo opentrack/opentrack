@@ -9,28 +9,7 @@
 #include <QDebug>
 #include <math.h>
 
-void kalman_load_settings(FTNoIR_Filter&) {
-    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
-    
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );     // Application settings (in INI-file)
-    
-    iniFile.beginGroup("ftnoir-filter-kalman");
-    iniFile.endGroup();
-}
-
-void kalman_save_settings(FilterControls&) {
-    QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
-    
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );     // Application settings (in INI-file)
-    
-    iniFile.beginGroup("ftnoir-filter-kalman");
-    iniFile.endGroup();
-}
-
 FTNoIR_Filter::FTNoIR_Filter() {
-    kalman_load_settings(*this);
     reset();
 }
 
@@ -135,35 +114,11 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 }
 
 void FilterControls::doOK() {
-    kalman_save_settings(*this);
     close();
 }
 
 void FilterControls::doCancel() {
-    if (settingsDirty) {
-        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-        
-        qDebug() << "doCancel says: answer =" << ret;
-        
-        switch (ret) {
-            case QMessageBox::Save:
-                kalman_save_settings(*this);
-                this->close();
-                break;
-            case QMessageBox::Discard:
-                this->close();
-                break;
-            case QMessageBox::Cancel:
-                // Cancel was clicked
-                break;
-            default:
-                // should never be reached
-                break;
-        }
-    }
-    else {
-        this->close();
-    }
+    close();
 }
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
