@@ -21,8 +21,6 @@ class TrackerControls: public QWidget, public ITrackerDialog
     Q_OBJECT
 public:
 	explicit TrackerControls();
-    virtual ~TrackerControls();
-    void Initialize(QWidget *parent) virt_override;
     void registerTracker(ITracker *tracker) virt_override;
     void unRegisterTracker() virt_override;
 private:
@@ -30,7 +28,7 @@ private:
 	FTNoIR_Tracker *theTracker;
 	QTime last_time;
 	
-public  slots:
+public slots:
     void WriteMsgInfo(const QByteArray &MsgInfo);
 
 protected slots:

@@ -275,11 +275,6 @@ TrackerControls::TrackerControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
 }
 
-void TrackerControls::Initialize(QWidget*)
-{
-	show();
-}
-
 void TrackerControls::doOK()
 {
     s.b->save();

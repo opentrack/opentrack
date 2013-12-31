@@ -20,15 +20,6 @@ QWidget()
     tie_setting(s.useYawSpring, ui.yawSpring);
 }
 
-void TrackerControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void TrackerControls::doOK() {
     s.b->save();
 	this->close();

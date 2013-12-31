@@ -83,9 +83,6 @@ class FSUIPCControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit FSUIPCControls();
-    virtual ~FSUIPCControls();
-	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
 	}

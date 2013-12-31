@@ -37,7 +37,7 @@ class FTNoIR_Filter : public IFilter
 public:
 	FTNoIR_Filter();
     void FilterHeadPoseData(const double* target_camera_position, double *new_camera_position);
-    void Initialize() {
+    void reset() {
         first_run = true;
     }
     void receiveSettings() {
@@ -64,7 +64,7 @@ class FilterControls: public QWidget, public IFilterDialog
     Q_OBJECT
 public:
     FilterControls();
-    void Initialize(QWidget *);
+    void reset(QWidget *);
     void registerFilter(IFilter* filter);
     void unregisterFilter();
 private:

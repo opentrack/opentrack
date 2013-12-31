@@ -60,34 +60,11 @@ TrackerControls::~TrackerControls() {
 	qDebug() << "~TrackerControls() says: started";
 }
 
-//
-// Initialize tracker-client-dialog
-//
-void TrackerControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
-// OK clicked on server-dialog
-//
 void TrackerControls::doOK() {
 	save();
 	this->close();
 }
 
-// override show event
-void TrackerControls::showEvent ( QShowEvent * ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void TrackerControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved

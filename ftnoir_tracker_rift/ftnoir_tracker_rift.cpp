@@ -26,8 +26,6 @@ Rift_Tracker::~Rift_Tracker()
     System::Destroy();
 }
 
-
-
 void Rift_Tracker::StartTracker(QFrame*)
 {
     System::Init(Log::ConfigureDefaultLog(LogMask_All));

@@ -147,24 +147,6 @@ TrackerControls::TrackerControls() : theTracker(NULL), timer(this)
 }
 
 //
-// Destructor for server-dialog
-//
-TrackerControls::~TrackerControls() {
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void TrackerControls::Initialize(QWidget *parent) {
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-
-//
 // Center asked to ARDUINO
 //
 void TrackerControls::doCenter() {

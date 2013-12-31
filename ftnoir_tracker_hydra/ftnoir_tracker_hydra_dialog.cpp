@@ -18,15 +18,6 @@ QWidget()
     tie_setting(s.bEnableZ, ui.chkEnableZ);
 }
 
-void TrackerControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void TrackerControls::doOK() {
     s.b->save();
 	this->close();

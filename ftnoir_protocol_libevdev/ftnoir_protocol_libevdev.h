@@ -41,10 +41,6 @@ class LibevdevControls: public QWidget, public IProtocolDialog
 public:
 
     explicit LibevdevControls();
-    virtual ~LibevdevControls();
-    void showEvent ( QShowEvent *) {}
-
-    void Initialize(QWidget *);
     void registerProtocol(IProtocol *) {}
 	void unRegisterProtocol() {}
 

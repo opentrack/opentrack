@@ -58,8 +58,7 @@ inline ITracker::~ITracker() { }
 struct ITrackerDialog
 {
     virtual ~ITrackerDialog() {}
-	virtual void Initialize(QWidget *parent) = 0;
-	virtual void registerTracker(ITracker *tracker) = 0;
+    virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
 
