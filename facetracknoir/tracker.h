@@ -17,7 +17,7 @@
 #include <qfunctionconfigurator/functionconfig.h>
 #include "tracker_types.h"
 #include "facetracknoir/main-settings.hpp"
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes

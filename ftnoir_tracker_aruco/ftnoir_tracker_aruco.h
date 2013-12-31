@@ -18,7 +18,7 @@
 #include <QDialog>
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {

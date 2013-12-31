@@ -5,7 +5,7 @@
 #include <QWaitCondition>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {

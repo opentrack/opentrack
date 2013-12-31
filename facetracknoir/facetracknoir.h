@@ -51,7 +51,7 @@
 
 #include "ui_facetracknoir.h"
 
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 #include "facetracknoir/main-settings.hpp"
