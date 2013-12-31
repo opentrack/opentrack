@@ -34,155 +34,87 @@
 // Constructor for server-settings-dialog
 //
 FTControls::FTControls() :
-QWidget()
+    QWidget()
 {
-	QString aFileName;														// File Path and Name
+    QString aFileName;														// File Path and Name
 
-	ui.setupUi( this );
+    ui.setupUi( this );
 
-	// Connect Qt signals to member-functions
+    // Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-	connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
-	connect(ui.chkTIRViews, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.chkStartDummy, SIGNAL(stateChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.cbxSelectInterface, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
+    connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-	ui.cbxSelectInterface->addItem("Enable both");
-	ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
-	ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
+    tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
+    tie_setting(s.useDummyExe, ui.chkStartDummy);
+    tie_setting(s.useTIRViews, ui.chkTIRViews);
 
-	theProtocol = NULL;
+    ui.cbxSelectInterface->addItem("Enable both");
+    ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
+    ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
 
-	// Load the settings from the current .INI-file
-	loadSettings();
-
-
-	aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
-	if ( !QFile::exists( aFileName ) ) {
-		ui.chkTIRViews->setChecked( false );
-		ui.chkTIRViews->setEnabled ( false );
-
-		//
-		// Best do this save() last, or it will continually reset the settings... :-(
-		//
-		save();
-	}
-	else {
-		ui.chkTIRViews->setEnabled ( true );
-	}
-
-
+    aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
+    if ( !QFile::exists( aFileName ) ) {
+        ui.chkTIRViews->setChecked( false );
+        ui.chkTIRViews->setEnabled ( false );
+    }
+    else {
+        ui.chkTIRViews->setEnabled ( true );
+    }
 }
 
 void FTControls::doOK() {
-	save();
-	this->close();
+    s.b->save();
+    this->close();
 }
 
 void FTControls::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+    //
+    // Ask if changed Settings should be saved
+    //
+    if (s.b->modifiedp()) {
+        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
-		qDebug() << "doCancel says: answer =" << ret;
+        qDebug() << "doCancel says: answer =" << ret;
 
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
+        switch (ret) {
+        case QMessageBox::Save:
+            s.b->save();
+            this->close();
+            break;
+        case QMessageBox::Discard:
+            s.b->revert();
+            this->close();
+            break;
+        case QMessageBox::Cancel:
+            // Cancel was clicked
+            break;
+        default:
+            // should never be reached
+            break;
+        }
+    }
+    else {
+        this->close();
+    }
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTControls::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "FT" );
-	ui.cbxSelectInterface->setCurrentIndex( iniFile.value ( "UsedInterface", 0 ).toInt() );
-	iniFile.endGroup ();
-
-	iniFile.beginGroup ( "FTIR" );
-	ui.chkTIRViews->setChecked (iniFile.value ( "useTIRViews", 0 ).toBool());
-	ui.chkStartDummy->setChecked (iniFile.value ( "useDummyExe", 0 ).toBool());
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void FTControls::save() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FT" );
-	iniFile.setValue ( "UsedInterface", ui.cbxSelectInterface->currentIndex());
-	iniFile.endGroup ();
-
-	iniFile.beginGroup ( "FTIR" );
-	iniFile.setValue ( "useTIRViews", ui.chkTIRViews->isChecked() );
-	iniFile.setValue ( "useDummyExe", ui.chkStartDummy->isChecked() );
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-//
-// Select a NPClient.dll file, to repair the Location in the Registry.
-// Several program distribute their own version of this file.
-//
 void FTControls::selectDLL() {
     QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
 
-	//
-	// Write the location of the file in the required Registry-key.
-	//
-	if (! fileName.isEmpty() ) {
-		if (fileName.endsWith("NPClient.dll", Qt::CaseInsensitive) ) {
-			QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");			// Registry settings (in HK_USER)
-			QString aLocation = fileName.left(fileName.length() - 12);							// Location of Client DLL
+    //
+    // Write the location of the file in the required Registry-key.
+    //
+    if (! fileName.isEmpty() ) {
+        if (fileName.endsWith("NPClient.dll", Qt::CaseInsensitive) ) {
+            QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");			// Registry settings (in HK_USER)
+            QString aLocation = fileName.left(fileName.length() - 12);							// Location of Client DLL
 
-			settingsTIR.setValue( "Path" , aLocation );
-		}
-	}
+            settingsTIR.setValue( "Path" , aLocation );
+        }
+    }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
     return new FTControls;
