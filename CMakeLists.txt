@@ -1,6 +1,8 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8)
 
+include(CMakeParseArguments)
+
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
 include(GetGitRevisionDescription)
 find_package(Git QUIET)
@@ -41,7 +43,6 @@ SET(CMAKE_SKIP_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOMOC_RELAXED_MODE ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
@@ -189,6 +190,21 @@ macro(opentrack_module n dir)
     QT5_ADD_RESOURCES(${n}-rcc ${${n}-rc})
 endmacro()
 
+macro(opentrack_library n)
+    cmake_parse_arguments(lib- "" "LINK COMPILE" "" ${ARGN})
+    add_library(${n} SHARED ${${n}-c} ${${n}-uih} ${${n}-rcc})
+    target_link_libraries(${n} ${MY_QT_LIBS})
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+        SET_TARGET_PROPERTIES(${n} PROPERTIES
+            LINK_FLAGS "${lib-LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
+            COMPILE_FLAGS "${lib-COMPILE}"
+            )
+    else()
+        set_target_properties(${n} PROPERTIES LINK_FLAGS "${lib-LINK}" COMPILE_FLAGS "${lib-COMPILE}")
+    endif()
+    install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
+endmacro()
+
 file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp" "opentrack-api/*.h" "facetracknoir/global-settings.h")
 
 opentrack_module(opentrack-bin facetracknoir)
@@ -208,7 +224,9 @@ opentrack_module(opentrack-proto-fsuipc ftnoir_protocol_fsuipc)
 opentrack_module(opentrack-proto-freetrack ftnoir_protocol_ft)
 opentrack_module(opentrack-proto-udp ftnoir_protocol_ftn)
 opentrack_module(opentrack-proto-wine ftnoir_protocol_wine)
-opentrack_module(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
+if(WIN32)
+    opentrack_module(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
+endif()
 opentrack_module(opentrack-proto-simconnect ftnoir_protocol_sc)
 opentrack_module(opentrack-proto-vjoy ftnoir_protocol_vjoy)
 opentrack_module(opentrack-proto-libevdev ftnoir_protocol_libevdev)
@@ -299,117 +317,65 @@ target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c})
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
-add_library(opentrack-filter-accela SHARED ${opentrack-filter-accela-c} ${opentrack-filter-accela-uih} ${opentrack-filter-accela-rcc})
-target_link_libraries(opentrack-filter-accela ${MY_QT_LIBS})
+opentrack_library(opentrack-filter-accela)
+opentrack_library(opentrack-filter-kalman)
+opentrack_library(opentrack-filter-ewma)
 
-add_library(opentrack-filter-kalman SHARED ${opentrack-filter-kalman-c} ${opentrack-filter-kalman-uih} ${opentrack-filter-kalman-rcc})
-target_link_libraries(opentrack-filter-kalman ${MY_QT_LIBS} ${OpenCV_LIBS})
+target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
 
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-filter-kalman
-    PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
+opentrack_library(opentrack-proto-fgfs)
 
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-filter-accela
-    PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
-
-add_library(opentrack-filter-ewma SHARED ${opentrack-filter-ewma-uih} ${opentrack-filter-ewma-c} ${opentrack-filter-ewma-rcc})
-target_link_libraries(opentrack-filter-ewma ${MY_QT_LIBS})
-
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-filter-ewma
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
-
-add_library(opentrack-proto-fgfs SHARED ${opentrack-proto-fgfs-c} ${opentrack-proto-fgfs-uih} ${opentrack-proto-fgfs-rcc})
-target_link_libraries(opentrack-proto-fgfs ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-proto-fgfs
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
-
-if(WIN32 AND SDK_VJOY)
+if(SDK_VJOY)
     include_directories(${SDK_VJOY})
-    add_library(opentrack-proto-vjoy SHARED ${opentrack-proto-vjoy-c} ${opentrack-proto-vjoy-uih} ${opentrack-proto-vjoy-rcc})
+    opentrack_library(opentrack-proto-vjoy)
     if(MSVC)
         target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.lib")
     else()
         target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
     endif()
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-proto-vjoy
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt -Wl,--enable-stdcall-fixup")
-    endif()
 endif()
 
-if(UNIX AND SDK_ENABLE_LIBEVDEV)
-    add_library(opentrack-proto-libevdev SHARED ${opentrack-proto-libevdev-c} ${opentrack-proto-libevdev-uih} ${opentrack-proto-libevdev-rcc})
-    target_link_libraries(opentrack-proto-libevdev ${MY_QT_LIBS} evdev)
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-proto-libevdev
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
+if(SDK_ENABLE_LIBEVDEV)
+    opentrack_library(opentrack-proto-libevdev)
+    target_link_libraries(opentrack-proto-libevdev evdev)
+endif()
+
+if(SDK_FSUIPC)
+    if(MSVC)
+            set(link-flags "/NODEFAULTLIB:libc")
     endif()
-    install(TARGETS opentrack-proto-libevdev RUNTIME DESTINATION . LIBRARY DESTINATION .  )
+    opentrack_library(opentrack-proto-fsuipc LINK "${link-flags}")
+    target_link_libraries(opentrack-proto-fsuipc "${SDK_FSUIPC}/FSUIPC_User.lib")
+endif()
+
+if(SDK_SIMCONNECT)
+    opentrack_library(opentrack-proto-simconnect)
+    include_directories("${SDK_SIMCONNECT}/inc")
+    target_link_libraries(opentrack-proto-simconnect "${SDK_SIMCONNECT}/lib/SimConnect.lib")
 endif()
 
 if(WIN32)
-    if(SDK_FSUIPC)
-        add_library(opentrack-proto-fsuipc SHARED ${opentrack-proto-fsuipc-c} ${opentrack-proto-fsuipc-uih} ${opentrack-proto-fsuipc-rcc})
-        target_link_libraries(opentrack-proto-fsuipc ${MY_QT_LIBS} "${SDK_FSUIPC}/FSUIPC_User.lib")
-        if(MSVC)
-                set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc")
-        else()
-                set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "-Wl,--exclude-all-symbols")
-        endif()
-    endif()
+    opentrack_library(opentrack-proto-freetrack)
+    target_link_libraries(opentrack-proto-freetrack opentrack-csv opentrack-compat)
+endif()
 
-    if(SDK_SIMCONNECT)
-        add_library(opentrack-proto-simconnect SHARED ${opentrack-proto-simconnect-c} ${opentrack-proto-simconnect-uih} ${opentrack-proto-simconnect-rcc})
-        target_link_libraries(opentrack-proto-simconnect ${MY_QT_LIBS})
-        include_directories("${SDK_SIMCONNECT}/inc")
-        target_link_libraries(opentrack-proto-simconnect "${SDK_SIMCONNECT}/lib/SimConnect.lib")
-    endif()
+opentrack_library(opentrack-proto-win32-mouse)
 
-    add_library(opentrack-proto-freetrack SHARED ${opentrack-proto-freetrack-c} ${opentrack-proto-freetrack-uih} ${opentrack-proto-freetrack-rcc})
-    target_link_libraries(opentrack-proto-freetrack opentrack-csv ${MY_QT_LIBS} opentrack-compat)
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-proto-freetrack
-            PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-    endif()
-
-    add_library(opentrack-proto-win32-mouse SHARED ${opentrack-proto-win32-mouse-c} ${opentrack-proto-win32-mouse-uih} ${opentrack-proto-win32-mouse-rcc})
-    target_link_libraries(opentrack-proto-win32-mouse ${MY_QT_LIBS})
+if(WIN32)
     add_library(freetrackclient SHARED ${opentrack-freetrack-c})
     if(CMAKE_COMPILER_IS_GNUCC)
         set_target_properties(freetrackclient PROPERTIES LINK_FLAGS "-Wl,--enable-stdcall-fixup -fno-lto -Wl,-kill-at" PREFIX "" COMPILE_FLAGS "-fno-lto")
     endif()
 endif()
 
-add_library(opentrack-proto-udp SHARED ${opentrack-proto-udp-c} ${opentrack-proto-udp-uih} ${opentrack-proto-udp-rcc})
-target_link_libraries(opentrack-proto-udp ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-proto-udp
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
+opentrack_library(opentrack-proto-udp)
 
 if(WIN32)
-    add_library(opentrack-tracker-joystick SHARED ${opentrack-tracker-joystick-c} ${opentrack-tracker-joystick-uih} ${opentrack-tracker-joystick-rcc})
-    target_link_libraries(opentrack-tracker-joystick ${MY_QT_LIBS})
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-tracker-joystick
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-    endif()
+    opentrack_library(opentrack-tracker-joystick)
 endif()
 
-if(NOT WIN32 AND SDK_WINE_PREFIX)
-    add_library(opentrack-proto-wine SHARED ${opentrack-proto-wine-c} ${opentrack-proto-wine-uih} ${opentrack-proto-wine-rcc})
-    target_link_libraries(opentrack-proto-wine ${MY_QT_LIBS} opentrack-compat opentrack-csv)
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-proto-wine
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-    endif()
+if(SDK_WINE_PREFIX)
+    opentrack_library(opentrack-proto-wine)
     if(NOT SDK_WINE_NO_WRAPPER)
 	set(my-rt -lrt)
 	if(APPLE)
@@ -431,26 +397,13 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
     endif()
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-proto-fgfs
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
-
-add_library(opentrack-tracker-ht SHARED ${opentrack-tracker-ht-c} ${opentrack-tracker-ht-uih} ${opentrack-tracker-ht-rcc})
-target_link_libraries(opentrack-tracker-ht ${MY_QT_LIBS} opentrack-compat)
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-tracker-ht
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
+opentrack_library(opentrack-tracker-ht)
+target_link_libraries(opentrack-tracker-ht opentrack-compat)
 
 if(SDK_ARUCO_LIBPATH)
     include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
-    add_library(opentrack-tracker-aruco SHARED ${opentrack-tracker-aruco-c} ${opentrack-tracker-aruco-uih} ${opentrack-tracker-aruco-rcc})
-    target_link_libraries(opentrack-tracker-aruco ${MY_QT_LIBS} ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-tracker-aruco
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-    endif()
+    opentrack_library(opentrack-tracker-aruco)
+    target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
     if(WIN32 AND MSVC)
         target_link_libraries(opentrack-tracker-aruco
                       "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
@@ -459,15 +412,7 @@ if(SDK_ARUCO_LIBPATH)
     endif()
 endif()
 
-if(SDK_HATIRE)
-    add_library(opentrack-tracker-hatire SHARED ${opentrack-tracker-hatire-c} ${opentrack-tracker-hatire-uih} ${opentrack-tracker-hatire-rcc})
-    target_link_libraries(opentrack-tracker-hatire ${MY_QT_LIBS})
-    install(TARGETS opentrack-tracker-hatire RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-tracker-hatire
-                      PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-    endif()
-endif()
+opentrack_library(opentrack-tracker-hatire)
 
 if(WIN32)
     target_link_libraries(opentrack-tracker-ht
@@ -481,18 +426,8 @@ if(WIN32)
                   uuid)
 endif()
 
-add_library(opentrack-tracker-pt SHARED ${opentrack-tracker-pt-c} ${opentrack-tracker-pt-uih} ${opentrack-tracker-pt-rcc})
-target_link_libraries(opentrack-tracker-pt ${MY_QT_LIBS} ${OpenCV_LIBS})
-
-if(APPLE)
-	SET_TARGET_PROPERTIES(opentrack-tracker-pt PROPERTIES COMPILE_FLAGS "-std=c++11")
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-	SET_TARGET_PROPERTIES(opentrack-tracker-pt
-		PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
-
+opentrack_library(opentrack-tracker-pt)
+target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 
 if(WIN32)
     target_link_libraries(opentrack-tracker-pt
@@ -501,50 +436,44 @@ if(WIN32)
                   uuid)
 endif()
 
-add_library(opentrack-tracker-udp SHARED ${opentrack-tracker-udp-c} ${opentrack-tracker-udp-uih} ${opentrack-tracker-udp-rcc})
-target_link_libraries(opentrack-tracker-udp ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-tracker-udp
-              PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-endif()
+opentrack_library(opentrack-tracker-udp)
 
 if(SDK_RIFT)
     include_directories("${SDK_RIFT}/Include")
     include_directories("${SDK_RIFT}/Src")
-    add_library(opentrack-tracker-rift SHARED ${opentrack-tracker-rift-c} ${opentrack-tracker-rift-uih} ${opentrack-tracker-rift-rcc})
-    target_link_libraries(opentrack-tracker-rift ${MY_QT_LIBS})
-            if(MSVC)
-                    target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/Lib/Win32/libovr.lib" winmm.lib setupapi.lib)
-                    set_target_properties(opentrack-tracker-rift PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT")
-            else()
-                if(WIN32)
-                    target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm.lib setupapi.lib)
-                else()
-                    if(NOT APPLE)
-                        target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
-                    else()
-                        target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
-                    endif()
-                endif()
-            endif()
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-tracker-rift
-                  PROPERTIES
-                  LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
-                  COMPILE_FLAGS "-fno-strict-aliasing"
-        )
-    endif()
-        if(APPLE)
-            SET_TARGET_PROPERTIES(opentrack-tracker-rift
-                                  PROPERTIES LINK_FLAGS "-framework CoreFoundation -framework CoreGraphics -framework IOKit -framework Quartz")
+    set(link-flags)
+    if(APPLE)
+        set(link-flags "-framework CoreFoundation -framework CoreGraphics -framework IOKit -framework Quartz")
+    else()
+        if(MSVC)
+            set(link-flags "/NODEFAULTLIB:LIBCMT")
         endif()
     endif()
+    if(NOT MSVC)
+        set(c-flags -fno-strict-aliasing)
+    else()
+        set(c-flags)
+    endif()
+    opentrack_library(opentrack-tracker-rift LINK "${link-flags}" COMPILE "${c-flags}")
+    if(MSVC)
+            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/Lib/Win32/libovr.lib" winmm.lib setupapi.lib)
+    else()
+        if(WIN32)
+            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm setupapi)
+        else()
+            if(NOT APPLE)
+                target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
+            else()
+                target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
+            endif()
+        endif()
+    endif()
+endif()
 
 if(SDK_HYDRA)
     include_directories("${SDK_HYDRA}/include")
     include_directories("${SDK_HYDRA}/include/sixense_utils")
-    add_library(opentrack-tracker-hydra SHARED ${opentrack-tracker-hydra-c} ${opentrack-tracker-hydra-uih} ${opentrack-tracker-hydra-rcc})
-    target_link_libraries(opentrack-tracker-hydra ${MY_QT_LIBS})
+    opentrack_library(opentrack-tracker-hydra)
     if(WIN32)
         target_link_libraries(opentrack-tracker-hydra
             "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib"
@@ -572,10 +501,6 @@ if(SDK_HYDRA)
                     )
                     target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
     endif()
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-        SET_TARGET_PROPERTIES(opentrack-tracker-hydra
-                  PROPERTIES LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt")
-            endif()
 endif()
 
 if(WIN32 AND NOT SDK_CONSOLE_DEBUG)
@@ -655,11 +580,13 @@ install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION .)
 if(SDK_XPLANE)
     install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
+
 if(WIN32)
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/tracker-ht" DESTINATION .)
     install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
-    install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
+
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 
 install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetracknoir/clientfiles" DESTINATION .)
@@ -667,69 +594,24 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetr
 if(NOT WIN32 AND SDK_WINE_PREFIX)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
             DESTINATION .)
-        install(TARGETS opentrack-proto-wine RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-endif()
-
-install(TARGETS opentrack-tracker-pt RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-
-if(SDK_ARUCO_LIBPATH)
-    install(TARGETS opentrack-tracker-aruco RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 install(TARGETS
-        opentrack-proto-fgfs
-        opentrack-proto-udp
         opentrack-api
         opentrack-compat
         opentrack-csv
         opentrack-pose-widget
         opentrack-spline-widget
-        opentrack-filter-accela
-        opentrack-filter-kalman
-        opentrack-filter-ewma
-        opentrack-tracker-ht
-        opentrack-tracker-udp
         RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 
-install(TARGETS
-        opentrack
-        DESTINATION .
-)
+install(TARGETS opentrack DESTINATION .)
 
-if(WIN32)
-    install(TARGETS opentrack-tracker-joystick RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-endif()
-
-if(WIN32 AND SDK_VJOY)
-    install(TARGETS opentrack-proto-vjoy RUNTIME DESTINATION . LIBRARY DESTINATION .  )
+if(SDK_VJOY)
     install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
-endif()
-
-if(SDK_RIFT)
-    install(TARGETS opentrack-tracker-rift RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-endif()
-
-if(SDK_HYDRA)
-    install(
-        TARGETS opentrack-tracker-hydra
-        RUNTIME DESTINATION . LIBRARY DESTINATION .  
-    )
 endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
-    if(SDK_SIMCONNECT)
-        install(TARGETS opentrack-proto-simconnect RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-    endif()
-    install(TARGETS
-            opentrack-proto-freetrack
-            opentrack-proto-win32-mouse
-            RUNTIME DESTINATION . LIBRARY DESTINATION .  
-    )
-    if(SDK_FSUIPC)
-        install(TARGETS opentrack-proto-fsuipc RUNTIME DESTINATION . LIBRARY DESTINATION .)
-    endif()
-
 endif()
 
 if(MSVC)
