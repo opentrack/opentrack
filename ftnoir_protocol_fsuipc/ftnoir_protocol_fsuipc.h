@@ -41,12 +41,20 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
+#include "facetracknoir/options.h"
+using namespace options;
 
 #define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"
 
-//
-// Define the structures necessary for the FSUIPC_Write calls
-//
+struct settings {
+    pbundle b;
+    value<QString> LocationOfDLL;
+    settings() :
+        b(bundle("proto-fsuipc")),
+        LocationOfDLL(b, "dll-location", FSUIPC_FILENAME)
+    {}
+};
+
 #pragma pack(push,1)		// All fields in structure must be byte aligned.
 typedef struct
 {
@@ -59,50 +67,32 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    virtual ~FTNoIR_Protocol() virt_override;
     bool checkServerInstallationOK();
     void sendHeadposeToGame(const double* headpose);
     QString getGameName() {
         return "Microsoft Flight Simulator X";
     }
 private:
-	// Private properties
-	QString ProgramName;
 	QLibrary FSUIPCLib;
-	QString LocationOfDLL;
-	float prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
-
+    double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+    settings s;
 	static int scale2AnalogLimits( float x, float min_x, float max_x );
-	void loadSettings();
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class FSUIPCControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-	explicit FSUIPCControls();
-	void registerProtocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	}
-	void unRegisterProtocol() {
-		theProtocol = NULL;									// Reset the pointer
-	}
-
+    FSUIPCControls();
+    void registerProtocol(IProtocol *protocol) {}
+    void unRegisterProtocol() {}
 private:
 	Ui::UICFSUIPCControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FTNoIR_Protocol *theProtocol;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
 	void getLocationOfDLL();
 };
 
@@ -112,14 +102,10 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FS2002/FS2004"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FSUIPC"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft FS2004 protocol"); };
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fs9.png"); };
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FS2002/FS2004"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FSUIPC"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft FS2004 protocol"); }
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fs9.png"); }
 };
 
 
