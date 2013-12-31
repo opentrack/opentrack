@@ -30,7 +30,7 @@ private:
     volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
-    FunctionConfig(const FunctionConfig&) {}
+    FunctionConfig(const FunctionConfig&) = delete;
 public:
 	//
 	// Contructor(s) and destructor
