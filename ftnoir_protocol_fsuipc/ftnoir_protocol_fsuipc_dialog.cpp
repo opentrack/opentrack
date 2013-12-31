@@ -29,8 +29,6 @@ FSUIPCControls::FSUIPCControls() :
     QWidget()
 {
     ui.setupUi( this );
-
-    // Connect Qt signals to member-functions
     connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
     connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
     connect(ui.btnFindDLL, SIGNAL(clicked()), this, SLOT(getLocationOfDLL()));
@@ -43,11 +41,7 @@ void FSUIPCControls::doOK() {
     this->close();
 }
 
-
 void FSUIPCControls::doCancel() {
-    //
-    // Ask if changed Settings should be saved
-    //
     if (s.b->modifiedp()) {
         int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
 
@@ -74,9 +68,6 @@ void FSUIPCControls::doCancel() {
 
 void FSUIPCControls::getLocationOfDLL()
 {
-    //
-    // Get the new filename of the INI-file.
-    //
     QString fileName = QFileDialog::getOpenFileName(this, tr("Locate file"),
                                                     ui.txtLocationOfDLL->text(),
                                                     tr("FSUIPC DLL file (FSUIPC*.dll);;All Files (*)"));
