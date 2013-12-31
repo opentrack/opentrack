@@ -26,41 +26,14 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #include "ftnoir_protocol_fg.h"
-#include <QFile>
 #include "facetracknoir/global-settings.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
 // For Todd and Arda Kutlu
 
-FTNoIR_Protocol::FTNoIR_Protocol()
+void FTNoIR_Protocol::reloadSettings()
 {
-    loadSettings();
-}
-
-FTNoIR_Protocol::~FTNoIR_Protocol()
-{
-}
-
-void FTNoIR_Protocol::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FG" );
-
-	bool blnLocalPC = iniFile.value ( "LocalPCOnly", 1 ).toBool();
-	if (blnLocalPC) {
-        destIP = QHostAddress::LocalHost;
-	}
-	else {
-		QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
-		destIP = QHostAddress( destAddr );
-	}
-    destPort = iniFile.value ( "PortNumber", 5542 ).toInt();
-
-	iniFile.endGroup ();
-
+    s.b->reload();
 }
 
 void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
@@ -71,13 +44,15 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     FlightData.h = headpose[Yaw];
     FlightData.r = headpose[Roll];
     FlightData.status = 1;
+    QHostAddress destIP(QString("%1.%2.%3.%4").arg(
+                            QString::number(static_cast<int>(s.ip1)),
+                            QString::number(static_cast<int>(s.ip2)),
+                            QString::number(static_cast<int>(s.ip3)),
+                            QString::number(static_cast<int>(s.ip4))));
+    int destPort = s.port;
     (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(destPort));
 }
 
-//
-// Check if the Client DLL exists and load it (to test it), if so.
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
