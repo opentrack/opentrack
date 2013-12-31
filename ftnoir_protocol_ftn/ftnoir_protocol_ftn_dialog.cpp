@@ -23,44 +23,28 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_protocol_ftn.h"
-#include <QDebug>
 #include "facetracknoir/global-settings.h"
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
 FTNControls::FTNControls() :
-QWidget()
+    QWidget()
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
-	QPoint offsetpos(100, 100);
-	//if (parent) {
-	//	this->move(parent->pos() + offsetpos);
-	//}
+    tie_setting(s.ip1, ui.spinIPFirstNibble);
+    tie_setting(s.ip2, ui.spinIPSecondNibble);
+    tie_setting(s.ip3, ui.spinIPThirdNibble);
+    tie_setting(s.ip4, ui.spinIPFourthNibble);
+    tie_setting(s.port, ui.spinPortNumber);
 
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.spinIPFirstNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.spinIPSecondNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.spinIPThirdNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.spinIPFourthNibble, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-	connect(ui.spinPortNumber, SIGNAL(valueChanged(int)), this, SLOT(settingChanged()));
-
-	// Load the settings from the current .INI-file
-	loadSettings();
+    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 }
 
 //
 // OK clicked on server-dialog
 //
 void FTNControls::doOK() {
-	save();
+    s.b->save();
 	this->close();
 }
 
@@ -68,27 +52,19 @@ void FTNControls::doOK() {
 // Cancel clicked on server-dialog
 //
 void FTNControls::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
+    if (s.b->modifiedp()) {
+        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 		switch (ret) {
 			case QMessageBox::Save:
-				save();
+                s.b->save();
 				this->close();
 				break;
 			case QMessageBox::Discard:
+                s.b->revert();
 				this->close();
 				break;
 			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
 			default:
-				// should never be reached
 			break;
 		}
 	}
@@ -96,59 +72,6 @@ void FTNControls::doCancel() {
 		this->close();
 	}
 }
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNControls::loadSettings() {
-//	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-//	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "FTN" );
-	ui.spinIPFirstNibble->setValue( iniFile.value ( "IP-1", 192 ).toInt() );
-	ui.spinIPSecondNibble->setValue( iniFile.value ( "IP-2", 168 ).toInt() );
-	ui.spinIPThirdNibble->setValue( iniFile.value ( "IP-3", 2 ).toInt() );
-	ui.spinIPFourthNibble->setValue( iniFile.value ( "IP-4", 1 ).toInt() );
-
-	ui.spinPortNumber->setValue( iniFile.value ( "PortNumber", 5550 ).toInt() );
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void FTNControls::save() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FTN" );
-	iniFile.setValue ( "IP-1", ui.spinIPFirstNibble->value() );
-	iniFile.setValue ( "IP-2", ui.spinIPSecondNibble->value() );
-	iniFile.setValue ( "IP-3", ui.spinIPThirdNibble->value() );
-	iniFile.setValue ( "IP-4", ui.spinIPFourthNibble->value() );
-	iniFile.setValue ( "PortNumber", ui.spinPortNumber->value() );
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
