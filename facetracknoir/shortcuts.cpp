@@ -12,177 +12,61 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
     mainApp = ftnoir;											// Preserve a pointer to FTNoIR
 
     // Connect Qt signals to member-functions
-    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     for ( int i = 0; i < global_key_sequences.size(); i++) {
         ui.cbxCenterKey->addItem(global_key_sequences.at(i));
         ui.cbxToggleKey->addItem(global_key_sequences.at(i));
     }
 
-    loadSettings();
-}
+    tie_setting(mainApp->s.center_key.key_index, ui.cbxCenterKey);
+    tie_setting(mainApp->s.center_key.alt, ui.chkCenterAlt);
+    tie_setting(mainApp->s.center_key.shift, ui.chkCenterShift);
+    tie_setting(mainApp->s.center_key.ctrl, ui.chkCenterCtrl);
 
-//
-// Destructor for server-dialog
-//
-KeyboardShortcutDialog::~KeyboardShortcutDialog() {
-    qDebug() << "~KeyboardShortcutDialog() says: started";
+    tie_setting(mainApp->s.toggle_key.key_index, ui.cbxToggleKey);
+    tie_setting(mainApp->s.toggle_key.alt, ui.chkToggleAlt);
+    tie_setting(mainApp->s.toggle_key.shift, ui.chkToggleShift);
+    tie_setting(mainApp->s.toggle_key.ctrl, ui.chkToggleCtrl);
 }
 
 //
 // OK clicked on server-dialog
 //
 void KeyboardShortcutDialog::doOK() {
-    save();
+    mainApp->b->save();
     this->close();
     if (mainApp->tracker)
         mainApp->bindKeyboardShortcuts();
 }
 
-void KeyboardShortcutDialog::showEvent ( QShowEvent * ) {
-    loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void KeyboardShortcutDialog::doCancel() {
     //
     // Ask if changed Settings should be saved
     //
-    if (settingsDirty) {
-        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+    if (mainApp->b->modifiedp()) {
+        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
         qDebug() << "doCancel says: answer =" << ret;
 
         switch (ret) {
             case QMessageBox::Save:
-                save();
+                mainApp->b->save();
                 this->close();
                 break;
             case QMessageBox::Discard:
-                this->close();
+                mainApp->b->revert();
+                close();
                 break;
             case QMessageBox::Cancel:
-                // Cancel was clicked
-                break;
             default:
-                // should never be reached
             break;
         }
     }
     else {
         this->close();
     }
-}
-
-void KeyboardShortcutDialog::loadSettings() {
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-    iniFile.beginGroup ( "KB_Shortcuts" );
-
-    const char* names[] = {
-        "Center", "Toggle"
-    };
-
-    QComboBox* comboboxen[] = {
-        ui.cbxCenterKey,
-        ui.cbxToggleKey
-    };
-
-    QCheckBox* boxen[2][3] = {
-        {
-            ui.chkCenterShift,
-            ui.chkCenterCtrl,
-            ui.chkCenterAlt
-        },
-        {
-            ui.chkToggleShift,
-            ui.chkToggleCtrl,
-            ui.chkToggleAlt
-        }
-    };
-
-    const char* modnames[] = {
-        "Shift", "Ctrl", "Alt"
-    };
-
-    const char* keynames[] = {
-        "Center", "Toggle"
-    };
-
-    const int KEY_COUNT = 2;
-    const int MODIFIERS = 3;
-
-    for (int i = 0; i < KEY_COUNT; i++)
-    {
-        for (int m = 0; m < MODIFIERS; m++)
-        {
-            boxen[i][m]->setChecked (iniFile.value ( QString("%1_%2").arg(modnames[m], keynames[i]), 0).toBool());
-        }
-        comboboxen[i]->setCurrentIndex(iniFile.value(QString("Key_index_%1").arg(names[i]), 0).toInt());
-    }
-
-    iniFile.endGroup ();
-
-    settingsDirty = false;
-}
-
-void KeyboardShortcutDialog::save() {
-    const char* keynames[] = {
-        "Center", "Toggle"
-    };
-
-    QComboBox* comboboxen[] = {
-        ui.cbxCenterKey,
-        ui.cbxToggleKey
-    };
-
-    const char* modnames[] = {
-        "Shift", "Ctrl", "Alt"
-    };
-
-    QCheckBox* boxen[2][3] = {
-        {
-            ui.chkCenterShift,
-            ui.chkCenterCtrl,
-            ui.chkCenterAlt
-        },
-        {
-            ui.chkToggleShift,
-            ui.chkToggleCtrl,
-            ui.chkToggleAlt
-        }
-    };
-
-    const int MODIFIERS = 3;
-    const int KEY_COUNT = 2;
-
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    iniFile.beginGroup ( "KB_Shortcuts" );
-
-    for (int i = 0; i < KEY_COUNT; i++)
-    {
-        for (int m = 0; m < MODIFIERS; m++)
-        {
-            iniFile.setValue(QString("%1_%2").arg(modnames[m], keynames[i]), boxen[i][m]->isChecked());
-        }
-        iniFile.setValue(QString("Key_index_%1").arg(keynames[i]), comboboxen[i]->currentIndex());
-    }
-
-    iniFile.endGroup();
-
-    settingsDirty = false;
 }
 
 #if defined(_WIN32)

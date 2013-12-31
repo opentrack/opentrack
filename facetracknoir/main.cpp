@@ -30,6 +30,7 @@
 #include <QList>
 #include <QDir>
 #include <QStringList>
+#include <memory>
 
 #if defined(_WIN32) && defined(_MSC_VER)
 #   include <windows.h>
@@ -61,11 +62,9 @@ int main(int argc, char** argv)
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
-    FaceTrackNoIR w;
-    QDesktopWidget desktop;
+    auto w = std::make_shared<FaceTrackNoIR>();
 
-    w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
-	w.show();
+    w->show();
     app.exec();
 
 	return 0;
