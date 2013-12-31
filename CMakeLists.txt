@@ -264,12 +264,6 @@ if(QT_USE_FILE)
     INCLUDE(${QT_USE_FILE})
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    SET (CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS_INIT} -rdynamic CACHE STRING "Flags used by the linker during the creation of dll's.")
-    SET (CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS_INIT} -rdynamic CACHE STRING "Flags used by the linker during the creation of modules.")
-    SET (CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS_INIT} -rdynamic CACHE STRING "Flags used by the linker during the creation of modules.")
-endif()
-
 add_library(opentrack-compat SHARED ${opentrack-compat-c})
 if(NOT WIN32 AND NOT APPLE)
     target_link_libraries(opentrack-compat rt)
