@@ -1,5 +1,4 @@
-
-Windows binary builds are available at <http://ananke.laggy.pk/opentrack/>
+Windows binary builds are available at <http://ts3.cosaofficial.pl/opentrack/>
 
 Source code access available at <http://github.com/opentrack/opentrack/>
 
