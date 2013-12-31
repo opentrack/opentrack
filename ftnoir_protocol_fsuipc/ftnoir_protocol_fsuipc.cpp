@@ -30,32 +30,22 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	loadSettings();
-	ProgramName = "Microsoft FS2004";
-
-	prevPosX = 0.0f;
-	prevPosY = 0.0f;
-	prevPosZ = 0.0f;
-	prevRotX = 0.0f;
-	prevRotY = 0.0f;
-	prevRotZ = 0.0f;
+    prevPosX = 0.0;
+    prevPosY = 0.0;
+    prevPosZ = 0.0;
+    prevRotX = 0.0;
+    prevRotY = 0.0;
+    prevRotZ = 0.0;
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	//
-	// Free the DLL
-	//
-	FSUIPCLib.unload();
+    FSUIPCLib.unload();
 }
 
-//
-// Scale the measured value to the Joystick values
-//
 int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
-double y;
-double local_x;
+    double y;
+    double local_x;
 	
 	local_x = x;
 	if (local_x > max_x) {
@@ -69,40 +59,20 @@ double local_x;
 	return (int) y;
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Protocol::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FSUIPC" );
-	LocationOfDLL = iniFile.value ( "LocationOfDLL", FSUIPC_FILENAME ).toString();
-	qDebug() << "FSUIPCServer::loadSettings() says: Location of DLL = " << LocationOfDLL;
-	iniFile.endGroup ();
-}
-
-//
-// Update Headpose in Game.
-//
 void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
-DWORD result;
-TFSState pitch;
-TFSState yaw;
-TFSState roll;
-WORD FSZoom;
+    DWORD result;
+    TFSState pitch;
+    TFSState yaw;
+    TFSState roll;
+    WORD FSZoom;
 
-float virtPosX;
-float virtPosY;
-float virtPosZ;
+    float virtPosX;
+    float virtPosY;
+    float virtPosZ;
 
-float virtRotX;
-float virtRotY;
-float virtRotZ;
-
-//	qDebug() << "FSUIPCServer::run() says: started!";
+    float virtRotX;
+    float virtRotY;
+    float virtRotZ;
 
     virtRotX = -headpose[Pitch];				// degrees
     virtRotY = headpose[Yaw];
@@ -112,17 +82,11 @@ float virtRotZ;
 	virtPosY = 0.0f;
     virtPosZ = headpose[TZ];
 
-	//
-	// Init. the FSUIPC offsets (derived from Free-track...)
-	//
 	pitch.Control = 66503;
 	yaw.Control = 66504;
 	roll.Control = 66505;
 
-	//
-	// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
-	//
-	if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
+    if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
 		(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
 		//
 		// Open the connection
@@ -178,7 +142,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	//
 	// Load the DLL.
 	//
-    FSUIPCLib.setFileName( LocationOfDLL );
+    FSUIPCLib.setFileName( s.LocationOfDLL );
     if (FSUIPCLib.load() != true) {
         qDebug() << "checkServerInstallationOK says: Error loading FSUIPC DLL";
         return false;
@@ -190,14 +154,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT FTNoIR_Protocol* CALLING_CONVENTION GetConstructor(void)
 {
