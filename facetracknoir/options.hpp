@@ -7,11 +7,13 @@
 
 #pragma once
 
-#include <QSettings>
+#include <QObject>
 #include <QSettings>
 #include <QMap>
 #include <QString>
 #include <QVariant>
+#include <QMutex>
+#include <QMutexLocker>
 #include <memory>
 #include <cassert>
 #include <QWidget>
@@ -21,6 +23,13 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <QLineEdit>
+#include <QCoreApplication>
+
+#ifdef __GNUC__
+#   define ov override
+#else
+#   define ov
+#endif
 
 namespace options {
     template<typename T>
@@ -101,8 +110,10 @@ namespace options {
         }
     };
 
-    class impl_bundle {
+    class impl_bundle : public QObject {
+        Q_OBJECT
     private:
+        QMutex mtx;
         const QString group_name;
         group saved;
         group transient;
@@ -111,6 +122,7 @@ namespace options {
         bool modified;
     public:
         impl_bundle(const QString& group_name) :
+            mtx(QMutex::Recursive),
             group_name(group_name),
             saved(group_name),
             transient(saved),
@@ -119,8 +131,10 @@ namespace options {
         }
         /* keep in mind doesn't fire signals */
         void reload() {
+            QMutexLocker l(&mtx);
             saved = group(group_name);
             transient = saved;
+            emit reloaded();
         }
 
         std::shared_ptr<impl_bundle> make(const QString& name) {
@@ -128,33 +142,46 @@ namespace options {
         }
         void store(const QString& name, const QVariant& datum)
         {
+            QMutexLocker l(&mtx);
             if (!transient.contains(name) || datum != transient.get<QVariant>(name))
             {
                 modified = true;
                 transient.put(name, datum);
+                emit bundleChanged();
             }
         }
         bool contains(const QString& name)
         {
+            QMutexLocker l(&mtx);
             return transient.contains(name);
         }
         template<typename T>
-        T get(QString& name) {
+        T get(const QString& name) {
+            QMutexLocker l(&mtx);
             return transient.get<T>(name);
         }
         void save()
         {
+            QMutexLocker l(&mtx);
             modified = false;
             saved = transient;
             transient.save();
         }
         void revert()
         {
+            QMutexLocker l(&mtx);
             modified = false;
             transient = saved;
+            emit bundleChanged();
         }
 
-        bool modifiedp() const { return modified; }
+        bool modifiedp() {
+            QMutexLocker l(&mtx);
+            return modified;
+        }
+    signals:
+        void bundleChanged();
+        void reloaded();
     };
 
     typedef std::shared_ptr<impl_bundle> pbundle;
@@ -162,7 +189,18 @@ namespace options {
     class base_value : public QObject {
         Q_OBJECT
     public:
+        base_value(pbundle b, const QString& name) : b(b), self_name(name) {
+            connect(b.get(), SIGNAL(reloaded()), this, SLOT(reread_value()));
+        }
         virtual QVariant operator=(const QVariant& datum) = 0;
+    protected:
+        pbundle b;
+        QString self_name;
+    public slots:
+        void reread_value()
+        {
+            this->operator=(b->get<QVariant>(self_name));
+        }
     public slots:
 #define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(datum); }
         DEFINE_SLOT(double)
@@ -179,13 +217,11 @@ namespace options {
 
     template<typename T>
     class value : public base_value {
-    private:
-        QString self_name;
-        pbundle b;
+    private: T def;
     public:
-        value(pbundle& b, const QString& name, T def) :
-            self_name(name),
-            b(b)
+        static constexpr const Qt::ConnectionType CONNTYPE = Qt::QueuedConnection;
+        value(pbundle b, const QString& name, T def) :
+            base_value(b, name), def(def)
         {
             if (!b->contains(name))
             {
@@ -196,15 +232,9 @@ namespace options {
         operator T() { return b->get<T>(self_name); }
         QVariant operator=(const QVariant& datum) {
             b->store(self_name, datum);
-            switch (datum.type())
-            {
-#define BRANCH_ON(e, m) case QVariant::e: return valueChanged(datum.m()), datum
-            BRANCH_ON(Int, toInt);
-            BRANCH_ON(Double, toDouble);
-            BRANCH_ON(String, toString);
-            BRANCH_ON(Bool, toBool);
-            default: abort();
-            }
+            auto foo = qcruft_to_t<T>(datum);
+            emit valueChanged(foo);
+            return datum;
         }
     };
 
@@ -214,56 +244,56 @@ namespace options {
     template<>
     inline void tie_setting(value<int>& v, QComboBox* cb)
     {
-        base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)));
-        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)));
+        base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.CONNTYPE);
         cb->setCurrentIndex(v);
     }
 
     template<>
     inline void tie_setting(value<QString>& v, QComboBox* cb)
     {
-        base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(int)));
-        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)));
+        base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.CONNTYPE);
         cb->setCurrentText(v);
     }
 
     template<>
     inline void tie_setting(value<bool>& v, QCheckBox* cb)
     {
-        base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)));
-        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)));
+        base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.CONNTYPE);
         cb->setChecked(v);
     }
 
     template<>
     inline void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
     {
-        base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)));
-        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)));
+        base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.CONNTYPE);
         dsb->setValue(v);
     }
 
     template<>
     inline void tie_setting(value<int>& v, QSpinBox* sb)
     {
-        base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)));
+        base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.CONNTYPE);
         sb->setValue(v);
     }
 
     template<>
     inline void tie_setting(value<int>& v, QSlider* sl)
     {
-        base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)));
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)));
+        base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)), v.CONNTYPE);
         sl->setValue(v);
     }
 
     template<>
     inline void tie_setting(value<QString>& v, QLineEdit* le)
     {
-        base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)));
-        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)));
+        base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.CONNTYPE);
         le->setText(v);
     }
 
