@@ -403,7 +403,6 @@ void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
 		CptError=0;
         return;
 	}
-#ifdef OPENTRACK_API
 	data[frame_cnt] = (long) HAT.Code;
 
     struct Fun {
@@ -446,39 +445,6 @@ void FTNoIR_Tracker::GetHeadPoseData(THeadPoseData *data)
         if (settings.InvertZ)  data[TZ] =  HAT.Trans[Fun::clamp3(settings.ZAxe)]*  -1.0f;
         else data[TZ] =  HAT.Trans[Fun::clamp3(settings.ZAxe)];
 	}
-#else
-	data->frame_number =  (long) HAT.Code;
-
-	if (bEnableYaw) {
-		if (bInvertYaw )	data->yaw = (double) HAT.Rot[iYawAxe] *  -1.0f;
-		else 	data->yaw = (double) HAT.Rot[iYawAxe];
-	}	
-
-	if (bEnablePitch) {
-		if (bInvertPitch)data->pitch = (double) HAT.Rot[iPitchAxe] *  -1.0f;
-		else data->pitch = (double) HAT.Rot[iPitchAxe];
-	}
-
-	if (bEnableRoll) {
-		if (bInvertRoll) data->roll = (double) HAT.Rot[iRollAxe] *  -1.0f; 
-		else data->roll = (double) HAT.Rot[iRollAxe];
-	}
-
-	if (bEnableX) {
-		if (bInvertX) data->x = (double) HAT.Trans[iXAxe]*  -1.0f;
-		else data->x = (double) HAT.Trans[iXAxe];
-	}
-
-	if (bEnableY) {
-		if (bInvertY) data->y = (double) HAT.Trans[iYAxe]*  -1.0f;
-		else data->y = (double) HAT.Trans[iYAxe];
-	}
-
-	if (bEnableZ) {
-		if (bInvertZ)  data->z = (double) HAT.Trans[iZAxe]*  -1.0f;
-		else data->z = (double) HAT.Trans[iZAxe];
-	}
-#endif
 }
 
 void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){

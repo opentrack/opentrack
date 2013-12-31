@@ -44,10 +44,6 @@ FTNoIR_Filter::FTNoIR_Filter()
     loadSettings();  // Load the Settings
 }
 
-FTNoIR_Filter::~FTNoIR_Filter()
-{
-}
-
 void FTNoIR_Filter::receiveSettings(double smin, double smax, double sexpt)
 {
     QMutexLocker foo(&mutex);

@@ -57,35 +57,11 @@ QWidget()
 }
 
 //
-// Destructor for server-dialog
-//
-FTNControls::~FTNControls() {
-	qDebug() << "~FTNControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void FTNControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
 // OK clicked on server-dialog
 //
 void FTNControls::doOK() {
 	save();
 	this->close();
-}
-
-// override show event
-void FTNControls::showEvent ( QShowEvent *  ) {
-	loadSettings();
 }
 
 //

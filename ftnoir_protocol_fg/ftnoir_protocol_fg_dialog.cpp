@@ -64,35 +64,11 @@ QWidget()
 }
 
 //
-// Destructor for server-dialog
-//
-FGControls::~FGControls() {
-	qDebug() << "~FGControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void FGControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
 // OK clicked on server-dialog
 //
 void FGControls::doOK() {
 	save();
 	this->close();
-}
-
-// override show event
-void FGControls::showEvent ( QShowEvent * ) {
-	loadSettings();
 }
 
 //

@@ -20,10 +20,6 @@ class TrackerDll :
         public ITrackerDll
 #endif
 {
-	// ITrackerDll interface
-#ifndef OPENTRACK_API
-	void Initialize() {}
-#endif
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);

@@ -93,9 +93,6 @@ class FTControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit FTControls();
-    virtual ~FTControls();
-    void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
 	}

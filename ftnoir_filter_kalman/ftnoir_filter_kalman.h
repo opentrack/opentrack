@@ -28,7 +28,7 @@ public:
     FTNoIR_Filter();
     ~FTNoIR_Filter() virt_override {
     }
-    void Initialize() virt_override;
+    void reset() virt_override;
     void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position) virt_override;
     cv::KalmanFilter kalman;
@@ -68,16 +68,9 @@ public:
         connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
         show();
     }
-    ~FilterControls() {}
     void showEvent ( QShowEvent * ) virt_override {
         show();
     }
-    
-    void Initialize(QWidget *) virt_override {
-        show();
-        raise();
-    }
-    
     bool settingsDirty;
     Ui::KalmanUICFilterControls ui;
     virtual void registerFilter(IFilter*) virt_override {}

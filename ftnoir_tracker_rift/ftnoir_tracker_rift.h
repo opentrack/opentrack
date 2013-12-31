@@ -55,7 +55,6 @@ class TrackerControls: public QWidget, public ITrackerDialog
 public:
 	explicit TrackerControls();
 
-    void Initialize(QWidget *parent);
     void registerTracker(ITracker *) {}
 	void unRegisterTracker() {}
 

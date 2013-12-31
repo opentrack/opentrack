@@ -18,6 +18,33 @@
 #include <QDialog>
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
+#include "facetracknoir/options.hpp"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<double> fov, headpos_x, headpos_y, headpos_z;
+    value<int> camera_index, force_fps, resolution;
+    value<bool> red_only;
+    value<bool> eyaw, epitch, eroll, ex, ey, ez;
+    settings() :
+        b(bundle("aruco-tracker")),
+        fov(b, "field-of-view", 56),
+        headpos_x(b, "headpos-x", 0),
+        headpos_y(b, "headpos-y", 0),
+        headpos_z(b, "headpos-z", 0),
+        camera_index(b, "camera-index", 0),
+        force_fps(b, "force-fps", 0),
+        resolution(b, "force-resolution", 0),
+        red_only(b, "red-only", false),
+        eyaw(b, "enable-y", true),
+        epitch(b, "enable-p", true),
+        eroll(b, "enable-r", true),
+        ex(b, "enable-x", true),
+        ey(b, "enable-y", true),
+        ez(b, "enable-z", true)
+    {}
+};
 
 class Tracker : protected QThread, public ITracker
 {
@@ -27,22 +54,16 @@ public:
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
-	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
     void run();
-    void load_settings();
 private:
     QMutex mtx;
-	ArucoVideoWidget* videoWidget;
-	QHBoxLayout* layout;
     volatile bool stop;
-    float fov;
-    int camera_index;
-    int force_fps, force_width, force_height;
+    QHBoxLayout* layout;
+	ArucoVideoWidget* videoWidget;
+    settings s;
     double pose[6];
     cv::Mat frame;
-    double headpos[3], headpitch;
     cv::VideoCapture camera;
-    volatile bool red_only;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -50,32 +71,20 @@ class TrackerControls : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
-	explicit TrackerControls();
-    virtual ~TrackerControls();
-    void showEvent (QShowEvent *);
-
-    void Initialize(QWidget *);
+    TrackerControls();
     void registerTracker(ITracker * x) {
         tracker = dynamic_cast<Tracker*>(x);
     }
     void unRegisterTracker() {
         tracker = nullptr;
     }
-
 private:
 	Ui::Form ui;
-	void loadSettings();
-	void save();
-	bool settingsDirty;
     Tracker* tracker;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-    void settingChanged() { settingsDirty = true; }
-    void settingChanged(int) { settingsDirty = true; }
-    void settingChanged(double) { settingsDirty = true; }
 };
 
 #endif

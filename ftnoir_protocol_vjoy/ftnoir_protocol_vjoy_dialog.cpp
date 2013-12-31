@@ -8,21 +8,6 @@ VJoyControls::VJoyControls() : QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 }
 
-VJoyControls::~VJoyControls() {
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void VJoyControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void VJoyControls::doOK() {
 	save();
 	this->close();

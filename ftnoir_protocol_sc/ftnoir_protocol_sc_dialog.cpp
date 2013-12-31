@@ -49,41 +49,11 @@ QWidget()
 	loadSettings();
 }
 
-//
-// Destructor for server-dialog
-//
-SCControls::~SCControls() {
-	qDebug() << "~SCControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void SCControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
-// OK clicked on server-dialog
-//
 void SCControls::doOK() {
 	save();
 	this->close();
 }
 
-// override show event
-void SCControls::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void SCControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved

@@ -35,10 +35,7 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <QSettings>
 #include "facetracknoir/global-settings.h"
-
-#define FT_PROGRAMID "FT_ProgramID"
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -65,10 +62,6 @@ class FGControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit FGControls();
-    virtual ~FGControls();
-	void showEvent ( QShowEvent * event );
-
-    void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
 	}

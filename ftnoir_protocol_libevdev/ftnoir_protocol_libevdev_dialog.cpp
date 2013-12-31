@@ -8,21 +8,6 @@ LibevdevControls::LibevdevControls() : QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 }
 
-LibevdevControls::~LibevdevControls() {
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void LibevdevControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void LibevdevControls::doOK() {
 	save();
 	this->close();

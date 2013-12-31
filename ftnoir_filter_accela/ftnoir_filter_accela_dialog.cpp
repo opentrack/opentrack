@@ -20,10 +20,6 @@ FilterControls::FilterControls() :
     tie_setting(s.expt, ui.expt);
 }
 
-void FilterControls::Initialize(QWidget *) {
-	show();
-}
-
 void FilterControls::registerFilter(IFilter* filter)
 {
     accela_filter = (FTNoIR_Filter*) filter;

@@ -64,9 +64,6 @@ class FTNControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit FTNControls();
-    virtual ~FTNControls();
-    void showEvent (QShowEvent *);
-    void Initialize(QWidget *parent);
     void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 

@@ -14,7 +14,7 @@ struct IFilter
 {
     virtual ~IFilter() = 0;
     virtual void FilterHeadPoseData(const double *target_camera_position, double *new_camera_position) = 0;
-    virtual void Initialize() = 0;
+    virtual void reset() = 0;
 };
 
 inline IFilter::~IFilter() { }
@@ -22,7 +22,6 @@ inline IFilter::~IFilter() { }
 struct IFilterDialog
 {
     virtual ~IFilterDialog() {}
-    virtual void Initialize(QWidget *parent) = 0;
     virtual void registerFilter(IFilter* tracker) = 0;
     virtual void unregisterFilter() = 0;
 };

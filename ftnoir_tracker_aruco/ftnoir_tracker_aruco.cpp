@@ -99,47 +99,8 @@ static resolution_tuple resolution_choices[] = {
 	{ 0, 0 }
 };
 
-void Tracker::load_settings()
+Tracker::Tracker() : stop(false), layout(nullptr), videoWidget(nullptr)
 {
-    QMutexLocker foo(&mtx);
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-
-	iniFile.beginGroup( "aruco-Tracker" );
-    fov = iniFile.value("fov", 56).toFloat();
-    force_fps = iniFile.value("fps", 0).toInt();
-    camera_index = iniFile.value("camera-index", -1).toInt();
-    int res = iniFile.value("resolution", 0).toInt();
-    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
-		res = 0;
-	resolution_tuple r = resolution_choices[res];
-	force_width = r.width;
-    force_height = r.height;
-	enableRX = iniFile.value("enable-rx", true).toBool();
-	enableRY = iniFile.value("enable-ry", true).toBool();
-	enableRZ = iniFile.value("enable-rz", true).toBool();
-	enableTX = iniFile.value("enable-tx", true).toBool();
-	enableTY = iniFile.value("enable-ty", true).toBool();
-	enableTZ = iniFile.value("enable-tz", true).toBool();
-
-    for (int i = 0; i < 3; i++)
-    {
-        headpos[i] = iniFile.value(QString("headpos-%1").arg(i), 0).toDouble();
-    }
-    headpitch = iniFile.value("pitch", 0).toDouble();
-    red_only = iniFile.value("red-only", true).toBool();
-
-	iniFile.endGroup();
-}
-
-Tracker::Tracker()
-{
-    layout = nullptr;
-    stop = false;
-	videoWidget = NULL;
-	enableRX = enableRY = enableRZ = enableTX = enableTY = enableTZ = true;
-	load_settings();
 }
 
 Tracker::~Tracker()
@@ -166,7 +127,6 @@ void Tracker::StartTracker(QFrame* videoframe)
         delete videoframe->layout();
     videoframe->setLayout(layout);
     videoWidget->show();
-    load_settings();
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
@@ -177,13 +137,35 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 void Tracker::run()
 {
-    camera = cv::VideoCapture(camera_index);  
-    if (force_width)
-        camera.set(CV_CAP_PROP_FRAME_WIDTH, force_width);
-    if (force_height)
-        camera.set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
-    if (force_fps)
-        camera.set(CV_CAP_PROP_FPS, force_fps);
+    int res = s.resolution;
+    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
+        res = 0;
+    resolution_tuple r = resolution_choices[res];
+    int fps;
+    switch (static_cast<int>(s.force_fps))
+    {
+    default:
+    case 0:
+        fps = 0;
+        break;
+    case 30:
+        fps = 1;
+        break;
+    case 60:
+        fps = 2;
+        break;
+    case 120:
+        fps = 3;
+        break;
+    }
+    camera = cv::VideoCapture(s.camera_index);
+    if (r.width)
+    {
+        camera.set(CV_CAP_PROP_FRAME_WIDTH, r.width);
+        camera.set(CV_CAP_PROP_FRAME_HEIGHT, r.height);
+    }
+    if (fps)
+        camera.set(CV_CAP_PROP_FPS, fps);
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
@@ -206,7 +188,7 @@ void Tracker::run()
 
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
-    int fps = 0;
+    int cur_fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
 
@@ -216,7 +198,7 @@ void Tracker::run()
             continue;
         auto tm = cv::getTickCount();
         color_.copyTo(color);
-        if (red_only)
+        if (s.red_only)
         {
             cv::Mat channel[3];
             cv::split(color, channel);
@@ -227,8 +209,8 @@ void Tracker::run()
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
 
-        const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
-        const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
+        const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * s.fov * HT_PI / 180);
+        const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * s.fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
         intrinsics.at<float> (0, 0) = focal_length_w;
         intrinsics.at<float> (1, 1) = focal_length_h;
@@ -275,12 +257,12 @@ void Tracker::run()
 
         if ((long) (time / freq) != (long) (last_time / freq))
         {
-            last_fps = fps;
-            fps = 0;
+            last_fps = cur_fps;
+            cur_fps = 0;
             last_time = time;
         }
 
-        fps++;
+        cur_fps++;
 
         char buf[128];
 
@@ -296,18 +278,18 @@ void Tracker::run()
             const float size = 7;
             
             cv::Mat obj_points(4,3,CV_32FC1);
-            obj_points.at<float>(1,0)=-size + headpos[0];
-            obj_points.at<float>(1,1)=-size + headpos[1];
-            obj_points.at<float>(1,2)=0 + headpos[2];
-            obj_points.at<float>(2,0)=size + headpos[0];
-            obj_points.at<float>(2,1)=-size + headpos[1];
-            obj_points.at<float>(2,2)=0 + headpos[2];
-            obj_points.at<float>(3,0)=size + headpos[0];
-            obj_points.at<float>(3,1)=size + headpos[1];
-            obj_points.at<float>(3,2)=0 + headpos[2];
-            obj_points.at<float>(0,0)=-size + headpos[0];
-            obj_points.at<float>(0,1)=size + headpos[1];
-            obj_points.at<float>(0,2)=0 + headpos[2];
+            obj_points.at<float>(1,0)=-size + s.headpos_x;
+            obj_points.at<float>(1,1)=-size + s.headpos_y;
+            obj_points.at<float>(1,2)=0 + s.headpos_z;
+            obj_points.at<float>(2,0)=size + s.headpos_x;
+            obj_points.at<float>(2,1)=-size + s.headpos_y;
+            obj_points.at<float>(2,2)=0 + s.headpos_z;
+            obj_points.at<float>(3,0)=size + s.headpos_x;
+            obj_points.at<float>(3,1)=size + s.headpos_y;
+            obj_points.at<float>(3,2)=0 + s.headpos_z;
+            obj_points.at<float>(0,0)=-size + s.headpos_x;
+            obj_points.at<float>(0,1)=size + s.headpos_y;
+            obj_points.at<float>(0,2)=0 + s.headpos_z;
 
             last_roi = cv::Rect(65535, 65535, 0, 0);
 
@@ -341,22 +323,12 @@ void Tracker::run()
             cv::Rodrigues(rvec, rotation_matrix);
         
             {
-                const double beta = headpitch * HT_PI / 180;
-                double pitch[] = {
-                    1, 0, 0,
-                    0, cos(beta), -sin(beta),
-                    0, sin(beta), cos(beta)
-                };
-                cv::Mat rot(3, 3, CV_64F, pitch);
-                cv::Mat tvec2 = rot * tvec;
-                rotation_matrix = rot * rotation_matrix;
-
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
                 QMutexLocker lck(&mtx);
 
                 for (int i = 0; i < 3; i++)
-                    pose[i] = tvec2.at<double>(i);
+                    pose[i] = tvec.at<double>(i);
 
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
@@ -389,17 +361,17 @@ void Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     
-    if (enableRX)
+    if (s.eyaw)
         data[Yaw] = pose[Yaw];
-    if (enableRY)
+    if (s.epitch)
         data[Pitch] = pose[Pitch];
-    if (enableRZ)
+    if (s.eroll)
         data[Roll] = pose[Roll];
-    if (enableTX)
+    if (s.ex)
         data[TX] = pose[TX];
-    if (enableTY)
+    if (s.ey)
         data[TY] = pose[TY];
-    if (enableTZ)
+    if (s.ez)
         data[TZ] = pose[TZ];
 }
 
@@ -468,178 +440,49 @@ TrackerControls::TrackerControls()
     tracker = nullptr;
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
-	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.rx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ry, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.rz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.cx, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-    connect(ui.cy, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-    connect(ui.cz, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-    //connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-    //connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
+    tie_setting(s.camera_index, ui.cameraName);
+    tie_setting(s.force_fps, ui.cameraFPS);
+    tie_setting(s.fov, ui.cameraFOV);
+    tie_setting(s.eyaw, ui.rx);
+    tie_setting(s.epitch, ui.ry);
+    tie_setting(s.eroll, ui.rz);
+    tie_setting(s.ex, ui.tx);
+    tie_setting(s.ey, ui.ty);
+    tie_setting(s.ez, ui.tz);
+    tie_setting(s.headpos_x, ui.cx);
+    tie_setting(s.headpos_y, ui.cy);
+    tie_setting(s.headpos_z, ui.cz);
+    tie_setting(s.red_only, ui.red_only);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    loadSettings();
-	settingsDirty = false;
-}
-
-TrackerControls::~TrackerControls()
-{
-}
-
-void TrackerControls::showEvent(QShowEvent *)
-{
-}
-
-void TrackerControls::Initialize(QWidget*)
-{
-    loadSettings();
-	show();
-}
-
-void TrackerControls::loadSettings()
-{
-	ui.cameraName->clear();
-	QList<QString> names = get_camera_names();
-	names.prepend("Any available");
-	ui.cameraName->addItems(names);
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-	iniFile.beginGroup( "aruco-Tracker" );
-	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
-    ui.cameraFOV->setValue(iniFile.value("fov", 56).toFloat());
-	int fps;
-	switch (iniFile.value("fps", 0).toInt())
-	{
-	default:
-	case 0:
-		fps = 0;
-		break;
-	case 30:
-		fps = 1;
-		break;
-	case 60:
-		fps = 2;
-		break;
-	case 120:
-		fps = 3;
-		break;
-	}
-	ui.cameraFPS->setCurrentIndex(fps);
-	ui.rx->setCheckState(iniFile.value("enable-rx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ry->setCheckState(iniFile.value("enable-ry", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.rz->setCheckState(iniFile.value("enable-rz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-    ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
-
-    QDoubleSpinBox* headpos[] = {
-        ui.cx,
-        ui.cy,
-        ui.cz
-    };
-
-    for (int i = 0; i < 3; i++)
-    {
-        headpos[i]->setValue(iniFile.value(QString("headpos-%1").arg(i)).toDouble());
-    }
-
-    ui.pitch_deg->setValue(iniFile.value("pitch", 0).toDouble());
-    ui.red_only->setChecked(iniFile.value("red-only", true).toBool());
-	iniFile.endGroup();
-	settingsDirty = false;
-}
-
-void TrackerControls::save()
-{
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-
-	iniFile.beginGroup( "aruco-Tracker" );
-	iniFile.setValue("fov", ui.cameraFOV->value());
-	int fps;
-	switch (ui.cameraFPS->currentIndex())
-	{
-	case 0:
-	default:
-		fps = 0;
-		break;
-	case 1:
-		fps = 30;
-		break;
-	case 2:
-		fps = 60;
-		break;
-	case 3:
-		fps = 120;
-		break;
-	}
-	iniFile.setValue("fps", fps);
-	iniFile.setValue("camera-index", ui.cameraName->currentIndex() - 1);
-	iniFile.setValue("enable-rx", ui.rx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ry", ui.ry->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-rz", ui.rz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tx", ui.tx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("resolution", ui.resolution->currentIndex());
-    iniFile.setValue("pitch", ui.pitch_deg->value());
-
-    QDoubleSpinBox* headpos[] = {
-        ui.cx,
-        ui.cy,
-        ui.cz
-    };
-
-    for (int i = 0; i < 3; i++)
-    {
-        iniFile.setValue(QString("headpos-%1").arg(i), headpos[i]->value());
-    }
-    iniFile.setValue("red-only", ui.red_only->isChecked());
-	iniFile.endGroup();
-	settingsDirty = false;
-    if (tracker)
-        tracker->load_settings();
+    ui.cameraName->addItems(get_camera_names());
 }
 
 void TrackerControls::doOK()
 {
-	save();
+    s.b->save();
 	this->close();
 }
 
 void TrackerControls::doCancel()
 {
-	if (settingsDirty) {
+    if (s.b->modifiedp()) {
 		int ret = QMessageBox::question ( this,
 										  "Settings have changed",
 										  "Do you want to save the settings?",
-										  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-										  QMessageBox::Discard );
+                                          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
 
 		switch (ret) {
 			case QMessageBox::Save:
-				save();
+                s.b->save();
 				this->close();
 				break;
 			case QMessageBox::Discard:
+                s.b->revert();
 				this->close();
 				break;
 			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
+                break;
 		}
 	}
 	else {

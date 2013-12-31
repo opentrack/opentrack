@@ -50,27 +50,9 @@ fin:
 	loadSettings();
 }
 
-//
-// Destructor for server-dialog
-//
-TrackerControls::~TrackerControls() {
-}
-
-void TrackerControls::Initialize(QWidget *parent) {
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void TrackerControls::doOK() {
 	save();
 	this->close();
-}
-
-void TrackerControls::showEvent ( QShowEvent * ) {
-	loadSettings();
 }
 
 void TrackerControls::doCancel() {

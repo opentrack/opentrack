@@ -75,41 +75,11 @@ QWidget()
 
 }
 
-//
-// Destructor for server-dialog
-//
-FTControls::~FTControls() {
-	qDebug() << "~FTControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void FTControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
-// OK clicked on server-dialog
-//
 void FTControls::doOK() {
 	save();
 	this->close();
 }
 
-// override show event
-void FTControls::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void FTControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved

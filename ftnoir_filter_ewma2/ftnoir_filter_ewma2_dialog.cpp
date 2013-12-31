@@ -59,27 +59,6 @@ FilterControls::FilterControls() :
 	loadSettings();
 }
 
-//
-// Destructor for server-dialog
-//
-FilterControls::~FilterControls() {
-	qDebug() << "~FilterControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void FilterControls::Initialize(QWidget *parent) {
-	//
-	//
-	//
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
 void FilterControls::registerFilter(IFilter* flt)
 {
     pFilter = (FTNoIR_Filter*) flt;

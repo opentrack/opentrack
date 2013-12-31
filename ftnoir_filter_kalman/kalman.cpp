@@ -31,12 +31,12 @@ void kalman_save_settings(FilterControls&) {
 
 FTNoIR_Filter::FTNoIR_Filter() {
     kalman_load_settings(*this);
-    Initialize();
+    reset();
 }
 
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
-void FTNoIR_Filter::Initialize() {
+void FTNoIR_Filter::reset() {
     const double accel_variance = 1e-3;
     const double noise_variance = 5e2;
     kalman.init(12, 6, 0, CV_64F);

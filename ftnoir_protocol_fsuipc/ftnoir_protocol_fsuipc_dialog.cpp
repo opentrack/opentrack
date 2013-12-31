@@ -48,41 +48,12 @@ QWidget()
 	loadSettings();
 }
 
-//
-// Destructor for server-dialog
-//
-FSUIPCControls::~FSUIPCControls() {
-	qDebug() << "~FSUIPCControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void FSUIPCControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
-// OK clicked on server-dialog
-//
 void FSUIPCControls::doOK() {
 	save();
 	this->close();
 }
 
-// override show event
-void FSUIPCControls::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
 
-//
-// Cancel clicked on server-dialog
-//
 void FSUIPCControls::doCancel() {
 	//
 	// Ask if changed Settings should be saved

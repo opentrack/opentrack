@@ -62,11 +62,7 @@ class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-	explicit TrackerControls();
-    ~TrackerControls();
-    void showEvent (QShowEvent *);
-
-    void Initialize(QWidget *parent);
+    TrackerControls();
     void registerTracker(ITracker *foo) {
         tracker = dynamic_cast<FTNoIR_Tracker*>(foo);
     }

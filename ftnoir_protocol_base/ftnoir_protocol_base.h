@@ -50,9 +50,6 @@ inline IProtocol::~IProtocol() { }
 struct IProtocolDialog
 {
     virtual ~IProtocolDialog() {}
-	virtual void Initialize(QWidget *parent) = 0;
-    virtual void showEvent ( QShowEvent * event ) = 0;
-
     virtual void registerProtocol(IProtocol *protocol) = 0;
     virtual void unRegisterProtocol() = 0;
 };

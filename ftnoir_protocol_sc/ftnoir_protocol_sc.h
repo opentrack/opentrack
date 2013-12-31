@@ -131,9 +131,6 @@ class SCControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit SCControls();
-    virtual ~SCControls();
-	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
 	void registerProtocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
 	}
