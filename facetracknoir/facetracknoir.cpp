@@ -634,9 +634,9 @@ void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, key_opts& k)
     }
 }
 #else
-static void bind_keyboard_shortcut(Key& key, const key& k)
+static void bind_keyboard_shortcut(Key& key, key_opts& k)
 {
-    const int idx = k.key_index;
+    int idx = k.key_index;
     if (idx > 0)
     {
         key.keycode = 0;
