@@ -23,6 +23,7 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <QLineEdit>
+#include <QLabel>
 #include <QCoreApplication>
 
 #ifdef __GNUC__
@@ -295,6 +296,13 @@ namespace options {
         base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
         base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.CONNTYPE);
         le->setText(v);
+    }
+
+    template<>
+    inline void tie_setting(value<QString>& v, QLabel* lb)
+    {
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.CONNTYPE);
+        lb->setText(v);
     }
 
     inline pbundle bundle(const QString& group) {
