@@ -10,7 +10,7 @@
 #define ACCELA_SECOND_ORDER_ALPHA 100.0
 #define ACCELA_THIRD_ORDER_ALPHA 180.0
 
-#include "facetracknoir/options.hpp"
+#include <facetracknoir/options.h>
 using namespace options;
 
 struct settings {

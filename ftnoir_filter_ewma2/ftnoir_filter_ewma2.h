@@ -31,7 +31,7 @@
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {

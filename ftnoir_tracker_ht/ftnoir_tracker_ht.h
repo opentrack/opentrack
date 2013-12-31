@@ -15,7 +15,7 @@
 #include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {

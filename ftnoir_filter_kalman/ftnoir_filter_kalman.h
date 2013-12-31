@@ -21,7 +21,7 @@
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QObject>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter

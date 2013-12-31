@@ -8,7 +8,7 @@
 #pragma once
 
 #include <QtSerialPort/QSerialPort>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 using namespace options;
 

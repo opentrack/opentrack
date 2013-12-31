@@ -8,7 +8,7 @@
 #include "facetracknoir/global-settings.h"
 #include "OVR.h"
 #include <memory>
-#include "facetracknoir/options.hpp"
+#include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {
