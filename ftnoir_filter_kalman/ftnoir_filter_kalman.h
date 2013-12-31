@@ -54,13 +54,6 @@ class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDi
 public:
     FilterControls() {
         ui.setupUi(this);
-        QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
-        
-        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-        QSettings iniFile( currentFile, QSettings::IniFormat );     // Application settings (in INI-file)
-        
-        iniFile.beginGroup("ftnoir-filter-kalman");
-        iniFile.endGroup();
         connect(ui.btnOk, SIGNAL(clicked()), this, SLOT(doOK()));
         connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
         show();
