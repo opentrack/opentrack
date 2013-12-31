@@ -21,13 +21,13 @@
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QObject>
+#include "facetracknoir/options.hpp"
+using namespace options;
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    ~FTNoIR_Filter() virt_override {
-    }
     void reset() virt_override;
     void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position) virt_override;
@@ -38,9 +38,6 @@ public:
     QElapsedTimer timer;
     qint64 timedelta;
 };
-
-void kalman_load_settings(FTNoIR_Filter&);
-void kalman_save_settings(FTNoIR_Filter&);
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_FilterDll : public Metadata
 {
@@ -55,7 +52,7 @@ class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDi
 {
     Q_OBJECT
 public:
-    explicit FilterControls() : settingsDirty(false) {
+    FilterControls() {
         ui.setupUi(this);
         QSettings settings("Abbequerque Inc.", "FaceTrackNoIR");    // Registry settings (in HK_USER)
         
@@ -68,19 +65,12 @@ public:
         connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
         show();
     }
-    void showEvent ( QShowEvent * ) virt_override {
-        show();
-    }
-    bool settingsDirty;
     Ui::KalmanUICFilterControls ui;
     virtual void registerFilter(IFilter*) virt_override {}
     virtual void unregisterFilter() virt_override {}
 public slots:
     void doOK();
     void doCancel();
-    void settingsChanged(double) {
-        settingsDirty = true;
-    }
 };
 
 #endif
