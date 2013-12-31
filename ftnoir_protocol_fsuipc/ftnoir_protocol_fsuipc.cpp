@@ -30,22 +30,25 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-    prevPosX = 0.0;
-    prevPosY = 0.0;
-    prevPosZ = 0.0;
-    prevRotX = 0.0;
-    prevRotY = 0.0;
-    prevRotZ = 0.0;
+	prevPosX = 0.0f;
+	prevPosY = 0.0f;
+	prevPosZ = 0.0f;
+	prevRotX = 0.0f;
+	prevRotY = 0.0f;
+	prevRotZ = 0.0f;
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-    FSUIPCLib.unload();
+	FSUIPCLib.unload();
 }
 
+//
+// Scale the measured value to the Joystick values
+//
 int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
-    double y;
-    double local_x;
+double y;
+double local_x;
 	
 	local_x = x;
 	if (local_x > max_x) {
@@ -74,6 +77,8 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
     float virtRotY;
     float virtRotZ;
 
+//	qDebug() << "FSUIPCServer::run() says: started!";
+
     virtRotX = -headpose[Pitch];				// degrees
     virtRotY = headpose[Yaw];
     virtRotZ = headpose[Roll];
@@ -82,11 +87,17 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
 	virtPosY = 0.0f;
     virtPosZ = headpose[TZ];
 
+	//
+	// Init. the FSUIPC offsets (derived from Free-track...)
+	//
 	pitch.Control = 66503;
 	yaw.Control = 66504;
 	roll.Control = 66505;
 
-    if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
+	//
+	// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
+	//
+	if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
 		(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
 		//
 		// Open the connection
@@ -132,9 +143,6 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
 	prevRotZ = virtRotZ;
 }
 
-//
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	qDebug() << "checkServerInstallationOK says: Starting Function";
@@ -153,7 +161,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 
 	return true;
 }
-
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT FTNoIR_Protocol* CALLING_CONVENTION GetConstructor(void)
 {

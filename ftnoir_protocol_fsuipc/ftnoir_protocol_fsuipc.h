@@ -76,8 +76,8 @@ public:
 private:
 	QLibrary FSUIPCLib;
     double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
-    settings s;
 	static int scale2AnalogLimits( float x, float min_x, float max_x );
+    settings s;
 };
 
 class FSUIPCControls: public QWidget, public IProtocolDialog
@@ -85,7 +85,7 @@ class FSUIPCControls: public QWidget, public IProtocolDialog
     Q_OBJECT
 public:
     FSUIPCControls();
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 private:
 	Ui::UICFSUIPCControls ui;
@@ -96,9 +96,6 @@ private slots:
 	void getLocationOfDLL();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
