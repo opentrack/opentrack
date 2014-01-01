@@ -262,6 +262,7 @@ void FaceTrackNoIR::open() {
             QSettings settings("opentrack");
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
+        fill_profile_cbx();
 		loadSettings();
     }
 }
@@ -587,10 +588,6 @@ void FaceTrackNoIR::fill_profile_cbx()
     ui.iconcomboProfile->clear();
     for ( int i = 0; i < iniFileList.size(); i++) {
         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), iniFileList.at(i));
-        if (iniFileList.at(i) == pathInfo.fileName()) {
-            ui.iconcomboProfile->setItemIcon(i, QIcon(":/images/settingsopen16.png"));
-            ui.iconcomboProfile->setCurrentIndex( i );
-        }
     }
     looping = false;
 }
@@ -602,11 +599,6 @@ void FaceTrackNoIR::profileSelected(int index)
     QFileInfo pathInfo ( currentFile );
     settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
 	loadSettings();
-    if (looping)
-        return;
-    looping = true;
-    fill_profile_cbx();
-    looping = false;
 }
 
 #if !defined(_WIN32)
