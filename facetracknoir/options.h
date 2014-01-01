@@ -32,6 +32,8 @@
 #   define ov
 #endif
 
+#include <QDebug>
+
 namespace options {
     template<typename T>
     inline T qcruft_to_t (const QVariant& t);
@@ -193,8 +195,8 @@ namespace options {
         base_value(pbundle b, const QString& name) : b(b), self_name(name) {
             connect(b.get(), SIGNAL(reloaded()), this, SLOT(reread_value()));
         }
-        virtual QVariant operator=(const QVariant& datum) = 0;
     protected:
+        virtual QVariant operator=(const QVariant& datum) = 0;
         pbundle b;
         QString self_name;
     public slots:
@@ -203,7 +205,7 @@ namespace options {
             this->operator=(b->get<QVariant>(self_name));
         }
     public slots:
-#define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(datum); }
+#define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(qVariantFromValue(datum)); }
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
         DEFINE_SLOT(QString)
@@ -218,24 +220,29 @@ namespace options {
 
     template<typename T>
     class value : public base_value {
-    private: T def;
+    private:
+        T def;
+    protected:
+        QVariant operator=(const QVariant& datum) {
+            auto foo = qcruft_to_t<T>(datum);
+            b->store(self_name, qVariantFromValue<T>(foo));
+            emit valueChanged(foo);
+            return datum;
+        }
     public:
         static constexpr const Qt::ConnectionType CONNTYPE = Qt::QueuedConnection;
         value(pbundle b, const QString& name, T def) :
             base_value(b, name), def(def)
         {
-            if (!b->contains(name))
+            if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
             {
-                QVariant cruft(def);
-                b->store(self_name, cruft);
+                this->operator=(qVariantFromValue<T>(def));
             }
         }
         operator T() { return b->get<T>(self_name); }
-        QVariant operator=(const QVariant& datum) {
-            b->store(self_name, datum);
-            auto foo = qcruft_to_t<T>(datum);
-            emit valueChanged(foo);
-            return datum;
+        QVariant operator=(const T& datum)
+        {
+            return this->operator =(qVariantFromValue<T>(datum));
         }
     };
 
