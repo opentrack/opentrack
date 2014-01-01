@@ -4,7 +4,6 @@
 #include <QImage>
 #include <QLabel>
 #include <QCoreApplication>
-#include <QSettings>
 #include <QIcon>
 #include <QHBoxLayout>
 #include <QTimer>

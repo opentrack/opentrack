@@ -3,7 +3,6 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <QSettings>
 #include <QMutex>
 #include <QWaitCondition>
 #include <math.h>

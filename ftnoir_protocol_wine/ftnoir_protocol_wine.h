@@ -33,7 +33,6 @@
 #include "ftnoir_csv/csv.h"
 #include "ui_ftnoir_winecontrols.h"
 #include <QMessageBox>
-#include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
