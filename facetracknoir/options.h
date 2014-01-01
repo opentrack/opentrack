@@ -132,7 +132,6 @@ namespace options {
             modified(false)
         {
         }
-        /* keep in mind doesn't fire signals */
         void reload() {
             QMutexLocker l(&mtx);
             saved = group(group_name);
