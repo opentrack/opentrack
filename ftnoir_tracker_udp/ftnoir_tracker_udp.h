@@ -73,10 +73,5 @@ public:
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
-
-private:
-	QString trackerFullName;									// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
 };
 

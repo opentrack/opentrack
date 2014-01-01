@@ -28,17 +28,17 @@
 
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerFullName;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerShortName;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerDescription;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
