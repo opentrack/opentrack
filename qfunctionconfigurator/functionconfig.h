@@ -32,6 +32,8 @@ private:
 	int _max_Output;
     FunctionConfig(const FunctionConfig&) = delete;
 public:
+    const int maxInput() const { return _max_Input; }
+    const int maxOutput() const { return _max_Output; }
 	//
 	// Contructor(s) and destructor
 	//

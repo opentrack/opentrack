@@ -31,8 +31,7 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     //
     // Defaults, for when the widget has no values different from the domXML()
     //
-    MaxInput = 50;					// Maximum input limit
-    MaxOutput = 180;				// Maximum output limit
+
     pPerEGU_Output = 1;				// Number of pixels, per EGU
     pPerEGU_Input = 4;				// Number of pixels, per EGU
     gDistEGU_Input = 5;				// Distance of gridlines
@@ -74,6 +73,10 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFi
     setCaption(config->getTitle());
 
     _draw_function = _draw_background = true;
+
+    setmaxInputEGU(config->maxInput());
+    setmaxOutputEGU(config->maxOutput());
+
     this->update();
 }
 
