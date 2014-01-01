@@ -591,7 +591,6 @@ void FaceTrackNoIR::fill_profile_cbx()
     for ( int i = 0; i < iniFileList.size(); i++) {
         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), iniFileList.at(i));
         if (iniFileList.at(i) == pathInfo.fileName()) {
-            ui.iconcomboProfile->setItemIcon(i, QIcon(":/images/settingsopen16.png"));
             ui.iconcomboProfile->setCurrentIndex( i );
         }
     }

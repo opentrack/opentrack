@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>uielements/tools.png</file>
         <file>images/settings16.png</file>
-        <file>images/settingsopen16.png</file>
         <file>uielements/curves.png</file>
         <file>images/facetracknoir.png</file>
     </qresource>
