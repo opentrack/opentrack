@@ -16,7 +16,6 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QSettings>
 
 #define VER_FILEVERSION_STR         "Version 2.0.7\0"
 

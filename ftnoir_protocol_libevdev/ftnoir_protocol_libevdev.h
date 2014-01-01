@@ -9,7 +9,6 @@
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include <QSettings>
 #include "facetracknoir/global-settings.h"
 
 extern "C" {

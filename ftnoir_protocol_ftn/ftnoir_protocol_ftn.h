@@ -33,7 +33,6 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <QSettings>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
 #include "facetracknoir/options.h"

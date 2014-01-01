@@ -2,7 +2,6 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_rift_clientcontrols.h"
 #include <QMessageBox>
-#include <QSettings>
 #include <QWaitCondition>
 #include <cmath>
 #include "facetracknoir/global-settings.h"
