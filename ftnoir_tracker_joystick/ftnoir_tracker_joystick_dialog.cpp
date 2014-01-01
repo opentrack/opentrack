@@ -11,22 +11,21 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
     return DIENUM_CONTINUE;
 }
 
-TrackerControls::TrackerControls() :
-    QWidget(), tracker(nullptr), settingsDirty(false)
+TrackerControls::TrackerControls() : tracker(nullptr)
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
-	// Connect Qt signals to member-functions
+    // Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    connect(ui.joylist, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox_2, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox_3, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox_4, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox_5, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-    connect(ui.comboBox_6, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
+    tie_setting(s.joyid, ui.joylist);
+    tie_setting(s.axis_0, ui.comboBox);
+    tie_setting(s.axis_1, ui.comboBox_2);
+    tie_setting(s.axis_2, ui.comboBox_3);
+    tie_setting(s.axis_3, ui.comboBox_4);
+    tie_setting(s.axis_4, ui.comboBox_5);
+    tie_setting(s.axis_5, ui.comboBox_6);
 
     {
         auto hr = CoInitialize( nullptr );
@@ -46,107 +45,42 @@ fin:
         if (g_pDI)
             g_pDI->Release();
     }
-
-	loadSettings();
 }
 
 void TrackerControls::doOK() {
-	save();
-	this->close();
+    s.b->save();
+    if (tracker)
+        tracker->reload();
+    this->close();
 }
 
 void TrackerControls::doCancel() {
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
+    if (s.b->modifiedp()) {
+        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
 
         switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
-}
-
-void TrackerControls::loadSettings() {
-
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    QComboBox* boxen[] = {
-        ui.comboBox_4,
-        ui.comboBox_5,
-        ui.comboBox_6,
-        ui.comboBox,
-        ui.comboBox_2,
-        ui.comboBox_3,
-    };
-
-    iniFile.beginGroup ( "tracker-joy" );
-    for (int i = 0; i < 6; i++)
-    {
-        boxen[i]->setCurrentIndex(iniFile.value(QString("axis-%1").arg(i), 0).toInt());
-    }
-    ui.joylist->setCurrentIndex(iniFile.value("joyid", -1).toInt());
-    iniFile.endGroup ();
-
-    settingsDirty = false;
-}
-
-void TrackerControls::save() {
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    {
-        QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-        QComboBox* boxen[] = {
-            ui.comboBox_4,
-            ui.comboBox_5,
-            ui.comboBox_6,
-            ui.comboBox,
-            ui.comboBox_2,
-            ui.comboBox_3,
-        };
-
-        iniFile.beginGroup ( "tracker-joy" );
-        for (int i = 0; i < 6; i++)
-        {
-            iniFile.setValue(QString("axis-%1").arg(i), boxen[i]->currentIndex());
+        case QMessageBox::Save:
+            s.b->save();
+            if (tracker)
+                tracker->reload();
+            this->close();
+            break;
+        case QMessageBox::Discard:
+            s.b->reload();
+            this->close();
+            break;
+        case QMessageBox::Cancel:
+            // Cancel was clicked
+            break;
+        default:
+            // should never be reached
+            break;
         }
-        iniFile.setValue("joyid", ui.joylist->currentIndex());
-        iniFile.endGroup ();
     }
-
-    if(tracker)
-    {
-        tracker->reload();
+    else {
+        this->close();
     }
-
-	settingsDirty = false;
 }
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
