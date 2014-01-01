@@ -191,16 +191,19 @@ macro(opentrack_module n dir)
 endmacro()
 
 macro(opentrack_library n)
-    cmake_parse_arguments(lib- "" "LINK COMPILE" "" ${ARGN})
+    cmake_parse_arguments(foolib "" "LINK;COMPILE" "" ${ARGN})
+    if(NOT " ${foolib_UNPARSED_ARGUMENTS}" STREQUAL " ")
+        message(FATAL_ERROR "opentrack_library bad formals")
+    endif()
     add_library(${n} SHARED ${${n}-c} ${${n}-uih} ${${n}-rcc})
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${lib-LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
-            COMPILE_FLAGS "${lib-COMPILE}"
+            LINK_FLAGS "${foolib_LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
+            COMPILE_FLAGS "${foolib_COMPILE}"
             )
     else()
-        set_target_properties(${n} PROPERTIES LINK_FLAGS "${lib-LINK}" COMPILE_FLAGS "${lib-COMPILE}")
+        set_target_properties(${n} PROPERTIES LINK_FLAGS "${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
     endif()
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
@@ -373,6 +376,7 @@ endif()
 
 if(SDK_WINE_PREFIX)
     opentrack_library(opentrack-proto-wine)
+    target_link_libraries(opentrack-proto-wine opentrack-compat opentrack-csv)
     if(NOT SDK_WINE_NO_WRAPPER)
 	set(my-rt -lrt)
 	if(APPLE)
