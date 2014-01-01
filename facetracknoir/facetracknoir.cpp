@@ -313,6 +313,8 @@ void FaceTrackNoIR::saveAs()
 		settings.setValue ("SettingsFile", fileName);
         save();
     }
+
+    fill_profile_cbx();
 }
 
 void FaceTrackNoIR::loadSettings() {
