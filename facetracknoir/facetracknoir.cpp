@@ -328,15 +328,13 @@ void FaceTrackNoIR::updateButtonState(bool running)
     ui.iconcomboProfile->setEnabled ( e );
     ui.btnLoad->setEnabled ( e );
     ui.btnSaveAs->setEnabled ( e );
-    ui.btnShowFilterControls->setEnabled ( e );
     ui.btnStartTracker->setEnabled ( e );
     ui.btnStopTracker->setEnabled ( running );
-
-    ui.iconcomboTrackerSource->setEnabled ( e );
-    ui.cbxSecondTrackerSource->setEnabled ( e );
     ui.iconcomboProtocol->setEnabled ( e );
     ui.btnShowServerControls->setEnabled ( e );
     ui.iconcomboFilter->setEnabled ( e );
+    ui.iconcomboTrackerSource->setEnabled(e);
+    ui.cbxSecondTrackerSource->setEnabled(e);
 
     ui.btnStartTracker->setEnabled(e);
     ui.btnStopTracker->setEnabled(running);
