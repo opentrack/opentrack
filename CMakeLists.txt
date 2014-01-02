@@ -197,7 +197,7 @@ function(link_with_dinput8 n)
 endfunction()
 
 macro(opentrack_module n dir)
-    file(GLOB ${n}-c "${dir}/*.cpp" "${dir}/*.h" ${EXTRA-MOCS})
+    file(GLOB ${n}-c "${dir}/*.cpp" "${dir}/*.h" "${dir}/*.rc" ${EXTRA-MOCS})
     file(GLOB ${n}-ui "${dir}/*.ui")
     file(GLOB ${n}-rc "${dir}/*.qrc")
     QT5_WRAP_UI(${n}-uih ${${n}-ui})
