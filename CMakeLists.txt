@@ -182,6 +182,20 @@ endif()
 # qt being broken as usual
 set(EXTRA-MOCS "${CMAKE_SOURCE_DIR}/facetracknoir/options.h")
 
+function(link_with_dinput8 n)
+	if(WIN32)
+		if(MSVC)
+			target_link_libraries(${n}
+							  "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
+							  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
+							  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
+							  uuid)		
+		else()
+			target_link_libraries(${n} dinput8 dxguid strmiids)
+		endif()
+	endif()
+endfunction()
+
 macro(opentrack_module n dir)
     file(GLOB ${n}-c "${dir}/*.cpp" "${dir}/*.h" ${EXTRA-MOCS})
     file(GLOB ${n}-ui "${dir}/*.ui")
@@ -413,29 +427,17 @@ if(SDK_ARUCO_LIBPATH)
     endif()
 endif()
 
-opentrack_library(opentrack-tracker-hatire)
-
-if(WIN32)
-    target_link_libraries(opentrack-tracker-ht
-                  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                  uuid)
-    target_link_libraries(opentrack-tracker-joystick
-                  "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
-                  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                  uuid)
+if(SDK_HATIRE)
+	opentrack_library(opentrack-tracker-hatire)
 endif()
+
+link_with_dinput8(opentrack-tracker-ht)
+link_with_dinput8(opentrack-tracker-joystick)
 
 opentrack_library(opentrack-tracker-pt)
 target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 
-if(WIN32)
-    target_link_libraries(opentrack-tracker-pt
-                  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                  uuid)
-endif()
+link_with_dinput8(opentrack-tracker-pt)
 
 opentrack_library(opentrack-tracker-udp)
 
@@ -547,14 +549,8 @@ if(UNIX OR APPLE)
     install(TARGETS opentrack-qxt-mini RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
-if(WIN32)
-    target_link_libraries(opentrack "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
-                                    "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                                    "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                                    winmm
-                                    uuid
-    )
-endif()
+link_with_dinput8(opentrack)
+
 if(MSVC)
     SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 endif()
