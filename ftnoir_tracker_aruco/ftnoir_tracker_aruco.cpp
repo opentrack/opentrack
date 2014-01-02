@@ -441,6 +441,7 @@ TrackerControls::TrackerControls()
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     tie_setting(s.camera_index, ui.cameraName);
+	tie_setting(s.resolution, ui.resolution);
     tie_setting(s.force_fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
     tie_setting(s.eyaw, ui.rx);
