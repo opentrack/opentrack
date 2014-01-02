@@ -5,6 +5,11 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+ #if defined(OPENTRACK_API) && defined(_WIN32)
+#include <windows.h>
+#include <dshow.h>
+#endif
+ 
 #include "camera.h"
 #include <string>
 #include <QDebug>
@@ -13,11 +18,6 @@ using namespace cv;
 
 #if defined(OPENTRACK_API) && (defined(__unix) || defined(__linux) || defined(__APPLE__))
 #include <unistd.h>
-#endif
-
-#if defined(OPENTRACK_API) && defined(_WIN32)
-#include <windows.h>
-#include <dshow.h>
 #endif
 
 #ifdef OPENTRACK_API
