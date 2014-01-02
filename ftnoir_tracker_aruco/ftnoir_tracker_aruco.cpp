@@ -146,16 +146,16 @@ void Tracker::run()
     {
     default:
     case 0:
+        fps = 30;
+        break;
+    case 1:
+        fps = 60;
+        break;
+    case 2:
+        fps = 120;
+        break;
+    case 3:
         fps = 0;
-        break;
-    case 30:
-        fps = 1;
-        break;
-    case 60:
-        fps = 2;
-        break;
-    case 120:
-        fps = 3;
         break;
     }
     camera = cv::VideoCapture(s.camera_index);
