@@ -1,17 +1,7 @@
 #include "ftnoir_tracker_joystick.h"
 #include "facetracknoir/global-settings.h"
 #undef NDEBUG
-#include <cassert>
 #include <QMutexLocker>
-
-static BOOL CALLBACK EnumJoysticksCallback2( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
-{
-    auto self = ( FTNoIR_Tracker* )pContext;
-
-    self->def = *pdidInstance;
-
-    return QString(pdidInstance->tszInstanceName) == self->s.joyid ? DIENUM_STOP : DIENUM_CONTINUE;
-}
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
@@ -20,7 +10,7 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
     mtx(QMutex::Recursive)
 {
     for (int i = 0; i < 6; i++)
-        *s.axes[i] = min_[i] = max_[i] = 0;
+        min_[i] = max_[i] = 0;
     GUID bar = {0};
 }
 
@@ -50,14 +40,16 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
         g_pJoystick->Release();
     }
     if (g_pDI)
+	{
         g_pDI->Release();
+	}
 }
 
 static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
                                    VOID* pContext )
 {
     auto self = (FTNoIR_Tracker*) pContext;
-
+	
     // For axes that are returned, set the DIPROP_RANGE property for the
     // enumerated axis in order to scale min/max values.
     if( pdidoi->dwType & DIDFT_AXIS )
@@ -84,14 +76,16 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 
 static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
 {
-    DI_ENUM_CONTEXT* pEnumContext = ( DI_ENUM_CONTEXT* )pContext;
+	auto self = reinterpret_cast<FTNoIR_Tracker*>(pContext);
+	bool stop = QString(pdidInstance->tszInstanceName) == self->s.joyid;
 
-    if (!IsEqualGUID(pEnumContext->preferred_instance, pdidInstance->guidInstance))
-        return DIENUM_CONTINUE;
+	if (stop)
+	{
+		(void) self->g_pDI->CreateDevice( pdidInstance->guidInstance, &self->g_pJoystick, NULL);
+		qDebug() << "device" << static_cast<QString>(self->s.joyid);
+	}
 
-    (void) pEnumContext->g_pDI->CreateDevice( pdidInstance->guidInstance, pEnumContext->g_pJoystick, NULL);
-
-    return DIENUM_STOP;
+    return stop ? DIENUM_STOP : DIENUM_CONTINUE;
 }
 
 void FTNoIR_Tracker::StartTracker(QFrame* frame)
@@ -100,7 +94,6 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
     this->frame = frame;
     iter = 0;
     auto hr = CoInitialize( nullptr );
-    DI_ENUM_CONTEXT enumContext = {0};
 
     if( FAILED( hr = DirectInput8Create( GetModuleHandle( NULL ), DIRECTINPUT_VERSION,
                                          IID_IDirectInput8, ( VOID** )&g_pDI, NULL ) ) )
@@ -108,26 +101,13 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
         qDebug() << "create";
         goto fail;
     }
-
-    if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
-                                         EnumJoysticksCallback2,
+	
+	if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
+                                         EnumJoysticksCallback,
                                          this,
                                          DIEDFL_ATTACHEDONLY)))
     {
         qDebug() << "enum2";
-        goto fail;
-    }
-
-    enumContext.g_pDI = g_pDI;
-    enumContext.g_pJoystick = &g_pJoystick;
-    enumContext.preferred_instance = def.guidInstance;
-
-    if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
-                                         EnumJoysticksCallback,
-                                         &enumContext,
-                                         DIEDFL_ATTACHEDONLY)))
-    {
-        qDebug() << "enum1";
         goto fail;
     }
 
@@ -188,7 +168,10 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         for (int i = 0; hr == DIERR_INPUTLOST && i < 200; i++)
             hr = g_pJoystick->Acquire();
         if (hr != DI_OK)
+		{
+			qDebug() << "joy read failure" << hr;
             return;
+		}
     }
 
     if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( js ), &js ) ) )
@@ -213,10 +196,19 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         90,
         180
     };
+	
+	int axes[] = {
+		s.axis_0,
+		s.axis_1,
+		s.axis_2,
+		s.axis_3,
+		s.axis_4,
+		s.axis_5
+	};
 
     for (int i = 0; i < 6; i++)
     {
-        auto idx = *s.axes[i] - 1;
+        auto idx = axes[i] - 1;
         if (idx < 0 || idx > 7)
         {
             data[i] = 0;
