@@ -19,7 +19,6 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.joyid, ui.joylist);
     tie_setting(s.axis_0, ui.comboBox);
     tie_setting(s.axis_1, ui.comboBox_2);
     tie_setting(s.axis_2, ui.comboBox_3);
@@ -45,6 +44,15 @@ fin:
         if (g_pDI)
             g_pDI->Release();
     }
+	
+	for (int i = ui.joylist->count(); i < 8; i++)
+	{
+		GUID dummy = {0};
+		guids.push_back(dummy);
+		ui.joylist->addItem("Nonexistent");
+	}
+	
+	tie_setting(s.joyid, ui.joylist);
 }
 
 void TrackerControls::doOK() {
