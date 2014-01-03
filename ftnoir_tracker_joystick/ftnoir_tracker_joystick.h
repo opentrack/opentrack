@@ -71,7 +71,6 @@ public:
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
     int min_[8], max_[8];
-    GUID preferred;
     QMutex mtx;
     QFrame* frame;
     DIDEVICEINSTANCE def;
