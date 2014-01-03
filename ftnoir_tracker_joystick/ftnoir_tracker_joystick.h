@@ -55,7 +55,7 @@ struct settings {
         axis_3(b, "axis-3", 0),
         axis_4(b, "axis-4", 0),
         axis_5(b, "axis-5", 0),
-        joyid(b, "joy-id", 0),
+        joyid(b, "joy-id", ""),
         axes{&axis_0, &axis_1, &axis_2, &axis_3, &axis_4, &axis_5}
     {}
 };

@@ -10,7 +10,7 @@ static BOOL CALLBACK EnumJoysticksCallback2( const DIDEVICEINSTANCE* pdidInstanc
 
     self->def = *pdidInstance;
 
-    return self->iter++ == self->s.joyid ? DIENUM_STOP : DIENUM_CONTINUE;
+    return QString(pdidInstance->tszInstanceName) == self->s.joyid ? DIENUM_STOP : DIENUM_CONTINUE;
 }
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
