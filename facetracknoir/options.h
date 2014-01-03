@@ -262,6 +262,7 @@ namespace options {
         base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
         base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.CONNTYPE);
         cb->setCurrentText(v);
+		v = cb->currentText();
     }
 
     template<>
