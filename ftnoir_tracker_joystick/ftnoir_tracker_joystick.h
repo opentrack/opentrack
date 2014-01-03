@@ -45,7 +45,7 @@ struct settings {
     value<int> axis_3;
     value<int> axis_4;
     value<int> axis_5;
-    value<int> joyid;
+    value<QString> joyid;
     value<int>* axes[6];
     settings() :
         b(bundle("tracker-joystick")),
