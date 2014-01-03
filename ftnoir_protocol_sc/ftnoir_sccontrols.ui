@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>258</width>
-    <height>61</height>
+    <width>290</width>
+    <height>79</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,12 +38,17 @@
     <widget class="QComboBox" name="comboBox">
      <item>
       <property name="text">
-       <string>Acceleration</string>
+       <string>SP1</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>SP2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Acceleration</string>
       </property>
      </item>
     </widget>
