@@ -102,7 +102,12 @@ public:
         actx.cbSize = sizeof(ACTCTXA);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-        QString path = QCoreApplication::applicationDirPath() + "/opentrack-proto-simconnect.dll";
+#ifdef _MSC_VER
+#	define PREFIX ""
+#else
+#	define PREFIX "lib"
+#endif 
+        QString path = QCoreApplication::applicationDirPath() + "/" PREFIX "opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
         hactctx = CreateActCtxA(&actx);
@@ -135,6 +140,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     {
         ActivationContext ctx(142 + static_cast<int>(s.sxs_manifest));
         
+		SCClientLib.setFileName("SimConnect.dll");
         if (!SCClientLib.load()) {
             qDebug() << "SC load" << SCClientLib.errorString();
             return false;
