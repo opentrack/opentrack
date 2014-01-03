@@ -172,11 +172,20 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <property name="horizontalSpacing">
       <number>10</number>
-     </property>
-     <property name="margin">
-      <number>0</number>
      </property>
      <item row="2" column="0">
       <widget class="QLabel" name="lblZ">
@@ -227,9 +236,6 @@
        </property>
        <property name="smallDecimalPoint">
         <bool>false</bool>
-       </property>
-       <property name="numDigits">
-        <number>5</number>
        </property>
        <property name="digitCount">
         <number>5</number>
@@ -283,9 +289,6 @@
        <property name="smallDecimalPoint">
         <bool>false</bool>
        </property>
-       <property name="numDigits">
-        <number>5</number>
-       </property>
        <property name="digitCount">
         <number>5</number>
        </property>
@@ -338,9 +341,6 @@
        <property name="smallDecimalPoint">
         <bool>false</bool>
        </property>
-       <property name="numDigits">
-        <number>5</number>
-       </property>
        <property name="digitCount">
         <number>5</number>
        </property>
@@ -379,9 +379,6 @@
        </property>
        <property name="smallDecimalPoint">
         <bool>false</bool>
-       </property>
-       <property name="numDigits">
-        <number>5</number>
        </property>
        <property name="digitCount">
         <number>5</number>
@@ -467,9 +464,6 @@
        <property name="smallDecimalPoint">
         <bool>false</bool>
        </property>
-       <property name="numDigits">
-        <number>5</number>
-       </property>
        <property name="digitCount">
         <number>5</number>
        </property>
@@ -508,9 +502,6 @@
        </property>
        <property name="smallDecimalPoint">
         <bool>false</bool>
-       </property>
-       <property name="numDigits">
-        <number>5</number>
        </property>
        <property name="digitCount">
         <number>5</number>
@@ -670,7 +661,7 @@
      <string notr="true">background:none;</string>
     </property>
     <property name="text">
-     <string>Curves</string>
+     <string>Mapping</string>
     </property>
     <property name="icon">
      <iconset resource="main-facetracknoir.qrc">
@@ -1425,7 +1416,16 @@
      <property name="formAlignment">
       <set>Qt::AlignHCenter|Qt::AlignTop</set>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item row="0" column="0">
@@ -1656,7 +1656,16 @@
      <property name="formAlignment">
       <set>Qt::AlignHCenter|Qt::AlignTop</set>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item row="0" column="0">
