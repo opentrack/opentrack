@@ -30,7 +30,7 @@ private:
     volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
-    FunctionConfig(const FunctionConfig&) {}
+    FunctionConfig(const FunctionConfig&) = delete;
 public:
     int maxInput() const { return _max_Input; }
     int maxOutput() const { return _max_Output; }

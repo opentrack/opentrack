@@ -15,16 +15,9 @@ class KeyboardShortcutDialog: public QWidget
     Q_OBJECT
 public:
 
-    explicit KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
-    virtual ~KeyboardShortcutDialog();
-    void showEvent (QShowEvent *);
-
+    KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
 private:
 	Ui::UICKeyboardShortcutDialog ui;
-	void loadSettings();
-	void save();
-
-	bool settingsDirty;
 	FaceTrackNoIR *mainApp;
 
 private slots:

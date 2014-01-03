@@ -33,7 +33,6 @@
 #include "ftnoir_csv/csv.h"
 #include "ui_ftnoir_winecontrols.h"
 #include <QMessageBox>
-#include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
@@ -70,10 +69,7 @@ class FTControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
     FTControls();
-    void showEvent ( QShowEvent *  ) {show();}
-    void Initialize(QWidget *) {show();}
     void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 

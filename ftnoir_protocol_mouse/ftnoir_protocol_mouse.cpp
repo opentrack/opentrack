@@ -29,38 +29,12 @@
 #include "ftnoir_protocol_mouse.h"
 #include "facetracknoir/global-settings.h"
 
-/** constructor **/
-FTNoIR_Protocol::FTNoIR_Protocol()
-{
-	loadSettings();
-}
-
-/** destructor **/
-FTNoIR_Protocol::~FTNoIR_Protocol()
-{
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Protocol::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "Mouse" );
-	Mouse_X = (FTN_AngleName) (iniFile.value ( "Mouse_X", 0 ).toInt());
-	Mouse_Y = (FTN_AngleName) (iniFile.value ( "Mouse_Y", 0 ).toInt());
-	iniFile.endGroup ();
-}
-
-//
-// Update Headpose in Game.
-//
 void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
-    float fMouse_X = 0;
-    float fMouse_Y = 0;
+    double fMouse_X = 0;
+    double fMouse_Y = 0;
+
+    int Mouse_X = s.Mouse_X;
+    int Mouse_Y = s.Mouse_Y;
 	
     if (Mouse_X > 0 && Mouse_X <= 6)
         fMouse_X = headpose[Mouse_X-1] / (Mouse_X < 3 ? 100 : 180);
@@ -77,23 +51,15 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
     }
 }
 
-//
-// Returns 'true' if all seems OK.
-//
-bool FTNoIR_Protocol::checkServerInstallationOK()
-{   
-
-	return true;
+void FTNoIR_Protocol::reload()
+{
+    s.b->reload();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
+bool FTNoIR_Protocol::checkServerInstallationOK()
+{   
+    return true;
+}
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {

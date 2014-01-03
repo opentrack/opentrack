@@ -15,6 +15,28 @@
 #include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
+#include "facetracknoir/options.h"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<bool> enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
+    value<double> fov;
+    value<int> fps, camera_idx, resolution;
+    settings() :
+        b(bundle("HT-Tracker")),
+        enableTX(b, "enable-tx", true),
+        enableTY(b, "enable-ty", true),
+        enableTZ(b, "enable-tz", true),
+        enableRX(b, "enable-rx", true),
+        enableRY(b, "enable-ry", true),
+        enableRZ(b, "enable-rz", true),
+        fov(b, "fov", 56),
+        fps(b, "fps", 0),
+        camera_idx(b, "camera-index", 0),
+        resolution(b, "resolution", 0)
+    {}
+};
 
 class Tracker : public QObject, public ITracker
 {
@@ -24,10 +46,11 @@ public:
     virtual ~Tracker();
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
-	bool enableTX, enableTY, enableTZ, enableRX, enableRY, enableRZ;
-	ht_shm_t* shm;
+    void load_settings(ht_config_t* config);
 private:
+    settings s;
     PortableLockedShm lck_shm;
+    ht_shm_t* shm;
 	QProcess subprocess;
     HTVideoWidget* videoWidget;
 	QHBoxLayout* layout;
@@ -38,27 +61,17 @@ class TrackerControls : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
 	explicit TrackerControls();
-    virtual ~TrackerControls();
-    void showEvent (QShowEvent *);
-
-    void Initialize(QWidget *);
     void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 
 private:
 	Ui::Form ui;
-	void loadSettings();
-	void save();
-	bool settingsDirty;
+    settings s;
 
 private slots:
 	void doOK();
 	void doCancel();
-    void settingChanged() { settingsDirty = true; }
-    void settingChanged(int) { settingsDirty = true; }
-    void settingChanged(double) { settingsDirty = true; }
 };
 
 #endif

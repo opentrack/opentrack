@@ -10,24 +10,24 @@ static BOOL CALLBACK EnumJoysticksCallback2( const DIDEVICEINSTANCE* pdidInstanc
 
     self->def = *pdidInstance;
 
-    return self->iter++ == self->joyid ? DIENUM_STOP : DIENUM_CONTINUE;
+    return self->iter++ == self->s.joyid ? DIENUM_STOP : DIENUM_CONTINUE;
 }
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
     g_pJoystick(nullptr),
-    joyid(-1),
     iter(-1),
     mtx(QMutex::Recursive)
 {
     for (int i = 0; i < 6; i++)
-        axes[i] = min_[i] = max_[i] = 0;
+        *s.axes[i] = min_[i] = max_[i] = 0;
     GUID bar = {0};
     preferred = bar;
 }
 
 void FTNoIR_Tracker::reload()
 {
+    s.b->reload();
     QMutexLocker foo(&mtx);
     if (g_pJoystick)
     {
@@ -100,7 +100,6 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
     QMutexLocker foo(&mtx);
     this->frame = frame;
     iter = 0;
-    loadSettings();
     auto hr = CoInitialize( nullptr );
     DI_ENUM_CONTEXT enumContext = {0};
 
@@ -218,7 +217,7 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
 
     for (int i = 0; i < 6; i++)
     {
-        auto idx = axes[i] - 1;
+        auto idx = *s.axes[i] - 1;
         if (idx < 0 || idx > 7)
         {
             data[i] = 0;
@@ -232,19 +231,6 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
             data[i] = val * limits[i] / (double) (val >= 0 ? max : min);
         }
     }
-}
-
-void FTNoIR_Tracker::loadSettings() {
-
-    QMutexLocker foo(&mtx);
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-    iniFile.beginGroup ( "tracker-joy" );
-    joyid = iniFile.value("joyid", -1).toInt();
-    for (int i = 0; i < 6; i++)
-        axes[i] = iniFile.value(QString("axis-%1").arg(i), 0).toInt() - 1;
-    iniFile.endGroup ();
 }
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()

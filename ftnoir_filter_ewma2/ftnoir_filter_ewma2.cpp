@@ -37,46 +37,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-FTNoIR_Filter::FTNoIR_Filter()
-{
-    first_run = true;
-    alpha_smoothing = 0.02f;  // this is a constant for now, might be a parameter later
-    loadSettings();  // Load the Settings
-}
-
-FTNoIR_Filter::~FTNoIR_Filter()
+FTNoIR_Filter::FTNoIR_Filter() : first_run(true), alpha_smoothing(0.02)
 {
 }
 
-void FTNoIR_Filter::receiveSettings(double smin, double smax, double sexpt)
+void FTNoIR_Filter::receiveSettings()
 {
-    QMutexLocker foo(&mutex);
-    
-    kMinSmoothing = smin;
-    kMaxSmoothing = smax;
-    kSmoothingScaleCurve = sexpt;
-}
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Filter::loadSettings() {
-    qDebug() << "FTNoIR_Filter::loadSettings says: Starting ";
-    QSettings settings("opentrack");  // Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );  // Application settings (in INI-file)
-
-    qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
-
-    //
-    // The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
-    //
-    iniFile.beginGroup ( "Tracking" );
-    kMinSmoothing = iniFile.value ( "minSmooth", 15 ).toInt();
-    kMaxSmoothing = iniFile.value ( "maxSmooth", 50 ).toInt();
-    kSmoothingScaleCurve = iniFile.value ( "powCurve", 10 ).toInt();
-    iniFile.endGroup ();
+    s.b->reload();
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
@@ -97,15 +64,13 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         return;
     }
     
-    QMutexLocker foo(&mutex);
-
     for (int i=0;i<6;i++) {
         // Calculate the delta.
         delta=target_camera_position[i]-current_camera_position[i];
         // Normalise the delta.
         delta=std::min<double>(std::max<double>(fabs(delta)/scale[i],0.0),1.0);
         // Calculate the new alpha from the normalized delta.
-        new_alpha=1.0/(kMinSmoothing+((1.0-pow(delta,kSmoothingScaleCurve))*(kMaxSmoothing-kMinSmoothing)));
+        new_alpha=1.0/(s.kMinSmoothing+((1.0-pow(delta,s.kSmoothingScaleCurve))*(s.kMaxSmoothing-s.kMinSmoothing)));
         // Update the smoothed alpha.
         alpha[i]=(alpha_smoothing*new_alpha)+((1.0-alpha_smoothing)*alpha[i]);
     }

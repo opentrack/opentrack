@@ -39,20 +39,11 @@ class Tracker : public ITracker, QThread, public FrameProvider
 public:
 	Tracker();
     virtual ~Tracker();
-
-	// --- ITracker interface ---
-	virtual void Initialize(QFrame *videoframe);
-#ifdef OPENTRACK_API
     virtual void StartTracker(QFrame* parent_window);
     virtual void GetHeadPoseData(double* data);
-#else
-	virtual void StartTracker(HWND parent_window);
-    virtual void StopTracker(bool exit);
-    virtual bool GetHeadPoseData(THeadPoseData *data);
-#endif
     virtual void refreshVideo();
 
-	void apply(const TrackerSettings& settings);
+    void apply(settings& s);
 	void center();
 	void reset();	// reset the trackers internal state variables
 	void run();
@@ -74,20 +65,12 @@ protected:
 	};
 	void set_command(Command command);
 	void reset_command(Command command);
-	int commands;	
+    int commands;
 
-	int sleep_time;	
-
-	// --- tracking chain ---
-#ifdef OPENTRACK_API
     CVCamera       camera;
-#else
-	VICamera       camera;
-#endif
 	FrameRotation  frame_rotation;
 	PointExtractor point_extractor;
 	PointTracker   point_tracker;
-	bool           tracking_valid;
 
 	FrameTrafo X_GH_0; // for centering
 	cv::Vec3f   t_MH; // translation from model frame to head frame
@@ -96,22 +79,11 @@ protected:
 	// --- ui ---
 	cv::Mat frame;	// the output frame for display
 
-	void update_show_video_widget();
-	bool show_video_widget;
-#ifdef OPENTRACK_API
     PTVideoWidget* video_widget;
-#endif
 	QFrame*      video_frame;
+    bool           tracking_valid;
 
-	// --- misc ---
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
-	
-	long frame_count;
+    settings s;
 	Timer time;
 };
 

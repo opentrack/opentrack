@@ -28,71 +28,24 @@ class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDi
 	Q_OBJECT
 public:
 	TrackerDialog();
-	~TrackerDialog();
-
-	// ITrackerDialog interface
-	void Initialize(QWidget *parent);
 	void registerTracker(ITracker *tracker);
 	void unRegisterTracker();
-	
+    void save();
 	void trans_calib_step();
 
-protected slots:
-	// ugly qt stuff
-	void set_video_widget(bool val)  { settings.video_widget = val;   settings_changed(); }
-	void set_dyn_pose_res(bool val)  { settings.dyn_pose_res = val;   settings_changed(); }
-	void set_sleep_time(int val)     { settings.sleep_time = val;     settings_changed(); }
-	void set_reset_time(int val)     { settings.reset_time = val;     settings_changed(); }
-	void set_cam_index(int idx)		 { settings.cam_index = idx;      settings_changed(); }
-	void set_cam_f(double val)       { settings.cam_f = val;          settings_changed(); }
-	void set_cam_res_x(int val)      { settings.cam_res_x = val;      settings_changed(); }
-	void set_cam_res_y(int val)      { settings.cam_res_y = val;      settings_changed(); }
-	void set_cam_fps(int val)        { settings.cam_fps = val;        settings_changed(); }
-	void set_cam_roll(int idx);
-	void set_cam_pitch(int val)      { settings.cam_pitch = val;      settings_changed(); }
-	void set_cam_yaw(int val)        { settings.cam_yaw = val;        settings_changed(); }
-	void set_min_point_size(int val) { settings.min_point_size = val; settings_changed(); }
-	void set_max_point_size(int val) { settings.max_point_size = val; settings_changed(); }
-	void set_threshold(int val)      { settings.threshold = val;      settings_changed(); }
-	void set_threshold_secondary(int val)      { settings.threshold_secondary = val;      settings_changed(); }
-	void set_ena_roll(bool val)		 { settings.bEnableRoll = val;    settings_changed(); }
-	void set_ena_pitch(bool val)	 { settings.bEnablePitch = val;   settings_changed(); }
-	void set_ena_yaw(bool val)		 { settings.bEnableYaw = val;     settings_changed(); }
-	void set_ena_x(bool val)		 { settings.bEnableX = val;       settings_changed(); }
-	void set_ena_y(bool val)		 { settings.bEnableY = val;       settings_changed(); }
-	void set_ena_z(bool val)		 { settings.bEnableZ = val;       settings_changed(); }
-
-	void set_clip_t_height(int val)  { dialog_settings.clip_ty = val; set_model_clip(); }
-	void set_clip_t_length(int val)  { dialog_settings.clip_tz = val; set_model_clip(); }
-	void set_clip_b_height(int val)  { dialog_settings.clip_by = val; set_model_clip(); }
-	void set_clip_b_length(int val)  { dialog_settings.clip_bz = val; set_model_clip(); }
-	void set_cap_width(int val)      { dialog_settings.cap_x = val;   set_model_cap(); }
-	void set_cap_height(int val)     { dialog_settings.cap_y = val;   set_model_cap(); }
-	void set_cap_length(int val)     { dialog_settings.cap_z = val;   set_model_cap(); }
-	void set_m1x(int val)            { dialog_settings.M01x = val;	  set_model_custom(); }
-	void set_m1y(int val)            { dialog_settings.M01y = val;    set_model_custom(); }
-	void set_m1z(int val)            { dialog_settings.M01z = val;    set_model_custom(); }
-	void set_m2x(int val)            { dialog_settings.M02x = val;    set_model_custom(); }
-	void set_m2y(int val)            { dialog_settings.M02y = val;    set_model_custom(); }
-	void set_m2z(int val)            { dialog_settings.M02z = val;    set_model_custom(); }
-	void set_tx(int val)             { settings.t_MH[0] = val;        settings_changed(); }
-	void set_ty(int val)             { settings.t_MH[1] = val;        settings_changed(); }
-	void set_tz(int val)             { settings.t_MH[2] = val;        settings_changed(); }
-	void set_model(int model_id);
-
-	void doCenter();
-	void doReset();
-
+public slots:
+    void doCenter();
+    void doReset();
 	void doOK();
+    void doApply();
 	void doCancel();
+    void do_apply_without_saving();
 
 	void startstop_trans_calib(bool start);
-
 	void widget_destroyed(QObject* obj);
-
 	void create_video_widget();
-
 	void poll_tracker_info();
+    void set_model(int idx);
 
 protected:
 	void destroy_video_widget(bool do_delete = true);
@@ -103,14 +56,10 @@ protected:
 
 	void settings_changed();
 
-	TrackerSettings settings;
-	TrackerDialogSettings dialog_settings;
-	bool settings_dirty;
-
+    settings s;
 	Tracker* tracker;
+    VideoWidgetDialog* video_widget_dialog;
 	QTimer timer;
-
-	VideoWidgetDialog* video_widget_dialog;
 
 	TranslationCalibrator trans_calib;
 	bool trans_calib_running;

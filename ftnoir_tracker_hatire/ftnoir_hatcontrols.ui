@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>307</width>
-    <height>509</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -126,25 +126,6 @@
           <property name="spacing">
            <number>4</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Serial port</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="cbSerialPort">
             <property name="sizePolicy">
@@ -167,6 +148,25 @@
             </property>
             <property name="modelColumn">
              <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>65536</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Serial port</string>
             </property>
            </widget>
           </item>
@@ -1030,45 +1030,6 @@ p, li { white-space: pre-wrap; }
        <string>About</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_info_2">
-         <property name="text">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;FTNoIR HAT  Plugin&lt;br /&gt;by FuraX49&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://hatire.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" rowspan="2" colspan="2">
-        <widget class="QPushButton" name="btn_icone">
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normalon>:/images/hat_logo.png</normalon>
-          </iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>128</width>
-           <height>128</height>
-          </size>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_version">
          <property name="font">
@@ -1120,6 +1081,45 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="backgroundVisible">
           <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" rowspan="2">
+        <widget class="QPushButton" name="btn_icone">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normalon>:/images/hat_logo.png</normalon>
+          </iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>128</width>
+           <height>128</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_info_2">
+         <property name="text">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;FTNoIR HAT  Plugin&lt;br /&gt;by FuraX49&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://hatire.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

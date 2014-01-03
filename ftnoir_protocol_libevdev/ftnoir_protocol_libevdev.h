@@ -9,7 +9,6 @@
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include <QSettings>
 #include "facetracknoir/global-settings.h"
 
 extern "C" {
@@ -41,10 +40,6 @@ class LibevdevControls: public QWidget, public IProtocolDialog
 public:
 
     explicit LibevdevControls();
-    virtual ~LibevdevControls();
-    void showEvent ( QShowEvent *) {}
-
-    void Initialize(QWidget *);
     void registerProtocol(IProtocol *) {}
 	void unRegisterProtocol() {}
 
