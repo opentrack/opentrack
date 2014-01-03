@@ -30,13 +30,6 @@
 #include "facetracknoir/options.h"
 using namespace options;
 
-struct DI_ENUM_CONTEXT
-{
-    GUID preferred_instance;
-    LPDIRECTINPUTDEVICE8* g_pJoystick;
-    LPDIRECTINPUT8 g_pDI;
-};
-
 struct settings {
     pbundle b;
     value<int> axis_0;
@@ -46,7 +39,6 @@ struct settings {
     value<int> axis_4;
     value<int> axis_5;
     value<QString> joyid;
-    value<int>* axes[6];
     settings() :
         b(bundle("tracker-joystick")),
         axis_0(b, "axis-0", 0),
@@ -55,8 +47,7 @@ struct settings {
         axis_3(b, "axis-3", 0),
         axis_4(b, "axis-4", 0),
         axis_5(b, "axis-5", 0),
-        joyid(b, "joy-id", ""),
-        axes{&axis_0, &axis_1, &axis_2, &axis_3, &axis_4, &axis_5}
+        joyid(b, "joy-id", "")
     {}
 };
 
