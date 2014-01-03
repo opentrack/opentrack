@@ -14,7 +14,23 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
 	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)));
+
+    tie_setting(mainApp->s.a_x.altp, ui.tx_altp);
+    tie_setting(mainApp->s.a_y.altp, ui.ty_altp);
+    tie_setting(mainApp->s.a_z.altp, ui.tz_altp);
+    tie_setting(mainApp->s.a_yaw.altp, ui.rx_altp);
+    tie_setting(mainApp->s.a_pitch.altp, ui.ry_altp);
+    tie_setting(mainApp->s.a_roll.altp, ui.rz_altp);
+
+    tie_setting(mainApp->s.tcomp_p, ui.tcomp_enable);
+    tie_setting(mainApp->s.tcomp_tz, ui.tcomp_rz);
+
+    tie_setting(mainApp->s.a_x.zero, ui.pos_tx);
+    tie_setting(mainApp->s.a_y.zero, ui.pos_ty);
+    tie_setting(mainApp->s.a_z.zero, ui.pos_tz);
+    tie_setting(mainApp->s.a_yaw.zero, ui.pos_rx);
+    tie_setting(mainApp->s.a_pitch.zero, ui.pos_ry);
+    tie_setting(mainApp->s.a_roll.zero, ui.pos_rz);
 
 	// Load the settings from the current .INI-file
 	loadSettings();
@@ -47,7 +63,7 @@ void CurveConfigurationDialog::doCancel() {
 	//
 	// Ask if changed Settings should be saved
 	//
-	if (settingsDirty) {
+    if (settingsDirty || mainApp->s.b->modifiedp()) {
 		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
 
 		qDebug() << "doCancel says: answer =" << ret;
@@ -58,6 +74,7 @@ void CurveConfigurationDialog::doCancel() {
 				this->close();
 				break;
 			case QMessageBox::Discard:
+                mainApp->s.b->revert();
 				this->close();
 				break;
 			case QMessageBox::Cancel:
@@ -77,67 +94,6 @@ void CurveConfigurationDialog::doCancel() {
 // Load the current Settings from the currently 'active' INI-file.
 //
 void CurveConfigurationDialog::loadSettings() {
-    qDebug() << "CurveConfigurationDialog::loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    qDebug() << "CurveConfigurationDialog::loadSettings says: iniFile = " << currentFile;
-
-    static const char* names[] = {
-        "tx_alt",
-        "ty_alt",
-        "tz_alt",
-        "rx_alt",
-        "ry_alt",
-        "rz_alt"
-    };
-
-    iniFile.beginGroup("Tracking");
-
-    ui.tcomp_rz->setChecked(iniFile.value("tcomp-rz", false).toBool());
-    ui.checkBox->setChecked(iniFile.value("compensate", true).toBool());
-
-    for (int i = 0; i < 6; i++)
-        mainApp->axis(i).altp = iniFile.value(names[i], false).toBool();
-
-    QCheckBox* widgets[] = {
-        ui.tx_altp,
-        ui.ty_altp,
-        ui.tz_altp,
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp
-    };
-
-    for (int i = 0; i < 6; i++)
-        widgets[i]->setChecked(mainApp->axis(i).altp);
-
-    QDoubleSpinBox* widgets2[] = {
-        ui.pos_tx,
-        ui.pos_ty,
-        ui.pos_tz,
-        ui.pos_tx,
-        ui.pos_ry,
-        ui.pos_rz
-    };
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-
-
-    for (int i = 0; i < 6; i++)
-        widgets2[i]->setValue(iniFile.value(names2[i], 0).toDouble());
-    
-    iniFile.endGroup();
-
     QFunctionConfigurator* configs[6] = {
         ui.txconfig,
         ui.tyconfig,
@@ -156,23 +112,10 @@ void CurveConfigurationDialog::loadSettings() {
         ui.rzconfig_alt
     };
 
-    QCheckBox* checkboxes[6] = {
-        ui.rx_altp,
-        ui.ry_altp,
-        ui.rz_altp,
-        ui.tx_altp,
-        ui.ty_altp,
-        ui.tz_altp
-    };
-
-    QDoubleSpinBox* widgets3[] = {
-        ui.pos_tx,
-        ui.pos_ty,
-        ui.pos_tz,
-        ui.pos_tx,
-        ui.pos_ry,
-        ui.pos_rz
-    };
+    QSettings settings("opentrack");
+    QString currentFile = settings.value("SettingsFile",
+                                         QCoreApplication::applicationDirPath() + "/settings/default.ini" )
+            .toString();
 
     for (int i = 0; i < 6; i++)
     {
@@ -182,8 +125,6 @@ void CurveConfigurationDialog::loadSettings() {
         alt_configs[i]->loadSettings(currentFile);
         connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
         connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
-        connect(checkboxes[i], SIGNAL(stateChanged(int)), this, SLOT(curveChanged(int)), Qt::UniqueConnection);
-        mainApp->axis(i).zero = widgets3[i]->value();
     }
 
     settingsDirty = false;
@@ -196,9 +137,11 @@ void CurveConfigurationDialog::save() {
 
 	qDebug() << "save() says: started";
 
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings settings("opentrack");
+    QString currentFile =
+            settings.value("SettingsFile",
+                           QCoreApplication::applicationDirPath() + "/settings/default.ini" )
+            .toString();
 
     ui.rxconfig->saveSettings(currentFile);
     ui.ryconfig->saveSettings(currentFile);
@@ -213,54 +156,6 @@ void CurveConfigurationDialog::save() {
     ui.rxconfig_alt->saveSettings(currentFile);
     ui.ryconfig_alt->saveSettings(currentFile);
     ui.rzconfig_alt->saveSettings(currentFile);
-
-    bool tcomp_rz = false, compensate = true;
-
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    iniFile.beginGroup("Tracking");
-
-    iniFile.setValue("tcomp-rz", tcomp_rz = ui.tcomp_rz->checkState() != Qt::Unchecked);
-    iniFile.setValue("compensate", compensate = (bool) !!ui.checkBox->isChecked());
-
-    if (mainApp->tracker)
-    {
-        mainApp->tracker->compensate = compensate;
-        mainApp->tracker->tcomp_rz = tcomp_rz;
-    }
-
-    iniFile.setValue("rx_alt", ui.rx_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("ry_alt", ui.ry_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("rz_alt", ui.rz_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("tx_alt", ui.tx_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("ty_alt", ui.ty_altp->checkState() != Qt::Unchecked);
-    iniFile.setValue("tz_alt", ui.tz_altp->checkState() != Qt::Unchecked);
-    
-    QDoubleSpinBox* widgets2[] = {
-        ui.pos_tx,
-        ui.pos_ty,
-        ui.pos_tz,
-        ui.pos_tx,
-        ui.pos_ry,
-        ui.pos_rz
-    };
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-    
-    for (int i = 0; i < 6; i++)
-    {
-        iniFile.setValue(names2[i], widgets2[i]->value());
-        mainApp->axis(i).zero = widgets2[i]->value();
-    }
-
-    iniFile.endGroup();
 
 	settingsDirty = false;
 }

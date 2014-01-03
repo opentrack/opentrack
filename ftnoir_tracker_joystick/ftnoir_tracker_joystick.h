@@ -24,9 +24,11 @@
 #include <commctrl.h>
 #include <basetsd.h>
 #include <dinput.h>
-//#include <dinputd.h>
 #include <oleauto.h>
 #include <shellapi.h>
+
+#include "facetracknoir/options.h"
+using namespace options;
 
 struct DI_ENUM_CONTEXT
 {
@@ -35,38 +37,53 @@ struct DI_ENUM_CONTEXT
     LPDIRECTINPUT8 g_pDI;
 };
 
+struct settings {
+    pbundle b;
+    value<int> axis_0;
+    value<int> axis_1;
+    value<int> axis_2;
+    value<int> axis_3;
+    value<int> axis_4;
+    value<int> axis_5;
+    value<int> joyid;
+    value<int>* axes[6];
+    settings() :
+        b(bundle("tracker-joystick")),
+        axis_0(b, "axis-0", 0),
+        axis_1(b, "axis-1", 0),
+        axis_2(b, "axis-2", 0),
+        axis_3(b, "axis-3", 0),
+        axis_4(b, "axis-4", 0),
+        axis_5(b, "axis-5", 0),
+        joyid(b, "joy-id", 0),
+        axes{&axis_0, &axis_1, &axis_2, &axis_3, &axis_4, &axis_5}
+    {}
+};
+
 class FTNoIR_Tracker : public ITracker
 {
 public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
-
     void StartTracker(QFrame *frame);
     void GetHeadPoseData(double *data);
-	void loadSettings();
+    void reload();
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
-    int axes[6];
     int min_[8], max_[8];
     GUID preferred;
-    int joyid;
     QMutex mtx;
     QFrame* frame;
     DIDEVICEINSTANCE def;
-    void reload();
     int iter; // XXX bad style
+    settings s;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-	explicit TrackerControls();
-    ~TrackerControls();
-    void showEvent (QShowEvent *);
-
-    void Initialize(QWidget *parent);
+    TrackerControls();
     void registerTracker(ITracker *foo) {
         tracker = dynamic_cast<FTNoIR_Tracker*>(foo);
     }
@@ -75,32 +92,20 @@ public:
     }
     QList<GUID> guids;
     Ui::UIJoystickControls ui;
-    void loadSettings();
-	void save();
-    bool settingsDirty;
     FTNoIR_Tracker* tracker;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-    void settingChanged() { settingsDirty = true; }
-    void settingChanged(int) { settingsDirty = true; }
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
-//*******************************************************************************************************
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-	FTNoIR_TrackerDll();
-	~FTNoIR_TrackerDll();
-
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
-
 private:
 	QString trackerFullName;									// Trackers' name and description
 	QString trackerShortName;

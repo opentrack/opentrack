@@ -69,13 +69,13 @@ protected:
         virtual void _set_fps() = 0;
         virtual void _set_res() = 0;
 
-        bool active;
-        int desired_index;
-        int active_index;
-        CamInfo cam_info;
-        CamInfo cam_desired;
         float dt_valid;
         float dt_mean;
+        int desired_index;
+        int active_index;
+        bool active;
+        CamInfo cam_info;
+        CamInfo cam_desired;
 };
 
 
@@ -128,9 +128,9 @@ protected:
 
 enum RotationType
 {
-    CLOCKWISE = -1,
-    ZERO = 0,
-    COUNTER_CLOCKWISE = 1
+    CLOCKWISE = 0,
+    ZERO = 1,
+    COUNTER_CLOCKWISE = 2
 };
 
 // ----------------------------------------------------------------------------

@@ -39,6 +39,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QShortcut>
+#include <vector>
 #if !defined(_WIN32)
 #	include "qxt-mini/QxtGlobalShortcut"
 #else
@@ -49,6 +50,11 @@
 #include <QElapsedTimer>
 
 #include "ui_facetracknoir.h"
+
+#include "facetracknoir/options.h"
+using namespace options;
+
+#include "facetracknoir/main-settings.hpp"
 
 #include "global-settings.h"
 #include "tracker.h"
@@ -100,6 +106,8 @@ public:
     QxtGlobalShortcut keyCenter;
     QxtGlobalShortcut keyToggle;
 #endif
+    pbundle b;
+    main_settings s;
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
@@ -108,7 +116,6 @@ private:
     HeadPoseData pose;
     Ui::OpentrackUI ui;
 	QTimer timUpdateHeadPose;					// Timer to display headpose
-	QStringList iniFileList;					// List of INI-files, that are present in the Settings folder
 
     ITrackerDialog* pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
     ITrackerDialog* pSecondTrackerDialog;		// Pointer to the second Tracker dialog instance (in DLL)
@@ -122,6 +129,7 @@ private:
 
 	void GetCameraNameDX();
 	void loadSettings();
+    void updateButtonState(bool);
 
     QList<DynamicLibrary*> dlopen_filters;
     QList<DynamicLibrary*> dlopen_trackers;
@@ -129,18 +137,18 @@ private:
     QShortcut kbd_quit;
 
 #ifndef _WIN32
-    void bind_keyboard_shortcut(QxtGlobalShortcut& key, const QString label, QSettings& iniFile);
+    void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
 #endif
 
-    volatile bool looping;
+    bool looping;
+
+    void fill_profile_cbx();
     
 private slots:
-    //file menu
     void open();
     void save();
     void saveAs();
     void exit();
-    //		void setIcon(int index);
     void profileSelected(int index);
     
     void showTrackerSettings();
@@ -151,30 +159,10 @@ private slots:
     void showKeyboardShortcuts();
     void showCurveConfiguration();
     
-    void setInvertAxis( Axis axis, int invert );
-    void setInvertYaw(int invert) {
-        setInvertAxis(Yaw, invert);
-    }
-    void setInvertPitch(int invert) {
-        setInvertAxis(Pitch, invert);
-    }        
-    void setInvertRoll(int invert) {
-        setInvertAxis(Roll, invert);
-    }
-    void setInvertX(int invert) {
-        setInvertAxis(TX, invert);
-    }
-    void setInvertY(int invert) {
-        setInvertAxis(TY, invert);
-    }
-    void setInvertZ(int invert) {
-        setInvertAxis(TZ, invert);
-    }
     void showHeadPose();
     
     void startTracker();
     void stopTracker();
-    
 };
 
 #endif // FaceTrackNoIR_H

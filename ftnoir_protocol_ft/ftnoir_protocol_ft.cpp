@@ -24,78 +24,30 @@
 * FTServer		FTServer is the Class, that communicates headpose-data			*
 *				to games, using the FreeTrackClient.dll.	         			*
 ********************************************************************************/
-#include <algorithm>
 #include "ftnoir_protocol_ft.h"
 #include "ftnoir_csv/csv.h"
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol() :
     shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTMemMap))
 {
     pMemData = (FTMemMap*) shm.mem;
-	useTIRViews	= false;
-	useDummyExe	= false;
-    intUsedInterface = 0;
-	
-    loadSettings();
-
-	ProgramName = "";
-	intGameID = 0;
-
-	viewsStart = 0;
-	viewsStop = 0;
+    ProgramName = "";
+    intGameID = 0;
+    viewsStart = 0;
+    viewsStop = 0;
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-
-	qDebug()<< "~FTNoIR_Protocol: Destructor started.";
-	
-	//
-	// Stop if started
-	//
-	if (viewsStop != NULL) {
-		qDebug()<< "~FTNoIR_Protocol: Stopping TIRViews.";
-		viewsStop();
-		FTIRViewsLib.unload();
-	}
-	dummyTrackIR.terminate();
+    if (viewsStop != NULL) {
+        viewsStop();
+        FTIRViewsLib.unload();
+    }
+    dummyTrackIR.terminate();
     dummyTrackIR.kill();
     dummyTrackIR.waitForFinished(50);
-
 }
 
-//
-// Read the game-data from CSV
-//
-
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Protocol::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FT" );
-	intUsedInterface = iniFile.value ( "UsedInterface", 0 ).toInt();
-	iniFile.endGroup ();
-
-	//
-	// Use the settings-section from the deprecated fake-TIR protocol, as they are most likely to be found there.
-	//
-	iniFile.beginGroup ( "FTIR" );
-	useTIRViews	= iniFile.value ( "useTIRViews", 0 ).toBool();
-	useDummyExe	= iniFile.value ( "useDummyExe", 0 ).toBool();
-	iniFile.endGroup ();
-}
-
-//
-// Update Headpose in Game.
-//
 void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     float virtPosX;
     float virtPosY;
@@ -112,7 +64,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     float headRotX;
     float headRotY;
     float headRotZ;
-    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]) * (useDummyExe ? 2.0 : 1.0);
+    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]) * (s.useDummyExe ? 2.0 : 1.0);
     headRotY = virtRotY = getRadsFromDegrees(headpose[Yaw]);
     headRotZ = virtRotZ = getRadsFromDegrees(headpose[Roll]);
     headPosX = virtPosX = headpose[TX] * 10;
@@ -149,13 +101,6 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     pMemData->data.Y3 = 0;
     pMemData->data.Y4 = 0;
 
-    //
-    // Check if the handle that was sent to the Game, was changed (on x64, this will be done by the ED-API)
-    // If the "Report Program Name" command arrives (which is a '1', for now), raise the event from here!
-    //
-    //
-    // The game-ID was changed?
-    //
     if (intGameID != pMemData->GameID)
     {
         QString gamename;
@@ -167,8 +112,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     }
 
 	pMemData->data.DataID += 1;
-    
-    shm.unlock();
+        shm.unlock();
 }
 
 void FTNoIR_Protocol::start_tirviews() {
@@ -212,6 +156,10 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
 	QString aLocation;															// Location of Client DLL
 
+
+    if (!shm.success())
+        return false;
+
 	qDebug() << "checkServerInstallationOK says: Starting Function";
 
     //
@@ -219,8 +167,8 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     //
     aLocation =  QCoreApplication::applicationDirPath() + "/";
 
-    qDebug() << "checkServerInstallationOK says: used interface = " << intUsedInterface;
-    switch (intUsedInterface) {
+    qDebug() << "checkServerInstallationOK says: used interface = " << s.intUsedInterface;
+    switch (s.intUsedInterface) {
         case 0:									// Use both interfaces
             settings.setValue( "Path" , aLocation );
             settingsTIR.setValue( "Path" , aLocation );
@@ -241,19 +189,16 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     //
     // TIRViews must be started first, or the NPClient DLL will never be loaded.
     //
-    if (useTIRViews) {
+    if (s.useTIRViews) {
         start_tirviews();
     }
 
     //
     // Check if TIRViews or dummy TrackIR.exe is required for this game
     //
-    if (useDummyExe) {
+    if (s.useDummyExe) {
         start_dummy();
     }
-    
-    if (!shm.success())
-        return false;
     
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
@@ -263,15 +208,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     
 	return true;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {

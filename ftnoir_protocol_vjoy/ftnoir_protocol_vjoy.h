@@ -60,10 +60,6 @@ class VJoyControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit VJoyControls();
-    virtual ~VJoyControls();
-    void showEvent ( QShowEvent *) {}
-
-    void Initialize(QWidget *);
     void registerProtocol(IProtocol *l) {}
 	void unRegisterProtocol() {}
 

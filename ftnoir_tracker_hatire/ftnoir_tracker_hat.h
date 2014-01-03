@@ -16,7 +16,6 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QSettings>
 
 #define VER_FILEVERSION_STR         "Version 2.0.7\0"
 
@@ -27,15 +26,8 @@ public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
 
-#ifdef OPENTRACK_API
     virtual void StartTracker(QFrame*);
     virtual void GetHeadPoseData(double* data);
-#else
-    void Initialize( QFrame *videoframe );
-	virtual void StartTracker(HWND parent_window);
-    virtual void StopTracker(bool exit);
-    virtual bool GetHeadPoseData(THeadPoseData *data);
-#endif
 	void applysettings(const TrackerSettings& settings);
 	void notifyCenter();
 	bool notifyZeroed();
@@ -62,51 +54,7 @@ private:
 	int frame_cnt;
 
     TrackerSettings settings;
-
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
-
-	bool bInvertRoll;
-	bool bInvertPitch;
-	bool bInvertYaw;
-	bool bInvertX;
-	bool bInvertY;
-	bool bInvertZ;
-
-	int iRollAxe;
-	int iPitchAxe;
-	int iYawAxe;
-	int iXAxe;
-	int iYAxe;
-	int iZAxe;
-
-	QByteArray  sCmdStart;
-	QByteArray  sCmdStop;
-	QByteArray  sCmdInit;
-	QByteArray  sCmdReset;
-	QByteArray  sCmdCenter;
-	QByteArray  sCmdZero;
-
-	int iDelayInit;
-	int iDelayStart;
-	int iDelaySeq;
-
-	bool bBigEndian;
-
-	QString sSerialPortName;
-	QSerialPort::BaudRate iBaudRate;
-	QSerialPort::DataBits iDataBits;
-	QSerialPort::Parity iParity;
-	QSerialPort::StopBits iStopBits;
-	QSerialPort::FlowControl iFlowControl;
-
     int CptError;
-
-
 };
 
 
