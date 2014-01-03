@@ -45,13 +45,6 @@ fin:
             g_pDI->Release();
     }
 	
-	for (int i = ui.joylist->count(); i < 8; i++)
-	{
-		GUID dummy = {0};
-		guids.push_back(dummy);
-		ui.joylist->addItem("Nonexistent");
-	}
-	
 	tie_setting(s.joyid, ui.joylist);
 }
 
