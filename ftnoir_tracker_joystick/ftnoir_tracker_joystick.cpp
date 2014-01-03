@@ -22,7 +22,6 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
     for (int i = 0; i < 6; i++)
         *s.axes[i] = min_[i] = max_[i] = 0;
     GUID bar = {0};
-    preferred = bar;
 }
 
 void FTNoIR_Tracker::reload()
