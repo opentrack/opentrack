@@ -106,6 +106,9 @@ void Tracker::load_settings(ht_config_t* config)
     case 3:
         nframes = 120;
         break;
+    case 4:
+        nframes = 180;
+        break;
     }
 
     config->classification_delay = 500;
