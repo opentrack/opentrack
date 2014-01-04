@@ -83,9 +83,9 @@ void Tracker::run()
         if (new_frame && !frame.empty())
         {
             frame = frame_rotation.rotate_frame(frame);
-            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, has_observers());
+            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, false);
             tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
-            video_widget->update_image(frame.clone());
+            video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
         log_stream<<"dt: "<<dt;

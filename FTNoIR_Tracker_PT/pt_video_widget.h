@@ -24,15 +24,20 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
+#include <QElapsedTimer>
 
 class PTVideoWidget : public QWidget, public FrameObserver
 {
     Q_OBJECT
 
 public:
-    PTVideoWidget(QWidget *parent, FrameProvider* provider) : QWidget(parent), /* to avoid linker errors */ FrameObserver(provider) {
+    PTVideoWidget(QWidget *parent, FrameProvider* provider) :
+        QWidget(parent),
+        /* to avoid linker errors */ FrameObserver(provider),
+        freshp(false)
+    {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
-        timer.start(45);
+        timer.start(40);
     }
     void update_image(const cv::Mat &frame);
     void update_frame_and_points() {}
@@ -48,6 +53,8 @@ private:
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
+    QElapsedTimer update_throttler;
+    bool freshp;
 };
 
 // ----------------------------------------------------------------------------

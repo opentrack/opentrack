@@ -18,7 +18,15 @@ using namespace std;
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    _frame = frame;
+    const int rate = 40;
+    if (freshp)
+        return;
+    if (!update_throttler.isValid() || update_throttler.elapsed() > rate)
+    {
+        _frame = frame.clone();
+        update_throttler.restart();
+        freshp = true;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -42,8 +50,9 @@ VideoWidgetDialog::VideoWidgetDialog(QWidget *parent, FrameProvider* provider)
 void PTVideoWidget::update_and_repaint()
 {
     QMutexLocker foo(&mtx);
-    if (_frame.empty())
+    if (_frame.empty() || !freshp)
         return;
+    freshp = false;
     QImage qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
     uchar* data = qframe.bits();
     const int pitch = qframe.bytesPerLine();
