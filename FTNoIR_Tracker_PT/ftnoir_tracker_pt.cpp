@@ -70,31 +70,28 @@ void Tracker::run()
 	bool new_frame;
 	forever
 	{
-		{	
-			QMutexLocker lock(&mutex);
-			
-			if (commands & ABORT) break;
-			if (commands & PAUSE) continue;
-			commands = 0;
-			
-			dt = time.elapsed() / 1000.0;
-			time.restart();
+        QMutexLocker lock(&mutex);
+        
+        if (commands & ABORT) break;
+        if (commands & PAUSE) continue;
+        commands = 0;
+        
+        dt = time.elapsed() / 1000.0;
+        time.restart();
 
-			new_frame = camera.get_frame(dt, &frame);
-			if (new_frame && !frame.empty())
-			{
-				frame = frame_rotation.rotate_frame(frame);
-				const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, has_observers());
-				tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
-                video_widget->update_image(frame.clone());
-			}
+        new_frame = camera.get_frame(dt, &frame);
+        if (new_frame && !frame.empty())
+        {
+            frame = frame_rotation.rotate_frame(frame);
+            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, has_observers());
+            tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
+            video_widget->update_image(frame.clone());
+        }
 #ifdef PT_PERF_LOG
-			log_stream<<"dt: "<<dt;
-			if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
-			log_stream<<"\n";
+        log_stream<<"dt: "<<dt;
+        if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
+        log_stream<<"\n";
 #endif
-		}
-        msleep(s.sleep_time);
 	}
 
 	qDebug()<<"Tracker:: Thread stopping";
