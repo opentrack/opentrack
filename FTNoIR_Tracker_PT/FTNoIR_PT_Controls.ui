@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>459</width>
-    <height>590</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,105 +66,65 @@
          <property name="title">
           <string>Tracker Thread</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <widget class="QSpinBox" name="reset_spin">
-                <property name="toolTip">
-                 <string>Time until automatic reset of tracker's internal state when no valid tracking result is found</string>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_42">
-                <property name="text">
-                 <string>ms</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="3">
-             <widget class="QCheckBox" name="dynpose_check">
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="label_17">
-              <property name="text">
-               <string>Dynamic Pose Resolution</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label_39">
-              <property name="text">
-               <string>Sleep time</string>
-              </property>
-              <property name="buddy">
-               <cstring>sleep_spin</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="label_43">
-              <property name="text">
-               <string>Auto-reset time</string>
-              </property>
-              <property name="buddy">
-               <cstring>reset_spin</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
-              <item>
-               <widget class="QSpinBox" name="sleep_spin">
-                <property name="toolTip">
-                 <string>Time the tracker thread sleeps after each processed frame</string>
-                </property>
-                <property name="suffix">
-                 <string/>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_40">
-                <property name="text">
-                 <string>ms</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="3" column="3">
-             <widget class="QPushButton" name="reset_button">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="toolTip">
-               <string>Reset the tracker's internal state</string>
-              </property>
-              <property name="text">
-               <string>Reset</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_43">
+            <property name="text">
+             <string>Auto-reset time</string>
+            </property>
+            <property name="buddy">
+             <cstring>reset_spin</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="reset_spin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Time until automatic reset of tracker's internal state when no valid tracking result is found</string>
+            </property>
+            <property name="suffix">
+             <string>ms</string>
+            </property>
+            <property name="maximum">
+             <number>9999</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Dynamic Pose Resolution</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="dynpose_check">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="reset_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Reset the tracker's internal state</string>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -1759,7 +1719,6 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>sleep_spin</tabstop>
   <tabstop>reset_spin</tabstop>
   <tabstop>chkEnableRoll</tabstop>
   <tabstop>chkEnablePitch</tabstop>

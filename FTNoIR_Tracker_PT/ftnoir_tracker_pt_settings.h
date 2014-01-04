@@ -36,7 +36,7 @@ struct settings
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
 
-    value<int> sleep_time, reset_time;
+    value<int> reset_time;
 
     value<bool> bEnableYaw, bEnablePitch, bEnableRoll;
     value<bool> bEnableX, bEnableY, bEnableZ;
@@ -69,7 +69,6 @@ struct settings
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
-        sleep_time(b, "sleep-time", 0),
         reset_time(b, "reset-time", 0),
         bEnableYaw(b, "enable-yaw", true),
         bEnablePitch(b, "enable-pitch", true),

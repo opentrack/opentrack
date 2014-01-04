@@ -43,7 +43,6 @@ TrackerDialog::TrackerDialog()
     ui.camroll_combo->addItem("90");
 
     tie_setting(s.dyn_pose_res, ui.dynpose_check);
-    tie_setting(s.sleep_time, ui.sleep_spin);
     tie_setting(s.reset_time, ui.reset_spin);
 
     tie_setting(s.cam_index, ui.camdevice_combo);
