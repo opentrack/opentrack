@@ -465,6 +465,8 @@ TrackerControls::TrackerControls()
 void TrackerControls::doOK()
 {
     s.b->save();
+    if (tracker)
+        tracker->reload();
 	this->close();
 }
 
@@ -480,6 +482,8 @@ void TrackerControls::doCancel()
 			case QMessageBox::Save:
                 s.b->save();
 				this->close();
+                if (tracker)
+                    tracker->reload();
 				break;
 			case QMessageBox::Discard:
                 s.b->revert();
