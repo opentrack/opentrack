@@ -55,6 +55,7 @@ public:
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
     void run();
+    void reload() { s.b->reload(); }
 private:
     QMutex mtx;
     volatile bool stop;
