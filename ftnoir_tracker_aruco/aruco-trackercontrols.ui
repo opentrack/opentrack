@@ -30,7 +30,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="spacing">
-    <number>-1</number>
+    <number>7</number>
    </property>
    <item row="2" column="1" colspan="2">
     <widget class="QComboBox" name="cameraName"/>
@@ -92,6 +92,11 @@
      <item>
       <property name="text">
        <string>120</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>180</string>
       </property>
      </item>
     </widget>
@@ -186,7 +191,7 @@
      </property>
      <layout class="QFormLayout" name="formLayout">
       <property name="horizontalSpacing">
-       <number>-1</number>
+       <number>7</number>
       </property>
       <property name="leftMargin">
        <number>6</number>
