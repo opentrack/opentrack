@@ -170,15 +170,14 @@ void Tracker::StartTracker(QFrame *parent_window)
     this->video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
     video_frame->show();
-    apply(s);
     video_widget = new PTVideoWidget(video_frame, this);
     QHBoxLayout* video_layout = new QHBoxLayout(parent_window);
     video_layout->setContentsMargins(0, 0, 0, 0);
     video_layout->addWidget(video_widget);
     video_frame->setLayout(video_layout);
     video_widget->resize(video_frame->width(), video_frame->height());
-    start();
     camera.start();
+	apply(s);
     start();
     reset_command(PAUSE);
 }
