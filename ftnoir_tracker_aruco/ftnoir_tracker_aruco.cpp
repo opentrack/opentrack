@@ -18,6 +18,7 @@
 #include <cstdio>
 
 #if defined(_WIN32)
+#define NOMINMAX
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
 #else
