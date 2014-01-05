@@ -126,6 +126,8 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
 
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
+    fill_profile_cbx();
+
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
     connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
@@ -165,8 +167,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
 
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
-
-    fill_profile_cbx();
 }
 
 FaceTrackNoIR::~FaceTrackNoIR() {
@@ -256,8 +256,10 @@ void FaceTrackNoIR::open() {
             QSettings settings("opentrack");
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
+        looping = true;
         fill_profile_cbx();
 		loadSettings();
+        looping = false;
     }
 }
 
@@ -569,7 +571,6 @@ void FaceTrackNoIR::fill_profile_cbx()
 {
     if (looping)
         return;
-    looping = true;
     QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
@@ -586,7 +587,6 @@ void FaceTrackNoIR::fill_profile_cbx()
             ui.iconcomboProfile->setCurrentIndex( i );
         }
     }
-    looping = false;
 }
 
 void FaceTrackNoIR::profileSelected(int index)
