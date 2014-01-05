@@ -147,6 +147,8 @@ namespace options {
             QMutexLocker l(&mtx);
             if (!transient.contains(name) || datum != transient.get<QVariant>(name))
             {
+                if (!modified)
+                    qDebug() << name << transient.get<QVariant>(name) << datum;
                 modified = true;
                 transient.put(name, datum);
                 emit bundleChanged();
