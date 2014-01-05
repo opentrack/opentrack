@@ -89,8 +89,6 @@ void CurveConfigurationDialog::loadSettings() {
         connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
         connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
     }
-
-    settingsDirty = false;
 }
 
 //
@@ -119,6 +117,4 @@ void CurveConfigurationDialog::save() {
     ui.rxconfig_alt->saveSettings(currentFile);
     ui.ryconfig_alt->saveSettings(currentFile);
     ui.rzconfig_alt->saveSettings(currentFile);
-
-	settingsDirty = false;
 }
