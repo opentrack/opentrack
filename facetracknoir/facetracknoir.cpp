@@ -286,6 +286,7 @@ void FaceTrackNoIR::save() {
 
 void FaceTrackNoIR::saveAs()
 {
+    looping = true;
 	QSettings settings("opentrack");
 	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
@@ -311,6 +312,7 @@ void FaceTrackNoIR::saveAs()
     }
 
     fill_profile_cbx();
+    looping = false;
 }
 
 void FaceTrackNoIR::loadSettings() {
