@@ -32,6 +32,13 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     tie_setting(mainApp->s.a_pitch.zero, ui.pos_ry);
     tie_setting(mainApp->s.a_roll.zero, ui.pos_rz);
 
+    tie_setting(mainApp->s.a_yaw.invert, ui.chkInvertYaw);
+    tie_setting(mainApp->s.a_pitch.invert, ui.chkInvertPitch);
+    tie_setting(mainApp->s.a_roll.invert, ui.chkInvertRoll);
+    tie_setting(mainApp->s.a_x.invert, ui.chkInvertX);
+    tie_setting(mainApp->s.a_y.invert, ui.chkInvertY);
+    tie_setting(mainApp->s.a_z.invert, ui.chkInvertZ);
+
 	// Load the settings from the current .INI-file
 	loadSettings();
 }
