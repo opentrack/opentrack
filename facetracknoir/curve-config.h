@@ -14,13 +14,9 @@ public:
 private:
     Ui::UICCurveConfigurationDialog ui;
     void save();
-
-    bool settingsDirty;
     FaceTrackNoIR *mainApp;
 
 private slots:
     void doOK();
     void doCancel();
-    void curveChanged( bool ) { settingsDirty = true; }
-    void curveChanged( int ) { settingsDirty = true; }
 };
