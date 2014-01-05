@@ -10,6 +10,8 @@ movements and relaying them to games and flight simulation software.
 
 Not to be confused with railway planning software <<http://opentrack.ch>>
 
+See our wiki at <<https://github.com/opentrack/opentrack/wiki>>
+
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
