@@ -221,8 +221,6 @@ namespace options {
 
     template<typename T>
     class value : public base_value {
-    private:
-        T def;
     protected:
         QVariant operator=(const QVariant& datum) {
             auto foo = qcruft_to_t<T>(datum);
@@ -233,7 +231,7 @@ namespace options {
     public:
         static constexpr const Qt::ConnectionType CONNTYPE = Qt::QueuedConnection;
         value(pbundle b, const QString& name, T def) :
-            base_value(b, name), def(def)
+            base_value(b, name)
         {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
             {
