@@ -37,7 +37,7 @@ See our wiki at <<https://github.com/opentrack/opentrack/wiki>>
 # Configuration
 
 **opentrack** offers output shaping, filtering, is buildable on
-MS Windows MacOSX and GNU/Linux.
+MS Windows, MacOSX and GNU/Linux.
 
 Don't be afraid to submit an issue/feature request if the need arises.
 
