@@ -47,11 +47,17 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="bottomMargin">
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>7</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -92,7 +98,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_3">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -105,7 +111,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QDoubleSpinBox" name="translation_alpha">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -130,50 +136,22 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_11">
      <property name="text">
       <string>Order #2</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="order_2nd">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="correctionMode">
-      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-     </property>
-     <property name="decimals">
-      <number>4</number>
-     </property>
-     <property name="minimum">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>65535.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_12">
      <property name="text">
       <string>Order #3</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="order_3rd">
+   <item row="5" column="1">
+    <widget class="QDoubleSpinBox" name="deadzone">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -183,24 +161,53 @@
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
-     <property name="correctionMode">
-      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-     </property>
      <property name="decimals">
-      <number>4</number>
+      <number>3</number>
      </property>
      <property name="minimum">
-      <double>0.100000000000000</double>
+      <double>0.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>65535.000000000000000</double>
+      <double>3.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.050000000000000</double>
      </property>
      <property name="value">
-      <double>1.000000000000000</double>
+      <double>0.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Exponent</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QDoubleSpinBox" name="expt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>0.050000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.050000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QLabel" name="lblSensYaw_6">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -229,64 +236,7 @@ background:none;</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QDoubleSpinBox" name="deadzone">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="decimals">
-      <number>3</number>
-     </property>
-     <property name="minimum">
-      <double>0.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>3.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.050000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>Exponent</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QDoubleSpinBox" name="expt">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="decimals">
-      <number>3</number>
-     </property>
-     <property name="minimum">
-      <double>0.050000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.050000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
+   <item row="7" column="0" colspan="2">
     <widget class="QLabel" name="label_9">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -331,7 +281,7 @@ background:none;</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
@@ -341,6 +291,62 @@ background:none;</string>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="order_2nd">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="correctionMode">
+      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>65535.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QDoubleSpinBox" name="order_3rd">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="correctionMode">
+      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>65535.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
