@@ -10,11 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>222</height>
+    <height>232</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FTNoIR tracker settings FaceTrackNoIR</string>
+   <string>UDP tracker settings</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -77,8 +77,8 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>143</width>
-        <height>64</height>
+        <width>147</width>
+        <height>68</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
