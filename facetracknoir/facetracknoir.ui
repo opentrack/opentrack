@@ -39,7 +39,7 @@
    <string>opentrack</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
+   <iconset resource="main-facetracknoir.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
@@ -702,16 +702,16 @@
    <widget class="QGroupBox" name="groupFilter">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>580</x>
       <y>210</y>
-      <width>231</width>
+      <width>171</width>
       <height>91</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>180</width>
-      <height>80</height>
+      <width>0</width>
+      <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
@@ -1721,7 +1721,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>
