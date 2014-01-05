@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>124</height>
+    <width>371</width>
+    <height>131</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>FaceTrackNoIR Keyboard and Mouse shortcuts</string>
+   <string>Keyboard shortcuts</string>
   </property>
   <property name="windowIcon">
    <iconset>

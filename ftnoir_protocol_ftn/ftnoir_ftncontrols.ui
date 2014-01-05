@@ -10,11 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>162</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FTNoIR protocol settings FaceTrackNoIR</string>
+   <string>UDP protocol settings</string>
   </property>
   <property name="windowIcon">
    <iconset>

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>FaceTrackNoIR tracking curves</string>
+   <string>Mapping properties</string>
   </property>
   <property name="windowIcon">
    <iconset>
