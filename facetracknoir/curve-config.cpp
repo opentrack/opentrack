@@ -86,8 +86,6 @@ void CurveConfigurationDialog::loadSettings() {
         alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
         configs[i]->loadSettings(currentFile);
         alt_configs[i]->loadSettings(currentFile);
-        connect(configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
-        connect(alt_configs[i], SIGNAL(CurveChanged(bool)), this, SLOT(curveChanged(bool)), Qt::UniqueConnection);
     }
 }
 
