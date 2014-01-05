@@ -145,12 +145,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
     fill_combobox("opentrack-filter-*.", dlopen_filters, ui.iconcomboFilter, NULL);
 
-    tie_setting(s.a_yaw.invert, ui.chkInvertYaw);
-    tie_setting(s.a_pitch.invert, ui.chkInvertPitch);
-    tie_setting(s.a_roll.invert, ui.chkInvertRoll);
-    tie_setting(s.a_x.invert, ui.chkInvertX);
-    tie_setting(s.a_y.invert, ui.chkInvertY);
-    tie_setting(s.a_z.invert, ui.chkInvertZ);
     tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
     tie_setting(s.tracker2_dll, ui.cbxSecondTrackerSource);
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
