@@ -43,29 +43,11 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
 	loadSettings();
 }
 
-//
-// Destructor for server-dialog
-//
-CurveConfigurationDialog::~CurveConfigurationDialog() {
-	qDebug() << "~CurveConfigurationDialog() says: started";
-}
-
-//
-// OK clicked on server-dialog
-//
 void CurveConfigurationDialog::doOK() {
 	save();
 	this->close();
 }
 
-// override show event
-void CurveConfigurationDialog::showEvent ( QShowEvent * ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void CurveConfigurationDialog::doCancel() {
 	//
 	// Ask if changed Settings should be saved
@@ -73,9 +55,7 @@ void CurveConfigurationDialog::doCancel() {
     if (settingsDirty || mainApp->s.b->modifiedp()) {
 		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
 
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
+        switch (ret) {
 			case QMessageBox::Save:
 				save();
 				this->close();
