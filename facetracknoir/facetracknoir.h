@@ -139,10 +139,8 @@ private:
 #ifndef _WIN32
     void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
 #endif
-
-    bool looping;
-
     void fill_profile_cbx();
+    bool looping;
     
 private slots:
     void open();
