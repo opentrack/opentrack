@@ -64,7 +64,6 @@ protected:
 
 public:
     Tracker( FaceTrackNoIR *parent, main_settings& s);
-    ~Tracker();
 
     void getHeadPose(double *data);
     void getOutputHeadPose(double *data);
