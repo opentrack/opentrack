@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
-    <height>414</height>
+    <width>489</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,7 +66,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>TRViews</string>
+         <string>Memory hacks</string>
         </property>
        </widget>
       </item>
@@ -120,7 +120,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Spawn a useless &quot;dummy&quot; process called TrackIR.exe in order to fool EZCA.</string>
+         <string>FSX-specific EZCA protocol hacks</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -147,17 +147,14 @@
      <property name="flat">
       <bool>false</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout_4">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::ExpandingFieldsGrow</enum>
-      </property>
+     <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
        <widget class="QComboBox" name="cbxSelectInterface"/>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Disable one of the protocols if games are confused by presence of both at the same time.</string>
+         <string>Disable one of the protocols if game is confused by presence of both at the same time.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -195,7 +192,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>Replace the registry entry if you want to use other software with the TrackIR protocol and it doesn't work automatically.</string>
+         <string>Replace the registry entry if you want to use other software with the NPClient protocol and it doesn't work automatically.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
