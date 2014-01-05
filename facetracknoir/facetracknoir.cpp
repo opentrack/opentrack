@@ -137,9 +137,9 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
-    ui.cbxSecondTrackerSource->addItem(QIcon(), "None");
+    ui.cbxSecondTrackerSource->addItem(QIcon(), "");
     dlopen_filters.push_back((DynamicLibrary*) NULL);
-    ui.iconcomboFilter->addItem(QIcon(), "None");
+    ui.iconcomboFilter->addItem(QIcon(), "");
 
     fill_combobox("opentrack-proto-*.", dlopen_protocols, ui.iconcomboProtocol, NULL);
     fill_combobox("opentrack-tracker-*.", dlopen_trackers, ui.iconcomboTrackerSource, ui.cbxSecondTrackerSource);
