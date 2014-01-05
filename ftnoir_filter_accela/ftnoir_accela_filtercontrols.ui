@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
-    <height>241</height>
+    <width>215</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,11 +32,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Filter settings</string>
+   <string>Accela filter settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
+   <iconset resource="../ftnoir_filter_ewma2/ewma-filter.qrc">
+    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -346,7 +346,9 @@ background:none;</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../ftnoir_filter_ewma2/ewma-filter.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

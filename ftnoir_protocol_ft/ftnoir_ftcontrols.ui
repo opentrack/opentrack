@@ -13,7 +13,7 @@
     <x>0</x>
     <y>0</y>
     <width>407</width>
-    <height>347</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,11 +29,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>FreeTrack 2.0 settings FaceTrackNoIR</string>
+   <string>freetrack protocol settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.ico</normaloff>images/FaceTrackNoIR.ico</iconset>
+   <iconset resource="ft-protocol.qrc">
+    <normaloff>:/images/freetrack.png</normaloff>:/images/freetrack.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -214,7 +214,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="ft-protocol.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

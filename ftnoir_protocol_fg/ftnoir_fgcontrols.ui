@@ -9,16 +9,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
+    <width>415</width>
     <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FlightGear settings FaceTrackNoIR</string>
+   <string>FlightGear protocol settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
+   <iconset resource="../ftnoir_filter_ewma2/ewma-filter.qrc">
+    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -131,7 +131,9 @@
   <tabstop>spinIPFourthNibble</tabstop>
   <tabstop>spinPortNumber</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../ftnoir_filter_ewma2/ewma-filter.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

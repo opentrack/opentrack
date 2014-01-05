@@ -17,8 +17,8 @@
    <string>UDP protocol settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
+   <iconset resource="../facetracknoir/main-facetracknoir.qrc">
+    <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -254,7 +254,9 @@
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../facetracknoir/main-facetracknoir.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
