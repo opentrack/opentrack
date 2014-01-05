@@ -286,27 +286,6 @@ void TrackerControls::doOK()
 
 void TrackerControls::doCancel()
 {
-    if (!s.b->modifiedp())
-    {
-        close();
-        return;
-    }
-    int ret = QMessageBox::question ( this,
-                                      "Settings have changed",
-                                      "Do you want to save the settings?",
-                                      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-    switch (ret) {
-        case QMessageBox::Save:
-            s.b->save();
-            this->close();
-            break;
-        case QMessageBox::Discard:
-            s.b->revert();
-            this->close();
-            break;
-        default:
-        case QMessageBox::Cancel:
-            break;
-    }
+    s.b->revert();
+    this->close();
 }

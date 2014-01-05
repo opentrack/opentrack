@@ -42,28 +42,8 @@ void FSUIPCControls::doOK() {
 }
 
 void FSUIPCControls::doCancel() {
-    if (s.b->modifiedp()) {
-        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-        qDebug() << "doCancel says: answer =" << ret;
-
-        switch (ret) {
-        case QMessageBox::Save:
-            s.b->save();
-            this->close();
-            break;
-        case QMessageBox::Discard:
-            s.b->revert();
-            this->close();
-            break;
-        case QMessageBox::Cancel:
-        default:
-            break;
-        }
-    }
-    else {
-        this->close();
-    }
+    s.b->revert();
+    close();
 }
 
 void FSUIPCControls::getLocationOfDLL()
