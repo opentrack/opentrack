@@ -225,29 +225,8 @@ void TrackerDialog::doApply()
 
 void TrackerDialog::doCancel()
 {
-    if (s.b->modifiedp()) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", 
-										  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-		switch (ret) {
-			case QMessageBox::Save:
-                save();
-				close();
-				break;
-			case QMessageBox::Discard:
-                s.b->revert();
-				close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		close();
-	}
+    s.b->revert();
+    close();
 }
 
 void TrackerDialog::widget_destroyed(QObject* obj)

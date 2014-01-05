@@ -69,34 +69,8 @@ void FTControls::doOK() {
 }
 
 void FTControls::doCancel() {
-    //
-    // Ask if changed Settings should be saved
-    //
-    if (s.b->modifiedp()) {
-        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-        qDebug() << "doCancel says: answer =" << ret;
-
-        switch (ret) {
-        case QMessageBox::Save:
-            s.b->save();
-            this->close();
-            break;
-        case QMessageBox::Discard:
-            s.b->revert();
-            this->close();
-            break;
-        case QMessageBox::Cancel:
-            // Cancel was clicked
-            break;
-        default:
-            // should never be reached
-            break;
-        }
-    }
-    else {
-        this->close();
-    }
+    s.b->revert();
+    this->close();
 }
 
 void FTControls::selectDLL() {
