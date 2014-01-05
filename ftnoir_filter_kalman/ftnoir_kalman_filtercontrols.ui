@@ -20,13 +20,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Filter settings</string>
+   <string>Kalman settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>
-    images/facetracknoir.png</normaloff>
-    images/facetracknoir.png</iconset>
+   <iconset resource="../ftnoir_filter_ewma2/ewma-filter.qrc">
+    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -64,7 +62,9 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../ftnoir_filter_ewma2/ewma-filter.qrc"/>
+ </resources>
  <connections/>
  <designerdata>
   <property name="gridDeltaX">

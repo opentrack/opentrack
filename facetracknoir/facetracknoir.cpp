@@ -246,7 +246,7 @@ void FaceTrackNoIR::open() {
      
 	 QString fileName = dialog.getOpenFileName(
 								this,
-                                 tr("Select one FTNoir settings file"),
+                                 tr("Open the settings file"),
 								 QCoreApplication::applicationDirPath() + "/settings/",
                                  tr("Settings file (*.ini);;All Files (*)"),
                                                NULL);

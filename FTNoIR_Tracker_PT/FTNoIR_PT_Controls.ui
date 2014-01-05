@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="ftnoir_tracker_pt.qrc">
-    <normaloff>:/Resources/icon.ico</normaloff>:/Resources/icon.ico</iconset>
+    <normaloff>:/Resources/Logo_IR.png</normaloff>:/Resources/Logo_IR.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
