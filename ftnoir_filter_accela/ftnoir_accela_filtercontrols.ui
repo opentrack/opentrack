@@ -352,6 +352,15 @@ background:none;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rotation_alpha</tabstop>
+  <tabstop>translation_alpha</tabstop>
+  <tabstop>order_2nd</tabstop>
+  <tabstop>order_3rd</tabstop>
+  <tabstop>deadzone</tabstop>
+  <tabstop>expt</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="../ftnoir_filter_ewma2/ewma-filter.qrc"/>
  </resources>
