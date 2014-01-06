@@ -282,19 +282,23 @@ void Tracker::run()
             const aruco::Marker& m = markers.at(0);
             const float size = 7;
             
+            const double p = s.marker_pitch;
+            const double sq = sin(p * HT_PI / 180);
+            const double cq = cos(p * HT_PI / 180);
+
             cv::Mat obj_points(4,3,CV_32FC1);
             obj_points.at<float>(1,0)=-size + s.headpos_x;
-            obj_points.at<float>(1,1)=-size + s.headpos_y;
-            obj_points.at<float>(1,2)=0 + s.headpos_z;
+            obj_points.at<float>(1,1)=-size * cq + s.headpos_y;
+            obj_points.at<float>(1,2)=-size * sq + s.headpos_z;
             obj_points.at<float>(2,0)=size + s.headpos_x;
-            obj_points.at<float>(2,1)=-size + s.headpos_y;
-            obj_points.at<float>(2,2)=0 + s.headpos_z;
+            obj_points.at<float>(2,1)=-size * cq + s.headpos_y;
+            obj_points.at<float>(2,2)=-size * sq + s.headpos_z;
             obj_points.at<float>(3,0)=size + s.headpos_x;
-            obj_points.at<float>(3,1)=size + s.headpos_y;
-            obj_points.at<float>(3,2)=0 + s.headpos_z;
+            obj_points.at<float>(3,1)=size * cq + s.headpos_y;
+            obj_points.at<float>(3,2)=size * sq + s.headpos_z;
             obj_points.at<float>(0,0)=-size + s.headpos_x;
-            obj_points.at<float>(0,1)=size + s.headpos_y;
-            obj_points.at<float>(0,2)=0 + s.headpos_z;
+            obj_points.at<float>(0,1)=size * cq + s.headpos_y;
+            obj_points.at<float>(0,2)=size * sq + s.headpos_z;
 
             last_roi = cv::Rect(65535, 65535, 0, 0);
 
@@ -468,6 +472,7 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
     tie_setting(s.red_only, ui.red_only);
+    tie_setting(s.marker_pitch, ui.marker_pitch);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     ui.cameraName->addItems(get_camera_names());
