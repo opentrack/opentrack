@@ -4,12 +4,12 @@ test -n "$1" || exit 1
 
 dir="$1"
 
-for i in "$dir"/*.dylib "$dir"/opentrack; do
+for i in "$dir"/* "$dir"/*/*; do
+	{ test -x "$i" && test -f "$i"; } || continue
 	echo ---- $i ----
-
 	install_name_tool -id "@executable_path/$(basename -- "$i")" "$i"
 
-	otool -L "$i" | awk '$1 ~ /\.dylib$/ { print $1 }' |
+	otool -L "$i" | awk '{ print $1 }' |
 	while read l; do
 		j="$(basename -- "$l")"
 		if test -e "$dir/$j"; then
