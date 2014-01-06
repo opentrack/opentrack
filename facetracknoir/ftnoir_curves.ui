@@ -88,7 +88,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="rxconfig_alt" native="true">
@@ -175,7 +175,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="ryconfig_alt" native="true">
@@ -265,7 +265,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="rzconfig_alt" native="true">
@@ -355,7 +355,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="txconfig_alt" native="true">
@@ -445,7 +445,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="tyconfig_alt" native="true">
@@ -535,7 +535,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Asymmetric curves below</string>
+        <string>Asymmetric mapping below</string>
        </property>
       </widget>
       <widget class="QFunctionConfigurator" name="tzconfig_alt" native="true">
