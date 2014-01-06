@@ -195,6 +195,7 @@ void Tracker::run()
     int cur_fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
+    bool first = true, pitch_sign = true;
 
     while (!stop)
     {
@@ -318,7 +319,9 @@ void Tracker::run()
                 last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
             }
             
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
+
+            first = false;
             
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             
@@ -328,6 +331,12 @@ void Tracker::run()
         
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
+
+                if ((euler[0] > 0) != pitch_sign)
+                {
+                    first = true;
+                    pitch_sign = euler[0] > 0;
+                }
 
                 QMutexLocker lck(&mtx);
 
@@ -354,6 +363,7 @@ void Tracker::run()
         else
         {
             last_roi = cv::Rect(65535, 65535, 0, 0);
+            first = true;
         }
 
         if (frame.rows > 0)
