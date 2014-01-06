@@ -18,7 +18,8 @@
 #include <cstdio>
 
 #if defined(_WIN32)
-#define NOMINMAX
+#   undef NOMINMAX
+#   define NOMINMAX
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
 #else
@@ -322,17 +323,13 @@ void Tracker::run()
                 last_roi.width = std::min<int>(grayscale.cols - last_roi.x, last_roi.width);
                 last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
             }
-            
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
 
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
             first = false;
-            
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
-            
             cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
-        
             cv::Rodrigues(rvec, rotation_matrix);
-        
+
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
@@ -350,6 +347,12 @@ void Tracker::run()
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
                 pose[Roll] = euler[2];
+
+                if (s.fisheye_correction)
+                {
+                    pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
+                    pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
+                }
             }
 
             std::vector<cv::Point2f> repr2;
@@ -473,6 +476,7 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_z, ui.cz);
     tie_setting(s.red_only, ui.red_only);
     tie_setting(s.marker_pitch, ui.marker_pitch);
+    tie_setting(s.fisheye_correction, ui.fisheye_correction);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     ui.cameraName->addItems(get_camera_names());
