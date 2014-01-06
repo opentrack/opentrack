@@ -196,7 +196,9 @@ void Tracker::run()
     int cur_fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
-    bool first = true, pitch_sign = true;
+    const double pitch_eps = 60;
+    double last_pitch = 0;
+    bool first = true;
 
     while (!stop)
     {
@@ -333,10 +335,11 @@ void Tracker::run()
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
-                if ((euler[0] > 0) != pitch_sign)
+                if (fabs(euler[0] - last_pitch) > pitch_eps)
                 {
                     first = true;
-                    pitch_sign = euler[0] > 0;
+                    last_pitch = euler[0];
+                    qDebug() << "reset levmarq due to pitch breakage";
                 }
 
                 QMutexLocker lck(&mtx);
