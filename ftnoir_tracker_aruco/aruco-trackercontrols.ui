@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>630</width>
-    <height>315</height>
+    <height>326</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,6 +32,256 @@
    <property name="spacing">
     <number>7</number>
    </property>
+   <item row="2" column="1" colspan="2">
+    <widget class="QComboBox" name="cameraName"/>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="cameraFPS">
+     <item>
+      <property name="text">
+       <string notr="true">Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>30</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>60</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>120</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>180</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Frames per second</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QCheckBox" name="red_only">
+     <property name="text">
+      <string>Recommended!</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" rowspan="6" colspan="3">
+    <widget class="QLabel" name="label_6">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The ARUCO Library has been developed by the Ava group of the Univeristy of Cordoba, Spain&lt;/p&gt;&lt;p&gt;Rafael Muñoz Salinas &amp;lt;&lt;a href=&quot;mailto:rmsalinas@uco.es&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;rmsalinas@uco.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;p&gt;&amp;lt;&lt;a href=&quot;https://github.com/rmsalinas/aruco&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/rmsalinas/aruco&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>4</number>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QDoubleSpinBox" name="cameraFOV">
+     <property name="locale">
+      <locale language="English" country="UnitedStates"/>
+     </property>
+     <property name="minimum">
+      <double>35.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>52.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Camera name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Red channel only</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Horizontal FOV</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="resolution">
+     <item>
+      <property name="text">
+       <string>640x480</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>320x240</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>320x200</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Default (not recommended!)</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="12" column="4">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Resolution</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="marker_pitch">
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Marker pitch</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1" rowspan="3">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Head position</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>TY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>TX</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="cx">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-200.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>TZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QDoubleSpinBox" name="cz">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-200.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="cy">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-200.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="3" rowspan="3" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -98,253 +348,17 @@
      </layout>
     </widget>
    </item>
-   <item row="9" column="1" rowspan="3">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Head position</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>TX</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="cx">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <double>-200.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>200.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>TY</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="cy">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <double>-200.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>200.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>TZ</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="cz">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <double>-200.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>200.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QComboBox" name="cameraName"/>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="cameraFOV">
-     <property name="locale">
-      <locale language="English" country="UnitedStates"/>
-     </property>
-     <property name="minimum">
-      <double>35.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>180.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>52.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QCheckBox" name="red_only">
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="fisheye_correction">
      <property name="text">
-      <string>Recommended!</string>
+      <string>Check if yaw/X interconnect</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_11">
      <property name="text">
-      <string>Frames per second</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="2" rowspan="5" colspan="3">
-    <widget class="QLabel" name="label_6">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The ARUCO Library has been developed by the Ava group of the Univeristy of Cordoba, Spain&lt;/p&gt;&lt;p&gt;Rafael Muñoz Salinas &amp;lt;&lt;a href=&quot;mailto:rmsalinas@uco.es&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;rmsalinas@uco.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;p&gt;&amp;lt;&lt;a href=&quot;https://github.com/rmsalinas/aruco&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/rmsalinas/aruco&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>4</number>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QComboBox" name="cameraFPS">
-     <item>
-      <property name="text">
-       <string notr="true">Default</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>30</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>60</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>120</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>180</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="resolution">
-     <item>
-      <property name="text">
-       <string>640x480</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>320x240</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>320x200</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Default (not recommended!)</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Camera name</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>Red channel only</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Horizontal FOV</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="4">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Resolution</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Marker pitch</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QDoubleSpinBox" name="marker_pitch">
-     <property name="minimum">
-      <double>-180.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>180.000000000000000</double>
+      <string>Fisheye correction</string>
      </property>
     </widget>
    </item>
@@ -357,6 +371,7 @@
   <tabstop>resolution</tabstop>
   <tabstop>red_only</tabstop>
   <tabstop>marker_pitch</tabstop>
+  <tabstop>fisheye_correction</tabstop>
   <tabstop>cx</tabstop>
   <tabstop>cy</tabstop>
   <tabstop>cz</tabstop>
