@@ -267,8 +267,8 @@ int PointTracker::POSIT(float f)
 	
 	// initial pose = last (predicted) pose
 	Vec3f k;
-	get_row(X_CM.R, 2, k);
-	float Z0 = X_CM.t[2];
+    get_row(R_expected, 2, k);
+    float Z0 = init_phase ? 1000 : X_CM.t[2];
 
 	float old_epsilon_1 = 0;
 	float old_epsilon_2 = 0;

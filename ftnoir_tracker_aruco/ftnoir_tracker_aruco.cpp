@@ -335,7 +335,7 @@ void Tracker::run()
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
-                if (fabs(euler[0] - last_pitch) > pitch_eps)
+                if (fabs(euler[0] - last_pitch) > pitch_eps || euler[0] < 0)
                 {
                     first = true;
                     last_pitch = euler[0];
