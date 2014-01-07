@@ -196,7 +196,7 @@ void Tracker::run()
     int cur_fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
-    const double pitch_eps = 60;
+    const double pitch_eps = 45;
     double last_pitch = 0;
     bool first = true;
 
