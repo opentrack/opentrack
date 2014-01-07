@@ -282,7 +282,13 @@ void Tracker::run()
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         
         if (markers.size() == 1 && markers[0].size() == 4) {
-            const aruco::Marker& m = markers.at(0);
+            const aruco::Marker& m = static_cast<std::vector<cv::Point2f>>(markers.at(0));
+            cv::cornerSubPix(grayscale,
+                             m,
+                             cv::Size(5, 5), cv::Size(-1, -1),
+                             cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
+                                              10,
+                                              1e-2));
             const float size = 7;
             
             const double p = s.marker_pitch;
