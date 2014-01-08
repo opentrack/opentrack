@@ -1679,7 +1679,7 @@
      <item>
       <widget class="QPushButton" name="btnApply">
        <property name="text">
-        <string>Apply</string>
+        <string>Save</string>
        </property>
       </widget>
      </item>
