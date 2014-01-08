@@ -46,7 +46,7 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.reset_time, ui.reset_spin);
 
     tie_setting(s.cam_index, ui.camdevice_combo);
-    tie_setting(s.cam_f, ui.f_dspin);
+    tie_setting(s.cam_fov, ui.fov_dspin);
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
