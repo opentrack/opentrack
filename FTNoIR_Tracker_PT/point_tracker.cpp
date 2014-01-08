@@ -104,6 +104,9 @@ void PointTracker::reset()
 	init_phase = true;
 	dt_valid = 0;
 	reset_velocities();
+    // assume identity rotation again
+    X_CM.R = cv::Matx33d::eye();
+    X_CM.t = cv::Vec3f();
 }
 
 void PointTracker::reset_velocities()
@@ -113,7 +116,7 @@ void PointTracker::reset_velocities()
 }
 
 
-bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w, int h, const cv::Vec3f& headpos)
+bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w, int h)
 {
 	if (!dynamic_pose_resolution) init_phase = true;
 
@@ -150,7 +153,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w
 	}
 
     // XXX TODO fov
-    POSIT(fov, w, h, headpos);
+    POSIT(fov, w, h);
 	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
 
 	if (!init_phase)
@@ -165,7 +168,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w
 void PointTracker::predict(float dt)
 {
 	// predict with constant velocity
-	Matx33f R;
+    Matx33d R;
 	Rodrigues(dt*v_r, R);
 	X_CM.R = R*X_CM.R;
 	X_CM.t += dt * v_t;
@@ -232,7 +235,7 @@ bool PointTracker::find_correspondences(const vector<Vec2f>& points)
 
 
 
-void PointTracker::POSIT(float fov, int w, int h, const cv::Vec3f& headpos)
+void PointTracker::POSIT(float fov, int w, int h)
 {
     // XXX hack
     this->fov = fov;
@@ -241,9 +244,9 @@ void PointTracker::POSIT(float fov, int w, int h, const cv::Vec3f& headpos)
     std::vector<cv::Point3f> obj_points;
     std::vector<cv::Point2f> img_points;
 
-    obj_points.push_back(headpos);
-    obj_points.push_back(point_model->M01 + headpos);
-    obj_points.push_back(point_model->M02 + headpos);
+    obj_points.push_back(cv::Vec3f(0, 0, 0));
+    obj_points.push_back(point_model->M01);
+    obj_points.push_back(point_model->M02);
 
     img_points.push_back(p[0]);
     img_points.push_back(p[1]);
@@ -262,17 +265,29 @@ void PointTracker::POSIT(float fov, int w, int h, const cv::Vec3f& headpos)
 
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
 
-    bool lastp = !rvec.empty() && !tvec.empty() && !init_phase;
+    bool lastp = !rvec.empty() && !tvec.empty();
 
     cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, lastp, cv::ITERATIVE);
 
     cv::Mat rmat;
     cv::Rodrigues(rvec, rmat);
 
+    // finally, find the closer solution
+    cv::Mat expected = cv::Mat(X_CM.R);
+    cv::Mat eye = cv::Mat::eye(3, 3, CV_64FC1);
+    double dev1 = norm(eye - expected * rmat.t());
+    double dev2 = norm(eye - expected * rmat);
+
+    if (dev1 > dev2)
+    {
+        rmat = rmat.t();
+        cv::Rodrigues(rmat, rvec);
+    }
+
 	// apply results
     for (int i = 0; i < 3; i++)
     {
-        X_CM.t[i] = tvec.at<double>(i);
+        X_CM.t[i] = tvec.at<double>(i) * 1e-2;
         for (int j = 0; j < 3; j++)
             X_CM.R(i, j) = rmat.at<double>(i, j);
     }
