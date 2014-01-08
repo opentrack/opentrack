@@ -50,6 +50,7 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Patrick Ruoff (PT tracker)
 - FuraX49 (hatire arduino tracker)
 - Ulf Schreiber (PT tracker)
+- George Trigonakis (tester)
 - Wim Vriend (historically)
 - Ron Hendriks (historically)
 
