@@ -229,7 +229,8 @@ namespace options {
             return datum;
         }
     public:
-        static constexpr const Qt::ConnectionType CONNTYPE = Qt::QueuedConnection;
+        static constexpr const Qt::ConnectionType QT_CONNTYPE = Qt::UniqueConnection;
+        static constexpr const Qt::ConnectionType OPT_CONNTYPE = Qt::UniqueConnection;
         value(pbundle b, const QString& name, T def) :
             base_value(b, name)
         {
@@ -252,8 +253,8 @@ namespace options {
     inline void tie_setting(value<int>& v, QComboBox* cb)
     {
         cb->setCurrentIndex(v);
-        base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.CONNTYPE);
+        base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.OPT_CONNTYPE);
     }
 
     template<>
@@ -261,55 +262,55 @@ namespace options {
     {
         cb->setCurrentText(v);
         v = cb->currentText();
-        base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.CONNTYPE);
+        base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<bool>& v, QCheckBox* cb)
     {
         cb->setChecked(v);
-        base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.CONNTYPE);
+        base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
     {
         dsb->setValue(v);
-        base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.CONNTYPE);
+        base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<int>& v, QSpinBox* sb)
     {
         sb->setValue(v);
-        base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.CONNTYPE);
+        base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<int>& v, QSlider* sl)
     {
         sl->setValue(v);
-        base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)), v.CONNTYPE);
+        base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<QString>& v, QLineEdit* le)
     {
         le->setText(v);
-        base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.CONNTYPE);
+        base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.QT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.OPT_CONNTYPE);
     }
 
     template<>
     inline void tie_setting(value<QString>& v, QLabel* lb)
     {
         lb->setText(v);
-        base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.OPT_CONNTYPE);
     }
 
     inline pbundle bundle(const QString& group) {
