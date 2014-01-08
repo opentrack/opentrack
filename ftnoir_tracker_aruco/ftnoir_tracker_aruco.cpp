@@ -226,10 +226,7 @@ void Tracker::run()
         intrinsics.at<float> (1, 2) = grayscale.rows/2;
 
         cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
-        
-        for (int i = 0; i < 5; i++)
-            dist_coeffs.at<float>(i) = 0;
-        
+
         std::vector< aruco::Marker > markers;
 
         const double size_min = 0.04;
