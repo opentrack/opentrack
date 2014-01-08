@@ -105,8 +105,8 @@ void PointTracker::reset()
 	dt_valid = 0;
 	reset_velocities();
     // assume identity rotation again
-    X_CM.R = cv::Matx33d::eye();
-    X_CM.t = cv::Vec3f();
+    X_CM.R = cv::Matx33f::eye();
+    X_CM.t = cv::Vec3f(0, 0, 1);
 }
 
 void PointTracker::reset_velocities()
@@ -168,7 +168,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w
 void PointTracker::predict(float dt)
 {
 	// predict with constant velocity
-    Matx33d R;
+    Matx33f R;
 	Rodrigues(dt*v_r, R);
 	X_CM.R = R*X_CM.R;
 	X_CM.t += dt * v_t;
@@ -273,7 +273,10 @@ void PointTracker::POSIT(float fov, int w, int h)
     cv::Rodrigues(rvec, rmat);
 
     // finally, find the closer solution
-    cv::Mat expected = cv::Mat(X_CM.R);
+    cv::Mat expected(3, 3, CV_64FC1);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            expected.at<double>(i, j) = X_CM.R(i, j);
     cv::Mat eye = cv::Mat::eye(3, 3, CV_64FC1);
     double dev1 = norm(eye - expected * rmat.t());
     double dev2 = norm(eye - expected * rmat);
