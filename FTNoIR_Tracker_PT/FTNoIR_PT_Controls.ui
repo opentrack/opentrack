@@ -515,23 +515,26 @@
               <item row="1" column="0">
                <widget class="QLabel" name="label_34">
                 <property name="text">
-                 <string>F/W</string>
+                 <string>FOV</string>
                 </property>
                 <property name="buddy">
-                 <cstring>f_dspin</cstring>
+                 <cstring>fov_dspin</cstring>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="f_dspin">
+               <widget class="QDoubleSpinBox" name="fov_dspin">
                 <property name="toolTip">
                  <string>The camera's focal length devided by its sensor width</string>
                 </property>
                 <property name="decimals">
                  <number>2</number>
                 </property>
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
                 <property name="singleStep">
-                 <double>0.100000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1733,7 +1736,7 @@
   <tabstop>res_x_spin</tabstop>
   <tabstop>res_y_spin</tabstop>
   <tabstop>fps_spin</tabstop>
-  <tabstop>f_dspin</tabstop>
+  <tabstop>fov_dspin</tabstop>
   <tabstop>camroll_combo</tabstop>
   <tabstop>campitch_spin</tabstop>
   <tabstop>camyaw_spin</tabstop>
