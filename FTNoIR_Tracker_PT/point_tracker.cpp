@@ -290,7 +290,7 @@ void PointTracker::POSIT(float fov, int w, int h)
 	// apply results
     for (int i = 0; i < 3; i++)
     {
-        X_CM.t[i] = tvec.at<double>(i) * 1e-2;
+        X_CM.t[i] = tvec.at<double>(i);
         for (int j = 0; j < 3; j++)
             X_CM.R(i, j) = rmat.at<double>(i, j);
     }
