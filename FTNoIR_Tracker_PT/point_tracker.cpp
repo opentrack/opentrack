@@ -91,10 +91,7 @@ PointTracker::PointTracker()
 	  dt_reset(1), 
 	  v_t(0,0,0),
 	  v_r(0,0,0), 
-      dynamic_pose_resolution(true),
-      fov(0),
-      _w(0),
-      _h(0)
+      dynamic_pose_resolution(true)
 {
 }
 
@@ -144,7 +141,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w
 		predict(dt_valid);
 
 	// if there is a point correspondence problem something has gone wrong, do a reset
-    if (!find_correspondences(points))
+    if (!find_correspondences(points, fov, w, h))
 	{
 		//qDebug()<<"Error in finding point correspondences!";
 		X_CM = X_CM_old;	// undo prediction
@@ -181,7 +178,7 @@ void PointTracker::update_velocities(float dt)
 	v_t = (X_CM.t - X_CM_old.t)/dt;
 }
 
-bool PointTracker::find_correspondences(const vector<Vec2f>& points)
+bool PointTracker::find_correspondences(const vector<Vec2f>& points, float fov, int w, int h)
 {
 	if (init_phase) {
 		// We do a simple freetrack-like sorting in the init phase...
@@ -198,9 +195,9 @@ bool PointTracker::find_correspondences(const vector<Vec2f>& points)
 	else {
 		// ... otherwise we look at the distance to the projection of the expected model points 
 		// project model points under current pose
-        p_exp[0] = project(Vec3f(0,0,0));
-        p_exp[1] = project(point_model->M01);
-        p_exp[2] = project(point_model->M02);
+        p_exp[0] = project(Vec3f(0,0,0), fov, w, h);
+        p_exp[1] = project(point_model->M01, fov, w, h);
+        p_exp[2] = project(point_model->M02, fov, w, h);
 
 		// set correspondences by minimum distance to projected model point
 		bool point_taken[PointModel::N_POINTS];
@@ -236,10 +233,6 @@ bool PointTracker::find_correspondences(const vector<Vec2f>& points)
 
 void PointTracker::POSIT(float fov, int w, int h)
 {
-    // XXX hack
-    this->fov = fov;
-    _w = w;
-    _h = h;
     std::vector<cv::Point3f> obj_points;
     std::vector<cv::Point2f> img_points;
 
