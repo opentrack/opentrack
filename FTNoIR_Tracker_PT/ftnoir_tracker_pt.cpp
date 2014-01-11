@@ -88,7 +88,6 @@ void Tracker::run()
                 auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2,
                                     -p[1] * frame.cols + frame.rows/2);
                 cv::Scalar color(0, 255, 0);
-                qDebug() << p2.x << p2.y;
                 cv::line(frame,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
