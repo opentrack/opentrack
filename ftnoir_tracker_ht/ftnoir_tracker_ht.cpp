@@ -115,7 +115,7 @@ void Tracker::load_settings(ht_config_t* config)
     config->field_of_view = s.fov;
     config->pyrlk_pyramids = 0;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 300;
+    config->max_keypoints = 120;
     config->keypoint_distance = 3.2;
     config->force_fps = nframes;
     config->camera_index = s.camera_idx - 1;
@@ -125,7 +125,7 @@ void Tracker::load_settings(ht_config_t* config)
     config->ransac_abs_max_mean_error = 16;
     config->ransac_max_mean_error = 6.5;
     config->debug = 0;
-    config->ransac_min_features = 0.83;
+    config->ransac_min_features = 0.85;
     int res = s.resolution;
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
