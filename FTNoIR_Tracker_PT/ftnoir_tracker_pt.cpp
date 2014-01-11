@@ -218,9 +218,9 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
         Vec3f   t = X_GH.t - X_GH_0.t;
 
         // get translation(s)
-        if (s.bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
-        if (s.bEnableY) data[TY] = t[1] / 10.0;
-        if (s.bEnableZ) data[TZ] = t[2] / 10.0;
+        if (s.bEnableX) data[TX] = t[0];	// convert to cm
+        if (s.bEnableY) data[TY] = t[1];
+        if (s.bEnableZ) data[TZ] = t[2];
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
 		// -z -> x, y -> z, x -> -y
