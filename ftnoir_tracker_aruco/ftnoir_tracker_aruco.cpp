@@ -238,7 +238,7 @@ void Tracker::run()
         {
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
-            auto m = markers.at(0);
+            auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
             {
                 auto& p = m.at(i);
@@ -253,7 +253,7 @@ void Tracker::run()
         }
 
         if (markers.size() == 1 && markers[0].size() == 4) {
-            const aruco::Marker& m = markers.at(0);
+            const auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
                 cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale, 8);
         }
@@ -279,7 +279,7 @@ void Tracker::run()
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         
         if (markers.size() == 1 && markers[0].size() == 4) {
-            const auto m = static_cast<std::vector<cv::Point2f>>(markers.at(0));
+            const auto& m = markers.at(0);
             cv::cornerSubPix(grayscale,
                              m,
                              cv::Size(5, 5), cv::Size(-1, -1),
