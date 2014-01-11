@@ -18,15 +18,8 @@ using namespace std;
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    const int rate = 40;
-    if (freshp)
-        return;
-    if (frame.empty() || !update_throttler.isValid() || update_throttler.elapsed() > rate)
-    {
-        _frame = frame.clone();
-        update_throttler.restart();
-        freshp = true;
-    }
+    _frame = frame.clone();
+    freshp = true;
 }
 
 // ----------------------------------------------------------------------------
