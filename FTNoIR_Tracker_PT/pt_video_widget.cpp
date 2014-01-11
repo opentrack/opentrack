@@ -21,7 +21,7 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     const int rate = 40;
     if (freshp)
         return;
-    if (!update_throttler.isValid() || update_throttler.elapsed() > rate)
+    if (frame.empty() || !update_throttler.isValid() || update_throttler.elapsed() > rate)
     {
         _frame = frame.clone();
         update_throttler.restart();
