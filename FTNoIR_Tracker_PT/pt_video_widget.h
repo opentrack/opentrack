@@ -24,7 +24,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
-#include <QElapsedTimer>
 
 class PTVideoWidget : public QWidget, public FrameObserver
 {
@@ -53,7 +52,6 @@ private:
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
-    QElapsedTimer update_throttler;
     bool freshp;
 };
 
