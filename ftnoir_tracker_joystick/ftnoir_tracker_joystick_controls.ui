@@ -57,21 +57,21 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>Yaw</string>
+         <string>X</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Pitch</string>
+         <string>Y</string>
         </property>
        </widget>
       </item>
       <item row="7" column="0">
        <widget class="QLabel" name="label_16">
         <property name="text">
-         <string>Z</string>
+         <string>Roll</string>
         </property>
        </widget>
       </item>
@@ -323,7 +323,7 @@
       <item row="5" column="0">
        <widget class="QLabel" name="label_14">
         <property name="text">
-         <string>X</string>
+         <string>Yaw</string>
         </property>
        </widget>
       </item>
@@ -379,14 +379,14 @@
       <item row="4" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Roll</string>
+         <string>Z</string>
         </property>
        </widget>
       </item>
       <item row="6" column="0">
        <widget class="QLabel" name="label_15">
         <property name="text">
-         <string>Y</string>
+         <string>Pitch</string>
         </property>
        </widget>
       </item>
@@ -419,6 +419,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>joylist</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>comboBox_3</tabstop>
+  <tabstop>comboBox_4</tabstop>
+  <tabstop>comboBox_5</tabstop>
+  <tabstop>comboBox_6</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <slots>
