@@ -76,8 +76,7 @@ void Tracker::run()
         if (commands & PAUSE) continue;
         commands = 0;
         
-        dt = time.elapsed() / 1000.0;
-        time.restart();
+        dt = time.restart() / 1000.0;
 
         new_frame = camera.get_frame(dt, &frame);
         if (new_frame && !frame.empty())

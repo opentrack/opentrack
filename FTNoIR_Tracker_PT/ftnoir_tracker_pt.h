@@ -18,7 +18,7 @@
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "pt_video_widget.h"
-#include "timer.h"
+#include <QElapsedTimer>
 
 #include <QThread>
 #include <QMutex>
@@ -84,7 +84,7 @@ protected:
     bool           tracking_valid;
 
     settings s;
-	Timer time;
+    QElapsedTimer time;
 };
 
 #undef VideoWidget
