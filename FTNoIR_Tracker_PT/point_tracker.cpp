@@ -244,7 +244,7 @@ void PointTracker::POSIT(float fov, int w, int h)
 
     for (int i = 0; i < 3; i++)
     {
-        auto p2 = cv::Point(p[i][0] * w + w/2, -p[i][1] * h + w/2);
+        auto p2 = cv::Point(p[i][0] * w + w/2, p[i][1] * h + h/2);
         img_points.push_back(p2);
     }
 
