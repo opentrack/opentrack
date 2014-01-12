@@ -50,8 +50,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>921</width>
-         <height>240</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -96,8 +96,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>975</width>
-         <height>206</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -134,8 +134,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>595</width>
-         <height>240</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -183,8 +183,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>1013</width>
-         <height>240</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -224,8 +224,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>595</width>
-         <height>240</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -273,8 +273,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>595</width>
-         <height>240</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -314,8 +314,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -363,8 +363,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -404,8 +404,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -453,8 +453,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -494,8 +494,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">
@@ -543,8 +543,8 @@
         <rect>
          <x>0</x>
          <y>300</y>
-         <width>555</width>
-         <height>160</height>
+         <width>930</width>
+         <height>260</height>
         </rect>
        </property>
        <property name="maxInputEGU" stdset="0">

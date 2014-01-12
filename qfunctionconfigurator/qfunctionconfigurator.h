@@ -68,6 +68,7 @@ private:
         const double mwr = 15, mhr = 35;
         range = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
         c = QPointF(range.width() / _config->maxInput(), range.height() / _config->maxOutput());
+        _draw_function = _draw_background = true;
     }
 
 	QRectF  range;														// The actual rectangle for the Bezier-curve
