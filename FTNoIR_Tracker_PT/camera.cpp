@@ -108,11 +108,11 @@ void Camera::set_device_index(int index)
 	}
 }
 
-void Camera::set_fov(float f)
+void Camera::set_f(float f)
 {
-    if (cam_desired.fov != f)
+	if (cam_desired.f != f)
 	{
-        cam_desired.fov = f;
+		cam_desired.f = f;
 		_set_f();
 	}
 }
@@ -208,7 +208,7 @@ void CVCamera::_set_index()
 
 void CVCamera::_set_f()
 {
-    cam_info.fov = cam_desired.fov;
+	cam_info.f = cam_desired.f;
 }
 
 void CVCamera::_set_fps()
