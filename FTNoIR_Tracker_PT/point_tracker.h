@@ -98,12 +98,16 @@ public:
 
 	FrameTrafo get_pose() const { return X_CM; }
 	void reset();
+    float fov;
+    int _w, _h;
+
 protected:
-    cv::Vec2f project(const cv::Vec3f& v_M, float fov, int w, int h)
+    cv::Vec2f project(const cv::Vec3f& v_M)
 	{
         if (!rvec.empty() && !tvec.empty() && fov > 0)
         {
             const float HT_PI = 3.1415926535;
+            const int w = _w, h = _h;
             const float focal_length_w = 0.5 * w / tan(fov * HT_PI / 180);
             const float focal_length_h = 0.5 * h / tan(fov * h / w * HT_PI / 180.0);
 
@@ -122,7 +126,7 @@ protected:
         return cv::Vec2f();
 	}
 
-    bool find_correspondences(const std::vector<cv::Vec2f>& points, float fov, int w, int h);
+    bool find_correspondences(const std::vector<cv::Vec2f>& points);
 
 	cv::Vec2f p[PointModel::N_POINTS];	// the points in model order
 	cv::Vec2f p_exp[PointModel::N_POINTS];	// the expected point positions
