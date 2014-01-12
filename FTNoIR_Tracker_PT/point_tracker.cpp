@@ -104,8 +104,6 @@ void PointTracker::reset()
     // assume identity rotation again
     X_CM.R = cv::Matx33f::eye();
     X_CM.t = cv::Vec3f(0, 0, 1);
-    rvec = Mat();
-    tvec = Mat();
 }
 
 void PointTracker::reset_velocities()
