@@ -370,10 +370,8 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
             // If the Left Mouse-button was clicked without touching a Point, add a new Point
             //
             if (!bTouchingPoint) {
-                if (withinRect(e->pos(), range)) {
-                    _config->addPoint(normalizePoint(e->pos()));
-                    emit CurveChanged( true );
-                }
+                _config->addPoint(normalizePoint(e->pos()));
+                emit CurveChanged( true );
             }
         }
     }
@@ -433,26 +431,20 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         }
     }
     else {
-        if (withinRect(e->pos(), rect()))
-        {
-            //
-            // Check to see if the cursor is touching one of the points.
-            //
-            bool bTouchingPoint = false;
-            if (_config) {
-                for (int i = 0; i < points.size(); i++) {
-                    if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
-                        bTouchingPoint = true;
-                    }
+        bool bTouchingPoint = false;
+        if (_config) {
+            for (int i = 0; i < points.size(); i++) {
+                if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
+                    bTouchingPoint = true;
                 }
             }
+        }
 
-            if ( bTouchingPoint ) {
-                setCursor(Qt::OpenHandCursor);
-            }
-            else {
-                setCursor(Qt::ArrowCursor);
-            }
+        if ( bTouchingPoint ) {
+            setCursor(Qt::OpenHandCursor);
+        }
+        else {
+            setCursor(Qt::ArrowCursor);
         }
     }
 }
@@ -489,22 +481,10 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 //
 bool QFunctionConfigurator::markContains(const QPointF &pos, const QPointF &coord) const
 {
-    QRectF rect(pos.x() - pointSize,
-                pos.y() - pointSize,
-                pointSize*M_PI, pointSize*M_PI);
-    QPainterPath path;
-    path.addEllipse(rect);
-    return path.contains(coord);
+    return coord.x() >= pos.x() - pointSize && coord.x() < pos.x() + pointSize &&
+           coord.y() >= pos.y() - pointSize && coord.y() < pos.y() + pointSize;
 }
 
-bool QFunctionConfigurator::withinRect( const QPointF &coord, const QRectF &rect ) const
-{
-    QPainterPath path;
-    path.addRect(rect);
-    return path.contains(coord);
-}
-
-//
 // Convert the Point in the graph, to the real-life Point.
 //
 QPointF QFunctionConfigurator::normalizePoint(QPointF point) const
@@ -533,8 +513,8 @@ QPointF QFunctionConfigurator::graphicalizePoint(QPointF point) const
 {
 QPointF graph;
 
-    graph.setX( range.left() + (fabs(point.x()) * pPerEGU_Input) );
-    graph.setY( range.bottom() - (fabs(point.y()) * pPerEGU_Output) );
+    graph.setX( range.left() + point.x() * pPerEGU_Input);
+    graph.setY( range.bottom() - point.y() * pPerEGU_Output);
 
     return graph;
 }
@@ -542,14 +522,11 @@ QPointF graph;
 void QFunctionConfigurator::setmaxInputEGU(int value)
 {
     MaxInput = value;
-    setMinimumWidth(MaxInput * pPerEGU_Input + 55);
-//	resetCurve();
     resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
 }
 void QFunctionConfigurator::setmaxOutputEGU(int value)
 {
     MaxOutput = value;
-    setMinimumHeight(MaxOutput * pPerEGU_Output + 60);
 //	resetCurve();
     resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
 }
@@ -560,7 +537,6 @@ void QFunctionConfigurator::setmaxOutputEGU(int value)
 void QFunctionConfigurator::setpixPerEGU_Input(int value)
 {
     pPerEGU_Input = value;
-    setMinimumWidth(MaxInput * pPerEGU_Input + 55);
     resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
 }
 
@@ -570,7 +546,6 @@ void QFunctionConfigurator::setpixPerEGU_Input(int value)
 void QFunctionConfigurator::setpixPerEGU_Output(int value)
 {
     pPerEGU_Output = value;
-    setMinimumHeight(MaxOutput * pPerEGU_Output + 60);
     resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
 }
 

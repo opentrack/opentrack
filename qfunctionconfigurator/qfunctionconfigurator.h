@@ -117,7 +117,6 @@ protected:
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
 	bool markContains(const QPointF &pt, const QPointF &coord) const;
-	bool withinRect( const QPointF &coord, const QRectF &rect ) const;
 
 protected:
 	virtual void resizeEvent(QResizeEvent *);
