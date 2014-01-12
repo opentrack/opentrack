@@ -232,7 +232,7 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         // This new feature is very handy for tweaking the curves!
         //
         if (_config->getLastPoint( currentPoint )) {
-            actualPos = point_to_pixel( currentPoint );
+            actualPos = point_to_pixel( QPointF(fabs(currentPoint.x()), fabs(currentPoint.y())) );
             drawPoint(&p, actualPos, QColor(255, 0, 0, 120));
 
             pen.setWidth(1);
