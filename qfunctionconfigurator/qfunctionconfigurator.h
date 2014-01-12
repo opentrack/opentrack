@@ -25,62 +25,11 @@
 class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
-    
-    Q_PROPERTY(double maxInputEGU READ maxInputEGU WRITE setmaxInputEGU)
-    Q_PROPERTY(double maxOutputEGU READ maxOutputEGU WRITE setmaxOutputEGU)
-    Q_PROPERTY(double pixPerEGU_Input READ pixPerEGU_Input WRITE setpixPerEGU_Input)
-    Q_PROPERTY(double pixPerEGU_Output READ pixPerEGU_Output WRITE setpixPerEGU_Output)
-    Q_PROPERTY(double gridDistEGU_Input READ gridDistEGU_Input WRITE setgridDistEGU_Input)
-    Q_PROPERTY(double gridDistEGU_Output READ gridDistEGU_Output WRITE setgridDistEGU_Output)
-
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
-    Q_PROPERTY(QString stringInputEGU READ stringInputEGU WRITE setInputEGU)
-    Q_PROPERTY(QString stringOutputEGU READ stringOutputEGU WRITE setOutputEGU)
-    Q_PROPERTY(QString stringCaption READ stringCaption WRITE setCaption)
-
-	// Return the current value to Designer
-    double maxInputEGU() const
-    {
-        return MaxInput;
-    }
-    double maxOutputEGU() const
-    {
-        return MaxOutput;
-    }
-    double pixPerEGU_Input() const
-    {
-        return pPerEGU_Input;
-    }
-    double pixPerEGU_Output() const
-    {
-        return pPerEGU_Output;
-    }
-    double gridDistEGU_Input() const
-    {
-        return gDistEGU_Input;
-    }
-    double gridDistEGU_Output() const
-    {
-        return gDistEGU_Output;
-    }
-
-	QColor colorBezier() const
+    QColor colorBezier() const
     {
         return colBezier;
     }
-	QString stringInputEGU() const
-    {
-        return strInputEGU;
-    }
-	QString stringOutputEGU() const
-    {
-        return strOutputEGU;
-    }
-	QString stringCaption() const
-    {
-        return strCaption;
-    }
-
 public:
 	QFunctionConfigurator(QWidget *parent = 0);
 	FunctionConfig* config();
@@ -93,18 +42,7 @@ signals:
     void CurveChanged(bool);
 
 public slots:
-    void setmaxInputEGU(int);
-    void setmaxOutputEGU(int);
-    void setpixPerEGU_Input(int);
-    void setpixPerEGU_Output(int);
-    void setgridDistEGU_Input(int);
-    void setgridDistEGU_Output(int);
-
     void setColorBezier(QColor);
-    void setInputEGU(QString);
-    void setOutputEGU(QString);
-    void setCaption(QString);
-
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
@@ -116,32 +54,32 @@ protected:
 	void drawFunction();
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
-	bool markContains(const QPointF &pt, const QPointF &coord) const;
+    bool point_within_pixel(QPointF pt, QPointF pixel) const;
 
 protected:
 	virtual void resizeEvent(QResizeEvent *);
 
 private:
+    void update_range() {
+        if (!_config)
+            return;
+        double w = width(), h = height();
+        const double mwl = 40, mhl = 20;
+        const double mwr = 15, mhr = 35;
+        range = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
+        c = QPointF(range.width() / _config->maxInput(), range.height() / _config->maxOutput());
+    }
+
 	QRectF  range;														// The actual rectangle for the Bezier-curve
 	QPointF lastPoint;													// The right-most point of the Function
-	QPointF normalizePoint (QPointF point) const;						// Convert the graphical Point to a real-life Point
-    QPointF graphicalizePoint (QPointF point) const;	// Convert the Point to a graphical Point
+    QPointF pixel_coord_to_point (QPointF point) const;						// Convert the graphical Point to a real-life Point
+    QPointF point_to_pixel (QPointF point) const;	// Convert the Point to a graphical Point
 
     int     movingPoint;
     QElapsedTimer timer;
-
-    double MaxInput;					// Maximum input limit
-    double MaxOutput;					// Maximum output limit
-    double pPerEGU_Input;				// Number of pixels, per EGU of Input
-    double pPerEGU_Output;				// Number of pixels, per EGU of Output
-    double gDistEGU_Input;				// Distance of the grid, in EGU of Input
-    double gDistEGU_Output;			// Distance of the grid, in EGU of Output
+    QPointF c;
 
 	QColor colBezier;				// Color of Bezier curve
-	QString strInputEGU;			// Engineering Units input (vertical axis)
-	QString strOutputEGU;			// Engineering Units output (horizontal axis)
-	QString strCaption;				// Caption of the graph
-	QString strSettingsFile;		// Name of last read INI-file
 
 	bool _draw_background;			// Flag to determine if the background should be (re-)drawn on the QPixmap
 	QPixmap _background;			// Image of the static parts (axis, lines, etc.)
