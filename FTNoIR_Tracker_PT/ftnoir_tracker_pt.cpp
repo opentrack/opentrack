@@ -85,7 +85,8 @@ void Tracker::run()
             const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, true);
             for (auto p : points)
             {
-                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
+                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2,
+                                    -p[1] * frame.cols + frame.rows/2);
                 cv::Scalar color(0, 255, 0);
                 cv::line(frame,
                          cv::Point(p2.x - 20, p2.y),
