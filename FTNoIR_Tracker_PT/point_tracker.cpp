@@ -152,6 +152,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float fov, float dt, int w
 		return false;
 	}
 
+    // XXX TODO fov
     POSIT(fov, w, h);
 	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
 
