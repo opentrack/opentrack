@@ -25,12 +25,12 @@ void get_camera_device_names(std::vector<std::string>& device_names);
 // ----------------------------------------------------------------------------
 struct CamInfo
 {
-    CamInfo() : res_x(0), res_y(0), fps(0), fov(56) {}
+	CamInfo() : res_x(0), res_y(0), fps(0), f(1) {}
 
 	int res_x;
 	int res_y;
 	int fps;
-    float fov;
+	float f;	// (focal length) / (sensor width)
 };
 
 // ----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public:
 
         // calls corresponding template methods and reinitializes frame rate calculation
         void set_device_index(int index);
-        void set_fov(float f);
+        void set_f(float f);
         void set_fps(int fps);
         void set_res(int x_res, int y_res);
 

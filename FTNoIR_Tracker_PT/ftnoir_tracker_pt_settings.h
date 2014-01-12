@@ -28,7 +28,7 @@ struct settings
                threshold_secondary,
                min_point_size,
                max_point_size;
-    value<double> cam_fov;
+    value<double> cam_f;
 
     value<int> m01_x, m01_y, m01_z;
     value<int> m02_x, m02_y, m02_z;
@@ -57,7 +57,7 @@ struct settings
         threshold_secondary(b, "threshold-secondary", 128),
         min_point_size(b, "min-point-size", 10),
         max_point_size(b, "max-point-size", 50),
-        cam_fov(b, "camera-fov", 56),
+        cam_f(b, "camera-focal-length", 1),
         m01_x(b, "m_01-x", 0),
         m01_y(b, "m_01-y", 0),
         m01_z(b, "m_01-z", 0),

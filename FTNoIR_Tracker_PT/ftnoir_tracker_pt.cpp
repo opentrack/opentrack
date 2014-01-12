@@ -83,7 +83,7 @@ void Tracker::run()
         {
             frame = frame_rotation.rotate_frame(frame);
             const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, false);
-            tracking_valid = point_tracker.track(points, camera.get_info().fov, dt, frame.cols, frame.rows, t_MH);
+            tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -103,7 +103,7 @@ void Tracker::apply(settings& s)
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
-    camera.set_fov(s.cam_fov);
+    camera.set_f(s.cam_f);
     frame_rotation.rotation = static_cast<RotationType>(static_cast<int>(s.cam_roll));
     point_extractor.threshold_val = s.threshold;
     point_extractor.threshold_secondary_val = s.threshold_secondary;

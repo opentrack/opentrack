@@ -90,7 +90,7 @@ public:
 	// track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
 	// f : (focal length)/(sensor width)
 	// dt : time since last call
-    bool track(const std::vector<cv::Vec2f>& points, float fov, float dt, int w, int h, const cv::Vec3f &headpos);
+	bool track(const std::vector<cv::Vec2f>& points, float f, float dt);
 	boost::shared_ptr<PointModel> point_model;
 
 	bool dynamic_pose_resolution;
@@ -98,35 +98,15 @@ public:
 
 	FrameTrafo get_pose() const { return X_CM; }
 	void reset();
-    float fov;
-    int _w, _h;
 
 protected:
-    cv::Vec2f project(const cv::Vec3f& v_M)
+	inline cv::Vec2f project(const cv::Vec3f& v_M, float f)
 	{
-        if (!rvec.empty() && !tvec.empty() && fov > 0)
-        {
-            const float HT_PI = 3.1415926535;
-            const int w = _w, h = _h;
-            const float focal_length_w = 0.5 * w / tan(fov * HT_PI / 180);
-            const float focal_length_h = 0.5 * h / tan(fov * h / w * HT_PI / 180.0);
-
-            cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
-            intrinsics.at<float> (0, 0) = focal_length_w;
-            intrinsics.at<float> (1, 1) = focal_length_h;
-            intrinsics.at<float> (0, 2) = w/2;
-            intrinsics.at<float> (1, 2) = h/2;
-            std::vector<cv::Point3f> xs;
-            xs.push_back(v_M);
-            cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
-            std::vector<cv::Point2f> rets(1);
-            cv::projectPoints(xs, rvec, tvec, intrinsics, dist_coeffs, rets);
-            return rets[0];
-        }
-        return cv::Vec2f();
+		cv::Vec3f v_C = X_CM * v_M;
+		return cv::Vec2f(f*v_C[0]/v_C[2], f*v_C[1]/v_C[2]);
 	}
 
-    bool find_correspondences(const std::vector<cv::Vec2f>& points);
+	bool find_correspondences(const std::vector<cv::Vec2f>& points, float f);
 
 	cv::Vec2f p[PointModel::N_POINTS];	// the points in model order
 	cv::Vec2f p_exp[PointModel::N_POINTS];	// the expected point positions
@@ -136,7 +116,7 @@ protected:
 	void reset_velocities();
 
 	
-    void POSIT(float fov, int w, int h, const cv::Vec3f &headpos);  // The POSIT algorithm, returns the number of iterations
+	int POSIT(float f);  // The POSIT algorithm, returns the number of iterations
 
 	bool init_phase;
 	float dt_valid;	// time since last valid tracking result
@@ -144,7 +124,6 @@ protected:
 	cv::Vec3f v_r;
 	FrameTrafo X_CM; // trafo from model to camera
 	FrameTrafo X_CM_old;
-    cv::Mat rvec, tvec;
 };
 
 #endif //POINTTRACKER_H
