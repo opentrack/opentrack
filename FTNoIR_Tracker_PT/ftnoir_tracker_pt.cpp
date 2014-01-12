@@ -83,23 +83,6 @@ void Tracker::run()
         {
             frame = frame_rotation.rotate_frame(frame);
             const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, true);
-            for (auto p : points)
-            {
-                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2,
-                                    p[1] * frame.rows + frame.rows/2);
-                cv::Scalar color(0, 255, 0);
-                qDebug() << p2.x << p2.y;
-                cv::line(frame,
-                         cv::Point(p2.x - 20, p2.y),
-                         cv::Point(p2.x + 20, p2.y),
-                         color,
-                         4);
-                cv::line(frame,
-                         cv::Point(p2.x, p2.y - 20),
-                         cv::Point(p2.x, p2.y + 20),
-                         color,
-                         4);
-            }
             tracking_valid = point_tracker.track(points, camera.get_info().fov, dt, frame.cols, frame.rows);
             video_widget->update_image(frame);
         }
