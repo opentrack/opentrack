@@ -44,7 +44,8 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFi
     config->loadSettings(iniFile);
     _config = config;
     _draw_function = _draw_background = true;
-    this->update();
+    update_range();
+    update();
 }
 
 void QFunctionConfigurator::loadSettings(QString settingsFile) {
@@ -87,7 +88,7 @@ void QFunctionConfigurator::drawBackground()
 
     // horizontal grid
 
-    for (int i = 0; i < maxx; i += xstep)
+    for (int i = 0; i < maxy; i += xstep)
     {
         double y = range.height() - i * c.y() + range.y();
         drawLine(&painter,
@@ -102,7 +103,7 @@ void QFunctionConfigurator::drawBackground()
     }
 
     {
-        const int i = maxx;
+        const int i = maxy;
         double y = range.height() - i * c.y() + range.y();
         drawLine(&painter,
                  QPointF(range.x(), y),
@@ -117,7 +118,7 @@ void QFunctionConfigurator::drawBackground()
 
     // vertical grid
 
-    for (int i = 0; i < maxy; i += ystep)
+    for (int i = 0; i < maxx; i += ystep)
     {
         double x = range.x() + i * c.x();
         drawLine(&painter,
@@ -132,7 +133,7 @@ void QFunctionConfigurator::drawBackground()
                          text);
     }
     {
-        const int i = maxy;
+        const int i = maxx;
         double x = range.x() + i * c.x();
         drawLine(&painter,
                  QPointF(x, range.y()),
@@ -415,8 +416,6 @@ void QFunctionConfigurator::setColorBezier(QColor color)
 
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
-    _draw_background = true;
-    _draw_function = true;
     update_range();
     repaint();
 }
