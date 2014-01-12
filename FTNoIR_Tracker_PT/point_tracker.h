@@ -21,11 +21,11 @@
 class FrameTrafo
 {
 public:
-    FrameTrafo() : R(cv::Matx33f::eye()), t(0,0,0) {}
-    FrameTrafo(const cv::Matx33f& R, const cv::Vec3f& t) : R(R),t(t) {}
+    FrameTrafo() : R(cv::Matx33d::eye()), t(0,0,0) {}
+    FrameTrafo(const cv::Matx33d& R, const cv::Vec3d& t) : R(R),t(t) {}
 
-    cv::Matx33f R;
-    cv::Vec3f t;
+    cv::Matx33d R;
+    cv::Vec3d t;
 };
 
 inline FrameTrafo operator*(const FrameTrafo& X, const FrameTrafo& Y)
@@ -33,17 +33,17 @@ inline FrameTrafo operator*(const FrameTrafo& X, const FrameTrafo& Y)
 	return FrameTrafo(X.R*Y.R, X.R*Y.t + X.t);
 }
 
-inline FrameTrafo operator*(const cv::Matx33f& X, const FrameTrafo& Y)
+inline FrameTrafo operator*(const cv::Matx33d& X, const FrameTrafo& Y)
 {
 	return FrameTrafo(X*Y.R, X*Y.t);
 }
 
-inline FrameTrafo operator*(const FrameTrafo& X, const cv::Matx33f& Y)
+inline FrameTrafo operator*(const FrameTrafo& X, const cv::Matx33d& Y)
 {
 	return FrameTrafo(X.R*Y, X.t);
 }
 
-inline cv::Vec3f operator*(const FrameTrafo& X, const cv::Vec3f& v)
+inline cv::Vec3f operator*(const FrameTrafo& X, const cv::Vec3d& v)
 {
 	return X.R*v + X.t;
 }
