@@ -353,12 +353,6 @@ void Tracker::run()
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
                 pose[Roll] = euler[2];
-
-                if (s.fisheye_correction)
-                {
-                    pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
-                    pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
-                }
             }
 
             std::vector<cv::Point2f> repr2;
@@ -482,7 +476,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_z, ui.cz);
     tie_setting(s.red_only, ui.red_only);
     tie_setting(s.marker_pitch, ui.marker_pitch);
-    tie_setting(s.fisheye_correction, ui.fisheye_correction);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     ui.cameraName->addItems(get_camera_names());
