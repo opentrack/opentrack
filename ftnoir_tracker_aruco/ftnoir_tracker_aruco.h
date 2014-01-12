@@ -28,7 +28,6 @@ struct settings {
     value<bool> red_only;
     value<bool> eyaw, epitch, eroll, ex, ey, ez;
     value<double> marker_pitch;
-    value<bool> fisheye_correction;
     settings() :
         b(bundle("aruco-tracker")),
         fov(b, "field-of-view", 56),
@@ -45,8 +44,7 @@ struct settings {
         ex(b, "enable-x", true),
         ey(b, "enable-y", true),
         ez(b, "enable-z", true),
-        marker_pitch(b, "marker-pitch", 0),
-        fisheye_correction(b, "fisheye-correction", false)
+        marker_pitch(b, "marker-pitch", 0)
     {}
 };
 
