@@ -104,8 +104,8 @@ protected:
         if (!rvec.empty() && !tvec.empty() && fov > 0)
         {
             const float HT_PI = 3.1415926535;
-            const float focal_length_w = 0.5 * w / tan(fov * HT_PI / 180);
-            const float focal_length_h = 0.5 * h / tan(fov * h / w * HT_PI / 180.0);
+            const float focal_length_w = 0.5 * w / tan(0.5 * fov * HT_PI / 180);
+            const float focal_length_h = 0.5 * h / tan(0.5 * fov * h / w * HT_PI / 180.0);
 
             cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
             intrinsics.at<float> (0, 0) = focal_length_w;
