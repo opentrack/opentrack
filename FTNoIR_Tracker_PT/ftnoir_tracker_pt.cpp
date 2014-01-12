@@ -82,8 +82,8 @@ void Tracker::run()
         if (new_frame && !frame.empty())
         {
             frame = frame_rotation.rotate_frame(frame);
-            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, true);
-            tracking_valid = point_tracker.track(points, camera.get_info().fov, dt, frame.cols, frame.rows);
+            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, false);
+            tracking_valid = point_tracker.track(points, camera.get_info().fov, dt, frame.cols, frame.rows, t_MH);
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -118,13 +118,15 @@ void Tracker::apply(settings& s)
     point_tracker.dt_reset = s.reset_time / 1000.0;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     R_GC =  Matx33f( cos(deg2rad*s.cam_yaw), 0, sin(deg2rad*s.cam_yaw),
-                     0, 1,                             0,
-                     -sin(deg2rad*s.cam_yaw), 0, cos(deg2rad*s.cam_yaw));
-    R_GC = R_GC * Matx33f( 1,                                0,                               0,
+		                                         0, 1,                             0,
+                    -sin(deg2rad*s.cam_yaw), 0, cos(deg2rad*s.cam_yaw));
+	R_GC = R_GC * Matx33f( 1,                                0,                               0,
                            0,  cos(deg2rad*s.cam_pitch), sin(deg2rad*s.cam_pitch),
                            0, -sin(deg2rad*s.cam_pitch), cos(deg2rad*s.cam_pitch));
-    FrameTrafo X_MH(Matx33f::eye(), t_MH);
-    X_GH_0 = R_GC * X_MH;
+
+	FrameTrafo X_MH(Matx33f::eye(), t_MH);
+	X_GH_0 = R_GC * X_MH;
+
 	qDebug()<<"Tracker::apply ends";
 }
 
@@ -137,10 +139,10 @@ void Tracker::reset()
 void Tracker::center()
 {
 	point_tracker.reset();	// we also do a reset here since there is no reset shortkey yet
-    QMutexLocker lock(&mutex);
-    FrameTrafo X_CM_0 = point_tracker.get_pose();
-    FrameTrafo X_MH(Matx33f::eye(), t_MH);
-    X_GH_0 = R_GC * X_CM_0 * X_MH;
+	QMutexLocker lock(&mutex);
+	FrameTrafo X_CM_0 = point_tracker.get_pose();
+	FrameTrafo X_MH(Matx33f::eye(), t_MH);
+	X_GH_0 = R_GC * X_CM_0 * X_MH;
 }
 
 bool Tracker::get_frame_and_points(cv::Mat& frame_copy, boost::shared_ptr< std::vector<Vec2f> >& points)
@@ -195,10 +197,10 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
         if (!tracking_valid) return;
 
 		FrameTrafo X_CM = point_tracker.get_pose();
-        FrameTrafo X_MH(Matx33f::eye(), t_MH);
-        FrameTrafo X_GH = R_GC * X_CM * X_MH;
+		FrameTrafo X_MH(Matx33f::eye(), t_MH);
+		FrameTrafo X_GH = R_GC * X_CM * X_MH;
         Matx33f R = X_GH.R * X_GH_0.R.t();
-        Vec3f   t = X_GH.t - X_GH_0.t;
+		Vec3f   t = X_GH.t - X_GH_0.t;		
 
         // get translation(s)
         if (s.bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
