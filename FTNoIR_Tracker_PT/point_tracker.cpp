@@ -240,11 +240,9 @@ void PointTracker::POSIT(float fov, int w, int h)
     obj_points.push_back(point_model->M01);
     obj_points.push_back(point_model->M02);
 
-    for (int i = 0; i < 3; i++)
-    {
-        auto p2 = cv::Point(p[i][0] * w + w/2, p[i][1] * h + h/2);
-        img_points.push_back(p2);
-    }
+    img_points.push_back(p[0]);
+    img_points.push_back(p[1]);
+    img_points.push_back(p[2]);
 
     const float HT_PI = 3.1415926535;
 
