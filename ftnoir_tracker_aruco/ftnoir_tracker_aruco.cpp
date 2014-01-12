@@ -284,7 +284,7 @@ void Tracker::run()
                              m,
                              cv::Size(5, 5), cv::Size(-1, -1),
                              cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
-                                              10,
+                                              20,
                                               1e-2));
             const float size = 7;
             
@@ -338,7 +338,7 @@ void Tracker::run()
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
-                if (fabs(euler[0] - last_pitch) > pitch_eps || euler[0] < 0)
+                if (fabs(euler[0] - last_pitch) > pitch_eps || euler[0] - s.marker_pitch < 0)
                 {
                     first = true;
                     last_pitch = euler[0];
