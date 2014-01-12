@@ -50,6 +50,7 @@ void CurveConfigurationDialog::doOK() {
 
 void CurveConfigurationDialog::doCancel() {
     mainApp->b->revert();
+    loadSettings();
     close();
 }
 
