@@ -89,10 +89,11 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
         const double a2 = a * s.second_order_alpha;
         const double a3 = a * s.third_order_alpha;
+        const double deadzone = i >= 3 ? s.rot_deadzone : s.trans_deadzone;
         const double velocity =
-                parabola(a, vec, s.deadzone, s.expt) +
-                parabola(a2, vec2, s.deadzone, s.expt) +
-                parabola(a3, vec3, s.deadzone, s.expt);
+                parabola(a, vec, deadzone, s.expt) +
+                parabola(a2, vec2, deadzone, s.expt) +
+                parabola(a3, vec3, deadzone, s.expt);
         const double result = last_output[0][i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
         new_camera_position[i] = done ? target_camera_position[i] : result;

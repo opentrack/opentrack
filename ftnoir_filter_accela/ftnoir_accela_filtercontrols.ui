@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>215</width>
-    <height>285</height>
+    <width>261</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,19 +54,16 @@
    <property name="horizontalSpacing">
     <number>7</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Rotation</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      <string>Translation</string>
      </property>
     </widget>
    </item>
@@ -98,16 +95,33 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Translation</string>
+      <string>Rotation</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Exponent</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Order #3</string>
      </property>
     </widget>
    </item>
@@ -143,15 +157,8 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_12">
-     <property name="text">
-      <string>Order #3</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="1">
-    <widget class="QDoubleSpinBox" name="deadzone">
+    <widget class="QDoubleSpinBox" name="rot_deadzone">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
@@ -175,35 +182,6 @@
      </property>
      <property name="value">
       <double>0.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>Exponent</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QDoubleSpinBox" name="expt">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="decimals">
-      <number>3</number>
-     </property>
-     <property name="minimum">
-      <double>0.050000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.050000000000000</double>
      </property>
     </widget>
    </item>
@@ -232,11 +210,11 @@
 background:none;</string>
      </property>
      <property name="text">
-      <string>Deadband</string>
+      <string>Rotation deadband</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <widget class="QLabel" name="label_9">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -281,7 +259,29 @@ background:none;</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
+   <item row="7" column="1">
+    <widget class="QDoubleSpinBox" name="expt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>0.050000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.050000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
@@ -291,34 +291,6 @@ background:none;</string>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="order_2nd">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="correctionMode">
-      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-     </property>
-     <property name="decimals">
-      <number>4</number>
-     </property>
-     <property name="minimum">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>65535.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -350,6 +322,69 @@ background:none;</string>
      </property>
     </widget>
    </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="order_2nd">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="correctionMode">
+      <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+     </property>
+     <property name="decimals">
+      <number>4</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>65535.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Translation deadband</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QDoubleSpinBox" name="trans_deadzone">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>3.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.050000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -357,7 +392,8 @@ background:none;</string>
   <tabstop>translation_alpha</tabstop>
   <tabstop>order_2nd</tabstop>
   <tabstop>order_3rd</tabstop>
-  <tabstop>deadzone</tabstop>
+  <tabstop>rot_deadzone</tabstop>
+  <tabstop>trans_deadzone</tabstop>
   <tabstop>expt</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>

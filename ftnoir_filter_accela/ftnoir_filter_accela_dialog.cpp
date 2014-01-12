@@ -16,7 +16,8 @@ FilterControls::FilterControls() :
     tie_setting(s.translation_alpha, ui.translation_alpha);
     tie_setting(s.second_order_alpha, ui.order_2nd);
     tie_setting(s.third_order_alpha, ui.order_3rd);
-    tie_setting(s.deadzone, ui.deadzone);
+    tie_setting(s.rot_deadzone, ui.rot_deadzone);
+    tie_setting(s.trans_deadzone, ui.trans_deadzone);
     tie_setting(s.expt, ui.expt);
 }
 
