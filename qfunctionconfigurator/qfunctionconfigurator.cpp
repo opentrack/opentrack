@@ -21,97 +21,52 @@
 #include <cmath>
 #include <QTabWidget>
 #include <QTabBar>
+#include <QFontMetrics>
 
 static const int pointSize = 5;
 
 QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     : QWidget(parent)
 {
-
-    //
-    // Defaults, for when the widget has no values different from the domXML()
-    //
-
-    pPerEGU_Output = 1;				// Number of pixels, per EGU
-    pPerEGU_Input = 4;				// Number of pixels, per EGU
-    gDistEGU_Input = 5;				// Distance of gridlines
-    gDistEGU_Output = 10;			// Distance of gridlines
-
-
-    // Change compared to BezierConfigurator: X = horizontal (input), Y = vertical (output)
-    // This will require the Curve-Dialog to be higher (which was the reason it was reversed in the first place..)
-    range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
-
     movingPoint = -1;				// Index of that same point
-
-    //
-    // Variables for FunctionConfig
-    //
     _config = 0;
     _draw_background = true;
     _draw_function = true;
-
+    update_range();
     setMouseTracking(true);
-
-//	qDebug() << "QFunctionConfigurator::QFunctionConfigurator object created.";
-
 }
 
-//
-// Attach an existing FunctionConfig to the Widget.
-//
 void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFile) {
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+
     config->loadSettings(iniFile);
-
     _config = config;
-
-    strSettingsFile = settingsFile;													// Remember for Reset()
-
-    setCaption(config->getTitle());
-
     _draw_function = _draw_background = true;
-
-    setmaxInputEGU(config->maxInput());
-    setmaxOutputEGU(config->maxOutput());
-
     this->update();
 }
 
-//
-// Load the FunctionConfig (points) from the INI-file.
-//
 void QFunctionConfigurator::loadSettings(QString settingsFile) {
 
     QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
-    strSettingsFile = settingsFile;													// Remember for Reset()
     if (_config) {
         _config->loadSettings(iniFile);
     }
 }
 
-//
-// Save the FunctionConfig (points) to the INI-file.
-//
 void QFunctionConfigurator::saveSettings(QString settingsFile) {
     QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
-    strSettingsFile = settingsFile;													// Remember for Reset()
 
     if (_config) {
         _config->saveSettings(iniFile);
     }
 }
 
-//
-// Draw the Background for the graph, the gridlines and the gridpoints.
-// The static objects are drawn on a Pixmap, so it does not have to be repeated every paintEvent. Hope this speeds things up...
-//
 void QFunctionConfigurator::drawBackground()
 {
-    int i;
-    QRect scale;
+    if (!_config)
+        return;
     _background = QPixmap(width(), height());
     QPainter painter(&_background);
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
@@ -122,87 +77,94 @@ void QFunctionConfigurator::drawBackground()
     QFont font;
     font.setPointSize(8);
     painter.setFont(font);
+    QFontMetrics metrics(font);
 
     QPen pen(QColor(55, 104, 170, 127), 1, Qt::SolidLine);
 
-    //
-    // Draw the Caption
-    //
-    if (_config) {
-        strCaption = _config->getTitle();
+    const int xstep = 10, ystep = 10;
+    const int maxx = _config->maxInput();
+    const int maxy = _config->maxOutput();
+
+    // horizontal grid
+
+    for (int i = 0; i < maxx; i += xstep)
+    {
+        double y = range.height() - i * c.y() + range.y();
+        drawLine(&painter,
+                 QPointF(range.x(), y),
+                 QPointF(range.x() + range.width(), y),
+                 pen);
+        painter.drawText(QRectF(10,
+                                y - metrics.height()/2,
+                                range.left(),
+                                metrics.height()),
+                         QString::number(i));
     }
 
-    scale.setCoords(range.left(), 0, range.right(), 20);
-    painter.drawText(scale, Qt::AlignCenter, strCaption);
-
-    //
-    // Draw the horizontal grid
-    //
-    for (i = range.bottom() - gDistEGU_Output * pPerEGU_Output; i >= range.top(); i -= gDistEGU_Output * pPerEGU_Output) {
-        drawLine(&painter, QPointF(40, i), QPointF(range.right(), i), pen);
-        scale.setCoords(0, i - 5, range.left() - 5, i + 5);
-        painter.drawText(scale, Qt::AlignRight, tr("%1").arg(((range.bottom() - i))/pPerEGU_Output));
+    {
+        const int i = maxx;
+        double y = range.height() - i * c.y() + range.y();
+        drawLine(&painter,
+                 QPointF(range.x(), y),
+                 QPointF(range.x() + range.width(), y),
+                 pen);
+        painter.drawText(QRectF(10,
+                                y - metrics.height()/2,
+                                range.x() - 10,
+                                metrics.height()),
+                         QString::number(i));
     }
 
-    //
-    // Draw the vertical guidelines
-    //
-    for (i = range.left(); i <= range.right(); i += gDistEGU_Input * pPerEGU_Input) {
-        drawLine(&painter, QPointF(i, range.top()), QPointF(i, range.bottom()), pen);
-        scale.setCoords(i - 10, range.bottom() + 2, i + 10, range.bottom() + 15);
-        painter.drawText(scale, Qt::AlignCenter, tr("%1").arg(abs(((range.left() - i))/pPerEGU_Input)));
+    // vertical grid
+
+    for (int i = 0; i < maxy; i += ystep)
+    {
+        double x = range.x() + i * c.x();
+        drawLine(&painter,
+                 QPointF(x, range.y()),
+                 QPointF(x, range.y() + range.height()),
+                 pen);
+        const QString text = QString::number(i);
+        painter.drawText(QRectF(x - metrics.width(text)/2,
+                                range.height() + 10 + metrics.height(),
+                                metrics.width(text),
+                                metrics.height()),
+                         text);
     }
-
-    scale.setCoords(range.left(), range.bottom() + 20, range.right(), range.bottom() + 35);
-    painter.drawText(scale, Qt::AlignRight, strInputEGU);
-
-    //
-    // Draw the EGU of the vertical axis (vertically!)
-    //
-    font.setPointSize(10);
-    painter.translate(range.topLeft().x() - 35, range.topLeft().y());
-    painter.rotate(90);
-    painter.drawText(0,0,strOutputEGU );
-
-    //
-    // Draw the two axis
-    //
-    pen.setWidth(2);
-    pen.setColor( Qt::black );
-    drawLine(&painter, range.topLeft() - QPointF(2,0), range.bottomLeft() - QPointF(2,0), pen);
-    drawLine(&painter, range.bottomLeft(), range.bottomRight(), pen);
+    {
+        const int i = maxy;
+        double x = range.x() + i * c.x();
+        drawLine(&painter,
+                 QPointF(x, range.y()),
+                 QPointF(x, range.y() + range.height()),
+                 pen);
+        const QString text = QString::number(i);
+        painter.drawText(QRectF(x - metrics.width(text)/2,
+                                range.height() + 10 + metrics.height(),
+                                metrics.width(text),
+                                metrics.height()),
+                         text);
+    }
 }
 
-
-//
-// Draw the Function for the graph, on a Pixmap.
-//
 void QFunctionConfigurator::drawFunction()
 {
     if (!_config)
         return;
-int i;
-QPointF prevPoint;
-QPointF currentPoint;
+    int i;
+    QPointF prevPoint;
+    QPointF currentPoint;
 
-    //
-    // Use the background picture to draw on.
-    // ToDo: find out how to add Pixmaps, without getting it all green...
-    //
     _function = QPixmap(_background);
     QPainter painter(&_function);
 
     painter.save();
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    //
-    // Draw the handles for the Points
-    //
-
     QList<QPointF> points = _config->getPoints();
 
     for (i = 0; i < points.size(); i++) {
-        currentPoint = graphicalizePoint( points[i] );		// Get the next point and convert it to Widget measures
+        currentPoint = point_to_pixel( points[i] );		// Get the next point and convert it to Widget measures
         drawPoint(&painter, currentPoint, QColor(200, 200, 210, 120));
         lastPoint = currentPoint;											// Remember which point is the rightmost in the graph
     }
@@ -210,39 +172,34 @@ QPointF currentPoint;
 
     QPen pen(colBezier, 1.2, Qt::SolidLine);
 
-    prevPoint = graphicalizePoint( QPointF(0,0) );		// Start at the Axis
-    double max = maxInputEGU();
-    QPointF prev = graphicalizePoint(QPointF(0, 0));
+    prevPoint = point_to_pixel( QPointF(0,0) );		// Start at the Axis
+    double max = _config->maxInput();
+    QPointF prev = point_to_pixel(QPointF(0, 0));
     const double step = 1.01;
     for (double i = 0; i < max; i += step) {
         double val = _config->getValue(i);
-        QPointF cur = graphicalizePoint(QPointF(i, val));
+        QPointF cur = point_to_pixel(QPointF(i, val));
         drawLine(&painter, prev, cur, pen);
         prev = cur;
     }
     painter.restore();
 }
 
-//
-// The Widget paints the surface every x msecs.
-//
 void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 {
-QPointF prevPoint;
-QPointF currentPoint;
-QPointF actualPos;
-int i;
-
-//	qDebug() << "QFunctionConfigurator::paintEvent.";
+    QPointF prevPoint;
+    QPointF currentPoint;
+    QPointF actualPos;
+    int i;
 
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
     if (_draw_background) {
-        drawBackground();						// Draw the static parts on a Pixmap
-        p.drawPixmap(e->rect(), _background);				// Paint the background
+        drawBackground();
         _draw_background = false;
     }
+    p.drawPixmap(e->rect(), _background);
 
     if (_draw_function) {
         drawFunction();						// Draw the Function on a Pixmap
@@ -250,33 +207,22 @@ int i;
     }
     p.drawPixmap(e->rect(), _function);						// Always draw the background and the function
 
-    //
-    // Draw the Points, that make up the Curve
-    //
     if (_config) {
         QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
-        //
-        // When moving, also draw a sketched version of the Function.
-        //
         if (movingPoint >= 0 && movingPoint < points.size()) {
-            prevPoint = graphicalizePoint( QPointF(0,0) );				// Start at the Axis
+            prevPoint = point_to_pixel( QPointF(0,0) );				// Start at the Axis
             for (i = 0; i < points.size(); i++) {
-                currentPoint = graphicalizePoint( points[i] );		// Get the next point and convert it to Widget measures
+                currentPoint = point_to_pixel( points[i] );		// Get the next point and convert it to Widget measures
                 drawLine(&p, prevPoint, currentPoint, pen);
                 prevPoint = currentPoint;
-//	qDebug() << "QFunctionConfigurator::paintEvent, drawing while moving " << currentPoint;
             }
-
-            //
-            // When moving, also draw a few help-lines, so positioning the point gets easier.
-            //
             pen.setWidth(1);
             pen.setColor( Qt::white );
             pen.setStyle( Qt::DashLine );
-            actualPos = graphicalizePoint(points[movingPoint]);
+            actualPos = point_to_pixel(points[movingPoint]);
             drawLine(&p, QPoint(range.left(), actualPos.y()), QPoint(actualPos.x(), actualPos.y()), pen);
-            drawLine(&p, QPoint(actualPos.x(), actualPos.y()), QPoint(actualPos.x(), range.bottom()), pen);
+            drawLine(&p, QPoint(actualPos.x(), actualPos.y()), QPoint(actualPos.x(), range.height() + range.top()), pen);
         }
 
         //
@@ -285,32 +231,17 @@ int i;
         // This new feature is very handy for tweaking the curves!
         //
         if (_config->getLastPoint( currentPoint )) {
-
-//	qDebug() << "QFunctionConfigurator::paintEvent, drawing tracked Point " << currentPoint;
-
-            actualPos = graphicalizePoint( currentPoint );
+            actualPos = point_to_pixel( currentPoint );
             drawPoint(&p, actualPos, QColor(255, 0, 0, 120));
 
             pen.setWidth(1);
             pen.setColor( Qt::black );
             pen.setStyle( Qt::SolidLine );
             drawLine(&p, QPoint(range.left(), actualPos.y()), QPoint(actualPos.x(), actualPos.y()), pen);
-            drawLine(&p, QPoint(actualPos.x(), actualPos.y()), QPoint(actualPos.x(), range.bottom()), pen);
+            drawLine(&p, QPoint(actualPos.x(), actualPos.y()), QPoint(actualPos.x(), range.width()), pen);
         }
 
     }
-
-    //
-    // Draw the delimiters
-    //
-#if 0
-    pen.setWidth(1);
-    pen.setColor( Qt::white );
-    pen.setStyle( Qt::SolidLine );
-    drawLine(&p, QPoint(lastPoint.x(), range.top()), QPoint(lastPoint.x(), range.bottom()), pen);
-    drawLine(&p, QPoint(range.left(), lastPoint.y()), QPoint(range.right(), lastPoint.y()), pen);
-#endif
-    //QTimer::singleShot(50, this, SLOT(update()));
 }
 
 //
@@ -336,65 +267,40 @@ void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, co
     painter->restore();
 }
 
-//
-// If the mousebutton is pressed, check if it is inside one of the Points.
-// If so: start moving that Point, until mouse release.
-//
 void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 {
     if (!_config)
         return;
     QList<QPointF> points = _config->getPoints();
-
-    //
-    // First: check the left mouse-button
-    //
     if (e->button() == Qt::LeftButton) {
-
-        //
-        // Check to see if the cursor is touching one of the points.
-        //
         bool bTouchingPoint = false;
         movingPoint = -1;
         if (_config) {
             for (int i = 0; i < points.size(); i++) {
-                if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
+                if ( point_within_pixel(points[i], e->pos() ) ) {
                     bTouchingPoint = true;
                     movingPoint = i;
                     timer.restart();
                     break;
                 }
             }
-
-            //
-            // If the Left Mouse-button was clicked without touching a Point, add a new Point
-            //
             if (!bTouchingPoint) {
-                _config->addPoint(normalizePoint(e->pos()));
+                _config->addPoint(pixel_coord_to_point(e->pos()));
                 emit CurveChanged( true );
             }
         }
     }
 
-    // Then: check the right mouse-button
-    //
     if (e->button() == Qt::RightButton) {
-
-        //
-        // Check to see if the cursor is touching one of the points.
-        //
         if (_config) {
             int found_pt = -1;
             for (int i = 0; i < points.size(); i++) {
-                if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
+                if ( point_within_pixel(points[i], e->pos() ) ) {
                     found_pt = i;
                     break;
                 }
             }
 
-            //
-            // If the Right Mouse-button was clicked while touching a Point, remove the Point
-            //
             if (found_pt != -1) {
                 _config->removePoint(found_pt);
                 emit CurveChanged( true );
@@ -402,14 +308,10 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
             movingPoint = -1;
         }
     }
-    _draw_function = _draw_background = true;
+    _draw_function = true;
     update();
 }
 
-//
-// If the mouse if moving, make sure the Bezier moves along.
-// Of course, only when a Point is selected...
-//
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
     if (!_config)
@@ -423,10 +325,10 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         if (timer.isValid() && timer.elapsed() > refresh_delay)
         {
             timer.restart();
-            QPointF new_pt = normalizePoint(e->pos());
+            QPointF new_pt = pixel_coord_to_point(e->pos());
             points[movingPoint] = new_pt;
             _config->movePoint(movingPoint, new_pt);
-            _draw_function = _draw_background = true;
+            _draw_function = true;
             update();
         }
     }
@@ -434,7 +336,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         bool bTouchingPoint = false;
         if (_config) {
             for (int i = 0; i < points.size(); i++) {
-                if ( markContains( graphicalizePoint( points[i] ), e->pos() ) ) {
+                if ( point_within_pixel(points[i], e->pos() ) ) {
                     bTouchingPoint = true;
                 }
             }
@@ -457,118 +359,52 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 
     if (e->button() == Qt::LeftButton) {
         timer.invalidate();
-        //qDebug()<<"releasing";
         if (movingPoint >= 0 && movingPoint < points.size()) {
             emit CurveChanged( true );
-
-            //
-            // Update the Point in the _config
-            //
             if (_config) {
-                _config->movePoint(movingPoint, normalizePoint(e->pos()));
+                _config->movePoint(movingPoint, pixel_coord_to_point(e->pos()));
             }
         }
         setCursor(Qt::ArrowCursor);
         movingPoint = -1;
     }
 
-    _draw_function = _draw_background = true;
+    _draw_function = true;
     update();
 }
 
-//
-// Determine if the mousebutton was pressed within the range of the Point.
-//
-bool QFunctionConfigurator::markContains(const QPointF &pos, const QPointF &coord) const
+bool QFunctionConfigurator::point_within_pixel(QPointF pt, QPointF pixel) const
 {
-    return coord.x() >= pos.x() - pointSize && coord.x() < pos.x() + pointSize &&
-           coord.y() >= pos.y() - pointSize && coord.y() < pos.y() + pointSize;
+    QPointF pixel2(range.x() + pt.x() * c.x(), (range.y() + range.height() - pt.y() * c.y()));
+    return pixel2.x() >= pixel.x() - pointSize && pixel2.x() < pixel.x() + pointSize &&
+           pixel2.y() >= pixel.y() - pointSize && pixel2.y() < pixel.y() + pointSize;
 }
 
-// Convert the Point in the graph, to the real-life Point.
-//
-QPointF QFunctionConfigurator::normalizePoint(QPointF point) const
+QPointF QFunctionConfigurator::pixel_coord_to_point(QPointF point) const
 {
-    QPointF norm;
+    if (!_config)
+        return QPointF(-1, -1);
 
-    norm.setX( (point.x() - range.left()) / pPerEGU_Input );
-    norm.setY( (range.bottom() - point.y()) / pPerEGU_Output );
+    double x = (point.x() - range.x()) / c.x();
+    double y = (range.height() - point.y() + range.y()) / c.y();
 
-    if (norm.x() > maxInputEGU())
-        norm.setX(maxInputEGU());
-    else if (norm.x() < 0)
-        norm.setX(0);
-    if (norm.y() > maxOutputEGU())
-        norm.setY(maxOutputEGU());
-    else if (norm.y() < 0)
-        norm.setY(0);
+    if (x < 0)
+        x = 0;
+    if (x > _config->maxInput())
+        x = _config->maxInput();
 
-    return norm;
+    if (y < 0)
+        y = 0;
+    if (y > _config->maxOutput())
+        y = _config->maxOutput();
+
+    return QPointF(x, y);
 }
 
-//
-// Convert the real-life Point into the graphical Point.
-//
-QPointF QFunctionConfigurator::graphicalizePoint(QPointF point) const
+QPointF QFunctionConfigurator::point_to_pixel(QPointF point) const
 {
-QPointF graph;
-
-    graph.setX( range.left() + point.x() * pPerEGU_Input);
-    graph.setY( range.bottom() - point.y() * pPerEGU_Output);
-
-    return graph;
-}
-
-void QFunctionConfigurator::setmaxInputEGU(int value)
-{
-    MaxInput = value;
-    resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
-}
-void QFunctionConfigurator::setmaxOutputEGU(int value)
-{
-    MaxOutput = value;
-//	resetCurve();
-    resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
-}
-
-//
-// To make configuration more visibly attractive, the number of pixels 'per EGU' can be defined.
-//
-void QFunctionConfigurator::setpixPerEGU_Input(int value)
-{
-    pPerEGU_Input = value;
-    resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
-}
-
-//
-// To make configuration more visibly attractive, the number of pixels 'per EGU' can be defined.
-//
-void QFunctionConfigurator::setpixPerEGU_Output(int value)
-{
-    pPerEGU_Output = value;
-    resize( MaxInput * pPerEGU_Input + 55, MaxOutput * pPerEGU_Output + 60 );
-}
-
-//
-// Define the distance of the grid 'in EGU' points.
-//
-void QFunctionConfigurator::setgridDistEGU_Input(int value)
-{
-    gDistEGU_Input = value;
-    _draw_background = true;
-    _draw_function = true;
-    repaint();
-}
-
-//
-// Define the distance of the grid 'in EGU' points.
-//
-void QFunctionConfigurator::setgridDistEGU_Output(int value)
-{
-    gDistEGU_Output = value;
-    _draw_background = true;
-    _draw_function = true;
-    repaint();
+    return QPointF(range.x() + point.x() * c.x(),
+                   range.y() + range.height() - point.y() * c.y());
 }
 
 void QFunctionConfigurator::setColorBezier(QColor color)
@@ -577,27 +413,10 @@ void QFunctionConfigurator::setColorBezier(QColor color)
     update();
 }
 
-void QFunctionConfigurator::setInputEGU(QString egu)
-{
-    strInputEGU = egu;
-    update();
-}
-void QFunctionConfigurator::setOutputEGU(QString egu)
-{
-    strOutputEGU = egu;
-    update();
-}
-void QFunctionConfigurator::setCaption(QString cap)
-{
-    strCaption = cap;
-    update();
-}
-
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
-    range = QRectF(40, 20, MaxInput * pPerEGU_Input, MaxOutput * pPerEGU_Output);
-
     _draw_background = true;
     _draw_function = true;
+    update_range();
     repaint();
 }
