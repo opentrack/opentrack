@@ -19,7 +19,8 @@ struct settings {
                   translation_alpha,
                   second_order_alpha,
                   third_order_alpha,
-                  deadzone,
+                  rot_deadzone,
+                  trans_deadzone,
                   expt;
     settings() :
         b(bundle("Accela")),
@@ -27,7 +28,8 @@ struct settings {
         translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
         second_order_alpha(b, "second-order-alpha", ACCELA_SECOND_ORDER_ALPHA),
         third_order_alpha(b, "third-order-alpha", ACCELA_THIRD_ORDER_ALPHA),
-        deadzone(b, "deadzone", 0),
+        rot_deadzone(b, "rotation-deadband", 0),
+        trans_deadzone(b, "translation-deadband", 0),
         expt(b, "exponent", 2)
     {}
 };
