@@ -44,7 +44,7 @@ struct ITracker
     virtual ~ITracker() = 0;
     virtual void StartTracker( QFrame* frame ) = 0;
     virtual void GetHeadPoseData(double *data) = 0;
-    virtual int preferredHz() { return 4; }
+    virtual int preferredHz() { return 200; }
 };
 
 inline ITracker::~ITracker() { }
