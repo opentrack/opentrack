@@ -34,8 +34,6 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS " -stdlib=libc++ -std=c++11 ${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 endif()
 
-set(SDK_HATIRE TRUE CACHE BOOL "hatire: generic Arduino over serial port")
-
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_SKIP_INSTALL_RPATH FALSE)
@@ -115,10 +113,6 @@ if(MINGW)
 endif()
 
 find_package(OpenCV REQUIRED)
-set(maybe-serial-port)
-if(SDK_HATIRE)
-    set(maybe-serial-port SerialPort)
-endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui ${maybe-serial-port} QUIET)
 cmake_policy(SET CMP0020 NEW)
@@ -255,7 +249,6 @@ opentrack_module(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_module(opentrack-tracker-joystick ftnoir_tracker_joystick)
 opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
 opentrack_module(opentrack-tracker-hydra ftnoir_tracker_hydra)
-opentrack_module(opentrack-tracker-hatire ftnoir_tracker_hatire)
 
 file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp" "ftnoir_csv/*.h")
 
@@ -308,11 +301,7 @@ if(WIN32)
     set(my-qt-deps ws2_32)
 endif()
 
-set(maybe-hatire)
-if(SDK_HATIRE)
-set(maybe-hatire ${Qt5SerialPort_LIBRARIES})
-endif()
-set(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${maybe-hatire} ${my-qt-deps})
+set(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
 
 add_library(opentrack-csv SHARED ${opentrack-csv-c})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
@@ -415,10 +404,6 @@ if(SDK_ARUCO_LIBPATH)
                       "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
                       uuid)
     endif()
-endif()
-
-if(SDK_HATIRE)
-	opentrack_library(opentrack-tracker-hatire)
 endif()
 
 link_with_dinput8(opentrack-tracker-ht)
