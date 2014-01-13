@@ -51,28 +51,29 @@ public:
     axis_opts& opts;
 };
 
-class Tracker : public QThread {
+class Tracker : protected QThread {
 	Q_OBJECT
 
 private:
     FaceTrackNoIR *mainApp;
     QMutex mtx;
     main_settings& s;
-
+    volatile bool should_quit;
 protected:
 	void run();
 
 public:
     Tracker( FaceTrackNoIR *parent, main_settings& s);
+    ~Tracker();
 
     void getHeadPose(double *data);
     void getOutputHeadPose(double *data);
-
-    volatile bool should_quit;
     volatile bool do_center;
     volatile bool enabled;
     
     T6DOF output_camera;
+
+    void start() { QThread::start(); }
 };
 
 class HeadPoseData {

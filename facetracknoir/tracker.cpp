@@ -31,6 +31,12 @@ Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
 {
 }
 
+Tracker::~Tracker()
+{
+    should_quit = true;
+    wait();
+}
+
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     bool altp = (pos < 0) && axis.opts.altp;
     if (altp) {
