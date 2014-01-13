@@ -286,7 +286,7 @@ void Tracker::run()
                              cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
                                               20,
                                               1e-2));
-            const float size = 7;
+            const float size = 40;
             
             const double p = s.marker_pitch;
             const double sq = sin(p * HT_PI / 180);
