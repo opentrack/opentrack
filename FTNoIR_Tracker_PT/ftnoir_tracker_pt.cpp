@@ -69,9 +69,7 @@ void Tracker::run()
 	float dt;
 	bool new_frame;
 	forever
-	{
-        QMutexLocker lock(&mutex);
-        
+	{   
         if (commands & ABORT) break;
         if (commands & PAUSE) continue;
         commands = 0;
@@ -79,8 +77,11 @@ void Tracker::run()
         dt = time.restart() / 1000.0;
 
         new_frame = camera.get_frame(dt, &frame);
+
         if (new_frame && !frame.empty())
         {
+            QMutexLocker lock(&mutex);
+
             frame = frame_rotation.rotate_frame(frame);
             const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, true);
             for (auto p : points)
