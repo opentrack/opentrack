@@ -54,7 +54,7 @@ static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
 
 static void t_compensate(double* input, double* output, bool rz)
 {
-    const auto H = input[Yaw] * M_PI / 180;
+    const auto H = input[Yaw] * M_PI / -180;
     const auto P = input[Pitch] * M_PI / 180;
     const auto B = input[Roll] * M_PI / 180;
 
