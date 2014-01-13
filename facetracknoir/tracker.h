@@ -80,9 +80,9 @@ public:
     THeadPoseDOF* axes[6];
     HeadPoseData(std::vector<axis_opts*> opts)
     {
-        axes[TX] = new THeadPoseDOF("tx","tx_alt", 100, 100, 25, 100, opts[TX]);
-        axes[TY] = new THeadPoseDOF("ty","ty_alt", 100, 100, 25, 100, opts[TY]);
-        axes[TZ] = new THeadPoseDOF("tz","tz_alt", 100, 100, 25, 100, opts[TZ]);
+        axes[TX] = new THeadPoseDOF("tx","tx_alt", 100, 100, 100, 100, opts[TX]);
+        axes[TY] = new THeadPoseDOF("ty","ty_alt", 100, 100, 100, 100, opts[TY]);
+        axes[TZ] = new THeadPoseDOF("tz","tz_alt", 100, 100, 100, 100, opts[TZ]);
         axes[Yaw] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180, opts[Yaw]);
         axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90, opts[Pitch]);
         axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180, opts[Roll]);
