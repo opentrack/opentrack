@@ -360,7 +360,6 @@ void FaceTrackNoIR::startTracker( ) {
 #endif
 
     if (tracker) {
-        tracker->wait();
         delete tracker;
     }
 
@@ -418,8 +417,6 @@ void FaceTrackNoIR::stopTracker( ) {
         pFilterDialog->unregisterFilter();
 
     if ( tracker ) {
-        tracker->should_quit = true;
-        tracker->wait();
 		delete tracker;
 		tracker = 0;
         if (Libraries) {
