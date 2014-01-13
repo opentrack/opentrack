@@ -389,11 +389,11 @@ void Tracker::GetHeadPoseData(double *data)
     if (s.eroll)
         data[Roll] = pose[Roll];
     if (s.ex)
-        data[TX] = pose[TX];
+        data[TX] = pose[TX] * .1;
     if (s.ey)
-        data[TY] = pose[TY];
+        data[TY] = pose[TY] * .1;
     if (s.ez)
-        data[TZ] = pose[TZ];
+        data[TZ] = pose[TZ] * .1;
 }
 
 class TrackerDll : public Metadata
