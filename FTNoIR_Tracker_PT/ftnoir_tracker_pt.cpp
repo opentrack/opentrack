@@ -45,13 +45,13 @@ Tracker::~Tracker()
 
 void Tracker::set_command(Command command)
 {
-	QMutexLocker lock(&mutex);
+    //QMutexLocker lock(&mutex);
 	commands |= command;
 }
 
 void Tracker::reset_command(Command command)
 {
-	QMutexLocker lock(&mutex);
+    //QMutexLocker lock(&mutex);
 	commands &= ~command;
 }
 

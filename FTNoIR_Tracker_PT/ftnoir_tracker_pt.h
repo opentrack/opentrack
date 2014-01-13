@@ -65,7 +65,7 @@ protected:
 	};
 	void set_command(Command command);
 	void reset_command(Command command);
-    int commands;
+    volatile int commands;
 
     CVCamera       camera;
 	FrameRotation  frame_rotation;
