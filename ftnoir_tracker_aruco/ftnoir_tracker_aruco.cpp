@@ -284,8 +284,8 @@ void Tracker::run()
                              m,
                              cv::Size(5, 5), cv::Size(-1, -1),
                              cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
-                                              20,
-                                              1e-2));
+                                              5,
+                                              1e-4));
             const float size = 40;
             
             const double p = s.marker_pitch;
