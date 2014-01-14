@@ -311,8 +311,8 @@ void FaceTrackNoIR::saveAs()
         save();
     }
 
-    fill_profile_cbx();
     looping = false;
+    fill_profile_cbx();
 }
 
 void FaceTrackNoIR::loadSettings() {
