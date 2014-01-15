@@ -409,12 +409,20 @@ void FaceTrackNoIR::stopTracker( ) {
 
     if (pTrackerDialog) {
         pTrackerDialog->unRegisterTracker();
+        delete pTrackerDialog;
+        pTrackerDialog = nullptr;
     }
     if (pProtocolDialog) {
         pProtocolDialog->unRegisterProtocol();
+        delete pProtocolDialog;
+        pProtocolDialog = nullptr;
     }
     if (pFilterDialog)
+    {
         pFilterDialog->unregisterFilter();
+        delete pFilterDialog;
+        pFilterDialog = nullptr;
+    }
 
     if ( tracker ) {
 		delete tracker;
