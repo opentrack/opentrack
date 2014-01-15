@@ -99,7 +99,7 @@ class FTControls: public QWidget, public IProtocolDialog
     Q_OBJECT
 public:
     explicit FTControls();
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 private:
     Ui::UICFTControls ui;
