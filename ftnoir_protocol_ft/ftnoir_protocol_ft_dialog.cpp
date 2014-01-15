@@ -45,13 +45,14 @@ FTControls::FTControls() :
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-    tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
     tie_setting(s.useDummyExe, ui.chkStartDummy);
     tie_setting(s.useTIRViews, ui.chkTIRViews);
 
     ui.cbxSelectInterface->addItem("Enable both");
     ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
     ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
+
+    tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
 
     aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
     if ( !QFile::exists( aFileName ) ) {
