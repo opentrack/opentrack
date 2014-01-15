@@ -3,7 +3,7 @@
  <class>Form</class>
  <widget class="QWidget" name="Form">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
