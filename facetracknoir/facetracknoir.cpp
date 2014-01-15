@@ -423,6 +423,12 @@ void FaceTrackNoIR::stopTracker( ) {
         delete pFilterDialog;
         pFilterDialog = nullptr;
     }
+    if (pSecondTrackerDialog)
+    {
+        pSecondTrackerDialog->unRegisterTracker();
+        delete pSecondTrackerDialog;
+        pSecondTrackerDialog = nullptr;
+    }
 
     if ( tracker ) {
 		delete tracker;
