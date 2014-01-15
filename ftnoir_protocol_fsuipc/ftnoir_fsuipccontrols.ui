@@ -3,7 +3,7 @@
  <class>UICFSUIPCControls</class>
  <widget class="QWidget" name="UICFSUIPCControls">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>

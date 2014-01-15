@@ -3,7 +3,7 @@
  <class>UICFTControls</class>
  <widget class="QWidget" name="UICFTControls">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="enabled">
    <bool>true</bool>

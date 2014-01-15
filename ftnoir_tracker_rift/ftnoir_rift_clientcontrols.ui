@@ -3,7 +3,7 @@
  <class>UIRiftControls</class>
  <widget class="QWidget" name="UIRiftControls">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
