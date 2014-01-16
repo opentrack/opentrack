@@ -278,12 +278,6 @@ void Tracker::run()
         
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
-            cv::cornerSubPix(grayscale,
-                             m,
-                             cv::Size(5, 5), cv::Size(-1, -1),
-                             cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,
-                                              5,
-                                              1e-4));
             const float size = 40;
             
             const double p = s.marker_pitch;
@@ -336,7 +330,7 @@ void Tracker::run()
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
 
-                if (euler[0] - s.marker_pitch < 0)
+                if (fabs(euler[0]) + fabs(s.marker_pitch) > 60)
                 {
                     first = true;
                     qDebug() << "reset levmarq due to pitch breakage";
