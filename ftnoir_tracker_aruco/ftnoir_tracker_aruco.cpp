@@ -187,10 +187,6 @@ void Tracker::run()
         return;
     }
 
-    while (!stop)
-        if(camera.read(color_))
-            break;
-
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
     int cur_fps = 0;
