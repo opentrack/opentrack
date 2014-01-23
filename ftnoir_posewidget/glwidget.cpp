@@ -186,37 +186,20 @@ void GLWidget::project_quad_texture() {
                     int qx2 = std::min<int>(ow - 1, std::max<int>(0, qx + 1.0));
                     int qy2 = std::min<int>(oh - 1, std::max<int>(0, qy + 1.0));
 
-                    double dx1 = qx1 - qx;
-                    double dy1 = qy1 - qy;
-                    double dx2 = qx2 - qx;
-                    double dy2 = qy2 - qy;
-
-                    double d1 = 2 - (dx1 * dx1 + dy1 * dy1);
-                    double d2 = 2 - (dx2 * dx2 + dy2 * dy2);
-                    double d3 = 2 - (dx2 * dx2 + dy1 * dy1);
-                    double d4 = 2 - (dx1 * dx1 + dy2 * dy2);
-
-                    double inv_norm = 1. / (d1 + d2 + d3 + d4);
-
-                    d1 *= inv_norm;
-                    d2 *= inv_norm;
-                    d3 *= inv_norm;
-                    d4 *= inv_norm;
+                    double r = (4 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 2]
+                              + 1 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 2]
+                              + 2 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 2]
+                              + 2 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 2]) / 9;
                     
-                    double r = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 2]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 2]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 2]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 2];
+                    double g = (4 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 1]
+                              + 1 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 1]
+                              + 2 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 1]
+                              + 2 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 1]) / 9;
                     
-                    double g = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 1]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 1]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 1]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 1];
-                    
-                    double b = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 0]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 0]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 0]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 0];
+                    double b = (4 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 0]
+                             + 1 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 0]
+                             + 2 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 0]
+                             + 2 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 0]) / 9;
                     
                     dest[y * dest_pitch + x * dest_depth + 0] = std::max<int>(0, std::min<int>(255, r));
                     dest[y * dest_pitch + x * dest_depth + 1] = std::max<int>(0, std::min<int>(255, g));
