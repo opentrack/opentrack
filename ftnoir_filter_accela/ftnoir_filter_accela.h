@@ -48,7 +48,6 @@ public:
 
 private:
     settings s;
-    QMutex mutex;
 	bool first_run;
     double last_input[6];
     double last_output[3][6];
