@@ -65,7 +65,6 @@ class FilterControls: public QWidget, public IFilterDialog
     Q_OBJECT
 public:
     FilterControls();
-    void reset(QWidget *);
     void registerFilter(IFilter* filter);
     void unregisterFilter();
 private:
