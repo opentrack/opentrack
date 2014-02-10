@@ -83,10 +83,8 @@ void CurveConfigurationDialog::loadSettings() {
 
     for (int i = 0; i < 6; i++)
     {
-        configs[i]->setConfig(&mainApp->axis(i).curve, currentFile);
-        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, currentFile);
-        configs[i]->loadSettings(currentFile);
-        alt_configs[i]->loadSettings(currentFile);
+        configs[i]->setConfig(&mainApp->axis(i).curve);
+        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt);
     }
 }
 

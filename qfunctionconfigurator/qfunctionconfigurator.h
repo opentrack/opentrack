@@ -34,9 +34,8 @@ public:
 	QFunctionConfigurator(QWidget *parent = 0);
 	FunctionConfig* config();
 
-	void setConfig(FunctionConfig* config, QString settingsFile);		// Connect the FunctionConfig to the Widget.
-	void loadSettings(QString settingsFile);							// Load the FunctionConfig (points) from the INI-file
-	void saveSettings(QString settingsFile);							// Save the FunctionConfig (points) to the INI-file
+    void setConfig(FunctionConfig* config);
+    void saveSettings(QString settingsFile);
 
 signals:
     void CurveChanged(bool);
