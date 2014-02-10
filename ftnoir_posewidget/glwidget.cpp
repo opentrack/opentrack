@@ -175,35 +175,19 @@ void GLWidget::project_quad_texture() {
                 Vec2f coords;
                 if (triangles[i].barycentric_coords(pos, coords))
                 {
-                    double qx = origs[i][0].x
-                                + coords.x * (origs[i][2].x - origs[i][0].x)
-                                + coords.y * (origs[i][1].x - origs[i][0].x);
-                    double qy = origs[i][0].y
-                                + coords.x * (origs[i][2].y - origs[i][0].y)
-                                + coords.y * (origs[i][1].y - origs[i][0].y);
-                    int qx1 = std::min<int>(ow - 1, std::max<int>(0, qx));
-                    int qy1 = std::min<int>(oh - 1, std::max<int>(0, qy));
-                    int qx2 = std::min<int>(ow - 1, std::max<int>(0, qx + 1.0));
-                    int qy2 = std::min<int>(oh - 1, std::max<int>(0, qy + 1.0));
+                    int px = origs[i][0].x
+                            + coords.x * (origs[i][2].x - origs[i][0].x)
+                            + coords.y * (origs[i][1].x - origs[i][0].x);
+                    int py = origs[i][0].y
+                            + coords.x * (origs[i][2].y - origs[i][0].y)
+                            + coords.y * (origs[i][1].y - origs[i][0].y);
+                    int r = orig[py * orig_pitch + px * orig_depth + 2];
+                    int g = orig[py * orig_pitch + px * orig_depth + 1];
+                    int b = orig[py * orig_pitch + px * orig_depth + 0];
 
-                    int r = (4 * orig[qy1 * orig_pitch + qx1 * orig_depth + 2]
-                           + 1 * orig[qy2 * orig_pitch + qx2 * orig_depth + 2]
-                           + 2 * orig[qy1 * orig_pitch + qx2 * orig_depth + 2]
-                           + 2 * orig[qy2 * orig_pitch + qx1 * orig_depth + 2]) / 9;
-                    
-                    int g = (4 * orig[qy1 * orig_pitch + qx1 * orig_depth + 1]
-                           + 1 * orig[qy2 * orig_pitch + qx2 * orig_depth + 1]
-                           + 2 * orig[qy1 * orig_pitch + qx2 * orig_depth + 1]
-                           + 2 * orig[qy2 * orig_pitch + qx1 * orig_depth + 1]) / 9;
-                    
-                    int b = (4 * orig[qy1 * orig_pitch + qx1 * orig_depth + 0]
-                           + 1 * orig[qy2 * orig_pitch + qx2 * orig_depth + 0]
-                           + 2 * orig[qy1 * orig_pitch + qx2 * orig_depth + 0]
-                           + 2 * orig[qy2 * orig_pitch + qx1 * orig_depth + 0]) / 9;
-                    
-                    dest[y * dest_pitch + x * dest_depth + 0] = std::max<int>(0, std::min<int>(255, r));
-                    dest[y * dest_pitch + x * dest_depth + 1] = std::max<int>(0, std::min<int>(255, g));
-                    dest[y * dest_pitch + x * dest_depth + 2] = std::max<int>(0, std::min<int>(255, b));
+                    dest[y * dest_pitch + x * dest_depth + 0] = r;
+                    dest[y * dest_pitch + x * dest_depth + 1] = g;
+                    dest[y * dest_pitch + x * dest_depth + 2] = b;
 
                     break;
                 }
