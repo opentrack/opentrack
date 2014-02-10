@@ -36,7 +36,7 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     setMouseTracking(true);
 }
 
-void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFile) {
+void QFunctionConfigurator::setConfig(FunctionConfig* config) {
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
@@ -46,14 +46,6 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config, QString settingsFi
     _draw_function = _draw_background = true;
     update_range();
     update();
-}
-
-void QFunctionConfigurator::loadSettings(QString settingsFile) {
-
-    QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
-    if (_config) {
-        _config->loadSettings(iniFile);
-    }
 }
 
 void QFunctionConfigurator::saveSettings(QString settingsFile) {
