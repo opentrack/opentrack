@@ -321,6 +321,7 @@ opentrack_library(opentrack-filter-ewma)
 target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
 
 opentrack_library(opentrack-proto-fgfs)
+
 if(SDK_VJOY)
     include_directories(${SDK_VJOY})
     opentrack_library(opentrack-proto-vjoy)
