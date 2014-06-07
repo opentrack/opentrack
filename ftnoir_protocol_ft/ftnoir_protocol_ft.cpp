@@ -193,13 +193,9 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
         start_tirviews();
     }
 
-    //
-    // Check if TIRViews or dummy TrackIR.exe is required for this game
-    //
-    if (s.useDummyExe) {
-        start_dummy();
-    }
-    
+    // more games need the dummy executable than previously thought
+    start_dummy();
+
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
