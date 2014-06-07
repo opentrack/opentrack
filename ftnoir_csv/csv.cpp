@@ -155,7 +155,7 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
                            tmp + 6,
                            tmp + 5,
                            tmp + 4,
-                           fuzz + 1) != 11 || (int) ((fuzz[2] << 8) | fuzz[0]) != gameLine.at(0).toInt())
+                           fuzz + 1) != 11)
                 {
                     qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
                 }
