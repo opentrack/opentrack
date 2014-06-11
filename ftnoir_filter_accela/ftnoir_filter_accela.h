@@ -3,7 +3,7 @@
 #include "ui_ftnoir_accela_filtercontrols.h"
 #include "facetracknoir/global-settings.h"
 #include <QMutex>
-#include <QElapsedTimer>
+#include "facetracknoir/timer.hpp"
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
 #define ACCELA_SMOOTHING_TRANSLATION 40.0
@@ -51,7 +51,7 @@ private:
 	bool first_run;
     double last_input[6];
     double last_output[3][6];
-    QElapsedTimer timer;
+    Timer timer;
     qint64 frame_delta;
 };
 
