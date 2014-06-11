@@ -44,6 +44,7 @@ public:
     virtual void refreshVideo();
 
     void apply(settings& s);
+	void apply_inner();
 	void center();
 	void reset();	// reset the trackers internal state variables
 	void run();
@@ -81,9 +82,10 @@ protected:
 
     PTVideoWidget* video_widget;
 	QFrame*      video_frame;
-    bool           tracking_valid;
-
+    bool           tracking_valid, need_apply;
+	
     settings s;
+    settings* new_settings;
     Timer time;
 };
 

@@ -26,7 +26,9 @@ Tracker::Tracker()
     : commands(0),
 	  video_widget(NULL), 
 	  video_frame(NULL),
-	  tracking_valid(false)
+	  tracking_valid(false),
+	  need_apply(false),
+	  new_settings(nullptr)
 {
 	qDebug()<<"Tracker::Tracker";
 }
@@ -73,7 +75,7 @@ void Tracker::run()
         if (commands & ABORT) break;
         if (commands & PAUSE) continue;
         commands = 0;
-        
+	apply_inner();
         dt = time.start() / 1000.0;
 
         new_frame = camera.get_frame(dt, &frame);
@@ -111,11 +113,23 @@ void Tracker::run()
 
 	qDebug()<<"Tracker:: Thread stopping";
 }
-
 void Tracker::apply(settings& s)
 {
-	qDebug()<<"Tracker:: Applying settings";
 	QMutexLocker lock(&mutex);
+	need_apply = true;
+	// caller guarantees object lifetime
+	new_settings = &s;
+}
+
+void Tracker::apply_inner()
+{
+	QMutexLocker lock(&mutex);
+	if (!need_apply)
+		return;
+	qDebug()<<"Tracker:: Applying settings";
+	auto& s = *new_settings;
+	new_settings = nullptr;
+	need_apply = false;
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
