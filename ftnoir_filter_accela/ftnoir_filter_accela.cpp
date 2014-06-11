@@ -67,8 +67,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
     {
         for (int i = 0; i < 6; i++)
             last_input[i] = target_camera_position[i];
-        frame_delta = timer.isValid() ? timer.elapsed() : 1;
-        timer.start();
+        frame_delta = timer.start();
     } else {
         auto d = timer.elapsed();
         double c = clamp(0.0, 1.0, d / (double) frame_delta);
