@@ -526,6 +526,10 @@ endif()
 
 link_with_dinput8(opentrack)
 
+if(CMAKE_SYSTEM STREQUAL LINUX)
+    link_libraries(rt)
+endif()
+
 if(MSVC)
     SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 endif()
