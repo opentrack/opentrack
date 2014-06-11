@@ -28,17 +28,18 @@ static inline void clock_gettime(int, struct timespec* ts)
 #       include <mach/mach_time.h>
 static inline void clock_gettime(int, struct timespec* ts)
 {
-    uint64_t state, nsec;
     static mach_timebase_info_data_t    sTimebaseInfo;
+    uint64_t state, nsec;
     if ( sTimebaseInfo.denom == 0 ) {
         (void) mach_timebase_info(&sTimebaseInfo);
     }
     state = mach_absolute_time();
-    nsec = elapsed * sTimebaseInfo.numer / sTimebaseInfo.denom;
-    ts->tv_sec = nsec / 1000000;
-    ts->tv_nsec = nsec % 1000000;
+    nsec = state * sTimebaseInfo.numer / sTimebaseInfo.denom;
+    ts->tv_sec = nsec / 1000000000L;
+    ts->tv_nsec = nsec % 1000000000L;
 }
-#   else
+#   endif
+#endif
 class Timer {
 private:
     struct timespec state;
@@ -63,5 +64,3 @@ public:
         return conv(cur);
     }
 };
-#   endif
-#endif
