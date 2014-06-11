@@ -47,7 +47,6 @@
 #endif
 #include <QThread>
 #include <QDebug>
-#include <QElapsedTimer>
 
 #include "ui_facetracknoir.h"
 
