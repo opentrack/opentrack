@@ -1,24 +1,24 @@
 #pragma once
 #include <time.h>
 #if defined (_WIN32)
-#include <windows.h>
+#   include <windows.h>
+#   define CLOCK_MONOTONIC 0
 static inline void clock_gettime(int, struct timespec* ts)
 {
-    static LARGE_INTEGER freq = 0;
+    static LARGE_INTEGER freq;
 
-    if (!freq)
+    if (!freq.QuadPart)
         (void) QueryPerformanceFrequency(&freq);
-
-    freq.QuadPart /= 1000000;
 
     LARGE_INTEGER d;
 
     (void) QueryPerformanceCounter(&d);
 
-    d.QuadPart = d.QuadPart / freq.QuadPart;
+    d.QuadPart *= 1000000000L;
+    d.QuadPart /= freq.QuadPart;
 
-    ts->tv_sec = d.QuadPart / 1000000;
-    ts->tv_nsec = d.QuadPart % 1000000;
+    ts->tv_sec = d.QuadPart / 1000000000L;
+    ts->tv_nsec = d.QuadPart % 1000000000L;
 }
 
 #else
