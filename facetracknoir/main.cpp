@@ -21,41 +21,51 @@
 * You should have received a copy of the GNU General Public License along		*
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-		20100520 - WVR: Added class FaceApp, to override winEventFilter. It receives 
-						messages from the Game.
-*/
 
 #include "facetracknoir.h"
 #include "tracker.h"
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QList>
+#include <QDir>
+#include <QStringList>
+#include <memory>
 
-#if defined(_WIN32)
-#include <windows.h>
-//#pragma comment(linker, "/SUBSYSTEM:console /ENTRY:mainCRTStartup")
+#if defined(_WIN32) && defined(_MSC_VER)
+#   include <windows.h>
+#	ifdef OPENTRACK_BREAKPAD
+#		include <exception_handler.h>
+using namespace google_breakpad;
+bool dumpCallback(const wchar_t* dump_path,
+                                 const wchar_t* minidump_id,
+                                 void* context,
+                                 EXCEPTION_POINTERS* exinfo,
+                                 MDRawAssertionInfo* assertion,
+                                 bool succeeded)
+{
+    MessageBoxA(GetDesktopWindow(),
+        "Generating crash dump!\r\n"
+        "Please send the .dmp file to <sthalik@misaki.pl> to help us improve the code.",
+        "opentrack crashed :(",
+        MB_OK | MB_ICONERROR);
+	return succeeded;
+}
+
+#	endif
 #endif
+
 int main(int argc, char** argv)
 {
-#if defined(_WIN32)
-    (void) timeBeginPeriod(1);
+#if defined(OPENTRACK_BREAKPAD) && defined(_MSC_VER)
+	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
 #endif
+    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
-    QFont font;
-    font.setFamily(font.defaultFamily());
-    font.setPointSize(9);
-    app.setFont(font);
-    FaceTrackNoIR w;
-	//
-	// Create the Main Window and DeskTop and Exec!
-	//
-	QDesktopWidget desktop;
-    w.move(desktop.screenGeometry().width()/2-w.width()/2, 100);
-	w.show();
-    qApp->exec();
+    auto w = std::make_shared<FaceTrackNoIR>();
+
+    w->show();
+    app.exec();
 
 	return 0;
 }

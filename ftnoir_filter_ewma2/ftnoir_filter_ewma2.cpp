@@ -28,6 +28,7 @@
 #include <QWidget>
 #include "facetracknoir/global-settings.h"
 #include <algorithm>
+#include <QMutexLocker>
 //#define LOG_OUTPUT
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,48 +44,22 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-FTNoIR_Filter::FTNoIR_Filter()
-{
-    first_run = true;
+FTNoIR_Filter::FTNoIR_Filter() :
+    first_run(true),
     // Deltas are smoothed over the last 3 frames (0.1sec at 30fps).
-    delta_smoothing = 1.0 / 3.0;
+    delta_smoothing(1.0/3.0),
     // Noise is smoothed over the last 3600 frames (~2mins at 30fps).
-    noise_smoothing = 1.0 / 3600.0;
-    loadSettings();  // Load the Settings
-}
-
-FTNoIR_Filter::~FTNoIR_Filter()
+    noise_smoothing(1.0/3600.0)
 {
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Filter::loadSettings() {
-    qDebug() << "FTNoIR_Filter::loadSettings says: Starting ";
-    QSettings settings("opentrack");  // Registry settings (in HK_USER)
-
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );  // Application settings (in INI-file)
-
-    qDebug() << "FTNoIR_Filter::loadSettings says: iniFile = " << currentFile;
-
-    //
-    // The EWMA2-filter-settings are in the Tracking group: this is because they used to be on the Main Form of FaceTrackNoIR
-    //
-    iniFile.beginGroup ( "Tracking" );
-    // TODO(abo): change UI to have range 1-120 frames.
-    kMinSmoothing = iniFile.value ( "minSmooth", 2 ).toInt();
-    kMaxSmoothing = iniFile.value ( "maxSmooth", 15 ).toInt();
-    // TODO(abo): change powCurve to a float with default=1.0.
-    kSmoothingScaleCurve = iniFile.value ( "powCurve", 10 ).toInt();
-    iniFile.endGroup ();
+void FTNoIR_Filter::receiveSettings()
+{
+    s.b->reload();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
-                                       double *target_camera_position,
-                                       double *new_camera_position,
-                                       double *last_post_filter)
+void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
+                                       double *new_camera_position)
 {
     double new_delta, new_noise, norm_noise;
     double alpha;
@@ -113,7 +88,7 @@ void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
         norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
         // Calculate the alpha from the normalized noise.
         // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
-        alpha = 1.0/(kMinSmoothing+(1.0-pow(norm_noise,kSmoothingScaleCurve/20.0))*(kMaxSmoothing-kMinSmoothing));
+        alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
         new_camera_position[i] = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
     }
 

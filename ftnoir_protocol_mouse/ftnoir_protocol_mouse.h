@@ -41,38 +41,34 @@
 #include <windows.h>
 #include <winuser.h>
 #include "facetracknoir/global-settings.h"
+#include "facetracknoir/options.h"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<int> Mouse_X, Mouse_Y;
+    settings() :
+        b(bundle("mouse-proto")),
+        Mouse_X(b, "mouse-x", 0),
+        Mouse_Y(b, "mouse-y", 0)
+    {}
+};
 
 #define MOUSE_AXIS_MIN 0
 #define MOUSE_AXIS_MAX 65535
 
-enum FTN_AngleName {
-    FTN_YAW = Yaw,
-    FTN_PITCH = Pitch,
-    FTN_ROLL = Roll,
-    FTN_X = TX,
-    FTN_Y = TY,
-    FTN_Z = TZ
-};
-
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
+    FTNoIR_Protocol() {}
     bool checkServerInstallationOK();
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
-
-private:
-	HANDLE h;
-	INPUT MouseStruct;
-
-	FTN_AngleName Mouse_X;			// Map one of the 6DOF's to this Mouse direction
-	FTN_AngleName Mouse_Y;
-	FTN_AngleName Mouse_Wheel;
-	void loadSettings();
+    void sendHeadposeToGame( const double *headpose);
     QString getGameName() {
         return "Mouse tracker";
     }
+    void reload();
+private:
+    struct settings s;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -80,31 +76,20 @@ class MOUSEControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-	explicit MOUSEControls();
-    virtual ~MOUSEControls();
-	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
-	void registerProtocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	}
-	void unRegisterProtocol() {
-		theProtocol = NULL;									// Reset the pointer
-	}
-
+    MOUSEControls();
+    void registerProtocol(IProtocol *protocol) {
+        _proto = (FTNoIR_Protocol *) protocol;
+    }
+    void unRegisterProtocol() {
+        _proto = NULL;
+    }
 private:
-	Ui::UICMOUSEControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FTNoIR_Protocol *theProtocol;
-
+    Ui::UICMOUSEControls ui;
+    settings s;
+    FTNoIR_Protocol* _proto;
 private slots:
-	void doOK();
-	void doCancel();
-	void settingChanged( int setting ) { settingsDirty = true; }
+    void doOK();
+    void doCancel();
 };
 
 //*******************************************************************************************************
@@ -113,13 +98,9 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); }
-
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); }
     void getIcon(QIcon *icon) { *icon = QIcon(":/images/mouse.png"); }
 };
 

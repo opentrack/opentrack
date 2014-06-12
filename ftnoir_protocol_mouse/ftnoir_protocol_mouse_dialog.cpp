@@ -22,166 +22,46 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120830 - WVR: The Dialog class was used to get general info on the DLL. This
-						had a big disadvantage: the complete dialog was loaded, just to get
-						some data and then it was deleted again (without ever showing the dialog).
-						The ProtocolDll class solves this.
-						The functions to get the name(s) and icon were removed from the two other classes.
-*/
 #include "ftnoir_protocol_mouse.h"
-#include <QDebug>
 #include "facetracknoir/global-settings.h"
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
-MOUSEControls::MOUSEControls() :
-QWidget()
+MOUSEControls::MOUSEControls() : _proto(nullptr)
 {
-	ui.setupUi( this );
-	ui.cbxSelectMouse_X->addItem("None");
+    ui.setupUi( this );
+    ui.cbxSelectMouse_X->addItem("None");
     ui.cbxSelectMouse_X->addItem("X");
-	ui.cbxSelectMouse_X->addItem("Y");
-	ui.cbxSelectMouse_X->addItem("Z");
-	ui.cbxSelectMouse_X->addItem("Yaw");
+    ui.cbxSelectMouse_X->addItem("Y");
+    ui.cbxSelectMouse_X->addItem("Z");
+    ui.cbxSelectMouse_X->addItem("Yaw");
     ui.cbxSelectMouse_X->addItem("Pitch");
-	ui.cbxSelectMouse_X->addItem("Roll");
+    ui.cbxSelectMouse_X->addItem("Roll");
 
-	ui.cbxSelectMouse_Y->addItem("None");
-	ui.cbxSelectMouse_Y->addItem("X");
-	ui.cbxSelectMouse_Y->addItem("Y");
-	ui.cbxSelectMouse_Y->addItem("Z");
+    ui.cbxSelectMouse_Y->addItem("None");
+    ui.cbxSelectMouse_Y->addItem("X");
+    ui.cbxSelectMouse_Y->addItem("Y");
+    ui.cbxSelectMouse_Y->addItem("Z");
     ui.cbxSelectMouse_Y->addItem("Yaw");
-	ui.cbxSelectMouse_Y->addItem("Pitch");
-	ui.cbxSelectMouse_Y->addItem("Roll");
-	// Connect Qt signals to member-functions
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.cbxSelectMouse_X, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-	connect(ui.cbxSelectMouse_Y, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged( int )));
-	theProtocol = NULL;
-	// Load the settings from the current .INI-file
-	loadSettings();
+    ui.cbxSelectMouse_Y->addItem("Pitch");
+    ui.cbxSelectMouse_Y->addItem("Roll");
+
+    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+
+    tie_setting(s.Mouse_X, ui.cbxSelectMouse_X);
+    tie_setting(s.Mouse_Y, ui.cbxSelectMouse_Y);
 }
 
-//
-// Destructor for server-dialog
-//
-MOUSEControls::~MOUSEControls() {
-	qDebug() << "~MOUSEControls() says: started";
-}
-
-//
-// Initialize tracker-client-dialog
-//
-void MOUSEControls::Initialize(QWidget *parent) {
-
-	QPoint offsetpos(100, 100);
-	if (parent) {
-		this->move(parent->pos() + offsetpos);
-	}
-	show();
-}
-
-//
-// OK clicked on server-dialog
-//
 void MOUSEControls::doOK() {
-	save();
-	this->close();
+    s.b->save();
+    if (_proto)
+        _proto->reload();
+    this->close();
 }
 
-// override show event
-void MOUSEControls::showEvent ( QShowEvent * event ) {
-	loadSettings();
-}
-
-//
-// Cancel clicked on server-dialog
-//
 void MOUSEControls::doCancel() {
-	//
-	// Ask if changed Settings should be saved
-	//
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-
-		qDebug() << "doCancel says: answer =" << ret;
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
+    s.b->revert();
+    this->close();
 }
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void MOUSEControls::loadSettings() {
-	qDebug() << "loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-
-	iniFile.beginGroup ( "Mouse" );
-	ui.cbxSelectMouse_X->setCurrentIndex(iniFile.value ( "Mouse_X", 0 ).toInt() );
-	ui.cbxSelectMouse_Y->setCurrentIndex(iniFile.value ( "Mouse_Y", 0 ).toInt() );
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
-void MOUSEControls::save() {
-	qDebug() << "save() says: started";
-
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "Mouse" );
-	iniFile.setValue ( "Mouse_X", ui.cbxSelectMouse_X->currentIndex() );
-	iniFile.setValue ( "Mouse_Y", ui.cbxSelectMouse_Y->currentIndex() );
-	iniFile.endGroup ();
-
-	settingsDirty = false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetProtocolDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetProtocolDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocolDialog=_GetProtocolDialog@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {

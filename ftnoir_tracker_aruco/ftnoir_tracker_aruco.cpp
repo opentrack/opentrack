@@ -15,17 +15,21 @@
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
 #include <vector>
+#include <cstdio>
 
-#if defined(_WIN32) || defined(__WIN32)
-#include <dshow.h>
+#if defined(_WIN32)
+#   undef NOMINMAX
+#   define NOMINMAX
+#   define NO_DSHOW_STRSAFE
+#   include <dshow.h>
 #else
-#include <unistd.h>
+#   include <unistd.h>
 #endif
 
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;
@@ -78,7 +82,7 @@ static QList<QString> get_camera_names(void) {
         if (access(buf, R_OK | W_OK) == 0) {
             ret.append(buf);
         } else {
-            break;
+            continue;
         }
     }
 #endif
@@ -97,55 +101,27 @@ static resolution_tuple resolution_choices[] = {
 	{ 0, 0 }
 };
 
-void Tracker::load_settings()
+Tracker::Tracker() : stop(false), layout(nullptr), videoWidget(nullptr)
 {
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-
-	iniFile.beginGroup( "aruco-Tracker" );
-    fov = iniFile.value("fov", 56).toFloat();
-    force_fps = iniFile.value("fps", 0).toInt();
-    camera_index = iniFile.value("camera-index", -1).toInt();
-    int res = iniFile.value("resolution", 0).toInt();
-    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
-		res = 0;
-	resolution_tuple r = resolution_choices[res];
-	force_width = r.width;
-    force_height = r.height;
-	enableRX = iniFile.value("enable-rx", true).toBool();
-	enableRY = iniFile.value("enable-ry", true).toBool();
-	enableRZ = iniFile.value("enable-rz", true).toBool();
-	enableTX = iniFile.value("enable-tx", true).toBool();
-	enableTY = iniFile.value("enable-ty", true).toBool();
-	enableTZ = iniFile.value("enable-tz", true).toBool();
-    for (int i = 0; i < 5; i++)
-        dc[i] = iniFile.value(QString("dc%1").arg(i), 0).toFloat();
-	iniFile.endGroup();
-}
-
-Tracker::Tracker()
-{
-    fresh = false;
-    stop = false;
-	videoWidget = NULL;
-	layout = NULL;
-	enableRX = enableRY = enableRZ = enableTX = enableTY = enableTZ = true;
-	load_settings();
 }
 
 Tracker::~Tracker()
 {
-	if (layout)
-		delete layout;
+    stop = true;
+    wait();
 	if (videoWidget)
 		delete videoWidget;
+    if(layout)
+        delete layout;
+    qDebug() << "releasing camera, brace for impact";
+    camera.release();
+    qDebug() << "all done!";
 }
 
 void Tracker::StartTracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new VideoWidget(videoframe);
+    videoWidget = new ArucoVideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(videoWidget);
@@ -153,143 +129,263 @@ void Tracker::StartTracker(QFrame* videoframe)
         delete videoframe->layout();
     videoframe->setLayout(layout);
     videoWidget->show();
-    this->layout = layout;
-    load_settings();
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(50);
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
-}
-
-void Tracker::paint_widget() {
-    if (fresh) {
-        fresh = false;
-        videoWidget->update();
-    }
+    this->layout = layout;
 }
 
 #define HT_PI 3.1415926535
 
 void Tracker::run()
 {
-    cv::VideoCapture camera(camera_index);
-    
-    if (force_width)
-        camera.set(CV_CAP_PROP_FRAME_WIDTH, force_width);
-    if (force_height)
-        camera.set(CV_CAP_PROP_FRAME_HEIGHT, force_height);
-    if (force_fps)
-        camera.set(CV_CAP_PROP_FPS, force_fps);
+    int res = s.resolution;
+    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
+        res = 0;
+    resolution_tuple r = resolution_choices[res];
+    int fps;
+    switch (static_cast<int>(s.force_fps))
+    {
+    default:
+    case 0:
+        fps = 0;
+        break;
+    case 1:
+        fps = 30;
+        break;
+    case 2:
+        fps = 60;
+        break;
+    case 3:
+        fps = 120;
+        break;
+    case 4:
+        fps = 180;
+        break;
+    }
+    camera = cv::VideoCapture(s.camera_index);
+    if (r.width)
+    {
+        camera.set(CV_CAP_PROP_FRAME_WIDTH, r.width);
+        camera.set(CV_CAP_PROP_FRAME_HEIGHT, r.height);
+    }
+    if (fps)
+        camera.set(CV_CAP_PROP_FPS, fps);
     
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
-    detector.setThresholdParams(11, 5);
-    cv::Mat color, grayscale, rvec, tvec;
-  
+
+    cv::Rect last_roi(65535, 65535, 0, 0);
+
+    cv::Mat color, color_, grayscale, rvec, tvec;
+
+    const double stateful_coeff = 0.88;
+    
+    if (!camera.isOpened())
+    {
+        fprintf(stderr, "aruco tracker: can't open camera\n");
+        return;
+    }
+
+    auto freq = cv::getTickFrequency();
+    auto last_time = cv::getTickCount();
+    int cur_fps = 0;
+    int last_fps = 0;
+    cv::Point2f last_centroid;
+    bool first = true;
+
     while (!stop)
     {
-        if (!camera.read(color))
-            break;
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
-        const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * fov * HT_PI / 180);
-        const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
+        if (!camera.read(color_))
+            continue;
+        auto tm = cv::getTickCount();
+        color_.copyTo(color);
+        if (s.red_only)
+        {
+            cv::Mat channel[3];
+            cv::split(color, channel);
+            grayscale = channel[2];
+        } else
+            cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+
+        const int scale = frame.cols > 480 ? 2 : 1;
+        detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
+
+        const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * s.fov * HT_PI / 180);
+        const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * s.fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
         cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
         intrinsics.at<float> (0, 0) = focal_length_w;
         intrinsics.at<float> (1, 1) = focal_length_h;
         intrinsics.at<float> (0, 2) = grayscale.cols/2;
         intrinsics.at<float> (1, 2) = grayscale.rows/2;
-        
+
         cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
-        
-        for (int i = 0; i < 5; i++)
-            dist_coeffs.at<float>(i) = dc[i];
-        
+
         std::vector< aruco::Marker > markers;
-        
-        detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
-        
-        if (markers.size() == 1 && markers[0].size() == 4) {
-            const aruco::Marker& m = markers.at(0);
-            for (int i = 0; i < 4; i++)
-                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 4);
-        }
-        
-        frame = color;
-        
-        if (frame.rows > 0 && !fresh)
+
+        const double size_min = 0.04;
+        const double size_max = 0.38;
+
+        if (last_roi.width > 0 &&
+                (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
+                 markers.size() == 1 && markers[0].size() == 4))
         {
-            videoWidget->update_image(frame.data, frame.cols, frame.rows);
-            fresh = true;
+            detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
+                                   std::min(1.0, size_max * grayscale.cols / last_roi.width));
+            auto& m = markers.at(0);
+            for (int i = 0; i < 4; i++)
+            {
+                auto& p = m.at(i);
+                p.x += last_roi.x;
+                p.y += last_roi.y;
+            }
         }
+        else
+        {
+            detector.setMinMaxSize(size_min, size_max);
+            detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
+        }
+
+        if (markers.size() == 1 && markers[0].size() == 4) {
+            const auto& m = markers.at(0);
+            for (int i = 0; i < 4; i++)
+                cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale, 8);
+        }
+
+        auto time = cv::getTickCount();
+
+        if ((long) (time / freq) != (long) (last_time / freq))
+        {
+            last_fps = cur_fps;
+            cur_fps = 0;
+            last_time = time;
+        }
+
+        cur_fps++;
+
+        char buf[128];
+
+        frame = color.clone();
+
+        ::sprintf(buf, "Hz: %d", last_fps);
+        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
+        ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
+        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
         
         if (markers.size() == 1 && markers[0].size() == 4) {
-            const aruco::Marker& m = markers.at(0);
-            const float size = 7;
+            const auto& m = markers.at(0);
+            const float size = 40;
             
+            const double p = s.marker_pitch;
+            const double sq = sin(p * HT_PI / 180);
+            const double cq = cos(p * HT_PI / 180);
+
             cv::Mat obj_points(4,3,CV_32FC1);
-            obj_points.at<float>(1,0)=-size;
-            obj_points.at<float>(1,1)=-size;
-            obj_points.at<float>(1,2)=0;
-            obj_points.at<float>(2,0)=size;
-            obj_points.at<float>(2,1)=-size;
-            obj_points.at<float>(2,2)=0;
-            obj_points.at<float>(3,0)=size;
-            obj_points.at<float>(3,1)=size;
-            obj_points.at<float>(3,2)=0;
-            obj_points.at<float>(0,0)=-size;
-            obj_points.at<float>(0,1)=size;
-            obj_points.at<float>(0,2)=0;
-            
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
-            
+            obj_points.at<float>(1,0)=-size + s.headpos_x;
+            obj_points.at<float>(1,1)=-size * cq + s.headpos_y;
+            obj_points.at<float>(1,2)=-size * sq + s.headpos_z;
+            obj_points.at<float>(2,0)=size + s.headpos_x;
+            obj_points.at<float>(2,1)=-size * cq + s.headpos_y;
+            obj_points.at<float>(2,2)=-size * sq + s.headpos_z;
+            obj_points.at<float>(3,0)=size + s.headpos_x;
+            obj_points.at<float>(3,1)=size * cq + s.headpos_y;
+            obj_points.at<float>(3,2)=size * sq + s.headpos_z;
+            obj_points.at<float>(0,0)=-size + s.headpos_x;
+            obj_points.at<float>(0,1)=size * cq + s.headpos_y;
+            obj_points.at<float>(0,2)=size * sq + s.headpos_z;
+
+            last_roi = cv::Rect(65535, 65535, 0, 0);
+
+            for (int i = 0; i < 4; i++)
+            {
+                auto foo = m.at(i);
+                last_roi.x = std::min<int>(foo.x, last_roi.x);
+                last_roi.y = std::min<int>(foo.y, last_roi.y);
+                last_roi.width = std::max<int>(foo.x, last_roi.width);
+                last_roi.height = std::max<int>(foo.y, last_roi.height);
+            }
+            {
+                last_roi.width -= last_roi.x;
+                last_roi.height -= last_roi.y;
+                last_roi.x -= last_roi.width * stateful_coeff;
+                last_roi.y -= last_roi.height * stateful_coeff;
+                last_roi.width *= stateful_coeff * 3;
+                last_roi.height *= stateful_coeff * 3;
+                last_roi.x = std::max<int>(0, last_roi.x);
+                last_roi.y = std::max<int>(0, last_roi.y);
+                last_roi.width = std::min<int>(grayscale.cols - last_roi.x, last_roi.width);
+                last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
+            }
+
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
+            first = false;
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
-            
             cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
-        
             cv::Rodrigues(rvec, rotation_matrix);
-        
-            cv::Vec3d foo = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
-            
-            QMutexLocker lck(&mtx);
-            
-            for (int i = 0; i < 3; i++)
-                pose[i] = tvec.at<double>(i);
-            
-            pose[Yaw] = foo[1];
-            pose[Pitch] = -foo[0];
-            pose[Roll] = foo[2];
-            
-            pose[Yaw] -= atan(pose[TX] / pose[TZ]) * 180 / HT_PI;
-            pose[Pitch] -= atan(pose[TY] / pose[TZ]) * 180 / HT_PI;
+
+            {
+                cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
+
+                if (fabs(euler[0]) + fabs(s.marker_pitch) > 60)
+                {
+                    first = true;
+                    qDebug() << "reset levmarq due to pitch breakage";
+                }
+
+                QMutexLocker lck(&mtx);
+
+                for (int i = 0; i < 3; i++)
+                    pose[i] = tvec.at<double>(i);
+
+                pose[Yaw] = euler[1];
+                pose[Pitch] = -euler[0];
+                pose[Roll] = euler[2];
+            }
+
+            std::vector<cv::Point2f> repr2;
+            std::vector<cv::Point3f> centroid;
+            centroid.push_back(cv::Point3f(0, 0, 0));
+            cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
+
+            {
+                auto s = cv::Scalar(255, 0, 255);
+                cv::circle(frame, repr2.at(0), 4, s, -1);
+            }
+
+            last_centroid = repr2[0];
         }
+        else
+        {
+            last_roi = cv::Rect(65535, 65535, 0, 0);
+            first = true;
+        }
+
+        if (frame.rows > 0)
+            videoWidget->update_image(frame);
     }
 }
 
-bool Tracker::GiveHeadPoseData(double *data)
+void Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     
-    if (enableRX)
+    if (s.eyaw)
         data[Yaw] = pose[Yaw];
-    if (enableRY)
+    if (s.epitch)
         data[Pitch] = pose[Pitch];
-    if (enableRZ)
+    if (s.eroll)
         data[Roll] = pose[Roll];
-    if (enableTX)
-        data[TX] = pose[TX];
-    if (enableTY)
-        data[TY] = pose[TY];
-    if (enableTZ)
-        data[TZ] = pose[TZ];
-    
-	return true;
+    if (s.ex)
+        data[TX] = pose[TX] * .1;
+    if (s.ey)
+        data[TY] = pose[TY] * .1;
+    if (s.ez)
+        data[TZ] = pose[TZ] * .1;
 }
 
 class TrackerDll : public Metadata
 {
 	// ITrackerDll interface
-	void Initialize() {}
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
@@ -349,163 +445,39 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 
 TrackerControls::TrackerControls()
 {
+    tracker = nullptr;
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
-	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.rx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ry, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.rz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
-    loadSettings();
-	settingsDirty = false;
-}
-
-TrackerControls::~TrackerControls()
-{
-}
-
-void TrackerControls::showEvent(QShowEvent *event)
-{
-}
-
-void TrackerControls::Initialize(QWidget* parent)
-{
-    loadSettings();
-	show();
-}
-
-void TrackerControls::loadSettings()
-{
-	ui.cameraName->clear();
-	QList<QString> names = get_camera_names();
-	names.prepend("Any available");
-	ui.cameraName->addItems(names);
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-	iniFile.beginGroup( "aruco-Tracker" );
-	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
-    ui.cameraFOV->setValue(iniFile.value("fov", 56).toFloat());
-	int fps;
-	switch (iniFile.value("fps", 0).toInt())
-	{
-	default:
-	case 0:
-		fps = 0;
-		break;
-	case 30:
-		fps = 1;
-		break;
-	case 60:
-		fps = 2;
-		break;
-	case 120:
-		fps = 3;
-		break;
-	}
-	ui.cameraFPS->setCurrentIndex(fps);
-	ui.rx->setCheckState(iniFile.value("enable-rx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ry->setCheckState(iniFile.value("enable-ry", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.rz->setCheckState(iniFile.value("enable-rz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-    ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
-    
-    ui.doubleSpinBox->setValue(iniFile.value("dc0").toDouble());
-    ui.doubleSpinBox_2->setValue(iniFile.value("dc1").toDouble());
-    ui.doubleSpinBox_3->setValue(iniFile.value("dc2").toDouble());
-    ui.doubleSpinBox_4->setValue(iniFile.value("dc3").toDouble());
-    ui.doubleSpinBox_5->setValue(iniFile.value("dc4").toDouble());
-    
-	iniFile.endGroup();
-	settingsDirty = false;
-}
-
-void TrackerControls::save()
-{
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-
-	iniFile.beginGroup( "aruco-Tracker" );
-	iniFile.setValue("fov", ui.cameraFOV->value());
-	int fps;
-	switch (ui.cameraFPS->currentIndex())
-	{
-	case 0:
-	default:
-		fps = 0;
-		break;
-	case 1:
-		fps = 30;
-		break;
-	case 2:
-		fps = 60;
-		break;
-	case 3:
-		fps = 120;
-		break;
-	}
-	iniFile.setValue("fps", fps);
-	iniFile.setValue("camera-index", ui.cameraName->currentIndex() - 1);
-	iniFile.setValue("enable-rx", ui.rx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ry", ui.ry->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-rz", ui.rz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tx", ui.tx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("resolution", ui.resolution->currentIndex());
-    
-    iniFile.setValue("dc0", ui.doubleSpinBox->value());
-    iniFile.setValue("dc1", ui.doubleSpinBox_2->value());
-    iniFile.setValue("dc2", ui.doubleSpinBox_3->value());
-    iniFile.setValue("dc3", ui.doubleSpinBox_4->value());
-    iniFile.setValue("dc4", ui.doubleSpinBox_5->value());
-    
-	iniFile.endGroup();
-	settingsDirty = false;
+    tie_setting(s.camera_index, ui.cameraName);
+	tie_setting(s.resolution, ui.resolution);
+    tie_setting(s.force_fps, ui.cameraFPS);
+    tie_setting(s.fov, ui.cameraFOV);
+    tie_setting(s.eyaw, ui.rx);
+    tie_setting(s.epitch, ui.ry);
+    tie_setting(s.eroll, ui.rz);
+    tie_setting(s.ex, ui.tx);
+    tie_setting(s.ey, ui.ty);
+    tie_setting(s.ez, ui.tz);
+    tie_setting(s.headpos_x, ui.cx);
+    tie_setting(s.headpos_y, ui.cy);
+    tie_setting(s.headpos_z, ui.cz);
+    tie_setting(s.red_only, ui.red_only);
+    tie_setting(s.marker_pitch, ui.marker_pitch);
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    ui.cameraName->addItems(get_camera_names());
 }
 
 void TrackerControls::doOK()
 {
-	save();
+    s.b->save();
+    if (tracker)
+        tracker->reload();
 	this->close();
 }
 
 void TrackerControls::doCancel()
 {
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this,
-										  "Settings have changed",
-										  "Do you want to save the settings?",
-										  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-										  QMessageBox::Discard );
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
+    s.b->revert();
+    this->close();
 }

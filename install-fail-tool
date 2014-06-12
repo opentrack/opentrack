@@ -1,0 +1,19 @@
+#!/bin/sh
+
+test -n "$1" || exit 1
+
+dir="$1"
+
+for i in "$dir"/* "$dir"/*/*; do
+	{ test -x "$i" && test -f "$i"; } || continue
+	echo ---- $i ----
+	install_name_tool -id "@executable_path/$(basename -- "$i")" "$i"
+
+	otool -L "$i" | awk '{ print $1 }' |
+	while read l; do
+		j="$(basename -- "$l")"
+		if test -e "$dir/$j"; then
+			install_name_tool -change "$l" "@executable_path/$j" "$i"
+		fi
+	done
+done

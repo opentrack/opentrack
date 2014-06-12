@@ -16,14 +16,13 @@
 #include <QSettings>
 #include <math.h>
 #include <QPixmap>
-#include <QDebug>
 
 //
 // Constructor with List of Points in argument.
 //
-FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
+FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput) :
+    _mutex(QMutex::Recursive)
 {
-    _mutex = new QMutex(QMutex::Recursive);
 	_title = title;
     _points = QList<QPointF>();
 	_data = 0;
@@ -33,21 +32,25 @@ FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput)
 	_max_Input = intMaxInput;					// Added WVR 20120805
 	_max_Output = intMaxOutput;
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );
     loadSettings(iniFile);
 	reload();
 }
 
+void FunctionConfig::setTrackingActive(bool blnActive)
+{
+    _tracking_active = blnActive;
+}
+
 FunctionConfig::FunctionConfig() :
+    _mutex(QMutex::Recursive),
+    _data(0),
+    _size(0),
     _tracking_active(false),
     _max_Input(0),
-    _max_Output(0),
-    _data(0),
-    _mutex(0),
-    _size(0)
+    _max_Output(0)
 {
-    _mutex = new QMutex();
 }
 
 //
@@ -56,7 +59,7 @@ FunctionConfig::FunctionConfig() :
 // The return-value is also stored internally, so the Widget can show the current value, when the Tracker is running.
 //
 float FunctionConfig::getValue(float x) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
     int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
     float ret = getValueInternal(x2);
 	lastValueTracked.setX(x);
@@ -68,7 +71,7 @@ float FunctionConfig::getValue(float x) {
 // The return-value is also stored internally, so the Widget can show the current value, when the Tracker is running.
 //
 bool FunctionConfig::getLastPoint(QPointF& point ) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
 	point = lastValueTracked;
 	return _tracking_active;
 }
@@ -133,20 +136,20 @@ void FunctionConfig::reload() {
             int start = p1.x() * MEMOIZE_PRECISION;
 
             for (int j = start; j < end && j < _size; j++) {
-                float t = (j - start) / (float) (end - start);
-                float t2 = t*t;
-                float t3 = t*t*t;
+                double t = (j - start) / (double) (end - start);
+                double t2 = t*t;
+                double t3 = t*t*t;
 
-                int x = .5 * ((2 * p1.x()) +
+                int x = .5 * ((2. * p1.x()) +
                               (-p0.x() + p2.x()) * t +
-                              (2 * p0.x() - 5 * p1.x() + 4 * p2.x() - p3.x()) * t2 +
-                              (-p0.x() + 3 * p1.x() - 3 * p2.x() + p3.x()) * t3)
+                              (2. * p0.x() - 5. * p1.x() + 4. * p2.x() - p3.x()) * t2 +
+                              (-p0.x() + 3. * p1.x() - 3. * p2.x() + p3.x()) * t3)
                         * MEMOIZE_PRECISION;
 
-                float y = .5 * ((2 * p1.y()) +
+                float y = .5 * ((2. * p1.y()) +
                                  (-p0.y() + p2.y()) * t +
-                                 (2 * p0.y() - 5 * p1.y() + 4 * p2.y() - p3.y()) * t2 +
-                                 (-p0.y() + 3 * p1.y() - 3 * p2.y() + p3.y()) * t3);
+                                 (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
+                                 (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
 
                 if (x >= 0 && x < _size)
                     _data[x] = y;
@@ -167,8 +170,6 @@ void FunctionConfig::reload() {
 FunctionConfig::~FunctionConfig() {
 	if (_data)
         delete[] _data;
-    if (_mutex)
-        delete _mutex;
 }
 
 //
@@ -176,7 +177,7 @@ FunctionConfig::~FunctionConfig() {
 // Used by the Widget.
 //
 void FunctionConfig::removePoint(int i) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
     if (i >= 0 && i < _points.size())
     {
         _points.removeAt(i);
@@ -189,7 +190,7 @@ void FunctionConfig::removePoint(int i) {
 // Used by the Widget and by loadSettings.
 //
 void FunctionConfig::addPoint(QPointF pt) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
 	_points.append(pt);
 	reload();
 }
@@ -199,7 +200,7 @@ void FunctionConfig::addPoint(QPointF pt) {
 // Used by the Widget.
 //
 void FunctionConfig::movePoint(int idx, QPointF pt) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
     if (idx >= 0 && idx < _points.size())
     {
         _points[idx] = pt;
@@ -213,8 +214,8 @@ void FunctionConfig::movePoint(int idx, QPointF pt) {
 //
 QList<QPointF> FunctionConfig::getPoints() {
 	QList<QPointF> ret;
-    QMutexLocker foo(_mutex);
-	for (int i = 0; i < _points.size(); i++) {
+    QMutexLocker foo(&_mutex);
+    for (int i = 0; i < _points.size(); i++) {
 		ret.append(_points[i]);
 	}
 	return ret;
@@ -225,7 +226,7 @@ QList<QPointF> FunctionConfig::getPoints() {
 // Settings for a specific Curve are loaded from their own Group in the INI-file.
 //
 void FunctionConfig::loadSettings(QSettings& settings) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
     QPointF newPoint;
 
 	QList<QPointF> points;
@@ -233,11 +234,9 @@ void FunctionConfig::loadSettings(QSettings& settings) {
 	
     int max = settings.value("point-count", 0).toInt();
 
-    qDebug() << _title << "count" << max;
-
 	for (int i = 0; i < max; i++) {
-        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), (i + 1) * _max_Input/2).toFloat(),
-                           settings.value(QString("point-%1-y").arg(i), (i + 1) * _max_Output/2).toFloat());
+        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
+                           settings.value(QString("point-%1-y").arg(i), 0).toFloat());
         //
 		// Make sure the new Point fits in the Function Range.
 		// Maybe this can be improved?
@@ -261,7 +260,7 @@ void FunctionConfig::loadSettings(QSettings& settings) {
 // The number of Points is also saved, to make loading more convenient.
 //
 void FunctionConfig::saveSettings(QSettings& settings) {
-    QMutexLocker foo(_mutex);
+    QMutexLocker foo(&_mutex);
 	settings.beginGroup(QString("Curves-%1").arg(_title));
 	int max = _points.size();
 	settings.setValue("point-count", max);

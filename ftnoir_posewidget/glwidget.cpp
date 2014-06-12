@@ -26,7 +26,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
     QWidget::paintEvent(event);
     QPainter p(this);
     project_quad_texture();
-    p.drawPixmap(event->rect(), pixmap, event->rect());
+    p.drawImage(event->rect(), texture);
 }
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
@@ -139,9 +139,9 @@ void GLWidget::project_quad_texture() {
 
     for (int i = 0; i < 4; i++)
         p2[i] = Vec2f(pt[i].x, pt[i].y);
-    
     QImage texture(QSize(sx, sy), QImage::Format_RGB888);
-    texture.fill(Qt::black);
+    QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
+    texture.fill(bgColor);
     
     const Vec2f projected[2][3] = { { p2[0], p2[1], p2[2] }, { p2[3], p2[1], p2[2] } };
     const Vec2f origs[2][3] = {
@@ -175,56 +175,23 @@ void GLWidget::project_quad_texture() {
                 Vec2f coords;
                 if (triangles[i].barycentric_coords(pos, coords))
                 {
-                    double qx = origs[i][0].x
-                                + coords.x * (origs[i][2].x - origs[i][0].x)
-                                + coords.y * (origs[i][1].x - origs[i][0].x);
-                    double qy = origs[i][0].y
-                                + coords.x * (origs[i][2].y - origs[i][0].y)
-                                + coords.y * (origs[i][1].y - origs[i][0].y);
-                    int qx1 = std::min<int>(ow - 1, std::max<int>(0, qx - 0.5));
-                    int qy1 = std::min<int>(oh - 1, std::max<int>(0, qy - 0.5));
-                    int qx2 = std::min<int>(ow - 1, std::max<int>(0, qx + 0.5));
-                    int qy2 = std::min<int>(oh - 1, std::max<int>(0, qy + 0.5));
+                    int px = origs[i][0].x
+                            + coords.x * (origs[i][2].x - origs[i][0].x)
+                            + coords.y * (origs[i][1].x - origs[i][0].x);
+                    int py = origs[i][0].y
+                            + coords.x * (origs[i][2].y - origs[i][0].y)
+                            + coords.y * (origs[i][1].y - origs[i][0].y);
+                    int r = orig[py * orig_pitch + px * orig_depth + 2];
+                    int g = orig[py * orig_pitch + px * orig_depth + 1];
+                    int b = orig[py * orig_pitch + px * orig_depth + 0];
 
-                    double dx1 = qx1 - qx;
-                    double dy1 = qy1 - qy;
-                    double dx2 = qx2 - qx;
-                    double dy2 = qy2 - qy;
-
-                    double d1 = 2 - (dx1 * dx1 + dy1 * dy1);
-                    double d2 = 2 - (dx2 * dx2 + dy2 * dy2);
-                    double d3 = 2 - (dx2 * dx2 + dy1 * dy1);
-                    double d4 = 2 - (dx1 * dx1 + dy2 * dy2);
-
-                    double inv_norm = 1. / (d1 + d2 + d3 + d4);
-
-                    d1 *= inv_norm;
-                    d2 *= inv_norm;
-                    d3 *= inv_norm;
-                    d4 *= inv_norm;
-                    
-                    double r = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 2]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 2]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 2]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 2];
-                    
-                    double g = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 1]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 1]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 1]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 1];
-                    
-                    double b = d1 * (double) orig[qy1 * orig_pitch + qx1 * orig_depth + 0]
-                               + d2 * (double) orig[qy2 * orig_pitch + qx2 * orig_depth + 0]
-                               + d3 * (double) orig[qy1 * orig_pitch + qx2 * orig_depth + 0]
-                               + d4 * (double) orig[qy2 * orig_pitch + qx1 * orig_depth + 0];
-                    
-                    dest[y * dest_pitch + x * dest_depth + 0] = std::max<int>(0, std::min<int>(255, r));
-                    dest[y * dest_pitch + x * dest_depth + 1] = std::max<int>(0, std::min<int>(255, g));
-                    dest[y * dest_pitch + x * dest_depth + 2] = std::max<int>(0, std::min<int>(255, b));
+                    dest[y * dest_pitch + x * dest_depth + 0] = r;
+                    dest[y * dest_pitch + x * dest_depth + 1] = g;
+                    dest[y * dest_pitch + x * dest_depth + 2] = b;
 
                     break;
                 }
             }
         }
-    pixmap = QPixmap::fromImage(texture);
+    this->texture = texture;
 }

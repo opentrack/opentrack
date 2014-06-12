@@ -2,11 +2,14 @@
 <ui version="4.0">
  <class>UICFilterControls</class>
  <widget class="QWidget" name="UICFilterControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>371</width>
+    <width>477</width>
     <height>380</height>
    </rect>
   </property>
@@ -17,12 +20,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>EWMA2 Filter settings FaceTrackNoIR</string>
+   <string>EWMA2 filter settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    images/facetracknoir.png
-   </iconset>
+   <iconset resource="ewma-filter.qrc">
+    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -480,7 +482,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="ewma-filter.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>minSmooth</sender>

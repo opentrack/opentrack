@@ -25,12 +25,6 @@
 *					to another FaceTrackNoIR program, using UDP.       			*
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
-	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
-					is called from run() of Tracker.cpp
-*/
 #include "ftnoir_protocol_ftn.h"
 #include <QFile>
 #include "facetracknoir/global-settings.h"
@@ -38,85 +32,22 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	loadSettings();
-    outSocket = 0;
 }
 
-/** destructor **/
-FTNoIR_Protocol::~FTNoIR_Protocol()
-{
-	if (outSocket != 0) {
-		outSocket->close();
-		delete outSocket;
-	}
+void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose) {
+    int destPort = s.port;
+    QHostAddress destIP(QString("%1.%2.%3.%4").arg(
+                            QString::number(static_cast<int>(s.ip1)),
+                            QString::number(static_cast<int>(s.ip2)),
+                            QString::number(static_cast<int>(s.ip3)),
+                            QString::number(static_cast<int>(s.ip4))));
+    outSocket.writeDatagram((const char *) headpose, sizeof( double[6] ), destIP, destPort);
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Protocol::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-	iniFile.beginGroup ( "FTN" );
-
-	QString destAddr = iniFile.value ( "IP-1", 192 ).toString() + "." + iniFile.value ( "IP-2", 168 ).toString() + "." + iniFile.value ( "IP-3", 2 ).toString() + "." + iniFile.value ( "IP-4", 1 ).toString();
-	destIP = QHostAddress( destAddr );
-	destPort = iniFile.value ( "PortNumber", 5550 ).toInt();
-
-	iniFile.endGroup ();
-}
-
-//
-// Update Headpose in Game.
-//
-void FTNoIR_Protocol::sendHeadposeToGame(double *headpose, double *rawheadpose ) {
-    int no_bytes;
-    double test_data[6];
-	//
-	// Copy the Raw measurements directly to the client.
-	//
-    for (int i = 0; i < 6; i++)
-        test_data[i] = headpose[i];
-	//
-	// Try to send an UDP-message to the receiver
-	//
-
-	//! [1]
-	if (outSocket != 0) {
-        no_bytes = outSocket->writeDatagram((const char *) test_data, sizeof( test_data ), destIP, destPort);
-		if ( no_bytes > 0) {
-//		qDebug() << "FTNServer::writePendingDatagrams says: bytes send =" << no_bytes << sizeof( double );
-		}
-		else {
-			qDebug() << "FTNServer::writePendingDatagrams says: nothing sent!";
-		}
-	}
-}
-
-//
-// Check if the Client DLL exists and load it (to test it), if so.
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
-	if (outSocket == 0) {
-		outSocket = new QUdpSocket();
-	}
-
-	return true;
+    return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {

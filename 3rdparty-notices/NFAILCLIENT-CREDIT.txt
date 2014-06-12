@@ -1,0 +1,4 @@
+NFailClient is a clean-room implementation of NFail LLC NFailClient.
+
+Completed as an operation spanning the whole Europe, NFailClient was 
+written by gnomes, halflings and rakshasa.

@@ -22,58 +22,29 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120830 - WVR: The Dialog class was used to get general info on the DLL. This
-						had a big disadvantage: the complete dialog was loaded, just to get
-						some data and then it was deleted again (without ever showing the dialog).
-						The TrackerDll class solves this.
-						The functions to get the name(s) and icon were removed from the two other classes.
-*/
 #include "ftnoir_tracker_udp.h"
 #include <QDebug>
 #include "facetracknoir/global-settings.h"
 
-FTNoIR_TrackerDll::FTNoIR_TrackerDll() {
-	//populate the description strings
-	trackerFullName = "FaceTrackNoIR UDP";
-	trackerShortName = "UDP";
-	trackerDescription = "FaceTrackNoIR UDP";
-}
-
-FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
-{
-
-}
-
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerFullName;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerShortName;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerDescription;
+    *strToBeFilled = "UDP";
 }
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 {
     *icon = QIcon(":/images/facetracknoir.png");
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker object.
-
-// Export both decorated and undecorated names.
-//   GetTrackerDll     - Undecorated name, which can be easily used with GetProcAddress
-//						Win32 API function.
-//   _GetTrackerDll@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {

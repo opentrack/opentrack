@@ -1,0 +1,12 @@
+{
+ global:
+     opentrack_make_ctx;
+     opentrack_finalize_ctx;
+     opentrack_enum_trackers;
+     opentrack_make_tracker;
+     opentrack_tracker_start;
+     opentrack_tracker_tick;
+     opentrack_finalize_tracker;
+ local:
+   *;
+};

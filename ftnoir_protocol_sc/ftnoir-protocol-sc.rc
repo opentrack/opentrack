@@ -1,2 +1,4 @@
 #include <winuser.h>
 142 RT_MANIFEST scserver.manifest
+143 RT_MANIFEST scserver-sp2.manifest
+144 RT_MANIFEST scserver-acceleration.manifest

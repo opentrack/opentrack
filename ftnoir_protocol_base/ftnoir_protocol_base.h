@@ -34,56 +34,22 @@
 
 #include "ftnoir_protocol_base_global.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_types.h"
-#include <QtGui/QWidget>
-#include <QtGui/QFrame>
-//#include "winbase.h"
+#include <QWidget>
+#include <QFrame>
 
-//#include "windows.h"
-//#include "winable.h"
-
-////////////////////////////////////////////////////////////////////////////////
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
-
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
 struct IProtocol
 {
-	virtual ~IProtocol() {}
+    virtual ~IProtocol() = 0;
     virtual bool checkServerInstallationOK() = 0;
-    virtual void sendHeadposeToGame( double *headpose, double *rawheadpose ) = 0;
+    virtual void sendHeadposeToGame( const double* headpose ) = 0;
     virtual QString getGameName() = 0;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
-struct IProtocolDll
-{
-	virtual ~IProtocolDll() {}
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
-};
+inline IProtocol::~IProtocol() { }
 
 struct IProtocolDialog
 {
     virtual ~IProtocolDialog() {}
-	virtual void Initialize(QWidget *parent) = 0;
-    virtual void showEvent ( QShowEvent * event ) = 0;
-
     virtual void registerProtocol(IProtocol *protocol) = 0;
     virtual void unRegisterProtocol() = 0;
 };

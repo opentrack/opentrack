@@ -2,20 +2,23 @@
 <ui version="4.0">
  <class>UICFTNClientControls</class>
  <widget class="QWidget" name="UICFTNClientControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>210</height>
+    <height>232</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FTNoIR tracker settings FaceTrackNoIR</string>
+   <string>UDP tracker settings</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
+    <normaloff>../facetracknoir/images/facetracknoir.png</normaloff>../facetracknoir/images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -74,8 +77,8 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>143</width>
-        <height>60</height>
+        <width>147</width>
+        <height>68</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">

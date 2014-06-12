@@ -1,0 +1,29 @@
+20131023 sh
+    Low-hanging fruit: Go through all forms and replace ok/cancel with
+    QButtonBox which works better with layouts.
+20131020 sh
+    Add unit testing by means of batch execution, protocol/filter that does
+    nothing, add separate executables for readers of specific protocols,
+    and run continuous integration every time commit happens that day.
+
+    Add statically-typed settings trees, convert result to qsettings-enabled
+    ini files. Use metadata props in order to get class name for ini section.
+    Required here are also arrays of settings. Use QList<T> for template
+    specialization.
+20131019 mm0zct
+    Ship more then one profile for configuring the curves etc.
+    There are two main user bases, HMD and traditional monitor+webcam users,
+    each wants a drastically different curve profile (HMD is 1:1 on all axes)
+    Also re:boost, I'd rather avoid extra library dependences if possible.
+
+    Rift tracker could do with positional estimation using intertial sensors.
+    Rift could do with a return-yaw-to-centre hotkey that's not the global all-axis option.
+    Hydra is really just a hack just now, could be improved a lot.
+
+    Add per-tracker hotkey support
+20131011 sh
+    low-hanging fruit: default saving profiles to a directory in user home,
+    not into global stuffies
+
+    as for build system, low-hanging fruit is writing functions/macrology
+    for all the repetition out there.

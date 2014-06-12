@@ -30,37 +30,38 @@
 #include "facetracknoir/global-settings.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
+#include <QMutex>
+#include "facetracknoir/options.h"
+using namespace options;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// EWMA Filter: Exponentially Weighted Moving Average filter with dynamic smoothing parameter
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct settings {
+    pbundle b;
+    value<int> kMinSmoothing, kMaxSmoothing, kSmoothingScaleCurve;
+    settings() :
+        b(bundle("ewma-filter")),
+        kMinSmoothing(b, "min-smoothing", 15),
+        kMaxSmoothing(b, "max-smoothing", 50),
+        kSmoothingScaleCurve(b, "smoothing-scale-curve", 10)
+    {}
+};
+
+
 class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    ~FTNoIR_Filter();
-    void Initialize() {}
-
-    void FilterHeadPoseData(double *current_camera_position,
-                            double *target_camera_position,
-                            double *new_camera_position,
-                            double *last_post_filter);
-
+    void reset() {}
+    void FilterHeadPoseData(const double *target_camera_position,
+                            double *new_camera_position);
+    void receiveSettings();
 private:
-    void loadSettings();  // Load the settings from the INI-file
-    double newHeadPose;   // Structure with new headpose
-
     bool first_run;
     double delta_smoothing;
     double noise_smoothing;
     double delta[6];
     double noise[6];
-
-    double kMinSmoothing;
-    double kMaxSmoothing;
-    double kSmoothingScaleCurve;
+    double current_camera_position[6];
+    settings s;
 };
 
 //*******************************************************************************************************
@@ -72,26 +73,19 @@ class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
-    explicit FilterControls();
-    virtual ~FilterControls();
-    void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent, IFilter* ptr);
+    FilterControls();
+    void registerFilter(IFilter* flt);
+    void unregisterFilter();
 
 private:
     Ui::UICFilterControls ui;
-    void loadSettings();
     void save();
-
-    /** helper **/
-    bool settingsDirty;
-
-    IFilter* pFilter;  // If the filter was active when the dialog was opened, this will hold a pointer to the Filter instance
+    settings s;
+    FTNoIR_Filter* pFilter;
 
 private slots:
     void doOK();
     void doCancel();
-    void settingChanged() { settingsDirty = true; };
-    void settingChanged( int ) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************
@@ -100,8 +94,6 @@ private slots:
 class FTNoIR_FilterDll : public Metadata
 {
 public:
-    FTNoIR_FilterDll();
-    ~FTNoIR_FilterDll();
     void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); }
     void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
     void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }

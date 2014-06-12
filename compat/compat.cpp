@@ -6,8 +6,9 @@
  */
 #define IN_FTNOIR_COMPAT
 #include "compat.h"
+#include <string.h>
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 
 PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName, int mapSize)
 {
@@ -44,21 +45,14 @@ void PortableLockedShm::unlock()
 }
 
 #else
-PortableLockedShm::PortableLockedShm(const char *shmName, const char *mutexName, int mapSize) : size(mapSize)
+PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
-    char shm_filename[NAME_MAX];
-    shm_filename[0] = '/';
-    strncpy(shm_filename+1, shmName, NAME_MAX-2);
-    sprintf(shm_filename + strlen(shm_filename), "%ld\n", (long) getuid());
-    shm_filename[NAME_MAX-1] = '\0';
-
-    //(void) shm_unlink(shm_filename);
-
-    fd = shm_open(shm_filename, O_RDWR | O_CREAT, 0600);
-    if (ftruncate(fd, mapSize) == 0)
-        mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
-    else
-        mem = (void*) -1;
+    char filename[512] = {0};
+    strcpy(filename, "/");
+    strcat(filename, shmName);
+    fd = shm_open(filename, O_RDWR | O_CREAT, 0600);
+    (void) ftruncate(fd, mapSize);
+    mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
 }
 
 PortableLockedShm::~PortableLockedShm()
@@ -79,6 +73,13 @@ void PortableLockedShm::unlock()
     flock(fd, LOCK_UN);
 }
 
-
-
 #endif
+
+bool PortableLockedShm::success()
+{
+#ifndef _WIN32
+    return (void*) mem != (void*) -1;
+#else
+    return (void*) mem != NULL;
+#endif
+}

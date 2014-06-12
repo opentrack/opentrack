@@ -136,9 +136,9 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 		//
 		if (gameLine.count() > 6) {
 			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
-                QByteArray id = gameLine.at(7).toAscii();
-                int tmp[8];
-                int fuzz[3];
+                QByteArray id = gameLine.at(7).toLatin1();
+                unsigned int tmp[8];
+                unsigned int fuzz[3];
                 if (gameLine.at(3) == QString("V160"))
                 {
                     qDebug() << "no table";
@@ -155,7 +155,7 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
                            tmp + 6,
                            tmp + 5,
                            tmp + 4,
-                           fuzz + 1) != 11 || ((fuzz[2] << 8) | fuzz[0]) != gameLine.at(0).toInt())
+                           fuzz + 1) != 11)
                 {
                     qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
                 }

@@ -1,9 +1,12 @@
 #include "facetracknoir/facetracknoir.h"
 
-#if defined(__WIN32) || defined(_WIN32)
-#include <windows.h>
-#include <strmif.h>
-#include <dshow.h>
+#if defined(_WIN32)
+#   ifndef DIRECTINPUT_VERSION
+#       define DIRECTINPUT_VERSION 0x800
+#   endif
+#   include <windows.h>
+#   include <dinput.h>
+
 QList<int> global_windows_key_sequences =
     QList<int>()
     << 0

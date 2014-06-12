@@ -26,12 +26,6 @@
 *				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
 *				must be treated as such...										*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-	20110401 - WVR: Moved protocol to a DLL, convenient for installation etc.
-	20101224 - WVR: Base class is no longer inheriting QThread. sendHeadposeToGame
-					is called from run() of Tracker.cpp
-*/
 #include "ftnoir_protocol_sc.h"
 #include "facetracknoir/global-settings.h"
 
@@ -56,15 +50,12 @@ float FTNoIR_Protocol::prevSCRotZ = 0.0f;
 
 static QLibrary SCClientLib;
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-	ProgramName = "Microsoft FSX";
 	blnSimConnectActive = false;
 	hSimConnect = 0;
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
 	qDebug() << "~FTNoIR_Protocol says: inside" << FTNoIR_Protocol::hSimConnect;
@@ -75,23 +66,9 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 			qDebug() << "~FTNoIR_Protocol says: close SUCCEEDED";
 		}
 	}
-//	SCClientLib.unload(); Generates crash when tracker is ended...
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void FTNoIR_Protocol::loadSettings() {
-// None yet...
-}
-
-//
-// Update Headpose in Game.
-//
-void FTNoIR_Protocol::sendHeadposeToGame( double *headpose, double *rawheadpose ) {
-PDWORD_PTR MsgResult = 0;
-
-
+void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     virtSCRotX = -headpose[Pitch];					// degrees
     virtSCRotY = -headpose[Yaw];
     virtSCRotZ = headpose[Roll];
@@ -100,14 +77,8 @@ PDWORD_PTR MsgResult = 0;
     virtSCPosY = headpose[TY]/100.f;
     virtSCPosZ = -headpose[TZ]/100.f;
 
-	//
-	// It's only useful to send data, if the connection was made.
-	//
 	if (!blnSimConnectActive) {
         if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-            qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: SimConnect active!";
-
-            //set up the events we want to listen for
             HRESULT hr;
 
             simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
@@ -115,51 +86,28 @@ PDWORD_PTR MsgResult = 0;
             hr = simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
             hr = simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
             hr = simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-            ////hr = SimConnect_MapInputEventToClientEvent(hSimConnect, INPUT0, "VK_COMMA", EVENT_INIT);
-            ////hr = SimConnect_SetInputGroupState(hSimConnect, INPUT0, SIMCONNECT_STATE_ON);
-
             blnSimConnectActive = true;
         }
 	}
-	else {
-		//
-		// Write the 6DOF-data to FSX
-//		//
-//		// Only do this when the data has changed. This way, the HAT-switch can be used when tracking is OFF.
-//		//
-//		if ((prevPosX != virtPosX) || (prevPosY != virtPosY) || (prevPosZ != virtPosZ) ||
-//			(prevRotX != virtRotX) || (prevRotY != virtRotY) || (prevRotZ != virtRotZ)) {
-////			if (S_OK == simconnect_set6DOF(hSimConnect, virtPosX, virtPosY, virtPosZ, virtRotX, virtRotZ, virtRotY)) {
-////					qDebug() << "FTNoIR_Protocol::run() says: SimConnect data written!";
-////			}
-//		}
-//
-//		prevPosX = virtPosX;
-//		prevPosY = virtPosY;
-//		prevPosZ = virtPosZ;
-//		prevRotX = virtRotX;
-//		prevRotY = virtRotY;
-//		prevRotZ = virtRotZ;
-
-		if (SUCCEEDED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL))) {
-			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: Dispatching";
-		}
-		else {
-			qDebug() << "FTNoIR_Protocol::sendHeadposeToGame() says: Error Dispatching!";
-		}
-	}
+    else
+        (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL));
 }
 
 class ActivationContext {
 public:
     ActivationContext(const int resid) {
         hactctx = INVALID_HANDLE_VALUE;
-        actctx_cookie = NULL;
+        actctx_cookie = 0;
         ACTCTXA actx = {0};
         actx.cbSize = sizeof(ACTCTXA);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-        QString path = QCoreApplication::applicationDirPath() + "/opentrack-proto-simconnect.dll";
+#ifdef _MSC_VER
+#	define PREFIX ""
+#else
+#	define PREFIX "lib"
+#endif 
+        QString path = QCoreApplication::applicationDirPath() + "/" PREFIX "opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
         hactctx = CreateActCtxA(&actx);
@@ -186,25 +134,17 @@ private:
     HANDLE hactctx;
 };
 
-//
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
     if (!SCClientLib.isLoaded())                           
     {
-        qDebug() << "SCCheckClientDLL says: Starting Function";
+        ActivationContext ctx(142 + static_cast<int>(s.sxs_manifest));
         
-        SCClientLib.setFileName("SimConnect.DLL");
-        
-        ActivationContext ctx(142);
-        
+		SCClientLib.setFileName("SimConnect.dll");
         if (!SCClientLib.load()) {
             qDebug() << "SC load" << SCClientLib.errorString();
             return false;
         }
-    } else {
-        qDebug() << "SimConnect already loaded";
     }
 
 	//
@@ -265,96 +205,46 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 
 void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
 {
-//    HRESULT hr;
-
     switch(pData->dwID)
     {
-        case SIMCONNECT_RECV_ID_EVENT:
-        {
-            SIMCONNECT_RECV_EVENT *evt = (SIMCONNECT_RECV_EVENT*)pData;
-
-			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: SimConnect active!";
-            //switch(evt->uEventID)
-            //{
-            //    //case EVENT_CAMERA_RIGHT:
-
-            //    //    cameraBank = normalize180( cameraBank + 5.0f);
-
-            //    //    hr = SimConnect_CameraSetRelative6DOF(hSimConnect, 0.0f, 0.0f, 0.0f,
-            //    //            SIMCONNECT_CAMERA_IGNORE_FIELD,SIMCONNECT_CAMERA_IGNORE_FIELD, cameraBank);
-
-            //    //    printf("\nCamera Bank = %f", cameraBank);
-            //    //    break;
-
-            //    //case EVENT_CAMERA_LEFT:
-            //    //    
-            //    //    cameraBank = normalize180( cameraBank - 5.0f);
-
-            //    //    hr = SimConnect_CameraSetRelative6DOF(hSimConnect, 0.0f, 0.0f, 0.0f,
-            //    //            SIMCONNECT_CAMERA_IGNORE_FIELD,SIMCONNECT_CAMERA_IGNORE_FIELD, cameraBank);
-            //    //    
-            //    //    printf("\nCamera Bank = %f", cameraBank);
-            //    //    break;
-
-            //    //default:
-            //    //    break;
-            //}
-            //break;
+    default:
+        break;
+    case SIMCONNECT_RECV_ID_EVENT_FRAME:
+    {
+        if ((prevSCPosX != virtSCPosX) || (prevSCPosY != virtSCPosY) || (prevSCPosZ != virtSCPosZ) ||
+                (prevSCRotX != virtSCRotX) || (prevSCRotY != virtSCRotY) || (prevSCRotZ != virtSCRotZ)) {
+            (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
         }
-		case SIMCONNECT_RECV_ID_EVENT_FRAME:
-		{
-//			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: Frame event!";
-			if ((prevSCPosX != virtSCPosX) || (prevSCPosY != virtSCPosY) || (prevSCPosZ != virtSCPosZ) ||
-				(prevSCRotX != virtSCRotX) || (prevSCRotY != virtSCRotY) || (prevSCRotZ != virtSCRotZ)) {
-				if (S_OK == simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY)) {
-	//					qDebug() << "FTNoIR_Protocol::run() says: SimConnect data written!";
-				}
-			}
-			prevSCPosX = virtSCPosX;
-			prevSCPosY = virtSCPosY;
-			prevSCPosZ = virtSCPosZ;
-			prevSCRotX = virtSCRotX;
-			prevSCRotY = virtSCRotY;
-			prevSCRotZ = virtSCRotZ;
-		}
+        prevSCPosX = virtSCPosX;
+        prevSCPosY = virtSCPosY;
+        prevSCPosZ = virtSCPosZ;
+        prevSCRotX = virtSCRotX;
+        prevSCRotY = virtSCRotY;
+        prevSCRotZ = virtSCRotZ;
+    }
+    case SIMCONNECT_RECV_ID_EXCEPTION:
+    {
+        SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION*)pData;
 
-        case SIMCONNECT_RECV_ID_EXCEPTION:
+        switch (except->dwException)
         {
-            SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION*)pData;
-            
-            switch (except->dwException)
-            {
-            case SIMCONNECT_EXCEPTION_ERROR:
-                printf("\nCamera error");
-                break;
-
-            default:
-                printf("\nException");
-                break;
-            }
+        case SIMCONNECT_EXCEPTION_ERROR:
+            qDebug() << "Camera error";
             break;
-        }
-
-        case SIMCONNECT_RECV_ID_QUIT:
-        {
-			qDebug() << "FTNoIR_Protocol::processNextSimconnectEvent() says: Quit event!";
-//            quit = 1;
-            break;
-        }
 
         default:
+            qDebug() << "Exception";
             break;
+        }
+        break;
+    }
+
+    case SIMCONNECT_RECV_ID_QUIT:
+    {
+        break;
+    }
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {
