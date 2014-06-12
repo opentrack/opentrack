@@ -5,6 +5,7 @@ include(CMakeParseArguments)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
 include(GetGitRevisionDescription)
+include(FindPkgConfig)
 find_package(Git QUIET)
 if(GIT_FOUND)
     git_describe(OPENTRACK__COMMIT --tags --always)
@@ -331,7 +332,9 @@ endif()
 
 if(SDK_ENABLE_LIBEVDEV)
     opentrack_library(opentrack-proto-libevdev)
-    target_link_libraries(opentrack-proto-libevdev evdev)
+    pkg_check_modules(libevdev REQUIRED QUIET libevdev)
+    include_directories(${LibXML++_INCLUDE_DIRS})
+    target_link_libraries(opentrack-proto-libevdev ${libevdev-LIBRARIES})
 endif()
 
 if(SDK_FSUIPC)
