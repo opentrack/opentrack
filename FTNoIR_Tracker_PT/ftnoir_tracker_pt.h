@@ -25,6 +25,7 @@
 #include <QMutexLocker>
 #include <QTime>
 #include <opencv2/opencv.hpp>
+#include <atomic>
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
@@ -82,10 +83,10 @@ protected:
 
     PTVideoWidget* video_widget;
 	QFrame*      video_frame;
-    bool           tracking_valid, need_apply;
+    bool           tracking_valid;
 	
     settings s;
-    settings* new_settings;
+    std::atomic<settings*> new_settings;
     Timer time;
 };
 
