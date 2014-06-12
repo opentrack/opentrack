@@ -7,7 +7,7 @@
 #include "facetracknoir/global-settings.h"
 #include <cmath>
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #include <dshow.h>
 #else
 #include <unistd.h>
@@ -16,7 +16,7 @@
 // delicious copypasta
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;
@@ -62,14 +62,14 @@ static QList<QString> get_camera_names(void) {
 		pEnumCat->Release();
 	}
 	pSysDevEnum->Release();
-#else
+#elif !defined(__APPLE__)
     for (int i = 0; i < 16; i++) {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
         if (access(buf, R_OK | W_OK) == 0) {
             ret.append(buf);
         } else {
-            break;
+            continue;
         }
     }
 #endif
@@ -88,67 +88,71 @@ static resolution_tuple resolution_choices[] = {
 	{ 0, 0 }
 };
 
-static void load_settings(ht_config_t* config, Tracker* tracker)
+void Tracker::load_settings(ht_config_t* config)
 {
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
+    int nframes = 0;
+    switch (static_cast<int>(s.fps))
+    {
+    default:
+    case 0:
+        nframes = 0;
+        break;
+    case 1:
+        nframes = 30;
+        break;
+    case 2:
+        nframes = 60;
+        break;
+    case 3:
+        nframes = 120;
+        break;
+    case 4:
+        nframes = 180;
+        break;
+    }
 
-	iniFile.beginGroup( "HT-Tracker" );
     config->classification_delay = 500;
-    config->field_of_view = iniFile.value("fov", 52).toFloat();
-	config->pyrlk_pyramids = 3;
+    config->field_of_view = s.fov;
+    config->pyrlk_pyramids = 0;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
-    config->max_keypoints = 200;
-    config->keypoint_distance = 4.5;
-    //config->force_width = 640;
-    //config->force_height = 480;
-    config->force_fps = iniFile.value("fps", 0).toInt();
-    config->camera_index = iniFile.value("camera-index", -1).toInt();
+    config->max_keypoints = 150;
+    config->keypoint_distance = 6;
+    config->force_fps = nframes;
+    config->camera_index = s.camera_idx - 1;
     config->ransac_num_iters = 100;
-    config->ransac_max_reprojection_error = 6.5;
-    config->ransac_max_inlier_error = 6.5;
-    config->ransac_abs_max_mean_error = 15;
-    config->ransac_max_mean_error = 4.5;
+    config->ransac_max_reprojection_error = 10;
+    config->ransac_max_inlier_error = 10;
+    config->ransac_abs_max_mean_error = 14;
+    config->ransac_max_mean_error = 8;
     config->debug = 0;
-    config->ransac_min_features = 0.8;
-    int res = iniFile.value("resolution", 0).toInt();
+    config->ransac_min_features = 0.86;
+    int res = s.resolution;
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
 		res = 0;
 	resolution_tuple r = resolution_choices[res];
 	config->force_width = r.width;
     config->force_height = r.height;
-    config->flandmark_delay = 200;
-    qDebug() << "width" << r.width << "height" << r.height;
-	if (tracker)
-	{
-		tracker->enableRX = iniFile.value("enable-rx", true).toBool();
-		tracker->enableRY = iniFile.value("enable-ry", true).toBool();
-		tracker->enableRZ = iniFile.value("enable-rz", true).toBool();
-		tracker->enableTX = iniFile.value("enable-tx", true).toBool();
-		tracker->enableTY = iniFile.value("enable-ty", true).toBool();
-		tracker->enableTZ = iniFile.value("enable-tz", true).toBool();
-	}
-    
+    config->flandmark_delay = 500;
     for (int i = 0; i < 5; i++)
-        config->dist_coeffs[i] = iniFile.value(QString("dc%1").arg(i), 0).toDouble();
-                
-	iniFile.endGroup();
+        config->dist_coeffs[i] = 0;
 }
 
-Tracker::Tracker() : lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)), fresh(false)
+Tracker::Tracker() :
+    lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)),
+    shm(reinterpret_cast<ht_shm_t*>(lck_shm.mem)),
+    videoWidget(nullptr),
+    layout(nullptr)
 {
-	videoWidget = NULL;
-	layout = NULL;
-	enableRX = enableRY = enableRZ = enableTX = enableTY = enableTZ = true;
-    shm = (ht_shm_t*) lck_shm.mem;
     shm->terminate = 0;
-	load_settings(&shm->config, this);
     shm->result.filled = false;
 }
 
 Tracker::~Tracker()
 {
+    if (shm) {
+        shm->terminate = true;
+        subprocess.waitForFinished(5000);
+    }
     subprocess.kill();
     if (shm)
         shm->terminate = true;
@@ -161,7 +165,7 @@ Tracker::~Tracker()
 void Tracker::StartTracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new VideoWidget(videoframe);
+    videoWidget = new HTVideoWidget(videoframe);
     QHBoxLayout* layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(videoWidget);
@@ -170,60 +174,51 @@ void Tracker::StartTracker(QFrame* videoframe)
     videoframe->setLayout(layout);
     videoWidget->show();
     this->layout = layout;
-    load_settings(&shm->config, this);
+    load_settings(&shm->config);
     shm->frame.channels = shm->frame.width = shm->frame.height = 0;
     shm->pause = shm->terminate = shm->running = false;
     shm->timer = 0;
     subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir" + "\"");
 #else
     subprocess.start(QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir");
 #endif
-    connect(&timer, SIGNAL(timeout()), this, SLOT(paint_widget()));
-    timer.start(40);
 }
 
-void Tracker::paint_widget() {
-    if (fresh) {
-        fresh = false;
-        videoWidget->update();
-    }
-}
-
-bool Tracker::GiveHeadPoseData(double *data)
+void Tracker::GetHeadPoseData(double *data)
 {
-	bool ret = false;
-
     lck_shm.lock();
     shm->timer = 0;
     if (shm->frame.width > 0)
     {
         videoWidget->update_image(shm->frame.frame, shm->frame.width, shm->frame.height);
         //memcpy(foo, shm->frame.frame, shm->frame.width * shm->frame.height * 3);
-        fresh = true;
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
-        if (enableRX)
+        if (s.enableRX)
             data[Yaw] = shm->result.rotx;
-        if (enableRY) {
+        if (s.enableRY) {
             data[Pitch] = shm->result.roty;
 		}
-        if (enableRZ) {
+        if (s.enableRZ) {
             data[Roll] = shm->result.rotz;
         }
-        if (enableTX)
+        if (s.enableTX)
             data[TX] = shm->result.tx;
-        if (enableTY)
+        if (s.enableTY)
             data[TY] = shm->result.ty;
-        if (enableTZ)
+        if (s.enableTZ)
             data[TZ] = shm->result.tz;
-        ret = true;
+        if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
+        {
+            shm->pause = true;
+        }
+    } else {
+        shm->pause = false;
     }
     lck_shm.unlock();
-
-	return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -247,30 +242,15 @@ void TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/ht.png");
 }
 
-
-//-----------------------------------------------------------------------------
-//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
-
 extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new TrackerDll;
 }
 
-//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Tracker;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
@@ -280,162 +260,32 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 TrackerControls::TrackerControls()
 {
 	ui.setupUi(this);
-    setAttribute(Qt::WA_NativeWindow, true);
-	connect(ui.cameraName, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFPS, SIGNAL(currentIndexChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.cameraFOV, SIGNAL(valueChanged(double)), this, SLOT(settingChanged(double)));
-	connect(ui.rx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ry, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.rz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tx, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.ty, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.tz, SIGNAL(stateChanged(int)), this, SLOT(settingChanged(int)));
-	connect(ui.buttonCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-	connect(ui.buttonOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    //connect(ui.buttonSettings, SIGNAL(clicked()), this, SLOT(cameraSettings()));
-    loadSettings();
-	settingsDirty = false;
-}
-
-TrackerControls::~TrackerControls()
-{
-}
-
-void TrackerControls::showEvent(QShowEvent *event)
-{
-}
-
-void TrackerControls::Initialize(QWidget* parent)
-{
-    loadSettings();
-	show();
-}
-
-void TrackerControls::loadSettings()
-{
-	ui.cameraName->clear();
-	QList<QString> names = get_camera_names();
-	names.prepend("Any available");
-	ui.cameraName->addItems(names);
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-	iniFile.beginGroup( "HT-Tracker" );
-	ui.cameraName->setCurrentIndex(iniFile.value("camera-index", -1).toInt() + 1);
-    ui.cameraFOV->setValue(iniFile.value("fov", 52).toFloat());
-	int fps;
-	switch (iniFile.value("fps", 0).toInt())
-	{
-	default:
-	case 0:
-		fps = 0;
-		break;
-	case 30:
-		fps = 1;
-		break;
-	case 60:
-		fps = 2;
-		break;
-	case 120:
-		fps = 3;
-		break;
-	}
-	ui.cameraFPS->setCurrentIndex(fps);
-	ui.rx->setCheckState(iniFile.value("enable-rx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ry->setCheckState(iniFile.value("enable-ry", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.rz->setCheckState(iniFile.value("enable-rz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tx->setCheckState(iniFile.value("enable-tx", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.ty->setCheckState(iniFile.value("enable-ty", true).toBool() ? Qt::Checked : Qt::Unchecked);
-	ui.tz->setCheckState(iniFile.value("enable-tz", true).toBool() ? Qt::Checked : Qt::Unchecked);
-    ui.resolution->setCurrentIndex(iniFile.value("resolution", 0).toInt());
-    
-    ui.doubleSpinBox->setValue(iniFile.value("dc0").toDouble());
-    ui.doubleSpinBox_2->setValue(iniFile.value("dc1").toDouble());
-    ui.doubleSpinBox_3->setValue(iniFile.value("dc2").toDouble());
-    ui.doubleSpinBox_4->setValue(iniFile.value("dc3").toDouble());
-    ui.doubleSpinBox_5->setValue(iniFile.value("dc4").toDouble());
-    
-	iniFile.endGroup();
-	settingsDirty = false;
-}
-
-void TrackerControls::save()
-{
-	QSettings settings("opentrack");
-	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );
-
-	iniFile.beginGroup( "HT-Tracker" );
-	iniFile.setValue("fov", ui.cameraFOV->value());
-	int fps;
-	switch (ui.cameraFPS->currentIndex())
-	{
-	case 0:
-	default:
-		fps = 0;
-		break;
-	case 1:
-		fps = 30;
-		break;
-	case 2:
-		fps = 60;
-		break;
-	case 3:
-		fps = 120;
-		break;
-	}
-	iniFile.setValue("fps", fps);
-	iniFile.setValue("camera-index", ui.cameraName->currentIndex() - 1);
-	iniFile.setValue("enable-rx", ui.rx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ry", ui.ry->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-rz", ui.rz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tx", ui.tx->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-ty", ui.ty->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("enable-tz", ui.tz->checkState() != Qt::Unchecked ? true : false);
-	iniFile.setValue("resolution", ui.resolution->currentIndex());
-    
-    iniFile.setValue("dc0", ui.doubleSpinBox->value());
-    iniFile.setValue("dc1", ui.doubleSpinBox_2->value());
-    iniFile.setValue("dc2", ui.doubleSpinBox_3->value());
-    iniFile.setValue("dc3", ui.doubleSpinBox_4->value());
-    iniFile.setValue("dc4", ui.doubleSpinBox_5->value());
-    
-	iniFile.endGroup();
-	settingsDirty = false;
+    ui.cameraName->clear();
+    QList<QString> names = get_camera_names();
+    names.prepend("Any available");
+    ui.cameraName->addItems(names);
+    tie_setting(s.camera_idx, ui.cameraName);
+    tie_setting(s.fps, ui.cameraFPS);
+    tie_setting(s.fov, ui.cameraFOV);
+    tie_setting(s.enableTX, ui.tx);
+    tie_setting(s.enableTY, ui.ty);
+    tie_setting(s.enableTZ, ui.tz);
+    tie_setting(s.enableRX, ui.rx);
+    tie_setting(s.enableRY, ui.ry);
+    tie_setting(s.enableRZ, ui.rz);
+    tie_setting(s.resolution, ui.resolution);
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
 }
 
 void TrackerControls::doOK()
 {
-	save();
+    s.b->save();
 	this->close();
 }
 
 void TrackerControls::doCancel()
 {
-	if (settingsDirty) {
-		int ret = QMessageBox::question ( this,
-										  "Settings have changed",
-										  "Do you want to save the settings?",
-										  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-										  QMessageBox::Discard );
-
-		switch (ret) {
-			case QMessageBox::Save:
-				save();
-				this->close();
-				break;
-			case QMessageBox::Discard:
-				this->close();
-				break;
-			case QMessageBox::Cancel:
-				// Cancel was clicked
-				break;
-			default:
-				// should never be reached
-			break;
-		}
-	}
-	else {
-		this->close();
-	}
+    s.b->revert();
+    this->close();
 }

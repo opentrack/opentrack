@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>WVR</author>
- <class>FaceTrackNoIRClass</class>
- <widget class="QMainWindow" name="FaceTrackNoIRClass">
+ <class>OpentrackUI</class>
+ <widget class="QMainWindow" name="OpentrackUI">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -10,124 +10,40 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
-    <height>380</height>
+    <width>790</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>874</width>
-    <height>380</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>874</width>
-    <height>380</height>
+    <width>65536</width>
+    <height>65536</height>
    </size>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::DefaultContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>FaceTrackNoIR</string>
+   <string>opentrack</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ftnoir_protocol_ftn/ftn-protocol.qrc">
+   <iconset resource="main-facetracknoir.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="toolTip">
    <string/>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">/* Customize any plain widget that is a child of a QMainWindow. */
-QMainWindow &gt; .QWidget {
-	background-color: rgb(100, 100, 100);
-}
-
-/* Set the selection colors for all widgets. */
-QWidget {
-    selection-color: black;
-    selection-background-color: Silver;
-    color: black;
-}
-
-/* Specials for individual widget(s) */
-QWidget#widget {
-/*	background-color: #484848;*/
-	background-color: #595959;
-	border-left: 1px solid #000;
-}
-
-/* Specials for individual widget(s) */
-QWidget#widget4logo {
-	background-color: #000000;
-}
-
-/* Specials for individual widget(s) */
-QWidget#headPoseWidget {
-	background-color: #595959;
-}
-
-QWidget#widget4video {
-/*	background-color: #595959;*/
-}
-
-QWidget#Leftwidget {
-	background-color: ;
-}
-
-QWidget#widgetTop {
-	background-color: #595959;
-	border-bottom: 1px solid #000;
-}
-
-/* Make text in message boxes selectable. */
-QMessageBox {
-    /* LinksAccessibleByMouse | TextSelectableByMouse */
-    messagebox-text-interaction-flags: 5;
-}
-   
-/* Make the entire row selected in item views. */
-QAbstractItemView {
-    show-decoration-selected: 1;
-}
-
-/* Nice WindowsXP-style password character for password line edits. */
-QLineEdit[echoMode=&quot;2&quot;] {
-    lineedit-password-character: 9679;
-}
-
-/* Customize tooltips. */
-QToolTip {
-	background-color: rgb(170, 255, 127);
-	opacity: 200;
-}
-
-/* Customize push buttons and comboboxes. Our read-only combobox
-   is very similar to a push button, so they share the same border image. */
-
-QPushButton {
-    min-width: 4em;
-}
-
-QCheckBox {
-    background:none;
-}
-
-QPushButton:disabled {
-	color: rgb(128, 128, 128);
-}
-
-QGroupBox {
-	color: rgb(255, 255, 255);
-}</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -143,1263 +59,37 @@ QGroupBox {
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
    <property name="minimumSize">
     <size>
-     <width>874</width>
-     <height>380</height>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>65535</width>
+     <height>65535</height>
     </size>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <widget class="QWidget" name="widget" native="true">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>0</y>
-      <width>671</width>
-      <height>431</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>400</width>
-      <height>419</height>
-     </size>
-    </property>
-    <property name="palette">
-     <palette>
-      <active>
-       <colorrole role="WindowText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Button">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Text">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Base">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Window">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Highlight">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>192</red>
-          <green>192</green>
-          <blue>192</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="HighlightedText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="AlternateBase">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>72</red>
-          <green>72</green>
-          <blue>72</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </active>
-      <inactive>
-       <colorrole role="WindowText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Button">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Text">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Base">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Window">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Highlight">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>192</red>
-          <green>192</green>
-          <blue>192</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="HighlightedText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="AlternateBase">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>72</red>
-          <green>72</green>
-          <blue>72</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </inactive>
-      <disabled>
-       <colorrole role="WindowText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Button">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Text">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Base">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Window">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>89</red>
-          <green>89</green>
-          <blue>89</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Highlight">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>192</red>
-          <green>192</green>
-          <blue>192</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="HighlightedText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="AlternateBase">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>72</red>
-          <green>72</green>
-          <blue>72</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </disabled>
-     </palette>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="locale">
-     <locale language="English" country="UnitedStates"/>
-    </property>
-    <widget class="QLabel" name="cameraName">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>10</y>
-       <width>400</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>400</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>600</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>70</y>
-       <width>221</width>
-       <height>121</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Axis inversion</string>
-     </property>
-     <widget class="QLabel" name="lblInvert1_2">
-      <property name="geometry">
-       <rect>
-        <x>169</x>
-        <y>24</y>
-        <width>30</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Invert</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblInvert1_3">
-      <property name="geometry">
-       <rect>
-        <x>72</x>
-        <y>24</y>
-        <width>30</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Invert</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensX">
-      <property name="geometry">
-       <rect>
-        <x>108</x>
-        <y>52</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>X</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensPitch">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>71</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Pitch</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertPitch">
-      <property name="geometry">
-       <rect>
-        <x>72</x>
-        <y>71</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensY">
-      <property name="geometry">
-       <rect>
-        <x>108</x>
-        <y>71</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Y</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensZ">
-      <property name="geometry">
-       <rect>
-        <x>108</x>
-        <y>90</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Z</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertZ">
-      <property name="geometry">
-       <rect>
-        <x>169</x>
-        <y>90</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertY">
-      <property name="geometry">
-       <rect>
-        <x>169</x>
-        <y>71</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertRoll">
-      <property name="geometry">
-       <rect>
-        <x>72</x>
-        <y>90</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertX">
-      <property name="geometry">
-       <rect>
-        <x>169</x>
-        <y>52</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensYaw">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>52</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Yaw</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="chkInvertYaw">
-      <property name="geometry">
-       <rect>
-        <x>72</x>
-        <y>52</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:none;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lblSensRoll">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>90</y>
-        <width>25</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>25</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>150</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:#ccc;
-background:none;</string>
-      </property>
-      <property name="text">
-       <string>Roll</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupProfile">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>271</width>
-       <height>120</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>206</width>
-       <height>120</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>65535</width>
-       <height>65535</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Profile</string>
-     </property>
-     <widget class="QComboBox" name="iconcomboProfile">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>251</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="maxVisibleItems">
-       <number>10</number>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnSaveAs">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>80</y>
-        <width>251</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Save the INI-file under another name</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Save As ...</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnLoad">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>111</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Load an INI-file from a folder</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Load</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnSave">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>50</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Save the current INI-file</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Save</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QLabel" name="game_name">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>411</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color:#ccc;
-background:none;</string>
-     </property>
-     <property name="text">
-      <string>Not connected</string>
-     </property>
-    </widget>
-    <widget class="QGroupBox" name="groupGameProtocol">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>201</y>
-       <width>180</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>180</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>180</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="title">
-      <string>Game protocol</string>
-     </property>
-     <widget class="QComboBox" name="iconcomboProtocol">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>161</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="maxVisibleItems">
-       <number>7</number>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnShowServerControls">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>161</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Change game protocol settings</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Settings</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupTrackerSource">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>201</y>
-       <width>200</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="title">
-      <string>Tracker Source(1st = Master)</string>
-     </property>
-     <widget class="QComboBox" name="iconcomboTrackerSource">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>180</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="maxVisibleItems">
-       <number>42</number>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnShowEngineControls">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>180</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Change tracker settings</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Settings</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupFilter">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>201</y>
-       <width>200</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>70</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="title">
-      <string>Filter</string>
-     </property>
-     <widget class="QComboBox" name="iconcomboFilter">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>180</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="maxVisibleItems">
-       <number>7</number>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnShowFilterControls">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>180</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Change game protocol settings</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Settings</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>289</y>
-       <width>200</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Tracker Source (2nd)</string>
-     </property>
-     <widget class="QPushButton" name="btnShowSecondTrackerSettings">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>180</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Change tracker settings</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Settings</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cbxSecondTrackerSource">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>180</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="maxVisibleItems">
-       <number>42</number>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupStartStop">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>289</y>
-       <width>200</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>GO!</string>
-     </property>
-     <widget class="QPushButton" name="btnStartTracker">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Start the Tracker</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Start</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnStopTracker">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>30</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Stop the Tracker</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Stop</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QPushButton" name="btnShortcuts">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>288</y>
-       <width>181</width>
-       <height>38</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>54</width>
-       <height>38</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="toolTip">
-      <string>Edit the Keyboard and mouse shortcuts</string>
-     </property>
-     <property name="text">
-      <string>Shortcuts</string>
-     </property>
-     <property name="icon">
-      <iconset resource="main-facetracknoir.qrc">
-       <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnEditCurves">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>332</y>
-       <width>181</width>
-       <height>38</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>54</width>
-       <height>38</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="toolTip">
-      <string>Edit the Curve settings</string>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:none;</string>
-     </property>
-     <property name="text">
-      <string>Curves</string>
-     </property>
-     <property name="icon">
-      <iconset resource="main-facetracknoir.qrc">
-       <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>120</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-   </widget>
    <widget class="QFrame" name="video_frame">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>89</y>
-      <width>250</width>
-      <height>187</height>
+      <x>10</x>
+      <y>130</y>
+      <width>320</width>
+      <height>240</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -1412,15 +102,9 @@ background:none;</string>
     </property>
     <property name="maximumSize">
      <size>
-      <width>250</width>
-      <height>187</height>
+      <width>65536</width>
+      <height>65536</height>
      </size>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
     </property>
     <property name="lineWidth">
      <number>0</number>
@@ -1430,65 +114,12 @@ background:none;</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>250</width>
-       <height>187</height>
+       <width>320</width>
+       <height>240</height>
       </rect>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>250</width>
-       <height>187</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>250</width>
-       <height>187</height>
-      </size>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="headPoseWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>275</y>
-      <width>261</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>100</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>160</height>
-     </size>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>231</width>
-       <height>169</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -1499,532 +130,396 @@ background:none;</string>
        <height>0</height>
       </size>
      </property>
-     <property name="title">
-      <string>Raw Input</string>
+     <property name="maximumSize">
+      <size>
+       <width>65536</width>
+       <height>65536</height>
+      </size>
      </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <widget class="QLCDNumber" name="lcdNumRotZ">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>60</y>
-        <width>71</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="numDigits">
-       <number>6</number>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcdNumRotX">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>20</y>
-        <width>71</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="numDigits">
-       <number>6</number>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_4">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>21</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white</string>
-      </property>
-      <property name="text">
-       <string>X</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>21</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
-      </property>
-      <property name="text">
-       <string>Y</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcdNumZ">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>60</y>
-        <width>61</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_6">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>21</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:white;
-border:none;</string>
-      </property>
-      <property name="text">
-       <string>Z</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcdNumY">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>61</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_7">
-      <property name="geometry">
-       <rect>
-        <x>108</x>
-        <y>58</y>
-        <width>31</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
-      </property>
-      <property name="text">
-       <string>roll</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_8">
-      <property name="geometry">
-       <rect>
-        <x>109</x>
-        <y>38</y>
-        <width>31</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:white;
-border:none;</string>
-      </property>
-      <property name="text">
-       <string>pitch</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_9">
-      <property name="geometry">
-       <rect>
-        <x>108</x>
-        <y>18</y>
-        <width>31</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color:white;</string>
-      </property>
-      <property name="text">
-       <string>yaw</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcdNumRotY">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>40</y>
-        <width>71</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="numDigits">
-       <number>6</number>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcdNumX">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>20</y>
-        <width>61</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="numDigits">
-       <number>5</number>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>231</width>
-       <height>50</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Status</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <widget class="QLabel" name="txtTracking">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>10</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:none;
-color: rgb(0, 255, 0);</string>
-      </property>
-      <property name="text">
-       <string>Tracking</string>
-      </property>
-     </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="widget4logo" native="true">
+   <widget class="QGroupBox" name="groupBox4logo">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>0</y>
-      <width>160</width>
-      <height>90</height>
+      <x>100</x>
+      <y>10</y>
+      <width>229</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>160</width>
-      <height>90</height>
+      <width>0</width>
+      <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>16777215</width>
-      <height>90</height>
+      <width>65536</width>
+      <height>65536</height>
      </size>
     </property>
-    <widget class="QLCDNumber" name="lcdNumOutputRotX">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>19</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
+    <property name="title">
+     <string notr="true"/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_8">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
      </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
+     <property name="leftMargin">
+      <number>0</number>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
+     <property name="topMargin">
+      <number>0</number>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+     <property name="rightMargin">
+      <number>0</number>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
-     <property name="numDigits">
-      <number>5</number>
+     <property name="horizontalSpacing">
+      <number>10</number>
      </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputRotY">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>37</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="numDigits">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputRotZ">
-     <property name="geometry">
-      <rect>
-       <x>101</x>
-       <y>55</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="numDigits">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputPosX">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>19</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="numDigits">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputPosY">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>37</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="numDigits">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="lcdNumOutputPosZ">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>55</y>
-       <width>50</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="numDigits">
-      <number>5</number>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblX">
-     <property name="geometry">
-      <rect>
-       <x>9</x>
-       <y>20</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>X</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblY">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>Y</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblZ">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>59</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>Z</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblRotZ">
-     <property name="geometry">
-      <rect>
-       <x>69</x>
-       <y>59</y>
-       <width>20</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>roll</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblRotX">
-     <property name="geometry">
-      <rect>
-       <x>71</x>
-       <y>20</y>
-       <width>20</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>yaw</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lblRotY">
-     <property name="geometry">
-      <rect>
-       <x>69</x>
-       <y>40</y>
-       <width>25</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>pitch</string>
-     </property>
-    </widget>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>TZ</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLCDNumber" name="lcdNumOutputRotX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblX">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TX</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLCDNumber" name="lcdNumOutputPosX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="lblRotX">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>yaw</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLCDNumber" name="lcdNumOutputPosY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLCDNumber" name="lcdNumOutputPosZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="lblRotZ">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>roll</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>TY</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="lblRotY">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>pitch</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLCDNumber" name="lcdNumOutputRotY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLCDNumber" name="lcdNumOutputRotZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <widget class="GLWidget" name="pose_display" native="true">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>90</width>
-      <height>90</height>
+      <x>10</x>
+      <y>20</y>
+      <width>81</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -2039,6 +534,1181 @@ color: rgb(0, 255, 0);</string>
       <height>0</height>
      </size>
     </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupGameProtocol">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>270</y>
+      <width>191</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>180</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="title">
+     <string>Game protocol</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_6" rowstretch="6,6" columnstretch="6" rowminimumheight="6,6" columnminimumwidth="6">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QComboBox" name="iconcomboProtocol">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="maxVisibleItems">
+        <number>7</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="btnShowServerControls">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Change game protocol settings</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="btnEditCurves">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>390</y>
+      <width>171</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>62</width>
+      <height>38</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string>Edit the Curve settings</string>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:none;</string>
+    </property>
+    <property name="text">
+     <string>Mapping</string>
+    </property>
+    <property name="icon">
+     <iconset resource="main-facetracknoir.qrc">
+      <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>98</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QLabel" name="game_name">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>40</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Not connected</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupFilter">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>210</y>
+      <width>171</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="title">
+     <string>Filter</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QComboBox" name="iconcomboFilter">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="maxVisibleItems">
+        <number>7</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="btnShowFilterControls">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Change game protocol settings</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupTrackerSource">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>60</y>
+      <width>191</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="title">
+     <string>Main tracker</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item>
+      <widget class="QComboBox" name="iconcomboTrackerSource">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="maxVisibleItems">
+        <number>42</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnShowEngineControls">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Change tracker settings</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="cameraName">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>10</y>
+      <width>411</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>160</y>
+      <width>191</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="title">
+     <string>Auxiliary tracker</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item>
+      <widget class="QComboBox" name="cbxSecondTrackerSource">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="maxVisibleItems">
+        <number>42</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnShowSecondTrackerSettings">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Change tracker settings</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupStartStop">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>400</y>
+      <width>190</width>
+      <height>65</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="title">
+     <string>GO!</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_9" rowstretch="0" columnstretch="0,0" rowminimumheight="0" columnminimumwidth="0,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btnStartTracker">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Start the Tracker</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btnStopTracker">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Stop the Tracker</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="btnShortcuts">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>340</y>
+      <width>171</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>62</width>
+      <height>38</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string>Edit the Keyboard and mouse shortcuts</string>
+    </property>
+    <property name="text">
+     <string>Keys</string>
+    </property>
+    <property name="icon">
+     <iconset resource="main-facetracknoir.qrc">
+      <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>98</width>
+      <height>24</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupProfile">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>60</y>
+      <width>231</width>
+      <height>123</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>65536</width>
+      <height>65536</height>
+     </size>
+    </property>
+    <property name="title">
+     <string>Profile</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_5" rowstretch="6,6,6" columnstretch="6,6" rowminimumheight="6,6,6" columnminimumwidth="6,6">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item row="0" column="0" colspan="2">
+      <widget class="QComboBox" name="iconcomboProfile">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="maxVisibleItems">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="btnLoad">
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Load an INI-file from a folder</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Load</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="btnSave">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Save the current INI-file</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QPushButton" name="btnSaveAs">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Save the INI-file under another name</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Save As ...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>380</y>
+      <width>141</width>
+      <height>106</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Raw translation</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+     </property>
+     <property name="rowWrapPolicy">
+      <enum>QFormLayout::DontWrapRows</enum>
+     </property>
+     <property name="labelAlignment">
+      <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+     </property>
+     <property name="formAlignment">
+      <set>Qt::AlignHCenter|Qt::AlignTop</set>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TX</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLCDNumber" name="lcdNumX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TY</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLCDNumber" name="lcdNumY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>TZ</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLCDNumber" name="lcdNumZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>380</y>
+      <width>161</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Raw rotation</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <layout class="QFormLayout" name="formLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+     </property>
+     <property name="rowWrapPolicy">
+      <enum>QFormLayout::DontWrapRows</enum>
+     </property>
+     <property name="labelAlignment">
+      <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+     </property>
+     <property name="formAlignment">
+      <set>Qt::AlignHCenter|Qt::AlignTop</set>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>yaw</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLCDNumber" name="lcdNumRotX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>pitch</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLCDNumber" name="lcdNumRotY">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>roll</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLCDNumber" name="lcdNumRotZ">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>65536</width>
+         <height>65536</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+    <zorder>lcdNumRotZ</zorder>
+    <zorder>label_8</zorder>
+    <zorder>label_7</zorder>
+    <zorder>lcdNumRotY</zorder>
+    <zorder>lcdNumRotX</zorder>
+    <zorder>label_9</zorder>
    </widget>
   </widget>
  </widget>
@@ -2050,15 +1720,7 @@ color: rgb(0, 255, 0);</string>
    <header>glwidget.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>iconcomboTrackerSource</tabstop>
-  <tabstop>btnStartTracker</tabstop>
-  <tabstop>btnStopTracker</tabstop>
-  <tabstop>btnShowEngineControls</tabstop>
-  <tabstop>iconcomboProtocol</tabstop>
- </tabstops>
  <resources>
-  <include location="../ftnoir_protocol_ftn/ftn-protocol.qrc"/>
   <include location="main-facetracknoir.qrc"/>
  </resources>
  <connections/>

@@ -3,47 +3,47 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <QSettings>
 #include <QMutex>
 #include <QWaitCondition>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
+#include "facetracknoir/options.h"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<int> port;
+    value<bool> enable_roll, enable_pitch, enable_yaw,
+                enable_x, enable_y, enable_z;
+    settings() :
+        b(bundle("udp-tracker")),
+        port(b, "port", 4242),
+        enable_roll(b, "enable-roll", true),
+        enable_pitch(b, "enable-pitch", true),
+        enable_yaw(b, "enable-yaw", true),
+        enable_x(b, "enable-x", true),
+        enable_y(b, "enable-y", true),
+        enable_z(b, "enable-y", true)
+    {}
+};
 
 class FTNoIR_Tracker : public ITracker, public QThread
 {
 public:
 	FTNoIR_Tracker();
-	~FTNoIR_Tracker();
-
-    void StartTracker( QFrame *videoframe );
-    bool GiveHeadPoseData(double *data);
-	void loadSettings();
+    ~FTNoIR_Tracker();
+    void StartTracker(QFrame *);
+    void GetHeadPoseData(double *data);
     volatile bool should_quit;
-    void WaitForExit() {
-        should_quit = true;
-        wait();
-    }
-
 protected:
 	void run();												// qthread override run method
-
 private:
-	// UDP socket-variables
-	QUdpSocket *inSocket;									// Receive from ...
-	QUdpSocket *outSocket;									// Send to ...
-	QHostAddress destIP;									// Destination IP-address
-	QHostAddress srcIP;										// Source IP-address
-
-    double newHeadPose[6];								// Structure with new headpose
-
-	float portAddress;										// Port-number
-	bool bEnableRoll;
-	bool bEnablePitch;
-	bool bEnableYaw;
-	bool bEnableX;
-	bool bEnableY;
-	bool bEnableZ;
+    QUdpSocket inSocket;
+    QHostAddress destIP;
+    QHostAddress srcIP;
+    double newHeadPose[6];
     QMutex mutex;
+    settings s;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -53,26 +53,14 @@ class TrackerControls: public QWidget, public ITrackerDialog
 public:
 
 	explicit TrackerControls();
-    ~TrackerControls();
-	void showEvent ( QShowEvent * event );
-
-    void Initialize(QWidget *parent);
-	void registerTracker(ITracker *tracker) {};
-	void unRegisterTracker() {};
-
+    void registerTracker(ITracker *) {}
+    void unRegisterTracker() {}
 private:
 	Ui::UICFTNClientControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-	void settingChanged() { settingsDirty = true; };
-	void settingChanged(int) { settingsDirty = true; };
 };
 
 //*******************************************************************************************************
@@ -81,17 +69,9 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-	FTNoIR_TrackerDll();
-	~FTNoIR_TrackerDll();
-
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
-
-private:
-	QString trackerFullName;									// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
 };
 

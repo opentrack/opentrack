@@ -1,140 +1,104 @@
-/* Copyright (c) 2012 Stanislaw Halik
+/* Copyright (c) 2012-2013 Stanislaw Halik
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-/*
-	Modifications (last one on top):
-		20120807 - WVR: FunctionConfig is now also used for the Filter. The extrapolation was adapted from Stanislaw.
-					    Additional changes: I have added two parameters to the constructor of FunctionConfig and
-						renamed 3 member-functions (getFilterFullName is now called getFullName).
-*/
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
-#include "math.h"
+#include <algorithm>
+#include <cmath>
 #include <QDebug>
-#include <float.h>
+#include <QMutexLocker>
 #include "facetracknoir/global-settings.h"
+using namespace std;
 
-#if !defined(_WIN32) && !defined(__WIN32)
-#   define _isnan isnan
-#endif
-
-FTNoIR_Filter::FTNoIR_Filter() :
-    functionConfig("Accela-Scaling-Rotation", 10, 10),
-    translationFunctionConfig("Accela-Scaling-Translation", 10, 10)
+FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
-	first_run = true;
-	kMagicNumber = 1000;
-	loadSettings();					// Load the Settings
 }
 
-FTNoIR_Filter::~FTNoIR_Filter()
+static inline double parabola(const double a, const double x, const double dz, const double expt)
 {
-
+    const double sign = x > 0 ? 1 : -1;
+    const double a1 = 1./a;
+    return a1 * pow(std::max<double>(fabs(x) - dz, 0), expt) * sign;
 }
 
-void FTNoIR_Filter::loadSettings() {
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    functionConfig.loadSettings(iniFile);
-    translationFunctionConfig.loadSettings(iniFile);
-
-	iniFile.beginGroup ( "Accela" );
-	kMagicNumber = iniFile.value ( "Reduction", 1000 ).toFloat();
-    kZoomSlowness = iniFile.value("zoom-slowness", 0).toFloat();
-	iniFile.endGroup ();
+template<typename T>
+static inline T clamp(const T min, const T max, const T value)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(double *current_camera_position,
-                                       double *target_camera_position,
-                                       double *new_camera_position,
-                                       double *last_post_filter_values)
+void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
+                                       double *new_camera_position)
 {
-	double target[6];
-	double prev_output[6];
-	float output[6];
-
-    for (int i = 0; i < 6; i++)
-    {
-        prev_output[i] = current_camera_position[i];
-        target[i] = target_camera_position[i];
-    }
-
 	if (first_run)
 	{
         for (int i = 0; i < 6; i++)
         {
-            new_camera_position[i] = target[i];
-            current_camera_position[i] = target[i];
+            new_camera_position[i] = target_camera_position[i];
+            last_input[i] = target_camera_position[i];
+            for (int j = 0; j < 3; j++)
+                last_output[j][i] = target_camera_position[i];
         }
 
-		first_run=false;
+        timer.start();
+        frame_delta = 1;
+        first_run = false;
 		return;
 	}
 
-    for (int i=0;i<6;i++)
-	{
-		if (_isnan(target[i]))
-			return;
-
-		if (_isnan(prev_output[i]))
-			return;
-
-		double e2 = target[i];
-		double start = prev_output[i];
-		double vec = e2 - start;
-		int sign = vec < 0 ? -1 : 1;
-		double x = fabs(vec);
-		QList<QPointF> points = (i >= 3 ? functionConfig : translationFunctionConfig).getPoints();
-		int extrapolatep = 0;
-		double ratio;
-		double maxx;
-		double add;
-		// linear extrapolation of a spline
-		if (points.size() > 1) {
-			QPointF last = points[points.size() - 1];
-			QPointF penultimate = points[points.size() - 2];
-			ratio = (last.y() - penultimate.y()) / (last.x() - penultimate.x());
-			extrapolatep = 1;
-			add = last.y();
-			maxx = last.x();
-		}
-		double foo = extrapolatep && x > maxx ? add + ratio * (x - maxx) : (i >= 3 ? functionConfig : translationFunctionConfig).getValue(x);
-		// the idea is that "empty" updates without new head pose data are still
-		// useful for filtering, as skipping them would result in jerky output.
-		// the magic "100" is the amount of calls to the filter by FTNOIR per sec.
-		// WVR: Added kMagicNumber for Patrick
-        double velocity = foo / kMagicNumber * (1 / std::max(1.0, 1 + kZoomSlowness * -last_post_filter_values[TZ] / 100));
-		double sum = start + velocity * sign;
-		bool done = (sign > 0 ? sum >= e2 : sum <= e2);
-		if (done) {
-			output[i] = e2;
-		} else {
-			output[i] = sum;
-		}
-
-		if (_isnan(output[i]))
-			return;
-	}
+    bool new_frame = false;
 
     for (int i = 0; i < 6; i++)
     {
-        new_camera_position[i] = output[i];
-        current_camera_position[i] = output[i];
+        if (target_camera_position[i] != last_input[i])
+        {
+            new_frame = true;
+            break;
+        }
     }
+
+    if (new_frame)
+    {
+        for (int i = 0; i < 6; i++)
+            last_input[i] = target_camera_position[i];
+        frame_delta = timer.start();
+    } else {
+        auto d = timer.elapsed();
+        double c = clamp(0.0, 1.0, d / (double) frame_delta);
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] =
+                    last_output[1][i] + (last_output[0][i] - last_output[1][i]) * c;
+        return;
+    }
+    
+    for (int i=0;i<6;i++)
+	{
+        const double vec = target_camera_position[i] - last_output[0][i];
+        const double vec2 = target_camera_position[i] - last_output[1][i];
+        const double vec3 = target_camera_position[i] - last_output[2][i];
+		const int sign = vec < 0 ? -1 : 1;
+        const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
+        const double a2 = a * s.second_order_alpha;
+        const double a3 = a * s.third_order_alpha;
+        const double deadzone = i >= 3 ? s.rot_deadzone : s.trans_deadzone;
+        const double velocity =
+                parabola(a, vec, deadzone, s.expt) +
+                parabola(a2, vec2, deadzone, s.expt) +
+                parabola(a3, vec3, deadzone, s.expt);
+        const double result = last_output[0][i] + velocity;
+        const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
+        new_camera_position[i] = done ? target_camera_position[i] : result;
+        last_output[2][i] = last_output[1][i];
+        last_output[1][i] = last_output[0][i];
+        last_output[0][i] = new_camera_position[i];
+	}
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Filter object.
-
-// Export both decorated and undecorated names.
-//   GetFilter     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetFilter@0  - Common name decoration for __stdcall functions in C language.
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
 {

@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>UICVJoyControls</class>
  <widget class="QWidget" name="UICVJoyControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>228</width>
-    <height>64</height>
+    <height>69</height>
    </rect>
   </property>
   <property name="windowTitle">

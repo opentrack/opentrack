@@ -1,1 +1,0 @@
-Windows binary builds are available at <http://ananke.laggy.pk/opentrack/>

@@ -1,210 +1,173 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2012	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage:			http://facetracknoir.sourceforge.net/home/default.htm		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*********************************************************************************/
+/* Copyright (c) 2012-2013 Stanislaw Halik <sthalik@misaki.pl>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 /*
-	Modifications (last one on top):
-		20121215 - WVR: Fixed crash after message: protocol not installed correctly... by terminating the thread.
-		20120921 - WVR: Fixed centering when no filter is selected.
-		20120917 - WVR: Added Mouse-buttons to ShortKeys.
-		20120827 - WVR: Signal tracking = false to Curve-widget(s) when quitting run(). Also when Alternative Pitch curve is used.
-		20120805 - WVR: The FunctionConfig-widget is used to configure the Curves. It was tweaked some more, because the Accela filter now also
-						uses the Curve(s). ToDo: make the ranges configurable by the user. Development on the Toradex IMU makes us realize, that
-						a fixed input-range may not be so handy after all..
-		20120427 - WVR: The Protocol-code was already in separate DLLs, but the ListBox was still filled �statically�. Now, a Dir() of the
-						EXE-folder is done, to locate Protocol-DLLs. The Icons were also moved to the DLLs
-		20120317 - WVR: The Filter and Tracker-code was moved to separate DLLs. The calling-method
-						was changed accordingly.
-						The face-tracker member-functions NotifyZeroed and refreshVideo were added, as 
-						requested by Stanislaw.
-		20110411 - WVR: Finished moving all Protocols to separate C++ projects. Every protocol now
-						has it's own Class, that's inside it's own DLL. This reduces the size of the program,
-						makes it more structured and enables a more sophisticated installer.
-		20110328 - WVR: Changed the camera-structs into class-instances. This makes initialisation
-						easier and hopefully solves the remaining 'start-up problem'.
-		20110313 - WVR: Removed 'set_initial'. Less is more.
-		20110109 - WVR: Added setZero option to define behaviour after STOP tracking via shortkey.
-		20110104 - WVR: Removed a few nasty bugs (it was impossible to stop tracker without crash).
-		20101224 - WVR: Removed the QThread inheritance of the Base Class for the protocol-servers.
-						Again, this drastically simplifies the code in the protocols.
-		20101217 - WVR: Created Base Class for the protocol-servers. This drastically simplifies
-						the code needed here.
-		20101024 - WVR: Added shortkey to disable/enable one or more axis during tracking.
-		20101021 - WVR: Added FSUIPC server for FS2004.
-		20101011 - WVR: Added SimConnect server.
-		20101007 - WVR: Created 6DOF-curves and drastically changed the tracker for that.
-						Also eliminated a 'glitch' in the process.
-		20100607 - WVR: Re-installed Rotation Neutral Zone and improved reaction
-						after 'start/stop'. MessageBeep when confidence is back...
-		20100604 - WVR: Created structure for DOF-data and changed timing of
-						ReceiveHeadPose end run().
-		20100602 - WVR: Implemented EWMA-filtering, according to the example of
-						Melchior Franz. Works like a charm...
-		20100601 - WVR: Added DirectInput keyboard-handling. '=' used for center,
-						'BACK' for start (+center)/stop.
-		20100517 - WVR: Added upstream command(s) from FlightGear
-		20100523 - WVR: Checkboxes to invert 6DOF's was implemented. Multiply by
-						1 or (-1).
-*/
+ * this file appeared originally in facetracknoir, was rewritten completely
+ * following opentrack fork.
+ *
+ * originally written by Wim Vriend.
+ */
+
 #include "tracker.h"
 #include "facetracknoir.h"
+#include <opencv2/core/core.hpp>
+#include <cmath>
+#include <algorithm>
 
-/** constructor **/
-Tracker::Tracker( FaceTrackNoIR *parent ) :
-    confid(false),
+#if defined(_WIN32)
+#   include <windows.h>
+#endif
+
+Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
+    mainApp(parent),
+    s(s),
     should_quit(false),
-    do_center(false)
+    do_center(false),
+    enabled(true)
 {
-    // Retieve the pointer to the parent
-	mainApp = parent;
-	// Load the settings from the INI-file
-	loadSettings();
 }
 
 Tracker::~Tracker()
 {
+    should_quit = true;
+    wait();
 }
 
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
-    bool altp = (pos < 0) && axis.altp;
+    bool altp = (pos < 0) && axis.opts.altp;
     if (altp) {
-        out = axis.invert * axis.curveAlt.getValue(pos);
+        out = (axis.opts.invert ? -1 : 1) * axis.curveAlt.getValue(pos);
         axis.curve.setTrackingActive( false );
         axis.curveAlt.setTrackingActive( true );
     }
     else {
-        out = axis.invert * axis.curve.getValue(pos);
+        out = (axis.opts.invert ? -1 : 1) * axis.curve.getValue(pos);
         axis.curve.setTrackingActive( true );
         axis.curveAlt.setTrackingActive( false );
     }
-    out += axis.zero;
+    out += axis.opts.zero;
+}
+
+static void t_compensate(double* input, double* output, bool rz)
+{
+    const auto H = input[Yaw] * M_PI / -180;
+    const auto P = input[Pitch] * M_PI / -180;
+    const auto B = input[Roll] * M_PI / 180;
+
+    const auto cosH = cos(H);
+    const auto sinH = sin(H);
+    const auto cosP = cos(P);
+    const auto sinP = sin(P);
+    const auto cosB = cos(B);
+    const auto sinB = sin(B);
+
+    double foo[] = {
+        cosH * cosB - sinH * sinP * sinB,
+        - sinB * cosP,
+        sinH * cosB + cosH * sinP * sinB,
+        cosH * sinB + sinH * sinP * cosB,
+        cosB * cosP,
+        sinB * sinH - cosH * sinP * cosB,
+        - sinH * cosP,
+        - sinP,
+        cosH * cosP,
+    };
+
+    cv::Mat rmat(3, 3, CV_64F, foo);
+    const cv::Mat tvec(3, 1, CV_64F, input);
+    cv::Mat ret = rmat * tvec;
+
+    const int max = !rz ? 3 : 2;
+
+    for (int i = 0; i < max; i++)
+        output[i] = ret.at<double>(i);
 }
 
 /** QThread run method @override **/
 void Tracker::run() {
-    T6DOF current_camera;                   // Used for filtering
-    T6DOF target_camera;
-    T6DOF new_camera;
-    
-    /** Direct Input variables **/
     T6DOF offset_camera;
-    T6DOF gameoutput_camera;
-    
-    bool bTracker1Confid = false;
-    bool bTracker2Confid = false;
-    
-    double newpose[6];
-    double last_post_filter[6];
-    
-    forever
-	{
+
+    double newpose[6] = {0};
+    int sleep_ms = 15;
+
+    if (Libraries->pTracker)
+        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pTracker->preferredHz());
+
+    if (Libraries->pSecondTracker)
+        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pSecondTracker->preferredHz());
+
+    qDebug() << "tracker Hz:" << 1000 / sleep_ms;
+
+#if defined(_WIN32)
+    (void) timeBeginPeriod(1);
+#endif
+
+    for (;;)
+    {
         if (should_quit)
             break;
 
-        for (int i = 0; i < 6; i++)
-            newpose[i] = 0;
-
-        //
-        // The second tracker serves as 'secondary'. So if an axis is written by the second tracker it CAN be overwritten by the Primary tracker.
-        // This is enforced by the sequence below.
-        //
         if (Libraries->pSecondTracker) {
-            bTracker2Confid = Libraries->pSecondTracker->GiveHeadPoseData(newpose);
+            Libraries->pSecondTracker->GetHeadPoseData(newpose);
         }
 
         if (Libraries->pTracker) {
-            bTracker1Confid = Libraries->pTracker->GiveHeadPoseData(newpose);
+            Libraries->pTracker->GetHeadPoseData(newpose);
         }
 
         {
             QMutexLocker foo(&mtx);
-            confid = bTracker1Confid || bTracker2Confid;
-            
-            if ( confid ) {
-                for (int i = 0; i < 6; i++)
-                    mainApp->axis(i).headPos = newpose[i];
-            }
-            
-            //
-            // If Center is pressed, copy the current values to the offsets.
-            //
+
+            for (int i = 0; i < 6; i++)
+                mainApp->axis(i).headPos = newpose[i];
+
             if (do_center)  {
-                //
-                // Only copy valid values
-                //
-                if (confid) {
-                    for (int i = 0; i < 6; i++)
-                        offset_camera.axes[i] = mainApp->axis(i).headPos;
-                }
-                
-                Tracker::do_center = false;
-                
-                if (Libraries->pTracker)
-                    Libraries->pTracker->NotifyCenter();
-                
-                if (Libraries->pSecondTracker)
-                    Libraries->pSecondTracker->NotifyCenter();
-                
+                for (int i = 0; i < 6; i++)
+                    offset_camera.axes[i] = mainApp->axis(i).headPos;
+
+                do_center = false;
+
                 if (Libraries->pFilter)
-                    Libraries->pFilter->Initialize();
+                    Libraries->pFilter->reset();
             }
-            
-            if (getTrackingActive()) {
-                // get values
+
+            T6DOF target_camera, target_camera2, new_camera;
+
+            if (enabled)
+            {
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
-                
-                // do the centering
-                target_camera = target_camera - offset_camera;
-                
-                //
-                // Use advanced filtering, when a filter was selected.
-                //
-                if (Libraries->pFilter) {
-                    for (int i = 0; i < 6; i++)
-                        last_post_filter[i] = gameoutput_camera.axes[i];
-                    Libraries->pFilter->FilterHeadPoseData(current_camera.axes, target_camera.axes, new_camera.axes, last_post_filter);
-                }
-                else {
-                    new_camera = target_camera;
-                }
-                
-                for (int i = 0; i < 6; i++) {
-                    get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
-                }
-                
-                //
-                // Send the headpose to the game
-                //
-                if (Libraries->pProtocol) {
-                    gameoutput_camera = output_camera;
-                    Libraries->pProtocol->sendHeadposeToGame( gameoutput_camera.axes, newpose );	// degrees & centimeters
-                }
+
+                target_camera2 = target_camera - offset_camera;
+            }
+
+            if (Libraries->pFilter) {
+                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
+            } else {
+                new_camera = target_camera2;
+            }
+
+            for (int i = 0; i < 6; i++) {
+                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
+            }
+
+            if (mainApp->s.tcomp_p)
+                t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
+
+            if (Libraries->pProtocol) {
+                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
             }
         }
-        
-        //for lower cpu load
-        msleep(1);
+
+        msleep(sleep_ms);
     }
+#if defined(_WIN32)
+    (void) timeEndPeriod(1);
+#endif
 
     for (int i = 0; i < 6; i++)
     {
@@ -213,9 +176,6 @@ void Tracker::run() {
     }
 }
 
-//
-// Get the raw headpose, so it can be displayed.
-//
 void Tracker::getHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
@@ -224,42 +184,8 @@ void Tracker::getHeadPose( double *data ) {
     }
 }
 
-//
-// Get the output-headpose, so it can be displayed.
-//
 void Tracker::getOutputHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
         data[i] = output_camera.axes[i];
 }
-
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
-void Tracker::loadSettings() {
-	qDebug() << "Tracker::loadSettings says: Starting ";
-	QSettings settings("opentrack");	// Registry settings (in HK_USER)
-
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
-
-    iniFile.beginGroup("Tracking");
-    
-	qDebug() << "loadSettings says: iniFile = " << currentFile;
-    
-    const char* names2[] = {
-        "zero_tx",
-        "zero_ty",
-        "zero_tz",
-        "zero_rx",
-        "zero_ry",
-        "zero_rz"
-    };
-    
-    for (int i = 0; i < 6; i++)
-        mainApp->axis(i).zero = iniFile.value(names2[i], 0).toDouble();
-    
-    iniFile.endGroup();
-}
-
-void Tracker::setInvertAxis(Axis axis, bool invert) { mainApp->axis(axis).invert = invert?-1.0f:1.0f; }

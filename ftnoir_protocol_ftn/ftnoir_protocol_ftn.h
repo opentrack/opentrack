@@ -26,8 +26,6 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #pragma once
-#ifndef INCLUDED_FTNSERVER_H
-#define INCLUDED_FTNSERVER_H
 
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
@@ -35,26 +33,36 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <QSettings>
 #include <math.h>
 #include "facetracknoir/global-settings.h"
+#include "facetracknoir/options.h"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<int> ip1, ip2, ip3, ip4, port;
+    settings() :
+        b(bundle("udp-proto")),
+        ip1(b, "ip1", 192),
+        ip2(b, "ip2", 168),
+        ip3(b, "ip3", 0),
+        ip4(b, "ip4", 2),
+        port(b, "port", 4242)
+    {}
+};
 
 class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
     bool checkServerInstallationOK();
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame(const double *headpose);
     QString getGameName() {
         return "UDP Tracker";
     }
-
 private:
-	QUdpSocket *outSocket;									// Send to FaceTrackNoIR
-	QHostAddress destIP;									// Destination IP-address
-	int destPort;											// Destination port-number
-	void loadSettings();
+    QUdpSocket outSocket;
+    settings s;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -62,43 +70,23 @@ class FTNControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-	explicit FTNControls();
-    virtual ~FTNControls();
-	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
-    void registerProtocol(IProtocol *protocol) {}
+    FTNControls();
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
-
 private:
 	Ui::UICFTNControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-
+    settings s;
 private slots:
 	void doOK();
 	void doCancel();
-    void settingChanged() { settingsDirty = true; }
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FTN Client"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FaceTrackNoIR Client protocol"); }
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("opentrack UDP protocol"); }
 
     void getIcon(QIcon *icon) { *icon = QIcon(":/images/facetracknoir.png"); }
 };
-
-#endif//INCLUDED_FTNSERVER_H
-//END

@@ -22,34 +22,8 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
-/*
-	Modifications (last one on top):
-		20120830 - WVR: The Dialog class was used to get general info on the DLL. This
-						had a big disadvantage: the complete dialog was loaded, just to get
-						some data and then it was deleted again (without ever showing the dialog).
-						The FilterDll class solves this.
-						The functions to get the name(s) and icon were removed from the two other classes.
-*/
 #include "ftnoir_filter_ewma2.h"
-#include <QDebug>
 #include "facetracknoir/global-settings.h"
-
-FTNoIR_FilterDll::FTNoIR_FilterDll() {
-}
-
-FTNoIR_FilterDll::~FTNoIR_FilterDll()
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Filter object.
-
-// Export both decorated and undecorated names.
-//   GetFilterDll     - Undecorated name, which can be easily used with GetProcAddress
-//						Win32 API function.
-//   _GetFilterDll@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetFilterDll=_GetFilterDll@0")
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {

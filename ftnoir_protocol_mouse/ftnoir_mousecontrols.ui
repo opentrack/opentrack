@@ -2,20 +2,23 @@
 <ui version="4.0">
  <class>UICMOUSEControls</class>
  <widget class="QWidget" name="UICMOUSEControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>99</height>
+    <width>257</width>
+    <height>114</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MouseLook settings FaceTrackNoIR</string>
+   <string>Mouse protocol settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/Mouse.png</normaloff>:/images/Mouse.png</iconset>
+   <iconset resource="win32-mouse-protocol.qrc">
+    <normaloff>:/images/mouse.png</normaloff>:/images/mouse.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -190,7 +193,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="win32-mouse-protocol.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

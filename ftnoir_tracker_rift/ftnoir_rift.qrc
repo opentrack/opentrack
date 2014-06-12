@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/rift_medium.png</file>
+        <file>images/rift_small.png</file>
+        <file>images/rift_tiny.png</file>
+    </qresource>
+</RCC>

@@ -7,9 +7,9 @@
 
 T6DOF operator-(const T6DOF& A, const T6DOF& B)
 {
-    Rotation R_A(A.axes[Yaw]*D2R, A.axes[Pitch]*D2R, A.axes[Roll]*D2R);
-    Rotation R_B(B.axes[Yaw]*D2R, B.axes[Pitch]*D2R, B.axes[Roll]*D2R);
-	Rotation R_C = R_A * R_B.inv();
+    RotationType R_A(A.axes[Yaw]*D2R, A.axes[Pitch]*D2R, A.axes[Roll]*D2R);
+    RotationType R_B(B.axes[Yaw]*D2R, B.axes[Pitch]*D2R, B.axes[Roll]*D2R);
+	RotationType R_C = R_A * R_B.inv();
 
 	T6DOF C;
     R_C.toEuler(C.axes[Yaw], C.axes[Pitch], C.axes[Roll]);
@@ -26,9 +26,9 @@ T6DOF operator-(const T6DOF& A, const T6DOF& B)
 
 T6DOF operator+(const T6DOF& A, const T6DOF& B)
 {
-    Rotation R_A(A.axes[Yaw]*D2R, A.axes[Pitch]*D2R, A.axes[Roll]*D2R);
-    Rotation R_B(B.axes[Yaw]*D2R, B.axes[Pitch]*D2R, B.axes[Roll]*D2R);
-	Rotation R_C = R_A * R_B;
+    RotationType R_A(A.axes[Yaw]*D2R, A.axes[Pitch]*D2R, A.axes[Roll]*D2R);
+    RotationType R_B(B.axes[Yaw]*D2R, B.axes[Pitch]*D2R, B.axes[Roll]*D2R);
+	RotationType R_C = R_A * R_B;
 
 	T6DOF C;
     R_C.toEuler(C.axes[Yaw], C.axes[Pitch], C.axes[Roll]);

@@ -9,475 +9,365 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
-    <height>280</height>
+    <width>615</width>
+    <height>326</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="maximumSize">
    <size>
-    <width>750</width>
-    <height>280</height>
+    <width>6666</width>
+    <height>6666</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>HT tracker settings</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>141</width>
-     <height>16</height>
-    </rect>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="spacing">
+    <number>7</number>
    </property>
-   <property name="text">
-    <string>Horizontal FOV</string>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="cameraFOV">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>10</y>
-     <width>251</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="locale">
-    <locale language="English" country="UnitedStates"/>
-   </property>
-   <property name="minimum">
-    <double>35.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>180.000000000000000</double>
-   </property>
-   <property name="value">
-    <double>52.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>40</y>
-     <width>137</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Frames per second</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cameraFPS">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>40</y>
-     <width>251</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string notr="true">Default</string>
-    </property>
+   <item row="9" column="1" rowspan="3">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Head position</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>TY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>TX</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="cx">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-10000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>TZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QDoubleSpinBox" name="cz">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-10000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="cy">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <double>-10000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>30</string>
-    </property>
+   <item row="0" column="3" rowspan="3" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Enable axes</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="horizontalSpacing">
+       <number>7</number>
+      </property>
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="rx">
+        <property name="text">
+         <string>RX</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="tx">
+        <property name="text">
+         <string>TX</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="ry">
+        <property name="text">
+         <string>RY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="ty">
+        <property name="text">
+         <string>TY</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="rz">
+        <property name="text">
+         <string>RZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="tz">
+        <property name="text">
+         <string>TZ</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>60</string>
-    </property>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Frames per second</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>120</string>
-    </property>
+   <item row="2" column="1" colspan="2">
+    <widget class="QComboBox" name="cameraName"/>
    </item>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>133</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Camera name</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="buttonOK">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>250</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>OK</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="buttonCancel">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>250</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>10</y>
-     <width>101</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Enable axes</string>
-   </property>
-   <widget class="QCheckBox" name="rx">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>RX</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="ry">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>RY</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="rz">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>RZ</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="tx">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>20</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TX</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="ty">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>40</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TY</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="tz">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>60</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TZ</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QComboBox" name="cameraName">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>70</y>
-     <width>251</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>128</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Resolution</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="resolution">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>100</y>
-     <width>251</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>640x480</string>
-    </property>
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="cameraFPS">
+     <item>
+      <property name="text">
+       <string notr="true">Default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>30</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>60</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>120</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>180</string>
+      </property>
+     </item>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>320x240</string>
-    </property>
+   <item row="7" column="1">
+    <widget class="QCheckBox" name="red_only">
+     <property name="text">
+      <string>Recommended!</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>320x200</string>
-    </property>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Camera name</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <property name="text">
-     <string>Default (not recommended!)</string>
-    </property>
+   <item row="0" column="1" colspan="2">
+    <widget class="QDoubleSpinBox" name="cameraFOV">
+     <property name="locale">
+      <locale language="English" country="UnitedStates"/>
+     </property>
+     <property name="minimum">
+      <double>35.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>52.000000000000000</double>
+     </property>
+    </widget>
    </item>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>130</y>
-     <width>171</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="decimals">
-    <number>24</number>
-   </property>
-   <property name="minimum">
-    <double>-1000.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>1000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>130</y>
-     <width>111</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Distortion coefficients</string>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>160</y>
-     <width>171</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="decimals">
-    <number>24</number>
-   </property>
-   <property name="minimum">
-    <double>-1000.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>1000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>190</y>
-     <width>171</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="decimals">
-    <number>24</number>
-   </property>
-   <property name="minimum">
-    <double>-1000.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>1000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>220</y>
-     <width>171</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="decimals">
-    <number>24</number>
-   </property>
-   <property name="minimum">
-    <double>-1000.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>1000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>250</y>
-     <width>171</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="decimals">
-    <number>24</number>
-   </property>
-   <property name="minimum">
-    <double>-1000.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>1000.000000000000000</double>
-   </property>
-   <property name="singleStep">
-    <double>0.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>325</x>
-     <y>133</y>
-     <width>253</width>
-     <height>60</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>The ARUCO Library has been developed by
-the Ava group of the Univeristy of Cordoba(Spain)
-Contact to
-Rafael Muñoz Salinas &lt;rmsalinas@uco.es&gt;</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>200</y>
-     <width>181</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>https://github.com/rmsalinas/aruco</string>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
+   <item row="6" column="2" rowspan="5" colspan="3">
+    <widget class="QLabel" name="label_6">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The ARUCO Library has been developed by the Ava group of the Univeristy of Cordoba, Spain&lt;/p&gt;&lt;p&gt;Rafael Muñoz Salinas &amp;lt;&lt;a href=&quot;mailto:rmsalinas@uco.es&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;rmsalinas@uco.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;p&gt;&amp;lt;&lt;a href=&quot;https://github.com/rmsalinas/aruco&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/rmsalinas/aruco&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>4</number>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Red channel only</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="resolution">
+     <item>
+      <property name="text">
+       <string>640x480</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>320x240</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>320x200</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Default (not recommended!)</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Horizontal FOV</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="4">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="marker_pitch">
+     <property name="minimum">
+      <double>-180.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>180.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Resolution</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Marker pitch</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
+ <tabstops>
+  <tabstop>cameraFOV</tabstop>
+  <tabstop>cameraFPS</tabstop>
+  <tabstop>cameraName</tabstop>
+  <tabstop>resolution</tabstop>
+  <tabstop>red_only</tabstop>
+  <tabstop>marker_pitch</tabstop>
+  <tabstop>cx</tabstop>
+  <tabstop>cy</tabstop>
+  <tabstop>cz</tabstop>
+  <tabstop>rx</tabstop>
+  <tabstop>ry</tabstop>
+  <tabstop>rz</tabstop>
+  <tabstop>tx</tabstop>
+  <tabstop>ty</tabstop>
+  <tabstop>tz</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <designerdata>

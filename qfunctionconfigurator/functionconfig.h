@@ -6,6 +6,8 @@
  * notice appear in all copies.
  */
 
+#pragma once
+
 #include <QList>
 #include <QPointF>
 #include <QString>
@@ -13,14 +15,11 @@
 #include <QMutex>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 
-#ifndef FUNCTION_CONFIG_H
-#define FUNCTION_CONFIG_H
-
-#define MEMOIZE_PRECISION 500
+#define MEMOIZE_PRECISION 100
 
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
-    QMutex* _mutex;
+    QMutex _mutex;
 	QList<QPointF> _points;
 	void reload();
     float* _data;
@@ -31,14 +30,16 @@ private:
     volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
-    FunctionConfig(const FunctionConfig&) {}
+    FunctionConfig(const FunctionConfig&) = delete;
 public:
+    int maxInput() const { return _max_Input; }
+    int maxOutput() const { return _max_Output; }
 	//
 	// Contructor(s) and destructor
 	//
     FunctionConfig();
     FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
-	virtual ~FunctionConfig();
+    ~FunctionConfig();
 
     float getValue(float x);
 	bool getLastPoint(QPointF& point);						// Get the last Point that was requested.
@@ -48,7 +49,7 @@ public:
 	//
 	void removePoint(int i);
     void removeAllPoints() {
-        QMutexLocker foo(_mutex);
+        QMutexLocker foo(&_mutex);
         _points.clear();
         reload();
     }
@@ -69,10 +70,6 @@ public:
 	void saveSettings(QSettings& settings);
 	void loadSettings(QSettings& settings);
 
-	void setTrackingActive(bool blnActive) {
-		_tracking_active = blnActive;
-	}
+	void setTrackingActive(bool blnActive);
     QString getTitle() { return _title; }
 };
-
-#endif

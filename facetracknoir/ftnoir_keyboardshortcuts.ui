@@ -6,16 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
-    <height>81</height>
+    <width>371</width>
+    <height>131</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>FaceTrackNoIR Keyboard and Mouse shortcuts</string>
+   <string>Keyboard shortcuts</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/FaceTrackNoIR.png</iconset>
+    <normaloff>images/facetracknoir.png</normaloff>images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -23,194 +29,176 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <widget class="QPushButton" name="btnCancel">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>50</y>
-     <width>100</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>100</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Cancel</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnOK">
-   <property name="geometry">
-    <rect>
-     <x>74</x>
-     <y>50</y>
-     <width>100</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>100</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>100</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>OK</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cbxCenterKey">
-   <property name="geometry">
-    <rect>
-     <x>179</x>
-     <y>19</y>
-     <width>101</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>90</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="toolTip">
-    <string>Select Number</string>
-   </property>
-   <property name="insertPolicy">
-    <enum>QComboBox::InsertAlphabetically</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="textLabel2_4">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>0</y>
-     <width>46</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Keyboard</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="wordWrap">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="chkCenterAlt">
-   <property name="geometry">
-    <rect>
-     <x>141</x>
-     <y>21</y>
-     <width>36</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>50</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Alt</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="textLabel2_3">
-   <property name="geometry">
-    <rect>
-     <x>5</x>
-     <y>23</y>
-     <width>33</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string>Center</string>
-   </property>
-   <property name="wordWrap">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="chkCenterCtrl">
-   <property name="geometry">
-    <rect>
-     <x>95</x>
-     <y>21</y>
-     <width>40</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>50</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Ctrl</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="chkCenterShift">
-   <property name="geometry">
-    <rect>
-     <x>44</x>
-     <y>21</y>
-     <width>45</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>50</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>Shift</string>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="4">
+    <widget class="QLabel" name="textLabel2_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Keyboard</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="textLabel2_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Center</string>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="chkCenterShift">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Shift</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="chkCenterCtrl">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Ctrl</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="chkCenterAlt">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Alt</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QComboBox" name="cbxCenterKey">
+     <property name="minimumSize">
+      <size>
+       <width>90</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select Number</string>
+     </property>
+     <property name="insertPolicy">
+      <enum>QComboBox::InsertAlphabetically</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="textLabel2_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Toggle</string>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="chkToggleShift">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Shift</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="chkToggleCtrl">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Ctrl</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QCheckBox" name="chkToggleAlt">
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Alt</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QComboBox" name="cbxToggleKey">
+     <property name="minimumSize">
+      <size>
+       <width>90</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select Number</string>
+     </property>
+     <property name="insertPolicy">
+      <enum>QComboBox::InsertAlphabetically</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

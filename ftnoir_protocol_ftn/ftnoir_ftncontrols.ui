@@ -2,20 +2,23 @@
 <ui version="4.0">
  <class>UICFTNControls</class>
  <widget class="QWidget" name="UICFTNControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>156</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FTNoIR protocol settings FaceTrackNoIR</string>
+   <string>UDP protocol settings</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>images/FaceTrackNoIR.png</normaloff>images/facetracknoir.png</iconset>
+   <iconset resource="../facetracknoir/main-facetracknoir.qrc">
+    <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -251,7 +254,9 @@
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../facetracknoir/main-facetracknoir.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

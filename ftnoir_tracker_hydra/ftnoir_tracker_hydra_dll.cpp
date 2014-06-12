@@ -3,42 +3,25 @@
 #include <QDebug>
 #include "facetracknoir/global-settings.h"
 
-FTNoIR_TrackerDll::FTNoIR_TrackerDll() {
-	//populate the description strings
-	trackerFullName = "Hydra";
-	trackerShortName = "Hydra";
-	trackerDescription = "Hydra";
-}
-
-FTNoIR_TrackerDll::~FTNoIR_TrackerDll()
-{
-
-}
-
-void FTNoIR_TrackerDll::Initialize()
-{
-	return;
-}
-
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerFullName;
-};
+    *strToBeFilled = "Hydra";
+}
 
 void FTNoIR_TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerShortName;
-};
+    *strToBeFilled = "Hydra";
+}
 
 void FTNoIR_TrackerDll::getDescription(QString *strToBeFilled)
 {
-	*strToBeFilled = trackerDescription;
-};
+    *strToBeFilled = "Hydra";
+}
 
 void FTNoIR_TrackerDll::getIcon(QIcon *icon)
 {
     *icon = QIcon(":/images/facetracknoir.png");
-};
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker object.

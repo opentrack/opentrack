@@ -22,29 +22,16 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 * This class implements a tracker-base											*
 *********************************************************************************/
-/*
-	Modifications (last one on top):
-	    20122109 - C14: Replaced Release with virtual destructor
-		20120009 - WVR: Removed AutoClosePtr (seemed like it didn't work OK)
-		20110415 - WVR: Added overloaded operator - and -=
-*/
 #ifndef FTNOIR_TRACKER_BASE_H
 #define FTNOIR_TRACKER_BASE_H
 
 #include "ftnoir_tracker_base_global.h"
 #include "ftnoir_tracker_types.h"
-#include <QtGui/QWidget>
-#include <QtGui/QFrame>
+#include <QWidget>
+#include <QFrame>
 #include <QWaitCondition>
 #include <QMutex>
 #include <QFrame>
-
-////////////////////////////////////////////////////////////////////////////////
-#ifdef __cplusplus
-#   define EXTERN_C     extern "C"
-#else
-#   define EXTERN_C
-#endif // __cplusplus
 
 ////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
@@ -54,16 +41,13 @@
 // Instances are obtained via factory function.
 struct ITracker
 {
-    virtual ~ITracker() {}
+    virtual ~ITracker() = 0;
     virtual void StartTracker( QFrame* frame ) = 0;
-    virtual bool GiveHeadPoseData(double *data) = 0;
-
-    virtual void WaitForExit() = 0;
-    
-    virtual void NotifyCenter() {}
+    virtual void GetHeadPoseData(double *data) = 0;
+    virtual int preferredHz() { return 200; }
 };
 
-typedef ITracker* ITrackerPtr;
+inline ITracker::~ITracker() { }
 
 ////////////////////////////////////////////////////////////////////////////////
 // COM-Like abstract interface.
@@ -74,28 +58,8 @@ typedef ITracker* ITrackerPtr;
 struct ITrackerDialog
 {
     virtual ~ITrackerDialog() {}
-	virtual void Initialize(QWidget *parent) = 0;
-	virtual void registerTracker(ITracker *tracker) = 0;
+    virtual void registerTracker(ITracker *tracker) = 0;
 	virtual void unRegisterTracker() = 0;
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-// COM-Like abstract interface.
-// This interface doesn't require __declspec(dllexport/dllimport) specifier.
-// Method calls are dispatched via virtual table.
-// Any C++ compiler can use it.
-// Instances are obtained via factory function.
-struct ITrackerDll
-{
-	virtual ~ITrackerDll() {}
-	virtual void Initialize() = 0;
-
-	virtual void getFullName(QString *strToBeFilled) = 0;
-	virtual void getShortName(QString *strToBeFilled) = 0;
-	virtual void getDescription(QString *strToBeFilled) = 0;
-	virtual void getIcon(QIcon *icon) = 0;
-};
-
 
 #endif // FTNOIR_TRACKER_BASE_H

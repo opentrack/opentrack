@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanis≥aw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanis≈Çaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -12,7 +12,6 @@
 class TrackerDll : public Metadata
 {
 	// ITrackerDll interface
-	void Initialize() {}
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);

@@ -1,0 +1,5 @@
+LIBRARY vjoy.dll
+IMPORTS
+VJoy_Initialize = _VJoy_Initialize
+VJoy_Shutdown = _VJoy_Shutdown
+VJoy_UpdateJoyState = _VJoy_UpdateJoyState

@@ -1,0 +1,6 @@
+LIBRARY freetrackclient.dll
+EXPORTS
+FTGetData@4 = FTGetData
+FTReportName@4 = FTReportName
+FTGetDllVersion@0 = FTGetDllVersion
+FTProvider@0 = FTProvider

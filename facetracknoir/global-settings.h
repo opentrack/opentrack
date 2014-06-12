@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION "@0"
 #   ifdef _MSC_VER
 #       define MAYBE_STDCALL_UNDERSCORE "_"
@@ -12,6 +12,14 @@
 #   define MAYBE_STDCALL_UNDERSCORE ""
 #endif
 
+#ifdef _MSC_VER
+#   define virt_override
+#else
+#   define virt_override override
+#endif
+
+#include <cstdio>
+
 #include <QWidget>
 #include <QDebug>
 #include <QString>
@@ -21,7 +29,7 @@
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
 #   define CALLING_CONVENTION __stdcall
 #else
 #   define CALLING_CONVENTION
@@ -57,7 +65,7 @@ public:
     METADATA_FUNCTION Metadata;
     QString filename;
 private:
-#if defined(_WIN32) || defined(__WIN32)
+#if defined(_WIN32)
     QLibrary* handle;
 #else
     void* handle;

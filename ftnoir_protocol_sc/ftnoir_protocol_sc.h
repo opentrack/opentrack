@@ -27,28 +27,27 @@
 *				must be treated as such...										*
 ********************************************************************************/
 #pragma once
-#ifndef INCLUDED_SCSERVER_H
-#define INCLUDED_SCSERVER_H
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0502
 #include "facetracknoir/global-settings.h"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
 //
 #define SIMCONNECT_H_NOMANIFEST 
-#define _WIN32_WINNT 0x0502
-
-#include <Windows.h>
+#include <windows.h>
 #include <SimConnect.h>
 
-#include <..\ftnoir_protocol_base\ftnoir_protocol_base.h>
-#include <ui_FTNoIR_SCcontrols.h>
+#include <ftnoir_protocol_base/ftnoir_protocol_base.h>
+#include <ui_ftnoir_sccontrols.h>
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-//#include "math.h"
+#include "facetracknoir/options.h"
+using namespace options;
 
 typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
 typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
@@ -77,21 +76,26 @@ enum INPUT_ID
     INPUT0=0,
 };
 
+struct settings {
+    pbundle b;
+    value<int> sxs_manifest;
+    settings() :
+        b(bundle("proto-simconnect")),
+        sxs_manifest(b, "sxs-manifest-version", 0)
+    {}
+};
+
 class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
+    virtual ~FTNoIR_Protocol();
     bool checkServerInstallationOK();
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    void sendHeadposeToGame(const double* headpose);
     QString getGameName() {
         return "FS2004/FSX";
     }
-
 private:
-	// Private properties
-	QString ProgramName;
-
 	static float virtSCPosX;
 	static float virtSCPosY;
 	static float virtSCPosZ;
@@ -121,7 +125,7 @@ private:
 
 	static HANDLE hSimConnect;						// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
-	void loadSettings();
+    settings s;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -129,31 +133,15 @@ class SCControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-	explicit SCControls();
-    virtual ~SCControls();
-	void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
-	void registerProtocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	}
-	void unRegisterProtocol() {
-		theProtocol = NULL;									// Reset the pointer
-	}
-
+    SCControls();
+    void registerProtocol(IProtocol *protocol) {}
+    void unRegisterProtocol() {}
 private:
-	Ui::UICSCControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FTNoIR_Protocol *theProtocol;
-
+    Ui::UICSCControls ui;
+    settings s;
 private slots:
-	void doOK();
-	void doCancel();
-	void settingChanged() { settingsDirty = true; };
+    void doOK();
+    void doCancel();
 };
 
 //*******************************************************************************************************
@@ -162,15 +150,8 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FSX SimConnect"); };
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("SimConnect"); };
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft SimConnect protocol"); };
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fsx.png"); };
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FSX SimConnect"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("SimConnect"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft SimConnect protocol"); }
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fsx.png"); }
 };
-
-#endif//INCLUDED_SCSERVER_H
-//END

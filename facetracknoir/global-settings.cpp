@@ -1,6 +1,6 @@
 #include "global-settings.h"
 
-#if !(defined(__WIN32) || defined(_WIN32))
+#if !(defined(_WIN32))
 #   include <dlfcn.h>
 #endif
 
@@ -8,13 +8,6 @@ SelectedLibraries* Libraries = NULL;
 
 SelectedLibraries::~SelectedLibraries()
 {
-    if (pTracker) {
-        pTracker->WaitForExit();
-    }
-    if (pSecondTracker) {
-        pSecondTracker->WaitForExit();
-    }
-
     if (pTracker) {
         delete pTracker;
         pTracker = NULL;
@@ -91,8 +84,8 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
 DynamicLibrary::DynamicLibrary(const QString& filename)
 {
     this->filename = filename;
+#if defined(_WIN32)
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
-#if defined(__WIN32) || defined(_WIN32)
     handle = new QLibrary(fullPath);
     Dialog = (SETTINGS_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetDialog" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
     Constructor = (NULLARY_DYNAMIC_FUNCTION) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
@@ -102,6 +95,8 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
     handle = dlopen(latin1.constData(), RTLD_NOW |
 #   ifdef __linux
                     RTLD_DEEPBIND
+#   elif defined(__APPLE__)
+                    RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
                     0
 #   endif
@@ -128,7 +123,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
 
 DynamicLibrary::~DynamicLibrary()
 {
-#if defined(__WIN32) || defined(_WIN32)
+#if defined(_WIN32)
     handle->unload();
 #else
     if (handle)

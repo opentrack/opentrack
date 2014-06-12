@@ -25,9 +25,6 @@
 *				to games, using the FreeTrackClient.dll.		         		*
 ********************************************************************************/
 #pragma once
-#ifndef INCLUDED_FTSERVER_H
-#define INCLUDED_FTSERVER_H
-
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_ftcontrols.h"
 #include "facetracknoir/global-settings.h"
@@ -43,7 +40,20 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include "compat/compat.h"
-//#include "math.h"
+#include "facetracknoir/options.h"
+using namespace options;
+
+struct settings {
+    pbundle b;
+    value<int> intUsedInterface;
+    value<bool> useTIRViews, useDummyExe;
+    settings() :
+        b(bundle("proto-freetrack")),
+        intUsedInterface(b, "used-interfaces", 0),
+        useTIRViews(b, "use-memory-hacks", false),
+        useDummyExe(b, "ezca-mode", false)
+    {}
+};
 
 //typedef char *(WINAPI *importProvider)(void);
 typedef void (WINAPI *importTIRViewsStart)(void);
@@ -52,90 +62,59 @@ typedef void (WINAPI *importTIRViewsStop)(void);
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
-	bool checkServerInstallationOK(  );
-    void sendHeadposeToGame( double *headpose, double *rawheadpose );
+    FTNoIR_Protocol();
+    virtual ~FTNoIR_Protocol();
+    bool checkServerInstallationOK(  );
+    void sendHeadposeToGame( const double *headpose );
     QString getGameName() {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }
-
 private:
-	importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
-	importTIRViewsStop viewsStop;
+    importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+    importTIRViewsStop viewsStop;
 
-	FTMemMap *pMemData;
+    FTMemMap *pMemData;
     QString game_name;
     PortableLockedShm shm;
 
-	// Private properties
-	QString ProgramName;
-	QLibrary FTIRViewsLib;
-	QProcess dummyTrackIR;
-	int intGameID;
-	int intUsedInterface;								// Determine which interface to use (or to hide from the game)
-	bool useTIRViews;									// Needs to be in the Settings dialog
-	bool useDummyExe;
-	float getRadsFromDegrees ( float degrees ) { return (degrees * 0.017453f); }
-	void loadSettings();
+    // Private properties
+    QString ProgramName;
+    QLibrary FTIRViewsLib;
+    QProcess dummyTrackIR;
+    static inline double getRadsFromDegrees ( double degrees )
+    {
+        return degrees * 0.017453;
+    }
+    int intGameID;
     void start_tirviews();
     void start_dummy();
-    
     QString connected_game;
     QMutex game_name_mutex;
+    settings s;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class FTControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-	explicit FTControls();
-    virtual ~FTControls();
-    void showEvent ( QShowEvent * event );
-    void Initialize(QWidget *parent);
-	void registerProtocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	}
-	void unRegisterProtocol() {
-		theProtocol = NULL;									// Reset the pointer
-	}
-
+    explicit FTControls();
+    void registerProtocol(IProtocol *) {}
+    void unRegisterProtocol() {}
 private:
-	Ui::UICFTControls ui;
-	void loadSettings();
-	void save();
-
-	/** helper **/
-	bool settingsDirty;
-	FTNoIR_Protocol *theProtocol;
-
+    Ui::UICFTControls ui;
+    settings s;
 private slots:
-	void selectDLL();
-	void doOK();
-	void doCancel();
-	void settingChanged() { settingsDirty = true; }
-	void settingChanged(int) { settingsDirty = true; }
+    void selectDLL();
+    void doOK();
+    void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); }
-
-	void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); }
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
+    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
+    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); }
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); }
 };
-
-
-#endif//INCLUDED_FTSERVER_H
-//END

@@ -1,36 +1,22 @@
-/********************************************************************************
-* FreeTrackClientDll Implements the FreeTrack 2.0 interface for FT-enabled		*
-*					games.														*
-*					It uses the FreeTrack protocol (memory mapping) to			*
-*					receive data from FaceTrackNoIR (or FreeTrack, or ...).		*
-*																				*
-* Copyright (C) 2013	Wim Vriend (Developing)									*
-*						Ron Hendriks (Testing and Research)						*
-*																				*
-* Homepage				<http://facetracknoir.sourceforge.net/home/default.htm>	*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-********************************************************************************/
-/*
-	Modifications (last one on top):
-
-	20130208 - WVR: The old DLL from FreeTrack seems to crash ArmA2. And we need 64-bit support.
-	
-*/
-
-#define FT_EXPORT(t) extern "C" t __declspec(dllexport) __stdcall
+/***********************************************************************************
+ * * FTTypes            FTTypes contains the specific type definitions for the      *
+ * *                    FreeTrack protocol.                                         *
+ * *                    It was loosely translated from FTTypes.pas                  *
+ * *                    which was created by the FreeTrack-team.                    *
+ * *                                                                                *
+ * * Wim Vriend (Developing)                                                        *
+ * * Ron Hendriks (Testing and Research)                                            *
+ * *                                                                                *
+ * * Homepage               <http://facetracknoir.sourceforge.net/home/default.htm> *
+ * *                                                                                *
+ * * This program is distributed in the hope that it will be useful, but            *
+ * * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY     *
+ * * or FITNESS FOR A PARTICULAR PURPOSE.                                           *
+ * *                                                                                *
+ * *                                                                                *
+ * * The FreeTrackClient sources were translated from the original Delphi sources   *
+ * * created by the FreeTrack developers.                                           *
+ */
 #define	NP_AXIS_MAX				16383
 
 #include <stdarg.h>
@@ -38,18 +24,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
-#include <tchar.h>
+//#include <tchar.h>
 
-#include "ftnoir_protocol_ft\fttypes.h"
+#include "ftnoir_protocol_ft/fttypes.h"
+
+#define FT_EXPORT(t) extern "C" __declspec(dllexport) t __stdcall
 
 //
 // Functions to create/open the file-mapping
 // and to destroy it again.
 //
-bool FTCreateMapping();
-void FTDestroyMapping();
-float scale2AnalogLimits( float x, float min_x, float max_x );
-float getDegreesFromRads ( float rads );
+static float scale2AnalogLimits( float x, float min_x, float max_x );
+static float getDegreesFromRads ( float rads );
+FT_EXPORT(bool) FTCreateMapping(void);
 
 #if 0
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
@@ -64,8 +51,8 @@ static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
 static HANDLE hFTMemMap = 0;
 static FTMemMap *pMemData = 0;
 static HANDLE hFTMutex = 0;
-static char* dllVersion = "1.0.0.0";
-static char* dllProvider = "FreeTrack";
+static const char* dllVersion = "1.0.0.0";
+static const char* dllProvider = "FreeTrack";
 
 static unsigned short gameid = 0;
 
@@ -98,13 +85,13 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 /******************************************************************
  *		FTGetData (FreeTrackClient.1)
  */
+
 #pragma comment(linker, "/export:FTGetData@4=FTGetData")
 FT_EXPORT(bool) FTGetData(PFreetrackData data)
 {
-  static int frame = 0;
   static int prevDataID = 0;
   static int dlyTrackingOff = 0;
-  static int tracking = 0;
+
 
 //  dbg_report("NP_GetData called.");
   if (FTCreateMapping() == false) return false;
@@ -123,7 +110,6 @@ FT_EXPORT(bool) FTGetData(PFreetrackData data)
 			dlyTrackingOff++;
 			if (dlyTrackingOff > 20) {
 				dlyTrackingOff = 100;
-				tracking = false;
 			}
 		}
 		prevDataID = pMemData->data.DataID;
@@ -167,7 +153,7 @@ FT_EXPORT(void) FTReportName( int name )
  *		FTGetDllVersion (FreeTrackClient.3)
  */
 #pragma comment(linker, "/export:FTGetDllVersion@0=FTGetDllVersion")
-extern "C" __declspec( dllexport ) char* FTGetDllVersion(void)
+FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
 
@@ -178,7 +164,7 @@ extern "C" __declspec( dllexport ) char* FTGetDllVersion(void)
  *		FTProvider (FreeTrackClient.4)
  */
 #pragma comment(linker, "/export:FTProvider@0=FTProvider")
-extern "C" __declspec( dllexport ) char* FTProvider(void)
+FT_EXPORT(const char*) FTProvider(void)
 {
     dbg_report("FTProvider request.\n");
 
@@ -190,10 +176,8 @@ extern "C" __declspec( dllexport ) char* FTProvider(void)
 // It contains the tracking data, a handle to the main-window and the program-name of the Game!
 //
 //
-bool FTCreateMapping()
+FT_EXPORT(bool) FTCreateMapping(void)
 {
-	bool bMappingExists = false;
-
 	//
 	// Memory-mapping already exists!
 	//
@@ -217,7 +201,6 @@ bool FTCreateMapping()
 
 	if ( ( hFTMemMap != 0 ) && ( GetLastError() == ERROR_ALREADY_EXISTS ) ) {
 		dbg_report("FTCreateMapping: Mapping already exists.\n");
-		bMappingExists = true;				// So the server was (probably) already started!
 		CloseHandle( hFTMemMap );
 		hFTMemMap = 0;
 	}
@@ -240,7 +223,7 @@ bool FTCreateMapping()
 //
 // Destory the FileMapping to the shared memory
 //
-void FTDestroyMapping()
+FT_EXPORT(void) FTDestroyMapping(void)
 {
 	if ( pMemData != NULL ) {
 		UnmapViewOfFile ( pMemData );
@@ -255,14 +238,14 @@ void FTDestroyMapping()
 //
 // 4 convenience
 //
-float getDegreesFromRads ( float rads ) { 
+static float getDegreesFromRads ( float rads ) { 
 	return (rads * 57.295781f); 
 }
 
 //
 // Scale the measured value to the TIR values
 //
-float scale2AnalogLimits( float x, float min_x, float max_x ) {
+static float scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 double local_x;
 	

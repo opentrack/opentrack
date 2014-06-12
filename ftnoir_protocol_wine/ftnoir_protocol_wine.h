@@ -33,7 +33,6 @@
 #include "ftnoir_csv/csv.h"
 #include "ui_ftnoir_winecontrols.h"
 #include <QMessageBox>
-#include <QSettings>
 #include <QLibrary>
 #include <QProcess>
 #include <QDebug>
@@ -48,11 +47,14 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-	~FTNoIR_Protocol();
+    virtual ~FTNoIR_Protocol();
 
     bool checkServerInstallationOK();
-	void sendHeadposeToGame(double* headpose, double* rawheadpose );
-
+    void sendHeadposeToGame(const double* headpose);
+    QString getGameName() {
+        QMutexLocker foo(&game_name_mutex);
+        return connected_game;
+    }
 private:
     PortableLockedShm lck_shm;
     WineSHM* shm;
@@ -60,10 +62,6 @@ private:
     int gameid;
     QString connected_game;
     QMutex game_name_mutex;
-    QString getGameName() {
-        QMutexLocker((QMutex*)&game_name_mutex);
-        return connected_game;
-    }
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -71,11 +69,8 @@ class FTControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
-
     FTControls();
-    void showEvent ( QShowEvent * event ) {show();}
-    void Initialize(QWidget *parent) {show();}
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 
 private:
