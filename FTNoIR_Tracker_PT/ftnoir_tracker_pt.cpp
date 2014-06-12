@@ -23,12 +23,13 @@ const float deg2rad = 1.0/rad2deg;
 
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
-    : commands(0),
+    : mutex(QMutex::Recursive),
+      commands(0),
 	  video_widget(NULL), 
 	  video_frame(NULL),
 	  tracking_valid(false),
-	  need_apply(false),
-	  new_settings(nullptr)
+      new_settings(nullptr)
+
 {
 	qDebug()<<"Tracker::Tracker";
 }
@@ -115,21 +116,18 @@ void Tracker::run()
 }
 void Tracker::apply(settings& s)
 {
-	QMutexLocker lock(&mutex);
-	need_apply = true;
-	// caller guarantees object lifetime
+    // caller guarantees object lifetime
 	new_settings = &s;
 }
 
 void Tracker::apply_inner()
 {
-	QMutexLocker lock(&mutex);
-	if (!need_apply)
-		return;
 	qDebug()<<"Tracker:: Applying settings";
-	auto& s = *new_settings;
+    settings* tmp = new_settings;
+    if (tmp == nullptr)
+        return;
+    auto& s = *tmp;
 	new_settings = nullptr;
-	need_apply = false;
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
