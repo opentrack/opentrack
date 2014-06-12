@@ -122,11 +122,11 @@ void Tracker::apply(settings& s)
 
 void Tracker::apply_inner()
 {
-	qDebug()<<"Tracker:: Applying settings";
     settings* tmp = new_settings.exchange(nullptr);
     if (tmp == nullptr)
         return;
     auto& s = *tmp;
+    qDebug()<<"Tracker:: Applying settings";
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
