@@ -333,7 +333,7 @@ endif()
 if(SDK_ENABLE_LIBEVDEV)
     opentrack_library(opentrack-proto-libevdev)
     pkg_check_modules(libevdev REQUIRED QUIET libevdev)
-    include_directories(${LibXML++_INCLUDE_DIRS})
+    include_directories(${libevdev_INCLUDE_DIRS})
     target_link_libraries(opentrack-proto-libevdev ${libevdev-LIBRARIES})
 endif()
 
