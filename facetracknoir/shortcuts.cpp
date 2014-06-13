@@ -29,6 +29,8 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
     tie_setting(mainApp->s.toggle_key.alt, ui.chkToggleAlt);
     tie_setting(mainApp->s.toggle_key.shift, ui.chkToggleShift);
     tie_setting(mainApp->s.toggle_key.ctrl, ui.chkToggleCtrl);
+
+    tie_setting(mainApp->s.dingp, ui.ding);
 }
 
 //

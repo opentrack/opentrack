@@ -679,7 +679,8 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
 
 void FaceTrackNoIR::shortcutRecentered()
 {
-    QApplication::beep();
+    if (s.dingp)
+        QApplication::beep();
 
     qDebug() << "Center";
     if (tracker)
@@ -688,7 +689,9 @@ void FaceTrackNoIR::shortcutRecentered()
 
 void FaceTrackNoIR::shortcutToggled()
 {
-    QApplication::beep();
+    if (s.dingp)
+        QApplication::beep();
+
     qDebug() << "Toggle";
     if (tracker)
         tracker->enabled = !tracker->enabled;
