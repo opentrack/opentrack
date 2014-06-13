@@ -77,6 +77,24 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         return;
     }
 
+    bool new_frame = false;
+
+    for (int i = 0; i < 6; i++)
+    {
+        if (target_camera_position[i] != current_camera_position[i])
+        {
+            new_frame = true;
+            break;
+        }
+    }
+
+    if (!new_frame)
+    {
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = current_camera_position[i];
+        return;
+    }
+
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
         // Calculate the current and smoothed delta.
