@@ -31,13 +31,25 @@
 #include <QMutexLocker>
 //#define LOG_OUTPUT
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //
 // EWMA Filter: Exponentially Weighted Moving Average filter with dynamic smoothing parameter
 //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This filter tries to adjust the amount of filtering to minimize lag when
+// moving, and minimize noise when still. It uses the delta filtered over the
+// last 3 frames (0.1secs) compared to the delta's average noise variance over
+// the last 3600 frames (~2mins) to try and detect movement vs noise. As the
+// delta increases from 0->3 stdevs of the noise, the filtering scales down
+// from maxSmooth->minSmooth at a rate controlled by the powCurve setting.
+//
+///////////////////////////////////////////////////////////////////////////////
 
-FTNoIR_Filter::FTNoIR_Filter() : first_run(true), alpha_smoothing(0.02)
+FTNoIR_Filter::FTNoIR_Filter() :
+    first_run(true),
+    // Deltas are smoothed over the last 3 frames (0.1sec at 30fps).
+    delta_smoothing(1.0/3.0),
+    // Noise is smoothed over the last 3600 frames (~2mins at 30fps).
+    noise_smoothing(1.0/3600.0)
 {
 }
 
@@ -49,43 +61,35 @@ void FTNoIR_Filter::receiveSettings()
 void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
                                        double *new_camera_position)
 {
-    double delta;
-    double new_alpha;
-    double scale[]={0.025f,0.025f,0.025f,6.0f,6.0f,6.0f};
+    double new_delta, new_noise, norm_noise;
+    double alpha;
 
     //On the first run, initialize to output=target and return.
     if (first_run==true) {
         for (int i=0;i<6;i++) {
             new_camera_position[i] = target_camera_position[i];
             current_camera_position[i] = target_camera_position[i];
-            alpha[i] = 0.0f;
+            delta[i] = 0.0f;
+            noise[i] = 0.0f;
         }
         first_run=false;
         return;
     }
-    
-    for (int i=0;i<6;i++) {
-        // Calculate the delta.
-        delta=target_camera_position[i]-current_camera_position[i];
-        // Normalise the delta.
-        delta=std::min<double>(std::max<double>(fabs(delta)/scale[i],0.0),1.0);
-        // Calculate the new alpha from the normalized delta.
-        new_alpha=1.0/(s.kMinSmoothing+((1.0-pow(delta,s.kSmoothingScaleCurve))*(s.kMaxSmoothing-s.kMinSmoothing)));
-        // Update the smoothed alpha.
-        alpha[i]=(alpha_smoothing*new_alpha)+((1.0-alpha_smoothing)*alpha[i]);
-    }
-
-    // Use the same (largest) smoothed alpha for each channel
-    //NB: larger alpha = *less* lag (opposite to what you'd expect)
-    float largest_alpha=0.0f;
-    for (int i=0;i<6;i++) {
-        largest_alpha=std::min<double>(largest_alpha, alpha[i]);
-    }
 
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
-        new_camera_position[i]=(largest_alpha*target_camera_position[i])+((1.0-largest_alpha)*current_camera_position[i]);
-        //new_camera_position[i]=(alpha[i]*target_camera_position[i])+((1.0f-alpha[i])*current_camera_position[i]);
+        // Calculate the current and smoothed delta.
+        new_delta = target_camera_position[i]-current_camera_position[i];
+        delta[i] = delta_smoothing*new_delta + (1.0-delta_smoothing)*delta[i];
+        // Calculate the current and smoothed noise variance.
+        new_noise = delta[i]*delta[i];
+        noise[i] = noise_smoothing*new_noise + (1.0-noise_smoothing)*noise[i];
+        // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
+        norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
+        // Calculate the alpha from the normalized noise.
+        // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
+        alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
+        new_camera_position[i] = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
     }
 
 #ifdef LOG_OUTPUT
@@ -111,7 +115,6 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
             << "\t" << new_camera_position[3]
             << "\t" << new_camera_position[4]
             << "\t" << new_camera_position[5] << '\n';
-        out << "largest_alpha:\t" << largest_alpha << '\n';
     }
 #endif
 
