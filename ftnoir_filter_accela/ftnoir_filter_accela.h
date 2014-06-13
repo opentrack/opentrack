@@ -55,11 +55,6 @@ private:
     qint64 frame_delta;
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Filter Settings-dialog.
-//*******************************************************************************************************
-
-// Widget that has controls for FTNoIR protocol filter-settings.
 class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
