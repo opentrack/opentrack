@@ -108,11 +108,9 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         // Calculate the alpha from the normalized noise.
         // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
         alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
-        new_camera_position[i] = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
-    }
-    // Update the current camera position to the new position.
-    for (int i = 0; i < 6; i++) {
-        current_camera_position[i] = new_camera_position[i];
+        // Update the current camera position to the new position.
+        double pos = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
+        new_camera_position[i] = current_camera_position[i] = pos;
     }
 }
 
