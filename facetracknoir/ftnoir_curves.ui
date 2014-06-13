@@ -760,7 +760,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Enablement</string>
+             <string>Enable</string>
             </property>
            </widget>
           </item>
