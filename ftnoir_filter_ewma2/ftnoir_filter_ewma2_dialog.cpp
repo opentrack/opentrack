@@ -33,8 +33,8 @@ FilterControls::FilterControls() :
 {
     ui.setupUi( this );
 
-    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.kMaxSmoothing, ui.maxSmooth);
     tie_setting(s.kMinSmoothing, ui.minSmooth);
