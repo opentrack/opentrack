@@ -86,7 +86,7 @@ private slots:
 class FTNoIR_FilterDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk2"); }
+    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk3"); }
     void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
     void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }
     void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
