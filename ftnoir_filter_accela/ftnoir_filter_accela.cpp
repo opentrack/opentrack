@@ -23,16 +23,6 @@ static inline double parabola(const double a, const double x, const double dz, c
     return a1 * pow(std::max<double>(fabs(x) - dz, 0), expt) * sign;
 }
 
-template<typename T>
-static inline T clamp(const T min, const T max, const T value)
-{
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
-}
-
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                                        double *new_camera_position)
 {
@@ -46,8 +36,6 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                 last_output[j][i] = target_camera_position[i];
         }
 
-        timer.start();
-        frame_delta = 1;
         first_run = false;
 		return;
 	}
@@ -63,19 +51,15 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         }
     }
 
-    if (new_frame)
+    if (!new_frame)
     {
         for (int i = 0; i < 6; i++)
-            last_input[i] = target_camera_position[i];
-        frame_delta = timer.start();
-    } else {
-        auto d = timer.elapsed();
-        double c = clamp(0.0, 1.0, d / (double) frame_delta);
-        for (int i = 0; i < 6; i++)
-            new_camera_position[i] =
-                    last_output[1][i] + (last_output[0][i] - last_output[1][i]) * c;
+            new_camera_position[i] = last_output[0][i];
         return;
     }
+
+    for (int i = 0; i < 6; i++)
+        last_input[i] = target_camera_position[i];
     
     for (int i=0;i<6;i++)
 	{
@@ -93,10 +77,9 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                 parabola(a3, vec3, deadzone, s.expt);
         const double result = last_output[0][i] + velocity;
         const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
-        new_camera_position[i] = done ? target_camera_position[i] : result;
         last_output[2][i] = last_output[1][i];
         last_output[1][i] = last_output[0][i];
-        last_output[0][i] = new_camera_position[i];
+        last_output[0][i] = new_camera_position[i] = done ? target_camera_position[i] : result;
 	}
 }
 
