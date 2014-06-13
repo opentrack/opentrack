@@ -35,7 +35,7 @@ struct main_settings {
     key_opts toggle_key;
     value<QString> tracker_dll, tracker2_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
-    value<bool> tcomp_p, tcomp_tz;
+    value<bool> tcomp_p, tcomp_tz, dingp;
     main_settings(pbundle b) :
         b(b),
         center_key(b, "center"),
@@ -51,6 +51,7 @@ struct main_settings {
         a_pitch(b, "pitch"),
         a_roll(b, "roll"),
         tcomp_p(b, "compensate-translation", true),
-        tcomp_tz(b, "compensate-translation-disable-z-axis", false)
+        tcomp_tz(b, "compensate-translation-disable-z-axis", false),
+        dingp(b, "ding", true)
     {}
 };
