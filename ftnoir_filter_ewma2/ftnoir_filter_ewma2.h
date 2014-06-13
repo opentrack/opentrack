@@ -36,6 +36,7 @@ using namespace options;
 
 struct settings {
     pbundle b;
+    // these are sadly sliders for now due to int/double mismatch -sh
     value<int> kMinSmoothing, kMaxSmoothing, kSmoothingScaleCurve;
     settings() :
         b(bundle("ewma-filter")),
