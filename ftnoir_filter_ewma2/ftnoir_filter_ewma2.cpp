@@ -41,6 +41,8 @@
 // delta increases from 0->3 stdevs of the noise, the filtering scales down
 // from maxSmooth->minSmooth at a rate controlled by the powCurve setting.
 //
+// Written by Donovan Baarda
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 FTNoIR_Filter::FTNoIR_Filter() :
