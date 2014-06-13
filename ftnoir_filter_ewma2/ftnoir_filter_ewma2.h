@@ -64,11 +64,6 @@ private:
     settings s;
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Filter Settings-dialog.
-//*******************************************************************************************************
-
-// Widget that has controls for FTNoIR protocol filter-settings.
 class FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
@@ -88,9 +83,6 @@ private slots:
     void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Filter DLL. Functions used to get general info on the Filter
-//*******************************************************************************************************
 class FTNoIR_FilterDll : public Metadata
 {
 public:
