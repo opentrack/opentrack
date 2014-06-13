@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_filter_ewma2.h"
-#include "math.h"
+#include <cmath>
 #include <QDebug>
 #include "facetracknoir/global-settings.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
