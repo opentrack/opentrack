@@ -108,6 +108,8 @@ void Tracker::run() {
 
     for (;;)
     {
+        t.start();
+
         if (should_quit)
             break;
 
@@ -163,7 +165,9 @@ void Tracker::run() {
             }
         }
 
-        msleep(sleep_ms);
+        const long q = std::max(0L, sleep_ms * 1000L - std::max(0L, t.elapsed()));
+
+        usleep(q);
     }
 #if defined(_WIN32)
     (void) timeEndPeriod(1);
