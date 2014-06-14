@@ -43,22 +43,22 @@ static inline void clock_gettime(int, struct timespec* ts)
 class Timer {
 private:
     struct timespec state;
-    int conv(const struct timespec& cur)
+    long conv(const struct timespec& cur)
     {
-        return (cur.tv_sec - state.tv_sec) * 1000L + (cur.tv_nsec - state.tv_nsec) / 1000000L;
+        return (cur.tv_sec - state.tv_sec) * 1000000000L + (cur.tv_nsec - state.tv_nsec);
     }
 public:
     Timer() {
         start();
     }
-    int start() {
+    long start() {
         struct timespec cur;
         (void) clock_gettime(CLOCK_MONOTONIC, &cur);
         int ret = conv(cur);
         state = cur;
         return ret;
     }
-    int elapsed() {
+    long elapsed() {
         struct timespec cur;
         (void) clock_gettime(CLOCK_MONOTONIC, &cur);
         return conv(cur);
