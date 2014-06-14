@@ -68,8 +68,8 @@ void Tracker::run()
 	QTextStream log_stream(&log_file);
 #endif
 
-	time.start();
-	float dt;
+    time.start();
+    double dt;
 	bool new_frame;
 	forever
 	{   
@@ -77,7 +77,7 @@ void Tracker::run()
         if (commands & PAUSE) continue;
         commands = 0;
 	apply_inner();
-        dt = time.start() / 1000.0;
+        dt = time.start() / 1000000000.;
 
         new_frame = camera.get_frame(dt, &frame);
 
