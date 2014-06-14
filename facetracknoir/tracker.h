@@ -18,6 +18,7 @@
 #include "tracker_types.h"
 #include "facetracknoir/main-settings.hpp"
 #include "facetracknoir/options.h"
+#include "facetracknoir/timer.hpp"
 using namespace options;
 
 class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
@@ -59,6 +60,7 @@ private:
     QMutex mtx;
     main_settings& s;
     volatile bool should_quit;
+    Timer t;
 protected:
 	void run();
 
