@@ -2,7 +2,6 @@
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_accela_filtercontrols.h"
 #include "facetracknoir/global-settings.h"
-#include "facetracknoir/lerp.hpp"
 #include <QMutex>
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
@@ -45,11 +44,11 @@ public:
     void receiveSettings() {
         s.b->reload();
     }
+
 private:
-    lerp l;
     settings s;
 	bool first_run;
-    double last_output[3][6];
+    double last_input[6], last_output[3][6];
 };
 
 class FilterControls: public QWidget, public IFilterDialog

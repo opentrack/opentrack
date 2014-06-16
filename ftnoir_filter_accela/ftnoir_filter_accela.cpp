@@ -30,40 +30,57 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 	{
         for (int i = 0; i < 6; i++)
         {
+            new_camera_position[i] = target_camera_position[i];
+            last_input[i] = target_camera_position[i];
             for (int j = 0; j < 3; j++)
                 last_output[j][i] = target_camera_position[i];
-            l.write(target_camera_position, new_camera_position);
         }
 
         first_run = false;
-        return;
-    }
+		return;
+	}
 
-    if (!l.idempotentp(target_camera_position))
+    bool new_frame = false;
+
+    for (int i = 0; i < 6; i++)
     {
-        for (int i=0;i<6;i++)
+        if (target_camera_position[i] != last_input[i])
         {
-            const double vec = target_camera_position[i] - last_output[0][i];
-            const double vec2 = target_camera_position[i] - last_output[1][i];
-            const double vec3 = target_camera_position[i] - last_output[2][i];
-            const int sign = vec < 0 ? -1 : 1;
-            const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
-            const double a2 = a * s.second_order_alpha;
-            const double a3 = a * s.third_order_alpha;
-            const double deadzone = i >= 3 ? s.rot_deadzone : s.trans_deadzone;
-            const double velocity =
-                    parabola(a, vec, deadzone, s.expt) +
-                    parabola(a2, vec2, deadzone, s.expt) +
-                    parabola(a3, vec3, deadzone, s.expt);
-            const double result = last_output[0][i] + velocity;
-            const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
-            last_output[2][i] = last_output[1][i];
-            last_output[1][i] = last_output[0][i];
-            last_output[0][i] = done ? target_camera_position[i] : result;
+            new_frame = true;
+            break;
         }
     }
 
-    l.write(last_output[0], new_camera_position);
+    if (!new_frame)
+    {
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = last_output[0][i];
+        return;
+    }
+
+    for (int i = 0; i < 6; i++)
+        last_input[i] = target_camera_position[i];
+    
+    for (int i=0;i<6;i++)
+	{
+        const double vec = target_camera_position[i] - last_output[0][i];
+        const double vec2 = target_camera_position[i] - last_output[1][i];
+        const double vec3 = target_camera_position[i] - last_output[2][i];
+		const int sign = vec < 0 ? -1 : 1;
+        const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
+        const double a2 = a * s.second_order_alpha;
+        const double a3 = a * s.third_order_alpha;
+        const double deadzone = i >= 3 ? s.rot_deadzone : s.trans_deadzone;
+        const double velocity =
+                parabola(a, vec, deadzone, s.expt) +
+                parabola(a2, vec2, deadzone, s.expt) +
+                parabola(a3, vec3, deadzone, s.expt);
+        const double result = last_output[0][i] + velocity;
+        const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
+        last_output[2][i] = last_output[1][i];
+        last_output[1][i] = last_output[0][i];
+        last_output[0][i] = new_camera_position[i] = done ? target_camera_position[i] : result;
+	}
 }
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
