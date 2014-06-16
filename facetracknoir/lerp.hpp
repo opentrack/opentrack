@@ -2,51 +2,36 @@
 
 #include "facetracknoir/timer.hpp"
 #include <algorithm>
-#include <cmath>
 
 class lerp {
 private:
-    static const constexpr double eps = 1e-2;
-    double last[2][6], cam[6], dt;
+    double last[2][6], dt;
     Timer t;
 public:
     lerp() :
-        last { {0,0,0,0,0,0}, {0,0,0,0,0,0} }, cam {0,0,0,0,0,0}, dt(1)
+        last { {0,0,0,0,0,0}, {0,0,0,0,0,0} }, dt(1)
     {
     }
     bool idempotentp(const double* input)
     {
         for (int i = 0; i < 6; i++)
-        {
-            double diff = fabs(cam[i] - input[i]);
-            if (diff > eps)
+            if (last[0][i] != input[i])
                 return false;
-        }
         return true;
     }
 
-    void write(const double* cam_, const double* input, double* output)
+    void write(const double* input, double* output)
     {
-        const double q = t.elapsed();
-        const double d = q/dt;
+        const double q = dt;
+        dt = std::max(1, t.start());
 
-        bool idem = idempotentp(cam_);
+        const double c = std::max(std::min(1.0, q/(double)dt), 0.0);
 
-        if (!idem)
+        for (int i = 0; i < 6; i++)
         {
-            dt = q;
-            t.start();
+            last[1][i] = last[0][i];
+            last[0][i] = input[i];
         }
-
-        const double c = std::max(std::min(1.0, d), 0.0);
-
-        if (!idem)
-            for (int i = 0; i < 6; i++)
-            {
-                last[1][i] = last[0][i];
-                last[0][i] = input[i];
-                cam[i] = cam_[i];
-            }
 
         for (int i = 0; i < 6; i++)
             output[i] = last[1][i] + (last[0][i] - last[1][i]) * c;
