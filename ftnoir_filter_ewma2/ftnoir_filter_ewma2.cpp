@@ -71,7 +71,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         for (int i=0;i<6;i++) {
             delta[i] = 0.0;
             noise[i] = 0.0;
-            l.write(target_camera_position, target_camera_position, new_camera_position);
+            l.write(target_camera_position, new_camera_position);
         }
         first_run=false;
         return;
@@ -100,7 +100,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         }
     }
 
-    l.write(target_camera_position, pos, new_camera_position);
+    l.write(pos, new_camera_position);
 }
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
