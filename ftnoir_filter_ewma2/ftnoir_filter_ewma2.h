@@ -32,7 +32,6 @@
 #include <QWidget>
 #include <QMutex>
 #include "facetracknoir/options.h"
-#include "facetracknoir/lerp.hpp"
 using namespace options;
 
 struct settings {
@@ -62,8 +61,8 @@ private:
     double noise_smoothing;
     double delta[6];
     double noise[6];
+    double current_camera_position[6];
     settings s;
-    lerp l;
 };
 
 class FilterControls: public QWidget, public IFilterDialog

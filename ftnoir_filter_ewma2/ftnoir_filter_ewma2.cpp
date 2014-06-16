@@ -64,43 +64,54 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
 {
     double new_delta, new_noise, norm_noise;
     double alpha;
-    double pos[6];
 
     //On the first run, initialize to output=target and return.
     if (first_run==true) {
         for (int i=0;i<6;i++) {
+            new_camera_position[i] = target_camera_position[i];
+            current_camera_position[i] = target_camera_position[i];
             delta[i] = 0.0;
             noise[i] = 0.0;
-            l.write(target_camera_position, new_camera_position);
         }
         first_run=false;
         return;
     }
 
-    if (!l.idempotentp(target_camera_position))
+    bool new_frame = false;
+
+    for (int i = 0; i < 6; i++)
     {
-        double cur[6];
-        l.get_state(cur);
-        // Calculate the new camera position.
-        for (int i=0;i<6;i++) {
-            // Calculate the current and smoothed delta.
-            new_delta = target_camera_position[i]-cur[i];
-            delta[i] = delta_smoothing*new_delta + (1.0-delta_smoothing)*delta[i];
-            // Calculate the current and smoothed noise variance.
-            new_noise = delta[i]*delta[i];
-            noise[i] = noise_smoothing*new_noise + (1.0-noise_smoothing)*noise[i];
-            // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
-            norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
-            // Calculate the alpha from the normalized noise.
-            // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
-            alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
-            // Update the current camera position to the new position.
-            double value = alpha*target_camera_position[i] + (1.0-alpha)*cur[i];
-            pos[i] = value;
+        if (target_camera_position[i] != current_camera_position[i])
+        {
+            new_frame = true;
+            break;
         }
     }
 
-    l.write(pos, new_camera_position);
+    if (!new_frame)
+    {
+        for (int i = 0; i < 6; i++)
+            new_camera_position[i] = current_camera_position[i];
+        return;
+    }
+
+    // Calculate the new camera position.
+    for (int i=0;i<6;i++) {
+        // Calculate the current and smoothed delta.
+        new_delta = target_camera_position[i]-current_camera_position[i];
+        delta[i] = delta_smoothing*new_delta + (1.0-delta_smoothing)*delta[i];
+        // Calculate the current and smoothed noise variance.
+        new_noise = delta[i]*delta[i];
+        noise[i] = noise_smoothing*new_noise + (1.0-noise_smoothing)*noise[i];
+        // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
+        norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
+        // Calculate the alpha from the normalized noise.
+        // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
+        alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
+        // Update the current camera position to the new position.
+        double pos = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
+        new_camera_position[i] = current_camera_position[i] = pos;
+    }
 }
 
 extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
