@@ -31,7 +31,6 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         for (int i = 0; i < 6; i++)
         {
             new_camera_position[i] = target_camera_position[i];
-            last_input[i] = target_camera_position[i];
             for (int j = 0; j < 3; j++)
                 last_output[j][i] = target_camera_position[i];
         }
@@ -40,27 +39,6 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
 		return;
 	}
 
-    bool new_frame = false;
-
-    for (int i = 0; i < 6; i++)
-    {
-        if (target_camera_position[i] != last_input[i])
-        {
-            new_frame = true;
-            break;
-        }
-    }
-
-    if (!new_frame)
-    {
-        for (int i = 0; i < 6; i++)
-            new_camera_position[i] = last_output[0][i];
-        return;
-    }
-
-    for (int i = 0; i < 6; i++)
-        last_input[i] = target_camera_position[i];
-    
     for (int i=0;i<6;i++)
 	{
         const double vec = target_camera_position[i] - last_output[0][i];
