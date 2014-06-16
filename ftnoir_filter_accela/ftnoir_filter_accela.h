@@ -48,7 +48,7 @@ public:
 private:
     settings s;
 	bool first_run;
-    double last_input[6], last_output[3][6];
+    double last_output[3][6];
 };
 
 class FilterControls: public QWidget, public IFilterDialog
