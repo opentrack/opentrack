@@ -6,7 +6,7 @@
 #ifndef FTNOIR_TRACKER_BASE_EXPORT
 #   ifdef OPENTRACK_MAIN
 #    if !defined(_MSC_VER)
-#      define FTNOIR_TRACKER_BASE_EXPORT __attribute__ ((visibility ("default")))
+#      define FTNOIR_TRACKER_BASE_EXPORT __attribute__ ((visibility ("default"))) Q_DECL_EXPORT
 #    else
 #     define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_EXPORT
 #   endif
