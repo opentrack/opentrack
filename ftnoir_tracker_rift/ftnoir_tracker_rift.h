@@ -40,12 +40,11 @@ protected:
 	void run();												// qthread override run method
 
 private:
-	static bool isInitialised;
-	OVR::DeviceManager* pManager;
-	OVR::SensorDevice* pSensor;
-	OVR::SensorFusion* pSFusion;
-    settings s;
     double old_yaw;
+    ovrHmd hmd;
+    ovrHmdDesc hmdDesc;
+    ovrFrameTiming frameTiming;
+    settings s;
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog
