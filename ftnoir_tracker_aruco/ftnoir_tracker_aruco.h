@@ -91,7 +91,6 @@ private:
     Tracker* tracker;
     settings s;
     TranslationCalibrator calibrator;
-    bool calibrating;
     QTimer calib_timer;
 private slots:
 	void doOK();

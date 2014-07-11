@@ -457,7 +457,6 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 TrackerControls::TrackerControls()
 {
     tracker = nullptr;
-    calibrating = false;
     calib_timer.setInterval(100);
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
@@ -487,19 +486,18 @@ TrackerControls::TrackerControls()
 
 void TrackerControls::toggleCalibrate()
 {
-    if (!calibrating)
+    if (!calib_timer.isActive())
     {
         calibrator.reset();
         calib_timer.start();
     } else {
         cleanupCalib();
     }
-    calibrating = !calibrating;
 }
 
 void TrackerControls::cleanupCalib()
 {
-    if (calibrating)
+    if (calib_timer.isActive())
     {
         calib_timer.stop();
         auto pos = calibrator.get_estimate() * .1;
@@ -511,7 +509,7 @@ void TrackerControls::cleanupCalib()
 
 void TrackerControls::update_tracker_calibration()
 {
-    if (calibrating && tracker)
+    if (calib_timer.isActive() && tracker)
     {
         cv::Matx33f r;
         cv::Vec3f t;
