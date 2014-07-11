@@ -139,7 +139,7 @@ private:
     void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
 #endif
     void fill_profile_cbx();
-    bool looping;
+    int looping;
     
 private slots:
     void open();
