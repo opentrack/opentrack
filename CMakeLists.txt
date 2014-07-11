@@ -26,8 +26,6 @@ if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     endif()
 endif()
 
-add_definitions(-DOPENTRACK_MAIN)
-
 if(APPLE)
     set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
     set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
