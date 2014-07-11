@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>615</width>
-    <height>326</height>
+    <width>636</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -107,6 +107,13 @@
         </property>
         <property name="maximum">
          <double>10000.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="btn_calibrate">
+        <property name="text">
+         <string>Calibrate</string>
         </property>
        </widget>
       </item>

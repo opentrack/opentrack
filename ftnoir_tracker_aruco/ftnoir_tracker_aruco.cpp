@@ -137,12 +137,20 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 #define HT_PI 3.1415926535
 
+void Tracker::getRT(cv::Matx33f& r_, cv::Vec3f& t_)
+{
+    QMutexLocker l(&mtx);
+
+    r_ = r;
+    t_ = t;
+}
+
 void Tracker::run()
 {
-    int res = s.resolution;
-    if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
-        res = 0;
-    resolution_tuple r = resolution_choices[res];
+    int rint = s.resolution;
+    if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
+        rint = 0;
+    resolution_tuple res = resolution_choices[rint];
     int fps;
     switch (static_cast<int>(s.force_fps))
     {
@@ -164,10 +172,10 @@ void Tracker::run()
         break;
     }
     camera = cv::VideoCapture(s.camera_index);
-    if (r.width)
+    if (res.width)
     {
-        camera.set(CV_CAP_PROP_FRAME_WIDTH, r.width);
-        camera.set(CV_CAP_PROP_FRAME_HEIGHT, r.height);
+        camera.set(CV_CAP_PROP_FRAME_WIDTH, res.width);
+        camera.set(CV_CAP_PROP_FRAME_HEIGHT, res.height);
     }
     if (fps)
         camera.set(CV_CAP_PROP_FPS, fps);
@@ -340,6 +348,9 @@ void Tracker::run()
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
                 pose[Roll] = euler[2];
+
+                rotation_matrix.convertTo(r, CV_32FC1);
+                tvec.convertTo(t, CV_32FC1);
             }
 
             std::vector<cv::Point2f> repr2;
@@ -446,6 +457,8 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 TrackerControls::TrackerControls()
 {
     tracker = nullptr;
+    calibrating = false;
+    calib_timer.setInterval(100);
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     tie_setting(s.camera_index, ui.cameraName);
@@ -466,6 +479,49 @@ TrackerControls::TrackerControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     ui.cameraName->addItems(get_camera_names());
+
+    connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
+    connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
+    connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
+}
+
+void TrackerControls::toggleCalibrate()
+{
+    if (!calibrating)
+    {
+        calibrator.reset();
+        calib_timer.start();
+    } else {
+        cleanupCalib();
+    }
+    calibrating = !calibrating;
+}
+
+void TrackerControls::cleanupCalib()
+{
+    if (calibrating)
+    {
+        calib_timer.stop();
+        auto pos = calibrator.get_estimate() * .1;
+        s.headpos_x = pos(0);
+        s.headpos_y = pos(1);
+        s.headpos_z = pos(2);
+    }
+}
+
+void TrackerControls::update_tracker_calibration()
+{
+    if (calibrating && tracker)
+    {
+        cv::Matx33f r;
+        cv::Vec3f t;
+        tracker->getRT(r, t);
+        calibrator.update(r, t);
+        auto pos = calibrator.get_estimate() * .1;
+        s.headpos_x = pos(0);
+        s.headpos_y = pos(1);
+        s.headpos_z = pos(2);
+    }
 }
 
 void TrackerControls::doOK()

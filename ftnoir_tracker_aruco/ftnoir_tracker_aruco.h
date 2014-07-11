@@ -16,9 +16,11 @@
 #include <QMutex>
 #include <QHBoxLayout>
 #include <QDialog>
+#include <QTimer>
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
 #include "facetracknoir/options.h"
+#include "ftnoir_tracker_aruco/trans_calib.h"
 using namespace options;
 
 struct settings {
@@ -58,6 +60,7 @@ public:
     void GetHeadPoseData(double *data);
     void run();
     void reload() { s.b->reload(); }
+    void getRT(cv::Matx33f& r, cv::Vec3f& t);
 private:
     QMutex mtx;
     volatile bool stop;
@@ -67,6 +70,8 @@ private:
     double pose[6];
     cv::Mat frame;
     cv::VideoCapture camera;
+    cv::Matx33f r;
+    cv::Vec3f t;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -85,9 +90,15 @@ private:
 	Ui::Form ui;
     Tracker* tracker;
     settings s;
+    TranslationCalibrator calibrator;
+    bool calibrating;
+    QTimer calib_timer;
 private slots:
 	void doOK();
 	void doCancel();
+    void toggleCalibrate();
+    void cleanupCalib();
+    void update_tracker_calibration();
 };
 
 #endif
