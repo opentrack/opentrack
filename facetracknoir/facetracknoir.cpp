@@ -104,7 +104,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    looping(false)
+    looping(0)
 {	
     ui.setupUi(this);
     setFixedSize(size());
@@ -256,10 +256,8 @@ void FaceTrackNoIR::open() {
             QSettings settings("opentrack");
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
-        looping = true;
         fill_profile_cbx();
 		loadSettings();
-        looping = false;
     }
 }
 
@@ -286,7 +284,7 @@ void FaceTrackNoIR::save() {
 
 void FaceTrackNoIR::saveAs()
 {
-    looping = true;
+    looping++;
 	QSettings settings("opentrack");
 	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
@@ -311,7 +309,7 @@ void FaceTrackNoIR::saveAs()
         save();
     }
 
-    looping = false;
+    looping--;
     fill_profile_cbx();
 }
 
@@ -584,6 +582,7 @@ void FaceTrackNoIR::fill_profile_cbx()
 {
     if (looping)
         return;
+    looping++;
     QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
@@ -594,12 +593,10 @@ void FaceTrackNoIR::fill_profile_cbx()
     filters << "*.ini";
     auto iniFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
     ui.iconcomboProfile->clear();
-    for ( int i = 0; i < iniFileList.size(); i++) {
+    for ( int i = 0; i < iniFileList.size(); i++)
         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), iniFileList.at(i));
-        if (iniFileList.at(i) == pathInfo.fileName()) {
-            ui.iconcomboProfile->setCurrentIndex( i );
-        }
-    }
+    ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
+    looping--;
 }
 
 void FaceTrackNoIR::profileSelected(int index)
