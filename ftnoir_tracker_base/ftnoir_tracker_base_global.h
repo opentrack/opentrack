@@ -4,7 +4,7 @@
 #include <QtGlobal>
 
 #ifndef FTNOIR_TRACKER_BASE_EXPORT
-#   ifdef OPENTRACK_MAIN
+#   ifdef IN_OPENTRACK
 #    if !defined(_MSC_VER)
 #      define FTNOIR_TRACKER_BASE_EXPORT __attribute__ ((visibility ("default"))) Q_DECL_EXPORT
 #    else
