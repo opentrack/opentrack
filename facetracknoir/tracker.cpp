@@ -87,7 +87,6 @@ static void t_compensate(double* input, double* output, bool rz)
         output[i] = ret.at<double>(i);
 }
 
-/** QThread run method @override **/
 void Tracker::run() {
     T6DOF offset_camera;
 

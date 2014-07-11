@@ -39,7 +39,6 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
     wait();
 }
 
-/** QThread run @override **/
 void FTNoIR_Tracker::run() {
 	forever {
         if (should_quit)
