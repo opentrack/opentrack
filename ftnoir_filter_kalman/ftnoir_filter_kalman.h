@@ -8,9 +8,6 @@
 #ifndef INCLUDED_FTN_FILTER_H
 #define INCLUDED_FTN_FILTER_H
 
-#undef FTNOIR_TRACKER_BASE_LIB
-#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
-
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include "facetracknoir/global-settings.h"
