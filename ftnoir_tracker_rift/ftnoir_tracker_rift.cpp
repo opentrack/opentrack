@@ -51,6 +51,9 @@ void Rift_Tracker::GetHeadPoseData(double *data)
                 if(newHeadPose[Yaw]<-s.deadzone)newHeadPose[Yaw]+= s.constant_drift;
                 old_yaw=yaw;
             }
+            newHeadPose[Pitch] = pitch;
+            newHeadPose[Roll] = roll;
+            newHeadPose[Yaw] = yaw;
             if (s.bEnableYaw) {
                 data[Yaw] = newHeadPose[Yaw] * 57.295781f;
             }
@@ -61,9 +64,6 @@ void Rift_Tracker::GetHeadPoseData(double *data)
                 data[Roll] = newHeadPose[Roll] * 57.295781f;
             }
             ovrHmd_EndFrameTiming(hmd);
-            newHeadPose[Pitch] = pitch;
-            newHeadPose[Roll] = roll;
-            newHeadPose[Yaw] = yaw;
         }
     }
 }
