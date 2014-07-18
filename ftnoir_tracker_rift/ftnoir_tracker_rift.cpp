@@ -42,26 +42,24 @@ void Rift_Tracker::GetHeadPoseData(double *data)
             ovrPosef pose = ss.Predicted.Pose;
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
-            double newHeadPose[6] = {0};
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
             if (s.useYawSpring)
             {
-                newHeadPose[Yaw] = old_yaw*s.persistence + (yaw-old_yaw);
-                if(newHeadPose[Yaw]>s.deadzone)newHeadPose[Yaw]-= s.constant_drift;
-                if(newHeadPose[Yaw]<-s.deadzone)newHeadPose[Yaw]+= s.constant_drift;
+                yaw = old_yaw*s.persistence + (yaw-old_yaw);
+                if(yaw > s.deadzone)
+                    yaw -= s.constant_drift;
+                if(yaw < -s.deadzone)
+                    yaw += s.constant_drift;
                 old_yaw=yaw;
             }
-            newHeadPose[Pitch] = pitch;
-            newHeadPose[Roll] = roll;
-            newHeadPose[Yaw] = yaw;
             if (s.bEnableYaw) {
-                data[Yaw] = newHeadPose[Yaw] * 57.295781f;
+                data[Yaw] = yaw * 57.295781f;
             }
             if (s.bEnablePitch) {
-                data[Pitch] = newHeadPose[Pitch] * 57.295781f;
+                data[Pitch] = pitch * 57.295781f;
             }
             if (s.bEnableRoll) {
-                data[Roll] = newHeadPose[Roll] * 57.295781f;
+                data[Roll] = roll * 57.295781f;
             }
             ovrHmd_EndFrameTiming(hmd);
         }
