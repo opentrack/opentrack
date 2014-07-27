@@ -31,34 +31,34 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     correct = false;
     if (!mainApp)
         return;
-    NULLARY_DYNAMIC_FUNCTION ptr;
+    CTOR_FUNPTR ptr;
     DynamicLibrary* lib;
 
     lib = mainApp->current_tracker1();
 
     if (lib && lib->Constructor) {
-        ptr = (NULLARY_DYNAMIC_FUNCTION) lib->Constructor;
+        ptr = (CTOR_FUNPTR) lib->Constructor;
         pTracker = (ITracker*) ptr();
     }
 
     lib = mainApp->current_tracker2();
 
     if (lib && lib->Constructor) {
-        ptr = (NULLARY_DYNAMIC_FUNCTION) lib->Constructor;
+        ptr = (CTOR_FUNPTR) lib->Constructor;
         pSecondTracker = (ITracker*) ptr();
     }
 
     lib = mainApp->current_protocol();
 
     if (lib && lib->Constructor) {
-        ptr = (NULLARY_DYNAMIC_FUNCTION) lib->Constructor;
+        ptr = (CTOR_FUNPTR) lib->Constructor;
         pProtocol = (IProtocol*) ptr();
     }
 
     lib = mainApp->current_filter();
 
     if (lib && lib->Constructor) {
-        ptr = (NULLARY_DYNAMIC_FUNCTION) lib->Constructor;
+        ptr = (CTOR_FUNPTR) lib->Constructor;
         pFilter = (IFilter*) ptr();
     }
 
@@ -109,13 +109,13 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
     {
         fprintf(stderr, "Error, if any: %s\n", dlerror());
         fflush(stderr);
-        Dialog = (SETTINGS_FUNCTION) dlsym(handle, "GetDialog");
+        Dialog = (DIALOG_FUNPTR) dlsym(handle, "GetDialog");
         fprintf(stderr, "Error, if any: %s\n", dlerror());
         fflush(stderr);
-        Constructor = (NULLARY_DYNAMIC_FUNCTION) dlsym(handle, "GetConstructor");
+        Constructor = (CTOR_FUNPTR) dlsym(handle, "GetConstructor");
         fprintf(stderr, "Error, if any: %s\n", dlerror());
         fflush(stderr);
-        Metadata = (METADATA_FUNCTION) dlsym(handle, "GetMetadata");
+        Metadata = (METADATA_FUNPTR) dlsym(handle, "GetMetadata");
         fprintf(stderr, "Error, if any: %s\n", dlerror());
         fflush(stderr);
     } else {

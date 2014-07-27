@@ -52,17 +52,17 @@ extern SelectedLibraries* Libraries;
 
 struct Metadata;
 
-extern "C" typedef void* (CALLING_CONVENTION * NULLARY_DYNAMIC_FUNCTION)(void);
-extern "C" typedef Metadata* (CALLING_CONVENTION* METADATA_FUNCTION)(void);
-extern "C" typedef void* (CALLING_CONVENTION* SETTINGS_FUNCTION)(void);
+extern "C" typedef void* (CALLING_CONVENTION * CTOR_FUNPTR)(void);
+extern "C" typedef Metadata* (CALLING_CONVENTION* METADATA_FUNPTR)(void);
+extern "C" typedef void* (CALLING_CONVENTION* DIALOG_FUNPTR)(void);
 
 class DynamicLibrary {
 public:
     DynamicLibrary(const QString& filename);
     virtual ~DynamicLibrary();
-    SETTINGS_FUNCTION Dialog;
-    NULLARY_DYNAMIC_FUNCTION Constructor;
-    METADATA_FUNCTION Metadata;
+    DIALOG_FUNPTR Dialog;
+    CTOR_FUNPTR Constructor;
+    METADATA_FUNPTR Metadata;
     QString filename;
 private:
 #if defined(_WIN32)
