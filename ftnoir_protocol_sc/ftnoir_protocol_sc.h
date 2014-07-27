@@ -29,7 +29,7 @@
 #pragma once
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0502
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX

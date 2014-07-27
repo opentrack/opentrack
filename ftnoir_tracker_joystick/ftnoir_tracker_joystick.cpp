@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_joystick.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #undef NDEBUG
 #include <QMutexLocker>
 

@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QWaitCondition>
 #include <cmath>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "OVR.h"
 #include <memory>
 #include "facetracknoir/options.h"

@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_rift.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 TrackerControls::TrackerControls() :
 QWidget()

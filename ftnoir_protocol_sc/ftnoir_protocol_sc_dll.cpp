@@ -24,7 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {

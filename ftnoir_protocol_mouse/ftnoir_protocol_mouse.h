@@ -40,7 +40,7 @@
 #include <QFile>
 #include <windows.h>
 #include <winuser.h>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "facetracknoir/options.h"
 using namespace options;
 

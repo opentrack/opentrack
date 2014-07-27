@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_protocol_mouse.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 MOUSEControls::MOUSEControls() : _proto(nullptr)
 {
