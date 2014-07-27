@@ -10,7 +10,7 @@
 
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_kalman_filtercontrols.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <QString>

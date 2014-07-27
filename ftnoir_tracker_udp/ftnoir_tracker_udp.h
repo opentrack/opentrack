@@ -6,7 +6,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <math.h>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "facetracknoir/options.h"
 using namespace options;
 

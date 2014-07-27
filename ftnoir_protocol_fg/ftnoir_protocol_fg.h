@@ -32,7 +32,7 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "facetracknoir/options.h"
 using namespace options;
 

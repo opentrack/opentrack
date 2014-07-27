@@ -1,4 +1,4 @@
-#include "global-settings.h"
+#include "plugin-support.h"
 
 #if !(defined(_WIN32))
 #   include <dlfcn.h>

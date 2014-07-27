@@ -25,7 +25,7 @@
 #include "ftnoir_filter_ewma2.h"
 #include <cmath>
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 
 FilterControls::FilterControls() :

@@ -9,7 +9,7 @@
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 extern "C" {
 #   include <libevdev/libevdev.h>

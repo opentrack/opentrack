@@ -31,7 +31,7 @@ void TrackerDll::getIcon(QIcon *icon)
 
 
 #ifdef OPENTRACK_API
-#   include "facetracknoir/global-settings.h"
+#   include "facetracknoir/plugin-support.h"
 extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 #else
 #   pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")

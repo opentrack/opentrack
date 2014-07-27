@@ -8,7 +8,7 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_aruco.h"
 #include "ui_aruco-trackercontrols.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <cmath>
 #include <QMutexLocker>
 #include <aruco.h>
@@ -457,7 +457,7 @@ extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDial
 TrackerControls::TrackerControls()
 {
     tracker = nullptr;
-    calib_timer.setInterval(100);
+    calib_timer.setInterval(200);
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     tie_setting(s.camera_index, ui.cameraName);

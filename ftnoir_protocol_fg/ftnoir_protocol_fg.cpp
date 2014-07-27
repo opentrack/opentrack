@@ -26,7 +26,7 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #include "ftnoir_protocol_fg.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
 // For Todd and Arda Kutlu

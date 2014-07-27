@@ -10,7 +10,7 @@
 
 #ifdef OPENTRACK_API
 #   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#   include "facetracknoir/global-settings.h"
+#   include "facetracknoir/plugin-support.h"
 #endif
 #include "ftnoir_tracker_pt_settings.h"
 #include "frame_observer.h"

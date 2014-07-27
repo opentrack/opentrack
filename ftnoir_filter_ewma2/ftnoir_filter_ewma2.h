@@ -27,7 +27,7 @@
 #define INCLUDED_FTN_FILTER_H
 
 #include "ftnoir_filter_base/ftnoir_filter_base.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>

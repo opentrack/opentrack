@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_tracker_udp.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 TrackerControls::TrackerControls() :
 QWidget()
