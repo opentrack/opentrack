@@ -33,7 +33,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <math.h>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <windows.h>
 
 #define FT_PROGRAMID "FT_ProgramID"

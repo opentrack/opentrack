@@ -27,7 +27,7 @@
 #pragma once
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_ftcontrols.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "fttypes.h"
 #include <QMessageBox>
 #include <QSettings>

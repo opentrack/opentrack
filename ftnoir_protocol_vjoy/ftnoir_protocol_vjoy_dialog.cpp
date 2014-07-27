@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_vjoy.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 VJoyControls::VJoyControls() : QWidget()
 {
