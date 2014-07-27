@@ -217,7 +217,7 @@ macro(opentrack_library n)
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
 
-file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp" "opentrack-api/*.h" "facetracknoir/global-settings.h")
+file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp" "opentrack-api/*.h" "facetracknoir/plugin-support.cpp")
 
 opentrack_module(opentrack-bin facetracknoir)
 opentrack_module(opentrack-pose-widget ftnoir_posewidget)
