@@ -24,7 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_tracker_udp.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {

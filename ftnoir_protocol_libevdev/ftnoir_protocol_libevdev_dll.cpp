@@ -1,6 +1,6 @@
 #include "ftnoir_protocol_libevdev.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FTNoIR_ProtocolDll::FTNoIR_ProtocolDll() {
 }

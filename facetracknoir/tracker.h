@@ -10,7 +10,7 @@
 #include <QPainterPath>
 #include <QDebug>
 #include <QMutex>
-#include "global-settings.h"
+#include "plugin-support.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 #include <vector>
 

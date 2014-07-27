@@ -1,7 +1,7 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_hydra.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {

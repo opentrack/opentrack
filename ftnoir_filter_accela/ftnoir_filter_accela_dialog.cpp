@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <QDoubleSpinBox>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FilterControls::FilterControls() :
     accela_filter(nullptr)

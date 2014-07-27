@@ -9,7 +9,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QMutexLocker>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 using namespace std;
 
 FTNoIR_Filter::FTNoIR_Filter() : first_run(true)

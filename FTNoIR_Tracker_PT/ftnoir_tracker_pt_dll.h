@@ -7,7 +7,7 @@
 
 #if defined(OPENTRACK_API)
 #   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#   include "facetracknoir/global-settings.h"
+#   include "facetracknoir/plugin-support.h"
 #else
 #   include "../ftnoir_tracker_base/ftnoir_tracker_base.h"
 #endif

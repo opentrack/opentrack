@@ -39,7 +39,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "compat/compat.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
 

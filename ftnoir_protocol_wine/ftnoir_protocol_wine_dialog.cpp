@@ -1,6 +1,6 @@
 #include "ftnoir_protocol_wine.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.

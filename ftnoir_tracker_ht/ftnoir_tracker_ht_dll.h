@@ -6,7 +6,7 @@
  */
 
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 //-----------------------------------------------------------------------------
 class TrackerDll : public Metadata

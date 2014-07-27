@@ -26,7 +26,7 @@
 #include "math.h"
 #include <QDebug>
 #include <QWidget>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <algorithm>
 #include <QMutexLocker>
 

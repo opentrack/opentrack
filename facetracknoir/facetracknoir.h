@@ -55,7 +55,7 @@ using namespace options;
 
 #include "facetracknoir/main-settings.hpp"
 
-#include "global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include "tracker.h"
 #include "facetracknoir/shortcuts.h"
 

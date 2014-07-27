@@ -28,7 +28,7 @@
 #include "ftnoir_protocol_fg.h"
 #include <QObject>
 #include <QFile>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.

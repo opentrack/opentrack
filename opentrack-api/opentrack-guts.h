@@ -12,7 +12,7 @@
 #include <QString>
 #include <QApplication>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <memory>
 
 typedef ITracker* opentrack_tracker;

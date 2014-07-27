@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_libevdev.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 LibevdevControls::LibevdevControls() : QWidget()
 {
