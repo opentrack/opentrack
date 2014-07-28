@@ -54,8 +54,6 @@ static HANDLE hFTMutex = 0;
 static const char* dllVersion = "1.0.0.0";
 static const char* dllProvider = "FreeTrack";
 
-static unsigned short gameid = 0;
-
 //
 // DllMain gets called, when the DLL is (un)loaded or a process attaches.
 //
@@ -89,31 +87,11 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 #pragma comment(linker, "/export:FTGetData@4=FTGetData")
 FT_EXPORT(bool) FTGetData(PFreetrackData data)
 {
-  static int prevDataID = 0;
-  static int dlyTrackingOff = 0;
-
-
 //  dbg_report("NP_GetData called.");
   if (FTCreateMapping() == false) return false;
 
   if (hFTMutex && WaitForSingleObject(hFTMutex, 5) == WAIT_OBJECT_0) {
 	if (pMemData) {
-
-		//
-		// When FaceTrackNoIR does not update frames (any more), don't update the data.
-		//
-		if (prevDataID != pMemData->data.DataID) {
-			memcpy(data, &pMemData->data, sizeof(TFreeTrackData));
-			dlyTrackingOff = 0;
-		}
-		else {
-			dlyTrackingOff++;
-			if (dlyTrackingOff > 20) {
-				dlyTrackingOff = 100;
-			}
-		}
-		prevDataID = pMemData->data.DataID;
-		
 		//
 		// Limit the range of DataID
 		//
@@ -122,11 +100,6 @@ FT_EXPORT(bool) FTGetData(PFreetrackData data)
 		}
 		data->DataID = pMemData->data.DataID;
 
-		//
-		// Send the ID to FaceTrackNoIR, so it can display the game-name.
-		// This could be a FreeTrack-specific ID
-		//
-        pMemData->GameID = gameid;
 	}
 	ReleaseMutex(hFTMutex);
   }
@@ -145,8 +118,6 @@ FT_EXPORT(bool) FTGetData(PFreetrackData data)
 FT_EXPORT(void) FTReportName( int name )
 {
 	dbg_report("FTReportName request (ID = %d).\n", name);
-	gameid = name;												// They might have really passed the name here... but they didn't!
-	return;
 }
 
 /******************************************************************
@@ -199,24 +170,15 @@ FT_EXPORT(bool) FTCreateMapping(void)
 		                           sizeof( FTMemMap ), 
 								   (LPCSTR) FT_MM_DATA );
 
-	if ( ( hFTMemMap != 0 ) && ( GetLastError() == ERROR_ALREADY_EXISTS ) ) {
-		dbg_report("FTCreateMapping: Mapping already exists.\n");
-		CloseHandle( hFTMemMap );
-		hFTMemMap = 0;
-	}
+    if (hFTMemMap == NULL)
+    {
+        pMemData = NULL;
+        return false;
+    }
 
-	//
-	// Create a new FileMapping, Read/Write access
-	//
-    hFTMemMap = OpenFileMappingA( FILE_MAP_WRITE , false , (LPCSTR) FT_MM_DATA );
-	if ( ( hFTMemMap != 0 ) ) {
-		dbg_report("FTCreateMapping: Mapping opened.\n");
-        pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTMemMap ) );
-	    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
-	}
-	else {
-		return false;
-	}
+    pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTMemMap ) );
+    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
+
 	return true;
 }
 
