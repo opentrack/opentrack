@@ -38,7 +38,8 @@ void Rift_Tracker::GetHeadPoseData(double *data)
     {
         frameTiming = ovrHmd_BeginFrameTiming(hmd, 0); 
         ovrSensorState ss = ovrHmd_GetSensorState(hmd, frameTiming.ScanoutMidpointSeconds);
-        if(ss.StatusFlags & (ovrStatus_OrientationTracked   | ovrStatus_PositionTracked)){
+        ovrHmd_EndFrameTiming(hmd);
+        if(ss.StatusFlags & ovrStatus_OrientationTracked) {
             ovrPosef pose = ss.Predicted.Pose;
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
@@ -52,16 +53,18 @@ void Rift_Tracker::GetHeadPoseData(double *data)
                     yaw += s.constant_drift;
                 old_yaw=yaw;
             }
-            if (s.bEnableYaw) {
+            if (s.bEnableYaw)
                 data[Yaw] = yaw * 57.295781f;
-            }
-            if (s.bEnablePitch) {
+            if (s.bEnablePitch)
                 data[Pitch] = pitch * 57.295781f;
-            }
-            if (s.bEnableRoll) {
+            if (s.bEnableRoll)
                 data[Roll] = roll * 57.295781f;
-            }
-            ovrHmd_EndFrameTiming(hmd);
+            if (s.bEnableX)
+                data[TX] = pose.Position.x * 1e-2;
+            if (s.bEnableY)
+                data[TY] = pose.Position.y * 1e-2;
+            if (s.bEnableX)
+                data[TZ] = pose.Position.z * 1e-2;
         }
     }
 }

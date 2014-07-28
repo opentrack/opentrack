@@ -14,6 +14,10 @@ QWidget()
     tie_setting(s.bEnablePitch, ui.chkEnablePitch);
     tie_setting(s.bEnableRoll, ui.chkEnableRoll);
 
+    tie_setting(s.bEnableX, ui.chkEnableX);
+    tie_setting(s.bEnableY, ui.chkEnableY);
+    tie_setting(s.bEnableZ, ui.chkEnableZ);
+
     tie_setting(s.constant_drift, ui.constantDrift);
     tie_setting(s.deadzone, ui.deadzone);
     tie_setting(s.persistence, ui.persistence);
