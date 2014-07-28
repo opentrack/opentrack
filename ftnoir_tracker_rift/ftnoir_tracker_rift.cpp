@@ -60,11 +60,11 @@ void Rift_Tracker::GetHeadPoseData(double *data)
             if (s.bEnableRoll)
                 data[Roll] = roll * 57.295781f;
             if (s.bEnableX)
-                data[TX] = pose.Position.x * 1e-2;
+                data[TX] = pose.Position.x * 1e-3;
             if (s.bEnableY)
-                data[TY] = pose.Position.y * 1e-2;
+                data[TY] = pose.Position.y * 1e-3;
             if (s.bEnableX)
-                data[TZ] = pose.Position.z * 1e-2;
+                data[TZ] = pose.Position.z * 1e-3;
         }
     }
 }
