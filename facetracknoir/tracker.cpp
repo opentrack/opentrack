@@ -20,7 +20,6 @@
 
 #if defined(_WIN32)
 #   include <windows.h>
-#	include <mmsystem.h> // doesn't build on mingw32 g++ without it
 #endif
 
 Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
