@@ -53,6 +53,8 @@ private:
     JOYSTICK_POSITION_V2 vJoyPosition;					// The structure that holds the full position data
     LONG lAxesMax[6], lAxesMin[6];      // max and min logical value of every axis
     BYTE bytevJoyID; // have no idea why it use weird way like that but since it's in the official docs...
+
+    long calcAxisValue(double rawValue, long axisMax, long axisMin, long maxAngle);
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.

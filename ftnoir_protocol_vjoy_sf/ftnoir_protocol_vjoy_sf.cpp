@@ -109,6 +109,21 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     bytevJoyID = (BYTE) s.intvJoyID;
     vJoyPosition.bDevice = bytevJoyID;
 
+
+    if(hasAxisX)
+        vJoyPosition.wAxisX = calcAxisValue(headpose[Yaw], lAxesMax[0], lAxesMin[0], 180);
+    if(hasAxisY)
+        vJoyPosition.wAxisY = calcAxisValue(headpose[Pitch], lAxesMax[1], lAxesMin[1], 90);
+    if(hasAxisZ)
+        vJoyPosition.wAxisZ = calcAxisValue(headpose[Roll], lAxesMax[2], lAxesMin[2], 180);
+    if(hasAxisRX)
+        vJoyPosition.wAxisXRot = calcAxisValue(headpose[TX], lAxesMax[3], lAxesMin[3], 100);
+    if(hasAxisRY)
+        vJoyPosition.wAxisYRot = calcAxisValue(headpose[TY], lAxesMax[4], lAxesMin[4], 100);
+    if(hasAxisRZ)
+        vJoyPosition.wAxisZRot = calcAxisValue(headpose[TZ], lAxesMax[5], lAxesMin[5], 100);
+
+    /****
     if(hasAxisX)
         vJoyPosition.wAxisX = std::min<int>(lAxesMax[0], std::max<int>(lAxesMin[0], headpose[Yaw] * lAxesMax[0] / 180.0));
     if(hasAxisY)
@@ -121,6 +136,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
         vJoyPosition.wAxisYRot = std::min<int>(lAxesMax[4], std::max<int>(lAxesMin[4], headpose[TY] * lAxesMax[4] / 100.0));
     if(hasAxisRZ)
         vJoyPosition.wAxisZRot = std::min<int>(lAxesMax[5], std::max<int>(lAxesMin[5], headpose[TZ] * lAxesMax[5] / 100.0));
+    ***/
 
     /*** Feed the driver with the position packet
      *   if it fails then wait for input then try to re-acquire device ***/
@@ -129,6 +145,26 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
         qDebug() << "vJoy SF: feeding device " << s.intvJoyID << " failed. Try to stop Open Track, activate the device and start Open Track again.";
     }
 
+}
+
+/***
+ * calc target axis value with given parameters
+ */
+long FTNoIR_Protocol::calcAxisValue(double rawValue, long axisAbsMax, long axisAbsMin, long halfAngle) {
+
+    long axisValue = 0;
+    long axisMiddle = (axisAbsMax - axisAbsMin) / 2;
+    long axisAbsMiddle = axisAbsMax - axisMiddle;
+    double unit = axisMiddle / halfAngle;
+
+    // if(rawValue >= 0)
+    // {
+        axisValue = axisAbsMiddle + std::floor(0.5 + unit * rawValue);
+    // } else {
+    //    axisValue = axisAbsMiddle - std::floor(0.5 + std::abs(unit) * rawValue);
+    // }
+
+    return axisValue;
 }
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
