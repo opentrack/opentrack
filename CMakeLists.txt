@@ -98,6 +98,9 @@ endif()
 IF(WIN32)
     SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
 ENDIF()
+IF(WIN32)
+    SET(SDK_VJOY_SF "" CACHE PATH "vJoy (Sourceforge) SDK path")
+ENDIF()
 SET(SDK_HYDRA "" CACHE PATH "libSixense path")
 SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether target is amd64 (else ia-32)")
 
@@ -239,6 +242,7 @@ opentrack_module(opentrack-proto-wine ftnoir_protocol_wine)
 opentrack_module(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
 opentrack_module(opentrack-proto-simconnect ftnoir_protocol_sc)
 opentrack_module(opentrack-proto-vjoy ftnoir_protocol_vjoy)
+opentrack_module(opentrack-proto-vjoy-sf ftnoir_protocol_vjoy_sf)
 opentrack_module(opentrack-proto-libevdev ftnoir_protocol_libevdev)
 
 # trackers
@@ -329,6 +333,17 @@ if(SDK_VJOY)
         target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
     endif()
 endif()
+
+if(SDK_VJOY_SF)
+    include_directories(${SDK_VJOY_SF})
+    opentrack_library(opentrack-proto-vjoy-sf)
+    if(MSVC)
+        target_link_libraries(opentrack-proto-vjoy-sf ${MY_QT_LIBS} "${SDK_VJOY}/vJoyInterface.lib")
+    else()
+        target_link_libraries(opentrack-proto-vjoy-sf ${MY_QT_LIBS} "${SDK_VJOY}/vJoyInterface.dll")
+    endif()
+endif()
+
 
 if(SDK_ENABLE_LIBEVDEV)
     opentrack_library(opentrack-proto-libevdev)
@@ -517,6 +532,11 @@ endif()
 
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
+# winmm for mingw
+if(MINGW)
+    target_link_libraries(opentrack winmm)
+endif()
+
 if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
@@ -585,6 +605,10 @@ install(TARGETS opentrack DESTINATION .)
 
 if(SDK_VJOY)
     install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
+endif()
+
+if(SDK_VJOY_SF)
+    install(FILES "${SDK_VJOY_SF}/vJoyInterface.dll" DESTINATION .)
 endif()
 
 if(WIN32)

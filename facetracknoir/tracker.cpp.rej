@@ -1,0 +1,9 @@
+diff a/facetracknoir/tracker.cpp b/facetracknoir/tracker.cpp	(rejected hunks)
+@@ -20,6 +20,7 @@
+ 
+ #if defined(_WIN32)
+ #   include <windows.h>
++#   include <mmsystem.h>
+ #endif
+ 
+ Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :

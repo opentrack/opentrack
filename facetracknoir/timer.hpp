@@ -1,6 +1,6 @@
 #pragma once
 #include <time.h>
-#if defined (_WIN32)
+#if defined (_WIN32) && !defined(__MINGW32__)
 #   include <windows.h>
 #   define CLOCK_MONOTONIC 0
 static inline void clock_gettime(int, struct timespec* ts)
