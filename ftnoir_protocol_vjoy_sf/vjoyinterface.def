@@ -1,0 +1,27 @@
+LIBRARY vJoyInterface.dll
+IMPORTS
+	AcquireVJD = _AcquireVJD
+	GetVJDAxisExist = _GetVJDAxisExist
+	GetVJDAxisMax = _GetVJDAxisMax
+	GetVJDAxisMin = _GetVJDAxisMin
+	GetVJDButtonNumber = _GetVJDButtonNumber
+	GetVJDContPovNumber = _GetVJDContPovNumber
+	GetVJDDiscPovNumber = _GetVJDDiscPovNumber
+	GetVJDStatus = _GetVJDStatus
+	GetvJoyManufacturerString = _GetvJoyManufacturerString
+	GetvJoyProductString = _GetvJoyProductString
+	GetvJoySerialNumberString = _GetvJoySerialNumberString
+	GetvJoyVersion = _GetvJoyVersion
+	isVJDExists = _isVJDExists
+	isVJDOpen = _isVJDOpen
+	RelinquishVJD = _RelinquishVJD
+	ResetAll = _ResetAll
+	ResetButtons = _ResetButtons
+	ResetPovs = _ResetPovs
+	ResetVJD = _ResetVJD
+	SetAxis = _SetAxis
+	SetBtn = _SetBtn
+	SetContPov = _SetContPov
+	SetDiscPov = _SetDiscPov
+	UpdateVJD = _UpdateVJD
+	vJoyEnabled = _vJoyEnabled
