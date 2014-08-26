@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UICVJoyControls</class>
- <widget class="QWidget" name="UICVJoyControls">
+ <class>UICVJoySFControls</class>
+ <widget class="QWidget" name="UICVJoySFControls">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -17,7 +17,7 @@
    <string>vJoy (SourceForge)</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="vjoy-sf-protocol.qrc">
+   <iconset>
     <normaloff>:/images/vjoy_sf.png</normaloff>:/images/vjoy_sf.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -101,9 +101,7 @@
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>
- <resources>
-  <include location="vjoy-sf-protocol.qrc"/>
- </resources>
+ <resources/>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
