@@ -69,8 +69,9 @@ public:
 
 private:
     Ui::UICVJoySFControls ui;
+    settings s;
     void save();
-
+    void revert();
 private slots:
     void doOK();
     void doCancel();
@@ -82,5 +83,5 @@ public:
     void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("vJoy SF"); }
     void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("vJoy (Sourceforge)"); }
     void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("vJoy - Virtual Joystick, sourceforge version: http://vjoystick.sourceforge.net"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/vjoy-sf.png"); }
+    void getIcon(QIcon *icon) { *icon = QIcon(":/images/vjoy_sf.png"); }
 };

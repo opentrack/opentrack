@@ -10,14 +10,14 @@
     <x>0</x>
     <y>0</y>
     <width>239</width>
-    <height>92</height>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>vJoy (SourceForge)</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="vjoy-sf-protocol.qrc">
     <normaloff>:/images/vjoy_sf.png</normaloff>:/images/vjoy_sf.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -30,7 +30,17 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>No settings implemented yet!</string>
+      <string>Use virtual joystick with ID:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="sbvJoyID">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>16</number>
      </property>
     </widget>
    </item>
@@ -101,7 +111,9 @@
   <tabstop>btnOK</tabstop>
   <tabstop>btnCancel</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="vjoy-sf-protocol.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
