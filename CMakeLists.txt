@@ -1,5 +1,6 @@
 project(opentrack)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
+cmake_policy(SET CMP0020 NEW)
 
 include(CMakeParseArguments)
 
@@ -58,10 +59,6 @@ if(WIN32 AND MSVC)
 	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
 endif()
 
-if(MINGW)
-    set(SDK_MINGW_PREFIX "" CACHE PATH "mingw prefix")
-endif()
-
 if(SDK_GOOGLE_BREAKPAD AND WIN32)
 	add_definitions(-DOPENTRACK_BREAKPAD)
 	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
@@ -105,18 +102,9 @@ SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-if(MINGW)
-    # qt scripts are broken
-    set(Qt5Gui_user32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libuser32.a)
-    set(Qt5Gui_opengl32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libopengl32.a)
-    set(Qt5Gui_glu32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libglu32.a)
-    set(Qt5Gui_gdi32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libgdi32.a)
-endif()
-
 find_package(OpenCV REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui ${maybe-serial-port} QUIET)
-cmake_policy(SET CMP0020 NEW)
 include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
@@ -130,12 +118,7 @@ set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Path to Aruco static library")
 SET(SDK_OPENCV_STATIC FALSE CACHE BOOL "Whether OpenCV is statically linked")
 if(WIN32)
     set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
-    set(SDK_DIRECTX "" CACHE PATH "Path to DirectX SDK")
     set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
-    if(SDK_DIRECTX)
-        include_directories("${SDK_DIRECTX}/Include")
-        link_directories("${SDK_DIRECTX}/Lib")
-    endif()
 endif()
 
 if(NOT WIN32)
