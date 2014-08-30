@@ -2,8 +2,7 @@
 #include <time.h>
 #if defined (_WIN32)
 #   include <windows.h>
-#   define CLOCK_MONOTONIC 0
-static inline void clock_gettime(int, struct timespec* ts)
+static inline void opentrack_clock_gettime(int, struct timespec* ts)
 {
     static LARGE_INTEGER freq;
 
@@ -20,7 +19,7 @@ static inline void clock_gettime(int, struct timespec* ts)
     ts->tv_sec = d.QuadPart / 1000000000L;
     ts->tv_nsec = d.QuadPart % 1000000000L;
 }
-
+#	define clock_gettime opentrack_clock_gettime
 #else
 #   if defined(__MACH__)
 #       define CLOCK_MONOTONIC 0
