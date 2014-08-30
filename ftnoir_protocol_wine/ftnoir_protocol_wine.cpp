@@ -4,7 +4,6 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
     if (lck_shm.success()) {
@@ -14,7 +13,6 @@ FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeo
     wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/opentrack-wrapper-wine.exe.so"));
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
     if (shm) {
