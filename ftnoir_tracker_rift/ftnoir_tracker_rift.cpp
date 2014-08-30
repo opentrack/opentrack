@@ -24,11 +24,12 @@ void Rift_Tracker::StartTracker(QFrame*)
     hmd = ovrHmd_Create(0);
     if (hmd)
     {
-        ovrHmd_GetDesc(hmd, &hmdDesc);
-        ovrHmd_StartSensor(hmd, ovrSensorCap_Orientation| ovrSensorCap_YawCorrection | ovrSensorCap_Position, ovrSensorCap_Orientation);
-    }else{
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
-	}
+        ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
+    }
+    else
+    {
+        QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+    }
 }
 
 
@@ -36,11 +37,12 @@ void Rift_Tracker::GetHeadPoseData(double *data)
 {
     if (hmd)
     {
-        frameTiming = ovrHmd_BeginFrameTiming(hmd, 0); 
-        ovrSensorState ss = ovrHmd_GetSensorState(hmd, frameTiming.ScanoutMidpointSeconds);
-        ovrHmd_EndFrameTiming(hmd);
+	ovrHSWDisplayState hsw;	
+	if (ovrHmd_GetHSWDisplayState(hmd, &hsw), hsw.Displayed)
+            ovrHmd_DismissHSWDisplay(hmd);
+        ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, frameTiming.ScanoutMidpointSeconds);
         if(ss.StatusFlags & ovrStatus_OrientationTracked) {
-            ovrPosef pose = ss.Predicted.Pose;
+            auto pose = ss.HeadPose.ThePose;
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
