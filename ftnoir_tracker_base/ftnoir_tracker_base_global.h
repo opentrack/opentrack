@@ -8,7 +8,7 @@
 #    if !defined(_MSC_VER)
 #      define FTNOIR_TRACKER_BASE_EXPORT __attribute__ ((visibility ("default"))) Q_DECL_EXPORT
 #    else
-#     define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_EXPORT
+#     error "MSVC support removed"
 #   endif
 #   else
 #       define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT

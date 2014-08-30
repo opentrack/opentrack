@@ -26,8 +26,8 @@ class Hydra_Tracker : public ITracker
 public:
 	Hydra_Tracker();
     ~Hydra_Tracker();
-    void StartTracker(QFrame *) virt_override;
-    void GetHeadPoseData(double *data) virt_override;
+    void StartTracker(QFrame *) override;
+    void GetHeadPoseData(double *data) override;
     volatile bool should_quit;
 protected:
 	void run();												// qthread override run method
@@ -36,7 +36,7 @@ private:
 	bool isCalibrated;
     double newHeadPose[6];								// Structure with new headpose
     QMutex mutex;
-    virtual int preferredHz() virt_override { return 250; }
+    virtual int preferredHz() override { return 250; }
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog

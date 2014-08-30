@@ -3,19 +3,13 @@
 #if defined(_WIN32)
 #   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION "@0"
 #   ifdef _MSC_VER
-#       define MAYBE_STDCALL_UNDERSCORE "_"
+#       error "No support for MSVC anymore"
 #else
 #       define MAYBE_STDCALL_UNDERSCORE ""
 #   endif
 #else
 #   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION ""
 #   define MAYBE_STDCALL_UNDERSCORE ""
-#endif
-
-#ifdef _MSC_VER
-#   define virt_override
-#else
-#   define virt_override override
 #endif
 
 #include <cstdio>

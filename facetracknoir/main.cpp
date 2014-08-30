@@ -32,34 +32,8 @@
 #include <QStringList>
 #include <memory>
 
-#if defined(_WIN32) && defined(_MSC_VER)
-#   include <windows.h>
-#	ifdef OPENTRACK_BREAKPAD
-#		include <exception_handler.h>
-using namespace google_breakpad;
-bool dumpCallback(const wchar_t* dump_path,
-                                 const wchar_t* minidump_id,
-                                 void* context,
-                                 EXCEPTION_POINTERS* exinfo,
-                                 MDRawAssertionInfo* assertion,
-                                 bool succeeded)
-{
-    MessageBoxA(GetDesktopWindow(),
-        "Generating crash dump!\r\n"
-        "Please send the .dmp file to <sthalik@misaki.pl> to help us improve the code.",
-        "opentrack crashed :(",
-        MB_OK | MB_ICONERROR);
-	return succeeded;
-}
-
-#	endif
-#endif
-
 int main(int argc, char** argv)
 {
-#if defined(OPENTRACK_BREAKPAD) && defined(_MSC_VER)
-	auto handler = new ExceptionHandler(L".", nullptr, dumpCallback, nullptr, -1);
-#endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
     auto w = std::make_shared<FaceTrackNoIR>();

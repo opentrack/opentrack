@@ -25,9 +25,9 @@ class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void reset() virt_override;
+    void reset() override;
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position) virt_override;
+                            double *new_camera_position) override;
     cv::KalmanFilter kalman;
     double prev_position[6];
     double prev2_filter_pos[6];
@@ -56,8 +56,8 @@ public:
         show();
     }
     Ui::KalmanUICFilterControls ui;
-    virtual void registerFilter(IFilter*) virt_override {}
-    virtual void unregisterFilter() virt_override {}
+    virtual void registerFilter(IFilter*) override {}
+    virtual void unregisterFilter() override {}
 public slots:
     void doOK();
     void doCancel();
