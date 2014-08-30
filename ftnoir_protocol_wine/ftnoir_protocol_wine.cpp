@@ -50,23 +50,10 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     }
 }
 
-//
-// Check if the Client DLL exists and load it (to test it), if so.
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {
     return lck_shm.success();
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
 
 extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
 {

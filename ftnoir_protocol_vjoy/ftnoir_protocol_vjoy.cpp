@@ -2,13 +2,11 @@
 #include "facetracknoir/plugin-support.h"
 #include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
     VJoy_Initialize("", "");
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
     VJoy_Shutdown();

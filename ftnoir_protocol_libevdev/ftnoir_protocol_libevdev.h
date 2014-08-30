@@ -33,7 +33,6 @@ private:
     struct libevdev_uinput* uidev;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class LibevdevControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
