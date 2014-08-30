@@ -29,7 +29,6 @@
 #include <QFile>
 #include "facetracknoir/plugin-support.h"
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 }
