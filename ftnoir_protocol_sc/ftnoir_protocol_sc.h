@@ -128,7 +128,6 @@ private:
     settings s;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class SCControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
@@ -144,9 +143,6 @@ private slots:
     void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
