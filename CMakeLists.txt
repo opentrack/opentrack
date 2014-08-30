@@ -2,6 +2,10 @@ project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
 cmake_policy(SET CMP0020 NEW)
 
+if(MSVC)
+	message(FATAL_ERROR "Support for MSVC removed due to incomplete C++11 support")
+endif()
+
 include(CMakeParseArguments)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
@@ -47,43 +51,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
 
-if(MSVC)
-    add_definitions(-DNOMINMAX)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     add_definitions(-std=c++11)
 endif()
 
-if(WIN32 AND MSVC)
-	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
-endif()
-
-if(SDK_GOOGLE_BREAKPAD AND WIN32)
-	add_definitions(-DOPENTRACK_BREAKPAD)
-	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
-	include_directories("${SDK_GOOGLE_BREAKPAD}/src/")
-endif()
-
-if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
-		find_path (WIN8_SDK_ROOT_DIR
-				Include/um/windows.h
-				PATHS
-						"$ENV{ProgramFiles}/Windows Kits/8.0"
-						"$ENV{ProgramFiles(x86)}/Windows Kits/8.0"
-						DOC "Windows 8 SDK root directory"
-		)
-
-                if(WIN8_SDK_ROOT_DIR)
-		  SET(CMAKE_LIBRARY_PATH "${WIN8_SDK_ROOT_DIR}/Lib/win8/um/x86")
-                endif()
-endif()
-
-if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
-	SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
-	SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
-	SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
-endif()
 
 if(UNIX)
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
@@ -162,15 +133,7 @@ set(EXTRA-MOCS "${CMAKE_SOURCE_DIR}/facetracknoir/options.h")
 
 function(link_with_dinput8 n)
 	if(WIN32)
-		if(MSVC)
-			target_link_libraries(${n}
-							  "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
-							  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-							  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-							  uuid)		
-		else()
-			target_link_libraries(${n} dinput8 dxguid strmiids)
-		endif()
+		target_link_libraries(${n} dinput8 dxguid strmiids)
 	endif()
 endfunction()
 
@@ -306,11 +269,7 @@ opentrack_library(opentrack-proto-fgfs)
 if(SDK_VJOY)
     include_directories(${SDK_VJOY})
     opentrack_library(opentrack-proto-vjoy)
-    if(MSVC)
-        target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.lib")
-    else()
-        target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
-    endif()
+    target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
 endif()
 
 if(SDK_ENABLE_LIBEVDEV)
@@ -321,9 +280,6 @@ if(SDK_ENABLE_LIBEVDEV)
 endif()
 
 if(SDK_FSUIPC)
-    if(MSVC)
-            set(link-flags "/NODEFAULTLIB:libc")
-    endif()
     opentrack_library(opentrack-proto-fsuipc LINK "${link-flags}")
     target_link_libraries(opentrack-proto-fsuipc "${SDK_FSUIPC}/FSUIPC_User.lib")
 endif()
@@ -384,12 +340,6 @@ if(SDK_ARUCO_LIBPATH)
     include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
     opentrack_library(opentrack-tracker-aruco)
     target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-    if(WIN32 AND MSVC)
-        target_link_libraries(opentrack-tracker-aruco
-                      "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                      uuid)
-    endif()
 endif()
 
 link_with_dinput8(opentrack-tracker-ht)
@@ -411,24 +361,16 @@ if(SDK_RIFT)
         set(link-flags "-framework CoreFoundation -framework CoreGraphics -framework IOKit -framework Quartz")
         set(c-flags "-fno-strict-aliasing")
     else()
-        if(MSVC)
-            set(link-flags "/NODEFAULTLIB:LIBCMT")
-        else()
-            set(c-flags "-fno-strict-aliasing")
-        endif()
+        set(c-flags "-fno-strict-aliasing")
     endif()
     opentrack_library(opentrack-tracker-rift LINK "${link-flags}" COMPILE "${c-flags}")
-    if(MSVC)
-            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/Lib/Win32/libovr.lib" winmm.lib setupapi.lib)
+    if(WIN32)
+        target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm setupapi ws2_32 imagehlp wbemuuid)
     else()
-        if(WIN32)
-            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm setupapi)
+        if(NOT APPLE)
+		target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
         else()
-            if(NOT APPLE)
-                target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
-            else()
-                target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
-            endif()
+		target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
         endif()
     endif()
 endif()
@@ -516,21 +458,10 @@ if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
-if(MSVC)
-    SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
-endif()
 target_link_libraries(opentrack opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
     target_link_libraries(opentrack-api dl)
-endif()
-if(SDK_GOOGLE_BREAKPAD)
-    if(MSVC)
-        target_link_libraries(opentrack
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
-    endif()
 endif()
 
 # make install
@@ -572,10 +503,4 @@ endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
-endif()
-
-if(MSVC)
-    file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
-    file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
-    install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
 endif()

@@ -106,17 +106,6 @@ typedef struct _JOYSTICK_STATE
         UINT32 Buttons;                         // 32 Buttons
 } JOYSTICK_STATE, * PJOYSTICK_STATE;
 
-#include <poppack.h>
-
-#undef EXTERN_C
-#if _MSC_VER
-#	define EXTERN_C
-#else
-#	define EXTERN_C extern "C"
-#endif
-#if _MSC_VER
-#	pragma comment(linker, "/implib:vjoy.def")
-#endif
 EXTERN_C BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
 EXTERN_C VOID __stdcall VJoy_Shutdown();
 EXTERN_C BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);

@@ -44,7 +44,7 @@
 #include <iostream>
 
 #ifdef _MSC_VER
-#   define LIB_PREFIX ""
+#   error "No support for MSVC anymore"
 #else
 #   define LIB_PREFIX "lib"
 #endif

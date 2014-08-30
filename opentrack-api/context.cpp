@@ -12,7 +12,7 @@
 #include <iostream>
 
 #ifdef _MSC_VER
-#   define LIB_PREFIX ""
+#   error "MSVC support removed"
 #else
 #   define LIB_PREFIX "lib"
 #endif
