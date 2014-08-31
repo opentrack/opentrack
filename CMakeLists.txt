@@ -163,8 +163,6 @@ macro(opentrack_library n)
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
 
-file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp" "opentrack-api/*.h" "facetracknoir/plugin-support.cpp")
-
 opentrack_module(opentrack-bin facetracknoir)
 opentrack_module(opentrack-pose-widget ftnoir_posewidget)
 opentrack_module(opentrack-spline-widget qfunctionconfigurator)
@@ -430,16 +428,6 @@ if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
 endif()
 
-add_library(opentrack-api SHARED ${opentrack-lib-c})
-target_link_libraries(opentrack-api ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-api PROPERTIES
-        LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt"
-        COMPILE_FLAGS "-fvisibility=protected  -fvisibility-inlines-hidden"
-        COMPILE_DEFINITIONS IN_OPENTRACK_API
-    )
-endif()
-
 set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
 if(UNIX OR APPLE)
@@ -461,7 +449,6 @@ endif()
 target_link_libraries(opentrack opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
-    target_link_libraries(opentrack-api dl)
 endif()
 
 # make install
@@ -488,7 +475,6 @@ if(NOT WIN32 AND SDK_WINE_PREFIX)
 endif()
 
 install(TARGETS
-        opentrack-api
         opentrack-compat
         opentrack-csv
         opentrack-pose-widget
