@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>239</width>
-    <height>126</height>
+    <width>392</width>
+    <height>115</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,21 +28,44 @@
   </property>
   <layout class="QVBoxLayout" name="_vertical_layout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Use virtual joystick with ID:</string>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="sbvJoyID">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>16</number>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Use virtual joystick with ID:</string>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="sbvJoyID">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>16</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblvJoyStatus">
+       <property name="text">
+        <string>Unavailable</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

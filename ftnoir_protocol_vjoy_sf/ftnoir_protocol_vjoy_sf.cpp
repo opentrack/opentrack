@@ -6,16 +6,16 @@
 /** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-
+    intvJoyID = s.intvJoyID;
 }
 
 /** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-    VjdStat status = GetVJDStatus(s.intvJoyID);
+    VjdStat status = GetVJDStatus(intvJoyID);
     if(status == VJD_STAT_OWN)
     {
-            RelinquishVJD(s.intvJoyID);
+            RelinquishVJD(intvJoyID);
             qDebug() << "vJoy SF: Relinquished device.";
     } else {
         qDebug() << "vJoy SF: Can't relinquish device, it's in unappropriate state.";
@@ -37,67 +37,67 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
            << "Version Number: " << TEXT(GetvJoySerialNumberString());
 
     // Get the state of the requested device
-    VjdStat status = GetVJDStatus(s.intvJoyID);
+    VjdStat status = GetVJDStatus(intvJoyID);
     switch (status)
     {
         case VJD_STAT_OWN:
-            qDebug() << "vJoy SF: Device " << TEXT(s.intvJoyID) << " is already owned by this feeder.";
+            qDebug() << "vJoy SF: Device " << TEXT(intvJoyID) << " is already owned by this feeder.";
             break;
         case VJD_STAT_FREE:
-            qDebug() << "vJoy SF: Device " << TEXT(s.intvJoyID) << " is free.";
+            qDebug() << "vJoy SF: Device " << TEXT(intvJoyID) << " is free.";
             break;
         case VJD_STAT_BUSY:
-            qDebug() << "vJoy SF: Device " << TEXT(s.intvJoyID) << " is already owned by another feeder. Cannot continue.";
+            qDebug() << "vJoy SF: Device " << TEXT(intvJoyID) << " is already owned by another feeder. Cannot continue.";
             return false;
         case VJD_STAT_MISS:
-            qDebug() << "vJoy SF: Device " << TEXT(s.intvJoyID) << " is not installed or disabled. Cannot continue.";
+            qDebug() << "vJoy SF: Device " << TEXT(intvJoyID) << " is not installed or disabled. Cannot continue.";
             return false;
         default:
-            qDebug() << "vJoy SF: Device " << TEXT(s.intvJoyID) << " general error. Cannot continue";
+            qDebug() << "vJoy SF: Device " << TEXT(intvJoyID) << " general error. Cannot continue";
             return false;
     };
 
-    hasAxisX  = GetVJDAxisExist(s.intvJoyID, HID_USAGE_X);
-    hasAxisY  = GetVJDAxisExist(s.intvJoyID, HID_USAGE_Y);
-    hasAxisZ  = GetVJDAxisExist(s.intvJoyID, HID_USAGE_Z);
-    hasAxisRX = GetVJDAxisExist(s.intvJoyID, HID_USAGE_RX);
-    hasAxisRX = GetVJDAxisExist(s.intvJoyID, HID_USAGE_RY);
-    hasAxisRZ = GetVJDAxisExist(s.intvJoyID, HID_USAGE_RZ);
+    hasAxisX  = GetVJDAxisExist(intvJoyID, HID_USAGE_X);
+    hasAxisY  = GetVJDAxisExist(intvJoyID, HID_USAGE_Y);
+    hasAxisZ  = GetVJDAxisExist(intvJoyID, HID_USAGE_Z);
+    hasAxisRX = GetVJDAxisExist(intvJoyID, HID_USAGE_RX);
+    hasAxisRX = GetVJDAxisExist(intvJoyID, HID_USAGE_RY);
+    hasAxisRZ = GetVJDAxisExist(intvJoyID, HID_USAGE_RZ);
 
     if(hasAxisX){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_X, &lAxesMax[0]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_X, &lAxesMin[0]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_X, &lAxesMax[0]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_X, &lAxesMin[0]);
     }
     if(hasAxisY){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_Y, &lAxesMax[1]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_Y, &lAxesMin[1]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_Y, &lAxesMax[1]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_Y, &lAxesMin[1]);
     }
     if(hasAxisZ){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_Z, &lAxesMax[2]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_Z, &lAxesMin[2]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_Z, &lAxesMax[2]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_Z, &lAxesMin[2]);
     }
     if(hasAxisRX){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_RX, &lAxesMax[3]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_RX, &lAxesMin[3]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_RX, &lAxesMax[3]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_RX, &lAxesMin[3]);
     }
     if(hasAxisRY){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_RY, &lAxesMax[4]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_RY, &lAxesMin[4]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_RY, &lAxesMax[4]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_RY, &lAxesMin[4]);
     }
     if(hasAxisRZ){
-        GetVJDAxisMax(s.intvJoyID, HID_USAGE_RZ, &lAxesMax[5]);
-        GetVJDAxisMin(s.intvJoyID, HID_USAGE_RZ, &lAxesMin[5]);
+        GetVJDAxisMax(intvJoyID, HID_USAGE_RZ, &lAxesMax[5]);
+        GetVJDAxisMin(intvJoyID, HID_USAGE_RZ, &lAxesMin[5]);
     }
 
     // Acquire the target
-    if ((status == VJD_STAT_OWN) || ((status == VJD_STAT_FREE) && (!AcquireVJD(s.intvJoyID))))
+    if ((status == VJD_STAT_OWN) || ((status == VJD_STAT_FREE) && (!AcquireVJD(intvJoyID))))
     {
-        qDebug() << "vJoy SF: Failed to acquire vJoy device number" << s.intvJoyID;
+        qDebug() << "vJoy SF: Failed to acquire vJoy device number" << intvJoyID;
         return false;
     }
     else
     {
-        qDebug() << "vJoy SF: Acquired vJoy device number %d" << s.intvJoyID;
+        qDebug() << "vJoy SF: Acquired vJoy device number %d" << intvJoyID;
     }
 
     return true;
@@ -106,9 +106,8 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
 
     // have no idea why it use weird way like that but since it's in the official docs...
-    bytevJoyID = (BYTE) s.intvJoyID;
+    bytevJoyID = (BYTE) intvJoyID;
     vJoyPosition.bDevice = bytevJoyID;
-
 
     if(hasAxisX)
         vJoyPosition.wAxisX = calcAxisValue(headpose[Yaw], lAxesMax[0], lAxesMin[0], 180);
@@ -123,26 +122,11 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     if(hasAxisRZ)
         vJoyPosition.wAxisZRot = calcAxisValue(headpose[TZ], lAxesMax[5], lAxesMin[5], 100);
 
-    /****
-    if(hasAxisX)
-        vJoyPosition.wAxisX = std::min<int>(lAxesMax[0], std::max<int>(lAxesMin[0], headpose[Yaw] * lAxesMax[0] / 180.0));
-    if(hasAxisY)
-        vJoyPosition.wAxisY = std::min<int>(lAxesMax[1], std::max<int>(lAxesMin[1], headpose[Pitch] * lAxesMax[1] / 90.0));
-    if(hasAxisZ)
-        vJoyPosition.wAxisZ = std::min<int>(lAxesMax[2], std::max<int>(lAxesMin[2], headpose[Roll] * lAxesMax[2] / 180.0));
-    if(hasAxisRX)
-        vJoyPosition.wAxisXRot = std::min<int>(lAxesMax[3], std::max<int>(lAxesMin[3], headpose[TX] * lAxesMax[3] / 100.0));
-    if(hasAxisRY)
-        vJoyPosition.wAxisYRot = std::min<int>(lAxesMax[4], std::max<int>(lAxesMin[4], headpose[TY] * lAxesMax[4] / 100.0));
-    if(hasAxisRZ)
-        vJoyPosition.wAxisZRot = std::min<int>(lAxesMax[5], std::max<int>(lAxesMin[5], headpose[TZ] * lAxesMax[5] / 100.0));
-    ***/
-
     /*** Feed the driver with the position packet
      *   if it fails then wait for input then try to re-acquire device ***/
-    if (!UpdateVJD(s.intvJoyID, (PVOID)&vJoyPosition))
+    if (!UpdateVJD(intvJoyID, (PVOID)&vJoyPosition))
     {
-        qDebug() << "vJoy SF: feeding device " << s.intvJoyID << " failed. Try to stop Open Track, activate the device and start Open Track again.";
+        qDebug() << "vJoy SF: feeding device " << intvJoyID << " failed. Try to stop Open Track, activate the device and start Open Track again.";
     }
 
 }
@@ -150,19 +134,14 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
 /***
  * calc target axis value with given parameters
  */
-long FTNoIR_Protocol::calcAxisValue(double rawValue, long axisAbsMax, long axisAbsMin, long halfAngle) {
+LONG FTNoIR_Protocol::calcAxisValue(DOUBLE rawValue, LONG axisAbsMax, LONG axisAbsMin, LONG halfAngle) {
 
-    long axisValue = 0;
-    long axisMiddle = (axisAbsMax - axisAbsMin) / 2;
-    long axisAbsMiddle = axisAbsMax - axisMiddle;
-    double unit = axisMiddle / halfAngle;
+    LONG axisValue = 0;
+    LONG axisMiddle = (axisAbsMax - axisAbsMin) / 2;
+    LONG axisAbsMiddle = axisAbsMax - axisMiddle;
+    DOUBLE unit = axisMiddle / halfAngle;
 
-    // if(rawValue >= 0)
-    // {
-        axisValue = axisAbsMiddle + std::floor(0.5 + unit * rawValue);
-    // } else {
-    //    axisValue = axisAbsMiddle - std::floor(0.5 + std::abs(unit) * rawValue);
-    // }
+    axisValue = axisAbsMiddle + std::floor(0.5 + unit * rawValue);
 
     return axisValue;
 }
