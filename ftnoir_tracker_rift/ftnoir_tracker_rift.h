@@ -45,8 +45,6 @@ protected:
 private:
     double old_yaw;
     ovrHmd hmd;
-    ovrHmdDesc hmdDesc;
-    ovrFrameTiming frameTiming;
     settings s;
 };
 

@@ -40,7 +40,7 @@ void Rift_Tracker::GetHeadPoseData(double *data)
 	ovrHSWDisplayState hsw;	
 	if (ovrHmd_GetHSWDisplayState(hmd, &hsw), hsw.Displayed)
             ovrHmd_DismissHSWDisplay(hmd);
-        ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, frameTiming.ScanoutMidpointSeconds);
+        ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, 0);
         if(ss.StatusFlags & ovrStatus_OrientationTracked) {
             auto pose = ss.HeadPose.ThePose;
             Quatf quat = pose.Orientation;
