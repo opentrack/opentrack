@@ -489,13 +489,7 @@ void TrackerControls::toggleCalibrate()
 void TrackerControls::cleanupCalib()
 {
     if (calib_timer.isActive())
-    {
         calib_timer.stop();
-        auto pos = calibrator.get_estimate() * .1;
-        s.headpos_x = pos(0);
-        s.headpos_y = pos(1);
-        s.headpos_z = pos(2);
-    }
 }
 
 void TrackerControls::update_tracker_calibration()
