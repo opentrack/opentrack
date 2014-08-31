@@ -26,12 +26,6 @@
 #include <QLabel>
 #include <QCoreApplication>
 
-#ifdef __GNUC__
-#   define ov override
-#else
-#   define ov
-#endif
-
 #include <QDebug>
 
 namespace options {
