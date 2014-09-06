@@ -189,7 +189,7 @@ opentrack_module(opentrack-proto-libevdev ftnoir_protocol_libevdev)
 
 opentrack_module(opentrack-tracker-ht ftnoir_tracker_ht)
 opentrack_module(opentrack-tracker-aruco ftnoir_tracker_aruco)
-opentrack_module(opentrack-tracker-pt FTNoIR_Tracker_PT)
+opentrack_module(opentrack-tracker-pt ftnoir_tracker_pt)
 opentrack_module(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_module(opentrack-tracker-joystick ftnoir_tracker_joystick)
 opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
