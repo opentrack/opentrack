@@ -29,7 +29,7 @@
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
-#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <memory>
 #endif
 #include <vector>
 
@@ -56,7 +56,7 @@ public:
 
 protected:
 	// --- MutexedFrameProvider interface ---
-	virtual bool get_frame_and_points(cv::Mat& frame, boost::shared_ptr< std::vector<cv::Vec2f> >& points);
+	virtual bool get_frame_and_points(cv::Mat& frame, std::shared_ptr< std::vector<cv::Vec2f> >& points);
 
 	// --- thread ---
 	QMutex mutex;
