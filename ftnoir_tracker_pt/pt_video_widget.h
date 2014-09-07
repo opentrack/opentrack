@@ -16,7 +16,7 @@
 #   include <QGLWidget>
 #   include <boost/shared_ptr.hpp>
 #else
-#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <memory>
 #   if defined(_WIN32)
 #       include <dshow.h>
 #   endif

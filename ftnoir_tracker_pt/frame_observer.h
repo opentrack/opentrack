@@ -13,7 +13,7 @@
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
-#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <memory>
 #endif
 #include <set>
 
@@ -31,7 +31,7 @@ public:
 	~FrameProvider();
 
 protected:
-	virtual bool get_frame_and_points(cv::Mat& frame, boost::shared_ptr< std::vector<cv::Vec2f> >& points) = 0;
+	virtual bool get_frame_and_points(cv::Mat& frame, std::shared_ptr< std::vector<cv::Vec2f> >& points) = 0;
 	
 	bool has_observers() const { QMutexLocker lock(&observer_mutex); return !frame_observers.empty(); }
 
@@ -58,7 +58,7 @@ public:
 		if (provider) provider->remove_observer(this); 
 	}
 
-	bool get_frame_and_points(cv::Mat& frame, boost::shared_ptr< std::vector<cv::Vec2f> >& points) {
+	bool get_frame_and_points(cv::Mat& frame, std::shared_ptr< std::vector<cv::Vec2f> >& points) {
 		return provider ? provider->get_frame_and_points(frame, points) : false;
 	}
 

@@ -14,7 +14,6 @@
 
 using namespace std;
 using namespace cv;
-using namespace boost;
 
 //#define PT_PERF_LOG	//log performance
 
@@ -139,7 +138,7 @@ void Tracker::apply_inner()
     {
         cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
         cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
-        point_tracker.point_model = boost::shared_ptr<PointModel>(new PointModel(M01, M02));
+        point_tracker.point_model = std::shared_ptr<PointModel>(new PointModel(M01, M02));
     }
     point_tracker.dynamic_pose_resolution = s.dyn_pose_res;
     point_tracker.dt_reset = s.reset_time / 1000.0;
@@ -172,14 +171,14 @@ void Tracker::center()
 	X_GH_0 = R_GC * X_CM_0 * X_MH;
 }
 
-bool Tracker::get_frame_and_points(cv::Mat& frame_copy, boost::shared_ptr< std::vector<Vec2f> >& points)
+bool Tracker::get_frame_and_points(cv::Mat& frame_copy, std::shared_ptr< std::vector<Vec2f> >& points)
 {
 	QMutexLocker lock(&mutex);
 	if (frame.empty()) return false;
 		
 	// copy the frame and points from the tracker thread
 	frame_copy = frame.clone();
-	points = boost::shared_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
+	points = std::shared_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
 	return true;
 }
 

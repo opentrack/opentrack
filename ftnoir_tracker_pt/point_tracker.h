@@ -12,7 +12,7 @@
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
-#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <memory>
 #endif
 #include <list>
 
@@ -91,7 +91,7 @@ public:
 	// f : (focal length)/(sensor width)
 	// dt : time since last call
 	bool track(const std::vector<cv::Vec2f>& points, float f, float dt);
-	boost::shared_ptr<PointModel> point_model;
+	std::shared_ptr<PointModel> point_model;
 
 	bool dynamic_pose_resolution;
 	float dt_reset;

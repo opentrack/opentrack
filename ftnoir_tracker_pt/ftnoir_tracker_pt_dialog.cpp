@@ -13,7 +13,7 @@
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
-#   include "FTNoIR_Tracker_PT/boost-compat.h"
+#   include <memory>
 #endif
 #include <vector>
 

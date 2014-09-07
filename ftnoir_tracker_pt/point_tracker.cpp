@@ -14,7 +14,6 @@
 #include <QDebug>
 
 using namespace cv;
-using namespace boost;
 using namespace std;
 
 const float PI = 3.14159265358979323846f;
