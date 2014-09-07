@@ -325,7 +325,7 @@ void Tracker::run()
                 last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
             }
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::SOLVEPNP_ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
             first = false;
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
