@@ -451,6 +451,7 @@ TrackerControls::TrackerControls()
     calib_timer.setInterval(200);
 	ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
+    ui.cameraName->addItems(get_camera_names());
     tie_setting(s.camera_index, ui.cameraName);
 	tie_setting(s.resolution, ui.resolution);
     tie_setting(s.force_fps, ui.cameraFPS);
@@ -468,8 +469,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.marker_pitch, ui.marker_pitch);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    ui.cameraName->addItems(get_camera_names());
-
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
