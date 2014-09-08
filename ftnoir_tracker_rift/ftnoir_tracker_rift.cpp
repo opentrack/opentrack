@@ -56,13 +56,13 @@ void Rift_Tracker::GetHeadPoseData(double *data)
                 old_yaw=yaw;
             }
             if (s.bEnableYaw)
-                data[Yaw] = yaw * -57.295781;
+                data[Yaw] = yaw * 57.295781;
             if (s.bEnablePitch)
                 data[Pitch] = pitch * -57.295781;
             if (s.bEnableRoll)
                 data[Roll] = roll * 57.295781;
             if (s.bEnableX)
-                data[TX] = pose.Position.x * 1e2;
+                data[TX] = pose.Position.x * -1e2;
             if (s.bEnableY)
                 data[TY] = pose.Position.y * 1e2;
             if (s.bEnableX)
