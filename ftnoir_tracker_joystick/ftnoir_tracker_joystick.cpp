@@ -2,6 +2,7 @@
 #include "facetracknoir/plugin-support.h"
 #undef NDEBUG
 #include <QMutexLocker>
+#include <stdlib.h>
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
@@ -225,9 +226,8 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
             auto mid = (min_[idx] + max_[idx]) / 2;
             auto val = values[idx] - mid;
 
-            auto max = (max_[idx] - mid);
-            auto min = (mid - min_[idx]);
-            data[i] = val * limits[i] / (double) (val > 0 ? max : min);
+            int scale = val > 0 ? abs(max_[idx] - mid) : -abs(mid - min_[idx]);
+            data[i] = abs(val) * limits[i] / scale;
         }
     }
 }
