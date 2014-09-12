@@ -227,7 +227,7 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
 
             auto max = (max_[idx] - mid);
             auto min = (mid - min_[idx]);
-            data[i] = val * limits[i] / (double) (val > mid ? max : min);
+            data[i] = val * limits[i] / (double) (val > 0 ? max : min);
         }
     }
 }
