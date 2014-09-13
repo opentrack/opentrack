@@ -3,6 +3,7 @@
 #undef NDEBUG
 #include <QMutexLocker>
 #include <stdlib.h>
+#include <utility>
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
@@ -10,8 +11,6 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
     iter(-1),
     mtx(QMutex::Recursive)
 {
-    for (int i = 0; i < 6; i++)
-        min_[i] = max_[i] = 0;
     GUID bar = {0};
 }
 
@@ -51,8 +50,6 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 {
     auto self = (FTNoIR_Tracker*) pContext;
 	
-    // For axes that are returned, set the DIPROP_RANGE property for the
-    // enumerated axis in order to scale min/max values.
     if( pdidoi->dwType & DIDFT_AXIS )
     {
         DIPROPRANGE diprg = {0};
@@ -60,15 +57,14 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
+	diprg.lMax = 65535;
+	diprg.lMin = -65536;
 
         // Set the range for the axis
 
-        if( FAILED( self->g_pJoystick->GetProperty( DIPROP_RANGE, &diprg.diph ) ) )
+        if( FAILED( self->g_pJoystick->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
             return DIENUM_STOP;
 
-        self->min_[self->iter] = diprg.lMin;
-        self->max_[self->iter] = diprg.lMax;
-        qDebug() << "axis" << self->iter << diprg.lMin << diprg.lMax;
         self->iter++;
     }
 
@@ -222,13 +218,8 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         {
             data[i] = 0;
         }
-        else {
-            auto mid = (min_[idx] + max_[idx]) / 2;
-            auto val = values[idx] - mid;
-
-            int scale = val > 0 ? abs(max_[idx] - mid) : -abs(mid - min_[idx]);
-            data[i] = abs(val) * limits[i] / scale;
-        }
+	else
+		data[i] = values[i] * limits[i] / AXIS_MAX;
     }
 }
 

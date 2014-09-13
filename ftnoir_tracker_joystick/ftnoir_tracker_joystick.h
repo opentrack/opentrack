@@ -61,12 +61,12 @@ public:
     void reload();
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
-    int min_[8], max_[8];
     QMutex mtx;
     QFrame* frame;
     DIDEVICEINSTANCE def;
     int iter; // XXX bad style
     settings s;
+	static const constexpr int AXIS_MAX = 65535;
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog
