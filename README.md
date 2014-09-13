@@ -51,7 +51,6 @@ Don't be afraid to submit an issue/feature request if the need arises.
 - Ulf Schreiber (PT tracker)
 - uglyDwarf (high CON)
 - Wim Vriend (historically)
-- Ron Hendriks (historically)
 
 # Licensing information
 
