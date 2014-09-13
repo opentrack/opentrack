@@ -54,8 +54,8 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
-	diprg.lMax = 65535;
-	diprg.lMin = -65536;
+	diprg.lMax = AXIS_MAX;
+	diprg.lMin = -AXIS_MAX;
 
         // Set the range for the axis
 
