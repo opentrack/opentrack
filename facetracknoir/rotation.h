@@ -5,10 +5,9 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef ROTATION_H
-#define ROTATION_H
+#pragma once
 #include <cmath>
-// ----------------------------------------------------------------------------
+
 class RotationType {
 
 public:
@@ -16,7 +15,7 @@ public:
 	RotationType(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
 	RotationType(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
 
-	RotationType inv(){	// inverse
+	RotationType inv(){
 		return RotationType(a,-b,-c, -d);
 	}
 
@@ -58,7 +57,3 @@ public:
 protected:
 	double a,b,c,d; // quaternion coefficients
 };
-
-
-
-#endif //ROTATION_H

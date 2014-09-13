@@ -1,11 +1,4 @@
-/*dummy CSV reader for QT4*/
-/*version 0.1*/
-/*11.1.2009*/
-#ifndef CSV_H
-#define CSV_H
-
-//#include "myclass_api.h"
-
+#pragma once
 #include <QObject>
 #include <QStringList>
 #include <QIODevice>
@@ -41,5 +34,3 @@ private:
     CSV(QIODevice * device);
 	CSV(QString &string);	
 };
-
-#endif // CSV_H

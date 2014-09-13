@@ -160,7 +160,7 @@ void Tracker::run() {
                 t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
 
             if (Libraries->pProtocol) {
-                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
+                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );
             }
         }
 

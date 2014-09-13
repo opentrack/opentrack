@@ -28,7 +28,7 @@ static const int pointSize = 5;
 QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
     : QWidget(parent)
 {
-    movingPoint = -1;				// Index of that same point
+    movingPoint = -1;
     _config = 0;
     _draw_background = true;
     _draw_function = true;
@@ -37,9 +37,9 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent)
 }
 
 void QFunctionConfigurator::setConfig(FunctionConfig* config) {
-    QSettings settings("opentrack");	// Registry settings (in HK_USER)
+    QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
+    QSettings iniFile( currentFile, QSettings::IniFormat );
 
     config->loadSettings(iniFile);
     _config = config;

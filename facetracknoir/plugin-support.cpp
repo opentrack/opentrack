@@ -1,4 +1,5 @@
 #include "plugin-support.h"
+#include <QCoreApplication>
 
 #if !(defined(_WIN32))
 #   include <dlfcn.h>
@@ -62,15 +63,9 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
         pFilter = (IFilter*) ptr();
     }
 
-    // Check if the Protocol-server files were installed OK.
-    // Some servers also create a memory-mapping, for Inter Process Communication.
-    // The handle of the MainWindow is sent to 'The Game', so it can send a message back.
-
     if (pProtocol)
         if(!pProtocol->checkServerInstallationOK())
             return;
-
-    // retrieve pointers to the User Interface and the main Application
     if (pTracker) {
         pTracker->StartTracker( mainApp->get_video_widget() );
     }

@@ -4,8 +4,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#ifndef QFUNCTIONCONFIGURATOR_H
-#define QFUNCTIONCONFIGURATOR_H
+#pragma once
 
 #include <QWidget>
 #include <QtGui>
@@ -13,14 +12,6 @@
 #include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-
-//
-// The FunctionConfigurator Widget is used to display and configure a function (curve).
-// The Function is used by FaceTrackNoIR to 'translate' the actual head-pose to the virtual headpose. Every axis is configured by a separate Function.
-//
-// The Function is coded in a separate Class and can exists, without the Widget. When the widget is displayed (therefore 'created'), the Function can be attached to the
-// Widget and the Widget used to change the Function.
-//
 
 class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
@@ -70,23 +61,21 @@ private:
         _draw_function = _draw_background = true;
     }
 
-	QRectF  range;														// The actual rectangle for the Bezier-curve
-	QPointF lastPoint;													// The right-most point of the Function
-    QPointF pixel_coord_to_point (QPointF point) const;						// Convert the graphical Point to a real-life Point
-    QPointF point_to_pixel (QPointF point) const;	// Convert the Point to a graphical Point
+	QRectF  range;
+	QPointF lastPoint;
+    QPointF pixel_coord_to_point (QPointF point) const;
+    QPointF point_to_pixel (QPointF point) const;
 
     int     movingPoint;
     QElapsedTimer timer;
     QPointF c;
 
-	QColor colBezier;				// Color of Bezier curve
+	QColor colBezier;
 
-	bool _draw_background;			// Flag to determine if the background should be (re-)drawn on the QPixmap
-	QPixmap _background;			// Image of the static parts (axis, lines, etc.)
-	bool _draw_function;			// Flag to determine if the function should be (re-)drawn on the QPixmap
-	QPixmap _function;				// Image of the function (static unless edited by the user)
+	bool _draw_background;
+	QPixmap _background;
+	bool _draw_function;
+	QPixmap _function;
 
 	FunctionConfig* _config;
 };
-
-#endif // QFUNCTIONCONFIGURATOR_H

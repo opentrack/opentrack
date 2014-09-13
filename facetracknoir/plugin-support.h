@@ -77,6 +77,7 @@ struct Metadata
     virtual void getIcon(QIcon *icon) = 0;
 };
 
+// merely to break a circular header dependency -sh
 class IDynamicLibraryProvider {
 public:
     virtual DynamicLibrary* current_tracker1() = 0;
