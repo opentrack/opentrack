@@ -11,7 +11,6 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     QPoint offsetpos(120, 30);
 	this->move(parent->pos() + offsetpos);
 
-	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
@@ -39,7 +38,6 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     tie_setting(mainApp->s.a_y.invert, ui.chkInvertY);
     tie_setting(mainApp->s.a_z.invert, ui.chkInvertZ);
 
-	// Load the settings from the current .INI-file
 	loadSettings();
 }
 
@@ -54,9 +52,6 @@ void CurveConfigurationDialog::doCancel() {
     close();
 }
 
-//
-// Load the current Settings from the currently 'active' INI-file.
-//
 void CurveConfigurationDialog::loadSettings() {
     QFunctionConfigurator* configs[6] = {
         ui.txconfig,

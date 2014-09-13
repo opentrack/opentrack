@@ -4,9 +4,8 @@
 TrackerControls::TrackerControls() :
 QWidget()
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
-	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
@@ -34,7 +33,7 @@ void TrackerControls::doCancel() {
     close();
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog()
 {
     return new TrackerControls;
 }

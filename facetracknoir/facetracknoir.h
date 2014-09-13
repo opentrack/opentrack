@@ -22,24 +22,16 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
 
-#ifndef FaceTrackNoIR_H
-#define FaceTrackNoIR_H
+#pragma once
 
 #include <QMainWindow>
 #include <QApplication>
-#include <QFileDialog>
-#include <QListView>
-#include <QPainter>
 #include <QWidget>
 #include <QDialog>
 #include <QUrl>
 #include <QList>
 #include <QKeySequence>
-#include <QtGui>
-#include <QString>
-#include <QByteArray>
 #include <QShortcut>
-#include <vector>
 #if !defined(_WIN32)
 #	include "qxt-mini/QxtGlobalShortcut"
 #else
@@ -78,7 +70,7 @@ public:
     FaceTrackNoIR(QWidget *parent = 0);
 	~FaceTrackNoIR();
 
-    QFrame *get_video_widget();					// Get a pointer to the video-widget, to use in the DLL
+    QFrame *get_video_widget();
     Tracker *tracker;
     void bindKeyboardShortcuts();
     DynamicLibrary* current_tracker1() {
@@ -114,12 +106,12 @@ public slots:
 private:
     HeadPoseData pose;
     Ui::OpentrackUI ui;
-	QTimer timUpdateHeadPose;					// Timer to display headpose
+	QTimer timUpdateHeadPose;
 
-    ITrackerDialog* pTrackerDialog;			// Pointer to Tracker dialog instance (in DLL)
-    ITrackerDialog* pSecondTrackerDialog;		// Pointer to the second Tracker dialog instance (in DLL)
-    IProtocolDialog* pProtocolDialog;			// Pointer to Protocol dialog instance (in DLL)
-    IFilterDialog* pFilterDialog;				// Pointer to Filter dialog instance (in DLL)
+    ITrackerDialog* pTrackerDialog;
+    ITrackerDialog* pSecondTrackerDialog;
+    IProtocolDialog* pProtocolDialog;
+    IFilterDialog* pFilterDialog;
 
 	QWidget *_keyboard_shortcuts;
 	QWidget *_curve_config;
@@ -161,5 +153,3 @@ private slots:
     void startTracker();
     void stopTracker();
 };
-
-#endif // FaceTrackNoIR_H

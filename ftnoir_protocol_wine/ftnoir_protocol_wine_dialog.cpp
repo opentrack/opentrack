@@ -2,13 +2,6 @@
 #include <QDebug>
 #include "facetracknoir/plugin-support.h"
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
 FTControls::FTControls() : QWidget()
 {
 	ui.setupUi( this );
@@ -16,19 +9,10 @@ FTControls::FTControls() : QWidget()
 	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 }
 
-//
-// Destructor for server-dialog
-
-//
-// OK clicked on server-dialog
-//
 void FTControls::doOK() {
 	this->close();
 }
 
-//
-// Cancel clicked on server-dialog
-//
 void FTControls::doCancel() {
     this->close();
 }

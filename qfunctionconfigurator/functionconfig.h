@@ -26,7 +26,7 @@ private:
 	int _size;
 	QString _title;
     float getValueInternal(int x);
-	QPointF lastValueTracked;								// The last input value requested by the Tracker, with it's output-value.
+	QPointF lastValueTracked;
     volatile bool _tracking_active;
 	int _max_Input;
 	int _max_Output;
@@ -34,19 +34,12 @@ private:
 public:
     int maxInput() const { return _max_Input; }
     int maxOutput() const { return _max_Output; }
-	//
-	// Contructor(s) and destructor
-	//
     FunctionConfig();
     FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
     ~FunctionConfig();
 
     float getValue(float x);
-	bool getLastPoint(QPointF& point);						// Get the last Point that was requested.
-
-	//
-	// Functions to manipulate the Function
-	//
+	bool getLastPoint(QPointF& point);
 	void removePoint(int i);
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
@@ -64,9 +57,6 @@ public:
 		_max_Output = MaxOutput;
 	}
 
-	//
-	// Functions to load/save the Function-Points to an INI-file
-	//
 	void saveSettings(QSettings& settings);
 	void loadSettings(QSettings& settings);
 

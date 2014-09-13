@@ -26,7 +26,7 @@
 #include "tracker.h"
 #include "curve-config.h"
 #include "opentrack-version.h"
-#include <QDebug>
+#include <QFileDialog>
 
 #if defined(_WIN32)
 #   include <windows.h>
@@ -185,7 +185,6 @@ void FaceTrackNoIR::GetCameraNameDX() {
 #if defined(_WIN32)
 	ui.cameraName->setText("No video-capturing device was found in your system: check if it's connected!");
 
-	// Create the System Device Enumerator.
 	HRESULT hr;
 	ICreateDevEnum *pSysDevEnum = NULL;
 	hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
@@ -197,7 +196,6 @@ void FaceTrackNoIR::GetCameraNameDX() {
 
 	qDebug() << "GetWDM says: CoCreateInstance succeeded!";
 	
-	// Obtain a class enumerator for the video compressor category.
 	IEnumMoniker *pEnumCat = NULL;
 	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
 

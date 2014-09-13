@@ -54,10 +54,8 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
-	diprg.lMax = AXIS_MAX;
-	diprg.lMin = -AXIS_MAX;
-
-        // Set the range for the axis
+	diprg.lMax = FTNoIR_Tracker::AXIS_MAX;
+	diprg.lMin = -FTNoIR_Tracker::AXIS_MAX;
 
         if( FAILED( self->g_pJoystick->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
             return DIENUM_STOP;
