@@ -1,9 +1,6 @@
 #include "ftnoir_tracker_joystick.h"
 #include "facetracknoir/plugin-support.h"
-#undef NDEBUG
 #include <QMutexLocker>
-#include <stdlib.h>
-#include <utility>
 
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
