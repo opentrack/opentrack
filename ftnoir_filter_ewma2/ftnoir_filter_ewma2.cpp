@@ -1,13 +1,5 @@
-/********************************************************************************
-* FaceTrackNoIR      This program is a private project of some enthusiastic     *
-*                    gamers from Holland, who don't like to pay much for        *
-*                    head-tracking.                                             *
-*                                                                               *
-* Copyright (C) 2012  Wim Vriend (Developing)                                   *
-*                     Ron Hendriks (Researching and Testing)                    *
-*                                                                               *
-* Homepage                                                                      *
-*                                                                               *
+/*** Written by Donovan Baarda
+* 
 * This program is free software; you can redistribute it and/or modify it       *
 * under the terms of the GNU General Public License as published by the         *
 * Free Software Foundation; either version 3 of the License, or (at your        *
@@ -29,21 +21,6 @@
 #include "facetracknoir/plugin-support.h"
 #include <algorithm>
 #include <QMutexLocker>
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// EWMA Filter: Exponentially Weighted Moving Average filter with dynamic smoothing parameter
-//
-// This filter tries to adjust the amount of filtering to minimize lag when
-// moving, and minimize noise when still. It uses the delta filtered over the
-// last 3 frames (0.1secs) compared to the delta's average noise variance over
-// the last 3600 frames (~2mins) to try and detect movement vs noise. As the
-// delta increases from 0->3 stdevs of the noise, the filtering scales down
-// from maxSmooth->minSmooth at a rate controlled by the powCurve setting.
-//
-// Written by Donovan Baarda
-//
-///////////////////////////////////////////////////////////////////////////////
 
 FTNoIR_Filter::FTNoIR_Filter() :
     first_run(true),
