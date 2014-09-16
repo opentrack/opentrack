@@ -1,12 +1,4 @@
 /CMakeLists.txt.user
 *~
 /build*
-/install
-/bin/tracker-ht/headtracker-ftnoir.exe
-/bin/tracker-ht/libgcc_s_dw2-1.dll
-/bin/tracker-ht/libstdc++-6.dll
-/bin/tracker-ht/bounding-box.raw
-/bin/tracker-ht/flandmark_model.dat
-/bin/tracker-ht/head.raw
 /installer/Output
-/nbproject/
