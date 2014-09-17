@@ -196,26 +196,9 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         90,
         180
     };
-	
-	int axes[] = {
-		s.axis_0,
-		s.axis_1,
-		s.axis_2,
-		s.axis_3,
-		s.axis_4,
-		s.axis_5
-	};
-
+    
     for (int i = 0; i < 6; i++)
-    {
-        auto idx = axes[i] - 1;
-        if (idx < 0 || idx > 7)
-        {
-            data[i] = 0;
-        }
-	else
-		data[i] = values[i] * limits[i] / AXIS_MAX;
-    }
+        data[i] = values[i] * limits[i] / AXIS_MAX;
 }
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
