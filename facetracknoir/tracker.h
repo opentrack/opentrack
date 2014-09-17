@@ -73,7 +73,7 @@ public:
     volatile bool do_center;
     volatile bool enabled;
     
-    T6DOF output_camera;
+    T6DOF output_camera, raw_6dof;
 
     void start() { QThread::start(); }
 };
