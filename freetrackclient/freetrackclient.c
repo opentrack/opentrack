@@ -49,23 +49,37 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     switch (fdwReason) {
 		case DLL_PROCESS_ATTACH:
-#ifdef WIN64
-		    dbg_report("\n= WIN64 =========================================================================================\n");
-#else
-		    dbg_report("\n= WIN32 =========================================================================================\n");
-#endif
-			dbg_report("DllMain: (0x%p, %d, %p)\n", hinstDLL, fdwReason, lpvReserved);
-            dbg_report("DllMain: Attach request\n");
             DisableThreadLibraryCalls(hinstDLL);
             break;
 
 		case DLL_PROCESS_DETACH:
-			dbg_report("DllMain: Detach\n");
-			dbg_report("DllMain: (0x%p, %d, %p)\n", hinstDLL, fdwReason, lpvReserved);
-		    dbg_report("==========================================================================================\n");
             break;
     }
     return TRUE;
+}
+
+static bool FTCreateMapping(void)
+{
+	if ( pMemData != NULL ) {
+		return true;
+	}
+
+    dbg_report("FTCreateMapping request (pMemData == NULL).\n");
+
+	hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
+		                           sizeof( FTHeap ), 
+								   (LPCSTR) FT_MM_DATA );
+
+    if (hFTMemMap == NULL)
+    {
+        pMemData = NULL;
+        return false;
+    }
+
+    pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTHeap ) );
+    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
+
+	return true;
 }
 
 FT_EXPORT(bool) FTGetData(FTData* data)
@@ -109,43 +123,3 @@ FT_EXPORT(const char*) FTProvider(void)
 	return dllProvider;
 }
 
-//
-// Create a memory-mapping to the Freetrack data.
-// It contains the tracking data, a handle to the main-window and the program-name of the Game!
-//
-//
-FT_EXPORT(bool) FTCreateMapping(void)
-{
-	if ( pMemData != NULL ) {
-		return true;
-	}
-
-    dbg_report("FTCreateMapping request (pMemData == NULL).\n");
-
-	hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( FTHeap ), 
-								   (LPCSTR) FT_MM_DATA );
-
-    if (hFTMemMap == NULL)
-    {
-        pMemData = NULL;
-        return false;
-    }
-
-    pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTHeap ) );
-    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
-
-	return true;
-}
-
-FT_EXPORT(void) FTDestroyMapping(void)
-{
-	if ( pMemData != NULL ) {
-		UnmapViewOfFile ( pMemData );
-	}
-	
-	CloseHandle( hFTMutex );
-	CloseHandle( hFTMemMap );
-	pMemData = 0;
-	hFTMemMap = 0;
-}
