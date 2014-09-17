@@ -36,7 +36,6 @@
 #include <QDebug>
 #include <QFile>
 #include <QString>
-#include <windows.h>
 #include <QMutex>
 #include <QMutexLocker>
 #include "compat/compat.h"
@@ -55,9 +54,8 @@ struct settings {
     {}
 };
 
-//typedef char *(WINAPI *importProvider)(void);
-typedef void (WINAPI *importTIRViewsStart)(void);
-typedef void (WINAPI *importTIRViewsStop)(void);
+typedef void (__stdcall *importTIRViewsStart)(void);
+typedef void (__stdcall *importTIRViewsStop)(void);
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -71,14 +69,13 @@ public:
         return connected_game;
     }
 private:
-    importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+    importTIRViewsStart viewsStart;
     importTIRViewsStop viewsStop;
-
-    FTMemMap *pMemData;
+    
+    FTHeap *pMemData;
     QString game_name;
     PortableLockedShm shm;
 
-    // Private properties
     QString ProgramName;
     QLibrary FTIRViewsLib;
     QProcess dummyTrackIR;

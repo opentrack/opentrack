@@ -16,27 +16,16 @@
  * * The FTTypes sources were translated from the original Delphi sources           *
  * * created by the FreeTrack developers.                                           *
  */
-#ifndef INCLUDED_FTTYPES_H
-#define INCLUDED_FTTYPES_H
 
-#if !defined(_WIN32)
-#   include <inttypes.h>
-typedef int32_t my_32bit_int;
-#   define WINAPI
-#else
-#   include <windows.h>
-typedef __int32 my_32bit_int;
-#endif
+#pragma once
 
-//#include "Registry.h"
+#include <inttypes.h>
 
-//  static const char* FT_CLIENT_LOCATION = "Software\\Freetrack\\FreetrackClient";
-//#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
 #define FT_MM_DATA "FT_SharedMem"
-//#define FREETRACK "Freetrack"
 #define FREETRACK_MUTEX "FT_Mutext"
 
-struct TFreeTrackData {
+// only 6 headpose floats and the data id are filled -sh
+typedef struct __FTData {
     int DataID;
     int CamWidth;
     int CamHeight;
@@ -63,24 +52,11 @@ struct TFreeTrackData {
     float Y3;
     float X4;
     float Y4;
-};
-typedef TFreeTrackData * PFreetrackData;
+} FTData;
 
-struct FTMemMap {
-    TFreeTrackData data;
-    my_32bit_int GameID;
+typedef struct __FTAlloc {
+    FTData data;
+    int32_t GameID;
     unsigned char table[8];
-    my_32bit_int GameID2;
-};
-typedef FTMemMap * PFTMemMap;
-
-//extern bool (*FTGetData) (PFreetrackData data); 
-// DLL function signatures
-// These match those given in FTTypes.pas
-// WINAPI is macro for __stdcall defined somewhere in the depths of windows.h
-typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
-typedef char *(WINAPI *importGetDllVersion)(void);
-typedef void (WINAPI *importReportID)(int name);
-typedef char *(WINAPI *importProvider)(void);
-
-#endif//INCLUDED_FTTYPES_H
+    int32_t GameID2;
+} FTHeap;

@@ -26,21 +26,10 @@
 #include <QDebug>
 #include <QFileDialog>
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
-FTControls::FTControls() :
-    QWidget()
+FTControls::FTControls()
 {
-    QString aFileName;														// File Path and Name
-
     ui.setupUi( this );
 
-    // Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
@@ -54,8 +43,8 @@ FTControls::FTControls() :
 
     tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
 
-    aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
-    if ( !QFile::exists( aFileName ) ) {
+    QFile memhacks_pathname(QCoreApplication::applicationDirPath() + "/TIRViews.dll");
+    if (!memhacks_pathname.exists()) {
         ui.chkTIRViews->setChecked( false );
         ui.chkTIRViews->setEnabled ( false );
     }
@@ -75,22 +64,16 @@ void FTControls::doCancel() {
 }
 
 void FTControls::selectDLL() {
-    QString fileName = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
+    QString filename = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
 
-    //
-    // Write the location of the file in the required Registry-key.
-    //
-    if (! fileName.isEmpty() ) {
-        if (fileName.endsWith("NPClient.dll", Qt::CaseInsensitive) ) {
-            QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");			// Registry settings (in HK_USER)
-            QString aLocation = fileName.left(fileName.length() - 12);							// Location of Client DLL
-
-            settingsTIR.setValue( "Path" , aLocation );
-        }
+    if (! filename.isEmpty() ) {
+            QSettings node("NaturalPoint", "NATURALPOINT\\NPClient Location");
+            QFileInfo dllname(filename);
+            node.setValue( "Path" , dllname.dir().path() );
     }
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog()
 {
     return new FTControls;
 }

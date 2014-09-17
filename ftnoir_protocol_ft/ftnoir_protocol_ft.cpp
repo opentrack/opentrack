@@ -28,9 +28,9 @@
 #include "ftnoir_csv/csv.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() :
-    shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTMemMap))
+    shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTHeap))
 {
-    pMemData = (FTMemMap*) shm.mem;
+    pMemData = (FTHeap*) shm.mem;
     ProgramName = "";
     intGameID = 0;
     viewsStart = 0;
@@ -49,50 +49,30 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 }
 
 void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
-    float virtPosX;
-    float virtPosY;
-    float virtPosZ;
-
-    float virtRotX;
-    float virtRotY;
-    float virtRotZ;
-
-    float headPosX;
-    float headPosY;
-    float headPosZ;
-
-    float headRotX;
-    float headRotY;
-    float headRotZ;
-    headRotX = virtRotX = getRadsFromDegrees(headpose[Pitch]) * (s.useDummyExe ? 2.0 : 1.0);
-    headRotY = virtRotY = getRadsFromDegrees(headpose[Yaw]);
-    headRotZ = virtRotZ = getRadsFromDegrees(headpose[Roll]);
-    headPosX = virtPosX = headpose[TX] * 10;
-    headPosY = virtPosY = headpose[TY] * 10;
-    headPosZ = virtPosZ = headpose[TZ] * 10;
+    float yaw = getRadsFromDegrees(headpose[Pitch]) * (s.useDummyExe ? 2.0 : 1.0);
+    float pitch = getRadsFromDegrees(headpose[Yaw]);
+    float roll = getRadsFromDegrees(headpose[Roll]);
+    float tx = headpose[TX] * 10.f;
+    float ty = headpose[TY] * 10.f;
+    float tz = headpose[TZ] * 10.f;
 
     shm.lock();
     
-    pMemData->data.RawX = headPosX;
-    pMemData->data.RawY = headPosY;
-    pMemData->data.RawZ = headPosZ;
-    pMemData->data.RawPitch = headRotX;
-    pMemData->data.RawYaw = headRotY;
-    pMemData->data.RawRoll = headRotZ;
+    pMemData->data.RawX = 0;
+    pMemData->data.RawY = 0;
+    pMemData->data.RawZ = 0;
+    pMemData->data.RawPitch = 0;
+    pMemData->data.RawYaw = 0;
+    pMemData->data.RawRoll = 0;
 
-    //
-    //
-    pMemData->data.X = virtPosX;
-    pMemData->data.Y = virtPosY;
-    pMemData->data.Z = virtPosZ;
-    pMemData->data.Pitch = virtRotX;
-    pMemData->data.Yaw = virtRotY;
-    pMemData->data.Roll = virtRotZ;
+    pMemData->data.X = tx;
+    pMemData->data.Y = ty;
+    pMemData->data.Z = tz;
+    pMemData->data.Pitch = pitch;
+    pMemData->data.Yaw = yaw;
+    pMemData->data.Roll = roll;
 
-    //
-    // Leave some values 0 yet...
-    //
-    pMemData->data.X1 = pMemData->data.DataID + 10;
+    pMemData->data.X1 = ++pMemData->data.DataID;
     pMemData->data.X2 = 0;
     pMemData->data.X3 = 0;
     pMemData->data.X4 = 0;
@@ -154,20 +134,14 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 {   
 	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
 	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
-	QString aLocation;															// Location of Client DLL
-
 
     if (!shm.success())
         return false;
 
-	qDebug() << "checkServerInstallationOK says: Starting Function";
-
-    //
-    // Write the path in the registry (for FreeTrack and FreeTrack20), for the game(s).
-    //
-    aLocation =  QCoreApplication::applicationDirPath() + "/";
+    QString aLocation =  QCoreApplication::applicationDirPath() + "/";
 
     qDebug() << "checkServerInstallationOK says: used interface = " << s.intUsedInterface;
+    
     switch (s.intUsedInterface) {
         case 0:									// Use both interfaces
             settings.setValue( "Path" , aLocation );
@@ -182,13 +156,9 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
             settingsTIR.setValue( "Path" , aLocation );
             break;
         default:
-            // should never be reached
-        break;
+            break;
     }
 
-    //
-    // TIRViews must be started first, or the NPClient DLL will never be loaded.
-    //
     if (s.useTIRViews) {
         start_tirviews();
     }
