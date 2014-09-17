@@ -31,12 +31,19 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     tie_setting(mainApp->s.a_pitch.zero, ui.pos_ry);
     tie_setting(mainApp->s.a_roll.zero, ui.pos_rz);
 
-    tie_setting(mainApp->s.a_yaw.invert, ui.chkInvertYaw);
-    tie_setting(mainApp->s.a_pitch.invert, ui.chkInvertPitch);
-    tie_setting(mainApp->s.a_roll.invert, ui.chkInvertRoll);
-    tie_setting(mainApp->s.a_x.invert, ui.chkInvertX);
-    tie_setting(mainApp->s.a_y.invert, ui.chkInvertY);
-    tie_setting(mainApp->s.a_z.invert, ui.chkInvertZ);
+    tie_setting(mainApp->s.a_yaw.invert, ui.invert_yaw);
+    tie_setting(mainApp->s.a_pitch.invert, ui.invert_pitch);
+    tie_setting(mainApp->s.a_roll.invert, ui.invert_roll);
+    tie_setting(mainApp->s.a_x.invert, ui.invert_x);
+    tie_setting(mainApp->s.a_y.invert, ui.invert_y);
+    tie_setting(mainApp->s.a_z.invert, ui.invert_z);
+    
+    tie_setting(mainApp->s.a_yaw.src, ui.src_yaw);
+    tie_setting(mainApp->s.a_pitch.src, ui.src_pitch);
+    tie_setting(mainApp->s.a_roll.src, ui.src_roll);
+    tie_setting(mainApp->s.a_x.src, ui.src_x);
+    tie_setting(mainApp->s.a_y.src, ui.src_y);
+    tie_setting(mainApp->s.a_z.src, ui.src_z);
 
 	loadSettings();
 }
@@ -83,9 +90,6 @@ void CurveConfigurationDialog::loadSettings() {
     }
 }
 
-//
-// Save the current Settings to the currently 'active' INI-file.
-//
 void CurveConfigurationDialog::save() {
 
 	qDebug() << "save() says: started";

@@ -2,6 +2,7 @@
 
 #include <QString>
 #include "facetracknoir/options.h"
+#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 using namespace options;
 
 struct key_opts {
@@ -18,10 +19,12 @@ struct key_opts {
 struct axis_opts {
     value<double> zero;
     value<bool> invert, altp;
-    axis_opts(pbundle b, QString pfx) :
+    value<int> src;
+    axis_opts(pbundle b, QString pfx, int idx) :
         zero(b, n(pfx, "zero-pos"), 0),
         invert(b, n(pfx, "invert-axis"), false),
-        altp(b, n(pfx, "alt-axis-sign"), false)
+        altp(b, n(pfx, "alt-axis-sign"), false),
+        src(b, n(pfx, "source-index"), idx)
     {}
 private:
     static inline QString n(QString pfx, QString name) {
@@ -44,12 +47,12 @@ struct main_settings {
         tracker2_dll(b, "tracker2-dll", ""),
         filter_dll(b, "filter-dll", ""),
         protocol_dll(b, "protocol-dll", ""),
-        a_x(b, "x"),
-        a_y(b, "y"),
-        a_z(b, "z"),
-        a_yaw(b, "yaw"),
-        a_pitch(b, "pitch"),
-        a_roll(b, "roll"),
+        a_x(b, "x", TX),
+        a_y(b, "y", TY),
+        a_z(b, "z", TZ),
+        a_yaw(b, "yaw", Yaw),
+        a_pitch(b, "pitch", Pitch),
+        a_roll(b, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
         tcomp_tz(b, "compensate-translation-disable-z-axis", false),
         dingp(b, "ding", true)
