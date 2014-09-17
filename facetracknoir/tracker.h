@@ -21,12 +21,7 @@
 #include "facetracknoir/timer.hpp"
 using namespace options;
 
-class FaceTrackNoIR;				// pre-define parent-class to avoid circular includes
-
 class THeadPoseDOF {
-private:
-    THeadPoseDOF(const THeadPoseDOF &) = delete;
-    THeadPoseDOF& operator=(const THeadPoseDOF&) = delete;
 public:
     THeadPoseDOF(QString primary,
                  QString secondary,
@@ -36,21 +31,26 @@ public:
                  int maxOutput2,
                  axis_opts* opts) :
         headPos(0),
-        curve(primary, maxInput1, maxOutput1),
-        curveAlt(secondary, maxInput2, maxOutput2),
-        opts(*opts)
+        curve(maxInput1, maxOutput1),
+        curveAlt(maxInput2, maxOutput2),
+        opts(*opts),
+        name1(primary),
+        name2(secondary)
     {
         QSettings settings("opentrack");
         QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
         QSettings iniFile( currentFile, QSettings::IniFormat );
-        curve.loadSettings(iniFile);
-        curveAlt.loadSettings(iniFile);
+        curve.loadSettings(iniFile, primary);
+        curveAlt.loadSettings(iniFile, secondary);
     }
     volatile double headPos;
     FunctionConfig curve;
 	FunctionConfig curveAlt;
     axis_opts& opts;
+    QString name1, name2;
 };
+
+class FaceTrackNoIR;
 
 class Tracker : protected QThread {
 	Q_OBJECT
@@ -80,23 +80,17 @@ public:
 
 class HeadPoseData {
 public:
-    THeadPoseDOF* axes[6];
-    HeadPoseData(std::vector<axis_opts*> opts)
-    {
-        axes[TX] = new THeadPoseDOF("tx","tx_alt", 100, 100, 100, 100, opts[TX]);
-        axes[TY] = new THeadPoseDOF("ty","ty_alt", 100, 100, 100, 100, opts[TY]);
-        axes[TZ] = new THeadPoseDOF("tz","tz_alt", 100, 100, 100, 100, opts[TZ]);
-        axes[Yaw] = new THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180, opts[Yaw]);
-        axes[Pitch] = new THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90, opts[Pitch]);
-        axes[Roll] = new THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180, opts[Roll]);
-    }
-    ~HeadPoseData()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            delete axes[i];
+    THeadPoseDOF axes[6];
+    HeadPoseData(std::vector<axis_opts*> opts) :
+        axes {
+            THeadPoseDOF("tx","tx_alt", 100, 100, 100, 100, opts[TX]),
+            THeadPoseDOF("ty","ty_alt", 100, 100, 100, 100, opts[TY]),
+            THeadPoseDOF("tz","tz_alt", 100, 100, 100, 100, opts[TZ]),
+            THeadPoseDOF("rx", "rx_alt", 180, 180, 180, 180, opts[Yaw]),
+            THeadPoseDOF("ry", "ry_alt", 90, 90, 90, 90, opts[Pitch]),
+            THeadPoseDOF("rz", "rz_alt", 180, 180, 180, 180, opts[Roll])
         }
-    }
+    {}
 };
 
 #endif

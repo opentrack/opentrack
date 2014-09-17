@@ -366,8 +366,8 @@ void FaceTrackNoIR::startTracker( ) {
 
         for (int i = 0; i < 6; i++)
         {
-            axis(i).curve.loadSettings(iniFile);
-            axis(i).curveAlt.loadSettings(iniFile);
+            axis(i).curve.loadSettings(iniFile, axis(i).name1);
+            axis(i).curveAlt.loadSettings(iniFile, axis(i).name2);
         }
     }
 

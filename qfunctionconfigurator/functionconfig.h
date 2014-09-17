@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2012, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2011-2014, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -14,36 +14,72 @@
 #include <QSettings>
 #include <QMutex>
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include <vector>
 
 #define MEMOIZE_PRECISION 100
 
+class MyMutex {
+private:
+    QMutex inner;
+    
+public:
+    QMutex* operator->() { return &inner; }
+    QMutex* operator->() const { return &const_cast<MyMutex*>(this)->inner; }
+    
+    MyMutex operator=(const MyMutex& datum)
+    {
+        auto mode =
+                datum->isRecursive()
+                ? QMutex::Recursive
+                : QMutex::NonRecursive;
+        
+        return MyMutex(mode);
+    }
+    
+    MyMutex(const MyMutex& datum)
+    {
+        *this = datum;
+    }
+    
+    MyMutex(QMutex::RecursionMode mode = QMutex::NonRecursive) :
+        inner(mode)
+    {
+    }
+    
+    QMutex* operator&()
+    {
+        return &inner;
+    }
+};
+
 class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
 private:
-    QMutex _mutex;
-	QList<QPointF> _points;
-	void reload();
-    float* _data;
-	int _size;
-	QString _title;
+    void reload();
     float getValueInternal(int x);
-	QPointF lastValueTracked;
-    volatile bool _tracking_active;
-	int _max_Input;
-	int _max_Output;
-    FunctionConfig(const FunctionConfig&) = delete;
+    
+    MyMutex _mutex;
+	QList<QPointF> input;
+    std::vector<float> data;
+	QPointF last_input_value;
+    volatile bool activep;
+	int max_x;
+	int max_y;
 public:
-    int maxInput() const { return _max_Input; }
-    int maxOutput() const { return _max_Output; }
+    int maxInput() const { return max_x; }
+    int maxOutput() const { return max_y; }
     FunctionConfig();
-    FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
-    ~FunctionConfig();
+    FunctionConfig(int maxx, int maxy)
+    {
+        setMaxInput(maxx);
+        setMaxOutput(maxy);
+    }
 
     float getValue(float x);
 	bool getLastPoint(QPointF& point);
 	void removePoint(int i);
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
-        _points.clear();
+        input.clear();
         reload();
     }
 
@@ -51,15 +87,14 @@ public:
 	void movePoint(int idx, QPointF pt);
 	QList<QPointF> getPoints();
 	void setMaxInput(int MaxInput) {
-		_max_Input = MaxInput;
+		max_x = MaxInput;
 	}
 	void setMaxOutput(int MaxOutput) {
-		_max_Output = MaxOutput;
+		max_y = MaxOutput;
 	}
 
-	void saveSettings(QSettings& settings);
-	void loadSettings(QSettings& settings);
+	void saveSettings(QSettings& settings, const QString& title);
+	void loadSettings(QSettings& settings, const QString& title);
 
 	void setTrackingActive(bool blnActive);
-    QString getTitle() { return _title; }
 };
