@@ -39,16 +39,11 @@ Tracker::~Tracker()
 
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     bool altp = (pos < 0) && axis.opts.altp;
-    if (altp) {
-        out = (axis.opts.invert ? -1 : 1) * axis.curveAlt.getValue(pos);
-        axis.curve.setTrackingActive( false );
-        axis.curveAlt.setTrackingActive( true );
-    }
-    else {
-        out = (axis.opts.invert ? -1 : 1) * axis.curve.getValue(pos);
-        axis.curve.setTrackingActive( true );
-        axis.curveAlt.setTrackingActive( false );
-    }
+    axis.curve.setTrackingActive( !altp );
+    axis.curveAlt.setTrackingActive( altp );    
+    auto& fc = altp ? axis.curveAlt : axis.curve;
+    out = (axis.opts.invert ? -1 : 1) * fc.getValue(pos);
+    
     out += axis.opts.zero;
 }
 
