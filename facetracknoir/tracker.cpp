@@ -121,6 +121,7 @@ void Tracker::run() {
             for (int i = 0; i < 6; i++)
             {
                 auto& axis = mainApp->axis(i);
+                raw_6dof.axes[i] = newpose[i];
                 int k = axis.opts.src;
                 if (k < 0 || k >= 6)
                     continue;
@@ -184,7 +185,7 @@ void Tracker::getHeadPose( double *data ) {
     QMutexLocker foo(&mtx);
     for (int i = 0; i < 6; i++)
     {
-        data[i] = mainApp->axis(i).headPos;
+        data[i] = raw_6dof.axes[i];
     }
 }
 
