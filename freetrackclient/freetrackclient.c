@@ -45,19 +45,6 @@ static HANDLE hFTMutex = 0;
 static const char* dllVersion = "1.0.0.0";
 static const char* dllProvider = "FreeTrack";
 
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
-{
-    switch (fdwReason) {
-		case DLL_PROCESS_ATTACH:
-            DisableThreadLibraryCalls(hinstDLL);
-            break;
-
-		case DLL_PROCESS_DETACH:
-            break;
-    }
-    return TRUE;
-}
-
 static bool FTCreateMapping(void)
 {
 	if ( pMemData != NULL ) {
