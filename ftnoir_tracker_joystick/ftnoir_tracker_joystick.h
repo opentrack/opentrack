@@ -32,21 +32,9 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<int> axis_0;
-    value<int> axis_1;
-    value<int> axis_2;
-    value<int> axis_3;
-    value<int> axis_4;
-    value<int> axis_5;
     value<QString> joyid;
     settings() :
         b(bundle("tracker-joystick")),
-        axis_0(b, "axis-0", 0),
-        axis_1(b, "axis-1", 0),
-        axis_2(b, "axis-2", 0),
-        axis_3(b, "axis-3", 0),
-        axis_4(b, "axis-4", 0),
-        axis_5(b, "axis-5", 0),
         joyid(b, "joy-id", "")
     {}
 };

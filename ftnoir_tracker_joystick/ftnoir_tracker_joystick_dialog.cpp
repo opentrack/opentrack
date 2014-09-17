@@ -19,13 +19,6 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.axis_0, ui.comboBox);
-    tie_setting(s.axis_1, ui.comboBox_2);
-    tie_setting(s.axis_2, ui.comboBox_3);
-    tie_setting(s.axis_3, ui.comboBox_4);
-    tie_setting(s.axis_4, ui.comboBox_5);
-    tie_setting(s.axis_5, ui.comboBox_6);
-
     {
         auto hr = CoInitialize( nullptr );
         LPDIRECTINPUT8 g_pDI = nullptr;
