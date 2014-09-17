@@ -86,7 +86,7 @@ public:
         return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
     }
     THeadPoseDOF& axis(int idx) {
-        return *pose.axes[idx];
+        return pose.axes[idx];
     }
 
 #if defined(_WIN32)

@@ -41,7 +41,7 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config) {
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );
 
-    config->loadSettings(iniFile);
+    config->loadSettings(iniFile, name);
     _config = config;
     _draw_function = _draw_background = true;
     update_range();
@@ -52,7 +52,7 @@ void QFunctionConfigurator::saveSettings(QString settingsFile) {
     QSettings iniFile( settingsFile, QSettings::IniFormat );						// Application settings (in INI-file)
 
     if (_config) {
-        _config->saveSettings(iniFile);
+        _config->saveSettings(iniFile, name);
     }
 }
 
@@ -279,7 +279,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
             }
             if (!bTouchingPoint) {
                 _config->addPoint(pixel_coord_to_point(e->pos()));
-                emit CurveChanged( true );
             }
         }
     }
@@ -296,7 +295,6 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 
             if (found_pt != -1) {
                 _config->removePoint(found_pt);
-                emit CurveChanged( true );
             }
             movingPoint = -1;
         }
@@ -353,7 +351,6 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     if (e->button() == Qt::LeftButton) {
         timer.invalidate();
         if (movingPoint >= 0 && movingPoint < points.size()) {
-            emit CurveChanged( true );
             if (_config) {
                 _config->movePoint(movingPoint, pixel_coord_to_point(e->pos()));
             }
@@ -398,12 +395,6 @@ QPointF QFunctionConfigurator::point_to_pixel(QPointF point) const
 {
     return QPointF(range.x() + point.x() * c.x(),
                    range.y() + range.height() - point.y() * c.y());
-}
-
-void QFunctionConfigurator::setColorBezier(QColor color)
-{
-    colBezier = color;
-    update();
 }
 
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)

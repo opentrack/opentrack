@@ -16,10 +16,23 @@
 class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
-    Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
+    Q_PROPERTY(QString Name READ get_name WRITE set_name)
+    
     QColor colorBezier() const
     {
         return colBezier;
+    }
+    void setColorBezier(QColor color)
+    {
+        colBezier = color;
+        update();
+    }
+    QString get_name() const {
+        return name;
+    }
+    void set_name(QString name)
+    {
+        this->name = name;
     }
 public:
 	QFunctionConfigurator(QWidget *parent = 0);
@@ -27,29 +40,23 @@ public:
 
     void setConfig(FunctionConfig* config);
     void saveSettings(QString settingsFile);
-
-signals:
-    void CurveChanged(bool);
-
 public slots:
-    void setColorBezier(QColor);
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
 	void mouseMoveEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
-      
 protected:
     void drawBackground();
 	void drawFunction();
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
     bool point_within_pixel(QPointF pt, QPointF pixel) const;
-
 protected:
 	virtual void resizeEvent(QResizeEvent *);
 
 private:
+    QString name;
     void update_range() {
         if (!_config)
             return;

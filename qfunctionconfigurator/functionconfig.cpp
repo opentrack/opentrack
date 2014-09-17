@@ -17,36 +17,17 @@
 #include <math.h>
 #include <QPixmap>
 
-FunctionConfig::FunctionConfig(QString title, int intMaxInput, int intMaxOutput) :
-    _mutex(QMutex::Recursive)
-{
-	_title = title;
-    _points = QList<QPointF>();
-	_data = 0;
-	_size = 0;
-	lastValueTracked = QPointF(0,0);
-	_tracking_active = false;
-	_max_Input = intMaxInput;
-	_max_Output = intMaxOutput;
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );
-    loadSettings(iniFile);
-	reload();
-}
-
 void FunctionConfig::setTrackingActive(bool blnActive)
 {
-    _tracking_active = blnActive;
+    activep = blnActive;
 }
 
 FunctionConfig::FunctionConfig() :
     _mutex(QMutex::Recursive),
-    _data(0),
-    _size(0),
-    _tracking_active(false),
-    _max_Input(0),
-    _max_Output(0)
+    data(0),
+    activep(false),
+    max_x(0),
+    max_y(0)
 {
 }
 
@@ -54,31 +35,30 @@ float FunctionConfig::getValue(float x) {
     QMutexLocker foo(&_mutex);
     int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
     float ret = getValueInternal(x2);
-	lastValueTracked.setX(x);
-	lastValueTracked.setY(ret);
+	last_input_value.setX(x);
+	last_input_value.setY(ret);
 	return ret;
 }
 
 bool FunctionConfig::getLastPoint(QPointF& point ) {
     QMutexLocker foo(&_mutex);
-	point = lastValueTracked;
-	return _tracking_active;
+	point = last_input_value;
+	return activep;
 }
 
 float FunctionConfig::getValueInternal(int x) {
     float sign = x < 0 ? -1 : 1;
 	x = x < 0 ? -x : x;
     float ret;
-	if (!_data)
-		ret = 0;
-	else if (_size == 0)
+    int sz = data.size();
+	if (sz == 0)
 		ret = 0;
 	else if (x < 0)
 		ret = 0;
-	else if (x < _size && x >= 0)
-		ret = _data[x];
+	else if (x < sz && x >= 0)
+		ret = data[x];
 	else
-		ret = _data[_size - 1];
+		ret = data[sz - 1];
 	return ret * sign;
 }
 
@@ -96,35 +76,32 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
 }
 
 void FunctionConfig::reload() {
-	_size = 0;
+	if (input.size())
+		qStableSort(input.begin(), input.end(), sortFn);
 
-	if (_points.size())
-		qStableSort(_points.begin(), _points.end(), sortFn);
+	if (input.size()) {
+        data = std::vector<float>(MEMOIZE_PRECISION * input[input.size() - 1].x());
+        
+        const int sz = data.size();
 
-	if (_data)
-        delete[] _data;
-	_data = NULL;
-	if (_points.size()) {
-        _data = new float[_size = MEMOIZE_PRECISION * _points[_points.size() - 1].x()];
+        for (int i = 0; i < sz; i++)
+                data[i] = -1;
 
-        for (int i = 0; i < _size; i++)
-                _data[i] = -1e6;
-
-		for (int k = 0; k < _points[0].x() * MEMOIZE_PRECISION; k++) {
-            if (k < _size)
-                _data[k] = _points[0].y() * k / (_points[0].x() * MEMOIZE_PRECISION);
+		for (int k = 0; k < input[0].x() * MEMOIZE_PRECISION; k++) {
+            if (k < sz)
+                data[k] = input[0].y() * k / (input[0].x() * MEMOIZE_PRECISION);
         }
 
-       for (int i = 0; i < _points.size(); i++) {
-            QPointF p0 = ensureInBounds(_points, i - 1);
-            QPointF p1 = ensureInBounds(_points, i);
-            QPointF p2 = ensureInBounds(_points, i + 1);
-            QPointF p3 = ensureInBounds(_points, i + 2);
+       for (int i = 0; i < sz; i++) {
+            QPointF p0 = ensureInBounds(input, i - 1);
+            QPointF p1 = ensureInBounds(input, i);
+            QPointF p2 = ensureInBounds(input, i + 1);
+            QPointF p3 = ensureInBounds(input, i + 2);
 
-            int end = p2.x() * MEMOIZE_PRECISION;
+            int end = std::min<int>(sz, p2.x() * MEMOIZE_PRECISION);
             int start = p1.x() * MEMOIZE_PRECISION;
 
-            for (int j = start; j < end && j < _size; j++) {
+            for (int j = start; j < end; j++) {
                 double t = (j - start) / (double) (end - start);
                 double t2 = t*t;
                 double t3 = t*t*t;
@@ -140,47 +117,41 @@ void FunctionConfig::reload() {
                                  (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
                                  (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
 
-                if (x >= 0 && x < _size)
-                    _data[x] = y;
+                if (x >= 0 && x < sz)
+                    data[x] = y;
             }
 		}
 
        float last = 0;
-
-       for (int i = 0; i < _size; i++)
+       for (int i = 0; i < sz; i++)
        {
-           if (_data[i] == -1e6)
-               _data[i] = last;
-           last = _data[i];
+           if (data[i] <= 0)
+               data[i] = last;
+           last = data[i];
        }
 	}
 }
 
-FunctionConfig::~FunctionConfig() {
-	if (_data)
-        delete[] _data;
-}
-
 void FunctionConfig::removePoint(int i) {
     QMutexLocker foo(&_mutex);
-    if (i >= 0 && i < _points.size())
+    if (i >= 0 && i < input.size())
     {
-        _points.removeAt(i);
+        input.removeAt(i);
         reload();
     }
 }
 
 void FunctionConfig::addPoint(QPointF pt) {
     QMutexLocker foo(&_mutex);
-	_points.append(pt);
+	input.append(pt);
 	reload();
 }
 
 void FunctionConfig::movePoint(int idx, QPointF pt) {
     QMutexLocker foo(&_mutex);
-    if (idx >= 0 && idx < _points.size())
+    if (idx >= 0 && idx < input.size())
     {
-        _points[idx] = pt;
+        input[idx] = pt;
         reload();
     }
 }
@@ -188,45 +159,45 @@ void FunctionConfig::movePoint(int idx, QPointF pt) {
 QList<QPointF> FunctionConfig::getPoints() {
 	QList<QPointF> ret;
     QMutexLocker foo(&_mutex);
-    for (int i = 0; i < _points.size(); i++) {
-		ret.append(_points[i]);
+    for (int i = 0; i < input.size(); i++) {
+		ret.append(input[i]);
 	}
 	return ret;
 }
 
-void FunctionConfig::loadSettings(QSettings& settings) {
+void FunctionConfig::loadSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
     QPointF newPoint;
 
 	QList<QPointF> points;
-	settings.beginGroup(QString("Curves-%1").arg(_title));
+	settings.beginGroup(QString("Curves-%1").arg(title));
 	
     int max = settings.value("point-count", 0).toInt();
 
 	for (int i = 0; i < max; i++) {
 		newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
 				   settings.value(QString("point-%1-y").arg(i), 0).toFloat());
-		if (newPoint.x() > _max_Input) {
-			newPoint.setX(_max_Input);
+		if (newPoint.x() > max_x) {
+			newPoint.setX(max_x);
 		}
-		if (newPoint.y() > _max_Output) {
-			newPoint.setY(_max_Output);
+		if (newPoint.y() > max_y) {
+			newPoint.setY(max_y);
 		}
 		points.append(newPoint);
 	}
     settings.endGroup();
-	_points = points;
+	input = points;
 	reload();
 }
 
-void FunctionConfig::saveSettings(QSettings& settings) {
+void FunctionConfig::saveSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
-	settings.beginGroup(QString("Curves-%1").arg(_title));
-	int max = _points.size();
+	settings.beginGroup(QString("Curves-%1").arg(title));
+	int max = input.size();
 	settings.setValue("point-count", max);
 	for (int i = 0; i < max; i++) {
-		settings.setValue(QString("point-%1-x").arg(i), _points[i].x());
-		settings.setValue(QString("point-%1-y").arg(i), _points[i].y());
+		settings.setValue(QString("point-%1-x").arg(i), input[i].x());
+		settings.setValue(QString("point-%1-y").arg(i), input[i].y());
     }
 
     for (int i = max; true; i++)
