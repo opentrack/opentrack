@@ -119,7 +119,13 @@ void Tracker::run() {
             QMutexLocker foo(&mtx);
 
             for (int i = 0; i < 6; i++)
-                mainApp->axis(i).headPos = newpose[i];
+            {
+                auto& axis = mainApp->axis(i);
+                int k = axis.opts.src;
+                if (k < 0 || k >= 6)
+                    continue;
+                axis.headPos = newpose[k];
+            }
 
             if (do_center)  {
                 for (int i = 0; i < 6; i++)
