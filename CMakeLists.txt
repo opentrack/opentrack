@@ -206,7 +206,7 @@ file(GLOB opentrack-xplane-plugin-c "x-plane-plugin/*.c")
 
 # freetrack
 
-file(GLOB opentrack-freetrack-c "freetrackclient/*.cpp")
+file(GLOB opentrack-freetrack-c "freetrackclient/*.c" "freetrackclient/*.def")
 
 if(SDK_XPLANE)
     # probably librt already included
@@ -296,9 +296,6 @@ endif()
 
 if(WIN32)
     add_library(freetrackclient SHARED ${opentrack-freetrack-c})
-    if(CMAKE_COMPILER_IS_GNUCC)
-        set_target_properties(freetrackclient PROPERTIES LINK_FLAGS "-Wl,--enable-stdcall-fixup -fno-lto -Wl,-kill-at" PREFIX "" COMPILE_FLAGS "-fno-lto")
-    endif()
 endif()
 
 opentrack_library(opentrack-proto-udp)
