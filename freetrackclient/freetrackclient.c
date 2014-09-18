@@ -83,10 +83,11 @@ FT_EXPORT(bool) FTGetData(FTData* data)
   return true;
 }
 
+/*
 // For some mysterious reason, the previously existing function FTReportID has been changed to FTReportName, but with an integer as argument.
 // The Delphi-code from the FreeTrack repo suggest a char * as argument, so it cost me an afternoon to figure it out (and keep ArmA2 from crashing).
 // Thanks guys!
-//
+*/
 FT_EXPORT(void) FTReportName( int name )
 {
 	dbg_report("FTReportName request (ID = %d).\n", name);
