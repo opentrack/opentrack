@@ -192,9 +192,9 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
     if (_config) {
         QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
-        if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
-            QPointF prev;
-            for (int i = 0; i < points.size(); i++) {
+        if (points.size() && moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
+            QPointF prev = points[0];
+            for (int i = 1; i < points.size(); i++) {
                 auto tmp = point_to_pixel(points[i]);
                 drawLine(&p, prev, tmp, pen);
                 prev = tmp;
