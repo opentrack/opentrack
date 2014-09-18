@@ -19,10 +19,7 @@
  */
 #define	NP_AXIS_MAX				16383
 
-#include <stdarg.h>
 #include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <windows.h>
 
@@ -33,6 +30,7 @@
 FT_EXPORT(bool) FTCreateMapping(void);
 
 #if 0
+#include <stdio.h>
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
 #define dbg_report(...) if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fflush(debug_stream); }
 #else
