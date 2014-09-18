@@ -47,15 +47,16 @@ static const char* dllProvider = "FreeTrack";
 
 static bool FTCreateMapping(void)
 {
-	if ( pMemData != NULL ) {
+	if (pMemData != NULL) {
 		return true;
 	}
 
-    dbg_report("FTCreateMapping request (pMemData == NULL).\n");
-
-	hFTMemMap = CreateFileMappingA( INVALID_HANDLE_VALUE , 00 , PAGE_READWRITE , 0 , 
-		                           sizeof( FTHeap ), 
-								   (LPCSTR) FT_MM_DATA );
+	hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE,
+                                   NULL,
+                                   PAGE_READWRITE,
+                                   0, 
+		                           sizeof(FTHeap), 
+								   (LPCSTR) FT_MM_DATA);
 
     if (hFTMemMap == NULL)
     {
@@ -63,7 +64,7 @@ static bool FTCreateMapping(void)
         return false;
     }
 
-    pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof( FTHeap ) );
+    pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTHeap));
     hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 
 	return true;
@@ -71,7 +72,6 @@ static bool FTCreateMapping(void)
 
 FT_EXPORT(bool) FTGetData(FTData* data)
 {
-//  dbg_report("NP_GetData called.");
   if (FTCreateMapping() == false)
       return false;
 
