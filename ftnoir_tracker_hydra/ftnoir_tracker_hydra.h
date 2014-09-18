@@ -1,8 +1,5 @@
 #include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_hydra_clientcontrols.h"
-#include <QMessageBox>
-#include <QWaitCondition>
-#include <math.h>
 #include "facetracknoir/plugin-support.h"
 #include "facetracknoir/options.h"
 using namespace options;
