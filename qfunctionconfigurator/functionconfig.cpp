@@ -14,7 +14,7 @@
 #include <QtAlgorithms>
 #include <QtAlgorithms>
 #include <QSettings>
-#include <math.h>
+#include <cmath>
 #include <QPixmap>
 
 void FunctionConfig::setTrackingActive(bool blnActive)
@@ -156,13 +156,10 @@ void FunctionConfig::movePoint(int idx, QPointF pt) {
     }
 }
 
-QList<QPointF> FunctionConfig::getPoints() {
-	QList<QPointF> ret;
+const QList<QPointF> FunctionConfig::getPoints() {
     QMutexLocker foo(&_mutex);
-    for (int i = 0; i < input.size(); i++) {
-		ret.append(input[i]);
-	}
-	return ret;
+    // NB can't pass by reference
+	return input;
 }
 
 void FunctionConfig::loadSettings(QSettings& settings, const QString& title) {

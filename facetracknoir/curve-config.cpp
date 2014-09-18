@@ -1,7 +1,5 @@
 #include "facetracknoir/facetracknoir.h"
 #include "facetracknoir/curve-config.h"
-#include <QDebug>
-#include <QCheckBox>
 CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidget *parent) :
     QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
@@ -78,39 +76,45 @@ void CurveConfigurationDialog::loadSettings() {
         ui.rzconfig_alt
     };
 
-    QSettings settings("opentrack");
-    QString currentFile = settings.value("SettingsFile",
-                                         QCoreApplication::applicationDirPath() + "/settings/default.ini" )
-            .toString();
-
     for (int i = 0; i < 6; i++)
     {
-        configs[i]->setConfig(&mainApp->axis(i).curve);
-        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt);
+        configs[i]->setConfig(&mainApp->axis(i).curve, mainApp->axis(i).name1);
+        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, mainApp->axis(i).name2);
     }
 }
 
 void CurveConfigurationDialog::save() {
-
-	qDebug() << "save() says: started";
-
     QSettings settings("opentrack");
     QString currentFile =
             settings.value("SettingsFile",
                            QCoreApplication::applicationDirPath() + "/settings/default.ini" )
             .toString();
-
-    ui.rxconfig->saveSettings(currentFile);
-    ui.ryconfig->saveSettings(currentFile);
-    ui.rzconfig->saveSettings(currentFile);
-    ui.txconfig->saveSettings(currentFile);
-    ui.tyconfig->saveSettings(currentFile);
-    ui.tzconfig->saveSettings(currentFile);
-
-    ui.txconfig_alt->saveSettings(currentFile);
-    ui.tyconfig_alt->saveSettings(currentFile);
-    ui.tzconfig_alt->saveSettings(currentFile);
-    ui.rxconfig_alt->saveSettings(currentFile);
-    ui.ryconfig_alt->saveSettings(currentFile);
-    ui.rzconfig_alt->saveSettings(currentFile);
+    
+    struct {
+        QFunctionConfigurator* qfc;
+        Axis axis;
+        bool altp;
+    } qfcs[] =
+    {
+        { ui.rxconfig, Yaw, false },
+        { ui.ryconfig, Pitch, false},
+        { ui.rzconfig, Roll, false },
+        { ui.txconfig, TX, false },
+        { ui.tyconfig, TY, false },
+        { ui.tzconfig, TZ, false },
+        
+        { ui.rxconfig_alt, Yaw, true },
+        { ui.ryconfig_alt, Pitch, true},
+        { ui.rzconfig_alt, Roll, true },
+        { ui.txconfig_alt, TX, true },
+        { ui.tyconfig_alt, TY, true },
+        { ui.tzconfig_alt, TZ, true },
+        { nullptr, Yaw, false }
+    };
+    
+    for (int i = 0; qfcs[i].qfc; i++)
+    {
+        THeadPoseDOF& axis = mainApp->axis(qfcs[i].axis);
+        qfcs[i].qfc->saveSettings(currentFile, qfcs[i].altp ? axis.name2 : axis.name1);
+    }
 }

@@ -85,7 +85,7 @@ public:
 
 	void addPoint(QPointF pt);
 	void movePoint(int idx, QPointF pt);
-	QList<QPointF> getPoints();
+	const QList<QPointF> getPoints();
 	void setMaxInput(int MaxInput) {
 		max_x = MaxInput;
 	}
