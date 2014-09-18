@@ -7,7 +7,7 @@
 #include "ftnoir_filter_kalman.h"
 #include "facetracknoir/plugin-support.h"
 #include <QDebug>
-#include <math.h>
+#include <cmath>
 
 FTNoIR_Filter::FTNoIR_Filter() {
     reset();

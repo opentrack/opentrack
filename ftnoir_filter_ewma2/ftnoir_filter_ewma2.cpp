@@ -15,7 +15,7 @@
 *                                                                               *
 ********************************************************************************/
 #include "ftnoir_filter_ewma2.h"
-#include "math.h"
+#include <cmath>
 #include <QDebug>
 #include <QWidget>
 #include "facetracknoir/plugin-support.h"

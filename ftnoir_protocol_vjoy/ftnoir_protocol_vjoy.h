@@ -28,13 +28,8 @@
 #pragma once
 #include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_vjoy_controls.h"
-#include <QThread>
-#include <QUdpSocket>
-#include <QMessageBox>
-#include <QSettings>
-#include <math.h>
+#include <cmath>
 #include "facetracknoir/plugin-support.h"
-#include <windows.h>
 
 #define FT_PROGRAMID "FT_ProgramID"
 
@@ -60,7 +55,7 @@ class VJoyControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit VJoyControls();
-    void registerProtocol(IProtocol *l) {}
+    void registerProtocol(IProtocol *) {}
 	void unRegisterProtocol() {}
 
 private:
@@ -88,6 +83,8 @@ public:
 #define VJOY_AXIS_MIN   -32768
 #define VJOY_AXIS_NIL   0
 #define VJOY_AXIS_MAX   32767
+
+#include <windows.h>
 
 #include <pshpack1.h>
 
