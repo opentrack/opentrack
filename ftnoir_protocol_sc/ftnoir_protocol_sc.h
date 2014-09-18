@@ -133,7 +133,7 @@ class SCControls: public QWidget, public IProtocolDialog
     Q_OBJECT
 public:
     SCControls();
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 private:
     Ui::UICSCControls ui;
