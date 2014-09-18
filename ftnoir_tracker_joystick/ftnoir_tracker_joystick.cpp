@@ -5,10 +5,9 @@
 FTNoIR_Tracker::FTNoIR_Tracker() :
     g_pDI(nullptr),
     g_pJoystick(nullptr),
-    iter(-1),
-    mtx(QMutex::Recursive)
+    mtx(QMutex::Recursive),
+    iter(-1)
 {
-    GUID bar = {0};
 }
 
 void FTNoIR_Tracker::reload()

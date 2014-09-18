@@ -79,13 +79,9 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 {
 	// get sort indices with respect to d scalar product
 	vector< pair<float,int> > d_vals;
-	for (int i = 0; i<points.size(); ++i)
+	for (unsigned i = 0; i<points.size(); ++i)
 		d_vals.push_back(pair<float, int>(d.dot(points[i]), i));
 
-	struct
-    {
-        bool operator()(const pair<float, int>& a, const pair<float, int>& b) { return a.first < b.first; }
-    } comp;
     std::sort(d_vals.begin(),
               d_vals.end(),
 #ifdef OPENTRACK_API
@@ -95,19 +91,19 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 #endif
               );
 
-	for (int i = 0; i<points.size(); ++i)
+	for (unsigned i = 0; i<points.size(); ++i)
 		d_order[i] = d_vals[i].second;
 }
 
 
 // ----------------------------------------------------------------------------
-PointTracker::PointTracker() 
-	: init_phase(true),
+PointTracker::PointTracker() :
+      dynamic_pose_resolution(true),
+      dt_reset(1), 
+      init_phase(true),
 	  dt_valid(0), 
-	  dt_reset(1), 
 	  v_t(0,0,0),
-	  v_r(0,0,0), 
-	  dynamic_pose_resolution(true)
+	  v_r(0,0,0)
 {
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
@@ -168,7 +164,7 @@ bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
 		return false;
 	}
 
-	int n_iter = POSIT(f);
+	(void) POSIT(f);
 	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
 
 	if (!init_phase)
