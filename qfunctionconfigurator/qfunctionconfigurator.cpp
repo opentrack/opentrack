@@ -181,7 +181,6 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 
     if (_background.isNull())
         drawBackground();
-    p.drawPixmap(e->rect(), _background);
 
     if (_draw_function) {
         _draw_function = false;
