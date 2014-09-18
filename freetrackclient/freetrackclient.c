@@ -27,8 +27,6 @@
 
 #define FT_EXPORT(t) __declspec(dllexport) t __stdcall
 
-FT_EXPORT(bool) FTCreateMapping(void);
-
 #if 0
 #include <stdio.h>
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
