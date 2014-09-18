@@ -206,7 +206,7 @@ file(GLOB opentrack-xplane-plugin-c "x-plane-plugin/*.c")
 
 # freetrack
 
-file(GLOB opentrack-freetrack-c "freetrackclient/*.c" "freetrackclient/*.def")
+file(GLOB opentrack-freetrack-c "freetrackclient/*.c")
 
 if(SDK_XPLANE)
     # probably librt already included
@@ -296,6 +296,7 @@ endif()
 
 if(WIN32)
     add_library(freetrackclient SHARED ${opentrack-freetrack-c})
+    set_target_properties(freetrackclient PROPERTIES PREFIX "")
 endif()
 
 opentrack_library(opentrack-proto-udp)
