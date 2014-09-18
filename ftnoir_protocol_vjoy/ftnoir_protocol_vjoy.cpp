@@ -4,7 +4,8 @@
 
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
-    VJoy_Initialize("", "");
+    static char meh[1] = {0};
+    VJoy_Initialize(meh, meh);
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
