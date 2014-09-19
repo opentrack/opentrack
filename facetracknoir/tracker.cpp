@@ -120,11 +120,14 @@ void Tracker::run() {
 
             for (int i = 0; i < 6; i++)
             {
-                auto& axis = mainApp->axis(i);
                 raw_6dof.axes[i] = newpose[i];
+                
+                auto& axis = mainApp->axis(i);
+                
                 int k = axis.opts.src;
                 if (k < 0 || k >= 6)
                     continue;
+                
                 axis.headPos = newpose[k];
             }
 
