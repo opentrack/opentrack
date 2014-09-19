@@ -23,8 +23,6 @@ public:
 	FunctionConfig* config();
     void setConfig(FunctionConfig* config, const QString &name);
     
-    void saveSettings(QString settingsFile, const QString &name);
-    
     QColor colorBezier() const
     {
         return spline_color;

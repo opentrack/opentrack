@@ -259,16 +259,26 @@ void FaceTrackNoIR::open() {
     }
 }
 
-void FaceTrackNoIR::save() {
-    b->save();
-
+void FaceTrackNoIR::save_mappings() {
     QSettings settings("opentrack");
 
     QString currentFile =
             settings.value("SettingsFile",
                            QCoreApplication::applicationDirPath() + "/settings/default.ini")
             .toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );
+    
+    for (int i = 0; i < 6; i++)
+    {
+        axis(i).curve.saveSettings(iniFile, axis(i).name1);
+        axis(i).curveAlt.saveSettings(iniFile, axis(i).name2);
+    }
+}
 
+void FaceTrackNoIR::save() {
+    b->save();
+    save_mappings();
+    
 #if defined(__unix) || defined(__linux)
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
@@ -311,9 +321,21 @@ void FaceTrackNoIR::saveAs()
     fill_profile_cbx();
 }
 
+void FaceTrackNoIR::load_mappings() {
+    QSettings settings("opentrack");
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings iniFile( currentFile, QSettings::IniFormat );
+
+    for (int i = 0; i < 6; i++)
+    {
+        axis(i).curve.loadSettings(iniFile, axis(i).name1);
+        axis(i).curveAlt.loadSettings(iniFile, axis(i).name2);
+    }
+}
+
 void FaceTrackNoIR::loadSettings() {
     b->reload();
-    (dynamic_cast<CurveConfigurationDialog*>(_curve_config))->loadSettings();
+    load_mappings();
 }
 
 void FaceTrackNoIR::updateButtonState(bool running)
@@ -357,18 +379,6 @@ void FaceTrackNoIR::startTracker( ) {
 
     if (tracker) {
         delete tracker;
-    }
-
-    {
-        QSettings settings("opentrack");
-        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-        QSettings iniFile( currentFile, QSettings::IniFormat );
-
-        for (int i = 0; i < 6; i++)
-        {
-            axis(i).curve.loadSettings(iniFile, axis(i).name1);
-            axis(i).curveAlt.loadSettings(iniFile, axis(i).name2);
-        }
     }
 
     tracker = new Tracker ( this, s );
@@ -559,17 +569,12 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
     _keyboard_shortcuts->show();
     _keyboard_shortcuts->raise();
 }
-void FaceTrackNoIR::showCurveConfiguration() {
-
-	if (!_curve_config)
-    {
+void FaceTrackNoIR::showCurveConfiguration() {    
+    if (!_curve_config)
         _curve_config = new CurveConfigurationDialog( this, this );
-    }
-
-	if (_curve_config) {
-		_curve_config->show();
-		_curve_config->raise();
-	}
+    
+    _curve_config->show();
+    _curve_config->raise();
 }
 
 void FaceTrackNoIR::exit() {

@@ -49,13 +49,6 @@ void QFunctionConfigurator::setConfig(FunctionConfig* config, const QString& nam
     update();
 }
 
-void QFunctionConfigurator::saveSettings(QString settingsFile, const QString& name) {
-    QSettings iniFile(settingsFile, QSettings::IniFormat);
-
-    if (_config)
-        _config->saveSettings(iniFile, name);
-}
-
 void QFunctionConfigurator::drawBackground()
 {
     if (!_config)
