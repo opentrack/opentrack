@@ -10,12 +10,10 @@ class CurveConfigurationDialog: public QWidget
     Q_OBJECT
 public:
     CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
-    void loadSettings();
 private:
     Ui::UICCurveConfigurationDialog ui;
     void save();
     FaceTrackNoIR *mainApp;
-
 private slots:
     void doOK();
     void doCancel();

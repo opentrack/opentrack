@@ -4,10 +4,50 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
 	ui.setupUi( this );
+    
+    // rest of mapping settings taken care of by options::value<t>
+    mainApp->load_mappings();
+    
+    {
+        struct {
+            QFunctionConfigurator* qfc;
+            Axis axis;
+            bool altp;
+        } qfcs[] =
+        {
+            { ui.rxconfig, Yaw, false },
+            { ui.ryconfig, Pitch, false},
+            { ui.rzconfig, Roll, false },
+            { ui.txconfig, TX, false },
+            { ui.tyconfig, TY, false },
+            { ui.tzconfig, TZ, false },
+            
+            { ui.rxconfig_alt, Yaw, true },
+            { ui.ryconfig_alt, Pitch, true},
+            { ui.rzconfig_alt, Roll, true },
+            { ui.txconfig_alt, TX, true },
+            { ui.tyconfig_alt, TY, true },
+            { ui.tzconfig_alt, TZ, true },
+            { nullptr, Yaw, false }
+        };
+        
+        for (int i = 0; qfcs[i].qfc; i++)
+        {
+            const bool altp = qfcs[i].altp;
+            THeadPoseDOF& axis = mainApp->axis(qfcs[i].axis);
+            FunctionConfig* conf = altp ? &axis.curveAlt : &axis.curve;
+            const auto& name = qfcs[i].altp ? axis.name2 : axis.name1;
+            
+            qfcs[i].qfc->setConfig(conf, name);
+        }
+    }
+ 
     setFont(qApp->font());
-
     QPoint offsetpos(120, 30);
 	this->move(parent->pos() + offsetpos);
+    
+   
+    
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -42,8 +82,6 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     tie_setting(mainApp->s.a_x.src, ui.src_x);
     tie_setting(mainApp->s.a_y.src, ui.src_y);
     tie_setting(mainApp->s.a_z.src, ui.src_z);
-
-	loadSettings();
 }
 
 void CurveConfigurationDialog::doOK() {
@@ -52,69 +90,10 @@ void CurveConfigurationDialog::doOK() {
 }
 
 void CurveConfigurationDialog::doCancel() {
-    mainApp->b->revert();
-    loadSettings();
-    close();
-}
-
-void CurveConfigurationDialog::loadSettings() {
-    QFunctionConfigurator* configs[6] = {
-        ui.txconfig,
-        ui.tyconfig,
-        ui.tzconfig,
-        ui.rxconfig,
-        ui.ryconfig,
-        ui.rzconfig
-    };
-
-    QFunctionConfigurator* alt_configs[6] = {
-        ui.txconfig_alt,
-        ui.tyconfig_alt,
-        ui.tzconfig_alt,
-        ui.rxconfig_alt,
-        ui.ryconfig_alt,
-        ui.rzconfig_alt
-    };
-
-    for (int i = 0; i < 6; i++)
-    {
-        configs[i]->setConfig(&mainApp->axis(i).curve, mainApp->axis(i).name1);
-        alt_configs[i]->setConfig(&mainApp->axis(i).curveAlt, mainApp->axis(i).name2);
-    }
+    mainApp->load_mappings();
+    this->close();
 }
 
 void CurveConfigurationDialog::save() {
-    QSettings settings("opentrack");
-    QString currentFile =
-            settings.value("SettingsFile",
-                           QCoreApplication::applicationDirPath() + "/settings/default.ini" )
-            .toString();
-    
-    struct {
-        QFunctionConfigurator* qfc;
-        Axis axis;
-        bool altp;
-    } qfcs[] =
-    {
-        { ui.rxconfig, Yaw, false },
-        { ui.ryconfig, Pitch, false},
-        { ui.rzconfig, Roll, false },
-        { ui.txconfig, TX, false },
-        { ui.tyconfig, TY, false },
-        { ui.tzconfig, TZ, false },
-        
-        { ui.rxconfig_alt, Yaw, true },
-        { ui.ryconfig_alt, Pitch, true},
-        { ui.rzconfig_alt, Roll, true },
-        { ui.txconfig_alt, TX, true },
-        { ui.tyconfig_alt, TY, true },
-        { ui.tzconfig_alt, TZ, true },
-        { nullptr, Yaw, false }
-    };
-    
-    for (int i = 0; qfcs[i].qfc; i++)
-    {
-        THeadPoseDOF& axis = mainApp->axis(qfcs[i].axis);
-        qfcs[i].qfc->saveSettings(currentFile, qfcs[i].altp ? axis.name2 : axis.name1);
-    }
+    mainApp->save_mappings();
 }

@@ -152,4 +152,8 @@ private slots:
     
     void startTracker();
     void stopTracker();
+    
+public:
+    void save_mappings();
+    void load_mappings();
 };
