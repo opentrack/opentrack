@@ -26,15 +26,15 @@ struct settings {
     {}
 };
 
-class TrackerImpl : public ITracker, protected QThread
+class TrackerImpl : public ITracker, private QThread
 {
 public:
-	TrackerImpl();
+    TrackerImpl();
     virtual ~TrackerImpl() override;
     void StartTracker(QFrame *);
     void GetHeadPoseData(double *data);
 protected:
-	void run();
+    virtual void run() override;
 private:
     double pose[6];
     QUdpSocket sock;
@@ -47,23 +47,23 @@ class TrackerDialog : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-	TrackerDialog();
+    TrackerDialog();
     void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 private:
-	Ui::UI_freepie_udp_dialog ui;
+    Ui::UI_freepie_udp_dialog ui;
     settings s;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class TrackerMeta : public Metadata
 {
 public:
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    void getFullName(QString *strToBeFilled);
+    void getShortName(QString *strToBeFilled);
+    void getDescription(QString *strToBeFilled);
+    void getIcon(QIcon *icon);
 };
 

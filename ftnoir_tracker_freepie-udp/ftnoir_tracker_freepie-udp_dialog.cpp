@@ -3,10 +3,10 @@
 
 TrackerDialog::TrackerDialog()
 {
-	ui.setupUi(this);
+    ui.setupUi(this);
 
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.port, ui.port);
     tie_setting(s.enable_yaw, ui.chkEnableYaw);
@@ -16,7 +16,7 @@ TrackerDialog::TrackerDialog()
 
 void TrackerDialog::doOK() {
     s.b->save();
-	this->close();
+    this->close();
 }
 
 void TrackerDialog::doCancel() {
