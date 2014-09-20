@@ -196,6 +196,8 @@ opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
 opentrack_module(opentrack-tracker-hydra ftnoir_tracker_hydra)
 opentrack_module(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
+file(GLOB opentrack-version-c "facetracknoir/version.c")
+
 file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp" "ftnoir_csv/*.h")
 
 # compat lib for POSIX/win32
@@ -256,6 +258,11 @@ add_library(opentrack-pose-widget SHARED ${opentrack-pose-widget-c} ${opentrack-
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c})
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
+
+add_library(opentrack-version STATIC ${opentrack-version-c})
+set_target_properties(opentrack-version PROPERTIES
+    COMPILE_DEFINITIONS
+    "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela)
 opentrack_library(opentrack-filter-kalman)
@@ -419,16 +426,12 @@ if(UNIX OR APPLE)
 	    target_link_libraries(opentrack-qxt-mini X11)
     endif()
 endif()
+
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-bin-c} ${opentrack-bin-uih} ${opentrack-bin-rcc})
-set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
-set(OPENTRACK_COMMIT_VERSION \"${OPENTRACK__COMMIT}\")
-configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/opentrack-version.h" @ONLY NEWLINE_STYLE UNIX)
 
 if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
 endif()
-
-set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
 if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
@@ -446,7 +449,7 @@ if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
-target_link_libraries(opentrack opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
+target_link_libraries(opentrack opentrack-version opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
 endif()
