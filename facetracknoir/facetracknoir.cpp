@@ -25,7 +25,6 @@
 #include "shortcuts.h"
 #include "tracker.h"
 #include "curve-config.h"
-#include "opentrack-version.h"
 #include <QFileDialog>
 
 #if defined(_WIN32)
@@ -581,6 +580,8 @@ void FaceTrackNoIR::exit() {
 	QCoreApplication::exit(0);
 }
 
+extern "C" volatile const char* opentrack_version;
+
 void FaceTrackNoIR::fill_profile_cbx()
 {
     if (looping)
@@ -590,7 +591,7 @@ void FaceTrackNoIR::fill_profile_cbx()
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
     QFileInfo pathInfo ( currentFile );
-    setWindowTitle(QString( OPENTRACK_VERSION " :: ") + pathInfo.fileName());
+    setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + pathInfo.fileName());
     QDir settingsDir( pathInfo.dir() );
     QStringList filters;
     filters << "*.ini";
