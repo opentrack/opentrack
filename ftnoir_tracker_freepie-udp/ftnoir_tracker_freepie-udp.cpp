@@ -21,27 +21,28 @@ void TrackerImpl::run() {
             float rot[6];
             struct {
                 float pad[9];
-                float rot[6];                
+                float rot[6];
             } raw_rot;
         };
     } data;
-    
+
     enum F {
         flag_Raw = 1 << 0,
         flag_Orient = 1 << 1,
         Mask = flag_Raw | flag_Orient
     };
 
-	while (1) {
+    while (1) {
         if (should_quit)
             break;
         {
             float* orient = nullptr;
-            
-            while (sock.hasPendingDatagrams()) {
+
+            while (sock.hasPendingDatagrams())
+            {
                 data = decltype(data){0,0, 0,0,0};
                 (void) sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
-                
+
                 int flags = data.flags & F::Mask;
                 switch (flags)
                 {
@@ -62,14 +63,14 @@ void TrackerImpl::run() {
                     pose[Yaw + i] = orient[i];
             }
         }
-		usleep(4000);
-	}
+        usleep(4000);
+    }
 }
 
 void TrackerImpl::StartTracker(QFrame*)
 {
     (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-	start();
+  start();
 }
 
 void TrackerImpl::GetHeadPoseData(double *data)
