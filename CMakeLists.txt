@@ -194,6 +194,7 @@ opentrack_module(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_module(opentrack-tracker-joystick ftnoir_tracker_joystick)
 opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
 opentrack_module(opentrack-tracker-hydra ftnoir_tracker_hydra)
+opentrack_module(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
 file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp" "ftnoir_csv/*.h")
 
@@ -347,6 +348,7 @@ target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 link_with_dinput8(opentrack-tracker-pt)
 
 opentrack_library(opentrack-tracker-udp)
+opentrack_library(opentrack-tracker-freepie-udp)
 
 if(SDK_RIFT)
     include_directories("${SDK_RIFT}/Include")
