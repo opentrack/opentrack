@@ -33,6 +33,8 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
     double fMouse_X = 0;
     double fMouse_Y = 0;
 
+    // XXX TODO remove axis selector, use mapping window's
+    // axis selection. Mention in UI axis used. -sh 20140920
     int Mouse_X = s.Mouse_X;
     int Mouse_Y = s.Mouse_Y;
 	
