@@ -224,12 +224,12 @@ void Tracker::GetHeadPoseData(double *data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-    *strToBeFilled = "HT 1.0";
+    *strToBeFilled = "HT face tracker";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = "HT";
+	*strToBeFilled = "HT"
 }
 
 void TrackerDll::getDescription(QString *strToBeFilled)
