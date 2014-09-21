@@ -32,13 +32,14 @@
 #include <QList>
 #include <QKeySequence>
 #include <QShortcut>
+#include <QLayout>
+#include <QPixmap>
+#include <QLabel>
 #if !defined(_WIN32)
 #	include "qxt-mini/QxtGlobalShortcut"
 #else
 #	include <windows.h>
 #endif
-#include <QThread>
-#include <QDebug>
 
 #include "ui_facetracknoir.h"
 
@@ -117,18 +118,20 @@ private:
 	void createIconGroupBox();
 
 	void loadSettings();
-    void updateButtonState(bool);
+    void updateButtonState(bool running);
 
     QList<DynamicLibrary*> dlopen_filters;
     QList<DynamicLibrary*> dlopen_trackers;
     QList<DynamicLibrary*> dlopen_protocols;
     QShortcut kbd_quit;
-
+    int looping;
+    
+    QLayout* video_frame_layout;
+    QPixmap no_feed_pixmap;
 #ifndef _WIN32
     void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
 #endif
     void fill_profile_cbx();
-    int looping;
     
 private slots:
     void open();

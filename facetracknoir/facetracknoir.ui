@@ -25,9 +25,9 @@
    <widget class="QPushButton" name="btnShortcuts">
     <property name="geometry">
      <rect>
-      <x>715</x>
-      <y>110</y>
-      <width>151</width>
+      <x>760</x>
+      <y>280</y>
+      <width>96</width>
       <height>38</height>
      </rect>
     </property>
@@ -54,7 +54,7 @@
    <widget class="QGroupBox" name="box_mapped_headpose">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>120</x>
       <y>20</y>
       <width>169</width>
       <height>137</height>
@@ -298,8 +298,8 @@
     <property name="geometry">
      <rect>
       <x>345</x>
-      <y>260</y>
-      <width>256</width>
+      <y>255</y>
+      <width>246</width>
       <height>65</height>
      </rect>
     </property>
@@ -343,7 +343,7 @@
      <rect>
       <x>345</x>
       <y>175</y>
-      <width>256</width>
+      <width>246</width>
       <height>65</height>
      </rect>
     </property>
@@ -385,9 +385,9 @@
    <widget class="QGroupBox" name="groupFilter">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>175</y>
-      <width>221</width>
+      <x>345</x>
+      <y>335</y>
+      <width>246</width>
       <height>65</height>
      </rect>
     </property>
@@ -429,8 +429,8 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>260</y>
+      <x>625</x>
+      <y>180</y>
       <width>221</width>
       <height>65</height>
      </rect>
@@ -485,16 +485,38 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <property name="lineWidth">
-     <number>0</number>
-    </property>
+    <widget class="QLabel" name="video_frame_label">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>320</width>
+       <height>240</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <stylestrategy>NoAntialias</stylestrategy>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupProfile">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>525</x>
       <y>40</y>
-      <width>256</width>
+      <width>311</width>
       <height>111</height>
      </rect>
     </property>
@@ -565,9 +587,9 @@
    <widget class="QPushButton" name="btnEditCurves">
     <property name="geometry">
      <rect>
-      <x>715</x>
-      <y>60</y>
-      <width>151</width>
+      <x>615</x>
+      <y>280</y>
+      <width>141</width>
       <height>38</height>
      </rect>
     </property>
@@ -586,8 +608,8 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>80</width>
-      <height>22</height>
+      <width>60</width>
+      <height>37</height>
      </size>
     </property>
    </widget>
@@ -610,9 +632,9 @@
    <widget class="QGroupBox" name="groupStartStop">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>340</y>
-      <width>190</width>
+      <x>635</x>
+      <y>335</y>
+      <width>201</width>
       <height>65</height>
      </rect>
     </property>
@@ -685,7 +707,7 @@
    <widget class="QGroupBox" name="box_raw_headpose">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>320</x>
       <y>20</y>
       <width>169</width>
       <height>137</height>

@@ -94,10 +94,14 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     pProtocolDialog(NULL),
     pFilterDialog(NULL),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    looping(0)
+    looping(0),
+    video_frame_layout(new QVBoxLayout()),
+    no_feed_pixmap(":/uielements/no-feed.png")
 {	
     ui.setupUi(this);
     setFixedSize(size());
+    ui.video_frame_label->setPixmap(no_feed_pixmap);
+    updateButtonState(false);
 
 	_keyboard_shortcuts = 0;
 	_curve_config = 0;
@@ -163,6 +167,7 @@ FaceTrackNoIR::~FaceTrackNoIR() {
     save();
     if (Libraries)
         delete Libraries;
+    delete video_frame_layout;
 }
 
 QFrame* FaceTrackNoIR::get_video_widget() {
@@ -275,20 +280,17 @@ void FaceTrackNoIR::loadSettings() {
 
 void FaceTrackNoIR::updateButtonState(bool running)
 {
-    bool e = !running;
-    ui.iconcomboProfile->setEnabled ( e );
-    ui.btnLoad->setEnabled ( e );
-    ui.btnSaveAs->setEnabled ( e );
-    ui.btnStartTracker->setEnabled ( e );
+    bool not_running = !running;
+    ui.iconcomboProfile->setEnabled ( not_running );
+    ui.btnStartTracker->setEnabled ( not_running );
     ui.btnStopTracker->setEnabled ( running );
-    ui.iconcomboProtocol->setEnabled ( e );
-    ui.btnShowServerControls->setEnabled ( e );
-    ui.iconcomboFilter->setEnabled ( e );
-    ui.iconcomboTrackerSource->setEnabled(e);
-    ui.cbxSecondTrackerSource->setEnabled(e);
-
-    ui.btnStartTracker->setEnabled(e);
+    ui.iconcomboProtocol->setEnabled ( not_running );
+    ui.iconcomboFilter->setEnabled ( not_running );
+    ui.iconcomboTrackerSource->setEnabled(not_running);
+    ui.cbxSecondTrackerSource->setEnabled(not_running);
+    ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
+    ui.video_frame_label->setVisible(not_running);
 }
 
 void FaceTrackNoIR::startTracker( ) {
