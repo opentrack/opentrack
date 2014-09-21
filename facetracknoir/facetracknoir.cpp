@@ -27,10 +27,6 @@
 #include "curve-config.h"
 #include <QFileDialog>
 
-#if defined(_WIN32)
-#   include <windows.h>
-#   include <dshow.h>
-#endif
 
 #if defined(__APPLE__)
 #   define SONAME "dylib"
@@ -154,8 +150,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
 
-    GetCameraNameDX();
-
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
     connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
 
@@ -178,63 +172,6 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 
 QFrame* FaceTrackNoIR::get_video_widget() {
     return ui.video_frame;
-}
-
-void FaceTrackNoIR::GetCameraNameDX() {
-#if defined(_WIN32)
-	ui.cameraName->setText("No video-capturing device was found in your system: check if it's connected!");
-
-	HRESULT hr;
-	ICreateDevEnum *pSysDevEnum = NULL;
-	hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
-	if (FAILED(hr))
-	{
-		qDebug() << "GetWDM says: CoCreateInstance Failed!";
-		return;
-	}
-
-	qDebug() << "GetWDM says: CoCreateInstance succeeded!";
-	
-	IEnumMoniker *pEnumCat = NULL;
-	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
-
-	if (hr == S_OK) {
-		qDebug() << "GetWDM says: CreateClassEnumerator succeeded!";
-
-		IMoniker *pMoniker = NULL;
-		ULONG cFetched;
-		if (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) {
-			IPropertyBag *pPropBag;
-			hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
-			if (SUCCEEDED(hr))	{
-				VARIANT varName;
-				VariantInit(&varName);
-				hr = pPropBag->Read(L"FriendlyName", &varName, 0);
-				if (SUCCEEDED(hr))
-				{
-					QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
-					qDebug() << "GetWDM says: Moniker found:" << str;
-					ui.cameraName->setText(str);
-				}
-				VariantClear(&varName);
-
-				pPropBag->Release();
-			}
-			pMoniker->Release();
-		}
-		pEnumCat->Release();
-	}
-	pSysDevEnum->Release();
-#else
-    for (int i = 0; i < 16; i++) {
-        char buf[128];
-        sprintf(buf, "/dev/video%d", i);
-        if (access(buf, R_OK | W_OK) == 0) {
-            ui.cameraName->setText(QString(buf));
-            break;
-        }
-    }
-#endif
 }
 
 void FaceTrackNoIR::open() {
