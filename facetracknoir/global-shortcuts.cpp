@@ -1,4 +1,5 @@
-#include "facetracknoir/facetracknoir.h"
+#   include <QList>
+#   include <QString>
 
 #if defined(_WIN32)
 #   ifndef DIRECTINPUT_VERSION
