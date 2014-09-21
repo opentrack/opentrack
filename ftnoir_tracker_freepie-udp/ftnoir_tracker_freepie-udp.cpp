@@ -1,6 +1,7 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "facetracknoir/plugin-support.h"
 
+#include <stddef.h>
 #include <cinttypes>
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
@@ -41,9 +42,16 @@ void TrackerImpl::run() {
             while (sock.hasPendingDatagrams())
             {
                 data = decltype(data){0,0, 0,0,0};
-                (void) sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
+                int sz = sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
 
                 int flags = data.flags & F::Mask;
+                
+                constexpr int minsz = offsetof(decltype(data), raw_rot) + sizeof(decltype(data)::raw_rot);
+                const bool flags_came_out_wrong = minsz > sz;
+                
+                if (flags_came_out_wrong)
+                    flags &= ~F::flag_Raw;
+                
                 switch (flags)
                 {
                 case flag_Raw:
