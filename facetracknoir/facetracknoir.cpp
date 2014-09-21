@@ -27,7 +27,6 @@
 #include "curve-config.h"
 #include <QFileDialog>
 
-
 #if defined(__APPLE__)
 #   define SONAME "dylib"
 #elif defined(_WIN32)
@@ -42,10 +41,6 @@
 #   error "No support for MSVC anymore"
 #else
 #   define LIB_PREFIX "lib"
-#endif
-
-#if defined(__unix) || defined(__linux) || defined(__APPLE__)
-#   include <unistd.h>
 #endif
 
 static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
@@ -210,6 +205,10 @@ void FaceTrackNoIR::save_mappings() {
         axis(i).curveAlt.saveSettings(iniFile, axis(i).name2);
     }
 }
+
+#if defined(__unix) || defined(__linux) || defined(__APPLE__)
+#   include <unistd.h>
+#endif
 
 void FaceTrackNoIR::save() {
     b->save();
