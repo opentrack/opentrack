@@ -116,7 +116,6 @@ private:
 
 	void createIconGroupBox();
 
-	void GetCameraNameDX();
 	void loadSettings();
     void updateButtonState(bool);
 
