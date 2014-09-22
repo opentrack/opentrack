@@ -55,8 +55,8 @@ public:
         show();
     }
     Ui::KalmanUICFilterControls ui;
-    virtual void registerFilter(IFilter*) override {}
-    virtual void unregisterFilter() override {}
+    void registerFilter(IFilter*) override {}
+    void unregisterFilter() override {}
 public slots:
     void doOK();
     void doCancel();

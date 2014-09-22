@@ -88,7 +88,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK();
     void sendHeadposeToGame(const double* headpose);
     QString getGameName() {

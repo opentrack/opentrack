@@ -17,7 +17,7 @@ public:
     ~Hydra_Tracker();
     void StartTracker(QFrame *) override;
     void GetHeadPoseData(double *data) override;
-    virtual int preferredHz() override { return 250; }
+    int preferredHz() override { return 250; }
     volatile bool should_quit;
 private:
     settings s;
