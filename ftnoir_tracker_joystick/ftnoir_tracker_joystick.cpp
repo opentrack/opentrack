@@ -129,8 +129,6 @@ void FTNoIR_Tracker::StartTracker(QFrame* frame)
         goto fail;
     }
 
-    qDebug() << "joy init success";
-
     return;
 
 fail:
