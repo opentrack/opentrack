@@ -37,7 +37,6 @@ if(APPLE)
     set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS} ")
 endif()
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -51,8 +50,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
 
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    add_definitions(-std=c++11)
+if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
+    set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
 endif()
 
 
