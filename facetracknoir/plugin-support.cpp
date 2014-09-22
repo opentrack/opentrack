@@ -1,5 +1,6 @@
 #include "plugin-support.h"
 #include <QCoreApplication>
+#include <QFile>
 
 #if !(defined(_WIN32))
 #   include <dlfcn.h>
@@ -109,23 +110,25 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
                     0
 #   endif
                     );
+
+    struct _foo {
+        static bool err(void*& handle)
+        {
+            const char* err = dlerror();
+            if (err)
+            {
+                fprintf(stderr, "Error, ignoring: %s\n", err);
+                fflush(stderr);
+                dlclose(handle);
+                handle = nullptr;
+                return true;
+            }
+            false;
+        }
+    };
+
     if (handle)
     {
-        struct _foo {
-            static bool err(void*& handle)
-            {
-                const char* err = dlerror();
-                if (err)
-                {
-                    fprintf(stderr, "Error, ignoring: %s\n", err);
-                    fflush(stderr);
-                    dlclose(handle);
-                    handle = nullptr;
-                    return true;
-                }
-                false;
-            }
-        };
         if (_foo::err(handle))
             return;
         Dialog = (DIALOG_FUNPTR) dlsym(handle, "GetDialog");
