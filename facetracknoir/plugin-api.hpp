@@ -82,6 +82,6 @@ struct ITrackerDialog
 #     error "MSVC support removed"
 #   endif
 #   else
-#       define OPENTRACK_EXPORT Q_DECL_IMPORT
+#       error "Use only for exporting dynamic modules"
 #   endif
 #endif
