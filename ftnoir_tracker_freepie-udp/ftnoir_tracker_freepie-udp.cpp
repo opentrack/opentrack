@@ -92,12 +92,9 @@ void TrackerImpl::GetHeadPoseData(double *data)
     if (s.enable_z)
         data[TZ] = pose[TZ];
 #endif
-    if (s.enable_yaw)
-        data[Yaw] = pose[Yaw];
-    if (s.enable_pitch)
-        data[Pitch] = pose[Pitch];
-    if (s.enable_roll)
-        data[Roll] = pose[Roll];
+    data[Yaw] = pose[Yaw];
+    data[Pitch] = pose[Pitch];
+    data[Roll] = pose[Roll];
 }
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()

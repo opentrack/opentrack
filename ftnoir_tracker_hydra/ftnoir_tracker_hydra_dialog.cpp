@@ -9,13 +9,6 @@ QWidget()
 	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-
-    tie_setting(s.bEnableYaw, ui.chkEnableYaw);
-    tie_setting(s.bEnablePitch, ui.chkEnablePitch);
-    tie_setting(s.bEnableRoll, ui.chkEnableRoll);
-    tie_setting(s.bEnableX, ui.chkEnableX);
-    tie_setting(s.bEnableY, ui.chkEnableY);
-    tie_setting(s.bEnableZ, ui.chkEnableZ);
 }
 
 void TrackerControls::doOK() {

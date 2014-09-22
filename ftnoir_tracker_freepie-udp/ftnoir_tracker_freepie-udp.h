@@ -16,13 +16,9 @@ using namespace options;
 struct settings {
     pbundle b;
     value<int> port;
-    value<bool> enable_roll, enable_pitch, enable_yaw;
     settings() :
         b(bundle("freepie-udp-tracker")),
-        port(b, "port", 4237),
-        enable_roll(b, "enable-roll", true),
-        enable_pitch(b, "enable-pitch", true),
-        enable_yaw(b, "enable-yaw", true)
+        port(b, "port", 4237)
     {}
 };
 

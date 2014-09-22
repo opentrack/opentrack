@@ -62,18 +62,8 @@ void FTNoIR_Tracker::StartTracker(QFrame*)
 void FTNoIR_Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker foo(&mutex);
-    if (s.enable_x)
-        data[TX] = newHeadPose[TX];
-    if (s.enable_y)
-        data[TY] = newHeadPose[TY];
-    if (s.enable_z)
-        data[TZ] = newHeadPose[TZ];
-    if (s.enable_yaw)
-        data[Yaw] = newHeadPose[Yaw];
-    if (s.enable_pitch)
-        data[Pitch] = newHeadPose[Pitch];
-    if (s.enable_roll)
-        data[Roll] = newHeadPose[Roll];
+    for (int i = 0; i < 6; i++)
+        data[i] = last_recv_pose[i];
 }
 
 extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()

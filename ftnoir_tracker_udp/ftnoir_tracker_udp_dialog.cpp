@@ -30,15 +30,9 @@ QWidget()
 {
 	ui.setupUi( this );
 
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.enable_x, ui.chkEnableX);
-    tie_setting(s.enable_y, ui.chkEnableY);
-    tie_setting(s.enable_z, ui.chkEnableZ);
-    tie_setting(s.enable_yaw, ui.chkEnableYaw);
-    tie_setting(s.enable_pitch, ui.chkEnablePitch);
-    tie_setting(s.enable_roll, ui.chkEnableRoll);
     tie_setting(s.port, ui.spinPortNumber);
 }
 

@@ -6,15 +6,8 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<bool> bEnableRoll, bEnablePitch, bEnableYaw, bEnableX, bEnableY, bEnableZ;
     settings() :
-        b(bundle("tracker-hydra")),
-        bEnableRoll(b, "enable-rz", true),
-        bEnablePitch(b, "enable-ry", true),
-        bEnableYaw(b, "enable-rx", true),
-        bEnableX(b, "enable-tx", true),
-        bEnableY(b, "enable-ty", true),
-        bEnableZ(b, "enable-tz", true)
+        b(bundle("tracker-hydra"))
     {}
 };
 
@@ -25,15 +18,11 @@ public:
     ~Hydra_Tracker();
     void StartTracker(QFrame *) override;
     void GetHeadPoseData(double *data) override;
+    virtual int preferredHz() override { return 250; }
     volatile bool should_quit;
-protected:
-	void run();												// qthread override run method
 private:
     settings s;
-	bool isCalibrated;
-    double newHeadPose[6];								// Structure with new headpose
     QMutex mutex;
-    virtual int preferredHz() override { return 250; }
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog

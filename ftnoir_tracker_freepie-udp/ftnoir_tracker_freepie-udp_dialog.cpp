@@ -9,9 +9,6 @@ TrackerDialog::TrackerDialog()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.port, ui.port);
-    tie_setting(s.enable_yaw, ui.chkEnableYaw);
-    tie_setting(s.enable_pitch, ui.chkEnablePitch);
-    tie_setting(s.enable_roll, ui.chkEnableRoll);
 }
 
 void TrackerDialog::doOK() {

@@ -197,24 +197,16 @@ void Tracker::GetHeadPoseData(double *data)
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
-        if (s.enableRX)
-            data[Yaw] = shm->result.rotx;
-        if (s.enableRY) {
-            data[Pitch] = shm->result.roty;
-		}
-        if (s.enableRZ) {
-            data[Roll] = shm->result.rotz;
-        }
-        if (s.enableTX)
-            data[TX] = shm->result.tx;
-        if (s.enableTY)
-            data[TY] = shm->result.ty;
-        if (s.enableTZ)
-            data[TZ] = shm->result.tz;
         if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
         {
             shm->pause = true;
         }
+        data[Yaw] = shm->result.rotx;
+        data[Pitch] = shm->result.roty;
+        data[Roll] = shm->result.rotz;
+        data[TX] = shm->result.tx;
+        data[TY] = shm->result.ty;
+        data[TZ] = shm->result.tz;
     } else {
         shm->pause = false;
     }
@@ -267,12 +259,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.camera_idx, ui.cameraName);
     tie_setting(s.fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
-    tie_setting(s.enableTX, ui.tx);
-    tie_setting(s.enableTY, ui.ty);
-    tie_setting(s.enableTZ, ui.tz);
-    tie_setting(s.enableRX, ui.rx);
-    tie_setting(s.enableRY, ui.ry);
-    tie_setting(s.enableRZ, ui.rz);
     tie_setting(s.resolution, ui.resolution);
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

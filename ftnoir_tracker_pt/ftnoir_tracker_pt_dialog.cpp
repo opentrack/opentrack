@@ -57,13 +57,6 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.threshold_secondary, ui.threshold_secondary_slider);
     tie_setting(s.threshold, ui.threshold_slider);
 
-    tie_setting(s.bEnableYaw, ui.chkEnableYaw);
-    tie_setting(s.bEnablePitch, ui.chkEnablePitch);
-    tie_setting(s.bEnableRoll, ui.chkEnableRoll);
-    tie_setting(s.bEnableX, ui.chkEnableX);
-    tie_setting(s.bEnableY, ui.chkEnableY);
-    tie_setting(s.bEnableZ, ui.chkEnableZ);
-
     tie_setting(s.min_point_size, ui.mindiam_spin);
     tie_setting(s.max_point_size, ui.maxdiam_spin);
 
