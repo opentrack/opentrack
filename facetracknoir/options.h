@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanislaw Halik
+/* Copyright (c) 2013-2014 Stanislaw Halik
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include <QObject>
 #include <QSettings>
 #include <QMap>
@@ -14,8 +15,6 @@
 #include <QVariant>
 #include <QMutex>
 #include <QMutexLocker>
-#include <memory>
-#include <cassert>
 #include <QWidget>
 #include <QComboBox>
 #include <QCheckBox>
@@ -67,26 +66,24 @@ namespace options {
     private:
         QMap<QString, QVariant> map;
         QString name;
+        static const QString ini_pathname()
+        {
+            QSettings settings(group::org);
+            return settings.value("SettingsFile",
+                                  QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+        }
     public:
         group(const QString& name) : name(name)
         {
-            QSettings settings(group::org);
-            QString currentFile =
-                    settings.value("SettingsFile",
-                                   QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-            QSettings iniFile(currentFile, QSettings::IniFormat);
-            iniFile.beginGroup(name);
-            for (auto& k : iniFile.childKeys())
-                map[k] = iniFile.value(k);
-            iniFile.endGroup();
+            QSettings conf(ini_pathname(), QSettings::IniFormat);
+            conf.beginGroup(name);
+            for (auto& k : conf.childKeys())
+                map[k] = conf.value(k);
+            conf.endGroup();
         }
         static constexpr const char* org = "opentrack";
         void save() {
-            QSettings settings(group::org);
-            QString currentFile =
-                    settings.value("SettingsFile",
-                                   QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-            QSettings s(currentFile, QSettings::IniFormat);
+            QSettings s(ini_pathname(), QSettings::IniFormat);
             s.beginGroup(name);
             for (auto& k : map.keys())
                 s.setValue(k, map[k]);
@@ -96,7 +93,6 @@ namespace options {
         T get(const QString& k) {
             return qcruft_to_t<T>(map.value(k));
         }
-
         void put(const QString& s, const QVariant& d)
         {
             map[s] = d;
@@ -107,8 +103,7 @@ namespace options {
         }
     };
 
-    class impl_bundle : public QObject {
-        Q_OBJECT
+    class impl_bundle {
     private:
         QMutex mtx;
         const QString group_name;
@@ -117,6 +112,7 @@ namespace options {
         impl_bundle(const impl_bundle&) = delete;
         impl_bundle& operator=(const impl_bundle&) = delete;
         bool modified;
+        long priv_cookie;
     public:
         impl_bundle(const QString& group_name) :
             mtx(QMutex::Recursive),
@@ -130,11 +126,7 @@ namespace options {
             QMutexLocker l(&mtx);
             saved = group(group_name);
             transient = saved;
-            emit reloaded();
-        }
-
-        std::shared_ptr<impl_bundle> make(const QString& name) {
-            return std::make_shared<impl_bundle>(name);
+            priv_cookie++;
         }
         void store(const QString& name, const QVariant& datum)
         {
@@ -142,10 +134,10 @@ namespace options {
             if (!transient.contains(name) || datum != transient.get<QVariant>(name))
             {
                 if (!modified)
-                    qDebug() << name << transient.get<QVariant>(name) << datum;
+                    qDebug() << "bundle" << group_name << "modified due to" << name << transient.get<QVariant>(name) << datum;
                 modified = true;
                 transient.put(name, datum);
-                emit bundleChanged();
+                priv_cookie++;
             }
         }
         bool contains(const QString& name)
@@ -170,16 +162,16 @@ namespace options {
             QMutexLocker l(&mtx);
             modified = false;
             transient = saved;
-            emit bundleChanged();
+            priv_cookie++;
         }
 
         bool modifiedp() {
             QMutexLocker l(&mtx);
             return modified;
         }
-    signals:
-        void bundleChanged();
-        void reloaded();
+        long cookie() const {
+            return priv_cookie;
+        }
     };
 
     typedef std::shared_ptr<impl_bundle> pbundle;
@@ -187,17 +179,21 @@ namespace options {
     class base_value : public QObject {
         Q_OBJECT
     public:
-        base_value(pbundle b, const QString& name) : b(b), self_name(name) {
-            connect(b.get(), SIGNAL(reloaded()), this, SLOT(reread_value()));
-        }
+        base_value(pbundle b, const QString& name) : b(b), self_name(name), cookie_snap(b->cookie()) {}
     protected:
         virtual QVariant operator=(const QVariant& datum) = 0;
         pbundle b;
         QString self_name;
-    public slots:
+    private:
+        long cookie_snap;
         void reread_value()
         {
-            this->operator=(b->get<QVariant>(self_name));
+            long cookie = b->cookie();
+            if (cookie_snap != cookie)
+            {
+                cookie_snap = cookie;
+                this->operator=(b->get<QVariant>(self_name));
+            }
         }
     public slots:
 #define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(qVariantFromValue(datum)); }
