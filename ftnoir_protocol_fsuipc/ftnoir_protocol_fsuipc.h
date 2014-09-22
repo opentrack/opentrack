@@ -31,8 +31,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include "FSUIPC_User.h"
-#include "facetracknoir/plugin-support.h"
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "ui_ftnoir_fsuipccontrols.h"
 #include <QMessageBox>
 #include <QSettings>

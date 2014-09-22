@@ -46,7 +46,7 @@ void TrackerControls::doCancel() {
     this->close();
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
     return new TrackerControls;
 }

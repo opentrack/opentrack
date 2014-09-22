@@ -9,7 +9,7 @@
 #define FTNOIR_TRACKER_PT_DIALOG_H
 
 #ifdef OPENTRACK_API
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#   include "facetracknoir/plugin-api.hpp"
 #else
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #endif

@@ -5,7 +5,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_tracker_joystick_controls.h"
 #include <QComboBox>
 #include <QCheckBox>
@@ -16,7 +15,7 @@
 #include <QMutex>
 #include <QFrame>
 #include <cmath>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif

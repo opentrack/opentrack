@@ -8,9 +8,8 @@
 #ifndef INCLUDED_FTN_FILTER_H
 #define INCLUDED_FTN_FILTER_H
 
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_kalman_filtercontrols.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <QString>
@@ -21,7 +20,7 @@
 #include "facetracknoir/options.h"
 using namespace options;
 
-class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
+class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
@@ -36,7 +35,7 @@ public:
     qint64 timedelta;
 };
 
-class FTNOIR_FILTER_BASE_EXPORT FTNoIR_FilterDll : public Metadata
+class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
 {
 public:
     void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Kalman filter"); }
@@ -45,7 +44,7 @@ public:
     void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
 };
 
-class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDialog
+class OPENTRACK_EXPORT FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:

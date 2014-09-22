@@ -22,7 +22,7 @@ void FTNoIR_TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/facetracknoir.png");
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
     return new FTNoIR_TrackerDll;
 }

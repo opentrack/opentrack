@@ -66,7 +66,7 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         data[i] = last_recv_pose[i];
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Tracker;
 }

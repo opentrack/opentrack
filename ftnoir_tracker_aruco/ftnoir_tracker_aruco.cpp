@@ -5,10 +5,9 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ftnoir_tracker_aruco.h"
 #include "ui_aruco-trackercontrols.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <cmath>
 #include <QMutexLocker>
 #include <aruco.h>
@@ -422,19 +421,19 @@ void TrackerDll::getIcon(QIcon *icon)
 //-----------------------------------------------------------------------------
 //#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new TrackerDll;
 }
 
 //#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Tracker;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
     return new TrackerControls;
 }

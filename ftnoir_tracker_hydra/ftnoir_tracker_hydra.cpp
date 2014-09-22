@@ -8,6 +8,7 @@
 #   define SIXENSE_UTILS_STATIC_LIB
 #endif
 #include <sixense.h>
+
 Hydra_Tracker::Hydra_Tracker() : should_quit(false) {}
 
 #pragma GCC diagnostic ignored "-Wreorder"
@@ -44,7 +45,7 @@ void Hydra_Tracker::GetHeadPoseData(double *data)
     data[Roll] = ypr[2] * r2d;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Hydra_Tracker;
 }

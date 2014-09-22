@@ -26,8 +26,7 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #include "ftnoir_protocol_fg.h"
-#include "facetracknoir/plugin-support.h"
-#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
+#include "facetracknoir/plugin-api.hpp"
 
 // For Todd and Arda Kutlu
 
@@ -58,7 +57,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

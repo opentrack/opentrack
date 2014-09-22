@@ -1,7 +1,6 @@
 #pragma once
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_accela_filtercontrols.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <QMutex>
 
 #define ACCELA_SMOOTHING_ROTATION 60.0

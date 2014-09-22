@@ -29,7 +29,7 @@
 #pragma once
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0502
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
@@ -38,8 +38,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <ftnoir_protocol_base/ftnoir_protocol_base.h>
-#include <ui_ftnoir_sccontrols.h>
+#include "ui_ftnoir_sccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
