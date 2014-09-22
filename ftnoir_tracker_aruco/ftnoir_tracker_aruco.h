@@ -28,7 +28,6 @@ struct settings {
     value<double> fov, headpos_x, headpos_y, headpos_z;
     value<int> camera_index, force_fps, resolution;
     value<bool> red_only;
-    value<bool> eyaw, epitch, eroll, ex, ey, ez;
     value<double> marker_pitch;
     settings() :
         b(bundle("aruco-tracker")),
@@ -40,12 +39,6 @@ struct settings {
         force_fps(b, "force-fps", 0),
         resolution(b, "force-resolution", 0),
         red_only(b, "red-only", false),
-        eyaw(b, "enable-y", true),
-        epitch(b, "enable-p", true),
-        eroll(b, "enable-r", true),
-        ex(b, "enable-x", true),
-        ey(b, "enable-y", true),
-        ez(b, "enable-z", true),
         marker_pitch(b, "marker-pitch", 0)
     {}
 };

@@ -38,9 +38,6 @@ struct settings
 
     value<int> reset_time;
 
-    value<bool> bEnableYaw, bEnablePitch, bEnableRoll;
-    value<bool> bEnableX, bEnableY, bEnableZ;
-
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
 
@@ -70,12 +67,6 @@ struct settings
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
         reset_time(b, "reset-time", 2000),
-        bEnableYaw(b, "enable-yaw", true),
-        bEnablePitch(b, "enable-pitch", true),
-        bEnableRoll(b, "enable-roll", true),
-        bEnableX(b, "enable-x", true),
-        bEnableY(b, "enable-y", true),
-        bEnableZ(b, "enable-z", true),
         clip_ty(b, "clip-ty", 0),
         clip_tz(b, "clip-tz", 0),
         clip_by(b, "clip-by", 0),

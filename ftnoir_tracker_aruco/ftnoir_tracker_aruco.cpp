@@ -380,18 +380,12 @@ void Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
     
-    if (s.eyaw)
-        data[Yaw] = pose[Yaw];
-    if (s.epitch)
-        data[Pitch] = pose[Pitch];
-    if (s.eroll)
-        data[Roll] = pose[Roll];
-    if (s.ex)
-        data[TX] = pose[TX] * .1;
-    if (s.ey)
-        data[TY] = pose[TY] * .1;
-    if (s.ez)
-        data[TZ] = pose[TZ] * .1;
+    data[Yaw] = pose[Yaw];
+    data[Pitch] = pose[Pitch];
+    data[Roll] = pose[Roll];
+    data[TX] = pose[TX] * .1;
+    data[TY] = pose[TY] * .1;
+    data[TZ] = pose[TZ] * .1;
 }
 
 class TrackerDll : public Metadata
@@ -456,12 +450,6 @@ TrackerControls::TrackerControls()
 	tie_setting(s.resolution, ui.resolution);
     tie_setting(s.force_fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
-    tie_setting(s.eyaw, ui.rx);
-    tie_setting(s.epitch, ui.ry);
-    tie_setting(s.eroll, ui.rz);
-    tie_setting(s.ex, ui.tx);
-    tie_setting(s.ey, ui.ty);
-    tie_setting(s.ez, ui.tz);
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
