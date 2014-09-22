@@ -91,6 +91,8 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
         (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL));
 }
 
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
 class ActivationContext {
 public:
     ActivationContext(const int resid) {
