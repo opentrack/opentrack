@@ -26,11 +26,11 @@ class Rift_Tracker : public ITracker
 {
 public:
 	Rift_Tracker();
-    virtual ~Rift_Tracker() override;
+    ~Rift_Tracker() override;
 
     void StartTracker(QFrame *) override;
     void GetHeadPoseData(double *data) override;
-    virtual int preferredHz() override { return 250; }
+    int preferredHz() override { return 250; }
     volatile bool should_quit;
 protected:
 	void run();												// qthread override run method

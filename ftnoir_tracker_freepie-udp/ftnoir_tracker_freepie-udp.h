@@ -25,11 +25,11 @@ class TrackerImpl : public ITracker, private QThread
 {
 public:
     TrackerImpl();
-    virtual ~TrackerImpl() override;
+    ~TrackerImpl() override;
     void StartTracker(QFrame *);
     void GetHeadPoseData(double *data);
 protected:
-    virtual void run() override;
+    void run() override;
 private:
     double pose[6];
     QUdpSocket sock;

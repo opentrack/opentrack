@@ -48,7 +48,7 @@ class Tracker : protected QThread, public ITracker
     Q_OBJECT
 public:
 	Tracker();
-    virtual ~Tracker();
+    ~Tracker() override;
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
     void run();
