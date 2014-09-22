@@ -5,11 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 
 extern "C" {
 #   include <libevdev/libevdev.h>

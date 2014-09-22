@@ -26,10 +26,9 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_vjoy_controls.h"
 #include <cmath>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 
 #define FT_PROGRAMID "FT_ProgramID"
 

@@ -25,9 +25,8 @@
 *				to games, using the FreeTrackClient.dll.		         		*
 ********************************************************************************/
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_ftcontrols.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "fttypes.h"
 #include <QMessageBox>
 #include <QSettings>

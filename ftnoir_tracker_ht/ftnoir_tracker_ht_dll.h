@@ -5,8 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 
 //-----------------------------------------------------------------------------
 class TrackerDll : public Metadata

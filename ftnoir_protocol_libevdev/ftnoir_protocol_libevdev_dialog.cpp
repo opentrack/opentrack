@@ -20,7 +20,7 @@ void LibevdevControls::doCancel() {
 void LibevdevControls::save() {
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
     return new LibevdevControls;
 }

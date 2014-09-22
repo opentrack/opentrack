@@ -1,9 +1,9 @@
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#pragma once
 #include "ui_ftnoir_ftnclientcontrols.h"
 #include <QUdpSocket>
 #include <QThread>
 #include <cmath>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
 

@@ -46,6 +46,7 @@ void Rift_Tracker::GetHeadPoseData(double *data)
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+            // XXX TODO move to core
             if (s.useYawSpring)
             {
                 yaw = old_yaw*s.persistence + (yaw-old_yaw);
@@ -66,7 +67,7 @@ void Rift_Tracker::GetHeadPoseData(double *data)
     }
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Rift_Tracker;
 }

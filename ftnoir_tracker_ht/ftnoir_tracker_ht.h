@@ -9,13 +9,13 @@
 #define FTNOIR_TRACKER_HT_H
 
 #include "stdafx.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ui_ht-trackercontrols.h"
 #include "ht_video_widget.h"
 #include "compat/compat.h"
 #include <QObject>
 #include "facetracknoir/options.h"
+#include "facetracknoir/plugin-api.hpp"
 using namespace options;
 
 struct settings {

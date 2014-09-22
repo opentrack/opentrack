@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>

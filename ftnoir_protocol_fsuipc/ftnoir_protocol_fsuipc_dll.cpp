@@ -25,7 +25,7 @@
 #include "ftnoir_protocol_fsuipc.h"
 #include "facetracknoir/plugin-support.h"
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata(void)
+extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata(void)
 {
 	return new FTNoIR_ProtocolDll;
 }

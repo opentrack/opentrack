@@ -1,6 +1,5 @@
 #include "ftnoir_protocol_libevdev.h"
-#include "facetracknoir/plugin-support.h"
-//#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <cstdio>
 #include <algorithm>
 
@@ -95,7 +94,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

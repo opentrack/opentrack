@@ -1,6 +1,5 @@
 #include "ftnoir_protocol_vjoy.h"
-#include "facetracknoir/plugin-support.h"
-#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
+#include "facetracknoir/plugin-api.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
@@ -28,7 +27,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     VJoy_UpdateJoyState(0, state);
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

@@ -308,7 +308,7 @@ void TrackerDialog::unRegisterTracker()
 	ui.reset_button->setEnabled(false);
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
 	return new TrackerDialog;
 }

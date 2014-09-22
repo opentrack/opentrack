@@ -20,7 +20,7 @@ void VJoyControls::doCancel() {
 void VJoyControls::save() {
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
 {
     return new VJoyControls;
 }

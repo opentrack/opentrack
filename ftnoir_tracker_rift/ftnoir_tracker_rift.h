@@ -1,10 +1,9 @@
 #pragma once
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_rift_clientcontrols.h"
 #include <QMessageBox>
 #include <QWaitCondition>
 #include <cmath>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "OVR.h"
 #include <memory>
 #include "facetracknoir/options.h"

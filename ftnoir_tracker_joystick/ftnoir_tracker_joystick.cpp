@@ -200,7 +200,7 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
         data[i] = values[i] * limits[i] / AXIS_MAX;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Tracker;
 }

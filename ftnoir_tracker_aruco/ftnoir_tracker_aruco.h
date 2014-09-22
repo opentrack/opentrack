@@ -8,7 +8,6 @@
 #ifndef FTNOIR_TRACKER_HT_H
 #define FTNOIR_TRACKER_HT_H
 
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_aruco-trackercontrols.h"
 #include "ar_video_widget.h"
 #include <QObject>
@@ -21,6 +20,7 @@
 #include <opencv/highgui.h>
 #include "facetracknoir/options.h"
 #include "ftnoir_tracker_aruco/trans_calib.h"
+#include "facetracknoir/plugin-api.hpp"
 using namespace options;
 
 struct settings {

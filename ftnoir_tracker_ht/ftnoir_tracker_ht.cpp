@@ -1,10 +1,9 @@
 #include "stdafx.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
 #include "ui_ht-trackercontrols.h"
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <cmath>
 
 #if defined(_WIN32)
@@ -197,10 +196,6 @@ void Tracker::GetHeadPoseData(double *data)
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
-        if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
-        {
-            shm->pause = true;
-        }
         data[Yaw] = shm->result.rotx;
         data[Pitch] = shm->result.roty;
         data[Roll] = shm->result.rotz;
@@ -234,17 +229,17 @@ void TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/ht.png");
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
 	return new TrackerDll;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 {
     return new Tracker;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
 {
     return new TrackerControls;
 }

@@ -5,11 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_freepie-udp-controls.h"
 #include <QUdpSocket>
 #include <QThread>
-#include "facetracknoir/plugin-support.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
 

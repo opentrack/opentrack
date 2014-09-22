@@ -229,9 +229,9 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
 		Vec3f   t = X_GH.t - X_GH_0.t;		
 
         // get translation(s)
-        if (s.bEnableX) data[TX] = t[0] / 10.0;	// convert to cm
-        if (s.bEnableY) data[TY] = t[1] / 10.0;
-        if (s.bEnableZ) data[TZ] = t[2] / 10.0;
+        data[TX] = t[0] / 10.0;	// convert to cm
+        data[TY] = t[1] / 10.0;
+        data[TZ] = t[2] / 10.0;
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
 		// -z -> x, y -> z, x -> -y
@@ -246,18 +246,18 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
-        if (s.bEnableYaw)   data[Yaw]  =   rad2deg * alpha;
-        if (s.bEnablePitch) data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
-        if (s.bEnableRoll)  data[Roll]  =   rad2deg * gamma;
+        data[Yaw]   =   rad2deg * alpha;
+        data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
+        data[Roll]  =   rad2deg * gamma;
 	}
 }
 
 //-----------------------------------------------------------------------------
 #ifdef OPENTRACK_API
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
 #else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
+OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
 #endif
 {
 	return new Tracker;

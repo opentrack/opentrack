@@ -91,7 +91,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
     }
 }
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
 {
     return new FTNoIR_Filter;
 }
