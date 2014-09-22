@@ -11,7 +11,6 @@
 #include <QDebug>
 #include <QMutex>
 #include "plugin-support.h"
-#include <ftnoir_tracker_base/ftnoir_tracker_types.h>
 #include <vector>
 
 #include <qfunctionconfigurator/functionconfig.h>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "facetracknoir/plugin-api.hpp"
+
 #if defined(_WIN32)
 #   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION "@0"
 #   ifdef _MSC_VER
@@ -19,15 +21,6 @@
 #include <QString>
 #include <QLibrary>
 #include <QFrame>
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
-
-#if defined(_WIN32)
-#   define CALLING_CONVENTION __stdcall
-#else
-#   define CALLING_CONVENTION
-#endif
 
 class IDynamicLibraryProvider;
 
@@ -66,16 +59,6 @@ private:
 #endif
 };
 
-struct Metadata
-{
-    Metadata() {}
-    virtual ~Metadata() {}
-
-    virtual void getFullName(QString *strToBeFilled) = 0;
-    virtual void getShortName(QString *strToBeFilled) = 0;
-    virtual void getDescription(QString *strToBeFilled) = 0;
-    virtual void getIcon(QIcon *icon) = 0;
-};
 
 // merely to break a circular header dependency -sh
 class IDynamicLibraryProvider {
