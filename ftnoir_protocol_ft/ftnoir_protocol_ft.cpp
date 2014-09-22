@@ -126,8 +126,6 @@ void FTNoIR_Protocol::start_dummy() {
     QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
-
-    qDebug() << "FTServer::run() says: TrackIR.exe executed!" << program;
 }
 
 bool FTNoIR_Protocol::checkServerInstallationOK()
@@ -140,8 +138,6 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 
     QString aLocation =  QCoreApplication::applicationDirPath() + "/";
 
-    qDebug() << "checkServerInstallationOK says: used interface = " << s.intUsedInterface;
-    
     switch (s.intUsedInterface) {
         case 0:									// Use both interfaces
             settings.setValue( "Path" , aLocation );
