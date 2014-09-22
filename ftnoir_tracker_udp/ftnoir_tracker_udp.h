@@ -16,31 +16,28 @@ struct settings {
     {}
 };
 
-class FTNoIR_Tracker : public ITracker, public QThread
+class FTNoIR_Tracker : public ITracker, protected QThread
 {
 public:
 	FTNoIR_Tracker();
     ~FTNoIR_Tracker();
     void StartTracker(QFrame *);
     void GetHeadPoseData(double *data);
-    volatile bool should_quit;
 protected:
-	void run();												// qthread override run method
+	void run() override;
 private:
-    QUdpSocket inSocket;
-    QHostAddress destIP;
-    QHostAddress srcIP;
-    double newHeadPose[6];
+    QUdpSocket sock;
+    double last_recv_pose[6];
     QMutex mutex;
     settings s;
+    volatile bool should_quit;
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
-	explicit TrackerControls();
+	TrackerControls();
     void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 private:
@@ -59,4 +56,3 @@ public:
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
 };
-

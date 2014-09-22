@@ -25,13 +25,7 @@
 #include "ftnoir_tracker_udp.h"
 #include "facetracknoir/plugin-support.h"
 
-FTNoIR_Tracker::FTNoIR_Tracker() : should_quit(false)
-{
-    should_quit = false;
-
-    for (int i = 0; i < 6; i++)
-        newHeadPose[i] = 0;
-}
+FTNoIR_Tracker::FTNoIR_Tracker() : last_recv_pose { 0,0,0, 0,0,0 }, should_quit(false) {}
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
@@ -40,22 +34,22 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 }
 
 void FTNoIR_Tracker::run() {
-	forever {
+    QByteArray datagram;
+    datagram.resize(sizeof(last_recv_pose));
+    for (;;) {
         if (should_quit)
             break;
-        while (inSocket.hasPendingDatagrams()) {
-                QMutexLocker foo(&mutex);
-				QByteArray datagram;
-                datagram.resize(sizeof(newHeadPose));
-                inSocket.readDatagram((char * ) newHeadPose, sizeof(double[6]));
+        QMutexLocker foo(&mutex);
+        while (sock.hasPendingDatagrams()) {
+            sock.readDatagram((char * ) last_recv_pose, sizeof(double[6]));
         }
-		usleep(10000);
-	}
+        msleep(1);
+    }
 }
 
 void FTNoIR_Tracker::StartTracker(QFrame*)
 {
-    (void) inSocket.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 	start();
 }
 
