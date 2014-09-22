@@ -48,12 +48,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
+# note, hatire supports both ftnoir and opentrack
+# don't remove without being sure as hell -sh 20140922
+add_definitions(-DOPENTRACK_API)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
 endif()
-
 
 if(UNIX)
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
