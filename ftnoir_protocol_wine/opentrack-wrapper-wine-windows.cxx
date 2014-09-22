@@ -8,11 +8,6 @@
 #include "compat/compat.cpp"
 #include "wine-shm.h"
 
-ptr<BasePortableLockedShm> make_shm_win32()
-{
-    return std::make_shared<ShmWine>(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-}
-
 void create_registry_key(void) {
     char dir[8192];
 
