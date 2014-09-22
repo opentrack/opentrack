@@ -4,20 +4,20 @@
 
 FTControls::FTControls() : QWidget()
 {
-	ui.setupUi( this );
-	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-	connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    ui.setupUi( this );
+    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
+    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
 }
 
 void FTControls::doOK() {
-	this->close();
+    this->close();
 }
 
 void FTControls::doCancel() {
     this->close();
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT void* CALLING_CONVENTION GetDialog( )
 {
     return (IProtocolDialog*) new FTControls;
 }
