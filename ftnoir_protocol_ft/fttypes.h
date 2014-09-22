@@ -21,7 +21,7 @@
 
 #include <inttypes.h>
 
-#define FT_MM_DATA "FT_SharedMem"
+#define FREETRACK_HEAP "FT_SharedMem"
 #define FREETRACK_MUTEX "FT_Mutext"
 
 /* only 6 headpose floats and the data id are filled -sh */
