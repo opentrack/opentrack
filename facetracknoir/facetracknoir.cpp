@@ -214,6 +214,8 @@ void FaceTrackNoIR::save() {
     save_mappings();
     
 #if defined(__unix) || defined(__linux)
+    QSettings settings("opentrack");
+    const QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
 

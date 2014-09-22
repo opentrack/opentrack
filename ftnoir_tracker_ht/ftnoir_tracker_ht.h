@@ -36,7 +36,7 @@ class Tracker : public QObject, public ITracker
     Q_OBJECT
 public:
 	Tracker();
-    virtual ~Tracker();
+    ~Tracker() override;
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
     void load_settings(ht_config_t* config);
