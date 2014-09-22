@@ -25,7 +25,7 @@
 #include "ftnoir_protocol_mouse.h"
 #include "facetracknoir/plugin-support.h"
 
-extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
 	return new FTNoIR_ProtocolDll;
 }

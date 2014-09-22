@@ -67,7 +67,7 @@ void Rift_Tracker::GetHeadPoseData(double *data)
     }
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new Rift_Tracker;
 }

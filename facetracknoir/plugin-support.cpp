@@ -1,10 +1,7 @@
+#include <cstdio>
 #include "plugin-support.h"
 #include <QCoreApplication>
 #include <QFile>
-
-#if !(defined(_WIN32))
-#   include <dlfcn.h>
-#endif
 
 SelectedLibraries* Libraries = NULL;
 
@@ -88,15 +85,15 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
     if (_foo::die(handle, !handle->load()))
         return;
     
-    Dialog = (DIALOG_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetDialog" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
+    Dialog = (DIALOG_FUNPTR) handle->resolve("GetDialog");
     if (_foo::die(handle, !Dialog))
         return;
     
-    Constructor = (CTOR_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
+    Constructor = (CTOR_FUNPTR) handle->resolve("GetConstructor");
     if (_foo::die(handle, !Constructor))
         return;
     
-    Metadata = (METADATA_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetMetadata" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
+    Metadata = (METADATA_FUNPTR) handle->resolve("GetMetadata");
     if (_foo::die(handle, !Metadata))
         return;
 #else

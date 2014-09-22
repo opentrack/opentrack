@@ -17,7 +17,7 @@ void FTControls::doCancel() {
     this->close();
 }
 
-extern "C" OPENTRACK_EXPORT void* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT void* GetDialog( )
 {
     return (IProtocolDialog*) new FTControls;
 }

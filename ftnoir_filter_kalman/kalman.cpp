@@ -121,16 +121,16 @@ void FilterControls::doCancel() {
     close();
 }
 
-extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
     return new FTNoIR_FilterDll;
 }
 
-extern "C" OPENTRACK_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
 {
     return new FTNoIR_Filter;
 }
 
-extern "C" OPENTRACK_EXPORT IFilterDialog* CALLING_CONVENTION GetDialog() {
+extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog() {
     return new FilterControls;
 }

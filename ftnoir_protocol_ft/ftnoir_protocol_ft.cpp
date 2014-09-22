@@ -171,7 +171,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	return true;
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

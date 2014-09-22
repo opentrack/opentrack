@@ -421,19 +421,19 @@ void TrackerDll::getIcon(QIcon *icon)
 //-----------------------------------------------------------------------------
 //#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 
-extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
 	return new TrackerDll;
 }
 
 //#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new Tracker;
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 {
     return new TrackerControls;
 }

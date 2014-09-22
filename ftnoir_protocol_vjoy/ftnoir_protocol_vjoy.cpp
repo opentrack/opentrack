@@ -28,7 +28,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     VJoy_UpdateJoyState(0, state);
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

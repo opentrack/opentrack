@@ -45,7 +45,7 @@ void Hydra_Tracker::GetHeadPoseData(double *data)
     data[Roll] = ypr[2] * r2d;
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new Hydra_Tracker;
 }

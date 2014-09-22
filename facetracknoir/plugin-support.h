@@ -2,20 +2,6 @@
 
 #include "facetracknoir/plugin-api.hpp"
 
-#if defined(_WIN32)
-#   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION "@0"
-#   ifdef _MSC_VER
-#       error "No support for MSVC anymore"
-#else
-#       define MAYBE_STDCALL_UNDERSCORE ""
-#   endif
-#else
-#   define CALLING_CONVENTION_SUFFIX_VOID_FUNCTION ""
-#   define MAYBE_STDCALL_UNDERSCORE ""
-#endif
-
-#include <cstdio>
-
 #include <QWidget>
 #include <QDebug>
 #include <QString>
@@ -38,9 +24,9 @@ extern SelectedLibraries* Libraries;
 
 struct Metadata;
 
-extern "C" typedef void* (CALLING_CONVENTION * CTOR_FUNPTR)(void);
-extern "C" typedef Metadata* (CALLING_CONVENTION* METADATA_FUNPTR)(void);
-extern "C" typedef void* (CALLING_CONVENTION* DIALOG_FUNPTR)(void);
+extern "C" typedef void* (*CTOR_FUNPTR)(void);
+extern "C" typedef Metadata* (*METADATA_FUNPTR)(void);
+extern "C" typedef void* (*DIALOG_FUNPTR)(void);
 
 class DynamicLibrary {
 public:

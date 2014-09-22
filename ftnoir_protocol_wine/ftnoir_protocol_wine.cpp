@@ -56,7 +56,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return lck_shm.success();
 }
 
-extern "C" OPENTRACK_EXPORT void* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT void* GetConstructor()
 {
     return (IProtocol*) new FTNoIR_Protocol;
 }
