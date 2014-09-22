@@ -37,7 +37,7 @@ static void set_row(Matx33f& m, int i, const Vec3f& v)
 PointModel::PointModel(Vec3f M01, Vec3f M02)
 	: M01(M01), 
 	  M02(M02)
-{	
+{
 	// calculate u
 	u = M01.cross(M02);
 	u /= norm(u);
@@ -48,7 +48,6 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	float s22 = M02.dot(M02);
 	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, 
 		                               -s12,  s11);
-
 	// calculate d and d_order for simple freetrack-like point correspondence
 	vector<Vec2f> points;
 	points.push_back(Vec2f(0,0));
@@ -97,151 +96,58 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 
 
 // ----------------------------------------------------------------------------
-PointTracker::PointTracker() :
-      dynamic_pose_resolution(true),
-      dt_reset(1), 
-      init_phase(true),
-	  dt_valid(0), 
-	  v_t(0,0,0),
-	  v_r(0,0,0)
+PointTracker::PointTracker()
 {
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
 
 void PointTracker::reset()
 {
-	// enter init phase and reset velocities
-	init_phase = true;
-	dt_valid = 0;
-	reset_velocities();
+	// enter init phase
+	X_CM = FrameTrafo();
 }
 
-void PointTracker::reset_velocities()
-{	
-	v_t = Vec3f(0,0,0);
-	v_r = Vec3f(0,0,0);
-}
-
-
-bool PointTracker::track(const vector<Vec2f>& points, float f, float dt)
+void PointTracker::track(const vector<Vec2f>& points, float f)
 {
-	if (!dynamic_pose_resolution) init_phase = true;
-
-	dt_valid += dt;
-	// if there was no valid tracking result for too long, do a reset
-	if (dt_valid > dt_reset) 
-	{
-		//qDebug()<<"dt_valid "<<dt_valid<<" > dt_reset "<<dt_reset;
-		reset();
-	}
-
-    bool no_model =
-#ifdef OPENTRACK_API
-        point_model.get() == NULL;
-#else
-        !point_model;
-#endif
-
-	// if there is a pointtracking problem, reset the velocities
-    if (no_model || points.size() != PointModel::N_POINTS)
-	{
-		//qDebug()<<"Wrong number of points!";
-		reset_velocities();
-		return false;
-	}
-
-	X_CM_old = X_CM;	// backup old transformation for velocity calculation
-
-	if (!init_phase) 
-		predict(dt_valid);
-
-	// if there is a point correspondence problem something has gone wrong, do a reset
-	if (!find_correspondences(points, f))
-	{
-		//qDebug()<<"Error in finding point correspondences!";
-		X_CM = X_CM_old;	// undo prediction
-		reset();
-		return false;
-	}
-
+    find_correspondences(points, f);
 	(void) POSIT(f);
 	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
-
-	if (!init_phase)
-		update_velocities(dt_valid);
-
-	// we have a valid tracking result, leave init phase and reset time since valid result
-	init_phase = false;
-	dt_valid = 0;
-	return true;
 }
 
-void PointTracker::predict(float dt)
+void PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, float f)
 {
-	// predict with constant velocity
-	Matx33f R;
-	Rodrigues(dt*v_r, R);
-	X_CM.R = R*X_CM.R;
-	X_CM.t += dt * v_t;
-}
-
-void PointTracker::update_velocities(float dt)
-{
-	// update velocities
-	Rodrigues(X_CM.R*X_CM_old.R.t(), v_r);
-	v_r /= dt;
-	v_t = (X_CM.t - X_CM_old.t)/dt;
-}
-
-bool PointTracker::find_correspondences(const vector<Vec2f>& points, float f)
-{
-	if (init_phase) {
-		// We do a simple freetrack-like sorting in the init phase...
-		// sort points
-		int point_d_order[PointModel::N_POINTS];
-		point_model->get_d_order(points, point_d_order);
-
-		// set correspondences
-		for (int i=0; i<PointModel::N_POINTS; ++i)
-		{
-			p[point_model->d_order[i]] = points[point_d_order[i]];
-		}
-	}
-	else {
-		// ... otherwise we look at the distance to the projection of the expected model points 
-		// project model points under current pose
-		p_exp[0] = project(Vec3f(0,0,0), f);
-		p_exp[1] = project(point_model->M01, f);
-		p_exp[2] = project(point_model->M02, f);
-
-		// set correspondences by minimum distance to projected model point
-		bool point_taken[PointModel::N_POINTS];
-		for (int i=0; i<PointModel::N_POINTS; ++i)
-			point_taken[i] = false;
-
-		float min_sdist = 0;
-		int min_idx = 0;
-		
-		for (int i=0; i<PointModel::N_POINTS; ++i)
-		{
-			// find closest point to projected model point i
-			for (int j=0; j<PointModel::N_POINTS; ++j)
-			{
-				Vec2f d = p_exp[i]-points[j];
-				float sdist = d.dot(d);
-				if (sdist < min_sdist || j==0) 
-				{
-					min_idx = j;
-					min_sdist = sdist;
-				}
-			}
-			// if one point is closest to more than one model point, abort
-			if (point_taken[min_idx]) return false;
-			point_taken[min_idx] = true;
-			p[i] = points[min_idx];
-		}
-	}
-	return true;
+    // ... otherwise we look at the distance to the projection of the expected model points 
+    // project model points under current pose
+    Vec2f p_exp[3];
+    p_exp[0] = project(Vec3f(0,0,0), f);
+    p_exp[1] = project(point_model->M01, f);
+    p_exp[2] = project(point_model->M02, f);
+    
+    // set correspondences by minimum distance to projected model point
+    bool point_taken[PointModel::N_POINTS];
+    for (int i=0; i<PointModel::N_POINTS; ++i)
+        point_taken[i] = false;
+    
+    for (int i=0; i<PointModel::N_POINTS; ++i)
+    {
+        float min_sdist = 1e4;
+        int min_idx = 0;
+        // find closest point to projected model point i
+        for (int j=0; j<PointModel::N_POINTS; ++j)
+        {
+            Vec2f d = p_exp[i]-points[j];
+            float sdist = d.dot(d);
+            if (sdist < min_sdist)
+            {
+                min_idx = j;
+                min_sdist = sdist;
+            }
+        }
+        // if one point is closest to more than one model point, abort
+        if (point_taken[min_idx]) return;
+        point_taken[min_idx] = true;
+        p[i] = points[min_idx];
+    }
 }
 
 
@@ -255,15 +161,12 @@ int PointTracker::POSIT(float f)
 	// The expected rotation used for resolving the ambiguity in POSIT:
 	// In every iteration step the rotation closer to R_expected is taken 
 	Matx33f R_expected;	
-	if (init_phase)
-		R_expected = Matx33f::eye(); // in the init phase, we want to be close to the default pose = no rotation
-	else 
-		R_expected = X_CM.R; // later we want to be close to the last (predicted) rotation
+    R_expected = X_CM.R; // later we want to be close to the last (predicted) rotation
 	
 	// initial pose = last (predicted) pose
 	Vec3f k;
     get_row(R_expected, 2, k);
-    float Z0 = init_phase ? 1000 : X_CM.t[2];
+    float Z0 = std::abs(X_CM.t[2]) < 1e-3 ? 1e3 : X_CM.t[2];
 
 	float old_epsilon_1 = 0;
 	float old_epsilon_2 = 0;

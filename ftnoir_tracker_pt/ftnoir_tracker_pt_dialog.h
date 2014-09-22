@@ -34,12 +34,10 @@ public:
 	void trans_calib_step();
 
 public slots:
-    void doCenter();
-    void doReset();
 	void doOK();
-    void doApply();
 	void doCancel();
-    void do_apply_without_saving();
+    void doApply();
+    void do_apply_without_saving(QAbstractButton *);
 
 	void startstop_trans_calib(bool start);
 	void widget_destroyed(QObject* obj);

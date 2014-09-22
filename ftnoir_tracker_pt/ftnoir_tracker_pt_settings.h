@@ -28,18 +28,17 @@ struct settings
                threshold_secondary,
                min_point_size,
                max_point_size;
-    value<double> cam_f;
 
     value<int> m01_x, m01_y, m01_z;
     value<int> m02_x, m02_y, m02_z;
-    value<bool> dyn_pose_res, video_widget;
+    value<bool> video_widget;
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
 
-    value<int> reset_time;
-
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
+    
+    // XXX todo red channel only, good for crapola CCD sensors -sh 20140922
 
     settings() :
         b(bundle("tracker-pt")),
@@ -54,19 +53,16 @@ struct settings
         threshold_secondary(b, "threshold-secondary", 128),
         min_point_size(b, "min-point-size", 10),
         max_point_size(b, "max-point-size", 50),
-        cam_f(b, "camera-focal-length", 1),
         m01_x(b, "m_01-x", 0),
         m01_y(b, "m_01-y", 0),
         m01_z(b, "m_01-z", 0),
         m02_x(b, "m_02-x", 0),
         m02_y(b, "m_02-y", 0),
         m02_z(b, "m_02-z", 0),
-        dyn_pose_res(b, "dynamic-pose-resolution", false),
         video_widget(b, "video-widget", true),
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
-        reset_time(b, "reset-time", 2000),
         clip_ty(b, "clip-ty", 0),
         clip_tz(b, "clip-tz", 0),
         clip_by(b, "clip-by", 0),

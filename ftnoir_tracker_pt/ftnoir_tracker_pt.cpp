@@ -26,7 +26,6 @@ Tracker::Tracker()
       commands(0),
 	  video_widget(NULL), 
 	  video_frame(NULL),
-	  tracking_valid(false),
       new_settings(nullptr)
 
 {
@@ -68,16 +67,13 @@ void Tracker::run()
 #endif
 
     time.start();
-    double dt;
 	bool new_frame;
 	forever
 	{   
         if (commands & ABORT) break;
-        if (commands & PAUSE) continue;
         commands = 0;
-	apply_inner();
-        dt = time.start() / 1000000000.;
-
+        apply_inner();
+        const double dt = time.start() * 1e-9;
         new_frame = camera.get_frame(dt, &frame);
 
         if (new_frame && !frame.empty())
@@ -101,7 +97,7 @@ void Tracker::run()
                          color,
                          4);
             }
-            tracking_valid = point_tracker.track(points, camera.get_info().f, dt);
+            point_tracker.track(points, camera.get_info().f);
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -124,12 +120,13 @@ void Tracker::apply_inner()
     settings* tmp = new_settings.exchange(nullptr);
     if (tmp == nullptr)
         return;
+    reset();
     auto& s = *tmp;
     qDebug()<<"Tracker:: Applying settings";
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
-    camera.set_f(s.cam_f);
+    camera.set_f(1);
     frame_rotation.rotation = static_cast<RotationType>(static_cast<int>(s.cam_roll));
     point_extractor.threshold_val = s.threshold;
     point_extractor.threshold_secondary_val = s.threshold_secondary;
@@ -140,8 +137,6 @@ void Tracker::apply_inner()
         cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
         point_tracker.point_model = std::shared_ptr<PointModel>(new PointModel(M01, M02));
     }
-    point_tracker.dynamic_pose_resolution = s.dyn_pose_res;
-    point_tracker.dt_reset = s.reset_time / 1000.0;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     R_GC =  Matx33f( cos(deg2rad*s.cam_yaw), 0, sin(deg2rad*s.cam_yaw),
 		                                         0, 1,                             0,
@@ -152,7 +147,6 @@ void Tracker::apply_inner()
 
 	FrameTrafo X_MH(Matx33f::eye(), t_MH);
 	X_GH_0 = R_GC * X_MH;
-
 	qDebug()<<"Tracker::apply ends";
 }
 
@@ -201,7 +195,6 @@ void Tracker::StartTracker(QFrame *parent_window)
     camera.start();
 	apply(s);
     start();
-    reset_command(PAUSE);
 }
 
 #ifndef OPENTRACK_API
@@ -220,9 +213,7 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
 	{
 		QMutexLocker lock(&mutex);
 
-        if (!tracking_valid) return;
-
-		FrameTrafo X_CM = point_tracker.get_pose();
+    	FrameTrafo X_CM = point_tracker.get_pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
 		FrameTrafo X_GH = R_GC * X_CM * X_MH;
         Matx33f R = X_GH.R * X_GH_0.R.t();
