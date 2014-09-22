@@ -20,7 +20,7 @@ PointExtractor::PointExtractor(){
 	//freopen("CON", "w", stderr);
 }
 // ----------------------------------------------------------------------------
-const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float dt, bool draw_output)
+const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float /*dt*/, bool draw_output)
 {
 	const int W = frame.cols;
 	const int H = frame.rows; 
