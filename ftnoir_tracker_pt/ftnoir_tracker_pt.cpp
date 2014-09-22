@@ -35,7 +35,6 @@ Tracker::~Tracker()
 {
 	set_command(ABORT);
 	wait();
-    s.video_widget = false;
     delete video_widget;
     video_widget = NULL;
     if (video_frame->layout()) delete video_frame->layout();

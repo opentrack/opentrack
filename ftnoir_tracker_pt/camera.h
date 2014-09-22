@@ -65,7 +65,6 @@ protected:
 
         // update the camera using cam_desired, write res and f to cam_info if successful
         virtual void _set_device_index() = 0;
-        virtual void _set_f() = 0;
         virtual void _set_fps() = 0;
         virtual void _set_res() = 0;
 
@@ -94,7 +93,6 @@ public:
 protected:
 	virtual bool _get_frame(cv::Mat* frame);
 	virtual void _set_index();
-	virtual void _set_f();
 	virtual void _set_fps();
 	virtual void _set_res();
     virtual void _set_device_index();
@@ -116,7 +114,6 @@ public:
 protected:
 	virtual bool _get_frame(cv::Mat* frame);
 	virtual void _set_device_index();
-	virtual void _set_f();
 	virtual void _set_fps();
 	virtual void _set_res();
 

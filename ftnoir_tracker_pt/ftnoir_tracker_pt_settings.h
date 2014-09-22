@@ -31,7 +31,6 @@ struct settings
 
     value<int> m01_x, m01_y, m01_z;
     value<int> m02_x, m02_y, m02_z;
-    value<bool> video_widget;
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
 
@@ -59,7 +58,6 @@ struct settings
         m02_x(b, "m_02-x", 0),
         m02_y(b, "m_02-y", 0),
         m02_z(b, "m_02-z", 0),
-        video_widget(b, "video-widget", true),
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),

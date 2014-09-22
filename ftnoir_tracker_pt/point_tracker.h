@@ -96,19 +96,17 @@ public:
 	FrameTrafo get_pose() const { return X_CM; }
 	void reset();
 
-protected:
+private:
 	inline cv::Vec2f project(const cv::Vec3f& v_M, float f)
 	{
 		cv::Vec3f v_C = X_CM * v_M;
 		return cv::Vec2f(f*v_C[0]/v_C[2], f*v_C[1]/v_C[2]);
 	}
 
-	void find_correspondences(const std::vector<cv::Vec2f>& points, float f);
-
+    void find_correspondences(const std::vector<cv::Vec2f>& points, float f);
+    int POSIT(float f);  // The POSIT algorithm, returns the number of iterations
+    
 	cv::Vec2f p[PointModel::N_POINTS];	// the points in model order
-
-	int POSIT(float f);  // The POSIT algorithm, returns the number of iterations
-
 	FrameTrafo X_CM; // trafo from model to camera
 };
 
