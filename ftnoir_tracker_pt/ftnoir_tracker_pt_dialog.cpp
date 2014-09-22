@@ -42,11 +42,7 @@ TrackerDialog::TrackerDialog()
     ui.camroll_combo->addItem("0");
     ui.camroll_combo->addItem("90");
 
-    tie_setting(s.dyn_pose_res, ui.dynpose_check);
-    tie_setting(s.reset_time, ui.reset_spin);
-
     tie_setting(s.cam_index, ui.camdevice_combo);
-    tie_setting(s.cam_f, ui.f_dspin);
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
@@ -82,11 +78,9 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.t_MH_z, ui.tz_spin);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
-    connect(ui.reset_button, SIGNAL(clicked()),  this, SLOT(doReset()));
 
-    connect(ui.ok_button, SIGNAL(clicked()),     this, SLOT(doOK()));
-    connect(ui.cancel_button, SIGNAL(clicked()), this, SLOT(doCancel()));
-    connect(ui.btnApply, SIGNAL(clicked()), this, SLOT(doApply()));
+    connect(ui.buttonBox, SIGNAL(accepted()),     this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     ui.model_tabs->setCurrentIndex(s.active_model_panel);
 
@@ -94,7 +88,7 @@ TrackerDialog::TrackerDialog()
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
 	timer.start(100);
 
-    connect(s.b.get(), SIGNAL(bundleChanged()), this, SLOT(do_apply_without_saving()));
+    connect(ui.buttonBox_2, SIGNAL(clicked(QAbstractButton*)), this, SLOT(do_apply_without_saving(QAbstractButton*)));
 }
 
 void TrackerDialog::set_model_clip()
@@ -172,19 +166,9 @@ void TrackerDialog::settings_changed()
     if (tracker) tracker->apply(s);
 }
 
-void TrackerDialog::doCenter()
-{
-	if (tracker) tracker->center();
-}
-
-void TrackerDialog::doReset()
-{
-	if (tracker) tracker->reset();
-}
-
 void TrackerDialog::save()
 {
-    do_apply_without_saving();
+    do_apply_without_saving(nullptr);
     s.b->save();
 }
 
@@ -194,7 +178,7 @@ void TrackerDialog::doOK()
 	close();
 }
 
-void TrackerDialog::do_apply_without_saving()
+void TrackerDialog::do_apply_without_saving(QAbstractButton*)
 {
     switch (s.active_model_panel) {
     default:
@@ -295,7 +279,6 @@ void TrackerDialog::registerTracker(ITracker *t)
         tracker->apply(s);
 	ui.tcalib_button->setEnabled(true);
 	//ui.center_button->setEnabled(true);
-	ui.reset_button->setEnabled(true);
 }
 
 void TrackerDialog::unRegisterTracker()
@@ -305,7 +288,6 @@ void TrackerDialog::unRegisterTracker()
 	destroy_video_widget();
 	ui.tcalib_button->setEnabled(false); 
 	//ui.center_button->setEnabled(false);
-	ui.reset_button->setEnabled(false);
 }
 
 extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )

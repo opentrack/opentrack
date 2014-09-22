@@ -57,14 +57,14 @@ class PointModel
 {
 	friend class PointTracker;
 public:
-	static const int N_POINTS = 3;
+	static constexpr int N_POINTS = 3;
 
 	PointModel(cv::Vec3f M01, cv::Vec3f M02);
 
-	const cv::Vec3f& get_M01() const { return M01; };
-	const cv::Vec3f& get_M02() const { return M02; };
+	const cv::Vec3f& get_M01() const { return M01; }
+	const cv::Vec3f& get_M02() const { return M02; }
 
-protected:
+private:
 	cv::Vec3f M01;	// M01 in model frame
 	cv::Vec3f M02;	// M02 in model frame
 
@@ -90,11 +90,8 @@ public:
 	// track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
 	// f : (focal length)/(sensor width)
 	// dt : time since last call
-	bool track(const std::vector<cv::Vec2f>& points, float f, float dt);
+	void track(const std::vector<cv::Vec2f>& points, float f);
 	std::shared_ptr<PointModel> point_model;
-
-	bool dynamic_pose_resolution;
-	float dt_reset;
 
 	FrameTrafo get_pose() const { return X_CM; }
 	void reset();
@@ -106,24 +103,13 @@ protected:
 		return cv::Vec2f(f*v_C[0]/v_C[2], f*v_C[1]/v_C[2]);
 	}
 
-	bool find_correspondences(const std::vector<cv::Vec2f>& points, float f);
+	void find_correspondences(const std::vector<cv::Vec2f>& points, float f);
 
 	cv::Vec2f p[PointModel::N_POINTS];	// the points in model order
-	cv::Vec2f p_exp[PointModel::N_POINTS];	// the expected point positions
 
-	void predict(float dt);
-	void update_velocities(float dt);
-	void reset_velocities();
-
-	
 	int POSIT(float f);  // The POSIT algorithm, returns the number of iterations
 
-	bool init_phase;
-	float dt_valid;	// time since last valid tracking result
-	cv::Vec3f v_t;	// velocities
-	cv::Vec3f v_r;
 	FrameTrafo X_CM; // trafo from model to camera
-	FrameTrafo X_CM_old;
 };
 
 #endif //POINTTRACKER_H

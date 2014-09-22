@@ -61,8 +61,7 @@ protected:
 	QMutex mutex;
 	// thread commands
 	enum Command {
-		ABORT = 1<<0,
-		PAUSE = 1<<1
+		ABORT = 1<<0
 	};
 	void set_command(Command command);
 	void reset_command(Command command);
@@ -82,7 +81,6 @@ protected:
 
     PTVideoWidget* video_widget;
 	QFrame*      video_frame;
-    bool           tracking_valid;
 	
     settings s;
     std::atomic<settings*> new_settings;
