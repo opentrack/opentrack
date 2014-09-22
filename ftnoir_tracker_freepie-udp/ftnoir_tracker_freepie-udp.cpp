@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "facetracknoir/plugin-support.h"
 
-#include <stddef.h>
+#include <cstddef>
 #include <cinttypes>
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
