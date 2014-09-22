@@ -52,6 +52,8 @@ static void reinit_offset() {
 #   define OT_UNUSED(varname) varname
 #endif
 
+#pragma GCC diagnostic ignored "-Wunused-result"
+
 PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *OT_UNUSED(mutexName), int mapSize)
 {
     PortableLockedShm* self = malloc(sizeof(PortableLockedShm));
