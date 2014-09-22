@@ -46,7 +46,7 @@ extern "C" typedef void* (CALLING_CONVENTION* DIALOG_FUNPTR)(void);
 class DynamicLibrary {
 public:
     DynamicLibrary(const QString& filename);
-    virtual ~DynamicLibrary();
+    ~DynamicLibrary();
     DIALOG_FUNPTR Dialog;
     CTOR_FUNPTR Constructor;
     METADATA_FUNPTR Metadata;

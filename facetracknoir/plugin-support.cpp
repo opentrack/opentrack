@@ -76,19 +76,44 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     correct = true;
 }
 
-DynamicLibrary::DynamicLibrary(const QString& filename)
+DynamicLibrary::DynamicLibrary(const QString& filename) :
+    handle(nullptr),
+    Dialog(nullptr),
+    Constructor(nullptr),
+    Metadata(nullptr)
 {
     this->filename = filename;
 #if defined(_WIN32)
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
     handle = new QLibrary(fullPath);
-    qDebug() << handle->errorString();
+    
+    struct _foo {
+        static bool die(QLibrary*& l, bool failp)
+        {
+            if (failp)
+            {
+                qDebug() << "failed" << l->errorString();
+                delete l;
+                l = nullptr;
+            }
+            return failp;
+        }
+    };
+    
+    if (_foo::die(handle, !handle->load()))
+        return;
+    
     Dialog = (DIALOG_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetDialog" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
-    qDebug() << handle->errorString();
+    if (_foo::die(handle, !Dialog))
+        return;
+    
     Constructor = (CTOR_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetConstructor" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
-    qDebug() << handle->errorString();
+    if (_foo::die(handle, !Constructor))
+        return;
+    
     Metadata = (METADATA_FUNPTR) handle->resolve(MAYBE_STDCALL_UNDERSCORE "GetMetadata" CALLING_CONVENTION_SUFFIX_VOID_FUNCTION);
-    qDebug() << handle->errorString();
+    if (_foo::die(handle, !Metadata))
+        return;
 #else
     QByteArray latin1 = QFile::encodeName(filename);
     handle = dlopen(latin1.constData(), RTLD_NOW |
@@ -102,20 +127,34 @@ DynamicLibrary::DynamicLibrary(const QString& filename)
                     );
     if (handle)
     {
-        fprintf(stderr, "Error, if any: %s\n", dlerror());
-        fflush(stderr);
+        struct _foo {
+            static bool err(void*& handle)
+            {
+                const char* err = dlerror();
+                if (err)
+                {
+                    fprintf(stderr, "Error, ignoring: %s\n", err);
+                    fflush(stderr);
+                    dlclose(handle);
+                    handle = nullptr;
+                    return true;
+                }
+                false;
+            }
+        };
+        if (_foo::err(handle))
+            return;
         Dialog = (DIALOG_FUNPTR) dlsym(handle, "GetDialog");
-        fprintf(stderr, "Error, if any: %s\n", dlerror());
-        fflush(stderr);
+        if (_foo::err(handle))
+            return;
         Constructor = (CTOR_FUNPTR) dlsym(handle, "GetConstructor");
-        fprintf(stderr, "Error, if any: %s\n", dlerror());
-        fflush(stderr);
+        if (_foo::err(handle))
+            return;
         Metadata = (METADATA_FUNPTR) dlsym(handle, "GetMetadata");
-        fprintf(stderr, "Error, if any: %s\n", dlerror());
-        fflush(stderr);
+        if (_foo::err(handle))
+            return;
     } else {
-        fprintf(stderr, "Error, if any: %s\n", dlerror());
-        fflush(stderr);
+        (void) _foo::err(handle);
     }
 #endif
 }
