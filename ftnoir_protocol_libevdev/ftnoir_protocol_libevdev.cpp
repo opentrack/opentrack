@@ -94,7 +94,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

@@ -48,7 +48,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

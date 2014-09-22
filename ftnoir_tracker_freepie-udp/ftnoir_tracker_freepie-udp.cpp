@@ -97,7 +97,7 @@ void TrackerImpl::GetHeadPoseData(double *data)
     data[Roll] = pose[Roll];
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new TrackerImpl;
 }

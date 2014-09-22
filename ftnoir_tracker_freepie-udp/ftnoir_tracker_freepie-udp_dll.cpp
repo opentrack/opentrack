@@ -21,7 +21,7 @@ void TrackerMeta::getIcon(QIcon *icon)
     *icon = QIcon(":/glovepie.png");
 }
 
-extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
     return new TrackerMeta;
 }

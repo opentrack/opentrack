@@ -56,7 +56,7 @@ void FSUIPCControls::getLocationOfDLL()
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog(void)
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog(void)
 {
     return new FSUIPCControls;
 }

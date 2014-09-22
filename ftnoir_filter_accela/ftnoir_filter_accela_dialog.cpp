@@ -52,7 +52,7 @@ void FilterControls::save() {
         accela_filter->receiveSettings();
 }
 
-extern "C" OPENTRACK_EXPORT IFilterDialog* CALLING_CONVENTION GetDialog()
+extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()
 {
     return new FilterControls;
 }

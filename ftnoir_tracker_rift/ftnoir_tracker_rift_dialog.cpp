@@ -25,7 +25,7 @@ void TrackerControls::doCancel() {
     close();
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog()
+extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog()
 {
     return new TrackerControls;
 }

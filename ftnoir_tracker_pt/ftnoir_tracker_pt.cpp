@@ -245,7 +245,7 @@ void Tracker::GetHeadPoseData(THeadPoseData *data)
 
 //-----------------------------------------------------------------------------
 #ifdef OPENTRACK_API
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 #else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()

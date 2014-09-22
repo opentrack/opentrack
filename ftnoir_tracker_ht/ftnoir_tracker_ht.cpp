@@ -229,17 +229,17 @@ void TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/ht.png");
 }
 
-extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
 	return new TrackerDll;
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new Tracker;
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 {
     return new TrackerControls;
 }

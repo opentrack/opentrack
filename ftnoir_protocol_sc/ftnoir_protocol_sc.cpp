@@ -246,7 +246,7 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }
