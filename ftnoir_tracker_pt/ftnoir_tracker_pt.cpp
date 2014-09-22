@@ -29,13 +29,10 @@ Tracker::Tracker()
       new_settings(nullptr)
 
 {
-	qDebug()<<"Tracker::Tracker";
 }
 
 Tracker::~Tracker()
 {
-	qDebug()<<"Tracker::~Tracker";
-	// terminate tracker thread
 	set_command(ABORT);
 	wait();
     s.video_widget = false;
