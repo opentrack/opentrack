@@ -3,6 +3,10 @@
 #include <QCoreApplication>
 #include <QFile>
 
+#ifndef _WIN32
+#   include <dlfcn.h>
+#endif
+
 SelectedLibraries* Libraries = NULL;
 
 SelectedLibraries::~SelectedLibraries()
