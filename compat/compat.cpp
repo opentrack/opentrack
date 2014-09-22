@@ -4,12 +4,12 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
+
+#include <cstring>
 #define IN_FTNOIR_COMPAT
 #include "compat.h"
-#include <string.h>
 
 #if defined(_WIN32)
-
 PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName, int mapSize)
 {
     hMutex = CreateMutexA(NULL, false, mutexName);
@@ -43,8 +43,8 @@ void PortableLockedShm::unlock()
 {
     (void) ReleaseMutex(hMutex);
 }
-
 #else
+#pragma GCC diagnostic ignored "-Wunused-result"
 PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
     char filename[512] = {0};
@@ -57,8 +57,6 @@ PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexNam
 
 PortableLockedShm::~PortableLockedShm()
 {
-    //(void) shm_unlink(shm_filename);
-
     (void) munmap(mem, size);
     (void) close(fd);
 }
@@ -72,7 +70,6 @@ void PortableLockedShm::unlock()
 {
     flock(fd, LOCK_UN);
 }
-
 #endif
 
 bool PortableLockedShm::success()

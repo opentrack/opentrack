@@ -28,9 +28,9 @@
 #include "ftnoir_csv/csv.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() :
-    shm(FT_MM_DATA, FREETRACK_MUTEX, sizeof(FTHeap))
+    shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap))
 {
-    pMemData = (FTHeap*) shm.mem;
+    pMemData = (FTHeap*) shm.ptr();
     ProgramName = "";
     intGameID = 0;
     viewsStart = 0;

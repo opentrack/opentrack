@@ -138,7 +138,7 @@ void Tracker::load_settings(ht_config_t* config)
 
 Tracker::Tracker() :
     lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)),
-    shm(reinterpret_cast<ht_shm_t*>(lck_shm.mem)),
+    shm(reinterpret_cast<ht_shm_t*>(lck_shm.ptr())),
     videoWidget(nullptr),
     layout(nullptr)
 {
