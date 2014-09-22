@@ -17,7 +17,11 @@
  * * The FreeTrackClient sources were translated from the original Delphi sources   *
  * * created by the FreeTrack developers.                                           *
  */
-#define	NP_AXIS_MAX				16383
+
+#pragma GCC diagnostic ignored "-Wvariadic-macros"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+#define NP_AXIS_MAX 16383
 
 #include <stdbool.h>
 #include <string.h>
@@ -43,44 +47,39 @@ static const char* dllProvider = "FreeTrack";
 
 static bool FTCreateMapping(void)
 {
-	if (pMemData != NULL) {
-		return true;
-	}
+    if (pMemData != NULL)
+        return true;
 
-	hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE,
+    hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE,
                                    NULL,
                                    PAGE_READWRITE,
-                                   0, 
-		                           sizeof(FTHeap), 
-								   (LPCSTR) FT_MM_DATA);
+                                   0,
+                                   sizeof(FTHeap),
+                                   (LPCSTR) FT_MM_DATA);
 
     if (hFTMemMap == NULL)
-    {
-        pMemData = NULL;
-        return false;
-    }
+        return (pMemData = NULL), false;
 
     pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTHeap));
     hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 
-	return true;
+    return true;
 }
 
 FT_EXPORT(bool) FTGetData(FTData* data)
 {
-  if (FTCreateMapping() == false)
-      return false;
+    if (FTCreateMapping() == false)
+        return false;
 
-  if (hFTMutex && WaitForSingleObject(hFTMutex, 16) == WAIT_OBJECT_0) {
-	if (pMemData) {
-		if (pMemData->data.DataID > (1 << 29)) {
-			pMemData->data.DataID = 0;
-		}
-		data->DataID = pMemData->data.DataID;
-	}
-	ReleaseMutex(hFTMutex);
-  }
-  return true;
+    if (hFTMutex && WaitForSingleObject(hFTMutex, 16) == WAIT_OBJECT_0) {
+        if (pMemData) {
+            if (pMemData->data.DataID > (1 << 29))
+                pMemData->data.DataID = 0;
+            data->DataID = pMemData->data.DataID;
+        }
+        ReleaseMutex(hFTMutex);
+    }
+    return true;
 }
 
 /*
@@ -90,20 +89,18 @@ FT_EXPORT(bool) FTGetData(FTData* data)
 */
 FT_EXPORT(void) FTReportName( int name )
 {
-	dbg_report("FTReportName request (ID = %d).\n", name);
+    dbg_report("FTReportName request (ID = %d).\n", name);
 }
 
 FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
-
-	return dllVersion;
+    return dllVersion;
 }
 
 FT_EXPORT(const char*) FTProvider(void)
 {
     dbg_report("FTProvider request.\n");
-
-	return dllProvider;
+    return dllProvider;
 }
 
