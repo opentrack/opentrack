@@ -68,16 +68,13 @@ public:
     QFrame *get_video_widget();
     Tracker *tracker;
     void bindKeyboardShortcuts();
-    DynamicLibrary* current_tracker1() {
+    DynamicLibrary* current_tracker1() override {
         return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), (DynamicLibrary*) NULL);
     }
-    DynamicLibrary* current_tracker2() {
-        return dlopen_trackers.value(ui.cbxSecondTrackerSource->currentIndex() - 1, (DynamicLibrary*) NULL);
-    }
-    DynamicLibrary* current_protocol() {
+    DynamicLibrary* current_protocol() override {
         return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), (DynamicLibrary*) NULL);
     }
-    DynamicLibrary* current_filter() {
+    DynamicLibrary* current_filter() override {
         return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
     }
     THeadPoseDOF& axis(int idx) {
@@ -104,7 +101,6 @@ private:
 	QTimer timUpdateHeadPose;
 
     ITrackerDialog* pTrackerDialog;
-    ITrackerDialog* pSecondTrackerDialog;
     IProtocolDialog* pProtocolDialog;
     IFilterDialog* pFilterDialog;
 
@@ -137,7 +133,6 @@ private slots:
     void profileSelected(int index);
     
     void showTrackerSettings();
-    void showSecondTrackerSettings();
     
     void showServerControls();
     void showFilterControls();

@@ -91,9 +91,6 @@ void Tracker::run() {
     if (Libraries->pTracker)
         sleep_ms = std::min(sleep_ms, 1000 / Libraries->pTracker->preferredHz());
 
-    if (Libraries->pSecondTracker)
-        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pSecondTracker->preferredHz());
-
     qDebug() << "tracker Hz:" << 1000 / sleep_ms;
 
 #if defined(_WIN32)
@@ -106,10 +103,6 @@ void Tracker::run() {
 
         if (should_quit)
             break;
-
-        if (Libraries->pSecondTracker) {
-            Libraries->pSecondTracker->GetHeadPoseData(newpose);
-        }
 
         if (Libraries->pTracker) {
             Libraries->pTracker->GetHeadPoseData(newpose);

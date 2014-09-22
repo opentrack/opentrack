@@ -27,7 +27,6 @@ class IDynamicLibraryProvider;
 struct SelectedLibraries {
 public:
     ITracker* pTracker;
-    ITracker* pSecondTracker;
     IFilter* pFilter;
     IProtocol* pProtocol;
     SelectedLibraries(IDynamicLibraryProvider* main = NULL);
@@ -64,7 +63,6 @@ private:
 class IDynamicLibraryProvider {
 public:
     virtual DynamicLibrary* current_tracker1() = 0;
-    virtual DynamicLibrary* current_tracker2() = 0;
     virtual DynamicLibrary* current_protocol() = 0;
     virtual DynamicLibrary* current_filter() = 0;
     virtual QFrame* get_video_widget() = 0;
