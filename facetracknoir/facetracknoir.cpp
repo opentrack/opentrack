@@ -101,7 +101,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     ui.setupUi(this);
     setFixedSize(size());
     ui.video_frame_label->setPixmap(no_feed_pixmap);
-    updateButtonState(false);
+    updateButtonState(false, false);
 
 	_keyboard_shortcuts = 0;
 	_curve_config = 0;
@@ -278,7 +278,7 @@ void FaceTrackNoIR::loadSettings() {
     load_mappings();
 }
 
-void FaceTrackNoIR::updateButtonState(bool running)
+void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled ( not_running );
@@ -290,7 +290,7 @@ void FaceTrackNoIR::updateButtonState(bool running)
     ui.cbxSecondTrackerSource->setEnabled(not_running);
     ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
-    ui.video_frame_label->setVisible(not_running);
+    ui.video_frame_label->setVisible(not_running || inertialp);
 }
 
 void FaceTrackNoIR::startTracker( ) {
@@ -333,7 +333,10 @@ void FaceTrackNoIR::startTracker( ) {
 
     timUpdateHeadPose.start(50);
 
-    updateButtonState(true);
+    // NB check valid since SelectedLibraries ctor called
+    // trackers take care of layout state updates
+    const bool is_inertial = ui.video_frame->layout() == nullptr;
+    updateButtonState(true, is_inertial);
 }
 
 void FaceTrackNoIR::stopTracker( ) {
@@ -381,7 +384,7 @@ void FaceTrackNoIR::stopTracker( ) {
             Libraries = NULL;
         }
 	}
-    updateButtonState(false);
+    updateButtonState(false, false);
 }
 
 void FaceTrackNoIR::showHeadPose() {
