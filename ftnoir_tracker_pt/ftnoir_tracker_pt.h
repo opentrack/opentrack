@@ -53,7 +53,7 @@ public:
 	int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
 	void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
 
-protected:
+private:
 	// --- MutexedFrameProvider interface ---
 	virtual bool get_frame_and_points(cv::Mat& frame, std::shared_ptr< std::vector<cv::Vec2f> >& points);
 
