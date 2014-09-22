@@ -55,7 +55,7 @@ static bool FTCreateMapping(void)
                                    PAGE_READWRITE,
                                    0,
                                    sizeof(FTHeap),
-                                   (LPCSTR) FT_MM_DATA);
+                                   (LPCSTR) FREETRACK_HEAP);
 
     if (hFTMemMap == NULL)
         return (pMemData = NULL), false;

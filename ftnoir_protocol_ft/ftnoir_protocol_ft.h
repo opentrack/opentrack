@@ -27,7 +27,6 @@
 #pragma once
 #include "ui_ftnoir_ftcontrols.h"
 #include "facetracknoir/plugin-api.hpp"
-#include "fttypes.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -39,6 +38,7 @@
 #include <QMutexLocker>
 #include "compat/compat.h"
 #include "facetracknoir/options.h"
+#include "fttypes.h"
 using namespace options;
 
 struct settings {
