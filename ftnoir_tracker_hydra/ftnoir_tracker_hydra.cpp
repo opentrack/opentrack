@@ -39,7 +39,7 @@ void Hydra_Tracker::GetHeadPoseData(double *data)
     data[TX] = acd.controllers[0].pos[0]/50.0;
     data[TY] = acd.controllers[0].pos[1]/50.0;
     data[TZ] = acd.controllers[0].pos[2]/50.0;
-    constexpr double r2d = 57.295781;
+    static constexpr double r2d = 57.295781;
     data[Yaw] = ypr[0] * r2d;
     data[Pitch] = ypr[1] * r2d;
     data[Roll] = ypr[2] * r2d;

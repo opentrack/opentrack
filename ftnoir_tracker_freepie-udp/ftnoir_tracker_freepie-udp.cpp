@@ -46,7 +46,7 @@ void TrackerImpl::run() {
 
                 int flags = data.flags & F::Mask;
                 
-                constexpr int minsz = offsetof(decltype(data), raw_rot) + sizeof(decltype(data)::raw_rot);
+                static constexpr int minsz = offsetof(decltype(data), raw_rot) + sizeof(decltype(data)::raw_rot);
                 const bool flags_came_out_wrong = minsz > sz;
                 
                 if (flags_came_out_wrong)

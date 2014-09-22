@@ -154,7 +154,7 @@ void QFunctionConfigurator::drawFunction()
 
     QPen pen(spline_color, 1.2, Qt::SolidLine);
 
-    static const constexpr double step = 1.02;
+    static constexpr double step = 1.02;
     const double max = _config->maxInput();
     
     QPointF prev = point_to_pixel(QPointF(0, 0));
@@ -284,12 +284,12 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
     if (!_config)
         return;
     
-    static const constexpr int min_refresh_delay = 25;
+    static constexpr int min_refresh_delay = 25;
     
     if (timer.isValid() && timer.elapsed() < min_refresh_delay)
         return;
     
-    static const constexpr int refresh_delay = 50;
+    static constexpr int refresh_delay = 50;
     QList<QPointF> points = _config->getPoints();
 
     if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
