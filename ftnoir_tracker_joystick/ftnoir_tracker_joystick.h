@@ -53,7 +53,7 @@ public:
     DIDEVICEINSTANCE def;
     int iter; // XXX bad style
     settings s;
-	static const constexpr int AXIS_MAX = 65535;
+	static constexpr int AXIS_MAX = 65535;
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog
