@@ -97,7 +97,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float /*dt*/, boo
 				{
 					if (frame_bin.at<unsigned char>(i,j) != blob_index-1) continue;
 					region_size++;
-				}
+			 	}
 			}
 			
 			if (region_size < region_size_min || region_size > region_size_max) continue; 
