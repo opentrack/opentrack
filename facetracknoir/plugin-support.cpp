@@ -14,11 +14,6 @@ SelectedLibraries::~SelectedLibraries()
         pTracker = NULL;
     }
 
-    if (pSecondTracker) {
-        delete pSecondTracker;
-        pSecondTracker = NULL;
-    }
-
     if (pFilter)
         delete pFilter;
 
@@ -27,7 +22,7 @@ SelectedLibraries::~SelectedLibraries()
 }
 
 SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
-    pTracker(NULL), pSecondTracker(NULL), pFilter(NULL), pProtocol(NULL)
+    pTracker(NULL), pFilter(NULL), pProtocol(NULL)
 {
     correct = false;
     if (!mainApp)
@@ -40,13 +35,6 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     if (lib && lib->Constructor) {
         ptr = (CTOR_FUNPTR) lib->Constructor;
         pTracker = (ITracker*) ptr();
-    }
-
-    lib = mainApp->current_tracker2();
-
-    if (lib && lib->Constructor) {
-        ptr = (CTOR_FUNPTR) lib->Constructor;
-        pSecondTracker = (ITracker*) ptr();
     }
 
     lib = mainApp->current_protocol();
@@ -69,15 +57,11 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     if (pTracker) {
         pTracker->StartTracker( mainApp->get_video_widget() );
     }
-    if (pSecondTracker) {
-        pSecondTracker->StartTracker( mainApp->get_video_widget() );
-    }
 
     correct = true;
 }
 
 DynamicLibrary::DynamicLibrary(const QString& filename) :
-    handle(nullptr),
     Dialog(nullptr),
     Constructor(nullptr),
     Metadata(nullptr)
