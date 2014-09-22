@@ -184,11 +184,6 @@ bool CVCamera::_get_frame(Mat* frame)
     if (cap && cap->isOpened())
 	{
         Mat img;
-        /*
-         * XXX some Windows webcams fail to decode first
-         *     frames and then some every once in a while
-         * -sh
-         */
         for (int i = 0; i < 100 && !cap->read(img); i++)
             ;;
 
