@@ -108,14 +108,6 @@ void Camera::set_device_index(int index)
 	}
 }
 
-void Camera::set_f(float f)
-{
-	if (cam_desired.f != f)
-	{
-		cam_desired.f = f;
-		_set_f();
-	}
-}
 void Camera::set_fps(int fps)
 {
 	if (cam_desired.fps != fps)
@@ -199,11 +191,6 @@ bool CVCamera::_get_frame(Mat* frame)
 void CVCamera::_set_index()
 {
 	if (active) restart();
-}
-
-void CVCamera::_set_f()
-{
-	cam_info.f = cam_desired.f;
 }
 
 void CVCamera::_set_fps()

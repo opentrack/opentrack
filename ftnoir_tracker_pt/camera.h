@@ -48,7 +48,6 @@ public:
 
         // calls corresponding template methods and reinitializes frame rate calculation
         void set_device_index(int index);
-        void set_f(float f);
         void set_fps(int fps);
         void set_res(int x_res, int y_res);
 

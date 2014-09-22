@@ -122,7 +122,6 @@ void Tracker::apply_inner()
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
-    camera.set_f(1);
     frame_rotation.rotation = static_cast<RotationType>(static_cast<int>(s.cam_roll));
     point_extractor.threshold_val = s.threshold;
     point_extractor.threshold_secondary_val = s.threshold_secondary;
