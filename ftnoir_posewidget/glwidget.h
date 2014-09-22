@@ -5,12 +5,11 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef GLWIDGET_H
-#define GLWIDGET_H
+#pragma once
 
 #include <QtGui>
 #include <QPixmap>
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/plugin-api.hpp"
 
 struct Point {
     Point(int x, int y) :
@@ -48,7 +47,7 @@ struct Vec2f {
     }
 };
 
-class FTNOIR_TRACKER_BASE_EXPORT GLWidget : public QWidget
+class OPENTRACK_EXPORT GLWidget : public QWidget
 {
     Q_OBJECT
 
@@ -56,7 +55,6 @@ public:
     GLWidget(QWidget *parent);
     ~GLWidget();
     void rotateBy(double xAngle, double yAngle, double zAngle);
-    
 protected:
     void paintEvent ( QPaintEvent * event );
 
@@ -93,5 +91,3 @@ private:
     QImage back;
     QImage texture;
 };
-
-#endif

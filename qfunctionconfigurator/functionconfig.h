@@ -13,7 +13,7 @@
 #include <QString>
 #include <QSettings>
 #include <QMutex>
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <vector>
 
 #define MEMOIZE_PRECISION 100
@@ -52,7 +52,7 @@ public:
     }
 };
 
-class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
+class OPENTRACK_EXPORT FunctionConfig {
 private:
     void reload();
     float getValueInternal(int x);

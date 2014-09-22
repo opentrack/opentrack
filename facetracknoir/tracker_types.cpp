@@ -1,5 +1,6 @@
 #include "tracker_types.h"
 #include "rotation.h"
+#include "facetracknoir/plugin-api.hpp"
 
 #define PI 3.14159265358979323846264
 #define D2R PI/180.0

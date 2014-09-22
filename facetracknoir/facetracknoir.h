@@ -52,10 +52,6 @@ using namespace options;
 #include "tracker.h"
 #include "facetracknoir/shortcuts.h"
 
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
-
 class Tracker;				// pre-define class to avoid circular includes
 class FaceTrackNoIR;
 

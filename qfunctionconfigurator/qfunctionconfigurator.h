@@ -11,9 +11,9 @@
 #include <QPointF>
 #include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/plugin-api.hpp"
 
-class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
+class OPENTRACK_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)

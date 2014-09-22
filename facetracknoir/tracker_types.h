@@ -1,7 +1,4 @@
-#ifndef __TRACKER_TYPES_H__
-#define __TRACKER_TYPES_H__
-
-#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
+#pragma once
 
 struct T6DOF {
 public:
@@ -12,5 +9,3 @@ public:
 
 T6DOF operator-(const T6DOF& A, const T6DOF& B); // get new pose with respect to reference pose B
 T6DOF operator+(const T6DOF& A, const T6DOF& B); // get new pose with respect to reference pose B^-1
-
-#endif //__TRACKER_TYPES_H__

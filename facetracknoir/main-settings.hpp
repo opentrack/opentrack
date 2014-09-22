@@ -2,7 +2,6 @@
 
 #include <QString>
 #include "facetracknoir/options.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
 using namespace options;
 
 struct key_opts {
