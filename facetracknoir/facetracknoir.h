@@ -118,7 +118,7 @@ private:
 	void createIconGroupBox();
 
 	void loadSettings();
-    void updateButtonState(bool running);
+    void updateButtonState(bool running, bool inertialp);
 
     QList<DynamicLibrary*> dlopen_filters;
     QList<DynamicLibrary*> dlopen_trackers;
