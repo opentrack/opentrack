@@ -9,7 +9,7 @@ FTNoIR_ProtocolDll::~FTNoIR_ProtocolDll()
 {
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
 {
     return new FTNoIR_ProtocolDll;
 }
