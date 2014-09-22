@@ -274,7 +274,11 @@ opentrack_library(opentrack-proto-fgfs)
 
 if(SDK_VJOY)
     include_directories(${SDK_VJOY})
-    opentrack_library(opentrack-proto-vjoy)
+    set(link-flags)
+    if(CMAKE_C_COMPILER_IS_GNUCC)
+        set(link-flags "-Wl,--enable-stdcall-fixup")
+    endif()
+    opentrack_library(opentrack-proto-vjoy LINK ${link-flags})
     target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
 endif()
 
@@ -286,7 +290,7 @@ if(SDK_ENABLE_LIBEVDEV)
 endif()
 
 if(SDK_FSUIPC)
-    opentrack_library(opentrack-proto-fsuipc LINK "${link-flags}")
+    opentrack_library(opentrack-proto-fsuipc)
     target_link_libraries(opentrack-proto-fsuipc "${SDK_FSUIPC}/FSUIPC_User.lib")
 endif()
 
