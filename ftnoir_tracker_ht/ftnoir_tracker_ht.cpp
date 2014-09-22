@@ -229,7 +229,7 @@ void TrackerDll::getFullName(QString *strToBeFilled)
 
 void TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = "HT"
+	*strToBeFilled = "HT";
 }
 
 void TrackerDll::getDescription(QString *strToBeFilled)
