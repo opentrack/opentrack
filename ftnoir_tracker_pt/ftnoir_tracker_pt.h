@@ -12,7 +12,6 @@
 #   include "facetracknoir/plugin-api.hpp"
 #endif
 #include "ftnoir_tracker_pt_settings.h"
-#include "frame_observer.h"
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
@@ -34,30 +33,25 @@
 
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
-class Tracker : public ITracker, QThread, public FrameProvider
+class Tracker : public ITracker, protected QThread
 {
 public:
 	Tracker();
-    virtual ~Tracker();
-    virtual void StartTracker(QFrame* parent_window);
-    virtual void GetHeadPoseData(double* data);
-    virtual void refreshVideo();
+    ~Tracker() override;
+    void StartTracker(QFrame* parent_window) override;
+    void GetHeadPoseData(double* data) override;
 
     void apply(settings& s);
 	void apply_inner();
 	void center();
 	void reset();	// reset the trackers internal state variables
-	void run();
 
 	void get_pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.get_pose(); }
 	int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
 	void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
-
+protected:
+    void run() override;
 private:
-	// --- MutexedFrameProvider interface ---
-	virtual bool get_frame_and_points(cv::Mat& frame, std::shared_ptr< std::vector<cv::Vec2f> >& points);
-
-	// --- thread ---
 	QMutex mutex;
 	// thread commands
 	enum Command {
@@ -85,6 +79,11 @@ private:
     settings s;
     std::atomic<settings*> new_settings;
     Timer time;
+    
+    static constexpr double rad2deg = 180.0/3.14159265;
+    static constexpr double deg2rad = 3.14159265/180.0;
+    
+    PointModel model;
 };
 
 #undef VideoWidget

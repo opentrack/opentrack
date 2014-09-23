@@ -23,13 +23,13 @@
 
 //-----------------------------------------------------------------------------
 // The dialog that shows up when the user presses "Settings"
-class TrackerDialog : public QWidget, Ui::UICPTClientControls, public ITrackerDialog
+class TrackerDialog : public QWidget, public ITrackerDialog
 {
 	Q_OBJECT
 public:
 	TrackerDialog();
-	void registerTracker(ITracker *tracker);
-	void unRegisterTracker();
+	void registerTracker(ITracker *tracker) override;
+	void unRegisterTracker() override;
     void save();
 	void trans_calib_step();
 
@@ -40,14 +40,9 @@ public slots:
     void do_apply_without_saving(QAbstractButton *);
 
 	void startstop_trans_calib(bool start);
-	void widget_destroyed(QObject* obj);
-	void create_video_widget();
 	void poll_tracker_info();
     void set_model(int idx);
-
-protected:
-	void destroy_video_widget(bool do_delete = true);
-
+private:
 	void set_model_clip();
 	void set_model_cap();
 	void set_model_custom();
@@ -56,7 +51,6 @@ protected:
 
     settings s;
 	Tracker* tracker;
-    VideoWidgetDialog* video_widget_dialog;
 	QTimer timer;
 
 	TranslationCalibrator trans_calib;

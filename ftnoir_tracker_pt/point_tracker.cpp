@@ -33,10 +33,14 @@ static void set_row(Matx33f& m, int i, const Vec3f& v)
 	m(i,2) = v[2];
 }
 
-// ----------------------------------------------------------------------------
+PointModel::PointModel() :
+    M01 { 0, 0, 0 },
+    M02 { 0, 0, 0 }
+{
+}
+
 PointModel::PointModel(Vec3f M01, Vec3f M02)
-	: M01(M01), 
-	  M02(M02)
+	: M01(M01), M02(M02)
 {
 	// calculate u
 	u = M01.cross(M02);
@@ -107,26 +111,30 @@ void PointTracker::reset()
 	X_CM = FrameTrafo();
 }
 
-void PointTracker::track(const vector<Vec2f>& points, float f)
+void PointTracker::track(const vector<Vec2f>& projected_points, const PointModel& model)
 {
-    find_correspondences(points, f);
-	(void) POSIT(f);
-	//qDebug()<<"Number of POSIT iterations: "<<n_iter;
+    const PointOrder& order = find_correspondences(projected_points, model);
+	int iters = POSIT(model, order);
+	qDebug()<<"POSIT iterations:"<<iters;
 }
 
-void PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, float f)
+PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel& model)
 {
     // ... otherwise we look at the distance to the projection of the expected model points 
     // project model points under current pose
     Vec2f p_exp[3];
-    p_exp[0] = project(Vec3f(0,0,0), f);
-    p_exp[1] = project(point_model->M01, f);
-    p_exp[2] = project(point_model->M02, f);
+    p_exp[0] = project(Vec3f(0,0,0));
+    p_exp[1] = project(model.get_M01());
+    p_exp[2] = project(model.get_M02());
     
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
     for (int i=0; i<PointModel::N_POINTS; ++i)
         point_taken[i] = false;
+    
+    PointOrder p;
+    for (int i=0; i<PointModel::N_POINTS; ++i)
+        p.points[i] = Vec2f(0, 0);
     
     for (int i=0; i<PointModel::N_POINTS; ++i)
     {
@@ -135,7 +143,7 @@ void PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, fl
         // find closest point to projected model point i
         for (int j=0; j<PointModel::N_POINTS; ++j)
         {
-            Vec2f d = p_exp[i]-points[j];
+            Vec2f d = p_exp[i]-projected_points[j];
             float sdist = d.dot(d);
             if (sdist < min_sdist)
             {
@@ -144,15 +152,16 @@ void PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, fl
             }
         }
         // if one point is closest to more than one model point, abort
-        if (point_taken[min_idx]) return;
+        if (point_taken[min_idx]) return p;
         point_taken[min_idx] = true;
-        p[i] = points[min_idx];
+        p.points[i] = projected_points[min_idx];
     }
+    return p;
 }
 
 
 
-int PointTracker::POSIT(float f)
+int PointTracker::POSIT(const PointModel& model, const PointOrder& order_)
 {
 	// POSIT algorithm for coplanar points as presented in
 	// [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
@@ -182,24 +191,26 @@ int PointTracker::POSIT(float f)
 
 	const int MAX_ITER = 100;
 	const float EPS_THRESHOLD = 1e-4;
+    
+    const cv::Vec2f* order = order_.points;
 
 	int i=1;
 	for (; i<MAX_ITER; ++i)
 	{
-		epsilon_1 = k.dot(point_model->M01)/Z0;
-		epsilon_2 = k.dot(point_model->M02)/Z0;
+		epsilon_1 = k.dot(model.M01)/Z0;
+		epsilon_2 = k.dot(model.M02)/Z0;
 
 		// vector of scalar products <I0, M0i> and <J0, M0i>
-		Vec2f I0_M0i(p[1][0]*(1.0 + epsilon_1) - p[0][0], 
-			         p[2][0]*(1.0 + epsilon_2) - p[0][0]);
-		Vec2f J0_M0i(p[1][1]*(1.0 + epsilon_1) - p[0][1],
-			         p[2][1]*(1.0 + epsilon_2) - p[0][1]);
+		Vec2f I0_M0i(order[1][0]*(1.0 + epsilon_1) - order[0][0], 
+			         order[2][0]*(1.0 + epsilon_2) - order[0][0]);
+		Vec2f J0_M0i(order[1][1]*(1.0 + epsilon_1) - order[0][1],
+			         order[2][1]*(1.0 + epsilon_2) - order[0][1]);
 
 		// construct projection of I, J onto M0i plane: I0 and J0
-		I0_coeff = point_model->P * I0_M0i;
-		J0_coeff = point_model->P * J0_M0i;
-		I0 = I0_coeff[0]*point_model->M01 + I0_coeff[1]*point_model->M02;
-		J0 = J0_coeff[0]*point_model->M01 + J0_coeff[1]*point_model->M02;
+		I0_coeff = model.P * I0_M0i;
+		J0_coeff = model.P * J0_M0i;
+		I0 = I0_coeff[0]*model.M01 + I0_coeff[1]*model.M02;
+		J0 = J0_coeff[0]*model.M01 + J0_coeff[1]*model.M02;
 
 		// calculate u component of I, J		
 		float II0 = I0.dot(I0);
@@ -219,11 +230,11 @@ int PointTracker::POSIT(float f)
 		}
 
 		// construct the two solutions
-		I_1 = I0 + rho*cos(theta)*point_model->u;	
-		I_2 = I0 - rho*cos(theta)*point_model->u;
+		I_1 = I0 + rho*cos(theta)*model.u;	
+		I_2 = I0 - rho*cos(theta)*model.u;
 
-		J_1 = J0 + rho*sin(theta)*point_model->u;
-		J_2 = J0 - rho*sin(theta)*point_model->u;
+		J_1 = J0 + rho*sin(theta)*model.u;
+		J_2 = J0 - rho*sin(theta)*model.u;
 
 		float norm_const = 1.0/norm(I_1); // all have the same norm
 		
@@ -240,7 +251,7 @@ int PointTracker::POSIT(float f)
 		set_row(R_2, 2, I_2.cross(J_2));
 
 		// the single translation solution
-		Z0 = norm_const * f;
+		Z0 = norm_const * focal_length;
 
 		// pick the rotation solution closer to the expected one
 		// in simple metric d(A,B) = || I - A * B^T ||
@@ -263,8 +274,8 @@ int PointTracker::POSIT(float f)
 
 	// apply results
 	X_CM.R = *R_current;
-	X_CM.t[0] = p[0][0] * Z0/f;
-	X_CM.t[1] = p[0][1] * Z0/f;
+	X_CM.t[0] = order[0][0] * Z0/focal_length;
+	X_CM.t[1] = order[0][1] * Z0/focal_length;
 	X_CM.t[2] = Z0;
 
 	return i;

@@ -17,9 +17,6 @@ using namespace cv;
 
 //#define PT_PERF_LOG	//log performance
 
-const float rad2deg = 180.0/3.14159265;
-const float deg2rad = 1.0/rad2deg;
-
 //-----------------------------------------------------------------------------
 Tracker::Tracker()
     : mutex(QMutex::Recursive),
@@ -27,7 +24,6 @@ Tracker::Tracker()
 	  video_widget(NULL), 
 	  video_frame(NULL),
       new_settings(nullptr)
-
 {
 }
 
@@ -54,30 +50,28 @@ void Tracker::reset_command(Command command)
 
 void Tracker::run()
 {
-	qDebug()<<"Tracker:: Thread started";
+	qDebug()<< "pt: thread started";
 
 #ifdef PT_PERF_LOG
 	QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
 	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 	QTextStream log_stream(&log_file);
 #endif
-
     time.start();
-	bool new_frame;
 	forever
 	{   
         if (commands & ABORT) break;
         commands = 0;
         apply_inner();
         const double dt = time.start() * 1e-9;
-        new_frame = camera.get_frame(dt, &frame);
+        const bool new_frame = camera.get_frame(dt, &frame);
 
         if (new_frame && !frame.empty())
         {
             QMutexLocker lock(&mutex);
 
             frame = frame_rotation.rotate_frame(frame);
-            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame, dt, true);
+            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame);
             for (auto p : points)
             {
                 auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
@@ -93,7 +87,8 @@ void Tracker::run()
                          color,
                          4);
             }
-            point_tracker.track(points, camera.get_info().f);
+            if (points.size() == PointModel::N_POINTS)
+                point_tracker.track(points, model);
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -119,6 +114,12 @@ void Tracker::apply_inner()
     reset();
     auto& s = *tmp;
     qDebug()<<"Tracker:: Applying settings";
+    
+    {
+        cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
+        cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
+        model = PointModel(M01, M02);
+    }
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
@@ -127,11 +128,6 @@ void Tracker::apply_inner()
     point_extractor.threshold_secondary_val = s.threshold_secondary;
     point_extractor.min_size = s.min_point_size;
     point_extractor.max_size = s.max_point_size;
-    {
-        cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
-        cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
-        point_tracker.point_model = std::shared_ptr<PointModel>(new PointModel(M01, M02));
-    }
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     R_GC =  Matx33f( cos(deg2rad*s.cam_yaw), 0, sin(deg2rad*s.cam_yaw),
 		                                         0, 1,                             0,
@@ -160,28 +156,12 @@ void Tracker::center()
 	X_GH_0 = R_GC * X_CM_0 * X_MH;
 }
 
-bool Tracker::get_frame_and_points(cv::Mat& frame_copy, std::shared_ptr< std::vector<Vec2f> >& points)
-{
-	QMutexLocker lock(&mutex);
-	if (frame.empty()) return false;
-		
-	// copy the frame and points from the tracker thread
-	frame_copy = frame.clone();
-	points = std::shared_ptr< vector<Vec2f> >(new vector<Vec2f>(point_extractor.get_points()));
-	return true;
-}
-
-void Tracker::refreshVideo()
-{	
-	if (video_widget) video_widget->update_frame_and_points();
-}
-
 void Tracker::StartTracker(QFrame *parent_window)
 {
     this->video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
     video_frame->show();
-    video_widget = new PTVideoWidget(video_frame, this);
+    video_widget = new PTVideoWidget(video_frame);
     QHBoxLayout* video_layout = new QHBoxLayout(parent_window);
     video_layout->setContentsMargins(0, 0, 0, 0);
     video_layout->addWidget(video_widget);
