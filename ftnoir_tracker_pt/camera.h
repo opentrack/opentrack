@@ -25,12 +25,11 @@ void get_camera_device_names(std::vector<std::string>& device_names);
 // ----------------------------------------------------------------------------
 struct CamInfo
 {
-	CamInfo() : res_x(0), res_y(0), fps(0), f(1) {}
+	CamInfo() : res_x(0), res_y(0), fps(0) {}
 
 	int res_x;
 	int res_y;
 	int fps;
-	float f;	// (focal length) / (sensor width)
 };
 
 // ----------------------------------------------------------------------------
@@ -39,7 +38,7 @@ class Camera
 {
 public:
         Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1), active(false) {}
-        virtual ~Camera() {}
+        virtual ~Camera() = 0;
 
         // start/stop capturing
         virtual void start() = 0;
@@ -75,7 +74,7 @@ protected:
         CamInfo cam_info;
         CamInfo cam_desired;
 };
-
+inline Camera::~Camera() {}
 
 // ----------------------------------------------------------------------------
 // camera based on OpenCV's videoCapture
@@ -86,15 +85,14 @@ public:
 	CVCamera() : cap(NULL) {}
 	~CVCamera() { stop(); }
 
-	virtual void start();
-	virtual void stop();
+	void start() override;
+	void stop() override;
 
 protected:
-	virtual bool _get_frame(cv::Mat* frame);
-	virtual void _set_index();
-	virtual void _set_fps();
-	virtual void _set_res();
-    virtual void _set_device_index();
+	bool _get_frame(cv::Mat* frame) override;
+	void _set_fps() override;
+	void _set_res() override;
+    void _set_device_index() override;
 
     cv::VideoCapture* cap;
 };

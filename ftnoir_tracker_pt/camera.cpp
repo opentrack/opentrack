@@ -188,11 +188,6 @@ bool CVCamera::_get_frame(Mat* frame)
 	return false;
 }
 
-void CVCamera::_set_index()
-{
-	if (active) restart();
-}
-
 void CVCamera::_set_fps()
 {
     if (cap) cap->set(CV_CAP_PROP_FPS, cam_desired.fps);

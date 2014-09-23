@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "frame_observer.h"
 #include <QObject>
 #include <QTime>
 #include <QDialog>
@@ -24,15 +23,16 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
+#include <QMutex>
+#include <QMutexLocker>
 
-class PTVideoWidget : public QWidget, public FrameObserver
+class PTVideoWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    PTVideoWidget(QWidget *parent, FrameProvider* provider) :
+    PTVideoWidget(QWidget *parent) :
         QWidget(parent),
-        /* to avoid linker errors */ FrameObserver(provider),
         freshp(false)
     {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
@@ -52,20 +52,5 @@ private:
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
-    bool freshp;
-};
-
-// ----------------------------------------------------------------------------
-// A VideoWidget embedded in a dialog frame
-class VideoWidgetDialog : public QDialog
-{
-    Q_OBJECT
-public:
-	VideoWidgetDialog(QWidget *parent, FrameProvider* provider);
-	virtual ~VideoWidgetDialog() {}
-
-    PTVideoWidget* get_video_widget() { return video_widget; }
-
-private:
-    PTVideoWidget* video_widget;
+    volatile bool freshp;
 };

@@ -20,7 +20,7 @@ PointExtractor::PointExtractor(){
 	//freopen("CON", "w", stderr);
 }
 // ----------------------------------------------------------------------------
-const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float /*dt*/, bool draw_output)
+const vector<Vec2f>& PointExtractor::extract_points(Mat& frame)
 {
 	const int W = frame.cols;
 	const int H = frame.rows; 
@@ -60,7 +60,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float /*dt*/, boo
 		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY);
 		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
 
-		if(draw_output) frame_bin.copyTo(frame_bin_copy);
+		frame_bin.copyTo(frame_bin_copy);
         if(frame_last.empty()){
 			frame_bin.copyTo(frame_last);
 		}else{
@@ -141,23 +141,21 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat frame, float /*dt*/, boo
 	}
 	
 	// draw output image
-	if (draw_output) {
-		vector<Mat> channels;
-		if(secondary==0){
-			frame_bin.setTo(170, frame_bin);
-			channels.push_back(frame_gray + frame_bin);
-			channels.push_back(frame_gray - frame_bin);
-			channels.push_back(frame_gray - frame_bin);
-		}else{
-			frame_bin_copy.setTo(120, frame_bin_copy);
-			frame_bin_low.setTo(90, frame_bin_low);
-			channels.push_back(frame_gray + frame_bin_copy);
-			channels.push_back(frame_gray + frame_last_and_low);
-			channels.push_back(frame_gray + frame_bin_low);
-			//channels.push_back(frame_gray + frame_bin);
-		}
-		merge(channels, frame);
-	}
+    vector<Mat> channels;
+    if(secondary==0){
+        frame_bin.setTo(170, frame_bin);
+        channels.push_back(frame_gray + frame_bin);
+        channels.push_back(frame_gray - frame_bin);
+        channels.push_back(frame_gray - frame_bin);
+    }else{
+        frame_bin_copy.setTo(120, frame_bin_copy);
+        frame_bin_low.setTo(90, frame_bin_low);
+        channels.push_back(frame_gray + frame_bin_copy);
+        channels.push_back(frame_gray + frame_last_and_low);
+        channels.push_back(frame_gray + frame_bin_low);
+        //channels.push_back(frame_gray + frame_bin);
+    }
+    merge(channels, frame);
 
 	return points;
 }

@@ -22,24 +22,6 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     freshp = true;
 }
 
-// ----------------------------------------------------------------------------
-VideoWidgetDialog::VideoWidgetDialog(QWidget *parent, FrameProvider* provider)
-    : QDialog(parent),
-      video_widget(NULL)
-{
-    const int VIDEO_FRAME_WIDTH  = 640;
-    const int VIDEO_FRAME_HEIGHT = 480;
-
-    video_widget = new PTVideoWidget(this, provider);
-
-    QHBoxLayout* layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(video_widget);
-    if (this->layout()) delete this->layout();
-    setLayout(layout);
-    resize(VIDEO_FRAME_WIDTH, VIDEO_FRAME_HEIGHT);
-}
-
 void PTVideoWidget::update_and_repaint()
 {
     QMutexLocker foo(&mtx);

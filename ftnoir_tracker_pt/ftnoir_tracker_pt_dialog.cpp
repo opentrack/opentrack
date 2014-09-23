@@ -22,13 +22,9 @@ using namespace std;
 //-----------------------------------------------------------------------------
 TrackerDialog::TrackerDialog()
     : tracker(NULL),
-	  video_widget_dialog(NULL),
-	  timer(this), 
-	  trans_calib_running(false)
+      timer(this),
+      trans_calib_running(false)
 {
-	qDebug()<<"TrackerDialog::TrackerDialog";
-	setAttribute(Qt::WA_DeleteOnClose, false);
-
 	ui.setupUi( this );
 
     vector<string> device_names;
@@ -147,6 +143,38 @@ void TrackerDialog::startstop_trans_calib(bool start)
 	}
 }
 
+void TrackerDialog::poll_tracker_info()
+{
+    if (tracker)
+    {	
+        QString to_print;
+        
+        // display caminfo
+        CamInfo info;
+        tracker->get_cam_info(&info);
+        to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
+        ui.caminfo_label->setText(to_print);
+        
+        // display pointinfo
+        int n_points = tracker->get_n_points();
+        to_print = QString::number(n_points);
+        if (n_points == 3)
+            to_print += " OK!";
+        else
+            to_print += " BAD!";
+        ui.pointinfo_label->setText(to_print);
+        
+        // update calibration
+        if (trans_calib_running) trans_calib_step();
+    }
+    else
+    {
+        QString to_print = "Tracker offline";
+        ui.caminfo_label->setText(to_print);
+        ui.pointinfo_label->setText(to_print);
+    }
+}
+
 void TrackerDialog::trans_calib_step()
 {
 	if (tracker)
@@ -197,78 +225,13 @@ void TrackerDialog::do_apply_without_saving(QAbstractButton*)
 
 void TrackerDialog::doApply()
 {
-    save();
+    save();                                                                                                                                                                                                                                                                                                         
 }
 
 void TrackerDialog::doCancel()
 {
     s.b->revert();
     close();
-}
-
-void TrackerDialog::widget_destroyed(QObject* obj)
-{
-	if (obj == video_widget_dialog) {
-		// widget was / will be already deleted by Qt
-		destroy_video_widget(false);
-	}
-}
-
-void TrackerDialog::create_video_widget()
-{
-	// this should not happen but better be sure
-	if (video_widget_dialog) destroy_video_widget(); 
-	if (!tracker) return;
-
-	video_widget_dialog = new VideoWidgetDialog(this, tracker);
-	video_widget_dialog->setAttribute( Qt::WA_DeleteOnClose );
-	connect( video_widget_dialog, SIGNAL(destroyed(QObject*)),  this, SLOT(widget_destroyed(QObject*)) );
-	video_widget_dialog->show();
-}
-
-void TrackerDialog::destroy_video_widget(bool do_delete /*= true*/)
-{
-	if (video_widget_dialog) {
-		if (do_delete) delete video_widget_dialog;
-		video_widget_dialog = NULL;
-	}
-}
-
-void TrackerDialog::poll_tracker_info()
-{
-	if (tracker)
-	{	
-		QString to_print;
-
-		// display caminfo
-		CamInfo info;
-		tracker->get_cam_info(&info);
-		to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
-		ui.caminfo_label->setText(to_print);
-
-		// display pointinfo
-		int n_points = tracker->get_n_points();
-		to_print = QString::number(n_points);
-		if (n_points == 3)
-			to_print += " OK!";
-		else
-			to_print += " BAD!";
-		ui.pointinfo_label->setText(to_print);
-
-		// update calibration
-		if (trans_calib_running) trans_calib_step();
-
-		// update videowidget
-		if (video_widget_dialog) {
-			video_widget_dialog->get_video_widget()->update_frame_and_points();
-		}
-	}
-	else
-	{
-		QString to_print = "Tracker offline";
-		ui.caminfo_label->setText(to_print);
-		ui.pointinfo_label->setText(to_print);
-	}
 }
 
 void TrackerDialog::registerTracker(ITracker *t)
@@ -285,7 +248,6 @@ void TrackerDialog::unRegisterTracker()
 {
 	qDebug()<<"TrackerDialog:: Tracker un-registered";
 	tracker = NULL;
-	destroy_video_widget();
 	ui.tcalib_button->setEnabled(false); 
 	//ui.center_button->setEnabled(false);
 }
