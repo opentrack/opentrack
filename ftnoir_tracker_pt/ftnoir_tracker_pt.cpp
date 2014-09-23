@@ -58,7 +58,7 @@ void Tracker::run()
 	QTextStream log_stream(&log_file);
 #endif
     time.start();
-	forever
+	while(1)
 	{   
         if (commands & ABORT) break;
         commands = 0;
