@@ -41,7 +41,7 @@ void TrackerImpl::run() {
 
             while (sock.hasPendingDatagrams())
             {
-                data = decltype(data){0,0, 0,0,0};
+                data = decltype(data){0,0, {0,0,0, 0,0,0}};
                 int sz = sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
 
                 int flags = data.flags & F::Mask;
