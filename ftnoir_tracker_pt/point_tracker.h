@@ -73,7 +73,7 @@ private:
 
 	cv::Matx22f P;
 
-	cv::Vec2f d;	// discriminant vector for point correspondence
+	cv::Vec2f d;	// determinant vector for point correspondence
 	int d_order[3];	// sorting of projected model points with respect to d scalar product 
 
 	void get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]) const;
