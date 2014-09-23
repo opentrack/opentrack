@@ -13,8 +13,6 @@
 #include <XPLMCamera.h>
 #include <XPLMProcessing.h>
 
-#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
-
 #ifndef PLUGIN_API
 #define PLUGIN_API
 #endif
@@ -22,6 +20,10 @@
 /* using Wine name to ease things */
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
+
+enum Axis {
+        TX = 0, TY, TZ, Yaw, Pitch, Roll
+};
 
 typedef struct PortableLockedShm {
     void* mem;
