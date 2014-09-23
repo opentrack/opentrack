@@ -124,7 +124,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
                 handle = nullptr;
                 return true;
             }
-            false;
+            return false;
         }
     };
 
