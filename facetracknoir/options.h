@@ -179,14 +179,12 @@ namespace options {
     class base_value : public QObject {
         Q_OBJECT
     public:
-        base_value(pbundle b, const QString& name) : b(b), self_name(name), cookie_snap(b->cookie()) {}
+        base_value(pbundle b, const QString& name) : b(b), self_name(name), cookie_snap(0) {}
     protected:
         virtual QVariant operator=(const QVariant& datum) = 0;
         pbundle b;
         QString self_name;
-    private:
-        long cookie_snap;
-        void reread_value()
+        void maybe_lazy_change()
         {
             long cookie = b->cookie();
             if (cookie_snap != cookie)
@@ -195,6 +193,8 @@ namespace options {
                 this->operator=(b->get<QVariant>(self_name));
             }
         }
+    private:
+        long cookie_snap;
     public slots:
 #define DEFINE_SLOT(t) void setValue(t datum) { this->operator=(qVariantFromValue(datum)); }
         DEFINE_SLOT(double)
@@ -229,7 +229,11 @@ namespace options {
                 this->operator=(qVariantFromValue<T>(def));
             }
         }
-        operator T() { return b->get<T>(self_name); }
+        operator T()
+        {
+            maybe_lazy_change();
+            return b->get<T>(self_name);
+        }
         QVariant operator=(const T& datum)
         {
             return this->operator =(qVariantFromValue<T>(datum));
