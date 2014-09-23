@@ -86,7 +86,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/ftnoir_posewidget)
 
 set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Path to Aruco static library")
 
-SET(SDK_OPENCV_STATIC FALSE CACHE BOOL "Whether OpenCV is statically linked")
 if(WIN32)
     set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
     set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
