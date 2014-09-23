@@ -134,7 +134,7 @@ namespace options {
             if (!transient.contains(name) || datum != transient.get<QVariant>(name))
             {
                 if (!modified)
-                    qDebug() << "bundle" << group_name << "modified due to" << name << transient.get<QVariant>(name) << datum;
+                    qDebug() << "bundle" << group_name << "modified due to" << name << transient.get<QVariant>(name) << datum << "->" << datum;
                 modified = true;
                 transient.put(name, datum);
                 priv_cookie++;
