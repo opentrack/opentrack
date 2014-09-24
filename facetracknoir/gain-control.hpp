@@ -8,6 +8,8 @@
 #include <deque>
 #include <vector>
 
+#include <cstdio>
+
 #include "timer.hpp"
 
 #include <opencv2/core/core.hpp>
@@ -43,16 +45,14 @@ namespace detail {
 class Gain {
 private:
     static constexpr bool use_box_filter = true;
-    static constexpr int box_size = 32 / 640.;
+    static constexpr int box_size = 16 / 640.;
     static constexpr double control_upper_bound = 1.0; // XXX FIXME implement for logitech crapola
-    static constexpr int GAIN_HISTORY_COUNT = 15, GAIN_HISTORY_EVERY_MS = 115;
+    static constexpr int GAIN_HISTORY_COUNT = 90, GAIN_HISTORY_EVERY_MS = 85;
     
     int control;
     double step, eps;
     
-    std::deque<double> means_history;
-    cv::Mat last_frame;
-    
+    std::deque<cv::Mat> means_history;
     Timer debug_timer, history_timer;
     
     typedef unsigned char px;
@@ -156,19 +156,30 @@ public:
             
             debug_timer.start();
             qDebug() << "---- gain:" << "mean" << mu << "variance" << var;
-            for (int i = 0; i < means_history.size(); i++)
-                qDebug() << "cov" << i << means_history[i];
-        }
-        
-        if (last_frame.cols != frame.cols || last_frame.rows != frame.rows)
-        {
-            last_frame = frame;
-            means_history.clear();
+
+            const int sz = means_history.size();
+
+            if (sz)
+                fprintf(stderr, "covs:  ");
+
+            for (int i = 0; i < sz; i++)
+            {
+                if (means_history[i].rows != frame.rows || means_history[i].cols != frame.cols)
+                {
+                    means_history.clear();
+                    qDebug() << "\n!!! resolution reset";
+                    break;
+                }
+                fprintf(stderr, "%f ", get_covariance(frame, means_history[i]));
+            }
+
+            if (sz)
+                fprintf(stderr, "\n");
         }
         
         if (GAIN_HISTORY_COUNT > means_history.size() && history_timer.elapsed_ms() > GAIN_HISTORY_EVERY_MS)
         {
-            means_history.push_front(get_covariance(frame, last_frame));
+            means_history.push_front(frame);
             
             if (GAIN_HISTORY_COUNT == means_history.size())
                 means_history.pop_back();
