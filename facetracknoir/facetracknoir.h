@@ -35,6 +35,7 @@
 #include <QLayout>
 #include <QPixmap>
 #include <QLabel>
+#include <QTimer>
 #if !defined(_WIN32)
 #	include "qxt-mini/QxtGlobalShortcut"
 #else
