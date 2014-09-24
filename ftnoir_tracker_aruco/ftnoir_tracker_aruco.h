@@ -21,6 +21,9 @@
 #include "facetracknoir/options.h"
 #include "ftnoir_tracker_aruco/trans_calib.h"
 #include "facetracknoir/plugin-api.hpp"
+
+#include "facetracknoir/gain-control.hpp"
+
 using namespace options;
 
 struct settings {
@@ -65,9 +68,9 @@ private:
     cv::VideoCapture camera;
     cv::Matx33f r;
     cv::Vec3f t;
+    Gain gain;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class TrackerControls : public QWidget, public ITrackerDialog
 {
     Q_OBJECT
