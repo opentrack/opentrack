@@ -62,4 +62,7 @@ public:
         (void) clock_gettime(CLOCK_MONOTONIC, &cur);
         return conv(cur);
     }
+    long elapsed_ms() {
+        return elapsed() / 1000000L;
+    }
 };
