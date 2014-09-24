@@ -162,7 +162,7 @@ void Tracker::run() {
             }
         }
 
-        const long q = std::max(0L, sleep_ms * 1000L - std::max(0L, t.elapsed()));
+        const long q = std::max(0L, sleep_ms * 1000000L - std::max(0L, t.elapsed()));
 
         usleep(q);
     }
