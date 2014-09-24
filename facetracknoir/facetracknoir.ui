@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
-    <height>422</height>
+    <width>597</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,42 +22,13 @@
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="btnShortcuts">
-    <property name="geometry">
-     <rect>
-      <x>760</x>
-      <y>280</y>
-      <width>96</width>
-      <height>38</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>Keys</string>
-    </property>
-    <property name="icon">
-     <iconset resource="main-facetracknoir.qrc">
-      <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>98</width>
-      <height>24</height>
-     </size>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="box_mapped_headpose">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>169</width>
-      <height>137</height>
+      <x>140</x>
+      <y>15</y>
+      <width>126</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
@@ -297,10 +268,10 @@
    <widget class="QGroupBox" name="groupGameProtocol">
     <property name="geometry">
      <rect>
-      <x>345</x>
-      <y>255</y>
-      <width>246</width>
-      <height>65</height>
+      <x>405</x>
+      <y>380</y>
+      <width>181</width>
+      <height>56</height>
      </rect>
     </property>
     <property name="title">
@@ -341,10 +312,10 @@
    <widget class="QGroupBox" name="groupTrackerSource">
     <property name="geometry">
      <rect>
-      <x>345</x>
-      <y>175</y>
-      <width>246</width>
-      <height>65</height>
+      <x>405</x>
+      <y>215</y>
+      <width>181</width>
+      <height>56</height>
      </rect>
     </property>
     <property name="title">
@@ -385,10 +356,10 @@
    <widget class="QGroupBox" name="groupFilter">
     <property name="geometry">
      <rect>
-      <x>345</x>
-      <y>335</y>
-      <width>246</width>
-      <height>65</height>
+      <x>405</x>
+      <y>325</y>
+      <width>181</width>
+      <height>56</height>
      </rect>
     </property>
     <property name="title">
@@ -426,13 +397,57 @@
      </item>
     </layout>
    </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>405</x>
+      <y>270</y>
+      <width>181</width>
+      <height>56</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Auxiliary tracker</string>
+    </property>
+    <layout class="QHBoxLayout" name="_6">
+     <item>
+      <widget class="QComboBox" name="cbxSecondTrackerSource">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maxVisibleItems">
+        <number>42</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnShowSecondTrackerSettings">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <widget class="QFrame" name="video_frame">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>320</width>
-      <height>240</height>
+      <x>24</x>
+      <y>204</y>
+      <width>366</width>
+      <height>281</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -446,8 +461,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>320</width>
-       <height>240</height>
+       <width>366</width>
+       <height>281</height>
       </rect>
      </property>
      <property name="sizePolicy">
@@ -470,29 +485,16 @@
    <widget class="QGroupBox" name="groupProfile">
     <property name="geometry">
      <rect>
-      <x>525</x>
-      <y>40</y>
-      <width>311</width>
-      <height>111</height>
+      <x>405</x>
+      <y>15</y>
+      <width>181</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="title">
      <string>Profile</string>
     </property>
     <layout class="QGridLayout" name="_2">
-     <item row="0" column="0">
-      <widget class="QComboBox" name="iconcomboProfile">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maxVisibleItems">
-        <number>10</number>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="btnSave">
        <property name="enabled">
@@ -538,60 +540,28 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QComboBox" name="iconcomboProfile">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maxVisibleItems">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </widget>
-   <widget class="QPushButton" name="btnEditCurves">
-    <property name="geometry">
-     <rect>
-      <x>615</x>
-      <y>280</y>
-      <width>141</width>
-      <height>38</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>Mapping</string>
-    </property>
-    <property name="icon">
-     <iconset resource="main-facetracknoir.qrc">
-      <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>60</width>
-      <height>37</height>
-     </size>
-    </property>
-   </widget>
-   <widget class="GLWidget" name="pose_display" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>10</y>
-      <width>81</width>
-      <height>100</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
    </widget>
    <widget class="QGroupBox" name="groupStartStop">
     <property name="geometry">
      <rect>
-      <x>635</x>
-      <y>335</y>
-      <width>201</width>
-      <height>65</height>
+      <x>405</x>
+      <y>440</y>
+      <width>181</width>
+      <height>56</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -608,9 +578,6 @@
     </property>
     <property name="title">
      <string notr="true">Controls</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignHCenter|Qt::AlignTop</set>
     </property>
     <layout class="QGridLayout">
      <item row="0" column="0">
@@ -644,37 +611,28 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="game_name">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>10</y>
-      <width>115</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="box_raw_headpose">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>20</y>
-      <width>169</width>
-      <height>137</height>
+      <x>273</x>
+      <y>15</y>
+      <width>126</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
      <string notr="true">Raw pose</string>
     </property>
     <layout class="QGridLayout" name="gridLayout_13">
-     <item row="0" column="1">
-      <widget class="QLCDNumber" name="lcdNumX">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblX_3">
+       <property name="text">
+        <string>TX</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLCDNumber" name="lcdNumZ">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -699,13 +657,6 @@
        </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lblX_3">
-       <property name="text">
-        <string>TX</string>
        </property>
       </widget>
      </item>
@@ -738,8 +689,8 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLCDNumber" name="lcdNumZ">
+     <item row="0" column="1">
+      <widget class="QLCDNumber" name="lcdNumX">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -796,13 +747,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="lblRotX_3">
-       <property name="text">
-        <string>yaw</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="3">
       <widget class="QLCDNumber" name="lcdNumRotX">
        <property name="enabled">
@@ -829,13 +773,6 @@
        </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Flat</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="lblRotZ_3">
-       <property name="text">
-        <string>roll</string>
        </property>
       </widget>
      </item>
@@ -901,8 +838,179 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="lblRotX_3">
+       <property name="text">
+        <string>yaw</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="lblRotZ_3">
+       <property name="text">
+        <string>roll</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>179</y>
+      <width>386</width>
+      <height>316</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Video preview</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>405</x>
+      <y>95</y>
+      <width>181</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <widget class="QPushButton" name="btnShortcuts">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>45</y>
+       <width>161</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Keys</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main-facetracknoir.qrc">
+       <normaloff>:/uielements/tools.png</normaloff>:/uielements/tools.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>98</width>
+       <height>24</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnEditCurves">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>15</y>
+       <width>161</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Mapping</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main-facetracknoir.qrc">
+       <normaloff>:/uielements/curves.png</normaloff>:/uielements/curves.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>60</width>
+       <height>37</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>15</y>
+      <width>116</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Tracking preview</string>
+    </property>
+    <widget class="GLWidget" name="pose_display" native="true">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>15</y>
+       <width>106</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_5">
+    <property name="geometry">
+     <rect>
+      <x>405</x>
+      <y>180</y>
+      <width>181</width>
+      <height>36</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Detected app</string>
+    </property>
+    <widget class="QLabel" name="game_name">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>15</y>
+       <width>115</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </widget>
+   <zorder>box_mapped_headpose</zorder>
+   <zorder>groupGameProtocol</zorder>
+   <zorder>groupTrackerSource</zorder>
+   <zorder>groupFilter</zorder>
+   <zorder>groupBox_3</zorder>
+   <zorder>video_frame</zorder>
+   <zorder>groupProfile</zorder>
+   <zorder>groupStartStop</zorder>
+   <zorder>box_raw_headpose</zorder>
+   <zorder>video_frame_label</zorder>
+   <zorder>video_frame_label</zorder>
+   <zorder>groupBox</zorder>
+   <zorder>groupBox_2</zorder>
+   <zorder>groupBox_4</zorder>
+   <zorder>groupBox_5</zorder>
   </widget>
  </widget>
  <customwidgets>
