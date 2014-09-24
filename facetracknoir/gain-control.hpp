@@ -43,14 +43,15 @@ namespace detail {
 class Gain {
 private:
     static constexpr bool use_box_filter = true;
-    static constexpr int box_size = 20 / 640.;
+    static constexpr int box_size = 32 / 640.;
     static constexpr double control_upper_bound = 1.0; // XXX FIXME implement for logitech crapola
-    static constexpr int GAIN_HISTORY_COUNT = 15, GAIN_HISTORY_EVERY_MS = 200;
+    static constexpr int GAIN_HISTORY_COUNT = 15, GAIN_HISTORY_EVERY_MS = 115;
     
     int control;
     double step, eps;
     
     std::deque<double> means_history;
+    cv::Mat last_frame;
     
     Timer debug_timer, history_timer;
     
@@ -85,8 +86,10 @@ private:
         return std::accumulate(frame.begin<unsigned char>(), frame.end<unsigned char>(), 0., logic) / (frame.rows * frame.cols);
     }
     
-    static double get_covariance(const cv::Mat& frame, double mean, double prev_mean)
+    static double get_covariance(const cv::Mat& frame, const cv::Mat& old_frame)
     {
+        double mean_0 = mean(frame), mean_1 = mean(old_frame);
+        
         struct covariance {
         public:
             using pair = std::tuple<px, px>;
@@ -106,18 +109,18 @@ private:
             {
                 return Cov(seed, t);
             }
-        } logic(mean, prev_mean);
+        } logic(mean_0, mean_1);
         
         const double N = frame.rows * frame.cols;
         
         using zipper = zip_iterator<cv::MatConstIterator_<px>,
-        cv::MatConstIterator_<px>,
-        std::tuple<px, px>>;
+                                    cv::MatConstIterator_<px>,
+                                    std::tuple<px, px>>;
         
         zipper zip(frame.begin<px>(),
-                                             frame.end<px>(),
-                                             frame.begin<px>(),
-                                             frame.end<px>());
+                   frame.end<px>(),
+                   old_frame.begin<px>(),
+                   old_frame.end<px>());
         std::vector<covariance::pair> values(zip, zipper::end());
         
         return std::accumulate(values.begin(), values.end(), 0., logic) / N;
@@ -145,28 +148,27 @@ public:
         }
         else
             frame = frame_;
-
-        const double mu = mean(frame);
-        const double var = get_variance(frame, mu);
         
-        if (debug_timer.elapsed_ms() > 500)
+        if (debug_timer.elapsed_ms() > 1000)
         {
+            const double mu = mean(frame);
+            const double var = get_variance(frame, mu);
+            
             debug_timer.start();
-            qDebug() << "gain:" << "mean" << mu << "variance" << var;
+            qDebug() << "---- gain:" << "mean" << mu << "variance" << var;
+            for (int i = 0; i < means_history.size(); i++)
+                qDebug() << "cov" << i << means_history[i];
         }
         
-        const int sz = means_history.size();
-        
-        for (int i = 0; i < sz; i++)
+        if (last_frame.cols != frame.cols || last_frame.rows != frame.rows)
         {
-            const double cov = get_covariance(frame, mu, means_history[i]);
-            
-            qDebug() << "cov" << i << cov;
+            last_frame = frame;
+            means_history.clear();
         }
         
         if (GAIN_HISTORY_COUNT > means_history.size() && history_timer.elapsed_ms() > GAIN_HISTORY_EVERY_MS)
         {
-            means_history.push_front(mu);
+            means_history.push_front(get_covariance(frame, last_frame));
             
             if (GAIN_HISTORY_COUNT == means_history.size())
                 means_history.pop_back();
