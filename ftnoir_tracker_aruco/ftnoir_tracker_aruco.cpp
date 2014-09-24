@@ -214,6 +214,8 @@ void Tracker::run()
             grayscale = channel[2];
         } else
             cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+        
+        gain.tick(camera, grayscale);
 
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
