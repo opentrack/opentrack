@@ -455,6 +455,8 @@ endif()
 target_link_libraries(opentrack opentrack-version opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
+else()
+    target_link_libraries(opentrack winmm)
 endif()
 
 # make install
