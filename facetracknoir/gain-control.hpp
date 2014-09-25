@@ -179,7 +179,7 @@ public:
         
         if (GAIN_HISTORY_COUNT > means_history.size() && history_timer.elapsed_ms() > GAIN_HISTORY_EVERY_MS)
         {
-            means_history.push_front(frame);
+            means_history.push_front(frame.clone());
             
             if (GAIN_HISTORY_COUNT == means_history.size())
                 means_history.pop_back();
