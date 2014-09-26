@@ -47,7 +47,7 @@ private:
     static constexpr bool use_box_filter = true;
     static constexpr int box_size = 16 / 640.;
     static constexpr double control_upper_bound = 1.0; // XXX FIXME implement for logitech crapola
-    static constexpr int GAIN_HISTORY_COUNT = 90, GAIN_HISTORY_EVERY_MS = 85;
+    static constexpr int GAIN_HISTORY_COUNT = 50, GAIN_HISTORY_EVERY_MS = 998;
     
     int control;
     double step, eps;
@@ -179,6 +179,7 @@ public:
         
         if (GAIN_HISTORY_COUNT > means_history.size() && history_timer.elapsed_ms() > GAIN_HISTORY_EVERY_MS)
         {
+            history_timer.start();
             means_history.push_front(frame.clone());
             
             if (GAIN_HISTORY_COUNT == means_history.size())
