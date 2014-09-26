@@ -1,7 +1,6 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "facetracknoir/plugin-support.h"
 
-#include <cstddef>
 #include <cinttypes>
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
@@ -34,6 +33,15 @@ void TrackerImpl::run() {
     };
 
     while (1) {
+        struct check {
+            union {
+                std::uint16_t half;
+                unsigned char bytes[2];
+            };
+            bool convertp;
+            check() : bytes { 255, 0 }, convertp(half > 255) {}
+        } crapola;
+
         if (should_quit)
             break;
         {
@@ -45,13 +53,14 @@ void TrackerImpl::run() {
                 int sz = sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
 
                 int flags = data.flags & F::Mask;
-                
-                static constexpr int minsz = offsetof(decltype(data), raw_rot) + sizeof(decltype(data)::raw_rot);
+
+                using t = decltype(data);
+                static constexpr int minsz = offsetof(t, raw_rot) + sizeof(t::raw_rot);
                 const bool flags_came_out_wrong = minsz > sz;
-                
+
                 if (flags_came_out_wrong)
                     flags &= ~F::flag_Raw;
-                
+
                 switch (flags)
                 {
                 case flag_Raw:
@@ -66,6 +75,15 @@ void TrackerImpl::run() {
             }
             if (orient)
             {
+                if (crapola.convertp)
+                {
+                    constexpr int sz = sizeof(float[6]);
+                    const int len = sz / 2;
+                    unsigned char* alias = reinterpret_cast<unsigned char*>(orient);
+                    for (int i = 0; i < sz; i++)
+                        alias[i] = alias[sz-i];
+                }
+
                 QMutexLocker foo(&mtx);
                 for (int i = 0; i < 3; i++)
                     pose[Yaw + i] = orient[i];

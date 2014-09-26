@@ -5,9 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ui_freepie-udp-controls.h"
+#include <cinttypes>
 #include <QUdpSocket>
 #include <QThread>
+#include "ui_freepie-udp-controls.h"
 #include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
