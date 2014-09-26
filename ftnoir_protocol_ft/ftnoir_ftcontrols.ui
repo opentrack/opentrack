@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>402</height>
+    <width>520</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,53 +42,6 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>TIRViews</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignJustify|Qt::AlignTop</set>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="chkTIRViews">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Memory hacks</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Only for very old and buggy old games such as CFS3.</string>
-        </property>
-        <property name="scaledContents">
-         <bool>false</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="sizePolicy">
@@ -113,14 +66,14 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Using EZCA</string>
+         <string>EZCA mode</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>FSX-specific EZCA protocol hacks</string>
+         <string>Can enable for 180° pitch range (not shown in UI) rather than regular 90°</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -207,6 +160,53 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>TIRViews</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="chkTIRViews">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Memory hacks</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Only for very old and buggy old games such as CFS3.</string>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
