@@ -39,7 +39,7 @@ void TrackerImpl::run() {
                 unsigned char bytes[2];
             };
             bool convertp;
-            check() : bytes { 255, 0 }, convertp(half > 255) {}
+            check() : bytes { 0, 255 }, convertp(half > 255) {}
         } crapola;
 
         if (should_quit)
@@ -80,7 +80,7 @@ void TrackerImpl::run() {
                     constexpr int sz = sizeof(float[6]);
                     const int len = sz / 2;
                     unsigned char* alias = reinterpret_cast<unsigned char*>(orient);
-                    for (int i = 0; i < sz; i++)
+                    for (int i = 0; i < len; i++)
                         alias[i] = alias[sz-i];
                 }
 
