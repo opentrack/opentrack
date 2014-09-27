@@ -29,6 +29,8 @@
 
 namespace options {
     template<typename T>
+    // don't elide usages of the function, qvariant default implicit
+    // conversion results in nonsensical runtime behavior -sh
     inline T qcruft_to_t (const QVariant& t);
 
     template<>
@@ -174,16 +176,28 @@ namespace options {
         }
     };
 
-    typedef std::shared_ptr<impl_bundle> pbundle;
+    using pbundle = std::shared_ptr<impl_bundle>;
 
     class base_value : public QObject {
         Q_OBJECT
     public:
         base_value(pbundle b, const QString& name) : b(b), self_name(name), cookie_snap(0) {}
-    protected:
         virtual QVariant operator=(const QVariant& datum) = 0;
+        template<typename T>
+        QVariant operator=(const T& datum)
+        {
+            return this->operator =(qVariantFromValue<T>(datum));
+        }
+    protected:
         pbundle b;
         QString self_name;
+        template<typename T>
+        QVariant store(const T& datum)
+        {
+            b->store(self_name, qVariantFromValue<T>(datum));
+            emit valueChanged(datum);
+            return datum;
+        }
         void maybe_lazy_change()
         {
             long cookie = b->cookie();
@@ -211,32 +225,21 @@ namespace options {
 
     template<typename T>
     class value : public base_value {
-    protected:
-        QVariant operator=(const QVariant& datum) {
-            auto foo = qcruft_to_t<T>(datum);
-            b->store(self_name, qVariantFromValue<T>(foo));
-            emit valueChanged(foo);
-            return datum;
-        }
     public:
+        QVariant operator=(const QVariant& datum) {
+            return store(qcruft_to_t<T>(datum));
+        }
         static constexpr const Qt::ConnectionType QT_CONNTYPE = Qt::UniqueConnection;
         static constexpr const Qt::ConnectionType OPT_CONNTYPE = Qt::UniqueConnection;
-        value(pbundle b, const QString& name, T def) :
-            base_value(b, name)
+        value(pbundle b, const QString& name, T def) : base_value(b, name)
         {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
-            {
                 this->operator=(qVariantFromValue<T>(def));
-            }
         }
         operator T()
         {
             maybe_lazy_change();
             return b->get<T>(self_name);
-        }
-        QVariant operator=(const T& datum)
-        {
-            return this->operator =(qVariantFromValue<T>(datum));
         }
     };
 
