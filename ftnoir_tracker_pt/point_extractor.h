@@ -15,21 +15,21 @@
 // Extracts points from an opencv image
 class PointExtractor
 {
-public:	
-	// extracts points from frame and draws some processing info into frame, if draw_output is set
-	// dt: time since last call in seconds
-	// WARNING: returned reference is valid as long as object
-	const std::vector<cv::Vec2f>& extract_points(cv::Mat &frame);
-	const std::vector<cv::Vec2f>& get_points() { return points; }
-	PointExtractor();
+public:
+    // extracts points from frame and draws some processing info into frame, if draw_output is set
+    // dt: time since last call in seconds
+    // WARNING: returned reference is valid as long as object
+    const std::vector<cv::Vec2f>& extract_points(cv::Mat &frame);
+    const std::vector<cv::Vec2f>& get_points() { return points; }
+    PointExtractor();
 
-	int threshold_val;
-	int threshold_secondary_val;
-	int min_size, max_size;	
+    int threshold_val;
+    int threshold_secondary_val;
+    int min_size, max_size;
 
-protected:
-	std::vector<cv::Vec2f> points;
-	cv::Mat frame_last;
+private:
+    std::vector<cv::Vec2f> points;
+    cv::Mat frame_last;
 };
 
 #endif //POINTEXTRACTOR_H

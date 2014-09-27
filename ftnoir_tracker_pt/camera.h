@@ -25,11 +25,11 @@ void get_camera_device_names(std::vector<std::string>& device_names);
 // ----------------------------------------------------------------------------
 struct CamInfo
 {
-	CamInfo() : res_x(0), res_y(0), fps(0) {}
+    CamInfo() : res_x(0), res_y(0), fps(0) {}
 
-	int res_x;
-	int res_y;
-	int fps;
+    int res_x;
+    int res_y;
+    int fps;
 };
 
 // ----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ protected:
         virtual void _set_device_index() = 0;
         virtual void _set_fps() = 0;
         virtual void _set_res() = 0;
-
+private:
         float dt_valid;
         float dt_mean;
         int desired_index;
@@ -82,18 +82,19 @@ inline Camera::~Camera() {}
 class CVCamera : public Camera
 {
 public:
-	CVCamera() : cap(NULL) {}
-	~CVCamera() { stop(); }
+    CVCamera() : cap(NULL) {}
+    ~CVCamera() { stop(); }
 
-	void start() override;
-	void stop() override;
+    void start() override;
+    void stop() override;
 
 protected:
-	bool _get_frame(cv::Mat* frame) override;
-	void _set_fps() override;
-	void _set_res() override;
+    bool _get_frame(cv::Mat* frame) override;
+    void _set_fps() override;
+    void _set_res() override;
     void _set_device_index() override;
 
+private:
     cv::VideoCapture* cap;
 };
 #else
@@ -102,21 +103,21 @@ protected:
 class VICamera : public Camera
 {
 public:
-	VICamera();
-	~VICamera() { stop(); }
+    VICamera();
+    ~VICamera() { stop(); }
 
-	virtual void start();
-	virtual void stop();
+    virtual void start();
+    virtual void stop();
 
 protected:
-	virtual bool _get_frame(cv::Mat* frame);
-	virtual void _set_device_index();
-	virtual void _set_fps();
-	virtual void _set_res();
+    virtual bool _get_frame(cv::Mat* frame);
+    virtual void _set_device_index();
+    virtual void _set_fps();
+    virtual void _set_res();
 
-	videoInput VI;
-	cv::Mat new_frame;
-	unsigned char* frame_buffer;
+    videoInput VI;
+    cv::Mat new_frame;
+    unsigned char* frame_buffer;
 };
 #endif
 
@@ -128,12 +129,12 @@ enum RotationType
 };
 
 // ----------------------------------------------------------------------------
-class FrameRotation 
+class FrameRotation
 {
 public:
     RotationType rotation;
 
-	cv::Mat rotate_frame(cv::Mat frame);
+    cv::Mat rotate_frame(cv::Mat frame);
 };
 
 #endif //CAMERA_H
