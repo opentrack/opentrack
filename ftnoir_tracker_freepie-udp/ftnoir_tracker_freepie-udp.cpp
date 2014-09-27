@@ -2,6 +2,7 @@
 #include "facetracknoir/plugin-support.h"
 
 #include <cinttypes>
+#include <algorithm>
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
 {
@@ -32,62 +33,55 @@ void TrackerImpl::run() {
         Mask = flag_Raw | flag_Orient
     };
 
-    while (1) {
-        struct check {
-            union {
-                std::uint16_t half;
-                unsigned char bytes[2];
-            };
-            bool convertp;
-            check() : bytes { 0, 255 }, convertp(half > 255) {}
-        } crapola;
+    struct check {
+        union {
+            std::uint16_t half;
+            unsigned char bytes[2];
+        };
+        bool convertp;
+        check() : bytes { 0, 255 }, convertp(half > 255) {}
+    } crapola;
 
+    while (1) {
         if (should_quit)
             break;
+
+        float* orient = nullptr;
+
+        while (sock.hasPendingDatagrams())
         {
-            float* orient = nullptr;
+            using t = decltype(data);
+            t tmp {0,0, {0,0,0, 0,0,0}};
+            (void) sock.readDatagram(reinterpret_cast<char*>(&tmp), sizeof(data));
+            int flags = data.flags & F::Mask;
 
-            while (sock.hasPendingDatagrams())
+            switch (flags)
             {
-                data = decltype(data){0,0, {0,0,0, 0,0,0}};
-                int sz = sock.readDatagram(reinterpret_cast<char*>(&data), sizeof(data));
-
-                int flags = data.flags & F::Mask;
-
-                using t = decltype(data);
-                static constexpr int minsz = offsetof(t, raw_rot) + sizeof(t::raw_rot);
-                const bool flags_came_out_wrong = minsz > sz;
-
-                if (flags_came_out_wrong)
-                    flags &= ~F::flag_Raw;
-
-                switch (flags)
-                {
-                case flag_Raw:
-                    continue;
-                case flag_Raw | flag_Orient:
-                    orient = data.raw_rot.rot;
-                    break;
-                case flag_Orient:
-                    orient = data.rot;
-                    break;
-                }
+            case flag_Raw:
+            continue;
+            case flag_Raw | flag_Orient:
+                orient = data.raw_rot.rot;
+            break;
+            case flag_Orient:
+                orient = data.rot;
+            break;
             }
-            if (orient)
+            data = tmp;
+        }
+        if (orient)
+        {
+            if (crapola.convertp)
             {
-                if (crapola.convertp)
-                {
-                    constexpr int sz = sizeof(float[6]);
-                    const int len = sz / 2;
-                    unsigned char* alias = reinterpret_cast<unsigned char*>(orient);
-                    for (int i = 0; i < len; i++)
-                        alias[i] = alias[sz-i];
-                }
-
-                QMutexLocker foo(&mtx);
-                for (int i = 0; i < 3; i++)
-                    pose[Yaw + i] = orient[i];
+                unsigned char* alias = reinterpret_cast<unsigned char*>(orient);
+                constexpr int sz = sizeof(float[6]);
+                std::reverse(alias, alias + sz);
             }
+
+            QMutexLocker foo(&mtx);
+            for (int i = 0; i < 3; i++)
+                pose[Yaw + i] = orient[i];
+
+            orient = nullptr;
         }
         usleep(4000);
     }
@@ -96,7 +90,7 @@ void TrackerImpl::run() {
 void TrackerImpl::StartTracker(QFrame*)
 {
     (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-  start();
+    start();
 }
 
 void TrackerImpl::GetHeadPoseData(double *data)
