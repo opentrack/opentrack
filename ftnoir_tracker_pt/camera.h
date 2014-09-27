@@ -68,6 +68,7 @@ protected:
 private:
         float dt_valid;
         float dt_mean;
+protected:
         int desired_index;
         int active_index;
         bool active;
