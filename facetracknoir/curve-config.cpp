@@ -3,11 +3,11 @@
 CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidget *parent) :
     QWidget( parent, Qt::Dialog ), mainApp(ftnoir)
 {
-	ui.setupUi( this );
-    
+    ui.setupUi( this );
+
     // rest of mapping settings taken care of by options::value<t>
     mainApp->load_mappings();
-    
+
     {
         struct {
             QFunctionConfigurator* qfc;
@@ -21,7 +21,7 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
             { ui.txconfig, TX, false },
             { ui.tyconfig, TY, false },
             { ui.tzconfig, TZ, false },
-            
+
             { ui.rxconfig_alt, Yaw, true },
             { ui.ryconfig_alt, Pitch, true},
             { ui.rzconfig_alt, Roll, true },
@@ -30,24 +30,21 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
             { ui.tzconfig_alt, TZ, true },
             { nullptr, Yaw, false }
         };
-        
+
         for (int i = 0; qfcs[i].qfc; i++)
         {
             const bool altp = qfcs[i].altp;
             THeadPoseDOF& axis = mainApp->axis(qfcs[i].axis);
             FunctionConfig* conf = altp ? &axis.curveAlt : &axis.curve;
             const auto& name = qfcs[i].altp ? axis.name2 : axis.name1;
-            
+
             qfcs[i].qfc->setConfig(conf, name);
         }
     }
- 
+
     setFont(qApp->font());
     QPoint offsetpos(120, 30);
-	this->move(parent->pos() + offsetpos);
-    
-   
-    
+    this->move(parent->pos() + offsetpos);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -75,7 +72,7 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
     tie_setting(mainApp->s.a_x.invert, ui.invert_x);
     tie_setting(mainApp->s.a_y.invert, ui.invert_y);
     tie_setting(mainApp->s.a_z.invert, ui.invert_z);
-    
+
     tie_setting(mainApp->s.a_yaw.src, ui.src_yaw);
     tie_setting(mainApp->s.a_pitch.src, ui.src_pitch);
     tie_setting(mainApp->s.a_roll.src, ui.src_roll);
@@ -85,8 +82,8 @@ CurveConfigurationDialog::CurveConfigurationDialog(FaceTrackNoIR *ftnoir, QWidge
 }
 
 void CurveConfigurationDialog::doOK() {
-	save();
-	this->close();
+    save();
+    this->close();
 }
 
 void CurveConfigurationDialog::doCancel() {
