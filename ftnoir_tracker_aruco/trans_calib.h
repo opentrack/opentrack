@@ -20,20 +20,20 @@
 class TranslationCalibrator
 {
 public:
-	TranslationCalibrator();
+    TranslationCalibrator();
 
-	// reset the calibration process
-	void reset();
+    // reset the calibration process
+    void reset();
 
-	// update the current estimate
-	void update(const cv::Matx33f& R_CM_k, const cv::Vec3f& t_CM_k);
+    // update the current estimate
+    void update(const cv::Matx33f& R_CM_k, const cv::Vec3f& t_CM_k);
 
-	// get the current estimate for t_MH
-	cv::Vec3f get_estimate();
+    // get the current estimate for t_MH
+    cv::Vec3f get_estimate();
 
-protected:
-	cv::Matx66f P;	// normalized precision matrix = inverse covariance
-	cv::Vec6f y;	// P*(-t_MH, t_CH)
+private:
+    cv::Matx66f P;	// normalized precision matrix = inverse covariance
+    cv::Vec6f y;	// P*(-t_MH, t_CH)
 };
 
 #endif //TRANSCALIB_H
