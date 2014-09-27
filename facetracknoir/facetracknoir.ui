@@ -598,7 +598,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -620,7 +620,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -668,7 +668,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -690,7 +690,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -750,7 +750,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -798,7 +798,7 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Outline</enum>
@@ -857,7 +857,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -885,7 +885,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -935,7 +935,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -991,7 +991,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -1069,7 +1069,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -1119,7 +1119,7 @@
            <bool>true</bool>
           </property>
           <property name="digitCount">
-           <number>1</number>
+           <number>3</number>
           </property>
           <property name="segmentStyle">
            <enum>QLCDNumber::Flat</enum>
@@ -1170,11 +1170,6 @@
      </item>
     </layout>
    </widget>
-   <zorder>video_feed</zorder>
-   <zorder>controls</zorder>
-   <zorder>headpose</zorder>
-   <zorder>octopus</zorder>
-   <zorder>box_mapped_headpose</zorder>
   </widget>
  </widget>
  <customwidgets>
