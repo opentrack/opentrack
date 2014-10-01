@@ -498,3 +498,12 @@ endif()
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
 endif()
+
+string(TIMESTAMP filename-date "%Y%m%d")
+set(filename-ostype ${CMAKE_SYSTEM_NAME})
+set(filename_0 opentrack-build-${filename-ostype}-${filename-date})
+string(TOLOWER "${filename_0}" filename_1)
+set(filename "${CMAKE_BINARY_DIR}/${filename_1}.tar.xz")
+
+add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
+add_custom_target(tarball DEPENDS ${filename})
