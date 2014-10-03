@@ -40,10 +40,10 @@ Tracker::~Tracker()
 static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
     bool altp = (pos < 0) && axis.opts.altp;
     axis.curve.setTrackingActive( !altp );
-    axis.curveAlt.setTrackingActive( altp );    
+    axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
     out = (axis.opts.invert ? -1 : 1) * fc.getValue(pos);
-    
+
     out += axis.opts.zero;
 }
 
@@ -114,13 +114,13 @@ void Tracker::run() {
             for (int i = 0; i < 6; i++)
             {
                 raw_6dof.axes[i] = newpose[i];
-                
+
                 auto& axis = mainApp->axis(i);
-                
+
                 int k = axis.opts.src;
                 if (k < 0 || k >= 6)
                     continue;
-                
+
                 axis.headPos = newpose[k];
             }
 
@@ -143,6 +143,8 @@ void Tracker::run() {
 
                 target_camera2 = target_camera - offset_camera;
             }
+            else
+                target_camera2 = raw_6dof;
 
             if (Libraries->pFilter) {
                 Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
@@ -158,7 +160,7 @@ void Tracker::run() {
                 t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
 
             if (Libraries->pProtocol) {
-                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );
+                Libraries->pProtocol->sendHeadposeToGame(output_camera.axes);
             }
         }
 
