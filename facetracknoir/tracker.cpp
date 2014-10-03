@@ -136,15 +136,13 @@ void Tracker::run() {
 
             T6DOF target_camera, target_camera2, new_camera;
 
-            if (enabled)
-            {
+            if (!enabled)
+                target_camera = raw_6dof;
+            else
                 for (int i = 0; i < 6; i++)
                     target_camera.axes[i] = mainApp->axis(i).headPos;
 
-                target_camera2 = target_camera - offset_camera;
-            }
-            else
-                target_camera2 = raw_6dof;
+            target_camera2 = target_camera - offset_camera;
 
             if (Libraries->pFilter) {
                 Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
