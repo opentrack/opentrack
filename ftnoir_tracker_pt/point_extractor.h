@@ -8,8 +8,8 @@
 #ifndef POINTEXTRACTOR_H
 #define POINTEXTRACTOR_H
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 // ----------------------------------------------------------------------------
 // Extracts points from an opencv image

@@ -9,10 +9,13 @@
 #include <cmath>
 
 class Quat {
-
+private:
+    static constexpr double pi = 3.141592653;
+    static constexpr double r2d = 180./pi;
+    double a,b,c,d; // quaternion coefficients
 public:
     Quat() : a(1.0),b(0.0),c(0.0),d(0.0) {}
-    Quat(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
+    Quat(double yaw, double pitch, double roll) { from_euler_rads(yaw, pitch, roll); }
     Quat(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
 
     Quat inv(){
@@ -21,7 +24,7 @@ public:
 
     // conversions
     // see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-    void fromEuler(double yaw, double pitch, double roll)
+    void from_euler_rads(double yaw, double pitch, double roll)
     {
 
         double sin_phi = sin(roll/2.0);
@@ -37,11 +40,19 @@ public:
         d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
     }
 
-    void toEuler(double& yaw, double& pitch, double& roll) const
+    void to_euler_rads(double& yaw, double& pitch, double& roll) const
     {
         roll = atan2(2.0*(a*b + c*d), 1.0 - 2.0*(b*b + c*c));
         pitch = asin(2.0*(a*c - b*d));
         yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
+    }
+
+    void to_euler_degrees(double& yaw, double& pitch, double& roll) const
+    {
+        to_euler_rads(yaw, pitch, roll);
+        yaw *= r2d;
+        pitch *= r2d;
+        roll *= r2d;
     }
 
     const Quat operator*(const Quat& B) const
@@ -52,7 +63,4 @@ public:
                         A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
                         A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
     }
-
-private:
-    double a,b,c,d; // quaternion coefficients
 };

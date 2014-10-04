@@ -9,7 +9,7 @@
 
 #include <QMessageBox>
 #include <QDebug>
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else
@@ -25,14 +25,14 @@ TrackerDialog::TrackerDialog()
       timer(this),
       trans_calib_running(false)
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
     vector<string> device_names;
-	get_camera_device_names(device_names);
+    get_camera_device_names(device_names);
     for (vector<string>::iterator iter = device_names.begin(); iter != device_names.end(); ++iter)
-	{
-		ui.camdevice_combo->addItem(iter->c_str());
-	}
+    {
+        ui.camdevice_combo->addItem(iter->c_str());
+    }
 
     ui.camroll_combo->addItem("-90");
     ui.camroll_combo->addItem("0");
@@ -82,7 +82,7 @@ TrackerDialog::TrackerDialog()
 
     connect(ui.model_tabs, SIGNAL(currentChanged(int)), this, SLOT(set_model(int)));
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
-	timer.start(100);
+    timer.start(100);
 
     connect(ui.buttonBox_2, SIGNAL(clicked(QAbstractButton*)), this, SLOT(do_apply_without_saving(QAbstractButton*)));
 }
@@ -96,7 +96,7 @@ void TrackerDialog::set_model_clip()
     s.m02_y = -static_cast<double>(s.clip_by);
     s.m02_z = -static_cast<double>(s.clip_bz);
 
-	settings_changed();
+    settings_changed();
 }
 
 void TrackerDialog::set_model_cap()
@@ -108,12 +108,12 @@ void TrackerDialog::set_model_cap()
     s.m02_y = -static_cast<double>(s.cap_y);
     s.m02_z = -static_cast<double>(s.cap_z);
 
-	settings_changed();
+    settings_changed();
 }
 
 void TrackerDialog::set_model_custom()
 {
-	settings_changed();
+    settings_changed();
 }
 
 void TrackerDialog::set_model(int val)
@@ -123,38 +123,38 @@ void TrackerDialog::set_model(int val)
 
 void TrackerDialog::startstop_trans_calib(bool start)
 {
-	if (start)
-	{
-		qDebug()<<"TrackerDialog:: Starting translation calibration";
-		trans_calib.reset();
-		trans_calib_running = true;
-	}
-	else
-	{
-		qDebug()<<"TrackerDialog:: Stoppping translation calibration";
-		trans_calib_running = false;
+    if (start)
+    {
+        qDebug()<<"TrackerDialog:: Starting translation calibration";
+        trans_calib.reset();
+        trans_calib_running = true;
+    }
+    else
+    {
+        qDebug()<<"TrackerDialog:: Stoppping translation calibration";
+        trans_calib_running = false;
         {
             auto tmp = trans_calib.get_estimate();
             s.t_MH_x = tmp[0];
             s.t_MH_y = tmp[1];
             s.t_MH_z = tmp[2];
         }
-		settings_changed();
-	}
+        settings_changed();
+    }
 }
 
 void TrackerDialog::poll_tracker_info()
 {
     if (tracker)
-    {	
+    {
         QString to_print;
-        
+
         // display caminfo
         CamInfo info;
         tracker->get_cam_info(&info);
         to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
         ui.caminfo_label->setText(to_print);
-        
+
         // display pointinfo
         int n_points = tracker->get_n_points();
         to_print = QString::number(n_points);
@@ -163,7 +163,7 @@ void TrackerDialog::poll_tracker_info()
         else
             to_print += " BAD!";
         ui.pointinfo_label->setText(to_print);
-        
+
         // update calibration
         if (trans_calib_running) trans_calib_step();
     }
@@ -177,16 +177,16 @@ void TrackerDialog::poll_tracker_info()
 
 void TrackerDialog::trans_calib_step()
 {
-	if (tracker)
-	{
-		FrameTrafo X_CM;
-		tracker->get_pose(&X_CM);
-		trans_calib.update(X_CM.R, X_CM.t);
-		cv::Vec3f t_MH = trans_calib.get_estimate();
+    if (tracker)
+    {
+        FrameTrafo X_CM;
+        tracker->get_pose(&X_CM);
+        trans_calib.update(X_CM.R, X_CM.t);
+        cv::Vec3f t_MH = trans_calib.get_estimate();
         s.t_MH_x = t_MH[0];
         s.t_MH_y = t_MH[1];
         s.t_MH_z = t_MH[2];
-	}
+    }
 }
 
 void TrackerDialog::settings_changed()
@@ -203,7 +203,7 @@ void TrackerDialog::save()
 void TrackerDialog::doOK()
 {
     save();
-	close();
+    close();
 }
 
 void TrackerDialog::do_apply_without_saving(QAbstractButton*)
@@ -225,7 +225,7 @@ void TrackerDialog::do_apply_without_saving(QAbstractButton*)
 
 void TrackerDialog::doApply()
 {
-    save();                                                                                                                                                                                                                                                                                                         
+    save();
 }
 
 void TrackerDialog::doCancel()
@@ -236,23 +236,23 @@ void TrackerDialog::doCancel()
 
 void TrackerDialog::registerTracker(ITracker *t)
 {
-	qDebug()<<"TrackerDialog:: Tracker registered";
-	tracker = static_cast<Tracker*>(t);
+    qDebug()<<"TrackerDialog:: Tracker registered";
+    tracker = static_cast<Tracker*>(t);
     if (isVisible() & s.b->modifiedp())
         tracker->apply(s);
-	ui.tcalib_button->setEnabled(true);
-	//ui.center_button->setEnabled(true);
+    ui.tcalib_button->setEnabled(true);
+    //ui.center_button->setEnabled(true);
 }
 
 void TrackerDialog::unRegisterTracker()
 {
-	qDebug()<<"TrackerDialog:: Tracker un-registered";
-	tracker = NULL;
-	ui.tcalib_button->setEnabled(false); 
-	//ui.center_button->setEnabled(false);
+    qDebug()<<"TrackerDialog:: Tracker un-registered";
+    tracker = NULL;
+    ui.tcalib_button->setEnabled(false);
+    //ui.center_button->setEnabled(false);
 }
 
 extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 {
-	return new TrackerDialog;
+    return new TrackerDialog;
 }

@@ -10,7 +10,7 @@
 #include <QObject>
 #include <QTime>
 #include <QDialog>
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #ifndef OPENTRACK_API
 #   include <QGLWidget>
 #   include <boost/shared_ptr.hpp>

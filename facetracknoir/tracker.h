@@ -22,8 +22,6 @@
 #include "facetracknoir/options.h"
 #include "facetracknoir/timer.hpp"
 
-
-
 class Tracker : protected QThread {
     Q_OBJECT
 private:

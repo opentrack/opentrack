@@ -8,7 +8,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>
 #else

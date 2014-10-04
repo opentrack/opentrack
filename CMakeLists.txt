@@ -344,7 +344,6 @@ opentrack_library(opentrack-tracker-ht)
 target_link_libraries(opentrack-tracker-ht opentrack-compat)
 
 if(SDK_ARUCO_LIBPATH)
-    include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
     opentrack_library(opentrack-tracker-aruco)
     target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
 endif()
@@ -477,7 +476,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetracknoir/clientfiles" DESTINATION .)
 
-if(NOT WIN32 AND SDK_WINE_PREFIX)
+if(NOT WIN32 AND SDK_WINE_PREFIX AND NOT SDK_WINE_NO_WRAPPER)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
             DESTINATION .)
 endif()

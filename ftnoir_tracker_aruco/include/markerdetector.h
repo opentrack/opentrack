@@ -27,7 +27,7 @@ or implied, of Rafael Muñoz Salinas.
 ********************************/
 #ifndef _ARUCO_MarkerDetector_H
 #define _ARUCO_MarkerDetector_H
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #include <cstdio>
 #include <iostream>
 #include "cameraparameters.h"
@@ -47,7 +47,7 @@ class ARUCO_EXPORTS  MarkerDetector
   class MarkerCandidate: public Marker{
   public:
     MarkerCandidate(){}
-    MarkerCandidate(const Marker &M): Marker(M){} 
+    MarkerCandidate(const Marker &M): Marker(M){}
     MarkerCandidate(const  MarkerCandidate &M): Marker(M){
       contour=M.contour;
       idx=M.idx;
@@ -60,20 +60,20 @@ class ARUCO_EXPORTS  MarkerDetector
       idx=M.idx;
       return M;
     }
-    
+
     vector<cv::Point> contour;//all the points of its contour
     int idx;//index position in the global contour list
   };
 public:
 
     /**
-     * See 
+     * See
      */
-    MarkerDetector();
+    MarkerDetector() {}
 
     /**
      */
-    ~MarkerDetector();
+    ~MarkerDetector() {}
 
     /**Detects the markers in the image passed
      *
@@ -161,17 +161,17 @@ public:
      * of cols and rows.
      * @param min size of the contour to consider a possible marker as valid (0,1]
      * @param max size of the contour to consider a possible marker as valid [0,1)
-     * 
+     *
      */
     void setMinMaxSize(float min=0.03,float max=0.5)throw(cv::Exception);
-    
+
     /**reads the min and max sizes employed
      * @param min output size of the contour to consider a possible marker as valid (0,1]
      * @param max output size of the contour to consider a possible marker as valid [0,1)
-     * 
+     *
      */
     void getMinMaxSize(float &min,float &max){min=_minSize;max=_maxSize;}
-    
+
     /**Enables/Disables erosion process that is REQUIRED for chessboard like boards.
      * By default, this property is enabled
      */
@@ -210,10 +210,10 @@ public:
         markerIdDetector_ptrfunc=markerdetector_func;
     }
 
-    /** Use an smaller version of the input image for marker detection. 
+    /** Use an smaller version of the input image for marker detection.
      * If your marker is small enough, you can employ an smaller image to perform the detection without noticeable reduction in the precision.
      * Internally, we are performing a pyrdown operation
-     * 
+     *
      * @param level number of times the image size is divided by 2. Internally, we are performing a pyrdown.
      */
     void pyrDown(unsigned int level){pyrdown_level=level;}
@@ -247,17 +247,17 @@ public:
      * @return true if the operation succeed
      */
     bool warp(cv::Mat &in,cv::Mat &out,cv::Size size, std::vector<cv::Point2f> points)throw (cv::Exception);
-    
-    
-    
+
+
+
     /** Refine MarkerCandidate Corner using LINES method
      * @param candidate candidate to refine corners
      */
-    void refineCandidateLines(MarkerCandidate &candidate);    
-    
-    
+    void refineCandidateLines(MarkerCandidate &candidate);
+
+
     /**DEPRECATED!!! Use the member function in CameraParameters
-     * 
+     *
      * Given the intrinsic camera parameters returns the GL_PROJECTION matrix for opengl.
      * PLease NOTE that when using OpenGL, it is assumed no camera distorsion! So, if it is not true, you should have
      * undistor image
@@ -308,26 +308,26 @@ private:
      */
     int perimeter(std::vector<cv::Point2f> &a);
 
-    
+
 //     //GL routines
-// 
+//
 //     static void argConvGLcpara2( double cparam[3][4], int width, int height, double gnear, double gfar, double m[16], bool invert )throw(cv::Exception);
 //     static int  arParamDecompMat( double source[3][4], double cpara[3][4], double trans[3][4] )throw(cv::Exception);
 //     static double norm( double a, double b, double c );
 //     static double dot(  double a1, double a2, double a3,
 //                         double b1, double b2, double b3 );
-// 
+//
 
     //detection of the
     void findBestCornerInRegion_harris(const cv::Mat  & grey,vector<cv::Point2f> &  Corners,int blockSize);
-   
-    
+
+
     // auxiliar functions to perform LINES refinement
     void interpolate2Dline( const vector< cv::Point > &inPoints, cv::Point3f &outLine);
-    cv::Point2f getCrossPoint(const cv::Point3f& line1, const cv::Point3f& line2);      
-    
-    
-    /**Given a vector vinout with elements and a boolean vector indicating the lements from it to remove, 
+    cv::Point2f getCrossPoint(const cv::Point3f& line1, const cv::Point3f& line2);
+
+
+    /**Given a vector vinout with elements and a boolean vector indicating the lements from it to remove,
      * this function remove the elements
      * @param vinout
      * @param toRemove
