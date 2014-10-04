@@ -8,7 +8,7 @@
 #ifndef FTNOIR_TRACKER_PT_SETTINGS_H
 #define FTNOIR_TRACKER_PT_SETTINGS_H
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #include "point_tracker.h"
 
 #include "facetracknoir/options.h"
@@ -36,7 +36,7 @@ struct settings
 
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
-    
+
     // XXX todo red channel only, good for crapola CCD sensors -sh 20140922
 
     settings() :

@@ -8,13 +8,13 @@
 #include "ftnoir_tracker_aruco.h"
 #include "ui_aruco-trackercontrols.h"
 #include "facetracknoir/plugin-api.hpp"
-#include <cmath>
 #include <QMutexLocker>
-#include <aruco.h>
-#include <opencv2/opencv.hpp>
-#include <opencv/highgui.h>
+#include "include/markerdetector.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <vector>
 #include <cstdio>
+#include <cmath>
 
 #if defined(_WIN32)
 #   undef NOMINMAX
@@ -29,51 +29,51 @@
 static QList<QString> get_camera_names(void) {
     QList<QString> ret;
 #if defined(_WIN32)
-	// Create the System Device Enumerator.
-	HRESULT hr;
-	ICreateDevEnum *pSysDevEnum = NULL;
-	hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
-	if (FAILED(hr))
-	{
-		return ret;
-	}
-	// Obtain a class enumerator for the video compressor category.
-	IEnumMoniker *pEnumCat = NULL;
-	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
+    // Create the System Device Enumerator.
+    HRESULT hr;
+    ICreateDevEnum *pSysDevEnum = NULL;
+    hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
+    if (FAILED(hr))
+    {
+        return ret;
+    }
+    // Obtain a class enumerator for the video compressor category.
+    IEnumMoniker *pEnumCat = NULL;
+    hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
 
-	if (hr == S_OK) {
-		// Enumerate the monikers.
-		IMoniker *pMoniker = NULL;
-		ULONG cFetched;
-		while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) {
-			IPropertyBag *pPropBag;
-			hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
-			if (SUCCEEDED(hr))	{
-				// To retrieve the filter's friendly name, do the following:
-				VARIANT varName;
-				VariantInit(&varName);
-				hr = pPropBag->Read(L"FriendlyName", &varName, 0);
-				if (SUCCEEDED(hr))
-				{
-					// Display the name in your UI somehow.
-					QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
-					ret.append(str);
-				}
-				VariantClear(&varName);
+    if (hr == S_OK) {
+        // Enumerate the monikers.
+        IMoniker *pMoniker = NULL;
+        ULONG cFetched;
+        while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) {
+            IPropertyBag *pPropBag;
+            hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
+            if (SUCCEEDED(hr))	{
+                // To retrieve the filter's friendly name, do the following:
+                VARIANT varName;
+                VariantInit(&varName);
+                hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+                if (SUCCEEDED(hr))
+                {
+                    // Display the name in your UI somehow.
+                    QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
+                    ret.append(str);
+                }
+                VariantClear(&varName);
 
-				////// To create an instance of the filter, do the following:
-				////IBaseFilter *pFilter;
-				////hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter,
-				////	(void**)&pFilter);
-				// Now add the filter to the graph. 
-				//Remember to release pFilter later.
-				pPropBag->Release();
-			}
-			pMoniker->Release();
-		}
-		pEnumCat->Release();
-	}
-	pSysDevEnum->Release();
+                ////// To create an instance of the filter, do the following:
+                ////IBaseFilter *pFilter;
+                ////hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter,
+                ////	(void**)&pFilter);
+                // Now add the filter to the graph.
+                //Remember to release pFilter later.
+                pPropBag->Release();
+            }
+            pMoniker->Release();
+        }
+        pEnumCat->Release();
+    }
+    pSysDevEnum->Release();
 #else
     for (int i = 0; i < 16; i++) {
         char buf[128];
@@ -89,15 +89,15 @@ static QList<QString> get_camera_names(void) {
 }
 
 typedef struct {
-	int width;
-	int height;
+    int width;
+    int height;
 } resolution_tuple;
 
 static resolution_tuple resolution_choices[] = {
-	{ 640, 480 },
-	{ 320, 240 },
-	{ 320, 200 },
-	{ 0, 0 }
+    { 640, 480 },
+    { 320, 240 },
+    { 320, 200 },
+    { 0, 0 }
 };
 
 Tracker::Tracker() : stop(false), layout(nullptr), videoWidget(nullptr)
@@ -108,8 +108,8 @@ Tracker::~Tracker()
 {
     stop = true;
     wait();
-	if (videoWidget)
-		delete videoWidget;
+    if (videoWidget)
+        delete videoWidget;
     if(layout)
         delete layout;
     qDebug() << "releasing camera, brace for impact";
@@ -178,7 +178,7 @@ void Tracker::run()
     }
     if (fps)
         camera.set(CV_CAP_PROP_FPS, fps);
-    
+
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
 
@@ -187,7 +187,7 @@ void Tracker::run()
     cv::Mat color, color_, grayscale, rvec, tvec;
 
     const double stateful_coeff = 0.88;
-    
+
     if (!camera.isOpened())
     {
         fprintf(stderr, "aruco tracker: can't open camera\n");
@@ -214,7 +214,7 @@ void Tracker::run()
             grayscale = channel[2];
         } else
             cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
-        
+
         gain.tick(camera, grayscale);
 
         const int scale = frame.cols > 480 ? 2 : 1;
@@ -280,11 +280,11 @@ void Tracker::run()
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
         ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
         cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
-        
+
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
             const float size = 40;
-            
+
             const double p = s.marker_pitch;
             const double sq = sin(p * HT_PI / 180);
             const double cq = cos(p * HT_PI / 180);
@@ -380,7 +380,7 @@ void Tracker::run()
 void Tracker::GetHeadPoseData(double *data)
 {
     QMutexLocker lck(&mtx);
-    
+
     data[Yaw] = pose[Yaw];
     data[Pitch] = pose[Pitch];
     data[Roll] = pose[Roll];
@@ -391,11 +391,11 @@ void Tracker::GetHeadPoseData(double *data)
 
 class TrackerDll : public Metadata
 {
-	// ITrackerDll interface
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    // ITrackerDll interface
+    void getFullName(QString *strToBeFilled);
+    void getShortName(QString *strToBeFilled);
+    void getDescription(QString *strToBeFilled);
+    void getIcon(QIcon *icon);
 };
 
 //-----------------------------------------------------------------------------
@@ -406,12 +406,12 @@ void TrackerDll::getFullName(QString *strToBeFilled)
 
 void TrackerDll::getShortName(QString *strToBeFilled)
 {
-	*strToBeFilled = "aruco";
+    *strToBeFilled = "aruco";
 }
 
 void TrackerDll::getDescription(QString *strToBeFilled)
 {
-	*strToBeFilled = "";
+    *strToBeFilled = "";
 }
 
 void TrackerDll::getIcon(QIcon *icon)
@@ -425,7 +425,7 @@ void TrackerDll::getIcon(QIcon *icon)
 
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
-	return new TrackerDll;
+    return new TrackerDll;
 }
 
 //#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
@@ -444,11 +444,11 @@ TrackerControls::TrackerControls()
 {
     tracker = nullptr;
     calib_timer.setInterval(200);
-	ui.setupUi(this);
+    ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     ui.cameraName->addItems(get_camera_names());
     tie_setting(s.camera_index, ui.cameraName);
-	tie_setting(s.resolution, ui.resolution);
+    tie_setting(s.resolution, ui.resolution);
     tie_setting(s.force_fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
     tie_setting(s.headpos_x, ui.cx);
@@ -500,7 +500,7 @@ void TrackerControls::doOK()
     s.b->save();
     if (tracker)
         tracker->reload();
-	this->close();
+    this->close();
 }
 
 void TrackerControls::doCancel()

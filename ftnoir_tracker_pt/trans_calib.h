@@ -8,7 +8,7 @@
 #ifndef TRANSCALIB_H
 #define TRANSCALIB_H
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 
 //-----------------------------------------------------------------------------
 // Calibrates the translation from head to model = t_MH

@@ -16,12 +16,9 @@
 #include <QHBoxLayout>
 #include <QDialog>
 #include <QTimer>
-#include <opencv2/opencv.hpp>
-#include <opencv/highgui.h>
 #include "facetracknoir/options.h"
 #include "ftnoir_tracker_aruco/trans_calib.h"
 #include "facetracknoir/plugin-api.hpp"
-
 #include "facetracknoir/gain-control.hpp"
 
 using namespace options;
@@ -50,7 +47,7 @@ class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
 public:
-	Tracker();
+    Tracker();
     ~Tracker() override;
     void StartTracker(QFrame* frame);
     void GetHeadPoseData(double *data);
@@ -61,7 +58,7 @@ private:
     QMutex mtx;
     volatile bool stop;
     QHBoxLayout* layout;
-	ArucoVideoWidget* videoWidget;
+    ArucoVideoWidget* videoWidget;
     settings s;
     double pose[6];
     cv::Mat frame;
@@ -83,14 +80,14 @@ public:
         tracker = nullptr;
     }
 private:
-	Ui::Form ui;
+    Ui::Form ui;
     Tracker* tracker;
     settings s;
     TranslationCalibrator calibrator;
     QTimer calib_timer;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
     void toggleCalibrate();
     void cleanupCalib();
     void update_tracker_calibration();

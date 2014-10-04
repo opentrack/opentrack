@@ -2,14 +2,14 @@
 
 #include <utility>
 #include <algorithm>
-#include "rotation.h"
-#include "plugin-api.hpp"
+#include "./quat.hpp"
+#include "./plugin-api.hpp"
 
 struct T6DOF {
 private:
-    static constexpr double PI = 3.14159265358979323846264;
-    static constexpr double D2R = PI/180.0;
-    static constexpr double R2D = 180.0/PI;
+    static constexpr double pi = 3.141592653;
+    static constexpr double d2r = pi/180.0;
+    static constexpr double r2d = 180./pi;
 
     double axes[6];
 public:
@@ -23,13 +23,13 @@ public:
 
     Quat quat() const
     {
-        return Quat(axes[Yaw]*D2R, axes[Pitch]*D2R, axes[Roll]*D2R);
+        return Quat(axes[Yaw]*d2r, axes[Pitch]*d2r, axes[Roll]*d2r);
     }
 
     static T6DOF fromQuat(const Quat& q)
     {
         T6DOF ret;
-        q.toEuler(ret(Yaw), ret(Pitch), ret(Roll));
+        q.to_euler_rads(ret(Yaw), ret(Pitch), ret(Roll));
         return ret;
     }
 
