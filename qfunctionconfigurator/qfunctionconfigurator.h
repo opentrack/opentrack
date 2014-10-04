@@ -20,8 +20,8 @@ class OPENTRACK_EXPORT QFunctionConfigurator : public QWidget
 public:
 	QFunctionConfigurator(QWidget *parent = 0);
     
-	FunctionConfig* config();
-    void setConfig(FunctionConfig* config, const QString &name);
+	Map* config();
+    void setConfig(Map* config, const QString &name);
     
     QColor colorBezier() const
     {
@@ -65,7 +65,7 @@ private:
     QPointF pixel_coord_to_point (const QPointF& point);
     QPointF point_to_pixel (const QPointF& point);
 
-    FunctionConfig* _config;
+    Map* _config;
     
     // bounds of the rectangle user can interact with
 	QRectF  pixel_bounds;

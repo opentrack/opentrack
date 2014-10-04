@@ -75,8 +75,8 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
     }
 }
 
-FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
-    QMainWindow(parent),
+FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
+    tracker(nullptr),
 #if defined(_WIN32)
     keybindingWorker(NULL),
 #else
@@ -87,33 +87,20 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
     s(b),
     pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll}),
     timUpdateHeadPose(this),
-    pTrackerDialog(NULL),
-    pProtocolDialog(NULL),
-    pFilterDialog(NULL),
+    pTrackerDialog(nullptr),
+    pProtocolDialog(nullptr),
+    pFilterDialog(nullptr),
+    shortcuts_widget(nullptr),
+    mapping_widget(new CurveConfigurationDialog(pose, s, this)),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     looping(0),
     video_frame_layout(new QVBoxLayout()),
     no_feed_pixmap(":/uielements/no-feed.png")
-{	
+{
     ui.setupUi(this);
     setFixedSize(size());
     ui.video_frame_label->setPixmap(no_feed_pixmap);
     updateButtonState(false, false);
-
-	_keyboard_shortcuts = 0;
-	_curve_config = 0;
-
-	tracker = 0;
-
-    CurveConfigurationDialog* ccd;
-
-    if (!_curve_config)
-    {
-        ccd = new CurveConfigurationDialog( this, this );
-        _curve_config = ccd;
-    } else {
-        ccd = dynamic_cast<CurveConfigurationDialog*>(_curve_config);
-    }
 
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
@@ -157,7 +144,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) :
 
 FaceTrackNoIR::~FaceTrackNoIR() {
 
-	stopTracker();
+    stopTracker();
     save();
     if (Libraries)
         delete Libraries;
@@ -171,38 +158,26 @@ QFrame* FaceTrackNoIR::get_video_widget() {
 void FaceTrackNoIR::open() {
      QFileDialog dialog(this);
      dialog.setFileMode(QFileDialog::ExistingFile);
-     
-	 QString fileName = dialog.getOpenFileName(
-								this,
+
+     QString fileName = dialog.getOpenFileName(
+                                this,
                                  tr("Open the settings file"),
-								 QCoreApplication::applicationDirPath() + "/settings/",
+                                 QCoreApplication::applicationDirPath() + "/settings/",
                                  tr("Settings file (*.ini);;All Files (*)"),
                                                NULL);
 
-	if (! fileName.isEmpty() ) {
+    if (! fileName.isEmpty() ) {
         {
             QSettings settings("opentrack");
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
         fill_profile_cbx();
-		loadSettings();
+        loadSettings();
     }
 }
 
 void FaceTrackNoIR::save_mappings() {
-    QSettings settings("opentrack");
-
-    QString currentFile =
-            settings.value("SettingsFile",
-                           QCoreApplication::applicationDirPath() + "/settings/default.ini")
-            .toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );
-    
-    for (int i = 0; i < 6; i++)
-    {
-        axis(i).curve.saveSettings(iniFile, axis(i).name1);
-        axis(i).curveAlt.saveSettings(iniFile, axis(i).name2);
-    }
+    pose.save_mappings();
 }
 
 #if defined(__unix) || defined(__linux) || defined(__APPLE__)
@@ -212,7 +187,7 @@ void FaceTrackNoIR::save_mappings() {
 void FaceTrackNoIR::save() {
     b->save();
     save_mappings();
-    
+
 #if defined(__unix) || defined(__linux)
     QSettings settings("opentrack");
     const QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
@@ -229,27 +204,27 @@ void FaceTrackNoIR::save() {
 void FaceTrackNoIR::saveAs()
 {
     looping++;
-	QSettings settings("opentrack");
-	QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings settings("opentrack");
+    QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
-													oldFile,
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
+                                                    oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
-	if (!fileName.isEmpty()) {
+    if (!fileName.isEmpty()) {
 
-		QFileInfo newFileInfo ( fileName );
-		if ((newFileInfo.exists()) && (oldFile != fileName)) {
-			QFile newFileFile ( fileName );
-			newFileFile.remove();
-		}
+        QFileInfo newFileInfo ( fileName );
+        if ((newFileInfo.exists()) && (oldFile != fileName)) {
+            QFile newFileFile ( fileName );
+            newFileFile.remove();
+        }
 
-		QFileInfo oldFileInfo ( oldFile );
-		if (oldFileInfo.exists()) {
-			QFile oldFileFile ( oldFile );
-			oldFileFile.copy( fileName );
-		}
+        QFileInfo oldFileInfo ( oldFile );
+        if (oldFileInfo.exists()) {
+            QFile oldFileFile ( oldFile );
+            oldFileFile.copy( fileName );
+        }
 
-		settings.setValue ("SettingsFile", fileName);
+        settings.setValue ("SettingsFile", fileName);
         save();
     }
 
@@ -258,15 +233,7 @@ void FaceTrackNoIR::saveAs()
 }
 
 void FaceTrackNoIR::load_mappings() {
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );
-
-    for (int i = 0; i < 6; i++)
-    {
-        axis(i).curve.loadSettings(iniFile, axis(i).name1);
-        axis(i).curveAlt.loadSettings(iniFile, axis(i).name2);
-    }
+    pose.load_mappings();
 }
 
 void FaceTrackNoIR::loadSettings() {
@@ -303,7 +270,7 @@ void FaceTrackNoIR::startTracker( ) {
         stopTracker();
         return;
     }
-    
+
 #if defined(_WIN32)
     keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
     keybindingWorker->start();
@@ -313,15 +280,15 @@ void FaceTrackNoIR::startTracker( ) {
         delete tracker;
     }
 
-    tracker = new Tracker ( this, s );
+    tracker = new Tracker(s, pose);
 
     if (pTrackerDialog && Libraries->pTracker) {
         pTrackerDialog->registerTracker( Libraries->pTracker );
-	}
-    
+    }
+
     if (pFilterDialog && Libraries->pFilter)
         pFilterDialog->registerFilter(Libraries->pFilter);
-    
+
     tracker->start();
 
     ui.video_frame->show();
@@ -345,7 +312,7 @@ void FaceTrackNoIR::stopTracker( ) {
         keybindingWorker = NULL;
     }
 #endif
-	timUpdateHeadPose.stop();
+    timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
 
     if (pTrackerDialog) {
@@ -366,44 +333,41 @@ void FaceTrackNoIR::stopTracker( ) {
     }
 
     if ( tracker ) {
-		delete tracker;
-		tracker = 0;
+        delete tracker;
+        tracker = 0;
         if (Libraries) {
             delete Libraries;
             Libraries = NULL;
         }
-	}
+    }
     updateButtonState(false, false);
 }
 
-void FaceTrackNoIR::showHeadPose() {
-    double newdata[6];
+void FaceTrackNoIR::showHeadPose()
+{
+    double mapped[6], raw[6];
 
-    tracker->getHeadPose(newdata);
-    ui.lcdNumX->display(newdata[TX]);
-    ui.lcdNumY->display(newdata[TY]);
-    ui.lcdNumZ->display(newdata[TZ]);
+    tracker->get_raw_and_mapped_poses(mapped, raw);
 
+    ui.pose_display->rotateBy(mapped[Yaw], mapped[Roll], mapped[Pitch]);
 
-    ui.lcdNumRotX->display(newdata[Yaw]);
-    ui.lcdNumRotY->display(newdata[Pitch]);
-    ui.lcdNumRotZ->display(newdata[Roll]);
+    if (mapping_widget)
+        mapping_widget->update();
 
-    tracker->getOutputHeadPose(newdata);
+    ui.lcdNumX->display(raw[TX]);
+    ui.lcdNumY->display(raw[TY]);
+    ui.lcdNumZ->display(raw[TZ]);
+    ui.lcdNumRotX->display(raw[Yaw]);
+    ui.lcdNumRotY->display(raw[Pitch]);
+    ui.lcdNumRotZ->display(raw[Roll]);
 
-    ui.pose_display->rotateBy(newdata[Yaw], newdata[Roll], newdata[Pitch]);
+    ui.lcdNumOutputPosX->display(mapped[TX]);
+    ui.lcdNumOutputPosY->display(mapped[TY]);
+    ui.lcdNumOutputPosZ->display(mapped[TZ]);
+    ui.lcdNumOutputRotX->display(mapped[Yaw]);
+    ui.lcdNumOutputRotY->display(mapped[Pitch]);
+    ui.lcdNumOutputRotZ->display(mapped[Roll]);
 
-    ui.lcdNumOutputPosX->display(newdata[TX]);
-    ui.lcdNumOutputPosY->display(newdata[TY]);
-    ui.lcdNumOutputPosZ->display(newdata[TZ]);
-
-    ui.lcdNumOutputRotX->display(newdata[Yaw]);
-    ui.lcdNumOutputRotY->display(newdata[Pitch]);
-    ui.lcdNumOutputRotZ->display(newdata[Roll]);
-
-    if (_curve_config) {
-        _curve_config->update();
-    }
     if (Libraries->pProtocol)
     {
         const QString name = Libraries->pProtocol->getGameName();
@@ -411,11 +375,12 @@ void FaceTrackNoIR::showHeadPose() {
     }
 }
 
-void FaceTrackNoIR::showTrackerSettings() {
-	if (pTrackerDialog) {
-		delete pTrackerDialog;
-		pTrackerDialog = NULL;
-	}
+void FaceTrackNoIR::showTrackerSettings()
+{
+    if (pTrackerDialog) {
+        delete pTrackerDialog;
+        pTrackerDialog = NULL;
+    }
 
     DynamicLibrary* lib = dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), (DynamicLibrary*) NULL);
 
@@ -470,24 +435,24 @@ void FaceTrackNoIR::showFilterControls() {
 }
 void FaceTrackNoIR::showKeyboardShortcuts() {
 
-	if (!_keyboard_shortcuts)
+    if (!shortcuts_widget)
     {
-        _keyboard_shortcuts = new KeyboardShortcutDialog( this, this );
+        shortcuts_widget = new KeyboardShortcutDialog( this, this );
     }
 
-    _keyboard_shortcuts->show();
-    _keyboard_shortcuts->raise();
+    shortcuts_widget->show();
+    shortcuts_widget->raise();
 }
-void FaceTrackNoIR::showCurveConfiguration() {    
-    if (!_curve_config)
-        _curve_config = new CurveConfigurationDialog( this, this );
-    
-    _curve_config->show();
-    _curve_config->raise();
+void FaceTrackNoIR::showCurveConfiguration() {
+    if (!mapping_widget)
+        mapping_widget = new CurveConfigurationDialog(pose, s, this);
+
+    mapping_widget->show();
+    mapping_widget->raise();
 }
 
 void FaceTrackNoIR::exit() {
-	QCoreApplication::exit(0);
+    QCoreApplication::exit(0);
 }
 
 extern "C" volatile const char* opentrack_version;
@@ -515,11 +480,11 @@ void FaceTrackNoIR::fill_profile_cbx()
 
 void FaceTrackNoIR::profileSelected(int index)
 {
-	QSettings settings("opentrack");
-	QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings settings("opentrack");
+    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
     settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
-	loadSettings();
+    loadSettings();
 }
 
 #if !defined(_WIN32)
@@ -542,8 +507,8 @@ void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, key_opts& k)
             key.setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
             key.setEnabled();
         } else {
-	    key.setDisabled();
-	}
+        key.setDisabled();
+    }
     }
 }
 #else
@@ -590,20 +555,18 @@ void FaceTrackNoIR::bindKeyboardShortcuts()
 
 void FaceTrackNoIR::shortcutRecentered()
 {
+    qDebug() << "Center";
     if (s.dingp)
         QApplication::beep();
-
-    qDebug() << "Center";
     if (tracker)
-        tracker->do_center = true;
+        tracker->center();
 }
 
 void FaceTrackNoIR::shortcutToggled()
 {
+    qDebug() << "Toggle";
     if (s.dingp)
         QApplication::beep();
-
-    qDebug() << "Toggle";
     if (tracker)
-        tracker->enabled = !tracker->enabled;
+        tracker->toggle_enabled();
 }

@@ -37,7 +37,7 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     setMouseTracking(true);
 }
 
-void QFunctionConfigurator::setConfig(FunctionConfig* config, const QString& name) {
+void QFunctionConfigurator::setConfig(Map* config, const QString& name) {
     QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QSettings iniFile( currentFile, QSettings::IniFormat );

@@ -22,12 +22,12 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
-    mainApp(parent),
+Tracker::Tracker(main_settings& s, Mappings &m) :
     s(s),
-    should_quit(false),
-    do_center(false),
-    enabled(true)
+    m(m),
+    centerp(false),
+    enabledp(true),
+    should_quit(false)
 {
 }
 
@@ -37,7 +37,7 @@ Tracker::~Tracker()
     wait();
 }
 
-static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
+void Tracker::get_curve(double pos, double& out, Mapping& axis) {
     bool altp = (pos < 0) && axis.opts.altp;
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
@@ -83,7 +83,7 @@ static void t_compensate(double* input, double* output, bool rz)
 }
 
 void Tracker::run() {
-    T6DOF offset_camera;
+    T6DOF pose_offset, unstopped_pose;
 
     double newpose[6] = {0};
     int sleep_ms = 15;
@@ -113,52 +113,42 @@ void Tracker::run() {
 
             for (int i = 0; i < 6; i++)
             {
-                raw_6dof.axes[i] = newpose[i];
-
-                auto& axis = mainApp->axis(i);
-
+                auto& axis = m(i);
                 int k = axis.opts.src;
                 if (k < 0 || k >= 6)
                     continue;
-
-                axis.headPos = newpose[k];
+                // not really raw, after axis remap -sh
+                raw_6dof(i) = newpose[k];
             }
 
-            if (do_center)  {
+            if (centerp)  {
+                centerp = false;
+                pose_offset = raw_6dof;
+            }
+
+            {
+                if (enabledp)
+                    unstopped_pose = raw_6dof;
+
+                {
+
+                    if (Libraries->pFilter)
+                        Libraries->pFilter->FilterHeadPoseData(unstopped_pose, output_pose);
+                    else
+                        output_pose = unstopped_pose;
+
+                    output_pose = output_pose - pose_offset;
+                }
+
                 for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = mainApp->axis(i).headPos;
-
-                do_center = false;
-
-                if (Libraries->pFilter)
-                    Libraries->pFilter->reset();
+                    get_curve(output_pose(i), output_pose(i), m(i));
             }
 
-            T6DOF target_camera, target_camera2, new_camera;
-
-            if (!enabled)
-                target_camera = raw_6dof;
-            else
-                for (int i = 0; i < 6; i++)
-                    target_camera.axes[i] = mainApp->axis(i).headPos;
-
-            target_camera2 = target_camera - offset_camera;
-
-            if (Libraries->pFilter) {
-                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
-            } else {
-                new_camera = target_camera2;
-            }
-
-            for (int i = 0; i < 6; i++) {
-                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
-            }
-
-            if (mainApp->s.tcomp_p)
-                t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
+            if (s.tcomp_p)
+                t_compensate(output_pose, output_pose, s.tcomp_tz);
 
             if (Libraries->pProtocol) {
-                Libraries->pProtocol->sendHeadposeToGame(output_camera.axes);
+                Libraries->pProtocol->sendHeadposeToGame(output_pose);
             }
         }
 
@@ -172,21 +162,17 @@ void Tracker::run() {
 
     for (int i = 0; i < 6; i++)
     {
-        mainApp->axis(i).curve.setTrackingActive(false);
-        mainApp->axis(i).curveAlt.setTrackingActive(false);
+        m(i).curve.setTrackingActive(false);
+        m(i).curveAlt.setTrackingActive(false);
     }
 }
 
-void Tracker::getHeadPose( double *data ) {
-    QMutexLocker foo(&mtx);
+void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const {
+    QMutexLocker foo(&const_cast<Tracker&>(*this).mtx);
     for (int i = 0; i < 6; i++)
     {
-        data[i] = raw_6dof.axes[i];
+        raw[i] = raw_6dof(i);
+        mapped[i] = output_pose(i);
     }
 }
 
-void Tracker::getOutputHeadPose( double *data ) {
-    QMutexLocker foo(&mtx);
-    for (int i = 0; i < 6; i++)
-        data[i] = output_camera.axes[i];
-}

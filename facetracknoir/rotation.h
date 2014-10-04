@@ -8,17 +8,16 @@
 #pragma once
 #include <cmath>
 
-class RotationType {
+class Quat {
 
 public:
-    RotationType() : a(1.0),b(0.0),c(0.0),d(0.0) {}
-    RotationType(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
-    RotationType(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
+    Quat() : a(1.0),b(0.0),c(0.0),d(0.0) {}
+    Quat(double yaw, double pitch, double roll) { fromEuler(yaw, pitch, roll); }
+    Quat(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
 
-    RotationType inv(){
-        return RotationType(a,-b,-c, -d);
+    Quat inv(){
+        return Quat(a,-b,-c, -d);
     }
-
 
     // conversions
     // see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
@@ -45,10 +44,10 @@ public:
         yaw =  atan2(2.0*(a*d + b*c), 1.0 - 2.0*(c*c + d*d));
     }
 
-    const RotationType operator*(const RotationType& B) const
+    const Quat operator*(const Quat& B) const
     {
-        const RotationType& A = *this;
-        return RotationType(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
+        const Quat& A = *this;
+        return Quat(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
                         A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
                         A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
                         A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
