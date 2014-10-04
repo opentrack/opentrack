@@ -1,6 +1,6 @@
 #pragma once
 /* Copyright (c) 2013 Stanisław Halik <sthalik@misaki.pl>
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -10,13 +10,12 @@
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include "facetracknoir/plugin-api.hpp"
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/video/video.hpp>
 #include <vector>
 #include <QString>
-#include <QIcon>
-#include <QWidget>
 #include <QElapsedTimer>
-#include <QObject>
+#include <QWidget>
 #include "facetracknoir/options.h"
 using namespace options;
 
@@ -24,7 +23,7 @@ class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void reset() override;
+    void reset();
     void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position) override;
     cv::KalmanFilter kalman;

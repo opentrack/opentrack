@@ -17,12 +17,12 @@
 #include <cmath>
 #include <QPixmap>
 
-void FunctionConfig::setTrackingActive(bool blnActive)
+void Map::setTrackingActive(bool blnActive)
 {
     activep = blnActive;
 }
 
-FunctionConfig::FunctionConfig() :
+Map::Map() :
     _mutex(QMutex::Recursive),
     data(0),
     activep(false),
@@ -31,7 +31,7 @@ FunctionConfig::FunctionConfig() :
 {
 }
 
-float FunctionConfig::getValue(float x) {
+float Map::getValue(float x) {
     QMutexLocker foo(&_mutex);
     int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
     float ret = getValueInternal(x2);
@@ -40,13 +40,13 @@ float FunctionConfig::getValue(float x) {
 	return ret;
 }
 
-bool FunctionConfig::getLastPoint(QPointF& point ) {
+bool Map::getLastPoint(QPointF& point ) {
     QMutexLocker foo(&_mutex);
 	point = last_input_value;
 	return activep;
 }
 
-float FunctionConfig::getValueInternal(int x) {
+float Map::getValueInternal(int x) {
     float sign = x < 0 ? -1 : 1;
 	x = x < 0 ? -x : x;
     float ret;
@@ -75,7 +75,7 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
 	return one.x() < two.x();
 }
 
-void FunctionConfig::reload() {
+void Map::reload() {
 	if (input.size())
 		qStableSort(input.begin(), input.end(), sortFn);
 
@@ -132,7 +132,7 @@ void FunctionConfig::reload() {
 	}
 }
 
-void FunctionConfig::removePoint(int i) {
+void Map::removePoint(int i) {
     QMutexLocker foo(&_mutex);
     if (i >= 0 && i < input.size())
     {
@@ -141,13 +141,13 @@ void FunctionConfig::removePoint(int i) {
     }
 }
 
-void FunctionConfig::addPoint(QPointF pt) {
+void Map::addPoint(QPointF pt) {
     QMutexLocker foo(&_mutex);
 	input.append(pt);
 	reload();
 }
 
-void FunctionConfig::movePoint(int idx, QPointF pt) {
+void Map::movePoint(int idx, QPointF pt) {
     QMutexLocker foo(&_mutex);
     if (idx >= 0 && idx < input.size())
     {
@@ -156,13 +156,13 @@ void FunctionConfig::movePoint(int idx, QPointF pt) {
     }
 }
 
-const QList<QPointF> FunctionConfig::getPoints() {
+const QList<QPointF> Map::getPoints() {
     QMutexLocker foo(&_mutex);
     // NB can't pass by reference
 	return input;
 }
 
-void FunctionConfig::loadSettings(QSettings& settings, const QString& title) {
+void Map::loadSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
     QPointF newPoint;
 
@@ -187,7 +187,7 @@ void FunctionConfig::loadSettings(QSettings& settings, const QString& title) {
 	reload();
 }
 
-void FunctionConfig::saveSettings(QSettings& settings, const QString& title) {
+void Map::saveSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
 	settings.beginGroup(QString("Curves-%1").arg(title));
 	int max = input.size();

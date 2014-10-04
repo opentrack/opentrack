@@ -19,7 +19,11 @@
 
 #pragma once
 
-#include <inttypes.h>
+#ifndef _MSC_VER
+#   include <inttypes.h>
+#else
+typedef unsigned __int32 uint32_t;
+#endif
 
 #define FREETRACK_HEAP "FT_SharedMem"
 #define FREETRACK_MUTEX "FT_Mutext"
@@ -54,7 +58,9 @@ typedef struct __FTData {
     float Y4;
 } FTData;
 
-typedef struct __FTAlloc {
+/* we add some shit at the end for other legacy proto, sadly */
+
+typedef struct __FTHeap {
     FTData data;
     int32_t GameID;
     unsigned char table[8];

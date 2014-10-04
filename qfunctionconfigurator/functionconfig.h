@@ -13,88 +13,55 @@
 #include <QString>
 #include <QSettings>
 #include <QMutex>
-#include "facetracknoir/plugin-api.hpp"
 #include <vector>
+#include "../facetracknoir/plugin-api.hpp"
+#include "../facetracknoir/qcopyable-mutex.hpp"
 
 #define MEMOIZE_PRECISION 100
 
-class MyMutex {
-private:
-    QMutex inner;
-    
-public:
-    QMutex* operator->() { return &inner; }
-    QMutex* operator->() const { return &const_cast<MyMutex*>(this)->inner; }
-    
-    MyMutex operator=(const MyMutex& datum)
-    {
-        auto mode =
-                datum->isRecursive()
-                ? QMutex::Recursive
-                : QMutex::NonRecursive;
-        
-        return MyMutex(mode);
-    }
-    
-    MyMutex(const MyMutex& datum)
-    {
-        *this = datum;
-    }
-    
-    MyMutex(QMutex::RecursionMode mode = QMutex::NonRecursive) :
-        inner(mode)
-    {
-    }
-    
-    QMutex* operator&()
-    {
-        return &inner;
-    }
-};
-
-class OPENTRACK_EXPORT FunctionConfig {
+class OPENTRACK_EXPORT Map {
 private:
     void reload();
     float getValueInternal(int x);
-    
+
     MyMutex _mutex;
-	QList<QPointF> input;
+    QList<QPointF> input;
     std::vector<float> data;
-	QPointF last_input_value;
+    QPointF last_input_value;
     volatile bool activep;
-	int max_x;
-	int max_y;
+    int max_x;
+    int max_y;
 public:
     int maxInput() const { return max_x; }
     int maxOutput() const { return max_y; }
-    FunctionConfig();
-    FunctionConfig(int maxx, int maxy)
+    Map();
+    Map(int maxx, int maxy)
     {
         setMaxInput(maxx);
         setMaxOutput(maxy);
     }
 
     float getValue(float x);
-	bool getLastPoint(QPointF& point);
-	void removePoint(int i);
+    bool getLastPoint(QPointF& point);
+    void removePoint(int i);
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
         input.clear();
         reload();
     }
 
-	void addPoint(QPointF pt);
-	void movePoint(int idx, QPointF pt);
-	const QList<QPointF> getPoints();
-	void setMaxInput(int MaxInput) {
-		max_x = MaxInput;
-	}
-	void setMaxOutput(int MaxOutput) {
-		max_y = MaxOutput;
-	}
+    void addPoint(QPointF pt);
+    void movePoint(int idx, QPointF pt);
+    const QList<QPointF> getPoints();
+    void setMaxInput(int MaxInput) {
+        max_x = MaxInput;
+    }
+    void setMaxOutput(int MaxOutput) {
+        max_y = MaxOutput;
+    }
 
-	void saveSettings(QSettings& settings, const QString& title);
-	void loadSettings(QSettings& settings, const QString& title);
+    void saveSettings(QSettings& settings, const QString& title);
+    void loadSettings(QSettings& settings, const QString& title);
 
-	void setTrackingActive(bool blnActive);
+    void setTrackingActive(bool blnActive);
 };

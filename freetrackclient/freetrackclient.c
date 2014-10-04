@@ -27,27 +27,27 @@
 #include <string.h>
 #include <windows.h>
 
-#include "ftnoir_protocol_ft/fttypes.h"
+#include "../ftnoir_protocol_ft/fttypes.h"
 
 #define FT_EXPORT(t) __declspec(dllexport) t __stdcall
 
 #if 0
-#include <stdio.h>
+#   include <stdio.h>
 static FILE *debug_stream = fopen("c:\\FreeTrackClient.log", "a");
-#define dbg_report(...) if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fflush(debug_stream); }
+#   define dbg_report(...) if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fflush(debug_stream); }
 #else
 #define dbg_report(...) ((void)0)
 #endif
 
 static HANDLE hFTMemMap = 0;
-static FTHeap *pMemData = 0;
-static HANDLE hFTMutex = 0;
+static FTHeap* ipc_heap = 0;
+static HANDLE ipc_mutex = 0;
 static const char* dllVersion = "1.0.0.0";
 static const char* dllProvider = "FreeTrack";
 
-static bool FTCreateMapping(void)
+static bool impl_create_mapping(void)
 {
-    if (pMemData != NULL)
+    if (ipc_heap != NULL)
         return true;
 
     hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE,
@@ -58,26 +58,27 @@ static bool FTCreateMapping(void)
                                    (LPCSTR) FREETRACK_HEAP);
 
     if (hFTMemMap == NULL)
-        return (pMemData = NULL), false;
+        return (ipc_heap = NULL), false;
 
-    pMemData = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTHeap));
-    hFTMutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
+    ipc_heap = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTHeap));
+    ipc_mutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
 
     return true;
 }
 
+#pragma comment (linker, "/export:FTGetData")
 FT_EXPORT(bool) FTGetData(FTData* data)
 {
-    if (FTCreateMapping() == false)
+    if (impl_create_mapping() == false)
         return false;
 
-    if (hFTMutex && WaitForSingleObject(hFTMutex, 16) == WAIT_OBJECT_0) {
-        if (pMemData) {
-            if (pMemData->data.DataID > (1 << 29))
-                pMemData->data.DataID = 0;
-            data->DataID = pMemData->data.DataID;
+    if (ipc_mutex && WaitForSingleObject(ipc_mutex, 16) == WAIT_OBJECT_0) {
+        if (ipc_heap) {
+            if (ipc_heap->data.DataID > (1 << 29))
+                ipc_heap->data.DataID = 0;
+            data->DataID = ipc_heap->data.DataID;
         }
-        ReleaseMutex(hFTMutex);
+        ReleaseMutex(ipc_mutex);
     }
     return true;
 }
@@ -87,17 +88,20 @@ FT_EXPORT(bool) FTGetData(FTData* data)
 // The Delphi-code from the FreeTrack repo suggest a char * as argument, so it cost me an afternoon to figure it out (and keep ArmA2 from crashing).
 // Thanks guys!
 */
+#pragma comment (linker, "/export:FTReportName")
 FT_EXPORT(void) FTReportName( int name )
 {
     dbg_report("FTReportName request (ID = %d).\n", name);
 }
 
+#pragma comment (linker, "/export:FTGetDllVersion")
 FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
     return dllVersion;
 }
 
+#pragma comment (linker, "/export:FTProvider")
 FT_EXPORT(const char*) FTProvider(void)
 {
     dbg_report("FTProvider request.\n");

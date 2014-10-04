@@ -14,11 +14,15 @@ struct Metadata
     virtual void getIcon(QIcon *icon) = 0;
 };
 
+// XXX TODO get rid of QString/QFrame to fix ABI woes
+// will lead plugins from different C++ runtimes working -sh 20141004
+
+// XXX TODO make virtual public the mess -sh 20141004
+
 struct IFilter
 {
     virtual ~IFilter() = 0;
     virtual void FilterHeadPoseData(const double *target_camera_position, double *new_camera_position) = 0;
-    virtual void reset() = 0;
 };
 inline IFilter::~IFilter() {}
 
