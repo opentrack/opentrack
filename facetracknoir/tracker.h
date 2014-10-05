@@ -37,6 +37,7 @@ private:
     std::atomic<bool> should_quit;
 
     static void get_curve(double pos, double& out, Mapping& axis);
+    static void t_compensate(const double* input, double* output, bool rz);
 protected:
     void run() override;
 public:
