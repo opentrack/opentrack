@@ -44,7 +44,7 @@ public:
             Mapping("ty","ty_alt", 100, 100, 100, 100, *opts[TY]),
             Mapping("tz","tz_alt", 100, 100, 100, 100, *opts[TZ]),
             Mapping("rx", "rx_alt", 180, 180, 180, 180, *opts[Yaw]),
-            Mapping("ry", "ry_alt", 90, 90, 90, 90, *opts[Pitch]),
+            Mapping("ry", "ry_alt", 180, 180, 180, 180, *opts[Pitch]),
             Mapping("rz", "rz_alt", 180, 180, 180, 180, *opts[Roll])
         }
     {}
