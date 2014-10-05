@@ -198,7 +198,6 @@ void Tracker::run()
     int cur_fps = 0;
     int last_fps = 0;
     cv::Point2f last_centroid;
-    bool first = true;
 
     while (!stop)
     {
@@ -284,23 +283,19 @@ void Tracker::run()
             const auto& m = markers.at(0);
             const float size = 40;
 
-            const double p = s.marker_pitch;
-            const double sq = sin(p * HT_PI / 180);
-            const double cq = cos(p * HT_PI / 180);
-
             cv::Mat obj_points(4,3,CV_32FC1);
             obj_points.at<float>(1,0)=-size + s.headpos_x;
-            obj_points.at<float>(1,1)=-size * cq + s.headpos_y;
-            obj_points.at<float>(1,2)=-size * sq + s.headpos_z;
+            obj_points.at<float>(1,1)=-size + s.headpos_y;
+            obj_points.at<float>(1,2)=-size + s.headpos_z;
             obj_points.at<float>(2,0)=size + s.headpos_x;
-            obj_points.at<float>(2,1)=-size * cq + s.headpos_y;
-            obj_points.at<float>(2,2)=-size * sq + s.headpos_z;
+            obj_points.at<float>(2,1)=-size + s.headpos_y;
+            obj_points.at<float>(2,2)=-size + s.headpos_z;
             obj_points.at<float>(3,0)=size + s.headpos_x;
-            obj_points.at<float>(3,1)=size * cq + s.headpos_y;
-            obj_points.at<float>(3,2)=size * sq + s.headpos_z;
+            obj_points.at<float>(3,1)=size + s.headpos_y;
+            obj_points.at<float>(3,2)=size + s.headpos_z;
             obj_points.at<float>(0,0)=-size + s.headpos_x;
-            obj_points.at<float>(0,1)=size * cq + s.headpos_y;
-            obj_points.at<float>(0,2)=size * sq + s.headpos_z;
+            obj_points.at<float>(0,1)=size + s.headpos_y;
+            obj_points.at<float>(0,2)=size + s.headpos_z;
 
             last_roi = cv::Rect(65535, 65535, 0, 0);
 
@@ -325,20 +320,13 @@ void Tracker::run()
                 last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
             }
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, !first, cv::ITERATIVE);
-            first = false;
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
             cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
             cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
             cv::Rodrigues(rvec, rotation_matrix);
 
             {
                 cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
-
-                if (fabs(euler[0]) + fabs(s.marker_pitch) > 60)
-                {
-                    first = true;
-                    qDebug() << "reset levmarq due to pitch breakage";
-                }
 
                 QMutexLocker lck(&mtx);
 
@@ -366,10 +354,7 @@ void Tracker::run()
             last_centroid = repr2[0];
         }
         else
-        {
             last_roi = cv::Rect(65535, 65535, 0, 0);
-            first = true;
-        }
 
         if (frame.rows > 0)
             videoWidget->update_image(frame);
@@ -454,7 +439,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
     tie_setting(s.red_only, ui.red_only);
-    tie_setting(s.marker_pitch, ui.marker_pitch);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));

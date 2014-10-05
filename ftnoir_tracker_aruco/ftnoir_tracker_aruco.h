@@ -28,7 +28,6 @@ struct settings {
     value<double> fov, headpos_x, headpos_y, headpos_z;
     value<int> camera_index, force_fps, resolution;
     value<bool> red_only;
-    value<double> marker_pitch;
     settings() :
         b(bundle("aruco-tracker")),
         fov(b, "field-of-view", 56),
@@ -38,8 +37,7 @@ struct settings {
         camera_index(b, "camera-index", 0),
         force_fps(b, "force-fps", 0),
         resolution(b, "force-resolution", 0),
-        red_only(b, "red-only", false),
-        marker_pitch(b, "marker-pitch", 0)
+        red_only(b, "red-only", false)
     {}
 };
 
