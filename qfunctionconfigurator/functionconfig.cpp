@@ -36,15 +36,15 @@ float Map::getValue(float x) {
     QMutexLocker foo(&_mutex);
     int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
     float ret = getValueInternal(x2);
-        last_input_value.setX(x);
-        last_input_value.setY(ret);
-        return ret;
+    last_input_value.setX(x);
+    last_input_value.setY(ret);
+    return ret;
 }
 
 bool Map::getLastPoint(QPointF& point ) {
     QMutexLocker foo(&_mutex);
-        point = last_input_value;
-        return activep;
+    point = last_input_value;
+    return activep;
 }
 
 float Map::getValueInternal(int x) {
@@ -73,12 +73,13 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
 }
 
 void Map::reload() {
-        if (input.size())
-                qStableSort(input.begin(), input.end(), sortFn);
+    if (input.size())
+            qStableSort(input.begin(), input.end(), sortFn);
 
-        if (input.size()) {
+    if (input.size())
+    {
         data = std::vector<float>(MEMOIZE_PRECISION * input[input.size() - 1].x());
-        
+
         const int sz = data.size();
 
         for (int i = 0; i < sz; i++)
@@ -117,7 +118,7 @@ void Map::reload() {
                 if (x >= 0 && x < sz)
                     data[x] = y;
             }
-                }
+       }
 
        float last = 0;
        for (int i = 0; i < sz; i++)
@@ -126,7 +127,7 @@ void Map::reload() {
                data[i] = last;
            last = data[i];
        }
-        }
+    }
 }
 
 void Map::removePoint(int i) {
@@ -156,42 +157,43 @@ void Map::movePoint(int idx, QPointF pt) {
 const QList<QPointF> Map::getPoints() {
     QMutexLocker foo(&_mutex);
     // NB can't pass by reference
-        return input;
+    return input;
 }
 
 void Map::loadSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
     QPointF newPoint;
+    QList<QPointF> points;
+    settings.beginGroup(QString("Curves-%1").arg(title));
 
-        QList<QPointF> points;
-        settings.beginGroup(QString("Curves-%1").arg(title));
-        
     int max = settings.value("point-count", 0).toInt();
 
-        for (int i = 0; i < max; i++) {
-                newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
-                                   settings.value(QString("point-%1-y").arg(i), 0).toFloat());
-                if (newPoint.x() > max_x) {
-                        newPoint.setX(max_x);
-                }
-                if (newPoint.y() > max_y) {
-                        newPoint.setY(max_y);
-                }
-                points.append(newPoint);
-        }
+    for (int i = 0; i < max; i++) {
+            newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
+                               settings.value(QString("point-%1-y").arg(i), 0).toFloat());
+            if (newPoint.x() > max_x) {
+                    newPoint.setX(max_x);
+            }
+            if (newPoint.y() > max_y) {
+                    newPoint.setY(max_y);
+            }
+            points.append(newPoint);
+    }
+
     settings.endGroup();
-        input = points;
-        reload();
+    input = points;
+    reload();
 }
 
 void Map::saveSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
-        settings.beginGroup(QString("Curves-%1").arg(title));
-        int max = input.size();
-        settings.setValue("point-count", max);
-        for (int i = 0; i < max; i++) {
-                settings.setValue(QString("point-%1-x").arg(i), input[i].x());
-                settings.setValue(QString("point-%1-y").arg(i), input[i].y());
+    settings.beginGroup(QString("Curves-%1").arg(title));
+    int max = input.size();
+    settings.setValue("point-count", max);
+
+    for (int i = 0; i < max; i++) {
+        settings.setValue(QString("point-%1-x").arg(i), input[i].x());
+        settings.setValue(QString("point-%1-y").arg(i), input[i].y());
     }
 
     for (int i = max; true; i++)
@@ -202,5 +204,5 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
         settings.remove(x);
         settings.remove(QString("point-%1-y").arg(i));
     }
-        settings.endGroup();
+    settings.endGroup();
 }
