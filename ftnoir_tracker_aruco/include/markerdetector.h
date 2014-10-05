@@ -52,13 +52,11 @@ class ARUCO_EXPORTS  MarkerDetector
       contour=M.contour;
       idx=M.idx;
     }
-    MarkerCandidate operator=(const  MarkerCandidate &M){
-      if (this == &M)
-          return *this;
+    MarkerCandidate & operator=(const  MarkerCandidate &M){
       (*(Marker*)this)=(*(Marker*)&M);
       contour=M.contour;
       idx=M.idx;
-      return M;
+      return *this;
     }
 
     vector<cv::Point> contour;//all the points of its contour
@@ -69,11 +67,11 @@ public:
     /**
      * See
      */
-    MarkerDetector() {}
+    MarkerDetector();
 
     /**
      */
-    ~MarkerDetector() {}
+    ~MarkerDetector();
 
     /**Detects the markers in the image passed
      *
@@ -353,5 +351,9 @@ private:
     void draw(cv::Mat out,const std::vector<Marker> &markers );
 
 };
-}
+
+
+
+
+};
 #endif

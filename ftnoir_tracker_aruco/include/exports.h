@@ -37,9 +37,9 @@ or implied, of Rafael Muñoz Salinas.
 
 
 #if (defined WIN32 || defined _WIN32 || defined WINCE)   && defined DSO_EXPORTS
-     #define ARUCO_EXPORTS __declspec(dllexport) __attribute__((visibility ("default")))
+     #define ARUCO_EXPORTS __declspec(dllexport)
 #else
-    #define ARUCO_EXPORTS __attribute__((visibility ("default")))
+    #define ARUCO_EXPORTS __attribute__ ((visibility ("default")))
 #endif
 
 

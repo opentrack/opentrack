@@ -12,8 +12,7 @@
  * originally written by Wim Vriend.
  */
 
-#include "tracker.h"
-#include "facetracknoir.h"
+#include "./tracker.h"
 #include <opencv2/core/core.hpp>
 #include <cmath>
 #include <algorithm>
@@ -49,9 +48,10 @@ void Tracker::get_curve(double pos, double& out, Mapping& axis) {
 
 static void t_compensate(double* input, double* output, bool rz)
 {
-    const auto H = input[Yaw] * M_PI / -180;
-    const auto P = input[Pitch] * M_PI / -180;
-    const auto B = input[Roll] * M_PI / 180;
+    static constexpr double pi = 3.141592653;
+    const auto H = input[Yaw] * pi / -180;
+    const auto P = input[Pitch] * pi / -180;
+    const auto B = input[Roll] * pi / 180;
 
     const auto cosH = cos(H);
     const auto sinH = sin(H);
@@ -83,15 +83,10 @@ static void t_compensate(double* input, double* output, bool rz)
 }
 
 void Tracker::run() {
-    T6DOF pose_offset, unstopped_pose;
+    Pose pose_offset, unstopped_pose;
 
     double newpose[6] = {0};
-    int sleep_ms = 15;
-
-    if (Libraries->pTracker)
-        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pTracker->preferredHz());
-
-    qDebug() << "tracker Hz:" << 1000 / sleep_ms;
+    const int sleep_ms = 3;
 
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
@@ -104,9 +99,7 @@ void Tracker::run() {
         if (should_quit)
             break;
 
-        if (Libraries->pTracker) {
-            Libraries->pTracker->GetHeadPoseData(newpose);
-        }
+        Libraries->pTracker->GetHeadPoseData(newpose);
 
         {
             QMutexLocker foo(&mtx);
@@ -130,15 +123,12 @@ void Tracker::run() {
                 if (enabledp)
                     unstopped_pose = raw_6dof;
 
-                {
+                if (Libraries->pFilter)
+                    Libraries->pFilter->FilterHeadPoseData(unstopped_pose, output_pose);
+                else
+                    output_pose = unstopped_pose;
 
-                    if (Libraries->pFilter)
-                        Libraries->pFilter->FilterHeadPoseData(unstopped_pose, output_pose);
-                    else
-                        output_pose = unstopped_pose;
-
-                    output_pose = output_pose - pose_offset;
-                }
+                output_pose = output_pose - pose_offset;
 
                 for (int i = 0; i < 6; i++)
                     get_curve(output_pose(i), output_pose(i), m(i));
@@ -147,9 +137,7 @@ void Tracker::run() {
             if (s.tcomp_p)
                 t_compensate(output_pose, output_pose, s.tcomp_tz);
 
-            if (Libraries->pProtocol) {
-                Libraries->pProtocol->sendHeadposeToGame(output_pose);
-            }
+            Libraries->pProtocol->sendHeadposeToGame(output_pose);
         }
 
         const long q = std::max(0L, sleep_ms * 1000L - std::max(0L, t.elapsed()));

@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <utils.h>
-
 
 //First 5 bytes is MD5 hash of "NaturalPoint"
 static uint8_t secret_key[] = {0x0e, 0x9a, 0x63, 0x71, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -114,10 +112,12 @@ static void game_data_close()
   free(decoded);
 }
 
+#define ltr_int_log_message(...) fprintf(stderr, __VA_ARGS__)
+
 bool get_game_data(const char *input_fname, const char *output_fname, bool from_update)
 {
   FILE *outfile = NULL;
-  if((outfile = fopen(output_fname, "w")) == NULL){
+  if((outfile = (output_fname ? fopen(output_fname, "w") : stdout)) == NULL){
     ltr_int_log_message("Can't open the output file '%s'!\n", output_fname);
     return false;
   }
@@ -147,3 +147,4 @@ bool get_game_data(const char *input_fname, const char *output_fname, bool from_
   return true;
 }
 
+int main(int argc, char** argv) { return argc > 1 && get_game_data(argv[1], NULL, false); }
