@@ -44,7 +44,7 @@ public:
 
     Pose operator+(const Pose& B) const
     {
-        const Quat q = (quat() * B.quat().inv());
+        const Quat q = quat() * B.quat();
         Pose ret = fromQuat(q);
         for (int i = TX; i < Yaw; i++)
             ret(i) = B(i);
@@ -56,7 +56,7 @@ public:
         Pose ret = *this;
         for (int i = 0; i < 6; i++)
         {
-            static constexpr double eps = 1e-5;
+            static constexpr double eps = 1e-3;
             // NB replace zero-valued elements with argument's
             if (std::abs(ret(i)) < eps)
                 ret(i) = replacement(i);
