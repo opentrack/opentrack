@@ -34,7 +34,7 @@ Map::Map() :
 
 float Map::getValue(float x) {
     QMutexLocker foo(&_mutex);
-    int x2 = (int) (std::min<float>(std::max<float>(x, -360), 360) * MEMOIZE_PRECISION);
+    int x2 = x * (double) MEMOIZE_PRECISION;
     float ret = getValueInternal(x2);
     last_input_value.setX(x);
     last_input_value.setY(ret);
@@ -55,7 +55,7 @@ float Map::getValueInternal(int x) {
     if (sz == 0)
         ret = 0;
     else
-        ret = std::max(std::min(x, sz-1), 0);
+        ret = data[std::max(std::min(x, sz-1), 0)];
     return ret * sign;
 }
 
