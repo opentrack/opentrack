@@ -10,14 +10,15 @@
 #include <QPainterPath>
 #include <QDebug>
 #include <QMutex>
-#include "plugin-support.h"
-#include "mappings.hpp"
+#include "./plugin-support.h"
+#include "./mappings.hpp"
+#include "./pose.hpp"
 
 #include <vector>
 #include <atomic>
 
 #include <qfunctionconfigurator/functionconfig.h>
-#include "tracker_types.h"
+#include "./quat.hpp"
 #include "facetracknoir/main-settings.hpp"
 #include "facetracknoir/options.h"
 #include "facetracknoir/timer.hpp"
@@ -30,7 +31,7 @@ private:
     // XXX can be const-cast when functionconfig const-correct -sh 20141004
     Mappings& m;
     Timer t;
-    T6DOF output_pose, raw_6dof;
+    Pose output_pose, raw_6dof;
     std::atomic<bool> centerp;
     std::atomic<bool> enabledp;
     std::atomic<bool> should_quit;

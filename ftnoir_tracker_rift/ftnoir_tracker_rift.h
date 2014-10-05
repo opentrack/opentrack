@@ -25,15 +25,14 @@ struct settings {
 class Rift_Tracker : public ITracker
 {
 public:
-	Rift_Tracker();
+    Rift_Tracker();
     ~Rift_Tracker() override;
 
     void StartTracker(QFrame *) override;
     void GetHeadPoseData(double *data) override;
-    int preferredHz() override { return 250; }
     volatile bool should_quit;
 protected:
-	void run();												// qthread override run method
+    void run();												// qthread override run method
 
 private:
     double old_yaw;
@@ -45,32 +44,32 @@ class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-	explicit TrackerControls();
+    explicit TrackerControls();
 
     void registerTracker(ITracker *) {}
-	void unRegisterTracker() {}
+    void unRegisterTracker() {}
 
 private:
-	Ui::UIRiftControls ui;
+    Ui::UIRiftControls ui;
     settings s;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-	FTNoIR_TrackerDll();
-	~FTNoIR_TrackerDll();
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    FTNoIR_TrackerDll();
+    ~FTNoIR_TrackerDll();
+    void getFullName(QString *strToBeFilled);
+    void getShortName(QString *strToBeFilled);
+    void getDescription(QString *strToBeFilled);
+    void getIcon(QIcon *icon);
 
 private:
-	QString trackerFullName;									// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
+    QString trackerFullName;									// Trackers' name and description
+    QString trackerShortName;
+    QString trackerDescription;
 };
 

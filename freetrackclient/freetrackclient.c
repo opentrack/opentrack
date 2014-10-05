@@ -18,6 +18,10 @@
  * * created by the FreeTrack developers.                                           *
  */
 
+#ifndef _MSC_VER
+#   warning "expect misnamed symbols"
+#endif
+
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 

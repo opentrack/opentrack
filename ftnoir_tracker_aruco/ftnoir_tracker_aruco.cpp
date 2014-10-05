@@ -5,16 +5,15 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_aruco.h"
-#include "ui_aruco-trackercontrols.h"
-#include "facetracknoir/plugin-api.hpp"
-#include <QMutexLocker>
-#include "include/markerdetector.h"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <QMutexLocker>
+#include "./include/markerdetector.h"
+#include "ftnoir_tracker_aruco.h"
+#include "facetracknoir/plugin-api.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #if defined(_WIN32)
 #   undef NOMINMAX

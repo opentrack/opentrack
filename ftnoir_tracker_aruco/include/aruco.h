@@ -26,12 +26,12 @@ The views and conclusions contained in the software and documentation are those 
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of Rafael Muñoz Salinas.
 
-
-
+ 
+ 
  \mainpage ArUco: Augmented Reality library from the University of Cordoba
 
 
-ArUco is a minimal C++ library for detection of Augmented Reality markers based on OpenCv exclusively.
+ArUco is a minimal C++ library for detection of Augmented Reality markers based on OpenCv exclusively.  
 
 It is an educational project to show student how to detect augmented reality markers and it is provided under BSD license.
 
@@ -54,11 +54,11 @@ Aruco allows the possibility to employ board. Boards are markers composed by an 
 
 The library comes with five applications that will help you to learn how to use the library:
  - aruco_create_marker: which creates marker and saves it in a jpg file you can print.
- - aruco_simple : simple test aplication that detects the markers in a image
+ - aruco_simple : simple test aplication that detects the markers in a image 
  - aruco_test: this is the main application for detection. It reads images either from the camera of from a video and detect markers. Additionally, if you provide the intrinsics of the camera(obtained by OpenCv calibration) and the size of the marker in meters, the library calculates the marker intrinsics so that you can easily create your AR applications.
  - aruco_test_gl: shows how to use the library AR applications using OpenGL for rendering
  - aruco_create_board: application that helps you to create a board
- - aruco_simple_board: simple test aplication that detects a board of markers in a image
+ - aruco_simple_board: simple test aplication that detects a board of markers in a image 
  - aruco_test_board: application that detects boards
  - aruco_test_board_gl: application that detects boards and uses OpenGL to draw
 
@@ -66,7 +66,7 @@ The library comes with five applications that will help you to learn how to use 
 
 The ArUco library contents are divided in two main directories. The src directory, which contains the library itself. And the utils directory which contains the applications.
 
-The library main classes are:
+The library main classes are: 
    - aruco::CameraParameters: represent the information of the camera that captures the images. Here you must set the calibration info.
    - aruco::Marker: which represent a marker detected in the image
    - aruco::MarkerDetector: that is in charge of deteting the markers in a image Detection is done by simple calling the member funcion ArMarkerDetector::detect(). Additionally, the classes contain members to create the required matrices for rendering using OpenGL. See aruco_test_gl for details
@@ -101,33 +101,34 @@ The library has been compiled using MinGW and codeblocks. Below I describe the b
       -# Download the source code and compile it using cmake and codeblocks. Note: install the library in C:\ if you want it to be easily detected by cmake afterwards
   - step 4) aruco
      -# Download and decompress.
-     -# Open cmake gui application and set the path to the main library directory and also set a path where the project is going to be built.
+     -# Open cmake gui application and set the path to the main library directory and also set a path where the project is going to be built. 
      -# Generate the codeblock project.
      -# Open the project with codeblock and compile then, install. The programs will be probably generated into the bin directory
 
 OpenGL: by default, the mingw version installed has not the glut library. So, the opengl programs are not compiled.  If you want to compile with OpenGL support, you must install glut, or prefereably freeglut.
-Thus,
-  - Download the library (http://www.martinpayne.me.uk/software/development/GLUT/freeglut-MinGW.zip) for mingw.
-  - Decompress in a directory X.
+Thus, 
+  - Download the library (http://www.martinpayne.me.uk/software/development/GLUT/freeglut-MinGW.zip) for mingw. 
+  - Decompress in a directory X. 
   - Then, rerun cmake setting the variable GLU_PATH to that directory (>cmake .. -DGLUT_PATH="C:\X")
   - Finally, recompile and test. Indeed, you should move the freeglut.dll to the directory with the binaries or to any other place in the PATH.
 
 
 CONCLUSION: Move to Linux, things are simpler :P
 
-
-\section Testing
+ 
+\section Testing 
 
 For testing the applications, the library provides videos and the corresponding camera parameters of these videos. Into the directories you will find information on how to run the examples.
-
+ 
 \section Final Notes
 
  - REQUIREMENTS: OpenCv >= 2.1.0. and OpenGL for (aruco_test_gl and aruco_test_board_gl)
  - CONTACT: Rafael Munoz-Salinas: rmsalinas@uco.es
  - This libary is free software and come with no guaratee!
-
+ 
 */
 
 #include "markerdetector.h"
+#include "boarddetector.h"
 #include "cvdrawingutils.h"
 
