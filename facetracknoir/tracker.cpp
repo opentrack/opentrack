@@ -46,7 +46,7 @@ void Tracker::get_curve(double pos, double& out, Mapping& axis) {
     out += axis.opts.zero;
 }
 
-static void t_compensate(double* input, double* output, bool rz)
+void Tracker::t_compensate(const double* input, double* output, bool rz)
 {
     static constexpr double pi = 3.141592653;
     const auto H = input[Yaw] * pi / -180;
@@ -72,14 +72,14 @@ static void t_compensate(double* input, double* output, bool rz)
         cosH * cosP,
     };
 
-    cv::Mat rmat(3, 3, CV_64F, foo);
-    const cv::Mat tvec(3, 1, CV_64F, input);
-    cv::Mat ret = rmat * tvec;
+    const cv::Matx33d rmat(foo);
+    const cv::Vec3d tvec(input);
+    const cv::Vec3d ret = rmat * tvec;
 
     const int max = !rz ? 3 : 2;
 
     for (int i = 0; i < max; i++)
-        output[i] = ret.at<double>(i);
+        output[i] = ret(i);
 }
 
 void Tracker::run() {
@@ -92,58 +92,59 @@ void Tracker::run() {
     (void) timeBeginPeriod(1);
 #endif
 
-    for (;;)
+    while (!should_quit)
     {
         t.start();
 
-        if (should_quit)
-            break;
-
         Libraries->pTracker->GetHeadPoseData(newpose);
+
+        Pose final_raw, final_mapped;
+
+        for (int i = 0; i < 6; i++)
+        {
+            auto& axis = m(i);
+            int k = axis.opts.src;
+            if (k < 0 || k >= 6)
+                continue;
+            // not really raw, after axis remap -sh
+            final_raw(i) = newpose[k];
+        }
+
+        if (centerp)  {
+            centerp = false;
+            pose_offset = final_raw;
+        }
+
+        {
+            if (enabledp)
+                unstopped_pose = final_raw;
+
+            if (Libraries->pFilter)
+                Libraries->pFilter->FilterHeadPoseData(unstopped_pose, final_mapped);
+            else
+                final_mapped = unstopped_pose;
+
+            final_mapped = final_mapped - pose_offset;
+
+            for (int i = 0; i < 6; i++)
+                get_curve(final_mapped(i), final_mapped(i), m(i));
+        }
+
+        if (s.tcomp_p)
+            t_compensate(final_mapped, final_mapped, s.tcomp_tz);
+
+        Libraries->pProtocol->sendHeadposeToGame(final_mapped);
 
         {
             QMutexLocker foo(&mtx);
-
-            for (int i = 0; i < 6; i++)
-            {
-                auto& axis = m(i);
-                int k = axis.opts.src;
-                if (k < 0 || k >= 6)
-                    continue;
-                // not really raw, after axis remap -sh
-                raw_6dof(i) = newpose[k];
-            }
-
-            if (centerp)  {
-                centerp = false;
-                pose_offset = raw_6dof;
-            }
-
-            {
-                if (enabledp)
-                    unstopped_pose = raw_6dof;
-
-                if (Libraries->pFilter)
-                    Libraries->pFilter->FilterHeadPoseData(unstopped_pose, output_pose);
-                else
-                    output_pose = unstopped_pose;
-
-                output_pose = output_pose - pose_offset;
-
-                for (int i = 0; i < 6; i++)
-                    get_curve(output_pose(i), output_pose(i), m(i));
-            }
-
-            if (s.tcomp_p)
-                t_compensate(output_pose, output_pose, s.tcomp_tz);
-
-            Libraries->pProtocol->sendHeadposeToGame(output_pose);
+            output_pose = final_mapped;
+            raw_6dof = final_raw;
         }
 
-        const long q = std::max(0L, sleep_ms * 1000L - std::max(0L, t.elapsed()));
-
+        const long q = 1000L * std::max(0L, sleep_ms - t.elapsed_ms());
         usleep(q);
     }
+
 #if defined(_WIN32)
     (void) timeEndPeriod(1);
 #endif
