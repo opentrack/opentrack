@@ -14,8 +14,9 @@
 #include <QtAlgorithms>
 #include <QtAlgorithms>
 #include <QSettings>
-#include <cmath>
 #include <QPixmap>
+#include <cmath>
+#include <algorithm>
 
 void Map::setTrackingActive(bool blnActive)
 {
@@ -48,18 +49,14 @@ bool Map::getLastPoint(QPointF& point ) {
 
 float Map::getValueInternal(int x) {
     float sign = x < 0 ? -1 : 1;
-    x = x < 0 ? -x : x;
+    x = fabs(x);
     float ret;
     int sz = data.size();
-        if (sz == 0)
-                ret = 0;
-        else if (x < 0)
-                ret = 0;
-        else if (x < sz && x >= 0)
-                ret = data[x];
-        else
-                ret = data[sz - 1];
-        return ret * sign;
+    if (sz == 0)
+        ret = 0;
+    else
+        ret = std::max(std::min(x, sz-1), 0);
+    return ret * sign;
 }
 
 static __inline QPointF ensureInBounds(QList<QPointF> points, int i) {
