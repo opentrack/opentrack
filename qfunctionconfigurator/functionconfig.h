@@ -17,10 +17,10 @@
 #include "../facetracknoir/plugin-api.hpp"
 #include "../facetracknoir/qcopyable-mutex.hpp"
 
-#define MEMOIZE_PRECISION 100
 
 class OPENTRACK_EXPORT Map {
 private:
+    static constexpr long MEMOIZE_PRECISION = 25;
     void reload();
     float getValueInternal(int x);
 
