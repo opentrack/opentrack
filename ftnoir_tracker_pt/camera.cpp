@@ -137,7 +137,7 @@ bool Camera::get_frame(float dt, cv::Mat* frame)
 	if (new_frame)
 	{
 		dt_mean = dt_smoothing_const * dt_mean + (1.0 - dt_smoothing_const) * dt_valid;
-		cam_info.fps = 1.0 / dt_mean;
+		cam_info.fps = dt_mean > 1e-3 ? 1.0 / dt_mean : 0;
 		dt_valid = 0;
 	}
 	return new_frame;
