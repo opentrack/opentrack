@@ -50,18 +50,14 @@ void Tracker::reset_command(Command command)
 
 void Tracker::run()
 {
-	qDebug()<< "pt: thread started";
-
 #ifdef PT_PERF_LOG
 	QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
 	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 	QTextStream log_stream(&log_file);
 #endif
     time.start();
-	while(1)
+	while((commands & ABORT) == 0)
 	{   
-        if (commands & ABORT) break;
-        commands = 0;
         apply_inner();
         const double dt = time.start() * 1e-9;
         const bool new_frame = camera.get_frame(dt, &frame);
