@@ -91,7 +91,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
     pProtocolDialog(nullptr),
     pFilterDialog(nullptr),
     shortcuts_widget(nullptr),
-    mapping_widget(new CurveConfigurationDialog(pose, s, this)),
+    mapping_widget(nullptr),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     looping(0),
     video_frame_layout(new QVBoxLayout()),
@@ -444,8 +444,10 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
     shortcuts_widget->raise();
 }
 void FaceTrackNoIR::showCurveConfiguration() {
-    if (!mapping_widget)
-        mapping_widget = new CurveConfigurationDialog(pose, s, this);
+    if (mapping_widget)
+        delete mapping_widget;
+    
+    mapping_widget = new MapWidget(pose, s, this);
 
     mapping_widget->show();
     mapping_widget->raise();

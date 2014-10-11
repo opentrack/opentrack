@@ -100,7 +100,7 @@ private:
     IFilterDialog* pFilterDialog;
 
     QWidget *shortcuts_widget;
-    CurveConfigurationDialog* mapping_widget;
+    MapWidget* mapping_widget;
 
     void createIconGroupBox();
     void loadSettings();
