@@ -33,34 +33,12 @@ public:
         return ret;
     }
 
-    Pose operator-(const Pose& B) const
+    Pose operator&(const Pose& B) const
     {
-        const Quat q = (quat() * B.quat().inv());
+        const Quat q = quat() * B.quat().inv();
         Pose ret = fromQuat(q);
-        for (int i = TX; i < Yaw; i++)
-            ret(i) = B(i);
-        return ret;
-    }
-
-    Pose operator+(const Pose& B) const
-    {
-        const Quat q = quat() * B.quat();
-        Pose ret = fromQuat(q);
-        for (int i = TX; i < Yaw; i++)
-            ret(i) = B(i);
-        return ret;
-    }
-
-    Pose operator|(const Pose& replacement) const
-    {
-        Pose ret = *this;
-        for (int i = 0; i < 6; i++)
-        {
-            static constexpr double eps = 1e-3;
-            // NB replace zero-valued elements with argument's
-            if (std::abs(ret(i)) < eps)
-                ret(i) = replacement(i);
-        }
+        for (int i = TX; i < TX + 3; i++)
+            ret(i) = axes[i] - B.axes[i];
         return ret;
     }
 };
