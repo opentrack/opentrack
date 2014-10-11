@@ -1,27 +1,19 @@
-#ifndef __TRACKER_H__
-#define __TRACKER_H__
+#pragma once
 
-#include <QThread>
-#include <QMessageBox>
-#include <QLineEdit>
-#include <QPoint>
-#include <QWaitCondition>
-#include <QList>
-#include <QPainterPath>
-#include <QDebug>
-#include <QMutex>
+#include <atomic>
+#include <vector>
+
+#include "./timer.hpp"
 #include "./plugin-support.h"
 #include "./mappings.hpp"
 #include "./pose.hpp"
 
-#include <vector>
-#include <atomic>
+#include "../qfunctionconfigurator/functionconfig.h"
+#include "./main-settings.hpp"
+#include "./options.h"
 
-#include <qfunctionconfigurator/functionconfig.h>
-#include "./quat.hpp"
-#include "facetracknoir/main-settings.hpp"
-#include "facetracknoir/options.h"
-#include "facetracknoir/timer.hpp"
+#include <QMutex>
+#include <QThread>
 
 class Tracker : protected QThread {
     Q_OBJECT
@@ -46,7 +38,6 @@ public:
 
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
-    void center() { centerp.store(true); }
     void toggle_enabled() { enabledp.store(!enabledp.load()); }
+    void center() { centerp.store(!centerp.load()); }
 };
-#endif
