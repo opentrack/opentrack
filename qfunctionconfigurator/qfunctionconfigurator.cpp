@@ -10,20 +10,11 @@
 #include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>
 #include <QPaintEvent>
-#include <QPainterPathStroker>
-#include <QPainterPath>
-#include <QBrush>
-#include <QFileDialog>
 #include <QPen>
-#include <QMessageBox>
-#include <QImage>
 #include <QPixmap>
 #include <QTimer>
-#include <QtDebug>
 #include <cmath>
-#include <QTabWidget>
-#include <QTabBar>
-#include <QFontMetrics>
+#include <algorithm>
 
 static const int pointSize = 5;
 
@@ -57,8 +48,7 @@ void QFunctionConfigurator::drawBackground()
     
     QPainter painter(&_background);
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
-    painter.setRenderHint(QPainter::Antialiasing);
-    
+
     QColor bg_color(112, 154, 209);
     painter.fillRect(pixel_bounds, bg_color);
 
@@ -140,8 +130,6 @@ void QFunctionConfigurator::drawFunction()
 
     _function = QPixmap(_background);
     QPainter painter(&_function);
-
-    painter.save();
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QList<QPointF> points = _config->getPoints();
@@ -164,13 +152,11 @@ void QFunctionConfigurator::drawFunction()
         drawLine(&painter, prev, cur, pen);
         prev = cur;
     }
-    painter.restore();
 }
 
 void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
 
     if (_background.isNull())
         drawBackground();
@@ -179,6 +165,7 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         _draw_function = false;
         drawFunction();
     }
+    
     p.drawPixmap(e->rect(), _function);
 
     if (_config) {
@@ -246,10 +233,9 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
         moving_control_point_idx = -1;
         if (_config) {
             for (int i = 0; i < points.size(); i++) {
-                if ( point_within_pixel(points[i], e->pos() ) ) {
+                if (point_within_pixel(points[i], e->pos())) {
                     bTouchingPoint = true;
                     moving_control_point_idx = i;
-                    timer.restart();
                     break;
                 }
             }
@@ -263,7 +249,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
         if (_config) {
             int found_pt = -1;
             for (int i = 0; i < points.size(); i++) {
-                if ( point_within_pixel(points[i], e->pos() ) ) {
+                if (point_within_pixel(points[i], e->pos())) {
                     found_pt = i;
                     break;
                 }
@@ -284,21 +270,31 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
     if (!_config)
         return;
     
-    static constexpr int min_refresh_delay = 25;
+    static constexpr int min_refresh_delay = 12;
     
     if (timer.isValid() && timer.elapsed() < min_refresh_delay)
         return;
     
-    static constexpr int refresh_delay = 50;
+    static constexpr int refresh_delay = 17;
     QList<QPointF> points = _config->getPoints();
 
-    if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
+    if (moving_control_point_idx != -1 && moving_control_point_idx < points.size()) {
         setCursor(Qt::ClosedHandCursor);
-
-        if (timer.isValid() && timer.elapsed() > refresh_delay)
+        
+        bool overlap = false;
+        
+        QPointF new_pt = pixel_coord_to_point(e->pos());
+        
+        if (moving_control_point_idx + 1 < points.size())
+            overlap |= new_pt.x() > points[moving_control_point_idx+1].x();
+        if (moving_control_point_idx != 0)
+            overlap |= new_pt.x() < points[moving_control_point_idx-1].x();
+        
+        if (overlap)
+            moving_control_point_idx = -1;
+        else if (timer.isValid() && timer.elapsed() > refresh_delay)
         {
             timer.restart();
-            QPointF new_pt = pixel_coord_to_point(e->pos());
             points[moving_control_point_idx] = new_pt;
             _config->movePoint(moving_control_point_idx, new_pt);
             _draw_function = true;
@@ -326,11 +322,9 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
     if (!_config)
         return;
-    
-    QList<QPointF> points = _config->getPoints();
 
     if (e->button() == Qt::LeftButton) {
-        timer.invalidate();
+        QList<QPointF> points = _config->getPoints();
         if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
             if (_config) {
                 _config->movePoint(moving_control_point_idx, pixel_coord_to_point(e->pos()));
@@ -338,10 +332,27 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
         }
         setCursor(Qt::ArrowCursor);
         moving_control_point_idx = -1;
+        
+        _draw_function = true;
+        update();
     }
+}
 
+void QFunctionConfigurator::update_range()
+{
+    if (!_config)
+        return;
+    
+    const double w = width(), h = height();
+    const double mwl = 40, mhl = 20;
+    const double mwr = 15, mhr = 35;
+    
+    pixel_bounds = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
+    c = QPointF(pixel_bounds.width() / _config->maxInput(), pixel_bounds.height() / _config->maxOutput());
     _draw_function = true;
-    update();
+    
+    _background = QPixmap();
+    _function = QPixmap();
 }
 
 bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
@@ -382,5 +393,5 @@ QPointF QFunctionConfigurator::point_to_pixel(const QPointF& point)
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
     update_range();
-    repaint();
+    update();
 }

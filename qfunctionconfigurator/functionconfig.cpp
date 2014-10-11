@@ -24,7 +24,6 @@ void Map::setTrackingActive(bool blnActive)
 
 Map::Map() :
     _mutex(QMutex::Recursive),
-    data(0),
     activep(false),
     max_x(0),
     max_y(0)
@@ -48,13 +47,13 @@ bool Map::getLastPoint(QPointF& point ) {
 
 float Map::getValueInternal(int x) {
     float sign = x < 0 ? -1 : 1;
-    x = std::abs((double) x);
+    x = std::abs(x);
     float ret;
-    int sz = data.size();
+    int sz = cur.data.size();
     if (sz == 0)
         ret = 0;
     else
-        ret = data[std::max(std::min(x, sz-1), 0)];
+        ret = cur.data[std::max(std::min(x, sz-1), 0)];
     return ret * sign;
 }
 
@@ -72,91 +71,99 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
 }
 
 void Map::reload() {
-    if (input.size())
-            qStableSort(input.begin(), input.end(), sortFn);
-
-    if (input.size())
+    if (cur.input.size())
     {
+        auto& input = cur.input;
+        auto& data = cur.data;
+        
+        qStableSort(input.begin(), input.end(), sortFn);
         data = std::vector<float>(MEMOIZE_PRECISION * input[input.size() - 1].x());
-
+        
         const int sz = data.size();
-
+        
         for (int i = 0; i < sz; i++)
-                data[i] = -1;
-
-                for (int k = 0; k < input[0].x() * MEMOIZE_PRECISION; k++) {
+            data[i] = -1;
+        
+        for (int k = 0; k < input[0].x() * MEMOIZE_PRECISION; k++) {
             if (k < sz)
                 data[k] = input[0].y() * k / (input[0].x() * MEMOIZE_PRECISION);
         }
-
-       for (int i = 0; i < sz; i++) {
+        
+        for (int i = 0; i < sz; i++) {
             QPointF p0 = ensureInBounds(input, i - 1);
             QPointF p1 = ensureInBounds(input, i);
             QPointF p2 = ensureInBounds(input, i + 1);
             QPointF p3 = ensureInBounds(input, i + 2);
-
+            
             int end = std::min<int>(sz, p2.x() * MEMOIZE_PRECISION);
             int start = p1.x() * MEMOIZE_PRECISION;
-
+            
             for (int j = start; j < end; j++) {
                 double t = (j - start) / (double) (end - start);
                 double t2 = t*t;
                 double t3 = t*t*t;
-
+                
                 int x = .5 * ((2. * p1.x()) +
                               (-p0.x() + p2.x()) * t +
                               (2. * p0.x() - 5. * p1.x() + 4. * p2.x() - p3.x()) * t2 +
                               (-p0.x() + 3. * p1.x() - 3. * p2.x() + p3.x()) * t3)
                         * MEMOIZE_PRECISION;
-
+                
                 float y = .5 * ((2. * p1.y()) +
-                                 (-p0.y() + p2.y()) * t +
-                                 (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
-                                 (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
-
+                                (-p0.y() + p2.y()) * t +
+                                (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
+                                (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
+                
                 if (x >= 0 && x < sz)
                     data[x] = y;
             }
-       }
-
-       float last = 0;
-       for (int i = 0; i < sz; i++)
-       {
-           if (data[i] <= 0)
-               data[i] = last;
-           last = data[i];
-       }
+        }
+        
+        float last = 0;
+        for (int i = 0; i < sz; i++)
+        {
+            if (data[i] <= 0)
+                data[i] = last;
+            last = data[i];
+        }
     }
+    else
+        cur.data.clear();
 }
 
 void Map::removePoint(int i) {
     QMutexLocker foo(&_mutex);
-    if (i >= 0 && i < input.size())
+    if (i >= 0 && i < cur.input.size())
     {
-        input.removeAt(i);
+        cur.input.removeAt(i);
         reload();
     }
 }
 
 void Map::addPoint(QPointF pt) {
     QMutexLocker foo(&_mutex);
-        input.append(pt);
+        cur.input.append(pt);
         reload();
 }
 
 void Map::movePoint(int idx, QPointF pt) {
     QMutexLocker foo(&_mutex);
-    if (idx >= 0 && idx < input.size())
+    if (idx >= 0 && idx < cur.input.size())
     {
-        input[idx] = pt;
+        cur.input[idx] = pt;
         reload();
     }
 }
 
 const QList<QPointF> Map::getPoints() {
     QMutexLocker foo(&_mutex);
-    // NB can't pass by reference
-    return input;
+    return cur.input;
+}
+
+void Map::invalidate_unsaved_settings()
+{
+    cur = saved;
+    reload();
 }
 
 void Map::loadSettings(QSettings& settings, const QString& title) {
@@ -180,19 +187,20 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     }
 
     settings.endGroup();
-    input = points;
+    cur.input = points;
     reload();
+    saved = cur;
 }
 
 void Map::saveSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
     settings.beginGroup(QString("Curves-%1").arg(title));
-    int max = input.size();
+    int max = cur.input.size();
     settings.setValue("point-count", max);
 
     for (int i = 0; i < max; i++) {
-        settings.setValue(QString("point-%1-x").arg(i), input[i].x());
-        settings.setValue(QString("point-%1-y").arg(i), input[i].y());
+        settings.setValue(QString("point-%1-x").arg(i), cur.input[i].x());
+        settings.setValue(QString("point-%1-y").arg(i), cur.input[i].y());
     }
 
     for (int i = max; true; i++)
@@ -203,5 +211,8 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
         settings.remove(x);
         settings.remove(QString("point-%1-y").arg(i));
     }
+    
+    saved = cur;
+        
     settings.endGroup();
 }

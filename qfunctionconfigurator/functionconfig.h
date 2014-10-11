@@ -20,17 +20,22 @@
 
 class OPENTRACK_EXPORT Map {
 private:
+    struct State {
+        QList<QPointF> input;
+        std::vector<float> data;        
+    };
+    
     static constexpr long MEMOIZE_PRECISION = 25;
     void reload();
     float getValueInternal(int x);
 
     MyMutex _mutex;
-    QList<QPointF> input;
-    std::vector<float> data;
     QPointF last_input_value;
     volatile bool activep;
     int max_x;
     int max_y;
+    
+    State cur, saved;
 public:
     int maxInput() const { return max_x; }
     int maxOutput() const { return max_y; }
@@ -46,7 +51,7 @@ public:
     void removePoint(int i);
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
-        input.clear();
+        cur.input.clear();
         reload();
     }
 
@@ -62,6 +67,7 @@ public:
 
     void saveSettings(QSettings& settings, const QString& title);
     void loadSettings(QSettings& settings, const QString& title);
+    void invalidate_unsaved_settings();
 
     void setTrackingActive(bool blnActive);
 };

@@ -435,12 +435,6 @@
         </property>
         <item row="0" column="0">
          <widget class="QPushButton" name="btnEditCurves">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
           <property name="text">
            <string>Mapping</string>
           </property>
@@ -458,12 +452,6 @@
         </item>
         <item row="1" column="0">
          <widget class="QPushButton" name="btnShortcuts">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
           <property name="text">
            <string>Keys</string>
           </property>

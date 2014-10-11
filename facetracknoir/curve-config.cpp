@@ -1,7 +1,8 @@
 #include "./facetracknoir.h"
 #include "./curve-config.h"
 #include "./main-settings.hpp"
-CurveConfigurationDialog::CurveConfigurationDialog(Mappings& m, main_settings& s, QWidget *parent) : QWidget(parent, Qt::Dialog),
+MapWidget::MapWidget(Mappings& m, main_settings& s, QWidget *parent) :
+    QWidget(parent, Qt::Dialog),
     m(m)
 {
     ui.setupUi( this );
@@ -82,16 +83,12 @@ CurveConfigurationDialog::CurveConfigurationDialog(Mappings& m, main_settings& s
     tie_setting(s.a_z.src, ui.src_z);
 }
 
-void CurveConfigurationDialog::doOK() {
-    save();
-    this->close();
-}
-
-void CurveConfigurationDialog::doCancel() {
-    m.load_mappings();
-    this->close();
-}
-
-void CurveConfigurationDialog::save() {
+void MapWidget::doOK() {
     m.save_mappings();
+    this->close();
+}
+
+void MapWidget::doCancel() {
+    m.invalidate_unsaved();
+    this->close();
 }

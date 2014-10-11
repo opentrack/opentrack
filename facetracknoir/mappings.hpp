@@ -76,4 +76,13 @@ public:
             axes[i].curveAlt.saveSettings(iniFile, axes[i].name2);
         }
     }
+    
+    void invalidate_unsaved()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            axes[i].curve.invalidate_unsaved_settings();
+            axes[i].curveAlt.invalidate_unsaved_settings();
+        }
+    }
 };

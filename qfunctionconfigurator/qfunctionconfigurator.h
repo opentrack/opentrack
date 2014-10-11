@@ -46,21 +46,7 @@ private:
 protected:
 	virtual void resizeEvent(QResizeEvent *);
 private:
-    void update_range() {
-        if (!_config)
-            return;
-        
-        const double w = width(), h = height();
-        const double mwl = 40, mhl = 20;
-        const double mwr = 15, mhr = 35;
-        
-        pixel_bounds = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
-        c = QPointF(pixel_bounds.width() / _config->maxInput(), pixel_bounds.height() / _config->maxOutput());
-        _draw_function = true;
-        
-        _background = QPixmap();
-        _function = QPixmap();
-    }
+    void update_range();
 
     QPointF pixel_coord_to_point (const QPointF& point);
     QPointF point_to_pixel (const QPointF& point);
