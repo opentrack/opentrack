@@ -1,5 +1,5 @@
 #pragma once
-#include <time.h>
+#include <ctime>
 #if defined (_WIN32)
 #   include <windows.h>
 static inline void opentrack_clock_gettime(int, struct timespec* ts)
