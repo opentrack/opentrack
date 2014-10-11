@@ -98,7 +98,7 @@ void Tracker::run() {
 
         Libraries->pTracker->GetHeadPoseData(newpose);
 
-        Pose final_raw, final_mapped;
+        Pose final_raw, filtered;
 
         for (int i = 0; i < 6; i++)
         {
@@ -110,34 +110,34 @@ void Tracker::run() {
             final_raw(i) = newpose[k];
         }
 
-        if (centerp)  {
-            centerp = false;
-            pose_offset = final_raw;
-        }
-
         {
             if (enabledp)
                 unstopped_pose = final_raw;
 
             if (Libraries->pFilter)
-                Libraries->pFilter->FilterHeadPoseData(unstopped_pose, final_mapped);
+                Libraries->pFilter->FilterHeadPoseData(unstopped_pose, filtered);
             else
-                final_mapped = unstopped_pose;
+                filtered = unstopped_pose;
+            
+            if (centerp)  {
+                centerp = false;
+                pose_offset = filtered;
+            }
 
-            final_mapped = final_mapped - pose_offset;
+            filtered = filtered & pose_offset;
 
             for (int i = 0; i < 6; i++)
-                get_curve(final_mapped(i), final_mapped(i), m(i));
+                get_curve(filtered(i), filtered(i), m(i));
         }
 
         if (s.tcomp_p)
-            t_compensate(final_mapped, final_mapped, s.tcomp_tz);
+            t_compensate(filtered, filtered, s.tcomp_tz);
 
-        Libraries->pProtocol->sendHeadposeToGame(final_mapped);
+        Libraries->pProtocol->sendHeadposeToGame(filtered);
 
         {
             QMutexLocker foo(&mtx);
-            output_pose = final_mapped;
+            output_pose = filtered;
             raw_6dof = final_raw;
         }
 
