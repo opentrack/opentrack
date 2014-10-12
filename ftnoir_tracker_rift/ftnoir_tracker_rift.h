@@ -27,13 +27,8 @@ class Rift_Tracker : public ITracker
 public:
     Rift_Tracker();
     ~Rift_Tracker() override;
-
     void StartTracker(QFrame *) override;
     void GetHeadPoseData(double *data) override;
-    volatile bool should_quit;
-protected:
-    void run();												// qthread override run method
-
 private:
     double old_yaw;
     ovrHmd hmd;

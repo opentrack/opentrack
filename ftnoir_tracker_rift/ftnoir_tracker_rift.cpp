@@ -7,8 +7,7 @@
 
 using namespace OVR;
 
-Rift_Tracker::Rift_Tracker() :
-    should_quit(false), old_yaw(0), hmd(nullptr)
+Rift_Tracker::Rift_Tracker() : old_yaw(0), hmd(nullptr)
 {
 }
 
@@ -28,6 +27,8 @@ void Rift_Tracker::StartTracker(QFrame*)
     }
     else
     {
+        // XXX need change ITracker et al api to allow for failure reporting
+        // this qmessagebox doesn't give any relevant details either -sh 20141012
         QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
     }
 }
