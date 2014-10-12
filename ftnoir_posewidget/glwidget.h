@@ -56,8 +56,7 @@ public:
     ~GLWidget();
     void rotateBy(double xAngle, double yAngle, double zAngle);
 protected:
-    void paintEvent ( QPaintEvent * event );
-
+    void paintEvent ( QPaintEvent * event ) override;
 private:
     Point project(const Vec3f& point) {
         Point rect;
