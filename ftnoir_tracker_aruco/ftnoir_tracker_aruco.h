@@ -5,8 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_HT_H
-#define FTNOIR_TRACKER_HT_H
+#pragma once
 
 #include "ui_aruco-trackercontrols.h"
 #include "ar_video_widget.h"
@@ -19,7 +18,9 @@
 #include "facetracknoir/options.h"
 #include "ftnoir_tracker_aruco/trans_calib.h"
 #include "facetracknoir/plugin-api.hpp"
-#include "facetracknoir/gain-control.hpp"
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 using namespace options;
 
@@ -27,7 +28,7 @@ struct settings {
     pbundle b;
     value<double> fov, headpos_x, headpos_y, headpos_z;
     value<int> camera_index, force_fps, resolution;
-    value<bool> red_only;
+    value<int> desaturate;
     settings() :
         b(bundle("aruco-tracker")),
         fov(b, "field-of-view", 56),
@@ -37,13 +38,14 @@ struct settings {
         camera_index(b, "camera-index", 0),
         force_fps(b, "force-fps", 0),
         resolution(b, "force-resolution", 0),
-        red_only(b, "red-only", false)
+        desaturate(b, "desaturate", 0)
     {}
 };
 
 class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
+    static constexpr double c_search_window = 2.9;
 public:
     Tracker();
     ~Tracker() override;
@@ -51,7 +53,7 @@ public:
     void GetHeadPoseData(double *data);
     void run();
     void reload() { s.b->reload(); }
-    void getRT(cv::Matx33f& r, cv::Vec3f& t);
+    void getRT(cv::Matx33d &r, cv::Vec3d &t);
 private:
     QMutex mtx;
     volatile bool stop;
@@ -61,9 +63,8 @@ private:
     double pose[6];
     cv::Mat frame;
     cv::VideoCapture camera;
-    cv::Matx33f r;
-    cv::Vec3f t;
-    Gain gain;
+    cv::Matx33d r;
+    cv::Vec3d t;
 };
 
 class TrackerControls : public QWidget, public ITrackerDialog
@@ -71,12 +72,8 @@ class TrackerControls : public QWidget, public ITrackerDialog
     Q_OBJECT
 public:
     TrackerControls();
-    void registerTracker(ITracker * x) {
-        tracker = dynamic_cast<Tracker*>(x);
-    }
-    void unRegisterTracker() {
-        tracker = nullptr;
-    }
+    void registerTracker(ITracker * x) { tracker = dynamic_cast<Tracker*>(x); }
+    void unRegisterTracker() { tracker = nullptr; }
 private:
     Ui::Form ui;
     Tracker* tracker;
@@ -90,6 +87,3 @@ private slots:
     void cleanupCalib();
     void update_tracker_calibration();
 };
-
-#endif
-

@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <algorithm>
 #include <QMutexLocker>
 #include "./include/markerdetector.h"
 #include "ftnoir_tracker_aruco.h"
@@ -135,7 +136,7 @@ void Tracker::StartTracker(QFrame* videoframe)
 
 #define HT_PI 3.1415926535
 
-void Tracker::getRT(cv::Matx33f& r_, cv::Vec3f& t_)
+void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 {
     QMutexLocker l(&mtx);
 
@@ -183,10 +184,6 @@ void Tracker::run()
 
     cv::Rect last_roi(65535, 65535, 0, 0);
 
-    cv::Mat color, color_, grayscale, rvec, tvec;
-
-    const double stateful_coeff = 0.88;
-
     if (!camera.isOpened())
     {
         fprintf(stderr, "aruco tracker: can't open camera\n");
@@ -201,19 +198,46 @@ void Tracker::run()
 
     while (!stop)
     {
-        if (!camera.read(color_))
+        cv::Mat color;
+        if (!camera.read(color))
             continue;
         auto tm = cv::getTickCount();
-        color_.copyTo(color);
-        if (s.red_only)
+        
+        const double c = s.desaturate * 16. / 100.;
+        
+        if (std::abs(c) > 1e-3)
         {
-            cv::Mat channel[3];
-            cv::split(color, channel);
-            grayscale = channel[2];
-        } else
-            cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
-
-        gain.tick(camera, grayscale);
+            const int w=color.cols, h=color.rows;
+            
+            cv::Mat hsv;
+            cv::cvtColor(color, hsv, cv::COLOR_BGR2HSV);
+            vector<cv::Mat> channels;
+            cv::split(hsv, channels);
+            cv::Mat sat = channels[1];
+            cv::Mat val = channels[2];
+            
+            struct ops {
+                static double sig(double x)
+                {
+                    double x_ = -6 + x * 2 * 6;
+                    return 1./(1.+exp(-x_));
+                }
+            };
+            
+            for (int i = 0; i < h; i++)
+                for (int j = 0; j < w; j++)
+                {
+                    const double sat_ij = sat.at<unsigned char>(i, j)/255.;
+                    val.at<unsigned char>(i, j) *= std::max(0., 1. - c*ops::sig(sat_ij));
+                }
+            
+            channels[1] = sat;
+            channels[2] = val;
+            cv::merge(channels, hsv);
+            cv::cvtColor(hsv, color, cv::COLOR_HSV2BGR);
+        }
+        cv::Mat grayscale;
+        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
@@ -232,27 +256,33 @@ void Tracker::run()
 
         const double size_min = 0.04;
         const double size_max = 0.38;
-
-        if (last_roi.width > 0 &&
-                (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
-                 markers.size() == 1 && markers[0].size() == 4))
+        
+        bool roi_valid = false;
+        
+        if (last_roi.width > 0 && last_roi.height)
         {
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
-            auto& m = markers.at(0);
-            for (int i = 0; i < 4; i++)
+            if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
+                markers.size() == 1 && markers[0].size() == 4)
             {
-                auto& p = m.at(i);
-                p.x += last_roi.x;
-                p.y += last_roi.y;
+                auto& m = markers.at(0);
+                for (int i = 0; i < 4; i++)
+                {
+                    auto& p = m.at(i);
+                    p.x += last_roi.x;
+                    p.y += last_roi.y;
+                }
+                roi_valid = true;
             }
         }
-        else
+        
+        if (!roi_valid)
         {
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
-
+        
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
@@ -275,70 +305,89 @@ void Tracker::run()
         frame = color.clone();
 
         ::sprintf(buf, "Hz: %d", last_fps);
-        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale);
+        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), 1);
         ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
-        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale);
+        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), 1);
 
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
             const float size = 40;
 
             cv::Mat obj_points(4,3,CV_32FC1);
-            obj_points.at<float>(1,0)=-size + s.headpos_x;
-            obj_points.at<float>(1,1)=-size + s.headpos_y;
-            obj_points.at<float>(1,2)=-size + s.headpos_z;
-            obj_points.at<float>(2,0)=size + s.headpos_x;
-            obj_points.at<float>(2,1)=-size + s.headpos_y;
-            obj_points.at<float>(2,2)=-size + s.headpos_z;
-            obj_points.at<float>(3,0)=size + s.headpos_x;
-            obj_points.at<float>(3,1)=size + s.headpos_y;
-            obj_points.at<float>(3,2)=size + s.headpos_z;
-            obj_points.at<float>(0,0)=-size + s.headpos_x;
-            obj_points.at<float>(0,1)=size + s.headpos_y;
-            obj_points.at<float>(0,2)=size + s.headpos_z;
-
-            last_roi = cv::Rect(65535, 65535, 0, 0);
-
+            const int x1=1, x2=2, x3=3, x4=0;
+            obj_points.at<float>(x1,0)=-size + s.headpos_x;
+            obj_points.at<float>(x1,1)=-size + s.headpos_y;
+            obj_points.at<float>(x1,2)= 0 + s.headpos_z;
+            
+            obj_points.at<float>(x2,0)=size + s.headpos_x;
+            obj_points.at<float>(x2,1)=-size + s.headpos_y;
+            obj_points.at<float>(x2,2)= 0 + s.headpos_z;
+            
+            obj_points.at<float>(x3,0)=size + s.headpos_x;
+            obj_points.at<float>(x3,1)=size + s.headpos_y;
+            obj_points.at<float>(x3,2)= 0 + s.headpos_z;
+            
+            obj_points.at<float>(x4,0)= -size + s.headpos_x;
+            obj_points.at<float>(x4,1)= size + s.headpos_y;
+            obj_points.at<float>(x4,2)= 0 + s.headpos_z;
+            
+            cv::Vec3d rvec, tvec;
+            
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
+            
+            std::vector<cv::Point2f> roi_projection(4);
+            cv::Mat roi_points = obj_points * c_search_window;
+            cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
+            
+            last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
+            
             for (int i = 0; i < 4; i++)
             {
-                auto foo = m.at(i);
-                last_roi.x = std::min<int>(foo.x, last_roi.x);
-                last_roi.y = std::min<int>(foo.y, last_roi.y);
-                last_roi.width = std::max<int>(foo.x, last_roi.width);
-                last_roi.height = std::max<int>(foo.y, last_roi.height);
+                auto proj = roi_projection[i];
+                int min_x = std::min<int>(proj.x, last_roi.x),
+                    min_y = std::min<int>(proj.y, last_roi.y);
+                
+                int max_x = std::max<int>(proj.x, last_roi.width),
+                    max_y = std::max<int>(proj.y, last_roi.height);
+                
+                last_roi.x = min_x;
+                last_roi.y = min_y;
+                
+                last_roi.width = max_x;
+                last_roi.height = max_y;
             }
-            {
-                last_roi.width -= last_roi.x;
-                last_roi.height -= last_roi.y;
-                last_roi.x -= last_roi.width * stateful_coeff;
-                last_roi.y -= last_roi.height * stateful_coeff;
-                last_roi.width *= stateful_coeff * 3;
-                last_roi.height *= stateful_coeff * 3;
-                last_roi.x = std::max<int>(0, last_roi.x);
-                last_roi.y = std::max<int>(0, last_roi.y);
-                last_roi.width = std::min<int>(grayscale.cols - last_roi.x, last_roi.width);
-                last_roi.height = std::min<int>(grayscale.rows - last_roi.y, last_roi.height);
-            }
+            
+            if (last_roi.x < 0)
+                last_roi.x = 0;
+            if (last_roi.y < 0)
+                last_roi.y = 0;
+            
+            if (last_roi.width+1 > color.cols)
+                last_roi.width = color.cols-1;
+            
+            if (last_roi.height+1 > color.rows)
+                last_roi.height = color.rows-1;
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
-            cv::Mat rotation_matrix = cv::Mat::zeros(3, 3, CV_64FC1);
-            cv::Mat junk1(3, 3, CV_64FC1), junk2(3, 3, CV_64FC1);
-            cv::Rodrigues(rvec, rotation_matrix);
+            last_roi.width -= last_roi.x;
+            last_roi.height -= last_roi.y;
+          
+            auto rmat = cv::Matx33d::zeros();
+            cv::Matx33d m_r(3, 3, CV_64FC1), m_q(3, 3, CV_64FC1);
+            cv::Rodrigues(rvec, rmat);
 
             {
-                cv::Vec3d euler = cv::RQDecomp3x3(rotation_matrix, junk1, junk2);
+                cv::Vec3d euler = cv::RQDecomp3x3(rmat, m_r, m_q);
 
                 QMutexLocker lck(&mtx);
 
                 for (int i = 0; i < 3; i++)
-                    pose[i] = tvec.at<double>(i);
-
+                    pose[i] = tvec(i);
                 pose[Yaw] = euler[1];
                 pose[Pitch] = -euler[0];
                 pose[Roll] = euler[2];
 
-                rotation_matrix.convertTo(r, CV_32FC1);
-                tvec.convertTo(t, CV_32FC1);
+                r = rmat;
+                t = tvec;
             }
 
             std::vector<cv::Point2f> repr2;
@@ -350,6 +399,9 @@ void Tracker::run()
                 auto s = cv::Scalar(255, 0, 255);
                 cv::circle(frame, repr2.at(0), 4, s, -1);
             }
+            
+            if (roi_valid)
+                cv::rectangle(frame, last_roi, cv::Scalar(255, 0, 255), 1);
 
             last_centroid = repr2[0];
         }
@@ -438,7 +490,7 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
-    tie_setting(s.red_only, ui.red_only);
+    tie_setting(s.desaturate, ui.desaturate_slider);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
@@ -467,8 +519,8 @@ void TrackerControls::update_tracker_calibration()
 {
     if (calib_timer.isActive() && tracker)
     {
-        cv::Matx33f r;
-        cv::Vec3f t;
+        cv::Matx33d r;
+        cv::Vec3d t;
         tracker->getRT(r, t);
         calibrator.update(r, t);
         auto pos = calibrator.get_estimate() * .1;

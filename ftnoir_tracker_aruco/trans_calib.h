@@ -26,7 +26,7 @@ public:
     void reset();
 
     // update the current estimate
-    void update(const cv::Matx33f& R_CM_k, const cv::Vec3f& t_CM_k);
+    void update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t_CM_k);
 
     // get the current estimate for t_MH
     cv::Vec3f get_estimate();
