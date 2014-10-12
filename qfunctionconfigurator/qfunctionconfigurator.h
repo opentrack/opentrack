@@ -1,9 +1,12 @@
 /* Copyright (c) 2011-2014 Stanislaw Halik <sthalik@misaki.pl>
- *                         Adapted to FaceTrackNoIR by Wim Vriend.
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
+
+// Adapted to FaceTrackNoIR by Wim Vriend.
+
 #pragma once
 
 #include <QWidget>
@@ -44,7 +47,7 @@ private:
 	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 protected:
-	virtual void resizeEvent(QResizeEvent *);
+	void resizeEvent(QResizeEvent *) override;
 private:
     void update_range();
 
