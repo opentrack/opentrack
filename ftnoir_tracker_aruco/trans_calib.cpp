@@ -21,9 +21,9 @@ void TranslationCalibrator::reset()
 	y = Vec6f(0,0,0, 0,0,0);
 }
 
-void TranslationCalibrator::update(const Matx33f& R_CM_k, const Vec3f& t_CM_k)
+void TranslationCalibrator::update(const Matx33d& R_CM_k, const Vec3d& t_CM_k)
 {
-	Matx<float, 6,3> H_k_T = Matx<float, 6,3>::zeros();
+	Matx<double, 6,3> H_k_T = Matx<double, 6,3>::zeros();
 	for (int i=0; i<3; ++i) {
 		for (int j=0; j<3; ++j) {
 			H_k_T(i,j) = R_CM_k(j,i);
