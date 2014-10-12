@@ -45,7 +45,7 @@ private:
 };
 
 
-// TODO it can die if running tracker state separated into class -sh 20141004
+// XXX TODO it can die if running tracker state separated into class -sh 20141004
 class IDynamicLibraryProvider {
 public:
     virtual DynamicLibrary* current_tracker1() = 0;

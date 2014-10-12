@@ -1,5 +1,7 @@
 #pragma once
 
+/* still WIP, not usable yet! -sh 20141012 */
+
 #include <algorithm>
 #undef NDEBUG
 #include <cassert>
@@ -163,7 +165,7 @@ public:
 
         if (history_timer.elapsed_ms() > GAIN_HISTORY_EVERY_MS)
         {
-            const double cov = get_covariance(frame, last_frame);
+            //const double cov = get_covariance(frame, last_frame);
             history_timer.start();
             last_frame = frame.clone();
 
@@ -174,6 +176,7 @@ public:
         if (debug_timer.elapsed_ms() > 1000)
         {
             const double mu = mean(frame);
+            // XXX move to HSL/HSV color space for it to work! -sh 20141012
             const double var = get_variance(frame, mu);
 
             debug_timer.start();
