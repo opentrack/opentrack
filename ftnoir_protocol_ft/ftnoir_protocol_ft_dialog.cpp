@@ -34,7 +34,6 @@ FTControls::FTControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-    tie_setting(s.useDummyExe, ui.chkStartDummy);
     tie_setting(s.useTIRViews, ui.chkTIRViews);
 
     ui.cbxSelectInterface->addItem("Enable both");

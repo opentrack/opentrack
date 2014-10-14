@@ -44,12 +44,11 @@ using namespace options;
 struct settings {
     pbundle b;
     value<int> intUsedInterface;
-    value<bool> useTIRViews, useDummyExe;
+    value<bool> useTIRViews;
     settings() :
         b(bundle("proto-freetrack")),
         intUsedInterface(b, "used-interfaces", 0),
-        useTIRViews(b, "use-memory-hacks", false),
-        useDummyExe(b, "ezca-mode", false)
+        useTIRViews(b, "use-memory-hacks", false)
     {}
 };
 
