@@ -91,6 +91,8 @@ public slots:
     void shortcutRecentered();
     void shortcutToggled();
 private:
+    // XXX move the shit outta the _widget_, establish a class
+    // for running tracker state, etc -sh 20141014
     Mappings pose;
     Ui::OpentrackUI ui;
     QTimer timUpdateHeadPose;
