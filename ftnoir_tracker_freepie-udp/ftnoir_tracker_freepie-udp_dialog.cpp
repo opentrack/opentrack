@@ -17,7 +17,7 @@ void TrackerDialog::doOK() {
 }
 
 void TrackerDialog::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

@@ -40,7 +40,7 @@ void KeyboardShortcutDialog::doOK() {
 }
 
 void KeyboardShortcutDialog::doCancel() {
-    mainApp->b->revert();
+    mainApp->s.b->reload();
     close();
 }
 

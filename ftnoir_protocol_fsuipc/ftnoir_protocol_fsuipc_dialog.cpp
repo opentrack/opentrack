@@ -42,7 +42,7 @@ void FSUIPCControls::doOK() {
 }
 
 void FSUIPCControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     close();
 }
 
