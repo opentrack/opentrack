@@ -269,7 +269,7 @@ namespace options {
         {
             reentrancy_count++;
             if (b->store_kv(self_name, datum))
-                if (reentrancy_count == 0)
+                if (reentrancy_count <= 3)
                     emit valueChanged(datum);
             reentrancy_count--;
         }
@@ -302,7 +302,7 @@ namespace options {
             return datum;
         }
         static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
-        static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::BlockingQueuedConnection;
+        static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::UniqueConnection;
         value(pbundle b, const string& name, t def) : base_value(b, name)
         {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
