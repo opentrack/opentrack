@@ -230,7 +230,7 @@ void TrackerDialog::doApply()
 
 void TrackerDialog::doCancel()
 {
-    s.b->revert();
+    s.b->reload();
     close();
 }
 

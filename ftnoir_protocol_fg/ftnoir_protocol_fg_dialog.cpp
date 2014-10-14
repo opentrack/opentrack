@@ -59,7 +59,7 @@ void FGControls::doOK() {
 }
 
 void FGControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

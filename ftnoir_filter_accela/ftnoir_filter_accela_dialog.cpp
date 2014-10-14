@@ -43,7 +43,7 @@ void FilterControls::doCancel() {
 
 void FilterControls::discard()
 {
-    s.b->revert();
+    s.b->reload();
 }
 
 void FilterControls::save() {

@@ -33,7 +33,7 @@ void FilterControls::doOK() {
 }
 
 void FilterControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

@@ -44,7 +44,7 @@ void SCControls::doOK() {
 }
 
 void SCControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     close();
 }
 

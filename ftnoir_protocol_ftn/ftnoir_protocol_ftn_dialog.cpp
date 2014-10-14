@@ -52,7 +52,7 @@ void FTNControls::doOK() {
 // Cancel clicked on server-dialog
 //
 void FTNControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

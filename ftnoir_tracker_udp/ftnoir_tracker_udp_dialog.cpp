@@ -18,7 +18,7 @@ void TrackerControls::doOK() {
 }
 
 void TrackerControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

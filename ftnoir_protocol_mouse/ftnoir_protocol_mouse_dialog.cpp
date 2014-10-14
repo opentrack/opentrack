@@ -59,7 +59,7 @@ void MOUSEControls::doOK() {
 }
 
 void MOUSEControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 

@@ -59,7 +59,7 @@ void FTControls::doOK() {
 }
 
 void FTControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 
