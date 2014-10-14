@@ -1,6 +1,6 @@
 #pragma once
 /* Copyright (c) 2013 Stanisław Halik <sthalik@misaki.pl>
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -31,12 +31,11 @@ public:
     void reset() virt_override;
     void FilterHeadPoseData(const double *target_camera_position,
                             double *new_camera_position) virt_override;
+    double accel_variance;
+    double noise_variance;
     cv::KalmanFilter kalman;
     double prev_position[6];
-    double prev2_filter_pos[6];
-    double prev_filter_pos[6];
     QElapsedTimer timer;
-    qint64 timedelta;
 };
 
 class FTNOIR_FILTER_BASE_EXPORT FTNoIR_FilterDll : public Metadata
