@@ -274,10 +274,7 @@ namespace options {
         value(pbundle b, const QString& name, t def) : base_value(b, name)
         {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
-            {
-                qDebug() << "new option" << *(t*)this;
                 *this = def;
-            }
         }
         operator t()
         {
