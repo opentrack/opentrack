@@ -28,7 +28,6 @@ struct settings {
     pbundle b;
     value<double> fov, headpos_x, headpos_y, headpos_z;
     value<int> camera_index, force_fps, resolution;
-    value<int> desaturate;
     settings() :
         b(bundle("aruco-tracker")),
         fov(b, "field-of-view", 56),
@@ -37,15 +36,14 @@ struct settings {
         headpos_z(b, "headpos-z", 0),
         camera_index(b, "camera-index", 0),
         force_fps(b, "force-fps", 0),
-        resolution(b, "force-resolution", 0),
-        desaturate(b, "desaturate", 0)
+        resolution(b, "force-resolution", 0)
     {}
 };
 
 class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
-    static constexpr double c_search_window = 2.9;
+    static constexpr double c_search_window = 2.2;
 public:
     Tracker();
     ~Tracker() override;

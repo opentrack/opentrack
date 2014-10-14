@@ -194,7 +194,6 @@ void Tracker::run()
     auto last_time = cv::getTickCount();
     int cur_fps = 0;
     int last_fps = 0;
-    cv::Point2f last_centroid;
 
     while (!stop)
     {
@@ -203,42 +202,9 @@ void Tracker::run()
             continue;
         auto tm = cv::getTickCount();
         
-        const double c = s.desaturate * 16. / 100.;
-        
-        if (std::abs(c) > 1e-3)
-        {
-            const int w=color.cols, h=color.rows;
-            
-            cv::Mat hsv;
-            cv::cvtColor(color, hsv, cv::COLOR_BGR2HSV);
-            vector<cv::Mat> channels;
-            cv::split(hsv, channels);
-            cv::Mat sat = channels[1];
-            cv::Mat val = channels[2];
-            
-            struct ops {
-                static double sig(double x)
-                {
-                    double x_ = -6 + x * 2 * 6;
-                    return 1./(1.+exp(-x_));
-                }
-            };
-            
-            for (int i = 0; i < h; i++)
-                for (int j = 0; j < w; j++)
-                {
-                    const double sat_ij = sat.at<unsigned char>(i, j)/255.;
-                    val.at<unsigned char>(i, j) *= std::max(0., 1. - c*ops::sig(sat_ij));
-                }
-            
-            channels[1] = sat;
-            channels[2] = val;
-            cv::merge(channels, hsv);
-            cv::cvtColor(hsv, color, cv::COLOR_HSV2BGR);
-        }
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
-
+        
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
 
@@ -333,9 +299,35 @@ void Tracker::run()
             
             cv::Vec3d rvec, tvec;
             
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::P3P);
             
             std::vector<cv::Point2f> roi_projection(4);
+            
+            {
+                std::vector<cv::Point2f> repr2;
+                std::vector<cv::Point3f> centroid;
+                centroid.push_back(cv::Point3f(0, 0, 0));
+                cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
+    
+                {
+                    auto s = cv::Scalar(255, 0, 255);
+                    cv::circle(frame, repr2.at(0), 4, s, -1);
+                }
+            }
+            
+            for (int i = 0; i < 4; i++)
+            {
+                obj_points.at<float>(i, 0) -= s.headpos_x;
+                obj_points.at<float>(i, 1) -= s.headpos_y;
+                obj_points.at<float>(i, 2) -= s.headpos_z;
+            }
+            
+            {
+                cv::Mat rvec_, tvec_;
+                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::P3P);
+                tvec = tvec_;
+            }
+            
             cv::Mat roi_points = obj_points * c_search_window;
             cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
             
@@ -389,21 +381,9 @@ void Tracker::run()
                 r = rmat;
                 t = tvec;
             }
-
-            std::vector<cv::Point2f> repr2;
-            std::vector<cv::Point3f> centroid;
-            centroid.push_back(cv::Point3f(0, 0, 0));
-            cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
-
-            {
-                auto s = cv::Scalar(255, 0, 255);
-                cv::circle(frame, repr2.at(0), 4, s, -1);
-            }
             
             if (roi_valid)
                 cv::rectangle(frame, last_roi, cv::Scalar(255, 0, 255), 1);
-
-            last_centroid = repr2[0];
         }
         else
             last_roi = cv::Rect(65535, 65535, 0, 0);
@@ -490,7 +470,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
-    tie_setting(s.desaturate, ui.desaturate_slider);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
@@ -540,6 +519,6 @@ void TrackerControls::doOK()
 
 void TrackerControls::doCancel()
 {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
