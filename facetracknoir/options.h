@@ -8,9 +8,11 @@
 #pragma once
 
 #include <memory>
+#include <tuple>
+#include <map>
+
 #include <QObject>
 #include <QSettings>
-#include <QMap>
 #include <QString>
 #include <QVariant>
 #include <QMutex>
@@ -25,9 +27,14 @@
 #include <QLabel>
 #include <QCoreApplication>
 
+#include <cinttypes>
+
 #include <QDebug>
 
 namespace options {
+    template<typename k, typename v>
+    using map = std::map<k, v>;
+    
     template<typename t>
     // don't elide usages of the function, qvariant default implicit
     // conversion results in nonsensical runtime behavior -sh
@@ -66,7 +73,7 @@ namespace options {
     // snapshot of qsettings group at given time
     class group {
     private:
-        QMap<QString, QVariant> map;
+        map<QString, QVariant> map;
         QString name;
         static const QString ini_pathname()
         {
@@ -85,39 +92,42 @@ namespace options {
         }
         static constexpr const char* org = "opentrack";
         
-        void save() {
+        void save()
+        {
             QSettings s(ini_pathname(), QSettings::IniFormat);
             s.beginGroup(name);
-            for (auto& k : map.keys())
-                s.setValue(k, map[k]);
+            for (auto& i : map)
+                s.setValue(i.first, map[i.first]);
             s.endGroup();
         }
+        
         template<typename t>
-        t get(const QString& k) {
-            return qcruft_to_t<t>(map.value(k));
+        t get(const QString& k)
+        {
+            return qcruft_to_t<t>(map[k]);
         }
+        
         void put(const QString& s, const QVariant& d)
         {
             map[s] = d;
         }
+        
         bool contains(const QString& s)
         {
-            return map.contains(s);
+            return map.count(s) != 0;
         }
     };
 
     class impl_bundle : public QObject {
         Q_OBJECT
-    private:
+    protected:
         QMutex mtx;
         const QString group_name;
         group saved;
         group transient;
+        bool modified;
         impl_bundle(const impl_bundle&) = delete;
         impl_bundle& operator=(const impl_bundle&) = delete;
-        bool modified;
-    signals:
-        void changed();
     public:
         impl_bundle(const QString& group_name) :
             mtx(QMutex::Recursive),
@@ -127,25 +137,32 @@ namespace options {
             modified(false)
         {
         }
+        
+        QString name() { return group_name; }
+        
         void reload() {
             QMutexLocker l(&mtx);
             saved = group(group_name);
             transient = saved;
+            modified = false;
         }
-        void store_kv(const QString& name, const QVariant& datum)
+        
+        bool store_kv(const QString& name, const QVariant& datum)
         {
             QMutexLocker l(&mtx);
+            
             auto old = transient.get<QVariant>(name);
             if (!transient.contains(name) || datum != old)
             {
                 if (!modified)
-                    qDebug() << "bundle" << group_name <<
-                                "modified due to" << name <<
-                                transient.get<QVariant>(name) <<
-                                old << "->" << datum;
+                    qDebug() << "bundle" << (intptr_t)static_cast<void*>(this) <<
+                                "modified as per" << name << old << "->" << datum;
+                
                 modified = true;
                 transient.put(name, datum);
+                return true;
             }
+            return false;
         }
         bool contains(const QString& name)
         {
@@ -153,7 +170,8 @@ namespace options {
             return transient.contains(name);
         }
         template<typename t>
-        t get(const QString& name) {
+        t get(const QString& name)
+        {
             QMutexLocker l(&mtx);
             return transient.get<t>(name);
         }
@@ -163,14 +181,6 @@ namespace options {
             modified = false;
             saved = transient;
             transient.save();
-            emit changed();
-        }
-        void revert()
-        {
-            QMutexLocker l(&mtx);
-            modified = false;
-            transient = saved;
-            emit changed();
         }
 
         bool modifiedp() {
@@ -178,15 +188,64 @@ namespace options {
             return modified;
         }
     };
-
-    using pbundle = std::shared_ptr<impl_bundle>;
+    
+    class opt_bundle;
+    using pbundle = std::shared_ptr<opt_bundle>;
+    
+    namespace {
+        using tt = std::tuple<int, pbundle>;
+        
+        QMutex implsgl_mtx(QMutex::Recursive);
+        map<QString, tt> implsgl_bundles;
+    }
+    
+    class opt_bundle : public impl_bundle
+    {
+    public:
+        opt_bundle() : impl_bundle("i-have-no-name") {}
+        opt_bundle(const QString& group_name) : impl_bundle(group_name) {}
+        
+        ~opt_bundle()
+        {
+            QMutexLocker l(&implsgl_mtx);
+            
+            if (--std::get<0>(implsgl_bundles[this->group_name]) == 0)
+                implsgl_bundles.erase(this->group_name);
+        }
+    };
+    
+    inline pbundle bundle(const QString& group) {
+        QMutexLocker l(&implsgl_mtx);
+        
+        if (implsgl_bundles.count(group) != 0)
+            return std::get<1>(implsgl_bundles[group]);
+        
+        auto shr = std::make_shared<opt_bundle>(group);
+        implsgl_bundles[group] = tt(1,shr);
+        return shr;
+    }
 
     class base_value : public QObject {
         Q_OBJECT
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
-#define DEFINE_SIGNAL(t) void valueChanged(t);
+#define DEFINE_SIGNAL(t) void valueChanged(const t&)
     public:
-        base_value(pbundle b, const QString& name) : b(b), self_name(name) {}
+        base_value(pbundle b, const QString& name) : b(b), self_name(name), reentrancy_count(0) {}
+    protected:
+        pbundle b;
+        QString self_name;
+        
+        template<typename t>
+        void store(const t& datum)
+        {
+            reentrancy_count++;
+            if (b->store_kv(self_name, datum))
+                if (reentrancy_count == 0)
+                    emit valueChanged(datum);
+            reentrancy_count--;
+        }
+    private:
+        volatile char reentrancy_count;
     public slots:
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
@@ -197,34 +256,25 @@ namespace options {
         DEFINE_SIGNAL(int);
         DEFINE_SIGNAL(bool);
         DEFINE_SIGNAL(QString);
-        // Qt5 moc really insists on that one -sh 20141012
-        DEFINE_SIGNAL(QVariant);
-    protected:
-        pbundle b;
-        QString self_name;
-        
-        template<typename t>
-        void store(const t& datum)
-        {
-            b->store_kv(self_name, datum);
-            emit valueChanged(static_cast<t>(datum));
-        }
     };
 
     template<typename t>
     class value : public base_value {
     public:
-        t operator=(const t& datum)
+        t operator=(const t datum)
         {
-            store(qVariantFromValue<t>(datum));
+            store(datum);
             return datum;
         }
         static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
-        static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::AutoConnection;
+        static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::BlockingQueuedConnection;
         value(pbundle b, const QString& name, t def) : base_value(b, name)
         {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
+            {
+                qDebug() << "new option" << *(t*)this;
                 *this = def;
+            }
         }
         operator t()
         {
@@ -299,9 +349,5 @@ namespace options {
     {
         lb->setText(v);
         base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.SAFE_CONNTYPE);
-    }
-
-    inline pbundle bundle(const QString& group) {
-        return std::make_shared<impl_bundle>(group);
     }
 }
