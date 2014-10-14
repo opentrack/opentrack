@@ -97,7 +97,7 @@ namespace options {
             QSettings s(ini_pathname(), QSettings::IniFormat);
             s.beginGroup(name);
             for (auto& i : map)
-                s.setValue(i.first, map[i.first]);
+                s.setValue(i.first, i.second);
             s.endGroup();
         }
         
@@ -210,7 +210,10 @@ namespace options {
             QMutexLocker l(&implsgl_mtx);
             
             if (--std::get<0>(implsgl_bundles[this->group_name]) == 0)
+            {
+                qDebug() << "bundle" << this->group_name << "not used anymore";
                 implsgl_bundles.erase(this->group_name);
+            }
         }
     };
     
