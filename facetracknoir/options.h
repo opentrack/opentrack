@@ -259,7 +259,7 @@ namespace options {
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define DEFINE_SIGNAL(t) void valueChanged(const t&)
     public:
-        base_value(pbundle b, const string& name) : b(b), self_name(name), reentrancy_count(0) {}
+        base_value(pbundle b, const string& name) : b(b), self_name(name) {}
     protected:
         pbundle b;
         string self_name;
@@ -267,14 +267,9 @@ namespace options {
         template<typename t>
         void store(const t& datum)
         {
-            reentrancy_count++;
             if (b->store_kv(self_name, datum))
-                if (reentrancy_count <= 3)
-                    emit valueChanged(datum);
-            reentrancy_count--;
+                emit valueChanged(datum);
         }
-    private:
-        volatile char reentrancy_count;
     public slots:
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
