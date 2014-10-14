@@ -1,5 +1,5 @@
 /* Copyright (c) 2013 Stanisław Halik <sthalik@misaki.pl>
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -16,100 +16,97 @@ FTNoIR_Filter::FTNoIR_Filter() {
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
 void FTNoIR_Filter::reset() {
-    const double accel_variance = 1e-3;
-    const double noise_variance = 5e2;
+    // accel_variance is set for moving 0.0->1.0 in dt=0.1.
+    accel_variance = 400.0f;
+    // TODO(abo): make noise_variance a UI setting 0.0->1.0.
+    noise_variance = 0.1;
+    // Setup kalman with state (x) is the 6 tracker outputs then
+    // their 6 corresponding velocities, and the measurement (z) is
+    // the 6 tracker outputs.
     kalman.init(12, 6, 0, CV_64F);
+    // Initialize the transitionMatrix and processNoiseCov for
+    // dt=0.1. This needs to be updated each frame for the real dt
+    // value, but this hows you what they should look like. See
+    // http://en.wikipedia.org/wiki/Kalman_filter#Example_application.2C_technical
+    double dt = 0.1;
     kalman.transitionMatrix = (cv::Mat_<double>(12, 12) <<
-    1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0,
-    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, dt, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, dt, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0, dt, 0, 0, 0,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, dt, 0, 0,
+    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, dt, 0,
+    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, dt,
     0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
-    double a = 0.25 * accel_variance;
-    double b = 0.5 * accel_variance;
-    double c = 1.0 * accel_variance;
+    double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
+    double b = 0.5 * a * dt;  // (dt^3)/2 * accel_variance.
+    double c = 0.5 * b * dt;  // (dt^4)/4 * accel_variance.
     kalman.processNoiseCov = (cv::Mat_<double>(12, 12) <<
-    a, 0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0,
-    0, a, 0, 0, 0, 0, 0, b, 0, 0, 0, 0,
-    0, 0, a, 0, 0, 0, 0, 0, b, 0, 0, 0,
-    0, 0, 0, a, 0, 0, 0, 0, 0, b, 0, 0,
-    0, 0, 0, 0, a, 0, 0, 0, 0, 0, b, 0,
-    0, 0, 0, 0, 0, a, 0, 0, 0, 0, 0, b,
-    b, 0, 0, 0, 0, 0, c, 0, 0, 0, 0, 0,
-    0, b, 0, 0, 0, 0, 0, c, 0, 0, 0, 0,
-    0, 0, b, 0, 0, 0, 0, 0, c, 0, 0, 0,
-    0, 0, 0, b, 0, 0, 0, 0, 0, c, 0, 0,
-    0, 0, 0, 0, b, 0, 0, 0, 0, 0, c, 0,
-    0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0, c);
+    c, 0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0,
+    0, c, 0, 0, 0, 0, 0, b, 0, 0, 0, 0,
+    0, 0, c, 0, 0, 0, 0, 0, b, 0, 0, 0,
+    0, 0, 0, c, 0, 0, 0, 0, 0, b, 0, 0,
+    0, 0, 0, 0, c, 0, 0, 0, 0, 0, b, 0,
+    0, 0, 0, 0, 0, c, 0, 0, 0, 0, 0, b,
+    b, 0, 0, 0, 0, 0, a, 0, 0, 0, 0, 0,
+    0, b, 0, 0, 0, 0, 0, a, 0, 0, 0, 0,
+    0, 0, b, 0, 0, 0, 0, 0, a, 0, 0, 0,
+    0, 0, 0, b, 0, 0, 0, 0, 0, a, 0, 0,
+    0, 0, 0, 0, b, 0, 0, 0, 0, 0, a, 0,
+    0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0, a);
     cv::setIdentity(kalman.measurementMatrix);
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
-    for (int i = 0; i < 6; i++)
-    {
+    for (int i = 0; i < 6; i++) {
         prev_position[i] = 0;
-        prev2_filter_pos[i] = 0;
-        prev_filter_pos[i] = 0;
-        timedelta = 1;
-        timer.invalidate();
     }
-}
-
-template<typename T>
-static inline T clamp(const T min, const T max, const T value)
-{
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
+    timer.invalidate();
 }
 
 void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
                                        double *new_camera_position)
 {
+    // Start the timer if it's not running.
+    if (!timer.isValid())
+        timer.start();
+    // Get the time in seconds since last run and restart the timer.
+    auto dt = timer.restart() / 1000.0f;
+    // Note this is a terrible way to detect when there is a new
+    // frame of tracker input, but it is the best we have.
     bool new_target = false;
-    
-    for (int i = 0; i < 6; i++)
-        if (prev_position[i] != target_camera_position[i])
-        {
-            new_target = true;
-            break;
-        }
+    for (int i = 0; i < 6 && !new_target; i++)
+        new_target = (prev_position[i] != target_camera_position[i]);
 
+    // Update the transitionMatrix and processNoiseCov for dt.
+    double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
+    double b = 0.5 * a * dt;  // (dt^3)/2 * accel_variance.
+    double c = 0.5 * b * dt;  // (dt^4)/4 * accel_variance.
+    for (int i = 0; i < 6; i++) {
+        kalman.transitionMatrix.at<double>(i,i+6) = dt;
+        kalman.processNoiseCov.at<double>(i,i) = c;
+        kalman.processNoiseCov.at<double>(i+6,i+6) = a;
+        kalman.processNoiseCov.at<double>(i,i+6) = b;
+        kalman.processNoiseCov.at<double>(i+6,i) = b;
+    }
+    // Get an updated predicted position.
+    cv::Mat output = kalman.predict();
+    // If we have new tracker input, correct with it.
     if (new_target) {
-        cv::Mat output = kalman.predict();
         cv::Mat measurement(6, 1, CV_64F);
-        for (int i = 0; i < 3; i++) {
-            measurement.at<double>(i) = target_camera_position[i+3];
-            measurement.at<double>(i+3) = target_camera_position[i];
-        }
-        kalman.correct(measurement);
-        for (int i = 0; i < 6; i++)
-        {
+        for (int i = 0; i < 6; i++) {
+            measurement.at<double>(i) = target_camera_position[i];
+            // Save prev_position for detecting new tracker input.
             prev_position[i] = target_camera_position[i];
         }
-        if (timer.isValid())
-            timedelta = timer.elapsed();
-        else
-            timedelta = 1;
-        for (int i = 0; i < 6; i++)
-        {
-            prev2_filter_pos[i] = prev_filter_pos[i];
-            prev_filter_pos[i] = new_camera_position[i] = output.at<double>((i + 3) % 6);
-        }
-        timer.start();
-    } else {
-        auto d = timer.isValid() ? timer.elapsed() : 1;
-        auto c = clamp(0.0, 1.0, d / (double) timedelta);
-        for (int i = 0; i < 6; i++)
-            new_camera_position[i] = prev2_filter_pos[i] + (prev_filter_pos[i] - prev2_filter_pos[i]) * c;
+        output = kalman.correct(measurement);
+    }
+    // Set new_camera_position to the output.
+    for (int i = 0; i < 6; i++) {
+        new_camera_position[i] = output.at<double>(i);
     }
 }
 
