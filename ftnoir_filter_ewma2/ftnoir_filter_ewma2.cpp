@@ -1,5 +1,5 @@
 /*** Written by Donovan Baarda
-* 
+*
 * This program is free software; you can redistribute it and/or modify it       *
 * under the terms of the GNU General Public License as published by the         *
 * Free Software Foundation; either version 3 of the License, or (at your        *
@@ -24,10 +24,14 @@
 
 FTNoIR_Filter::FTNoIR_Filter() :
     first_run(true),
-    // Deltas are smoothed over the last 3 frames (0.1sec at 30fps).
-    delta_smoothing(1.0/3.0),
-    // Noise is smoothed over the last 3600 frames (~2mins at 30fps).
-    noise_smoothing(1.0/3600.0)
+    // Currently facetracknoir/tracker.cpp updates every dt=3ms. All
+    // filter alpha values are calculated as alpha=dt/(dt + RC) and
+    // need to be updated when tracker.cpp changes.
+    // TODO(abo): Change this to use a dynamic dt using a timer.
+    // Deltas are smoothed over the last 1/60sec (16ms).
+    delta_smoothing(0.003/(0.003 + 0.016)),
+    // Noise is smoothed over the last 2mins.
+    noise_smoothing(0.003/(0.003 + 120.0))
 {
 }
 
@@ -40,7 +44,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
                                        double *new_camera_position)
 {
     double new_delta, new_noise, norm_noise;
-    double alpha;
+    double scale, RC, alpha, pos;
 
     //On the first run, initialize filter states to target intput.
     if (first_run==true) {
@@ -62,11 +66,16 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         noise[i] = noise_smoothing*new_noise + (1.0-noise_smoothing)*noise[i];
         // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
         norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
-        // Calculate the alpha from the normalized noise.
+        // Calculate the smoothing scale 0.0->1.0 from the normalized noise.
         // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
-        alpha = 1.0/(s.kMinSmoothing+(1.0-pow(norm_noise,s.kSmoothingScaleCurve/20.0))*(s.kMaxSmoothing-s.kMinSmoothing));
+        scale = 1.0 - pow(norm_noise, s.kSmoothingScaleCurve/20.0);
+        // Currently min/max smoothing are ints 0->100. We want 0.0->3.0 seconds.
+        // TODO(abo): Change kMinSmoothing, kMaxSmoothing to floats 0.0->3.0 seconds RC.
+        RC = 3.0*(s.kMinSmoothing + scale*(s.kMaxSmoothing - s.kMinSmoothing))/100.0;
+        // TODO(abo): Change this to use a dynamic dt using a timer.
+        alpha = 0.003/(0.003 + RC);
         // Update the current camera position to the new position.
-        double pos = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
+        pos = alpha*target_camera_position[i] + (1.0-alpha)*current_camera_position[i];
         new_camera_position[i] = current_camera_position[i] = pos;
     }
 }
