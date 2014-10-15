@@ -95,7 +95,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -117,7 +117,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -165,7 +165,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -187,7 +187,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -247,7 +247,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -295,7 +295,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Outline</enum>
@@ -341,14 +341,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
@@ -369,14 +366,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
@@ -413,14 +407,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
@@ -463,14 +454,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
@@ -529,14 +517,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
@@ -573,14 +558,11 @@
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
             <property name="smallDecimalPoint">
              <bool>true</bool>
             </property>
             <property name="digitCount">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="segmentStyle">
              <enum>QLCDNumber::Flat</enum>
