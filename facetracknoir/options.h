@@ -75,7 +75,7 @@ namespace options {
     // snapshot of qsettings group at given time
     class group {
     private:
-        map<string, QVariant> map;
+        map<string, QVariant> kvs;
         string name;
         static const QString ini_pathname()
         {
@@ -93,7 +93,7 @@ namespace options {
             {
                 auto tmp = k_.toUtf8();
                 string k(tmp);
-                map[k] = conf.value(k_);
+                kvs[k] = conf.value(k_);
             }
             conf.endGroup();
         }
@@ -104,7 +104,7 @@ namespace options {
             QSettings s(ini_pathname(), QSettings::IniFormat);
             auto q_name = QString::fromStdString(name);
             s.beginGroup(q_name);
-            for (auto& i : map)
+            for (auto& i : kvs)
             {
                 auto k = QString::fromStdString(i.first);
                 s.setValue(k, i.second);
@@ -115,17 +115,17 @@ namespace options {
         template<typename t>
         t get(const string& k)
         {
-            return qcruft_to_t<t>(map[k]);
+            return qcruft_to_t<t>(kvs[k]);
         }
         
         void put(const string& s, const QVariant& d)
         {
-            map[s] = d;
+            kvs[s] = d;
         }
         
         bool contains(const string& s)
         {
-            return map.count(s) != 0;
+            return kvs.count(s) != 0;
         }
     };
 
