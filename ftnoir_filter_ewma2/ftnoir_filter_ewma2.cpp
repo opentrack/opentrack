@@ -30,8 +30,8 @@ FTNoIR_Filter::FTNoIR_Filter() :
     // TODO(abo): Change this to use a dynamic dt using a timer.
     // Deltas are smoothed over the last 1/60sec (16ms).
     delta_smoothing(0.003/(0.003 + 0.016)),
-    // Noise is smoothed over the last 2mins.
-    noise_smoothing(0.003/(0.003 + 120.0))
+    // Noise is smoothed over the last 60sec.
+    noise_smoothing(0.003/(0.003 + 60.0))
 {
 }
 
