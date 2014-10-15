@@ -16,7 +16,7 @@ FTNoIR_Filter::FTNoIR_Filter() {
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
 void FTNoIR_Filter::reset() {
-    // accel_variance is set for moving 0.0->1.0 in dt=0.1.
+    // Set accel_variance for moving 0.0->1.0 in dt=0.1.
     accel_variance = 400.0f;
     // TODO(abo): make noise_variance a UI setting 0.0->1.0.
     noise_variance = 0.1;
@@ -92,9 +92,9 @@ void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
         kalman.processNoiseCov.at<double>(i,i+6) = b;
         kalman.processNoiseCov.at<double>(i+6,i) = b;
     }
-    // Get an updated predicted position.
+    // Get the updated predicted position.
     cv::Mat output = kalman.predict();
-    // If we have new tracker input, correct with it.
+    // If we have new tracker input, get the corrected position.
     if (new_target) {
         cv::Mat measurement(6, 1, CV_64F);
         for (int i = 0; i < 6; i++) {
