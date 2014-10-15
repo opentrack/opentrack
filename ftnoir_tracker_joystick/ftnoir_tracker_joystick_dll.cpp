@@ -1,6 +1,6 @@
 #include "ftnoir_tracker_joystick.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 void FTNoIR_TrackerDll::getFullName(QString *strToBeFilled)
 {
@@ -22,7 +22,7 @@ void FTNoIR_TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/facetracknoir.png");
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
     return new FTNoIR_TrackerDll;
 }

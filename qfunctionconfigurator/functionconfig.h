@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2012, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2011-2014, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -13,63 +13,61 @@
 #include <QString>
 #include <QSettings>
 #include <QMutex>
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include <vector>
+#include "../facetracknoir/plugin-api.hpp"
+#include "../facetracknoir/qcopyable-mutex.hpp"
 
-#define MEMOIZE_PRECISION 100
 
-class FTNOIR_TRACKER_BASE_EXPORT FunctionConfig {
+class OPENTRACK_EXPORT Map {
 private:
-    QMutex _mutex;
-	QList<QPointF> _points;
-	void reload();
-    float* _data;
-	int _size;
-	QString _title;
+    struct State {
+        QList<QPointF> input;
+        std::vector<float> data;        
+    };
+    
+    static constexpr long MEMOIZE_PRECISION = 25;
+    void reload();
     float getValueInternal(int x);
-	QPointF lastValueTracked;								// The last input value requested by the Tracker, with it's output-value.
-    volatile bool _tracking_active;
-	int _max_Input;
-	int _max_Output;
-    FunctionConfig(const FunctionConfig&) = delete;
+
+    MyMutex _mutex;
+    QPointF last_input_value;
+    volatile bool activep;
+    int max_x;
+    int max_y;
+    
+    State cur, saved;
 public:
-    int maxInput() const { return _max_Input; }
-    int maxOutput() const { return _max_Output; }
-	//
-	// Contructor(s) and destructor
-	//
-    FunctionConfig();
-    FunctionConfig(QString title, int intMaxInput, int intMaxOutput);
-    ~FunctionConfig();
+    int maxInput() const { return max_x; }
+    int maxOutput() const { return max_y; }
+    Map();
+    Map(int maxx, int maxy)
+    {
+        setMaxInput(maxx);
+        setMaxOutput(maxy);
+    }
 
     float getValue(float x);
-	bool getLastPoint(QPointF& point);						// Get the last Point that was requested.
-
-	//
-	// Functions to manipulate the Function
-	//
-	void removePoint(int i);
+    bool getLastPoint(QPointF& point);
+    void removePoint(int i);
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
-        _points.clear();
+        cur.input.clear();
         reload();
     }
 
-	void addPoint(QPointF pt);
-	void movePoint(int idx, QPointF pt);
-	QList<QPointF> getPoints();
-	void setMaxInput(int MaxInput) {
-		_max_Input = MaxInput;
-	}
-	void setMaxOutput(int MaxOutput) {
-		_max_Output = MaxOutput;
-	}
+    void addPoint(QPointF pt);
+    void movePoint(int idx, QPointF pt);
+    const QList<QPointF> getPoints();
+    void setMaxInput(int MaxInput) {
+        max_x = MaxInput;
+    }
+    void setMaxOutput(int MaxOutput) {
+        max_y = MaxOutput;
+    }
 
-	//
-	// Functions to load/save the Function-Points to an INI-file
-	//
-	void saveSettings(QSettings& settings);
-	void loadSettings(QSettings& settings);
+    void saveSettings(QSettings& settings, const QString& title);
+    void loadSettings(QSettings& settings, const QString& title);
+    void invalidate_unsaved_settings();
 
-	void setTrackingActive(bool blnActive);
-    QString getTitle() { return _title; }
+    void setTrackingActive(bool blnActive);
 };

@@ -4,5 +4,6 @@
         <file>images/settings16.png</file>
         <file>uielements/curves.png</file>
         <file>images/facetracknoir.png</file>
+        <file>uielements/no-feed.png</file>
     </qresource>
 </RCC>

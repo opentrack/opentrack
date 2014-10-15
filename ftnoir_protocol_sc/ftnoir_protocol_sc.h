@@ -29,7 +29,7 @@
 #pragma once
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0502
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-api.hpp"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
@@ -38,8 +38,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <ftnoir_protocol_base/ftnoir_protocol_base.h>
-#include <ui_ftnoir_sccontrols.h>
+#include "ui_ftnoir_sccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -89,7 +88,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK();
     void sendHeadposeToGame(const double* headpose);
     QString getGameName() {
@@ -128,13 +127,12 @@ private:
     settings s;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class SCControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
 public:
     SCControls();
-    void registerProtocol(IProtocol *protocol) {}
+    void registerProtocol(IProtocol *) {}
     void unRegisterProtocol() {}
 private:
     Ui::UICSCControls ui;
@@ -144,9 +142,6 @@ private slots:
     void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:

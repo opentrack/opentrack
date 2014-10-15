@@ -1,7 +1,7 @@
 #include "ftnoir_filter_accela.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
     return new FTNoIR_FilterDll;
 }

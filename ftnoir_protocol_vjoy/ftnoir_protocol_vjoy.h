@@ -26,15 +26,9 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_vjoy_controls.h"
-#include <QThread>
-#include <QUdpSocket>
-#include <QMessageBox>
-#include <QSettings>
-#include <math.h>
-#include "facetracknoir/global-settings.h"
-#include <windows.h>
+#include <cmath>
+#include "facetracknoir/plugin-api.hpp"
 
 #define FT_PROGRAMID "FT_ProgramID"
 
@@ -42,7 +36,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK() {
         return true;
     }
@@ -60,7 +54,7 @@ class VJoyControls: public QWidget, public IProtocolDialog
 public:
 
 	explicit VJoyControls();
-    void registerProtocol(IProtocol *l) {}
+    void registerProtocol(IProtocol *) {}
 	void unRegisterProtocol() {}
 
 private:
@@ -72,9 +66,6 @@ private slots:
 	void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
@@ -91,6 +82,8 @@ public:
 #define VJOY_AXIS_MIN   -32768
 #define VJOY_AXIS_NIL   0
 #define VJOY_AXIS_MAX   32767
+
+#include <windows.h>
 
 #include <pshpack1.h>
 
@@ -109,17 +102,6 @@ typedef struct _JOYSTICK_STATE
         UINT32 Buttons;                         // 32 Buttons
 } JOYSTICK_STATE, * PJOYSTICK_STATE;
 
-#include <poppack.h>
-
-#undef EXTERN_C
-#if _MSC_VER
-#	define EXTERN_C
-#else
-#	define EXTERN_C extern "C"
-#endif
-#if _MSC_VER
-#	pragma comment(linker, "/implib:vjoy.def")
-#endif
 EXTERN_C BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
 EXTERN_C VOID __stdcall VJoy_Shutdown();
 EXTERN_C BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);

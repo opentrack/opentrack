@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_protocol_ftn.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FTNControls::FTNControls() :
     QWidget()
@@ -52,11 +52,11 @@ void FTNControls::doOK() {
 // Cancel clicked on server-dialog
 //
 void FTNControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new FTNControls;
 }

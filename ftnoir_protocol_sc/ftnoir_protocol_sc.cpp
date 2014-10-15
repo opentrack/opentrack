@@ -27,7 +27,7 @@
 *				must be treated as such...										*
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol::simconnect_set6DOF;
 HANDLE FTNoIR_Protocol::hSimConnect = 0;			// Handle to SimConnect
@@ -79,19 +79,19 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
 
 	if (!blnSimConnectActive) {
         if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-            HRESULT hr;
-
             simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
 
-            hr = simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
-            hr = simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
-            hr = simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+            simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
+            simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
+            simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
             blnSimConnectActive = true;
         }
 	}
     else
         (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL));
 }
+
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
 class ActivationContext {
 public:
@@ -103,7 +103,7 @@ public:
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
 #ifdef _MSC_VER
-#	define PREFIX ""
+#	error "MSVC support removed"
 #else
 #	define PREFIX "lib"
 #endif 
@@ -203,7 +203,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	return true;
 }
 
-void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext)
+void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *)
 {
     switch(pData->dwID)
     {
@@ -246,7 +246,7 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

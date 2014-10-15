@@ -31,8 +31,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include "FSUIPC_User.h"
-#include "facetracknoir/global-settings.h"
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "ui_ftnoir_fsuipccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
@@ -67,7 +66,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol() virt_override;
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK();
     void sendHeadposeToGame(const double* headpose);
     QString getGameName() {

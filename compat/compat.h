@@ -38,12 +38,12 @@ public:
     void lock();
     void unlock();
     bool success();
-    void* mem;
+    inline void* ptr() { return mem; }
 private:
+    void* mem;
 #if defined(_WIN32)
     HANDLE hMutex, hMapFile;
 #else
     int fd, size;
-    //char shm_filename[NAME_MAX];
 #endif
 };

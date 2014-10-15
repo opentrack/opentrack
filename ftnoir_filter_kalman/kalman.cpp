@@ -5,9 +5,9 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_filter_kalman.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 #include <QDebug>
-#include <math.h>
+#include <cmath>
 
 FTNoIR_Filter::FTNoIR_Filter() {
     reset();
@@ -118,16 +118,16 @@ void FilterControls::doCancel() {
     close();
 }
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
     return new FTNoIR_FilterDll;
 }
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT IFilter* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
 {
     return new FTNoIR_Filter;
 }
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT IFilterDialog* CALLING_CONVENTION GetDialog() {
+extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog() {
     return new FilterControls;
 }

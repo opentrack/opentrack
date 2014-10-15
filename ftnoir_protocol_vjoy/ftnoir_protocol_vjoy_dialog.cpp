@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_vjoy.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 VJoyControls::VJoyControls() : QWidget()
 {
@@ -20,7 +20,7 @@ void VJoyControls::doCancel() {
 void VJoyControls::save() {
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new VJoyControls;
 }

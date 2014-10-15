@@ -1,92 +1,71 @@
-/* Copyright (c) 2011-2012 Stanislaw Halik <sthalik@misaki.pl>
- *                         Adapted to FaceTrackNoIR by Wim Vriend.
+/* Copyright (c) 2011-2014 Stanislaw Halik <sthalik@misaki.pl>
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#ifndef QFUNCTIONCONFIGURATOR_H
-#define QFUNCTIONCONFIGURATOR_H
+
+// Adapted to FaceTrackNoIR by Wim Vriend.
+
+#pragma once
 
 #include <QWidget>
 #include <QtGui>
 #include <QPointF>
 #include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "facetracknoir/plugin-api.hpp"
 
-//
-// The FunctionConfigurator Widget is used to display and configure a function (curve).
-// The Function is used by FaceTrackNoIR to 'translate' the actual head-pose to the virtual headpose. Every axis is configured by a separate Function.
-//
-// The Function is coded in a separate Class and can exists, without the Widget. When the widget is displayed (therefore 'created'), the Function can be attached to the
-// Widget and the Widget used to change the Function.
-//
-
-class FTNOIR_TRACKER_BASE_EXPORT QFunctionConfigurator : public QWidget
+class OPENTRACK_EXPORT QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
-    QColor colorBezier() const
-    {
-        return colBezier;
-    }
 public:
 	QFunctionConfigurator(QWidget *parent = 0);
-	FunctionConfig* config();
-
-    void setConfig(FunctionConfig* config);
-    void saveSettings(QString settingsFile);
-
-signals:
-    void CurveChanged(bool);
-
-public slots:
-    void setColorBezier(QColor);
+    
+	Map* config();
+    void setConfig(Map* config, const QString &name);
+    
+    QColor colorBezier() const
+    {
+        return spline_color;
+    }
+    void setColorBezier(QColor color)
+    {
+        spline_color = color;
+        update();
+    }
 protected slots:
 	void paintEvent(QPaintEvent *e);
 	void mousePressEvent(QMouseEvent *e);
 	void mouseMoveEvent(QMouseEvent *e);
 	void mouseReleaseEvent(QMouseEvent *e);
-      
-protected:
+private:
     void drawBackground();
 	void drawFunction();
 	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
-	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen pen);
-    bool point_within_pixel(QPointF pt, QPointF pixel) const;
-
+	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
+    bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 protected:
-	virtual void resizeEvent(QResizeEvent *);
-
+	void resizeEvent(QResizeEvent *) override;
 private:
-    void update_range() {
-        if (!_config)
-            return;
-        double w = width(), h = height();
-        const double mwl = 40, mhl = 20;
-        const double mwr = 15, mhr = 35;
-        range = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
-        c = QPointF(range.width() / _config->maxInput(), range.height() / _config->maxOutput());
-        _draw_function = _draw_background = true;
-    }
+    void update_range();
 
-	QRectF  range;														// The actual rectangle for the Bezier-curve
-	QPointF lastPoint;													// The right-most point of the Function
-    QPointF pixel_coord_to_point (QPointF point) const;						// Convert the graphical Point to a real-life Point
-    QPointF point_to_pixel (QPointF point) const;	// Convert the Point to a graphical Point
+    QPointF pixel_coord_to_point (const QPointF& point);
+    QPointF point_to_pixel (const QPointF& point);
 
-    int     movingPoint;
+    Map* _config;
+    
+    // bounds of the rectangle user can interact with
+	QRectF  pixel_bounds;
+    
+    int moving_control_point_idx;
     QElapsedTimer timer;
     QPointF c;
 
-	QColor colBezier;				// Color of Bezier curve
-
-	bool _draw_background;			// Flag to determine if the background should be (re-)drawn on the QPixmap
-	QPixmap _background;			// Image of the static parts (axis, lines, etc.)
-	bool _draw_function;			// Flag to determine if the function should be (re-)drawn on the QPixmap
-	QPixmap _function;				// Image of the function (static unless edited by the user)
-
-	FunctionConfig* _config;
+	QColor spline_color;
+    
+	QPixmap _background;
+	QPixmap _function;
+    bool _draw_function;
 };
-
-#endif // QFUNCTIONCONFIGURATOR_H

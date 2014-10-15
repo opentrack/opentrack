@@ -1,10 +1,9 @@
 #include "stdafx.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
 #include "ui_ht-trackercontrols.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <cmath>
 
 #if defined(_WIN32)
@@ -139,7 +138,7 @@ void Tracker::load_settings(ht_config_t* config)
 
 Tracker::Tracker() :
     lck_shm(HT_SHM_NAME, HT_MUTEX_NAME, sizeof(ht_shm_t)),
-    shm(reinterpret_cast<ht_shm_t*>(lck_shm.mem)),
+    shm(reinterpret_cast<ht_shm_t*>(lck_shm.ptr())),
     videoWidget(nullptr),
     layout(nullptr)
 {
@@ -197,24 +196,12 @@ void Tracker::GetHeadPoseData(double *data)
         shm->frame.width = 0;
     }
     if (shm->result.filled) {
-        if (s.enableRX)
-            data[Yaw] = shm->result.rotx;
-        if (s.enableRY) {
-            data[Pitch] = shm->result.roty;
-		}
-        if (s.enableRZ) {
-            data[Roll] = shm->result.rotz;
-        }
-        if (s.enableTX)
-            data[TX] = shm->result.tx;
-        if (s.enableTY)
-            data[TY] = shm->result.ty;
-        if (s.enableTZ)
-            data[TZ] = shm->result.tz;
-        if (fabs(data[Yaw]) > 60 || fabs(data[Pitch]) > 50 || fabs(data[Roll]) > 40)
-        {
-            shm->pause = true;
-        }
+        data[Yaw] = shm->result.rotx;
+        data[Pitch] = shm->result.roty;
+        data[Roll] = shm->result.rotz;
+        data[TX] = shm->result.tx;
+        data[TY] = shm->result.ty;
+        data[TZ] = shm->result.tz;
     } else {
         shm->pause = false;
     }
@@ -224,7 +211,7 @@ void Tracker::GetHeadPoseData(double *data)
 //-----------------------------------------------------------------------------
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
-    *strToBeFilled = "HT 1.0";
+    *strToBeFilled = "HT face tracker";
 }
 
 void TrackerDll::getShortName(QString *strToBeFilled)
@@ -242,17 +229,17 @@ void TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/ht.png");
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
 	return new TrackerDll;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 {
     return new Tracker;
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 {
     return new TrackerControls;
 }
@@ -267,12 +254,6 @@ TrackerControls::TrackerControls()
     tie_setting(s.camera_idx, ui.cameraName);
     tie_setting(s.fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
-    tie_setting(s.enableTX, ui.tx);
-    tie_setting(s.enableTY, ui.ty);
-    tie_setting(s.enableTZ, ui.tz);
-    tie_setting(s.enableRX, ui.rx);
-    tie_setting(s.enableRY, ui.ry);
-    tie_setting(s.enableRZ, ui.rz);
     tie_setting(s.resolution, ui.resolution);
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
@@ -286,6 +267,6 @@ void TrackerControls::doOK()
 
 void TrackerControls::doCancel()
 {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }

@@ -1,3 +1,7 @@
+The opentrack project is a fork of "FaceTrackNoIR" software.
+
+Original project's site located at <http://facetracknoir.sourceforge.net/home/default.htm>
+
 ********************************************************************************
 * FaceTrackNoIR     This program is a private project of the some enthusiastic  *
 *                   gamers from Holland, who don't like to pay much for         *

@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_libevdev.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 LibevdevControls::LibevdevControls() : QWidget()
 {
@@ -20,7 +20,7 @@ void LibevdevControls::doCancel() {
 void LibevdevControls::save() {
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new LibevdevControls;
 }

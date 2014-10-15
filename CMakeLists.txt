@@ -1,5 +1,10 @@
 project(opentrack)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
+cmake_policy(SET CMP0020 NEW)
+
+if(MSVC)
+        message(FATAL_ERROR "Support for MSVC removed due to incomplete C++11 support")
+endif()
 
 include(CMakeParseArguments)
 
@@ -32,7 +37,6 @@ if(APPLE)
     set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_CXX_FLAGS " -stdlib=libc++ -std=c++11 ${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 endif()
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -44,48 +48,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions(-DOPENTRACK_API -DIN_OPENTRACK)
+# note, hatire supports both ftnoir and opentrack
+# don't remove without being sure as hell -sh 20140922
+add_definitions(-DOPENTRACK_API)
 
-if(MSVC)
-    add_definitions(-DNOMINMAX)
-endif()
-
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    add_definitions(-std=c++11)
-endif()
-
-if(WIN32 AND MSVC)
-	set(SDK_GOOGLE_BREAKPAD "" CACHE PATH "google-breakpad for crash reporting")
-endif()
-
-if(MINGW)
-    set(SDK_MINGW_PREFIX "" CACHE PATH "mingw prefix")
-endif()
-
-if(SDK_GOOGLE_BREAKPAD AND WIN32)
-	add_definitions(-DOPENTRACK_BREAKPAD)
-	include_directories("${SDK_GOOGLE_BREAKPAD}/src/client/windows/handler")
-	include_directories("${SDK_GOOGLE_BREAKPAD}/src/")
-endif()
-
-if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
-		find_path (WIN8_SDK_ROOT_DIR
-				Include/um/windows.h
-				PATHS
-						"$ENV{ProgramFiles}/Windows Kits/8.0"
-						"$ENV{ProgramFiles(x86)}/Windows Kits/8.0"
-						DOC "Windows 8 SDK root directory"
-		)
-
-                if(WIN8_SDK_ROOT_DIR)
-		  SET(CMAKE_LIBRARY_PATH "${WIN8_SDK_ROOT_DIR}/Lib/win8/um/x86")
-                endif()
-endif()
-
-if(WIN32 AND DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
-	SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
-	SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
-	SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
+    set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
 endif()
 
 if(UNIX)
@@ -105,18 +73,9 @@ SET(SDK_RIFT "" CACHE PATH "libOVR path")
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-if(MINGW)
-    # qt scripts are broken
-    set(Qt5Gui_user32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libuser32.a)
-    set(Qt5Gui_opengl32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libopengl32.a)
-    set(Qt5Gui_glu32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libglu32.a)
-    set(Qt5Gui_gdi32_LIBRARY ${SDK_MINGW_PREFIX}/mingw/lib/libgdi32.a)
-endif()
-
 find_package(OpenCV REQUIRED)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui ${maybe-serial-port} QUIET)
-cmake_policy(SET CMP0020 NEW)
 include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
@@ -127,15 +86,9 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/ftnoir_posewidget)
 
 set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Path to Aruco static library")
 
-SET(SDK_OPENCV_STATIC FALSE CACHE BOOL "Whether OpenCV is statically linked")
 if(WIN32)
     set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
-    set(SDK_DIRECTX "" CACHE PATH "Path to DirectX SDK")
     set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
-    if(SDK_DIRECTX)
-        include_directories("${SDK_DIRECTX}/Include")
-        link_directories("${SDK_DIRECTX}/Lib")
-    endif()
 endif()
 
 if(NOT WIN32)
@@ -178,17 +131,9 @@ endif()
 set(EXTRA-MOCS "${CMAKE_SOURCE_DIR}/facetracknoir/options.h")
 
 function(link_with_dinput8 n)
-	if(WIN32)
-		if(MSVC)
-			target_link_libraries(${n}
-							  "${CMAKE_SOURCE_DIR}/dinput/dinput8.lib"
-							  "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-							  "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-							  uuid)		
-		else()
-			target_link_libraries(${n} dinput8 dxguid strmiids)
-		endif()
-	endif()
+        if(WIN32)
+                target_link_libraries(${n} dinput8 dxguid strmiids)
+        endif()
 endfunction()
 
 macro(opentrack_module n dir)
@@ -209,15 +154,13 @@ macro(opentrack_library n)
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
             LINK_FLAGS "${foolib_LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
-            COMPILE_FLAGS "${foolib_COMPILE}"
+            COMPILE_FLAGS "${foolib_COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
             )
     else()
         set_target_properties(${n} PROPERTIES LINK_FLAGS "${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
     endif()
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
-
-file(GLOB opentrack-lib-c "opentrack-api/*.cpp" "facetracknoir/global-settings.cpp" "opentrack-api/*.h" "facetracknoir/global-settings.h")
 
 opentrack_module(opentrack-bin facetracknoir)
 opentrack_module(opentrack-pose-widget ftnoir_posewidget)
@@ -245,11 +188,14 @@ opentrack_module(opentrack-proto-libevdev ftnoir_protocol_libevdev)
 
 opentrack_module(opentrack-tracker-ht ftnoir_tracker_ht)
 opentrack_module(opentrack-tracker-aruco ftnoir_tracker_aruco)
-opentrack_module(opentrack-tracker-pt FTNoIR_Tracker_PT)
+opentrack_module(opentrack-tracker-pt ftnoir_tracker_pt)
 opentrack_module(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_module(opentrack-tracker-joystick ftnoir_tracker_joystick)
 opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
 opentrack_module(opentrack-tracker-hydra ftnoir_tracker_hydra)
+opentrack_module(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
+
+file(GLOB opentrack-version-c "facetracknoir/version.c")
 
 file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp" "ftnoir_csv/*.h")
 
@@ -262,7 +208,7 @@ file(GLOB opentrack-xplane-plugin-c "x-plane-plugin/*.c")
 
 # freetrack
 
-file(GLOB opentrack-freetrack-c "freetrackclient/*.cpp")
+file(GLOB opentrack-freetrack-c "freetrackclient/*.c")
 
 if(SDK_XPLANE)
     # probably librt already included
@@ -312,6 +258,11 @@ target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 add_library(opentrack-spline-widget SHARED ${opentrack-spline-widget-c})
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
+add_library(opentrack-version STATIC ${opentrack-version-c})
+set_target_properties(opentrack-version PROPERTIES
+    COMPILE_DEFINITIONS
+    "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
+
 opentrack_library(opentrack-filter-accela)
 opentrack_library(opentrack-filter-kalman)
 opentrack_library(opentrack-filter-ewma)
@@ -322,12 +273,12 @@ opentrack_library(opentrack-proto-fgfs)
 
 if(SDK_VJOY)
     include_directories(${SDK_VJOY})
-    opentrack_library(opentrack-proto-vjoy)
-    if(MSVC)
-        target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.lib")
-    else()
-        target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
+    set(link-flags)
+    if(CMAKE_C_COMPILER_IS_GNUCC)
+        set(link-flags "-Wl,--enable-stdcall-fixup")
     endif()
+    opentrack_library(opentrack-proto-vjoy LINK ${link-flags})
+    target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
 endif()
 
 if(SDK_ENABLE_LIBEVDEV)
@@ -338,10 +289,7 @@ if(SDK_ENABLE_LIBEVDEV)
 endif()
 
 if(SDK_FSUIPC)
-    if(MSVC)
-            set(link-flags "/NODEFAULTLIB:libc")
-    endif()
-    opentrack_library(opentrack-proto-fsuipc LINK "${link-flags}")
+    opentrack_library(opentrack-proto-fsuipc)
     target_link_libraries(opentrack-proto-fsuipc "${SDK_FSUIPC}/FSUIPC_User.lib")
 endif()
 
@@ -359,9 +307,7 @@ endif()
 
 if(WIN32)
     add_library(freetrackclient SHARED ${opentrack-freetrack-c})
-    if(CMAKE_COMPILER_IS_GNUCC)
-        set_target_properties(freetrackclient PROPERTIES LINK_FLAGS "-Wl,--enable-stdcall-fixup -fno-lto -Wl,-kill-at" PREFIX "" COMPILE_FLAGS "-fno-lto")
-    endif()
+    set_target_properties(freetrackclient PROPERTIES PREFIX "")
 endif()
 
 opentrack_library(opentrack-proto-udp)
@@ -374,23 +320,23 @@ if(SDK_WINE_PREFIX)
     opentrack_library(opentrack-proto-wine)
     target_link_libraries(opentrack-proto-wine opentrack-compat opentrack-csv)
     if(NOT SDK_WINE_NO_WRAPPER)
-	set(my-rt -lrt)
-	if(APPLE)
-		set(my-rt)
-	endif()
+        set(my-rt -lrt)
+        if(APPLE)
+            set(my-rt)
+        endif()
+        file(GLOB wine-deps "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/*.cxx")
         add_custom_command(
           OUTPUT opentrack-wrapper-wine.exe.so
-          DEPENDS "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
-                  "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx"
-                  "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx"
-          COMMAND "${SDK_WINE_PREFIX}/bin/wineg++" -g -O2 -m32 -o
+          DEPENDS ${wine-deps}
+          COMMAND "${SDK_WINE_PREFIX}/bin/wineg++" -g -O2 -m32 -std=c++11 -o
                   opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx"
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx"
                   "${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx"
                   ${my-rt})
         add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
-        add_dependencies(wine-wrapper opentrack-compat opentrack-proto-wine)
+        add_dependencies(opentrack-proto-wine wine-wrapper)
+        add_dependencies(wine-wrapper opentrack-compat)
     endif()
 endif()
 
@@ -398,15 +344,8 @@ opentrack_library(opentrack-tracker-ht)
 target_link_libraries(opentrack-tracker-ht opentrack-compat)
 
 if(SDK_ARUCO_LIBPATH)
-    include_directories(${CMAKE_SOURCE_DIR}/ftnoir_tracker_aruco/include)
     opentrack_library(opentrack-tracker-aruco)
     target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-    if(WIN32 AND MSVC)
-        target_link_libraries(opentrack-tracker-aruco
-                      "${CMAKE_SOURCE_DIR}/dinput/dxguid.lib"
-                      "${CMAKE_SOURCE_DIR}/dinput/strmiids.lib"
-                      uuid)
-    endif()
 endif()
 
 link_with_dinput8(opentrack-tracker-ht)
@@ -418,6 +357,7 @@ target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 link_with_dinput8(opentrack-tracker-pt)
 
 opentrack_library(opentrack-tracker-udp)
+opentrack_library(opentrack-tracker-freepie-udp)
 
 if(SDK_RIFT)
     include_directories("${SDK_RIFT}/Include")
@@ -428,24 +368,16 @@ if(SDK_RIFT)
         set(link-flags "-framework CoreFoundation -framework CoreGraphics -framework IOKit -framework Quartz")
         set(c-flags "-fno-strict-aliasing")
     else()
-        if(MSVC)
-            set(link-flags "/NODEFAULTLIB:LIBCMT")
-        else()
-            set(c-flags "-fno-strict-aliasing")
-        endif()
+        set(c-flags "-fno-strict-aliasing")
     endif()
     opentrack_library(opentrack-tracker-rift LINK "${link-flags}" COMPILE "${c-flags}")
-    if(MSVC)
-            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/Lib/Win32/libovr.lib" winmm.lib setupapi.lib)
+    if(WIN32)
+        target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm setupapi ws2_32 imagehlp wbemuuid)
     else()
-        if(WIN32)
-            target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" winmm setupapi)
-        else()
-            if(NOT APPLE)
+        if(NOT APPLE)
                 target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a" udev Xinerama)
-            else()
+        else()
                 target_link_libraries(opentrack-tracker-rift "${SDK_RIFT}/libLibOVR.a")
-            endif()
         endif()
     endif()
 endif()
@@ -493,29 +425,15 @@ if(UNIX OR APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES COMPILE_FLAGS "-DBUILD_QXT_CORE=42 -DBUILD_QXT_WIDGETS=42 -DBUILD_QXT_GUI=42")
     target_link_libraries(opentrack-qxt-mini ${MY_QT_LIBS})
     if(NOT APPLE)
-	    target_link_libraries(opentrack-qxt-mini X11)
+            target_link_libraries(opentrack-qxt-mini X11)
     endif()
 endif()
+
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-bin-c} ${opentrack-bin-uih} ${opentrack-bin-rcc})
-set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
-set(OPENTRACK_COMMIT_VERSION \"${OPENTRACK__COMMIT}\")
-configure_file("${CMAKE_SOURCE_DIR}/opentrack-version.h" "${CMAKE_BINARY_DIR}/opentrack-version.h" @ONLY NEWLINE_STYLE UNIX)
 
 if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
 endif()
-
-add_library(opentrack-api SHARED ${opentrack-lib-c})
-target_link_libraries(opentrack-api ${MY_QT_LIBS})
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    SET_TARGET_PROPERTIES(opentrack-api PROPERTIES
-        LINK_FLAGS "-Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack-api/gnuc-version-script.txt"
-        COMPILE_FLAGS "-fvisibility=protected  -fvisibility-inlines-hidden"
-        COMPILE_DEFINITIONS IN_OPENTRACK_API
-    )
-endif()
-
-set_target_properties(opentrack PROPERTIES COMPILE_DEFINITIONS OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\")
 
 if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
@@ -533,23 +451,12 @@ if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
-if(MSVC)
-    SET_TARGET_PROPERTIES(opentrack PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
-endif()
-target_link_libraries(opentrack opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
+target_link_libraries(opentrack opentrack-version opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
 if(NOT WIN32)
     target_link_libraries(opentrack dl)
-    target_link_libraries(opentrack-api dl)
+else()
+    target_link_libraries(opentrack winmm)
 endif()
-if(SDK_GOOGLE_BREAKPAD)
-    if(MSVC)
-        target_link_libraries(opentrack
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/crash_generation_client.lib"
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/exception_handler.lib"
-            "${SDK_GOOGLE_BREAKPAD}/src/client/windows/Release/lib/common.lib")
-    endif()
-endif()
-set_target_properties(opentrack PROPERTIES COMPILE_FLAGS -DOPENTRACK_MAIN)
 
 # make install
 
@@ -569,13 +476,12 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty-notices" DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/facetracknoir/clientfiles" DESTINATION .)
 
-if(NOT WIN32 AND SDK_WINE_PREFIX)
+if(NOT WIN32 AND SDK_WINE_PREFIX AND NOT SDK_WINE_NO_WRAPPER)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
             DESTINATION .)
 endif()
 
 install(TARGETS
-        opentrack-api
         opentrack-compat
         opentrack-csv
         opentrack-pose-widget
@@ -592,8 +498,17 @@ if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
 endif()
 
-if(MSVC)
-    file(GLOB pdbs1 "${CMAKE_BINARY_DIR}/Release/*.pdb")
-    file(GLOB pdbs2 "${CMAKE_BINARY_DIR}/*.pdb")
-    install(FILES ${pdbs1} ${pdbs2} DESTINATION .)
+string(TIMESTAMP filename-date "%Y%m%d")
+set(filename-ostype ${CMAKE_SYSTEM_NAME})
+get_git_head_revision(filename-branch_0 filename-hash_0)
+if(filename-hash_0)
+    string(SUBSTRING "${filename-hash_0}" 0 7 filename-hash)
 endif()
+string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
+string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
+set(filename_0 opentrack-${filename-ostype}-${filename-branch}-${filename-date}-${filename-hash})
+string(TOLOWER "${filename_0}" filename_1)
+set(filename "${CMAKE_BINARY_DIR}/${filename_1}.tar.xz")
+
+add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
+add_custom_target(tarball DEPENDS ${filename})

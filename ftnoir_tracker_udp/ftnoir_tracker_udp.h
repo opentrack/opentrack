@@ -1,58 +1,43 @@
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#pragma once
 #include "ui_ftnoir_ftnclientcontrols.h"
-#include <QThread>
 #include <QUdpSocket>
-#include <QMessageBox>
-#include <QMutex>
-#include <QWaitCondition>
-#include <math.h>
-#include "facetracknoir/global-settings.h"
+#include <QThread>
+#include <cmath>
+#include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
 
 struct settings {
     pbundle b;
     value<int> port;
-    value<bool> enable_roll, enable_pitch, enable_yaw,
-                enable_x, enable_y, enable_z;
     settings() :
         b(bundle("udp-tracker")),
-        port(b, "port", 4242),
-        enable_roll(b, "enable-roll", true),
-        enable_pitch(b, "enable-pitch", true),
-        enable_yaw(b, "enable-yaw", true),
-        enable_x(b, "enable-x", true),
-        enable_y(b, "enable-y", true),
-        enable_z(b, "enable-y", true)
+        port(b, "port", 4242)
     {}
 };
 
-class FTNoIR_Tracker : public ITracker, public QThread
+class FTNoIR_Tracker : public ITracker, protected QThread
 {
 public:
 	FTNoIR_Tracker();
     ~FTNoIR_Tracker();
     void StartTracker(QFrame *);
     void GetHeadPoseData(double *data);
-    volatile bool should_quit;
 protected:
-	void run();												// qthread override run method
+	void run() override;
 private:
-    QUdpSocket inSocket;
-    QHostAddress destIP;
-    QHostAddress srcIP;
-    double newHeadPose[6];
+    QUdpSocket sock;
+    double last_recv_pose[6];
     QMutex mutex;
     settings s;
+    volatile bool should_quit;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class TrackerControls: public QWidget, public ITrackerDialog
 {
     Q_OBJECT
 public:
-
-	explicit TrackerControls();
+	TrackerControls();
     void registerTracker(ITracker *) {}
     void unRegisterTracker() {}
 private:
@@ -63,9 +48,6 @@ private slots:
 	void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
-//*******************************************************************************************************
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
@@ -74,4 +56,3 @@ public:
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
 };
-

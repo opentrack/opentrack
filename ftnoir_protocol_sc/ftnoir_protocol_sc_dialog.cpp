@@ -24,7 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 SCControls::SCControls() :
 QWidget()
@@ -44,11 +44,11 @@ void SCControls::doOK() {
 }
 
 void SCControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     close();
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new SCControls;
 }

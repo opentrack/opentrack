@@ -1,7 +1,7 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift.h"
 #include <QDebug>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FTNoIR_TrackerDll::FTNoIR_TrackerDll() {
 	//populate the description strings
@@ -35,7 +35,7 @@ void FTNoIR_TrackerDll::getIcon(QIcon *icon)
     *icon = QIcon(":/images/rift_tiny.png");
 }
 
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {
 	return new FTNoIR_TrackerDll;
 }

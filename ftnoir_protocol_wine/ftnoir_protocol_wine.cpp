@@ -3,18 +3,17 @@
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
+#include "ftnoir_csv/csv.h"
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
     if (lck_shm.success()) {
-        shm = (WineSHM*) lck_shm.mem;
+        shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
     }
     wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/opentrack-wrapper-wine.exe.so"));
 }
 
-/** destructor **/
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
     if (shm) {
@@ -52,25 +51,12 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     }
 }
 
-//
-// Check if the Client DLL exists and load it (to test it), if so.
-// Returns 'true' if all seems OK.
-//
 bool FTNoIR_Protocol::checkServerInstallationOK()
 {
     return lck_shm.success();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Protocol object.
-
-// Export both decorated and undecorated names.
-//   GetProtocol     - Undecorated name, which can be easily used with GetProcAddress
-//                Win32 API function.
-//   _GetProtocol@0  - Common name decoration for __stdcall functions in C language.
-//#pragma comment(linker, "/export:GetProtocol=_GetProtocol@0")
-
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT void* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT void* GetConstructor()
 {
     return (IProtocol*) new FTNoIR_Protocol;
 }

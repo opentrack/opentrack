@@ -1,0 +1,1207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UICPTClientControls</class>
+ <widget class="QWidget" name="UICPTClientControls">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>453</width>
+    <height>621</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>PointTracker Settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ftnoir_tracker_pt.qrc">
+    <normaloff>:/Resources/Logo_IR.png</normaloff>:/Resources/Logo_IR.png</iconset>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_9">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="title">
+      <string>Status</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_10">
+      <item row="2" column="2">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Extracted Points:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_38">
+        <property name="text">
+         <string>Camera Info:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDialogButtonBox" name="buttonBox_2">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Apply</set>
+        </property>
+        <property name="centerButtons">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="caminfo_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="pointinfo_label">
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="locale">
+      <locale language="English" country="UnitedStates"/>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Camera</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Camera settings</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Device</string>
+            </property>
+            <property name="buddy">
+             <cstring>camdevice_combo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="camdevice_combo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumContentsLength">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_36">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Width</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="res_x_spin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Desired capture width</string>
+            </property>
+            <property name="suffix">
+             <string> px</string>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_41">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Height</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="res_y_spin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Desired capture height</string>
+            </property>
+            <property name="suffix">
+             <string> px</string>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_37">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>FPS</string>
+            </property>
+            <property name="buddy">
+             <cstring>fps_spin</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="fps_spin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Desired capture framerate</string>
+            </property>
+            <property name="suffix">
+             <string> Hz</string>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Camera orientation</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>Roll</string>
+            </property>
+            <property name="buddy">
+             <cstring>camroll_combo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="camroll_combo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Rotation of the camera image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Pitch</string>
+            </property>
+            <property name="buddy">
+             <cstring>campitch_spin</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="campitch_spin">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>The angle the camera is facing upwards</string>
+            </property>
+            <property name="suffix">
+             <string> deg</string>
+            </property>
+            <property name="minimum">
+             <number>-180</number>
+            </property>
+            <property name="maximum">
+             <number>180</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>positive = upwards</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>Yaw</string>
+            </property>
+            <property name="buddy">
+             <cstring>camyaw_spin</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="camyaw_spin">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>The angle the camera is facing leftwards</string>
+            </property>
+            <property name="suffix">
+             <string> deg</string>
+            </property>
+            <property name="prefix">
+             <string/>
+            </property>
+            <property name="minimum">
+             <number>-180</number>
+            </property>
+            <property name="maximum">
+             <number>180</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>positve = left</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Point extraction</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="4">
+           <widget class="QSpinBox" name="mindiam_spin">
+            <property name="toolTip">
+             <string>Minimum point diameter</string>
+            </property>
+            <property name="suffix">
+             <string> px</string>
+            </property>
+            <property name="maximum">
+             <number>1024</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QSlider" name="threshold_slider">
+            <property name="toolTip">
+             <string>Intensity threshold for point extraction</string>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="pageStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>127</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TicksBothSides</enum>
+            </property>
+            <property name="tickInterval">
+             <number>25</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QSpinBox" name="maxdiam_spin">
+            <property name="toolTip">
+             <string>Maximum point diameter</string>
+            </property>
+            <property name="suffix">
+             <string> px</string>
+            </property>
+            <property name="maximum">
+             <number>1024</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Max size</string>
+            </property>
+            <property name="buddy">
+             <cstring>maxdiam_spin</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QSlider" name="threshold_secondary_slider">
+            <property name="toolTip">
+             <string>Per pixel hysteresis width (leave left if there is little difference between dot and non-dot, move right for increased stability against pixel noise)</string>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="pageStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::TicksBothSides</enum>
+            </property>
+            <property name="tickInterval">
+             <number>25</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Threshold</string>
+            </property>
+            <property name="buddy">
+             <cstring>threshold_slider</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_secondary">
+            <property name="text">
+             <string>Hysteresis</string>
+            </property>
+            <property name="buddy">
+             <cstring>threshold_secondary_slider</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Min size</string>
+            </property>
+            <property name="buddy">
+             <cstring>mindiam_spin</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Model</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_16">
+       <item>
+        <widget class="QTabWidget" name="model_tabs">
+         <property name="tabShape">
+          <enum>QTabWidget::Rounded</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <property name="usesScrollButtons">
+          <bool>false</bool>
+         </property>
+         <property name="documentMode">
+          <bool>false</bool>
+         </property>
+         <property name="tabsClosable">
+          <bool>false</bool>
+         </property>
+         <widget class="QWidget" name="tab_5">
+          <attribute name="title">
+           <string>Clip</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="groupBox_8">
+             <property name="title">
+              <string>Model Dimensions</string>
+             </property>
+             <widget class="QSpinBox" name="clip_tlength_spin">
+              <property name="geometry">
+               <rect>
+                <x>70</x>
+                <y>35</y>
+                <width>100</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="clip_bheight_spin">
+              <property name="geometry">
+               <rect>
+                <x>110</x>
+                <y>115</y>
+                <width>100</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_44">
+              <property name="geometry">
+               <rect>
+                <x>40</x>
+                <y>55</y>
+                <width>71</width>
+                <height>111</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/clip_side.png</pixmap>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_50">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>35</y>
+                <width>46</width>
+                <height>13</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Side</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="clip_blength_spin">
+              <property name="geometry">
+               <rect>
+                <x>50</x>
+                <y>165</y>
+                <width>100</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="clip_theight_spin">
+              <property name="geometry">
+               <rect>
+                <x>110</x>
+                <y>75</y>
+                <width>100</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_51">
+              <property name="geometry">
+               <rect>
+                <x>255</x>
+                <y>40</y>
+                <width>46</width>
+                <height>13</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Front</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_45">
+              <property name="geometry">
+               <rect>
+                <x>265</x>
+                <y>60</y>
+                <width>21</width>
+                <height>111</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/clip_front.png</pixmap>
+              </property>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_6">
+          <attribute name="title">
+           <string>Cap</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item>
+            <widget class="QGroupBox" name="groupBox_9">
+             <property name="title">
+              <string>Model Dimensions</string>
+             </property>
+             <widget class="QLabel" name="label_46">
+              <property name="geometry">
+               <rect>
+                <x>30</x>
+                <y>90</y>
+                <width>111</width>
+                <height>81</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/cap_side.png</pixmap>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_48">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>35</y>
+                <width>46</width>
+                <height>13</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Side</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="cap_length_spin">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>70</y>
+                <width>101</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_54">
+              <property name="geometry">
+               <rect>
+                <x>140</x>
+                <y>90</y>
+                <width>16</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>R</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_55">
+              <property name="geometry">
+               <rect>
+                <x>290</x>
+                <y>85</y>
+                <width>16</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>R</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_47">
+              <property name="geometry">
+               <rect>
+                <x>270</x>
+                <y>85</y>
+                <width>81</width>
+                <height>81</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/cap_front.png</pixmap>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="cap_width_spin">
+              <property name="geometry">
+               <rect>
+                <x>255</x>
+                <y>55</y>
+                <width>100</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label_49">
+              <property name="geometry">
+               <rect>
+                <x>290</x>
+                <y>35</y>
+                <width>46</width>
+                <height>13</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Front</string>
+              </property>
+             </widget>
+             <widget class="QSpinBox" name="cap_height_spin">
+              <property name="geometry">
+               <rect>
+                <x>60</x>
+                <y>120</y>
+                <width>116</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="suffix">
+               <string> units</string>
+              </property>
+              <property name="minimum">
+               <number>-65535</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Custom</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="groupBox_7">
+             <property name="title">
+              <string>Model Dimensions</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="3" column="1">
+               <widget class="QLabel" name="label_57">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="5">
+               <widget class="QSpinBox" name="m2y_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_63">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>x:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QSpinBox" name="m1x_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QSpinBox" name="m1y_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="5">
+               <widget class="QSpinBox" name="m2z_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="5">
+               <widget class="QSpinBox" name="m2x_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="6">
+               <widget class="QLabel" name="label_56">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location of the two remaining model points&lt;br/&gt;with respect to the reference point in default pose&lt;/p&gt;&lt;p&gt;Use any units you want, e.g. millimeters, inches, parsecs...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QSpinBox" name="m1z_spin">
+                <property name="suffix">
+                 <string> units</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="4">
+               <widget class="QLabel" name="label_70">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QLabel" name="label_67">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>x:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QLabel" name="label_64">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_60">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QLabel" name="label_69">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_58">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>y:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="title">
+          <string>Model position</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="tx_spin">
+            <property name="suffix">
+             <string> units</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65536</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="label_59">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Translation from head center to model reference point&lt;br/&gt; in default pose&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="ty_spin">
+            <property name="suffix">
+             <string> units</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65536</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_62">
+            <property name="text">
+             <string>y:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_66">
+            <property name="text">
+             <string>z:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_61">
+            <property name="text">
+             <string>x:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="tz_spin">
+            <property name="suffix">
+             <string> units</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65536</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="tcalib_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Calibrate</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>About</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_35">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="ftnoir_tracker_pt.qrc">:/Resources/Logo_IR.png</pixmap>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>camdevice_combo</tabstop>
+  <tabstop>res_x_spin</tabstop>
+  <tabstop>camroll_combo</tabstop>
+  <tabstop>campitch_spin</tabstop>
+  <tabstop>camyaw_spin</tabstop>
+  <tabstop>threshold_slider</tabstop>
+  <tabstop>model_tabs</tabstop>
+  <tabstop>m1x_spin</tabstop>
+  <tabstop>m1y_spin</tabstop>
+  <tabstop>m1z_spin</tabstop>
+  <tabstop>m2x_spin</tabstop>
+  <tabstop>m2y_spin</tabstop>
+  <tabstop>m2z_spin</tabstop>
+  <tabstop>tx_spin</tabstop>
+  <tabstop>ty_spin</tabstop>
+  <tabstop>tz_spin</tabstop>
+ </tabstops>
+ <resources>
+  <include location="ftnoir_tracker_pt.qrc"/>
+ </resources>
+ <connections/>
+ <slots>
+  <slot>startEngineClicked()</slot>
+  <slot>stopEngineClicked()</slot>
+  <slot>cameraSettingsClicked()</slot>
+ </slots>
+</ui>

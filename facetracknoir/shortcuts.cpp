@@ -9,9 +9,8 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
     QPoint offsetpos(100, 100);
     this->move(parent->pos() + offsetpos);
 
-    mainApp = ftnoir;											// Preserve a pointer to FTNoIR
+    mainApp = ftnoir;
 
-    // Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
@@ -33,9 +32,6 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
     tie_setting(mainApp->s.dingp, ui.ding);
 }
 
-//
-// OK clicked on server-dialog
-//
 void KeyboardShortcutDialog::doOK() {
     mainApp->b->save();
     this->close();
@@ -44,7 +40,7 @@ void KeyboardShortcutDialog::doOK() {
 }
 
 void KeyboardShortcutDialog::doCancel() {
-    mainApp->b->revert();
+    mainApp->s.b->reload();
     close();
 }
 
@@ -112,16 +108,10 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
         ctrl  = ( (keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80) );
         alt   = ( (keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80) );
 
-        //
-        // If one of the modifiers is needed and not pressed, return false.
-        //
         if (key->shift && !shift) return false;
         if (key->ctrl && !ctrl) return false;
         if (key->alt && !alt) return false;
 
-        //
-        // All is well!
-        //
         return true;
     }
     return false;

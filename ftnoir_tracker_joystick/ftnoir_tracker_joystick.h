@@ -5,7 +5,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_tracker_joystick_controls.h"
 #include <QComboBox>
 #include <QCheckBox>
@@ -16,7 +15,7 @@
 #include <QMutex>
 #include <QFrame>
 #include <cmath>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-api.hpp"
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif
@@ -32,21 +31,9 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<int> axis_0;
-    value<int> axis_1;
-    value<int> axis_2;
-    value<int> axis_3;
-    value<int> axis_4;
-    value<int> axis_5;
     value<QString> joyid;
     settings() :
         b(bundle("tracker-joystick")),
-        axis_0(b, "axis-0", 0),
-        axis_1(b, "axis-1", 0),
-        axis_2(b, "axis-2", 0),
-        axis_3(b, "axis-3", 0),
-        axis_4(b, "axis-4", 0),
-        axis_5(b, "axis-5", 0),
         joyid(b, "joy-id", "")
     {}
 };
@@ -61,12 +48,12 @@ public:
     void reload();
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
-    int min_[8], max_[8];
     QMutex mtx;
     QFrame* frame;
     DIDEVICEINSTANCE def;
     int iter; // XXX bad style
     settings s;
+	static constexpr int AXIS_MAX = 65535;
 };
 
 class TrackerControls: public QWidget, public ITrackerDialog

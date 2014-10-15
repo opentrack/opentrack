@@ -1,0 +1,8 @@
+*.cpp text=auto eol=lf
+*.hpp text=auto eol=lf
+*.c text=auto eol=lf
+*.h text=auto eol=lf
+*.cxx text=auto eol=lf
+*.txt text=auto eol=lf
+*.ui text=auto eol=lf
+*.qrc text=auto eol=lf

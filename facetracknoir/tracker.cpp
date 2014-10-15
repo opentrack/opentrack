@@ -12,8 +12,7 @@
  * originally written by Wim Vriend.
  */
 
-#include "tracker.h"
-#include "facetracknoir.h"
+#include "./tracker.h"
 #include <opencv2/core/core.hpp>
 #include <cmath>
 #include <algorithm>
@@ -22,12 +21,12 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker(FaceTrackNoIR *parent , main_settings& s) :
-    mainApp(parent),
+Tracker::Tracker(main_settings& s, Mappings &m) :
     s(s),
-    should_quit(false),
-    do_center(false),
-    enabled(true)
+    m(m),
+    centerp(false),
+    enabledp(true),
+    should_quit(false)
 {
 }
 
@@ -37,26 +36,22 @@ Tracker::~Tracker()
     wait();
 }
 
-static void get_curve(double pos, double& out, THeadPoseDOF& axis) {
+void Tracker::get_curve(double pos, double& out, Mapping& axis) {
     bool altp = (pos < 0) && axis.opts.altp;
-    if (altp) {
-        out = (axis.opts.invert ? -1 : 1) * axis.curveAlt.getValue(pos);
-        axis.curve.setTrackingActive( false );
-        axis.curveAlt.setTrackingActive( true );
-    }
-    else {
-        out = (axis.opts.invert ? -1 : 1) * axis.curve.getValue(pos);
-        axis.curve.setTrackingActive( true );
-        axis.curveAlt.setTrackingActive( false );
-    }
+    axis.curve.setTrackingActive( !altp );
+    axis.curveAlt.setTrackingActive( altp );
+    auto& fc = altp ? axis.curveAlt : axis.curve;
+    out = (axis.opts.invert ? -1 : 1) * fc.getValue(pos);
+
     out += axis.opts.zero;
 }
 
-static void t_compensate(double* input, double* output, bool rz)
+void Tracker::t_compensate(const double* input, double* output, bool rz)
 {
-    const auto H = input[Yaw] * M_PI / -180;
-    const auto P = input[Pitch] * M_PI / -180;
-    const auto B = input[Roll] * M_PI / 180;
+    static constexpr double pi = 3.141592653;
+    const auto H = input[Yaw] * pi / -180;
+    const auto P = input[Pitch] * pi / -180;
+    const auto B = input[Roll] * pi / 180;
 
     const auto cosH = cos(H);
     const auto sinH = sin(H);
@@ -77,119 +72,96 @@ static void t_compensate(double* input, double* output, bool rz)
         cosH * cosP,
     };
 
-    cv::Mat rmat(3, 3, CV_64F, foo);
-    const cv::Mat tvec(3, 1, CV_64F, input);
-    cv::Mat ret = rmat * tvec;
+    const cv::Matx33d rmat(foo);
+    const cv::Vec3d tvec(input);
+    const cv::Vec3d ret = rmat * tvec;
 
     const int max = !rz ? 3 : 2;
 
     for (int i = 0; i < max; i++)
-        output[i] = ret.at<double>(i);
+        output[i] = ret(i);
 }
 
-/** QThread run method @override **/
 void Tracker::run() {
-    T6DOF offset_camera;
+    Pose pose_offset, unstopped_pose;
 
     double newpose[6] = {0};
-    int sleep_ms = 15;
-
-    if (Libraries->pTracker)
-        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pTracker->preferredHz());
-
-    if (Libraries->pSecondTracker)
-        sleep_ms = std::min(sleep_ms, 1000 / Libraries->pSecondTracker->preferredHz());
-
-    qDebug() << "tracker Hz:" << 1000 / sleep_ms;
+    const int sleep_ms = 3;
 
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
 #endif
 
-    for (;;)
+    while (!should_quit)
     {
         t.start();
 
-        if (should_quit)
-            break;
+        Libraries->pTracker->GetHeadPoseData(newpose);
 
-        if (Libraries->pSecondTracker) {
-            Libraries->pSecondTracker->GetHeadPoseData(newpose);
-        }
+        Pose final_raw, filtered;
 
-        if (Libraries->pTracker) {
-            Libraries->pTracker->GetHeadPoseData(newpose);
+        for (int i = 0; i < 6; i++)
+        {
+            auto& axis = m(i);
+            int k = axis.opts.src;
+            if (k < 0 || k >= 6)
+                continue;
+            // not really raw, after axis remap -sh
+            final_raw(i) = newpose[k];
         }
 
         {
-            QMutexLocker foo(&mtx);
+            if (enabledp)
+                unstopped_pose = final_raw;
+
+            if (Libraries->pFilter)
+                Libraries->pFilter->FilterHeadPoseData(unstopped_pose, filtered);
+            else
+                filtered = unstopped_pose;
+            
+            if (centerp)  {
+                centerp = false;
+                pose_offset = filtered;
+            }
+
+            filtered = filtered & pose_offset;
 
             for (int i = 0; i < 6; i++)
-                mainApp->axis(i).headPos = newpose[i];
-
-            if (do_center)  {
-                for (int i = 0; i < 6; i++)
-                    offset_camera.axes[i] = mainApp->axis(i).headPos;
-
-                do_center = false;
-
-                if (Libraries->pFilter)
-                    Libraries->pFilter->reset();
-            }
-
-            T6DOF target_camera, target_camera2, new_camera;
-
-            if (enabled)
-            {
-                for (int i = 0; i < 6; i++)
-                    target_camera.axes[i] = mainApp->axis(i).headPos;
-
-                target_camera2 = target_camera - offset_camera;
-            }
-
-            if (Libraries->pFilter) {
-                Libraries->pFilter->FilterHeadPoseData(target_camera2.axes, new_camera.axes);
-            } else {
-                new_camera = target_camera2;
-            }
-
-            for (int i = 0; i < 6; i++) {
-                get_curve(new_camera.axes[i], output_camera.axes[i], mainApp->axis(i));
-            }
-
-            if (mainApp->s.tcomp_p)
-                t_compensate(output_camera.axes, output_camera.axes, mainApp->s.tcomp_tz);
-
-            if (Libraries->pProtocol) {
-                Libraries->pProtocol->sendHeadposeToGame( output_camera.axes );	// degrees & centimeters
-            }
+                get_curve(filtered(i), filtered(i), m(i));
         }
 
-        const long q = std::max(0L, sleep_ms * 1000L - std::max(0L, t.elapsed()));
+        if (s.tcomp_p)
+            t_compensate(filtered, filtered, s.tcomp_tz);
 
+        Libraries->pProtocol->sendHeadposeToGame(filtered);
+
+        {
+            QMutexLocker foo(&mtx);
+            output_pose = filtered;
+            raw_6dof = final_raw;
+        }
+
+        const long q = 1000L * std::max(0L, sleep_ms - t.elapsed_ms());
         usleep(q);
     }
+
 #if defined(_WIN32)
     (void) timeEndPeriod(1);
 #endif
 
     for (int i = 0; i < 6; i++)
     {
-        mainApp->axis(i).curve.setTrackingActive(false);
-        mainApp->axis(i).curveAlt.setTrackingActive(false);
+        m(i).curve.setTrackingActive(false);
+        m(i).curveAlt.setTrackingActive(false);
     }
 }
 
-void Tracker::getHeadPose( double *data ) {
-    QMutexLocker foo(&mtx);
+void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const {
+    QMutexLocker foo(&const_cast<Tracker&>(*this).mtx);
     for (int i = 0; i < 6; i++)
     {
-        data[i] = mainApp->axis(i).headPos;
+        raw[i] = raw_6dof(i);
+        mapped[i] = output_pose(i);
     }
 }
 
-void Tracker::getOutputHeadPose( double *data ) {
-    QMutexLocker foo(&mtx);
-    for (int i = 0; i < 6; i++)
-        data[i] = output_camera.axes[i];
-}
