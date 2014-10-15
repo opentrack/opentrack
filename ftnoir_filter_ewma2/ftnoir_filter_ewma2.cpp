@@ -42,16 +42,14 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
     double new_delta, new_noise, norm_noise;
     double alpha;
 
-    //On the first run, initialize to output=target and return.
+    //On the first run, initialize filter states to target intput.
     if (first_run==true) {
         for (int i=0;i<6;i++) {
-            new_camera_position[i] = target_camera_position[i];
             current_camera_position[i] = target_camera_position[i];
             delta[i] = 0.0;
             noise[i] = 0.0;
         }
         first_run=false;
-        return;
     }
 
     // Calculate the new camera position.
