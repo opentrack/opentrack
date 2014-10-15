@@ -25,13 +25,12 @@ public:
     FTNoIR_Filter();
     void reset();
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position) override;
+                            double *new_camera_position);
+    double accel_variance;
+    double noise_variance;
     cv::KalmanFilter kalman;
     double prev_position[6];
-    double prev2_filter_pos[6];
-    double prev_filter_pos[6];
     QElapsedTimer timer;
-    qint64 timedelta;
 };
 
 class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
