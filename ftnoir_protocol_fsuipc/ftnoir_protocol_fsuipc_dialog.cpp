@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_protocol_fsuipc.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FSUIPCControls::FSUIPCControls() :
     QWidget()
@@ -42,7 +42,7 @@ void FSUIPCControls::doOK() {
 }
 
 void FSUIPCControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     close();
 }
 
@@ -56,7 +56,7 @@ void FSUIPCControls::getLocationOfDLL()
     }
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog(void)
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog(void)
 {
     return new FSUIPCControls;
 }

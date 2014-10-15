@@ -27,14 +27,12 @@
 ********************************************************************************/
 #pragma once
 
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
 #include "ui_ftnoir_ftncontrols.h"
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include <math.h>
-#include "facetracknoir/global-settings.h"
+#include <cmath>
+#include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
 

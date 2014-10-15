@@ -1,21 +1,16 @@
 #pragma once
 #include <QWidget>
-#include <QPalette>
+#include "./mappings.hpp"
 #include "ui_ftnoir_curves.h"
 
-class FaceTrackNoIR;
-
-class CurveConfigurationDialog: public QWidget
+class MapWidget: public QWidget
 {
     Q_OBJECT
 public:
-    CurveConfigurationDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
-    void loadSettings();
+    MapWidget(Mappings &m, main_settings &s, QWidget *parent );
 private:
     Ui::UICCurveConfigurationDialog ui;
-    void save();
-    FaceTrackNoIR *mainApp;
-
+    Mappings& m;
 private slots:
     void doOK();
     void doCancel();

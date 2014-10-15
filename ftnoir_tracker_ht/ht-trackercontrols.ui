@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
-    <height>166</height>
+    <width>354</width>
+    <height>158</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,91 +50,6 @@
      <property name="text">
       <string>Horizontal FOV</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="2" rowspan="3">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Enable axes</string>
-     </property>
-     <widget class="QCheckBox" name="rx">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RX</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="ry">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RY</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="rz">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RZ</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="tx">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>20</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TX</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="ty">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>40</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TY</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="tz">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>60</y>
-        <width>70</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TZ</string>
-      </property>
-     </widget>
     </widget>
    </item>
    <item row="1" column="0">
@@ -214,7 +129,7 @@
      </item>
     </widget>
    </item>
-   <item row="4" column="2">
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>

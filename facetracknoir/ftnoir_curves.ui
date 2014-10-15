@@ -33,7 +33,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="styleSheet">
-      <string notr="true">background-color: #ccc;</string>
+      <string notr="true"/>
      </property>
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
@@ -53,15 +53,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>5</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -100,15 +91,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>5</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>255</red>
@@ -137,18 +119,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>90</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>90</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -187,18 +157,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>90</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>90</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>10</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>0</red>
@@ -227,18 +185,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>5</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>1</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -277,18 +223,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>180</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>5</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>1</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>0</red>
@@ -317,18 +251,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -367,18 +289,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>255</red>
@@ -407,18 +317,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -457,18 +355,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>255</red>
@@ -497,18 +383,6 @@
          <width>930</width>
          <height>260</height>
         </rect>
-       </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
        </property>
        <property name="colorBezier" stdset="0">
         <color>
@@ -547,18 +421,6 @@
          <height>260</height>
         </rect>
        </property>
-       <property name="maxInputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="maxOutputEGU" stdset="0">
-        <number>100</number>
-       </property>
-       <property name="pixPerEGU_Input" stdset="0">
-        <number>28</number>
-       </property>
-       <property name="pixPerEGU_Output" stdset="0">
-        <number>2</number>
-       </property>
        <property name="colorBezier" stdset="0">
         <color>
          <red>0</red>
@@ -580,6 +442,9 @@
        <string>Options</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -595,15 +460,8 @@
           <bool>false</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>RX</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="pos_rx">
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="pos_rz">
             <property name="suffix">
              <string> deg.</string>
             </property>
@@ -615,6 +473,22 @@
             </property>
             <property name="maximum">
              <double>180.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QDoubleSpinBox" name="pos_tz">
+            <property name="suffix">
+             <string> cm</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-100.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -648,6 +522,13 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>TY</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QDoubleSpinBox" name="pos_ry">
             <property name="suffix">
@@ -664,10 +545,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_5">
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>TY</string>
+             <string>TZ</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>RZ</string>
             </property>
            </widget>
           </item>
@@ -687,22 +575,15 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_6">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>TZ</string>
+             <string>RX</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>RZ</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="pos_rz">
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="pos_rx">
             <property name="suffix">
              <string> deg.</string>
             </property>
@@ -717,27 +598,361 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
-           <widget class="QDoubleSpinBox" name="pos_tz">
-            <property name="suffix">
-             <string> cm</string>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="maximumSize">
+          <size>
+           <width>65536</width>
+           <height>65536</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="title">
+          <string>Output remap</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0,0,0,0,0" columnstretch="0,0,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinAndMaxSize</enum>
+          </property>
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>X</string>
             </property>
-            <property name="decimals">
-             <number>3</number>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Yaw</string>
             </property>
-            <property name="minimum">
-             <double>-100.000000000000000</double>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Pitch</string>
             </property>
-            <property name="maximum">
-             <double>100.000000000000000</double>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Z</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Roll</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="invert_yaw">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="invert_pitch">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="invert_x">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="invert_roll">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QCheckBox" name="invert_y">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QCheckBox" name="invert_z">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="src_yaw">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="src_pitch">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="src_roll">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="src_x">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QComboBox" name="src_y">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QComboBox" name="src_z">
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Source</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Invert</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Destination</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="0" column="1">
         <widget class="QGroupBox" name="groupBox_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -747,8 +962,8 @@
          <property name="flat">
           <bool>true</bool>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="tcomp_enable">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -764,165 +979,13 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0">
            <widget class="QCheckBox" name="tcomp_rz">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="text">
              <string>Disable Z axis compensation</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="maximumSize">
-          <size>
-           <width>65536</width>
-           <height>65536</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <kerning>true</kerning>
-          </font>
-         </property>
-         <property name="title">
-          <string>Axis inversion</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-         <property name="checkable">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4" rowstretch="6,6,6" columnstretch="6,6" rowminimumheight="6,6,6" columnminimumwidth="6,6">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinAndMaxSize</enum>
-          </property>
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chkInvertYaw">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>Yaw</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="chkInvertX">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>TX</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="chkInvertPitch">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>Pitch</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="chkInvertY">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>TY</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="chkInvertRoll">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>Roll</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="chkInvertZ">
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>65536</height>
-             </size>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background:none;</string>
-            </property>
-            <property name="text">
-             <string>TZ</string>
             </property>
            </widget>
           </item>

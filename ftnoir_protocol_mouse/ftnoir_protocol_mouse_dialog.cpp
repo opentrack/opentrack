@@ -23,7 +23,7 @@
 *																				*
 ********************************************************************************/
 #include "ftnoir_protocol_mouse.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 MOUSEControls::MOUSEControls() : _proto(nullptr)
 {
@@ -59,11 +59,11 @@ void MOUSEControls::doOK() {
 }
 
 void MOUSEControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new MOUSEControls;
 }

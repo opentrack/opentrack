@@ -28,7 +28,7 @@
 #include "ftnoir_protocol_fg.h"
 #include <QObject>
 #include <QFile>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -59,11 +59,11 @@ void FGControls::doOK() {
 }
 
 void FGControls::doCancel() {
-    s.b->revert();
+    s.b->reload();
     this->close();
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocolDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
 {
     return new FGControls;
 }

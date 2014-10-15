@@ -5,11 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-api.hpp"
 
 extern "C" {
 #   include <libevdev/libevdev.h>
@@ -20,7 +19,7 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK() {
         return dev != NULL;
     }
@@ -33,7 +32,6 @@ private:
     struct libevdev_uinput* uidev;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class LibevdevControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT

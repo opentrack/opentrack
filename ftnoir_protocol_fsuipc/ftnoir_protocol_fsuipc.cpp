@@ -25,9 +25,8 @@
 *					to games, using the FSUIPC.dll.			         			*
 ********************************************************************************/
 #include "ftnoir_protocol_fsuipc.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 	prevPosX = 0.0f;
@@ -43,9 +42,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	FSUIPCLib.unload();
 }
 
-//
-// Scale the measured value to the Joystick values
-//
 int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
 double y;
 double local_x;
@@ -162,7 +158,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	return true;
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT FTNoIR_Protocol* CALLING_CONVENTION GetConstructor(void)
+extern "C" OPENTRACK_EXPORT FTNoIR_Protocol* GetConstructor(void)
 {
     return new FTNoIR_Protocol;
 }

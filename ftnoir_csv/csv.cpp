@@ -25,9 +25,9 @@
 #define INSIDE_CSV
 #include "csv.h"
 #include <QTextDecoder>
-#include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
+#include <QDebug>
 
 CSV::CSV(QIODevice * device)
 {
@@ -46,12 +46,10 @@ CSV::CSV(QString &string){
 
 CSV::~CSV()
 {
-	//delete m_codec;
 }
 
 
 void CSV::setCodec(const char* codecName){
-	//delete m_codec;
 	m_codec = QTextCodec::codecForName(codecName);
 }
 
@@ -59,7 +57,6 @@ QString CSV::readLine(){
 	QString line;
 
 	if(m_string.isNull()){
-		//READ DATA FROM DEVICE
 		if(m_device && m_device->isReadable()){
 			QTextDecoder dec(m_codec);
 			m_string = dec.toUnicode(m_device->readAll());
@@ -67,8 +64,6 @@ QString CSV::readLine(){
 			return QString();
 		}
 	}
-
-	//PARSE
 	if((m_pos = m_rx.indexIn(m_string,m_pos)) != -1) {
 		line = m_rx.cap(1);		
 		m_pos += m_rx.matchedLength();
@@ -111,12 +106,9 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
     QStringList gameLine;
 	qDebug() << "getGameData, ID = " << gameID;
 
-	//
-	// Open the supported games list, to get the Name.
-	//
 	QFile file(QCoreApplication::applicationDirPath() + "/settings/facetracknoir supported games.csv");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return;
+		return;
 	}
 	CSV csv(&file);
 	gameLine = csv.parseLine();
@@ -131,9 +123,6 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 		//qDebug() << "Column 6: " << gameLine.at(6);		// International ID
 		//qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
 		
-		//
-		// If the gameID was found, fill the shared memory
-		//
 		if (gameLine.count() > 6) {
 			if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
                 QByteArray id = gameLine.at(7).toLatin1();
@@ -172,9 +161,6 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 		gameLine = csv.parseLine();
 	}
 
-	//
-	// If the gameID was NOT found, fill only the name "Unknown game connected"
-	//
     qDebug() << "Unknown game connected" << gameID;
     file.close();
 }

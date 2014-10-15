@@ -1,8 +1,13 @@
-#include <errno.h>
-#include <stdio.h>
+#include <cerrno>
+#include <cstdio>
 #include "ftnoir_protocol_ft/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
-#include "ftnoir_tracker_base/ftnoir_tracker_types.h"
+
+#define OPENTRACK_CROSS_ONLY
+#include "facetracknoir/plugin-api.hpp"
+
+#define OPENTRACK_COMPAT_BUNDLED
+#include "compat/compat.h"
 
 void create_registry_key(void);
 
@@ -13,8 +18,9 @@ public:
     void lock();
     void unlock();
     bool success();
-    void* mem;
+    inline void* ptr() { return mem; }
 private:
+    void* mem;
     int fd, size;
 };
 
@@ -25,8 +31,9 @@ public:
     void lock();
     void unlock();
     bool success();
-    void* mem;
+    inline void* ptr() { return mem; }
 private:
+    void* mem;
     void *hMutex, *hMapFile;
 };
 #include <windows.h>
@@ -34,8 +41,8 @@ private:
 int main(void)
 {
 	ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTMemMap));
-	if(!lck_posix.success()) {
+    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
+    if(!lck_posix.success()) {
 		printf("Can't open posix map: %d\n", errno);
 		return 1;
 	}
@@ -43,12 +50,11 @@ int main(void)
 		printf("Can't open Wine map\n");
 		return 1;
 	}
-	WineSHM* shm_posix = (WineSHM*) lck_posix.mem;
-    FTMemMap* shm_wine = (FTMemMap*) lck_wine.mem;
-    TFreeTrackData* data = &shm_wine->data;
+    WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();
+    FTHeap* shm_wine = (FTHeap*) lck_wine.ptr();
+    FTData* data = &shm_wine->data;
     create_registry_key();
 	while (1) {
-		(void) Sleep(10);
 		lck_posix.lock();
 		if (shm_posix->stop) {
 			lck_posix.unlock();
@@ -70,5 +76,6 @@ int main(void)
             shm_wine->table[i] = shm_posix->table[i];
 		lck_wine.unlock();
 		lck_posix.unlock();
+        (void) Sleep(4);
 	}
 }

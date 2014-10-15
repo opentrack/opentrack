@@ -25,10 +25,8 @@
 *				to games, using the FreeTrackClient.dll.		         		*
 ********************************************************************************/
 #pragma once
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_ftcontrols.h"
-#include "facetracknoir/global-settings.h"
-#include "fttypes.h"
+#include "facetracknoir/plugin-api.hpp"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -36,34 +34,32 @@
 #include <QDebug>
 #include <QFile>
 #include <QString>
-#include <windows.h>
 #include <QMutex>
 #include <QMutexLocker>
 #include "compat/compat.h"
 #include "facetracknoir/options.h"
+#include "fttypes.h"
 using namespace options;
 
 struct settings {
     pbundle b;
     value<int> intUsedInterface;
-    value<bool> useTIRViews, useDummyExe;
+    value<bool> useTIRViews;
     settings() :
         b(bundle("proto-freetrack")),
         intUsedInterface(b, "used-interfaces", 0),
-        useTIRViews(b, "use-memory-hacks", false),
-        useDummyExe(b, "ezca-mode", false)
+        useTIRViews(b, "use-memory-hacks", false)
     {}
 };
 
-//typedef char *(WINAPI *importProvider)(void);
-typedef void (WINAPI *importTIRViewsStart)(void);
-typedef void (WINAPI *importTIRViewsStop)(void);
+typedef void (__stdcall *importTIRViewsStart)(void);
+typedef void (__stdcall *importTIRViewsStop)(void);
 
 class FTNoIR_Protocol : public IProtocol
 {
 public:
     FTNoIR_Protocol();
-    virtual ~FTNoIR_Protocol();
+    ~FTNoIR_Protocol() override;
     bool checkServerInstallationOK(  );
     void sendHeadposeToGame( const double *headpose );
     QString getGameName() {
@@ -71,14 +67,13 @@ public:
         return connected_game;
     }
 private:
-    importTIRViewsStart viewsStart;						// Functions inside TIRViews.dll
+    importTIRViewsStart viewsStart;
     importTIRViewsStop viewsStop;
-
-    FTMemMap *pMemData;
+    
+    FTHeap *pMemData;
     QString game_name;
     PortableLockedShm shm;
 
-    // Private properties
     QString ProgramName;
     QLibrary FTIRViewsLib;
     QProcess dummyTrackIR;

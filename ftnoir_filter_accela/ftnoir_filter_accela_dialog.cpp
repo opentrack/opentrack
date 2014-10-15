@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <QDoubleSpinBox>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 FilterControls::FilterControls() :
     accela_filter(nullptr)
@@ -43,7 +43,7 @@ void FilterControls::doCancel() {
 
 void FilterControls::discard()
 {
-    s.b->revert();
+    s.b->reload();
 }
 
 void FilterControls::save() {
@@ -52,7 +52,7 @@ void FilterControls::save() {
         accela_filter->receiveSettings();
 }
 
-extern "C" FTNOIR_FILTER_BASE_EXPORT IFilterDialog* CALLING_CONVENTION GetDialog()
+extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()
 {
     return new FilterControls;
 }

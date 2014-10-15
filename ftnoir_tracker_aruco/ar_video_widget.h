@@ -22,26 +22,18 @@
 class ArucoVideoWidget : public QWidget
 {
 	Q_OBJECT
-
-public:
-    ArucoVideoWidget(QWidget *parent) : QWidget(parent) {
-        connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
-        timer.start(60);
-	}
-    void update_image(const cv::Mat& frame);
-protected slots:
-    void paintEvent( QPaintEvent* e ) {
-        QMutexLocker foo(&mtx);
-        QPainter painter(this);
-        painter.drawImage(e->rect(), texture);
-    }
-    void update_and_repaint();
-
+    
 private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
+private slots:
+    void update_and_repaint(); 
+public:
+    ArucoVideoWidget(QWidget *parent);
+    void update_image(const cv::Mat& frame);   
+    void paintEvent( QPaintEvent*) override;
 };
 
 #endif // VIDEOWIDGET_H

@@ -43,17 +43,14 @@ Don't be afraid to submit an issue/feature request if the need arises.
 
 # Credits
 
-- Stanisław Halik
+- Stanisław Halik (maintainer)
 - Chris Thompson (aka mm0zct)
-- Donovan Baarda
+- Donovan Baarda (filtering/control theory expert)
 - Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (PT tracker)
-- FuraX49 (hatire arduino tracker)
 - Ulf Schreiber (PT tracker)
 - uglyDwarf (high CON)
-- George Trigonakis (tester)
 - Wim Vriend (historically)
-- Ron Hendriks (historically)
 
 # Licensing information
 

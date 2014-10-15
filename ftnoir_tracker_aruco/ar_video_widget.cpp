@@ -40,3 +40,15 @@ void ArucoVideoWidget::update_and_repaint()
     texture = qframe2;
     update();
 }
+
+void ArucoVideoWidget::paintEvent(QPaintEvent* e)
+{
+    QMutexLocker foo(&mtx);
+    QPainter(this).drawImage(e->rect(), texture);
+}
+
+ArucoVideoWidget::ArucoVideoWidget(QWidget* parent): QWidget(parent)
+{
+    connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
+    timer.start(60);
+}

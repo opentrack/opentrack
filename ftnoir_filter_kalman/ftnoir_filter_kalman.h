@@ -8,29 +8,24 @@
 #ifndef INCLUDED_FTN_FILTER_H
 #define INCLUDED_FTN_FILTER_H
 
-#undef FTNOIR_TRACKER_BASE_LIB
-#define FTNOIR_TRACKER_BASE_EXPORT Q_DECL_IMPORT
-
-#include "ftnoir_filter_base/ftnoir_filter_base.h"
 #include "ui_ftnoir_kalman_filtercontrols.h"
-#include "facetracknoir/global-settings.h"
-#include <opencv2/opencv.hpp>
+#include "facetracknoir/plugin-api.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/video/video.hpp>
 #include <vector>
 #include <QString>
-#include <QIcon>
-#include <QWidget>
 #include <QElapsedTimer>
-#include <QObject>
+#include <QWidget>
 #include "facetracknoir/options.h"
 using namespace options;
 
-class FTNOIR_FILTER_BASE_EXPORT FTNoIR_Filter : public IFilter
+class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void reset() virt_override;
+    void reset();
     void FilterHeadPoseData(const double *target_camera_position,
-                            double *new_camera_position) virt_override;
+                            double *new_camera_position);
     double accel_variance;
     double noise_variance;
     cv::KalmanFilter kalman;
@@ -38,7 +33,7 @@ public:
     QElapsedTimer timer;
 };
 
-class FTNOIR_FILTER_BASE_EXPORT FTNoIR_FilterDll : public Metadata
+class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
 {
 public:
     void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Kalman filter"); }
@@ -47,7 +42,7 @@ public:
     void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
 };
 
-class FTNOIR_FILTER_BASE_EXPORT FilterControls: public QWidget, public IFilterDialog
+class OPENTRACK_EXPORT FilterControls: public QWidget, public IFilterDialog
 {
     Q_OBJECT
 public:
@@ -58,8 +53,8 @@ public:
         show();
     }
     Ui::KalmanUICFilterControls ui;
-    virtual void registerFilter(IFilter*) virt_override {}
-    virtual void unregisterFilter() virt_override {}
+    void registerFilter(IFilter*) override {}
+    void unregisterFilter() override {}
 public slots:
     void doOK();
     void doCancel();

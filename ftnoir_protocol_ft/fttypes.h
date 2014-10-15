@@ -16,45 +16,38 @@
  * * The FTTypes sources were translated from the original Delphi sources           *
  * * created by the FreeTrack developers.                                           *
  */
-#ifndef INCLUDED_FTTYPES_H
-#define INCLUDED_FTTYPES_H
 
-#if !defined(_WIN32)
+#pragma once
+
+#ifndef _MSC_VER
 #   include <inttypes.h>
-typedef int32_t my_32bit_int;
-#   define WINAPI
 #else
-#   include <windows.h>
-typedef __int32 my_32bit_int;
+typedef unsigned __int32 uint32_t;
 #endif
 
-//#include "Registry.h"
-
-//  static const char* FT_CLIENT_LOCATION = "Software\\Freetrack\\FreetrackClient";
-//#define FT_CLIENT_FILENAME "FreeTrackClient.Dll"
-#define FT_MM_DATA "FT_SharedMem"
-//#define FREETRACK "Freetrack"
+#define FREETRACK_HEAP "FT_SharedMem"
 #define FREETRACK_MUTEX "FT_Mutext"
 
-struct TFreeTrackData {
+/* only 6 headpose floats and the data id are filled -sh */
+typedef struct __FTData {
     int DataID;
     int CamWidth;
     int CamHeight;
-    // virtual pose
-    float Yaw;   // positive yaw to the left
-    float Pitch; // positive pitch up
-    float Roll;  // positive roll to the left
+    /* virtual pose */
+    float Yaw;   /* positive yaw to the left */
+    float Pitch; /* positive pitch up */
+    float Roll;  /* positive roll to the left */
     float X;
     float Y;
     float Z;
-    // raw pose with no smoothing, sensitivity, response curve etc. 
+    /* raw pose with no smoothing, sensitivity, response curve etc. */
     float RawYaw;
     float RawPitch;
     float RawRoll;
     float RawX;
     float RawY;
     float RawZ;
-    // raw points, sorted by Y, origin top left corner
+    /* raw points, sorted by Y, origin top left corner */
     float X1;
     float Y1;
     float X2;
@@ -63,24 +56,13 @@ struct TFreeTrackData {
     float Y3;
     float X4;
     float Y4;
-};
-typedef TFreeTrackData * PFreetrackData;
+} FTData;
 
-struct FTMemMap {
-    TFreeTrackData data;
-    my_32bit_int GameID;
+/* we add some shit at the end for other legacy proto, sadly */
+
+typedef struct __FTHeap {
+    FTData data;
+    int32_t GameID;
     unsigned char table[8];
-    my_32bit_int GameID2;
-};
-typedef FTMemMap * PFTMemMap;
-
-//extern bool (*FTGetData) (PFreetrackData data); 
-// DLL function signatures
-// These match those given in FTTypes.pas
-// WINAPI is macro for __stdcall defined somewhere in the depths of windows.h
-typedef bool (WINAPI *importGetData)(TFreeTrackData * data);
-typedef char *(WINAPI *importGetDllVersion)(void);
-typedef void (WINAPI *importReportID)(int name);
-typedef char *(WINAPI *importProvider)(void);
-
-#endif//INCLUDED_FTTYPES_H
+    int32_t GameID2;
+} FTHeap;

@@ -27,12 +27,14 @@
 *						but no face-tracking.									*
 ********************************************************************************/
 #include "ftnoir_protocol_mouse.h"
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
 void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
     double fMouse_X = 0;
     double fMouse_Y = 0;
 
+    // XXX TODO remove axis selector, use mapping window's
+    // axis selection. Mention in UI axis used. -sh 20140920
     int Mouse_X = s.Mouse_X;
     int Mouse_Y = s.Mouse_Y;
 	
@@ -61,7 +63,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return true;
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

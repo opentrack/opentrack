@@ -30,7 +30,6 @@
 #ifndef INCLUDED_MOUSESERVER_H
 #define INCLUDED_MOUSESERVER_H
 
-#include "ftnoir_protocol_base/ftnoir_protocol_base.h"
 #include "ui_ftnoir_mousecontrols.h"
 #include <QMessageBox>
 #include <QSettings>
@@ -40,7 +39,7 @@
 #include <QFile>
 #include <windows.h>
 #include <winuser.h>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-api.hpp"
 #include "facetracknoir/options.h"
 using namespace options;
 
@@ -71,7 +70,6 @@ private:
     struct settings s;
 };
 
-// Widget that has controls for FTNoIR protocol client-settings.
 class MOUSEControls: public QWidget, public IProtocolDialog
 {
     Q_OBJECT
@@ -92,9 +90,6 @@ private slots:
     void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:

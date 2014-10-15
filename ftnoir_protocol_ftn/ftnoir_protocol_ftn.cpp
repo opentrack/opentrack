@@ -27,9 +27,8 @@
 ********************************************************************************/
 #include "ftnoir_protocol_ftn.h"
 #include <QFile>
-#include "facetracknoir/global-settings.h"
+#include "facetracknoir/plugin-support.h"
 
-/** constructor **/
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
 }
@@ -49,7 +48,7 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-extern "C" FTNOIR_PROTOCOL_BASE_EXPORT IProtocol* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
 {
     return new FTNoIR_Protocol;
 }

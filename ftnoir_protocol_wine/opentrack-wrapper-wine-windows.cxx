@@ -1,19 +1,16 @@
-#define OPENTRACK_COMPAT_BUNDLED
-
 #ifndef __WIN32
-#define __WIN32
+#   error "bad cross"
 #endif
 
+#define OPENTRACK_COMPAT_BUNDLED
 #define PortableLockedShm ShmWine
-
-#include "ftnoir_protocol_ft/fttypes.h"
 #include "compat/compat.h"
 #include "compat/compat.cpp"
-#include <string.h>
+#include "wine-shm.h"
 
 void create_registry_key(void) {
     char dir[8192];
-    
+
     if (GetCurrentDirectoryA(8192, dir) < 8190)
     {
         HKEY hkpath;
