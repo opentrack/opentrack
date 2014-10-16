@@ -100,6 +100,12 @@
         <property name="styleSheet">
          <string notr="true">background:none;</string>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::PlusMinus</enum>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -168,6 +174,12 @@
         </property>
         <property name="styleSheet">
          <string notr="true">background:none;</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::PlusMinus</enum>
         </property>
         <property name="minimum">
          <number>1</number>
@@ -238,6 +250,12 @@
         <property name="styleSheet">
          <string notr="true">background:none;</string>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::PlusMinus</enum>
+        </property>
         <property name="maximum">
          <number>100</number>
         </property>
@@ -296,7 +314,56 @@ p, li { white-space: pre-wrap; }
  <resources>
   <include location="ewma-filter.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>minSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinMinSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>maxSmooth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinMaxSmooth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>powCurve</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinPowCurve</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>
