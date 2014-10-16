@@ -1,19 +1,9 @@
-/*** Written by Donovan Baarda
-*
-* This program is free software; you can redistribute it and/or modify it       *
-* under the terms of the GNU General Public License as published by the         *
-* Free Software Foundation; either version 3 of the License, or (at your        *
-* option) any later version.                                                    *
-*                                                                               *
-* This program is distributed in the hope that it will be useful, but           *
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for   *
-* more details.                                                                 *
-*                                                                               *
-* You should have received a copy of the GNU General Public License along       *
-* with this program; if not, see <http://www.gnu.org/licenses/>.                *
-*                                                                               *
-********************************************************************************/
+/* Copyright (c) 2014 Donovan Baarda <abo@minkirri.apana.org.au>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
 #include "ftnoir_filter_ewma2.h"
 #include <cmath>
 #include <QDebug>
@@ -22,10 +12,20 @@
 #include <algorithm>
 #include <QMutexLocker>
 
+// Exponentially Weighted Moving Average (EWMA) Filter with dynamic smoothing.
+//
+// This filter tries to adjust the amount of filtering to minimize lag when
+// moving, and minimize noise when still. It uses the delta filtered over the
+// last 1/60sec (16ms) compared to the delta's average noise variance over
+// the last 60sec to try and detect movement vs noise. As the delta increases
+// from 0 to 3 stdevs of the noise, the filtering scales down from maxSmooth
+// to minSmooth at a rate controlled by the powCurve setting.
+
+
 FTNoIR_Filter::FTNoIR_Filter() :
     first_run(true),
     // Currently facetracknoir/tracker.cpp updates every dt=3ms. All
-    // filter alpha values are calculated as alpha=dt/(dt + RC) and
+    // filter alpha values are calculated as alpha=dt/(dt+RC) and
     // need to be updated when tracker.cpp changes.
     // TODO(abo): Change this to use a dynamic dt using a timer.
     // Deltas are smoothed over the last 1/60sec (16ms).
