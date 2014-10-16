@@ -30,11 +30,11 @@ public:
     void receiveSettings();
 private:
     bool first_run;
-    double delta_smoothing;
-    double noise_smoothing;
+    double delta_alpha;
+    double noise_alpha;
     double delta[6];
     double noise[6];
-    double current_camera_position[6];
+    double output[6];
     settings s;
 };
 
