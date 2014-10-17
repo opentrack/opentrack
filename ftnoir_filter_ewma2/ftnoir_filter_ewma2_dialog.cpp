@@ -14,7 +14,6 @@ FilterControls::FilterControls() :
 
     tie_setting(s.kMaxSmoothing, ui.maxSmooth);
     tie_setting(s.kMinSmoothing, ui.minSmooth);
-    tie_setting(s.kSmoothingScaleCurve, ui.powCurve);
 }
 
 void FilterControls::registerFilter(IFilter* flt)
