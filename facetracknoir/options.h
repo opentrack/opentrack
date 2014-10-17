@@ -212,6 +212,12 @@ namespace options {
         public:
             opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
             
+            static opt_singleton<k, v>& datum()
+            {
+                static opt_singleton<k, v> ret;
+                return ret;
+            }
+            
             pbundle bundle(const k& key)
             {
                 QMutexLocker l(&implsgl_mtx);
@@ -237,20 +243,23 @@ namespace options {
         
         using pbundle = std::shared_ptr<opt_bundle>;
         using t_fact = opt_singleton<string, opt_bundle>;
-        static t_fact* opt_factory = new t_fact;
     }
  
-    static inline t_fact::pbundle bundle(const string name) { return opt_factory->bundle(name); }
+    static inline t_fact::pbundle bundle(const string name) { return t_fact::datum().bundle(name); }
     
     class opt_bundle : public impl_bundle
     {
     public:
         opt_bundle() : impl_bundle("i-have-no-name") {}
-        opt_bundle(const string& group_name) : impl_bundle(group_name) {}
+        opt_bundle(const string& group_name) : impl_bundle(group_name)
+        {
+            qDebug() << "bundle +" << QString::fromStdString(group_name);
+        }
         
         ~opt_bundle()
         {
-            opt_factory->bundle_decf(this->group_name);
+            qDebug() << "bundle -" << QString::fromStdString(group_name);
+            t_fact::datum().bundle_decf(group_name);
         }
     };
 
