@@ -353,6 +353,12 @@ void FaceTrackNoIR::showHeadPose()
 
     if (mapping_widget)
         mapping_widget->update();
+    
+    for (int i = 0; i < 6; i++)
+    {
+        mapped[i] = (int) mapped[i];
+        raw[i] = (int) raw[i];
+    }
 
     ui.lcdNumX->display(raw[TX]);
     ui.lcdNumY->display(raw[TY]);

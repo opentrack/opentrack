@@ -23,12 +23,14 @@ private:
     // XXX can be const-cast when functionconfig const-correct -sh 20141004
     Mappings& m;
     Timer t;
-    Pose output_pose, raw_6dof;
+    Pose output_pose, raw_6dof, raw_center, unstopped_raw;
+    double newpose[6];
     std::atomic<bool> centerp;
     std::atomic<bool> enabledp;
     std::atomic<bool> should_quit;
 
-    static void get_curve(double pos, double& out, Mapping& axis);
+    double map(double pos, Mapping& axis);
+    void logic();
     static void t_compensate(const double* input, double* output, bool rz);
 protected:
     void run() override;
