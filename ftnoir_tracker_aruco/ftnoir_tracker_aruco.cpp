@@ -209,8 +209,6 @@ void Tracker::run()
             // red only, best on CCD, also artifacts on blue ps3eye
             grayscale = tmp[2];
         }
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
-        
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
 
