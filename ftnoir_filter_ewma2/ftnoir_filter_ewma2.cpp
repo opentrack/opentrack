@@ -40,16 +40,17 @@ void FTNoIR_Filter::receiveSettings()
     s.b->reload();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
-                                       double *new_camera_position)
+void FTNoIR_Filter::FilterHeadPoseData(const double *input, double *output)
 {
     double new_delta, new_noise;
     double smoothing, RC, alpha;
+    
+    QMutexLocker l(&state_mutex);
 
     //On the first run, initialize filter states to target intput.
     if (first_run==true) {
         for (int i=0;i<6;i++) {
-            output[i] = target_camera_position[i];
+            last_output[i] = input[i];
             delta[i] = 0.0;
             noise[i] = 0.0;
         }
@@ -62,7 +63,7 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
         // Calculate the current and smoothed delta.
-        new_delta = target_camera_position[i]-output[i];
+        new_delta = input[i]-last_output[i];
         delta[i] = delta_alpha*new_delta + (1.0-delta_alpha)*delta[i];
         // Calculate the current and smoothed noise variance.
         new_noise = delta[i]*delta[i];
@@ -75,8 +76,8 @@ void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
         // TODO(abo): Change this to use a dynamic dt using a timer.
         alpha = 0.003/(0.003 + RC);
         // Calculate the new output position.
-        output[i] = alpha*target_camera_position[i] + (1.0-alpha)*output[i];
-        new_camera_position[i] = output[i];
+        last_output[i] = alpha*input[i] + (1.0-alpha)*last_output[i];
+        output[i] = last_output[i];
     }
 }
 
