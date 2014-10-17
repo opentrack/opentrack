@@ -141,8 +141,10 @@ void Tracker::run() {
             raw_6dof = final_raw;
         }
 
-        const long q = 1000L * std::max(0L, sleep_ms - t.elapsed_ms());
-        usleep(q);
+        double q = sleep_ms * 1000L;
+        q -= t.elapsed();
+        q = std::max(0., q);
+        usleep((long)q);
     }
 
 #if defined(_WIN32)
