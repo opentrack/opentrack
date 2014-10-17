@@ -179,6 +179,10 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     }
 
     settings.endGroup();
+    
+    if (max == 0)
+        points.append(QPointF(maxInput(), maxOutput()));
+    
     cur.input = points;
     reload();
     saved = cur;
