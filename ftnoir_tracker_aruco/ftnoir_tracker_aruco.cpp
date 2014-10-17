@@ -203,6 +203,12 @@ void Tracker::run()
         auto tm = cv::getTickCount();
         
         cv::Mat grayscale;
+        {
+            std::vector<cv::Mat> tmp;
+            cv::split(color, tmp);
+            // red only, best on CCD, also artifacts on blue ps3eye
+            grayscale = tmp[2];
+        }
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
         
         const int scale = frame.cols > 480 ? 2 : 1;
@@ -221,7 +227,7 @@ void Tracker::run()
         std::vector< aruco::Marker > markers;
 
         const double size_min = 0.04;
-        const double size_max = 0.38;
+        const double size_max = 0.28;
         
         bool roi_valid = false;
         
@@ -229,6 +235,7 @@ void Tracker::run()
         {
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
+            
             if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
@@ -299,7 +306,7 @@ void Tracker::run()
             
             cv::Vec3d rvec, tvec;
             
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::P3P);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
             
             std::vector<cv::Point2f> roi_projection(4);
             
@@ -324,7 +331,7 @@ void Tracker::run()
             
             {
                 cv::Mat rvec_, tvec_;
-                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::P3P);
+                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::ITERATIVE);
                 tvec = tvec_;
             }
             

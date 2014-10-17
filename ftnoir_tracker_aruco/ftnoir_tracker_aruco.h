@@ -43,7 +43,7 @@ struct settings {
 class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
-    static constexpr double c_search_window = 2.2;
+    static constexpr double c_search_window = 2.65;
 public:
     Tracker();
     ~Tracker() override;
