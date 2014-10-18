@@ -13,15 +13,9 @@ TrackerControls::TrackerControls()
     ui.comboBox->clear();
     
     QDir dir("/dev/input/by-id");
-    auto devices = dir.entryList(QStringList { "usb-?*-event-joystick"});
+    auto devices = dir.entryList(QStringList { "usb-?*-event-?*"});
     for (QString dev : devices)
-    {
-        dev.replace(QRegularExpression("^usb-"), "");
-        dev.replace(QRegularExpression("-event-.[^-]*"), "");
-        dev.replace("_", " ");
         ui.comboBox->addItem(dev);
-    }
-    
     tie_setting(s.device_name, ui.comboBox);
 }
 

@@ -29,8 +29,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 
 void FTNoIR_Tracker::StartTracker(QFrame*)
 {
-    QString pretty_name = s.device_name;
-    QString node_name = "usb-" + pretty_name.replace(' ', '_') + "-event-joystick";
+    QString node_name = s.device_name;
     std::string str = (QString("/dev/input/by-id/") + node_name).toStdString();
     const char* filename = str.c_str();
     
@@ -63,8 +62,7 @@ void FTNoIR_Tracker::GetHeadPoseData(double *data)
 {
     if (node)
     {
-        int max = 64;
-        while (libevdev_has_event_pending(node) == 1 && max-- > 0)
+        while (libevdev_has_event_pending(node) == 1)
         {
             struct input_event ev;
             int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
