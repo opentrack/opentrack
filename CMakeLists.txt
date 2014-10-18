@@ -144,11 +144,12 @@ macro(opentrack_module n dir)
     QT5_ADD_RESOURCES(${n}-rcc ${${n}-rc})
 endmacro()
 
-macro(opentrack_library n)
+macro(opentrack_library n dir)
     cmake_parse_arguments(foolib "" "LINK;COMPILE" "" ${ARGN})
     if(NOT " ${foolib_UNPARSED_ARGUMENTS}" STREQUAL " ")
         message(FATAL_ERROR "opentrack_library bad formals")
     endif()
+    opentrack_module(${n} ${dir})
     add_library(${n} SHARED ${${n}-c} ${${n}-uih} ${${n}-rcc})
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
@@ -165,35 +166,6 @@ endmacro()
 opentrack_module(opentrack-bin facetracknoir)
 opentrack_module(opentrack-pose-widget ftnoir_posewidget)
 opentrack_module(opentrack-spline-widget qfunctionconfigurator)
-
-# filters
-
-opentrack_module(opentrack-filter-accela ftnoir_filter_accela)
-opentrack_module(opentrack-filter-kalman ftnoir_filter_kalman)
-opentrack_module(opentrack-filter-ewma ftnoir_filter_ewma2)
-
-# protocols
-
-opentrack_module(opentrack-proto-fgfs ftnoir_protocol_fg)
-opentrack_module(opentrack-proto-fsuipc ftnoir_protocol_fsuipc)
-opentrack_module(opentrack-proto-freetrack ftnoir_protocol_ft)
-opentrack_module(opentrack-proto-udp ftnoir_protocol_ftn)
-opentrack_module(opentrack-proto-wine ftnoir_protocol_wine)
-opentrack_module(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
-opentrack_module(opentrack-proto-simconnect ftnoir_protocol_sc)
-opentrack_module(opentrack-proto-vjoy ftnoir_protocol_vjoy)
-opentrack_module(opentrack-proto-libevdev ftnoir_protocol_libevdev)
-
-# trackers
-
-opentrack_module(opentrack-tracker-ht ftnoir_tracker_ht)
-opentrack_module(opentrack-tracker-aruco ftnoir_tracker_aruco)
-opentrack_module(opentrack-tracker-pt ftnoir_tracker_pt)
-opentrack_module(opentrack-tracker-udp ftnoir_tracker_udp)
-opentrack_module(opentrack-tracker-joystick ftnoir_tracker_joystick)
-opentrack_module(opentrack-tracker-rift ftnoir_tracker_rift)
-opentrack_module(opentrack-tracker-hydra ftnoir_tracker_hydra)
-opentrack_module(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
 file(GLOB opentrack-version-c "facetracknoir/version.c")
 
@@ -263,13 +235,13 @@ set_target_properties(opentrack-version PROPERTIES
     COMPILE_DEFINITIONS
     "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
-opentrack_library(opentrack-filter-accela)
-opentrack_library(opentrack-filter-kalman)
-opentrack_library(opentrack-filter-ewma)
+opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
+opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
+opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 
 target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
 
-opentrack_library(opentrack-proto-fgfs)
+opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
     include_directories(${SDK_VJOY})
@@ -277,32 +249,33 @@ if(SDK_VJOY)
     if(CMAKE_C_COMPILER_IS_GNUCC)
         set(link-flags "-Wl,--enable-stdcall-fixup")
     endif()
-    opentrack_library(opentrack-proto-vjoy LINK ${link-flags})
+    opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy LINK ${link-flags})
     target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} "${SDK_VJOY}/VJoy.dll")
 endif()
 
 if(SDK_ENABLE_LIBEVDEV)
-    opentrack_library(opentrack-proto-libevdev)
+    opentrack_library(opentrack-proto-libevdev ftnoir_protocol_libevdev)
+    opentrack_library(opentrack-tracker-libevdev ftnoir_tracker_libevdev)
     pkg_check_modules(libevdev REQUIRED QUIET libevdev)
     include_directories(${libevdev_INCLUDE_DIRS})
     target_link_libraries(opentrack-proto-libevdev ${libevdev_LIBRARIES})
 endif()
 
 if(SDK_FSUIPC)
-    opentrack_library(opentrack-proto-fsuipc)
+    opentrack_library(opentrack-proto-fsuipc ftnoir_protocol_fsuipc)
     target_link_libraries(opentrack-proto-fsuipc "${SDK_FSUIPC}/FSUIPC_User.lib")
 endif()
 
 if(SDK_SIMCONNECT)
-    opentrack_library(opentrack-proto-simconnect)
+    opentrack_library(opentrack-proto-simconnect ftnoir_protocol_sc)
     include_directories("${SDK_SIMCONNECT}/inc")
     target_link_libraries(opentrack-proto-simconnect "${SDK_SIMCONNECT}/lib/SimConnect.lib")
 endif()
 
 if(WIN32)
-    opentrack_library(opentrack-proto-freetrack)
+    opentrack_library(opentrack-proto-freetrack ftnoir_protocol_ft)
     target_link_libraries(opentrack-proto-freetrack opentrack-csv opentrack-compat)
-    opentrack_library(opentrack-proto-win32-mouse)
+    opentrack_library(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
 endif()
 
 if(WIN32)
@@ -310,14 +283,14 @@ if(WIN32)
     set_target_properties(freetrackclient PROPERTIES PREFIX "")
 endif()
 
-opentrack_library(opentrack-proto-udp)
+opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
 
 if(WIN32)
-    opentrack_library(opentrack-tracker-joystick)
+    opentrack_library(opentrack-tracker-joystick ftnoir_protocol_joystick)
 endif()
 
 if(SDK_WINE_PREFIX)
-    opentrack_library(opentrack-proto-wine)
+    opentrack_library(opentrack-proto-wine ftnoir_protocol_wine)
     target_link_libraries(opentrack-proto-wine opentrack-compat opentrack-csv)
     if(NOT SDK_WINE_NO_WRAPPER)
         set(my-rt -lrt)
@@ -340,24 +313,24 @@ if(SDK_WINE_PREFIX)
     endif()
 endif()
 
-opentrack_library(opentrack-tracker-ht)
+opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
 target_link_libraries(opentrack-tracker-ht opentrack-compat)
 
 if(SDK_ARUCO_LIBPATH)
-    opentrack_library(opentrack-tracker-aruco)
+    opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
     target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
 endif()
 
 link_with_dinput8(opentrack-tracker-ht)
 link_with_dinput8(opentrack-tracker-joystick)
 
-opentrack_library(opentrack-tracker-pt)
+opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
 target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 
 link_with_dinput8(opentrack-tracker-pt)
 
-opentrack_library(opentrack-tracker-udp)
-opentrack_library(opentrack-tracker-freepie-udp)
+opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
+opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
 if(SDK_RIFT)
     include_directories("${SDK_RIFT}/Include")
@@ -385,7 +358,7 @@ endif()
 if(SDK_HYDRA)
     include_directories("${SDK_HYDRA}/include")
     include_directories("${SDK_HYDRA}/include/sixense_utils")
-    opentrack_library(opentrack-tracker-hydra)
+    opentrack_library(opentrack-tracker-hydra ftnoir_tracker_hydra)
     if(WIN32)
         target_link_libraries(opentrack-tracker-hydra
             "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib"
