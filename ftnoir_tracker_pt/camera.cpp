@@ -151,6 +151,8 @@ void CVCamera::start()
 	// extract camera info
     if (cap->isOpened())
 	{
+        _set_fps();
+        _set_res();
 		active = true;
 		active_index = desired_index;
         cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
