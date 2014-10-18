@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ui_libevdev_tracker_dialog</class>
+ <widget class="QWidget" name="ui_libevdev_tracker_dialog">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>335</width>
+    <height>85</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>libevdev tracker settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../facetracknoir/images/facetracknoir.png</normaloff>../facetracknoir/images/facetracknoir.png</iconset>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBox"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Device</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <slots>
+  <slot>startEngineClicked()</slot>
+  <slot>stopEngineClicked()</slot>
+  <slot>cameraSettingsClicked()</slot>
+ </slots>
+</ui>
