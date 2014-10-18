@@ -123,10 +123,9 @@ void Tracker::logic()
     
     Pose mapped_pose;
     
+    mapped_pose = mapped_pose_precomp;
     if (s.tcomp_p)
         t_compensate(mapped_pose_precomp, mapped_pose, s.tcomp_tz);
-    else
-        mapped_pose = mapped_pose_precomp;
 
     Libraries->pProtocol->sendHeadposeToGame(mapped_pose);
 
