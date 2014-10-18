@@ -2,6 +2,7 @@
 
 #include "opentrack/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
+#include <QElapsedTimer>
 #include <QWidget>
 #include <QMutex>
 #include "opentrack/options.hpp"
@@ -24,17 +25,19 @@ class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void reset() { first_run=true; }
+    void reset();
     void filter(const double *target_camera_position,
-                            double *new_camera_position);
+                double *new_camera_position);
     void receiveSettings();
 private:
-    bool first_run;
-    double delta_alpha;
-    double noise_alpha;
+    // Deltas are smoothed over the last 1/60sec (16ms).
+    const double delta_RC = 0.016;
+    // Noise is smoothed over the last 60sec.
+    const double noise_RC = 60.0;
     double delta[6];
     double noise[6];
     double output[6];
+    QElapsedTimer timer;
     settings s;
 };
 
