@@ -53,8 +53,8 @@ public:
     long start() {
         struct timespec cur;
         (void) clock_gettime(CLOCK_MONOTONIC, &cur);
+        long ret = conv(cur);
         state = cur;
-        int ret = conv(cur);
         return ret;
     }
     long elapsed() {
