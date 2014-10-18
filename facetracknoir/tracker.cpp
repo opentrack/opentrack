@@ -94,7 +94,10 @@ void Tracker::logic()
             auto& axis = m(i);
             int k = axis.opts.src;
             if (k < 0 || k >= 6)
+            {
+                final_raw(i) = 0;
                 continue;
+            }
             // not really raw, after axis remap -sh
             final_raw(i) = newpose[k];
         }
