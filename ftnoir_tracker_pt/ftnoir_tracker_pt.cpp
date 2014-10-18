@@ -55,8 +55,8 @@ void Tracker::run()
 	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 	QTextStream log_stream(&log_file);
 #endif
-    time.start();
-	while((commands & ABORT) == 0)
+
+    while((commands & ABORT) == 0)
 	{   
         apply_inner();
         const double dt = time.start() * 1e-9;
@@ -163,8 +163,9 @@ void Tracker::StartTracker(QFrame *parent_window)
     video_layout->addWidget(video_widget);
     video_frame->setLayout(video_layout);
     video_widget->resize(video_frame->width(), video_frame->height());
+    apply(s);
+    apply_inner();
     camera.start();
-	apply(s);
     start();
 }
 
