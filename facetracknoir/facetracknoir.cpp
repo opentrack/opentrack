@@ -91,11 +91,14 @@ FaceTrackNoIR::~FaceTrackNoIR()
     save();
 }
 
-void FaceTrackNoIR::fill_combobox(dylib::Type t, QList<ptr<dylib>> list, QList<ptr<dylib>>& out_list, QComboBox* cbx)
+void FaceTrackNoIR::fill_combobox(dylib::Type t,
+                                  QList<ptr<dylib>> list,
+                                  QList<ptr<dylib>>& out_list,
+                                  QComboBox* cbx)
 {
     for (auto x : list)
     {
-        if (t && t == x->type)
+        if (t == x->type)
         {
             cbx->addItem(x->icon, x->name);
             out_list.append(x);
