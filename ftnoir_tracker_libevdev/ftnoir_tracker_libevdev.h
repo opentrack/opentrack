@@ -1,8 +1,8 @@
 #pragma once
 #include <cmath>
 #include "libevdev/libevdev.h"
-#include "facetracknoir/plugin-api.hpp"
-#include "facetracknoir/options.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack/options.hpp"
 #include "./ui_ftnoir_libevdev.h"
 #include <QThread>
 #include <QMutex>

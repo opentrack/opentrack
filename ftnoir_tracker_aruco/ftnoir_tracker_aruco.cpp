@@ -12,7 +12,7 @@
 #include <QMutexLocker>
 #include "./include/markerdetector.h"
 #include "ftnoir_tracker_aruco.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 

@@ -39,8 +39,8 @@
 #include <QFile>
 #include <windows.h>
 #include <winuser.h>
-#include "facetracknoir/plugin-api.hpp"
-#include "facetracknoir/options.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

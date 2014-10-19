@@ -9,7 +9,7 @@
 #include <QIcon>
 
 #ifdef OPENTRACK_API
-#   include "facetracknoir/plugin-support.h"
+#   include "opentrack/plugin-api.hpp"
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 #else
 #   pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")

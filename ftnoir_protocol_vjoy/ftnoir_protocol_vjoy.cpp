@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_vjoy.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol()
 {

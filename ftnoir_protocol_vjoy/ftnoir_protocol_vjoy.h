@@ -28,7 +28,7 @@
 #pragma once
 #include "ui_ftnoir_vjoy_controls.h"
 #include <cmath>
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 #define FT_PROGRAMID "FT_ProgramID"
 

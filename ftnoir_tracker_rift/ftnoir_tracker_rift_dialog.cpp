@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_rift.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 TrackerControls::TrackerControls()
 {

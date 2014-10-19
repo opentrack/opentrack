@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_joystick.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 #include <QMutexLocker>
 
 FTNoIR_Tracker::FTNoIR_Tracker() :

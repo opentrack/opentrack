@@ -1,10 +1,10 @@
 #pragma once
 
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

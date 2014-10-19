@@ -1,12 +1,13 @@
 #pragma once
 
-#include "facetracknoir/plugin-api.hpp"
+#include "plugin-api.hpp"
 
 #include <QWidget>
 #include <QDebug>
 #include <QString>
 #include <QLibrary>
 #include <QFrame>
+#include <QList>
 
 #include <memory>
 template<typename t> using ptr = std::shared_ptr<t>;
@@ -14,14 +15,22 @@ template<typename t> using ptr = std::shared_ptr<t>;
 extern "C" typedef void* (*CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*METADATA_FUNPTR)(void);
 
-class DynamicLibrary {
-public:
-    DynamicLibrary(const QString& filename);
-    ~DynamicLibrary();
+struct dylib {
+    enum Type { Filter, Tracker, Protocol };
+    
+    dylib(const QString& filename, Type t);
+    ~dylib();
+    static QList<ptr<dylib>> enum_libraries();
+    
+    Type type;
+    QString filename;
+    
+    QIcon icon;
+    QString name;
+    
     CTOR_FUNPTR Dialog;
     CTOR_FUNPTR Constructor;
-    METADATA_FUNPTR Metadata;
-    QString filename;
+    METADATA_FUNPTR Meta;
 private:
 #if defined(_WIN32)
     QLibrary* handle;
@@ -31,12 +40,11 @@ private:
 };
 
 struct SelectedLibraries {
-    using dylib = ptr<DynamicLibrary>;
-
+    using dylibtr = ptr<dylib>;
     ptr<ITracker> pTracker;
     ptr<IFilter> pFilter;
     ptr<IProtocol> pProtocol;
-    SelectedLibraries(QFrame* frame, dylib t, dylib p, dylib f);
+    SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibtr f);
     SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
     ~SelectedLibraries();
     bool correct;

@@ -23,74 +23,24 @@
 *********************************************************************************/
 #include "facetracknoir.h"
 #include "shortcuts.h"
-#include "tracker.h"
+#include "opentrack/tracker.h"
 #include "curve-config.h"
 #include <QFileDialog>
 
-#if defined(__APPLE__)
-#   define SONAME "dylib"
-#elif defined(_WIN32)
-#   define SONAME "dll"
-#else
-#   define SONAME "so"
-#endif
-
-#include <iostream>
-
-#ifdef _MSC_VER
-#   error "No support for MSVC anymore"
-#else
-#   define LIB_PREFIX "lib"
-#endif
-
-static bool get_metadata(ptr<DynamicLibrary> lib, QString& name, QIcon& icon)
-{
-    Metadata* meta;
-    if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
-        return false;
-    name = meta->name();
-    icon = meta->icon();
-    delete meta;
-    return true;
-}
-
-static void fill_combobox(const QString& filter, QList<ptr<DynamicLibrary>>& list, QComboBox& cbx)
-{
-    QDir settingsDir( QCoreApplication::applicationDirPath() );
-    QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
-    for ( int i = 0; i < filenames.size(); i++) {
-        QIcon icon;
-        QString longName;
-        QString str = filenames.at(i);
-        auto lib = std::make_shared<DynamicLibrary>(str);
-        qDebug() << "Loading" << str;
-        std::cout.flush();
-        if (!get_metadata(lib, longName, icon))
-            continue;
-        list.push_back(lib);
-        cbx.addItem(icon, longName);
-    }
-}
-
 FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
-    tracker(nullptr),
-#if defined(_WIN32)
-    keybindingWorker(NULL),
-#else
-    keyCenter(this),
-    keyToggle(this),
-#endif
     b(bundle("opentrack-ui")),
     s(b),
+    #if defined(_WIN32)
+        keybindingWorker(NULL),
+    #else
+        keyCenter(this),
+        keyToggle(this),
+    #endif
     pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll}),
     timUpdateHeadPose(this),
-    pTrackerDialog(nullptr),
-    pProtocolDialog(nullptr),
-    pFilterDialog(nullptr),
-    shortcuts_widget(nullptr),
-    mapping_widget(nullptr),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/uielements/no-feed.png")
+    no_feed_pixmap(":/uielements/no-feed.png"),
+    module_list(dylib::enum_libraries())
 {
     ui.setupUi(this);
     setFixedSize(size());
@@ -98,9 +48,7 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     updateButtonState(false, false);
 
     QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-    fill_profile_cbx();
-
+    
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
     connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
@@ -111,12 +59,14 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
-    dlopen_filters.push_back(nullptr);
+    filter_modules.push_back(nullptr);
     ui.iconcomboFilter->addItem(QIcon(), "");
-
-    fill_combobox("opentrack-proto-*.", dlopen_protocols, *ui.iconcomboProtocol);
-    fill_combobox("opentrack-tracker-*.", dlopen_trackers, *ui.iconcomboTrackerSource);
-    fill_combobox("opentrack-filter-*.", dlopen_filters, *ui.iconcomboFilter);
+    
+    fill_combobox(dylib::Tracker, module_list, tracker_modules, ui.iconcomboTrackerSource);
+    fill_combobox(dylib::Protocol, module_list, protocol_modules, ui.iconcomboProtocol);
+    fill_combobox(dylib::Filter, module_list, filter_modules, ui.iconcomboFilter);
+    
+    fill_profile_combobox();
 
     tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
@@ -137,10 +87,22 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     kbd_quit.setEnabled(true);
 }
 
-FaceTrackNoIR::~FaceTrackNoIR() {
-
+FaceTrackNoIR::~FaceTrackNoIR()
+{
     stopTracker();
     save();
+}
+
+void FaceTrackNoIR::fill_combobox(dylib::Type t, QList<ptr<dylib>> list, QList<ptr<dylib>>& out_list, QComboBox* cbx)
+{
+    for (auto x : list)
+    {
+        if (t && t == x->type)
+        {
+            cbx->addItem(x->icon, x->name);
+            out_list.append(x);
+        }
+    }
 }
 
 QFrame* FaceTrackNoIR::video_frame() {
@@ -163,7 +125,7 @@ void FaceTrackNoIR::open() {
             QSettings settings("opentrack");
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
-        fill_profile_cbx();
+        fill_profile_combobox();
         loadSettings();
     }
 }
@@ -219,7 +181,7 @@ void FaceTrackNoIR::saveAs()
         save();
     }
 
-    fill_profile_cbx();
+    fill_profile_combobox();
 }
 
 void FaceTrackNoIR::load_mappings() {
@@ -229,6 +191,24 @@ void FaceTrackNoIR::load_mappings() {
 void FaceTrackNoIR::loadSettings() {
     b->reload();
     load_mappings();
+}
+
+extern "C" volatile const char* opentrack_version;
+
+void FaceTrackNoIR::fill_profile_combobox()
+{
+     QSettings settings("opentrack");
+     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath()
+                                            + "/settings/default.ini" ).toString();
+     qDebug() << "Config file now" << currentFile;
+     QFileInfo pathInfo ( currentFile );
+     setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + pathInfo.fileName());
+     QDir settingsDir( pathInfo.dir() );
+     auto iniFileList = settingsDir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+     ui.iconcomboProfile->clear();
+     for (auto x : iniFileList)
+         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
+     ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
 }
 
 void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
@@ -313,6 +293,7 @@ void FaceTrackNoIR::stopTracker( ) {
     }
     
     tracker = nullptr;
+    libs = SelectedLibraries();
     updateButtonState(false, false);
 }
 
@@ -356,7 +337,7 @@ void FaceTrackNoIR::showHeadPose()
 
 void FaceTrackNoIR::showTrackerSettings()
 {
-    ptr<DynamicLibrary> lib = dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+    ptr<dylib> lib = tracker_modules.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
 
     if (lib) {
         pTrackerDialog = ptr<ITrackerDialog>(reinterpret_cast<ITrackerDialog*>(lib->Dialog()));
@@ -367,7 +348,7 @@ void FaceTrackNoIR::showTrackerSettings()
 }
 
 void FaceTrackNoIR::showServerControls() {
-    ptr<DynamicLibrary> lib = dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
+    ptr<dylib> lib = protocol_modules.value(ui.iconcomboProtocol->currentIndex(), nullptr);
 
     if (lib) {
         pProtocolDialog = ptr<IProtocolDialog>(reinterpret_cast<IProtocolDialog*>(lib->Dialog()));
@@ -377,7 +358,7 @@ void FaceTrackNoIR::showServerControls() {
 }
 
 void FaceTrackNoIR::showFilterControls() {
-    ptr<DynamicLibrary> lib = dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
+    ptr<dylib> lib = filter_modules.value(ui.iconcomboFilter->currentIndex(), nullptr);
 
     if (lib) {
         pFilterDialog = ptr<IFilterDialog>(reinterpret_cast<IFilterDialog*>(lib->Dialog()));
@@ -402,23 +383,6 @@ void FaceTrackNoIR::exit() {
 }
 
 extern "C" volatile const char* opentrack_version;
-
-void FaceTrackNoIR::fill_profile_cbx()
-{
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    qDebug() << "Config file now" << currentFile;
-    QFileInfo pathInfo ( currentFile );
-    setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + pathInfo.fileName());
-    QDir settingsDir( pathInfo.dir() );
-    QStringList filters;
-    filters << "*.ini";
-    auto iniFileList = settingsDir.entryList( filters, QDir::Files, QDir::Name );
-    ui.iconcomboProfile->clear();
-    for ( int i = 0; i < iniFileList.size(); i++)
-        ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), iniFileList.at(i));
-    ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
-}
 
 void FaceTrackNoIR::profileSelected(int index)
 {

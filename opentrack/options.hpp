@@ -130,7 +130,6 @@ namespace options {
     };
 
     class impl_bundle : public QObject {
-        Q_OBJECT
     protected:
         QMutex mtx;
         const string group_name;
@@ -214,8 +213,8 @@ namespace options {
             
             static opt_singleton<k, v>& datum()
             {
-                static opt_singleton<k, v> ret;
-                return ret;
+                static auto ret = std::make_shared<opt_singleton<k, v>>();
+                return *ret;
             }
             
             pbundle bundle(const k& key)
@@ -263,32 +262,33 @@ namespace options {
         }
     };
 
-    class base_value : public QObject {
+    class base_value : public QObject
+    {
         Q_OBJECT
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
-#define DEFINE_SIGNAL(t) void valueChanged(const t&)
+#define DEFINE_SIGNAL(t) void valueChanged(t)
     public:
         base_value(pbundle b, const string& name) : b(b), self_name(name) {}
+    signals:
+        DEFINE_SIGNAL(double);
+        DEFINE_SIGNAL(int);
+        DEFINE_SIGNAL(bool);
+        DEFINE_SIGNAL(QString);
     protected:
         pbundle b;
         string self_name;
-        
+
         template<typename t>
         void store(const t& datum)
         {
             if (b->store_kv(self_name, datum))
-                emit valueChanged(datum);
+                emit valueChanged(static_cast<t>(datum));
         }
     public slots:
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
         DEFINE_SLOT(QString)
         DEFINE_SLOT(bool)
-    signals:
-        DEFINE_SIGNAL(double);
-        DEFINE_SIGNAL(int);
-        DEFINE_SIGNAL(bool);
-        DEFINE_SIGNAL(QString);
     };
     
     static inline string string_from_qstring(const QString& datum)

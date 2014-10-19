@@ -1,7 +1,7 @@
 #include "ftnoir_filter_ewma2.h"
 #include <cmath>
 #include <QDebug>
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 
 FilterControls::FilterControls() : pFilter(NULL)

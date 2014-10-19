@@ -14,8 +14,8 @@
 #include <QSettings>
 #include <QMutex>
 #include <vector>
-#include "../facetracknoir/plugin-api.hpp"
-#include "../facetracknoir/qcopyable-mutex.hpp"
+#include "../opentrack/plugin-api.hpp"
+#include "../opentrack/qcopyable-mutex.hpp"
 
 
 class OPENTRACK_EXPORT Map {

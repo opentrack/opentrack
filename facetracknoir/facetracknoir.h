@@ -44,10 +44,10 @@
 
 #include "ui_facetracknoir.h"
 
-#include "./options.h"
-#include "./main-settings.hpp"
-#include "./plugin-support.h"
-#include "./tracker.h"
+#include "opentrack/options.hpp"
+#include "opentrack/main-settings.hpp"
+#include "opentrack/plugin-support.h"
+#include "opentrack/tracker.h"
 #include "./shortcuts.h"
 #include "./curve-config.h"
 
@@ -56,27 +56,16 @@ using namespace options;
 class FaceTrackNoIR : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    FaceTrackNoIR();
-    ~FaceTrackNoIR();
-
-    QFrame *video_frame();
+    pbundle b;
+    main_settings s;
     ptr<Tracker> tracker;
-    void bindKeyboardShortcuts();
-
-    // XXX this shit stinks -sh 20141004
-    // TODO move to separate class representing running tracker state
-    ptr<DynamicLibrary> current_tracker() {
-        return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
-    }
-    ptr<DynamicLibrary> current_protocol() {
-        return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
-    }
-    ptr<DynamicLibrary> current_filter() {
-        return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
-    }
-
+        
+    // XXX move kbd handling into class its own -sh 20141019
+#ifndef _WIN32
+    void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
+#endif
+private:
 #if defined(_WIN32)
     Key keyCenter;
     Key keyToggle;
@@ -85,12 +74,6 @@ public:
     QxtGlobalShortcut keyCenter;
     QxtGlobalShortcut keyToggle;
 #endif
-    pbundle b;
-    main_settings s;
-public slots:
-    void shortcutRecentered();
-    void shortcutToggled();
-private:
     // XXX move the shit outta the _widget_, establish a class
     // for running tracker state, etc -sh 20141014
     Mappings pose;
@@ -104,23 +87,42 @@ private:
 
     ptr<QWidget> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
+    
+    QShortcut kbd_quit;
+    QPixmap no_feed_pixmap;
+    
+    QList<ptr<dylib>> filter_modules;
+    QList<ptr<dylib>> tracker_modules;
+    QList<ptr<dylib>> protocol_modules;
+    
+    QList<ptr<dylib>> module_list;
+    
+    // XXX this shit stinks -sh 20141004
+    // TODO move to separate class representing running tracker state
+    ptr<dylib> current_tracker()
+    {
+        return tracker_modules.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+    }
+    ptr<dylib> current_protocol()
+    {
+        return protocol_modules.value(ui.iconcomboProtocol->currentIndex(), nullptr);
+    }
+    ptr<dylib> current_filter()
+    {
+        return filter_modules.value(ui.iconcomboFilter->currentIndex(), nullptr);
+    }
 
     void createIconGroupBox();
     void loadSettings();
     void updateButtonState(bool running, bool inertialp);
 
-    QList<ptr<DynamicLibrary>> dlopen_filters;
-    QList<ptr<DynamicLibrary>> dlopen_trackers;
-    QList<ptr<DynamicLibrary>> dlopen_protocols;
+    void fill_combobox(dylib::Type t, QList<ptr<dylib>> list, QList<ptr<dylib> > &out_list, QComboBox* cbx);
+    void fill_profile_combobox();
     
-    QShortcut kbd_quit;
-    QPixmap no_feed_pixmap;
-    
-#ifndef _WIN32
-    void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
-#endif
-    void fill_profile_cbx();
-
+    QFrame *video_frame();
+public slots:
+    void shortcutRecentered();
+    void shortcutToggled();
 private slots:
     void open();
     void save();
@@ -139,8 +141,10 @@ private slots:
 
     void startTracker();
     void stopTracker();
-
 public:
+    FaceTrackNoIR();
+    ~FaceTrackNoIR();
     void save_mappings();
     void load_mappings();
+    void bindKeyboardShortcuts();
 };

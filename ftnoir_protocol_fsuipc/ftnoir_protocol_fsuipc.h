@@ -31,7 +31,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include "FSUIPC_User.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include "ui_ftnoir_fsuipccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
@@ -40,7 +40,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 #define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"

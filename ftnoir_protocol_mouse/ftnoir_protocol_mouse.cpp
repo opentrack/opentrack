@@ -27,7 +27,7 @@
 *						but no face-tracking.									*
 ********************************************************************************/
 #include "ftnoir_protocol_mouse.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 void FTNoIR_Protocol::pose(const double *headpose ) {
     double fMouse_X = 0;

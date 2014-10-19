@@ -1,6 +1,6 @@
 #include "ftnoir_protocol_wine.h"
 #include <QDebug>
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 FTControls::FTControls()
 {

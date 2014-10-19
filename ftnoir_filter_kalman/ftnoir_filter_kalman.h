@@ -9,14 +9,14 @@
 #define INCLUDED_FTN_FILTER_H
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/video/video.hpp>
 #include <vector>
 #include <QString>
 #include <QElapsedTimer>
 #include <QWidget>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter

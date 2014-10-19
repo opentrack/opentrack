@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_vjoy.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 VJoyControls::VJoyControls()
 {

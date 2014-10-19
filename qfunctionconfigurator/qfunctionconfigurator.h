@@ -14,7 +14,7 @@
 #include <QPointF>
 #include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 class OPENTRACK_EXPORT QFunctionConfigurator : public QWidget
 {

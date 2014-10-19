@@ -9,8 +9,8 @@
 #include <QUdpSocket>
 #include <QThread>
 #include "ui_freepie-udp-controls.h"
-#include "facetracknoir/plugin-api.hpp"
-#include "facetracknoir/options.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

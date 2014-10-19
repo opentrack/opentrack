@@ -1,6 +1,6 @@
 #include "./facetracknoir.h"
 #include "./curve-config.h"
-#include "./main-settings.hpp"
+#include "opentrack/main-settings.hpp"
 MapWidget::MapWidget(Mappings& m, main_settings& s, QWidget *parent) :
     QWidget(parent, Qt::Dialog),
     m(m)

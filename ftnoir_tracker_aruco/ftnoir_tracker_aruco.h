@@ -15,9 +15,9 @@
 #include <QHBoxLayout>
 #include <QDialog>
 #include <QTimer>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 #include "ftnoir_tracker_aruco/trans_calib.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

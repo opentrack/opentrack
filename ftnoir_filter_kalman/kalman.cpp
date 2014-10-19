@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_filter_kalman.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 #include <QDebug>
 #include <cmath>
 

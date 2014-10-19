@@ -9,14 +9,14 @@
 #define FTNOIR_TRACKER_PT_H
 
 #ifdef OPENTRACK_API
-#   include "facetracknoir/plugin-api.hpp"
+#   include "opentrack/plugin-api.hpp"
 #endif
 #include "ftnoir_tracker_pt_settings.h"
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "pt_video_widget.h"
-#include "facetracknoir/timer.hpp"
+#include "opentrack/timer.hpp"
 
 #include <QThread>
 #include <QMutex>

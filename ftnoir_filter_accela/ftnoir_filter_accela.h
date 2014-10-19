@@ -1,6 +1,6 @@
 #pragma once
 #include "ui_ftnoir_accela_filtercontrols.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <QMutex>
 
 #define ACCELA_SMOOTHING_ROTATION 60.0
@@ -8,7 +8,7 @@
 #define ACCELA_SECOND_ORDER_ALPHA 100.0
 #define ACCELA_THIRD_ORDER_ALPHA 180.0
 
-#include <facetracknoir/options.h>
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {
