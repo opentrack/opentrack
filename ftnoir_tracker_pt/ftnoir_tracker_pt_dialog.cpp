@@ -180,7 +180,7 @@ void TrackerDialog::trans_calib_step()
     if (tracker)
     {
         FrameTrafo X_CM;
-        tracker->get_pose(&X_CM);
+        tracker->pose(&X_CM);
         trans_calib.update(X_CM.R, X_CM.t);
         cv::Vec3f t_MH = trans_calib.get_estimate();
         s.t_MH_x = t_MH[0];
@@ -234,7 +234,7 @@ void TrackerDialog::doCancel()
     close();
 }
 
-void TrackerDialog::registerTracker(ITracker *t)
+void TrackerDialog::register_tracker(ITracker *t)
 {
     qDebug()<<"TrackerDialog:: Tracker registered";
     tracker = static_cast<Tracker*>(t);
@@ -244,7 +244,7 @@ void TrackerDialog::registerTracker(ITracker *t)
     //ui.center_button->setEnabled(true);
 }
 
-void TrackerDialog::unRegisterTracker()
+void TrackerDialog::unregister_tracker()
 {
     qDebug()<<"TrackerDialog:: Tracker un-registered";
     tracker = NULL;

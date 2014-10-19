@@ -91,7 +91,7 @@ public:
     // f : (focal length)/(sensor width)
     // dt : time since last call
     void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model);
-    FrameTrafo get_pose() const { return X_CM; }
+    FrameTrafo pose() const { return X_CM; }
     void reset();
 
 private:

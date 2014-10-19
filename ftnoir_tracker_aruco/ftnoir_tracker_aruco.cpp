@@ -117,7 +117,7 @@ Tracker::~Tracker()
     qDebug() << "all done!";
 }
 
-void Tracker::StartTracker(QFrame* videoframe)
+void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new ArucoVideoWidget(videoframe);
@@ -398,7 +398,7 @@ void Tracker::run()
     }
 }
 
-void Tracker::GetHeadPoseData(double *data)
+void Tracker::data(double *data)
 {
     QMutexLocker lck(&mtx);
 
@@ -412,34 +412,9 @@ void Tracker::GetHeadPoseData(double *data)
 
 class TrackerDll : public Metadata
 {
-    // ITrackerDll interface
-    void getFullName(QString *strToBeFilled);
-    void getShortName(QString *strToBeFilled);
-    void getDescription(QString *strToBeFilled);
-    void getIcon(QIcon *icon);
+    QString name() { return QString("aruco -- paper marker tracker"); }
+    QIcon icon() { return QIcon(":/images/aruco.png"); }
 };
-
-//-----------------------------------------------------------------------------
-void TrackerDll::getFullName(QString *strToBeFilled)
-{
-    *strToBeFilled = "aruco";
-}
-
-void TrackerDll::getShortName(QString *strToBeFilled)
-{
-    *strToBeFilled = "aruco";
-}
-
-void TrackerDll::getDescription(QString *strToBeFilled)
-{
-    *strToBeFilled = "";
-}
-
-void TrackerDll::getIcon(QIcon *icon)
-{
-    *icon = QIcon(":/images/aruco.png");
-}
-
 
 //-----------------------------------------------------------------------------
 //#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")

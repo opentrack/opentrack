@@ -20,11 +20,11 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool checkServerInstallationOK() {
+    bool correct() {
         return dev != NULL;
     }
-    void sendHeadposeToGame(const double *headpose);
-    QString getGameName() {
+    void pose(const double *headpose);
+    QString game_name() {
         return "Virtual joystick for Linux";
     }
 private:
@@ -32,14 +32,13 @@ private:
     struct libevdev_uinput* uidev;
 };
 
-class LibevdevControls: public QWidget, public IProtocolDialog
+class LibevdevControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
-
-    explicit LibevdevControls();
-    void registerProtocol(IProtocol *) {}
-	void unRegisterProtocol() {}
+    LibevdevControls();
+    void register_protocol(IProtocol *) {}
+	void unregister_protocol() {}
 
 private:
     Ui::UICLibevdevControls ui;
@@ -50,18 +49,9 @@ private slots:
 	void doCancel();
 };
 
-//*******************************************************************************************************
-// FaceTrackNoIR Protocol DLL. Functions used to get general info on the Protocol
-//*******************************************************************************************************
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("libevdev"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("libevdev"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("libevdev"); }
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/linux.png"); }
+    QString name() { return QString("libevdev joystick receiver"); }
+    QIcon icon() { return QIcon(":/images/linux.png"); }
 };

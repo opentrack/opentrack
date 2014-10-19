@@ -15,38 +15,43 @@
 
 static const int ot_libevdev_joystick_axes[6] = { ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ };
 
-FTNoIR_Tracker::FTNoIR_Tracker() : node(nullptr), success(false)
+FTNoIR_Tracker::FTNoIR_Tracker() : node(nullptr), success(false), should_quit(false)
 {
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
+    if (success)
+    {
+        should_quit = true;
+        wait();
+    }
     if (node)
         libevdev_free(node);
     if (fd != -1)
         close(fd);
 }
 
-void FTNoIR_Tracker::StartTracker(QFrame*)
+void FTNoIR_Tracker::start_tracker(QFrame*)
 {
     QString node_name = s.device_name;
     std::string str = (QString("/dev/input/by-id/") + node_name).toStdString();
     const char* filename = str.c_str();
-    
-    fd = open(filename, O_NONBLOCK, O_RDWR);
+
+    fd = open(filename, 0, O_RDWR);
     if (fd == -1)
     {
         qDebug() << "error opening" << filename;
         return;
     }
-    
+
     int ret = libevdev_new_from_fd(fd, &node);
     if (ret)
     {
         qDebug() << "libevdev open error" << ret;
         return;
     }
-    
+
     for (int i = 0; i < 6; i++)
     {
         // no error checking here, errors result in SIGFPE
@@ -54,32 +59,65 @@ void FTNoIR_Tracker::StartTracker(QFrame*)
         a_max[i] = libevdev_get_abs_maximum(node, ot_libevdev_joystick_axes[i]);
         qDebug() << "axis limits" << i << a_min[i] << "->" << a_max[i];
     }
-    
+
     success = true;
+
+    QThread::start();
 }
 
-void FTNoIR_Tracker::GetHeadPoseData(double *data)
+void FTNoIR_Tracker::run()
 {
-    if (node)
+    bool absp = libevdev_has_event_code(node, EV_ABS, ABS_X) &&
+                !libevdev_has_event_code(node, EV_REL, ABS_X);
+    while (!should_quit)
     {
-        while (libevdev_has_event_pending(node) == 1)
+        struct input_event ev;
+        int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+        if (status != LIBEVDEV_READ_STATUS_SUCCESS)
+            continue;
+        if (absp)
         {
-            struct input_event ev;
-            int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-            if (status != LIBEVDEV_READ_STATUS_SUCCESS)
-                continue;
             if (ev.type == EV_ABS)
             {
-                const int val = ev.value, code = ev.code;
+                const int code = ev.code;
                 for (int i = 0; i < 6; i++)
                 {
                     if (ot_libevdev_joystick_axes[i] == code)
                     {
-                        data[i] = (val - a_min[i])*(i >= Yaw ? 180. : 100.) / a_max[i] - a_min[i];
+                        QMutexLocker l(&mtx);
+                        values[i] = ev.value;
                         break;
                     }
                 }
             }
+        } else {
+            if (ev.type == EV_REL)
+            {
+                const int code = ev.code;
+                for (int i = 0; i < 6; i++)
+                {
+                    if (ot_libevdev_joystick_axes[i] == code)
+                    {
+                        QMutexLocker l(&mtx);
+                        values[i] += ev.value;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void FTNoIR_Tracker::data(double *data)
+{
+    if (node)
+    {
+        QMutexLocker l(&mtx);
+        for (int i = 0; i < 6; i++)
+        {
+            int val = values[i];
+            double v = (val - a_min[i])*(i >= Yaw ? 180. : 100.) / a_max[i] - a_min[i];
+            data[i] = v;
         }
     }
 }

@@ -19,12 +19,12 @@ Hydra_Tracker::~Hydra_Tracker()
 	sixenseExit();
 }
 
-void Hydra_Tracker::StartTracker(QFrame*)
+void Hydra_Tracker::start_tracker(QFrame*)
 {
 	sixenseInit();
 }
 
-void Hydra_Tracker::GetHeadPoseData(double *data)
+void Hydra_Tracker::data(double *data)
 {
     
 	sixenseSetActiveBase(0);

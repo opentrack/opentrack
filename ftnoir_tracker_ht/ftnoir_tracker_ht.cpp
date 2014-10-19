@@ -161,7 +161,7 @@ Tracker::~Tracker()
 		delete videoWidget;
 }
 
-void Tracker::StartTracker(QFrame* videoframe)
+void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new HTVideoWidget(videoframe);
@@ -185,7 +185,7 @@ void Tracker::StartTracker(QFrame* videoframe)
 #endif
 }
 
-void Tracker::GetHeadPoseData(double *data)
+void Tracker::data(double *data)
 {
     lck_shm.lock();
     shm->timer = 0;
@@ -206,27 +206,6 @@ void Tracker::GetHeadPoseData(double *data)
         shm->pause = false;
     }
     lck_shm.unlock();
-}
-
-//-----------------------------------------------------------------------------
-void TrackerDll::getFullName(QString *strToBeFilled)
-{
-    *strToBeFilled = "HT face tracker";
-}
-
-void TrackerDll::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = "HT";
-}
-
-void TrackerDll::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = "";
-}
-
-void TrackerDll::getIcon(QIcon *icon)
-{
-    *icon = QIcon(":/images/ht.png");
 }
 
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()

@@ -60,42 +60,38 @@ class FTNoIR_Protocol : public IProtocol
 public:
     FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool checkServerInstallationOK(  );
-    void sendHeadposeToGame( const double *headpose );
-    QString getGameName() {
+    bool correct(  );
+    void pose( const double *headpose );
+    QString game_name() override {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }
 private:
-    importTIRViewsStart viewsStart;
-    importTIRViewsStop viewsStop;
-    
+    settings s;
     FTHeap *pMemData;
-    QString game_name;
     PortableLockedShm shm;
 
-    QString ProgramName;
     QLibrary FTIRViewsLib;
     QProcess dummyTrackIR;
-    static inline double getRadsFromDegrees ( double degrees )
-    {
-        return degrees * 0.017453;
-    }
+    importTIRViewsStart viewsStart;
+    importTIRViewsStop viewsStop;    
+    
     int intGameID;
-    void start_tirviews();
-    void start_dummy();
     QString connected_game;
     QMutex game_name_mutex;
-    settings s;
+    
+    static inline double getRadsFromDegrees(double degrees) { return degrees * 0.017453; }
+    void start_tirviews();
+    void start_dummy();
 };
 
-class FTControls: public QWidget, public IProtocolDialog
+class FTControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
-    explicit FTControls();
-    void registerProtocol(IProtocol *) {}
-    void unRegisterProtocol() {}
+    FTControls();
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
     Ui::UICFTControls ui;
     settings s;
@@ -108,8 +104,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FreeTrack 2.0"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Enhanced FreeTrack protocol"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/freetrack.png"); }
+    QString name() { return QString("freetrack 2.0 Enhanced"); }
+    QIcon icon() { return QIcon(":/images/freetrack.png"); }
 };

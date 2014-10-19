@@ -38,15 +38,15 @@ class Tracker : public ITracker, protected QThread
 public:
     Tracker();
     ~Tracker() override;
-    void StartTracker(QFrame* parent_window) override;
-    void GetHeadPoseData(double* data) override;
+    void start_tracker(QFrame* parent_window) override;
+    void data(double* data) override;
 
     void apply(settings& s);
     void apply_inner();
     void center();
     void reset();	// reset the trackers internal state variables
 
-    void get_pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.get_pose(); }
+    void pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
     void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
 protected:

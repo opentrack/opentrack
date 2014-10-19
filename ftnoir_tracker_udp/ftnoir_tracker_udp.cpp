@@ -23,13 +23,13 @@ void FTNoIR_Tracker::run() {
     }
 }
 
-void FTNoIR_Tracker::StartTracker(QFrame*)
+void FTNoIR_Tracker::start_tracker(QFrame*)
 {
     (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 	start();
 }
 
-void FTNoIR_Tracker::GetHeadPoseData(double *data)
+void FTNoIR_Tracker::data(double *data)
 {
     QMutexLocker foo(&mutex);
     for (int i = 0; i < 6; i++)

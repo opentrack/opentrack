@@ -8,28 +8,6 @@
 #include "ftnoir_tracker_pt_dll.h"
 #include <QIcon>
 
-//-----------------------------------------------------------------------------
-void TrackerDll::getFullName(QString *strToBeFilled)
-{
-	*strToBeFilled = "PointTracker 1.1";
-}
-
-void TrackerDll::getShortName(QString *strToBeFilled)
-{
-	*strToBeFilled = "PointTracker";
-}
-
-void TrackerDll::getDescription(QString *strToBeFilled)
-{
-	*strToBeFilled = "Tracks a 3-point model with know geometry like Freetrack / TrackIR";
-}
-
-void TrackerDll::getIcon(QIcon *icon)
-{
-    *icon = QIcon(":/Resources/Logo_IR.png");
-}
-
-
 #ifdef OPENTRACK_API
 #   include "facetracknoir/plugin-support.h"
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()

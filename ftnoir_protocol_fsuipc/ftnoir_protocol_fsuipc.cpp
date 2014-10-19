@@ -58,7 +58,7 @@ double local_x;
 	return (int) y;
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
+void FTNoIR_Protocol::pose(const double *headpose ) {
     DWORD result;
     TFSState pitch;
     TFSState yaw;
@@ -139,20 +139,20 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
 	prevRotZ = virtRotZ;
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
-	qDebug() << "checkServerInstallationOK says: Starting Function";
+	qDebug() << "correct says: Starting Function";
 
 	//
 	// Load the DLL.
 	//
     FSUIPCLib.setFileName( s.LocationOfDLL );
     if (FSUIPCLib.load() != true) {
-        qDebug() << "checkServerInstallationOK says: Error loading FSUIPC DLL";
+        qDebug() << "correct says: Error loading FSUIPC DLL";
         return false;
     }
     else {
-        qDebug() << "checkServerInstallationOK says: FSUIPC DLL loaded.";
+        qDebug() << "correct says: FSUIPC DLL loaded.";
     }
 
 	return true;

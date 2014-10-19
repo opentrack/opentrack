@@ -37,8 +37,8 @@ class Tracker : public QObject, public ITracker
 public:
 	Tracker();
     ~Tracker() override;
-    void StartTracker(QFrame* frame);
-    void GetHeadPoseData(double *data);
+    void start_tracker(QFrame* frame);
+    void data(double *data);
     void load_settings(ht_config_t* config);
 private:
     settings s;
@@ -50,13 +50,13 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class TrackerControls : public QWidget, public ITrackerDialog
+class TrackerControls : public ITrackerDialog
 {
     Q_OBJECT
 public:
 	explicit TrackerControls();
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    void register_tracker(ITracker *) {}
+    void unregister_tracker() {}
 
 private:
 	Ui::Form ui;

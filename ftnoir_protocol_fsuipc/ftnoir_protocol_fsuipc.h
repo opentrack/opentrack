@@ -67,9 +67,9 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame(const double* headpose);
-    QString getGameName() {
+    bool correct();
+    void pose(const double* headpose);
+    QString game_name() {
         return "Microsoft Flight Simulator X";
     }
 private:
@@ -79,13 +79,13 @@ private:
     settings s;
 };
 
-class FSUIPCControls: public QWidget, public IProtocolDialog
+class FSUIPCControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     FSUIPCControls();
-    void registerProtocol(IProtocol *) {}
-    void unRegisterProtocol() {}
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
 	Ui::UICFSUIPCControls ui;
     settings s;
@@ -98,10 +98,8 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FS2002/FS2004"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FSUIPC"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft FS2004 protocol"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fs9.png"); }
+    QString name() { return QString("FSUIPC -- Microsoft FS2002/FS2004"); }
+    QIcon icon() { return QIcon(":/images/fs9.png"); }
 };
 
 

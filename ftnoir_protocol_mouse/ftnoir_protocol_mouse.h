@@ -60,9 +60,9 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
     FTNoIR_Protocol() {}
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame( const double *headpose);
-    QString getGameName() {
+    bool correct();
+    void pose( const double *headpose);
+    QString game_name() {
         return "Mouse tracker";
     }
     void reload();
@@ -70,15 +70,15 @@ private:
     struct settings s;
 };
 
-class MOUSEControls: public QWidget, public IProtocolDialog
+class MOUSEControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     MOUSEControls();
-    void registerProtocol(IProtocol *protocol) {
+    void register_protocol(IProtocol *protocol) {
         _proto = (FTNoIR_Protocol *) protocol;
     }
-    void unRegisterProtocol() {
+    void unregister_protocol() {
         _proto = NULL;
     }
 private:
@@ -93,10 +93,8 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Mouse Look protocol"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/mouse.png"); }
+    QString name() { return QString("mouse emulation"); }
+    QIcon icon() { return QIcon(":/images/mouse.png"); }
 };
 
 

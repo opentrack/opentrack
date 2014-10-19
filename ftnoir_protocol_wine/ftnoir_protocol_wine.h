@@ -18,9 +18,9 @@ public:
     FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
 
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame(const double* headpose);
-    QString getGameName() {
+    bool correct();
+    void pose(const double* headpose);
+    QString game_name() {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }
@@ -33,13 +33,13 @@ private:
     QMutex game_name_mutex;
 };
 
-class FTControls: public QWidget, public IProtocolDialog
+class FTControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     FTControls();
-    void registerProtocol(IProtocol *) {}
-    void unRegisterProtocol() {}
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 
 private:
     Ui::UICFTControls ui;
@@ -52,12 +52,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    FTNoIR_ProtocolDll();
-    ~FTNoIR_ProtocolDll();
-
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Wine"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Wine"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Wine glue wrapper"); }
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/wine.png"); }
+    QString name() { return QString("Wine -- Windows layer for Unix"); }
+    QIcon icon() { return QIcon(":/images/wine.png"); }
 };

@@ -24,7 +24,7 @@ class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void reset();
-    void FilterHeadPoseData(const double *target_camera_position,
+    void filter(const double *target_camera_position,
                             double *new_camera_position);
     double accel_variance;
     double noise_variance;
@@ -36,13 +36,11 @@ public:
 class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Kalman filter"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Kalman filter"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Kalman filter"); }
-    void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
+    QString name() { return QString("Kalman"); }
+   QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
 
-class OPENTRACK_EXPORT FilterControls: public QWidget, public IFilterDialog
+class OPENTRACK_EXPORT FilterControls: public IFilterDialog
 {
     Q_OBJECT
 public:

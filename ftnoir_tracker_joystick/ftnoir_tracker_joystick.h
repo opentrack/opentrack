@@ -43,8 +43,8 @@ class FTNoIR_Tracker : public ITracker
 public:
 	FTNoIR_Tracker();
 	~FTNoIR_Tracker();
-    void StartTracker(QFrame *frame);
-    void GetHeadPoseData(double *data);
+    void start_tracker(QFrame *frame);
+    void data(double *data);
     void reload();
     LPDIRECTINPUT8          g_pDI;
     LPDIRECTINPUTDEVICE8    g_pJoystick;
@@ -56,17 +56,13 @@ public:
 	static constexpr int AXIS_MAX = 65535;
 };
 
-class TrackerControls: public QWidget, public ITrackerDialog
+class TrackerControls: public ITrackerDialog
 {
     Q_OBJECT
 public:
     TrackerControls();
-    void registerTracker(ITracker *foo) {
-        tracker = dynamic_cast<FTNoIR_Tracker*>(foo);
-    }
-    void unRegisterTracker() {
-        tracker = NULL;
-    }
+    void register_tracker(ITracker *foo) {}
+    void unregister_tracker() {}
     QList<GUID> guids;
     Ui::UIJoystickControls ui;
     FTNoIR_Tracker* tracker;
@@ -79,13 +75,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
-private:
-	QString trackerFullName;									// Trackers' name and description
-	QString trackerShortName;
-	QString trackerDescription;
+    QString name() { return QString("Joystick input"); }
+    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

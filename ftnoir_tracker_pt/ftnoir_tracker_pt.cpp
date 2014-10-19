@@ -147,12 +147,12 @@ void Tracker::center()
 {
 	point_tracker.reset();	// we also do a reset here since there is no reset shortkey yet
 	QMutexLocker lock(&mutex);
-	FrameTrafo X_CM_0 = point_tracker.get_pose();
+	FrameTrafo X_CM_0 = point_tracker.pose();
 	FrameTrafo X_MH(Matx33f::eye(), t_MH);
 	X_GH_0 = R_GC * X_CM_0 * X_MH;
 }
 
-void Tracker::StartTracker(QFrame *parent_window)
+void Tracker::start_tracker(QFrame *parent_window)
 {
     this->video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
@@ -180,12 +180,12 @@ void Tracker::StopTracker(bool exit)
 #define THeadPoseData double
 #endif
 
-void Tracker::GetHeadPoseData(THeadPoseData *data)
+void Tracker::data(THeadPoseData *data)
 {
 	{
 		QMutexLocker lock(&mutex);
 
-    	FrameTrafo X_CM = point_tracker.get_pose();
+    	FrameTrafo X_CM = point_tracker.pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
 		FrameTrafo X_GH = R_GC * X_CM * X_MH;
         Matx33f R = X_GH.R * X_GH_0.R.t();

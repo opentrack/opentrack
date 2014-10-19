@@ -52,9 +52,9 @@ struct settings {
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame(const double *headpose);
-    QString getGameName() {
+    bool correct();
+    void pose(const double *headpose);
+    QString game_name() {
         return "FlightGear";
     }
     void reloadSettings();
@@ -65,15 +65,15 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class FGControls: public QWidget, public IProtocolDialog
+class FGControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     FGControls();
-	void registerProtocol(IProtocol *protocol) {
+	void register_protocol(IProtocol *protocol) {
 		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
 	}
-	void unRegisterProtocol() {
+	void unregister_protocol() {
 		theProtocol = NULL;									// Reset the pointer
 	}
 private:
@@ -88,8 +88,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); }
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear"); }
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("FlightGear UDP protocol"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/flightgear.png"); }
+    QString name() { return QString("FlightGear"); }
+   QIcon icon() { return QIcon(":/images/flightgear.png"); }
 };

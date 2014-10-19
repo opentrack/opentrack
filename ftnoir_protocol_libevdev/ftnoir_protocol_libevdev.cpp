@@ -69,7 +69,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
         libevdev_free(dev);
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
+void FTNoIR_Protocol::pose(const double* headpose) {
     static const int axes[] = {
         /* translation goes first */
         ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ

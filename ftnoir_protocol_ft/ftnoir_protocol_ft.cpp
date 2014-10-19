@@ -28,13 +28,12 @@
 #include "ftnoir_csv/csv.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() :
-    shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap))
+    pMemData((FTHeap*) shm.ptr()),
+    shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
+    viewsStart(nullptr),
+    viewsStop(nullptr),
+    intGameID(0)
 {
-    pMemData = (FTHeap*) shm.ptr();
-    ProgramName = "";
-    intGameID = 0;
-    viewsStart = 0;
-    viewsStop = 0;
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
@@ -48,7 +47,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     dummyTrackIR.waitForFinished(50);
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
+void FTNoIR_Protocol::pose(const double* headpose) {
     float yaw = getRadsFromDegrees(headpose[Yaw]);
     float pitch = getRadsFromDegrees(headpose[Pitch]);
     float roll = getRadsFromDegrees(headpose[Roll]);
@@ -128,7 +127,7 @@ void FTNoIR_Protocol::start_dummy() {
     dummyTrackIR.start();
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
 	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
 	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
