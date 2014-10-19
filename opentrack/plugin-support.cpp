@@ -98,7 +98,7 @@ QList<ptr<dylib>> dylib::enum_libraries()
         QStringList filenames = settingsDir.entryList(QStringList { LIB_PREFIX + filter + SONAME },
                                                       QDir::Files,
                                                       QDir::Name);
-        for ( int i = 0; i < filenames.size(); i++) {
+        for (int i = 0; i < filenames.size(); i++) {
             QIcon icon;
             QString longName;
             QString str = filenames.at(i);
