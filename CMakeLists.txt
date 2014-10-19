@@ -390,7 +390,9 @@ else()
 endif()
 
 opentrack_module(opentrack facetracknoir)
-list(APPEND opentrack-c qxt-mini/qxtglobalshortcut.h)
+if(UNIX OR APPLE)
+    list(APPEND opentrack-c qxt-mini/qxtglobalshortcut.h)
+endif()
 opentrack_qt(opentrack)
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
 
