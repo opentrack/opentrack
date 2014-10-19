@@ -26,8 +26,6 @@ public:
 
 struct IFilterDialog : public QWidget
 {
-    Q_OBJECT
-public:
     virtual ~IFilterDialog() {}
     virtual void registerFilter(IFilter* tracker) = 0;
     virtual void unregisterFilter() = 0;
@@ -44,8 +42,6 @@ public:
 
 struct IProtocolDialog : public QWidget
 {
-    Q_OBJECT
-public:
     virtual ~IProtocolDialog() {}
     virtual void register_protocol(IProtocol *protocol) = 0;
     virtual void unregister_protocol() = 0;
@@ -61,8 +57,6 @@ public:
 
 struct ITrackerDialog : public QWidget
 {
-    Q_OBJECT
-public:
     virtual ~ITrackerDialog() {}
     virtual void register_tracker(ITracker *tracker) = 0;
     virtual void unregister_tracker() = 0;

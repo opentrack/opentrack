@@ -1,7 +1,7 @@
 #include "ftnoir_protocol_vjoy.h"
 #include "facetracknoir/plugin-support.h"
 
-VJoyControls::VJoyControls() : QWidget()
+VJoyControls::VJoyControls()
 {
 	ui.setupUi( this );
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
