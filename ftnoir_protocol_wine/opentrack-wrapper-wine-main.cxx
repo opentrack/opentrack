@@ -4,7 +4,7 @@
 #include "ftnoir_protocol_wine/wine-shm.h"
 
 #define OPENTRACK_CROSS_ONLY
-#include "facetracknoir/plugin-api.hpp"
+#include "../opentrack/plugin-api.hpp"
 
 #define OPENTRACK_COMPAT_BUNDLED
 #include "compat/compat.h"

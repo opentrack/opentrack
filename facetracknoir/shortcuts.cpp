@@ -1,5 +1,7 @@
-#include "facetracknoir/facetracknoir.h"
-#include "facetracknoir/shortcuts.h"
+#include "facetracknoir.h"
+#include "shortcuts.h"
+
+// XXX todo remove ref to ui class -sh 20141019
 
 KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent )
     : QWidget( parent, Qt::Dialog)

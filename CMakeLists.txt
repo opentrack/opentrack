@@ -43,9 +43,9 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_SKIP_INSTALL_RPATH FALSE)
 SET(CMAKE_SKIP_RPATH FALSE)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # note, hatire supports both ftnoir and opentrack
@@ -128,7 +128,7 @@ else()
 endif()
 
 # qt being broken as usual
-set(EXTRA-MOCS "${CMAKE_SOURCE_DIR}/facetracknoir/options.h")
+set(EXTRA-MOCS opentrack/options.hpp)
 
 function(link_with_dinput8 n)
         if(WIN32)
@@ -137,11 +137,17 @@ function(link_with_dinput8 n)
 endfunction()
 
 macro(opentrack_module n dir)
-    file(GLOB ${n}-c "${dir}/*.cpp" "${dir}/*.h" "${dir}/*.rc" "${dir}/*.hpp" ${EXTRA-MOCS})
-    file(GLOB ${n}-ui "${dir}/*.ui")
-    file(GLOB ${n}-rc "${dir}/*.qrc")
+    file(GLOB ${n}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp ${EXTRA-MOCS})
+    file(GLOB ${n}-res ${dir}/*.rc)
+    file(GLOB ${n}-ui ${dir}/*.ui)
+    file(GLOB ${n}-rc ${dir}/*.qrc)
+endmacro()
+
+macro(opentrack_qt n)
+    qt5_wrap_cpp(${n}-moc ${${n}-c} OPTIONS --no-notes)
     QT5_WRAP_UI(${n}-uih ${${n}-ui})
     QT5_ADD_RESOURCES(${n}-rcc ${${n}-rc})
+    set(${n}-all ${${n}-c} ${${n}-rc} ${${n}-rcc} ${${n}-uih} ${${n}-moc} ${${n}-res})
 endmacro()
 
 macro(opentrack_library n dir)
@@ -150,38 +156,26 @@ macro(opentrack_library n dir)
         message(FATAL_ERROR "opentrack_library bad formals")
     endif()
     opentrack_module(${n} ${dir})
-    add_library(${n} SHARED ${${n}-c} ${${n}-uih} ${${n}-rcc})
+    opentrack_qt(${n})
+    add_library(${n} SHARED ${${n}-all})
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
             LINK_FLAGS "${foolib_LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/facetracknoir/${version-script}-version-script.txt"
             COMPILE_FLAGS "${foolib_COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
-            )
+        )
     else()
-        set_target_properties(${n} PROPERTIES LINK_FLAGS "${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
+        set_target_properties(${n} PROPERTIES LINK_FLAGS ${foolib_LINK} COMPILE_FLAGS ${foolib_COMPILE})
     endif()
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
 
-opentrack_module(opentrack-bin facetracknoir)
-opentrack_module(opentrack-api opentrack)
-opentrack_module(opentrack-pose-widget ftnoir_posewidget)
-opentrack_module(opentrack-spline-widget qfunctionconfigurator)
-
-file(GLOB opentrack-version-c "facetracknoir/version.c")
-
-file(GLOB opentrack-csv-c "ftnoir_csv/*.cpp" "ftnoir_csv/*.h")
-
-# compat lib for POSIX/win32
-
-file(GLOB opentrack-compat-c "compat/*.cpp" "compat/*.h")
-
-# x-plane plugin
-file(GLOB opentrack-xplane-plugin-c "x-plane-plugin/*.c")
+opentrack_module(opentrack-compat compat)
+opentrack_module(opentrack-xplane-plugin x-plane-plugin)
 
 # freetrack
 
-file(GLOB opentrack-freetrack-c "freetrackclient/*.c")
+opentrack_module(freetrackclient freetrackclient)
 
 if(SDK_XPLANE)
     # probably librt already included
@@ -223,15 +217,21 @@ endif()
 
 set(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
 
+opentrack_module(opentrack-csv ftnoir_csv)
 add_library(opentrack-csv STATIC ${opentrack-csv-c})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 
-add_library(opentrack-pose-widget STATIC ${opentrack-pose-widget-c} ${opentrack-pose-widget-rcc})
+opentrack_module(opentrack-pose-widget ftnoir_posewidget)
+opentrack_qt(opentrack-pose-widget)
+add_library(opentrack-pose-widget STATIC ${opentrack-pose-widget-all})
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
-add_library(opentrack-spline-widget STATIC ${opentrack-spline-widget-c})
+
+opentrack_module(opentrack-spline-widget qfunctionconfigurator)
+opentrack_qt(opentrack-spline-widget)
+add_library(opentrack-spline-widget STATIC ${opentrack-spline-widget-all})
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
-add_library(opentrack-version STATIC ${opentrack-version-c})
+add_library(opentrack-version STATIC opentrack/version.C)
 set_target_properties(opentrack-version PROPERTIES
     COMPILE_DEFINITIONS
     "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
@@ -281,7 +281,7 @@ if(WIN32)
 endif()
 
 if(WIN32)
-    add_library(freetrackclient SHARED ${opentrack-freetrack-c})
+    add_library(freetrackclient SHARED ${freetrackclient-c})
     set_target_properties(freetrackclient PROPERTIES PREFIX "")
 endif()
 
@@ -404,9 +404,14 @@ if(UNIX OR APPLE)
     endif()
 endif()
 
-add_library(opentrack-api STATIC ${opentrack-api-c})
-add_executable(opentrack ${opentrack-win32-executable} ${opentrack-bin-c} ${opentrack-bin-uih} ${opentrack-bin-rcc})
-target_link_libraries(opentrack opentrack-api)
+opentrack_module(opentrack-api opentrack)
+opentrack_qt(opentrack-api)
+add_library(opentrack-api STATIC ${opentrack-api-all})
+
+opentrack_module(opentrack facetracknoir)
+opentrack_qt(opentrack)
+add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
+target_link_libraries(opentrack opentrack-api opentrack-version opentrack-pose-widget opentrack-spline-widget)
 
 if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
@@ -415,7 +420,7 @@ endif()
 if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
-target_link_libraries(opentrack-api ${OpenCV_LIBS})
+target_link_libraries(opentrack-api ${OpenCV_LIBS} ${MY_QT_LIBS})
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 link_with_dinput8(opentrack)
@@ -424,7 +429,8 @@ if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
-target_link_libraries(opentrack opentrack-version opentrack-pose-widget opentrack-spline-widget ${MY_QT_LIBS} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE})
+target_link_libraries(opentrack ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTWIDGETS_LIB_RELEASE} ${MY_QT_LIBS})
+
 if(NOT WIN32)
     target_link_libraries(opentrack-api dl)
 else()

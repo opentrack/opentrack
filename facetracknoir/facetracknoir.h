@@ -48,8 +48,8 @@
 #include "opentrack/main-settings.hpp"
 #include "opentrack/plugin-support.h"
 #include "opentrack/tracker.h"
-#include "./shortcuts.h"
-#include "./curve-config.h"
+#include "shortcuts.h"
+#include "curve-config.h"
 
 using namespace options;
 
@@ -85,7 +85,7 @@ private:
     ptr<IProtocolDialog> pProtocolDialog;
     ptr<IFilterDialog> pFilterDialog;
 
-    ptr<QWidget> shortcuts_widget;
+    ptr<KeyboardShortcutDialog> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
     
     QShortcut kbd_quit;

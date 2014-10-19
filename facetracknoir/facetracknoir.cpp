@@ -22,9 +22,7 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *********************************************************************************/
 #include "facetracknoir.h"
-#include "shortcuts.h"
 #include "opentrack/tracker.h"
-#include "curve-config.h"
 #include <QFileDialog>
 
 FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),

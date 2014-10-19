@@ -6,19 +6,9 @@
 #include <QRegExp>
 #include <QtGlobal>
 
-#if defined(INSIDE_CSV)
-#   define CSV_API Q_DECL_EXPORT
-#else
-#   define CSV_API Q_DECL_IMPORT
-#endif
-
-class CSV_API CSV
+class CSV
 {
-	/*Q_OBJECT*/
-
 public:
-	~CSV();
-
 	QString readLine();
 	QStringList parseLine();
 	static QStringList parseLine(QString line);

@@ -44,11 +44,6 @@ CSV::CSV(QString &string){
 	m_rx = QRegExp("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)\\n");
 }
 
-CSV::~CSV()
-{
-}
-
-
 void CSV::setCodec(const char* codecName){
 	m_codec = QTextCodec::codecForName(codecName);
 }

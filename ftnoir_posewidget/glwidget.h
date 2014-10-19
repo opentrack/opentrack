@@ -49,8 +49,6 @@ struct Vec2f {
 
 class OPENTRACK_EXPORT GLWidget : public QWidget
 {
-    Q_OBJECT
-
 public:
     GLWidget(QWidget *parent);
     ~GLWidget();

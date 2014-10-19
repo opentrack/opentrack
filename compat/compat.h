@@ -19,19 +19,7 @@
 #include <sys/types.h>
 #endif
 
-#if !defined(OPENTRACK_COMPAT_BUNDLED)
-#   if defined(IN_FTNOIR_COMPAT) && defined(_WIN32)
-#       define COMPAT_EXPORT __declspec(dllexport)
-#   elif defined(_WIN32)
-#       define COMPAT_EXPORT __declspec(dllimport)
-#   else
-#       define COMPAT_EXPORT __attribute__ ((visibility ("default")))
-#   endif
-#else
-#   define COMPAT_EXPORT
-#endif
-
-class COMPAT_EXPORT PortableLockedShm {
+class PortableLockedShm {
 public:
     PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
     ~PortableLockedShm();
