@@ -43,7 +43,7 @@
 #   define LIB_PREFIX "lib"
 #endif
 
-static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
+static bool get_metadata(ptr<DynamicLibrary> lib, QString& longName, QIcon& icon)
 {
     Metadata* meta;
     if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
@@ -54,7 +54,7 @@ static bool get_metadata(DynamicLibrary* lib, QString& longName, QIcon& icon)
     return true;
 }
 
-static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, QComboBox& cbx)
+static void fill_combobox(const QString& filter, QList<ptr<DynamicLibrary>>& list, QComboBox& cbx)
 {
     QDir settingsDir( QCoreApplication::applicationDirPath() );
     QStringList filenames = settingsDir.entryList( QStringList() << (LIB_PREFIX + filter + SONAME), QDir::Files, QDir::Name );
@@ -62,14 +62,11 @@ static void fill_combobox(const QString& filter, QList<DynamicLibrary*>& list, Q
         QIcon icon;
         QString longName;
         QString str = filenames.at(i);
-        DynamicLibrary* lib = new DynamicLibrary(str);
+        auto lib = std::make_shared<DynamicLibrary>(str);
         qDebug() << "Loading" << str;
         std::cout.flush();
         if (!get_metadata(lib, longName, icon))
-        {
-            delete lib;
             continue;
-        }
         list.push_back(lib);
         cbx.addItem(icon, longName);
     }
@@ -116,7 +113,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
-    dlopen_filters.push_back((DynamicLibrary*) NULL);
+    dlopen_filters.push_back(nullptr);
     ui.iconcomboFilter->addItem(QIcon(), "");
 
     fill_combobox("opentrack-proto-*.", dlopen_protocols, *ui.iconcomboProtocol);
@@ -388,7 +385,7 @@ void FaceTrackNoIR::showTrackerSettings()
         pTrackerDialog = NULL;
     }
 
-    DynamicLibrary* lib = dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> lib = dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
 
     if (lib) {
         pTrackerDialog = (ITrackerDialog*) lib->Dialog();
@@ -408,7 +405,7 @@ void FaceTrackNoIR::showServerControls() {
         pProtocolDialog = NULL;
     }
 
-    DynamicLibrary* lib = dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> lib = dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
 
     if (lib && lib->Dialog) {
         pProtocolDialog = (IProtocolDialog*) lib->Dialog();
@@ -426,7 +423,7 @@ void FaceTrackNoIR::showFilterControls() {
         pFilterDialog = NULL;
     }
 
-    DynamicLibrary* lib = dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> lib = dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
 
     if (lib && lib->Dialog) {
         pFilterDialog = (IFilterDialog*) lib->Dialog();

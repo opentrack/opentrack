@@ -67,14 +67,14 @@ public:
 
     // XXX this shit stinks -sh 20141004
     // TODO move to separate class representing running tracker state
-    DynamicLibrary* current_tracker1() override {
-        return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> current_tracker1() override {
+        return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
     }
-    DynamicLibrary* current_protocol() override {
-        return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> current_protocol() override {
+        return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
     }
-    DynamicLibrary* current_filter() override {
-        return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), (DynamicLibrary*) NULL);
+    ptr<DynamicLibrary> current_filter() override {
+        return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
 #if defined(_WIN32)
@@ -108,9 +108,9 @@ private:
     void loadSettings();
     void updateButtonState(bool running, bool inertialp);
 
-    QList<DynamicLibrary*> dlopen_filters;
-    QList<DynamicLibrary*> dlopen_trackers;
-    QList<DynamicLibrary*> dlopen_protocols;
+    QList<ptr<DynamicLibrary>> dlopen_filters;
+    QList<ptr<DynamicLibrary>> dlopen_trackers;
+    QList<ptr<DynamicLibrary>> dlopen_protocols;
     QShortcut kbd_quit;
     int looping;
 
