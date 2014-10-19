@@ -81,7 +81,7 @@ static bool get_metadata(ptr<dylib> lib, QString& name, QIcon& icon)
 QList<ptr<dylib>> dylib::enum_libraries()
 {
 #define BASE "opentrack-"
-#define SUFF "-*.*"
+#define SUFF "-*."
     const char* filters_n[] = { BASE "filter" SUFF,
                                 BASE "tracker" SUFF,
                                 BASE "proto" SUFF };
