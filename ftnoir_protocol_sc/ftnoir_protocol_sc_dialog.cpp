@@ -26,8 +26,7 @@
 #include <QDebug>
 #include "facetracknoir/plugin-support.h"
 
-SCControls::SCControls() :
-QWidget()
+SCControls::SCControls()
 {
 	ui.setupUi( this );
 

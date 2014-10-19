@@ -25,8 +25,7 @@
 #include "ftnoir_protocol_fsuipc.h"
 #include "facetracknoir/plugin-support.h"
 
-FSUIPCControls::FSUIPCControls() :
-    QWidget()
+FSUIPCControls::FSUIPCControls()
 {
     ui.setupUi( this );
     connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
