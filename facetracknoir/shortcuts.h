@@ -14,12 +14,10 @@ class KeyboardShortcutDialog: public QWidget
 {
     Q_OBJECT
 public:
-
     KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent );
 private:
 	Ui::UICKeyboardShortcutDialog ui;
 	FaceTrackNoIR *mainApp;
-
 private slots:
 	void doOK();
 	void doCancel();

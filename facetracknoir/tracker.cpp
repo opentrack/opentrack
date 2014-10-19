@@ -12,8 +12,9 @@
  * originally written by Wim Vriend.
  */
 
-#include "./tracker.h"
 #include <opencv2/core/core.hpp>
+
+#include "./tracker.h"
 #include <cmath>
 #include <algorithm>
 
@@ -21,12 +22,13 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker(main_settings& s, Mappings &m) :
+Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     s(s),
     m(m),
     centerp(false),
     enabledp(true),
-    should_quit(false)
+    should_quit(false),
+    libs(libs)
 {
 }
 
@@ -45,12 +47,12 @@ double Tracker::map(double pos, Mapping& axis) {
     return invert * (fc.getValue(pos) + axis.opts.zero);
 }
 
-void Tracker::t_compensate(const double* input, double* output, bool rz)
+static cv::Matx33d euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[Yaw] * pi / -180;
-    const auto P = input[Pitch] * pi / -180;
-    const auto B = input[Roll] * pi / 180;
+    const auto H = input[0] * pi / -180;
+    const auto P = input[1] * pi / -180;
+    const auto B = input[2] * pi / 180;
 
     const auto cosH = cos(H);
     const auto sinH = sin(H);
@@ -71,7 +73,12 @@ void Tracker::t_compensate(const double* input, double* output, bool rz)
         cosH * cosP,
     };
 
-    const cv::Matx33d rmat(foo);
+    return cv::Matx33d(foo);    
+}
+
+void Tracker::t_compensate(const double* input, double* output, bool rz)
+{
+    const cv::Matx33d rmat = euler_to_rmat(&input[Yaw]);
     const cv::Vec3d tvec(input);
     const cv::Vec3d ret = rmat * tvec;
 
@@ -83,7 +90,7 @@ void Tracker::t_compensate(const double* input, double* output, bool rz)
 
 void Tracker::logic()
 {
-    Libraries->pTracker->GetHeadPoseData(newpose);
+    libs.pTracker->data(newpose);
     
     Pose final_raw;
 
@@ -106,8 +113,8 @@ void Tracker::logic()
     
     Pose filtered_pose;
     
-    if (Libraries->pFilter)
-        Libraries->pFilter->FilterHeadPoseData(final_raw, filtered_pose);
+    if (libs.pFilter)
+        libs.pFilter->filter(final_raw, filtered_pose);
     else
         filtered_pose = final_raw;
     
@@ -130,7 +137,7 @@ void Tracker::logic()
     if (s.tcomp_p)
         t_compensate(mapped_pose_precomp, mapped_pose, s.tcomp_tz);
 
-    Libraries->pProtocol->sendHeadposeToGame(mapped_pose);
+    libs.pProtocol->pose(mapped_pose);
 
     {
         QMutexLocker foo(&mtx);

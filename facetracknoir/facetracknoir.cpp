@@ -43,13 +43,13 @@
 #   define LIB_PREFIX "lib"
 #endif
 
-static bool get_metadata(ptr<DynamicLibrary> lib, QString& longName, QIcon& icon)
+static bool get_metadata(ptr<DynamicLibrary> lib, QString& name, QIcon& icon)
 {
     Metadata* meta;
     if (!lib->Metadata || ((meta = lib->Metadata()), !meta))
         return false;
-    meta->getFullName(&longName);
-    meta->getIcon(&icon);
+    name = meta->name();
+    icon = meta->icon();
     delete meta;
     return true;
 }
@@ -72,7 +72,7 @@ static void fill_combobox(const QString& filter, QList<ptr<DynamicLibrary>>& lis
     }
 }
 
-FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
+FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     tracker(nullptr),
 #if defined(_WIN32)
     keybindingWorker(NULL),
@@ -90,8 +90,6 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
     shortcuts_widget(nullptr),
     mapping_widget(nullptr),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    looping(0),
-    video_frame_layout(new QVBoxLayout()),
     no_feed_pixmap(":/uielements/no-feed.png")
 {
     ui.setupUi(this);
@@ -124,7 +122,7 @@ FaceTrackNoIR::FaceTrackNoIR(QWidget *parent) : QMainWindow(parent),
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
     tie_setting(s.filter_dll, ui.iconcomboFilter);
 
-    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
+    connect(ui.btnstart_tracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
 
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
@@ -143,12 +141,9 @@ FaceTrackNoIR::~FaceTrackNoIR() {
 
     stopTracker();
     save();
-    if (Libraries)
-        delete Libraries;
-    delete video_frame_layout;
 }
 
-QFrame* FaceTrackNoIR::get_video_widget() {
+QFrame* FaceTrackNoIR::video_frame() {
     return ui.video_frame;
 }
 
@@ -200,7 +195,6 @@ void FaceTrackNoIR::save() {
 
 void FaceTrackNoIR::saveAs()
 {
-    looping++;
     QSettings settings("opentrack");
     QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
@@ -225,7 +219,6 @@ void FaceTrackNoIR::saveAs()
         save();
     }
 
-    looping--;
     fill_profile_cbx();
 }
 
@@ -242,12 +235,12 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled ( not_running );
-    ui.btnStartTracker->setEnabled ( not_running );
+    ui.btnstart_tracker->setEnabled ( not_running );
     ui.btnStopTracker->setEnabled ( running );
     ui.iconcomboProtocol->setEnabled ( not_running );
     ui.iconcomboFilter->setEnabled ( not_running );
     ui.iconcomboTrackerSource->setEnabled(not_running);
-    ui.btnStartTracker->setEnabled(not_running);
+    ui.btnstart_tracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
     ui.video_frame_label->setVisible(not_running || inertialp);
 }
@@ -256,15 +249,18 @@ void FaceTrackNoIR::startTracker( ) {
     b->save();
     loadSettings();
     bindKeyboardShortcuts();
+    
+    // Tracker dtor needs run first
+    tracker = nullptr;
+    
+    libs = SelectedLibraries(video_frame(), current_tracker(), current_protocol(), current_filter());
 
-    if (Libraries)
-        delete Libraries;
-    Libraries = new SelectedLibraries(this);
-
-    if (!Libraries->correct)
+    if (!libs.correct)
     {
-        QMessageBox::warning(this, "Something went wrong", "Tracking can't be initialized, probably protocol prerequisites missing", QMessageBox::Ok, QMessageBox::NoButton);
-        stopTracker();
+        QMessageBox::warning(this, "Library load error",
+                             "One of libraries failed to load. Check installation.",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
         return;
     }
 
@@ -272,25 +268,11 @@ void FaceTrackNoIR::startTracker( ) {
     keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
     keybindingWorker->start();
 #endif
-
-    if (tracker) {
-        delete tracker;
-    }
-
-    tracker = new Tracker(s, pose);
-
-    if (pTrackerDialog && Libraries->pTracker) {
-        pTrackerDialog->registerTracker( Libraries->pTracker );
-    }
-
-    if (pFilterDialog && Libraries->pFilter)
-        pFilterDialog->registerFilter(Libraries->pFilter);
-
-    tracker->start();
-
+    
     ui.video_frame->show();
-
     timUpdateHeadPose.start(50);
+    tracker = std::make_shared<Tracker>(s, pose, libs);
+    tracker->start();
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
@@ -311,32 +293,26 @@ void FaceTrackNoIR::stopTracker( ) {
 #endif
     timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
-
-    if (pTrackerDialog) {
-        pTrackerDialog->unRegisterTracker();
-        delete pTrackerDialog;
+    
+    if (pTrackerDialog)
+    {
+        pTrackerDialog->unregister_tracker();
         pTrackerDialog = nullptr;
     }
-    if (pProtocolDialog) {
-        pProtocolDialog->unRegisterProtocol();
-        delete pProtocolDialog;
+    
+    if (pProtocolDialog)
+    {
+        pProtocolDialog->unregister_protocol();
         pProtocolDialog = nullptr;
     }
+    
     if (pFilterDialog)
     {
         pFilterDialog->unregisterFilter();
-        delete pFilterDialog;
         pFilterDialog = nullptr;
     }
-
-    if ( tracker ) {
-        delete tracker;
-        tracker = 0;
-        if (Libraries) {
-            delete Libraries;
-            Libraries = NULL;
-        }
-    }
+    
+    tracker = nullptr;
     updateButtonState(false, false);
 }
 
@@ -371,87 +347,52 @@ void FaceTrackNoIR::showHeadPose()
     ui.lcdNumOutputRotY->display(mapped[Pitch]);
     ui.lcdNumOutputRotZ->display(mapped[Roll]);
 
-    if (Libraries->pProtocol)
+    if (libs.pProtocol)
     {
-        const QString name = Libraries->pProtocol->getGameName();
+        const QString name = libs.pProtocol->game_name();
         ui.game_name->setText(name);
     }
 }
 
 void FaceTrackNoIR::showTrackerSettings()
 {
-    if (pTrackerDialog) {
-        delete pTrackerDialog;
-        pTrackerDialog = NULL;
-    }
-
     ptr<DynamicLibrary> lib = dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
 
     if (lib) {
-        pTrackerDialog = (ITrackerDialog*) lib->Dialog();
-        if (pTrackerDialog) {
-            auto foo = dynamic_cast<QWidget*>(pTrackerDialog);
-            foo->setFixedSize(foo->size());
-            if (Libraries && Libraries->pTracker)
-                pTrackerDialog->registerTracker(Libraries->pTracker);
-            dynamic_cast<QWidget*>(pTrackerDialog)->show();
-        }
+        pTrackerDialog = ptr<ITrackerDialog>(reinterpret_cast<ITrackerDialog*>(lib->Dialog()));
+        pTrackerDialog->setFixedSize(pTrackerDialog->size());
+        pTrackerDialog->register_tracker(libs.pTracker.get());
+        pTrackerDialog->show();
     }
 }
 
 void FaceTrackNoIR::showServerControls() {
-    if (pProtocolDialog) {
-        delete pProtocolDialog;
-        pProtocolDialog = NULL;
-    }
-
     ptr<DynamicLibrary> lib = dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
 
-    if (lib && lib->Dialog) {
-        pProtocolDialog = (IProtocolDialog*) lib->Dialog();
-        if (pProtocolDialog) {
-            auto foo = dynamic_cast<QWidget*>(pProtocolDialog);
-            foo->setFixedSize(foo->size());
-            dynamic_cast<QWidget*>(pProtocolDialog)->show();
-        }
+    if (lib) {
+        pProtocolDialog = ptr<IProtocolDialog>(reinterpret_cast<IProtocolDialog*>(lib->Dialog()));
+        pProtocolDialog->setFixedSize(pProtocolDialog->size());
+        pProtocolDialog->show();
     }
 }
 
 void FaceTrackNoIR::showFilterControls() {
-    if (pFilterDialog) {
-        delete pFilterDialog;
-        pFilterDialog = NULL;
-    }
-
     ptr<DynamicLibrary> lib = dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
 
-    if (lib && lib->Dialog) {
-        pFilterDialog = (IFilterDialog*) lib->Dialog();
-        if (pFilterDialog) {
-            auto foo = dynamic_cast<QWidget*>(pFilterDialog);
-            foo->setFixedSize(foo->size());
-            if (Libraries && Libraries->pFilter)
-                pFilterDialog->registerFilter(Libraries->pFilter);
-            dynamic_cast<QWidget*>(pFilterDialog)->show();
-        }
+    if (lib) {
+        pFilterDialog = ptr<IFilterDialog>(reinterpret_cast<IFilterDialog*>(lib->Dialog()));
+        pFilterDialog->setFixedSize(pFilterDialog->size());
+        pFilterDialog->registerFilter(libs.pFilter.get());
+        pFilterDialog->show();
     }
 }
 void FaceTrackNoIR::showKeyboardShortcuts() {
-
-    if (!shortcuts_widget)
-    {
-        shortcuts_widget = new KeyboardShortcutDialog( this, this );
-    }
-
+    shortcuts_widget = std::make_shared<KeyboardShortcutDialog>( this, this );
     shortcuts_widget->show();
     shortcuts_widget->raise();
 }
 void FaceTrackNoIR::showCurveConfiguration() {
-    if (mapping_widget)
-        delete mapping_widget;
-    
-    mapping_widget = new MapWidget(pose, s, this);
-
+    mapping_widget = std::make_shared<MapWidget>(pose, s, this);
     mapping_widget->show();
     mapping_widget->raise();
 }
@@ -464,9 +405,6 @@ extern "C" volatile const char* opentrack_version;
 
 void FaceTrackNoIR::fill_profile_cbx()
 {
-    if (looping)
-        return;
-    looping++;
     QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     qDebug() << "Config file now" << currentFile;
@@ -480,7 +418,6 @@ void FaceTrackNoIR::fill_profile_cbx()
     for ( int i = 0; i < iniFileList.size(); i++)
         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), iniFileList.at(i));
     ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
-    looping--;
 }
 
 void FaceTrackNoIR::profileSelected(int index)
