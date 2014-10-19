@@ -40,43 +40,44 @@ void FTNoIR_Filter::receiveSettings()
     s.b->reload();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
-                                       double *new_camera_position)
+void FTNoIR_Filter::FilterHeadPoseData(const double *input, double *output)
 {
-    double new_delta, new_noise, norm_noise;
+    double new_delta, new_noise;
     double smoothing, RC, alpha;
+    
+    QMutexLocker l(&state_mutex);
 
     //On the first run, initialize filter states to target intput.
     if (first_run==true) {
         for (int i=0;i<6;i++) {
-            output[i] = target_camera_position[i];
+            last_output[i] = input[i];
             delta[i] = 0.0;
             noise[i] = 0.0;
         }
         first_run=false;
     }
 
+    const double s_min = s.kMinSmoothing;
+    const double s_max = s.kMaxSmoothing + s_min;
+    
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
         // Calculate the current and smoothed delta.
-        new_delta = target_camera_position[i]-output[i];
+        new_delta = input[i]-last_output[i];
         delta[i] = delta_alpha*new_delta + (1.0-delta_alpha)*delta[i];
         // Calculate the current and smoothed noise variance.
         new_noise = delta[i]*delta[i];
         noise[i] = noise_alpha*new_noise + (1.0-noise_alpha)*noise[i];
-        // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
-        norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
+        // Get the normalised stddevs between 0->1 for 0->3 stddevs.
+        const double norm_stddevs = std::min(sqrt(new_noise/noise[i])/3.0, 1.0);
         // Calculate the smoothing 0.0->1.0 from the normalized noise.
-        // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
-        smoothing = 1.0 - pow(norm_noise, s.kSmoothingScaleCurve/20.0);
-        // Currently min/max smoothing are ints 0->100. We want 0.0->3.0 seconds.
-        // TODO(abo): Change kMinSmoothing, kMaxSmoothing to floats 0.0->3.0 seconds RC.
-        RC = 3.0*(s.kMinSmoothing + smoothing*(s.kMaxSmoothing - s.kMinSmoothing))/100.0;
+        smoothing = 1.0 - norm_stddevs;
+        RC = 3.0*(s_min + smoothing*(s_max - s_min))/100.0;
         // TODO(abo): Change this to use a dynamic dt using a timer.
         alpha = 0.003/(0.003 + RC);
         // Calculate the new output position.
-        output[i] = alpha*target_camera_position[i] + (1.0-alpha)*output[i];
-        new_camera_position[i] = output[i];
+        last_output[i] = alpha*input[i] + (1.0-alpha)*last_output[i];
+        output[i] = last_output[i];
     }
 }
 
