@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cinttypes>
 #include "plugin-support.h"
 #include <QCoreApplication>
 #include <QFile>
@@ -7,57 +8,44 @@
 #   include <dlfcn.h>
 #endif
 
-SelectedLibraries* Libraries = NULL;
-
 SelectedLibraries::~SelectedLibraries()
 {
-    if (pTracker) {
-        delete pTracker;
-        pTracker = NULL;
-    }
-
-    if (pFilter)
-        delete pFilter;
-
-    if (pProtocol)
-        delete pProtocol;
 }
 
-SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
-    pTracker(NULL), pFilter(NULL), pProtocol(NULL)
+template<typename t>
+static ptr<t> make_instance(ptr<DynamicLibrary> lib)
 {
-    correct = false;
-    if (!mainApp)
+    ptr<t> ret = nullptr;
+    if (lib && lib->Constructor)
+        ret = ptr<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
+    qDebug() << "lib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t)ret.get();
+    return ret;
+}
+
+SelectedLibraries::SelectedLibraries(QFrame* frame, dylib t, dylib p, dylib f) :
+    pTracker(nullptr),
+    pFilter(nullptr),
+    pProtocol(nullptr),
+    correct(false)
+{
+    pTracker = make_instance<ITracker>(t);
+    pProtocol = make_instance<IProtocol>(p);
+    pFilter = make_instance<IFilter>(f);
+    
+    if (!pTracker|| !pProtocol)
+    {
+        qDebug() << "load failure tracker" << (intptr_t)pTracker.get() << "protocol" << (intptr_t)pProtocol.get();
         return;
-    CTOR_FUNPTR p;
-
-    ptr<DynamicLibrary> lib = mainApp->current_tracker1();
-
-    if (lib && lib->Constructor) {
-        p = (CTOR_FUNPTR) lib->Constructor;
-        pTracker = (ITracker*) p();
-    }
-
-    lib = mainApp->current_protocol();
-
-    if (lib && lib->Constructor) {
-        p = (CTOR_FUNPTR) lib->Constructor;
-        pProtocol = (IProtocol*) p();
-    }
-
-    lib = mainApp->current_filter();
-
-    if (lib && lib->Constructor) {
-        p = (CTOR_FUNPTR) lib->Constructor;
-        pFilter = (IFilter*) p();
     }
 
     if (pProtocol)
-        if(!pProtocol->checkServerInstallationOK())
+        if(!pProtocol->correct())
+        {
+            qDebug() << "protocol load failure";
             return;
-    if (pTracker) {
-        pTracker->StartTracker( mainApp->get_video_widget() );
-    }
+        }
+    
+    pTracker->start_tracker(frame);
 
     correct = true;
 }
@@ -88,7 +76,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
     if (_foo::die(handle, !handle->load()))
         return;
     
-    Dialog = (DIALOG_FUNPTR) handle->resolve("GetDialog");
+    Dialog = (CTOR_FUNPTR) handle->resolve("GetDialog");
     if (_foo::die(handle, !Dialog))
         return;
     
@@ -131,7 +119,7 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
     {
         if (_foo::err(handle))
             return;
-        Dialog = (DIALOG_FUNPTR) dlsym(handle, "GetDialog");
+        Dialog = (CTOR_FUNPTR) dlsym(handle, "GetDialog");
         if (_foo::err(handle))
             return;
         Constructor = (CTOR_FUNPTR) dlsym(handle, "GetConstructor");

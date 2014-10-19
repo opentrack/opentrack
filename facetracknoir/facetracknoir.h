@@ -53,27 +53,27 @@
 
 using namespace options;
 
-class FaceTrackNoIR : public QMainWindow, IDynamicLibraryProvider
+class FaceTrackNoIR : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    FaceTrackNoIR(QWidget *parent = 0);
+    FaceTrackNoIR();
     ~FaceTrackNoIR();
 
-    QFrame *get_video_widget();
-    Tracker *tracker;
+    QFrame *video_frame();
+    ptr<Tracker> tracker;
     void bindKeyboardShortcuts();
 
     // XXX this shit stinks -sh 20141004
     // TODO move to separate class representing running tracker state
-    ptr<DynamicLibrary> current_tracker1() override {
+    ptr<DynamicLibrary> current_tracker() {
         return dlopen_trackers.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
     }
-    ptr<DynamicLibrary> current_protocol() override {
+    ptr<DynamicLibrary> current_protocol() {
         return dlopen_protocols.value(ui.iconcomboProtocol->currentIndex(), nullptr);
     }
-    ptr<DynamicLibrary> current_filter() override {
+    ptr<DynamicLibrary> current_filter() {
         return dlopen_filters.value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
@@ -96,13 +96,14 @@ private:
     Mappings pose;
     Ui::OpentrackUI ui;
     QTimer timUpdateHeadPose;
+    
+    SelectedLibraries libs;
+    ptr<ITrackerDialog> pTrackerDialog;
+    ptr<IProtocolDialog> pProtocolDialog;
+    ptr<IFilterDialog> pFilterDialog;
 
-    ITrackerDialog* pTrackerDialog;
-    IProtocolDialog* pProtocolDialog;
-    IFilterDialog* pFilterDialog;
-
-    QWidget *shortcuts_widget;
-    MapWidget* mapping_widget;
+    ptr<QWidget> shortcuts_widget;
+    ptr<MapWidget> mapping_widget;
 
     void createIconGroupBox();
     void loadSettings();
@@ -111,11 +112,10 @@ private:
     QList<ptr<DynamicLibrary>> dlopen_filters;
     QList<ptr<DynamicLibrary>> dlopen_trackers;
     QList<ptr<DynamicLibrary>> dlopen_protocols;
+    
     QShortcut kbd_quit;
-    int looping;
-
-    QLayout* video_frame_layout;
     QPixmap no_feed_pixmap;
+    
 #ifndef _WIN32
     void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
 #endif
