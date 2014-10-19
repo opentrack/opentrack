@@ -213,6 +213,7 @@ namespace options {
             
             static opt_singleton<k, v>& datum()
             {
+                // XXX crashes with dlopen on Linux -sh 20141019
                 static auto ret = std::make_shared<opt_singleton<k, v>>();
                 return *ret;
             }
