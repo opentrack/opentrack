@@ -6,7 +6,6 @@
  */
 
 #include <cstring>
-#define IN_FTNOIR_COMPAT
 #include "compat.h"
 
 #if defined(_WIN32)

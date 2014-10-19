@@ -16,7 +16,7 @@
 #include "qfunctionconfigurator/functionconfig.h"
 #include "opentrack/plugin-api.hpp"
 
-class OPENTRACK_EXPORT QFunctionConfigurator : public QWidget
+class QFunctionConfigurator : public QWidget
 {
 	Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)

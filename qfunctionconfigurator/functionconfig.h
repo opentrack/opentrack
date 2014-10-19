@@ -14,11 +14,9 @@
 #include <QSettings>
 #include <QMutex>
 #include <vector>
-#include "../opentrack/plugin-api.hpp"
 #include "../opentrack/qcopyable-mutex.hpp"
 
-
-class OPENTRACK_EXPORT Map {
+class Map {
 private:
     struct State {
         QList<QPointF> input;

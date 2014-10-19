@@ -61,7 +61,7 @@ class TrackerControls: public ITrackerDialog
     Q_OBJECT
 public:
     TrackerControls();
-    void register_tracker(ITracker *foo) {}
+    void register_tracker(ITracker *) {}
     void unregister_tracker() {}
     QList<GUID> guids;
     Ui::UIJoystickControls ui;

@@ -19,7 +19,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -flto -march=i686 -mtune=prescott -mno-sse3 -mno-avx -frename-registers" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -flto -flto-partition=none -march=i686 -mtune=prescott -mno-sse3 -mno-avx -frename-registers" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 

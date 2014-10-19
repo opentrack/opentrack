@@ -2,6 +2,8 @@
 
 #include <QString>
 #include "opentrack/options.hpp"
+#include "opentrack/plugin-api.hpp"
+
 using namespace options;
 
 struct key_opts {
