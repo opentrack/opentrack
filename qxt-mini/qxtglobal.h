@@ -51,6 +51,8 @@
 
 #define QXT_DLLEXPORT DO_NOT_USE_THIS_ANYMORE
 
+#define QXT_STATIC
+
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_CORE)
 #        define QXT_CORE_EXPORT Q_DECL_EXPORT
