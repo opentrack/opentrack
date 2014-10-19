@@ -67,41 +67,22 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 
 void FTNoIR_Tracker::run()
 {
-    bool absp = libevdev_has_event_code(node, EV_ABS, ABS_X) &&
-                !libevdev_has_event_code(node, EV_REL, ABS_X);
     while (!should_quit)
     {
         struct input_event ev;
         int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
         if (status != LIBEVDEV_READ_STATUS_SUCCESS)
             continue;
-        if (absp)
+        if (ev.type == EV_ABS || ev.type == EV_MSC)
         {
-            if (ev.type == EV_ABS)
+            const int code = ev.code;
+            for (int i = 0; i < 6; i++)
             {
-                const int code = ev.code;
-                for (int i = 0; i < 6; i++)
+                if (ot_libevdev_joystick_axes[i] == code)
                 {
-                    if (ot_libevdev_joystick_axes[i] == code)
-                    {
-                        QMutexLocker l(&mtx);
-                        values[i] = ev.value;
-                        break;
-                    }
-                }
-            }
-        } else {
-            if (ev.type == EV_REL)
-            {
-                const int code = ev.code;
-                for (int i = 0; i < 6; i++)
-                {
-                    if (ot_libevdev_joystick_axes[i] == code)
-                    {
-                        QMutexLocker l(&mtx);
-                        values[i] += ev.value;
-                        break;
-                    }
+                    QMutexLocker l(&mtx);
+                    values[i] = ev.value;
+                    break;
                 }
             }
         }
