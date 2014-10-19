@@ -29,28 +29,27 @@ SelectedLibraries::SelectedLibraries(IDynamicLibraryProvider* mainApp) :
     correct = false;
     if (!mainApp)
         return;
-    CTOR_FUNPTR ptr;
-    DynamicLibrary* lib;
+    CTOR_FUNPTR p;
 
-    lib = mainApp->current_tracker1();
+    ptr<DynamicLibrary> lib = mainApp->current_tracker1();
 
     if (lib && lib->Constructor) {
-        ptr = (CTOR_FUNPTR) lib->Constructor;
-        pTracker = (ITracker*) ptr();
+        p = (CTOR_FUNPTR) lib->Constructor;
+        pTracker = (ITracker*) p();
     }
 
     lib = mainApp->current_protocol();
 
     if (lib && lib->Constructor) {
-        ptr = (CTOR_FUNPTR) lib->Constructor;
-        pProtocol = (IProtocol*) ptr();
+        p = (CTOR_FUNPTR) lib->Constructor;
+        pProtocol = (IProtocol*) p();
     }
 
     lib = mainApp->current_filter();
 
     if (lib && lib->Constructor) {
-        ptr = (CTOR_FUNPTR) lib->Constructor;
-        pFilter = (IFilter*) ptr();
+        p = (CTOR_FUNPTR) lib->Constructor;
+        pFilter = (IFilter*) p();
     }
 
     if (pProtocol)

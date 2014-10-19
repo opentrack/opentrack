@@ -8,6 +8,9 @@
 #include <QLibrary>
 #include <QFrame>
 
+#include <memory>
+template<typename t> using ptr = std::shared_ptr<t>;
+
 class IDynamicLibraryProvider;
 
 struct SelectedLibraries {
@@ -48,8 +51,8 @@ private:
 // XXX TODO it can die if running tracker state separated into class -sh 20141004
 class IDynamicLibraryProvider {
 public:
-    virtual DynamicLibrary* current_tracker1() = 0;
-    virtual DynamicLibrary* current_protocol() = 0;
-    virtual DynamicLibrary* current_filter() = 0;
+    virtual ptr<DynamicLibrary> current_tracker1() = 0;
+    virtual ptr<DynamicLibrary> current_protocol() = 0;
+    virtual ptr<DynamicLibrary> current_filter() = 0;
     virtual QFrame* get_video_widget() = 0;
 };
