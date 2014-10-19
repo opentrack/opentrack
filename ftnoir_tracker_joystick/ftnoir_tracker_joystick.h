@@ -15,7 +15,7 @@
 #include <QMutex>
 #include <QFrame>
 #include <cmath>
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif
@@ -26,7 +26,7 @@
 #include <oleauto.h>
 #include <shellapi.h>
 
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

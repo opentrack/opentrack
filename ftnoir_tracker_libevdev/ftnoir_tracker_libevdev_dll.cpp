@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_libevdev.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 {

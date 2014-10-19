@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QString>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct key_opts {

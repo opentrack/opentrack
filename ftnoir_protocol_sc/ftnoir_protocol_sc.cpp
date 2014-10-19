@@ -27,7 +27,7 @@
 *				must be treated as such...										*
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol::simconnect_set6DOF;
 HANDLE FTNoIR_Protocol::hSimConnect = 0;			// Handle to SimConnect

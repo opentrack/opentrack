@@ -10,7 +10,7 @@
 
 #include "../qfunctionconfigurator/functionconfig.h"
 #include "./main-settings.hpp"
-#include "./options.h"
+#include "./options.hpp"
 
 #include <QMutex>
 #include <QThread>
@@ -35,7 +35,6 @@ private:
     void logic();
     
     static void t_compensate(const double* input, double* output, bool rz);
-protected:
     void run() override;
 public:
     Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);

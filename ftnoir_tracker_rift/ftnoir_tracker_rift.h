@@ -3,10 +3,10 @@
 #include <QMessageBox>
 #include <QWaitCondition>
 #include <cmath>
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include "OVR.h"
 #include <memory>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

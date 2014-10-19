@@ -3,6 +3,7 @@
 #include "plugin-support.h"
 #include <QCoreApplication>
 #include <QFile>
+#include <QDir>
 
 #ifndef _WIN32
 #   include <dlfcn.h>
@@ -13,7 +14,7 @@ SelectedLibraries::~SelectedLibraries()
 }
 
 template<typename t>
-static ptr<t> make_instance(ptr<DynamicLibrary> lib)
+static ptr<t> make_instance(ptr<dylib> lib)
 {
     ptr<t> ret = nullptr;
     if (lib && lib->Constructor)
@@ -22,7 +23,7 @@ static ptr<t> make_instance(ptr<DynamicLibrary> lib)
     return ret;
 }
 
-SelectedLibraries::SelectedLibraries(QFrame* frame, dylib t, dylib p, dylib f) :
+SelectedLibraries::SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibtr f) :
     pTracker(nullptr),
     pFilter(nullptr),
     pProtocol(nullptr),
@@ -50,10 +51,74 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylib t, dylib p, dylib f) :
     correct = true;
 }
 
-DynamicLibrary::DynamicLibrary(const QString& filename) :
+#if defined(__APPLE__)
+#   define SONAME "dylib"
+#elif defined(_WIN32)
+#   define SONAME "dll"
+#else
+#   define SONAME "so"
+#endif
+
+#include <iostream>
+
+#ifdef _MSC_VER
+#   error "No support for MSVC anymore"
+#else
+#   define LIB_PREFIX "lib"
+#endif
+
+static bool get_metadata(ptr<dylib> lib, QString& name, QIcon& icon)
+{
+    Metadata* meta;
+    if (!lib->Meta || ((meta = lib->Meta()), !meta))
+        return false;
+    name = meta->name();
+    icon = meta->icon();
+    delete meta;
+    return true;
+}
+
+QList<ptr<dylib>> dylib::enum_libraries()
+{
+#define BASE "opentrack-"
+#define SUFF "-*.*"
+    const char* filters_n[] = { BASE "filter" SUFF,
+                                BASE "tracker" SUFF,
+                                BASE "proto" SUFF };
+    const Type filters_t[] = { Filter, Tracker, Protocol };
+    
+    QDir settingsDir( QCoreApplication::applicationDirPath() );
+    
+    QList<ptr<dylib>> ret;
+    
+    for (int i = 0; i < 3; i++)
+    {
+        QString filter = filters_n[i];
+        auto t = filters_t[i];
+        QStringList filenames = settingsDir.entryList(QStringList { LIB_PREFIX + filter + SONAME },
+                                                      QDir::Files,
+                                                      QDir::Name);
+        for ( int i = 0; i < filenames.size(); i++) {
+            QIcon icon;
+            QString longName;
+            QString str = filenames.at(i);
+            auto lib = std::make_shared<dylib>(str, t);
+            qDebug() << "Loading" << str;
+            std::cout.flush();
+            if (!get_metadata(lib, longName, icon))
+                continue;
+            ret.push_back(lib);
+        }
+    }
+    
+    return ret;
+}
+
+dylib::dylib(const QString& filename, Type t) :
+    type(t),
     Dialog(nullptr),
     Constructor(nullptr),
-    Metadata(nullptr)
+    Meta(nullptr)
 {
     this->filename = filename;
 #if defined(_WIN32)
@@ -84,8 +149,8 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
     if (_foo::die(handle, !Constructor))
         return;
     
-    Metadata = (METADATA_FUNPTR) handle->resolve("GetMetadata");
-    if (_foo::die(handle, !Metadata))
+    Meta = (METADATA_FUNPTR) handle->resolve("GetMetadata");
+    if (_foo::die(handle, !Meta))
         return;
 #else
     QByteArray latin1 = QFile::encodeName(filename);
@@ -125,16 +190,21 @@ DynamicLibrary::DynamicLibrary(const QString& filename) :
         Constructor = (CTOR_FUNPTR) dlsym(handle, "GetConstructor");
         if (_foo::err(handle))
             return;
-        Metadata = (METADATA_FUNPTR) dlsym(handle, "GetMetadata");
+        Meta = (METADATA_FUNPTR) dlsym(handle, "GetMetadata");
         if (_foo::err(handle))
             return;
     } else {
         (void) _foo::err(handle);
     }
 #endif
+    
+    auto m = ptr<Metadata>(Meta());
+    
+    icon = m->icon();
+    name = m->name();
 }
 
-DynamicLibrary::~DynamicLibrary()
+dylib::~dylib()
 {
 #if defined(_WIN32)
     handle->unload();

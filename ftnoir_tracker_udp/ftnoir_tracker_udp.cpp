@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_udp.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 FTNoIR_Tracker::FTNoIR_Tracker() : last_recv_pose { 0,0,0, 0,0,0 }, should_quit(false) {}
 

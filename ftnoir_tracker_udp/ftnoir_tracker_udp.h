@@ -3,8 +3,8 @@
 #include <QUdpSocket>
 #include <QThread>
 #include <cmath>
-#include "facetracknoir/plugin-api.hpp"
-#include "facetracknoir/options.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {

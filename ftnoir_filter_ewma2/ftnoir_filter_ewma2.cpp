@@ -8,7 +8,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QWidget>
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 #include <algorithm>
 #include <QMutexLocker>
 

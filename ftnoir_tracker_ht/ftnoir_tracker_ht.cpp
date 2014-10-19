@@ -3,7 +3,7 @@
 #include "ftnoir_tracker_ht.h"
 #include "ftnoir_tracker_ht_dll.h"
 #include "ui_ht-trackercontrols.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <cmath>
 
 #if defined(_WIN32)

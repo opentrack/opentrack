@@ -26,7 +26,7 @@
 *					It is based on the (Linux) example made by Melchior FRANZ.	*
 ********************************************************************************/
 #include "ftnoir_protocol_fg.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 // For Todd and Arda Kutlu
 

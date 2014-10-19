@@ -11,7 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include "point_tracker.h"
 
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 struct settings

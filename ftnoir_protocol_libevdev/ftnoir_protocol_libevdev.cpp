@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_libevdev.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <cstdio>
 #include <algorithm>
 

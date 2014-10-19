@@ -26,7 +26,7 @@
 ********************************************************************************/
 #pragma once
 #include "ui_ftnoir_ftcontrols.h"
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -37,7 +37,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include "compat/compat.h"
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 #include "fttypes.h"
 using namespace options;
 

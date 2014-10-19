@@ -25,7 +25,7 @@
 *					to games, using the FSUIPC.dll.			         			*
 ********************************************************************************/
 #include "ftnoir_protocol_fsuipc.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol()
 {

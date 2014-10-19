@@ -1,6 +1,6 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift.h"
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 #include "OVR_CAPI.h"
 #include "Kernel/OVR_Math.h"
 #include <cstdio>

@@ -8,7 +8,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 #include "compat/compat.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
 

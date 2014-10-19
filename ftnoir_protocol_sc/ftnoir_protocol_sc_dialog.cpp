@@ -24,7 +24,7 @@
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
 #include <QDebug>
-#include "facetracknoir/plugin-support.h"
+#include "opentrack/plugin-api.hpp"
 
 SCControls::SCControls()
 {

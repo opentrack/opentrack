@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QSettings>
-#include "options.h"
+#include "options.hpp"
 using namespace options;
 #include "../qfunctionconfigurator/functionconfig.h"
 #include "main-settings.hpp"

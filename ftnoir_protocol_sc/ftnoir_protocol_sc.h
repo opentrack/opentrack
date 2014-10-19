@@ -29,7 +29,7 @@
 #pragma once
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0502
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 //
 // Prevent the SimConnect manifest from being merged in the application-manifest
 // This is necessary to run FaceTrackNoIR on a PC without FSX
@@ -45,7 +45,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "facetracknoir/options.h"
+#include "opentrack/options.hpp"
 using namespace options;
 
 typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);

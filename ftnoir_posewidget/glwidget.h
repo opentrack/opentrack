@@ -9,7 +9,7 @@
 
 #include <QtGui>
 #include <QPixmap>
-#include "facetracknoir/plugin-api.hpp"
+#include "opentrack/plugin-api.hpp"
 
 struct Point {
     Point(int x, int y) :
