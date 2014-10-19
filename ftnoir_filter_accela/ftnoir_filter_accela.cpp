@@ -23,7 +23,7 @@ static inline double parabola(const double a, const double x, const double dz, c
     return a1 * pow(std::max<double>(fabs(x) - dz, 0), expt) * sign;
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
+void FTNoIR_Filter::filter(const double* target_camera_position,
                                        double *new_camera_position)
 {
 	if (first_run)

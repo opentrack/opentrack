@@ -12,7 +12,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     VJoy_Shutdown();
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
+void FTNoIR_Protocol::pose( const double *headpose ) {
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
     JOYSTICK_STATE state[2] = { 0 };
 

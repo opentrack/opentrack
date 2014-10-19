@@ -68,7 +68,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 	}
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
+void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCRotX = -headpose[Pitch];					// degrees
     virtSCRotY = -headpose[Yaw];
     virtSCRotZ = headpose[Roll];
@@ -134,7 +134,7 @@ private:
     HANDLE hactctx;
 };
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
     if (!SCClientLib.isLoaded())                           
     {
@@ -152,17 +152,17 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 	//
 	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
 	if (simconnect_open == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_Open function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Open function not found in DLL!";
 		return false;
 	}
 	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
 	if (simconnect_set6DOF == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
 		return false;
 	}
 	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
 	if (simconnect_close == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_Close function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Close function not found in DLL!";
 		return false;
 	}
 
@@ -170,35 +170,35 @@ bool FTNoIR_Protocol::checkServerInstallationOK()
 
 	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
 	if (simconnect_calldispatch == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_CallDispatch function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CallDispatch function not found in DLL!";
 		return false;
 	}
 
 	simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
 		return false;
 	}
 
 	simconnect_mapclienteventtosimevent = (importSimConnect_MapClientEventToSimEvent) SCClientLib.resolve("SimConnect_MapClientEventToSimEvent");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
 		return false;
 	}
 
 	simconnect_addclienteventtonotificationgroup = (importSimConnect_AddClientEventToNotificationGroup) SCClientLib.resolve("SimConnect_AddClientEventToNotificationGroup");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
 		return false;
 	}
 
 	simconnect_setnotificationgrouppriority = (importSimConnect_SetNotificationGroupPriority) SCClientLib.resolve("SimConnect_SetNotificationGroupPriority");
 	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
+		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
 		return false;
 	}
 
-	qDebug() << "FTNoIR_Protocol::checkServerInstallationOK() says: SimConnect functions resolved in DLL!";
+	qDebug() << "FTNoIR_Protocol::correct() says: SimConnect functions resolved in DLL!";
 
 	return true;
 }

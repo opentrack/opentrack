@@ -73,13 +73,13 @@ void TrackerImpl::run() {
     }
 }
 
-void TrackerImpl::StartTracker(QFrame*)
+void TrackerImpl::start_tracker(QFrame*)
 {
     (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     start();
 }
 
-void TrackerImpl::GetHeadPoseData(double *data)
+void TrackerImpl::data(double *data)
 {
     QMutexLocker foo(&mtx);
 

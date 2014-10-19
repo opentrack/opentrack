@@ -4,8 +4,7 @@
 #include "facetracknoir/plugin-support.h"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 
-FilterControls::FilterControls() :
-    QWidget(), pFilter(NULL)
+FilterControls::FilterControls() : pFilter(NULL)
 {
     ui.setupUi( this );
 

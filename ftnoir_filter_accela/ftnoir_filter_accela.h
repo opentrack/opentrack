@@ -36,7 +36,7 @@ class FTNoIR_Filter : public IFilter
 {
 public:
 	FTNoIR_Filter();
-    void FilterHeadPoseData(const double* target_camera_position, double *new_camera_position);
+    void filter(const double* target_camera_position, double *new_camera_position);
     void reset() {
         first_run = true;
     }
@@ -50,7 +50,7 @@ private:
     double last_output[3][6];
 };
 
-class FilterControls: public QWidget, public IFilterDialog
+class FilterControls: public IFilterDialog
 {
     Q_OBJECT
 public:
@@ -71,9 +71,6 @@ private slots:
 class FTNoIR_FilterDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Filter Mk4"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("Accela Mk4"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Accela filter Mk4"); }
-
-    void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png");	}
+    QString name() { return QString("Accela"); }
+   QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

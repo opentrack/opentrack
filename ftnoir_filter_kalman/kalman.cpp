@@ -67,7 +67,7 @@ void FTNoIR_Filter::reset() {
     timer.invalidate();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(const double* target_camera_position,
+void FTNoIR_Filter::filter(const double* target_camera_position,
                                        double *new_camera_position)
 {
     // Start the timer if it's not running.

@@ -29,7 +29,7 @@
 #include "ftnoir_protocol_mouse.h"
 #include "facetracknoir/plugin-support.h"
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose ) {
+void FTNoIR_Protocol::pose(const double *headpose ) {
     double fMouse_X = 0;
     double fMouse_Y = 0;
 
@@ -58,7 +58,7 @@ void FTNoIR_Protocol::reload()
     s.b->reload();
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
     return true;
 }

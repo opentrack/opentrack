@@ -47,8 +47,8 @@ class Tracker : protected QThread, public ITracker
 public:
     Tracker();
     ~Tracker() override;
-    void StartTracker(QFrame* frame);
-    void GetHeadPoseData(double *data);
+    void start_tracker(QFrame* frame);
+    void data(double *data);
     void run();
     void reload() { s.b->reload(); }
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
@@ -65,13 +65,13 @@ private:
     cv::Vec3d t;
 };
 
-class TrackerControls : public QWidget, public ITrackerDialog
+class TrackerControls : public ITrackerDialog
 {
     Q_OBJECT
 public:
     TrackerControls();
-    void registerTracker(ITracker * x) { tracker = dynamic_cast<Tracker*>(x); }
-    void unRegisterTracker() { tracker = nullptr; }
+    void register_tracker(ITracker * x) { tracker = static_cast<Tracker*>(x); }
+    void unregister_tracker() { tracker = nullptr; }
 private:
     Ui::Form ui;
     Tracker* tracker;

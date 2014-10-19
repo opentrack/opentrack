@@ -25,7 +25,7 @@ void FTNoIR_Tracker::reload()
     g_pJoystick = nullptr;
     g_pDI = nullptr;
 
-    StartTracker(frame);
+    start_tracker(frame);
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
@@ -81,7 +81,7 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
     return stop ? DIENUM_STOP : DIENUM_CONTINUE;
 }
 
-void FTNoIR_Tracker::StartTracker(QFrame* frame)
+void FTNoIR_Tracker::start_tracker(QFrame* frame)
 {
     QMutexLocker foo(&mtx);
     this->frame = frame;
@@ -144,7 +144,7 @@ fail:
     qDebug() << "joy init failure";
 }
 
-void FTNoIR_Tracker::GetHeadPoseData(double *data)
+void FTNoIR_Tracker::data(double *data)
 {
     QMutexLocker foo(&mtx);
     DIJOYSTATE js = {0};

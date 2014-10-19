@@ -35,7 +35,7 @@ void FTNoIR_Protocol::reloadSettings()
     s.b->reload();
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
+void FTNoIR_Protocol::pose(const double* headpose) {
     FlightData.x = headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;
@@ -52,7 +52,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
     (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(destPort));
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }

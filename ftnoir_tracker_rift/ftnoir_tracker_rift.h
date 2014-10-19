@@ -27,22 +27,22 @@ class Rift_Tracker : public ITracker
 public:
     Rift_Tracker();
     ~Rift_Tracker() override;
-    void StartTracker(QFrame *) override;
-    void GetHeadPoseData(double *data) override;
+    void start_tracker(QFrame *) override;
+    void data(double *data) override;
 private:
     double old_yaw;
     ovrHmd hmd;
     settings s;
 };
 
-class TrackerControls: public QWidget, public ITrackerDialog
+class TrackerControls: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    explicit TrackerControls();
+    TrackerControls();
 
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    void register_tracker(ITracker *) {}
+    void unregister_tracker() {}
 
 private:
     Ui::UIRiftControls ui;
@@ -55,16 +55,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-    FTNoIR_TrackerDll();
-    ~FTNoIR_TrackerDll();
-    void getFullName(QString *strToBeFilled);
-    void getShortName(QString *strToBeFilled);
-    void getDescription(QString *strToBeFilled);
-    void getIcon(QIcon *icon);
-
-private:
-    QString trackerFullName;									// Trackers' name and description
-    QString trackerShortName;
-    QString trackerDescription;
+    QString name() { return QString("Oculus Rift -- HMD"); }
+    QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

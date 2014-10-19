@@ -17,7 +17,7 @@ Rift_Tracker::~Rift_Tracker()
     ovr_Shutdown();
 }
 
-void Rift_Tracker::StartTracker(QFrame*)
+void Rift_Tracker::start_tracker(QFrame*)
 {
     ovr_Initialize();
     hmd = ovrHmd_Create(0);
@@ -34,7 +34,7 @@ void Rift_Tracker::StartTracker(QFrame*)
 }
 
 
-void Rift_Tracker::GetHeadPoseData(double *data)
+void Rift_Tracker::data(double *data)
 {
     if (hmd)
     {

@@ -25,7 +25,7 @@ class FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void reset() { first_run=true; }
-    void FilterHeadPoseData(const double *target_camera_position,
+    void filter(const double *target_camera_position,
                             double *new_camera_position);
     void receiveSettings();
 private:
@@ -38,7 +38,7 @@ private:
     settings s;
 };
 
-class FilterControls: public QWidget, public IFilterDialog
+class FilterControls: public IFilterDialog
 {
     Q_OBJECT
 public:
@@ -60,8 +60,6 @@ private slots:
 class FTNoIR_FilterDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA Filter Mk3"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("EWMA"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Exponentially Weighted Moving Average filter with dynamic smoothing parameter"); }
-    void getIcon(QIcon *icon){ *icon = QIcon(":/images/filter-16.png"); }
+    QString name() { return QString("EWMA"); }
+   QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

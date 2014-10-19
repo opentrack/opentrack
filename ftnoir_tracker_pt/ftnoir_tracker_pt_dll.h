@@ -19,8 +19,6 @@ class TrackerDll :
         public ITrackerDll
 #endif
 {
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    QString name() { return QString("PointTracker 1.1"); }
+    QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
 };

@@ -21,8 +21,8 @@ class FTNoIR_Tracker : public ITracker, protected QThread
 public:
 	FTNoIR_Tracker();
     ~FTNoIR_Tracker();
-    void StartTracker(QFrame *);
-    void GetHeadPoseData(double *data);
+    void start_tracker(QFrame *);
+    void data(double *data);
 protected:
 	void run() override;
 private:
@@ -33,13 +33,13 @@ private:
     volatile bool should_quit;
 };
 
-class TrackerControls: public QWidget, public ITrackerDialog
+class TrackerControls: public ITrackerDialog
 {
     Q_OBJECT
 public:
 	TrackerControls();
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    void register_tracker(ITracker *) {}
+    void unregister_tracker() {}
 private:
 	Ui::UICFTNClientControls ui;
     settings s;
@@ -51,8 +51,6 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    QString name() { return QString("UDP sender"); }
+    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };

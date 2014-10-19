@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "facetracknoir/plugin-support.h"
 
-FTControls::FTControls() : QWidget()
+FTControls::FTControls()
 {
     ui.setupUi( this );
     connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));

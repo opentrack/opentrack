@@ -15,21 +15,21 @@ class Hydra_Tracker : public ITracker
 public:
     Hydra_Tracker();
     ~Hydra_Tracker();
-    void StartTracker(QFrame *) override;
-    void GetHeadPoseData(double *data) override;
+    void start_tracker(QFrame *) override;
+    void data(double *data) override;
     volatile bool should_quit;
 private:
     settings s;
     QMutex mutex;
 };
 
-class TrackerControls: public QWidget, public ITrackerDialog
+class TrackerControls: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    explicit TrackerControls();
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    TrackerControls();
+    void register_tracker(ITracker *) {}
+    void unregister_tracker() {}
 private:
     settings s;
     Ui::UIHydraControls ui;
@@ -41,9 +41,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled);
-    void getShortName(QString *strToBeFilled);
-    void getDescription(QString *strToBeFilled);
-    void getIcon(QIcon *icon);
+    QString name() { return QString("Razer Hydra -- inertial device"); }
+    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

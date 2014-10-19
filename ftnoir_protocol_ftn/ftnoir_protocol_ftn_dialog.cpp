@@ -25,8 +25,7 @@
 #include "ftnoir_protocol_ftn.h"
 #include "facetracknoir/plugin-support.h"
 
-FTNControls::FTNControls() :
-    QWidget()
+FTNControls::FTNControls()
 {
     ui.setupUi( this );
 

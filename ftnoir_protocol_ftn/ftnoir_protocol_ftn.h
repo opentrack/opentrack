@@ -53,9 +53,9 @@ class FTNoIR_Protocol : public IProtocol
 {
 public:
 	FTNoIR_Protocol();
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame(const double *headpose);
-    QString getGameName() {
+    bool correct();
+    void pose(const double *headpose);
+    QString game_name() {
         return "UDP Tracker";
     }
 private:
@@ -64,13 +64,13 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class FTNControls: public QWidget, public IProtocolDialog
+class FTNControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     FTNControls();
-    void registerProtocol(IProtocol *) {}
-    void unRegisterProtocol() {}
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
 	Ui::UICFTNControls ui;
     settings s;
@@ -82,9 +82,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("UDP"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("opentrack UDP protocol"); }
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/facetracknoir.png"); }
+    QString name() { return QString("UDP receiver"); }
+    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };

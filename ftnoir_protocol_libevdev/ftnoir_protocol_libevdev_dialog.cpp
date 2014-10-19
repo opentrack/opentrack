@@ -1,7 +1,7 @@
 #include "ftnoir_protocol_libevdev.h"
 #include "facetracknoir/plugin-support.h"
 
-LibevdevControls::LibevdevControls() : QWidget()
+LibevdevControls::LibevdevControls()
 {
 	ui.setupUi( this );
 	connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));

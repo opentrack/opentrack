@@ -40,7 +40,7 @@ void FTNoIR_Filter::receiveSettings()
     s.b->reload();
 }
 
-void FTNoIR_Filter::FilterHeadPoseData(const double *target_camera_position,
+void FTNoIR_Filter::filter(const double *target_camera_position,
                                        double *new_camera_position)
 {
     double new_delta, new_noise, norm_noise;

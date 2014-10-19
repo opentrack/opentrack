@@ -27,8 +27,8 @@ class TrackerImpl : public ITracker, private QThread
 public:
     TrackerImpl();
     ~TrackerImpl() override;
-    void StartTracker(QFrame *);
-    void GetHeadPoseData(double *data);
+    void start_tracker(QFrame *);
+    void data(double *data);
 protected:
     void run() override;
 private:
@@ -39,13 +39,13 @@ private:
     volatile bool should_quit;
 };
 
-class TrackerDialog : public QWidget, public ITrackerDialog
+class TrackerDialog : public ITrackerDialog
 {
     Q_OBJECT
 public:
     TrackerDialog();
-    void registerTracker(ITracker *) {}
-    void unRegisterTracker() {}
+    void register_tracker(ITracker *) {}
+    void unregister_tracker() {}
 private:
     Ui::UI_freepie_udp_dialog ui;
     settings s;
@@ -57,9 +57,7 @@ private slots:
 class TrackerMeta : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled);
-    void getShortName(QString *strToBeFilled);
-    void getDescription(QString *strToBeFilled);
-    void getIcon(QIcon *icon);
+    QString name() { return QString("FreePIE UDP receiver"); }
+    QIcon icon() { return QIcon(":/glovepie.png"); }
 };
 

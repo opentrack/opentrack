@@ -23,13 +23,13 @@
 
 //-----------------------------------------------------------------------------
 // The dialog that shows up when the user presses "Settings"
-class TrackerDialog : public QWidget, public ITrackerDialog
+class TrackerDialog : public ITrackerDialog
 {
 	Q_OBJECT
 public:
 	TrackerDialog();
-	void registerTracker(ITracker *tracker) override;
-	void unRegisterTracker() override;
+	void register_tracker(ITracker *tracker) override;
+	void unregister_tracker() override;
     void save();
 	void trans_calib_step();
 

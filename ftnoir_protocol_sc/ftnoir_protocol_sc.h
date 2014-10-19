@@ -89,9 +89,9 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool checkServerInstallationOK();
-    void sendHeadposeToGame(const double* headpose);
-    QString getGameName() {
+    bool correct();
+    void pose(const double* headpose);
+    QString game_name() {
         return "FS2004/FSX";
     }
 private:
@@ -127,13 +127,13 @@ private:
     settings s;
 };
 
-class SCControls: public QWidget, public IProtocolDialog
+class SCControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
     SCControls();
-    void registerProtocol(IProtocol *) {}
-    void unRegisterProtocol() {}
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
     Ui::UICSCControls ui;
     settings s;
@@ -145,8 +145,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("FSX SimConnect"); }
-    void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("SimConnect"); }
-    void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("Microsoft SimConnect protocol"); }
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/fsx.png"); }
+    QString name() { return QString("Microsoft FSX SimConnect"); }
+    QIcon icon() { return QIcon(":/images/fsx.png"); }
 };

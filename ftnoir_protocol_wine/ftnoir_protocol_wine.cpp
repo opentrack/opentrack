@@ -29,7 +29,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
+void FTNoIR_Protocol::pose( const double *headpose ) {
     if (shm)
     {
         lck_shm.lock();
@@ -51,7 +51,7 @@ void FTNoIR_Protocol::sendHeadposeToGame( const double *headpose ) {
     }
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {
     return lck_shm.success();
 }

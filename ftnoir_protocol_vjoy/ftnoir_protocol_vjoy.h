@@ -37,25 +37,25 @@ class FTNoIR_Protocol : public IProtocol
 public:
 	FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool checkServerInstallationOK() {
+    bool correct() {
         return true;
     }
-    void sendHeadposeToGame( const double *headpose );
-    QString getGameName() {
+    void pose( const double *headpose );
+    QString game_name() {
         return "Virtual joystick";
     }
 private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class VJoyControls: public QWidget, public IProtocolDialog
+class VJoyControls: public IProtocolDialog
 {
     Q_OBJECT
 public:
 
 	explicit VJoyControls();
-    void registerProtocol(IProtocol *) {}
-	void unRegisterProtocol() {}
+    void register_protocol(IProtocol *) {}
+	void unregister_protocol() {}
 
 private:
 	Ui::UICVJoyControls ui;
@@ -69,14 +69,8 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-	FTNoIR_ProtocolDll();
-	~FTNoIR_ProtocolDll();
-
-	void getFullName(QString *strToBeFilled) { *strToBeFilled = QString("VJoy"); }
-	void getShortName(QString *strToBeFilled) { *strToBeFilled = QString("VJoy"); }
-	void getDescription(QString *strToBeFilled) { *strToBeFilled = QString("VJoy"); }
-
-    void getIcon(QIcon *icon) { *icon = QIcon(":/images/vjoy.png"); }
+    QString name() { return QString("Joystick emulation -- VJoy"); }
+    QIcon icon() { return QIcon(":/images/vjoy.png"); }
 };
 
 #define VJOY_AXIS_MIN   -32768

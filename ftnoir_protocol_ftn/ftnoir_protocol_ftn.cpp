@@ -33,7 +33,7 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 {
 }
 
-void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose) {
+void FTNoIR_Protocol::pose(const double *headpose) {
     int destPort = s.port;
     QHostAddress destIP(QString("%1.%2.%3.%4").arg(
                             QString::number(static_cast<int>(s.ip1)),
@@ -43,7 +43,7 @@ void FTNoIR_Protocol::sendHeadposeToGame(const double *headpose) {
     outSocket.writeDatagram((const char *) headpose, sizeof( double[6] ), destIP, destPort);
 }
 
-bool FTNoIR_Protocol::checkServerInstallationOK()
+bool FTNoIR_Protocol::correct()
 {   
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
