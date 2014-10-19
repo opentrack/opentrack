@@ -1,8 +1,7 @@
 #include "ftnoir_tracker_rift.h"
 #include "facetracknoir/plugin-support.h"
 
-TrackerControls::TrackerControls() :
-QWidget()
+TrackerControls::TrackerControls()
 {
     ui.setupUi( this );
 
