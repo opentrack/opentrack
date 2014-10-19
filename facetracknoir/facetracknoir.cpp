@@ -122,7 +122,7 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
     tie_setting(s.filter_dll, ui.iconcomboFilter);
 
-    connect(ui.btnstart_tracker, SIGNAL(clicked()), this, SLOT(startTracker()));
+    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
 
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
@@ -235,12 +235,12 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled ( not_running );
-    ui.btnstart_tracker->setEnabled ( not_running );
+    ui.btnStartTracker->setEnabled ( not_running );
     ui.btnStopTracker->setEnabled ( running );
     ui.iconcomboProtocol->setEnabled ( not_running );
     ui.iconcomboFilter->setEnabled ( not_running );
     ui.iconcomboTrackerSource->setEnabled(not_running);
-    ui.btnstart_tracker->setEnabled(not_running);
+    ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
     ui.video_frame_label->setVisible(not_running || inertialp);
 }
