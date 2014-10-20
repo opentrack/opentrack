@@ -48,7 +48,8 @@
 #include "opentrack/main-settings.hpp"
 #include "opentrack/plugin-support.h"
 #include "opentrack/tracker.h"
-#include "shortcuts.h"
+#include "opentrack/shortcuts.h"
+#include "opentrack/work.hpp"
 #include "curve-config.h"
 
 using namespace options;
@@ -59,70 +60,54 @@ class FaceTrackNoIR : public QMainWindow
 public:
     pbundle b;
     main_settings s;
-    ptr<Tracker> tracker;
-        
-    // XXX move kbd handling into class its own -sh 20141019
-#ifndef _WIN32
-    void bind_keyboard_shortcut(QxtGlobalShortcut&, key_opts& k);
-#endif
 private:
-#if defined(_WIN32)
-    Key keyCenter;
-    Key keyToggle;
-    KeybindingWorker* keybindingWorker;
-#else
-    QxtGlobalShortcut keyCenter;
-    QxtGlobalShortcut keyToggle;
-#endif
     // XXX move the shit outta the _widget_, establish a class
     // for running tracker state, etc -sh 20141014
     Mappings pose;
     Ui::OpentrackUI ui;
+    
     QTimer timUpdateHeadPose;
     
     SelectedLibraries libs;
-    ptr<ITrackerDialog> pTrackerDialog;
-    ptr<IProtocolDialog> pProtocolDialog;
-    ptr<IFilterDialog> pFilterDialog;
+    ptr<Work> work;
 
     ptr<KeyboardShortcutDialog> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
     
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
-    
-    QList<ptr<dylib>> filter_modules;
-    QList<ptr<dylib>> tracker_modules;
-    QList<ptr<dylib>> protocol_modules;
-    
-    QList<ptr<dylib>> module_list;
+    ptr<IFilterDialog> pFilterDialog;
+    ptr<IProtocolDialog> pProtocolDialog;
+    ptr<ITrackerDialog> pTrackerDialog;
+    Modules modules;
     
     // XXX this shit stinks -sh 20141004
     // TODO move to separate class representing running tracker state
     ptr<dylib> current_tracker()
     {
-        return tracker_modules.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+        return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
     }
     ptr<dylib> current_protocol()
     {
-        return protocol_modules.value(ui.iconcomboProtocol->currentIndex(), nullptr);
+        return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
     }
     ptr<dylib> current_filter()
     {
-        return filter_modules.value(ui.iconcomboFilter->currentIndex(), nullptr);
+        return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
     void createIconGroupBox();
     void loadSettings();
     void updateButtonState(bool running, bool inertialp);
 
-    void fill_combobox(dylib::Type t, QList<ptr<dylib>> list, QList<ptr<dylib> > &out_list, QComboBox* cbx);
     void fill_profile_combobox();
     
-    QFrame *video_frame();
+    void display_pose(const double* mapped, const double* raw);
+
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
+    void bindKeyboardShortcuts();
 private slots:
     void open();
     void save();
@@ -146,5 +131,4 @@ public:
     ~FaceTrackNoIR();
     void save_mappings();
     void load_mappings();
-    void bindKeyboardShortcuts();
 };

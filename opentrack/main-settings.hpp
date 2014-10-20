@@ -6,17 +6,6 @@
 
 using namespace options;
 
-struct key_opts {
-    value<int> key_index;
-    value<bool> ctrl, alt, shift;
-    key_opts(pbundle b, const QString& name) :
-        key_index(b,  QString("key-index-%1").arg(name), 0),
-        ctrl(b,  QString("key-ctrl-%1").arg(name), 0),
-        alt(b,  QString("key-alt-%1").arg(name), 0),
-        shift(b,  QString("key-shift-%1").arg(name), 0)
-    {}
-};
-
 struct axis_opts {
     value<double> zero;
     value<bool> invert, altp;
@@ -35,15 +24,11 @@ private:
 
 struct main_settings {
     pbundle b;
-    key_opts center_key;
-    key_opts toggle_key;
     value<QString> tracker_dll, tracker2_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
-    value<bool> tcomp_p, tcomp_tz, dingp;
+    value<bool> tcomp_p, tcomp_tz;
     main_settings(pbundle b) :
         b(b),
-        center_key(b, "center"),
-        toggle_key(b, "toggle"),
         tracker_dll(b, "tracker-dll", ""),
         tracker2_dll(b, "tracker2-dll", ""),
         filter_dll(b, "filter-dll", ""),
@@ -55,7 +40,6 @@ struct main_settings {
         a_pitch(b, "pitch", Pitch),
         a_roll(b, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
-        tcomp_tz(b, "compensate-translation-disable-z-axis", false),
-        dingp(b, "ding", true)
+        tcomp_tz(b, "compensate-translation-disable-z-axis", false)
     {}
 };

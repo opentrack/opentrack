@@ -28,23 +28,16 @@
 FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     b(bundle("opentrack-ui")),
     s(b),
-    #if defined(_WIN32)
-        keybindingWorker(NULL),
-    #else
-        keyCenter(this),
-        keyToggle(this),
-    #endif
     pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll}),
     timUpdateHeadPose(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/uielements/no-feed.png"),
-    module_list(dylib::enum_libraries())
+    no_feed_pixmap(":/uielements/no-feed.png")
 {
     ui.setupUi(this);
+    
     setFixedSize(size());
-    ui.video_frame_label->setPixmap(no_feed_pixmap);
     updateButtonState(false, false);
-
+    ui.video_frame_label->setPixmap(no_feed_pixmap);
     QDir::setCurrent(QCoreApplication::applicationDirPath());
     
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
@@ -57,12 +50,17 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
 
-    filter_modules.push_back(nullptr);
+    modules.filters().push_back(nullptr);
     ui.iconcomboFilter->addItem(QIcon(), "");
     
-    fill_combobox(dylib::Tracker, module_list, tracker_modules, ui.iconcomboTrackerSource);
-    fill_combobox(dylib::Protocol, module_list, protocol_modules, ui.iconcomboProtocol);
-    fill_combobox(dylib::Filter, module_list, filter_modules, ui.iconcomboFilter);
+    for (auto x : modules.trackers())
+        ui.iconcomboTrackerSource->addItem(x->icon, x->name);
+    
+    for (auto x : modules.protocols())
+        ui.iconcomboProtocol->addItem(x->icon, x->name);
+    
+    for (auto x : modules.filters())
+        ui.iconcomboFilter->addItem(x->icon, x->name);
     
     fill_profile_combobox();
 
@@ -72,15 +70,9 @@ FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+    
     connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
-
-#ifndef _WIN32
-    connect(&keyCenter, SIGNAL(activated()), this, SLOT(shortcutRecentered()));
-    connect(&keyToggle, SIGNAL(activated()), this, SLOT(shortcutToggled()));
-#endif
-
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
 }
@@ -89,25 +81,6 @@ FaceTrackNoIR::~FaceTrackNoIR()
 {
     stopTracker();
     save();
-}
-
-void FaceTrackNoIR::fill_combobox(dylib::Type t,
-                                  QList<ptr<dylib>> list,
-                                  QList<ptr<dylib>>& out_list,
-                                  QComboBox* cbx)
-{
-    for (auto x : list)
-    {
-        if (t == x->type)
-        {
-            cbx->addItem(x->icon, x->name);
-            out_list.append(x);
-        }
-    }
-}
-
-QFrame* FaceTrackNoIR::video_frame() {
-    return ui.video_frame;
 }
 
 void FaceTrackNoIR::open() {
@@ -226,15 +199,27 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
     ui.video_frame_label->setVisible(not_running || inertialp);
 }
 
+void FaceTrackNoIR::bindKeyboardShortcuts()
+{
+    if (work)
+        work->sc = std::make_shared<Shortcuts>();
+}
+
 void FaceTrackNoIR::startTracker( ) {
     b->save();
     loadSettings();
     bindKeyboardShortcuts();
     
-    // Tracker dtor needs run first
-    tracker = nullptr;
+    // tracker dtor needs run first
+    work = nullptr;
     
-    libs = SelectedLibraries(video_frame(), current_tracker(), current_protocol(), current_filter());
+    libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
+    work = std::make_shared<Work>(s, pose, libs, this);
+    
+    {
+        double p[6] = {0,0,0, 0,0,0};
+        display_pose(p, p);
+    }
 
     if (!libs.correct)
     {
@@ -252,8 +237,6 @@ void FaceTrackNoIR::startTracker( ) {
     
     ui.video_frame->show();
     timUpdateHeadPose.start(50);
-    tracker = std::make_shared<Tracker>(s, pose, libs);
-    tracker->start();
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
@@ -293,41 +276,53 @@ void FaceTrackNoIR::stopTracker( ) {
         pFilterDialog = nullptr;
     }
     
-    tracker = nullptr;
+    work = nullptr;
     libs = SelectedLibraries();
+    
+    {
+        double p[6] = {0,0,0, 0,0,0};
+        display_pose(p, p);
+    }
     updateButtonState(false, false);
+}
+
+void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
+{
+    ui.pose_display->rotateBy(mapped[Yaw], mapped[Roll], mapped[Pitch]);
+
+    if (mapping_widget)
+        mapping_widget->update();
+    
+    double mapped_[6], raw_[6];
+    
+    for (int i = 0; i < 6; i++)
+    {
+        mapped_[i] = (int) mapped[i];
+        raw_[i] = (int) raw[i];
+    }
+
+    ui.lcdNumX->display(raw_[TX]);
+    ui.lcdNumY->display(raw_[TY]);
+    ui.lcdNumZ->display(raw_[TZ]);
+    ui.lcdNumRotX->display(raw_[Yaw]);
+    ui.lcdNumRotY->display(raw_[Pitch]);
+    ui.lcdNumRotZ->display(raw_[Roll]);
+
+    ui.lcdNumOutputPosX->display(mapped_[TX]);
+    ui.lcdNumOutputPosY->display(mapped_[TY]);
+    ui.lcdNumOutputPosZ->display(mapped_[TZ]);
+    ui.lcdNumOutputRotX->display(mapped_[Yaw]);
+    ui.lcdNumOutputRotY->display(mapped_[Pitch]);
+    ui.lcdNumOutputRotZ->display(mapped_[Roll]);
 }
 
 void FaceTrackNoIR::showHeadPose()
 {
     double mapped[6], raw[6];
 
-    tracker->get_raw_and_mapped_poses(mapped, raw);
+    work->tracker->get_raw_and_mapped_poses(mapped, raw);
 
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Roll], mapped[Pitch]);
-
-    if (mapping_widget)
-        mapping_widget->update();
-    
-    for (int i = 0; i < 6; i++)
-    {
-        mapped[i] = (int) mapped[i];
-        raw[i] = (int) raw[i];
-    }
-
-    ui.lcdNumX->display(raw[TX]);
-    ui.lcdNumY->display(raw[TY]);
-    ui.lcdNumZ->display(raw[TZ]);
-    ui.lcdNumRotX->display(raw[Yaw]);
-    ui.lcdNumRotY->display(raw[Pitch]);
-    ui.lcdNumRotZ->display(raw[Roll]);
-
-    ui.lcdNumOutputPosX->display(mapped[TX]);
-    ui.lcdNumOutputPosY->display(mapped[TY]);
-    ui.lcdNumOutputPosZ->display(mapped[TZ]);
-    ui.lcdNumOutputRotX->display(mapped[Yaw]);
-    ui.lcdNumOutputRotY->display(mapped[Pitch]);
-    ui.lcdNumOutputRotZ->display(mapped[Roll]);
+    display_pose(mapped, raw);
 
     if (libs.pProtocol)
     {
@@ -338,7 +333,7 @@ void FaceTrackNoIR::showHeadPose()
 
 void FaceTrackNoIR::showTrackerSettings()
 {
-    ptr<dylib> lib = tracker_modules.value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+    ptr<dylib> lib = modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
 
     if (lib) {
         pTrackerDialog = ptr<ITrackerDialog>(reinterpret_cast<ITrackerDialog*>(lib->Dialog()));
@@ -349,7 +344,7 @@ void FaceTrackNoIR::showTrackerSettings()
 }
 
 void FaceTrackNoIR::showServerControls() {
-    ptr<dylib> lib = protocol_modules.value(ui.iconcomboProtocol->currentIndex(), nullptr);
+    ptr<dylib> lib = modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
 
     if (lib) {
         pProtocolDialog = ptr<IProtocolDialog>(reinterpret_cast<IProtocolDialog*>(lib->Dialog()));
@@ -359,7 +354,7 @@ void FaceTrackNoIR::showServerControls() {
 }
 
 void FaceTrackNoIR::showFilterControls() {
-    ptr<dylib> lib = filter_modules.value(ui.iconcomboFilter->currentIndex(), nullptr);
+    ptr<dylib> lib = modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
 
     if (lib) {
         pFilterDialog = ptr<IFilterDialog>(reinterpret_cast<IFilterDialog*>(lib->Dialog()));
@@ -369,9 +364,10 @@ void FaceTrackNoIR::showFilterControls() {
     }
 }
 void FaceTrackNoIR::showKeyboardShortcuts() {
-    shortcuts_widget = std::make_shared<KeyboardShortcutDialog>( this, this );
+    shortcuts_widget = std::make_shared<KeyboardShortcutDialog>();
     shortcuts_widget->show();
     shortcuts_widget->raise();
+    connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
 }
 void FaceTrackNoIR::showCurveConfiguration() {
     mapping_widget = std::make_shared<MapWidget>(pose, s, this);
@@ -394,86 +390,16 @@ void FaceTrackNoIR::profileSelected(int index)
     loadSettings();
 }
 
-#if !defined(_WIN32)
-void FaceTrackNoIR::bind_keyboard_shortcut(QxtGlobalShortcut& key, key_opts& k)
-{
-    key.setShortcut(QKeySequence::fromString(""));
-    key.setDisabled();
-    const int idx = k.key_index;
-    if (idx > 0)
-    {
-        QString seq(global_key_sequences.value(idx, ""));
-        if (!seq.isEmpty())
-        {
-            if (k.shift)
-                seq = "Shift+" + seq;
-            if (k.alt)
-                seq = "Alt+" + seq;
-            if (k.ctrl)
-                seq = "Ctrl+" + seq;
-            key.setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
-            key.setEnabled();
-        } else {
-        key.setDisabled();
-    }
-    }
-}
-#else
-static void bind_keyboard_shortcut(Key& key, key_opts& k)
-{
-    int idx = k.key_index;
-    if (idx > 0)
-    {
-        key.keycode = 0;
-        key.shift = key.alt = key.ctrl = 0;
-        if (idx < global_windows_key_sequences.size())
-            key.keycode = global_windows_key_sequences[idx];
-        key.shift = k.shift;
-        key.alt = k.alt;
-        key.ctrl = k.ctrl;
-    }
-}
-#endif
-
-void FaceTrackNoIR::bindKeyboardShortcuts()
-{
-#if !defined(_WIN32)
-    bind_keyboard_shortcut(keyCenter, s.center_key);
-    bind_keyboard_shortcut(keyToggle, s.toggle_key);
-#else
-    bind_keyboard_shortcut(keyCenter, s.center_key);
-    bind_keyboard_shortcut(keyToggle, s.toggle_key);
-#endif
-    if (tracker) /* running already */
-    {
-#if defined(_WIN32)
-        if (keybindingWorker)
-        {
-            keybindingWorker->should_quit = true;
-            keybindingWorker->wait();
-            delete keybindingWorker;
-            keybindingWorker = NULL;
-        }
-        keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
-        keybindingWorker->start();
-#endif
-    }
-}
-
 void FaceTrackNoIR::shortcutRecentered()
 {
     qDebug() << "Center";
-    if (s.dingp)
-        QApplication::beep();
-    if (tracker)
-        tracker->center();
+    if (work)
+        work->tracker->center();
 }
 
 void FaceTrackNoIR::shortcutToggled()
 {
     qDebug() << "Toggle";
-    if (s.dingp)
-        QApplication::beep();
-    if (tracker)
-        tracker->toggle_enabled();
+    if (work)
+        work->tracker->toggle_enabled();
 }
