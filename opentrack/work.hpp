@@ -16,14 +16,17 @@ struct Work
     ptr<Tracker> tracker;
     ptr<Shortcuts> sc;
     
-    Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv) :
+    Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv, WId handle) :
         s(s), libs(libs),
         tracker(std::make_shared<Tracker>(s, m, libs)),
-        sc(std::make_shared<Shortcuts>())
+        sc(std::make_shared<Shortcuts>(handle))
     {
 #ifndef _WIN32
         QObject::connect(&sc->keyCenter, SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
         QObject::connect(&sc->keyToggle, SIGNAL(activated()), recv, SLOT(shortcutToggled()));
+#else
+        QObject::connect(sc->keybindingWorker.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
+        QObject::connect(sc->keybindingWorker.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
 #endif
         tracker->start();
     }

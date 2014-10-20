@@ -37,7 +37,7 @@ void KeyboardShortcutDialog::doCancel() {
 #if defined(_WIN32)
 #include <windows.h>
 
-KeybindingWorkerImpl::~KeybindingWorkerImpl() {
+KeybindingWorker::~KeybindingWorker() {
     should_quit = true;
     wait();
     if (dinkeyboard) {
@@ -48,8 +48,8 @@ KeybindingWorkerImpl::~KeybindingWorkerImpl() {
         din->Release();
 }
 
-KeybindingWorkerImpl::KeybindingWorkerImpl(Key keyCenter, Key keyToggle)
-: din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), window(w), should_quit(true)
+KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, WId handle) :
+    din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
@@ -69,8 +69,7 @@ KeybindingWorkerImpl::KeybindingWorkerImpl(Key keyCenter, Key keyToggle)
         din = 0;
         return;
     }
-
-    if (dinkeyboard->SetCooperativeLevel((HWND) window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
+    if (dinkeyboard->SetCooperativeLevel((HWND) handle, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         din->Release();
         din = 0;
@@ -111,9 +110,9 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
 
 #define PROCESS_KEY(k, s) \
     if (isKeyPressed(&k, keystate) && (!k.ever_pressed ? (k.timer.start(), k.ever_pressed = true) : k.timer.restart() > 100)) \
-        window.s();
+        emit s;
 
-void KeybindingWorkerImpl::run() {
+void KeybindingWorker::run() {
     BYTE keystate[256];
     while (!should_quit)
     {
@@ -123,8 +122,8 @@ void KeybindingWorkerImpl::run() {
             continue;
         }
 
-        PROCESS_KEY(kCenter, shortcutRecentered);
-        PROCESS_KEY(kToggle, shortcutToggled);
+        PROCESS_KEY(kCenter, center());
+        PROCESS_KEY(kToggle, toggle());
 
         Sleep(25);
     }

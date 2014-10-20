@@ -199,7 +199,7 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
 void FaceTrackNoIR::bindKeyboardShortcuts()
 {
     if (work)
-        work->sc = std::make_shared<Shortcuts>();
+        work->sc = std::make_shared<Shortcuts>(winId());
 }
 
 void FaceTrackNoIR::startTracker( ) {
@@ -211,7 +211,7 @@ void FaceTrackNoIR::startTracker( ) {
     work = nullptr;
     
     libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
-    work = std::make_shared<Work>(s, pose, libs, this);
+    work = std::make_shared<Work>(s, pose, libs, this, winId());
     
     {
         double p[6] = {0,0,0, 0,0,0};
@@ -227,11 +227,6 @@ void FaceTrackNoIR::startTracker( ) {
         return;
     }
 
-#if defined(_WIN32)
-    keybindingWorker = new KeybindingWorker(*this, keyCenter, keyToggle);
-    keybindingWorker->start();
-#endif
-    
     ui.video_frame->show();
     timUpdateHeadPose.start(50);
 
@@ -243,15 +238,7 @@ void FaceTrackNoIR::startTracker( ) {
 
 void FaceTrackNoIR::stopTracker( ) {
     ui.game_name->setText("Not connected");
-#if defined(_WIN32)
-    if (keybindingWorker)
-    {
-        keybindingWorker->should_quit = true;
-        keybindingWorker->wait();
-        delete keybindingWorker;
-        keybindingWorker = NULL;
-    }
-#endif
+
     timUpdateHeadPose.stop();
     ui.pose_display->rotateBy(0, 0, 0);
     

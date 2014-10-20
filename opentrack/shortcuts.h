@@ -51,8 +51,9 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
-#if defined(_WIN32)
-class KeybindingWorkerImpl {
+struct KeybindingWorker : public QThread {
+    Q_OBJECT
+#ifdef _WIN32
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
@@ -60,26 +61,17 @@ private:
     Key kToggle;
 public:
     volatile bool should_quit;
-    ~KeybindingWorkerImpl();
-    KeybindingWorkerImpl(Key keyCenter, Key keyToggle);
+    ~KeybindingWorker();
+    KeybindingWorker(Key keyCenter, Key keyToggle, WId handle);
 	void run();
-};
 #else
-class KeybindingWorkerImpl {
 public:
-    KeybindingWorkerImpl(Key keyCenter, Key keyToggle);
+    KeybindingWorker(Key, Key, WId) {}
 	void run() {}
-};
 #endif
-
-template<typename t_self>
-struct KeybindingWorker : public QThread, public KeybindingWorkerImpl {
-    KeybindingWorker(Key keyCenter, Key keyToggle) : KeybindingWorkerImpl(keyCenter, keyToggle)
-	{
-	}
-	void run() {
-		KeybindingWorkerImpl::run();
-	}
+signals:
+    void center();
+    void toggle();
 };
 
 
@@ -108,14 +100,18 @@ struct Shortcuts {
         {}
     } s;
     
-    Shortcuts()
+#ifdef _WIN32
+    Shortcuts(WId handle)
+#else
+    Shortcuts(WId)
+#endif
     {
         bind_keyboard_shortcut(keyCenter, s.center);
         bind_keyboard_shortcut(keyToggle, s.toggle);
 #ifdef _WIN32
         keybindingWorker = nullptr;
-        keybindingWorker = std::make_shared<KeybindingWorker>(*this, keyCenter, keyToggle);
-        keybindingWorker.start();
+        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle);
+        keybindingWorker->start();
 #endif
     }
 private:
