@@ -20,7 +20,6 @@ class Tracker : private QThread {
 private:
     QMutex mtx;
     main_settings& s;
-    // XXX can be const-cast when functionconfig const-correct -sh 20141004
     Mappings& m;
     
     Timer t;

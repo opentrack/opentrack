@@ -1,17 +1,8 @@
-#include "facetracknoir.h"
 #include "shortcuts.h"
 
-// XXX todo remove ref to ui class -sh 20141019
-
-KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *parent )
-    : QWidget( parent, Qt::Dialog)
+KeyboardShortcutDialog::KeyboardShortcutDialog()
 {
     ui.setupUi( this );
-
-    QPoint offsetpos(100, 100);
-    this->move(parent->pos() + offsetpos);
-
-    mainApp = ftnoir;
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -21,28 +12,25 @@ KeyboardShortcutDialog::KeyboardShortcutDialog( FaceTrackNoIR *ftnoir, QWidget *
         ui.cbxToggleKey->addItem(global_key_sequences.at(i));
     }
 
-    tie_setting(mainApp->s.center_key.key_index, ui.cbxCenterKey);
-    tie_setting(mainApp->s.center_key.alt, ui.chkCenterAlt);
-    tie_setting(mainApp->s.center_key.shift, ui.chkCenterShift);
-    tie_setting(mainApp->s.center_key.ctrl, ui.chkCenterCtrl);
+    tie_setting(s.center.key_index, ui.cbxCenterKey);
+    tie_setting(s.center.alt, ui.chkCenterAlt);
+    tie_setting(s.center.shift, ui.chkCenterShift);
+    tie_setting(s.center.ctrl, ui.chkCenterCtrl);
 
-    tie_setting(mainApp->s.toggle_key.key_index, ui.cbxToggleKey);
-    tie_setting(mainApp->s.toggle_key.alt, ui.chkToggleAlt);
-    tie_setting(mainApp->s.toggle_key.shift, ui.chkToggleShift);
-    tie_setting(mainApp->s.toggle_key.ctrl, ui.chkToggleCtrl);
-
-    tie_setting(mainApp->s.dingp, ui.ding);
+    tie_setting(s.toggle.key_index, ui.cbxToggleKey);
+    tie_setting(s.toggle.alt, ui.chkToggleAlt);
+    tie_setting(s.toggle.shift, ui.chkToggleShift);
+    tie_setting(s.toggle.ctrl, ui.chkToggleCtrl);
 }
 
 void KeyboardShortcutDialog::doOK() {
-    mainApp->b->save();
+    s.b->save();
     this->close();
-    if (mainApp->tracker)
-        mainApp->bindKeyboardShortcuts();
+    emit reload();
 }
 
 void KeyboardShortcutDialog::doCancel() {
-    mainApp->s.b->reload();
+    s.b->reload();
     close();
 }
 
@@ -50,6 +38,8 @@ void KeyboardShortcutDialog::doCancel() {
 #include <windows.h>
 
 KeybindingWorkerImpl::~KeybindingWorkerImpl() {
+    should_quit = true;
+    wait();
     if (dinkeyboard) {
         dinkeyboard->Unacquire();
         dinkeyboard->Release();
@@ -58,7 +48,7 @@ KeybindingWorkerImpl::~KeybindingWorkerImpl() {
         din->Release();
 }
 
-KeybindingWorkerImpl::KeybindingWorkerImpl(FaceTrackNoIR& w, Key keyCenter, Key keyToggle)
+KeybindingWorkerImpl::KeybindingWorkerImpl(Key keyCenter, Key keyToggle)
 : din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), window(w), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
@@ -142,3 +132,41 @@ void KeybindingWorkerImpl::run() {
 
 #else
 #endif
+
+void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
+{
+#if !defined(_WIN32)
+    key.setShortcut(QKeySequence::fromString(""));
+    key.setDisabled();
+    const int idx = k.key_index;
+    if (idx > 0)
+    {
+        QString seq(global_key_sequences.value(idx, ""));
+        if (!seq.isEmpty())
+        {
+            if (k.shift)
+                seq = "Shift+" + seq;
+            if (k.alt)
+                seq = "Alt+" + seq;
+            if (k.ctrl)
+                seq = "Ctrl+" + seq;
+            key.setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
+            key.setEnabled();
+        } else {
+            key.setDisabled();
+        }
+    }
+#else
+    int idx = k.key_index;
+    if (idx > 0)
+    {
+        key.keycode = 0;
+        key.shift = key.alt = key.ctrl = 0;
+        if (idx < global_windows_key_sequences.size())
+            key.keycode = global_windows_key_sequences[idx];
+        key.shift = k.shift;
+        key.alt = k.alt;
+        key.ctrl = k.ctrl;
+    }
+#endif
+}
