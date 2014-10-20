@@ -25,10 +25,7 @@
 #include "opentrack/tracker.h"
 #include <QFileDialog>
 
-FaceTrackNoIR::FaceTrackNoIR() : QMainWindow(nullptr),
-    b(bundle("opentrack-ui")),
-    s(b),
-    pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll}),
+FaceTrackNoIR::FaceTrackNoIR() :
     timUpdateHeadPose(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     no_feed_pixmap(":/uielements/no-feed.png")
