@@ -50,39 +50,28 @@
 #include "opentrack/tracker.h"
 #include "opentrack/shortcuts.h"
 #include "opentrack/work.hpp"
+#include "opentrack/state.hpp"
 #include "curve-config.h"
 
 using namespace options;
 
-class FaceTrackNoIR : public QMainWindow
+class FaceTrackNoIR : public QMainWindow, private State
 {
     Q_OBJECT
-public:
-    pbundle b;
-    main_settings s;
-private:
-    // XXX move the shit outta the _widget_, establish a class
-    // for running tracker state, etc -sh 20141014
-    Mappings pose;
     Ui::OpentrackUI ui;
     
     QTimer timUpdateHeadPose;
     
-    SelectedLibraries libs;
-    ptr<Work> work;
-
     ptr<KeyboardShortcutDialog> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
     
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
+    
     ptr<IFilterDialog> pFilterDialog;
     ptr<IProtocolDialog> pProtocolDialog;
     ptr<ITrackerDialog> pTrackerDialog;
-    Modules modules;
     
-    // XXX this shit stinks -sh 20141004
-    // TODO move to separate class representing running tracker state
     ptr<dylib> current_tracker()
     {
         return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
