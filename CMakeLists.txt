@@ -103,6 +103,16 @@ macro(opentrack_library n dir)
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
 
+function(link_with_dinput8 n)
+    if(WIN32)
+        target_link_libraries(${n} dinput8 dxguid strmiids)
+    endif()
+endfunction()
+
+# cache variables
+
+# ----
+
 if(UNIX)
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
 endif()
@@ -132,13 +142,44 @@ if(NOT WIN32)
     set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "Don't build wrapper, for instance X-Plane is native Linux app")
 endif()
 
-#include_directories(${CMAKE_SOURCE_DIR})
+# ----
 
-function(link_with_dinput8 n)
-    if(WIN32)
-        target_link_libraries(${n} dinput8 dxguid strmiids)
-    endif()
-endfunction()
+# misc
+
+# ----
+
+string(TIMESTAMP filename-date "%Y%m%d")
+set(filename-ostype ${CMAKE_SYSTEM_NAME})
+get_git_head_revision(filename-branch_0 filename-hash_0)
+if(filename-hash_0)
+    string(SUBSTRING "${filename-hash_0}" 0 7 filename-hash)
+endif()
+string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
+string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
+set(filename_0 opentrack-${filename-ostype}-${filename-branch}-${filename-date}-${filename-hash})
+string(TOLOWER "${filename_0}" filename_1)
+set(filename "${CMAKE_BINARY_DIR}/${filename_1}.tar.xz")
+
+add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
+add_custom_target(tarball DEPENDS ${filename})
+
+
+opentrack_module(opentrack-api opentrack)
+opentrack_qt(opentrack-api)
+add_library(opentrack-api STATIC ${opentrack-api-all})
+target_link_libraries(opentrack-api ${OpenCV_LIBS} ${MY_QT_LIBS})
+
+if(NOT WIN32)
+    target_link_libraries(opentrack-api dl)
+else()
+    target_link_libraries(opentrack-api winmm)
+endif()
+
+# ----
+
+# conditional targets
+
+# ----
 
 if(SDK_XPLANE)
     INCLUDE_DIRECTORIES(${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
@@ -297,12 +338,10 @@ endif()
 
 link_with_dinput8(opentrack-tracker-ht)
 link_with_dinput8(opentrack-tracker-joystick)
+link_with_dinput8(opentrack-tracker-pt)
 
 opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
 target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
-
-link_with_dinput8(opentrack-tracker-pt)
-
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
@@ -379,10 +418,6 @@ if(UNIX OR APPLE)
     endif()
 endif()
 
-opentrack_module(opentrack-api opentrack)
-opentrack_qt(opentrack-api)
-add_library(opentrack-api STATIC ${opentrack-api-all})
-
 if(WIN32 AND NOT SDK_CONSOLE_DEBUG)
     set(opentrack-win32-executable WIN32)
 else()
@@ -401,6 +436,8 @@ if(NOT WIN32)
 endif()
 target_link_libraries(opentrack opentrack-api opentrack-version opentrack-pose-widget opentrack-spline-widget)
 
+
+
 if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
 endif()
@@ -408,23 +445,19 @@ endif()
 if(UNIX OR APPLE)
     target_link_libraries(opentrack opentrack-qxt-mini)
 endif()
-target_link_libraries(opentrack-api ${OpenCV_LIBS} ${MY_QT_LIBS})
 
 link_with_dinput8(opentrack)
+target_link_libraries(opentrack ${MY_QT_LIBS})
 
 if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
-target_link_libraries(opentrack ${MY_QT_LIBS})
-
-if(NOT WIN32)
-    target_link_libraries(opentrack-api dl)
-else()
-    target_link_libraries(opentrack-api winmm)
-endif()
+# ----
 
 # make install
+
+# ----
 
 install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION .)
 
@@ -456,18 +489,3 @@ endif()
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
 endif()
-
-string(TIMESTAMP filename-date "%Y%m%d")
-set(filename-ostype ${CMAKE_SYSTEM_NAME})
-get_git_head_revision(filename-branch_0 filename-hash_0)
-if(filename-hash_0)
-    string(SUBSTRING "${filename-hash_0}" 0 7 filename-hash)
-endif()
-string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
-string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
-set(filename_0 opentrack-${filename-ostype}-${filename-branch}-${filename-date}-${filename-hash})
-string(TOLOWER "${filename_0}" filename_1)
-set(filename "${CMAKE_BINARY_DIR}/${filename_1}.tar.xz")
-
-add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
-add_custom_target(tarball DEPENDS ${filename})
