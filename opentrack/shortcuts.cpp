@@ -128,16 +128,18 @@ void KeybindingWorker::run() {
         Sleep(25);
     }
 }
-
-#else
 #endif
 
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {
 #if !defined(_WIN32)
-    key.setShortcut(QKeySequence::fromString(""));
-    key.setDisabled();
     const int idx = k.key_index;
+    if (!key)
+        key = std::make_shared<QxtGlobalShortcut>();
+    else {
+        key->setEnabled(false);
+        key->setShortcut(QKeySequence::UnknownKey);
+    }
     if (idx > 0)
     {
         QString seq(global_key_sequences.value(idx, ""));
@@ -149,10 +151,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
                 seq = "Alt+" + seq;
             if (k.ctrl)
                 seq = "Ctrl+" + seq;
-            key.setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
-            key.setEnabled();
-        } else {
-            key.setDisabled();
+            key->setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
+            key->setEnabled();
         }
     }
 #else

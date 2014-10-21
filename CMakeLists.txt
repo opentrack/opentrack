@@ -336,14 +336,14 @@ if(SDK_ARUCO_LIBPATH)
     target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
 endif()
 
-link_with_dinput8(opentrack-tracker-ht)
-link_with_dinput8(opentrack-tracker-joystick)
-link_with_dinput8(opentrack-tracker-pt)
-
 opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
 target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
+
+link_with_dinput8(opentrack-tracker-ht)
+link_with_dinput8(opentrack-tracker-joystick)
+link_with_dinput8(opentrack-tracker-pt)
 
 if(SDK_RIFT)
     include_directories(${SDK_RIFT}/Include)
