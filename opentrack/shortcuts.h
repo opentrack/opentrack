@@ -19,6 +19,7 @@ extern QList<QString> global_key_sequences;
 struct key_opts {
     value<int> key_index;
     value<bool> ctrl, alt, shift;
+
     key_opts(pbundle b, const QString& name) :
         key_index(b,  QString("key-index-%1").arg(name), 0),
         ctrl(b,  QString("key-ctrl-%1").arg(name), 0),
@@ -78,7 +79,7 @@ signals:
 struct Shortcuts {
     using K =
 #ifndef _WIN32
-    QxtGlobalShortcut
+    ptr<QxtGlobalShortcut>
 #else
     Key
 #endif
@@ -86,6 +87,8 @@ struct Shortcuts {
     
     K keyCenter;
     K keyToggle;
+
+    WId handle;
 #ifdef _WIN32
     ptr<KeybindingWorker> keybindingWorker;
 #endif
@@ -99,23 +102,36 @@ struct Shortcuts {
             toggle(b, "toggle")
         {}
     } s;
-    
-#ifdef _WIN32
-    Shortcuts(WId handle)
-#else
-    Shortcuts(WId)
-#endif
+
+    Shortcuts(WId handle) : handle(handle)
     {
+        reload();
+    }
+
+    void reload()
+    {
+#ifndef _WIN32
+        if (keyCenter)
+        {
+            keyCenter->setShortcut(QKeySequence::UnknownKey);
+            keyCenter->setEnabled(false);
+        }
+        if (keyToggle)
+        {
+            keyToggle->setShortcut(QKeySequence::UnknownKey);
+            keyToggle->setEnabled(false);
+        }
+#endif
         bind_keyboard_shortcut(keyCenter, s.center);
         bind_keyboard_shortcut(keyToggle, s.toggle);
 #ifdef _WIN32
         keybindingWorker = nullptr;
         keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle);
         keybindingWorker->start();
-#endif
+#endif        
     }
 private:
-    void bind_keyboard_shortcut(K& key, key_opts& k);
+    void bind_keyboard_shortcut(K &key, key_opts& k);
 };
 
 class KeyboardShortcutDialog: public QWidget
@@ -124,7 +140,7 @@ class KeyboardShortcutDialog: public QWidget
 public:
     KeyboardShortcutDialog();
 private:
-	Ui::UICKeyboardShortcutDialog ui;
+    Ui::UICKeyboardShortcutDialog ui;
     Shortcuts::settings s;
     ptr<Shortcuts> sc;
 signals:

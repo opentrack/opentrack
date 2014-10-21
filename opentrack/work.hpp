@@ -24,8 +24,8 @@ struct Work
         handle(handle)
     {
 #ifndef _WIN32
-        QObject::connect(&sc->keyCenter, SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
-        QObject::connect(&sc->keyToggle, SIGNAL(activated()), recv, SLOT(shortcutToggled()));
+        QObject::connect(sc->keyCenter.get(), SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
+        QObject::connect(sc->keyToggle.get(), SIGNAL(activated()), recv, SLOT(shortcutToggled()));
 #else
         QObject::connect(sc->keybindingWorker.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
         QObject::connect(sc->keybindingWorker.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
@@ -35,7 +35,7 @@ struct Work
     
     void reload_shortcuts()
     {
-        sc = std::make_shared<Shortcuts>(handle);
+        sc->reload();
     }
     
     ~Work()
