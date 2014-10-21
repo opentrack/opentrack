@@ -43,8 +43,8 @@ class FilterControls: public IFilterDialog
     Q_OBJECT
 public:
     FilterControls();
-    void registerFilter(IFilter* flt);
-    void unregisterFilter();
+    void register_filter(IFilter* flt);
+    void unregister_filter();
 
 private:
     Ui::UICFilterControls ui;
