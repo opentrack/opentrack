@@ -92,7 +92,7 @@ void Tracker::logic()
 {
     libs.pTracker->data(newpose);
     
-    Pose final_raw;
+    Pose final_raw_;
 
     if (enabledp)
     {
@@ -102,13 +102,13 @@ void Tracker::logic()
             int k = axis.opts.src;
             if (k < 0 || k >= 6)
             {
-                final_raw(i) = 0;
+                final_raw_(i) = 0;
                 continue;
             }
             // not really raw, after axis remap -sh
-            final_raw(i) = newpose[k];
+            final_raw_(i) = newpose[k];
         }
-        unstopped_raw = final_raw;
+        final_raw = final_raw_;
     }
     
     Pose filtered_pose;
@@ -142,7 +142,7 @@ void Tracker::logic()
     {
         QMutexLocker foo(&mtx);
         output_pose = mapped_pose;
-        raw_6dof = unstopped_raw;
+        raw_6dof = final_raw;
     }
 }
 
