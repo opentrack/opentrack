@@ -58,16 +58,14 @@ using namespace options;
 class FaceTrackNoIR : public QMainWindow, private State
 {
     Q_OBJECT
+    
     Ui::OpentrackUI ui;
     
-    QTimer timUpdateHeadPose;
-    
+    QTimer pose_update_timer;
     ptr<KeyboardShortcutDialog> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
-    
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
-    
     ptr<IFilterDialog> pFilterDialog;
     ptr<IProtocolDialog> pProtocolDialog;
     ptr<ITrackerDialog> pTrackerDialog;
@@ -86,11 +84,9 @@ class FaceTrackNoIR : public QMainWindow, private State
     }
 
     void createIconGroupBox();
-    void loadSettings();
+    void load_settings();
     void updateButtonState(bool running, bool inertialp);
-
     void fill_profile_combobox();
-    
     void display_pose(const double* mapped, const double* raw);
 
 public slots:
@@ -105,12 +101,10 @@ private slots:
     void profileSelected(int index);
 
     void showTrackerSettings();
-
     void showProtocolSettings();
     void showFilterSettings();
     void showKeyboardShortcuts();
     void showCurveConfiguration();
-
     void showHeadPose();
 
     void startTracker();

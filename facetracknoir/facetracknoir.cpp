@@ -26,7 +26,7 @@
 #include <QFileDialog>
 
 FaceTrackNoIR::FaceTrackNoIR() :
-    timUpdateHeadPose(this),
+    pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     no_feed_pixmap(":/uielements/no-feed.png")
 {
@@ -69,7 +69,7 @@ FaceTrackNoIR::FaceTrackNoIR() :
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
     
-    connect(&timUpdateHeadPose, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
 }
@@ -97,7 +97,7 @@ void FaceTrackNoIR::open() {
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
         fill_profile_combobox();
-        loadSettings();
+        load_settings();
     }
 }
 
@@ -159,7 +159,7 @@ void FaceTrackNoIR::load_mappings() {
     pose.load_mappings();
 }
 
-void FaceTrackNoIR::loadSettings() {
+void FaceTrackNoIR::load_settings() {
     b->reload();
     load_mappings();
 }
@@ -199,12 +199,12 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
 void FaceTrackNoIR::bindKeyboardShortcuts()
 {
     if (work)
-        work->sc = std::make_shared<Shortcuts>(winId());
+        work->reload_shortcuts();
 }
 
 void FaceTrackNoIR::startTracker( ) {
     b->save();
-    loadSettings();
+    load_settings();
     bindKeyboardShortcuts();
     
     // tracker dtor needs run first
@@ -228,7 +228,7 @@ void FaceTrackNoIR::startTracker( ) {
     }
 
     ui.video_frame->show();
-    timUpdateHeadPose.start(50);
+    pose_update_timer.start(50);
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
@@ -239,7 +239,7 @@ void FaceTrackNoIR::startTracker( ) {
 void FaceTrackNoIR::stopTracker( ) {
     ui.game_name->setText("Not connected");
 
-    timUpdateHeadPose.stop();
+    pose_update_timer.stop();
     ui.pose_display->rotateBy(0, 0, 0);
     
     if (pTrackerDialog)
@@ -372,14 +372,12 @@ void FaceTrackNoIR::showKeyboardShortcuts() {
 void FaceTrackNoIR::showCurveConfiguration() {
     mapping_widget = std::make_shared<MapWidget>(pose, s);
     mapping_widget->setWindowFlags(Qt::Dialog);
-    mapping_widget->raise();
+    mapping_widget->show();
 }
 
 void FaceTrackNoIR::exit() {
     QCoreApplication::exit(0);
 }
-
-extern "C" volatile const char* opentrack_version;
 
 void FaceTrackNoIR::profileSelected(int index)
 {
@@ -387,7 +385,7 @@ void FaceTrackNoIR::profileSelected(int index)
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
     settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
-    loadSettings();
+    load_settings();
 }
 
 void FaceTrackNoIR::shortcutRecentered()
