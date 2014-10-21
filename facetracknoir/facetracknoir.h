@@ -106,8 +106,8 @@ private slots:
 
     void showTrackerSettings();
 
-    void showServerControls();
-    void showFilterControls();
+    void showProtocolSettings();
+    void showFilterSettings();
     void showKeyboardShortcuts();
     void showCurveConfiguration();
 

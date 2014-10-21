@@ -44,8 +44,8 @@ FaceTrackNoIR::FaceTrackNoIR() :
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
     connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
-    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showServerControls()));
-    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterControls()));
+    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
+    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
 
     modules.filters().push_back(std::make_shared<dylib>("", dylib::Filter));
     ui.iconcomboFilter->addItem(QIcon(), "");
@@ -256,7 +256,7 @@ void FaceTrackNoIR::stopTracker( ) {
     
     if (pFilterDialog)
     {
-        pFilterDialog->unregisterFilter();
+        pFilterDialog->unregister_filter();
         pFilterDialog = nullptr;
     }
     
@@ -315,44 +315,60 @@ void FaceTrackNoIR::showHeadPose()
     }
 }
 
+template<typename t>
+ptr<t> mk_dialog(ptr<dylib> lib)
+{   
+    if (lib)
+    {
+        auto dialog = ptr<t>(reinterpret_cast<t*>(lib->Dialog()));
+        dialog->setWindowFlags(Qt::Dialog);
+        dialog->setFixedSize(dialog->size());
+        return dialog;
+    }
+    
+    return nullptr;
+}
+
 void FaceTrackNoIR::showTrackerSettings()
 {
-    ptr<dylib> lib = modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
-
-    if (lib) {
-        pTrackerDialog = ptr<ITrackerDialog>(reinterpret_cast<ITrackerDialog*>(lib->Dialog()));
-        pTrackerDialog->setFixedSize(pTrackerDialog->size());
-        pTrackerDialog->register_tracker(libs.pTracker.get());
-        pTrackerDialog->show();
+    int idx = ui.iconcomboTrackerSource->currentIndex();
+    auto dialog = mk_dialog<ITrackerDialog>(modules.trackers().value(idx, nullptr));
+    
+    if (dialog) {
+        pTrackerDialog = dialog;
+        dialog->register_tracker(libs.pTracker.get());
+        dialog->show();
     }
 }
 
-void FaceTrackNoIR::showServerControls() {
-    ptr<dylib> lib = modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
-
-    if (lib) {
-        pProtocolDialog = ptr<IProtocolDialog>(reinterpret_cast<IProtocolDialog*>(lib->Dialog()));
-        pProtocolDialog->setFixedSize(pProtocolDialog->size());
-        pProtocolDialog->show();
+void FaceTrackNoIR::showProtocolSettings() {
+    int idx = ui.iconcomboProtocol->currentIndex();
+    auto dialog = mk_dialog<IProtocolDialog>(modules.protocols().value(idx, nullptr));
+    
+    if (dialog) {
+        pProtocolDialog = dialog;
+        dialog->show();
     }
 }
 
-void FaceTrackNoIR::showFilterControls() {
-    ptr<dylib> lib = modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
-
-    if (lib) {
-        pFilterDialog = ptr<IFilterDialog>(reinterpret_cast<IFilterDialog*>(lib->Dialog()));
-        pFilterDialog->setFixedSize(pFilterDialog->size());
-        pFilterDialog->registerFilter(libs.pFilter.get());
-        pFilterDialog->show();
+void FaceTrackNoIR::showFilterSettings() {
+    int idx = ui.iconcomboFilter->currentIndex();
+    auto dialog = mk_dialog<IFilterDialog>(modules.filters().value(idx, nullptr));
+    
+    if (dialog) {
+        pFilterDialog = dialog;
+        dialog->register_filter(libs.pFilter.get());
+        dialog->show();
     }
 }
+
 void FaceTrackNoIR::showKeyboardShortcuts() {
     shortcuts_widget = std::make_shared<KeyboardShortcutDialog>();
     shortcuts_widget->show();
     shortcuts_widget->raise();
     connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
 }
+
 void FaceTrackNoIR::showCurveConfiguration() {
     mapping_widget = std::make_shared<MapWidget>(pose, s, this);
     mapping_widget->show();
