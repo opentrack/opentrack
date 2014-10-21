@@ -26,17 +26,16 @@ class FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void reset();
-    void filter(const double *target_camera_position,
-                double *new_camera_position);
+    void filter(const double *input, double *output);
     void receiveSettings();
 private:
     // Deltas are smoothed over the last 1/60sec (16ms).
     const double delta_RC = 0.016;
     // Noise is smoothed over the last 60sec.
     const double noise_RC = 60.0;
-    double delta[6];
-    double noise[6];
-    double output[6];
+    double last_delta[6];
+    double last_noise[6];
+    double last_output[6];
     QElapsedTimer timer;
     settings s;
 };
