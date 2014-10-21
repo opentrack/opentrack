@@ -120,6 +120,10 @@ dylib::dylib(const QString& filename, Type t) :
     Constructor(nullptr),
     Meta(nullptr)
 {
+    // otherwise dlopen opens the calling executable
+    if (filename.size() == 0)
+        return;
+    
     this->filename = filename;
 #if defined(_WIN32)
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
@@ -156,7 +160,7 @@ dylib::dylib(const QString& filename, Type t) :
     QByteArray latin1 = QFile::encodeName(filename);
     handle = dlopen(latin1.constData(), RTLD_NOW |
 #   ifdef __linux
-                    RTLD_DEEPBIND
+                    RTLD_DEEPBIND|RTLD_LOCAL|RTLD_NOW
 #   elif defined(__APPLE__)
                     RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
