@@ -21,12 +21,12 @@ FilterControls::FilterControls() :
     tie_setting(s.expt, ui.expt);
 }
 
-void FilterControls::registerFilter(IFilter* filter)
+void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = (FTNoIR_Filter*) filter;
 }
 
-void FilterControls::unregisterFilter()
+void FilterControls::unregister_filter()
 {
     accela_filter = NULL;
 }

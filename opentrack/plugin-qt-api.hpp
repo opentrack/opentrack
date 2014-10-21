@@ -9,7 +9,7 @@ struct Metadata
 public:
     virtual QString name() = 0;
     virtual QIcon icon() = 0;
-    virtual ~Metadata() {};
+    virtual ~Metadata() {}
 };
 
 // XXX TODO get rid of QString/QFrame to fix ABI woes
@@ -20,23 +20,23 @@ public:
 struct IFilter
 {
 public:
-    virtual ~IFilter() {};
+    virtual ~IFilter() {}
     virtual void filter(const double *target_camera_position, double *new_camera_position) = 0;
 };
 
 struct IFilterDialog : public QWidget
 {
     virtual ~IFilterDialog() {}
-    virtual void registerFilter(IFilter* tracker) = 0;
-    virtual void unregisterFilter() = 0;
+    virtual void register_filter(IFilter* filter) = 0;
+    virtual void unregister_filter() = 0;
 };
 
 struct IProtocol
 {
 public:
-    virtual ~IProtocol() {};
+    virtual ~IProtocol() {}
     virtual bool correct() = 0;
-    virtual void pose( const double* headpose ) = 0;
+    virtual void pose(const double* headpose) = 0;
     virtual QString game_name() = 0;
 };
 
@@ -50,8 +50,8 @@ struct IProtocolDialog : public QWidget
 struct ITracker
 {
 public:
-    virtual ~ITracker() {};
-    virtual void start_tracker( QFrame* frame ) = 0;
+    virtual ~ITracker() {}
+    virtual void start_tracker(QFrame* frame) = 0;
     virtual void data(double *data) = 0;
 };
 

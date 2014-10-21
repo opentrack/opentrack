@@ -55,8 +55,8 @@ class FilterControls: public IFilterDialog
     Q_OBJECT
 public:
     FilterControls();
-    void registerFilter(IFilter* filter);
-    void unregisterFilter();
+    void register_filter(IFilter* filter);
+    void unregister_filter();
 private:
     Ui::AccelaUICFilterControls ui;
     void discard();

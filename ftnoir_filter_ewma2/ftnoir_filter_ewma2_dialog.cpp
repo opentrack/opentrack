@@ -16,12 +16,12 @@ FilterControls::FilterControls() : pFilter(NULL)
     tie_setting(s.kSmoothingScaleCurve, ui.powCurve);
 }
 
-void FilterControls::registerFilter(IFilter* flt)
+void FilterControls::register_filter(IFilter* flt)
 {
     pFilter = (FTNoIR_Filter*) flt;
 }
 
-void FilterControls::unregisterFilter()
+void FilterControls::unregister_filter()
 {
     pFilter = NULL;
 }
