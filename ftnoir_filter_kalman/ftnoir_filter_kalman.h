@@ -24,12 +24,11 @@ class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void reset();
-    void filter(const double *target_camera_position,
-                            double *new_camera_position);
+    void filter(const double *input, double *output);
     double accel_variance;
     double noise_variance;
     cv::KalmanFilter kalman;
-    double prev_position[6];
+    double last_input[6];
     QElapsedTimer timer;
 };
 
