@@ -16,10 +16,6 @@ FTNoIR_Filter::FTNoIR_Filter() {
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
 void FTNoIR_Filter::reset() {
-    // Set accel_variance for moving 0.0->1.0 in dt=0.1.
-    accel_variance = 400.0f;
-    // TODO(abo): make noise_variance a UI setting 0.0->1.0.
-    noise_variance = 0.1;
     // Setup kalman with state (x) is the 6 tracker outputs then
     // their 6 corresponding velocities, and the measurement (z) is
     // the 6 tracker outputs.
@@ -42,6 +38,7 @@ void FTNoIR_Filter::reset() {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+    double accel_variance = accel_stddev * accel_stddev;
     double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
     double b = 0.5 * a * dt;  // (dt^3)/2 * accel_variance.
     double c = 0.5 * b * dt;  // (dt^4)/4 * accel_variance.
@@ -59,6 +56,7 @@ void FTNoIR_Filter::reset() {
     0, 0, 0, 0, b, 0, 0, 0, 0, 0, a, 0,
     0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0, a);
     cv::setIdentity(kalman.measurementMatrix);
+    double noise_variance = noise_stddev * noise_stddev;
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
     for (int i = 0; i < 6; i++) {
@@ -80,6 +78,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     for (int i = 0; i < 6 && !new_input; i++)
         new_input = (input[i] != last_input[i]);
     // Update the transitionMatrix and processNoiseCov for dt.
+    double accel_variance = accel_stddev * accel_stddev;
     double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
     double b = 0.5 * a * dt;  // (dt^3)/2 * accel_variance.
     double c = 0.5 * b * dt;  // (dt^4)/4 * accel_variance.
@@ -96,7 +95,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     if (new_input) {
         cv::Mat measurement(6, 1, CV_64F);
         for (int i = 0; i < 6; i++) {
-            measurement.at<double>(i) = target_camera_position[i];
+            measurement.at<double>(i) = input[i];
             // Save last_input for detecting new tracker input.
             last_input[i] = input[i];
         }
