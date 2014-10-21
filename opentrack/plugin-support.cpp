@@ -159,12 +159,10 @@ dylib::dylib(const QString& filename, Type t) :
 #else
     QByteArray latin1 = QFile::encodeName(filename);
     handle = dlopen(latin1.constData(), RTLD_NOW |
-#   ifdef __linux
-                    RTLD_DEEPBIND|RTLD_LOCAL|RTLD_NOW
-#   elif defined(__APPLE__)
+#   if defined(__APPLE__)
                     RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
-                    0
+                    RTLD_NOW|RTLD_GLOBAL|RTLD_NODELETE
 #   endif
                     );
 
