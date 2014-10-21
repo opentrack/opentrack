@@ -25,8 +25,10 @@ public:
     FTNoIR_Filter();
     void reset();
     void filter(const double *input, double *output);
-    double accel_variance;
-    double noise_variance;
+    // Set accel_stddev assuming moving 0.0->100.0 in dt=0.2 is 3 stddevs: (100.0*4/dt^2)/3.
+    const double accel_stddev = (100.0*4/(0.2*0.2))/3.0;
+    // TODO(abo): make noise_stddev a UI setting 0.0->10.0 with 0.1 resolution.
+    const double noise_stddev = 1.0;
     cv::KalmanFilter kalman;
     double last_input[6];
     QElapsedTimer timer;
