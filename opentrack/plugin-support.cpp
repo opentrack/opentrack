@@ -19,7 +19,7 @@ static ptr<t> make_instance(ptr<dylib> lib)
     ptr<t> ret = nullptr;
     if (lib && lib->Constructor)
         ret = ptr<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
-    qDebug() << "lib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t)ret.get();
+    //qDebug() << "lib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t)ret.get();
     return ret;
 }
 
