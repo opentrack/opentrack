@@ -4,6 +4,10 @@
 #include <QStringList>
 #include <memory>
 
+#ifndef _WIN32
+#   include <unistd.h>
+#endif
+
 int main(int argc, char** argv)
 {
     // workaround QTBUG-38598
@@ -32,6 +36,10 @@ int main(int argc, char** argv)
 
     w->show();
     app.exec();
-
+    
+#ifndef _WIN32
+    _exit(0);
+#endif
+    
     return 0;
 }
