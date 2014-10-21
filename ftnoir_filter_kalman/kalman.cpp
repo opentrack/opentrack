@@ -62,13 +62,12 @@ void FTNoIR_Filter::reset() {
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
     for (int i = 0; i < 6; i++) {
-        prev_position[i] = 0;
+        last_input[i] = 0;
     }
     timer.invalidate();
 }
 
-void FTNoIR_Filter::filter(const double* target_camera_position,
-                                       double *new_camera_position)
+void FTNoIR_Filter::filter(const double* input, double *output)
 {
     // Start the timer if it's not running.
     if (!timer.isValid())
@@ -77,10 +76,9 @@ void FTNoIR_Filter::filter(const double* target_camera_position,
     auto dt = timer.restart() / 1000.0f;
     // Note this is a terrible way to detect when there is a new
     // frame of tracker input, but it is the best we have.
-    bool new_target = false;
-    for (int i = 0; i < 6 && !new_target; i++)
-        new_target = (prev_position[i] != target_camera_position[i]);
-
+    bool new_input = false;
+    for (int i = 0; i < 6 && !new_input; i++)
+        new_input = (input[i] != last_input[i]);
     // Update the transitionMatrix and processNoiseCov for dt.
     double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
     double b = 0.5 * a * dt;  // (dt^3)/2 * accel_variance.
@@ -93,20 +91,20 @@ void FTNoIR_Filter::filter(const double* target_camera_position,
         kalman.processNoiseCov.at<double>(i+6,i) = b;
     }
     // Get the updated predicted position.
-    cv::Mat output = kalman.predict();
+    cv::Mat next_output = kalman.predict();
     // If we have new tracker input, get the corrected position.
-    if (new_target) {
+    if (new_input) {
         cv::Mat measurement(6, 1, CV_64F);
         for (int i = 0; i < 6; i++) {
             measurement.at<double>(i) = target_camera_position[i];
-            // Save prev_position for detecting new tracker input.
-            prev_position[i] = target_camera_position[i];
+            // Save last_input for detecting new tracker input.
+            last_input[i] = input[i];
         }
-        output = kalman.correct(measurement);
+        next_output = kalman.correct(measurement);
     }
-    // Set new_camera_position to the output.
+    // Set output to the next_output.
     for (int i = 0; i < 6; i++) {
-        new_camera_position[i] = output.at<double>(i);
+        output[i] = next_output.at<double>(i);
     }
 }
 
