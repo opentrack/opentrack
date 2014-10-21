@@ -364,14 +364,14 @@ void FaceTrackNoIR::showFilterSettings() {
 
 void FaceTrackNoIR::showKeyboardShortcuts() {
     shortcuts_widget = std::make_shared<KeyboardShortcutDialog>();
-    shortcuts_widget->show();
-    shortcuts_widget->raise();
+    shortcuts_widget->setWindowFlags(Qt::Dialog);
     connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
+    shortcuts_widget->show();
 }
 
 void FaceTrackNoIR::showCurveConfiguration() {
-    mapping_widget = std::make_shared<MapWidget>(pose, s, this);
-    mapping_widget->show();
+    mapping_widget = std::make_shared<MapWidget>(pose, s);
+    mapping_widget->setWindowFlags(Qt::Dialog);
     mapping_widget->raise();
 }
 

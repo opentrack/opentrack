@@ -1,8 +1,7 @@
 #include "./facetracknoir.h"
 #include "./curve-config.h"
 #include "opentrack/main-settings.hpp"
-MapWidget::MapWidget(Mappings& m, main_settings& s, QWidget *parent) :
-    QWidget(parent, Qt::Dialog),
+MapWidget::MapWidget(Mappings& m, main_settings& s) :
     m(m)
 {
     ui.setupUi( this );
@@ -45,9 +44,6 @@ MapWidget::MapWidget(Mappings& m, main_settings& s, QWidget *parent) :
     }
 
     setFont(qApp->font());
-    QPoint offsetpos(120, 30);
-    this->move(parent->pos() + offsetpos);
-
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
