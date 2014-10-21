@@ -15,13 +15,11 @@ public:
 // XXX TODO get rid of QString/QFrame to fix ABI woes
 // will lead plugins from different C++ runtimes working -sh 20141004
 
-// XXX TODO make public QWidget the mess -sh 20141004
-
 struct IFilter
 {
 public:
     virtual ~IFilter() {}
-    virtual void filter(const double *target_camera_position, double *new_camera_position) = 0;
+    virtual void filter(const double *input, double *output) = 0;
 };
 
 struct IFilterDialog : public QWidget
