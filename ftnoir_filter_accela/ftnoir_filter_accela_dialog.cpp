@@ -23,7 +23,7 @@ FilterControls::FilterControls() :
 
 void FilterControls::register_filter(IFilter* filter)
 {
-    accela_filter = (FTNoIR_Filter*) filter;
+    accela_filter = static_cast<FTNoIR_Filter*>(filter);
 }
 
 void FilterControls::unregister_filter()
