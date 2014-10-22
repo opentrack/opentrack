@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QDir>
 
+#include <iostream>
+
 #ifndef _WIN32
 #   include <dlfcn.h>
 #endif
@@ -20,7 +22,7 @@ static ptr<t> make_instance(ptr<dylib> lib)
     if (lib != nullptr && lib->Constructor)
     {
         qDebug() << "dylib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t) lib->Constructor;
-        fflush(stderr);
+        std::cout.flush();
         ret = ptr<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
     }
     return ret;
@@ -42,12 +44,14 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dyli
         return;
     }
 
-    if (pProtocol)
-        if(!pProtocol->correct())
-        {
-            qDebug() << "protocol load failure";
-            return;
-        }
+    if(!pProtocol->correct())
+    {
+        qDebug() << "protocol load failure";
+        return;
+    }
+
+    qDebug() << "start tracker with frame" << (intptr_t)frame;
+    std::cout.flush();
 
     pTracker->start_tracker(frame);
 
