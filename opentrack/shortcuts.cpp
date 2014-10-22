@@ -125,7 +125,7 @@ void KeybindingWorker::run() {
         PROCESS_KEY(kCenter, center());
         PROCESS_KEY(kToggle, toggle());
 
-        Sleep(25);
+        Sleep(14);
     }
 }
 #endif
@@ -167,5 +167,26 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
         key.alt = k.alt;
         key.ctrl = k.ctrl;
     }
+#endif
+}
+void Shortcuts::reload() {
+#ifndef _WIN32
+    if (keyCenter)
+    {
+        keyCenter->setShortcut(QKeySequence::UnknownKey);
+        keyCenter->setEnabled(false);
+    }
+    if (keyToggle)
+    {
+        keyToggle->setShortcut(QKeySequence::UnknownKey);
+        keyToggle->setEnabled(false);
+    }
+#endif
+    bind_keyboard_shortcut(keyCenter, s.center);
+    bind_keyboard_shortcut(keyToggle, s.toggle);
+#ifdef _WIN32
+    keybindingWorker = nullptr;
+    keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle);
+    keybindingWorker->start();
 #endif
 }

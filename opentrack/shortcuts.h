@@ -75,7 +75,6 @@ signals:
     void toggle();
 };
 
-
 struct Shortcuts {
     using K =
 #ifndef _WIN32
@@ -103,33 +102,9 @@ struct Shortcuts {
         {}
     } s;
 
-    Shortcuts(WId handle) : handle(handle)
-    {
-        reload();
-    }
+    Shortcuts(WId handle) : handle(handle) { reload(); }
 
-    void reload()
-    {
-#ifndef _WIN32
-        if (keyCenter)
-        {
-            keyCenter->setShortcut(QKeySequence::UnknownKey);
-            keyCenter->setEnabled(false);
-        }
-        if (keyToggle)
-        {
-            keyToggle->setShortcut(QKeySequence::UnknownKey);
-            keyToggle->setEnabled(false);
-        }
-#endif
-        bind_keyboard_shortcut(keyCenter, s.center);
-        bind_keyboard_shortcut(keyToggle, s.toggle);
-#ifdef _WIN32
-        keybindingWorker = nullptr;
-        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle);
-        keybindingWorker->start();
-#endif        
-    }
+    void reload();
 private:
     void bind_keyboard_shortcut(K &key, key_opts& k);
 };
