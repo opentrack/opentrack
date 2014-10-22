@@ -47,8 +47,7 @@ FaceTrackNoIR::FaceTrackNoIR() :
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
 
-    modules.filters().push_back(std::make_shared<dylib>("", dylib::Filter));
-    ui.iconcomboFilter->addItem(QIcon(), "");
+    modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
 
     for (auto x : modules.trackers())
         ui.iconcomboTrackerSource->addItem(x->icon, x->name);
