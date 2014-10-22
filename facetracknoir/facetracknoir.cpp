@@ -242,7 +242,7 @@ void FaceTrackNoIR::startTracker( ) {
 }
 
 void FaceTrackNoIR::stopTracker( ) {
-    ui.game_name->setText("Not connected");
+    //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
     ui.pose_display->rotateBy(0, 0, 0);
@@ -290,19 +290,19 @@ void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
         raw_[i] = (int) raw[i];
     }
 
-    ui.lcdNumX->display(raw_[TX]);
-    ui.lcdNumY->display(raw_[TY]);
-    ui.lcdNumZ->display(raw_[TZ]);
-    ui.lcdNumRotX->display(raw_[Yaw]);
-    ui.lcdNumRotY->display(raw_[Pitch]);
-    ui.lcdNumRotZ->display(raw_[Roll]);
+    ui.raw_x->display(raw_[TX]);
+    ui.raw_y->display(raw_[TY]);
+    ui.raw_z->display(raw_[TZ]);
+    ui.raw_yaw->display(raw_[Yaw]);
+    ui.raw_pitch->display(raw_[Pitch]);
+    ui.raw_roll->display(raw_[Roll]);
 
-    ui.lcdNumOutputPosX->display(mapped_[TX]);
-    ui.lcdNumOutputPosY->display(mapped_[TY]);
-    ui.lcdNumOutputPosZ->display(mapped_[TZ]);
-    ui.lcdNumOutputRotX->display(mapped_[Yaw]);
-    ui.lcdNumOutputRotY->display(mapped_[Pitch]);
-    ui.lcdNumOutputRotZ->display(mapped_[Roll]);
+    ui.pose_x->display(mapped_[TX]);
+    ui.pose_y->display(mapped_[TY]);
+    ui.pose_z->display(mapped_[TZ]);
+    ui.pose_yaw->display(mapped_[Yaw]);
+    ui.pose_pitch->display(mapped_[Pitch]);
+    ui.pose_roll->display(mapped_[Roll]);
 }
 
 void FaceTrackNoIR::showHeadPose()
@@ -313,11 +313,13 @@ void FaceTrackNoIR::showHeadPose()
 
     display_pose(mapped, raw);
 
+#if 0
     if (libs.pProtocol)
     {
         const QString name = libs.pProtocol->game_name();
         ui.game_name->setText(name);
     }
+#endif
 }
 
 template<typename t>
