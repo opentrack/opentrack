@@ -31,12 +31,12 @@ FaceTrackNoIR::FaceTrackNoIR() :
     no_feed_pixmap(":/uielements/no-feed.png")
 {
     ui.setupUi(this);
-    
+
     setFixedSize(size());
     updateButtonState(false, false);
     ui.video_frame_label->setPixmap(no_feed_pixmap);
     QDir::setCurrent(QCoreApplication::applicationDirPath());
-    
+
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
     connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
@@ -49,16 +49,16 @@ FaceTrackNoIR::FaceTrackNoIR() :
 
     modules.filters().push_back(std::make_shared<dylib>("", dylib::Filter));
     ui.iconcomboFilter->addItem(QIcon(), "");
-    
+
     for (auto x : modules.trackers())
         ui.iconcomboTrackerSource->addItem(x->icon, x->name);
-    
+
     for (auto x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name);
-    
+
     for (auto x : modules.filters())
         ui.iconcomboFilter->addItem(x->icon, x->name);
-    
+
     fill_profile_combobox();
 
     tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
@@ -68,7 +68,7 @@ FaceTrackNoIR::FaceTrackNoIR() :
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
-    
+
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
@@ -206,13 +206,13 @@ void FaceTrackNoIR::startTracker( ) {
     b->save();
     load_settings();
     bindKeyboardShortcuts();
-    
+
     // tracker dtor needs run first
     work = nullptr;
-    
+
     libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
     work = std::make_shared<Work>(s, pose, libs, this, winId());
-    
+
     {
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
@@ -241,28 +241,28 @@ void FaceTrackNoIR::stopTracker( ) {
 
     pose_update_timer.stop();
     ui.pose_display->rotateBy(0, 0, 0);
-    
+
     if (pTrackerDialog)
     {
         pTrackerDialog->unregister_tracker();
         pTrackerDialog = nullptr;
     }
-    
+
     if (pProtocolDialog)
     {
         pProtocolDialog->unregister_protocol();
         pProtocolDialog = nullptr;
     }
-    
+
     if (pFilterDialog)
     {
         pFilterDialog->unregister_filter();
         pFilterDialog = nullptr;
     }
-    
+
     work = nullptr;
     libs = SelectedLibraries();
-    
+
     {
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
@@ -276,9 +276,9 @@ void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
 
     if (mapping_widget)
         mapping_widget->update();
-    
+
     double mapped_[6], raw_[6];
-    
+
     for (int i = 0; i < 6; i++)
     {
         mapped_[i] = (int) mapped[i];
@@ -317,7 +317,7 @@ void FaceTrackNoIR::showHeadPose()
 
 template<typename t>
 ptr<t> mk_dialog(ptr<dylib> lib)
-{   
+{
     if (lib)
     {
         auto dialog = ptr<t>(reinterpret_cast<t*>(lib->Dialog()));
@@ -325,7 +325,7 @@ ptr<t> mk_dialog(ptr<dylib> lib)
         dialog->setFixedSize(dialog->size());
         return dialog;
     }
-    
+
     return nullptr;
 }
 
