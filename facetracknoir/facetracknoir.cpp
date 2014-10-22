@@ -227,7 +227,6 @@ void FaceTrackNoIR::startTracker( ) {
         return;
     }
 
-    ui.video_frame->show();
     pose_update_timer.start(50);
 
     // NB check valid since SelectedLibraries ctor called
@@ -331,9 +330,8 @@ ptr<t> mk_dialog(ptr<dylib> lib)
 
 void FaceTrackNoIR::showTrackerSettings()
 {
-    int idx = ui.iconcomboTrackerSource->currentIndex();
-    auto dialog = mk_dialog<ITrackerDialog>(modules.trackers().value(idx, nullptr));
-    
+    auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
+
     if (dialog) {
         pTrackerDialog = dialog;
         dialog->register_tracker(libs.pTracker.get());
@@ -342,9 +340,8 @@ void FaceTrackNoIR::showTrackerSettings()
 }
 
 void FaceTrackNoIR::showProtocolSettings() {
-    int idx = ui.iconcomboProtocol->currentIndex();
-    auto dialog = mk_dialog<IProtocolDialog>(modules.protocols().value(idx, nullptr));
-    
+    auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
+
     if (dialog) {
         pProtocolDialog = dialog;
         dialog->show();
@@ -352,9 +349,8 @@ void FaceTrackNoIR::showProtocolSettings() {
 }
 
 void FaceTrackNoIR::showFilterSettings() {
-    int idx = ui.iconcomboFilter->currentIndex();
-    auto dialog = mk_dialog<IFilterDialog>(modules.filters().value(idx, nullptr));
-    
+    auto dialog = mk_dialog<IFilterDialog>(current_filter());
+
     if (dialog) {
         pFilterDialog = dialog;
         dialog->register_filter(libs.pFilter.get());
