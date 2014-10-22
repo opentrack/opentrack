@@ -4,17 +4,11 @@
 #include <QStringList>
 #include <memory>
 
-#ifndef _WIN32
-#   include <unistd.h>
-#else
-#   include <windows.h>
-#endif
-
 int main(int argc, char** argv)
 {
     // workaround QTBUG-38598
     QCoreApplication::addLibraryPath(".");
-    
+
     // qt5 designer-made controls look like shit on 'doze -sh 20140921
 #ifdef _WIN32
     {
@@ -30,16 +24,14 @@ int main(int argc, char** argv)
         }
     }
 #endif
-    
+
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
-    
+
     auto w = std::make_shared<FaceTrackNoIR>();
 
     w->show();
     app.exec();
-    
-    _exit(0);
-    
+
     return 0;
 }
