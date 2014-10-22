@@ -35,7 +35,7 @@ struct settings {
 class FTNoIR_Filter : public IFilter
 {
 public:
-	FTNoIR_Filter();
+    FTNoIR_Filter();
     void filter(const double* target_camera_position, double *new_camera_position);
     void reset() {
         first_run = true;
@@ -43,10 +43,9 @@ public:
     void receiveSettings() {
         s.b->reload();
     }
-
 private:
     settings s;
-	bool first_run;
+    bool first_run;
     double last_output[3][6];
 };
 
@@ -60,17 +59,17 @@ public:
 private:
     Ui::AccelaUICFilterControls ui;
     void discard();
-	void save();
+    void save();
     FTNoIR_Filter* accela_filter;
     settings s;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_FilterDll : public Metadata
 {
 public:
     QString name() { return QString("Accela"); }
-   QIcon icon() { return QIcon(":/images/filter-16.png"); }
+    QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
