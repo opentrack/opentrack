@@ -28,8 +28,8 @@
 #include "ftnoir_csv/csv.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() :
-    pMemData((FTHeap*) shm.ptr()),
     shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
+    pMemData((FTHeap*) shm.ptr()),
     viewsStart(nullptr),
     viewsStop(nullptr),
     intGameID(0)

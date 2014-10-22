@@ -60,7 +60,7 @@ class FTNoIR_Protocol : public IProtocol
 public:
     FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
-    bool correct(  );
+    bool correct();
     void pose( const double *headpose );
     QString game_name() override {
         QMutexLocker foo(&game_name_mutex);
@@ -68,18 +68,18 @@ public:
     }
 private:
     settings s;
-    FTHeap *pMemData;
     PortableLockedShm shm;
+    FTHeap *pMemData;
 
     QLibrary FTIRViewsLib;
     QProcess dummyTrackIR;
     importTIRViewsStart viewsStart;
-    importTIRViewsStop viewsStop;    
-    
+    importTIRViewsStop viewsStop;
+
     int intGameID;
     QString connected_game;
     QMutex game_name_mutex;
-    
+
     static inline double getRadsFromDegrees(double degrees) { return degrees * 0.017453; }
     void start_tirviews();
     void start_dummy();
