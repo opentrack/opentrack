@@ -16,7 +16,7 @@ struct Work
     ptr<Tracker> tracker;
     ptr<Shortcuts> sc;
     WId handle;
-    
+
     Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv, WId handle) :
         s(s), libs(libs),
         tracker(std::make_shared<Tracker>(s, m, libs)),
@@ -32,16 +32,16 @@ struct Work
 #endif
         tracker->start();
     }
-    
+
     void reload_shortcuts()
     {
         sc->reload();
     }
-    
+
     ~Work()
     {
         // order matters, otherwise use-after-free -sh
         tracker = nullptr;
         libs = SelectedLibraries();
-    }  
+    }
 };
