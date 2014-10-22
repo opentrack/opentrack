@@ -6,6 +6,8 @@
 
 #ifndef _WIN32
 #   include <unistd.h>
+#else
+#   include <windows.h>
 #endif
 
 int main(int argc, char** argv)
@@ -37,9 +39,7 @@ int main(int argc, char** argv)
     w->show();
     app.exec();
     
-#ifndef _WIN32
     _exit(0);
-#endif
     
     return 0;
 }
