@@ -65,3 +65,8 @@ extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
 {
     return new FTNoIR_Filter;
 }
+
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
+{
+    return new FTNoIR_FilterDll;
+}
