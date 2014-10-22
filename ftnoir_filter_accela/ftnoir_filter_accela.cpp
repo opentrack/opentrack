@@ -26,8 +26,8 @@ static inline double parabola(const double a, const double x, const double dz, c
 void FTNoIR_Filter::filter(const double* target_camera_position,
                                        double *new_camera_position)
 {
-	if (first_run)
-	{
+    if (first_run)
+    {
         for (int i = 0; i < 6; i++)
         {
             new_camera_position[i] = target_camera_position[i];
@@ -36,15 +36,15 @@ void FTNoIR_Filter::filter(const double* target_camera_position,
         }
 
         first_run = false;
-		return;
-	}
+                return;
+    }
 
     for (int i=0;i<6;i++)
-	{
+    {
         const double vec = target_camera_position[i] - last_output[0][i];
         const double vec2 = target_camera_position[i] - last_output[1][i];
         const double vec3 = target_camera_position[i] - last_output[2][i];
-		const int sign = vec < 0 ? -1 : 1;
+                const int sign = vec < 0 ? -1 : 1;
         const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
         const double a2 = a * s.second_order_alpha;
         const double a3 = a * s.third_order_alpha;
@@ -58,7 +58,7 @@ void FTNoIR_Filter::filter(const double* target_camera_position,
         last_output[2][i] = last_output[1][i];
         last_output[1][i] = last_output[0][i];
         last_output[0][i] = new_camera_position[i] = done ? target_camera_position[i] : result;
-	}
+    }
 }
 
 extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
