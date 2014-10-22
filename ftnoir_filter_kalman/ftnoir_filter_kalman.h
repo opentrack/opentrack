@@ -24,12 +24,13 @@ class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void reset();
-    void filter(const double *target_camera_position,
-                            double *new_camera_position);
-    double accel_variance;
-    double noise_variance;
+    void filter(const double *input, double *output);
+    // Set accel_stddev assuming moving 0.0->100.0 in dt=0.2 is 3 stddevs: (100.0*4/dt^2)/3.
+    const double accel_stddev = (100.0*4/(0.2*0.2))/3.0;
+    // TODO(abo): make noise_stddev a UI setting 0.0->10.0 with 0.1 resolution.
+    const double noise_stddev = 1.0;
     cv::KalmanFilter kalman;
-    double prev_position[6];
+    double last_input[6];
     QElapsedTimer timer;
 };
 
