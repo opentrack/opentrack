@@ -5,14 +5,17 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include <QtGui>
 #include "glwidget.h"
-#include <QWidget>
 #include <cmath>
 #include <algorithm>
 
+#include <QPainter>
+#include <QPaintEvent>
+
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
+    Q_INIT_RESOURCE(posewidget);
+
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
     rotateBy(0, 0, 0);
@@ -23,7 +26,6 @@ GLWidget::~GLWidget()
 }
 
 void GLWidget::paintEvent ( QPaintEvent * event ) {
-    QWidget::paintEvent(event);
     QPainter p(this);
     project_quad_texture();
     p.drawImage(event->rect(), texture);
@@ -31,7 +33,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
 {
-    
+
     double ch = cos(xAngle / 57.295781);
     double sh = sin(xAngle / 57.295781);
     double ca = cos(yAngle / 57.295781);

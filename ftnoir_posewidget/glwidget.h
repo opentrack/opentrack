@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <QtGui>
+#include <QWidget>
 #include <QPixmap>
 #include "opentrack/plugin-api.hpp"
 
@@ -47,7 +47,7 @@ struct Vec2f {
     }
 };
 
-class OPENTRACK_EXPORT GLWidget : public QWidget
+class GLWidget : public QWidget
 {
 public:
     GLWidget(QWidget *parent);
