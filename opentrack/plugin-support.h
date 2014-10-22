@@ -40,11 +40,11 @@ private:
 };
 
 struct SelectedLibraries {
-    using dylibtr = ptr<dylib>;
+    using dylibptr = ptr<dylib>;
     ptr<ITracker> pTracker;
     ptr<IFilter> pFilter;
     ptr<IProtocol> pProtocol;
-    SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibtr f);
+    SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
     SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
     ~SelectedLibraries();
     bool correct;
