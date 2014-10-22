@@ -121,7 +121,7 @@ void Tracker::logic()
     if (centerp)
     {
         centerp = false;
-        raw_center = final_raw;
+        raw_center = filtered_pose;
     }
     
     Pose raw_centered = filtered_pose & raw_center;
