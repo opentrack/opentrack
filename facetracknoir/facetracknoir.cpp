@@ -25,6 +25,12 @@
 #include "opentrack/tracker.h"
 #include <QFileDialog>
 
+#ifndef _WIN32
+#   include <unistd.h>
+#else
+#   include <windows.h>
+#endif
+
 FaceTrackNoIR::FaceTrackNoIR() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
@@ -77,6 +83,7 @@ FaceTrackNoIR::~FaceTrackNoIR()
 {
     stopTracker();
     save();
+    _exit(0);
 }
 
 void FaceTrackNoIR::open() {
