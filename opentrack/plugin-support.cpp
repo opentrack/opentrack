@@ -16,14 +16,17 @@ SelectedLibraries::~SelectedLibraries()
 template<typename t>
 static ptr<t> make_instance(ptr<dylib> lib)
 {
-    ptr<t> ret = nullptr;
-    if (lib && lib->Constructor)
+    ptr<t> ret;
+    if (lib != nullptr && lib->Constructor)
+    {
+        qDebug() << "dylib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t) lib->Constructor;
+        fflush(stderr);
         ret = ptr<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
-    //qDebug() << "lib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t)ret.get();
+    }
     return ret;
 }
 
-SelectedLibraries::SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibtr f) :
+SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
     pTracker(nullptr),
     pFilter(nullptr),
     pProtocol(nullptr),
@@ -32,10 +35,10 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibt
     pTracker = make_instance<ITracker>(t);
     pProtocol = make_instance<IProtocol>(p);
     pFilter = make_instance<IFilter>(f);
-    
-    if (!pTracker|| !pProtocol)
+
+    if (!pTracker || !pProtocol)
     {
-        qDebug() << "load failure tracker" << (intptr_t)pTracker.get() << "protocol" << (intptr_t)pProtocol.get();
+        qDebug() << "dylib load failure";
         return;
     }
 
@@ -45,7 +48,7 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibtr t, dylibtr p, dylibt
             qDebug() << "protocol load failure";
             return;
         }
-    
+
     pTracker->start_tracker(frame);
 
     correct = true;
@@ -86,11 +89,11 @@ QList<ptr<dylib>> dylib::enum_libraries()
                                 BASE "tracker" SUFF,
                                 BASE "proto" SUFF };
     const Type filters_t[] = { Filter, Tracker, Protocol };
-    
+
     QDir settingsDir( QCoreApplication::applicationDirPath() );
-    
+
     QList<ptr<dylib>> ret;
-    
+
     for (int i = 0; i < 3; i++)
     {
         QString filter = filters_n[i];
@@ -110,7 +113,7 @@ QList<ptr<dylib>> dylib::enum_libraries()
             ret.push_back(lib);
         }
     }
-    
+
     return ret;
 }
 
@@ -123,12 +126,12 @@ dylib::dylib(const QString& filename, Type t) :
     // otherwise dlopen opens the calling executable
     if (filename.size() == 0)
         return;
-    
+
     this->filename = filename;
 #if defined(_WIN32)
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
     handle = new QLibrary(fullPath);
-    
+
     struct _foo {
         static bool die(QLibrary*& l, bool failp)
         {
@@ -141,18 +144,18 @@ dylib::dylib(const QString& filename, Type t) :
             return failp;
         }
     };
-    
+
     if (_foo::die(handle, !handle->load()))
         return;
-    
+
     Dialog = (CTOR_FUNPTR) handle->resolve("GetDialog");
     if (_foo::die(handle, !Dialog))
         return;
-    
+
     Constructor = (CTOR_FUNPTR) handle->resolve("GetConstructor");
     if (_foo::die(handle, !Constructor))
         return;
-    
+
     Meta = (METADATA_FUNPTR) handle->resolve("GetMetadata");
     if (_foo::die(handle, !Meta))
         return;
@@ -199,9 +202,9 @@ dylib::dylib(const QString& filename, Type t) :
         (void) _foo::err(handle);
     }
 #endif
-    
+
     auto m = ptr<Metadata>(Meta());
-    
+
     icon = m->icon();
     name = m->name();
 }
