@@ -28,13 +28,14 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 
 # Output
 
-- FlightGear Nasal script
 - SimConnect for newer Microsoft Flight Simulator (Windows)
 - freetrack implementation (Windows)
 - Relaying UDP to another computer
 - Virtual joystick output (Linux, Windows)
 - Wine freetrack glue protocol (Linux, OSX)
+- X-Plane plugin (Linux)
 - Tablet-like mouse output (Windows)
+- FlightGear Nasal script
 - FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
 
 ***
