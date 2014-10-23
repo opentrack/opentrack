@@ -17,7 +17,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift
-- AR marker support via the ArUco library <https://github.com/rmsalinas/aruco>
+- Paper marker support via the ArUco library <https://github.com/rmsalinas/aruco>
 - HT tracker <https://github.com/sthalik/headtracker>
 - Razer Hydra
 - Relaying via UDP from a different computer
@@ -57,7 +57,7 @@ Don't be afraid to submit an issue/feature request if the need arises.
 # Licensing information
 
 The code originally licensed under GPLv3, new code is required to be
-compatible with it unless resides in separate address space.
+legally compatible with it unless resides in separate address space.
 
 It's recommended to submit new code under ISC license, it's a shorter
 boilerplate header than MIT/X11 or new BSD.
