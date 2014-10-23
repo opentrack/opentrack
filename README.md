@@ -2,14 +2,16 @@ Windows binary builds are available at <https://www.dropbox.com/sh/544fbhsokdpy3
 
 Source code access available at <http://github.com/opentrack/opentrack/>
 
+Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
+for new user guide, frequent questions, specific tracker/filter
+documentation.
+
 --
 
 **opentrack** is an application dedicated to tracking user's head
 movements and relaying them to games and flight simulation software.
 
 Not to be confused with railway planning software <<http://opentrack.ch>>
-
-See our wiki at <<https://github.com/opentrack/opentrack/wiki>>
 
 # Tracking sources
 
