@@ -204,7 +204,7 @@ opentrack_module(freetrackclient freetrackclient)
 
 if(SDK_XPLANE)
     # probably librt already included
-    add_library(opentrack-xplane-plugin STATIC ${opentrack-xplane-plugin-c})
+    add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin
             PROPERTIES LINK_FLAGS
