@@ -1,4 +1,4 @@
-Windows binary builds are available at <<https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>>
+Windows binary builds available at <<https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>>
 
 Source code access available at <<http://github.com/opentrack/opentrack/>>
 
@@ -46,7 +46,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 **opentrack** allows for output shaping, filtering, the codebase builds
 on on Microsoft Windows, Apple OSX, and GNU/Linux.
 
-Don't be afraid to submit an issue/feature request if the need arises.
+Don't be afraid to submit an issue/feature request if need arises.
 
 ***
 
