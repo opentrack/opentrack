@@ -9,7 +9,8 @@ documentation.
 ***
 
 **opentrack** is an application dedicated to tracking user's head
-movements and relaying them to games and flight simulation software.
+movements and relaying the information to games and flight simulation
+software.
 
 Not to be confused with railway planning software <<http://opentrack.ch>>
 
