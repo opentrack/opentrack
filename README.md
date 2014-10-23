@@ -6,12 +6,14 @@ Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
 documentation.
 
---
+***
 
 **opentrack** is an application dedicated to tracking user's head
 movements and relaying them to games and flight simulation software.
 
 Not to be confused with railway planning software <<http://opentrack.ch>>
+
+***
 
 # Tracking sources
 
@@ -36,12 +38,16 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - Wine freetrack glue protocol (Linux, OSX)
 - Tablet-like coordinate output (Windows)
 
+***
+
 # Configuration
 
-**opentrack** offers output shaping, filtering, is buildable on
-MS Windows, MacOSX and GNU/Linux.
+**opentrack** allows for output shaping, filtering, is buildable on MS
+Windows, MacOSX and GNU/Linux.
 
 Don't be afraid to submit an issue/feature request if the need arises.
+
+***
 
 # Credits
 
