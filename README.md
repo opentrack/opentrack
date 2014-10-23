@@ -21,7 +21,8 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - HT tracker <https://github.com/sthalik/headtracker>
 - Razer Hydra
 - Relaying via UDP from a different computer
-- Joystick analog axes (Windows only)
+- Relaying UDP via FreePIE-specific Android app
+- Joystick analog axes (Windows, Linux)
 
 # Output
 
