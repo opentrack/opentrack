@@ -1,6 +1,6 @@
-Windows binary builds are available at <https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>
+Windows binary builds are available at <<https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>>
 
-Source code access available at <http://github.com/opentrack/opentrack/>
+Source code access available at <<http://github.com/opentrack/opentrack/>>
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
@@ -19,8 +19,8 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift
-- Paper marker support via the ArUco library <https://github.com/rmsalinas/aruco>
-- HT tracker <https://github.com/sthalik/headtracker>
+- Paper marker support via the ArUco library <<https://github.com/rmsalinas/aruco>>
+- Human face tracker <<https://github.com/sthalik/headtracker>>
 - Razer Hydra
 - Relaying via UDP from a different computer
 - Relaying UDP via FreePIE-specific Android app
