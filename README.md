@@ -1,4 +1,3 @@
-=======
 Windows binary builds are available at <https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>
 
 Source code access available at <http://github.com/opentrack/opentrack/>
