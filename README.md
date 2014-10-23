@@ -29,21 +29,20 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Output
 
 - FlightGear Nasal script
-- FSUIPC for Microsoft Flight Simulator (Windows)
 - SimConnect for newer Microsoft Flight Simulator (Windows)
-- freetrack emulation (Windows)
-- Relaying udp to another computer
-- Joystick support via freedesktop.org libevdev (Linux)
-- Joystick support via VJoy (Windows)
+- freetrack implementation (Windows)
+- Relaying UDP to another computer
+- Virtual joystick output (Linux, Windows)
 - Wine freetrack glue protocol (Linux, OSX)
-- Tablet-like coordinate output (Windows)
+- Tablet-like mouse output (Windows)
+- FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
 
 ***
 
 # Configuration
 
-**opentrack** allows for output shaping, filtering, is buildable on MS
-Windows, MacOSX and GNU/Linux.
+**opentrack** allows for output shaping, filtering, the codebase builds
+on on Microsoft Windows, Apple OSX, and GNU/Linux.
 
 Don't be afraid to submit an issue/feature request if the need arises.
 
@@ -62,8 +61,8 @@ Don't be afraid to submit an issue/feature request if the need arises.
 
 # Licensing information
 
-The code originally licensed under GPLv3, new code is required to be
-legally compatible with it unless resides in separate address space.
+The code originally licensed under GPLv3, new code required legally
+compatible unless resides in separate address space.
 
-It's recommended to submit new code under ISC license, it's a shorter
-boilerplate header than MIT/X11 or new BSD.
+Recommended to submit new code under ISC license, shorter boilerplate
+header than MIT/X11 or new BSD.
