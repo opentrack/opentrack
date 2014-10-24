@@ -157,16 +157,13 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     }
 #else
     int idx = k.key_index;
-    if (idx > 0)
-    {
-        key.keycode = 0;
-        key.shift = key.alt = key.ctrl = 0;
-        if (idx < global_windows_key_sequences.size())
-            key.keycode = global_windows_key_sequences[idx];
-        key.shift = k.shift;
-        key.alt = k.alt;
-        key.ctrl = k.ctrl;
-    }
+    key.keycode = 0;
+    key.shift = key.alt = key.ctrl = 0;
+    if (idx > 0 && idx < global_windows_key_sequences.size())
+        key.keycode = global_windows_key_sequences[idx];
+    key.shift = k.shift;
+    key.alt = k.alt;
+    key.ctrl = k.ctrl;
 #endif
 }
 void Shortcuts::reload() {
