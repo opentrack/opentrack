@@ -21,18 +21,22 @@ private:
     QMutex mtx;
     main_settings& s;
     Mappings& m;
-    
+
     Timer t;
-    Pose output_pose, raw_6dof, raw_center, final_raw;
+    Pose output_pose, raw_6dof, final_raw;
+
     double newpose[6];
     std::atomic<bool> centerp;
     std::atomic<bool> enabledp;
     std::atomic<bool> should_quit;
     SelectedLibraries const& libs;
-    
+
+    Quat r_b;
+    double t_b[3];
+
     double map(double pos, Mapping& axis);
     void logic();
-    
+
     static void t_compensate(const double* input, double* output, bool rz);
     void run() override;
 public:

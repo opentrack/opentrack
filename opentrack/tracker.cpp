@@ -28,7 +28,8 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     centerp(false),
     enabledp(true),
     should_quit(false),
-    libs(libs)
+    libs(libs),
+    t_b {0,0,0}
 {
 }
 
@@ -73,7 +74,7 @@ static cv::Matx33d euler_to_rmat(const double* input)
         cosH * cosP,
     };
 
-    return cv::Matx33d(foo);    
+    return cv::Matx33d(foo);
 }
 
 void Tracker::t_compensate(const double* input, double* output, bool rz)
@@ -91,7 +92,7 @@ void Tracker::t_compensate(const double* input, double* output, bool rz)
 void Tracker::logic()
 {
     libs.pTracker->data(newpose);
-    
+
     Pose final_raw_;
 
     if (enabledp)
@@ -110,29 +111,38 @@ void Tracker::logic()
         }
         final_raw = final_raw_;
     }
-    
+
     Pose filtered_pose;
-    
+
     if (libs.pFilter)
         libs.pFilter->filter(final_raw, filtered_pose);
     else
         filtered_pose = final_raw;
-    
+
     if (centerp)
     {
         centerp = false;
-        raw_center = filtered_pose;
+        r_b = filtered_pose.quat();
+        for (int i = 0; i < 3; i++)
+            t_b[i] = filtered_pose(i);
     }
-    
-    Pose raw_centered = filtered_pose & raw_center;
-    
+
+    Pose raw_centered;
+
+    {
+        const Quat q = filtered_pose.quat();
+        raw_centered = Pose::fromQuat(r_b.inv() * q);
+        for (int i = 0; i < 3; i++)
+            raw_centered(i) = filtered_pose(i) - t_b[i];
+    }
+
     Pose mapped_pose_precomp;
-    
+
     for (int i = 0; i < 6; i++)
         mapped_pose_precomp(i) = map(raw_centered(i), m(i));
-    
+
     Pose mapped_pose;
-    
+
     mapped_pose = mapped_pose_precomp;
     if (s.tcomp_p)
         t_compensate(mapped_pose_precomp, mapped_pose, s.tcomp_tz);
