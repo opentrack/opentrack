@@ -94,7 +94,8 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
     bool ctrl;
     bool alt;
 
-    if (keystate[key->keycode] & 0x80) {
+    if (key->keycode != 0 && keystate[key->keycode] & 0x80)
+    {
         shift = ( (keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80) );
         ctrl  = ( (keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80) );
         alt   = ( (keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80) );
