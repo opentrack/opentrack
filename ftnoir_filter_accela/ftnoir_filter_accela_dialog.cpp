@@ -14,26 +14,42 @@ FilterControls::FilterControls() :
 
     tie_setting(s.rotation_alpha, ui.rotation_alpha);
     tie_setting(s.translation_alpha, ui.translation_alpha);
-    tie_setting(s.second_order_alpha, ui.order_2nd);
-    tie_setting(s.third_order_alpha, ui.order_3rd);
+    tie_setting(s.fast_alpha, ui.ui_fast_alpha);
     tie_setting(s.rot_deadzone, ui.rot_deadzone);
     tie_setting(s.trans_deadzone, ui.trans_deadzone);
     tie_setting(s.expt, ui.expt);
+
+    connect(&t, SIGNAL(timeout()), this, SLOT(timer_fired()));
+
+    t.setInterval(250);
+}
+
+void FilterControls::timer_fired()
+{
+    if (accela_filter)
+    {
+        state_display st = accela_filter->state;
+        ui.debug_y->setValue(st.y);
+        ui.debug_p->setValue(st.p);
+        ui.debug_r->setValue(st.r);
+    }
 }
 
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
+    t.start();
 }
 
 void FilterControls::unregister_filter()
 {
-    accela_filter = NULL;
+    t.stop();
+    accela_filter = nullptr;
 }
 
 void FilterControls::doOK() {
-	save();
-	this->close();
+    save();
+    this->close();
 }
 
 void FilterControls::doCancel() {
@@ -48,8 +64,6 @@ void FilterControls::discard()
 
 void FilterControls::save() {
     s.b->save();
-    if (accela_filter)
-        accela_filter->receiveSettings();
 }
 
 extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()

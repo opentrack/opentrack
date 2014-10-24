@@ -12,7 +12,7 @@
 #include "opentrack/plugin-api.hpp"
 using namespace std;
 
-FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
+FTNoIR_Filter::FTNoIR_Filter() : first_run(true), fast_state { 0,0,0, 0,0,0 }
 {
 }
 
@@ -20,45 +20,64 @@ static inline double parabola(const double a, const double x, const double dz, c
 {
     const double sign = x > 0 ? 1 : -1;
     const double a1 = 1./a;
-    return a1 * pow(std::max<double>(fabs(x) - dz, 0), expt) * sign;
+    return a1 * pow(std::max(0., fabs(x) - dz), expt) * sign;
 }
 
-void FTNoIR_Filter::filter(const double* target_camera_position,
-                                       double *new_camera_position)
+void FTNoIR_Filter::filter(const double* input, double *output)
 {
     if (first_run)
     {
         for (int i = 0; i < 6; i++)
         {
-            new_camera_position[i] = target_camera_position[i];
+            fast_state[i] = 0;
+            output[i] = input[i];
             for (int j = 0; j < 3; j++)
-                last_output[j][i] = target_camera_position[i];
+                last_output[i] = input[i];
         }
-
         first_run = false;
-                return;
+        return;
     }
+
+    const double fast_c = s.fast_alpha / 100.;
+    const double rot_dz = s.rot_deadzone;
+    const double trans_dz = s.trans_deadzone;
+    const double rot_a = s.rotation_alpha;
+    const double trans_a = s.translation_alpha;
+    const double expt = s.expt;
+
+    static constexpr double fast_alpha = Hz/(Hz + fast_alpha_seconds);
 
     for (int i=0;i<6;i++)
     {
-        const double vec = target_camera_position[i] - last_output[0][i];
-        const double vec2 = target_camera_position[i] - last_output[1][i];
-        const double vec3 = target_camera_position[i] - last_output[2][i];
-                const int sign = vec < 0 ? -1 : 1;
-        const double a = i >= 3 ? s.rotation_alpha : s.translation_alpha;
-        const double a2 = a * s.second_order_alpha;
-        const double a3 = a * s.third_order_alpha;
-        const double deadzone = i >= 3 ? s.rot_deadzone : s.trans_deadzone;
-        const double velocity =
-                parabola(a, vec, deadzone, s.expt) +
-                parabola(a2, vec2, deadzone, s.expt) +
-                parabola(a3, vec3, deadzone, s.expt);
-        const double result = last_output[0][i] + velocity;
-        const bool done = sign > 0 ? result >= target_camera_position[i] : result <= target_camera_position[i];
-        last_output[2][i] = last_output[1][i];
-        last_output[1][i] = last_output[0][i];
-        last_output[0][i] = new_camera_position[i] = done ? target_camera_position[i] : result;
+        const double vec = input[i] - last_output[i];
+        const double a = i >= 3 ? rot_a : trans_a;
+        const double deadzone = i >= 3 ? rot_dz : trans_dz;
+
+        double datum;
+
+        if (i >= 3)
+        {
+            const double cur_fast = std::abs(vec) * fast_alpha + fast_state[i]*(1. - fast_alpha);
+            fast_state[i] = cur_fast;
+            const double how_fast = std::max(0., fast_c * (cur_fast - max_slow_delta));
+            datum = parabola(a, vec * (1.-damping + how_fast), deadzone, s.expt);
+        }
+        else
+            datum = parabola(a, vec, deadzone, expt);
+
+        const double result = last_output[i] + datum;
+        const bool negp = vec < 0.;
+        const bool done = negp ? result <= input[i] : result >= input[i];
+
+        last_output[i] = last_output[i];
+        last_output[i] = last_output[i];
+        const double ret = done ? input[i] : result;
+        last_output[i] = output[i] = ret;
     }
+
+    state.y = output[Yaw] - input[Yaw];
+    state.p = output[Pitch] - input[Pitch];
+    state.r = output[Roll] - input[Roll];
 }
 
 extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
