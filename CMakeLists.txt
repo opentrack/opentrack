@@ -12,7 +12,6 @@ if(GIT_FOUND)
     git_describe(OPENTRACK__COMMIT --tags --always)
 endif()
 
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_SKIP_INSTALL_RPATH FALSE)
@@ -34,8 +33,6 @@ if(WIN32) # hack to avoid breakage on buildbot
     set(my-qt-deps ws2_32)
 endif()
 set(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
-
-#include_directories(${CMAKE_SOURCE_DIR})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
@@ -108,6 +105,8 @@ function(link_with_dinput8 n)
         target_link_libraries(${n} dinput8 dxguid strmiids)
     endif()
 endfunction()
+
+# ----
 
 # cache variables
 
