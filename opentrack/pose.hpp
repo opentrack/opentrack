@@ -13,7 +13,7 @@ private:
 
     double axes[6];
 public:
-    Pose() : axes {0,0,0, 0,0,0 } {}
+    Pose() : axes {0,0,0, 0,0,0} {}
 
     inline operator double*() { return axes; }
     inline operator const double*() const { return axes; }
@@ -30,15 +30,6 @@ public:
     {
         Pose ret;
         q.to_euler_degrees(ret(Yaw), ret(Pitch), ret(Roll));
-        return ret;
-    }
-
-    Pose operator&(const Pose& B) const
-    {
-        const Quat q = quat() * B.quat().inv();
-        Pose ret = fromQuat(q);
-        for (int i = TX; i < TX + 3; i++)
-            ret(i) = axes[i] - B.axes[i];
         return ret;
     }
 };

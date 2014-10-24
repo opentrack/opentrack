@@ -12,19 +12,19 @@ class Quat {
 private:
     static constexpr double pi = 3.141592653;
     static constexpr double r2d = 180./pi;
-    double a,b,c,d; // quaternion coefficients
+    double _0,_1,_2,_3; // quaternion coefficients
 public:
-    Quat() : a(1.),b(0.),c(0.),d(0.) {}
-    Quat(double yaw, double pitch, double roll) { from_euler_rads(yaw, pitch, roll); }
-    Quat(double a, double b, double c, double d) : a(a),b(b),c(c),d(d) {}
+    Quat() : _0(1.),_1(0.),_2(0.),_3(0.) {}
+    Quat(double yaw, double pitch, double roll) { *this = from_euler_rads(yaw, pitch, roll); }
+    Quat(double a, double b, double c, double d) : _0(a),_1(b),_2(c),_3(d) {}
 
-    Quat inv(){
-        return Quat(a,-b,-c, -d);
+    Quat inv() const {
+        return Quat(_0,-_1,-_2, -_3);
     }
 
     // conversions
     // see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-    void from_euler_rads(double yaw, double pitch, double roll)
+    static Quat from_euler_rads(double yaw, double pitch, double roll)
     {
 
         const double sin_phi = sin(roll/2.);
@@ -34,17 +34,21 @@ public:
         const double sin_psi = sin(yaw/2.);
         const double cos_psi = cos(yaw/2.);
 
-        a = cos_phi*cos_the*cos_psi + sin_phi*sin_the*sin_psi;
-        b = sin_phi*cos_the*cos_psi - cos_phi*sin_the*sin_psi;
-        c = cos_phi*sin_the*cos_psi + sin_phi*cos_the*sin_psi;
-        d = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
+        Quat q;
+
+        q._0 = cos_phi*cos_the*cos_psi + sin_phi*sin_the*sin_psi;
+        q._1 = sin_phi*cos_the*cos_psi - cos_phi*sin_the*sin_psi;
+        q._2 = cos_phi*sin_the*cos_psi + sin_phi*cos_the*sin_psi;
+        q._3 = cos_phi*cos_the*sin_psi - sin_phi*sin_the*cos_psi;
+
+        return q;
     }
 
     void to_euler_rads(double& yaw, double& pitch, double& roll) const
     {
-        roll = atan2(2.*(a*b + c*d), 1. - 2.*(b*b + c*c));
-        pitch = asin(2.*(a*c - b*d));
-        yaw =  atan2(2.*(a*d + b*c), 1. - 2.*(c*c + d*d));
+        roll = atan2(2.*(_0*_1 + _2*_3), 1. - 2.*(_1*_1 + _2*_2));
+        pitch = asin(2.*(_0*_2 - _1*_3));
+        yaw =  atan2(2.*(_0*_3 + _1*_2), 1. - 2.*(_2*_2 + _3*_3));
     }
 
     void to_euler_degrees(double& yaw, double& pitch, double& roll) const
@@ -58,9 +62,15 @@ public:
     const Quat operator*(const Quat& B) const
     {
         const Quat& A = *this;
-        return Quat(A.a*B.a - A.b*B.b - A.c*B.c - A.d*B.d,	// quaternion multiplication
-                    A.a*B.b + A.b*B.a + A.c*B.d - A.d*B.c,
-                    A.a*B.c - A.b*B.d + A.c*B.a + A.d*B.b,
-                    A.a*B.d + A.b*B.c - A.c*B.b + A.d*B.a);
-    }
+        const Quat ret(A._0*B._0 - A._1*B._1 - A._2*B._2 - A._3*B._3,
+                       A._0*B._1 + A._1*B._0 + A._2*B._3 - A._3*B._2,
+                       A._0*B._2 - A._1*B._3 + A._2*B._0 + A._3*B._1,
+                       A._0*B._3 + A._1*B._2 - A._2*B._1 + A._3*B._0);
+        const double mag_2 = ret._0 * ret._0 +
+                             ret._1 * ret._1 +
+                             ret._2 * ret._2 +
+                             ret._3 * ret._3;
+        const double inv_mag = 1./sqrt(mag_2);
+        return Quat(1., ret._1 * inv_mag, ret._2 * inv_mag, ret._3 * inv_mag);
+   }
 };
