@@ -60,7 +60,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
             const double cur_fast = std::abs(vec) * fast_alpha + fast_state[i]*(1. - fast_alpha);
             fast_state[i] = cur_fast;
             const double how_fast = std::max(0., fast_c * (cur_fast - max_slow_delta));
-            datum = parabola(a, vec * (1.-damping + how_fast), deadzone, s.expt);
+            datum = parabola(a, vec * (1.-damping + (1.+damping)*how_fast), deadzone, s.expt);
         }
         else
             datum = parabola(a, vec, deadzone, expt);
