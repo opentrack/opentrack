@@ -48,11 +48,11 @@ private:
     // hardcoded distance between filter() calls
     static constexpr double Hz = 3./1000;
     // moving average history
-    static constexpr double fast_alpha_seconds = 10;
+    static constexpr double fast_alpha_seconds = 0.2;
     // max degrees considered "slow" after alpha
-    static constexpr double max_slow_delta = 0.34;
+    static constexpr double max_slow_delta = 0.75;
     // if set to zero, never decreases response
-    static constexpr double damping = 0.3;
+    static constexpr double damping = 0.75;
     settings s;
     bool first_run;
     double last_output[6];
