@@ -38,7 +38,9 @@ FaceTrackNoIR::FaceTrackNoIR() :
 {
     ui.setupUi(this);
 
+    adjustSize();
     setFixedSize(size());
+
     updateButtonState(false, false);
     ui.video_frame_label->setPixmap(no_feed_pixmap);
     QDir::setCurrent(QCoreApplication::applicationDirPath());
