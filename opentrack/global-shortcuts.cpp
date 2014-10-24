@@ -1,5 +1,8 @@
-#   include <QList>
-#   include <QString>
+#include <QList>
+#include <QString>
+
+extern QList<QString> global_key_sequences;
+extern QList<int> global_windows_key_sequences;
 
 #if defined(_WIN32)
 #   ifndef DIRECTINPUT_VERSION
