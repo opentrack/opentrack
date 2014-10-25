@@ -138,6 +138,7 @@ void Tracker::logic()
     if (centerp)
     {
         centerp = false;
+        cv::Matx31d tmp;
         r_b = euler_to_rmat(&filtered_pose[Yaw]);
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
@@ -147,7 +148,7 @@ void Tracker::logic()
 
     {
         const cv::Matx33d rmat = euler_to_rmat(&filtered_pose[Yaw]);
-        const cv::Matx33d m_ = rmat * r_b.t();
+        const cv::Matx33d m_ = (r_b * rmat * r_b.t()) * r_b.t();
         const auto euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
