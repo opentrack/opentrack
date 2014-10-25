@@ -62,15 +62,13 @@ public:
     const Quat operator*(const Quat& B) const
     {
         const Quat& A = *this;
-        const Quat ret(A._0*B._0 - A._1*B._1 - A._2*B._2 - A._3*B._3,
-                       A._0*B._1 + A._1*B._0 + A._2*B._3 - A._3*B._2,
-                       A._0*B._2 - A._1*B._3 + A._2*B._0 + A._3*B._1,
-                       A._0*B._3 + A._1*B._2 - A._2*B._1 + A._3*B._0);
-        const double mag_2 = ret._0 * ret._0 +
-                             ret._1 * ret._1 +
-                             ret._2 * ret._2 +
-                             ret._3 * ret._3;
-        const double inv_mag = 1./sqrt(mag_2);
-        return Quat(1., ret._1 * inv_mag, ret._2 * inv_mag, ret._3 * inv_mag);
+        const double x =  A._2 * B._0 + A._2 * B._3 - A._3 * B._2 + A._0 * B._2;
+        const double y = -A._2 * B._3 + A._2 * B._0 + A._3 * B._2 + A._0 * B._2;
+        const double z =  A._2 * B._2 - A._2 * B._2 + A._3 * B._0 + A._0 * B._3;
+        const double w = -A._2 * B._2 - A._2 * B._2 - A._3 * B._3 + A._0 * B._0;
+        const double mag_2 = x*x + y*y + z*z + w*w;
+        const double mag = sqrt(mag_2);
+        const double inv_mag = 1./mag;
+        return Quat(mag, x*inv_mag, y*inv_mag, z*inv_mag);
    }
 };
