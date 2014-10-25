@@ -36,10 +36,10 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
 
     double ch = cos(xAngle / 57.295781);
     double sh = sin(xAngle / 57.295781);
-    double ca = cos(yAngle / 57.295781);
-    double sa = sin(yAngle / 57.295781);
-    double cb = cos(zAngle / 57.295781);
-    double sb = sin(zAngle / 57.295781);
+    double ca = cos(zAngle / 57.295781);
+    double sa = sin(zAngle / 57.295781);
+    double cb = cos(yAngle / 57.295781);
+    double sb = sin(yAngle / 57.295781);
 
     matrix[0 * 3 + 0] = ch * ca;
     matrix[0 * 3 + 1]= sh*sb - ch*sa*cb;
