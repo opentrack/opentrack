@@ -203,12 +203,7 @@ void Tracker::run()
         auto tm = cv::getTickCount();
         
         cv::Mat grayscale;
-        {
-            std::vector<cv::Mat> tmp;
-            cv::split(color, tmp);
-            // red only, best on CCD, also artifacts on blue ps3eye
-            grayscale = tmp[2];
-        }
+        cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         const int scale = frame.cols > 480 ? 2 : 1;
         detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
 
@@ -224,8 +219,8 @@ void Tracker::run()
 
         std::vector< aruco::Marker > markers;
 
-        const double size_min = 0.04;
-        const double size_max = 0.28;
+        const double size_min = 0.07;
+        const double size_max = 0.4;
         
         bool roi_valid = false;
         
