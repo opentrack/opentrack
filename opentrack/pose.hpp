@@ -2,7 +2,6 @@
 
 #include <utility>
 #include <algorithm>
-#include "./quat.hpp"
 #include "./plugin-api.hpp"
 
 class Pose {
@@ -20,16 +19,4 @@ public:
 
     inline double& operator()(int i) { return axes[i]; }
     inline double operator()(int i) const { return axes[i]; }
-
-    Quat quat() const
-    {
-        return Quat(axes[Yaw]*d2r, axes[Pitch]*d2r, axes[Roll]*d2r);
-    }
-
-    static Pose fromQuat(const Quat& q)
-    {
-        Pose ret;
-        q.to_euler_degrees(ret(Yaw), ret(Pitch), ret(Roll));
-        return ret;
-    }
 };
