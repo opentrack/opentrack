@@ -3,6 +3,8 @@
 #include <atomic>
 #include <vector>
 
+#include <opencv2/core/core.hpp>
+
 #include "./timer.hpp"
 #include "./plugin-support.h"
 #include "./mappings.hpp"
@@ -31,7 +33,7 @@ private:
     std::atomic<bool> should_quit;
     SelectedLibraries const& libs;
 
-    Quat r_b;
+    cv::Matx33d r_b;
     double t_b[3];
 
     double map(double pos, Mapping& axis);
