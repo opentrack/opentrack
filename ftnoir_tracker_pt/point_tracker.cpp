@@ -169,8 +169,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_)
 
 	// The expected rotation used for resolving the ambiguity in POSIT:
 	// In every iteration step the rotation closer to R_expected is taken 
-	Matx33f R_expected;	
-    R_expected = X_CM.R; // later we want to be close to the last (predicted) rotation
+	Matx33f R_expected = Matx33f::eye();	
 	
 	// initial pose = last (predicted) pose
 	Vec3f k;
