@@ -12,7 +12,6 @@
 #include <QWidget>
 #include <QtGui>
 #include <QPointF>
-#include <QElapsedTimer>
 #include "qfunctionconfigurator/functionconfig.h"
 #include "opentrack/plugin-api.hpp"
 
@@ -60,7 +59,6 @@ private:
 	QRectF  pixel_bounds;
     
     int moving_control_point_idx;
-    QElapsedTimer timer;
     QPointF c;
 
 	QColor spline_color;
