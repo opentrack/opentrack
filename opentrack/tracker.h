@@ -39,7 +39,7 @@ private:
     double map(double pos, Mapping& axis);
     void logic();
 
-    static void t_compensate(const double* input, double* output, bool rz);
+    void t_compensate(const cv::Matx33d& rmat, const double* ypr, double* output, bool rz);
     void run() override;
 public:
     Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);

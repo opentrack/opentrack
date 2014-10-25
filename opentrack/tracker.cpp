@@ -39,31 +39,25 @@ Tracker::~Tracker()
     wait();
 }
 
-double Tracker::map(double pos, Mapping& axis) {
+double Tracker::map(double pos, Mapping& axis)
+{
     bool altp = (pos < 0) && axis.opts.altp;
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
-    double invert = axis.opts.invert ? -1 : 1;
-    return invert * (fc.getValue(pos) + axis.opts.zero);
+    return fc.getValue(pos) + axis.opts.zero;
 }
 
 // http://stackoverflow.com/a/18436193
 static cv::Vec3d rmat_to_euler(const cv::Matx33d& R)
 {
-    //static constexpr double pi = 3.141592653;
-    float x1 = -asin(R(0,2));
-    //float x2 = pi - x1;
-
-    float y1 = atan2(R(1,2) / cos(x1), R(2,2) / cos(x1));
-    //float y2 = atan2(R(1,2) / cos(x2), R(2,2) / cos(x2));
-
-    float z1 = atan2(R(0,1) / cos(x1), R(0,0) / cos(x1));
-    //float z2 = atan2(R(0,1) / cos(x2), R(0,0) / cos(x2));
-
-    return cv::Vec3d { -x1, y1, -z1 };
+    const double beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+    const double alpha = atan2( R(1,0), R(0,0));
+    const double gamma = atan2( R(2,1), R(2,2));
+    return cv::Vec3d { alpha, -beta, gamma };
 }
 
+// tait-bryan angles, not euler
 static cv::Matx33d euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
@@ -79,33 +73,32 @@ static cv::Matx33d euler_to_rmat(const double* input)
     const auto s3 = sin(B);
 
     double foo[] = {
-        // x
-        c2*c3,
-        -c2*s3,
-        s2,
-        // y
-        c1*s3 + c3*s1*s2,
-        c1*c3 - s1*s2*s3,
-        -c2*s1,
-        // z
-        s1*s3 - c1*c2*s2,
-        c3*s1 + c1*s2*s3,
-        c1*c2,
+       // z
+       c1 * c3 - s1 * s2 * s3,
+       - s3 * c2,
+       s1 * c3 + c1 * s2 * s3,
+       // x
+       c1 * s3 + s1 * s2 * c3,
+       c3 * c2,
+       s3 * s1 - c1 * s2 * c3,
+       // y
+       - s1 * c2,
+       - s2,
+       c1 * c2,
     };
 
     return cv::Matx33d(foo);
 }
 
-void Tracker::t_compensate(const double* input, double* output, bool rz)
+void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
 {
-    const cv::Matx33d rmat = euler_to_rmat(&input[Yaw]);
-    const cv::Vec3d tvec(input);
-    const cv::Vec3d ret = rmat * tvec;
-
-    const int max = !rz ? 3 : 2;
-
-    for (int i = 0; i < max; i++)
-        output[i] = ret(i);
+    const double xyz_[3] = { xyz[1], -xyz[0], xyz[2] };
+    cv::Matx31d tvec(xyz_);
+    const cv::Matx31d ret = rmat * tvec;
+    output[0] = ret(1, 0);
+    output[1] = -ret(0, 0);
+    if (!rz)
+        output[2] = ret(2, 0);
 }
 
 void Tracker::logic()
@@ -138,6 +131,10 @@ void Tracker::logic()
     else
         filtered_pose = final_raw;
 
+    // must invert early as euler_to_rmat's sensitive to sign change
+    for (int i = 0; i < 6; i++)
+        filtered_pose[i] *= m(i).opts.invert ? -1. : 1.;
+
     if (centerp)
     {
         centerp = false;
@@ -149,8 +146,8 @@ void Tracker::logic()
     Pose raw_centered;
 
     {
-        const auto m = euler_to_rmat(&filtered_pose[Yaw]);
-        const cv::Matx33d m_ = m * r_b.t();
+        const cv::Matx33d rmat = euler_to_rmat(&filtered_pose[Yaw]);
+        const cv::Matx33d m_ = rmat * r_b.t();
         const auto euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
@@ -165,19 +162,19 @@ void Tracker::logic()
     for (int i = 0; i < 6; i++)
         mapped_pose_precomp(i) = map(raw_centered(i), m(i));
 
-    Pose mapped_pose;
+    Pose mapped_pose = mapped_pose_precomp;
 
-    mapped_pose = mapped_pose_precomp;
     if (s.tcomp_p)
-        t_compensate(mapped_pose_precomp, mapped_pose, s.tcomp_tz);
+        t_compensate(euler_to_rmat(&mapped_pose_precomp[Yaw]),
+                     mapped_pose_precomp,
+                     mapped_pose,
+                     s.tcomp_tz);
 
     libs.pProtocol->pose(mapped_pose);
 
-    {
-        QMutexLocker foo(&mtx);
-        output_pose = mapped_pose;
-        raw_6dof = final_raw;
-    }
+    QMutexLocker foo(&mtx);
+    output_pose = mapped_pose;
+    raw_6dof = final_raw;
 }
 
 void Tracker::run() {
