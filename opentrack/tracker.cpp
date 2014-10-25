@@ -12,7 +12,6 @@
  * originally written by Wim Vriend.
  */
 
-#include <opencv2/core/core.hpp>
 
 #include "./tracker.h"
 #include <cmath>
@@ -29,6 +28,7 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     enabledp(true),
     should_quit(false),
     libs(libs),
+    r_b (cv::Matx33d::eye()),
     t_b {0,0,0}
 {
 }
@@ -48,30 +48,49 @@ double Tracker::map(double pos, Mapping& axis) {
     return invert * (fc.getValue(pos) + axis.opts.zero);
 }
 
+// http://stackoverflow.com/a/18436193
+static cv::Vec3d rmat_to_euler(const cv::Matx33d& R)
+{
+    //static constexpr double pi = 3.141592653;
+    float x1 = -asin(R(0,2));
+    //float x2 = pi - x1;
+
+    float y1 = atan2(R(1,2) / cos(x1), R(2,2) / cos(x1));
+    //float y2 = atan2(R(1,2) / cos(x2), R(2,2) / cos(x2));
+
+    float z1 = atan2(R(0,1) / cos(x1), R(0,0) / cos(x1));
+    //float z2 = atan2(R(0,1) / cos(x2), R(0,0) / cos(x2));
+
+    return cv::Vec3d { -x1, y1, -z1 };
+}
+
 static cv::Matx33d euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[0] * pi / -180;
-    const auto P = input[1] * pi / -180;
-    const auto B = input[2] * pi / 180;
+    const auto H = input[1] * pi / -180;
+    const auto P = input[2] * pi / -180;
+    const auto B = input[0] * pi / 180;
 
-    const auto cosH = cos(H);
-    const auto sinH = sin(H);
-    const auto cosP = cos(P);
-    const auto sinP = sin(P);
-    const auto cosB = cos(B);
-    const auto sinB = sin(B);
+    const auto c1 = cos(H);
+    const auto s1 = sin(H);
+    const auto c2 = cos(P);
+    const auto s2 = sin(P);
+    const auto c3 = cos(B);
+    const auto s3 = sin(B);
 
     double foo[] = {
-        cosH * cosB - sinH * sinP * sinB,
-        - sinB * cosP,
-        sinH * cosB + cosH * sinP * sinB,
-        cosH * sinB + sinH * sinP * cosB,
-        cosB * cosP,
-        sinB * sinH - cosH * sinP * cosB,
-        - sinH * cosP,
-        - sinP,
-        cosH * cosP,
+        // x
+        c2*c3,
+        -c2*s3,
+        s2,
+        // y
+        c1*s3 + c3*s1*s2,
+        c1*c3 - s1*s2*s3,
+        -c2*s1,
+        // z
+        s1*s3 - c1*c2*s2,
+        c3*s1 + c1*s2*s3,
+        c1*c2,
     };
 
     return cv::Matx33d(foo);
@@ -122,7 +141,7 @@ void Tracker::logic()
     if (centerp)
     {
         centerp = false;
-        r_b = filtered_pose.quat();
+        r_b = euler_to_rmat(&filtered_pose[Yaw]);
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
     }
@@ -130,10 +149,15 @@ void Tracker::logic()
     Pose raw_centered;
 
     {
-        const Quat q = filtered_pose.quat();
-        raw_centered = Pose::fromQuat(r_b.inv() * q);
+        const auto m = euler_to_rmat(&filtered_pose[Yaw]);
+        const cv::Matx33d m_ = m * r_b.t();
+        const auto euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
+        {
+            static constexpr double pi = 3.141592653;
             raw_centered(i) = filtered_pose(i) - t_b[i];
+            raw_centered(i+3) = euler(i) * 180./pi;
+        }
     }
 
     Pose mapped_pose_precomp;
