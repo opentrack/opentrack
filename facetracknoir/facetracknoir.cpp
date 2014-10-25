@@ -279,7 +279,7 @@ void FaceTrackNoIR::stopTracker( ) {
 
 void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
 {
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Roll], mapped[Pitch]);
+    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll]);
 
     if (mapping_widget)
         mapping_widget->update();
