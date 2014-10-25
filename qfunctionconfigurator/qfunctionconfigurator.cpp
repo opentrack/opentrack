@@ -3,7 +3,6 @@
 #include <QPaintEvent>
 #include <QPen>
 #include <QPixmap>
-#include <QTimer>
 #include <cmath>
 #include <algorithm>
 
@@ -36,7 +35,7 @@ void QFunctionConfigurator::drawBackground()
     if (!_config)
         return;
     _background = QPixmap(width(), height());
-    
+
     QPainter painter(&_background);
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
 
@@ -135,7 +134,7 @@ void QFunctionConfigurator::drawFunction()
 
     static constexpr double step = 1.02;
     const double max = _config->maxInput();
-    
+
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (double i = 0; i < max; i += step) {
         double val = _config->getValue(i);
@@ -156,7 +155,7 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         _draw_function = false;
         drawFunction();
     }
-    
+
     p.drawPixmap(e->rect(), _function);
 
     if (_config) {
@@ -260,32 +259,25 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
     if (!_config)
         return;
-    
-    static constexpr int min_refresh_delay = 12;
-    
-    if (timer.isValid() && timer.elapsed() < min_refresh_delay)
-        return;
-    
-    static constexpr int refresh_delay = 17;
+
     QList<QPointF> points = _config->getPoints();
 
     if (moving_control_point_idx != -1 && moving_control_point_idx < points.size()) {
         setCursor(Qt::ClosedHandCursor);
-        
+
         bool overlap = false;
-        
+
         QPointF new_pt = pixel_coord_to_point(e->pos());
-        
+
         if (moving_control_point_idx + 1 < points.size())
             overlap |= new_pt.x() > points[moving_control_point_idx+1].x();
         if (moving_control_point_idx != 0)
             overlap |= new_pt.x() < points[moving_control_point_idx-1].x();
-        
+
         if (overlap)
             moving_control_point_idx = -1;
-        else if (timer.isValid() && timer.elapsed() > refresh_delay)
+        else
         {
-            timer.restart();
             points[moving_control_point_idx] = new_pt;
             _config->movePoint(moving_control_point_idx, new_pt);
             _draw_function = true;
@@ -323,7 +315,7 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
         }
         setCursor(Qt::ArrowCursor);
         moving_control_point_idx = -1;
-        
+
         _draw_function = true;
         update();
     }
@@ -333,15 +325,15 @@ void QFunctionConfigurator::update_range()
 {
     if (!_config)
         return;
-    
+
     const double w = width(), h = height();
     const double mwl = 40, mhl = 20;
     const double mwr = 15, mhr = 35;
-    
+
     pixel_bounds = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
     c = QPointF(pixel_bounds.width() / _config->maxInput(), pixel_bounds.height() / _config->maxOutput());
     _draw_function = true;
-    
+
     _background = QPixmap();
     _function = QPixmap();
 }
