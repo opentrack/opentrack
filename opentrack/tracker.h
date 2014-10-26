@@ -36,7 +36,7 @@ private:
     cv::Matx33d r_b;
     double t_b[3];
 
-    double map(double pos, Mapping& axis);
+    double map(double pos, bool invertp, Mapping& axis);
     void logic();
 
     void t_compensate(const cv::Matx33d& rmat, const double* ypr, double* output, bool rz);
