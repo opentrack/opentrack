@@ -5,30 +5,20 @@
 #include <QMutex>
 #include <QTimer>
 
-#define ACCELA_SMOOTHING_ROTATION 60.0
-#define ACCELA_SMOOTHING_TRANSLATION 40.0
-#define ACCELA_fast_ALPHA 100.0
-#define ACCELA_THIRD_ORDER_ALPHA 180.0
-
 #include "opentrack/options.hpp"
 using namespace options;
 
 struct settings {
     pbundle b;
-    value<double> rotation_alpha,
-                  translation_alpha,
-                  rot_deadzone,
-                  trans_deadzone,
-                  expt;
-    value<int> fast_alpha;
+    value<double> rot_deadzone, trans_deadzone;
+    value<int> rot_plus, rot_minus, trans_smoothing;
     settings() :
         b(bundle("Accela")),
-        rotation_alpha(b, "rotation-alpha", ACCELA_SMOOTHING_ROTATION),
-        translation_alpha(b, "translation-alpha", ACCELA_SMOOTHING_TRANSLATION),
         rot_deadzone(b, "rotation-deadband", 0),
         trans_deadzone(b, "translation-deadband", 0),
-        expt(b, "exponent", 2),
-        fast_alpha(b, "fast-alpha", 0)
+        rot_plus(b, "rotation-increase", 30),
+        rot_minus(b, "rotation-decrease", 25),
+        trans_smoothing(b, "translation-smoothing", 0)
     {}
 };
 
@@ -44,20 +34,16 @@ public:
     FTNoIR_Filter();
     void filter(const double* target_camera_position, double *new_camera_position);
     state_display state;
-private:
-    // hardcoded distance between filter() calls
     static constexpr double Hz = 3./1000;
-    // moving average history
-    static constexpr double fast_alpha_seconds = 0.6;
+private:
+    // moving average history amount
+    static constexpr double fast_alpha_seconds = 0.7;
     // max degrees considered "slow" after moving average
     static constexpr double max_slow_delta = 0.9;
-    // if set to zero, never decreases response above, can also slow
-    // down due to fast_alpha
-    static constexpr double damping = 0.; 
     settings s;
     bool first_run;
     double last_output[6];
-    double fast_state[6];
+    double fast_state[3];
 };
 
 class FilterControls: public IFilterDialog
