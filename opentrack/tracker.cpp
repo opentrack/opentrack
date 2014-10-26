@@ -39,9 +39,9 @@ Tracker::~Tracker()
     wait();
 }
 
-double Tracker::map(double pos, Mapping& axis)
+double Tracker::map(double pos, bool invertp, Mapping& axis)
 {
-    bool altp = (pos < 0) && axis.opts.altp;
+    bool altp = (pos < 0) == !invertp && axis.opts.altp;
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
@@ -92,12 +92,12 @@ static cv::Matx33d euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
 {
-    const double xyz_[3] = { xyz[2], xyz[1], xyz[0] };
+    const double xyz_[3] = { xyz[2], -xyz[1], xyz[0] };
     cv::Matx31d tvec(xyz_);
     const cv::Matx31d ret = rmat * tvec;
     if (!rz)
         output[2] = ret(0, 0);
-    output[1] = ret(1, 0);
+    output[1] = -ret(1, 0);
     output[0] = ret(2, 0);
 }
 
@@ -116,9 +116,18 @@ void Tracker::logic()
     else
         filtered_pose = final_raw;
 
+    bool inverts[6] = {
+        m(0).opts.invert,
+        m(1).opts.invert,
+        m(2).opts.invert,
+        m(3).opts.invert,
+        m(4).opts.invert,
+        m(5).opts.invert,
+    };
+
     // must invert early as euler_to_rmat's sensitive to sign change
     for (int i = 0; i < 6; i++)
-        filtered_pose[i] *= m(i).opts.invert ? -1. : 1.;
+        filtered_pose[i] *= inverts[i] ? -1. : 1.;
 
     if (centerp)
     {
@@ -146,7 +155,7 @@ void Tracker::logic()
     Pose mapped_pose_precomp;
 
     for (int i = 0; i < 6; i++)
-        mapped_pose_precomp(i) = map(raw_centered(i), m(i));
+        mapped_pose_precomp(i) = map(raw_centered(i), inverts[i], m(i));
 
     Pose mapped_pose_ = mapped_pose_precomp;
 
