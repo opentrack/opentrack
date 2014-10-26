@@ -219,7 +219,7 @@ void Tracker::run()
 
         std::vector< aruco::Marker > markers;
 
-        const double size_min = 0.07;
+        const double size_min = 0.02;
         const double size_max = 0.4;
         
         bool roi_valid = false;

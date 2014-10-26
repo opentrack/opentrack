@@ -12,12 +12,12 @@ FilterControls::FilterControls() :
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.rotation_alpha, ui.rotation_alpha);
-    tie_setting(s.translation_alpha, ui.translation_alpha);
-    tie_setting(s.fast_alpha, ui.ui_fast_alpha);
     tie_setting(s.rot_deadzone, ui.rot_deadzone);
     tie_setting(s.trans_deadzone, ui.trans_deadzone);
-    tie_setting(s.expt, ui.expt);
+
+    tie_setting(s.rot_plus , ui.rot_plus);
+    tie_setting(s.rot_minus , ui.rot_minus);
+    tie_setting(s.trans_smoothing, ui.trans_smoothing);
 
     connect(&t, SIGNAL(timeout()), this, SLOT(timer_fired()));
 
