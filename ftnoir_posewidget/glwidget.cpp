@@ -34,10 +34,10 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
 {
 
-    double c1 = cos(xAngle / 57.295781);
-    double s1 = sin(xAngle / 57.295781);
-    double c2 = cos(zAngle / 57.295781);
-    double s2 = sin(zAngle / 57.295781);
+    double c1 = cos(zAngle / 57.295781);
+    double s1 = sin(zAngle / 57.295781);
+    double c2 = cos(xAngle / 57.295781);
+    double s2 = sin(xAngle / 57.295781);
     double c3 = cos(yAngle / 57.295781);
     double s3 = sin(yAngle / 57.295781);
 
