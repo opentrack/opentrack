@@ -105,24 +105,9 @@ void Tracker::logic()
 {
     libs.pTracker->data(newpose);
 
-    Pose final_raw_;
-
     if (enabledp)
-    {
         for (int i = 0; i < 6; i++)
-        {
-            auto& axis = m(i);
-            int k = axis.opts.src;
-            if (k < 0 || k >= 6)
-            {
-                final_raw_(i) = 0;
-                continue;
-            }
-            // not really raw, after axis remap -sh
-            final_raw_(i) = newpose[k];
-        }
-        final_raw = final_raw_;
-    }
+            final_raw(i) = newpose[i];
 
     Pose filtered_pose;
 
@@ -163,13 +148,26 @@ void Tracker::logic()
     for (int i = 0; i < 6; i++)
         mapped_pose_precomp(i) = map(raw_centered(i), m(i));
 
-    Pose mapped_pose = mapped_pose_precomp;
+    Pose mapped_pose_ = mapped_pose_precomp;
 
     if (s.tcomp_p)
         t_compensate(euler_to_rmat(&mapped_pose_precomp[Yaw]),
                      mapped_pose_precomp,
-                     mapped_pose,
+                     mapped_pose_,
                      s.tcomp_tz);
+
+    Pose mapped_pose;
+
+    for (int i = 0; i < 6; i++)
+    {
+        auto& axis = m(i);
+        int k = axis.opts.src;
+        if (k < 0 || k >= 6)
+            mapped_pose(i) = 0;
+        else
+            mapped_pose(i) = mapped_pose_(i);
+    }
+
 
     libs.pProtocol->pose(mapped_pose);
 
