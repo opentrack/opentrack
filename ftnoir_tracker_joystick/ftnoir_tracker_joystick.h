@@ -32,17 +32,24 @@ using namespace options;
 struct settings {
     pbundle b;
     value<QString> joyid;
+    value<int> joy_1, joy_2, joy_3, joy_4, joy_5, joy_6;
     settings() :
         b(bundle("tracker-joystick")),
-        joyid(b, "joy-id", "")
+        joyid(b, "joy-id", ""),
+        joy_1(b, "axis-map-1", 1),
+        joy_2(b, "axis-map-2", 2),
+        joy_3(b, "axis-map-3", 3),
+        joy_4(b, "axis-map-4", 4),
+        joy_5(b, "axis-map-5", 5),
+        joy_6(b, "axis-map-6", 6)
     {}
 };
 
 class FTNoIR_Tracker : public ITracker
 {
 public:
-	FTNoIR_Tracker();
-	~FTNoIR_Tracker();
+    FTNoIR_Tracker();
+    ~FTNoIR_Tracker();
     void start_tracker(QFrame *frame);
     void data(double *data);
     void reload();
@@ -53,7 +60,7 @@ public:
     DIDEVICEINSTANCE def;
     int iter; // XXX bad style
     settings s;
-	static constexpr int AXIS_MAX = 65535;
+    static constexpr int AXIS_MAX = 65535;
 };
 
 class TrackerControls: public ITrackerDialog
@@ -68,8 +75,8 @@ public:
     FTNoIR_Tracker* tracker;
     settings s;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_TrackerDll : public Metadata

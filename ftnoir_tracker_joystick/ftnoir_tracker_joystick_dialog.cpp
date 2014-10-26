@@ -37,8 +37,15 @@ fin:
         if (g_pDI)
             g_pDI->Release();
     }
-	
-	tie_setting(s.joyid, ui.joylist);
+
+    tie_setting(s.joyid, ui.joylist);
+
+    tie_setting(s.joy_1, ui.joy_1);
+    tie_setting(s.joy_2, ui.joy_2);
+    tie_setting(s.joy_3, ui.joy_3);
+    tie_setting(s.joy_4, ui.joy_4);
+    tie_setting(s.joy_5, ui.joy_5);
+    tie_setting(s.joy_6, ui.joy_6);
 }
 
 void TrackerControls::doOK() {
