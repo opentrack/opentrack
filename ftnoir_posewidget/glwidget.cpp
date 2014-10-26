@@ -34,22 +34,31 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
 {
 
-    double ch = cos(xAngle / 57.295781);
-    double sh = sin(xAngle / 57.295781);
-    double ca = cos(zAngle / 57.295781);
-    double sa = sin(zAngle / 57.295781);
-    double cb = cos(yAngle / 57.295781);
-    double sb = sin(yAngle / 57.295781);
+    double c1 = cos(xAngle / 57.295781);
+    double s1 = sin(xAngle / 57.295781);
+    double c2 = cos(zAngle / 57.295781);
+    double s2 = sin(zAngle / 57.295781);
+    double c3 = cos(yAngle / 57.295781);
+    double s3 = sin(yAngle / 57.295781);
 
-    matrix[0 * 3 + 0] = ch * ca;
-    matrix[0 * 3 + 1]= sh*sb - ch*sa*cb;
-    matrix[0 * 3 + 2]= ch*sa*sb + sh*cb;
-    matrix[1 * 3 + 0]= sa;
-    matrix[1 * 3 + 1]= ca*cb;
-    matrix[1 * 3 + 2]= -ca*sb;
-    matrix[2 * 3 + 0]= -sh*ca;
-    matrix[2 * 3 + 1]= sh*sa*cb + ch*sb;
-    matrix[2 * 3 + 2]= -sh*sa*sb + ch*cb;
+    double foo[] = {
+        // z
+        c1 * c2,
+        c1 * s2 * s3 - c3 * s1,
+        s1 * s3 + c1 * c3 * s2,
+        // y
+        c2 * s1,
+        c1 * c3 + s1 * s2 * s3,
+        c3 * s1 * s2 - c1 * s3,
+        // x
+        -s2,
+        c2 * s3,
+        c2 * c3
+    };
+
+    for (int i = 0; i < 9; i++)
+        matrix[i] = foo[i];
+
     update();
 }
 
