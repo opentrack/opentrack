@@ -92,13 +92,13 @@ static cv::Matx33d euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
 {
-    const double xyz_[3] = { xyz[2], -xyz[1], xyz[0] };
+    const double xyz_[3] = { xyz[2], xyz[0], -xyz[1] };
     cv::Matx31d tvec(xyz_);
     const cv::Matx31d ret = rmat * tvec;
     if (!rz)
         output[2] = ret(0, 0);
-    output[1] = -ret(1, 0);
-    output[0] = ret(2, 0);
+    output[0] = ret(1, 0);
+    output[1] = -ret(2, 0);
 }
 
 void Tracker::logic()
