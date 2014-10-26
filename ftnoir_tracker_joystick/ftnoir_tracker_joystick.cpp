@@ -36,9 +36,9 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
         g_pJoystick->Release();
     }
     if (g_pDI)
-	{
+    {
         g_pDI->Release();
-	}
+    }
 }
 
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
@@ -47,7 +47,7 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
                                    VOID* pContext )
 {
     auto self = (FTNoIR_Tracker*) pContext;
-	
+
     if( pdidoi->dwType & DIDFT_AXIS )
     {
         DIPROPRANGE diprg = {0};
@@ -55,8 +55,8 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
-	diprg.lMax = FTNoIR_Tracker::AXIS_MAX;
-	diprg.lMin = -FTNoIR_Tracker::AXIS_MAX;
+        diprg.lMax = FTNoIR_Tracker::AXIS_MAX;
+        diprg.lMin = -FTNoIR_Tracker::AXIS_MAX;
 
         if( FAILED( self->g_pJoystick->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
             return DIENUM_STOP;
@@ -69,14 +69,14 @@ static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 
 static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
 {
-	auto self = reinterpret_cast<FTNoIR_Tracker*>(pContext);
-	bool stop = QString(pdidInstance->tszInstanceName) == self->s.joyid;
+    auto self = reinterpret_cast<FTNoIR_Tracker*>(pContext);
+    bool stop = QString(pdidInstance->tszInstanceName) == self->s.joyid;
 
-	if (stop)
-	{
-		(void) self->g_pDI->CreateDevice( pdidInstance->guidInstance, &self->g_pJoystick, NULL);
-		qDebug() << "device" << static_cast<QString>(self->s.joyid);
-	}
+    if (stop)
+    {
+        (void) self->g_pDI->CreateDevice( pdidInstance->guidInstance, &self->g_pJoystick, NULL);
+        qDebug() << "device" << static_cast<QString>(self->s.joyid);
+    }
 
     return stop ? DIENUM_STOP : DIENUM_CONTINUE;
 }
@@ -94,8 +94,8 @@ void FTNoIR_Tracker::start_tracker(QFrame* frame)
         qDebug() << "create";
         goto fail;
     }
-	
-	if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
+
+    if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
                                          EnumJoysticksCallback,
                                          this,
                                          DIEDFL_ATTACHEDONLY)))
@@ -152,39 +152,48 @@ void FTNoIR_Tracker::data(double *data)
     if( !g_pDI || !g_pJoystick)
         return;
 
-	bool ok = false;
+    bool ok = false;
 
-	for (int i = 0; i < 100; i++)
-	{
-		if (!FAILED(g_pJoystick->Poll()))
-		{
-			ok = true;
-			break;
-		}
-		if (g_pJoystick->Acquire() != DI_OK)
-			continue;
-		else
-			ok = true;
-		break;
-	}
+    for (int i = 0; i < 100; i++)
+    {
+        if (!FAILED(g_pJoystick->Poll()))
+        {
+                ok = true;
+                break;
+        }
+        if (g_pJoystick->Acquire() != DI_OK)
+                continue;
+        else
+                ok = true;
+        break;
+    }
 
-	if (!ok)
-		return;
+    if (!ok)
+            return;
 
-	HRESULT hr = 0;
+    HRESULT hr = 0;
 
     if( FAILED( hr = g_pJoystick->GetDeviceState( sizeof( js ), &js ) ) )
         return;
 
     const LONG values[] = {
-        js.lRx,
-        js.lRy,
-        js.lRz,
         js.lX,
         js.lY,
         js.lZ,
+        js.lRx,
+        js.lRy,
+        js.lRz,
         js.rglSlider[0],
         js.rglSlider[1]
+    };
+
+    int map[6] = {
+        s.joy_1 - 1,
+        s.joy_2 - 1,
+        s.joy_3 - 1,
+        s.joy_4 - 1,
+        s.joy_5 - 1,
+        s.joy_6 - 1,
     };
 
     const double limits[] = {
@@ -192,12 +201,18 @@ void FTNoIR_Tracker::data(double *data)
         100,
         100,
         180,
-        90,
+        180,
         180
     };
-    
+
     for (int i = 0; i < 6; i++)
-        data[i] = values[i] * limits[i] / AXIS_MAX;
+    {
+        int k = map[i] - 1;
+        if (k < 0 || k >= 8)
+            data[i] = 0;
+        else
+            data[i] = values[k] * limits[i] / AXIS_MAX;
+    }
 }
 
 extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
