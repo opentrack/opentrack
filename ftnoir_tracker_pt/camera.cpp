@@ -302,29 +302,3 @@ void VICamera::_set_res()
 	if (active) restart();
 }
 #endif
-
-// ----------------------------------------------------------------------------
-Mat FrameRotation::rotate_frame(Mat frame)
-{	
-	switch (rotation)
-	{
-	case CLOCKWISE:
-		{
-			Mat dst;
-			transpose(frame, dst);
-			flip(dst, dst, 1);
-			return dst;
-		}
-
-	case COUNTER_CLOCKWISE:
-		{
-			Mat dst;
-			transpose(frame, dst);
-			flip(dst, dst, 0);
-			return dst;
-		}
-	
-	default:
-		return frame;
-	}
-}

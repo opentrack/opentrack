@@ -66,7 +66,6 @@ void Tracker::run()
         {
             QMutexLocker lock(&mutex);
 
-            frame = frame_rotation.rotate_frame(frame);
             const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame);
             for (auto p : points)
             {
@@ -119,22 +118,15 @@ void Tracker::apply_inner()
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
-    frame_rotation.rotation = static_cast<RotationType>(static_cast<int>(s.cam_roll));
     point_extractor.threshold_val = s.threshold;
     point_extractor.threshold_secondary_val = s.threshold_secondary;
     point_extractor.min_size = s.min_point_size;
     point_extractor.max_size = s.max_point_size;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
-    R_GC =  Matx33f( cos(deg2rad*s.cam_yaw), 0, sin(deg2rad*s.cam_yaw),
-		                                         0, 1,                             0,
-                    -sin(deg2rad*s.cam_yaw), 0, cos(deg2rad*s.cam_yaw));
-	R_GC = R_GC * Matx33f( 1,                                0,                               0,
-                           0,  cos(deg2rad*s.cam_pitch), sin(deg2rad*s.cam_pitch),
-                           0, -sin(deg2rad*s.cam_pitch), cos(deg2rad*s.cam_pitch));
-
-	FrameTrafo X_MH(Matx33f::eye(), t_MH);
-	X_GH_0 = R_GC * X_MH;
-	qDebug()<<"Tracker::apply ends";
+    R_GC = cv::Matx33f::eye();
+    FrameTrafo X_MH(Matx33f::eye(), t_MH);
+    X_GH_0 = R_GC * X_MH;
+    qDebug()<<"Tracker::apply ends";
 }
 
 void Tracker::reset()
@@ -145,7 +137,7 @@ void Tracker::reset()
 
 void Tracker::center()
 {
-	point_tracker.reset();	// we also do a reset here since there is no reset shortkey yet
+	point_tracker.reset();
 	QMutexLocker lock(&mutex);
 	FrameTrafo X_CM_0 = point_tracker.pose();
 	FrameTrafo X_MH(Matx33f::eye(), t_MH);

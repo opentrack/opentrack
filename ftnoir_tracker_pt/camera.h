@@ -5,8 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include <opencv2/core/core.hpp>
 #ifndef OPENTRACK_API
@@ -128,14 +127,3 @@ enum RotationType
     ZERO = 1,
     COUNTER_CLOCKWISE = 2
 };
-
-// ----------------------------------------------------------------------------
-class FrameRotation
-{
-public:
-    RotationType rotation;
-
-    cv::Mat rotate_frame(cv::Mat frame);
-};
-
-#endif //CAMERA_H
