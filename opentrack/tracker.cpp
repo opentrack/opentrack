@@ -103,8 +103,6 @@ void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* o
 
 void Tracker::logic()
 {
-    libs.pTracker->data(newpose);
-
     if (enabledp)
         for (int i = 0; i < 6; i++)
             final_raw(i) = newpose[i];
@@ -196,12 +194,23 @@ void Tracker::run() {
     {
         t.start();
 
+        libs.pTracker->data(newpose);
         logic();
 
         double q = sleep_ms * 1000L;
         q -= t.elapsed();
         q = std::max(0., q);
         usleep((long)q);
+    }
+
+    {
+        // do one last pass with origin pose
+        for (int i = 0; i < 6; i++)
+            newpose[i] = 0;
+        logic();
+        // filter may inhibit exact origin
+        Pose p;
+        libs.pProtocol->pose(p);
     }
 
 #if defined(_WIN32)
