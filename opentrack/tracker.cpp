@@ -197,10 +197,8 @@ void Tracker::run() {
         libs.pTracker->data(newpose);
         logic();
 
-        double q = sleep_ms * 1000L;
-        q -= t.elapsed();
-        q = std::max(0., q);
-        usleep((long)q);
+        long q = sleep_ms * 1000L - t.elapsed()/1000L;
+        usleep(q);
     }
 
     {
