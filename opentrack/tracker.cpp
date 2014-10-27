@@ -198,7 +198,7 @@ void Tracker::run() {
         logic();
 
         long q = sleep_ms * 1000L - t.elapsed()/1000L;
-        usleep(q);
+        usleep(std::max(1L, q));
     }
 
     {
