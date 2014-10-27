@@ -52,7 +52,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     for (int i = 0; i < 6; i++)
     {
         const double vec = input[i] - last_output[i];
-        double datum = Hz * 24;
+        double datum = Hz * 64;
 
         if (i >= 3)
         {
