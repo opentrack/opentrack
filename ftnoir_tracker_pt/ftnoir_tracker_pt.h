@@ -62,7 +62,6 @@ private:
     volatile int commands;
 
     CVCamera       camera;
-    FrameRotation  frame_rotation;
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 

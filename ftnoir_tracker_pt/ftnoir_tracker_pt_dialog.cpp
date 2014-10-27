@@ -34,17 +34,10 @@ TrackerDialog::TrackerDialog()
         ui.camdevice_combo->addItem(iter->c_str());
     }
 
-    ui.camroll_combo->addItem("-90");
-    ui.camroll_combo->addItem("0");
-    ui.camroll_combo->addItem("90");
-
     tie_setting(s.cam_index, ui.camdevice_combo);
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
-    tie_setting(s.cam_roll, ui.camroll_combo);
-    tie_setting(s.cam_pitch, ui.campitch_spin);
-    tie_setting(s.cam_yaw, ui.camyaw_spin);
 
     tie_setting(s.threshold_secondary, ui.threshold_secondary_slider);
     tie_setting(s.threshold, ui.threshold_slider);
