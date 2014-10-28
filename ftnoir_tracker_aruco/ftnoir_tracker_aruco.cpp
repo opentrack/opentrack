@@ -201,7 +201,7 @@ void Tracker::run()
         if (!camera.read(color))
             continue;
         auto tm = cv::getTickCount();
-        
+
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         const int scale = frame.cols > 480 ? 2 : 1;
@@ -221,14 +221,14 @@ void Tracker::run()
 
         const double size_min = 0.02;
         const double size_max = 0.4;
-        
+
         bool roi_valid = false;
-        
+
         if (last_roi.width > 0 && last_roi.height)
         {
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
-            
+
             if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
@@ -242,13 +242,13 @@ void Tracker::run()
                 roi_valid = true;
             }
         }
-        
+
         if (!roi_valid)
         {
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
-        
+
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
@@ -271,9 +271,9 @@ void Tracker::run()
         frame = color.clone();
 
         ::sprintf(buf, "Hz: %d", last_fps);
-        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), 1);
+        cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale*2);
         ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
-        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), 1);
+        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale*2);
 
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
@@ -284,85 +284,85 @@ void Tracker::run()
             obj_points.at<float>(x1,0)=-size + s.headpos_x;
             obj_points.at<float>(x1,1)=-size + s.headpos_y;
             obj_points.at<float>(x1,2)= 0 + s.headpos_z;
-            
+
             obj_points.at<float>(x2,0)=size + s.headpos_x;
             obj_points.at<float>(x2,1)=-size + s.headpos_y;
             obj_points.at<float>(x2,2)= 0 + s.headpos_z;
-            
+
             obj_points.at<float>(x3,0)=size + s.headpos_x;
             obj_points.at<float>(x3,1)=size + s.headpos_y;
             obj_points.at<float>(x3,2)= 0 + s.headpos_z;
-            
+
             obj_points.at<float>(x4,0)= -size + s.headpos_x;
             obj_points.at<float>(x4,1)= size + s.headpos_y;
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
-            
+
             cv::Vec3d rvec, tvec;
-            
+
             cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
-            
+
             std::vector<cv::Point2f> roi_projection(4);
-            
+
             {
                 std::vector<cv::Point2f> repr2;
                 std::vector<cv::Point3f> centroid;
                 centroid.push_back(cv::Point3f(0, 0, 0));
                 cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
-    
+
                 {
                     auto s = cv::Scalar(255, 0, 255);
                     cv::circle(frame, repr2.at(0), 4, s, -1);
                 }
             }
-            
+
             for (int i = 0; i < 4; i++)
             {
                 obj_points.at<float>(i, 0) -= s.headpos_x;
                 obj_points.at<float>(i, 1) -= s.headpos_y;
                 obj_points.at<float>(i, 2) -= s.headpos_z;
             }
-            
+
             {
                 cv::Mat rvec_, tvec_;
                 cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::ITERATIVE);
                 tvec = tvec_;
             }
-            
+
             cv::Mat roi_points = obj_points * c_search_window;
             cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
-            
+
             last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
-            
+
             for (int i = 0; i < 4; i++)
             {
                 auto proj = roi_projection[i];
                 int min_x = std::min<int>(proj.x, last_roi.x),
                     min_y = std::min<int>(proj.y, last_roi.y);
-                
+
                 int max_x = std::max<int>(proj.x, last_roi.width),
                     max_y = std::max<int>(proj.y, last_roi.height);
-                
+
                 last_roi.x = min_x;
                 last_roi.y = min_y;
-                
+
                 last_roi.width = max_x;
                 last_roi.height = max_y;
             }
-            
+
             if (last_roi.x < 0)
                 last_roi.x = 0;
             if (last_roi.y < 0)
                 last_roi.y = 0;
-            
+
             if (last_roi.width+1 > color.cols)
                 last_roi.width = color.cols-1;
-            
+
             if (last_roi.height+1 > color.rows)
                 last_roi.height = color.rows-1;
 
             last_roi.width -= last_roi.x;
             last_roi.height -= last_roi.y;
-          
+
             auto rmat = cv::Matx33d::zeros();
             cv::Matx33d m_r(3, 3, CV_64FC1), m_q(3, 3, CV_64FC1);
             cv::Rodrigues(rvec, rmat);
@@ -381,7 +381,7 @@ void Tracker::run()
                 r = rmat;
                 t = tvec;
             }
-            
+
             if (roi_valid)
                 cv::rectangle(frame, last_roi, cv::Scalar(255, 0, 255), 1);
         }
