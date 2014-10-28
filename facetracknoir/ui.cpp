@@ -436,7 +436,7 @@ void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
 
 void MainWindow::changeEvent(QEvent* e)
 {
-    if (e->type() == QEvent::WindowStateChange && (windowState() & Qt::WindowMinimized))
+    if (tray_enabled && e->type() == QEvent::WindowStateChange && (windowState() & Qt::WindowMinimized))
         hide();
     QMainWindow::changeEvent(e);
 }
