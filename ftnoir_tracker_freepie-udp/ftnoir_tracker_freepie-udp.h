@@ -15,10 +15,13 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<int> port;
+    value<int> port, idx_x, idx_y, idx_z;
     settings() :
         b(bundle("freepie-udp-tracker")),
-        port(b, "port", 4237)
+        port(b, "port", 4237),
+        idx_x(b, "axis-index-x", 0),
+        idx_y(b, "axis-index-y", 1),
+        idx_z(b, "axis-index-z", 2)
     {}
 };
 
