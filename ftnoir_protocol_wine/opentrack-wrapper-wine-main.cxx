@@ -1,6 +1,6 @@
 #include <cerrno>
 #include <cstdio>
-#include "ftnoir_protocol_ft/fttypes.h"
+#include "freetrackclient/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
 
 #define OPENTRACK_CROSS_ONLY

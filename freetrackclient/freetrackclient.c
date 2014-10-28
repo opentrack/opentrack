@@ -31,9 +31,9 @@
 #include <string.h>
 #include <windows.h>
 
-#include "../ftnoir_protocol_ft/fttypes.h"
+#include "fttypes.h"
 
-#define FT_EXPORT(t) __declspec(dllexport) t __stdcall
+#define FT_EXPORT(t) t __stdcall
 
 #if 0
 #   include <stdio.h>
@@ -70,7 +70,6 @@ static bool impl_create_mapping(void)
     return true;
 }
 
-#pragma comment (linker, "/export:FTGetData")
 FT_EXPORT(bool) FTGetData(FTData* data)
 {
     if (impl_create_mapping() == false)
@@ -92,23 +91,24 @@ FT_EXPORT(bool) FTGetData(FTData* data)
 // The Delphi-code from the FreeTrack repo suggest a char * as argument, so it cost me an afternoon to figure it out (and keep ArmA2 from crashing).
 // Thanks guys!
 */
-#pragma comment (linker, "/export:FTReportName")
 FT_EXPORT(void) FTReportName( int name )
 {
     dbg_report("FTReportName request (ID = %d).\n", name);
 }
 
-#pragma comment (linker, "/export:FTGetDllVersion")
 FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
     return dllVersion;
 }
 
-#pragma comment (linker, "/export:FTProvider")
 FT_EXPORT(const char*) FTProvider(void)
 {
     dbg_report("FTProvider request.\n");
     return dllProvider;
 }
 
+#pragma comment (linker, "/export:FTReportName=_FTReportName@4")
+#pragma comment (linker, "/export:FTGetDllVersion=_FTGetDllVersion@0")
+#pragma comment (linker, "/export:FTProvider=_FTProvider@0")
+#pragma comment (linker, "/export:FTGetData=_FTGetData@4")
