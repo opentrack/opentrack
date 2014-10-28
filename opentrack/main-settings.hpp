@@ -27,6 +27,7 @@ struct main_settings {
     value<QString> tracker_dll, tracker2_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
+    value<bool> tray_enabled;
     main_settings(pbundle b) :
         b(b),
         tracker_dll(b, "tracker-dll", ""),
@@ -40,6 +41,7 @@ struct main_settings {
         a_pitch(b, "pitch", Pitch),
         a_roll(b, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
-        tcomp_tz(b, "compensate-translation-disable-z-axis", false)
+        tcomp_tz(b, "compensate-translation-disable-z-axis", false),
+        tray_enabled(false, "use-system-tray", true)
     {}
 };

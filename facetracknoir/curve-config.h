@@ -1,7 +1,7 @@
 #pragma once
 #include <QWidget>
 #include "opentrack/mappings.hpp"
-#include "ui_ftnoir_curves.h"
+#include "ui_mapping.h"
 
 class MapWidget: public QWidget
 {

@@ -36,6 +36,7 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QTimer>
+#include <QSystemTrayIcon>
 
 #if !defined(_WIN32)
 #       include "qxt-mini/QxtGlobalShortcut"
@@ -61,6 +62,7 @@ class MainWindow : public QMainWindow, private State
     Q_OBJECT
 
     Ui::OpentrackUI ui;
+    ptr<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
     ptr<KeyboardShortcutDialog> shortcuts_widget;
     ptr<MapWidget> mapping_widget;
@@ -88,6 +90,7 @@ class MainWindow : public QMainWindow, private State
     void updateButtonState(bool running, bool inertialp);
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
+    void ensure_tray();
 
 public slots:
     void shortcutRecentered();

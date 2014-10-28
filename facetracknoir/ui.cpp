@@ -21,7 +21,7 @@
 * You should have received a copy of the GNU General Public License along
 * with this program; if not, see <http://www.gnu.org/licenses/>.
 *********************************************************************************/
-#include "facetracknoir.h"
+#include "ui.h"
 #include "opentrack/tracker.h"
 #include <QFileDialog>
 
@@ -78,6 +78,10 @@ MainWindow::MainWindow() :
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
+
+    ensure_tray();
+    if (s.tray_enabled)
+        hide();
 }
 
 MainWindow::~MainWindow()
@@ -405,4 +409,16 @@ void MainWindow::shortcutToggled()
     qDebug() << "Toggle";
     if (work)
         work->tracker->toggle_enabled();
+}
+
+void MainWindow::ensure_tray()
+{
+    tray = nullptr;
+    if (s.tray_enabled)
+    {
+        tray = std::make_shared<QSystemTrayIcon>(this);
+        tray->setIcon(QIcon(":/images/facetracknoir.png"));
+        tray->show();
+        connect(tray.get(), SIGNAL(activated()), this, SLOT(show()));
+    }
 }

@@ -1,4 +1,3 @@
-#include "./facetracknoir.h"
 #include "./curve-config.h"
 #include "opentrack/main-settings.hpp"
 MapWidget::MapWidget(Mappings& m, main_settings& s) :

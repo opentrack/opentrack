@@ -1,4 +1,4 @@
-#include "facetracknoir.h"
+#include "ui.h"
 #include <QApplication>
 #include <QStyleFactory>
 #include <QStringList>
