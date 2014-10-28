@@ -199,7 +199,7 @@ endif()
 
 opentrack_module(opentrack-compat compat)
 opentrack_module(opentrack-xplane-plugin x-plane-plugin)
-opentrack_module(freetrackclient freetrackclient)
+#opentrack_module(freetrackclient freetrackclient)
 
 if(SDK_XPLANE)
     # probably librt already included
@@ -292,10 +292,10 @@ if(WIN32)
     opentrack_library(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
 endif()
 
-if(WIN32)
-    add_library(freetrackclient SHARED ${freetrackclient-c})
-    set_target_properties(freetrackclient PROPERTIES PREFIX "")
-endif()
+#if(WIN32)
+#    add_library(freetrackclient SHARED ${freetrackclient-c})
+#    set_target_properties(freetrackclient PROPERTIES PREFIX "")
+#endif()
 
 opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
 
@@ -466,11 +466,12 @@ endif()
 
 if(WIN32)
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/tracker-ht DESTINATION .)
-    install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
+    #install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
 
+install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/clientfiles" DESTINATION .)
 

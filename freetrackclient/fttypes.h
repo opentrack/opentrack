@@ -23,6 +23,7 @@
 #   include <inttypes.h>
 #else
 typedef unsigned __int32 uint32_t;
+typedef __int32 int32_t;
 #endif
 
 #define FREETRACK_HEAP "FT_SharedMem"
