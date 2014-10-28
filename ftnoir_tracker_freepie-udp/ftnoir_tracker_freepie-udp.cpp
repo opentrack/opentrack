@@ -14,6 +14,16 @@ TrackerImpl::~TrackerImpl()
     wait();
 }
 
+template<typename t>
+static const t bound(t datum, t least, t max)
+{
+    if (datum < least)
+        return least;
+    if (datum > max)
+        return max;
+    return datum;
+}
+
 void TrackerImpl::run() {
 #pragma pack(push, 1)
     struct {
@@ -29,10 +39,12 @@ void TrackerImpl::run() {
         Mask = flag_Raw | flag_Orient
     };
 
-    while (1) {
-        if (should_quit)
-            break;
-
+    while (!should_quit) {
+        int order[] = {
+            bound<int>(s.idx_x, 0, 2),
+            bound<int>(s.idx_y, 0, 2),
+            bound<int>(s.idx_z, 0, 2)
+        };
         float orient[3];
         bool filled = false;
 
@@ -67,7 +79,9 @@ void TrackerImpl::run() {
             QMutexLocker foo(&mtx);
             static constexpr double d2r = 57.295781;
             for (int i = 0; i < 3; i++)
-                pose[Yaw + i] = d2r * orient[i];
+            {
+                pose[Yaw + i] = d2r * orient[order[i]];
+            }
         }
         usleep(4000);
     }
