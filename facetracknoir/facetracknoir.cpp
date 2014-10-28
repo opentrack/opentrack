@@ -34,11 +34,10 @@
 FaceTrackNoIR::FaceTrackNoIR() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/uielements/no-feed.png")
+    no_feed_pixmap(":/images/no-feed.png")
 {
     ui.setupUi(this);
 
-    adjustSize();
     setFixedSize(size());
 
     updateButtonState(false, false);
