@@ -1,5 +1,5 @@
 /*******************************************************************************
-* FaceTrackNoIR         This program is a private project of the some enthusiastic
+* MainWindow         This program is a private project of the some enthusiastic
 *                                       gamers from Holland, who don't like to pay much for
 *                                       head-tracking.
 *
@@ -56,7 +56,7 @@
 
 using namespace options;
 
-class FaceTrackNoIR : public QMainWindow, private State
+class MainWindow : public QMainWindow, private State
 {
     Q_OBJECT
 
@@ -110,8 +110,8 @@ private slots:
     void startTracker();
     void stopTracker();
 public:
-    FaceTrackNoIR();
-    ~FaceTrackNoIR();
+    MainWindow();
+    ~MainWindow();
     void save_mappings();
     void load_mappings();
 };

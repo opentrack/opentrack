@@ -31,7 +31,7 @@
 #   include <windows.h>
 #endif
 
-FaceTrackNoIR::FaceTrackNoIR() :
+MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     no_feed_pixmap(":/images/no-feed.png")
@@ -80,14 +80,14 @@ FaceTrackNoIR::FaceTrackNoIR() :
     kbd_quit.setEnabled(true);
 }
 
-FaceTrackNoIR::~FaceTrackNoIR()
+MainWindow::~MainWindow()
 {
     stopTracker();
     save();
     _exit(0);
 }
 
-void FaceTrackNoIR::open() {
+void MainWindow::open() {
      QFileDialog dialog(this);
      dialog.setFileMode(QFileDialog::ExistingFile);
 
@@ -108,7 +108,7 @@ void FaceTrackNoIR::open() {
     }
 }
 
-void FaceTrackNoIR::save_mappings() {
+void MainWindow::save_mappings() {
     pose.save_mappings();
 }
 
@@ -116,7 +116,7 @@ void FaceTrackNoIR::save_mappings() {
 #   include <unistd.h>
 #endif
 
-void FaceTrackNoIR::save() {
+void MainWindow::save() {
     b->save();
     save_mappings();
 
@@ -133,7 +133,7 @@ void FaceTrackNoIR::save() {
 #endif
 }
 
-void FaceTrackNoIR::saveAs()
+void MainWindow::saveAs()
 {
     QSettings settings("opentrack");
     QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
@@ -162,18 +162,18 @@ void FaceTrackNoIR::saveAs()
     fill_profile_combobox();
 }
 
-void FaceTrackNoIR::load_mappings() {
+void MainWindow::load_mappings() {
     pose.load_mappings();
 }
 
-void FaceTrackNoIR::load_settings() {
+void MainWindow::load_settings() {
     b->reload();
     load_mappings();
 }
 
 extern "C" volatile const char* opentrack_version;
 
-void FaceTrackNoIR::fill_profile_combobox()
+void MainWindow::fill_profile_combobox()
 {
      QSettings settings("opentrack");
      QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath()
@@ -189,7 +189,7 @@ void FaceTrackNoIR::fill_profile_combobox()
      ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
 }
 
-void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
+void MainWindow::updateButtonState(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled ( not_running );
@@ -203,13 +203,13 @@ void FaceTrackNoIR::updateButtonState(bool running, bool inertialp)
     ui.video_frame_label->setVisible(not_running || inertialp);
 }
 
-void FaceTrackNoIR::bindKeyboardShortcuts()
+void MainWindow::bindKeyboardShortcuts()
 {
     if (work)
         work->reload_shortcuts();
 }
 
-void FaceTrackNoIR::startTracker( ) {
+void MainWindow::startTracker( ) {
     b->save();
     load_settings();
     bindKeyboardShortcuts();
@@ -242,7 +242,7 @@ void FaceTrackNoIR::startTracker( ) {
     updateButtonState(true, is_inertial);
 }
 
-void FaceTrackNoIR::stopTracker( ) {
+void MainWindow::stopTracker( ) {
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
@@ -276,7 +276,7 @@ void FaceTrackNoIR::stopTracker( ) {
     updateButtonState(false, false);
 }
 
-void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
+void MainWindow::display_pose(const double *mapped, const double *raw)
 {
     ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll]);
 
@@ -306,7 +306,7 @@ void FaceTrackNoIR::display_pose(const double *mapped, const double *raw)
     ui.pose_roll->display(mapped_[Roll]);
 }
 
-void FaceTrackNoIR::showHeadPose()
+void MainWindow::showHeadPose()
 {
     double mapped[6], raw[6];
 
@@ -337,7 +337,7 @@ ptr<t> mk_dialog(ptr<dylib> lib)
     return nullptr;
 }
 
-void FaceTrackNoIR::showTrackerSettings()
+void MainWindow::showTrackerSettings()
 {
     auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
 
@@ -348,7 +348,7 @@ void FaceTrackNoIR::showTrackerSettings()
     }
 }
 
-void FaceTrackNoIR::showProtocolSettings() {
+void MainWindow::showProtocolSettings() {
     auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
 
     if (dialog) {
@@ -357,7 +357,7 @@ void FaceTrackNoIR::showProtocolSettings() {
     }
 }
 
-void FaceTrackNoIR::showFilterSettings() {
+void MainWindow::showFilterSettings() {
     auto dialog = mk_dialog<IFilterDialog>(current_filter());
 
     if (dialog) {
@@ -367,24 +367,24 @@ void FaceTrackNoIR::showFilterSettings() {
     }
 }
 
-void FaceTrackNoIR::showKeyboardShortcuts() {
+void MainWindow::showKeyboardShortcuts() {
     shortcuts_widget = std::make_shared<KeyboardShortcutDialog>();
     shortcuts_widget->setWindowFlags(Qt::Dialog);
     connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
     shortcuts_widget->show();
 }
 
-void FaceTrackNoIR::showCurveConfiguration() {
+void MainWindow::showCurveConfiguration() {
     mapping_widget = std::make_shared<MapWidget>(pose, s);
     mapping_widget->setWindowFlags(Qt::Dialog);
     mapping_widget->show();
 }
 
-void FaceTrackNoIR::exit() {
+void MainWindow::exit() {
     QCoreApplication::exit(0);
 }
 
-void FaceTrackNoIR::profileSelected(int index)
+void MainWindow::profileSelected(int index)
 {
     QSettings settings("opentrack");
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
@@ -393,14 +393,14 @@ void FaceTrackNoIR::profileSelected(int index)
     load_settings();
 }
 
-void FaceTrackNoIR::shortcutRecentered()
+void MainWindow::shortcutRecentered()
 {
     qDebug() << "Center";
     if (work)
         work->tracker->center();
 }
 
-void FaceTrackNoIR::shortcutToggled()
+void MainWindow::shortcutToggled()
 {
     qDebug() << "Toggle";
     if (work)
