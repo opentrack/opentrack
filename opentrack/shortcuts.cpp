@@ -21,6 +21,8 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
     tie_setting(s.toggle.alt, ui.chkToggleAlt);
     tie_setting(s.toggle.shift, ui.chkToggleShift);
     tie_setting(s.toggle.ctrl, ui.chkToggleCtrl);
+
+    tie_setting(s.s_main.tray_enabled, ui.trayp);
 }
 
 void KeyboardShortcutDialog::doOK() {

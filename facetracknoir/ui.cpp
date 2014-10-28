@@ -81,11 +81,13 @@ MainWindow::MainWindow() :
 
     ensure_tray();
     if (s.tray_enabled)
-        hide();
+        setWindowState(Qt::WindowMinimized);
 }
 
 MainWindow::~MainWindow()
 {
+    if (tray)
+        tray->hide();
     stopTracker();
     save();
     _exit(0);
@@ -413,12 +415,28 @@ void MainWindow::shortcutToggled()
 
 void MainWindow::ensure_tray()
 {
+    if (tray)
+        tray->hide();
     tray = nullptr;
     if (s.tray_enabled)
     {
         tray = std::make_shared<QSystemTrayIcon>(this);
         tray->setIcon(QIcon(":/images/facetracknoir.png"));
         tray->show();
-        connect(tray.get(), SIGNAL(activated()), this, SLOT(show()));
+        connect(tray.get(), SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+                this, SLOT(restore_from_tray(QSystemTrayIcon::ActivationReason)));
     }
+}
+
+void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
+{
+    show();
+    setWindowState(Qt::WindowNoState);
+}
+
+void MainWindow::changeEvent(QEvent* e)
+{
+    if (e->type() == QEvent::WindowStateChange && (windowState() & Qt::WindowMinimized))
+        hide();
+    QMainWindow::changeEvent(e);
 }
