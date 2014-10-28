@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>uielements/tools.png</file>
+        <file>images/tools.png</file>
         <file>images/settings16.png</file>
-        <file>uielements/curves.png</file>
+        <file>images/curves.png</file>
         <file>images/facetracknoir.png</file>
-        <file>uielements/no-feed.png</file>
+        <file>images/no-feed.png</file>
     </qresource>
 </RCC>
