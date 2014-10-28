@@ -10,7 +10,8 @@
 #include "qxt-mini/QxtGlobalShortcut"
 #include "opentrack/plugin-support.h"
 #include "opentrack/options.hpp"
-#include "ui_ftnoir_keyboardshortcuts.h"
+#include "opentrack/main-settings.hpp"
+#include "ui_keyboard.h"
 
 using namespace options;
 
@@ -95,10 +96,12 @@ struct Shortcuts {
     struct settings {
         pbundle b;
         key_opts center, toggle;
+        main_settings s_main;
         settings() :
             b(bundle("keyboard-shortcuts")),
             center(b, "center"),
-            toggle(b, "toggle")
+            toggle(b, "toggle"),
+            s_main(bundle("opentrack-ui"))
         {}
     } s;
 

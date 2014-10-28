@@ -42,6 +42,6 @@ struct main_settings {
         a_roll(b, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
         tcomp_tz(b, "compensate-translation-disable-z-axis", false),
-        tray_enabled(false, "use-system-tray", true)
+        tray_enabled(b, "use-system-tray", false)
     {}
 };

@@ -44,7 +44,7 @@
 #       include <windows.h>
 #endif
 
-#include "ui_facetracknoir.h"
+#include "ui_main.h"
 
 #include "opentrack/options.hpp"
 #include "opentrack/main-settings.hpp"
@@ -85,13 +85,14 @@ class MainWindow : public QMainWindow, private State
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
+    void changeEvent(QEvent* e) override;
+
     void createIconGroupBox();
     void load_settings();
     void updateButtonState(bool running, bool inertialp);
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
-
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
@@ -112,6 +113,8 @@ private slots:
 
     void startTracker();
     void stopTracker();
+
+    void restore_from_tray(QSystemTrayIcon::ActivationReason);
 public:
     MainWindow();
     ~MainWindow();
