@@ -61,8 +61,8 @@ int main(void)
 			break;
 		}
 		lck_wine.lock();
-        data->Yaw = shm_posix->data[Yaw];
-        data->Pitch = shm_posix->data[Pitch];
+        data->Yaw = -shm_posix->data[Yaw];
+        data->Pitch = -shm_posix->data[Pitch];
         data->Roll = shm_posix->data[Roll];
         data->X = shm_posix->data[TX];
         data->Y = shm_posix->data[TY];
