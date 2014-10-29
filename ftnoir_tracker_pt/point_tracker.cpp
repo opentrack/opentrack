@@ -57,18 +57,6 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	points.push_back(Vec2f(0,0));
 	points.push_back(Vec2f(M01[0], M01[1]));
 	points.push_back(Vec2f(M02[0], M02[1]));
-	// fit line to orthographically projected points
-	// ERROR: yields wrong results with colinear points?!
-	/*
-	Vec4f line;
-	fitLine(points, line, CV_DIST_L2, 0, 0.01, 0.01);
-	d[0] = line[0]; d[1] = line[1];
-	*/
-	// TODO: fix this
-	d = Vec2f(M01[0]-M02[0], M01[1]-M02[1]);
-
-	// sort model points
-	get_d_order(points, d_order);
 }
 
 #ifdef OPENTRACK_API
@@ -80,6 +68,8 @@ static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
 
 void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]) const
 {
+	// fit line to orthographically projected points
+	Vec2f d(M01[0]-M02[0], M01[1]-M02[1]);
 	// get sort indices with respect to d scalar product
 	vector< pair<float,int> > d_vals;
 	for (unsigned i = 0; i<points.size(); ++i)
@@ -111,55 +101,26 @@ void PointTracker::reset()
 	X_CM = FrameTrafo();
 }
 
-void PointTracker::track(const vector<Vec2f>& projected_points, const PointModel& model)
+void PointTracker::track(const vector<Vec2f>& points, const PointModel& model)
 {
-    const PointOrder& order = find_correspondences(projected_points, model);
-	int iters = POSIT(model, order);
-	qDebug()<<"POSIT iterations:"<<iters;
+    const PointOrder& order = find_correspondences(points, model);
+    int iters = POSIT(model, order);
+    qDebug()<<"POSIT iterations:"<<iters;
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel& model)
+PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, const PointModel& model)
 {
-    // ... otherwise we look at the distance to the projection of the expected model points 
-    // project model points under current pose
-    Vec2f p_exp[3];
-    p_exp[0] = project(Vec3f(0,0,0));
-    p_exp[1] = project(model.get_M01());
-    p_exp[2] = project(model.get_M02());
-    
-    // set correspondences by minimum distance to projected model point
-    bool point_taken[PointModel::N_POINTS];
-    for (int i=0; i<PointModel::N_POINTS; ++i)
-        point_taken[i] = false;
-    
+    // We do a simple freetrack-like sorting in the init phase...
+    // sort points
+    int point_d_order[PointModel::N_POINTS];
+    model.get_d_order(points, point_d_order);
+    // set correspondences
     PointOrder p;
     for (int i=0; i<PointModel::N_POINTS; ++i)
-        p.points[i] = Vec2f(0, 0);
-    
-    for (int i=0; i<PointModel::N_POINTS; ++i)
-    {
-        float min_sdist = 1e4;
-        int min_idx = 0;
-        // find closest point to projected model point i
-        for (int j=0; j<PointModel::N_POINTS; ++j)
-        {
-            Vec2f d = p_exp[i]-projected_points[j];
-            float sdist = d.dot(d);
-            if (sdist < min_sdist)
-            {
-                min_idx = j;
-                min_sdist = sdist;
-            }
-        }
-        // if one point is closest to more than one model point, abort
-        if (point_taken[min_idx]) return p;
-        point_taken[min_idx] = true;
-        p.points[i] = projected_points[min_idx];
-    }
+        p.points[i] = points[point_d_order[i]];
+
     return p;
 }
-
-
 
 int PointTracker::POSIT(const PointModel& model, const PointOrder& order_)
 {
