@@ -56,14 +56,14 @@ static cv::Vec3d rmat_to_euler(const cv::Matx33d& R)
     const double beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
     const double alpha = atan2( R(1,0), R(0,0));
     const double gamma = atan2( R(2,1), R(2,2));
-    return cv::Vec3d { gamma, alpha, beta };
+    return cv::Vec3d { gamma, -alpha, beta };
 }
 
 // tait-bryan angles, not euler
 static cv::Matx33d euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[x] * pi / 180;
+    const auto H = input[x] * -pi / 180;
     const auto P = input[y] * pi / 180;
     const auto B = input[z] * pi / 180;
 
@@ -86,13 +86,14 @@ static cv::Matx33d euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
 {
-    const double xyz_[3] = { xyz[x], -xyz[y], xyz[z] };
+    // same order/sign as rmat_to_euler retval
+    const double xyz_[3] = { xyz[2], -xyz[0], xyz[1] };
     cv::Matx31d tvec(xyz_);
     const cv::Matx31d ret = rmat * tvec;
     if (!rz)
-        output[2] = ret(z, 0);
-    output[1] = -ret(y, 0);
-    output[0] = ret(x, 0);
+        output[2] = ret(0, 0);
+    output[1] = ret(0, 0);
+    output[0] = -ret(1, 0);
 }
 
 void Tracker::logic()
