@@ -135,7 +135,8 @@ void Tracker::logic()
 
     {
         const cv::Matx33d rmat = euler_to_rmat(&filtered_pose[Yaw]);
-        const cv::Matx33d m_ = r_b.t() * rmat;
+        const cv::Matx33d m_c = rmat * r_b.t();
+        const cv::Matx33d m_ = r_b * m_c * r_b.t();
         const auto euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
