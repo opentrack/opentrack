@@ -375,7 +375,7 @@ void Tracker::run()
                 for (int i = 0; i < 3; i++)
                     pose[i] = tvec(i);
                 pose[Yaw] = euler[1];
-                pose[Pitch] = -euler[0];
+                pose[Pitch] = euler[0];
                 pose[Roll] = euler[2];
 
                 r = rmat;
