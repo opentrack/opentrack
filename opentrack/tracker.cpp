@@ -48,22 +48,24 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
     return fc.getValue(pos) + axis.opts.zero;
 }
 
+static constexpr int x = 1, y = 0, z = 2;
+
 // http://stackoverflow.com/a/18436193
 static cv::Vec3d rmat_to_euler(const cv::Matx33d& R)
 {
     const double beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
     const double alpha = atan2( R(1,0), R(0,0));
     const double gamma = atan2( R(2,1), R(2,2));
-    return cv::Vec3d { alpha, beta, gamma };
+    return cv::Vec3d { gamma, alpha, beta };
 }
 
 // tait-bryan angles, not euler
 static cv::Matx33d euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[0] * pi / 180;
-    const auto P = input[1] * pi / 180;
-    const auto B = input[2] * pi / 180;
+    const auto H = input[x] * pi / 180;
+    const auto P = input[y] * pi / 180;
+    const auto B = input[z] * pi / 180;
 
     const auto c1 = cos(H);
     const auto s1 = sin(H);
@@ -73,18 +75,10 @@ static cv::Matx33d euler_to_rmat(const double* input)
     const auto s3 = sin(B);
 
     double foo[] = {
-        // z
-        c1 * c2,
-        c1 * s2 * s3 - c3 * s1,
-        s1 * s3 + c1 * c3 * s2,
-        // y
-        c2 * s1,
-        c1 * c3 + s1 * s2 * s3,
-        c3 * s1 * s2 - c1 * s3,
-        // x
-        -s2,
-        c2 * s3,
-        c2 * c3
+        //Tait-Bryan ZXY
+        c1*c3 - s1*s2*s3,  -c2*s1,  c1*s3+c3*s1*s2,
+        c3*s1+c1*s2*s3,  c1*c2,  s1*s3-c1*c3*s2,
+        -c2*s3,  s2,  c2*c3
     };
 
     return cv::Matx33d(foo);
@@ -92,13 +86,13 @@ static cv::Matx33d euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
 {
-    const double xyz_[3] = { xyz[2], -xyz[0], -xyz[1] };
+    const double xyz_[3] = { xyz[x], -xyz[y], xyz[z] };
     cv::Matx31d tvec(xyz_);
     const cv::Matx31d ret = rmat * tvec;
     if (!rz)
-        output[2] = ret(0, 0);
-    output[0] = -ret(1, 0);
-    output[1] = -ret(2, 0);
+        output[2] = ret(z, 0);
+    output[1] = -ret(y, 0);
+    output[0] = ret(x, 0);
 }
 
 void Tracker::logic()
