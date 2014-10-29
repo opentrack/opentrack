@@ -13,8 +13,8 @@ struct Work
 {
     main_settings& s;
     SelectedLibraries libs;
-    ptr<Tracker> tracker;
-    ptr<Shortcuts> sc;
+    mem<Tracker> tracker;
+    mem<Shortcuts> sc;
     WId handle;
 
     Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv, WId handle) :

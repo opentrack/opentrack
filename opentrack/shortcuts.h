@@ -79,7 +79,7 @@ signals:
 struct Shortcuts {
     using K =
 #ifndef _WIN32
-    ptr<QxtGlobalShortcut>
+    mem<QxtGlobalShortcut>
 #else
     Key
 #endif
@@ -90,7 +90,7 @@ struct Shortcuts {
 
     WId handle;
 #ifdef _WIN32
-    ptr<KeybindingWorker> keybindingWorker;
+    mem<KeybindingWorker> keybindingWorker;
 #endif
     
     struct settings {
@@ -120,7 +120,7 @@ public:
 private:
     Ui::UICKeyboardShortcutDialog ui;
     Shortcuts::settings s;
-    ptr<Shortcuts> sc;
+    mem<Shortcuts> sc;
 signals:
     void reload();
 private slots:

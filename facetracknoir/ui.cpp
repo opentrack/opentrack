@@ -330,11 +330,11 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t>
-ptr<t> mk_dialog(ptr<dylib> lib)
+mem<t> mk_dialog(mem<dylib> lib)
 {
     if (lib)
     {
-        auto dialog = ptr<t>(reinterpret_cast<t*>(lib->Dialog()));
+        auto dialog = mem<t>(reinterpret_cast<t*>(lib->Dialog()));
         dialog->setWindowFlags(Qt::Dialog);
         dialog->setFixedSize(dialog->size());
         return dialog;
