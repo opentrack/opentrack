@@ -1,28 +1,28 @@
-/********************************************************************************
-* FaceTrackNoIR		This program is a private project of the some enthusiastic	*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2013	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage																		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* FTServer		FTServer is the Class, that communicates headpose-data			*
-*				to games, using the FreeTrackClient.dll.	         			*
+/*******************************************************************************
+* FaceTrackNoIR         This program is a private project of the some enthusiastic
+*                                       gamers from Holland, who don't like to pay much for
+*                                       head-tracking.
+*
+* Copyright (C) 2013    Wim Vriend (Developing)
+*                                               Ron Hendriks (Researching and Testing)
+*
+* Homepage
+*
+* This program is free software; you can redistribute it and/or modify it
+* under the terms of the GNU General Public License as published by the
+* Free Software Foundation; either version 3 of the License, or (at your
+* option) any later version.
+*
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+* more details.
+*
+* You should have received a copy of the GNU General Public License along
+* with this program; if not, see <http://www.gnu.org/licenses/>.
+*
+* FTServer              FTServer is the Class, that communicates headpose-data
+*                               to games, using the FreeTrackClient.dll.
 ********************************************************************************/
 #include "ftnoir_protocol_ft.h"
 #include "ftnoir_csv/csv.h"
@@ -56,7 +56,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     float tz = headpose[TZ] * 10.f;
 
     shm.lock();
-    
+
     pMemData->data.RawX = 0;
     pMemData->data.RawY = 0;
     pMemData->data.RawZ = 0;
@@ -90,7 +90,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
         connected_game = gamename;
     }
 
-	pMemData->data.DataID += 1;
+        pMemData->data.DataID += 1;
         shm.unlock();
 }
 
@@ -128,9 +128,9 @@ void FTNoIR_Protocol::start_dummy() {
 }
 
 bool FTNoIR_Protocol::correct()
-{   
-	QSettings settings("Freetrack", "FreetrackClient");							// Registry settings (in HK_USER)
-	QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");	// Registry settings (in HK_USER)
+{
+        QSettings settings("Freetrack", "FreetrackClient");                                                     // Registry settings (in HK_USER)
+        QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");       // Registry settings (in HK_USER)
 
     if (!shm.success())
         return false;
@@ -138,15 +138,15 @@ bool FTNoIR_Protocol::correct()
     QString aLocation =  QCoreApplication::applicationDirPath() + "/";
 
     switch (s.intUsedInterface) {
-        case 0:									// Use both interfaces
+        case 0:                                                                 // Use both interfaces
             settings.setValue( "Path" , aLocation );
             settingsTIR.setValue( "Path" , aLocation );
             break;
-        case 1:									// Use FreeTrack, disable TrackIR
+        case 1:                                                                 // Use FreeTrack, disable TrackIR
             settings.setValue( "Path" , aLocation );
             settingsTIR.setValue( "Path" , "" );
             break;
-        case 2:									// Use TrackIR, disable FreeTrack
+        case 2:                                                                 // Use TrackIR, disable FreeTrack
             settings.setValue( "Path" , "" );
             settingsTIR.setValue( "Path" , aLocation );
             break;
@@ -166,8 +166,8 @@ bool FTNoIR_Protocol::correct()
     pMemData->data.CamHeight = 250;
     pMemData->GameID2 = 0;
     memset(pMemData->table, 0, 8);
-    
-	return true;
+
+        return true;
 }
 
 extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
