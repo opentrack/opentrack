@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowIcon">
-   <iconset resource="main-facetracknoir.qrc">
+   <iconset resource="ui-res.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="styleSheet">
@@ -92,75 +92,53 @@
            <height>360</height>
           </size>
          </property>
-         <layout class="QGridLayout" name="gridLayout_11">
-          <property name="leftMargin">
-           <number>0</number>
+         <widget class="QFrame" name="video_frame">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>480</width>
+            <height>360</height>
+           </rect>
           </property>
-          <property name="topMargin">
-           <number>0</number>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QFrame" name="video_frame">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_13">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item row="0" column="1">
-              <widget class="QLabel" name="video_frame_label">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>480</width>
-                 <height>360</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>480</width>
-                 <height>360</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
+          <widget class="QLabel" name="video_frame_label">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>480</width>
+             <height>360</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>480</width>
+             <height>360</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>480</width>
+             <height>360</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </item>
        <item row="0" column="1">
@@ -928,7 +906,7 @@
                 <string>Keys</string>
                </property>
                <property name="icon">
-                <iconset resource="main-facetracknoir.qrc">
+                <iconset resource="ui-res.qrc">
                  <normaloff>:/images/tools.png</normaloff>:/images/tools.png</iconset>
                </property>
                <property name="iconSize">
@@ -951,7 +929,7 @@
                 <string>Mapping</string>
                </property>
                <property name="icon">
-                <iconset resource="main-facetracknoir.qrc">
+                <iconset resource="ui-res.qrc">
                  <normaloff>:/images/curves.png</normaloff>:/images/curves.png</iconset>
                </property>
                <property name="iconSize">
@@ -1196,7 +1174,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="main-facetracknoir.qrc"/>
+  <include location="ui-res.qrc"/>
  </resources>
  <connections/>
 </ui>
