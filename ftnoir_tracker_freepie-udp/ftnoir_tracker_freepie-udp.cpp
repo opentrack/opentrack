@@ -28,7 +28,6 @@ void TrackerImpl::run() {
 #pragma pack(push, 1)
     struct {
         uint8_t pad1;
-        uint8_t pad2;
         uint8_t flags;
         float fl[12];
     } data;
