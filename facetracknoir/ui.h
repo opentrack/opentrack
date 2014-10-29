@@ -62,25 +62,25 @@ class MainWindow : public QMainWindow, private State
     Q_OBJECT
 
     Ui::OpentrackUI ui;
-    ptr<QSystemTrayIcon> tray;
+    mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
-    ptr<KeyboardShortcutDialog> shortcuts_widget;
-    ptr<MapWidget> mapping_widget;
+    mem<KeyboardShortcutDialog> shortcuts_widget;
+    mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
-    ptr<IFilterDialog> pFilterDialog;
-    ptr<IProtocolDialog> pProtocolDialog;
-    ptr<ITrackerDialog> pTrackerDialog;
+    mem<IFilterDialog> pFilterDialog;
+    mem<IProtocolDialog> pProtocolDialog;
+    mem<ITrackerDialog> pTrackerDialog;
 
-    ptr<dylib> current_tracker()
+    mem<dylib> current_tracker()
     {
         return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
     }
-    ptr<dylib> current_protocol()
+    mem<dylib> current_protocol()
     {
         return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
     }
-    ptr<dylib> current_filter()
+    mem<dylib> current_filter()
     {
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }

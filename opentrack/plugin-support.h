@@ -10,7 +10,7 @@
 #include <QList>
 
 #include <memory>
-template<typename t> using ptr = std::shared_ptr<t>;
+template<typename t> using mem = std::shared_ptr<t>;
 
 extern "C" typedef void* (*CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*METADATA_FUNPTR)(void);
@@ -20,7 +20,7 @@ struct dylib {
     
     dylib(const QString& filename, Type t);
     ~dylib();
-    static QList<ptr<dylib>> enum_libraries();
+    static QList<mem<dylib>> enum_libraries();
     
     Type type;
     QString filename;
@@ -40,10 +40,10 @@ private:
 };
 
 struct SelectedLibraries {
-    using dylibptr = ptr<dylib>;
-    ptr<ITracker> pTracker;
-    ptr<IFilter> pFilter;
-    ptr<IProtocol> pProtocol;
+    using dylibptr = mem<dylib>;
+    mem<ITracker> pTracker;
+    mem<IFilter> pFilter;
+    mem<IProtocol> pProtocol;
     SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
     SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
     ~SelectedLibraries();

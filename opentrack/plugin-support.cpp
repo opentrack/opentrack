@@ -16,14 +16,14 @@ SelectedLibraries::~SelectedLibraries()
 }
 
 template<typename t>
-static ptr<t> make_instance(ptr<dylib> lib)
+static mem<t> make_instance(mem<dylib> lib)
 {
-    ptr<t> ret;
+    mem<t> ret;
     if (lib != nullptr && lib->Constructor)
     {
         qDebug() << "dylib" << (lib ? lib->filename : "<null>") << "ptr" << (intptr_t) lib->Constructor;
         std::cout.flush();
-        ret = ptr<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
+        ret = mem<t>(reinterpret_cast<t*>(reinterpret_cast<CTOR_FUNPTR>(lib->Constructor)()));
     }
     return ret;
 }
@@ -74,7 +74,7 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 #   define LIB_PREFIX "lib"
 #endif
 
-static bool get_metadata(ptr<dylib> lib, QString& name, QIcon& icon)
+static bool get_metadata(mem<dylib> lib, QString& name, QIcon& icon)
 {
     Metadata* meta;
     if (!lib->Meta || ((meta = lib->Meta()), !meta))
@@ -85,7 +85,7 @@ static bool get_metadata(ptr<dylib> lib, QString& name, QIcon& icon)
     return true;
 }
 
-QList<ptr<dylib>> dylib::enum_libraries()
+QList<mem<dylib>> dylib::enum_libraries()
 {
 #define BASE "opentrack-"
 #define SUFF "-*."
@@ -96,7 +96,7 @@ QList<ptr<dylib>> dylib::enum_libraries()
 
     QDir settingsDir( QCoreApplication::applicationDirPath() );
 
-    QList<ptr<dylib>> ret;
+    QList<mem<dylib>> ret;
 
     for (int i = 0; i < 3; i++)
     {
@@ -207,7 +207,7 @@ dylib::dylib(const QString& filename, Type t) :
     }
 #endif
 
-    auto m = ptr<Metadata>(Meta());
+    auto m = mem<Metadata>(Meta());
 
     icon = m->icon();
     name = m->name();

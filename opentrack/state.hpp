@@ -12,18 +12,18 @@ struct Modules {
         tracker_modules(filter(dylib::Tracker)),
         protocol_modules(filter(dylib::Protocol))
     {}
-    QList<ptr<dylib>>& filters() { return filter_modules; }
-    QList<ptr<dylib>>& trackers() { return tracker_modules; }
-    QList<ptr<dylib>>& protocols() { return protocol_modules; }
+    QList<mem<dylib>>& filters() { return filter_modules; }
+    QList<mem<dylib>>& trackers() { return tracker_modules; }
+    QList<mem<dylib>>& protocols() { return protocol_modules; }
 private:
-    QList<ptr<dylib>> module_list;
-    QList<ptr<dylib>> filter_modules;
-    QList<ptr<dylib>> tracker_modules;
-    QList<ptr<dylib>> protocol_modules;
+    QList<mem<dylib>> module_list;
+    QList<mem<dylib>> filter_modules;
+    QList<mem<dylib>> tracker_modules;
+    QList<mem<dylib>> protocol_modules;
     
-    QList<ptr<dylib>> filter(dylib::Type t)
+    QList<mem<dylib>> filter(dylib::Type t)
     {
-        QList<ptr<dylib>> ret;
+        QList<mem<dylib>> ret;
         for (auto x : module_list)
             if (x->type == t)
                 ret.push_back(x);
@@ -44,5 +44,5 @@ struct State {
     pbundle b;
     main_settings s;
     Mappings pose;
-    ptr<Work> work;
+    mem<Work> work;
 };
