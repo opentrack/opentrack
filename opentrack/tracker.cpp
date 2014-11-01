@@ -13,7 +13,7 @@
  */
 
 
-#include "./tracker.h"
+#include "tracker.h"
 #include <cmath>
 #include <algorithm>
 
@@ -28,7 +28,7 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     enabledp(true),
     should_quit(false),
     libs(libs),
-    r_b (cv::Matx33d::eye()),
+    r_b (dmat<3, 3>::eye()),
     t_b {0,0,0}
 {
 }
@@ -51,21 +51,23 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
 static constexpr int x = 1, y = 0, z = 2;
 
 // http://stackoverflow.com/a/18436193
-static cv::Vec3d rmat_to_euler(const cv::Matx33d& R)
+static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 {
-    const double beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-    const double alpha = atan2( R(1,0), R(0,0));
-    const double gamma = atan2( R(2,1), R(2,2));
-    return cv::Vec3d { gamma, -alpha, beta };
+    const double tmp[] = {
+        -atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) ),
+        -atan2( R(2,1), R(2,2)),
+        -atan2( R(1,0), R(0,0)),
+    };
+    return dmat<3, 1>(tmp);
 }
 
 // tait-bryan angles, not euler
-static cv::Matx33d euler_to_rmat(const double* input)
+static dmat<3, 3> euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[x] * -pi / 180;
-    const auto P = input[y] * pi / 180;
-    const auto B = input[z] * pi / 180;
+    const auto H = input[1] * pi / 180;
+    const auto P = input[0] * pi / 180;
+    const auto B = input[2] * pi / 180;
 
     const auto c1 = cos(H);
     const auto s1 = sin(H);
@@ -75,25 +77,27 @@ static cv::Matx33d euler_to_rmat(const double* input)
     const auto s3 = sin(B);
 
     double foo[] = {
-        //Tait-Bryan ZXY
-        c1*c3 - s1*s2*s3,  -c2*s1,  c1*s3+c3*s1*s2,
-        c3*s1+c1*s2*s3,  c1*c2,  s1*s3-c1*c3*s2,
-        -c2*s3,  s2,  c2*c3
+        //Tait-Bryan XYZ
+        c2*c3,  -c2*s3,  s2,
+        c1*s3+c3*s1*s2,  c1*c3-s1*s2*s3,  -c2*s1,
+        s1*s3-c1*c3*s2,  c3*s1+c1*s2*s3,  c1*c2,
     };
 
-    return cv::Matx33d(foo);
+    return dmat<3, 3>(foo);
 }
 
-void Tracker::t_compensate(const cv::Matx33d& rmat, const double* xyz, double* output, bool rz)
+void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* output, bool rz)
 {
-    // same order/sign as rmat_to_euler retval
-    const double xyz_[3] = { xyz[2], -xyz[0], xyz[1] };
-    cv::Matx31d tvec(xyz_);
-    const cv::Matx31d ret = rmat * tvec;
+    static constexpr int p_x = 0, p_y = 1, p_z = 2;
+    const double xyz_[3] = { -xyz[p_x], -xyz[p_y], xyz[p_z] };
+    dmat<3, 1> tvec(xyz_);
+    const dmat<3, 1> ret = rmat * tvec;
+    output[0] = -ret(p_x, 0);
+    output[1] = -ret(p_y, 0);
     if (!rz)
-        output[2] = ret(0, 0);
-    output[1] = ret(0, 0);
-    output[0] = -ret(1, 0);
+        output[2] = ret(p_z, 0);
+    else
+        output[2] = xyz[2];
 }
 
 void Tracker::logic()
@@ -125,7 +129,7 @@ void Tracker::logic()
     if (centerp)
     {
         centerp = false;
-        cv::Matx31d tmp;
+        dmat<3, 1> tmp;
         r_b = euler_to_rmat(&filtered_pose[Yaw]);
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
@@ -134,15 +138,14 @@ void Tracker::logic()
     Pose raw_centered;
 
     {
-        const cv::Matx33d rmat = euler_to_rmat(&filtered_pose[Yaw]);
-        const cv::Matx33d m_c = rmat * r_b.t();
-        const cv::Matx33d m_ = r_b * m_c * r_b.t();
+        const dmat<3, 3> rmat = euler_to_rmat(&filtered_pose[Yaw]);
+        const dmat<3, 3> m_ = r_b.t() * rmat;
         const auto euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
             static constexpr double pi = 3.141592653;
             raw_centered(i) = filtered_pose(i) - t_b[i];
-            raw_centered(i+3) = euler(i) * 180./pi;
+            raw_centered(i+3) = euler(i, 0) * 180./pi;
         }
     }
 
