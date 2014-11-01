@@ -21,7 +21,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui ${maybe-serial-port} QUIET)
@@ -166,7 +166,7 @@ add_custom_target(tarball DEPENDS ${filename})
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
 add_library(opentrack-api STATIC ${opentrack-api-all})
-target_link_libraries(opentrack-api ${OpenCV_LIBS} ${MY_QT_LIBS})
+target_link_libraries(opentrack-api ${MY_QT_LIBS})
 
 if(NOT WIN32)
     target_link_libraries(opentrack-api dl)
@@ -252,8 +252,6 @@ opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
 opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
 opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 
-target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
-
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
@@ -330,15 +328,18 @@ endif()
 opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
 target_link_libraries(opentrack-tracker-ht opentrack-compat)
 
-if(SDK_ARUCO_LIBPATH)
-    opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
-    target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-endif()
-
-opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
-target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
+
+if(OpenCV_FOUND)
+    opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
+    target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
+    if(SDK_ARUCO_LIBPATH)
+        opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
+        target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
+    endif()
+    target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
+endif()
 
 link_with_dinput8(opentrack-tracker-ht)
 link_with_dinput8(opentrack-tracker-joystick)

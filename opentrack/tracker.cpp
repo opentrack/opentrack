@@ -48,8 +48,6 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
     return fc.getValue(pos) + axis.opts.zero;
 }
 
-static constexpr int x = 1, y = 0, z = 2;
-
 // http://stackoverflow.com/a/18436193
 static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 {
@@ -64,6 +62,7 @@ static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 // tait-bryan angles, not euler
 static dmat<3, 3> euler_to_rmat(const double* input)
 {
+    static constexpr int x = 1, y = 0, z = 2;
     static constexpr double pi = 3.141592653;
     const auto H = input[1] * pi / 180;
     const auto P = input[0] * pi / 180;
