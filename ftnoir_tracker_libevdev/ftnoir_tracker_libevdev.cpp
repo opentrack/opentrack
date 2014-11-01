@@ -57,6 +57,10 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
         // no error checking here, errors result in SIGFPE
         a_min[i] = libevdev_get_abs_minimum(node, ot_libevdev_joystick_axes[i]);
         a_max[i] = libevdev_get_abs_maximum(node, ot_libevdev_joystick_axes[i]);
+
+        if (a_min[i] == a_max[i])
+            a_max[i]++;
+
         qDebug() << "axis limits" << i << a_min[i] << "->" << a_max[i];
     }
 
