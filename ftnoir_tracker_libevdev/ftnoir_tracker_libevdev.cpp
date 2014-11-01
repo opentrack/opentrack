@@ -38,7 +38,7 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
     std::string str = (QString("/dev/input/by-id/") + node_name).toStdString();
     const char* filename = str.c_str();
 
-    fd = open(filename, 0, O_RDWR);
+    fd = open(filename, O_NONBLOCK, O_RDWR);
     if (fd == -1)
     {
         qDebug() << "error opening" << filename;
@@ -73,20 +73,25 @@ void FTNoIR_Tracker::run()
 {
     while (!should_quit)
     {
-        struct input_event ev;
-        int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-        if (status != LIBEVDEV_READ_STATUS_SUCCESS)
-            continue;
-        if (ev.type == EV_ABS || ev.type == EV_MSC)
+        msleep(1);
+
+        while (1)
         {
-            const int code = ev.code;
-            for (int i = 0; i < 6; i++)
+            struct input_event ev;
+            int status = libevdev_next_event(node, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+            if (status != LIBEVDEV_READ_STATUS_SUCCESS)
+                break;
+            if (ev.type == EV_ABS)
             {
-                if (ot_libevdev_joystick_axes[i] == code)
+                const int code = ev.code;
+                for (int i = 0; i < 6; i++)
                 {
-                    QMutexLocker l(&mtx);
-                    values[i] = ev.value;
-                    break;
+                    if (ot_libevdev_joystick_axes[i] == code)
+                    {
+                        QMutexLocker l(&mtx);
+                        values[i] = ev.value;
+                        break;
+                    }
                 }
             }
         }
