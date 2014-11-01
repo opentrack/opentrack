@@ -266,11 +266,9 @@ endif()
 
 if(SDK_ENABLE_LIBEVDEV)
     opentrack_library(opentrack-proto-libevdev ftnoir_protocol_libevdev)
-    opentrack_library(opentrack-tracker-libevdev ftnoir_tracker_libevdev)
     pkg_check_modules(libevdev REQUIRED QUIET libevdev)
     include_directories(${libevdev_INCLUDE_DIRS})
     target_link_libraries(opentrack-proto-libevdev ${libevdev_LIBRARIES})
-    target_link_libraries(opentrack-tracker-libevdev ${libevdev_LIBRARIES})
 endif()
 
 if(SDK_FSUIPC)
