@@ -3,16 +3,15 @@
 #include <atomic>
 #include <vector>
 
-#include <opencv2/core/core.hpp>
-
-#include "./timer.hpp"
-#include "./plugin-support.h"
-#include "./mappings.hpp"
-#include "./pose.hpp"
+#include "timer.hpp"
+#include "plugin-support.h"
+#include "mappings.hpp"
+#include "pose.hpp"
+#include "simple-mat.hpp"
 
 #include "../qfunctionconfigurator/functionconfig.h"
-#include "./main-settings.hpp"
-#include "./options.hpp"
+#include "main-settings.hpp"
+#include "options.hpp"
 
 #include <QMutex>
 #include <QThread>
@@ -33,13 +32,13 @@ private:
     std::atomic<bool> should_quit;
     SelectedLibraries const& libs;
 
-    cv::Matx33d r_b;
+    dmat<3, 3> r_b;
     double t_b[3];
 
     double map(double pos, bool invertp, Mapping& axis);
     void logic();
 
-    void t_compensate(const cv::Matx33d& rmat, const double* ypr, double* output, bool rz);
+    void t_compensate(const dmat<3, 3>& rmat, const double* ypr, double* output, bool rz);
     void run() override;
 public:
     Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);
