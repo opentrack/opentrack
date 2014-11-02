@@ -57,9 +57,10 @@ void Tracker::run()
 #endif
 
     while((commands & ABORT) == 0)
-	{   
+    {
         apply_inner();
         const double dt = time.start() * 1e-9;
+        cv::Mat frame;
         const bool new_frame = camera.get_frame(dt, &frame);
 
         if (new_frame && !frame.empty())
@@ -91,14 +92,13 @@ void Tracker::run()
         if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
         log_stream<<"\n";
 #endif
-	}
-
-	qDebug()<<"Tracker:: Thread stopping";
+    }
+    qDebug()<<"Tracker:: Thread stopping";
 }
 void Tracker::apply(settings& s)
 {
     // caller guarantees object lifetime
-	new_settings = &s;
+    new_settings = &s;
 }
 
 void Tracker::apply_inner()
@@ -109,7 +109,7 @@ void Tracker::apply_inner()
     reset();
     auto& s = *tmp;
     qDebug()<<"Tracker:: Applying settings";
-    
+
     {
         cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
         cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
@@ -123,9 +123,7 @@ void Tracker::apply_inner()
     point_extractor.min_size = s.min_point_size;
     point_extractor.max_size = s.max_point_size;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
-    R_GC = cv::Matx33f::eye();
     FrameTrafo X_MH(Matx33f::eye(), t_MH);
-    X_GH_0 = R_GC * X_MH;
     qDebug()<<"Tracker::apply ends";
 }
 
@@ -133,15 +131,6 @@ void Tracker::reset()
 {
 	QMutexLocker lock(&mutex);
 	point_tracker.reset();
-}
-
-void Tracker::center()
-{
-	point_tracker.reset();
-	QMutexLocker lock(&mutex);
-	FrameTrafo X_CM_0 = point_tracker.pose();
-	FrameTrafo X_MH(Matx33f::eye(), t_MH);
-	X_GH_0 = R_GC * X_CM_0 * X_MH;
 }
 
 void Tracker::start_tracker(QFrame *parent_window)
@@ -174,19 +163,12 @@ void Tracker::StopTracker(bool exit)
 
 void Tracker::data(THeadPoseData *data)
 {
-	{
-		QMutexLocker lock(&mutex);
 
     	FrameTrafo X_CM = point_tracker.pose();
 		FrameTrafo X_MH(Matx33f::eye(), t_MH);
-		FrameTrafo X_GH = R_GC * X_CM * X_MH;
-        Matx33f R = X_GH.R * X_GH_0.R.t();
-		Vec3f   t = X_GH.t - X_GH_0.t;		
-
-        // get translation(s)
-        data[TX] = t[0] / 10.0;	// convert to cm
-        data[TY] = t[1] / 10.0;
-        data[TZ] = t[2] / 10.0;
+		FrameTrafo X_GH = X_CM * X_MH;
+        Matx33f R = X_GH.R;
+		Vec3f   t = X_GH.t;
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
 		// -z -> x, y -> z, x -> -y
@@ -201,10 +183,16 @@ void Tracker::data(THeadPoseData *data)
 		alpha = atan2( R(1,0), R(0,0));
 		gamma = atan2( R(2,1), R(2,2));		
 
+        QMutexLocker lock(&mutex);
+
         data[Yaw]   =   rad2deg * alpha;
         data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
         data[Roll]  =   rad2deg * gamma;
-	}
+
+        // get translation(s)
+        data[TX] = t[0] / 10.0;	// convert to cm
+        data[TY] = t[1] / 10.0;
+        data[TZ] = t[2] / 10.0;
 }
 
 //-----------------------------------------------------------------------------
