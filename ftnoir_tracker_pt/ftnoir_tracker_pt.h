@@ -43,7 +43,6 @@ public:
 
     void apply(settings& s);
     void apply_inner();
-    void center();
     void reset();	// reset the trackers internal state variables
 
     void pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.pose(); }
@@ -65,12 +64,7 @@ private:
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
-    FrameTrafo X_GH_0; // for centering
     cv::Vec3f   t_MH; // translation from model frame to head frame
-    cv::Matx33f R_GC; // rotation from opengl reference frame to camera frame
-
-    // --- ui ---
-    cv::Mat frame;	// the output frame for display
 
     PTVideoWidget* video_widget;
     QFrame*      video_frame;
