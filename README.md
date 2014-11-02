@@ -1,6 +1,6 @@
-Windows binary builds available at <<https://www.dropbox.com/sh/544fbhsokdpy3n7/AAAKwl6BluqwT9Xn2slyp0dCa>>
+opentrack project home at <<http://github.com/opentrack/opentrack>>.
 
-Source code access available at <<http://github.com/opentrack/opentrack/>>
+Binary releases at <<https://github.com/opentrack/opentrack/releases>>.
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
