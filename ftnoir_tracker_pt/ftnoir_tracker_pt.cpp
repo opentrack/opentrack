@@ -103,6 +103,9 @@ void Tracker::apply(settings& s)
 
 void Tracker::apply_inner()
 {
+    // XXX this nonsense oughta reference settings directly,
+    // rather than keep its own state -sh 20141102
+    // applies to -- camera, extractor, this tracker class
     settings* tmp = new_settings.exchange(nullptr);
     if (tmp == nullptr)
         return;
