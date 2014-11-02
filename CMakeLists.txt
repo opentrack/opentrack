@@ -228,9 +228,10 @@ opentrack_module(opentrack-csv ftnoir_csv)
 add_library(opentrack-csv STATIC ${opentrack-csv-c})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 
-opentrack_module(opentrack-pose-widget ftnoir_posewidget)
-include_directories(ftnoir_posewidget/)
+opentrack_module(opentrack-pose-widget pose-widget)
+include_directories(pose-widget/) # else Qt moc breaks
 opentrack_qt(opentrack-pose-widget)
+
 add_library(opentrack-pose-widget STATIC ${opentrack-pose-widget-all})
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 
