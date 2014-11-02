@@ -25,7 +25,7 @@
 *                               to games, using the FreeTrackClient.dll.
 ********************************************************************************/
 #include "ftnoir_protocol_ft.h"
-#include "ftnoir_csv/csv.h"
+#include "csv/csv.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() :
     shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
