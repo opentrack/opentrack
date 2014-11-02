@@ -31,6 +31,8 @@
 #   include <windows.h>
 #endif
 
+static constexpr const char* _group = "opentrack-2.3";
+
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
@@ -106,7 +108,7 @@ void MainWindow::open() {
 
     if (! fileName.isEmpty() ) {
         {
-            QSettings settings("opentrack");
+            QSettings settings(_group);
             settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
         }
         fill_profile_combobox();
@@ -127,7 +129,7 @@ void MainWindow::save() {
     save_mappings();
 
 #if defined(__unix) || defined(__linux)
-    QSettings settings("opentrack");
+    QSettings settings(_group);
     const QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
@@ -141,7 +143,7 @@ void MainWindow::save() {
 
 void MainWindow::saveAs()
 {
-    QSettings settings("opentrack");
+    QSettings settings(_group);
     QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
@@ -181,7 +183,7 @@ extern "C" volatile const char* opentrack_version;
 
 void MainWindow::fill_profile_combobox()
 {
-     QSettings settings("opentrack");
+     QSettings settings(_group);
      QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath()
                                             + "/settings/default.ini" ).toString();
      qDebug() << "Config file now" << currentFile;
@@ -392,7 +394,7 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(int index)
 {
-    QSettings settings("opentrack");
+    QSettings settings(_group);
     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
     QFileInfo pathInfo ( currentFile );
     settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
