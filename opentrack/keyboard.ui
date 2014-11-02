@@ -206,7 +206,7 @@
    <item>
     <widget class="QCheckBox" name="trayp">
      <property name="text">
-      <string>Start in tray, minimize to tray</string>
+      <string>Minimize to tray</string>
      </property>
     </widget>
    </item>

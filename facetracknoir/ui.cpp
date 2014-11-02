@@ -82,8 +82,6 @@ MainWindow::MainWindow() :
     kbd_quit.setEnabled(true);
 
     ensure_tray();
-    if (s.tray_enabled)
-        setWindowState(Qt::WindowMinimized);
 }
 
 MainWindow::~MainWindow()
