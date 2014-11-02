@@ -285,11 +285,6 @@ if(WIN32)
     opentrack_library(opentrack-proto-win32-mouse ftnoir_protocol_mouse)
 endif()
 
-#if(WIN32)
-#    add_library(freetrackclient SHARED ${freetrackclient-c})
-#    set_target_properties(freetrackclient PROPERTIES PREFIX "")
-#endif()
-
 opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
 
 if(WIN32)
