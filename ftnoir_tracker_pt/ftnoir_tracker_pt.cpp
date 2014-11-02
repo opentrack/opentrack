@@ -129,8 +129,8 @@ void Tracker::apply_inner()
 
 void Tracker::reset()
 {
-	QMutexLocker lock(&mutex);
-	point_tracker.reset();
+    QMutexLocker lock(&mutex);
+    point_tracker.reset();
 }
 
 void Tracker::start_tracker(QFrame *parent_window)
@@ -153,7 +153,7 @@ void Tracker::start_tracker(QFrame *parent_window)
 #ifndef OPENTRACK_API
 void Tracker::StopTracker(bool exit)
 {
-	set_command(PAUSE);
+    set_command(PAUSE);
 }
 #endif
 
@@ -164,35 +164,28 @@ void Tracker::StopTracker(bool exit)
 void Tracker::data(THeadPoseData *data)
 {
 
-    	FrameTrafo X_CM = point_tracker.pose();
-		FrameTrafo X_MH(Matx33f::eye(), t_MH);
-		FrameTrafo X_GH = X_CM * X_MH;
-        Matx33f R = X_GH.R;
-		Vec3f   t = X_GH.t;
+    FrameTrafo X_CM = point_tracker.pose();
+    FrameTrafo X_MH(Matx33f::eye(), t_MH);
+    FrameTrafo X_GH = X_CM * X_MH;
+    Matx33f R = X_GH.R;
+    Vec3f   t = X_GH.t;
 
-        // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
-		// -z -> x, y -> z, x -> -y
-		Matx33f R_EG( 0, 0,-1,
-		             -1, 0, 0,
-		              0, 1, 0);
-		R = R_EG * R * R_EG.t();
+    // extract rotation angles
+    float alpha, beta, gamma;
+    beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+    alpha = atan2( R(1,0), R(0,0));
+    gamma = atan2( R(2,1), R(2,2));
 
-		// extract rotation angles
-		float alpha, beta, gamma;
-		beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-		alpha = atan2( R(1,0), R(0,0));
-		gamma = atan2( R(2,1), R(2,2));		
+    QMutexLocker lock(&mutex);
 
-        QMutexLocker lock(&mutex);
+    data[Yaw] =   rad2deg * alpha;
+    data[Roll] = - rad2deg * beta;	// FTNoIR expects a minus here
+    data[Pitch]  =   rad2deg * gamma;
 
-        data[Yaw]   =   rad2deg * alpha;
-        data[Pitch] = - rad2deg * beta;	// FTNoIR expects a minus here
-        data[Roll]  =   rad2deg * gamma;
-
-        // get translation(s)
-        data[TX] = t[0] / 10.0;	// convert to cm
-        data[TY] = t[1] / 10.0;
-        data[TZ] = t[2] / 10.0;
+    // get translation(s)
+    data[TX] = t[0] / 10.0;	// convert to cm
+    data[TY] = t[1] / 10.0;
+    data[TZ] = t[2] / 10.0;
 }
 
 //-----------------------------------------------------------------------------
