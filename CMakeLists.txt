@@ -224,7 +224,7 @@ if(NOT WIN32 AND NOT APPLE)
     target_link_libraries(opentrack-compat rt)
 endif()
 
-opentrack_module(opentrack-csv ftnoir_csv)
+opentrack_module(opentrack-csv csv)
 add_library(opentrack-csv STATIC ${opentrack-csv-c})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 
