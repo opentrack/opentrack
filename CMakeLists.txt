@@ -112,33 +112,30 @@ endfunction()
 
 # ----
 
-if(UNIX)
-    set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support (probably Linux only)")
-endif()
-
 IF(WIN32)
     SET(SDK_VJOY "" CACHE PATH "VJoy SDK path")
-    SET(SDK_CONSOLE_DEBUG FALSE CACHE BOOL "Console build")
+    SET(SDK_CONSOLE_DEBUG FALSE CACHE BOOL "Console window visible at runtime")
 ENDIF()
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR APPLE)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
+    set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support")
 endif()
 
-SET(SDK_HYDRA "" CACHE PATH "libSixense path")
-SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether target is amd64 (else ia-32)")
-SET(SDK_RIFT "" CACHE PATH "libOVR path")
+SET(SDK_HYDRA "" CACHE PATH "libSixense path for Razer Hydra")
+SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether libSixense is amd64 (else ia-32)")
+SET(SDK_RIFT "" CACHE PATH "libOVR path for Oculus Rift")
 
-set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Path to Aruco static library")
+set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
 
 if(WIN32)
-    set(SDK_SIMCONNECT "" CACHE PATH "Path to SimConnect SDK")
-    set(SDK_FSUIPC "" CACHE PATH "Path to FSUIPC")
+    set(SDK_SIMCONNECT "" CACHE PATH "SimConnect SDK path for MS FSX")
+    set(SDK_FSUIPC "" CACHE PATH "FSUIPC for older MS FSX path")
 endif()
 
 if(NOT WIN32)
-    set(SDK_WINE_PREFIX "" CACHE PATH "Path where Wine is installed")
-    set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "Don't build wrapper, for instance X-Plane is native Linux app")
+    set(SDK_WINE_PREFIX "" CACHE PATH "Wine install prefix")
+    set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "disable Wine wrapper -- use Wine only for X-Plane")
 endif()
 
 # ----
