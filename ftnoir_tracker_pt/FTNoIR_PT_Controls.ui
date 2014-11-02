@@ -126,7 +126,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -414,7 +414,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -438,8 +438,8 @@
              <widget class="QSpinBox" name="clip_tlength_spin">
               <property name="geometry">
                <rect>
-                <x>70</x>
-                <y>35</y>
+                <x>20</x>
+                <y>30</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -457,8 +457,8 @@
              <widget class="QSpinBox" name="clip_bheight_spin">
               <property name="geometry">
                <rect>
-                <x>110</x>
-                <y>115</y>
+                <x>120</x>
+                <y>100</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -477,7 +477,7 @@
               <property name="geometry">
                <rect>
                 <x>40</x>
-                <y>55</y>
+                <y>60</y>
                 <width>71</width>
                 <height>111</height>
                </rect>
@@ -492,8 +492,8 @@
              <widget class="QLabel" name="label_50">
               <property name="geometry">
                <rect>
-                <x>10</x>
-                <y>35</y>
+                <x>150</x>
+                <y>30</y>
                 <width>46</width>
                 <height>13</height>
                </rect>
@@ -505,8 +505,8 @@
              <widget class="QSpinBox" name="clip_blength_spin">
               <property name="geometry">
                <rect>
-                <x>50</x>
-                <y>165</y>
+                <x>120</x>
+                <y>150</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -524,8 +524,8 @@
              <widget class="QSpinBox" name="clip_theight_spin">
               <property name="geometry">
                <rect>
-                <x>110</x>
-                <y>75</y>
+                <x>120</x>
+                <y>60</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
