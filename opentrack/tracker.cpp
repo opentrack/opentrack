@@ -28,7 +28,6 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     enabledp(true),
     should_quit(false),
     libs(libs),
-    r_b (dmat<3, 3>::eye()),
     t_b {0,0,0}
 {
 }
@@ -46,17 +45,6 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
     return fc.getValue(pos) + axis.opts.zero;
-}
-
-// http://stackoverflow.com/a/18436193
-static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
-{
-    const double tmp[] = {
-        -atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) ),
-        -atan2( R(2,1), R(2,2)),
-        -atan2( R(1,0), R(0,0)),
-    };
-    return dmat<3, 1>(tmp);
 }
 
 // tait-bryan angles, not euler
@@ -124,26 +112,32 @@ void Tracker::logic()
     for (int i = 0; i < 6; i++)
         filtered_pose[i] *= inverts[i] ? -1. : 1.;
 
+    static constexpr double pi = 3.141592653;
+    static constexpr double d2r = pi / 180.;
+
     if (centerp)
     {
         centerp = false;
-        dmat<3, 1> tmp;
-        r_b = euler_to_rmat(&filtered_pose[Yaw]);
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
+        q_b = Quat::from_euler_rads(filtered_pose(Yaw) * d2r,
+                                    filtered_pose(Pitch) * d2r,
+                                    filtered_pose(Roll) * d2r);
     }
 
     Pose raw_centered;
 
     {
-        const dmat<3, 3> rmat = euler_to_rmat(&filtered_pose[Yaw]);
-        const dmat<3, 3> m_ = rmat * r_b.t();
-        const auto euler = rmat_to_euler(m_);
+        const Quat q(filtered_pose(Yaw)*d2r,
+                     filtered_pose(Pitch)*d2r,
+                     filtered_pose(Roll)*d2r);
+        const Quat q_ = q * q_b.inv();
+        double ypr[3];
+        q_.to_euler_degrees(ypr[0], ypr[1], ypr[2]);
         for (int i = 0; i < 3; i++)
         {
-            static constexpr double pi = 3.141592653;
             raw_centered(i) = filtered_pose(i) - t_b[i];
-            raw_centered(i+3) = euler(i, 0) * 180./pi;
+            raw_centered(i+3) = ypr[i];
         }
     }
 
