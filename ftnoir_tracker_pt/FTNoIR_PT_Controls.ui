@@ -587,7 +587,7 @@
               <property name="geometry">
                <rect>
                 <x>30</x>
-                <y>90</y>
+                <y>60</y>
                 <width>111</width>
                 <height>81</height>
                </rect>
@@ -603,7 +603,7 @@
               <property name="geometry">
                <rect>
                 <x>20</x>
-                <y>35</y>
+                <y>30</y>
                 <width>46</width>
                 <height>13</height>
                </rect>
@@ -615,8 +615,8 @@
              <widget class="QSpinBox" name="cap_length_spin">
               <property name="geometry">
                <rect>
-                <x>20</x>
-                <y>70</y>
+                <x>80</x>
+                <y>30</y>
                 <width>101</width>
                 <height>22</height>
                </rect>
@@ -660,8 +660,8 @@
              <widget class="QLabel" name="label_47">
               <property name="geometry">
                <rect>
-                <x>270</x>
-                <y>85</y>
+                <x>200</x>
+                <y>80</y>
                 <width>81</width>
                 <height>81</height>
                </rect>
@@ -676,8 +676,8 @@
              <widget class="QSpinBox" name="cap_width_spin">
               <property name="geometry">
                <rect>
-                <x>255</x>
-                <y>55</y>
+                <x>210</x>
+                <y>50</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -695,8 +695,8 @@
              <widget class="QLabel" name="label_49">
               <property name="geometry">
                <rect>
-                <x>290</x>
-                <y>35</y>
+                <x>200</x>
+                <y>30</y>
                 <width>46</width>
                 <height>13</height>
                </rect>
@@ -708,8 +708,8 @@
              <widget class="QSpinBox" name="cap_height_spin">
               <property name="geometry">
                <rect>
-                <x>60</x>
-                <y>120</y>
+                <x>50</x>
+                <y>140</y>
                 <width>116</width>
                 <height>22</height>
                </rect>
@@ -898,7 +898,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
