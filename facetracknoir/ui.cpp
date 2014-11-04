@@ -143,27 +143,14 @@ void MainWindow::saveAs()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
                                                     oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
-    if (!fileName.isEmpty()) {
+    (void) QFile::remove(fileName);
 
-        QFileInfo newFileInfo ( fileName );
-        if ((newFileInfo.exists()) && (oldFile != fileName)) {
-            QFile newFileFile ( fileName );
-            newFileFile.remove();
-        }
-
-        QFileInfo oldFileInfo ( oldFile );
-        if (oldFileInfo.exists()) {
-            QFile oldFileFile ( oldFile );
-            oldFileFile.copy( fileName );
-        }
-
-        {
-            QSettings settings(group::org);
-            settings.setValue (group::filename_key, fileName);
-        }
-        save();
+    {
+        QSettings settings(group::org);
+        settings.setValue (group::filename_key, fileName);
     }
 
+    save();
     fill_profile_combobox();
 }
 
