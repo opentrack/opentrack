@@ -1,6 +1,7 @@
 #pragma once
 
 #include "plugin-api.hpp"
+#include "options.hpp"
 
 #include <QWidget>
 #include <QDebug>
@@ -9,8 +10,6 @@
 #include <QFrame>
 #include <QList>
 
-#include <memory>
-template<typename t> using mem = std::shared_ptr<t>;
 
 extern "C" typedef void* (*CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*METADATA_FUNPTR)(void);
