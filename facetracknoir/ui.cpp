@@ -122,11 +122,14 @@ void MainWindow::save_mappings() {
 #endif
 
 void MainWindow::save() {
+    const QString currentFile = group::ini_pathname();
+    // Qt5 refuses writing to empty file
+    (void) QFile::remove(currentFile);
+
     b->save();
     save_mappings();
 
 #if defined(__unix) || defined(__linux)
-    const QString currentFile = group::ini_pathname();
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
 
