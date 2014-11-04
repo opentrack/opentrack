@@ -32,6 +32,9 @@
 
 #include <QDebug>
 
+#include <memory>
+template<typename t> using mem = std::shared_ptr<t>;
+
 namespace options {
     template<typename k, typename v>
     using map = std::map<k, v>;
