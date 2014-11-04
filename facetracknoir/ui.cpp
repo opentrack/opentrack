@@ -359,12 +359,16 @@ void MainWindow::showProtocolSettings() {
 }
 
 void MainWindow::showFilterSettings() {
-    auto dialog = mk_dialog<IFilterDialog>(current_filter());
+    if (libs.pFilter != nullptr)
+    {
+        auto dialog = mk_dialog<IFilterDialog>(current_filter());
 
-    if (dialog) {
-        pFilterDialog = dialog;
-        dialog->register_filter(libs.pFilter.get());
-        dialog->show();
+        if (dialog)
+        {
+            pFilterDialog = dialog;
+            dialog->register_filter(libs.pFilter.get());
+            dialog->show();
+        }
     }
 }
 
