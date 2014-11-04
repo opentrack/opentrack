@@ -95,11 +95,11 @@ MainWindow::~MainWindow()
 void MainWindow::open() {
      QFileDialog dialog(this);
      dialog.setFileMode(QFileDialog::ExistingFile);
-
+     QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
      QString fileName = dialog.getOpenFileName(
                                 this,
                                  tr("Open the settings file"),
-                                 QCoreApplication::applicationDirPath() + "/settings/",
+                                 dir_path,
                                  tr("Settings file (*.ini);;All Files (*)"),
                                                NULL);
 
