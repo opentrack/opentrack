@@ -140,7 +140,6 @@ void MainWindow::save() {
 void MainWindow::saveAs()
 {
     QString oldFile = group::ini_pathname();
-    QSettings settings(group::org);
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
                                                     oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
@@ -158,7 +157,10 @@ void MainWindow::saveAs()
             oldFileFile.copy( fileName );
         }
 
-        settings.setValue (group::filename_key, fileName);
+        {
+            QSettings settings(group::org);
+            settings.setValue (group::filename_key, fileName);
+        }
         save();
     }
 
@@ -391,10 +393,12 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(int index)
 {
-    QSettings settings(group::org);
     QString currentFile = group::ini_pathname();
     QFileInfo pathInfo ( currentFile );
-    settings.setValue (group::filename_key, pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
+    {
+        QSettings settings(group::org);
+        settings.setValue (group::filename_key, pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
+    }
     load_settings();
 }
 
