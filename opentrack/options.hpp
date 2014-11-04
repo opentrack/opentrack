@@ -140,6 +140,7 @@ namespace options {
     };
 
     class impl_bundle : public QObject {
+        Q_OBJECT
     protected:
         QMutex mtx;
         const string group_name;
@@ -148,6 +149,8 @@ namespace options {
         bool modified;
         impl_bundle(const impl_bundle&) = delete;
         impl_bundle& operator=(const impl_bundle&) = delete;
+    signals:
+        void reloading();
     public:
         impl_bundle(const string& group_name) :
             mtx(QMutex::Recursive),
@@ -165,9 +168,10 @@ namespace options {
             saved = group(group_name);
             transient = saved;
             modified = false;
+            emit reloading();
         }
 
-        bool store_kv(const string& name, const QVariant& datum)
+        void store_kv(const string& name, const QVariant& datum)
         {
             QMutexLocker l(&mtx);
 
@@ -176,9 +180,7 @@ namespace options {
             {
                 modified = true;
                 transient.put(name, datum);
-                return true;
             }
-            return false;
         }
         bool contains(const string& name)
         {
@@ -291,14 +293,16 @@ namespace options {
         template<typename t>
         void store(const t& datum)
         {
-            if (b->store_kv(self_name, datum))
-                emit valueChanged(static_cast<t>(datum));
+            b->store_kv(self_name, datum);
+            emit valueChanged(static_cast<t>(datum));
         }
     public slots:
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
         DEFINE_SLOT(QString)
         DEFINE_SLOT(bool)
+    public slots:
+        virtual void reload() = 0;
     };
 
     static inline string string_from_qstring(const QString& datum)
@@ -319,6 +323,9 @@ namespace options {
         static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::UniqueConnection;
         value(pbundle b, const string& name, t def) : base_value(b, name)
         {
+            QObject::connect(b.get(), SIGNAL(reloading()),
+                             this, SLOT(reload()),
+                             DIRECT_CONNTYPE);
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
                 *this = def;
         }
@@ -328,6 +335,9 @@ namespace options {
         operator t()
         {
             return b->get<t>(self_name);
+        }
+        void reload() override {
+            *this = static_cast<t>(*this);
         }
     };
 
