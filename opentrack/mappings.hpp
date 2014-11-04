@@ -6,8 +6,6 @@ using namespace options;
 #include "../qfunctionconfigurator/functionconfig.h"
 #include "main-settings.hpp"
 
-static constexpr const char* settings_group = "opentrack-2.3";
-
 class Mapping {
 public:
     Mapping(QString primary,
@@ -20,12 +18,9 @@ public:
         name1(primary),
         name2(secondary)
     {
-        // XXX TODO move all this qsettings boilerplate into a single header -sh 20141004
-        QSettings settings(settings_group);
-        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-        QSettings iniFile(currentFile, QSettings::IniFormat);
-        curve.loadSettings(iniFile, primary);
-        curveAlt.loadSettings(iniFile, secondary);
+        mem<QSettings> iniFile = group::ini_file();
+        curve.loadSettings(*iniFile, primary);
+        curveAlt.loadSettings(*iniFile, secondary);
     }
     Map curve;
     Map curveAlt;
@@ -53,29 +48,25 @@ public:
 
     void load_mappings()
     {
-        QSettings settings(settings_group);
-        QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-        QSettings iniFile( currentFile, QSettings::IniFormat );
+        mem<QSettings> iniFile = group::ini_file();
 
         for (int i = 0; i < 6; i++)
         {
-            axes[i].curve.loadSettings(iniFile, axes[i].name1);
-            axes[i].curveAlt.loadSettings(iniFile, axes[i].name2);
+            axes[i].curve.loadSettings(*iniFile, axes[i].name1);
+            axes[i].curveAlt.loadSettings(*iniFile, axes[i].name2);
         }
     }
     void save_mappings()
     {
-        QSettings settings(settings_group);
-        QString currentFile = settings.value("SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini").toString();
-        QSettings iniFile(currentFile, QSettings::IniFormat);
+        mem<QSettings> iniFile = group::ini_file();
 
         for (int i = 0; i < 6; i++)
         {
-            axes[i].curve.saveSettings(iniFile, axes[i].name1);
-            axes[i].curveAlt.saveSettings(iniFile, axes[i].name2);
+            axes[i].curve.saveSettings(*iniFile, axes[i].name1);
+            axes[i].curveAlt.saveSettings(*iniFile, axes[i].name2);
         }
     }
-    
+
     void invalidate_unsaved()
     {
         for (int i = 0; i < 6; i++)

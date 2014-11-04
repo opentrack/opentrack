@@ -23,6 +23,7 @@
 *********************************************************************************/
 #include "ui.h"
 #include "opentrack/tracker.h"
+#include "opentrack/options.hpp"
 #include <QFileDialog>
 
 #ifndef _WIN32
@@ -30,8 +31,6 @@
 #else
 #   include <windows.h>
 #endif
-
-static constexpr const char* _group = "opentrack-2.3";
 
 MainWindow::MainWindow() :
     pose_update_timer(this),
@@ -106,8 +105,8 @@ void MainWindow::open() {
 
     if (! fileName.isEmpty() ) {
         {
-            QSettings settings(_group);
-            settings.setValue ("SettingsFile", QFileInfo(fileName).absoluteFilePath());
+            QSettings settings(group::org);
+            settings.setValue (group::filename_key, QFileInfo(fileName).absoluteFilePath());
         }
         fill_profile_combobox();
         load_settings();
@@ -127,8 +126,7 @@ void MainWindow::save() {
     save_mappings();
 
 #if defined(__unix) || defined(__linux)
-    QSettings settings(_group);
-    const QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    const QString currentFile = group::ini_pathname();
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
 
@@ -141,9 +139,8 @@ void MainWindow::save() {
 
 void MainWindow::saveAs()
 {
-    QSettings settings(_group);
-    QString oldFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-
+    QString oldFile = group::ini_pathname();
+    QSettings settings(group::org);
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
                                                     oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
@@ -161,7 +158,7 @@ void MainWindow::saveAs()
             oldFileFile.copy( fileName );
         }
 
-        settings.setValue ("SettingsFile", fileName);
+        settings.setValue (group::filename_key, fileName);
         save();
     }
 
@@ -181,9 +178,7 @@ extern "C" volatile const char* opentrack_version;
 
 void MainWindow::fill_profile_combobox()
 {
-     QSettings settings(_group);
-     QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath()
-                                            + "/settings/default.ini" ).toString();
+     QString currentFile = group::ini_pathname();
      qDebug() << "Config file now" << currentFile;
      QFileInfo pathInfo ( currentFile );
      setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + pathInfo.fileName());
@@ -392,10 +387,10 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(int index)
 {
-    QSettings settings(_group);
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
+    QSettings settings(group::org);
+    QString currentFile = group::ini_pathname();
     QFileInfo pathInfo ( currentFile );
-    settings.setValue ("SettingsFile", pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
+    settings.setValue (group::filename_key, pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
     load_settings();
 }
 
