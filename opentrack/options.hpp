@@ -39,7 +39,7 @@ namespace options {
     template<typename k, typename v>
     using map = std::map<k, v>;
     using std::string;
-    
+
     template<typename t>
     // don't elide usages of the function, qvariant default implicit
     // conversion results in nonsensical runtime behavior -sh
@@ -80,12 +80,6 @@ namespace options {
     private:
         map<string, QVariant> kvs;
         string name;
-        static const QString ini_pathname()
-        {
-            QSettings settings(group::org);
-            return settings.value("SettingsFile",
-                                  QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-        }
     public:
         group(const string& name) : name(name)
         {
@@ -101,7 +95,7 @@ namespace options {
             conf.endGroup();
         }
         static constexpr const char* org = "opentrack-2.3";
-        
+
         void save()
         {
             QSettings s(ini_pathname(), QSettings::IniFormat);
@@ -114,21 +108,34 @@ namespace options {
             }
             s.endGroup();
         }
-        
+
         template<typename t>
         t get(const string& k)
         {
             return qcruft_to_t<t>(kvs[k]);
         }
-        
+
         void put(const string& s, const QVariant& d)
         {
             kvs[s] = d;
         }
-        
+
         bool contains(const string& s)
         {
             return kvs.count(s) != 0;
+        }
+
+        static constexpr const char* filename_key = "settings-file";
+        static constexpr const char* default_path = "/settings/default.ini";
+
+        static const QString ini_pathname()
+        {
+            QSettings settings(group::org);
+            return settings.value(filename_key, QCoreApplication::applicationDirPath() + default_path).toString();
+        }
+        static const mem<QSettings> ini_file()
+        {
+            return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
         }
     };
 
@@ -150,20 +157,20 @@ namespace options {
             modified(false)
         {
         }
-        
+
         string name() { return group_name; }
-        
+
         void reload() {
             QMutexLocker l(&mtx);
             saved = group(group_name);
             transient = saved;
             modified = false;
         }
-        
+
         bool store_kv(const string& name, const QVariant& datum)
         {
             QMutexLocker l(&mtx);
-            
+
             auto old = transient.get<QVariant>(name);
             if (!transient.contains(name) || datum != old)
             {
@@ -197,9 +204,9 @@ namespace options {
             return modified;
         }
     };
-    
+
     class opt_bundle;
-    
+
     namespace
     {
         template<typename k, typename v, typename cnt = int>
@@ -213,42 +220,42 @@ namespace options {
             map<k, tt> implsgl_data;
         public:
             opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
-            
+
             static opt_singleton<k, v>& datum()
             {
                 static auto ret = std::make_shared<opt_singleton<k, v>>();
                 return *ret;
             }
-            
+
             pbundle bundle(const k& key)
             {
                 QMutexLocker l(&implsgl_mtx);
-                
+
                 if (implsgl_data.count(key) != 0)
                     return std::get<1>(implsgl_data[key]);
-                
+
                 auto shr = std::make_shared<v>(key);
                 implsgl_data[key] = tt(cnt(1), shr);
                 return shr;
             }
-            
+
             void bundle_decf(const k& key)
             {
                 QMutexLocker l(&implsgl_mtx);
-                
+
                 if (--std::get<0>(implsgl_data[key]) == 0)
                     implsgl_data.erase(key);
             }
-            
+
             ~opt_singleton() { implsgl_data.clear(); }
         };
-        
+
         using pbundle = std::shared_ptr<opt_bundle>;
         using t_fact = opt_singleton<string, opt_bundle>;
     }
- 
+
     static inline t_fact::pbundle bundle(const string name) { return t_fact::datum().bundle(name); }
-    
+
     class opt_bundle : public impl_bundle
     {
     public:
@@ -257,7 +264,7 @@ namespace options {
         {
             qDebug() << "bundle +" << QString::fromStdString(group_name);
         }
-        
+
         ~opt_bundle()
         {
             qDebug() << "bundle -" << QString::fromStdString(group_name);
@@ -293,7 +300,7 @@ namespace options {
         DEFINE_SLOT(QString)
         DEFINE_SLOT(bool)
     };
-    
+
     static inline string string_from_qstring(const QString& datum)
     {
         auto tmp = datum.toUtf8();

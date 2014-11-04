@@ -1,3 +1,5 @@
+#include "../opentrack/options.hpp"
+using namespace options;
 #include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>
 #include <QPaintEvent>
@@ -19,11 +21,8 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
 }
 
 void QFunctionConfigurator::setConfig(Map* config, const QString& name) {
-    QSettings settings("opentrack");
-    QString currentFile = settings.value ( "SettingsFile", QCoreApplication::applicationDirPath() + "/settings/default.ini" ).toString();
-    QSettings iniFile( currentFile, QSettings::IniFormat );
-
-    config->loadSettings(iniFile, name);
+    mem<QSettings> iniFile = group::ini_file();
+    config->loadSettings(*iniFile, name);
     _config = config;
     _draw_function = true;
     update_range();
