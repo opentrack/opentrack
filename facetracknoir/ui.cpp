@@ -318,7 +318,7 @@ void MainWindow::showHeadPose()
 template<typename t>
 mem<t> mk_dialog(mem<dylib> lib)
 {
-    if (lib)
+    if (lib && lib->Dialog)
     {
         auto dialog = mem<t>(reinterpret_cast<t*>(lib->Dialog()));
         dialog->setWindowFlags(Qt::Dialog);
@@ -350,16 +350,17 @@ void MainWindow::showProtocolSettings() {
 }
 
 void MainWindow::showFilterSettings() {
-    if (libs.pFilter != nullptr)
-    {
-        auto dialog = mk_dialog<IFilterDialog>(current_filter());
+    auto dialog = mk_dialog<IFilterDialog>(current_filter());
 
-        if (dialog)
+
+    if (dialog)
+    {
+        pFilterDialog = dialog;
+        if (libs.pFilter != nullptr)
         {
-            pFilterDialog = dialog;
             dialog->register_filter(libs.pFilter.get());
-            dialog->show();
         }
+        dialog->show();
     }
 }
 
