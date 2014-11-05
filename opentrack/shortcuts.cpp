@@ -1,4 +1,5 @@
 #include "shortcuts.h"
+#include <QMutexLocker>
 
 KeyboardShortcutDialog::KeyboardShortcutDialog()
 {
@@ -39,6 +40,14 @@ void KeyboardShortcutDialog::doCancel() {
 #if defined(_WIN32)
 #include <windows.h>
 
+void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_)
+{
+    QMutexLocker l(&mtx);
+
+    kCenter = kCenter_;
+    kToggle = kToggle_;
+}
+
 KeybindingWorker::~KeybindingWorker() {
     should_quit = true;
     wait();
@@ -50,8 +59,8 @@ KeybindingWorker::~KeybindingWorker() {
         din->Release();
 }
 
-KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, WId handle) :
-    din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), should_quit(true)
+KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, WId handle, Shortcuts& sc) :
+    sc(sc), din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
@@ -111,12 +120,9 @@ static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
     return false;
 }
 
-#define PROCESS_KEY(k, s) \
-    if (isKeyPressed(&k, keystate) && (!k.ever_pressed ? (k.timer.start(), k.ever_pressed = true) : k.timer.restart() > 100)) \
-        emit s;
-
 void KeybindingWorker::run() {
     BYTE keystate[256];
+
     while (!should_quit)
     {
         if (dinkeyboard->GetDeviceState(256, (LPVOID)keystate) != DI_OK) {
@@ -125,10 +131,16 @@ void KeybindingWorker::run() {
             continue;
         }
 
-        PROCESS_KEY(kCenter, center());
-        PROCESS_KEY(kToggle, toggle());
+        QMutexLocker l(&mtx);
 
-        Sleep(14);
+        if (isKeyPressed(&kCenter, keystate) && kCenter.should_process())
+            emit sc.center();
+
+        if (isKeyPressed(&kToggle, keystate) && kToggle.should_process())
+            emit sc.toggle();
+
+        // keypresses get dropped with high values
+        Sleep(15);
     }
 }
 #endif
@@ -159,6 +171,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
         }
     }
 #else
+    key = K();
     int idx = k.key_index;
     key.keycode = 0;
     key.shift = key.alt = key.ctrl = 0;
@@ -169,6 +182,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     key.ctrl = k.ctrl;
 #endif
 }
+
 void Shortcuts::reload() {
 #ifndef _WIN32
     if (keyCenter)
@@ -185,8 +199,13 @@ void Shortcuts::reload() {
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
 #ifdef _WIN32
-    keybindingWorker = nullptr;
-    keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle);
-    keybindingWorker->start();
+    bool is_new = keybindingWorker == nullptr;
+    if (is_new)
+    {
+        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle, *this);
+        keybindingWorker->start();
+    }
+    else
+        keybindingWorker->set_keys(keyCenter, keyToggle);
 #endif
 }
