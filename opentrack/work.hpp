@@ -27,8 +27,8 @@ struct Work
         QObject::connect(sc->keyCenter.get(), SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
         QObject::connect(sc->keyToggle.get(), SIGNAL(activated()), recv, SLOT(shortcutToggled()));
 #else
-        QObject::connect(sc->keybindingWorker.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
-        QObject::connect(sc->keybindingWorker.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
+        QObject::connect(sc.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
+        QObject::connect(sc.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
 #endif
         tracker->start();
     }

@@ -1,4 +1,5 @@
 #pragma once
+#include <QObject>
 #include <QWidget>
 #include <QElapsedTimer>
 #include <QThread>
@@ -6,6 +7,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QSettings>
+#include <QMutex>
 
 #include "qxt-mini/QxtGlobalShortcut"
 #include "opentrack/plugin-support.h"
@@ -41,11 +43,15 @@ struct Key {
     bool shift;
     bool ctrl;
     bool alt;
-    bool ever_pressed;
     QElapsedTimer timer;
 public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false), ever_pressed(false)
+    Key() : keycode(0), shift(false), ctrl(false), alt(false)
     {
+    }
+
+    bool should_process()
+    {
+        return !timer.isValid() ? (timer.start(), true) : timer.restart() > 100;
     }
 };
 #else
@@ -53,30 +59,33 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
+class Shortcuts;
+
 struct KeybindingWorker : public QThread {
-    Q_OBJECT
 #ifdef _WIN32
 private:
+    Shortcuts& sc;
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     Key kCenter;
     Key kToggle;
+    QMutex mtx;
 public:
     volatile bool should_quit;
     ~KeybindingWorker();
-    KeybindingWorker(Key keyCenter, Key keyToggle, WId handle);
-	void run();
+    KeybindingWorker(Key keyCenter, Key keyToggle, WId handle, Shortcuts& sc);
+    void run();
+    void set_keys(Key kCenter, Key kToggle);
 #else
 public:
     KeybindingWorker(Key, Key, WId) {}
-	void run() {}
+    void run() {}
 #endif
-signals:
-    void center();
-    void toggle();
 };
 
-struct Shortcuts {
+struct Shortcuts : public QObject {
+    Q_OBJECT
+
     using K =
 #ifndef _WIN32
     mem<QxtGlobalShortcut>
@@ -84,7 +93,7 @@ struct Shortcuts {
     Key
 #endif
     ;
-    
+
     K keyCenter;
     K keyToggle;
 
@@ -92,7 +101,8 @@ struct Shortcuts {
 #ifdef _WIN32
     mem<KeybindingWorker> keybindingWorker;
 #endif
-    
+
+public:
     struct settings {
         pbundle b;
         key_opts center, toggle;
@@ -110,20 +120,22 @@ struct Shortcuts {
     void reload();
 private:
     void bind_keyboard_shortcut(K &key, key_opts& k);
+signals:
+    void center();
+    void toggle();
 };
 
 class KeyboardShortcutDialog: public QWidget
 {
     Q_OBJECT
+signals:
+    void reload();
 public:
     KeyboardShortcutDialog();
 private:
     Ui::UICKeyboardShortcutDialog ui;
     Shortcuts::settings s;
-    mem<Shortcuts> sc;
-signals:
-    void reload();
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
