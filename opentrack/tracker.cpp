@@ -115,62 +115,61 @@ void Tracker::logic()
     static constexpr double pi = 3.141592653;
     static constexpr double d2r = pi / 180.;
 
+    Pose mapped_pose;
+
+    for (int i = 0; i < 6; i++)
+        mapped_pose(i) = map(filtered_pose(i), inverts[i], m(i));
+
     if (centerp)
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
-        q_b = Quat::from_euler_rads(filtered_pose(Yaw) * d2r,
-                                    filtered_pose(Pitch) * d2r,
-                                    filtered_pose(Roll) * d2r);
+        q_b = Quat::from_euler_rads(mapped_pose(Yaw) * d2r,
+                                    mapped_pose(Pitch) * d2r,
+                                    mapped_pose(Roll) * d2r);
     }
 
-    Pose raw_centered;
+    Pose centered;
 
     {
-        const Quat q(filtered_pose(Yaw)*d2r,
-                     filtered_pose(Pitch)*d2r,
-                     filtered_pose(Roll)*d2r);
+        const Quat q(mapped_pose(Yaw)*d2r,
+                     mapped_pose(Pitch)*d2r,
+                     mapped_pose(Roll)*d2r);
         const Quat q_ = q * q_b.inv();
         double ypr[3];
         q_.to_euler_degrees(ypr[0], ypr[1], ypr[2]);
         for (int i = 0; i < 3; i++)
         {
-            raw_centered(i) = filtered_pose(i) - t_b[i];
-            raw_centered(i+3) = ypr[i];
+            centered(i) = mapped_pose(i) - t_b[i];
+            centered(i+3) = ypr[i];
         }
     }
 
-    Pose mapped_pose_precomp;
-
-    for (int i = 0; i < 6; i++)
-        mapped_pose_precomp(i) = map(raw_centered(i), inverts[i], m(i));
-
-    Pose mapped_pose_ = mapped_pose_precomp;
+    Pose centered_ = centered;
 
     if (s.tcomp_p)
-        t_compensate(euler_to_rmat(&mapped_pose_precomp[Yaw]),
-                     mapped_pose_precomp,
-                     mapped_pose_,
+        t_compensate(euler_to_rmat(&centered[Yaw]),
+                     centered,
+                     centered_,
                      s.tcomp_tz);
 
-    Pose mapped_pose;
+    Pose mapped;
 
     for (int i = 0; i < 6; i++)
     {
         auto& axis = m(i);
         int k = axis.opts.src;
         if (k < 0 || k >= 6)
-            mapped_pose(i) = 0;
+            mapped(i) = 0;
         else
-            mapped_pose(i) = mapped_pose_(i);
+            mapped(i) = centered_(i);
     }
 
-
-    libs.pProtocol->pose(mapped_pose);
+    libs.pProtocol->pose(mapped);
 
     QMutexLocker foo(&mtx);
-    output_pose = mapped_pose;
+    output_pose = mapped;
     raw_6dof = final_raw;
 }
 
