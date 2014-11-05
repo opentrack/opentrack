@@ -50,9 +50,6 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dyli
         return;
     }
 
-    qDebug() << "start tracker with frame" << (intptr_t)frame;
-    std::cout.flush();
-
     pTracker->start_tracker(frame);
 
     correct = true;

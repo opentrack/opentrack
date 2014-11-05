@@ -112,9 +112,7 @@ Tracker::~Tracker()
         delete videoWidget;
     if(layout)
         delete layout;
-    qDebug() << "releasing camera, brace for impact";
     camera.release();
-    qDebug() << "all done!";
 }
 
 void Tracker::start_tracker(QFrame* videoframe)
