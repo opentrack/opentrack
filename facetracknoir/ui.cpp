@@ -123,11 +123,10 @@ void MainWindow::save_mappings() {
 
 void MainWindow::save() {
     const QString currentFile = group::ini_pathname();
-    // Qt5 refuses writing to empty file
-    (void) QFile::remove(currentFile);
-
     b->save();
     save_mappings();
+    mem<QSettings> settings = group::ini_file();
+    settings->sync();
 
 #if defined(__unix) || defined(__linux)
     QByteArray bytes = QFile::encodeName(currentFile);
