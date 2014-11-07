@@ -51,7 +51,6 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
 // http://stackoverflow.com/a/18436193
 static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 {
-    static constexpr double pi = 3.141592653;
     // don't use atan2 here, confuses quadrants. see issue #63 -sh
     double pitch = atan( -R(0, 2) / sqrt(R(1,2)*R(1,2) + R(2,2)*R(2,2)) );
     double roll = atan(R(1, 2) / R(2, 2));
