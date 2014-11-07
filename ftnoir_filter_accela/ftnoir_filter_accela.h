@@ -18,7 +18,7 @@ struct settings {
         trans_deadzone(b, "translation-deadband", 0),
         rot_plus(b, "rotation-increase", 30),
         rot_minus(b, "rotation-decrease", 25),
-        trans_smoothing(b, "translation-smoothing", 0)
+        trans_smoothing(b, "translation-smoothing", 50)
     {}
 };
 
