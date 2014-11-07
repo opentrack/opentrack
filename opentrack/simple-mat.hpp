@@ -1,4 +1,5 @@
 #pragma once
+#include <initializer_list>
 
 template<typename num, int h, int w>
 struct Mat
@@ -25,6 +26,14 @@ struct Mat
 
     num operator()(int j, int i) const { return data[j][i]; }
     num& operator()(int j, int i) { return data[j][i]; }
+
+    Mat(std::initializer_list<num>&& list)
+    {
+        auto iter = list.begin();
+        for (int i = 0; i < h; i++)
+            for (int j = 0; j < w; j++)
+                data[i][j] = *iter++;
+    }
 
     Mat()
     {
