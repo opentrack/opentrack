@@ -63,12 +63,10 @@ struct Mat
         for (int j = 0; j < h; j++)
             for (int i = 0; i < w; i++)
                 ret.data[i][j] = data[j][i];
-        
+
         return ret;
     }
 };
 
 template<int h, int w> using dmat = Mat<double, h, w>;
-
-using rmat = dmat<3, 3>;
 
