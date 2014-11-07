@@ -93,15 +93,14 @@ static dmat<3, 3> euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* output, bool rz)
 {
-    static constexpr int p_x = 2, p_y = 0, p_z = 1;
-    dmat<3, 1> tvec({-xyz[p_x], -xyz[p_y], xyz[p_z]});
+    dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
     const dmat<3, 1> ret = rmat * tvec;
-    output[0] = -ret(p_x, 0);
-    output[1] = -ret(p_y, 0);
     if (!rz)
-        output[2] = ret(p_z, 0);
+        output[2] = ret(0, 0);
     else
         output[2] = xyz[2];
+    output[1] = -ret(2, 0);
+    output[0] = -ret(1, 0);
 }
 
 void Tracker::logic()
