@@ -28,6 +28,7 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     enabledp(true),
     should_quit(false),
     libs(libs),
+    r_b(dmat<3,3>::eye()),
     t_b {0,0,0}
 {
 }
@@ -47,13 +48,24 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
     return fc.getValue(pos) + axis.opts.zero;
 }
 
+// http://stackoverflow.com/a/18436193
+static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
+{
+    static constexpr double pi = 3.141592653;
+    // don't use atan2 here, confuses quadrants. see issue #63 -sh
+    double pitch = atan( -R(0, 2) / sqrt(R(1,2)*R(1,2) + R(2,2)*R(2,2)) );
+    double roll = atan(R(1, 2) / R(2, 2));
+    double yaw = atan(R(0, 1) / R(0, 0));
+    return dmat<3, 1>({yaw, pitch, roll});
+}
+
 // tait-bryan angles, not euler
 static dmat<3, 3> euler_to_rmat(const double* input)
 {
     static constexpr double pi = 3.141592653;
-    const auto H = input[1] * pi / 180;
-    const auto P = input[0] * pi / 180;
-    const auto B = input[2] * pi / 180;
+    auto H = input[0] * pi / 180;
+    auto P = input[1] * pi / 180;
+    auto B = input[2] * pi / 180;
 
     const auto c1 = cos(H);
     const auto s1 = sin(H);
@@ -63,10 +75,18 @@ static dmat<3, 3> euler_to_rmat(const double* input)
     const auto s3 = sin(B);
 
     double foo[] = {
-        //Tait-Bryan XYZ
-        c2*c3,  -c2*s3,  s2,
-        c1*s3+c3*s1*s2,  c1*c3-s1*s2*s3,  -c2*s1,
-        s1*s3-c1*c3*s2,  c3*s1+c1*s2*s3,  c1*c2,
+        // z
+        c1 * c2,
+        c1 * s2 * s3 - c3 * s1,
+        s1 * s3 + c1 * c3 * s2,
+        // y
+        c2 * s1,
+        c1 * c3 + s1 * s2 * s3,
+        c3 * s1 * s2 - c1 * s3,
+        // x
+        -s2,
+        c2 * s3,
+        c2 * c3
     };
 
     return dmat<3, 3>(foo);
@@ -74,7 +94,7 @@ static dmat<3, 3> euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* output, bool rz)
 {
-    static constexpr int p_x = 0, p_y = 1, p_z = 2;
+    static constexpr int p_x = 2, p_y = 0, p_z = 1;
     const double xyz_[3] = { -xyz[p_x], -xyz[p_y], xyz[p_z] };
     dmat<3, 1> tvec(xyz_);
     const dmat<3, 1> ret = rmat * tvec;
@@ -113,31 +133,27 @@ void Tracker::logic()
         filtered_pose[i] *= inverts[i] ? -1. : 1.;
 
     static constexpr double pi = 3.141592653;
-    static constexpr double d2r = pi / 180.;
+    static constexpr double r2d = 180. / pi;
 
     if (centerp)
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
             t_b[i] = filtered_pose(i);
-        q_b = Quat::from_euler_rads(filtered_pose(Yaw) * d2r,
-                                    filtered_pose(Pitch) * d2r,
-                                    filtered_pose(Roll) * d2r);
+        r_b = euler_to_rmat(&filtered_pose[Yaw]);
     }
 
     Pose raw_centered;
 
     {
-        const Quat q(filtered_pose(Yaw)*d2r,
-                     filtered_pose(Pitch)*d2r,
-                     filtered_pose(Roll)*d2r);
-        const Quat q_ = q * q_b.inv();
-        double ypr[3];
-        q_.to_euler_degrees(ypr[0], ypr[1], ypr[2]);
+        const dmat<3, 3> rmat = euler_to_rmat(&filtered_pose[Yaw]);
+        const dmat<3, 3> m_ = r_b.t() * rmat;
+        //const dmat<3, 3> m_ = (r_b.t() * rmat) * r_b * r_b.t();
+        const dmat<3, 1> euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
             raw_centered(i) = filtered_pose(i) - t_b[i];
-            raw_centered(i+3) = ypr[i];
+            raw_centered(i+3) = euler(i, 0) * r2d;
         }
     }
 

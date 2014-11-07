@@ -7,7 +7,6 @@
 #include "plugin-support.h"
 #include "mappings.hpp"
 #include "pose.hpp"
-#include "quat.hpp"
 #include "simple-mat.hpp"
 
 #include "../qfunctionconfigurator/functionconfig.h"
@@ -33,7 +32,7 @@ private:
     std::atomic<bool> should_quit;
     SelectedLibraries const& libs;
 
-    Quat q_b;
+    dmat<3, 3> r_b;
     double t_b[3];
 
     double map(double pos, bool invertp, Mapping& axis);
