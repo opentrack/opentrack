@@ -175,9 +175,9 @@ void Tracker::data(THeadPoseData *data)
 
     // extract rotation angles
     float alpha, beta, gamma;
-    beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-    alpha = atan2( R(1,0), R(0,0));
-    gamma = atan2( R(2,1), R(2,2));
+    beta  = atan( -R(2,0) / sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+    alpha = atan( R(1,0) / R(0,0));
+    gamma = atan( R(2,1) / R(2,2));
 
     QMutexLocker lock(&mutex);
 
