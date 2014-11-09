@@ -93,6 +93,7 @@ static dmat<3, 3> euler_to_rmat(const double* input)
 
 void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* output, bool rz)
 {
+    // TY is really yaw axis. need swapping accordingly.
     dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
     const dmat<3, 1> ret = rmat * tvec;
     if (!rz)
