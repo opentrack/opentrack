@@ -145,8 +145,8 @@ void Tracker::logic()
 
     {
         const dmat<3, 3> rmat = euler_to_rmat(&filtered_pose[Yaw]);
-        const dmat<3, 3> m_ = r_b.t() * rmat;
-        //const dmat<3, 3> m_ = (r_b.t() * rmat) * r_b * r_b.t();
+        //const dmat<3, 3> m_ = r_b.t() * rmat;
+        const dmat<3, 3> m_ = (r_b.t() * rmat) * r_b * r_b.t();
         const dmat<3, 1> euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
