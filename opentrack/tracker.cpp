@@ -52,7 +52,7 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
 static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 {
     // don't use atan2 here, confuses quadrants. see issue #63 -sh
-    double pitch = atan( -R(0, 2) / sqrt(R(1,2)*R(1,2) + R(2,2)*R(2,2)) );
+    double pitch = atan( -R(2,0) / (sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2))) );
     double roll = atan(R(1, 2) / R(2, 2));
     double yaw = atan(R(0, 1) / R(0, 0));
     return dmat<3, 1>({yaw, pitch, roll});
