@@ -95,12 +95,6 @@ PointTracker::PointTracker()
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
 
-void PointTracker::reset()
-{
-	// enter init phase
-	X_CM = FrameTrafo();
-}
-
 void PointTracker::track(const vector<Vec2f>& points, const PointModel& model)
 {
     const PointOrder& order = find_correspondences(points, model);
@@ -134,8 +128,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_)
 	
 	// initial pose = last (predicted) pose
 	Vec3f k;
-    get_row(R_expected, 2, k);
-    float Z0 = std::abs(X_CM.t[2]) < 1e-3 ? 1e3 : X_CM.t[2];
+        get_row(R_expected, 2, k);
+        float Z0 = 1000.f;
 
 	float old_epsilon_1 = 0;
 	float old_epsilon_2 = 0;

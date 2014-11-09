@@ -88,8 +88,6 @@ public:
     // dt : time since last call
     void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model);
     FrameTrafo pose() const { return X_CM; }
-    void reset();
-
 private:
     // the points in model order
     typedef struct { cv::Vec2f points[PointModel::N_POINTS]; } PointOrder;
