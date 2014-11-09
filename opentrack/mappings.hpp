@@ -10,10 +10,11 @@ class Mapping {
 public:
     Mapping(QString primary,
             QString secondary,
-            int max_value,
+            int max_x,
+            int max_y,
             axis_opts& opts) :
-        curve(max_value, max_value),
-        curveAlt(max_value, max_value),
+        curve(max_x, max_y),
+        curveAlt(max_x, max_y),
         opts(opts),
         name1(primary),
         name2(secondary)
@@ -34,12 +35,12 @@ private:
 public:
     Mappings(std::vector<axis_opts*> opts) :
         axes {
-            Mapping("tx","tx_alt", 100, *opts[TX]),
-            Mapping("ty","ty_alt", 100, *opts[TY]),
-            Mapping("tz","tz_alt", 100, *opts[TZ]),
-            Mapping("rx", "rx_alt", 180, *opts[Yaw]),
-            Mapping("ry", "ry_alt", 180, *opts[Pitch]),
-            Mapping("rz", "rz_alt", 180, *opts[Roll])
+            Mapping("tx","tx_alt", 100, 100, *opts[TX]),
+            Mapping("ty","ty_alt", 100, 100, *opts[TY]),
+            Mapping("tz","tz_alt", 100, 100, *opts[TZ]),
+            Mapping("rx", "rx_alt", 180, 180, *opts[Yaw]),
+            Mapping("ry", "ry_alt", 90, 180, *opts[Pitch]),
+            Mapping("rz", "rz_alt", 180, 180, *opts[Roll])
         }
     {}
 
