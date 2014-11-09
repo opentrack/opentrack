@@ -109,7 +109,6 @@ void Tracker::apply_inner()
     settings* tmp = new_settings.exchange(nullptr);
     if (tmp == nullptr)
         return;
-    reset();
     auto& s = *tmp;
     qDebug()<<"Tracker:: Applying settings";
 
@@ -128,12 +127,6 @@ void Tracker::apply_inner()
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     FrameTrafo X_MH(Matx33f::eye(), t_MH);
     qDebug()<<"Tracker::apply ends";
-}
-
-void Tracker::reset()
-{
-    QMutexLocker lock(&mutex);
-    point_tracker.reset();
 }
 
 void Tracker::start_tracker(QFrame *parent_window)

@@ -43,7 +43,6 @@ public:
 
     void apply(settings& s);
     void apply_inner();
-    void reset();	// reset the trackers internal state variables
 
     void pose(FrameTrafo* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
