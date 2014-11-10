@@ -98,8 +98,7 @@ PointTracker::PointTracker()
 void PointTracker::track(const vector<Vec2f>& points, const PointModel& model)
 {
     const PointOrder& order = find_correspondences(points, model);
-    int iters = POSIT(model, order);
-    qDebug()<<"POSIT iterations:"<<iters;
+    POSIT(model, order);
 }
 
 PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, const PointModel& model)
