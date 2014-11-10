@@ -145,6 +145,10 @@ void MainWindow::saveAs()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
                                                     oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
+
+    if (fileName.isEmpty())
+        return;
+
     (void) QFile::remove(fileName);
 
     {
