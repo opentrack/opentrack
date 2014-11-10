@@ -59,7 +59,7 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
-class Shortcuts;
+struct Shortcuts;
 
 struct KeybindingWorker : public QThread {
 #ifdef _WIN32
@@ -86,6 +86,7 @@ public:
 struct Shortcuts : public QObject {
     Q_OBJECT
 
+public:
     using K =
 #ifndef _WIN32
     mem<QxtGlobalShortcut>
@@ -102,7 +103,6 @@ struct Shortcuts : public QObject {
     mem<KeybindingWorker> keybindingWorker;
 #endif
 
-public:
     struct settings {
         pbundle b;
         key_opts center, toggle;
