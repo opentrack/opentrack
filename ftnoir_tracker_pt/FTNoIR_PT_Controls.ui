@@ -457,8 +457,8 @@
              <widget class="QSpinBox" name="clip_bheight_spin">
               <property name="geometry">
                <rect>
-                <x>120</x>
-                <y>100</y>
+                <x>105</x>
+                <y>110</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -476,8 +476,8 @@
              <widget class="QLabel" name="label_44">
               <property name="geometry">
                <rect>
-                <x>40</x>
-                <y>60</y>
+                <x>30</x>
+                <y>50</y>
                 <width>71</width>
                 <height>111</height>
                </rect>
@@ -505,8 +505,8 @@
              <widget class="QSpinBox" name="clip_blength_spin">
               <property name="geometry">
                <rect>
-                <x>120</x>
-                <y>150</y>
+                <x>15</x>
+                <y>155</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -524,8 +524,8 @@
              <widget class="QSpinBox" name="clip_theight_spin">
               <property name="geometry">
                <rect>
-                <x>120</x>
-                <y>60</y>
+                <x>105</x>
+                <y>70</y>
                 <width>100</width>
                 <height>22</height>
                </rect>
@@ -544,7 +544,7 @@
               <property name="geometry">
                <rect>
                 <x>255</x>
-                <y>40</y>
+                <y>35</y>
                 <width>46</width>
                 <height>13</height>
                </rect>
@@ -603,7 +603,7 @@
               <property name="geometry">
                <rect>
                 <x>20</x>
-                <y>30</y>
+                <y>35</y>
                 <width>46</width>
                 <height>13</height>
                </rect>
@@ -615,7 +615,7 @@
              <widget class="QSpinBox" name="cap_length_spin">
               <property name="geometry">
                <rect>
-                <x>80</x>
+                <x>65</x>
                 <y>30</y>
                 <width>101</width>
                 <height>22</height>
