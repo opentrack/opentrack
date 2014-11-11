@@ -12,6 +12,10 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.idx_x, ui.input_x);
     tie_setting(s.idx_y, ui.input_y);
     tie_setting(s.idx_z, ui.input_z);
+
+    tie_setting(s.add_yaw, ui.add_yaw);
+    tie_setting(s.add_pitch, ui.add_pitch);
+    tie_setting(s.add_roll, ui.add_roll);
 }
 
 void TrackerDialog::doOK() {

@@ -58,6 +58,7 @@ void TrackerImpl::run() {
 
             switch (flags)
             {
+            //default:
             case flag_Raw:
             continue;
             case flag_Raw | flag_Orient:
@@ -76,11 +77,23 @@ void TrackerImpl::run() {
 
         if (filled)
         {
+            static const int add_cbx[] = {
+                0,
+                90,
+                -90,
+                180,
+                -180,
+            };
+            int indices[] = { s.add_yaw, s.add_pitch, s.add_roll };
             QMutexLocker foo(&mtx);
-            static constexpr double d2r = 57.295781;
+            static constexpr double r2d = 57.295781;
             for (int i = 0; i < 3; i++)
             {
-                pose[Yaw + i] = d2r * orient[order[i]];
+                int val = 0;
+                int idx = indices[order[i]];
+                if (idx >= 0 && idx < (int)(sizeof(add_cbx) / sizeof(*add_cbx)))
+                    val = add_cbx[idx];
+                pose[Yaw + i] = r2d * orient[order[i]] + val;
             }
         }
         usleep(4000);
