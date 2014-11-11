@@ -53,12 +53,13 @@ static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
 {
     static constexpr double pi = 3.141592653;
     const double up = 90 * pi / 180.;
-    if (R(0, 2) > 0.998)
+    static constexpr double bound = 1. - 2e-4;
+    if (R(0, 2) > bound)
     {
         double roll = atan(R(1, 0) / R(2, 0));
         return dmat<3, 1>({0., up, roll});
     }
-    if (R(0, 2) < -0.998)
+    if (R(0, 2) < -bound)
     {
         double roll = atan(R(1, 0) / R(2, 0));
         return dmat<3, 1>({0., -up, roll});
