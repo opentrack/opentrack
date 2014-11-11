@@ -178,7 +178,7 @@ void Tracker::data(THeadPoseData *data)
     R = r_y.t() * R;
     QMutexLocker lock(&mutex);
     // extract rotation angles
-    data[Pitch] = -rad2deg * atan( -R(0,2) / R(0,0));
+    data[Pitch] = rad2deg * atan( -R(0,2) / R(0,0));
     data[Roll]  = -rad2deg * asin( R(0,1));
     data[Yaw]   = -rad2deg * atan( R(2,1) / R(1,1));
 
