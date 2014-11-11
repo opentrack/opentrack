@@ -194,8 +194,6 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.iconcomboProtocol->setEnabled ( not_running );
     ui.iconcomboFilter->setEnabled ( not_running );
     ui.iconcomboTrackerSource->setEnabled(not_running);
-    ui.btnStartTracker->setEnabled(not_running);
-    ui.btnStopTracker->setEnabled(running);
     ui.video_frame_label->setVisible(not_running || inertialp);
     ui.btnSaveAs->setEnabled(not_running);
     ui.btnLoad->setEnabled(not_running);
