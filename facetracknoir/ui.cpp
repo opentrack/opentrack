@@ -197,6 +197,8 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
     ui.video_frame_label->setVisible(not_running || inertialp);
+    ui.btnSaveAs->setEnabled(not_running);
+    ui.btnLoad->setEnabled(not_running);
 }
 
 void MainWindow::bindKeyboardShortcuts()
