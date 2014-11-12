@@ -83,10 +83,10 @@ TrackerDialog::TrackerDialog()
 void TrackerDialog::set_model_clip()
 {
     s.m01_x =  0;
-    s.m01_y = -static_cast<double>(s.clip_ty);
+    s.m01_y = static_cast<double>(s.clip_ty);
     s.m01_z = -static_cast<double>(s.clip_tz);
     s.m02_x =  0;
-    s.m02_y = static_cast<double>(s.clip_by);
+    s.m02_y = -static_cast<double>(s.clip_by);
     s.m02_z = -static_cast<double>(s.clip_bz);
 
     settings_changed();
