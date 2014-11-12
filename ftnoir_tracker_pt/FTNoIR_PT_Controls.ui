@@ -126,7 +126,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -414,7 +414,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -1067,8 +1067,20 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>camdevice_combo</tabstop>
   <tabstop>res_x_spin</tabstop>
+  <tabstop>res_y_spin</tabstop>
+  <tabstop>fps_spin</tabstop>
   <tabstop>threshold_slider</tabstop>
+  <tabstop>threshold_secondary_slider</tabstop>
+  <tabstop>mindiam_spin</tabstop>
+  <tabstop>maxdiam_spin</tabstop>
   <tabstop>model_tabs</tabstop>
+  <tabstop>clip_tlength_spin</tabstop>
+  <tabstop>clip_theight_spin</tabstop>
+  <tabstop>clip_bheight_spin</tabstop>
+  <tabstop>clip_blength_spin</tabstop>
+  <tabstop>cap_length_spin</tabstop>
+  <tabstop>cap_width_spin</tabstop>
+  <tabstop>cap_height_spin</tabstop>
   <tabstop>m1x_spin</tabstop>
   <tabstop>m1y_spin</tabstop>
   <tabstop>m1z_spin</tabstop>
@@ -1078,6 +1090,7 @@
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>
+  <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_tracker_pt.qrc"/>
