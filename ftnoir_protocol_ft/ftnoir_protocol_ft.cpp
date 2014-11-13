@@ -49,8 +49,8 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 }
 
 void FTNoIR_Protocol::sendHeadposeToGame(const double* headpose) {
-    float yaw = getRadsFromDegrees(headpose[Yaw]) * (s.useDummyExe ? 2.0 : 1.0);
-    float pitch = getRadsFromDegrees(headpose[Pitch]);
+    float yaw = getRadsFromDegrees(headpose[Yaw]);
+    float pitch = getRadsFromDegrees(headpose[Pitch]) * (s.useDummyExe ? 2.0 : 1.0);
     float roll = getRadsFromDegrees(headpose[Roll]);
     float tx = headpose[TX] * 10.f;
     float ty = headpose[TY] * 10.f;
