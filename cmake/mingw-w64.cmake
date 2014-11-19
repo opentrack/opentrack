@@ -25,4 +25,4 @@ set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 
 # these are merely for my own convenience
 set(OpenCV_DIR /home/sthalik/opentrack-win32-sdk/opencv/build)
-set(Qt5_DIR /home/sthalik/opentrack-win32-sdk/qt-install-5.3.1/lib/cmake/Qt5)
+set(Qt5_DIR /home/sthalik/opentrack-win32-sdk/qt-win32-5.3.2/lib/cmake/Qt5)
