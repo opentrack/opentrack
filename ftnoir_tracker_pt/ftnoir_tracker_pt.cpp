@@ -125,7 +125,7 @@ void Tracker::apply_inner()
     point_extractor.min_size = s.min_point_size;
     point_extractor.max_size = s.max_point_size;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
-    FrameTrafo X_MH(Matx33f::eye(), t_MH);
+    Affine X_MH(Matx33f::eye(), t_MH);
     qDebug()<<"Tracker::apply ends";
 }
 
@@ -160,9 +160,11 @@ void Tracker::StopTracker(bool exit)
 void Tracker::data(THeadPoseData *data)
 {
 
-    FrameTrafo X_CM = point_tracker.pose();
-    FrameTrafo X_MH(Matx33f::eye(), t_MH);
-    FrameTrafo X_GH = X_CM * X_MH;
+    Affine X_CM = point_tracker.pose();
+
+    Affine X_MH(Matx33f::eye(), t_MH);
+    Affine X_GH = X_CM * X_MH;
+
     Matx33f R = X_GH.R;
     Vec3f   t = X_GH.t;
 
