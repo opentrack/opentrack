@@ -168,22 +168,24 @@ void Tracker::data(THeadPoseData *data)
     Matx33f R = X_GH.R;
     Vec3f   t = X_GH.t;
 
-    Matx33f R_EG( 0, 0,-1,
-                 -1, 0, 0,
-                  0, 1, 0);
+    // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
+    // -z -> x, y -> z, x -> -y
+    Matx33f R_EG(0, 0,-1,
+                -1, 0, 0,
+                 0, 1, 0);
     R = R_EG * R * R_EG.t();
 
-    static constexpr float pi = 3.141592653;
-    float cy = cos(pi*-.5);
-    float sy = sin(pi*-.5);
-    Matx33f r_y(cy, 0, sy, 0, 1, 0, -sy, 0, cy);
-    R = r_y.t() * R;
+    // extract rotation angles
+    float alpha, beta, gamma;
+    beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+    alpha = atan2( R(1,0), R(0,0));
+    gamma = atan2( R(2,1), R(2,2));
+
     QMutexLocker lock(&mutex);
     // extract rotation angles
-    data[Yaw] = -rad2deg * atan2( R(1,0), R(0,0));
-    data[Pitch] = -rad2deg * atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-    data[Roll] = rad2deg * atan2( R(2,1), R(2,2));
-
+    data[Yaw] = rad2deg * alpha;
+    data[Pitch] = -rad2deg * beta;
+    data[Roll] = rad2deg * gamma;
     // get translation(s)
     data[TX] = t[0] / 10.0;	// convert to cm
     data[TY] = t[1] / 10.0;
