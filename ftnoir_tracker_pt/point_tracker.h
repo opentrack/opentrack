@@ -18,32 +18,32 @@
 
 // ----------------------------------------------------------------------------
 // Affine frame trafo
-class FrameTrafo
+class Affine
 {
 public:
-    FrameTrafo() : R(cv::Matx33f::eye()), t(0,0,0) {}
-    FrameTrafo(const cv::Matx33f& R, const cv::Vec3f& t) : R(R),t(t) {}
+    Affine() : R(cv::Matx33f::eye()), t(0,0,0) {}
+    Affine(const cv::Matx33f& R, const cv::Vec3f& t) : R(R),t(t) {}
 
     cv::Matx33f R;
     cv::Vec3f t;
 };
 
-inline FrameTrafo operator*(const FrameTrafo& X, const FrameTrafo& Y)
+inline Affine operator*(const Affine& X, const Affine& Y)
 {
-    return FrameTrafo(X.R*Y.R, X.R*Y.t + X.t);
+    return Affine(X.R*Y.R, X.R*Y.t + X.t);
 }
 
-inline FrameTrafo operator*(const cv::Matx33f& X, const FrameTrafo& Y)
+inline Affine operator*(const cv::Matx33f& X, const Affine& Y)
 {
-    return FrameTrafo(X*Y.R, X*Y.t);
+    return Affine(X*Y.R, X*Y.t);
 }
 
-inline FrameTrafo operator*(const FrameTrafo& X, const cv::Matx33f& Y)
+inline Affine operator*(const Affine& X, const cv::Matx33f& Y)
 {
-    return FrameTrafo(X.R*Y, X.t);
+    return Affine(X.R*Y, X.t);
 }
 
-inline cv::Vec3f operator*(const FrameTrafo& X, const cv::Vec3f& v)
+inline cv::Vec3f operator*(const Affine& X, const cv::Vec3f& v)
 {
     return X.R*v + X.t;
 }
@@ -87,7 +87,7 @@ public:
     // f : (focal length)/(sensor width)
     // dt : time since last call
     void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model);
-    FrameTrafo pose() const { return X_CM; }
+    Affine pose() const { return X_CM; }
 private:
     // the points in model order
     typedef struct { cv::Vec2f points[PointModel::N_POINTS]; } PointOrder;
@@ -102,7 +102,7 @@ private:
     PointOrder find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel &model);
     int POSIT(const PointModel& point_model, const PointOrder& order);  // The POSIT algorithm, returns the number of iterations
 
-    FrameTrafo X_CM; // trafo from model to camera
+    Affine X_CM; // trafo from model to camera
 };
 
 #endif //POINTTRACKER_H
