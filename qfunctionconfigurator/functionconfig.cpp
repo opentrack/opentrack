@@ -45,7 +45,7 @@ float Map::getValueInternal(int x) {
     if (sz == 0)
         ret = 0;
     else
-        ret = cur.data[std::max(std::min(x, sz-1), 0)];
+        ret = cur.data[std::min<unsigned>(x, sz-1)];
     return ret * sign;
 }
 
