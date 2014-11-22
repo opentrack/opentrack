@@ -52,11 +52,6 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	float s22 = M02.dot(M02);
 	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, 
 		                               -s12,  s11);
-	// calculate d and d_order for simple freetrack-like point correspondence
-	vector<Vec2f> points;
-	points.push_back(Vec2f(0,0));
-	points.push_back(Vec2f(M01[0], M01[1]));
-	points.push_back(Vec2f(M02[0], M02[1]));
 }
 
 #ifdef OPENTRACK_API
@@ -106,11 +101,18 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     // We do a simple freetrack-like sorting in the init phase...
     // sort points
     int point_d_order[PointModel::N_POINTS];
+    int model_d_order[PointModel::N_POINTS];
     model.get_d_order(points, point_d_order);
+    // calculate d and d_order for simple freetrack-like point correspondence
+    vector<Vec2f> model_points;
+    model_points.push_back(Vec2f(0,0));
+    model_points.push_back(Vec2f(model.M01[0], model.M01[1]));
+    model_points.push_back(Vec2f(model.M02[0], model.M02[1]));
+    model.get_d_order(model_points, model_d_order);
     // set correspondences
     PointOrder p;
     for (int i=0; i<PointModel::N_POINTS; ++i)
-        p.points[i] = points[point_d_order[i]];
+        p.points[model_d_order[i]] = points[point_d_order[i]];
 
     return p;
 }
