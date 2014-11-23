@@ -34,8 +34,6 @@ struct settings
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
 
-    // XXX todo red channel only, good for crapola CCD sensors -sh 20140922
-
     settings() :
         b(bundle("tracker-pt")),
         cam_index(b, "camera-index", 0),
