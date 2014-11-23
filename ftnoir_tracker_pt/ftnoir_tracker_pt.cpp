@@ -125,7 +125,6 @@ void Tracker::apply_inner()
     point_extractor.min_size = s.min_point_size;
     point_extractor.max_size = s.max_point_size;
     t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
-    Affine X_MH(Matx33f::eye(), t_MH);
     qDebug()<<"Tracker::apply ends";
 }
 
