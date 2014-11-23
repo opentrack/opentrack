@@ -119,13 +119,12 @@ void Camera::set_fps(int fps)
 
 void Camera::set_res(int x_res, int y_res)
 {
-	if (cam_desired.res_x != x_res || cam_desired.res_y != y_res)
-	{
-		cam_desired.res_x = x_res;
-		cam_desired.res_y = y_res;
-		_set_res();
-        _set_fps();
-	}
+    if (cam_desired.res_x != x_res || cam_desired.res_y != y_res)
+    {
+        cam_desired.res_x = x_res;
+        cam_desired.res_y = y_res;
+        _set_res();
+    }
 }
 
 bool Camera::get_frame(float dt, cv::Mat* frame)
@@ -174,18 +173,20 @@ void CVCamera::stop()
 bool CVCamera::_get_frame(Mat* frame)
 {
     if (cap && cap->isOpened())
-	{
+    {
         Mat img;
         for (int i = 0; i < 100 && !cap->read(img); i++)
             ;;
 
-		if (img.empty())
-			return false;
+        if (img.empty())
+            return false;
 
-        *frame = img;
-        return true;
-	}
-	return false;
+            *frame = img;
+            cam_info.res_x = img.cols;
+            cam_info.res_y = img.rows;
+            return true;
+    }
+    return false;
 }
 
 void CVCamera::_set_fps()
@@ -195,13 +196,11 @@ void CVCamera::_set_fps()
 
 void CVCamera::_set_res()
 {
-	if (cap)
-	{
+    if (cap)
+    {
         cap->set(CV_CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
         cap->set(CV_CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
-        cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
-        cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
-	}
+    }
 }
 void CVCamera::_set_device_index()
 {
