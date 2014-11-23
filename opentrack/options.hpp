@@ -107,6 +107,7 @@ namespace options {
                 s.setValue(k, i.second);
             }
             s.endGroup();
+            s.sync();
         }
 
         template<typename t>
