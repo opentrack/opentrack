@@ -631,32 +631,6 @@
                <number>65535</number>
               </property>
              </widget>
-             <widget class="QLabel" name="label_54">
-              <property name="geometry">
-               <rect>
-                <x>140</x>
-                <y>90</y>
-                <width>16</width>
-                <height>16</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>R</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_55">
-              <property name="geometry">
-               <rect>
-                <x>290</x>
-                <y>85</y>
-                <width>16</width>
-                <height>16</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>R</string>
-              </property>
-             </widget>
              <widget class="QLabel" name="label_47">
               <property name="geometry">
                <rect>
