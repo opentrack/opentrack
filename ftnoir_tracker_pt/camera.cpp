@@ -144,16 +144,18 @@ bool Camera::get_frame(float dt, cv::Mat* frame)
 
 void CVCamera::start()
 {
+    if (cap)
+        delete cap;
     cap = new VideoCapture(desired_index);
-	// extract camera info
+    _set_res();
+    _set_fps();
+    // extract camera info
     if (cap->isOpened())
-	{
-        _set_fps();
-        _set_res();
-		active = true;
-		active_index = desired_index;
-        cam_info.res_x = cap->get(CV_CAP_PROP_FRAME_WIDTH);
-        cam_info.res_y = cap->get(CV_CAP_PROP_FRAME_HEIGHT);
+    {
+        active = true;
+        active_index = desired_index;
+        cam_info.res_x = 0;
+        cam_info.res_y = 0;
     } else {
         delete cap;
         cap = nullptr;
@@ -166,8 +168,9 @@ void CVCamera::stop()
     {
         cap->release();
         delete cap;
+        cap = nullptr;
     }
-	active = false;
+    active = false;
 }
 
 bool CVCamera::_get_frame(Mat* frame)
