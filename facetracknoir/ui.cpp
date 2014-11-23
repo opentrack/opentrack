@@ -152,6 +152,7 @@ void MainWindow::saveAs()
     (void) QFile::remove(fileName);
 
     {
+        (void) QFile::copy(oldFile, fileName);
         QSettings settings(group::org);
         settings.setValue (group::filename_key, fileName);
     }
