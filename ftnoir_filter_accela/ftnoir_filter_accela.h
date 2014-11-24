@@ -7,6 +7,7 @@
 
 #include "opentrack/options.hpp"
 using namespace options;
+#include "opentrack/timer.hpp"
 
 struct settings {
     pbundle b;
@@ -34,7 +35,6 @@ public:
     FTNoIR_Filter();
     void filter(const double* target_camera_position, double *new_camera_position);
     state_display state;
-    static constexpr double Hz = 3./1000;
 private:
     // moving average history amount
     static constexpr double fast_alpha_seconds = 0.7;
@@ -44,6 +44,7 @@ private:
     bool first_run;
     double last_output[6];
     double fast_state[3];
+    Timer timer;
 };
 
 class FilterControls: public IFilterDialog
