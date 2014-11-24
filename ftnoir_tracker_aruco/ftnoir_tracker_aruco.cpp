@@ -162,10 +162,10 @@ void Tracker::run()
         fps = 60;
         break;
     case 3:
-        fps = 120;
+        fps = 125;
         break;
     case 4:
-        fps = 180;
+        fps = 200;
         break;
     }
     camera = cv::VideoCapture(s.camera_index);
