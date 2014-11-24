@@ -59,7 +59,8 @@ void Tracker::run()
     while((commands & ABORT) == 0)
     {
         apply_inner();
-        const double dt = time.start() * 1e-9;
+        const double dt = time.elapsed() * 1e-9;
+        time.start();
         cv::Mat frame;
         const bool new_frame = camera.get_frame(dt, &frame);
 

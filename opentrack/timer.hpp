@@ -51,12 +51,8 @@ public:
     Timer() {
         start();
     }
-    long start() {
-        struct timespec cur;
-        (void) clock_gettime(CLOCK_MONOTONIC, &cur);
-        long ret = conv(cur);
-        state = cur;
-        return ret;
+    void start() {
+        (void) clock_gettime(CLOCK_MONOTONIC, &state);
     }
     long elapsed() {
         struct timespec cur;
