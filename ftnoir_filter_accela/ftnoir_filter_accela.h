@@ -26,7 +26,7 @@ struct settings {
 struct state_display
 {
     double y, p, r;
-    state_display() : y(0), p(0), r(0) {};
+    state_display() : y(0), p(0), r(0) {}
 };
 
 class FTNoIR_Filter : public IFilter
@@ -36,8 +36,8 @@ public:
     void filter(const double* target_camera_position, double *new_camera_position);
     state_display state;
 private:
-    // moving average history amount
-    static constexpr double fast_alpha_seconds = 0.7;
+    // moving average history amount in seconds
+    static constexpr double fast_alpha_seconds = 0.3;
     // max degrees considered "slow" after moving average
     static constexpr double max_slow_delta = 0.9;
     settings s;
