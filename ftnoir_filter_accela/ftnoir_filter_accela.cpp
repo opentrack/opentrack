@@ -35,6 +35,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
                 last_output[i] = input[i];
         }
         first_run = false;
+        timer.start();
         return;
     }
 
@@ -47,12 +48,14 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     const double a_rot_minus = s_rot_minus/100. * a_rot_plus;
     const double a_trans = s.trans_smoothing/100.;
 
-    static constexpr double fast_alpha = Hz/(Hz + fast_alpha_seconds);
+    const double Hz = timer.elapsed() * 1e-9;
+    timer.start();
+    double fast_alpha = Hz/(Hz + fast_alpha_seconds);
 
     for (int i = 0; i < 6; i++)
     {
         const double vec = input[i] - last_output[i];
-        double datum = Hz * 64;
+        double datum = Hz * 16;
 
         if (i >= 3)
         {
