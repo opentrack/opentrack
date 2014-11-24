@@ -202,8 +202,9 @@ void Tracker::run()
 
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
-        const int scale = frame.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(scale > 1 ? 11 : 7, 4);
+        
+        const int scale = grayscale.cols > 480 ? 2 : 1;
+        detector.setThresholdParams(scale > 1 ? 11 : 4, 3);
 
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * s.fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * s.fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
