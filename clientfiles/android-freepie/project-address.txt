@@ -1,2 +1,0 @@
-http://andersmalmgren.github.io/FreePIE/index.html
-https://github.com/AndersMalmgren/FreePIE
