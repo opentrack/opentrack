@@ -28,7 +28,6 @@ void TrackerImpl::run() {
 #pragma pack(push, 1)
     struct {
         uint8_t pad1;
-        uint8_t pad2;
         uint8_t flags;
         float fl[12];
     } data;
@@ -51,7 +50,7 @@ void TrackerImpl::run() {
         while (sock.hasPendingDatagrams())
         {
             using t = decltype(data);
-            t tmp {0,0,0, {0,0,0, 0,0,0}};
+            t tmp {0,0, {0,0,0, 0,0,0, 0,0,0, 0,0,0}};
             (void) sock.readDatagram(reinterpret_cast<char*>(&tmp), sizeof(data));
 
             int flags = tmp.flags & F::Mask;
