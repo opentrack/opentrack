@@ -24,7 +24,7 @@ private:
     Mappings& m;
 
     Timer t;
-    Pose output_pose, raw_6dof, final_raw;
+    Pose output_pose, raw_6dof;
 
     double newpose[6];
     std::atomic<bool> centerp;
