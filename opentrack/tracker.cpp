@@ -118,17 +118,6 @@ void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* ou
 
 void Tracker::logic()
 {
-    if (enabledp)
-        for (int i = 0; i < 6; i++)
-            final_raw(i) = newpose[i];
-
-    Pose filtered_pose;
-
-    if (libs.pFilter)
-        libs.pFilter->filter(final_raw, filtered_pose);
-    else
-        filtered_pose = final_raw;
-
     bool inverts[6] = {
         m(0).opts.invert,
         m(1).opts.invert,
@@ -137,66 +126,76 @@ void Tracker::logic()
         m(4).opts.invert,
         m(5).opts.invert,
     };
-
-    // must invert early as euler_to_rmat's sensitive to sign change
-    for (int i = 0; i < 6; i++)
-        filtered_pose[i] *= inverts[i] ? -1. : 1.;
-
-    static constexpr double pi = 3.141592653;
-    static constexpr double r2d = 180. / pi;
-
+    
+    Pose value, raw;
+    
+    if (enabledp)
+        for (int i = 0; i < 6; i++)
+        {
+            value(i) = newpose[i];
+            raw(i) = newpose[i];
+        }
+    
     if (centerp)
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
-            t_b[i] = filtered_pose(i);
-        r_b = euler_to_rmat(&filtered_pose[Yaw]);
+            t_b[i] = value(i);
+        r_b = euler_to_rmat(&value[Yaw]);
     }
-
-    Pose raw_centered;
-
+    
     {
-        const dmat<3, 3> rmat = euler_to_rmat(&filtered_pose[Yaw]);
+        const dmat<3, 3> rmat = euler_to_rmat(&value[Yaw]);
         const dmat<3, 3> m_ = rmat * r_b.t();
         const dmat<3, 1> euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
-            raw_centered(i) = filtered_pose(i) - t_b[i];
-            raw_centered(i+3) = euler(i, 0) * r2d;
+            static constexpr double pi = 3.141592653;
+            static constexpr double r2d = 180. / pi;
+            
+            value(i) -= t_b[i];
+            value(i+3) = euler(i, 0) * r2d;
         }
     }
 
-    Pose mapped_pose_precomp;
-
     for (int i = 0; i < 6; i++)
-        mapped_pose_precomp(i) = map(raw_centered(i), inverts[i], m(i));
+        value(i) = map(value(i), inverts[i], m(i));
+    
+    {
+        Pose tmp = value;
+        
+        if (libs.pFilter)
+            libs.pFilter->filter(tmp, value);
+    }
 
-    Pose mapped_pose_ = mapped_pose_precomp;
+    // must invert early as euler_to_rmat's sensitive to sign change
+    for (int i = 0; i < 6; i++)
+        value[i] *= inverts[i] ? -1. : 1.;
 
     if (s.tcomp_p)
-        t_compensate(euler_to_rmat(&mapped_pose_precomp[Yaw]),
-                     mapped_pose_precomp,
-                     mapped_pose_,
+        t_compensate(euler_to_rmat(&value[Yaw]),
+                     value,
+                     value,
                      s.tcomp_tz);
 
-    Pose mapped_pose;
+    Pose output_pose_;
 
     for (int i = 0; i < 6; i++)
     {
         auto& axis = m(i);
         int k = axis.opts.src;
         if (k < 0 || k >= 6)
-            mapped_pose(i) = 0;
+            output_pose_(i) = 0;
         else
-            mapped_pose(i) = mapped_pose_(i);
+            output_pose_(i) = value(i);
     }
 
 
-    libs.pProtocol->pose(mapped_pose);
+    libs.pProtocol->pose(output_pose_);
 
     QMutexLocker foo(&mtx);
-    output_pose = mapped_pose;
-    raw_6dof = final_raw;
+    output_pose = output_pose_;
+    raw_6dof = raw;
 }
 
 void Tracker::run() {
