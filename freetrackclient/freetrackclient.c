@@ -27,7 +27,6 @@
 
 #define NP_AXIS_MAX 16383
 
-#include <stdbool.h>
 #include <string.h>
 #include <windows.h>
 
@@ -49,10 +48,10 @@ static HANDLE ipc_mutex = 0;
 static const char* dllVersion = "1.0.0.0";
 static const char* dllProvider = "FreeTrack";
 
-static bool impl_create_mapping(void)
+static BOOL impl_create_mapping(void)
 {
     if (ipc_heap != NULL)
-        return true;
+        return TRUE;
 
     hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE,
                                    NULL,
@@ -62,18 +61,18 @@ static bool impl_create_mapping(void)
                                    (LPCSTR) FREETRACK_HEAP);
 
     if (hFTMemMap == NULL)
-        return (ipc_heap = NULL), false;
+        return (ipc_heap = NULL), FALSE;
 
     ipc_heap = (FTHeap*) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTHeap));
-    ipc_mutex = CreateMutexA(NULL, false, FREETRACK_MUTEX);
+    ipc_mutex = CreateMutexA(NULL, FALSE, FREETRACK_MUTEX);
 
-    return true;
+    return TRUE;
 }
 
-FT_EXPORT(bool) FTGetData(FTData* data)
+FT_EXPORT(BOOL) FTGetData(FTData* data)
 {
-    if (impl_create_mapping() == false)
-        return false;
+    if (impl_create_mapping() == FALSE)
+        return FALSE;
 
     if (ipc_mutex && WaitForSingleObject(ipc_mutex, 16) == WAIT_OBJECT_0) {
         if (ipc_heap) {
@@ -83,7 +82,7 @@ FT_EXPORT(bool) FTGetData(FTData* data)
         }
         ReleaseMutex(ipc_mutex);
     }
-    return true;
+    return TRUE;
 }
 
 /*
