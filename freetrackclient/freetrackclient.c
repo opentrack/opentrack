@@ -75,11 +75,9 @@ FT_EXPORT(BOOL) FTGetData(FTData* data)
         return FALSE;
 
     if (ipc_mutex && WaitForSingleObject(ipc_mutex, 16) == WAIT_OBJECT_0) {
-        if (ipc_heap) {
-            if (ipc_heap->data.DataID > (1 << 29))
-                ipc_heap->data.DataID = 0;
-            data->DataID = ipc_heap->data.DataID;
-        }
+        memcpy(data, &ipc_heap->data, sizeof(FTData));
+        if (ipc_heap->data.DataID > (1 << 29))
+            ipc_heap->data.DataID = 0;
         ReleaseMutex(ipc_mutex);
     }
     return TRUE;
