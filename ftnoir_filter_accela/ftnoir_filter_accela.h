@@ -11,40 +11,26 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<double> rot_deadzone, trans_deadzone;
-    value<int> rot_plus, rot_minus, trans_smoothing;
+    value<int> rot_threshold, trans_threshold, ewma;
     settings() :
         b(bundle("Accela")),
-        rot_deadzone(b, "rotation-deadband", 0),
-        trans_deadzone(b, "translation-deadband", 0),
-        rot_plus(b, "rotation-increase", 30),
-        rot_minus(b, "rotation-decrease", 25),
-        trans_smoothing(b, "translation-smoothing", 50)
+        rot_threshold(b, "rotation-threshold", 30),
+        trans_threshold(b, "translation-threshold", 50),
+        ewma(b, "ewma", 2)
     {}
-};
-
-struct state_display
-{
-    double y, p, r;
-    state_display() : y(0), p(0), r(0) {}
 };
 
 class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void filter(const double* target_camera_position, double *new_camera_position);
-    state_display state;
+    void filter(const double* input, double *output);
 private:
-    // moving average history amount in seconds
-    static constexpr double fast_alpha_seconds = 0.3;
-    // max degrees considered "slow" after moving average
-    static constexpr double max_slow_delta = 0.9;
     settings s;
     bool first_run;
     double last_output[6];
-    double fast_state[3];
-    Timer timer;
+    double smoothed_input[6];
+    Timer t;
 };
 
 class FilterControls: public IFilterDialog
@@ -60,11 +46,9 @@ private:
     void save();
     FTNoIR_Filter* accela_filter;
     settings s;
-    QTimer t;
 private slots:
     void doOK();
     void doCancel();
-    void timer_fired();
 };
 
 class FTNoIR_FilterDll : public Metadata

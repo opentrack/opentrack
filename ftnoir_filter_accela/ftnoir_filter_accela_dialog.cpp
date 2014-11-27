@@ -12,38 +12,18 @@ FilterControls::FilterControls() :
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.rot_deadzone, ui.rot_deadzone);
-    tie_setting(s.trans_deadzone, ui.trans_deadzone);
-
-    tie_setting(s.rot_plus , ui.rot_plus);
-    tie_setting(s.rot_minus , ui.rot_minus);
-    tie_setting(s.trans_smoothing, ui.trans_smoothing);
-
-    connect(&t, SIGNAL(timeout()), this, SLOT(timer_fired()));
-
-    t.setInterval(250);
-}
-
-void FilterControls::timer_fired()
-{
-    if (accela_filter)
-    {
-        state_display st = accela_filter->state;
-        ui.debug_y->setValue(st.y);
-        ui.debug_p->setValue(st.p);
-        ui.debug_r->setValue(st.r);
-    }
+    tie_setting(s.rot_threshold, ui.rotation_slider);
+    tie_setting(s.trans_threshold, ui.translation_slider);
+    tie_setting(s.ewma, ui.ewma);
 }
 
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
-    t.start();
 }
 
 void FilterControls::unregister_filter()
 {
-    t.stop();
     accela_filter = nullptr;
 }
 

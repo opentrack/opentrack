@@ -12,74 +12,83 @@
 #include "opentrack/plugin-api.hpp"
 using namespace std;
 
-FTNoIR_Filter::FTNoIR_Filter() : first_run(true), fast_state { 0,0,0 }
+FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
 }
 
-static inline double dz(double x, double dz)
+static double f(double vec, double thres)
 {
-    return std::max(0., fabs(x) - dz) * (x < 0. ? -1. : 1.);
+    if (vec > thres*4)
+        return (vec - thres*4) * 600 + thres*4;
+    if (vec > thres)
+        return (vec - thres) * 150 + thres;
+    return vec;
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
 {
     if (first_run)
     {
-        for (int i = 0; i < 3; i++)
-            fast_state[i] = 0;
-
         for (int i = 0; i < 6; i++)
         {
             output[i] = input[i];
-            for (int j = 0; j < 3; j++)
-                last_output[i] = input[i];
+            last_output[i] = input[i];
+            smoothed_input[i] = input[i];
         }
         first_run = false;
-        timer.start();
+        t.start();
         return;
     }
 
-    const double rot_dz = s.rot_deadzone;
-    const double trans_dz = s.trans_deadzone;
+    const double rot_t = 10. * s.rot_threshold / 100.;
+    const double trans_t = 10. * s.trans_threshold / 100.;
 
-    const int s_rot_plus = s.rot_plus, s_rot_minus = s.rot_minus;
+    const double dt = t.elapsed() * 1e-9;
+    t.start();
 
-    const double a_rot_plus = s_rot_plus/100.;
-    const double a_rot_minus = s_rot_minus/100. * a_rot_plus;
-    const double a_trans = s.trans_smoothing/100.;
+    double RC;
 
-    const double Hz = timer.elapsed() * 1e-9;
-    timer.start();
-    double fast_alpha = Hz/(Hz + fast_alpha_seconds);
-
+    switch (s.ewma)
+    {
+    default:
+    case 0: // none
+        RC = 0;
+        break;
+    case 1: // low
+        RC = 0.07;
+        break;
+    case 2: // normal
+        RC = 0.10;
+        break;
+    case 3: // high
+        RC = 0.14;
+        break;
+    case 4: // extreme
+        RC = 0.16;
+        break;
+    }
+    
     for (int i = 0; i < 6; i++)
     {
-        const double vec = input[i] - last_output[i];
-        double datum = Hz * 16;
-
-        if (i >= 3)
-        {
-            int k = i - 3;
-            const double vec_ = dz(vec, rot_dz);
-            const double cur_fast = fabs(vec_) * fast_alpha + fast_state[k]*(1. - fast_alpha);
-            fast_state[k] = cur_fast;
-            const double c = cur_fast > max_slow_delta ? a_rot_plus : a_rot_minus;
-            datum *= vec_ * c;
-        }
-        else
-            datum *= dz(vec, trans_dz) * a_trans;
-
-        const double result = last_output[i] + datum;
+        const double alpha = dt/(dt+RC);
+        
+        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
+        
+        const double in = smoothed_input[i];
+        
+        const double vec = in - last_output[i];
+        const double vec_ = fabs(vec);
+        const double t = i >= 3 ? rot_t : trans_t;
+        const double val = f(vec_, t);
+        const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
         const bool negp = vec < 0.;
-        const bool done = negp ? result <= input[i] : result >= input[i];
-
-        const double ret = done ? input[i] : result;
+        const bool done = negp
+            ? result <= in
+            : result >= in;
+        const double ret = done ? in : result;
+        
         last_output[i] = output[i] = ret;
     }
-
-    state.y = fast_state[0];
-    state.p = fast_state[1];
-    state.r = fast_state[2];
 }
 
 extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
