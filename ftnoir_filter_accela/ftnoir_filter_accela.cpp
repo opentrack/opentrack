@@ -22,7 +22,7 @@ static double f(double vec, double thres)
         return (vec - thres*4) * 600 + thres*4;
     if (vec > thres)
         return (vec - thres) * 150 + thres;
-    return vec;
+    return pow(vec / thres, 2.0) * thres;
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
