@@ -31,6 +31,12 @@ private:
     double last_output[6];
     double smoothed_input[6];
     Timer t;
+    static double f(double vec, double thres);
+    
+    static constexpr double high_thres_c = 4;
+    static constexpr double high_thres_out = 600;
+    
+    static constexpr double low_thres_mult = 150;
 };
 
 class FilterControls: public IFilterDialog

@@ -16,12 +16,12 @@ FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
 }
 
-static double f(double vec, double thres)
+double FTNoIR_Filter::f(double vec, double thres)
 {
-    if (vec > thres*4)
-        return (vec - thres*4) * 600 + thres*4;
+    if (vec > thres*high_thres_c)
+        return (vec - thres*high_thres_c) * high_thres_out + thres*high_thres_c;
     if (vec > thres)
-        return (vec - thres) * 150 + thres;
+        return (vec - thres) * low_thres_mult + thres;
     return pow(vec / thres, 2.0) * thres;
 }
 
