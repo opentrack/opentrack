@@ -129,12 +129,11 @@ void Tracker::logic()
     
     Pose value, raw;
     
-    if (enabledp)
-        for (int i = 0; i < 6; i++)
-        {
-            value(i) = newpose[i];
-            raw(i) = newpose[i];
-        }
+    for (int i = 0; i < 6; i++)
+    {
+        value(i) = newpose[i];
+        raw(i) = newpose[i];
+    }
     
     if (centerp)
     {
@@ -208,8 +207,14 @@ void Tracker::run() {
     while (!should_quit)
     {
         t.start();
-
-        libs.pTracker->data(newpose);
+        
+        double tmp[6];
+        libs.pTracker->data(tmp);
+        
+        if (enabledp)
+            for (int i = 0; i < 6; i++)
+                newpose[i] = tmp[i];
+        
         logic();
 
         long q = sleep_ms * 1000L - t.elapsed()/1000L;
