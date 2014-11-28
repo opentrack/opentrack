@@ -55,16 +55,16 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         RC = 0;
         break;
     case 1: // low
-        RC = 0.07;
+        RC = 0.09;
         break;
     case 2: // normal
-        RC = 0.10;
+        RC = 0.13;
         break;
     case 3: // high
-        RC = 0.14;
+        RC = 0.16;
         break;
     case 4: // extreme
-        RC = 0.16;
+        RC = 0.19;
         break;
     }
     
