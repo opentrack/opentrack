@@ -6,7 +6,6 @@
  */
 
 #include "point_tracker.h"
-#include <opencv2/imgproc/imgproc.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -52,10 +51,6 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	float s12 = M01.dot(M02);
 	float s22 = M02.dot(M02);
 	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, -s12,  s11);
-    
-    cv::Vec6f line;
-    cv::fitLine(std::vector<cv::Point3f>{M01, M02}, line, CV_DIST_L1, 0, 1e-2, 1e-4);
-    d = cv::Vec3f(line[0], line[1], line[3]);
 }
 
 #ifdef OPENTRACK_API
@@ -106,9 +101,14 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     // sort points
     int point_d_order[PointModel::N_POINTS];
     int model_d_order[PointModel::N_POINTS];
-    model.get_d_order(points, point_d_order, cv::Vec2f(points[0][0]-points[1][0], points[0][1]-points[1][1]));
+    model.get_d_order(points, point_d_order,
+                      cv::Vec2f(points[0][0]-points[1][0], points[0][1]-points[1][1]));
     // calculate d and d_order for simple freetrack-like point correspondence
-    model.get_d_order(std::vector<cv::Vec3f>{ Vec3f{0,0,0}, model.M01, model.M02 }, model_d_order, model.d);
+    model.get_d_order(std::vector<cv::Vec3f>{ Vec3f{0,0,0}, model.M01, model.M02 },
+                      model_d_order,
+                      cv::Vec3f(model.M01[0]-model.M02[0],
+                                model.M01[1]-model.M02[1],
+                                model.M01[2]-model.M02[2]));
     // set correspondences
     PointOrder p;
     for (int i=0; i<PointModel::N_POINTS; ++i)
