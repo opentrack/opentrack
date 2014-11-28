@@ -93,12 +93,6 @@ private:
     typedef struct { cv::Vec2f points[PointModel::N_POINTS]; } PointOrder;
     static constexpr float focal_length = 1.0f;
 
-    inline cv::Vec2f project(const cv::Vec3f& v_M)
-    {
-        cv::Vec3f v_C = X_CM * v_M;
-        return cv::Vec2f(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);
-    }
-
     PointOrder find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel &model);
     int POSIT(const PointModel& point_model, const PointOrder& order);  // The POSIT algorithm, returns the number of iterations
 
