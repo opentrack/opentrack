@@ -6,6 +6,7 @@
  */
 
 #include "point_tracker.h"
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -50,8 +51,11 @@ PointModel::PointModel(Vec3f M01, Vec3f M02)
 	float s11 = M01.dot(M01);
 	float s12 = M01.dot(M02);
 	float s22 = M02.dot(M02);
-	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, 
-		                               -s12,  s11);
+	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, -s12,  s11);
+    
+    cv::Vec6f line;
+    cv::fitLine(std::vector<cv::Point3f>{M01, M02}, line, CV_DIST_L1, 0, 1e-2, 1e-4);
+    d = cv::Vec3f(line[0], line[1], line[3]);
 }
 
 #ifdef OPENTRACK_API
@@ -61,12 +65,12 @@ static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
 }
 #endif
 
-void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]) const
+template<typename vec>
+void PointModel::get_d_order(const std::vector<vec>& points, int d_order[], vec d) const
 {
 	// fit line to orthographically projected points
-	Vec2f d(M01[0]-M02[0], M01[1]-M02[1]);
-	// get sort indices with respect to d scalar product
 	vector< pair<float,int> > d_vals;
+    // get sort indices with respect to d scalar product
 	for (unsigned i = 0; i<points.size(); ++i)
 		d_vals.push_back(pair<float, int>(d.dot(points[i]), i));
 
@@ -102,13 +106,9 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     // sort points
     int point_d_order[PointModel::N_POINTS];
     int model_d_order[PointModel::N_POINTS];
-    model.get_d_order(points, point_d_order);
+    model.get_d_order(points, point_d_order, cv::Vec2f(points[0][0]-points[1][0], points[0][1]-points[1][1]));
     // calculate d and d_order for simple freetrack-like point correspondence
-    vector<Vec2f> model_points;
-    model_points.push_back(Vec2f(0,0));
-    model_points.push_back(Vec2f(model.M01[0], model.M01[1]));
-    model_points.push_back(Vec2f(model.M02[0], model.M02[1]));
-    model.get_d_order(model_points, model_d_order);
+    model.get_d_order(std::vector<cv::Vec3f>{ Vec3f{0,0,0}, model.M01, model.M02 }, model_d_order, model.d);
     // set correspondences
     PointOrder p;
     for (int i=0; i<PointModel::N_POINTS; ++i)

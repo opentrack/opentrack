@@ -72,7 +72,10 @@ private:
     cv::Vec3f u;	// unit vector perpendicular to M01,M02-plane
 
     cv::Matx22f P;
-    void get_d_order(const std::vector<cv::Vec2f>& points, int* d_order) const;
+    cv::Vec3f d;
+    
+    template<typename vec>
+    void get_d_order(const std::vector<vec>& points, int* d_order, vec d) const;
 };
 
 // ----------------------------------------------------------------------------
