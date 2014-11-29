@@ -411,6 +411,13 @@ void MainWindow::shortcutToggled()
         work->tracker->toggle_enabled();
 }
 
+void MainWindow::shortcutZeroed()
+{
+    qDebug() << "Zero";
+    if (work)
+        work->tracker->zero();
+}
+
 void MainWindow::ensure_tray()
 {
     if (tray)

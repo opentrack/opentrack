@@ -11,6 +11,7 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
     for ( int i = 0; i < global_key_sequences.size(); i++) {
         ui.cbxCenterKey->addItem(global_key_sequences.at(i));
         ui.cbxToggleKey->addItem(global_key_sequences.at(i));
+        ui.cbxZeroKey->addItem(global_key_sequences.at(i));
     }
 
     tie_setting(s.center.key_index, ui.cbxCenterKey);
@@ -22,6 +23,11 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
     tie_setting(s.toggle.alt, ui.chkToggleAlt);
     tie_setting(s.toggle.shift, ui.chkToggleShift);
     tie_setting(s.toggle.ctrl, ui.chkToggleCtrl);
+
+    tie_setting(s.zero.key_index, ui.cbxZeroKey);
+    tie_setting(s.zero.alt, ui.chkZeroAlt);
+    tie_setting(s.zero.shift, ui.chkZeroShift);
+    tie_setting(s.zero.ctrl, ui.chkZeroCtrl);
 
     tie_setting(s.s_main.tray_enabled, ui.trayp);
 }
@@ -40,12 +46,13 @@ void KeyboardShortcutDialog::doCancel() {
 #if defined(_WIN32)
 #include <windows.h>
 
-void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_)
+void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_, Key kZero_)
 {
     QMutexLocker l(&mtx);
 
     kCenter = kCenter_;
     kToggle = kToggle_;
+    kZero = kZero_;
 }
 
 KeybindingWorker::~KeybindingWorker() {
@@ -59,8 +66,8 @@ KeybindingWorker::~KeybindingWorker() {
         din->Release();
 }
 
-KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, WId handle, Shortcuts& sc) :
-    sc(sc), din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), should_quit(true)
+KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, Key keyZero, WId handle, Shortcuts& sc) :
+    sc(sc), din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), kZero(keyZero), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
@@ -139,6 +146,9 @@ void KeybindingWorker::run() {
         if (isKeyPressed(&kToggle, keystate) && kToggle.should_process())
             emit sc.toggle();
 
+        if (isKeyPressed(&kZero, keystate) && kZero.should_process())
+            emit sc.zero();
+
         // keypresses get dropped with high values
         Sleep(15);
     }
@@ -195,17 +205,23 @@ void Shortcuts::reload() {
         keyToggle->setShortcut(QKeySequence::UnknownKey);
         keyToggle->setEnabled(false);
     }
+    if (keyZero)
+    {
+        keyZero->setShortcut(QKeySequence::UnknownKey);
+        keyZero->setEnabled(false);
+    }
 #endif
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
+    bind_keyboard_shortcut(keyZero, s.zero);
 #ifdef _WIN32
     bool is_new = keybindingWorker == nullptr;
     if (is_new)
     {
-        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, handle, *this);
+        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, keyZero, handle, *this);
         keybindingWorker->start();
     }
     else
-        keybindingWorker->set_keys(keyCenter, keyToggle);
+        keybindingWorker->set_keys(keyCenter, keyToggle, keyZero);
 #endif
 }

@@ -26,9 +26,11 @@ struct Work
 #ifndef _WIN32
         QObject::connect(sc->keyCenter.get(), SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
         QObject::connect(sc->keyToggle.get(), SIGNAL(activated()), recv, SLOT(shortcutToggled()));
+        QObject::connect(sc->keyZero.get(), SIGNAL(activated()), recv, SLOT(shortcutZeroed()));
 #else
         QObject::connect(sc.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
         QObject::connect(sc.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
+        QObject::connect(sc.get(), SIGNAL(zero()), recv, SLOT(shortcutZeroed()));
 #endif
         tracker->start();
     }

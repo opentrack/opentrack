@@ -29,6 +29,7 @@ private:
     double newpose[6];
     std::atomic<bool> centerp;
     std::atomic<bool> enabledp;
+    std::atomic<bool> zero_;
     std::atomic<bool> should_quit;
     SelectedLibraries const& libs;
 
@@ -48,4 +49,5 @@ public:
     void start() { QThread::start(); }
     void toggle_enabled() { enabledp.store(!enabledp.load()); }
     void center() { centerp.store(!centerp.load()); }
+    void zero() { zero_.store(!zero_.load()); }
 };
