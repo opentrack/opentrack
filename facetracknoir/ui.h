@@ -96,6 +96,7 @@ class MainWindow : public QMainWindow, private State
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
+    void shortcutZeroed();
     void bindKeyboardShortcuts();
 private slots:
     void open();

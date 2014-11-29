@@ -69,16 +69,17 @@ private:
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     Key kCenter;
     Key kToggle;
+    Key kZero;
     QMutex mtx;
 public:
     volatile bool should_quit;
     ~KeybindingWorker();
-    KeybindingWorker(Key keyCenter, Key keyToggle, WId handle, Shortcuts& sc);
+    KeybindingWorker(Key keyCenter, Key keyToggle, Key keyZero, WId handle, Shortcuts& sc);
     void run();
-    void set_keys(Key kCenter, Key kToggle);
+    void set_keys(Key kCenter, Key kToggle, Key kZero);
 #else
 public:
-    KeybindingWorker(Key, Key, WId) {}
+    KeybindingWorker(Key, Key, Key, WId) {}
     void run() {}
 #endif
 };
@@ -97,6 +98,7 @@ public:
 
     K keyCenter;
     K keyToggle;
+    K keyZero;
 
     WId handle;
 #ifdef _WIN32
@@ -105,12 +107,13 @@ public:
 
     struct settings {
         pbundle b;
-        key_opts center, toggle;
+        key_opts center, toggle, zero;
         main_settings s_main;
         settings() :
             b(bundle("keyboard-shortcuts")),
             center(b, "center"),
             toggle(b, "toggle"),
+            zero(b, "zero"),
             s_main(bundle("opentrack-ui"))
         {}
     } s;
@@ -123,6 +126,7 @@ private:
 signals:
     void center();
     void toggle();
+    void zero();
 };
 
 class KeyboardShortcutDialog: public QWidget

@@ -26,6 +26,7 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     m(m),
     centerp(false),
     enabledp(true),
+    zero_(false),
     should_quit(false),
     libs(libs),
     r_b(dmat<3,3>::eye()),
@@ -127,12 +128,26 @@ void Tracker::logic()
         m(5).opts.invert,
     };
     
+    static constexpr double pi = 3.141592653;
+    static constexpr double r2d = 180. / pi;
+    
     Pose value, raw;
     
-    for (int i = 0; i < 6; i++)
+    if (!zero_)
+        for (int i = 0; i < 6; i++)
+        {
+            value(i) = newpose[i];
+            raw(i) = newpose[i];
+        }
+    else
     {
-        value(i) = newpose[i];
-        raw(i) = newpose[i];
+        auto mat = rmat_to_euler(r_b);
+        
+        for (int i = 0; i < 3; i++)
+        {
+            raw(i+3) = value(i+3) = mat(i, 0) * r2d;
+            raw(i) = value(i) = t_b[i];
+        }
     }
     
     if (centerp)
@@ -149,9 +164,6 @@ void Tracker::logic()
         const dmat<3, 1> euler = rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
-            static constexpr double pi = 3.141592653;
-            static constexpr double r2d = 180. / pi;
-            
             value(i) -= t_b[i];
             value(i+3) = euler(i, 0) * r2d;
         }
