@@ -67,7 +67,7 @@ QList<int> global_windows_key_sequences =
     << DIK_UP
     << DIK_DOWN
     << DIK_PGUP
-    << DIK_DOWN
+    << DIK_PGDN
     << DIK_HOME
     << DIK_END
     << DIK_BACK
