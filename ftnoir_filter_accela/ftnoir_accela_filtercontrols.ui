@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>268</height>
+    <width>479</width>
+    <height>255</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -104,7 +104,7 @@ background:none;</string>
          <enum>QSlider::TicksAbove</enum>
         </property>
         <property name="tickInterval">
-         <number>25</number>
+         <number>24</number>
         </property>
        </widget>
       </item>
@@ -123,7 +123,7 @@ background:none;</string>
          <enum>QSlider::TicksAbove</enum>
         </property>
         <property name="tickInterval">
-         <number>25</number>
+         <number>24</number>
         </property>
        </widget>
       </item>
