@@ -54,6 +54,7 @@
 #include "opentrack/work.hpp"
 #include "opentrack/state.hpp"
 #include "curve-config.h"
+#include "shortcut-dialog.hpp"
 
 using namespace options;
 
