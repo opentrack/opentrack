@@ -22,7 +22,7 @@ double FTNoIR_Filter::f(double vec, double thres)
         return (vec - thres*high_thres_c) * high_thres_out + thres*high_thres_c;
     if (vec > thres)
         return (vec - thres) * low_thres_mult + thres;
-    return pow(vec / thres, 2.0) * thres;
+    return pow(vec, 2.0) / thres;
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
