@@ -13,7 +13,6 @@
 #include "opentrack/plugin-support.h"
 #include "opentrack/options.hpp"
 #include "opentrack/main-settings.hpp"
-#include "ui_keyboard.h"
 
 using namespace options;
 
@@ -129,17 +128,4 @@ signals:
     void zero();
 };
 
-class KeyboardShortcutDialog: public QWidget
-{
-    Q_OBJECT
-signals:
-    void reload();
-public:
-    KeyboardShortcutDialog();
-private:
-    Ui::UICKeyboardShortcutDialog ui;
-    Shortcuts::settings s;
-private slots:
-    void doOK();
-    void doCancel();
-};
+
