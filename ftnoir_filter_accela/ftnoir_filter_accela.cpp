@@ -40,7 +40,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_t = 10. * (1+s.rot_threshold) / 100.;
+    const double rot_t = 7. * (1+s.rot_threshold) / 100.;
     const double trans_t = 5. * (1+s.trans_threshold) / 100.;
 
     const double dt = t.elapsed() * 1e-9;
@@ -55,16 +55,16 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         RC = 0;
         break;
     case 1: // low
-        RC = 0.09;
+        RC = 0.06;
         break;
     case 2: // normal
-        RC = 0.13;
+        RC = 0.11;
         break;
     case 3: // high
-        RC = 0.16;
+        RC = 0.15;
         break;
     case 4: // extreme
-        RC = 0.19;
+        RC = 0.20;
         break;
     }
     
