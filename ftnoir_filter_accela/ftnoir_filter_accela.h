@@ -33,10 +33,10 @@ private:
     Timer t;
     static double f(double vec, double thres);
     
-    static constexpr double high_thres_c = 3;
-    static constexpr double high_thres_out = 350;
+    static constexpr double high_thres_c = 4;
+    static constexpr double high_thres_out = 500;
     
-    static constexpr double low_thres_mult = 50;
+    static constexpr double low_thres_mult = 100;
 };
 
 class FilterControls: public IFilterDialog
