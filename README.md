@@ -58,6 +58,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (PT tracker)
 - Ulf Schreiber (PT tracker)
+- Andrzej Czarnowski (quality assurance)
 - uglyDwarf (high CON)
 - Wim Vriend (historically)
 
