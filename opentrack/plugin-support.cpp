@@ -213,7 +213,8 @@ dylib::dylib(const QString& filename, Type t) :
 dylib::~dylib()
 {
 #if defined(_WIN32)
-    handle->unload();
+    if (handle)
+        delete handle;
 #else
     if (handle)
         (void) dlclose(handle);
