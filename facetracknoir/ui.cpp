@@ -204,6 +204,7 @@ void MainWindow::bindKeyboardShortcuts()
 {
     if (work)
         work->reload_shortcuts();
+    ensure_tray();
 }
 
 void MainWindow::startTracker( ) {
