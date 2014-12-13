@@ -12,6 +12,7 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 void FTNoIR_Tracker::run() {
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
+    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     for (;;) {
         if (should_quit)
             break;
@@ -25,7 +26,6 @@ void FTNoIR_Tracker::run() {
 
 void FTNoIR_Tracker::start_tracker(QFrame*)
 {
-    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 	start();
 }
 

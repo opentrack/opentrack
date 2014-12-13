@@ -37,6 +37,8 @@ void TrackerImpl::run() {
         flag_Orient = 1 << 1,
         Mask = flag_Raw | flag_Orient
     };
+    
+    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
     while (!should_quit) {
         int order[] = {
@@ -101,7 +103,6 @@ void TrackerImpl::run() {
 
 void TrackerImpl::start_tracker(QFrame*)
 {
-    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     start();
 }
 
