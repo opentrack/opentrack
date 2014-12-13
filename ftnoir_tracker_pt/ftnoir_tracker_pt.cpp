@@ -48,6 +48,13 @@ void Tracker::reset_command(Command command)
 	commands &= ~command;
 }
 
+float Tracker::get_focal_length()
+{
+    static constexpr float pi = 3.1415926f;
+    const float fov = static_cast<int>(s.fov) * pi / 180.f;
+    return 0.5f / tan(0.5f * fov);
+}
+
 void Tracker::run()
 {
 #ifdef PT_PERF_LOG
@@ -85,7 +92,7 @@ void Tracker::run()
                          4);
             }
             if (points.size() == PointModel::N_POINTS)
-                point_tracker.track(points, model);
+                point_tracker.track(points, model, get_focal_length());
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG

@@ -83,16 +83,15 @@ void PointModel::get_d_order(const std::vector<vec>& points, int d_order[], vec 
 }
 
 
-// ----------------------------------------------------------------------------
 PointTracker::PointTracker()
 {
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
 
-void PointTracker::track(const vector<Vec2f>& points, const PointModel& model)
+void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f)
 {
     const PointOrder& order = find_correspondences(points, model);
-    POSIT(model, order);
+    POSIT(model, order, f);
 }
 
 PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, const PointModel& model)
@@ -117,7 +116,7 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     return p;
 }
 
-int PointTracker::POSIT(const PointModel& model, const PointOrder& order_)
+int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float focal_length)
 {
 	// POSIT algorithm for coplanar points as presented in
 	// [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]

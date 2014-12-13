@@ -88,15 +88,15 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model);
+    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f);
     Affine pose() const { return X_CM; }
+    
 private:
     // the points in model order
     typedef struct { cv::Vec2f points[PointModel::N_POINTS]; } PointOrder;
-    static constexpr float focal_length = 1.0f;
 
     PointOrder find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel &model);
-    int POSIT(const PointModel& point_model, const PointOrder& order);  // The POSIT algorithm, returns the number of iterations
+    int POSIT(const PointModel& point_model, const PointOrder& order, float focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera
 };
