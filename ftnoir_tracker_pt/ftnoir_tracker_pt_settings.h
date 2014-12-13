@@ -33,6 +33,8 @@ struct settings
 
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
+    
+    value<int> fov;
 
     settings() :
         b(bundle("tracker-pt")),
@@ -60,7 +62,8 @@ struct settings
         active_model_panel(b, "active-model-panel", 0),
         cap_x(b, "cap-x", 0),
         cap_y(b, "cap-y", 0),
-        cap_z(b, "cap-z", 0)
+        cap_z(b, "cap-z", 0),
+        fov(b, "camera-fov", 56)
     {}
 };
 

@@ -65,6 +65,8 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.t_MH_x, ui.tx_spin);
     tie_setting(s.t_MH_y, ui.ty_spin);
     tie_setting(s.t_MH_z, ui.tz_spin);
+    
+    tie_setting(s.fov, ui.fov);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 

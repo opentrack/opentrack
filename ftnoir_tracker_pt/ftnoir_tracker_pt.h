@@ -57,6 +57,9 @@ private:
     };
     void set_command(Command command);
     void reset_command(Command command);
+    
+    float get_focal_length();
+    
     volatile int commands;
 
     CVCamera       camera;
