@@ -152,6 +152,7 @@ namespace options {
         impl_bundle& operator=(const impl_bundle&) = delete;
     signals:
         void reloading();
+        void saving();
     public:
         impl_bundle(const string& group_name) :
             mtx(QMutex::Recursive),
@@ -200,6 +201,7 @@ namespace options {
             modified = false;
             saved = transient;
             transient.save();
+            emit saving();
         }
 
         bool modifiedp() {
