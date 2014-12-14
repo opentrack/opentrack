@@ -33,26 +33,6 @@ static void set_row(Matx33f& m, int i, const Vec3f& v)
 	m(i,2) = v[2];
 }
 
-PointModel::PointModel() :
-    M01 { 0, 0, 0 },
-    M02 { 0, 0, 0 }
-{
-}
-
-PointModel::PointModel(Vec3f M01, Vec3f M02)
-	: M01(M01), M02(M02)
-{
-	// calculate u
-	u = M01.cross(M02);
-	u /= norm(u);
-
-	// calculate projection matrix on M01,M02 plane
-	float s11 = M01.dot(M01);
-	float s12 = M01.dot(M02);
-	float s22 = M02.dot(M02);
-	P = 1.0/(s11*s22-s12*s12) * Matx22f(s22, -s12, -s12,  s11);
-}
-
 #ifdef OPENTRACK_API
 static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
 {

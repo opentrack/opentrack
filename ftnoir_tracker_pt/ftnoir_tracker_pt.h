@@ -33,20 +33,20 @@
 
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
-class Tracker : public ITracker, protected QThread
+class Tracker : public QThread, public ITracker
 {
+    Q_OBJECT
 public:
     Tracker();
     ~Tracker() override;
     void start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
 
-    void apply(settings& s);
-    void apply_inner();
-
     void pose(Affine* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
     void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
+public slots:
+    void apply_settings();
 protected:
     void run() override;
 private:
@@ -66,19 +66,14 @@ private:
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
-    cv::Vec3f   t_MH; // translation from model frame to head frame
-
     PTVideoWidget* video_widget;
     QFrame*      video_frame;
 
     settings s;
-    std::atomic<settings*> new_settings;
     Timer time;
 
     static constexpr double rad2deg = 180.0/3.14159265;
     static constexpr double deg2rad = 3.14159265/180.0;
-
-    PointModel model;
 };
 
 #undef VideoWidget

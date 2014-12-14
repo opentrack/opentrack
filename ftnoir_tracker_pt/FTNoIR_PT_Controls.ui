@@ -42,17 +42,17 @@
       <string>Status</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_10">
-      <item row="2" column="2">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Extracted Points:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
         </property>
        </widget>
       </item>
@@ -63,17 +63,20 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QDialogButtonBox" name="buttonBox_2">
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Apply</set>
+      <item row="1" column="1">
+       <widget class="QLabel" name="pointinfo_label">
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="centerButtons">
-         <bool>true</bool>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="1">
        <widget class="QLabel" name="caminfo_label">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -84,19 +87,6 @@
         <property name="minimumSize">
          <size>
           <width>120</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="pointinfo_label">
-        <property name="minimumSize">
-         <size>
-          <width>50</width>
           <height>0</height>
          </size>
         </property>

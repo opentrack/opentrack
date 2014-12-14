@@ -21,10 +21,10 @@ using namespace cv;
 Tracker::Tracker()
     : mutex(QMutex::Recursive),
       commands(0),
-	  video_widget(NULL), 
-	  video_frame(NULL),
-      new_settings(nullptr)
+	  video_widget(NULL),
+	  video_frame(NULL)
 {
+    connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
 
 Tracker::~Tracker()
@@ -65,7 +65,6 @@ void Tracker::run()
 
     while((commands & ABORT) == 0)
     {
-        apply_inner();
         const double dt = time.elapsed() * 1e-9;
         time.start();
         cv::Mat frame;
@@ -92,7 +91,7 @@ void Tracker::run()
                          4);
             }
             if (points.size() == PointModel::N_POINTS)
-                point_tracker.track(points, model, get_focal_length());
+                point_tracker.track(points, PointModel(s), get_focal_length());
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -103,36 +102,14 @@ void Tracker::run()
     }
     qDebug()<<"Tracker:: Thread stopping";
 }
-void Tracker::apply(settings& s)
-{
-    // caller guarantees object lifetime
-    new_settings = &s;
-}
 
-void Tracker::apply_inner()
+void Tracker::apply_settings()
 {
-    // XXX this nonsense oughta reference settings directly,
-    // rather than keep its own state -sh 20141102
-    // applies to -- camera, extractor, this tracker class
-    settings* tmp = new_settings.exchange(nullptr);
-    if (tmp == nullptr)
-        return;
-    auto& s = *tmp;
     qDebug()<<"Tracker:: Applying settings";
-
-    {
-        cv::Vec3f M01(s.m01_x, s.m01_y, s.m01_z);
-        cv::Vec3f M02(s.m02_x, s.m02_y, s.m02_z);
-        model = PointModel(M01, M02);
-    }
+    QMutexLocker lock(&mutex);
     camera.set_device_index(s.cam_index);
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
-    point_extractor.threshold_val = s.threshold;
-    point_extractor.threshold_secondary_val = s.threshold_secondary;
-    point_extractor.min_size = s.min_point_size;
-    point_extractor.max_size = s.max_point_size;
-    t_MH = cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     qDebug()<<"Tracker::apply ends";
 }
 
@@ -147,8 +124,7 @@ void Tracker::start_tracker(QFrame *parent_window)
     video_layout->addWidget(video_widget);
     video_frame->setLayout(video_layout);
     video_widget->resize(video_frame->width(), video_frame->height());
-    apply(s);
-    apply_inner();
+    apply_settings();
     camera.start();
     start();
 }
@@ -169,7 +145,7 @@ void Tracker::data(THeadPoseData *data)
 
     Affine X_CM = point_tracker.pose();
 
-    Affine X_MH(Matx33f::eye(), t_MH);
+    Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
     Affine X_GH = X_CM * X_MH;
 
     Matx33f R = X_GH.R;
