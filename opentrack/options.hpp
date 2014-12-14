@@ -26,6 +26,7 @@
 #include <QSlider>
 #include <QLineEdit>
 #include <QLabel>
+#include <QTabWidget>
 #include <QCoreApplication>
 
 #include <cinttypes>
@@ -411,5 +412,13 @@ namespace options {
     {
         lb->setText(v);
         base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.SAFE_CONNTYPE);
+    }
+    
+    template<>
+    inline void tie_setting(value<int>& v, QTabWidget* t)
+    {
+        t->setCurrentIndex(v);
+        base_value::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
     }
 }
