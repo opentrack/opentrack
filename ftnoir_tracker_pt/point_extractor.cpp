@@ -37,7 +37,8 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat& frame)
 	Mat frame_gray;
     cvtColor(frame, frame_gray, CV_RGB2GRAY);
 
-	int secondary = threshold_secondary_val;
+	int secondary = s.threshold_secondary;
+    int primary = s.threshold;
 	
 	// mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
 	Mat frame_bin;
@@ -49,15 +50,15 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat& frame)
 	Mat frame_last_and_low;
 
 	if(secondary==0){
-		threshold(frame_gray, frame_bin, threshold_val, 255, THRESH_BINARY);
+		threshold(frame_gray, frame_bin, primary, 255, THRESH_BINARY);
 	}else{
 		// we recombine a number of buffers, this might be slower than a single loop of per-pixel logic
 		// but it might as well be faster if openCV makes good use of SIMD
-		float t = threshold_val;
+		float t = primary;
 		//float hyst = float(threshold_secondary_val)/512.;
 		//threshold(frame_gray, frame_bin, (t + ((255.-t)*hyst)), 255, THRESH_BINARY);
-		float hyst = float(threshold_secondary_val)/256.;
-		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY);
+		float hyst = float(primary)/256.;
+		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY); 
 		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
 
 		frame_bin.copyTo(frame_bin_copy);
@@ -71,6 +72,10 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat& frame)
 			frame_last.copyTo(frame_bin);
 		}
 	}
+    
+    int min_size = s.min_point_size;
+    int max_size = s.max_point_size;
+    
 	unsigned int region_size_min = 3.14*min_size*min_size/4.0;
 	unsigned int region_size_max = 3.14*max_size*max_size/4.0;
 
@@ -118,7 +123,7 @@ const vector<Vec2f>& PointExtractor::extract_points(Mat& frame)
 
 					if(secondary==0){
 						val = frame_gray.at<unsigned char>(i,j);
-						val = float(val - threshold_val)/(256 - threshold_val);
+						val = float(val - primary)/(256 - primary);
 						val = val*val; // makes it more stable (less emphasis on low values, more on the peak)
 					}else{
 						//hysteresis point detection gets stability from ignoring pixel noise so we decidedly leave the actual pixel values out of the picture

@@ -16,6 +16,10 @@
 #endif
 #include <vector>
 
+#include "ftnoir_tracker_pt_settings.h"
+
+#include <QObject>
+
 // ----------------------------------------------------------------------------
 // Affine frame trafo
 class Affine
@@ -59,19 +63,47 @@ class PointModel
 public:
     static constexpr int N_POINTS = 3;
 
-    PointModel(cv::Vec3f M01, cv::Vec3f M02);
-    PointModel();
-
-    inline const cv::Vec3f& get_M01() const { return M01; }
-    inline const cv::Vec3f& get_M02() const { return M02; }
-
-private:
     cv::Vec3f M01;	// M01 in model frame
     cv::Vec3f M02;	// M02 in model frame
 
     cv::Vec3f u;	// unit vector perpendicular to M01,M02-plane
 
     cv::Matx22f P;
+    
+    enum Model { Clip = 0, Cap = 1, Custom = 2 };
+        
+    PointModel(settings& s)
+    {
+        set_model(s);
+        // calculate u
+        u = M01.cross(M02);
+        u /= norm(u);
+    
+        // calculate projection matrix on M01,M02 plane
+        float s11 = M01.dot(M01);
+        float s12 = M01.dot(M02);
+        float s22 = M02.dot(M02);
+        P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
+    }
+    
+    void set_model(settings& s)
+    {
+        switch (s.active_model_panel)
+        {
+        case Clip:
+            M01 = cv::Vec3f(0, static_cast<double>(s.clip_ty), -static_cast<double>(s.clip_tz));
+            M02 = cv::Vec3f(0, -static_cast<double>(s.clip_by), -static_cast<double>(s.clip_bz));
+            break;
+        case Cap:
+            M01 = cv::Vec3f(-static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
+            M02 = cv::Vec3f(static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
+            break;
+        case Custom:
+            M01 = cv::Vec3f(s.m01_x, s.m01_y, s.m01_z);
+            M02 = cv::Vec3f(s.m02_x, s.m02_y, s.m02_z);
+            break;
+        }
+    }
     
     template<typename vec>
     void get_d_order(const std::vector<vec>& points, int* d_order, vec d) const;

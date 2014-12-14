@@ -67,53 +67,16 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.t_MH_z, ui.tz_spin);
     
     tie_setting(s.fov, ui.fov);
+    
+    tie_setting(s.active_model_panel, ui.model_tabs);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
-    connect(ui.buttonBox, SIGNAL(accepted()),     this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    ui.model_tabs->setCurrentIndex(s.active_model_panel);
-
-    connect(ui.model_tabs, SIGNAL(currentChanged(int)), this, SLOT(set_model(int)));
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     timer.start(100);
-
-    connect(ui.buttonBox_2, SIGNAL(clicked(QAbstractButton*)), this, SLOT(do_apply_without_saving(QAbstractButton*)));
-}
-
-void TrackerDialog::set_model_clip()
-{
-    s.m01_x =  0;
-    s.m01_y = static_cast<double>(s.clip_ty);
-    s.m01_z = -static_cast<double>(s.clip_tz);
-    s.m02_x =  0;
-    s.m02_y = -static_cast<double>(s.clip_by);
-    s.m02_z = -static_cast<double>(s.clip_bz);
-
-    settings_changed();
-}
-
-void TrackerDialog::set_model_cap()
-{
-    s.m01_x = -static_cast<double>(s.cap_x);
-    s.m01_y = -static_cast<double>(s.cap_y);
-    s.m01_z = -static_cast<double>(s.cap_z);
-    s.m02_x =  static_cast<double>(s.cap_x);
-    s.m02_y = -static_cast<double>(s.cap_y);
-    s.m02_z = -static_cast<double>(s.cap_z);
-
-    settings_changed();
-}
-
-void TrackerDialog::set_model_custom()
-{
-    settings_changed();
-}
-
-void TrackerDialog::set_model(int val)
-{
-    s.active_model_panel = val;
 }
 
 void TrackerDialog::startstop_trans_calib(bool start)
@@ -134,7 +97,6 @@ void TrackerDialog::startstop_trans_calib(bool start)
             s.t_MH_y = tmp[1];
             s.t_MH_z = tmp[2];
         }
-        settings_changed();
     }
 }
 
@@ -184,14 +146,8 @@ void TrackerDialog::trans_calib_step()
     }
 }
 
-void TrackerDialog::settings_changed()
-{
-    if (tracker) tracker->apply(s);
-}
-
 void TrackerDialog::save()
 {
-    do_apply_without_saving(nullptr);
     s.b->save();
 }
 
@@ -199,28 +155,6 @@ void TrackerDialog::doOK()
 {
     save();
     close();
-}
-
-void TrackerDialog::do_apply_without_saving(QAbstractButton*)
-{
-    switch (s.active_model_panel) {
-    default:
-    case 0:
-        set_model_clip();
-        break;
-    case 1:
-        set_model_cap();
-        break;
-    case 2:
-        set_model_custom();
-        break;
-    }
-    if (tracker) tracker->apply(s);
-}
-
-void TrackerDialog::doApply()
-{
-    save();
 }
 
 void TrackerDialog::doCancel()
@@ -233,8 +167,6 @@ void TrackerDialog::register_tracker(ITracker *t)
 {
     qDebug()<<"TrackerDialog:: Tracker registered";
     tracker = static_cast<Tracker*>(t);
-    if (isVisible() & s.b->modifiedp())
-        tracker->apply(s);
     ui.tcalib_button->setEnabled(true);
     //ui.center_button->setEnabled(true);
 }

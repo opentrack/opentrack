@@ -11,6 +11,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "ftnoir_tracker_pt_settings.h"
+
 // ----------------------------------------------------------------------------
 // Extracts points from an opencv image
 class PointExtractor
@@ -22,11 +24,8 @@ public:
     const std::vector<cv::Vec2f>& extract_points(cv::Mat &frame);
     const std::vector<cv::Vec2f>& get_points() { return points; }
     PointExtractor();
-
-    int threshold_val;
-    int threshold_secondary_val;
-    int min_size, max_size;
-
+    
+    settings s;
 private:
     std::vector<cv::Vec2f> points;
     cv::Mat frame_last;

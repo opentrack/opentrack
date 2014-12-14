@@ -9,7 +9,6 @@
 #define FTNOIR_TRACKER_PT_SETTINGS_H
 
 #include <opencv2/core/core.hpp>
-#include "point_tracker.h"
 
 #include "opentrack/options.hpp"
 using namespace options;

@@ -36,19 +36,10 @@ public:
 public slots:
 	void doOK();
 	void doCancel();
-    void doApply();
-    void do_apply_without_saving(QAbstractButton *);
 
 	void startstop_trans_calib(bool start);
 	void poll_tracker_info();
-    void set_model(int idx);
 private:
-	void set_model_clip();
-	void set_model_cap();
-	void set_model_custom();
-
-	void settings_changed();
-
     settings s;
 	Tracker* tracker;
 	QTimer timer;
