@@ -1,6 +1,5 @@
 #pragma once
 
-#include <atomic>
 #include <vector>
 
 #include "timer.hpp"
@@ -27,10 +26,10 @@ private:
     Pose output_pose, raw_6dof;
 
     double newpose[6];
-    std::atomic<bool> centerp;
-    std::atomic<bool> enabledp;
-    std::atomic<bool> zero_;
-    std::atomic<bool> should_quit;
+    volatile bool centerp;
+    volatile bool enabledp;
+    volatile bool zero_;
+    volatile bool should_quit;
     SelectedLibraries const& libs;
 
     dmat<3, 3> r_b;
@@ -47,7 +46,7 @@ public:
 
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
-    void toggle_enabled() { enabledp.store(!enabledp.load()); }
-    void center() { centerp.store(!centerp.load()); }
-    void zero() { zero_.store(!zero_.load()); }
+    void toggle_enabled() { enabledp = !enabledp; }
+    void center() { centerp = !centerp; }
+    void zero() { zero_ = !zero_; }
 };
