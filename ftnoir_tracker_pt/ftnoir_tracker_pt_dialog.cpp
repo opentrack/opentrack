@@ -89,7 +89,7 @@ void TrackerDialog::startstop_trans_calib(bool start)
     }
     else
     {
-        qDebug()<<"TrackerDialog:: Stoppping translation calibration";
+        qDebug()<<"TrackerDialog:: Stopping translation calibration";
         trans_calib_running = false;
         {
             auto tmp = trans_calib.get_estimate();
@@ -139,10 +139,6 @@ void TrackerDialog::trans_calib_step()
         Affine X_CM;
         tracker->pose(&X_CM);
         trans_calib.update(X_CM.R, X_CM.t);
-        cv::Vec3f t_MH = trans_calib.get_estimate();
-        s.t_MH_x = t_MH[0];
-        s.t_MH_y = t_MH[1];
-        s.t_MH_z = t_MH[2];
     }
 }
 

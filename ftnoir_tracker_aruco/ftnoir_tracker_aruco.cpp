@@ -457,10 +457,18 @@ void TrackerControls::toggleCalibrate()
 {
     if (!calib_timer.isActive())
     {
+        s.headpos_x = 0;
+        s.headpos_y = 0;
+        s.headpos_z = 0;
         calibrator.reset();
         calib_timer.start();
     } else {
         cleanupCalib();
+        
+        auto pos = calibrator.get_estimate();
+        s.headpos_x = pos(0);
+        s.headpos_y = pos(1);
+        s.headpos_z = pos(2);
     }
 }
 
@@ -478,10 +486,6 @@ void TrackerControls::update_tracker_calibration()
         cv::Vec3d t;
         tracker->getRT(r, t);
         calibrator.update(r, t);
-        auto pos = calibrator.get_estimate() * .1;
-        s.headpos_x = pos(0);
-        s.headpos_y = pos(1);
-        s.headpos_z = pos(2);
     }
 }
 
