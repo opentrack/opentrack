@@ -167,10 +167,12 @@ namespace options {
         string name() { return group_name; }
 
         void reload() {
-            QMutexLocker l(&mtx);
-            saved = group(group_name);
-            transient = saved;
-            modified = false;
+            {
+                QMutexLocker l(&mtx);
+                saved = group(group_name);
+                transient = saved;
+                modified = false;
+            }
             emit reloading();
         }
 
@@ -198,10 +200,12 @@ namespace options {
         }
         void save()
         {
-            QMutexLocker l(&mtx);
-            modified = false;
-            saved = transient;
-            transient.save();
+            {
+                QMutexLocker l(&mtx);
+                modified = false;
+                saved = transient;
+                transient.save();
+            }
             emit saving();
         }
 
