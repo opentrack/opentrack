@@ -74,7 +74,22 @@ void Tracker::run()
         {
             QMutexLocker lock(&mutex);
 
-            const std::vector<cv::Vec2f>& points = point_extractor.extract_points(frame);
+            std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
+            
+            if (points.size() == PointModel::N_POINTS)
+                point_tracker.track(points, PointModel(s), get_focal_length());
+            
+            {
+                Affine CM;
+                pose(&CM);
+                cv::Vec3f MH(s.t_MH_x, s.t_MH_y, s.t_MH_z);
+                cv::Vec3f p = CM.t - MH;
+                float fx = get_focal_length();
+                cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);
+
+                points.push_back(p_);
+            }
+            
             for (auto p : points)
             {
                 auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
@@ -90,8 +105,7 @@ void Tracker::run()
                          color,
                          4);
             }
-            if (points.size() == PointModel::N_POINTS)
-                point_tracker.track(points, PointModel(s), get_focal_length());
+            
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
