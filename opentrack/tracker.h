@@ -32,6 +32,8 @@ private:
     volatile bool should_quit;
     SelectedLibraries const& libs;
 
+    using rmat = dmat<3, 3>;
+    
     dmat<3, 3> r_b;
     double t_b[3];
 
@@ -40,6 +42,7 @@ private:
 
     void t_compensate(const dmat<3, 3>& rmat, const double* ypr, double* output, bool rz);
     void run() override;
+    
 public:
     Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);
     ~Tracker();

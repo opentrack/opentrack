@@ -49,62 +49,7 @@ double Tracker::map(double pos, bool invertp, Mapping& axis)
     return fc.getValue(pos) + axis.opts.zero;
 }
 
-// http://stackoverflow.com/a/18436193
-static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
-{
-    static constexpr double pi = 3.141592653;
-    const double up = 90 * pi / 180.;
-    static constexpr double bound = 1. - 2e-4;
-    if (R(0, 2) > bound)
-    {
-        double roll = atan(R(1, 0) / R(2, 0));
-        return dmat<3, 1>({0., up, roll});
-    }
-    if (R(0, 2) < -bound)
-    {
-        double roll = atan(R(1, 0) / R(2, 0));
-        return dmat<3, 1>({0., -up, roll});
-    }
-    double pitch = asin(-R(0, 2));
-    double roll = atan2(R(1, 2), R(2, 2));
-    double yaw = atan2(R(0, 1), R(0, 0));
-    return dmat<3, 1>({yaw, pitch, roll});
-}
-
-// tait-bryan angles, not euler
-static dmat<3, 3> euler_to_rmat(const double* input)
-{
-    static constexpr double pi = 3.141592653;
-    auto H = input[0] * pi / 180;
-    auto P = input[1] * pi / 180;
-    auto B = input[2] * pi / 180;
-
-    const auto c1 = cos(H);
-    const auto s1 = sin(H);
-    const auto c2 = cos(P);
-    const auto s2 = sin(P);
-    const auto c3 = cos(B);
-    const auto s3 = sin(B);
-
-    double foo[] = {
-        // z
-        c1 * c2,
-        c1 * s2 * s3 - c3 * s1,
-        s1 * s3 + c1 * c3 * s2,
-        // y
-        c2 * s1,
-        c1 * c3 + s1 * s2 * s3,
-        c3 * s1 * s2 - c1 * s3,
-        // x
-        -s2,
-        c2 * s3,
-        c2 * c3
-    };
-
-    return dmat<3, 3>(foo);
-}
-
-void Tracker::t_compensate(const dmat<3, 3>& rmat, const double* xyz, double* output, bool rz)
+void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
     dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
@@ -141,7 +86,7 @@ void Tracker::logic()
         }
     else
     {
-        auto mat = rmat_to_euler(r_b);
+        auto mat = rmat::rmat_to_euler(r_b);
         
         for (int i = 0; i < 3; i++)
         {
@@ -155,13 +100,13 @@ void Tracker::logic()
         centerp = false;
         for (int i = 0; i < 3; i++)
             t_b[i] = value(i);
-        r_b = euler_to_rmat(&value[Yaw]);
+        r_b = rmat::euler_to_rmat(&value[Yaw]);
     }
     
     {
-        const dmat<3, 3> rmat = euler_to_rmat(&value[Yaw]);
-        const dmat<3, 3> m_ = rmat * r_b.t();
-        const dmat<3, 1> euler = rmat_to_euler(m_);
+        const rmat r = rmat::euler_to_rmat(&value[Yaw]);
+        const rmat m_ = r * r_b.t();
+        const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
             value(i) -= t_b[i];
@@ -184,7 +129,7 @@ void Tracker::logic()
         value[i] *= inverts[i] ? -1. : 1.;
 
     if (s.tcomp_p)
-        t_compensate(euler_to_rmat(&value[Yaw]),
+        t_compensate(rmat::euler_to_rmat(&value[Yaw]),
                      value,
                      value,
                      s.tcomp_tz);
