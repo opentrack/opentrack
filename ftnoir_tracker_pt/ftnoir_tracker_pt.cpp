@@ -159,7 +159,7 @@ void Tracker::data(THeadPoseData *data)
 
     Affine X_CM = point_tracker.pose();
 
-    Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+    Affine X_MH(Matx33f::eye(), cv::Vec3f(-s.t_MH_x, -s.t_MH_y, -s.t_MH_z));
     Affine X_GH = X_CM * X_MH;
 
     Matx33f R = X_GH.R;
