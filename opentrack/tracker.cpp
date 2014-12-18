@@ -94,22 +94,33 @@ void Tracker::logic()
             raw(i) = value(i) = t_b[i];
         }
     }
+
+    const double off[] = {
+        s.camera_yaw,
+        s.camera_pitch,
+        0.
+    };
+    const rmat cam = rmat::euler_to_rmat(off);
+    rmat r = rmat::euler_to_rmat(&value[Yaw]);
+    dmat<3, 1> t { value(0), value(1), value(3) };
+    
+    r = cam * r;
+    t = cam * t;
     
     if (centerp)
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
-            t_b[i] = value(i);
-        r_b = rmat::euler_to_rmat(&value[Yaw]);
+            t_b[i] = t(i, 0);
+        r_b = r;
     }
     
     {
-        const rmat r = rmat::euler_to_rmat(&value[Yaw]);
         const rmat m_ = r * r_b.t();
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
-            value(i) -= t_b[i];
+            value(i) = t(i, 0) - t_b[i];
             value(i+3) = euler(i, 0) * r2d;
         }
     }

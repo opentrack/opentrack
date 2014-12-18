@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>970</width>
-    <height>655</height>
+    <height>664</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -626,350 +626,400 @@
          <property name="checkable">
           <bool>false</bool>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0,0,0,0,0" columnstretch="0,0,0">
+         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0,0">
           <property name="sizeConstraint">
            <enum>QLayout::SetMinAndMaxSize</enum>
           </property>
           <property name="spacing">
            <number>6</number>
           </property>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_10">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_20">
             <property name="text">
-             <string>X</string>
+             <string>Assign input axis to output axis.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Yaw</string>
+           <widget class="QFrame" name="frame_2">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Pitch</string>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Y</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>Z</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Roll</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QCheckBox" name="invert_yaw">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="invert_pitch">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QCheckBox" name="invert_x">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QCheckBox" name="invert_roll">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QCheckBox" name="invert_y">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QCheckBox" name="invert_z">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="src_yaw">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="src_pitch">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="src_roll">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QComboBox" name="src_x">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QComboBox" name="src_y">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QComboBox" name="src_z">
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Source</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>Invert</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>Destination</string>
-            </property>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="7" column="2">
+              <widget class="QCheckBox" name="invert_y">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>Roll</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>X</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_14">
+               <property name="text">
+                <string>Invert</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QComboBox" name="src_x">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Pitch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QComboBox" name="src_y">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="src_yaw">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QCheckBox" name="invert_roll">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>Destination</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QCheckBox" name="invert_pitch">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Yaw</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="2">
+              <widget class="QCheckBox" name="invert_x">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>Source</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QComboBox" name="src_pitch">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QCheckBox" name="invert_yaw">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QComboBox" name="src_roll">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>Z</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="1">
+              <widget class="QComboBox" name="src_z">
+               <item>
+                <property name="text">
+                 <string>X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Yaw</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pitch</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roll</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="QCheckBox" name="invert_z">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+            <zorder>label_15</zorder>
+            <zorder>label_14</zorder>
+            <zorder>label_13</zorder>
+            <zorder>label_15</zorder>
+            <zorder>label_15</zorder>
+            <zorder>label_13</zorder>
+            <zorder>label_14</zorder>
+            <zorder>src_yaw</zorder>
+            <zorder>invert_yaw</zorder>
+            <zorder>label_7</zorder>
+            <zorder>src_pitch</zorder>
+            <zorder>label_8</zorder>
+            <zorder>invert_pitch</zorder>
+            <zorder>label_9</zorder>
+            <zorder>src_roll</zorder>
+            <zorder>invert_roll</zorder>
+            <zorder>label_10</zorder>
+            <zorder>src_x</zorder>
+            <zorder>invert_x</zorder>
+            <zorder>label_11</zorder>
+            <zorder>src_y</zorder>
+            <zorder>invert_y</zorder>
+            <zorder>label_12</zorder>
+            <zorder>src_z</zorder>
+            <zorder>invert_z</zorder>
            </widget>
           </item>
          </layout>
@@ -993,7 +1043,7 @@
           <bool>true</bool>
          </property>
          <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QCheckBox" name="tcomp_enable">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1009,13 +1059,124 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QCheckBox" name="tcomp_rz">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="text">
              <string>Disable Z axis compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>With compensation on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Camera offset</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="3" column="0">
+           <widget class="QFrame" name="frame">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_18">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Yaw</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="camera_yaw">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimum">
+                <number>-90</number>
+               </property>
+               <property name="maximum">
+                <number>90</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_19">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Pitch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="camera_pitch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimum">
+                <number>-90</number>
+               </property>
+               <property name="maximum">
+                <number>90</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
