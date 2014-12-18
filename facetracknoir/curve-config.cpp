@@ -76,6 +76,9 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
     tie_setting(s.a_x.src, ui.src_x);
     tie_setting(s.a_y.src, ui.src_y);
     tie_setting(s.a_z.src, ui.src_z);
+    
+    tie_setting(s.camera_yaw, ui.camera_yaw);
+    tie_setting(s.camera_pitch, ui.camera_pitch);
 }
 
 void MapWidget::doOK() {
