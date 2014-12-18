@@ -65,7 +65,7 @@ struct Mat
         return ret;
     }
 
-    Mat<num, w, h> t()
+    Mat<num, w, h> t() const
     {
         Mat<num, w, h> ret;
 
