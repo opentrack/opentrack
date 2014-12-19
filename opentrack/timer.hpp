@@ -2,7 +2,9 @@
 #include <ctime>
 #if defined (_WIN32)
 #   include <windows.h>
-#   define CLOCK_MONOTONIC -1
+#	ifndef CLOCK_MONOTONIC
+#   	define CLOCK_MONOTONIC -1
+#	endif
 static inline void opentrack_clock_gettime(int, struct timespec* ts)
 {
     static LARGE_INTEGER freq;
