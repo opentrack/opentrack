@@ -102,10 +102,9 @@ void Tracker::logic()
     };
     const rmat cam = rmat::euler_to_rmat(off);
     rmat r = rmat::euler_to_rmat(&value[Yaw]);
-    dmat<3, 1> t { value(0), value(1), value(3) };
+    dmat<3, 1> t { value(0), value(1), value(2) };
     
     r = cam * r;
-    t = cam * t;
     
     if (centerp)
     {
@@ -116,11 +115,13 @@ void Tracker::logic()
     }
     
     {
+        double tmp[3] = { t(0, 0) - t_b[0], t(1, 0) - t_b[1], t(2, 0) - t_b[2] };
+        t_compensate(cam, tmp, tmp, false);
         const rmat m_ = r * r_b.t();
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
-            value(i) = t(i, 0) - t_b[i];
+            value(i) = tmp[i];
             value(i+3) = euler(i, 0) * r2d;
         }
     }
