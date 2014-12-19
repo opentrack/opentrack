@@ -24,7 +24,3 @@ set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-msse -msse2 -mno-sse3 -mno-avx -fno-use-
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
-
-# these are merely for my own convenience
-set(OpenCV_DIR /home/sthalik/opentrack-win32-sdk/opencv/build)
-set(Qt5_DIR /home/sthalik/opentrack-win32-sdk/qt-win32-5.3.2/lib/cmake/Qt5)
