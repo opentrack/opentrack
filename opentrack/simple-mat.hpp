@@ -5,6 +5,24 @@ template<typename num, int h, int w>
 struct Mat
 {
     num data[h][w];
+    
+    Mat<num, h, w> operator+(const Mat<num, h, w>& other) const
+    {
+        Mat<num, h, w> ret;
+        for (int j = 0; j < h; j++)
+            for (int i = 0; i < w; i++)
+                ret(j, i) = this->operator ()(j, i) + other(j, i);
+        return ret;
+    }
+    
+    Mat<num, h, w> operator-(const Mat<num, h, w>& other) const
+    {
+        Mat<num, h, w> ret;
+        for (int j = 0; j < h; j++)
+            for (int i = 0; i < w; i++)
+                ret(j, i) = this->operator ()(j, i) - other(j, i);
+        return ret;
+    }
 
     template<int p>
     Mat<num, w, p> operator*(const Mat<num, w, p>& other) const
