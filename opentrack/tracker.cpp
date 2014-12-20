@@ -40,9 +40,9 @@ Tracker::~Tracker()
     wait();
 }
 
-double Tracker::map(double pos, bool invertp, Mapping& axis)
+double Tracker::map(double pos, Mapping& axis)
 {
-    bool altp = (pos < 0) == !invertp && axis.opts.altp;
+    bool altp = (pos < 0) && axis.opts.altp;
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
@@ -125,9 +125,9 @@ void Tracker::logic()
             value(i+3) = euler(i, 0) * r2d;
         }
     }
-
-    for (int i = 0; i < 6; i++)
-        value(i) = map(value(i), inverts[i], m(i));
+    
+    for (int i = 3; i < 6; i++)
+        value(i) = map(value(i), m(i));
     
     {
         Pose tmp = value;
@@ -136,15 +136,17 @@ void Tracker::logic()
             libs.pFilter->filter(tmp, value);
     }
 
-    // must invert early as euler_to_rmat's sensitive to sign change
-    for (int i = 0; i < 6; i++)
-        value[i] *= inverts[i] ? -1. : 1.;
-
     if (s.tcomp_p)
         t_compensate(rmat::euler_to_rmat(&value[Yaw]),
                      value,
                      value,
                      s.tcomp_tz);
+    
+    for (int i = 0; i < 3; i++)
+        value(i) = map(value(i), m(i));
+    
+    for (int i = 0; i < 6; i++)
+        value[i] *= inverts[i] ? -1. : 1.;
 
     Pose output_pose_;
 

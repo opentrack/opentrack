@@ -37,7 +37,7 @@ private:
     dmat<3, 3> r_b;
     double t_b[3];
 
-    double map(double pos, bool invertp, Mapping& axis);
+    double map(double pos, Mapping& axis);
     void logic();
 
     void t_compensate(const dmat<3, 3>& rmat, const double* ypr, double* output, bool rz);
