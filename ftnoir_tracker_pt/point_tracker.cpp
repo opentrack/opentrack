@@ -40,8 +40,7 @@ static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
 }
 #endif
 
-template<typename vec>
-void PointModel::get_d_order(const std::vector<vec>& points, int d_order[], vec d) const
+void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[], cv::Vec2f d) const
 {
 	// fit line to orthographically projected points
 	vector< pair<float,int> > d_vals;
@@ -80,17 +79,16 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     // sort points
     int point_d_order[PointModel::N_POINTS];
     int model_d_order[PointModel::N_POINTS];
-    model.get_d_order(points, point_d_order,
-                      cv::Vec2f(points[0][0]-points[1][0], points[0][1]-points[1][1]));
+    cv::Vec2f d(points[0][0]-points[1][0], points[0][1]-points[1][1]);
+    model.get_d_order(points, point_d_order, d);
     // calculate d and d_order for simple freetrack-like point correspondence
-    model.get_d_order(std::vector<cv::Vec2f>{
+    model.get_d_order(std::vector<cv::Vec2f> {
                           Vec2f{0,0},
                           Vec2f(model.M01[0], model.M01[1]),
                           Vec2f(model.M02[0], model.M02[1])
                       },
                       model_d_order,
-                      cv::Vec2f(model.M01[0]-model.M02[0],
-                                model.M01[1]-model.M02[1]));
+                      d);
     // set correspondences
     PointOrder p;
     for (int i=0; i<PointModel::N_POINTS; ++i)
