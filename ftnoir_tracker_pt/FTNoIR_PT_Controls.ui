@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>616</height>
+    <width>397</width>
+    <height>586</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -101,7 +101,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -426,11 +426,11 @@
       <attribute name="title">
        <string>Model</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_16">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
         <widget class="QTabWidget" name="model_tabs">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -439,7 +439,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -462,6 +462,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>331</width>
+               <height>208</height>
+              </size>
              </property>
              <property name="title">
               <string>Model Dimensions</string>
@@ -611,6 +617,12 @@
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
             <widget class="QGroupBox" name="groupBox_9">
+             <property name="minimumSize">
+              <size>
+               <width>331</width>
+               <height>208</height>
+              </size>
+             </property>
              <property name="title">
               <string>Model Dimensions</string>
              </property>
@@ -666,7 +678,7 @@
               <property name="geometry">
                <rect>
                 <x>220</x>
-                <y>90</y>
+                <y>100</y>
                 <width>81</width>
                 <height>81</height>
                </rect>
@@ -681,7 +693,7 @@
              <widget class="QSpinBox" name="cap_width_spin">
               <property name="geometry">
                <rect>
-                <x>270</x>
+                <x>240</x>
                 <y>70</y>
                 <width>81</width>
                 <height>22</height>
@@ -700,7 +712,7 @@
              <widget class="QLabel" name="label_49">
               <property name="geometry">
                <rect>
-                <x>260</x>
+                <x>240</x>
                 <y>40</y>
                 <width>46</width>
                 <height>13</height>
@@ -946,7 +958,7 @@
          </widget>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_10">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
