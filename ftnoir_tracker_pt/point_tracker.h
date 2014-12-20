@@ -105,8 +105,7 @@ public:
         }
     }
     
-    template<typename vec>
-    void get_d_order(const std::vector<vec>& points, int* d_order, vec d) const;
+    void get_d_order(const std::vector<cv::Vec2f>& points, int* d_order, cv::Vec2f d) const;
 };
 
 // ----------------------------------------------------------------------------
