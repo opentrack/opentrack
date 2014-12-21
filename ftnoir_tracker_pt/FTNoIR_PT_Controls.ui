@@ -439,7 +439,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -1043,7 +1043,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Calibrate</string>
+             <string>Toggle calibration</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
