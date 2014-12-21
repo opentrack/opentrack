@@ -236,7 +236,7 @@
       <item row="4" column="1">
        <widget class="QPushButton" name="btn_calibrate">
         <property name="text">
-         <string>Calibrate</string>
+         <string>Toggle calibration</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
