@@ -90,10 +90,13 @@ void Tracker::run()
                 points.push_back(p_);
             }
             
-            for (auto p : points)
+            for (int i = 0; i < points.size(); i++)
             {
+                auto& p = points[i];
                 auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
                 cv::Scalar color(0, 255, 0);
+                if (i == points.size()-1)
+                    color = cv::Scalar(0, 0, 255);
                 cv::line(frame,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
