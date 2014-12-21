@@ -57,7 +57,7 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 		float t = primary;
 		//float hyst = float(threshold_secondary_val)/512.;
 		//threshold(frame_gray, frame_bin, (t + ((255.-t)*hyst)), 255, THRESH_BINARY);
-		float hyst = float(primary)/(256.*4.);
+		float hyst = float(primary)/(256.*8.);
 		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY); 
 		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
 
