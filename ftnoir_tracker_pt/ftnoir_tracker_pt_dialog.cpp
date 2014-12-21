@@ -94,7 +94,7 @@ void TrackerDialog::startstop_trans_calib(bool start)
         {
             auto tmp = trans_calib.get_estimate();
             s.t_MH_x = tmp[0];
-            s.t_MH_y = -tmp[1];
+            s.t_MH_y = tmp[1];
             s.t_MH_z = tmp[2];
         }
     }
