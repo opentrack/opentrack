@@ -79,7 +79,7 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     // sort points
     int point_d_order[PointModel::N_POINTS];
     int model_d_order[PointModel::N_POINTS];
-    cv::Vec2f d(points[0][0]-points[1][0], points[0][1]-points[1][1]);
+    cv::Vec2f d(model.M01[0]-model.M02[0], model.M01[1]-model.M02[1]);
     model.get_d_order(points, point_d_order, d);
     // calculate d and d_order for simple freetrack-like point correspondence
     model.get_d_order(std::vector<cv::Vec2f> {
