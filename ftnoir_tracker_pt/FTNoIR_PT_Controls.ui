@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>397</width>
-    <height>586</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -439,7 +439,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -482,7 +482,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -501,7 +501,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -549,7 +549,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -568,7 +568,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -665,7 +665,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -700,7 +700,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -732,7 +732,7 @@
                </rect>
               </property>
               <property name="suffix">
-               <string> cm</string>
+               <string> mm</string>
               </property>
               <property name="minimum">
                <number>-65535</number>
@@ -772,7 +772,7 @@
               <item row="2" column="5">
                <widget class="QSpinBox" name="m2y_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -798,7 +798,7 @@
               <item row="1" column="2">
                <widget class="QSpinBox" name="m1x_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -811,7 +811,7 @@
               <item row="2" column="2">
                <widget class="QSpinBox" name="m1y_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -824,7 +824,7 @@
               <item row="3" column="5">
                <widget class="QSpinBox" name="m2z_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -837,7 +837,7 @@
               <item row="1" column="5">
                <widget class="QSpinBox" name="m2x_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -863,7 +863,7 @@
               <item row="3" column="2">
                <widget class="QSpinBox" name="m1z_spin">
                 <property name="suffix">
-                 <string> cm</string>
+                 <string> mm</string>
                 </property>
                 <property name="minimum">
                  <number>-65535</number>
@@ -973,7 +973,7 @@
           <item row="3" column="1">
            <widget class="QSpinBox" name="tz_spin">
             <property name="suffix">
-             <string> cm</string>
+             <string> mm</string>
             </property>
             <property name="minimum">
              <number>-65535</number>
@@ -986,7 +986,7 @@
           <item row="1" column="1">
            <widget class="QSpinBox" name="tx_spin">
             <property name="suffix">
-             <string> cm</string>
+             <string> mm</string>
             </property>
             <property name="minimum">
              <number>-65535</number>
@@ -1027,7 +1027,7 @@
           <item row="2" column="1">
            <widget class="QSpinBox" name="ty_spin">
             <property name="suffix">
-             <string> cm</string>
+             <string> mm</string>
             </property>
             <property name="minimum">
              <number>-65535</number>
