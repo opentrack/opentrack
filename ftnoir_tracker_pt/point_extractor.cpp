@@ -154,10 +154,10 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
         channels.push_back(frame_gray - frame_bin);
     }else{
         frame_bin_copy.setTo(120, frame_bin_copy);
-        frame_bin_low.setTo(90, frame_bin_low);
+        //frame_bin_low.setTo(90, frame_bin_low);
         channels.push_back(frame_gray + frame_bin_copy);
-        channels.push_back(frame_gray + frame_last_and_low);
-        channels.push_back(frame_gray + frame_bin_low);
+        channels.push_back(frame_gray);
+        channels.push_back(frame_gray);
         //channels.push_back(frame_gray + frame_bin);
     }
     merge(channels, frame);
