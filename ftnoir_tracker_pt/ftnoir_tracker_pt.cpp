@@ -82,7 +82,7 @@ void Tracker::run()
             {
                 Affine CM;
                 pose(&CM);
-                cv::Vec3f MH(-s.t_MH_x, -s.t_MH_y, -s.t_MH_z);
+                cv::Vec3f MH(s.t_MH_x, s.t_MH_y, s.t_MH_z);
                 cv::Vec3f p = CM.t - MH;
                 float fx = get_focal_length();
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);
@@ -162,7 +162,7 @@ void Tracker::data(THeadPoseData *data)
 
     Affine X_CM = point_tracker.pose();
 
-    Affine X_MH(Matx33f::eye(), cv::Vec3f(-s.t_MH_x, -s.t_MH_y, -s.t_MH_z));
+    Affine X_MH(Matx33f::eye(), cv::Vec3f(-s.t_MH_x, s.t_MH_y, s.t_MH_z));
     Affine X_GH = X_CM * X_MH;
 
     Matx33f R = X_GH.R;
