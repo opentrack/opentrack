@@ -231,7 +231,16 @@ void MainWindow::startTracker( ) {
                              QMessageBox::NoButton);
         return;
     }
-
+    
+    if (pTrackerDialog)
+        pTrackerDialog->register_tracker(libs.pTracker.get());
+    
+    if (pFilterDialog)
+        pFilterDialog->register_filter(libs.pFilter.get());
+    
+    if (pProtocolDialog)
+        pProtocolDialog->register_protocol(libs.pProtocol.get());
+    
     pose_update_timer.start(50);
 
     // NB check valid since SelectedLibraries ctor called
