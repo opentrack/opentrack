@@ -80,8 +80,8 @@ void Tracker::run()
                 point_tracker.track(points, PointModel(s), get_focal_length());
             
             {
-                cv::Vec3f MH(s.t_MH_x, s.t_MH_y, s.t_MH_z);
                 Affine CM = pose();
+                cv::Vec3f MH(-s.t_MH_x, s.t_MH_y, s.t_MH_z);
                 cv::Vec3f p = CM.t - MH;
                 float fx = get_focal_length();
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);
@@ -161,11 +161,11 @@ void Tracker::data(THeadPoseData *data)
 
     Affine X_CM = point_tracker.pose();
 
-    Affine X_MH(Matx33f::eye(), cv::Vec3f(-s.t_MH_x, s.t_MH_y, s.t_MH_z));
+    Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
     Affine X_GH = X_CM * X_MH;
 
-    Matx33f R = X_GH.R;
-    Vec3f   t = X_GH.t;
+    Matx33f R = X_GH.R * X_MH.R.t();
+    Vec3f   t = X_GH.t - X_MH.t;
 
     // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
     // -z -> x, y -> z, x -> -y
