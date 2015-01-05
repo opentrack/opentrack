@@ -1173,6 +1173,22 @@
    <header>glwidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>btnStartTracker</tabstop>
+  <tabstop>btnStopTracker</tabstop>
+  <tabstop>iconcomboTrackerSource</tabstop>
+  <tabstop>btnShowEngineControls</tabstop>
+  <tabstop>iconcomboProtocol</tabstop>
+  <tabstop>btnShowServerControls</tabstop>
+  <tabstop>iconcomboFilter</tabstop>
+  <tabstop>btnShowFilterControls</tabstop>
+  <tabstop>iconcomboProfile</tabstop>
+  <tabstop>btnLoad</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>btnSaveAs</tabstop>
+  <tabstop>btnEditCurves</tabstop>
+  <tabstop>btnShortcuts</tabstop>
+ </tabstops>
  <resources>
   <include location="ui-res.qrc"/>
  </resources>
