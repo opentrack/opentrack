@@ -30,11 +30,6 @@
 
 // For Todd and Arda Kutlu
 
-void FTNoIR_Protocol::reloadSettings()
-{
-    s.b->reload();
-}
-
 void FTNoIR_Protocol::pose(const double* headpose) {
     FlightData.x = headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;

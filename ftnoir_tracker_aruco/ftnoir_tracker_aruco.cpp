@@ -492,8 +492,6 @@ void TrackerControls::update_tracker_calibration()
 void TrackerControls::doOK()
 {
     s.b->save();
-    if (tracker)
-        tracker->reload();
     this->close();
 }
 

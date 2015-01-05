@@ -57,7 +57,6 @@ public:
     QString game_name() {
         return "FlightGear";
     }
-    void reloadSettings();
 private:
     settings s;
     TFlightGearData FlightData;
@@ -70,15 +69,10 @@ class FGControls: public IProtocolDialog
     Q_OBJECT
 public:
     FGControls();
-	void register_protocol(IProtocol *protocol) {
-		theProtocol = (FTNoIR_Protocol *) protocol;			// Accept the pointer to the Protocol
-	}
-	void unregister_protocol() {
-		theProtocol = NULL;									// Reset the pointer
-	}
+	void register_protocol(IProtocol *) {}
+	void unregister_protocol() {}
 private:
 	Ui::UICFGControls ui;
-	FTNoIR_Protocol *theProtocol;
     settings s;
 private slots:
 	void doOK();
