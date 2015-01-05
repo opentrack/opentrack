@@ -37,7 +37,7 @@
 //
 // Constructor for server-settings-dialog
 //
-FGControls::FGControls() : theProtocol(nullptr)
+FGControls::FGControls()
 {
 	ui.setupUi( this );
 
@@ -54,8 +54,6 @@ FGControls::FGControls() : theProtocol(nullptr)
 void FGControls::doOK() {
     s.b->save();
 	this->close();
-    if (theProtocol)
-        theProtocol->reloadSettings();
 }
 
 void FGControls::doCancel() {

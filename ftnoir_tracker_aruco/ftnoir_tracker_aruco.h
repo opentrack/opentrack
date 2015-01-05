@@ -50,7 +50,6 @@ public:
     void start_tracker(QFrame* frame);
     void data(double *data);
     void run();
-    void reload() { s.b->reload(); }
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
 private:
     QMutex mtx;

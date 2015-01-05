@@ -25,7 +25,7 @@
 #include "ftnoir_protocol_mouse.h"
 #include "opentrack/plugin-api.hpp"
 
-MOUSEControls::MOUSEControls() : _proto(nullptr)
+MOUSEControls::MOUSEControls()
 {
     ui.setupUi( this );
     ui.cbxSelectMouse_X->addItem("None");
@@ -53,8 +53,6 @@ MOUSEControls::MOUSEControls() : _proto(nullptr)
 
 void MOUSEControls::doOK() {
     s.b->save();
-    if (_proto)
-        _proto->reload();
     this->close();
 }
 

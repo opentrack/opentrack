@@ -53,11 +53,6 @@ void FTNoIR_Protocol::pose(const double *headpose ) {
     }
 }
 
-void FTNoIR_Protocol::reload()
-{
-    s.b->reload();
-}
-
 bool FTNoIR_Protocol::correct()
 {   
     return true;

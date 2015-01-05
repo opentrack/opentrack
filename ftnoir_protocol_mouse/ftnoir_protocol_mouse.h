@@ -65,7 +65,6 @@ public:
     QString game_name() {
         return "Mouse tracker";
     }
-    void reload();
 private:
     struct settings s;
 };
@@ -75,16 +74,11 @@ class MOUSEControls: public IProtocolDialog
     Q_OBJECT
 public:
     MOUSEControls();
-    void register_protocol(IProtocol *protocol) {
-        _proto = (FTNoIR_Protocol *) protocol;
-    }
-    void unregister_protocol() {
-        _proto = NULL;
-    }
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
     Ui::UICMOUSEControls ui;
     settings s;
-    FTNoIR_Protocol* _proto;
 private slots:
     void doOK();
     void doCancel();
