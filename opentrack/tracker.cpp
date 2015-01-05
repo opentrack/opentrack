@@ -157,7 +157,7 @@ void Tracker::logic()
         if (k < 0 || k >= 6)
             output_pose_(i) = 0;
         else
-            output_pose_(i) = value(i);
+            output_pose_(i) = value(k);
     }
 
 
