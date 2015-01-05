@@ -80,9 +80,8 @@ void Tracker::run()
                 point_tracker.track(points, PointModel(s), get_focal_length());
             
             {
-                Affine CM;
-                pose(&CM);
                 cv::Vec3f MH(s.t_MH_x, s.t_MH_y, s.t_MH_z);
+                Affine CM = pose();
                 cv::Vec3f p = CM.t - MH;
                 float fx = get_focal_length();
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);

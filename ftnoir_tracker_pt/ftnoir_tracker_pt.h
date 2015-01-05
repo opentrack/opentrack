@@ -42,7 +42,7 @@ public:
     void start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
 
-    void pose(Affine* X_CM) { QMutexLocker lock(&mutex); *X_CM = point_tracker.pose(); }
+    Affine pose() { QMutexLocker lock(&mutex); return point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
     void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
 public slots:
