@@ -136,8 +136,7 @@ void TrackerDialog::trans_calib_step()
 {
     if (tracker)
     {
-        Affine X_CM;
-        tracker->pose(&X_CM);
+        Affine X_CM = tracker->pose();
         trans_calib.update(X_CM.R, X_CM.t);
     }
 }
