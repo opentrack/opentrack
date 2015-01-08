@@ -71,7 +71,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     pMemData->data.Pitch = pitch;
     pMemData->data.Roll = roll;
 
-    pMemData->data.X1 = ++pMemData->data.DataID;
+    pMemData->data.X1 = pMemData->data.DataID;
     pMemData->data.X2 = 0;
     pMemData->data.X3 = 0;
     pMemData->data.X4 = 0;
