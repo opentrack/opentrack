@@ -86,6 +86,9 @@ void TrackerDialog::startstop_trans_calib(bool start)
         qDebug()<<"TrackerDialog:: Starting translation calibration";
         trans_calib.reset();
         trans_calib_running = true;
+        s.t_MH_x = 0;
+        s.t_MH_y = 0;
+        s.t_MH_z = 0;
     }
     else
     {
