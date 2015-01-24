@@ -165,7 +165,7 @@ void Tracker::data(THeadPoseData *data)
     Affine X_GH = X_CM * X_MH;
 
     Matx33f R = X_GH.R * X_MH.R.t();
-    Vec3f   t = X_GH.t - X_MH.t;
+    Vec3f   t = X_GH.t;
 
     // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
     // -z -> x, y -> z, x -> -y
