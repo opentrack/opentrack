@@ -159,7 +159,7 @@ void Tracker::StopTracker(bool exit)
 void Tracker::data(THeadPoseData *data)
 {
 
-    Affine X_CM = point_tracker.pose();
+    Affine X_CM = pose();
 
     Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
     Affine X_GH = X_CM * X_MH;
@@ -180,7 +180,6 @@ void Tracker::data(THeadPoseData *data)
     alpha = atan2( R(1,0), R(0,0));
     gamma = atan2( R(2,1), R(2,2));
 
-    QMutexLocker lock(&mutex);
     // extract rotation angles
     data[Yaw] = rad2deg * alpha;
     data[Pitch] = -rad2deg * beta;
