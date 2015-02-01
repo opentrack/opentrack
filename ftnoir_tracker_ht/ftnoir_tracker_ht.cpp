@@ -177,6 +177,7 @@ void Tracker::start_tracker(QFrame* videoframe)
     shm->frame.channels = shm->frame.width = shm->frame.height = 0;
     shm->pause = shm->terminate = shm->running = false;
     shm->timer = 0;
+    shm->result.filled = false;
     subprocess.setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tracker-ht");
 #if defined(_WIN32)
     subprocess.start("\"" + QCoreApplication::applicationDirPath() + "/tracker-ht/headtracker-ftnoir" + "\"");
