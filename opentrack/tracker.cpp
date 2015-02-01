@@ -24,7 +24,7 @@
 Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     s(s),
     m(m),
-    centerp(false),
+    centerp(true),
     enabledp(true),
     zero_(false),
     should_quit(false),
@@ -106,7 +106,19 @@ void Tracker::logic()
     
     r = cam * r;
     
+    bool can_center = false;
+    
     if (centerp)
+    {
+        for (int i = 0; i < 6; i++)
+            if (fabs(newpose[i]) != 0)
+        {
+            can_center = true;
+            break;
+        }
+    }
+    
+    if (can_center)
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
@@ -179,7 +191,7 @@ void Tracker::run() {
     {
         t.start();
         
-        double tmp[6];
+        double tmp[6] {0,0,0, 0,0,0};
         libs.pTracker->data(tmp);
         
         if (enabledp)
