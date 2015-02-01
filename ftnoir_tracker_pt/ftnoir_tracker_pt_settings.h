@@ -34,6 +34,8 @@ struct settings
     value<int> active_model_panel, cap_x, cap_y, cap_z;
     
     value<int> fov;
+    
+    value<bool> dynamic_pose;
 
     settings() :
         b(bundle("tracker-pt")),
@@ -62,7 +64,8 @@ struct settings
         cap_x(b, "cap-x", 0),
         cap_y(b, "cap-y", 0),
         cap_z(b, "cap-z", 0),
-        fov(b, "camera-fov", 56)
+        fov(b, "camera-fov", 56),
+        dynamic_pose(b, "dynamic-pose-resolution", false)
     {}
 };
 

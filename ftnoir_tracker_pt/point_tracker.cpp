@@ -67,9 +67,53 @@ PointTracker::PointTracker()
 	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
 
-void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f)
+PointTracker::PointOrder PointTracker::find_correspondences_previous(const vector<Vec2f>& points, const PointModel& model, float f)
 {
-    const PointOrder& order = find_correspondences(points, model);
+    PointTracker::PointOrder p;
+    p.points[0] = project(Vec3f(0,0,0), f);
+    p.points[1] = project(model.M01, f);
+    p.points[2] = project(model.M02, f);
+
+    // set correspondences by minimum distance to projected model point
+    bool point_taken[PointModel::N_POINTS];
+    for (int i=0; i<PointModel::N_POINTS; ++i)
+            point_taken[i] = false;
+
+    for (int i=0; i<PointModel::N_POINTS; ++i)
+    {
+            float min_sdist = 0;
+            int min_idx = 0;
+            // find closest point to projected model point i
+            for (int j=0; j<PointModel::N_POINTS; ++j)
+            {
+                    Vec2f d = p.points[i]-points[j];
+                    float sdist = d.dot(d);
+                    if (sdist < min_sdist || j==0)
+                    {
+                            min_idx = j;
+                            min_sdist = sdist;
+                    }
+            }
+            // if one point is closest to more than one model point, fallback
+            if (point_taken[min_idx])
+            {
+                return find_correspondences(points, model);
+            }
+            point_taken[min_idx] = true;
+            p.points[i] = points[min_idx];
+    }
+    return p;
+}
+
+void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f, bool dynamic_pose)
+{
+    PointOrder order;
+    
+    if (!dynamic_pose)
+       order = find_correspondences(points, model);
+    else
+        order = find_correspondences_previous(points, model, f);
+    
     POSIT(model, order, f);
 }
 
@@ -221,4 +265,10 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 	//Vec3f r;
 	//
 	//qDebug()<<"r: "<<r[0]<<' '<<r[1]<<' '<<r[2]<<'\n';
+}
+
+cv::Vec2f PointTracker::project(const cv::Vec3f& v_M, float f)
+{
+        cv::Vec3f v_C = X_CM * v_M;
+        return cv::Vec2f(f*v_C[0]/v_C[2], f*v_C[1]/v_C[2]);
 }

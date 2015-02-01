@@ -77,7 +77,7 @@ void Tracker::run()
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
             
             if (points.size() == PointModel::N_POINTS)
-                point_tracker.track(points, PointModel(s), get_focal_length());
+                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
             
             {
                 Affine CM = pose();

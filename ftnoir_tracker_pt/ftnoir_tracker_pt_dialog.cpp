@@ -69,6 +69,8 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.fov, ui.fov);
     
     tie_setting(s.active_model_panel, ui.model_tabs);
+    
+    tie_setting(s.dynamic_pose, ui.dynamic_pose);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
