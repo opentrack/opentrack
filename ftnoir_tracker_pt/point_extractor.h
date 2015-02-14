@@ -21,7 +21,7 @@ public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
-    std::vector<cv::Vec2f> extract_points(cv::Mat &frame);
+    const std::vector<cv::Vec2f>& extract_points(cv::Mat &frame);
     const std::vector<cv::Vec2f>& get_points() { return points; }
     PointExtractor();
     
