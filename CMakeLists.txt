@@ -91,7 +91,7 @@ macro(opentrack_library n dir)
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${foolib_LINK} -Wl,--version-script=${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt"
+            LINK_FLAGS "${foolib_LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
             COMPILE_FLAGS "${foolib_COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
