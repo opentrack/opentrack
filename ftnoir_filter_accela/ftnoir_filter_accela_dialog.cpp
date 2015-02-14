@@ -12,8 +12,9 @@ FilterControls::FilterControls() :
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.rot_threshold, ui.rotation_slider);
-    tie_setting(s.trans_threshold, ui.translation_slider);
+    tie_setting(s.dampening, ui.dampening_rot_slider);
+	tie_setting(s.dampening_translation, ui.dampening_trans_slider);
+    tie_setting(s.deadzone, ui.deadzone_slider);
     tie_setting(s.ewma, ui.ewma);
 }
 

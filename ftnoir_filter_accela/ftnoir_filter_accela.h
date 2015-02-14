@@ -11,11 +11,12 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<int> rot_threshold, trans_threshold, ewma;
+    value<int> dampening, dampening_translation, deadzone, ewma;
     settings() :
         b(bundle("Accela")),
-        rot_threshold(b, "rotation-threshold", 30),
-        trans_threshold(b, "translation-threshold", 50),
+        dampening(b, "dampening", 30), // rotation
+		dampening_translation(b, "dampening_translation", 30),
+        deadzone(b, "deadzone", 50),
         ewma(b, "ewma", 2)
     {}
 };
@@ -31,12 +32,6 @@ private:
     double last_output[6];
     double smoothed_input[6];
     Timer t;
-    static double f(double vec, double thres);
-    
-    static constexpr double high_thres_c = 4;
-    static constexpr double high_thres_out = 500;
-    
-    static constexpr double low_thres_mult = 100;
 };
 
 class FilterControls: public IFilterDialog
