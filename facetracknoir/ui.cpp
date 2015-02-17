@@ -43,7 +43,6 @@ MainWindow::MainWindow() :
 
     updateButtonState(false, false);
     ui.video_frame_label->setPixmap(no_feed_pixmap);
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
@@ -92,21 +91,26 @@ MainWindow::~MainWindow()
     _exit(0);
 }
 
-void MainWindow::open() {
-     QFileDialog dialog(this);
-     dialog.setFileMode(QFileDialog::ExistingFile);
-     QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
-     QString fileName = dialog.getOpenFileName(
-                                this,
-                                 tr("Open the settings file"),
-                                 dir_path,
-                                 tr("Settings file (*.ini);;All Files (*)"),
-                                               NULL);
+void MainWindow::set_working_directory()
+{
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+}
 
+void MainWindow::open() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
+    QString fileName = dialog.getOpenFileName(
+                this,
+                tr("Open the settings file"),
+                dir_path,
+                tr("Settings file (*.ini);;All Files (*)"));
+    set_working_directory();
+    
     if (! fileName.isEmpty() ) {
         {
             QSettings settings(group::org);
-            settings.setValue (group::filename_key, QFileInfo(fileName).absoluteFilePath());
+            settings.setValue(group::filename_key, remove_app_path(fileName));
         }
         fill_profile_combobox();
         load_settings();
@@ -122,7 +126,6 @@ void MainWindow::save_mappings() {
 #endif
 
 void MainWindow::save() {
-    const QString currentFile = group::ini_pathname();
     b->save();
     save_mappings();
     mem<QSettings> settings = group::ini_file();
@@ -145,18 +148,19 @@ void MainWindow::saveAs()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
                                                     oldFile,
                                                     tr("Settings file (*.ini);;All Files (*)"));
-
+    set_working_directory();
+    
     if (fileName.isEmpty())
         return;
-
+    
     (void) QFile::remove(fileName);
-
+    
     {
         (void) QFile::copy(oldFile, fileName);
         QSettings settings(group::org);
-        settings.setValue (group::filename_key, fileName);
+        settings.setValue (group::filename_key, remove_app_path(fileName));
     }
-
+    
     save();
     fill_profile_combobox();
 }
@@ -396,13 +400,35 @@ void MainWindow::exit() {
     QCoreApplication::exit(0);
 }
 
+QString MainWindow::remove_app_path(const QString full_path)
+{
+    QFileInfo path_info(full_path);
+    QString path = path_info.absolutePath();
+    
+    QFileInfo app_path(QCoreApplication::applicationDirPath());
+    QString app_prefix(app_path.absoluteFilePath());
+    
+    if (path == app_prefix)
+    {
+        path = ".";
+    }
+    else if (path.startsWith(app_prefix + "/"))
+    {
+        path = "./" + path.mid(app_prefix.size() + 1);
+    }
+    
+    return path + "/" + path_info.fileName();
+}
+
 void MainWindow::profileSelected(int index)
 {
-    QString currentFile = group::ini_pathname();
-    QFileInfo pathInfo ( currentFile );
+    if (index == -1)
+        return;
+    
     {
         QSettings settings(group::org);
-        settings.setValue (group::filename_key, pathInfo.absolutePath() + "/" + ui.iconcomboProfile->itemText(index));
+        settings.setValue (group::filename_key, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
+                                                                ui.iconcomboProfile->itemText(index)));
     }
     load_settings();
 }
