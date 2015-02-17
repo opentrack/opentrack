@@ -29,6 +29,8 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
     tie_setting(s.zero.ctrl, ui.chkZeroCtrl);
 
     tie_setting(s.s_main.tray_enabled, ui.trayp);
+    
+    tie_setting(s.s_main.center_at_startup, ui.center_at_startup);
 }
 
 void KeyboardShortcutDialog::doOK() {

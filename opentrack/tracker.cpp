@@ -24,7 +24,7 @@
 Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     s(s),
     m(m),
-    centerp(true),
+    centerp(s.center_at_startup),
     enabledp(true),
     zero_(false),
     should_quit(false),

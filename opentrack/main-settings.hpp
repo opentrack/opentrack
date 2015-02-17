@@ -29,6 +29,7 @@ struct main_settings {
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch;
+    value<bool> center_at_startup;
     main_settings(pbundle b) :
         b(b),
         tracker_dll(b, "tracker-dll", ""),
@@ -45,6 +46,7 @@ struct main_settings {
         tcomp_tz(b, "compensate-translation-disable-z-axis", false),
         tray_enabled(b, "use-system-tray", false),
         camera_yaw(b, "camera-yaw", 0),
-        camera_pitch(b, "camera-pitch", 0)
+        camera_pitch(b, "camera-pitch", 0),
+        center_at_startup(b, "center-at-startup", true)
     {}
 };
