@@ -22,7 +22,8 @@ Tracker::Tracker()
     : mutex(QMutex::Recursive),
       commands(0),
 	  video_widget(NULL),
-	  video_frame(NULL)
+	  video_frame(NULL),
+      success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
@@ -76,7 +77,9 @@ void Tracker::run()
 
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
             
-            if (points.size() == PointModel::N_POINTS)
+            success = points.size() == PointModel::N_POINTS;
+            
+            if (success)
                 point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
             
             {
@@ -158,36 +161,38 @@ void Tracker::StopTracker(bool exit)
 
 void Tracker::data(THeadPoseData *data)
 {
-
-    Affine X_CM = pose();
-
-    Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-    Affine X_GH = X_CM * X_MH;
-
-    Matx33f R = X_GH.R * X_MH.R.t();
-    Vec3f   t = X_GH.t;
-
-    // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
-    // -z -> x, y -> z, x -> -y
-    Matx33f R_EG(0, 0,-1,
-                -1, 0, 0,
-                 0, 1, 0);
-    R = R_EG * R * R_EG.t();
-
-    // extract rotation angles
-    float alpha, beta, gamma;
-    beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-    alpha = atan2( R(1,0), R(0,0));
-    gamma = atan2( R(2,1), R(2,2));
-
-    // extract rotation angles
-    data[Yaw] = rad2deg * alpha;
-    data[Pitch] = -rad2deg * beta;
-    data[Roll] = rad2deg * gamma;
-    // get translation(s)
-    data[TX] = t[0] / 10.0;	// convert to cm
-    data[TY] = t[1] / 10.0;
-    data[TZ] = t[2] / 10.0;
+    if (success)
+    {
+        Affine X_CM = pose();
+    
+        Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+        Affine X_GH = X_CM * X_MH;
+    
+        Matx33f R = X_GH.R * X_MH.R.t();
+        Vec3f   t = X_GH.t;
+    
+        // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
+        // -z -> x, y -> z, x -> -y
+        Matx33f R_EG(0, 0,-1,
+                    -1, 0, 0,
+                     0, 1, 0);
+        R = R_EG * R * R_EG.t();
+    
+        // extract rotation angles
+        float alpha, beta, gamma;
+        beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+        alpha = atan2( R(1,0), R(0,0));
+        gamma = atan2( R(2,1), R(2,2));
+    
+        // extract rotation angles
+        data[Yaw] = rad2deg * alpha;
+        data[Pitch] = -rad2deg * beta;
+        data[Roll] = rad2deg * gamma;
+        // get translation(s)
+        data[TX] = t[0] / 10.0;	// convert to cm
+        data[TY] = t[1] / 10.0;
+        data[TZ] = t[2] / 10.0;
+    }
 }
 
 //-----------------------------------------------------------------------------
