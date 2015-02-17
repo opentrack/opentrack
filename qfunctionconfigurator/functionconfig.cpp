@@ -24,8 +24,12 @@ Map::Map() :
 
 float Map::getValue(float x) {
     QMutexLocker foo(&_mutex);
-    int x2 = x * (double) MEMOIZE_PRECISION;
-    float ret = getValueInternal(x2);
+    double q  = x * (double) MEMOIZE_PRECISION;
+    int    xi = (int)q;
+    float  yi = getValueInternal(xi);
+    float  yiplus1 = getValueInternal(xi+1);
+    float  f = (q-xi);
+    float  ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
     last_input_value.setX(x);
     last_input_value.setY(ret);
     return ret;
