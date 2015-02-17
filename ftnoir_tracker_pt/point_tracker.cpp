@@ -64,7 +64,6 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 
 PointTracker::PointTracker()
 {
-	X_CM.t[2] = 1000;	// default position: 1 m away from cam;
 }
 
 PointTracker::PointOrder PointTracker::find_correspondences_previous(const vector<Vec2f>& points, const PointModel& model, float f)
