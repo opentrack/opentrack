@@ -94,6 +94,8 @@ class MainWindow : public QMainWindow, private State
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
+    void set_working_directory();
+    QString remove_app_path(const QString full_path);
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
