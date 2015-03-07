@@ -83,11 +83,12 @@ void Tracker::run()
                 point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
             
             {
-                Affine CM = pose();
-                cv::Vec3f MH(s.t_MH_x, s.t_MH_y, s.t_MH_z);
-                cv::Vec3f p = CM.t + MH;
+                Affine X_CM = pose();
+                Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                Affine X_GH = X_CM * X_MH;
+                cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 float fx = get_focal_length();
-                cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);
+                cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
 
                 points.push_back(p_);
             }
