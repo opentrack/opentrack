@@ -105,6 +105,7 @@ void Tracker::logic()
     dmat<3, 1> t { value(0), value(1), value(2) };
     
     r = cam * r;
+    t = cam * t;
     
     bool can_center = false;
     
