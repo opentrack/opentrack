@@ -35,11 +35,13 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
 
 void KeyboardShortcutDialog::doOK() {
     s.b->save();
+    s.s_main.b->save();
     this->close();
     emit reload();
 }
 
 void KeyboardShortcutDialog::doCancel() {
     s.b->reload();
+    s.s_main.b->reload();
     close();
 }
