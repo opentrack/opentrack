@@ -243,6 +243,8 @@ namespace options {
 
                 if (implsgl_data.count(key) != 0)
                     return std::get<1>(implsgl_data[key]);
+                
+                qDebug() << "bundle +" << QString::fromStdString(key);
 
                 auto shr = std::make_shared<v>(key);
                 implsgl_data[key] = tt(cnt(1), shr);
@@ -272,7 +274,6 @@ namespace options {
         opt_bundle() : impl_bundle("i-have-no-name") {}
         opt_bundle(const string& group_name) : impl_bundle(group_name)
         {
-            qDebug() << "bundle +" << QString::fromStdString(group_name);
         }
 
         ~opt_bundle()
