@@ -126,7 +126,7 @@ void MainWindow::save_mappings() {
 #endif
 
 void MainWindow::save() {
-    b->save();
+    s.b->save();
     save_mappings();
     mem<QSettings> settings = group::ini_file();
     settings->sync();
@@ -170,7 +170,7 @@ void MainWindow::load_mappings() {
 }
 
 void MainWindow::load_settings() {
-    b->reload();
+    s.b->reload();
     load_mappings();
 }
 
@@ -212,7 +212,7 @@ void MainWindow::bindKeyboardShortcuts()
 }
 
 void MainWindow::startTracker( ) {
-    b->save();
+    s.b->save();
     load_settings();
     bindKeyboardShortcuts();
 

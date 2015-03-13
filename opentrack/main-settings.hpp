@@ -30,8 +30,8 @@ struct main_settings {
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch;
     value<bool> center_at_startup;
-    main_settings(pbundle b) :
-        b(b),
+    main_settings() :
+        b(bundle("opentrack-ui")),
         tracker_dll(b, "tracker-dll", ""),
         tracker2_dll(b, "tracker2-dll", ""),
         filter_dll(b, "filter-dll", ""),
