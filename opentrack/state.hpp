@@ -35,13 +35,10 @@ struct Work;
 
 struct State {
     State() :
-        b(bundle("opentrack-ui")),
-        s(b),
         pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll})
     {}
     Modules modules;
     SelectedLibraries libs;
-    pbundle b;
     main_settings s;
     Mappings pose;
     mem<Work> work;

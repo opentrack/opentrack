@@ -112,8 +112,7 @@ public:
             b(bundle("keyboard-shortcuts")),
             center(b, "center"),
             toggle(b, "toggle"),
-            zero(b, "zero"),
-            s_main(bundle("opentrack-ui"))
+            zero(b, "zero")
         {}
     } s;
 
