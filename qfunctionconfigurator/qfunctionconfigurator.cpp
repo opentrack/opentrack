@@ -167,12 +167,6 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
                 drawLine(&p, prev, tmp, pen);
                 prev = tmp;
             }
-            pen.setWidth(1);
-            pen.setColor( Qt::white );
-            pen.setStyle( Qt::DashLine );
-            QPointF pixel_pos = point_to_pixel(points[moving_control_point_idx]);
-            drawLine(&p, QPoint(pixel_bounds.left(), pixel_pos.y()), QPoint(pixel_pos.x(), pixel_pos.y()), pen);
-            drawLine(&p, QPoint(pixel_pos.x(), pixel_pos.y()), QPoint(pixel_pos.x(), pixel_bounds.height() + pixel_bounds.top()), pen);
         }
 
         // If the Tracker is active, the 'Last Point' it requested is recorded.
@@ -182,12 +176,6 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         if (_config->getLastPoint(last)) {
             QPointF pixel_pos = point_to_pixel( QPointF(fabs(last.x()), fabs(last.y())) );
             drawPoint(&p, pixel_pos, QColor(255, 0, 0, 120));
-
-            pen.setWidth(1);
-            pen.setColor( Qt::black );
-            pen.setStyle( Qt::SolidLine );
-            drawLine(&p, QPoint(pixel_bounds.left(), pixel_pos.y()), QPoint(pixel_pos.x(), pixel_pos.y()), pen);
-            drawLine(&p, QPoint(pixel_pos.x(), pixel_pos.y()), QPoint(pixel_pos.x(), pixel_bounds.width()), pen);
         }
     }
 }
