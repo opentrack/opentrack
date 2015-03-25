@@ -59,12 +59,13 @@ struct settings {
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-    FTNoIR_Protocol() {}
+    FTNoIR_Protocol() : last_x(0), last_y(0) {}
     bool correct();
     void pose( const double *headpose);
     QString game_name() {
         return "Mouse tracker";
     }
+    int last_x, last_y;
 private:
     struct settings s;
 };
