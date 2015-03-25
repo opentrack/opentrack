@@ -30,26 +30,30 @@
 #include "opentrack/plugin-api.hpp"
 
 void FTNoIR_Protocol::pose(const double *headpose ) {
-    double fMouse_X = 0;
-    double fMouse_Y = 0;
-
-    // XXX TODO remove axis selector, use mapping window's
-    // axis selection. Mention in UI axis used. -sh 20140920
-    int Mouse_X = s.Mouse_X;
-    int Mouse_Y = s.Mouse_Y;
-	
-    if (Mouse_X > 0 && Mouse_X <= 6)
-        fMouse_X = headpose[Mouse_X-1] / (Mouse_X < 3 ? 100 : 180);
-
-    if (Mouse_Y > 0 && Mouse_Y <= 6)
-        fMouse_Y = headpose[Mouse_Y-1] / (Mouse_Y < 3 ? 100 : 180);
-    
     RECT desktop;
     const HWND hDesktop = GetDesktopWindow();
     if (hDesktop != NULL && GetWindowRect(hDesktop, &desktop)) {
-        fMouse_X *= desktop.right;
-        fMouse_Y *= desktop.bottom;
-        SetCursorPos(fMouse_X + desktop.right/2, fMouse_Y + desktop.bottom/2);
+        // XXX TODO remove axis selector, use mapping window's
+        // axis selection. Mention in UI axis used. -sh 20140920
+        int axis_x = s.Mouse_X;
+        int axis_y = s.Mouse_Y;
+        
+        int mouse_x, mouse_y;
+        
+        if (axis_x > 0 && axis_x <= 6)
+            mouse_x = headpose[axis_x-1] / (axis_x < 3 ? 100 : 180) * 10 * desktop.right/2;
+    
+        if (axis_y > 0 && axis_y <= 6)
+            mouse_y = headpose[axis_y-1] / (axis_y < 3 ? 100 : 180) * 10 * desktop.bottom/2;
+        
+        POINT pt;
+        
+        if (GetCursorPos(&pt))
+        {
+            SetCursorPos(pt.x + mouse_x - last_x, pt.y + mouse_y - last_y);
+            last_x = mouse_x;
+            last_y = mouse_y;
+        }
     }
 }
 
