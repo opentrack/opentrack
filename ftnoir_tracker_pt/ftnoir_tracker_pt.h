@@ -72,7 +72,7 @@ private:
     settings s;
     Timer time;
     
-    volatile bool success;
+    volatile bool ever_success;
 
     static constexpr double rad2deg = 180.0/3.14159265;
     static constexpr double deg2rad = 3.14159265/180.0;
