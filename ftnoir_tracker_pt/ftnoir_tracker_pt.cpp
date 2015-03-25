@@ -23,7 +23,7 @@ Tracker::Tracker()
       commands(0),
 	  video_widget(NULL),
 	  video_frame(NULL),
-      success(false)
+      ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
@@ -77,7 +77,9 @@ void Tracker::run()
 
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
             
-            success = points.size() == PointModel::N_POINTS;
+            bool success = points.size() == PointModel::N_POINTS;
+            
+            ever_success |= success;
             
             if (success)
                 point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
@@ -162,7 +164,7 @@ void Tracker::StopTracker(bool exit)
 
 void Tracker::data(THeadPoseData *data)
 {
-    if (success)
+    if (ever_success)
     {
         Affine X_CM = pose();
     
