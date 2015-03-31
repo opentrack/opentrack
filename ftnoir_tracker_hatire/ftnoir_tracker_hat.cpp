@@ -334,7 +334,7 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 		}
 	}
 	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort",QMessageBox::Ok,QMessageBox::NoButton);
+		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort: " + ComPort->errorString(), QMessageBox::Ok,QMessageBox::NoButton);
 		delete ComPort;
 		ComPort = NULL;
 	} 
