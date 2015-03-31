@@ -52,12 +52,12 @@ void FilterControls::save() {
 
 void FilterControls::update_rot_display(int value)
 {
-    ui.rot_gain->setText(QString::number(value * 7 / 100. + 1) + "°");
+    ui.rot_gain->setText(QString::number((value + 1) * 7 / 100.) + "°");
 }
 
 void FilterControls::update_trans_display(int value)
 {
-    ui.trans_gain->setText(QString::number(value * 5 / 100. + 1) + "mm");
+    ui.trans_gain->setText(QString::number((value + 1) * 5 / 100.) + "mm");
 }
 
 void FilterControls::update_ewma_display(int value)
