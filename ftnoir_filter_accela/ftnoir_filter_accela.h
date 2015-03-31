@@ -55,6 +55,9 @@ private:
 private slots:
     void doOK();
     void doCancel();
+    void update_ewma_display(int value);
+    void update_rot_display(int value);
+    void update_trans_display(int value);
 };
 
 class FTNoIR_FilterDll : public Metadata
