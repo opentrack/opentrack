@@ -287,7 +287,7 @@ void FTNoIR_Tracker::notifyCenter() {
 
 
 #else
-void FTNoIR_Tracker::StartTracker(QFrame*)
+void FTNoIR_Tracker::start_tracker(QFrame*)
 {
 	CptError=0;
 	dataRead.clear();
@@ -361,7 +361,7 @@ int FTNoIR_Tracker::preferredHz() {
 // Return 6DOF info
 //
 #ifdef OPENTRACK_API
-void FTNoIR_Tracker::GetHeadPoseData(double *data)
+void FTNoIR_Tracker::data(double *data)
 #else
 bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 #endif
@@ -536,7 +536,7 @@ void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
 //   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef OPENTRACK_API
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITracker* CALLING_CONVENTION GetConstructor()
+extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 #else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()

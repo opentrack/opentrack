@@ -48,6 +48,7 @@ void TrackerDll::Initialize()
 }
 #endif
 
+#ifndef OPENTRACK_API
 void TrackerDll::getFullName(QString *strToBeFilled)
 {
 	*strToBeFilled = trackerFullName;
@@ -67,6 +68,19 @@ void TrackerDll::getIcon(QIcon *icon)
 {
     *icon = QIcon(":/images/hat.png");
 }
+#else
+
+QString TrackerDll::name()
+{
+    return trackerFullName;
+}
+
+QIcon TrackerDll::icon()
+{
+    return QIcon(":/images/hat.png");
+}
+
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Factory function that creates instances if the Tracker object.
@@ -77,8 +91,8 @@ void TrackerDll::getIcon(QIcon *icon)
 //   _GetTrackerDll@0  - Common name decoration for __stdcall functions in C language.
 
 #ifdef OPENTRACK_API
-#   include "facetracknoir/plugin-support.h"
-extern "C" FTNOIR_TRACKER_BASE_EXPORT Metadata* CALLING_CONVENTION GetMetadata()
+#   include "opentrack/plugin-support.h"
+extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 #else
 #   pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerDllPtr __stdcall GetTrackerDll()
