@@ -2,7 +2,7 @@
 #define FTNOIR_TRACKER_HAT_DIALOG_H
 
 #ifdef OPENTRACK_API
-#include "ftnoir_tracker_base/ftnoir_tracker_base.h"
+#include "opentrack/plugin-api.hpp"
 #else
 #include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #endif
@@ -17,16 +17,20 @@
 #include <QMetaType>
 
 // Widget that has controls for FTNoIR protocol client-settings.
+#ifdef OPENTRACK_API
+class TrackerControls: public ITrackerDialog
+#else
 class TrackerControls: public QWidget, public ITrackerDialog
+#endif
 {
     Q_OBJECT
 public:
 	explicit TrackerControls();
     virtual ~TrackerControls();
 #ifdef OPENTRACK_API
-    void Initialize(QWidget *parent) ;
-    void registerTracker(ITracker *tracker);
-    void unRegisterTracker();
+    void Initialize(QWidget *parent) ; // unused
+    void register_tracker(ITracker *tracker);
+    void unregister_tracker();
 #else
     void Initialize(QWidget *parent) ;
     void registerTracker(ITracker *tracker) ;

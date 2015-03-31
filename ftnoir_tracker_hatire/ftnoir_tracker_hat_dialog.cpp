@@ -201,8 +201,8 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
 
-    connect(ui.lineSend,SIGNAL(keyPressEvent),this,SLOT(on_lineSend_returnPressed()) );
-
+    // can't connect slot, keyPressEvent takes QKeyPressEvent as argument
+    //connect(ui.lineSend,SIGNAL(keyPressEvent),this,SLOT(on_lineSend_returnPressed()) );
 }
 
 //
@@ -365,8 +365,12 @@ void TrackerControls::doCancel() {
     }
 }
 
-
-void TrackerControls::registerTracker(ITracker *tracker) {
+#ifdef OPENTRACK_API
+void TrackerControls::register_tracker(ITracker *tracker)
+#else
+void TrackerControls::registerTracker(ITracker *tracker)
+#endif
+{
     theTracker = static_cast<FTNoIR_Tracker*>(tracker);
     connect(theTracker, SIGNAL(sendMsgInfo(QByteArray)),this , SLOT(WriteMsgInfo(QByteArray)));
 
@@ -383,8 +387,12 @@ void TrackerControls::registerTracker(ITracker *tracker) {
 
 }
 
-
-void TrackerControls::unRegisterTracker() {
+#ifdef OPENTRACK_API
+void TrackerControls::unregister_tracker()
+#else
+void TrackerControls::unRegisterTracker()
+#endif
+{
     timer.stop();
     theTracker=NULL;
     ui.cbSerialPort->setEnabled(true);
@@ -406,7 +414,7 @@ void TrackerControls::unRegisterTracker() {
 //                          Win32 API function.
 //   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
 #ifdef OPENTRACK_API
-extern "C" FTNOIR_TRACKER_BASE_EXPORT ITrackerDialog* CALLING_CONVENTION GetDialog( )
+extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 #else
 #pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )

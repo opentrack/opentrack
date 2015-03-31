@@ -2,8 +2,7 @@
 #define FTNOIR_TRACKER_HAT_H
 
 #ifdef OPENTRACK_API
-#   include "ftnoir_tracker_base/ftnoir_tracker_base.h"
-#   include "facetracknoir/plugin-support.h"
+#   include "opentrack/plugin-support.h"
 #else
 #	include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #endif
@@ -30,10 +29,10 @@ public:
 	~FTNoIR_Tracker();
 
 #ifdef OPENTRACK_API
-    void StartTracker(QFrame*);
-    void GetHeadPoseData(double *data);
-    int preferredHz();
-    void center();
+    void start_tracker(QFrame*);
+    void data(double *data);
+    int preferredHz(); // unused
+    void center(); // unused
 #else
     void Initialize( QFrame *videoframe );
     void StartTracker(HWND parent_window);
@@ -134,11 +133,16 @@ public:
 #ifndef OPENTRACK_API
 	void Initialize();
 #endif
-
+    
+#ifdef OPENTRACK_API
+    QString name();
+    QIcon icon();
+#else
 	void getFullName(QString *strToBeFilled);
 	void getShortName(QString *strToBeFilled);
 	void getDescription(QString *strToBeFilled);
 	void getIcon(QIcon *icon);
+#endif
 
 private:
 	QString trackerFullName;									// Trackers' name and description
