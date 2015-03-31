@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/hat_logo.png</file>
+        <file>images/hat.ico</file>
+        <file>images/hat.png</file>
+    </qresource>
+</RCC>
