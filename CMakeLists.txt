@@ -24,7 +24,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 find_package(OpenCV)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui ${maybe-serial-port} QUIET)
+find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
+find_package(Qt5 COMPONENTS SerialPort QUIET)
 include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
@@ -290,6 +291,12 @@ opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
 
 if(WIN32)
     opentrack_library(opentrack-tracker-joystick ftnoir_tracker_joystick)
+endif()
+
+if(Qt5SerialPort_FOUND)
+    opentrack_library(opentrack-tracker-hatire ftnoir_tracker_hatire)
+    include_directories(${Qt5SerialPort_INCLUDE_DIRS})
+    target_link_libraries(opentrack-tracker-hatire ${Qt5SerialPort_LIBRARIES})
 endif()
 
 if(SDK_WINE_PREFIX)
