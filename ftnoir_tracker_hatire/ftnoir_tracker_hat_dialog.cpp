@@ -61,7 +61,8 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
         if (indxport!=-1) {
             ui.cbSerialPort->setCurrentIndex(indxport);
         } else {
-            QMessageBox::warning(this,"FaceTrackNoIR Error", "Selected SerialPort modified");
+            if (settings.SerialPortName != "")
+                QMessageBox::warning(this,"FaceTrackNoIR Error", "Selected SerialPort modified");
             ui.cbSerialPort-> setCurrentIndex(indxport);
         }
     }
