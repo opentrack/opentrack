@@ -16,14 +16,30 @@ FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
 }
 
-double FTNoIR_Filter::f(double vec, double thres)
+// vec = difference between current and last position
+inline double f(double vec, double thres, double exponent)
 {
-    if (vec > thres*high_thres_c)
-        return (vec - thres*high_thres_c) * high_thres_out + thres*high_thres_c;
-    if (vec > thres)
-        return (vec - thres) * low_thres_mult + thres;
-    return pow(vec, 2.0) / thres;
+	if (vec <= 0) return 0;
+	
+	// Want to dampen the movement depending on the amount of movement,
+	// and we want to do it in a smooth way. The following function
+	// looks like a good candiate: x^n/(a^n + x^n) = 1/(1 + (a/x)^n)
+	// It goes into saturation for x>>a, and n controls how fast the 
+	// function increases near x = zero.
+	// In our terms: a == thres has the meaning of a length scale and
+	// mostly determines the relaxiation speed. n == exponent has the
+	// meaning of a dead zone size. The larger, the less movment for
+	// small perturbations.
+	const double mu = thres/vec;	
+	return (1.0 + vec/thres*0.1)/(pow(mu, exponent) + 1.0);
+	// Here we do things a bit differently than planned and add
+	// vec/thres*0.1. This makes the function grow approximately
+	// linearly with slope 1/(10 thres) for x >> a. I found this 
+	// gives faster response for large movements. Otherwise it was
+	// too slow. Actually, it should result in exponential decay
+	// for x >> a.
 }
+
 
 void FTNoIR_Filter::filter(const double* input, double *output)
 {
@@ -40,14 +56,20 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_t = 7. * (1+s.rot_threshold) / 100.;
-    const double trans_t = 5. * (1+s.trans_threshold) / 100.;
+	// parameters use a logarithmic scale on the slider, so transform it back to linear scale
+	// value range: 10^{-1} to 10^{3}
+    const double rot_t = std::pow(10.0, s.dampening / 100.0 * 4.0 - 1.0);
+    const double trans_t = std::pow(10.0, s.dampening_translation / 100.0 * 4.0 - 1.0) ;
 
-    const double dt = t.elapsed() * 1e-9;
+	double exponent = s.deadzone / 100.0;
+	exponent = std::pow(10.,exponent); 
+	// value range: 1 to  10. exponents < 1 amplify small motions so thats no use.
+	
+    const double dt = t.elapsed() / 1000.;
     t.start();
 
+	// changed all the coefficients to go in powers of 2
     double RC;
-
     switch (s.ewma)
     {
     default:
@@ -55,18 +77,19 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         RC = 0;
         break;
     case 1: // low
-        RC = 0.06;
+        RC = 0.01;
         break;
     case 2: // normal
-        RC = 0.11;
+        RC = 0.02;
         break;
     case 3: // high
-        RC = 0.15;
+        RC = 0.04;
         break;
     case 4: // extreme
-        RC = 0.20;
+        RC = 0.08;
         break;
     }
+    RC *= 1.0e6; // because i changed the factor in dt from 1e-9 to 1e-3;
     
     for (int i = 0; i < 6; i++)
     {
@@ -77,17 +100,11 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double in = smoothed_input[i];
         
         const double vec = in - last_output[i];
-        const double vec_ = fabs(vec);
         const double t = i >= 3 ? rot_t : trans_t;
-        const double val = f(vec_, t);
-        const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
-        const bool negp = vec < 0.;
-        const bool done = negp
-            ? result <= in
-            : result >= in;
-        const double ret = done ? in : result;
+        const double val = f(fabs(vec), t, exponent); // euler integration method, basically
+        const double result = last_output[i] + (vec < 0 ? -1 : 1) * std::min(1.0, 30.*dt) * val;
         
-        last_output[i] = output[i] = ret;
+        last_output[i] = output[i] = result;
     }
 }
 
