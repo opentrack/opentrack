@@ -11,10 +11,14 @@ FilterControls::FilterControls() :
     ui.setupUi( this );
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    
+    connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
+    connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
+    connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
 
     tie_setting(s.rot_threshold, ui.rotation_slider);
     tie_setting(s.trans_threshold, ui.translation_slider);
-    tie_setting(s.ewma, ui.ewma);
+    tie_setting(s.ewma, ui.ewma_slider);
 }
 
 void FilterControls::register_filter(IFilter* filter)
@@ -44,6 +48,21 @@ void FilterControls::discard()
 
 void FilterControls::save() {
     s.b->save();
+}
+
+void FilterControls::update_rot_display(int value)
+{
+    ui.rot_gain->setText(QString::number(value * 7 / 100. + 1) + "°");
+}
+
+void FilterControls::update_trans_display(int value)
+{
+    ui.trans_gain->setText(QString::number(value * 5 / 100. + 1) + "mm");
+}
+
+void FilterControls::update_ewma_display(int value)
+{
+    ui.ewma_label->setText(QString::number(value * 2) + "ms");
 }
 
 extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()
