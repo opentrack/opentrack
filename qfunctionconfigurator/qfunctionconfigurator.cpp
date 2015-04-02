@@ -323,12 +323,13 @@ void QFunctionConfigurator::update_range()
 
     _background = QPixmap();
     _function = QPixmap();
+    
+    update();
 }
 
 bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
 {
-    QPointF pixel2(pixel_bounds.x() + pt.x() * c.x(),
-                   (pixel_bounds.y() + pixel_bounds.height() - pt.y() * c.y()));
+    QPointF pixel2 = point_to_pixel(pt);
     return pixel2.x() >= pixel.x() - pointSize && pixel2.x() < pixel.x() + pointSize &&
            pixel2.y() >= pixel.y() - pointSize && pixel2.y() < pixel.y() + pointSize;
 }
@@ -363,5 +364,4 @@ QPointF QFunctionConfigurator::point_to_pixel(const QPointF& point)
 void QFunctionConfigurator::resizeEvent(QResizeEvent *)
 {
     update_range();
-    update();
 }
