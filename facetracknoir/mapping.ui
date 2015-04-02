@@ -16,6 +16,18 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>970</width>
+    <height>664</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>970</width>
+    <height>664</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Mapping properties</string>
   </property>
@@ -45,397 +57,301 @@
       <attribute name="title">
        <string>Yaw</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="rxconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="rx_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>260</y>
-         <width>166</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="rxconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFunctionConfigurator" name="rxconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="rx_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="rxconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage2">
       <attribute name="title">
        <string>Pitch</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="ryconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>255</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="ry_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>260</y>
-         <width>199</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="ryconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>255</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QFunctionConfigurator" name="ryconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ry_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="ryconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage3">
       <attribute name="title">
        <string>Roll</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="rzconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>0</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="rz_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>260</y>
-         <width>271</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="rzconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>0</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QFunctionConfigurator" name="rzconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="rz_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="rzconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage4">
       <attribute name="title">
        <string>X</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="txconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>0</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="tx_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>228</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="txconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>0</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QFunctionConfigurator" name="txconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="tx_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="txconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>0</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage5">
       <attribute name="title">
        <string>Y</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="tyconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>255</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="ty_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>229</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="tyconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>255</red>
-         <green>255</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QFunctionConfigurator" name="tyconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ty_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="tyconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>255</red>
+           <green>255</green>
+           <blue>0</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage6">
       <attribute name="title">
        <string>Z</string>
       </attribute>
-      <widget class="QFunctionConfigurator" name="tzconfig" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="tz_altp">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>263</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Asymmetric mapping below</string>
-       </property>
-      </widget>
-      <widget class="QFunctionConfigurator" name="tzconfig_alt" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>300</y>
-         <width>930</width>
-         <height>260</height>
-        </rect>
-       </property>
-       <property name="colorBezier" stdset="0">
-        <color>
-         <red>0</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </property>
-       <property name="colorBackground" stdset="0">
-        <color>
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QFunctionConfigurator" name="tzconfig" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="tz_altp">
+         <property name="text">
+          <string>Asymmetric mapping below</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFunctionConfigurator" name="tzconfig_alt" native="true">
+         <property name="colorBezier" stdset="0">
+          <color>
+           <red>0</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </property>
+         <property name="colorBackground" stdset="0">
+          <color>
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage7">
       <attribute name="title">
@@ -626,7 +542,7 @@
          <property name="checkable">
           <bool>false</bool>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0,0">
+         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="0">
           <property name="sizeConstraint">
            <enum>QLayout::SetMinAndMaxSize</enum>
           </property>
@@ -995,10 +911,6 @@
               </widget>
              </item>
             </layout>
-            <zorder>label_15</zorder>
-            <zorder>label_14</zorder>
-            <zorder>label_13</zorder>
-            <zorder>label_15</zorder>
             <zorder>label_15</zorder>
             <zorder>label_13</zorder>
             <zorder>label_14</zorder>
