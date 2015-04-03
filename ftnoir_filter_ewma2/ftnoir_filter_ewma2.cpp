@@ -22,17 +22,9 @@
 // to minSmooth at a rate controlled by the powCurve setting.
 
 
-FTNoIR_Filter::FTNoIR_Filter() :
-    first_run(true),
-    // Currently facetracknoir/tracker.cpp updates every dt=3ms. All
-    // filter alpha values are calculated as alpha=dt/(dt+RC) and
-    // need to be updated when tracker.cpp changes.
-    // TODO(abo): Change this to use a dynamic dt using a timer.
-    // Deltas are smoothed over the last 1/60sec (16ms).
-    delta_alpha(0.003/(0.003 + 0.016)),
-    // Noise is smoothed over the last 60sec.
-    noise_alpha(0.003/(0.003 + 60.0))
+FTNoIR_Filter::FTNoIR_Filter()
 {
+    reset();
 }
 
 void FTNoIR_Filter::receiveSettings()
@@ -40,43 +32,47 @@ void FTNoIR_Filter::receiveSettings()
     s.b->reload();
 }
 
-void FTNoIR_Filter::filter(const double *target_camera_position,
-                                       double *new_camera_position)
+void FTNoIR_Filter::reset()
 {
-    double new_delta, new_noise, norm_noise;
-    double smoothing, RC, alpha;
+    timer.invalidate();
+}
 
-    //On the first run, initialize filter states to target intput.
-    if (first_run==true) {
+void FTNoIR_Filter::filter(const double *input, double *output)
+{
+    // Start the timer and initialise filter state if it's not running.
+    if (!timer.isValid()) {
+        timer.start();
         for (int i=0;i<6;i++) {
-            output[i] = target_camera_position[i];
-            delta[i] = 0.0;
-            noise[i] = 0.0;
+            last_output[i] = input[i];
+            last_delta[i] = 0.0;
+            last_noise[i] = 0.0;
         }
-        first_run=false;
     }
-
+    // Get the time in seconds since last run and restart the timer.
+    auto dt = timer.restart() / 1000.0f;
+    // Calculate delta_alpha and noise_alpha from dt.
+    double delta_alpha = dt/(dt + delta_RC);
+    double noise_alpha = dt/(dt + noise_RC);
     // Calculate the new camera position.
     for (int i=0;i<6;i++) {
         // Calculate the current and smoothed delta.
-        new_delta = target_camera_position[i]-output[i];
-        delta[i] = delta_alpha*new_delta + (1.0-delta_alpha)*delta[i];
+        double delta = input[i] - last_output[i];
+        last_delta[i] = delta_alpha*delta + (1.0-delta_alpha)*last_delta[i];
         // Calculate the current and smoothed noise variance.
-        new_noise = delta[i]*delta[i];
-        noise[i] = noise_alpha*new_noise + (1.0-noise_alpha)*noise[i];
+        double noise = last_delta[i]*last_delta[i];
+        last_noise[i] = noise_alpha*noise + (1.0-noise_alpha)*last_noise[i];
         // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
-        norm_noise = std::min<double>(new_noise/(9.0*noise[i]), 1.0);
+        double norm_noise = std::min<double>(noise/(9.0*last_noise[i]), 1.0);
         // Calculate the smoothing 0.0->1.0 from the normalized noise.
         // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
-        smoothing = 1.0 - pow(norm_noise, s.kSmoothingScaleCurve/20.0);
+        double smoothing = 1.0 - pow(norm_noise, s.kSmoothingScaleCurve/20.0);
         // Currently min/max smoothing are ints 0->100. We want 0.0->3.0 seconds.
         // TODO(abo): Change kMinSmoothing, kMaxSmoothing to floats 0.0->3.0 seconds RC.
-        RC = 3.0*(s.kMinSmoothing + smoothing*(s.kMaxSmoothing - s.kMinSmoothing))/100.0;
-        // TODO(abo): Change this to use a dynamic dt using a timer.
-        alpha = 0.003/(0.003 + RC);
+        double RC = 3.0*(s.kMinSmoothing + smoothing*(s.kMaxSmoothing - s.kMinSmoothing))/100.0;
+        // Calculate the dynamic alpha.
+        double alpha = dt/(dt + RC);
         // Calculate the new output position.
-        output[i] = alpha*target_camera_position[i] + (1.0-alpha)*output[i];
-        new_camera_position[i] = output[i];
+        output[i] = last_output[i] = alpha*input[i] + (1.0-alpha)*last_output[i];
     }
 }
 
