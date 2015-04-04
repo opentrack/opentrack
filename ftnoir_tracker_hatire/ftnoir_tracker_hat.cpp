@@ -408,17 +408,17 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 
 	if (bEnableYaw) {
         if (bInvertYaw )	data[Yaw] =  HAT.Rot[iYawAxe] *  -1.0f * d2r;
-        else 	data[Yaw] = HAT.Rot[iYawAxe];
+        else 	data[Yaw] = HAT.Rot[iYawAxe] * d2r;
     } else 	data[Yaw] =0;
 
 	if (bEnablePitch) {
         if (bInvertPitch) data[Pitch] =  HAT.Rot[iPitchAxe] *  -1.0f * d2r;
-        else data[Pitch] =   HAT.Rot[iPitchAxe];
+        else data[Pitch] =   HAT.Rot[iPitchAxe] * d2r;
     } else data[Pitch] = 0;
 
 	if (bEnableRoll) {
         if (bInvertRoll) data[Roll] =  HAT.Rot[iRollAxe] *  -1.0f * d2r;
-        else data[Roll] =  HAT.Rot[iRollAxe];
+        else data[Roll] =  HAT.Rot[iRollAxe] * d2r;
     } else data[Roll] =0;
 
 	if (bEnableX) {
