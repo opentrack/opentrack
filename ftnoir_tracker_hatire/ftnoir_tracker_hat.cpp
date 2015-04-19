@@ -402,23 +402,20 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 	}
     if  (new_frame) {
 #ifdef OPENTRACK_API
-        
-    static constexpr double pi = 3.14159265359;
-    static constexpr double d2r = pi / 180.;
-
-	if (bEnableYaw) {
-        if (bInvertYaw )	data[Yaw] =  HAT.Rot[iYawAxe] *  -1.0f * d2r;
-        else 	data[Yaw] = HAT.Rot[iYawAxe] * d2r;
+       
+    if (bEnableYaw) {
+        if (bInvertYaw )	data[Yaw] =  HAT.Rot[iYawAxe] *  -1.0f;
+        else 	data[Yaw] = HAT.Rot[iYawAxe];
     } else 	data[Yaw] =0;
 
 	if (bEnablePitch) {
-        if (bInvertPitch) data[Pitch] =  HAT.Rot[iPitchAxe] *  -1.0f * d2r;
-        else data[Pitch] =   HAT.Rot[iPitchAxe] * d2r;
+        if (bInvertPitch) data[Pitch] =  HAT.Rot[iPitchAxe] *  -1.0f;
+        else data[Pitch] =   HAT.Rot[iPitchAxe];
     } else data[Pitch] = 0;
 
 	if (bEnableRoll) {
-        if (bInvertRoll) data[Roll] =  HAT.Rot[iRollAxe] *  -1.0f * d2r;
-        else data[Roll] =  HAT.Rot[iRollAxe] * d2r;
+        if (bInvertRoll) data[Roll] =  HAT.Rot[iRollAxe] *  -1.0f;
+        else data[Roll] =  HAT.Rot[iRollAxe];
     } else data[Roll] =0;
 
 	if (bEnableX) {
