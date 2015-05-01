@@ -1119,7 +1119,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="3" column="0" colspan="2">
         <widget class="QLineEdit" name="lineSend">
          <property name="inputMask">
           <string notr="true"/>
@@ -1129,14 +1129,14 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="3" column="2">
         <widget class="QPushButton" name="btnSend">
          <property name="text">
           <string>Send</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="3">
+       <item row="4" column="0" colspan="3">
         <widget class="QPlainTextEdit" name="pteINFO">
          <property name="contextMenuPolicy">
           <enum>Qt::ActionsContextMenu</enum>
@@ -1155,6 +1155,16 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="backgroundVisible">
           <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="3">
+        <widget class="QCheckBox" name="chkEnableLogging">
+         <property name="toolTip">
+          <string>Disable when not in use, will have a performance impact</string>
+         </property>
+         <property name="text">
+          <string>Enable logging to diagnostic file</string>
          </property>
         </widget>
        </item>

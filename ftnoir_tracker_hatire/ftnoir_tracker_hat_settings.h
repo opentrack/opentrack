@@ -51,6 +51,7 @@ struct TrackerSettings
 	int DelaySeq;
 
 	bool BigEndian;
+	bool EnableLogging;
 
 	QString SerialPortName;
 	QSerialPort::BaudRate pBaudRate;

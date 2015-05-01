@@ -50,6 +50,8 @@ FTNoIR_Tracker::FTNoIR_Tracker()
 	Begin.append((char) 0xAA);
 	End.append((char) 0x55);
 	End.append((char) 0x55);
+	
+	flDiagnostics.setFileName(QCoreApplication::applicationDirPath() + "/HATDiagnostics.txt");
 
 	settings.load_ini();
 }
@@ -62,10 +64,12 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
 
 #ifdef OPENTRACK_API
             QByteArray Msg;
+			Log("Tracker shut down");
             ComPort->write(sCmdStop);
             if (!ComPort->waitForBytesWritten(1000)) {
                 emit sendMsgInfo("TimeOut in writing CMD");
-            } else  {
+            } else  
+			{
                 Msg.append("\r\n");
                 Msg.append("SEND '");
                 Msg.append(sCmdStop);
@@ -166,20 +170,30 @@ void FTNoIR_Tracker::sendcmd(const QByteArray &cmd) {
 	if (cmd.length()>0) {
 		if (ComPort->isOpen() ) 
 		{
+			QString logMess;
+			logMess.append("SEND '");
+			logMess.append(cmd);
+			logMess.append("'");
+			Log(logMess);
 			ComPort->write(cmd);
 			if (!ComPort->waitForBytesWritten(1000)) {
 				emit sendMsgInfo("TimeOut in writing CMD");
-			} else  {
+			} else  
+			{
 				Msg.append("\r\n");
 				Msg.append("SEND '");
 				Msg.append(cmd);
 				Msg.append("'\r\n");
 			}
+			#ifndef _WIN32 // WaitForReadyRead isn't working well and there are some reports of it being a win32 issue. We can live without it anyway
 			if  ( !ComPort->waitForReadyRead(1000)) {
 				emit sendMsgInfo("TimeOut in response to CMD") ;
 			} else {
 				emit sendMsgInfo(Msg);
 			}
+			#else
+				emit sendMsgInfo(Msg);
+			#endif
 		} else {
 			emit sendMsgInfo("ComPort not open")  ;
 		}
@@ -195,7 +209,7 @@ void FTNoIR_Tracker::get_info( int *tps ){
 
 void FTNoIR_Tracker::SerialRead()
 {
-    QMutexLocker lck(&mutex);
+	QMutexLocker lck(&mutex);
 	dataRead+=ComPort->readAll();
 }
 
@@ -205,6 +219,8 @@ void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 	CptError=0;
 	dataRead.clear();
 	frame_cnt=0;
+	
+	Log("INITIALISING HATIRE");
 
 	settings.load_ini();
 	applysettings(settings);
@@ -249,6 +265,7 @@ void FTNoIR_Tracker::StartTracker(HWND parent_window)
 {
 	// Send  START cmd to IMU
 	sendcmd(sCmdStart);
+	Log("Starting Tracker");
 	// Wait start MPU sequence 
 	for (int i = 1; i <=iDelaySeq;  i+=50) {
 		if (ComPort->waitForReadyRead(50)) break;
@@ -260,13 +277,16 @@ void FTNoIR_Tracker::StartTracker(HWND parent_window)
 void FTNoIR_Tracker::StopTracker( bool exit )
 {
 	QByteArray Msg;
+	
+	Log("Stopping tracker");
 	if (sCmdStop.length()>0) {
 		if (ComPort->isOpen() ) 
 		{
 			ComPort->write(sCmdStop);
 			if (!ComPort->waitForBytesWritten(1000)) {
 				emit sendMsgInfo("TimeOut in writing CMD");
-			} else  {
+			} else  
+			{
 				Msg.append("\r\n");
 				Msg.append("SEND '");
 				Msg.append(sCmdStop);
@@ -297,8 +317,11 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 	applysettings(settings);
 	ComPort =  new QSerialPort(this);
 	ComPort->setPortName(sSerialPortName); 
+	Log("Starting Tracker");
+
 	if (ComPort->open(QIODevice::ReadWrite ) == true) { 
 		connect(ComPort, SIGNAL(readyRead()), this, SLOT(SerialRead()));
+		Log("Port Open");
 		if (  
 			ComPort->setBaudRate((QSerialPort::BaudRate)iBaudRate)
 			&& ComPort->setDataBits((QSerialPort::DataBits)iDataBits) 
@@ -308,12 +331,27 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 			&& ComPort->clear(QSerialPort::AllDirections)
 			&& ComPort->setDataErrorPolicy(QSerialPort::IgnorePolicy)
 			) {
+				Log("Port Parameters set");
                 qDebug()  << QTime::currentTime()  << " HAT OPEN   on " << ComPort->portName() <<  ComPort->baudRate() <<  ComPort->dataBits() <<  ComPort->parity() <<  ComPort->stopBits() <<  ComPort->flowControl();
 
+				if (ComPort->flowControl() == QSerialPort::HardwareControl)
+				{
+					// Raise DTR
+					Log("Raising DTR");
+					if (!ComPort->setDataTerminalReady(true))
+						Log("Couldn't set DTR");
+					
+					// Raise RTS/CTS
+					Log("Raising RTS");
+					if (!ComPort->setRequestToSend(true))
+						Log("Couldn't set RTS");
+					
+				}
 				// Wait init arduino sequence 
 				for (int i = 1; i <=iDelayInit;  i+=50) {
 					if (ComPort->waitForReadyRead(50)) break;
 				}
+				Log("Waiting on init");
                 qDebug()  << QTime::currentTime()  << " HAT send INIT ";
 				sendcmd(sCmdInit);
 				// Wait init MPU sequence 
@@ -328,6 +366,7 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 				for (int i = 1; i <=iDelaySeq;  i+=50) {
 					if (ComPort->waitForReadyRead(50)) break;
 				}
+				Log("Port setup, waiting for HAT frames to process");
                 qDebug()  << QTime::currentTime()  << " HAT wait MPU ";
         } else {
 			QMessageBox::warning(0,"FaceTrackNoIR Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
@@ -345,6 +384,8 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 //send CENTER to Arduino
 void FTNoIR_Tracker::center() {
     qDebug()   << " HAT send CENTER ";
+	Log("Sending Centre Command");
+
     sendcmd(sCmdCenter);
 }
 
@@ -368,6 +409,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 {
     QMutexLocker lck(&mutex);
 	while  (dataRead.length()>=30) {
+		Log(dataRead.toHex());
 		if ((dataRead.startsWith(Begin) &&  ( dataRead.mid(28,2)==End )) )  { // .Begin==0xAAAA .End==0x5555
 			QDataStream  datastream(dataRead.left(30));
 			if (bBigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
@@ -390,6 +432,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 			emit sendMsgInfo(dataRead.mid(0,index))  ;
 			dataRead.remove(0,index);
 			CptError++;
+			qDebug() << QTime::currentTime() << " HAT Resync-Frame, counter " << CptError;
 		}
 	}
 
@@ -400,13 +443,19 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
 		return false;
 #endif
 	}
-    if  (new_frame) {
+	// Need to handle this differently in opentrack as opposed to tracknoir
+    //if  (new_frame) { 
 #ifdef OPENTRACK_API
-       
+	// in open track always populate the data, it seems opentrack always gives us a zeroed data structure to populate with pose data.
+	// if we have no new data, we don't populate it and so 0 pose gets handed back which is wrong. By always running the code below, if we 
+	// have no new data, we will just give it the previous pose data which is the best thing we can do really.
+    if(1){
+      
     if (bEnableYaw) {
         if (bInvertYaw )	data[Yaw] =  HAT.Rot[iYawAxe] *  -1.0f;
         else 	data[Yaw] = HAT.Rot[iYawAxe];
-    } else 	data[Yaw] =0;
+			
+    } else data[Yaw] =0;
 
 	if (bEnablePitch) {
         if (bInvertPitch) data[Pitch] =  HAT.Rot[iPitchAxe] *  -1.0f;
@@ -433,7 +482,7 @@ bool FTNoIR_Tracker::GiveHeadPoseData(THeadPoseData *data)
         else data[TZ] =   HAT.Trans[iZAxe];
     } else data[TZ] =0;
 #else
-
+	if  (new_frame) { // treat frame handling as it was for TrackNoIR. 
 	if (bEnableYaw) {
 		if (bInvertYaw )	data->yaw = (double) HAT.Rot[iYawAxe] *  -1.0f;
 		else 	data->yaw = (double) HAT.Rot[iYawAxe];
@@ -494,6 +543,7 @@ void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
 	bInvertX = settings.InvertX;
 	bInvertY = settings.InvertY;
 	bInvertZ = settings.InvertZ;
+	bEnableLogging = settings.EnableLogging;
 
 	iRollAxe= settings.RollAxe;
 	iPitchAxe= settings.PitchAxe;
@@ -525,6 +575,23 @@ void FTNoIR_Tracker::applysettings(const TrackerSettings& settings){
 #endif
 }
 
+void FTNoIR_Tracker::Log(QString message)
+{
+	// Drop out immediately if logging is off. Yes, there is still some overhead because of passing strings around for no reason.
+	// that's unfortunate and I'll monitor the impact and see if it needs a more involved fix.
+	if (!bEnableLogging) return;
+	QString logMessage;
+
+	if (flDiagnostics.open(QIODevice::ReadWrite | QIODevice::Append))
+	{
+		QTextStream out(&flDiagnostics);
+		QString milliSeconds;
+		milliSeconds = QString("%1").arg(QTime::currentTime().msec(), 3, 10, QChar('0'));
+		// We have a file
+		out << QTime::currentTime().toString() << "." << milliSeconds << ": " << message << "\r\n";
+		flDiagnostics.close();
+	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

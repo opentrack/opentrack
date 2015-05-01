@@ -117,6 +117,8 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     ui.chkInvertX->setChecked(settings.InvertX);
     ui.chkInvertY->setChecked(settings.InvertY);
     ui.chkInvertZ->setChecked(settings.InvertZ);
+	
+	ui.chkEnableLogging->setChecked(settings.EnableLogging);
 
 
     ui.cb_roll->setCurrentIndex(settings.RollAxe);
@@ -165,6 +167,7 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     connect( ui.chkInvertX,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_x(bool)) );
     connect( ui.chkInvertY,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_y(bool)) );
     connect( ui.chkInvertZ,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_z(bool)) );
+	connect( ui.chkEnableLogging,SIGNAL(toggled(bool)),      this,SLOT(set_diag_logging(bool)) );
 
     connect(ui.cb_roll, SIGNAL(currentIndexChanged(int)), this,SLOT(set_rot_roll(int)));
     connect(ui.cb_pitch, SIGNAL(currentIndexChanged(int)),this,SLOT(set_rot_pitch(int)));
