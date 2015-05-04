@@ -224,7 +224,7 @@ namespace options {
         {
         public:
             using pbundle = std::shared_ptr<v>;
-            using tt = std::tuple<cnt, pbundle>;
+            using tt = std::tuple<cnt, std::weak_ptr<v>>;
         private:
             QMutex implsgl_mtx;
             map<k, tt> implsgl_data;
@@ -242,7 +242,11 @@ namespace options {
                 QMutexLocker l(&implsgl_mtx);
 
                 if (implsgl_data.count(key) != 0)
-                    return std::get<1>(implsgl_data[key]);
+                {
+                    auto shared = std::get<1>(implsgl_data[key]).lock();
+                    if (shared != nullptr)
+                        return shared;
+                }
                 
                 qDebug() << "bundle +" << QString::fromStdString(key);
 
