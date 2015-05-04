@@ -262,8 +262,6 @@ namespace options {
                 if (--std::get<0>(implsgl_data[key]) == 0)
                     implsgl_data.erase(key);
             }
-
-            ~opt_singleton() { implsgl_data.clear(); }
         };
 
         using pbundle = std::shared_ptr<opt_bundle>;
