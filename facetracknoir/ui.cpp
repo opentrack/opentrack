@@ -88,7 +88,6 @@ MainWindow::~MainWindow()
         tray->hide();
     stopTracker();
     save();
-    _exit(0);
 }
 
 void MainWindow::set_working_directory()
