@@ -298,7 +298,7 @@ void Tracker::run()
 
             cv::Vec3d rvec, tvec;
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, CV_ITERATIVE);
 
             std::vector<cv::Point2f> roi_projection(4);
 
@@ -323,7 +323,7 @@ void Tracker::run()
 
             {
                 cv::Mat rvec_, tvec_;
-                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::ITERATIVE);
+                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, CV_ITERATIVE);
                 tvec = tvec_;
             }
 
