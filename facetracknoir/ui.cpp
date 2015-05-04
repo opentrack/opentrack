@@ -131,6 +131,7 @@ void MainWindow::save() {
     settings->sync();
 
 #if defined(__unix) || defined(__linux)
+    QString currentFile = group::ini_pathname();
     QByteArray bytes = QFile::encodeName(currentFile);
     const char* filename_as_asciiz = bytes.constData();
 
