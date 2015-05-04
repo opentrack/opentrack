@@ -120,15 +120,16 @@ QList<mem<dylib>> dylib::enum_libraries()
 
 dylib::dylib(const QString& filename, Type t) :
     type(t),
+    filename(filename),
     Dialog(nullptr),
     Constructor(nullptr),
-    Meta(nullptr)
+    Meta(nullptr),
+    handle(nullptr)
 {
     // otherwise dlopen opens the calling executable
     if (filename.size() == 0)
         return;
 
-    this->filename = filename;
 #if defined(_WIN32)
     QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
     handle = new QLibrary(fullPath);
