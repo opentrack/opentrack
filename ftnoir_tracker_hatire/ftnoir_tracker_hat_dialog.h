@@ -61,6 +61,8 @@ protected slots:
 	void set_inv_y(bool val)	 { settings.InvertY = val;       settings_changed(); }
 	void set_inv_z(bool val)	 { settings.InvertZ = val;       settings_changed(); }
 
+	void set_diag_logging(bool val)	 { settings.EnableLogging = val;       settings_changed(); }
+
 
 	void set_rot_roll(int val)	 { settings.RollAxe = val;    settings_changed(); }
 	void set_rot_pitch(int val)	 { settings.PitchAxe = val;   settings_changed(); }

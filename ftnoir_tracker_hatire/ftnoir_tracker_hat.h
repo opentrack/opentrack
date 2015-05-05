@@ -19,7 +19,7 @@
 #include <QMutexLocker>
 #include <QSettings>
 
-#define VER_FILEVERSION_STR         "Version 2.1.0\0"
+#define VER_FILEVERSION_STR         "Version 2.1.1\0"
 
 class FTNoIR_Tracker : public QObject, public ITracker 
 { 
@@ -49,6 +49,7 @@ public:
 
 private Q_SLOTS:
     void SerialRead();
+	void Log(QString message);
 
 signals:
     void sendMsgInfo(const QByteArray &MsgInfo);
@@ -80,6 +81,7 @@ private:
 	bool bInvertX;
 	bool bInvertY;
 	bool bInvertZ;
+	bool bEnableLogging;
 
 	int iRollAxe;
 	int iPitchAxe;
@@ -107,6 +109,8 @@ private:
 	QSerialPort::Parity iParity;
 	QSerialPort::StopBits iStopBits;
 	QSerialPort::FlowControl iFlowControl;
+	
+	QFile flDiagnostics;
 #ifdef OPENTRACK_API
     int iFpsArduino;
 #endif
