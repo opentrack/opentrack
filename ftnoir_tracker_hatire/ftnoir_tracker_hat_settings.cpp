@@ -57,8 +57,8 @@ void TrackerSettings::load_ini()
 	EnableX = iniFile.value( "EnableX", 0 ).toBool();
 	EnableY = iniFile.value( "EnableY", 0 ).toBool();
 	EnableZ = iniFile.value( "EnableZ", 0 ).toBool();
-
-
+	EnableLogging = iniFile.value( "EnableLogging", 0).toBool();
+	
 	InvertRoll = iniFile.value( "InvertRoll", 1 ).toBool();
 	InvertPitch = iniFile.value( "InvertPitch", 1 ).toBool();
 	InvertYaw = iniFile.value( "InvertYaw", 1 ).toBool();
@@ -127,6 +127,7 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue( "EnableX", EnableX );
 	iniFile.setValue( "EnableY", EnableY );
 	iniFile.setValue( "EnableZ", EnableZ );
+	iniFile.setValue( "EnableLogging", EnableLogging );
 
     iniFile.setValue( "InvertRoll", InvertRoll );
 	iniFile.setValue( "InvertPitch", InvertPitch );
