@@ -185,7 +185,7 @@ void FTNoIR_Tracker::sendcmd(const QByteArray &cmd) {
 				Msg.append(cmd);
 				Msg.append("'\r\n");
 			}
-			#ifndef _WIN32 // WaitForReadyRead isn't working well and there are some reports of it being a win32 issue. We can live without it anyway
+			#if 0 // WaitForReadyRead isn't working well and there are some reports of it being a win32 issue. We can live without it anyway
 			if  ( !ComPort->waitForReadyRead(1000)) {
 				emit sendMsgInfo("TimeOut in response to CMD") ;
 			} else {
