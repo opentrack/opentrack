@@ -48,6 +48,8 @@ void FTNoIR_Filter::filter(const double* input, double *output)
 
     const double RC = 2 * s.ewma / 1000.; // seconds
     const double alpha = dt/(dt+RC);
+    const double rot_dz = s.rot_deadzone * 3. / 1000.;
+    const double trans_dz = s.trans_deadzone * 1. / 100.;
     
     for (int i = 0; i < 6; i++)
     {
@@ -56,7 +58,8 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double in = smoothed_input[i];
         
         const double vec = in - last_output[i];
-        const double vec_ = fabs(vec);
+        const double dz = i >= 3 ? rot_dz : trans_dz;
+        const double vec_ = max(0., fabs(vec) - dz);
         const double t = i >= 3 ? rot_t : trans_t;
         const double val = f(vec_, t);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
