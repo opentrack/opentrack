@@ -15,10 +15,14 @@ FilterControls::FilterControls() :
     connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
     connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
     connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
+    connect(ui.rot_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_dz_display(int)));
+    connect(ui.trans_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_dz_display(int)));
 
     tie_setting(s.rot_threshold, ui.rotation_slider);
     tie_setting(s.trans_threshold, ui.translation_slider);
     tie_setting(s.ewma, ui.ewma_slider);
+    tie_setting(s.rot_deadzone, ui.rot_dz_slider);
+    tie_setting(s.trans_deadzone, ui.trans_dz_slider);
 }
 
 void FilterControls::register_filter(IFilter* filter)
@@ -63,6 +67,16 @@ void FilterControls::update_trans_display(int value)
 void FilterControls::update_ewma_display(int value)
 {
     ui.ewma_label->setText(QString::number(value * 2) + "ms");
+}
+
+void FilterControls::update_rot_dz_display(int value)
+{
+    ui.rot_dz->setText(QString::number(value * 3 / 1000.) + "°");
+}
+
+void FilterControls::update_trans_dz_display(int value)
+{
+    ui.trans_dz->setText(QString::number(value * 1 / 100.) + "mm");
 }
 
 extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()

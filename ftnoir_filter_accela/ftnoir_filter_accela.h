@@ -11,12 +11,14 @@ using namespace options;
 
 struct settings {
     pbundle b;
-    value<int> rot_threshold, trans_threshold, ewma;
+    value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
     settings() :
         b(bundle("Accela")),
         rot_threshold(b, "rotation-threshold", 30),
         trans_threshold(b, "translation-threshold", 50),
-        ewma(b, "ewma", 2)
+        ewma(b, "ewma", 2),
+        rot_deadzone(b, "rotation-deadzone", 0),
+        trans_deadzone(b, "translation-deadzone", 0)
     {}
 };
 
@@ -58,6 +60,8 @@ private slots:
     void update_ewma_display(int value);
     void update_rot_display(int value);
     void update_trans_display(int value);
+    void update_rot_dz_display(int value);
+    void update_trans_dz_display(int value);
 };
 
 class FTNoIR_FilterDll : public Metadata
