@@ -25,6 +25,7 @@
 #include "opentrack/tracker.h"
 #include "opentrack/options.hpp"
 #include <QFileDialog>
+#include <QFileInfo>
 
 #ifndef _WIN32
 #   include <unistd.h>
@@ -209,6 +210,18 @@ void MainWindow::bindKeyboardShortcuts()
     if (work)
         work->reload_shortcuts();
     ensure_tray();
+}
+
+void MainWindow::open_and_run(const QString &fileName) {
+    if (! fileName.isEmpty() && QFileInfo(fileName).exists()) {
+        {
+            QSettings settings(group::org);
+            settings.setValue(group::filename_key, remove_app_path(fileName));
+        }
+        fill_profile_combobox();
+        load_settings();
+        QTimer::singleShot(0, this, SLOT(startTracker()));
+    }
 }
 
 void MainWindow::startTracker( ) {
