@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "opentrack/options.hpp"
+using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QStyleFactory>
@@ -36,13 +38,17 @@ int main(int argc, char** argv)
 	p.addOption(autostartOption);
 	p.process(app);
 
-    MainWindow w;
-
 	QString profile = p.value(autostartOption);
-	if (! profile.isEmpty() ) 
+	if (!profile.isEmpty())
 	{
-		w.open_and_run(profile);
+        QSettings settings(group::org);
+        settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
 	}
+    
+    MainWindow w;
+    
+    if (!profile.isEmpty())
+        w.startTracker();
 		
     w.show();
     app.exec();

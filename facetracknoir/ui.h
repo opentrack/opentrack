@@ -95,13 +95,11 @@ class MainWindow : public QMainWindow, private State
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
     void set_working_directory();
-    QString remove_app_path(const QString full_path);
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
     void shortcutZeroed();
     void bindKeyboardShortcuts();
-	void open_and_run(const QString &profile);
 private slots:
     void open();
     void save();
@@ -116,13 +114,16 @@ private slots:
     void showCurveConfiguration();
     void showHeadPose();
 
+    void restore_from_tray(QSystemTrayIcon::ActivationReason);
+    
+public slots:
     void startTracker();
     void stopTracker();
-
-    void restore_from_tray(QSystemTrayIcon::ActivationReason);
+    
 public:
     MainWindow();
     ~MainWindow();
     void save_mappings();
     void load_mappings();
+    static QString remove_app_path(const QString full_path);
 };
