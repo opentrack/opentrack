@@ -101,6 +101,7 @@ public slots:
     void shortcutToggled();
     void shortcutZeroed();
     void bindKeyboardShortcuts();
+	void open_and_run(const QString &profile);
 private slots:
     void open();
     void save();
