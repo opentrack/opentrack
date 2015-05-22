@@ -79,6 +79,9 @@ MainWindow::MainWindow() :
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
     kbd_quit.setEnabled(true);
+    
+    connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
+    det_timer.start(3000);
 
     ensure_tray();
 }
@@ -179,16 +182,13 @@ extern "C" volatile const char* opentrack_version;
 
 void MainWindow::fill_profile_combobox()
 {
-     QString currentFile = group::ini_pathname();
-     qDebug() << "Config file now" << currentFile;
-     QFileInfo pathInfo ( currentFile );
-     setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + pathInfo.fileName());
-     QDir settingsDir( pathInfo.dir() );
-     auto iniFileList = settingsDir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+     QStringList ini_list = group::ini_list();
+     QString current = QFileInfo(group::ini_pathname()).fileName();
+     setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
      ui.iconcomboProfile->clear();
-     for (auto x : iniFileList)
+     for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
-     ui.iconcomboProfile->setCurrentText(pathInfo.fileName());
+     ui.iconcomboProfile->setCurrentText(current);
 }
 
 void MainWindow::updateButtonState(bool running, bool inertialp)
@@ -485,4 +485,29 @@ void MainWindow::changeEvent(QEvent* e)
         hide();
     }
     QMainWindow::changeEvent(e);
+}
+
+void MainWindow::maybe_start_profile_from_executable()
+{
+    if (!work)
+    {
+        QString prof;
+        if (det.config_to_start(prof))
+        {
+            QString profile = QFileInfo(group::ini_pathname()).absolutePath() + "/" + prof;
+            set_profile(profile);
+            startTracker();
+        }
+    }
+    else
+    {
+        if (det.should_stop())
+            stopTracker();
+    }
+}
+
+void MainWindow::set_profile(const QString &profile)
+{
+    QSettings settings(group::org);
+    settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
 }
