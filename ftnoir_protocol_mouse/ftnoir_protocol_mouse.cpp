@@ -29,6 +29,10 @@
 #include "ftnoir_protocol_mouse.h"
 #include "opentrack/plugin-api.hpp"
 
+#ifndef MOUSEEVENTF_MOVE_NOCOALESCE
+#   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
+#endif
+
 void FTNoIR_Protocol::pose(const double *headpose ) {
     RECT desktop;
     const HWND hDesktop = GetDesktopWindow();
@@ -38,22 +42,28 @@ void FTNoIR_Protocol::pose(const double *headpose ) {
         int axis_x = s.Mouse_X;
         int axis_y = s.Mouse_Y;
         
-        int mouse_x, mouse_y;
+        int mouse_x = 0, mouse_y = 0;
         
         if (axis_x > 0 && axis_x <= 6)
-            mouse_x = headpose[axis_x-1] / (axis_x < 3 ? 100 : 180) * 10 * desktop.right/2;
+            mouse_x = headpose[axis_x-1] / (axis_x <= 3 ? 100 : 180) * 10 * desktop.right/2;
     
         if (axis_y > 0 && axis_y <= 6)
-            mouse_y = headpose[axis_y-1] / (axis_y < 3 ? 100 : 180) * 10 * desktop.bottom/2;
+            mouse_y = headpose[axis_y-1] / (axis_y <= 3 ? 100 : 180) * 10 * desktop.bottom/2;
         
-        POINT pt;
+        MOUSEINPUT mi;
+        mi.dx = mouse_x - last_x;
+        mi.dy = mouse_y - last_y;
+        mi.mouseData = 0;
+        mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
+        mi.time = 0;
+        mi.dwExtraInfo = 0;
+        INPUT input;
+        input.type = INPUT_MOUSE;
+        input.mi = mi;
+        (void) SendInput(1, &input, sizeof(INPUT));
         
-        if (GetCursorPos(&pt))
-        {
-            SetCursorPos(pt.x + mouse_x - last_x, pt.y + mouse_y - last_y);
-            last_x = mouse_x;
-            last_y = mouse_y;
-        }
+        last_x = mouse_x;
+        last_y = mouse_y;
     }
 }
 
