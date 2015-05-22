@@ -9,6 +9,7 @@ using namespace options;
 #include <QCommandLineParser>
 #include <QStyleFactory>
 #include <QStringList>
+#include <QMessageBox>
 #include <memory>
 #include <cstring>
 
@@ -24,9 +25,7 @@ static void add_program_library_path()
             char* ptr = strrchr(path, '\\');
             if (ptr)
             {
-                printf("%s\n", path);
                 *ptr = '\0';
-                printf("%s\n", path);
                 QCoreApplication::addLibraryPath(path);
             }
         }
@@ -69,7 +68,13 @@ int main(int argc, char** argv)
 	p.process(app);
 
 	QString profile = p.value(autostartOption);
-	if (!profile.isEmpty())
+    
+    bool use_profile = profile.endsWith(".ini") && QFileInfo(profile).exists() && QFileInfo(profile).isFile();
+    if (!profile.isEmpty() && !use_profile)
+        QMessageBox::warning(nullptr, "Can't load profile", "Profile " + profile + " specified but can't be opened!",
+                             QMessageBox::Ok, QMessageBox::NoButton);
+    
+	if (use_profile)
 	{
         QSettings settings(group::org);
         settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
@@ -77,7 +82,7 @@ int main(int argc, char** argv)
     
     MainWindow w;
     
-    if (!profile.isEmpty())
+    if (use_profile)
         w.startTracker();
 		
     w.show();
