@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#   include <stdlib.h>
+#endif
+
 #include "ui.h"
 #include "opentrack/options.hpp"
 using namespace options;
@@ -6,9 +10,35 @@ using namespace options;
 #include <QStyleFactory>
 #include <QStringList>
 #include <memory>
+#include <cstring>
+
+#ifdef _WIN32
+// workaround QTBUG-38598, allow for launching from another directory
+static void add_program_library_path()
+{
+    {
+        char* p = _pgmptr;
+        {
+            char path[MAX_PATH];
+            strcpy(path, p);
+            char* ptr = strrchr(path, '\\');
+            if (ptr)
+            {
+                printf("%s\n", path);
+                *ptr = '\0';
+                printf("%s\n", path);
+                QCoreApplication::addLibraryPath(path);
+            }
+        }
+    }
+#endif
+}
 
 int main(int argc, char** argv)
 {
+#ifdef _WIN32
+    add_program_library_path();
+#endif
     // workaround QTBUG-38598
     QCoreApplication::addLibraryPath(".");
 
