@@ -3,10 +3,9 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     settings() :
-        b(bundle("tracker-hydra"))
+        opts("tracker-hydra")
     {}
 };
 

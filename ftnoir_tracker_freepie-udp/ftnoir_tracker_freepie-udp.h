@@ -13,12 +13,11 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> port, idx_x, idx_y, idx_z;
     value<int> add_yaw, add_pitch, add_roll;
     settings() :
-        b(bundle("freepie-udp-tracker")),
+        opts("freepie-udp-tracker"),
         port(b, "port", 5555),
         idx_x(b, "axis-index-x", 0),
         idx_y(b, "axis-index-y", 1),

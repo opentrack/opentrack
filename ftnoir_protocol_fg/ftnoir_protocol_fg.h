@@ -35,12 +35,11 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> ip1, ip2, ip3, ip4;
     value<int> port;
     settings() :
-        b(bundle("flightgear-proto")),
+        opts("flightgear-proto"),
         ip1(b, "ip1", 192),
         ip2(b, "ip2", 168),
         ip3(b, "ip3", 0),

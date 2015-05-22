@@ -29,12 +29,11 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<QString> joyid;
     value<int> joy_1, joy_2, joy_3, joy_4, joy_5, joy_6;
     settings() :
-        b(bundle("tracker-joystick")),
+        opts("tracker-joystick"),
         joyid(b, "joy-id", ""),
         joy_1(b, "axis-map-1", 1),
         joy_2(b, "axis-map-2", 2),

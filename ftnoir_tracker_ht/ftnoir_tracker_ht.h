@@ -18,12 +18,11 @@
 #include "opentrack/plugin-api.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<double> fov;
     value<int> fps, camera_idx, resolution;
     settings() :
-        b(bundle("HT-Tracker")),
+        opts("HT-Tracker"),
         fov(b, "fov", 56),
         fps(b, "fps", 0),
         camera_idx(b, "camera-index", 0),

@@ -9,12 +9,11 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<bool> useYawSpring;
     value<double> constant_drift, persistence, deadzone;
     settings() :
-        b(bundle("Rift")),
+        opts("Rift"),
         useYawSpring(b, "yaw-spring", false),
         constant_drift(b, "constant-drift", 0.000005),
         persistence(b, "persistence", 0.99999),

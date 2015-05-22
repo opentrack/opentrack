@@ -104,12 +104,11 @@ public:
     mem<KeybindingWorker> keybindingWorker;
 #endif
 
-    struct settings {
-        pbundle b;
+    struct settings : opts {
         key_opts center, toggle, zero;
         main_settings s_main;
         settings() :
-            b(bundle("keyboard-shortcuts")),
+            opts("keyboard-shortcuts"),
             center(b, "center"),
             toggle(b, "toggle"),
             zero(b, "zero")

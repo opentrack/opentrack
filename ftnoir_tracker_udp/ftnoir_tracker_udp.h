@@ -7,11 +7,10 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> port;
     settings() :
-        b(bundle("udp-tracker")),
+        opts("udp-tracker"),
         port(b, "port", 4242)
     {}
 };

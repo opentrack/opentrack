@@ -22,8 +22,7 @@ private:
     }
 };
 
-struct main_settings {
-    pbundle b;
+struct main_settings : opts {
     value<QString> tracker_dll, tracker2_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
@@ -31,7 +30,7 @@ struct main_settings {
     value<int> camera_yaw, camera_pitch;
     value<bool> center_at_startup;
     main_settings() :
-        b(bundle("opentrack-ui")),
+        opts("opentrack-ui"),
         tracker_dll(b, "tracker-dll", ""),
         tracker2_dll(b, "tracker2-dll", ""),
         filter_dll(b, "filter-dll", ""),

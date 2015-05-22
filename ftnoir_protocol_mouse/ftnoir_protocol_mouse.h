@@ -43,11 +43,10 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> Mouse_X, Mouse_Y;
     settings() :
-        b(bundle("mouse-proto")),
+        opts("mouse-proto"),
         Mouse_X(b, "mouse-x", 0),
         Mouse_Y(b, "mouse-y", 0)
     {}
