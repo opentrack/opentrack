@@ -71,7 +71,7 @@ void FilterControls::update_ewma_display(int value)
 
 void FilterControls::update_rot_dz_display(int value)
 {
-    ui.rot_dz->setText(QString::number(value * 3 / 1000.) + "°");
+    ui.rot_dz->setText(QString::number(value * 2 / 100.) + "°");
 }
 
 void FilterControls::update_trans_dz_display(int value)

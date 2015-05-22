@@ -48,7 +48,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
 
     const double RC = 2 * s.ewma / 1000.; // seconds
     const double alpha = dt/(dt+RC);
-    const double rot_dz = s.rot_deadzone * 3. / 1000.;
+    const double rot_dz = s.rot_deadzone * 2. / 100.;
     const double trans_dz = s.trans_deadzone * 1. / 100.;
     
     for (int i = 0; i < 6; i++)
