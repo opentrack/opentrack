@@ -36,6 +36,7 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
 void KeyboardShortcutDialog::doOK() {
     s.b->save();
     s.s_main.b->save();
+    ui.game_detector->save();
     this->close();
     emit reload();
 }
@@ -43,5 +44,6 @@ void KeyboardShortcutDialog::doOK() {
 void KeyboardShortcutDialog::doCancel() {
     s.b->reload();
     s.s_main.b->reload();
+    ui.game_detector->revert();
     close();
 }

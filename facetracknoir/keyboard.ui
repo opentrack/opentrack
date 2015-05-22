@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>461</width>
-    <height>181</height>
+    <height>413</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -289,6 +289,16 @@
     </widget>
    </item>
    <item>
+    <widget class="process_detector" name="game_detector">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -297,6 +307,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>process_detector</class>
+   <extends>QWidget</extends>
+   <header>facetracknoir/process_detector.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <slots>

@@ -55,6 +55,7 @@
 #include "opentrack/state.hpp"
 #include "curve-config.h"
 #include "shortcut-dialog.hpp"
+#include "process_detector.h"
 
 using namespace options;
 
@@ -65,6 +66,7 @@ class MainWindow : public QMainWindow, private State
     Ui::OpentrackUI ui;
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
+    QTimer det_timer;
     mem<KeyboardShortcutDialog> shortcuts_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
@@ -72,6 +74,7 @@ class MainWindow : public QMainWindow, private State
     mem<IFilterDialog> pFilterDialog;
     mem<IProtocolDialog> pProtocolDialog;
     mem<ITrackerDialog> pTrackerDialog;
+    process_detector_worker det;
 
     mem<dylib> current_tracker()
     {
@@ -94,7 +97,6 @@ class MainWindow : public QMainWindow, private State
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
-    void set_working_directory();
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
@@ -115,15 +117,16 @@ private slots:
     void showHeadPose();
 
     void restore_from_tray(QSystemTrayIcon::ActivationReason);
-    
+    void maybe_start_profile_from_executable();
 public slots:
     void startTracker();
     void stopTracker();
-    
 public:
     MainWindow();
     ~MainWindow();
     void save_mappings();
     void load_mappings();
     static QString remove_app_path(const QString full_path);
+    static void set_working_directory();
+    static void set_profile(const QString& profile);
 };
