@@ -75,10 +75,7 @@ int main(int argc, char** argv)
                              QMessageBox::Ok, QMessageBox::NoButton);
     
 	if (use_profile)
-	{
-        QSettings settings(group::org);
-        settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
-	}
+        MainWindow::set_profile(profile);
     
     MainWindow w;
     
