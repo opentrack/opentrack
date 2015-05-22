@@ -24,12 +24,11 @@
 
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<double> fov, headpos_x, headpos_y, headpos_z;
     value<int> camera_index, force_fps, resolution;
     settings() :
-        b(bundle("aruco-tracker")),
+        opts("aruco-tracker"),
         fov(b, "field-of-view", 56),
         headpos_x(b, "headpos-x", 0),
         headpos_y(b, "headpos-y", 0),

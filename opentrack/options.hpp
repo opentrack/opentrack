@@ -28,6 +28,8 @@
 #include <QLabel>
 #include <QTabWidget>
 #include <QCoreApplication>
+#include <QFileInfo>
+#include <QDir>
 
 #include <cinttypes>
 
@@ -135,6 +137,14 @@ namespace options {
             QSettings settings(group::org);
             return settings.value(filename_key, QCoreApplication::applicationDirPath() + default_path).toString();
         }
+        
+        static const QStringList ini_list()
+        {
+            QFileInfo info(group::ini_pathname());
+            QDir settings_dir(info.dir());
+            return settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+        }
+        
         static const mem<QSettings> ini_file()
         {
             return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
@@ -351,7 +361,19 @@ namespace options {
             *this = static_cast<t>(*this);
         }
     };
-
+    
+    struct opts
+    {
+        pbundle b;
+        
+        opts(const std::string& name) : b(bundle(name)) {}
+        
+        ~opts()
+        {
+            b->reload();
+        }
+    };
+    
     template<typename t, typename q>
     inline void tie_setting(value<t>&, q*);
 

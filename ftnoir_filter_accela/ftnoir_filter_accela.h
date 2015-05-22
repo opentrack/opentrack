@@ -9,11 +9,10 @@
 using namespace options;
 #include "opentrack/timer.hpp"
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
     settings() :
-        b(bundle("Accela")),
+        opts("Accela"),
         rot_threshold(b, "rotation-threshold", 30),
         trans_threshold(b, "translation-threshold", 50),
         ewma(b, "ewma", 2),

@@ -13,9 +13,8 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings
+struct settings : opts
 {
-    pbundle b;
     value<int> cam_index,
                cam_res_x,
                cam_res_y,
@@ -38,7 +37,7 @@ struct settings
     value<bool> dynamic_pose;
 
     settings() :
-        b(bundle("tracker-pt")),
+        opts("tracker-pt"),
         cam_index(b, "camera-index", 0),
         cam_res_x(b, "camera-res-width", 640),
         cam_res_y(b, "camera-res-height", 480),

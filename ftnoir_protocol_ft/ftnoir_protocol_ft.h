@@ -41,12 +41,11 @@
 #include "../freetrackclient/fttypes.h"
 using namespace options;
 
-struct settings {
-    pbundle b;
+struct settings : opts {
     value<int> intUsedInterface;
     value<bool> useTIRViews;
     settings() :
-        b(bundle("proto-freetrack")),
+        opts("proto-freetrack"),
         intUsedInterface(b, "used-interfaces", 0),
         useTIRViews(b, "use-memory-hacks", false)
     {}
