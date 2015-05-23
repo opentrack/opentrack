@@ -494,8 +494,7 @@ void MainWindow::maybe_start_profile_from_executable()
         QString prof;
         if (det.config_to_start(prof))
         {
-            QString profile = QFileInfo(group::ini_pathname()).absolutePath() + "/" + prof;
-            set_profile(profile);
+            ui.iconcomboProfile->setCurrentText(prof);
             startTracker();
         }
     }
