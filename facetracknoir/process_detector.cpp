@@ -186,7 +186,7 @@ bool process_detector_worker::should_stop()
             return false;
         }
     }
-
+    
     last_exe_name = "";
     CloseHandle(h);
     
@@ -216,7 +216,7 @@ bool process_detector_worker::config_to_start(QString& str)
         if (filenames.contains(exe_name))
         {
             str = filenames[exe_name];
-            last_exe_name = str;
+            last_exe_name = exe_name;
             CloseHandle(h);
             return true;
         }
@@ -228,7 +228,7 @@ bool process_detector_worker::config_to_start(QString& str)
         if (filenames.contains(exe_name))
         {
             str = filenames[exe_name];
-            last_exe_name = str;
+            last_exe_name = exe_name;
             CloseHandle(h);
             return true;
         }
