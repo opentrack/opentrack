@@ -64,7 +64,7 @@ struct settings : opts
         cap_y(b, "cap-y", 0),
         cap_z(b, "cap-z", 0),
         fov(b, "camera-fov", 56),
-        dynamic_pose(b, "dynamic-pose-resolution", false)
+        dynamic_pose(b, "dynamic-pose-resolution", true)
     {}
 };
 
