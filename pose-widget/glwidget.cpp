@@ -110,7 +110,7 @@ static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
 void GLWidget::project_quad_texture() {
     const int sx = width(), sy = height();
     vec2 pt[4];
-    static const vec3 corners[] = {
+    const vec3 corners[] = {
         vec3({0., 0., 0.}),
         vec3({sx-1., 0., 0.}),
         vec3({0., sy-1., 0.}),
