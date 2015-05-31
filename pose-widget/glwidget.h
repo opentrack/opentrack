@@ -10,42 +10,11 @@
 #include <QWidget>
 #include <QPixmap>
 #include "opentrack/plugin-api.hpp"
+#include "opentrack/simple-mat.hpp"
 
-struct Point {
-    Point(int x, int y) :
-            x(x), y(y)
-    {
-    }
-    Point() :
-            x(0), y(0)
-    {
-    }
-    int x, y;
-};
-
-struct Vec3f {
-    double x, y, z;
-    Vec3f(double x, double y, double z) :
-            x(x), y(y), z(z)
-    {
-    }
-    Vec3f() :
-            x(0), y(0), z(0)
-    {
-    }
-};
-
-struct Vec2f {
-    double x, y;
-    Vec2f(double x, double y) :
-            x(x), y(y)
-    {
-    }
-    Vec2f() :
-            x(0), y(0)
-    {
-    }
-};
+typedef dmat<2, 1> vec2;
+typedef dmat<3, 1> vec3;
+typedef dmat<3, 3> rmat;
 
 class GLWidget : public QWidget
 {
@@ -56,34 +25,15 @@ public:
 protected:
     void paintEvent ( QPaintEvent * event ) override;
 private:
-    Point project(const Vec3f& point) {
-        Point rect;
-
-        rect.x = point.x * matrix[0]
-                 + point.y * matrix[1]
-                 + point.z * matrix[2];
-        rect.y = point.x * matrix[3]
-                 + point.y * matrix[4]
-                 + point.z * matrix[5];
-
-        return rect;
+    vec2 project(const vec3& point) {
+        vec3 ret = matrix * point;
+        return vec2 { ret(0, 0), ret(1, 0) };
     }
-    Vec3f project2(const Vec3f& point) {
-        Vec3f rect;
-
-        rect.x = point.x * matrix[0]
-                 + point.y * matrix[1]
-                 + point.z * matrix[2];
-        rect.y = point.x * matrix[3]
-                 + point.y * matrix[4]
-                 + point.z * matrix[5];
-        rect.z = point.x * matrix[6]
-                 + point.y * matrix[7]
-                 + point.z * matrix[8];
-        return rect;
+    vec3 project2(const vec3& point) {
+        return matrix * point;
     }
     void project_quad_texture();
-    double matrix[9];
+    rmat matrix;
     QImage front;
     QImage back;
     QImage texture;
