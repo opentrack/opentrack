@@ -18,7 +18,7 @@ GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
-    rotateBy(0, 0, 0);
+    rotateBy(0, 0, 0, 0, 0, 0);
 }
 
 GLWidget::~GLWidget()
@@ -31,7 +31,7 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
     p.drawImage(event->rect(), texture);
 }
 
-void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
+void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
 
     double c1 = cos(yAngle / 57.295781);
@@ -47,7 +47,8 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle)
         s1*s3-c1*c3*s2,  c3*s1+c1*s2*s3,  c1*c2,
     };
     
-    matrix = rmat(foo);
+    rotation = rmat(foo);
+    translation = vec3({x, y, z});
 
     update();
 }
@@ -109,7 +110,7 @@ static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
 void GLWidget::project_quad_texture() {
     const int sx = width(), sy = height();
     vec2 pt[4];
-    static vec3 corners[] = {
+    static const vec3 corners[] = {
         vec3({0., 0., 0.}),
         vec3({sx-1., 0., 0.}),
         vec3({0., sy-1., 0.}),
@@ -136,7 +137,7 @@ void GLWidget::project_quad_texture() {
     QImage& tex = dir < 0 ? back : front;
     
     int ow = tex.width(), oh = tex.height();
-       
+
     vec2 p2[4];
 
     for (int i = 0; i < 4; i++)
@@ -194,4 +195,23 @@ void GLWidget::project_quad_texture() {
             }
         }
     this->texture = texture;
+}
+
+vec2 GLWidget::project(const vec3 &point)
+{
+    vec3 ret = rotation * point;
+    double z = std::max(.75, 1. + translation(2,0)/-60.);
+    int w = width(), h = height();
+    double x = w * translation(0, 0) / 2. / -40.;
+    if (abs(x) > w/2)
+        x = x > 0 ? w/2 : w/-2;
+    double y = h * translation(1, 0) / 2. / -40.;
+    if (abs(y) > h/2)
+        y = y > 0 ? h/2 : h/-2;
+    return vec2 { z * (ret(0, 0) + x), z * (ret(1, 0) + y) };
+}
+
+vec3 GLWidget::project2(const vec3 &point)
+{
+    return rotation * point;
 }
