@@ -258,7 +258,7 @@ void MainWindow::stopTracker( ) {
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
-    ui.pose_display->rotateBy(0, 0, 0);
+    ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
 
     if (pTrackerDialog)
     {
@@ -290,7 +290,8 @@ void MainWindow::stopTracker( ) {
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll]);
+    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll],
+                              mapped[TX], mapped[TY], mapped[TZ]);
 
     if (mapping_widget)
         mapping_widget->update();

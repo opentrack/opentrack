@@ -21,19 +21,15 @@ class GLWidget : public QWidget
 public:
     GLWidget(QWidget *parent);
     ~GLWidget();
-    void rotateBy(double xAngle, double yAngle, double zAngle);
+    void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 protected:
     void paintEvent ( QPaintEvent * event ) override;
 private:
-    vec2 project(const vec3& point) {
-        vec3 ret = matrix * point;
-        return vec2 { ret(0, 0), ret(1, 0) };
-    }
-    vec3 project2(const vec3& point) {
-        return matrix * point;
-    }
+    vec2 project(const vec3& point);
+    vec3 project2(const vec3& point);
     void project_quad_texture();
-    rmat matrix;
+    rmat rotation;
+    vec3 translation;
     QImage front;
     QImage back;
     QImage texture;
