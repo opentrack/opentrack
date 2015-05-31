@@ -192,6 +192,9 @@ void Tracker::run()
     auto last_time = cv::getTickCount();
     int cur_fps = 0;
     int last_fps = 0;
+    
+    std::vector<int> box_sizes { 5, 7, 9, 11 };
+    int box_idx = 0;
 
     while (!stop)
     {
@@ -204,7 +207,7 @@ void Tracker::run()
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
         const int scale = grayscale.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(scale > 1 ? 7 : 5, 4);
+        detector.setThresholdParams(box_sizes[box_idx], 5);
 
         const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * s.fov * HT_PI / 180);
         const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * s.fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
@@ -225,6 +228,7 @@ void Tracker::run()
 
         if (last_roi.width > 0 && last_roi.height)
         {
+            detector.setThresholdParams(box_sizes[box_idx], 5);
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
 
@@ -244,6 +248,9 @@ void Tracker::run()
 
         if (!roi_valid)
         {
+            box_idx++;
+            box_idx %= box_sizes.size();
+            detector.setThresholdParams(box_sizes[box_idx], 5);
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
