@@ -17,9 +17,10 @@
 #endif
 #include <string>
 
+#ifndef OPENTRACK_API
 // ----------------------------------------------------------------------------
 void get_camera_device_names(std::vector<std::string>& device_names);
-
+#endif
 
 // ----------------------------------------------------------------------------
 struct CamInfo
