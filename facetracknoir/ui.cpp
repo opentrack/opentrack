@@ -385,7 +385,7 @@ void MainWindow::showFilterSettings() {
 }
 
 void MainWindow::showKeyboardShortcuts() {
-    shortcuts_widget = std::make_shared<KeyboardShortcutDialog>();
+    shortcuts_widget = std::make_shared<OptionsDialog>();
     shortcuts_widget->setWindowFlags(Qt::Dialog);
     connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
     shortcuts_widget->show();

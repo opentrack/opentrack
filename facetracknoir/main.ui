@@ -903,7 +903,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Keys</string>
+                <string>Options</string>
                </property>
                <property name="icon">
                 <iconset resource="ui-res.qrc">

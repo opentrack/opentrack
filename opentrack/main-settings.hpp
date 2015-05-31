@@ -27,7 +27,7 @@ struct main_settings : opts {
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
-    value<int> camera_yaw, camera_pitch;
+    value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup;
     main_settings() :
         opts("opentrack-ui"),
@@ -46,6 +46,7 @@ struct main_settings : opts {
         tray_enabled(b, "use-system-tray", false),
         camera_yaw(b, "camera-yaw", 0),
         camera_pitch(b, "camera-pitch", 0),
+        camera_roll(b, "camera-roll", 0),
         center_at_startup(b, "center-at-startup", true)
     {}
 };

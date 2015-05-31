@@ -1,6 +1,6 @@
-#include "shortcut-dialog.hpp"
+#include "options-dialog.hpp"
 
-KeyboardShortcutDialog::KeyboardShortcutDialog()
+OptionsDialog::OptionsDialog()
 {
     ui.setupUi( this );
 
@@ -31,9 +31,37 @@ KeyboardShortcutDialog::KeyboardShortcutDialog()
     tie_setting(s.s_main.tray_enabled, ui.trayp);
     
     tie_setting(s.s_main.center_at_startup, ui.center_at_startup);
+    
+    tie_setting(s.s_main.tcomp_p, ui.tcomp_enable);
+    tie_setting(s.s_main.tcomp_tz, ui.tcomp_rz);
+
+    tie_setting(s.s_main.a_x.zero, ui.pos_tx);
+    tie_setting(s.s_main.a_y.zero, ui.pos_ty);
+    tie_setting(s.s_main.a_z.zero, ui.pos_tz);
+    tie_setting(s.s_main.a_yaw.zero, ui.pos_rx);
+    tie_setting(s.s_main.a_pitch.zero, ui.pos_ry);
+    tie_setting(s.s_main.a_roll.zero, ui.pos_rz);
+
+    tie_setting(s.s_main.a_yaw.invert, ui.invert_yaw);
+    tie_setting(s.s_main.a_pitch.invert, ui.invert_pitch);
+    tie_setting(s.s_main.a_roll.invert, ui.invert_roll);
+    tie_setting(s.s_main.a_x.invert, ui.invert_x);
+    tie_setting(s.s_main.a_y.invert, ui.invert_y);
+    tie_setting(s.s_main.a_z.invert, ui.invert_z);
+
+    tie_setting(s.s_main.a_yaw.src, ui.src_yaw);
+    tie_setting(s.s_main.a_pitch.src, ui.src_pitch);
+    tie_setting(s.s_main.a_roll.src, ui.src_roll);
+    tie_setting(s.s_main.a_x.src, ui.src_x);
+    tie_setting(s.s_main.a_y.src, ui.src_y);
+    tie_setting(s.s_main.a_z.src, ui.src_z);
+    
+    tie_setting(s.s_main.camera_yaw, ui.camera_yaw);
+    tie_setting(s.s_main.camera_pitch, ui.camera_pitch);
+    tie_setting(s.s_main.camera_roll, ui.camera_roll);
 }
 
-void KeyboardShortcutDialog::doOK() {
+void OptionsDialog::doOK() {
     s.b->save();
     s.s_main.b->save();
     ui.game_detector->save();
@@ -41,7 +69,7 @@ void KeyboardShortcutDialog::doOK() {
     emit reload();
 }
 
-void KeyboardShortcutDialog::doCancel() {
+void OptionsDialog::doCancel() {
     s.b->reload();
     s.s_main.b->reload();
     ui.game_detector->revert();

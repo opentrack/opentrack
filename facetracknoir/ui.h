@@ -54,7 +54,7 @@
 #include "opentrack/work.hpp"
 #include "opentrack/state.hpp"
 #include "curve-config.h"
-#include "shortcut-dialog.hpp"
+#include "options-dialog.hpp"
 #include "process_detector.h"
 
 using namespace options;
@@ -67,7 +67,7 @@ class MainWindow : public QMainWindow, private State
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
     QTimer det_timer;
-    mem<KeyboardShortcutDialog> shortcuts_widget;
+    mem<OptionsDialog> shortcuts_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
