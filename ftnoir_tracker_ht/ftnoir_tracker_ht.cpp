@@ -115,7 +115,7 @@ void Tracker::load_settings(ht_config_t* config)
     config->pyrlk_pyramids = 0;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
     config->max_keypoints = 150;
-    config->keypoint_distance = 5;
+    config->keypoint_distance = 3.5;
     config->force_fps = nframes;
     config->camera_index = s.camera_idx - 1;
     config->ransac_num_iters = 100;
