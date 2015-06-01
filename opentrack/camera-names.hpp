@@ -13,15 +13,21 @@
 #   include <unistd.h>
 #endif
 
+// template to allow compiler coalesce function at linking with multiple definitions
+template<typename = int>
 QList<QString> get_camera_names() {
     QList<QString> ret;
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+        qDebug() << "failed CoInitializeEx" << hr;
     ICreateDevEnum *pSysDevEnum = NULL;
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
     {
+        qDebug() << "failed CLSID_SystemDeviceEnum" << hr;
         return ret;
     }
     // Obtain a class enumerator for the video compressor category.
@@ -60,6 +66,9 @@ QList<QString> get_camera_names() {
         }
         pEnumCat->Release();
     }
+    else
+        qDebug() << "failed CLSID_VideoInputDeviceCategory" << hr;
+    
     pSysDevEnum->Release();
 #else
     for (int i = 0; i < 16; i++) {
@@ -72,5 +81,15 @@ QList<QString> get_camera_names() {
         }
     }
 #endif
+    return ret;
+}
+
+template<typename = int>
+int camera_name_to_index(const QString &name)
+{
+    auto list = get_camera_names();
+    int ret = list.indexOf(name);
+    if (ret < 0)
+        ret = 0;
     return ret;
 }
