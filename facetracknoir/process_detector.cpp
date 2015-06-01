@@ -149,8 +149,33 @@ void process_detector::remove()
 #include <windows.h>
 #include <TlHelp32.h>
 
+static QStringList get_all_executable_names()
+{
+    QStringList ret;
+    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (h == INVALID_HANDLE_VALUE)
+        return ret;
+    
+    PROCESSENTRY32 e;
+    e.dwSize = sizeof(e);
+
+    if (Process32First(h, &e) != TRUE)
+    {
+        CloseHandle(h);
+        return ret;
+    }
+    
+    do {
+        ret.append(e.szExeFile);
+    } while (Process32Next(h, &e) == TRUE);
+        
+    CloseHandle(h);
+    
+    return ret;
+}
+
 bool process_detector_worker::should_stop()
-{   
+{
     if (last_exe_name == "")
         return false;
  
@@ -162,34 +187,12 @@ bool process_detector_worker::should_stop()
         return false;
     }
     
-    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (h == INVALID_HANDLE_VALUE)
+    QStringList exe_list = get_all_executable_names();
+    
+    if (exe_list.contains(last_exe_name))
         return false;
     
-    PROCESSENTRY32 e;
-
-    if (Process32First(h, &e) == TRUE)
-    {
-        QString exe_name(e.szExeFile);
-        if (exe_name == last_exe_name)
-        {
-            CloseHandle(h);
-            return false;
-        }
-    }
-    
-    while (Process32Next(h, &e) == TRUE)
-    {
-        QString exe_name(e.szExeFile);
-        if (exe_name == last_exe_name)
-        {
-            CloseHandle(h);
-            return false;
-        }
-    }
-    
     last_exe_name = "";
-    CloseHandle(h);
     
     return true;
 }
@@ -204,38 +207,22 @@ bool process_detector_worker::config_to_start(QString& str)
     }
     
     auto filenames = s.split_process_names();
+    QStringList exe_list = get_all_executable_names();
     
-    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (h == INVALID_HANDLE_VALUE)
+    // assuming manual stop by user button click.
+    // don't automatically start again while the same process is running.
+    if (last_exe_name != "" && exe_list.contains(last_exe_name))
         return false;
     
-    PROCESSENTRY32 e;
-
-    if (Process32First(h, &e) == TRUE)
+    for (auto& name : exe_list)
     {
-        QString exe_name(e.szExeFile);
-        if (filenames.contains(exe_name))
+        if (filenames.contains(name))
         {
-            str = filenames[exe_name];
-            last_exe_name = exe_name;
-            CloseHandle(h);
+            last_exe_name = name;
+            str = filenames[name];
             return true;
         }
     }
-    
-    while (Process32Next(h, &e) == TRUE)
-    {
-        QString exe_name(e.szExeFile);
-        if (filenames.contains(exe_name))
-        {
-            str = filenames[exe_name];
-            last_exe_name = exe_name;
-            CloseHandle(h);
-            return true;
-        }
-    }
-
-    CloseHandle(h);
     
     return false;
 }
