@@ -54,10 +54,6 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, d
 }
 
 
-static __inline double dot(const vec2& p1, const vec2& p2) {
-    return p1.x() * p2.x() + p1.y() * p2.y();
-}
-
 class Triangle {
 public:
     Triangle(const vec2& p1,
@@ -67,16 +63,16 @@ public:
         origin = p1;
         v0 = vec2({ p3.x() - p1.x(), p3.y() - p1.y() });
         v1 = vec2({ p2.x() - p1.x(), p2.y() - p1.y() });
-        dot00 = dot(v0, v0);
-        dot01 = dot(v0, v1);
-        dot11 = dot(v1, v1);
+        dot00 = v0.dot(v0);
+        dot01 = v0.dot(v1);
+        dot11 = v1.dot(v1);
         invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
     }
     bool barycentric_coords(const vec2& px, vec2& uv) const
     {
         vec2 v2({ px.x() - origin.x(), px.y() - origin.y() });
-        double dot12 = dot(v1, v2);
-        double dot02 = dot(v0, v2);
+        double dot12 = v1.dot(v2);
+        double dot02 = v0.dot(v2);
         double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
         double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
         uv = vec2({u, v});
@@ -88,19 +84,12 @@ private:
     vec2 v0, v1, origin;
 };
 
-static __inline vec3 cross(const vec3& p1, const vec3& p2)
-{
-    return vec3({p1.y() * p2.z() - p2.y() * p1.z(),
-                 p2.x() * p1.z() - p1.x() * p2.z(),
-                 p1.x() * p2.y() - p1.y() * p2.x()});
-}
-
 static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
     vec3 u({p2.x() - p1.x(), p2.y() - p1.y(), p2.z() - p1.z()});
     vec3 v({p3.x() - p1.x(), p3.y() - p1.y(), p3.z() - p1.z()});
      
-    vec3 tmp = cross(u, v);
+    vec3 tmp = u.cross(v);
     
     double i = 1./sqrt(tmp.x() * tmp.x() + tmp.y() * tmp.y() + tmp.z() * tmp.z());
     
