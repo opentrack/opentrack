@@ -55,7 +55,7 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, d
 
 
 static __inline double dot(const vec2& p1, const vec2& p2) {
-    return p1(0,0) * p2(0,0) + p1(1,0) * p2(1,0);
+    return p1.x() * p2.x() + p1.y() * p2.y();
 }
 
 class Triangle {
@@ -65,8 +65,8 @@ public:
              const vec2& p3)
     {
         origin = p1;
-        v0 = vec2({ p3(0,0) - p1(0,0), p3(1,0) - p1(1,0) });
-        v1 = vec2({ p2(0,0) - p1(0,0), p2(1,0) - p1(1,0) });
+        v0 = vec2({ p3.x() - p1.x(), p3.y() - p1.y() });
+        v1 = vec2({ p2.x() - p1.x(), p2.y() - p1.y() });
         dot00 = dot(v0, v0);
         dot01 = dot(v0, v1);
         dot11 = dot(v1, v1);
@@ -74,7 +74,7 @@ public:
     }
     bool barycentric_coords(const vec2& px, vec2& uv) const
     {
-        vec2 v2({ px(0,0) - origin(0,0), px(1,0) - origin(1,0) });
+        vec2 v2({ px.x() - origin.x(), px.y() - origin.y() });
         double dot12 = dot(v1, v2);
         double dot02 = dot(v0, v2);
         double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
@@ -90,21 +90,21 @@ private:
 
 static __inline vec3 cross(const vec3& p1, const vec3& p2)
 {
-    return vec3({p1(1,0) * p2(2,0) - p2(1,0) * p1(2,0),
-                 p2(0,0) * p1(2,0) - p1(0,0) * p2(2,0),
-                 p1(0,0) * p2(1,0) - p1(1,0) * p2(0,0)});
+    return vec3({p1.y() * p2.z() - p2.y() * p1.z(),
+                 p2.x() * p1.z() - p1.x() * p2.z(),
+                 p1.x() * p2.y() - p1.y() * p2.x()});
 }
 
 static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
-    vec3 u({p2(0,0) - p1(0,0), p2(1,0) - p1(1,0), p2(2,0) - p1(2,0)});
-    vec3 v({p3(0,0) - p1(0,0), p3(1,0) - p1(1,0), p3(2,0) - p1(2,0)});
+    vec3 u({p2.x() - p1.x(), p2.y() - p1.y(), p2.z() - p1.z()});
+    vec3 v({p3.x() - p1.x(), p3.y() - p1.y(), p3.z() - p1.z()});
      
     vec3 tmp = cross(u, v);
     
-    double i = 1./sqrt(tmp(0,0) * tmp(0,0) + tmp(1,0) * tmp(1,0) + tmp(2,0) * tmp(2,0));
+    double i = 1./sqrt(tmp.x() * tmp.x() + tmp.y() * tmp.y() + tmp.z() * tmp.z());
     
-    return vec3({i * tmp(0,0), i * tmp(1,0), i * tmp(2,0)});
+    return vec3({i * tmp.x(), i * tmp.y(), i * tmp.z()});
 }
 
 void GLWidget::project_quad_texture() {
@@ -118,9 +118,9 @@ void GLWidget::project_quad_texture() {
     };
     
     for (int i = 0; i < 4; i++) {
-        pt[i] = project(vec3({corners[i](0,0) - sx/2., corners[i](1,0) - sy/2., 0}));
-        pt[i](0, 0) += sx/2.;
-        pt[i](1, 0) += sy/2.;
+        pt[i] = project(vec3({corners[i].x() - sx/2., corners[i].y() - sy/2., 0}));
+        pt[i].x() += sx/2.;
+        pt[i].y() += sy/2.;
     }
     
     vec3 normal1({0, 0, 1});
@@ -132,7 +132,7 @@ void GLWidget::project_quad_texture() {
         normal2 = normal(foo[0], foo[1], foo[2]);
     }
     
-    double dir = normal1(0,0) * normal2(0,0) + normal1(1,0) * normal2(1,0) + normal1(2,0) * normal2(2,0);
+    double dir = normal1.x() * normal2.x() + normal1.y() * normal2.y() + normal1.z() * normal2.z();
     
     QImage& tex = dir < 0 ? back : front;
     
@@ -141,7 +141,7 @@ void GLWidget::project_quad_texture() {
     vec2 p2[4];
 
     for (int i = 0; i < 4; i++)
-        p2[i] = vec2({pt[i](0,0), pt[i](1,0)});
+        p2[i] = vec2({pt[i].x(), pt[i].y()});
     QImage texture(QSize(sx, sy), QImage::Format_RGB888);
     QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
     texture.fill(bgColor);
@@ -176,12 +176,12 @@ void GLWidget::project_quad_texture() {
                 vec2 coords;
                 if (triangles[i].barycentric_coords(pos, coords))
                 {
-                    int px = origs[i][0](0,0)
-                            + coords(0,0) * (origs[i][2](0,0) - origs[i][0](0,0))
-                            + coords(1,0) * (origs[i][1](0,0) - origs[i][0](0,0));
-                    int py = origs[i][0](1,0)
-                            + coords(0,0) * (origs[i][2](1,0) - origs[i][0](1,0))
-                            + coords(1,0) * (origs[i][1](1,0) - origs[i][0](1,0));
+                    int px = origs[i][0].x()
+                            + coords.x() * (origs[i][2].x() - origs[i][0].x())
+                            + coords.y() * (origs[i][1].x() - origs[i][0].x());
+                    int py = origs[i][0].y()
+                            + coords.x() * (origs[i][2].y() - origs[i][0].y())
+                            + coords.y() * (origs[i][1].y() - origs[i][0].y());
                     int r = orig[py * orig_pitch + px * orig_depth + 2];
                     int g = orig[py * orig_pitch + px * orig_depth + 1];
                     int b = orig[py * orig_pitch + px * orig_depth + 0];
@@ -200,15 +200,15 @@ void GLWidget::project_quad_texture() {
 vec2 GLWidget::project(const vec3 &point)
 {
     vec3 ret = rotation * point;
-    double z = std::max(.75, 1. + translation(2,0)/-60.);
+    double z = std::max(.75, 1. + translation.z()/-60.);
     int w = width(), h = height();
-    double x = w * translation(0, 0) / 2. / -40.;
+    double x = w * translation.x() / 2. / -40.;
     if (abs(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
-    double y = h * translation(1, 0) / 2. / -40.;
+    double y = h * translation.y() / 2. / -40.;
     if (abs(y) > h/2)
         y = y > 0 ? h/2 : h/-2;
-    return vec2 { z * (ret(0, 0) + x), z * (ret(1, 0) + y) };
+    return vec2 { z * (ret.x() + x), z * (ret.y() + y) };
 }
 
 vec3 GLWidget::project2(const vec3 &point)
