@@ -26,14 +26,15 @@ using namespace options;
 
 struct settings : opts {
     value<double> fov, headpos_x, headpos_y, headpos_z;
-    value<int> camera_index, force_fps, resolution;
+    value<QString> camera_name;
+    value<int> force_fps, resolution;
     settings() :
         opts("aruco-tracker"),
         fov(b, "field-of-view", 56),
         headpos_x(b, "headpos-x", 0),
         headpos_y(b, "headpos-y", 0),
         headpos_z(b, "headpos-z", 0),
-        camera_index(b, "camera-index", 0),
+        camera_name(b, "camera-name", ""),
         force_fps(b, "force-fps", 0),
         resolution(b, "force-resolution", 0)
     {}

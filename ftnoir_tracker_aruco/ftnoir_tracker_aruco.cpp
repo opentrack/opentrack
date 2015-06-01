@@ -97,7 +97,7 @@ void Tracker::run()
         fps = 200;
         break;
     }
-    camera = cv::VideoCapture(s.camera_index);
+    camera = cv::VideoCapture(camera_name_to_index(s.camera_name));
     if (res.width)
     {
         camera.set(CV_CAP_PROP_FRAME_WIDTH, res.width);
@@ -375,7 +375,7 @@ TrackerControls::TrackerControls()
     ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     ui.cameraName->addItems(get_camera_names());
-    tie_setting(s.camera_index, ui.cameraName);
+    tie_setting(s.camera_name, ui.cameraName);
     tie_setting(s.resolution, ui.resolution);
     tie_setting(s.force_fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);

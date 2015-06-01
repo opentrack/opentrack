@@ -6,6 +6,7 @@
  */
 
 #include "ftnoir_tracker_pt.h"
+#include "opentrack/camera-names.hpp"
 #include <QHBoxLayout>
 #include <cmath>
 #include <QDebug>
@@ -129,7 +130,7 @@ void Tracker::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
     QMutexLocker lock(&mutex);
-    camera.set_device_index(s.cam_index);
+    camera.set_device_index(camera_name_to_index(s.camera_name));
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
     qDebug()<<"Tracker::apply ends";

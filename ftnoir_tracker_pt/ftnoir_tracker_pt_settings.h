@@ -15,8 +15,8 @@ using namespace options;
 
 struct settings : opts
 {
-    value<int> cam_index,
-               cam_res_x,
+    value<QString> camera_name;
+    value<int> cam_res_x,
                cam_res_y,
                cam_fps,
                threshold,
@@ -38,7 +38,7 @@ struct settings : opts
 
     settings() :
         opts("tracker-pt"),
-        cam_index(b, "camera-index", 0),
+        camera_name(b, "camera-name", ""),
         cam_res_x(b, "camera-res-width", 640),
         cam_res_y(b, "camera-res-height", 480),
         cam_fps(b, "camera-fps", 30),

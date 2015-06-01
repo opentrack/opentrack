@@ -39,7 +39,7 @@ TrackerDialog::TrackerDialog()
     }
 #endif
 
-    tie_setting(s.cam_index, ui.camdevice_combo);
+    tie_setting(s.camera_name, ui.camdevice_combo);
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
