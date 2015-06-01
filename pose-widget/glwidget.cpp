@@ -86,14 +86,14 @@ private:
 
 static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
-    vec3 u({p2.x() - p1.x(), p2.y() - p1.y(), p2.z() - p1.z()});
-    vec3 v({p3.x() - p1.x(), p3.y() - p1.y(), p3.z() - p1.z()});
+    vec3 u = p2 - p1;
+    vec3 v = p3 - p1;
      
     vec3 tmp = u.cross(v);
     
-    double i = 1./sqrt(tmp.x() * tmp.x() + tmp.y() * tmp.y() + tmp.z() * tmp.z());
+    double i = 1./sqrt(tmp.dot(tmp));
     
-    return vec3({i * tmp.x(), i * tmp.y(), i * tmp.z()});
+    return tmp * i;
 }
 
 void GLWidget::project_quad_texture() {
@@ -121,7 +121,7 @@ void GLWidget::project_quad_texture() {
         normal2 = normal(foo[0], foo[1], foo[2]);
     }
     
-    double dir = normal1.x() * normal2.x() + normal1.y() * normal2.y() + normal1.z() * normal2.z();
+    double dir = normal1.dot(normal2);
     
     QImage& tex = dir < 0 ? back : front;
     
