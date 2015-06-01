@@ -99,6 +99,7 @@ void process_detector::add_items()
 process_detector::process_detector(QWidget* parent) : QWidget(parent)
 {
     ui.setupUi(this);
+    setFixedSize(size());
     connect(ui.add, SIGNAL(pressed()), this, SLOT(add()));
     connect(ui.remove, SIGNAL(pressed()), this, SLOT(remove()));
     
