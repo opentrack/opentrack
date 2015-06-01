@@ -49,7 +49,7 @@ void Tracker::load_settings(ht_config_t* config)
     config->max_keypoints = 150;
     config->keypoint_distance = 3.5;
     config->force_fps = nframes;
-    config->camera_index = s.camera_idx - 1;
+    config->camera_index = camera_name_to_index(s.camera_name);
     config->ransac_num_iters = 100;
     config->ransac_max_reprojection_error = 10;
     config->ransac_max_inlier_error = 10;
@@ -164,7 +164,7 @@ TrackerControls::TrackerControls()
     QList<QString> names = get_camera_names();
     names.prepend("Any available");
     ui.cameraName->addItems(names);
-    tie_setting(s.camera_idx, ui.cameraName);
+    tie_setting(s.camera_name, ui.cameraName);
     tie_setting(s.fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
     tie_setting(s.resolution, ui.resolution);

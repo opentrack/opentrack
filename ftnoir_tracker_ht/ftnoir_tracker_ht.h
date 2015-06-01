@@ -20,12 +20,13 @@ using namespace options;
 
 struct settings : opts {
     value<double> fov;
-    value<int> fps, camera_idx, resolution;
+    value<QString> camera_name;
+    value<int> fps, resolution;
     settings() :
         opts("HT-Tracker"),
         fov(b, "fov", 56),
+        camera_name(b, "camera-name", ""),
         fps(b, "fps", 0),
-        camera_idx(b, "camera-index", 0),
         resolution(b, "resolution", 0)
     {}
 };
