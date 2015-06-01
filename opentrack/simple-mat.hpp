@@ -130,7 +130,7 @@ struct Mat
         return ret;
     }
     
-    Mat<num, w_, h_> operator*(const num& other) const
+    Mat<num, h_, w_> operator*(const num& other) const
     {
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
