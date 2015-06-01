@@ -1,39 +1,117 @@
 #pragma once
 #include <initializer_list>
+#include <type_traits>
 
-template<typename num, int h, int w>
+namespace {
+    // last param to fool SFINAE into overloading
+    template<int i, int j, int ignored>
+    struct equals
+    {
+        enum { value = i == j };
+    };
+    template<int i, int j, int min>
+    struct maybe_add_swizzle
+    {
+        enum { value = (i == 1 || j == 1) && (i >= min || j >= min) };
+    };
+}
+
+template<typename num, int h_, int w_>
 struct Mat
 {
-    num data[h][w];
+    num data[h_][w_];
     
-    Mat<num, h, w> operator+(const Mat<num, h, w>& other) const
+    template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
+    __inline operator()(int i) const { return data[i][0]; }
+    
+    template<int P = h_> typename std::enable_if<equals<P, 1, 1>::value, num>::type
+    __inline operator()(int i) const { return data[0][i]; }
+    
+    template<int Q = w_> typename std::enable_if<equals<Q, 1, 2>::value, num&>::type
+    __inline operator()(int i) { return data[i][0]; }
+    
+    template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
+    __inline operator()(int i) { return data[0][i]; }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
+    __inline x() const { return operator()(0); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num>::type
+    __inline y() const { return operator()(1); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num>::type
+    __inline z() const { return operator()(2); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num>::type
+    __inline w() const { return operator()(3); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num&>::type
+    __inline x() { return operator()(0); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num&>::type
+    __inline y() { return operator()(1); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num&>::type
+    __inline z() { return operator()(2); }
+    
+    template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
+    __inline w() { return operator()(3); }
+    
+    Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
     {
-        Mat<num, h, w> ret;
-        for (int j = 0; j < h; j++)
+        Mat<num, h_, w_> ret;
+        for (int j = 0; j < h_; j++)
             for (int i = 0; i < w; i++)
                 ret(j, i) = this->operator ()(j, i) + other(j, i);
         return ret;
     }
     
-    Mat<num, h, w> operator-(const Mat<num, h, w>& other) const
+    Mat<num, h_, w_> operator-(const Mat<num, h_, w_>& other) const
     {
-        Mat<num, h, w> ret;
-        for (int j = 0; j < h; j++)
-            for (int i = 0; i < w; i++)
+        Mat<num, h_, w_> ret;
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
                 ret(j, i) = this->operator ()(j, i) - other(j, i);
         return ret;
     }
-
-    template<int p>
-    Mat<num, w, p> operator*(const Mat<num, w, p>& other) const
+    
+    Mat<num, h_, w_> operator+(const num& other) const
     {
-        Mat<num, w, p> ret;
-        for (int j = 0; j < w; j++)
+        Mat<num, h_, w_> ret;
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w; i++)
+                ret(j, i) = this->operator ()(j, i) + other;
+        return ret;
+    }
+    
+    Mat<num, h_, w_> operator-(const num& other) const
+    {
+        Mat<num, h_, w_> ret;
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                ret(j, i) = this->operator ()(j, i) - other;
+        return ret;
+    }
+    
+    Mat<num, w_, h_> operator*(const num& other) const
+    {
+        Mat<num, h_, w_> ret;
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                ret(j, i) = operator()(j, i) * other;
+        return ret;
+    }
+    
+    template<int p>
+    Mat<num, w_, p> operator*(const Mat<num, w_, p>& other) const
+    {
+        Mat<num, w_, p> ret;
+        for (int j = 0; j < w_; j++)
             for (int i = 0; i < p; i++)
             {
                 num sum = num(0);
 
-                for (int k = 0; k < h; k++)
+                for (int k = 0; k < h_; k++)
                     sum += data[j][k]*other.data[k][i];
 
                 ret.data[j][i] = sum;
@@ -42,59 +120,59 @@ struct Mat
         return ret;
     }
 
-    num operator()(int j, int i) const { return data[j][i]; }
-    num& operator()(int j, int i) { return data[j][i]; }
+    __inline num operator()(int j, int i) const { return data[j][i]; }
+    __inline num& operator()(int j, int i) { return data[j][i]; }
 
     Mat(std::initializer_list<num>&& list)
     {
         auto iter = list.begin();
-        for (int i = 0; i < h; i++)
-            for (int j = 0; j < w; j++)
+        for (int i = 0; i < h_; i++)
+            for (int j = 0; j < w_; j++)
                 data[i][j] = *iter++;
     }
 
     Mat()
     {
-        for (int j = 0; j < h; j++)
-            for (int i = 0; i < w; i++)
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
                 data[j][i] = 0;
     }
 
     Mat(const num* mem)
     {
-        for (int j = 0; j < h; j++)
-            for (int i = 0; i < w; i++)
-                data[j][i] = mem[i*h+j];
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = mem[i*h_+j];
     }
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
 
-    static Mat<num, h, h> eye()
+    static Mat<num, h_, h_> eye()
     {
-        Mat<num, h, h> ret;
-        for (int j = 0; j < h; j++)
-            for (int i = 0; i < w; i++)
+        Mat<num, h_, h_> ret;
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
                 ret.data[j][i] = 0;
 
-        for (int i = 0; i < h; i++)
+        for (int i = 0; i < h_; i++)
             ret.data[i][i] = 1;
 
         return ret;
     }
 
-    Mat<num, w, h> t() const
+    Mat<num, w_, h_> t() const
     {
-        Mat<num, w, h> ret;
+        Mat<num, w_, h_> ret;
 
-        for (int j = 0; j < h; j++)
-            for (int i = 0; i < w; i++)
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
                 ret.data[i][j] = data[j][i];
 
         return ret;
     }
     
-    template<int h_, int w_> using dmat = Mat<double, h_, w_>;
+    template<int h__, int w__> using dmat = Mat<double, h__, w__>;
     
     // http://stackoverflow.com/a/18436193
     static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
@@ -151,5 +229,5 @@ struct Mat
         return dmat<3, 3>(foo);
     }
 };
-
-template<int h, int w> using dmat = Mat<double, h, w>;
+   
+template<int h_, int w_> using dmat = Mat<double, h_, w_>;
