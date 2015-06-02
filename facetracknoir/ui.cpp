@@ -81,7 +81,7 @@ MainWindow::MainWindow() :
     kbd_quit.setEnabled(true);
     
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
-    det_timer.start(3000);
+    det_timer.start(1000);
 
     ensure_tray();
 }
