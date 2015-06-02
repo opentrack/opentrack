@@ -213,6 +213,8 @@ bool process_detector_worker::config_to_start(QString& str)
     // don't automatically start again while the same process is running.
     if (last_exe_name != "" && exe_list.contains(last_exe_name))
         return false;
+    // it's gone, we can start automatically again
+    last_exe_name = "";
     
     for (auto& name : exe_list)
     {
