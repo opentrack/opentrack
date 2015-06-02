@@ -124,6 +124,8 @@ void Tracker::run()
     
     std::vector<int> box_sizes { 5, 7, 9, 11 };
     int box_idx = 0;
+    double failed = 0;
+    const double max_failed = .334;
 
     while (!stop)
     {
@@ -164,6 +166,7 @@ void Tracker::run()
             if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
+                failed = 0;
                 auto& m = markers.at(0);
                 for (int i = 0; i < 4; i++)
                 {
@@ -174,11 +177,27 @@ void Tracker::run()
                 roi_valid = true;
             }
         }
+        
+        auto time = cv::getTickCount();
+
+        if ((long) (time / freq) != (long) (last_time / freq))
+        {
+            last_fps = cur_fps;
+            cur_fps = 0;
+            last_time = time;
+        }
+        
+        const double dt = (time - last_time) / freq;
 
         if (!roi_valid)
         {
-            box_idx++;
-            box_idx %= box_sizes.size();
+            failed += dt;
+            if (failed > max_failed)
+            {
+                box_idx++;
+                box_idx %= box_sizes.size();
+                failed = 0;
+            }
             detector.setThresholdParams(box_sizes[box_idx], 5);
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
@@ -188,15 +207,6 @@ void Tracker::run()
             const auto& m = markers.at(0);
             for (int i = 0; i < 4; i++)
                 cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale, 8);
-        }
-
-        auto time = cv::getTickCount();
-
-        if ((long) (time / freq) != (long) (last_time / freq))
-        {
-            last_fps = cur_fps;
-            cur_fps = 0;
-            last_time = time;
         }
 
         cur_fps++;
