@@ -22,11 +22,10 @@ set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 find_package(OpenCV)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
 find_package(Qt5 COMPONENTS SerialPort QUIET)
-include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
+include_directories(SYSTEM ${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
 set(my-qt-deps)
@@ -178,30 +177,21 @@ endif()
 
 # ----
 
-if(SDK_XPLANE)
-    INCLUDE_DIRECTORIES(${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
-endif()
-
 if(WIN32)
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
-    SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+    SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> --use-temp-file -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
   endif()
   ENABLE_LANGUAGE(RC)
 endif(WIN32)
 
-if(SDK_FSUIPC AND WIN32)
-    include_directories(${SDK_FSUIPC})
-    link_directories(${SDK_FSUIPC})
-endif()
-
 opentrack_module(opentrack-compat compat)
 opentrack_module(opentrack-xplane-plugin x-plane-plugin)
-#opentrack_module(freetrackclient freetrackclient)
 
 if(SDK_XPLANE)
     # probably librt already included
     add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
+    target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC AND NOT APPLE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin
             PROPERTIES LINK_FLAGS
@@ -230,16 +220,16 @@ add_library(opentrack-csv STATIC ${opentrack-csv-c})
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 
 opentrack_module(opentrack-pose-widget pose-widget)
-include_directories(pose-widget/) # else Qt moc breaks
 opentrack_qt(opentrack-pose-widget)
 
 add_library(opentrack-pose-widget STATIC ${opentrack-pose-widget-all})
+target_include_directories(opentrack-pose-widget PUBLIC pose-widget/) # else Qt moc breaks
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 
 opentrack_module(opentrack-spline-widget qfunctionconfigurator)
-include_directories(qfunctionconfigurator/)
 opentrack_qt(opentrack-spline-widget)
 add_library(opentrack-spline-widget STATIC ${opentrack-spline-widget-all})
+target_include_directories(opentrack-spline-widget PUBLIC qfunctionconfigurator/)
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
 add_library(opentrack-version STATIC opentrack/version.C)
@@ -254,31 +244,33 @@ opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
-    include_directories(${SDK_VJOY})
     set(link-flags)
     if(CMAKE_C_COMPILER_IS_GNUCC)
         set(link-flags "-Wl,--enable-stdcall-fixup")
     endif()
     opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy LINK ${link-flags})
     target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} ${SDK_VJOY}/VJoy.dll)
+    target_include_directories(opentrack-proto-vjoy SYSTEM PUBLIC ${SDK_VJOY})
 endif()
 
 if(SDK_ENABLE_LIBEVDEV)
     opentrack_library(opentrack-proto-libevdev ftnoir_protocol_libevdev)
     pkg_check_modules(libevdev REQUIRED QUIET libevdev)
-    include_directories(${libevdev_INCLUDE_DIRS})
     target_link_libraries(opentrack-proto-libevdev ${libevdev_LIBRARIES})
+    include_directories(opentrack-proto-libevdev SYSTEM PUBLIC ${libevdev_INCLUDE_DIRS})
 endif()
 
 if(SDK_FSUIPC)
     opentrack_library(opentrack-proto-fsuipc ftnoir_protocol_fsuipc)
     target_link_libraries(opentrack-proto-fsuipc ${SDK_FSUIPC}/FSUIPC_User.lib)
+    target_include_directories(opentrack-proto-fsuipc SYSTEM PUBLIC ${SDK_FSUIPC})
+    #target_link_directories(${SDK_FSUIPC})
 endif()
 
 if(SDK_SIMCONNECT)
     opentrack_library(opentrack-proto-simconnect ftnoir_protocol_sc)
-    include_directories(${SDK_SIMCONNECT}/inc)
     target_link_libraries(opentrack-proto-simconnect ${SDK_SIMCONNECT}/lib/SimConnect.lib)
+    include_directories(opentrack-proto-simconnect SYSTEM PUBLIC ${SDK_SIMCONNECT}/inc)
 endif()
 
 if(WIN32)
@@ -295,8 +287,8 @@ endif()
 
 if(Qt5SerialPort_FOUND)
     opentrack_library(opentrack-tracker-hatire ftnoir_tracker_hatire)
-    include_directories(${Qt5SerialPort_INCLUDE_DIRS})
     target_link_libraries(opentrack-tracker-hatire ${Qt5SerialPort_LIBRARIES})
+    target_include_directories(opentrack-tracker-hatire SYSTEM PUBLIC ${Qt5SerialPort_INCLUDE_DIRS})
 endif()
 
 if(SDK_WINE_PREFIX)
@@ -332,11 +324,14 @@ opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 if(OpenCV_FOUND)
     opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
     target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
+    target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     if(SDK_ARUCO_LIBPATH)
         opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
         target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
+        target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
     target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
+    target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 endif()
 
 link_with_dinput8(opentrack-tracker-ht)
@@ -344,8 +339,6 @@ link_with_dinput8(opentrack-tracker-joystick)
 link_with_dinput8(opentrack-tracker-pt)
 
 if(SDK_RIFT)
-    include_directories(${SDK_RIFT}/Include)
-    include_directories(${SDK_RIFT}/Src)
     set(link-flags)
     set(c-flags)
     if(APPLE)
@@ -355,6 +348,7 @@ if(SDK_RIFT)
         set(c-flags "-fno-strict-aliasing")
     endif()
     opentrack_library(opentrack-tracker-rift ftnoir_tracker_rift LINK ${link-flags} COMPILE ${c-flags})
+    target_include_directories(opentrack-tracker-rift SYSTEM PUBLIC ${SDK_RIFT}/Include ${SDK_RIFT}/Src)
     if(WIN32)
         target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/libLibOVR.a winmm setupapi ws2_32 imagehlp wbemuuid)
     else()
@@ -367,9 +361,8 @@ if(SDK_RIFT)
 endif()
 
 if(SDK_HYDRA)
-    include_directories(${SDK_HYDRA}/include)
-    include_directories(${SDK_HYDRA}/include/sixense_utils)
     opentrack_library(opentrack-tracker-hydra ftnoir_tracker_hydra)
+    target_include_directories(opentrack-tracker-hydra SYSTEM PUBLIC ${SDK_HYDRA}/include ${SDK_HYDRA}/include/sixense_utils)
     if(WIN32)
         target_link_libraries(opentrack-tracker-hydra
             "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib"
