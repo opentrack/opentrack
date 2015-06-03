@@ -18,7 +18,7 @@ namespace {
     template<int i1, int j1, int i2, int j2>
     struct is_vector_pair
     {
-        enum { value = i1 == i2 && j1 == 1 && j2 == 1 || j1 == j2 && i1 == 1 && i2 == 1 };
+        enum { value = (i1 == i2 && j1 == 1 && j2 == 1) || (j1 == j2 && i1 == 1 && i2 == 1) };
     };
     template<int i, int j>
     struct vector_len
@@ -28,7 +28,7 @@ namespace {
     template<int a, int b, int c, int d>
     struct is_dim3
     {
-        enum { value = a == 1 && c == 1 && b == 3 && d == 3 || a == 3 && c == 3 && b == 1 && d == 1 };
+        enum { value = (a == 1 && c == 1 && b == 3 && d == 3) || (a == 3 && c == 3 && b == 1 && d == 1) };
         enum { P = a == 1 ? 1 : 3 };
         enum { Q = a == 1 ? 3 : 1 };
     };
