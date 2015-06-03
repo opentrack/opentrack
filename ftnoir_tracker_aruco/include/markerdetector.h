@@ -355,5 +355,5 @@ private:
 
 
 
-};
+}
 #endif
