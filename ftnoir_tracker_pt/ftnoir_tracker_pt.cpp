@@ -96,7 +96,7 @@ void Tracker::run()
                 points.push_back(p_);
             }
             
-            for (int i = 0; i < points.size(); i++)
+            for (unsigned i = 0; i < points.size(); i++)
             {
                 auto& p = points[i];
                 auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
