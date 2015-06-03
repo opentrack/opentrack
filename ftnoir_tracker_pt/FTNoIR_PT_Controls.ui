@@ -358,7 +358,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_secondary">
             <property name="text">
-             <string>Hysteresis</string>
+             <string>Extent</string>
             </property>
             <property name="buddy">
              <cstring>threshold_secondary_slider</cstring>
