@@ -119,21 +119,18 @@ void Tracker::run()
 
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
-    int cur_fps = 0;
-    int last_fps = 0;
-    
+    double cur_fps = 0;
     std::vector<int> box_sizes { 5, 7, 9, 11 };
     int box_idx = 0;
     double failed = 0;
-    const double max_failed = .334;
+    const double max_failed = 1.25;
+    cv::Vec3d rvec, tvec;
 
     while (!stop)
     {
         cv::Mat color;
         if (!camera.read(color))
             continue;
-        auto tm = cv::getTickCount();
-
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
@@ -156,7 +153,13 @@ void Tracker::run()
         const double size_max = 0.4;
 
         bool roi_valid = false;
-
+        
+        auto time = cv::getTickCount();
+        
+        const double dt = (time - last_time) / freq;
+        last_time = time;
+        cur_fps = cur_fps * 0.97 + 0.03 * (dt == 0 ? 0 : 1./dt);
+        
         if (last_roi.width > 0 && last_roi.height)
         {
             detector.setThresholdParams(box_sizes[box_idx], 5);
@@ -166,7 +169,7 @@ void Tracker::run()
             if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
-                failed = 0;
+                failed = std::max(0., failed - dt);
                 auto& m = markers.at(0);
                 for (int i = 0; i < 4; i++)
                 {
@@ -177,17 +180,6 @@ void Tracker::run()
                 roi_valid = true;
             }
         }
-        
-        auto time = cv::getTickCount();
-
-        if ((long) (time / freq) != (long) (last_time / freq))
-        {
-            last_fps = cur_fps;
-            cur_fps = 0;
-            last_time = time;
-        }
-        
-        const double dt = (time - last_time) / freq;
 
         if (!roi_valid)
         {
@@ -209,16 +201,12 @@ void Tracker::run()
                 cv::line(color, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), scale, 8);
         }
 
-        cur_fps++;
-
         char buf[128];
 
         frame = color.clone();
 
-        ::sprintf(buf, "Hz: %d", last_fps);
+        ::sprintf(buf, "Hz: %d", (int)cur_fps);
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale*2);
-        ::sprintf(buf, "Jiffies: %ld", (long) (10000 * (time - tm) / freq));
-        cv::putText(frame, buf, cv::Point(10, 54), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(80, 255, 0), scale*2);
 
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
@@ -241,8 +229,6 @@ void Tracker::run()
             obj_points.at<float>(x4,0)= -size + s.headpos_x;
             obj_points.at<float>(x4,1)= size + s.headpos_y;
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
-
-            cv::Vec3d rvec, tvec;
 
             cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, CV_ITERATIVE);
 
@@ -267,14 +253,11 @@ void Tracker::run()
                 obj_points.at<float>(i, 2) -= s.headpos_z;
             }
 
-            {
-                cv::Mat rvec_, tvec_;
-                cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, CV_ITERATIVE);
-                tvec = tvec_;
-            }
+            cv::Mat rvec_, tvec_;
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, CV_ITERATIVE);
 
             cv::Mat roi_points = obj_points * c_search_window;
-            cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
+            cv::projectPoints(roi_points, rvec_, tvec_, intrinsics, dist_coeffs, roi_projection);
 
             last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
 
@@ -317,8 +300,6 @@ void Tracker::run()
 
                 QMutexLocker lck(&mtx);
 
-                tvec[1] *= -1;
-
                 for (int i = 0; i < 3; i++)
                     pose[i] = tvec(i);
                 pose[Yaw] = euler[1];
@@ -326,7 +307,7 @@ void Tracker::run()
                 pose[Roll] = euler[2];
 
                 r = rmat;
-                t = tvec;
+                t = cv::Vec3d(tvec[0], -tvec[1], tvec[2]);
             }
 
             if (roi_valid)
