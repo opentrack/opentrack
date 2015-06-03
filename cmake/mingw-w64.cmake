@@ -10,6 +10,7 @@ SET(CMAKE_SYSTEM_VERSION 1)
 SET(CMAKE_C_COMPILER   i686-w64-mingw32-gcc)
 SET(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
 set(CMAKE_RC_COMPILER  i686-w64-mingw32-windres)
+set(CMAKE_LINKER  i686-w64-mingw32-ld)
 
 SET(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
 
@@ -19,7 +20,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -flto -fno-use-linker-plugin -march=i686 -mtune=prescott -msse -msse2 -mno-sse3 -mno-avx -frename-registers" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -flto -fno-use-linker-plugin -march=i686 -mtune=corei7-avx -mfpmath=both -msse -msse2 -mno-sse3 -mno-avx -frename-registers" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-msse -msse2 -mno-sse3 -mno-avx -fno-use-linker-plugin -flto" CACHE STRING "" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
