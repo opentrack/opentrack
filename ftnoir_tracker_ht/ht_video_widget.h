@@ -23,7 +23,7 @@ class HTVideoWidget : public QWidget
     Q_OBJECT
 
 public:
-    HTVideoWidget(QWidget *parent) : QWidget(parent), fb(), width(0), height(0) {
+    HTVideoWidget(QWidget *parent) : QWidget(parent), fb(), width(0), height(0), fresh(false) {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
         timer.start(60);
     }
@@ -40,8 +40,9 @@ private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
-    char fb[2048*2048*3];
+    unsigned char fb[2048*2048*3];
     int width,height;
+    bool fresh;
 };
 
 #endif // VIDEOWIDGET_H

@@ -28,6 +28,7 @@ private:
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
+    bool fresh;
 private slots:
     void update_and_repaint(); 
 public:

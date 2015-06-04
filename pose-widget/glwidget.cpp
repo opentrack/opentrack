@@ -145,14 +145,14 @@ void GLWidget::project_quad_texture() {
         Triangle(projected[1][0], projected[1][1], projected[1][2])
     };
   
-    int orig_pitch = tex.bytesPerLine();
-    int dest_pitch = texture.bytesPerLine();
+    const int orig_pitch = tex.bytesPerLine();
+    const int dest_pitch = texture.bytesPerLine();
     
     const unsigned char* orig = tex.bits();
     unsigned char* dest = texture.bits();
     
-    int orig_depth = tex.depth() / 8;
-    int dest_depth = texture.depth() / 8;
+    const int orig_depth = tex.depth() / 8;
+    const int dest_depth = texture.depth() / 8;
     
     /* image breakage? */
     if (orig_depth < 3)
@@ -165,12 +165,13 @@ void GLWidget::project_quad_texture() {
                 vec2 coords;
                 if (triangles[i].barycentric_coords(pos, coords))
                 {
-                    int px = origs[i][0].x()
+                    const int px = origs[i][0].x()
                             + coords.x() * (origs[i][2].x() - origs[i][0].x())
                             + coords.y() * (origs[i][1].x() - origs[i][0].x());
-                    int py = origs[i][0].y()
+                    const int py = origs[i][0].y()
                             + coords.x() * (origs[i][2].y() - origs[i][0].y())
                             + coords.y() * (origs[i][1].y() - origs[i][0].y());
+                    
                     int r = orig[py * orig_pitch + px * orig_depth + 2];
                     int g = orig[py * orig_pitch + px * orig_depth + 1];
                     int b = orig[py * orig_pitch + px * orig_depth + 0];

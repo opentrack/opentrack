@@ -14,30 +14,47 @@ using namespace std;
 void ArucoVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    _frame = frame.clone();
+    if (!fresh)
+    {
+        _frame = frame.clone();
+        fresh = true;
+    }
 }
 
 void ArucoVideoWidget::update_and_repaint()
 {
-    QMutexLocker foo(&mtx);
-    if (_frame.cols*_frame.rows <= 0)
-        return;
-    QImage qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
-    uchar* data = qframe.bits();
-    const int pitch = qframe.bytesPerLine();
-    for (int y = 0; y < _frame.rows; y++)
+    QImage qframe;
+    
     {
-        for (int x = 0; x < _frame.cols; x++)
+        QMutexLocker foo(&mtx);
+        if (_frame.cols*_frame.rows <= 0 || !fresh)
+            return;
+        fresh = false;
+        qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
+        uchar* data = qframe.bits();
+        const int pitch = qframe.bytesPerLine();
+        unsigned char *input = (unsigned char*)(_frame.data);
+        const int chans = _frame.channels();
+        for (int y = 0; y < _frame.rows; y++)
         {
-            const auto& elt = _frame.at<cv::Vec3b>(y, x);
-            const cv::Scalar elt2 = static_cast<cv::Scalar>(elt);
-            data[y * pitch + x * 3 + 0] = elt2.val[2];
-            data[y * pitch + x * 3 + 1] = elt2.val[1];
-            data[y * pitch + x * 3 + 2] = elt2.val[0];
+            const int step = y * _frame.step;
+            const int pitch_ = y * pitch;
+            for (int x = 0; x < _frame.cols; x++)
+            {
+                data[pitch_ + x * 3 + 0] = input[step + x * chans + 2];
+                data[pitch_ + x * 3 + 1] = input[step + x * chans + 1];
+                data[pitch_ + x * 3 + 2] = input[step + x * chans + 0];
+            }
         }
     }
-    auto qframe2 = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    texture = qframe2;
+    
+    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    
+    {
+        QMutexLocker foo(&mtx);
+        texture = qframe;
+    }
+    
     update();
 }
 
@@ -47,7 +64,7 @@ void ArucoVideoWidget::paintEvent(QPaintEvent* e)
     QPainter(this).drawImage(e->rect(), texture);
 }
 
-ArucoVideoWidget::ArucoVideoWidget(QWidget* parent): QWidget(parent)
+ArucoVideoWidget::ArucoVideoWidget(QWidget* parent): QWidget(parent), fresh(false)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
     timer.start(60);

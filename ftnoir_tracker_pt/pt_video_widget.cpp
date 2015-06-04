@@ -18,29 +18,43 @@ using namespace std;
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
-    _frame = frame.clone();
-    freshp = true;
+    
+    if (!freshp)
+    {
+        _frame = frame.clone();
+        freshp = true;
+    }
 }
 
 void PTVideoWidget::update_and_repaint()
 {
-    QMutexLocker foo(&mtx);
-    if (_frame.empty() || !freshp)
-        return;
-    freshp = false;
-    QImage qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
-    uchar* data = qframe.bits();
-    const int pitch = qframe.bytesPerLine();
-    for (int y = 0; y < _frame.rows; y++)
-        for (int x = 0; x < _frame.cols; x++)
+    QImage qframe;
+    {
+        QMutexLocker foo(&mtx);
+        if (_frame.empty() || !freshp)
+            return;
+        qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
+        freshp = false;
+        uchar* data = qframe.bits();
+        const int pitch = qframe.bytesPerLine();
+        unsigned char *input = (unsigned char*) _frame.data;
+        const int chans = _frame.channels();
+        for (int y = 0; y < _frame.rows; y++)
         {
-            const auto& elt = _frame.at<Vec3b>(y, x);
-            const cv::Scalar elt2 = static_cast<cv::Scalar>(elt);
-            data[y * pitch + x * 3 + 0] = elt2.val[2];
-            data[y * pitch + x * 3 + 1] = elt2.val[1];
-            data[y * pitch + x * 3 + 2] = elt2.val[0];
+            const int step = y * _frame.step;
+            const int pitch_ = y * pitch;
+            for (int x = 0; x < _frame.cols; x++)
+            {
+                data[pitch_ + x * 3 + 0] = input[step + x * chans + 2];
+                data[pitch_ + x * 3 + 1] = input[step + x * chans + 1];
+                data[pitch_ + x * 3 + 2] = input[step + x * chans + 0];
+            }
         }
+    }
     qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    texture = qframe;
+    {
+        QMutexLocker foo(&mtx);
+        texture = qframe;
+    }
     update();
 }
