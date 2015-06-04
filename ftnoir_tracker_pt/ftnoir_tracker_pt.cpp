@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
+#include "opentrack/thread.hpp"
 
 using namespace std;
 using namespace cv;
@@ -64,6 +65,8 @@ void Tracker::run()
 	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 	QTextStream log_stream(&log_file);
 #endif
+    
+    Affinity thr;
 
     while((commands & ABORT) == 0)
     {

@@ -16,6 +16,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "opentrack/camera-names.hpp"
+#include "opentrack/thread.hpp"
 
 typedef struct {
     int width;
@@ -73,6 +74,8 @@ void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 
 void Tracker::run()
 {
+    Affinity thr;
+    
     int rint = s.resolution;
     if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
         rint = 0;
