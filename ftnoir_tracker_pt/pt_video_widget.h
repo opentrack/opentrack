@@ -39,7 +39,6 @@ public:
         timer.start(40);
     }
     void update_image(const cv::Mat &frame);
-    void update_frame_and_points() {}
 protected slots:
     void paintEvent( QPaintEvent* e ) {
         QMutexLocker foo(&mtx);
@@ -52,5 +51,5 @@ private:
     QImage texture;
     QTimer timer;
     cv::Mat _frame;
-    volatile bool freshp;
+    bool freshp;
 };
