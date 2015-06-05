@@ -314,9 +314,6 @@ if(SDK_WINE_PREFIX)
     endif()
 endif()
 
-opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-target_link_libraries(opentrack-tracker-ht opentrack-compat)
-
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
@@ -324,18 +321,24 @@ if(OpenCV_FOUND)
     opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
     target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
     target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    link_with_dinput8(opentrack-tracker-pt)
+
     if(SDK_ARUCO_LIBPATH)
         opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
         target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
+
     target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
     target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+
+    opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
+    target_link_libraries(opentrack-tracker-ht opentrack-compat)
+    target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    link_with_dinput8(opentrack-tracker-ht)
 endif()
 
-link_with_dinput8(opentrack-tracker-ht)
 link_with_dinput8(opentrack-tracker-joystick)
-link_with_dinput8(opentrack-tracker-pt)
 
 if(SDK_RIFT)
     set(link-flags)
