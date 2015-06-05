@@ -9,7 +9,7 @@
 #if !defined(_WIN32) && !defined(_isnan)
 #  define _isnan isnan
 #endif
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 struct ht_context;
 typedef struct ht_context headtracker_t;
 
