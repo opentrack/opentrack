@@ -21,7 +21,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package(OpenCV)
+find_package(OpenCV 3.0)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets Gui QUIET)
 find_package(Qt5 COMPONENTS SerialPort QUIET)

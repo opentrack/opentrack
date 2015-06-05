@@ -35,7 +35,7 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 
 	// convert to grayscale
 	Mat frame_gray;
-    cvtColor(frame, frame_gray, CV_RGB2GRAY);
+    cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
 	int secondary = s.threshold_secondary;
     int primary = s.threshold;

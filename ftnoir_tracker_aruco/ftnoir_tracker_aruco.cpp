@@ -15,6 +15,7 @@
 #include "opentrack/plugin-api.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
 #include "opentrack/thread.hpp"
 
@@ -103,11 +104,11 @@ void Tracker::run()
     camera = cv::VideoCapture(camera_name_to_index(s.camera_name));
     if (res.width)
     {
-        camera.set(CV_CAP_PROP_FRAME_WIDTH, res.width);
-        camera.set(CV_CAP_PROP_FRAME_HEIGHT, res.height);
+        camera.set(cv::CAP_PROP_FRAME_WIDTH, res.width);
+        camera.set(cv::CAP_PROP_FRAME_HEIGHT, res.height);
     }
     if (fps)
-        camera.set(CV_CAP_PROP_FPS, fps);
+        camera.set(cv::CAP_PROP_FPS, fps);
 
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
@@ -233,7 +234,7 @@ void Tracker::run()
             obj_points.at<float>(x4,1)= size + s.headpos_y;
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, CV_ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE);
 
             std::vector<cv::Point2f> roi_projection(4);
 
@@ -257,7 +258,7 @@ void Tracker::run()
             }
 
             cv::Mat rvec_, tvec_;
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, CV_ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::SOLVEPNP_ITERATIVE);
 
             cv::Mat roi_points = obj_points * c_search_window;
             cv::projectPoints(roi_points, rvec_, tvec_, intrinsics, dist_coeffs, roi_projection);
