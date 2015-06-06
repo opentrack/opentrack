@@ -63,6 +63,8 @@ void FTNoIR_Filter::filter(const double *input, double *output)
         last_noise[i] = noise_alpha*noise + (1.0-noise_alpha)*last_noise[i];
         // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
         double norm_noise = std::min<double>(noise/(9.0*last_noise[i]), 1.0);
+        if (std::isnan(norm_noise))
+            norm_noise = 0;
         // Calculate the smoothing 0.0->1.0 from the normalized noise.
         // TODO(abo): change kSmoothingScaleCurve to a float where 1.0 is sqrt(norm_noise).
         double smoothing = 1.0 - pow(norm_noise, s.kSmoothingScaleCurve/20.0);
