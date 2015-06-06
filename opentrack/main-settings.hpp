@@ -23,7 +23,7 @@ private:
 };
 
 struct main_settings : opts {
-    value<QString> tracker_dll, tracker2_dll, filter_dll, protocol_dll;
+    value<QString> tracker_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
@@ -32,7 +32,6 @@ struct main_settings : opts {
     main_settings() :
         opts("opentrack-ui"),
         tracker_dll(b, "tracker-dll", ""),
-        tracker2_dll(b, "tracker2-dll", ""),
         filter_dll(b, "filter-dll", ""),
         protocol_dll(b, "protocol-dll", ""),
         a_x(b, "x", TX),
