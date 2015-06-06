@@ -234,7 +234,7 @@ void Tracker::run()
             obj_points.at<float>(x4,1)= size + s.headpos_y;
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
 
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE);
+            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, roi_valid, cv::SOLVEPNP_ITERATIVE);
 
             std::vector<cv::Point2f> roi_projection(4);
 
