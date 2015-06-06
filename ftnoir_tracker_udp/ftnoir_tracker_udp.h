@@ -9,9 +9,13 @@ using namespace options;
 
 struct settings : opts {
     value<int> port;
+    value<int> add_yaw, add_pitch, add_roll;
     settings() :
         opts("udp-tracker"),
-        port(b, "port", 4242)
+        port(b, "port", 4242),
+        add_yaw(b, "add-yaw", 0),
+        add_pitch(b, "add-pitch", 0),
+        add_roll(b, "add-roll", 0)
     {}
 };
 
