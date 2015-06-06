@@ -56,7 +56,7 @@ void FilterControls::save() {
 
 void FilterControls::update_rot_display(int value)
 {
-    ui.rot_gain->setText(QString::number((value + 1) * 7 / 100.) + "°");
+    ui.rot_gain->setText(QString::number((value + 1) * 10 / 100.) + "°");
 }
 
 void FilterControls::update_trans_display(int value)

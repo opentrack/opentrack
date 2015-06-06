@@ -33,7 +33,7 @@
       <item row="1" column="3">
        <widget class="QSlider" name="rotation_slider">
         <property name="maximum">
-         <number>100</number>
+         <number>99</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -186,7 +186,7 @@ background:none;</string>
       <item row="5" column="3">
        <widget class="QSlider" name="translation_slider">
         <property name="maximum">
-         <number>100</number>
+         <number>99</number>
         </property>
         <property name="pageStep">
          <number>5</number>

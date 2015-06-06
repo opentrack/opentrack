@@ -16,13 +16,16 @@ FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
 }
 
-double FTNoIR_Filter::f(double vec, double thres)
+double FTNoIR_Filter::f(double val, const double gains[][2])
 {
-    if (vec > thres*high_thres_c)
-        return (vec - thres*high_thres_c) * high_thres_out + thres*high_thres_c;
-    if (vec > thres)
-        return (vec - thres) * low_thres_mult + thres;
-    return pow(vec, 2.0) / thres;
+    for (int i = 0; gains[i][0] >= 0; i++)
+    {
+        if (val >= gains[i][0])
+        {
+            return gains[i][1] * val;
+        }
+    }
+    return 0;
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
@@ -39,8 +42,27 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         t.start();
         return;
     }
+    
+    static const double rot_gains[][2] = {
+        { 6, 15 },
+        { 5, 6 },
+        { 4, 3 },
+        { 3, 1.3 },
+        { 2, .7 },
+        { 1, .4 },
+        { 0, .2 },
+        { -1, 0 }
+    };
+    static const double trans_gains[][2] = {
+        { 4, 8 },
+        { 3, 4 },
+        { 2, 2 },
+        { 1, .5 },
+        { 0, .1 },
+        { -1, 0 }
+    };
 
-    const double rot_t = 7. * (1+s.rot_threshold) / 100.;
+    const double rot_t = 10. * (1+s.rot_threshold) / 100.;
     const double trans_t = 5. * (1+s.trans_threshold) / 100.;
     
     const double dt = t.elapsed() * 1e-9;
@@ -60,13 +82,29 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double vec = in - last_output[i];
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec_ = max(0., fabs(vec) - dz);
-        const double t = i >= 3 ? rot_t : trans_t;
-        const double val = f(vec_, t);
+        const double thres = i >= 3 ? rot_t : trans_t;
+        const double val = f(vec_ / thres, i >= 3 ? rot_gains : trans_gains) * thres;
+        static Timer tr;
+        static double m = 0, n = 0;
+        if (i == 3)
+        {
+            m = max(vec_ / thres, m);
+            n = max(n, val * dt);
+        }
+        if (tr.elapsed_ms() > 1000)
+        {
+            tr.start();
+            qDebug() << "3" << m << n;
+            m = 0;
+            n = 0;
+        }
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
         const bool negp = vec < 0.;
         const bool done = negp
             ? result <= in
             : result >= in;
+        if (i == 3 && val > 0.1 && done)
+            qDebug() << "done";
         const double ret = done ? in : result;
         
         last_output[i] = output[i] = ret;
