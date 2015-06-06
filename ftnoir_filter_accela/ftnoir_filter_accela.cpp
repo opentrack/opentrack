@@ -84,20 +84,6 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double vec_ = max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double val = f(vec_ / thres, i >= 3 ? rot_gains : trans_gains) * thres;
-        static Timer tr;
-        static double m = 0, n = 0;
-        if (i == 3)
-        {
-            m = max(vec_ / thres, m);
-            n = max(n, val * dt);
-        }
-        if (tr.elapsed_ms() > 1000)
-        {
-            tr.start();
-            qDebug() << "3" << m << n;
-            m = 0;
-            n = 0;
-        }
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
         const bool negp = vec < 0.;
         const bool done = negp
