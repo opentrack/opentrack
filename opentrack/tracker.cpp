@@ -97,8 +97,8 @@ void Tracker::logic()
     }
 
     const double off[] = {
-        (double)s.camera_yaw,
-        (double)s.camera_pitch,
+        (double)-s.camera_yaw,
+        (double)-s.camera_pitch,
         (double)s.camera_roll
     };
     const rmat cam = rmat::euler_to_rmat(off);
@@ -140,24 +140,21 @@ void Tracker::logic()
         }
     }
     
-    for (int i = 3; i < 6; i++)
-        value(i) = map(value(i), m(i));
-    
     {
         Pose tmp = value;
         
         if (libs.pFilter)
             libs.pFilter->filter(tmp, value);
     }
-
+    
+    for (int i = 0; i < 6; i++)
+        value(i) = map(value(i), m(i));
+    
     if (s.tcomp_p)
         t_compensate(rmat::euler_to_rmat(&value[Yaw]),
                      value,
                      value,
                      s.tcomp_tz);
-    
-    for (int i = 0; i < 3; i++)
-        value(i) = map(value(i), m(i));
     
     for (int i = 0; i < 6; i++)
         value[i] *= inverts[i] ? -1. : 1.;
