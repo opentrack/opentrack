@@ -16,9 +16,11 @@ void FTNoIR_Tracker::run() {
     for (;;) {
         if (should_quit)
             break;
-        QMutexLocker foo(&mutex);
-        while (sock.hasPendingDatagrams()) {
-            sock.readDatagram((char * ) last_recv_pose, sizeof(double[6]));
+        {
+            QMutexLocker foo(&mutex);
+            while (sock.hasPendingDatagrams()) {
+                sock.readDatagram((char * ) last_recv_pose, sizeof(double[6]));
+            }
         }
         msleep(1);
     }
@@ -34,6 +36,22 @@ void FTNoIR_Tracker::data(double *data)
     QMutexLocker foo(&mutex);
     for (int i = 0; i < 6; i++)
         data[i] = last_recv_pose[i];
+    
+    int values[] = {
+        0,
+        90,
+        -90,
+        180,
+        -180,
+    };
+    int indices[] = {
+        s.add_yaw,
+        s.add_pitch,
+        s.add_roll,
+    };
+    
+    for (int i = 0; i < 3; i++)
+        data[Yaw + i] += values[indices[i]];
 }
 
 extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
