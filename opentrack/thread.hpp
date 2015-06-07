@@ -31,7 +31,7 @@ private:
 #else
 class Affinity {
 public:
-    Affinity() {}
+    Affinity(int core = CORE_WORK) {}
     ~Affinity() {}
-}
+};
 #endif

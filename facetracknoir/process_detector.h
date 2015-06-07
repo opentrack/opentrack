@@ -88,6 +88,8 @@ public:
     {
         return false;
     }
+    bool should_stop() { return false; }
+
 };
 
 #endif

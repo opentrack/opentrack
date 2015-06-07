@@ -61,7 +61,7 @@ void BrowseButton::browse()
     twi->setText(filename);
 }
 
-process_detector::add_row(QString exe_name, QString profile)
+int process_detector::add_row(QString exe_name, QString profile)
 {
     int i = ui.tableWidget->rowCount();
     ui.tableWidget->insertRow(i);
