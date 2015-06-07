@@ -93,6 +93,11 @@ FT_EXPORT(void) FTReportName( int name )
     dbg_report("FTReportName request (ID = %d).\n", name);
 }
 
+FT_EXPORT(void) FTReportID( int name )
+{
+    dbg_report("FTReportID request (ID = %d).\n", name);
+}
+
 FT_EXPORT(const char*) FTGetDllVersion(void)
 {
     dbg_report("FTGetDllVersion request.\n");
@@ -105,6 +110,7 @@ FT_EXPORT(const char*) FTProvider(void)
     return dllProvider;
 }
 
+#pragma comment (linker, "/export:FTReportID=_FTReportID@4")
 #pragma comment (linker, "/export:FTReportName=_FTReportName@4")
 #pragma comment (linker, "/export:FTGetDllVersion=_FTGetDllVersion@0")
 #pragma comment (linker, "/export:FTProvider=_FTProvider@0")
