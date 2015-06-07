@@ -10,7 +10,7 @@
 #include <QMutex>
 
 #include "qxt-mini/QxtGlobalShortcut"
-#include "opentrack/plugin-support.h"
+#include "opentrack/plugin-support.hpp"
 #include "opentrack/options.hpp"
 #include "opentrack/main-settings.hpp"
 

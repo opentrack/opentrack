@@ -48,7 +48,7 @@
 
 #include "opentrack/options.hpp"
 #include "opentrack/main-settings.hpp"
-#include "opentrack/plugin-support.h"
+#include "opentrack/plugin-support.hpp"
 #include "opentrack/tracker.h"
 #include "opentrack/shortcuts.h"
 #include "opentrack/work.hpp"

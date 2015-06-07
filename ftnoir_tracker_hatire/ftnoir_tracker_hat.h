@@ -2,7 +2,7 @@
 #define FTNOIR_TRACKER_HAT_H
 
 #ifdef OPENTRACK_API
-#   include "opentrack/plugin-support.h"
+#   include "opentrack/plugin-support.hpp"
 #else
 #	include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
 #endif

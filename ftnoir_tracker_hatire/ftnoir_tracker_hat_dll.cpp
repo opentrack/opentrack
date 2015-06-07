@@ -91,7 +91,7 @@ QIcon TrackerDll::icon()
 //   _GetTrackerDll@0  - Common name decoration for __stdcall functions in C language.
 
 #ifdef OPENTRACK_API
-#   include "opentrack/plugin-support.h"
+#   include "opentrack/plugin-support.hpp"
 extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
 #else
 #   pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
