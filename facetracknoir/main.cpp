@@ -30,8 +30,8 @@ static void add_program_library_path()
             }
         }
     }
-#endif
 }
+#endif
 
 int main(int argc, char** argv)
 {
