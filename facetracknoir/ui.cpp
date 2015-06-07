@@ -352,50 +352,82 @@ mem<t> mk_dialog(mem<dylib> lib)
 
 void MainWindow::showTrackerSettings()
 {
-    auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
-
-    if (dialog) {
+    if (pTrackerDialog && pTrackerDialog->isVisible())
+    {
+        pTrackerDialog->show();
+        pTrackerDialog->raise();
+    }
+    else
+    {
+        auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
         pTrackerDialog = dialog;
         if (libs.pTracker != nullptr)
             dialog->register_tracker(libs.pTracker.get());
         dialog->show();
+        dialog->raise();
     }
 }
 
 void MainWindow::showProtocolSettings() {
-    auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
-
-    if (dialog) {
+    if (pProtocolDialog && pProtocolDialog->isVisible())
+    {
+        pProtocolDialog->show();
+        pProtocolDialog->raise();
+    } else
+    {
+        auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
         pProtocolDialog = dialog;
         if (libs.pProtocol != nullptr)
             dialog->register_protocol(libs.pProtocol.get());
         dialog->show();
+        dialog->raise();
     }
 }
 
 void MainWindow::showFilterSettings() {
-    auto dialog = mk_dialog<IFilterDialog>(current_filter());
-
-    if (dialog)
+    if (pFilterDialog && pFilterDialog->isVisible())
     {
+        pFilterDialog->show();
+        pFilterDialog->raise();
+    } else
+    {
+        auto dialog = mk_dialog<IFilterDialog>(current_filter());
         pFilterDialog = dialog;
         if (libs.pFilter != nullptr)
             dialog->register_filter(libs.pFilter.get());
         dialog->show();
+        dialog->raise();
     }
 }
 
 void MainWindow::showKeyboardShortcuts() {
-    shortcuts_widget = std::make_shared<OptionsDialog>();
-    shortcuts_widget->setWindowFlags(Qt::Dialog);
-    connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
-    shortcuts_widget->show();
+    if (shortcuts_widget && shortcuts_widget->isVisible())
+    {
+        shortcuts_widget->show();
+        shortcuts_widget->raise();
+    }
+    else
+    {
+        shortcuts_widget = std::make_shared<OptionsDialog>();
+        shortcuts_widget->setWindowFlags(Qt::Dialog);
+        connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
+        shortcuts_widget->show();
+        shortcuts_widget->raise();
+    }
 }
 
 void MainWindow::showCurveConfiguration() {
-    mapping_widget = std::make_shared<MapWidget>(pose, s);
-    mapping_widget->setWindowFlags(Qt::Dialog);
-    mapping_widget->show();
+    if (mapping_widget && mapping_widget->isVisible())
+    {
+        mapping_widget->show();
+        mapping_widget->raise();
+    }
+    else
+    {
+        mapping_widget = std::make_shared<MapWidget>(pose, s);
+        mapping_widget->setWindowFlags(Qt::Dialog);
+        mapping_widget->show();
+    }
 }
 
 void MainWindow::exit() {
