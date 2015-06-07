@@ -192,6 +192,7 @@ void Tracker::run()
             {
                 box_idx++;
                 box_idx %= box_sizes.size();
+                qDebug() << "aruco: box size now" << box_sizes[box_idx];
                 failed = 0;
             }
             detector.setThresholdParams(box_sizes[box_idx], 5);
