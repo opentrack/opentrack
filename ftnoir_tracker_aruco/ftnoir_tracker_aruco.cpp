@@ -233,10 +233,10 @@ void Tracker::run()
             obj_points.at<float>(x4,0)= -size + s.headpos_x;
             obj_points.at<float>(x4,1)= size + s.headpos_y;
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
-
-            cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec, tvec, roi_valid, cv::SOLVEPNP_ITERATIVE);
-
-            std::vector<cv::Point2f> roi_projection(4);
+            
+            std::vector<cv::Point2f> img_points = m;
+            cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_DLS);
+            cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, true, cv::SOLVEPNP_ITERATIVE);
 
             {
                 std::vector<cv::Point2f> repr2;
@@ -261,6 +261,7 @@ void Tracker::run()
             cv::solvePnP(obj_points, m, intrinsics, dist_coeffs, rvec_, tvec_, false, cv::SOLVEPNP_ITERATIVE);
 
             cv::Mat roi_points = obj_points * c_search_window;
+            std::vector<cv::Point2f> roi_projection(4);
             cv::projectPoints(roi_points, rvec_, tvec_, intrinsics, dist_coeffs, roi_projection);
 
             last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
