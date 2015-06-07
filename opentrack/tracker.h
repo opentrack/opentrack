@@ -3,10 +3,11 @@
 #include <vector>
 
 #include "timer.hpp"
-#include "plugin-support.h"
+#include "plugin-support.hpp"
 #include "mappings.hpp"
 #include "pose.hpp"
 #include "simple-mat.hpp"
+#include "selected-libraries.hpp"
 
 #include "../qfunctionconfigurator/functionconfig.h"
 #include "main-settings.hpp"
