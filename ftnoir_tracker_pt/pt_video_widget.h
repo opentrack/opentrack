@@ -16,9 +16,6 @@
 #   include <boost/shared_ptr.hpp>
 #else
 #   include <memory>
-#   if defined(_WIN32)
-#       include <dshow.h>
-#   endif
 #endif
 #include <QPainter>
 #include <QPaintEvent>
