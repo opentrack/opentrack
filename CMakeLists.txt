@@ -1,12 +1,12 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
 cmake_policy(SET CMP0020 NEW)
+cmake_policy(SET CMP0058 OLD)
 
 include(CMakeParseArguments)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(GetGitRevisionDescription)
-include(FindPkgConfig)
 find_package(Git QUIET)
 if(GIT_FOUND)
     git_describe(OPENTRACK__COMMIT --tags --always)
@@ -253,6 +253,7 @@ if(SDK_VJOY)
 endif()
 
 if(SDK_ENABLE_LIBEVDEV)
+    include(FindPkgConfig)
     opentrack_library(opentrack-proto-libevdev ftnoir_protocol_libevdev)
     pkg_check_modules(libevdev REQUIRED QUIET libevdev)
     target_link_libraries(opentrack-proto-libevdev ${libevdev_LIBRARIES})
