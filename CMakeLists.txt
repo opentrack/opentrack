@@ -244,7 +244,7 @@ opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
     set(link-flags)
-    if(CMAKE_C_COMPILER_IS_GNUCC)
+    if(CMAKE_COMPILER_IS_GNUCC)
         set(link-flags "-Wl,--enable-stdcall-fixup")
     endif()
     opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy LINK ${link-flags})
