@@ -6,7 +6,6 @@
  */
 
 #include "ftnoir_tracker_pt.h"
-#include "opentrack/camera-names.hpp"
 #include <QHBoxLayout>
 #include <cmath>
 #include <QDebug>
@@ -128,6 +127,8 @@ void Tracker::run()
     }
     qDebug()<<"Tracker:: Thread stopping";
 }
+
+int camera_name_to_index(const QString &name);
 
 void Tracker::apply_settings()
 {
