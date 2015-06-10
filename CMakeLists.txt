@@ -367,9 +367,12 @@ if(SDK_HYDRA)
     target_include_directories(opentrack-tracker-hydra SYSTEM PUBLIC ${SDK_HYDRA}/include ${SDK_HYDRA}/include/sixense_utils)
     if(WIN32)
         target_link_libraries(opentrack-tracker-hydra
-            "${SDK_HYDRA}/lib/win32/release_dll/sixense.lib"
-            "${SDK_HYDRA}/lib/win32/release_dll/sixense_utils.lib")
-                    install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll" "${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll" DESTINATION .)
+                              "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
+                              #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
+                             )
+                    install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
+                                  #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
+                            DESTINATION .)
             else()
                     if(SDK_HYDRA_AMD64)
                             set(underscore-sixtyfour _x64)
@@ -387,10 +390,13 @@ if(SDK_HYDRA)
                     endif()
                     install(FILES
                             "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
-                            "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
+                            #"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
                             DESTINATION .
                     )
-                    target_link_libraries(opentrack-tracker-hydra "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}" "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}")
+                    target_link_libraries(opentrack-tracker-hydra
+                                          "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
+                                          #"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
+                                         )
     endif()
 endif()
 
