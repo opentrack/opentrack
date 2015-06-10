@@ -13,8 +13,6 @@
 #   include <unistd.h>
 #endif
 
-// template to allow compiler coalesce function at linking with multiple definitions
-template<typename = int>
 QList<QString> get_camera_names() {
     QList<QString> ret;
 #if defined(_WIN32)
@@ -84,7 +82,6 @@ QList<QString> get_camera_names() {
     return ret;
 }
 
-template<typename = int>
 int camera_name_to_index(const QString &name)
 {
     auto list = get_camera_names();
