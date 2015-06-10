@@ -7,10 +7,15 @@ SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 1)
 
 # specify the cross compiler
-SET(CMAKE_C_COMPILER   i686-w64-mingw32-gcc)
-SET(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
-set(CMAKE_RC_COMPILER  i686-w64-mingw32-windres)
-set(CMAKE_LINKER  i686-w64-mingw32-ld)
+set(c i686-w64-mingw32-)
+
+SET(CMAKE_C_COMPILER    ${c}gcc)
+SET(CMAKE_CXX_COMPILER  ${c}g++)
+set(CMAKE_RC_COMPILER   ${c}windres)
+set(CMAKE_LINKER        ${c}ld)
+set(CMAKE_AR            ${c}gcc-ar      CACHE STRING "" FORCE)
+set(CMAKE_NM            ${c}gcc-nm      CACHE STRING "" FORCE)
+set(CMAKE_RANLIB        ${c}gcc-ranlib  CACHE STRING "" FORCE)
 
 SET(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
 
@@ -20,7 +25,13 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(CMAKE_C_FLAGS_RELEASE "-O3  -frename-registers -ffast-math -mfpmath=both -march=i686 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx" CACHE STRING "" FORCE)
+set(lto "-flto -fuse-linker-plugin -flto-partition=none -fno-fat-lto-objects")
+set(rice "-ftree-vectorize -ffast-math -mfpmath=both -fipa-pta")
+set(cpu "-march=i686 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx")
+
+set(CFLAGS-OVERRIDE "" CACHE STRING "")
+
+set(CMAKE_C_FLAGS_RELEASE "-O3 ${rice} ${lto} ${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-msse -msse2 -mno-sse3 -mno-avx ${lto}" CACHE STRING "" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
