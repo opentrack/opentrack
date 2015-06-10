@@ -45,7 +45,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     
     static const double rot_gains[][2] = {
         { 6, 15 },
-        { 5, 7 },
+        { 5, 8 },
         { 4, 4 },
         { 3, 1.6 },
         { 2, .7 },
