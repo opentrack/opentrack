@@ -81,7 +81,7 @@ macro(opentrack_qt n)
 endmacro()
 
 macro(opentrack_library n dir)
-    cmake_parse_arguments(foolib "" "LINK;COMPILE" "" ${ARGN})
+    cmake_parse_arguments(foolib "" "LINK;COMPILE;GNU-LINK;GNU-COMPILE" "" ${ARGN})
     if(NOT " ${foolib_UNPARSED_ARGUMENTS}" STREQUAL " ")
         message(FATAL_ERROR "opentrack_library bad formals")
     endif()
@@ -91,8 +91,8 @@ macro(opentrack_library n dir)
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${foolib_LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
-            COMPILE_FLAGS "${foolib_COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
+            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
+            COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
         set_target_properties(${n} PROPERTIES LINK_FLAGS ${foolib_LINK} COMPILE_FLAGS ${foolib_COMPILE})
@@ -243,11 +243,7 @@ opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
-    set(link-flags)
-    if(CMAKE_COMPILER_IS_GNUCC)
-        set(link-flags "-Wl,--enable-stdcall-fixup")
-    endif()
-    opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy LINK ${link-flags})
+    opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy GNU-LINK "-Wl,--enable-stdcall-fixup")
     target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} ${SDK_VJOY}/VJoy.dll)
     target_include_directories(opentrack-proto-vjoy SYSTEM PUBLIC ${SDK_VJOY})
 endif()
