@@ -51,26 +51,16 @@ MainWindow::MainWindow() :
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
-    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
-    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
 
     modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
-
-    for (auto x : modules.trackers())
-        ui.iconcomboTrackerSource->addItem(x->icon, x->name);
 
     for (auto x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name);
 
-    for (auto x : modules.filters())
-        ui.iconcomboFilter->addItem(x->icon, x->name);
-
     fill_profile_combobox();
 
-    tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
-    tie_setting(s.filter_dll, ui.iconcomboFilter);
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
@@ -184,7 +174,7 @@ void MainWindow::fill_profile_combobox()
 {
      QStringList ini_list = group::ini_list();
      QString current = QFileInfo(group::ini_pathname()).fileName();
-     setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
+     setWindowTitle(QStringLiteral("TrackHat") + QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
@@ -198,8 +188,6 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.btnStartTracker->setEnabled ( not_running );
     ui.btnStopTracker->setEnabled ( running );
     ui.iconcomboProtocol->setEnabled ( not_running );
-    ui.iconcomboFilter->setEnabled ( not_running );
-    ui.iconcomboTrackerSource->setEnabled(not_running);
     ui.video_frame_label->setVisible(not_running || inertialp);
     ui.btnSaveAs->setEnabled(not_running);
     ui.btnLoad->setEnabled(not_running);

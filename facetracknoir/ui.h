@@ -78,7 +78,7 @@ class MainWindow : public QMainWindow, private State
 
     mem<dylib> current_tracker()
     {
-        return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+        return modules.trackers().value(0, nullptr);
     }
     mem<dylib> current_protocol()
     {
@@ -86,7 +86,7 @@ class MainWindow : public QMainWindow, private State
     }
     mem<dylib> current_filter()
     {
-        return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
+        return modules.filters().value(0, nullptr);
     }
 
     void changeEvent(QEvent* e) override;

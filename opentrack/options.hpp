@@ -97,7 +97,7 @@ namespace options {
             }
             conf.endGroup();
         }
-        static constexpr const char* org = "opentrack-2.3";
+        static constexpr const char* org = "trackhat opentrack-2.3";
 
         void save()
         {
