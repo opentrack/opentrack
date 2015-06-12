@@ -321,7 +321,7 @@ if(OpenCV_FOUND)
     link_with_dinput8(opentrack-tracker-pt)
 
     if(SDK_ARUCO_LIBPATH)
-        opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco GNU-LINK -fno-ipa-pta)
+        opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
         target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
