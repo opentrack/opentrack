@@ -26,7 +26,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(lto "-flto -fuse-linker-plugin -flto-partition=none -fno-fat-lto-objects")
-set(rice "-ftree-vectorize -ffast-math -mfpmath=both -fipa-pta")
+set(rice "-ftree-vectorize -ffast-math -mfpmath=both -fipa-pta -fmerge-all-constants -fipa-icf -fivopts -fweb")
 set(cpu "-march=i686 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx")
 
 set(CFLAGS-OVERRIDE "" CACHE STRING "")
