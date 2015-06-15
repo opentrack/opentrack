@@ -236,8 +236,8 @@ void Tracker::run()
             obj_points.at<float>(x4,2)= 0 + s.headpos_z;
             
             std::vector<cv::Point2f> img_points = m;
-            cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_DLS);
-            cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, true, cv::SOLVEPNP_ITERATIVE);
+            if (!cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
+                goto fail;
 
             {
                 std::vector<cv::Point2f> repr2;
@@ -287,11 +287,17 @@ void Tracker::run()
                 last_roi.x = 0;
             if (last_roi.y < 0)
                 last_roi.y = 0;
-
-            if (last_roi.width+1 > color.cols)
+            if (last_roi.width < 0)
+                last_roi.width = 0;
+            if (last_roi.height < 0)
+                last_roi.height = 0;
+            if (last_roi.x >= color.cols-1)
+                last_roi.x = color.cols-1;
+            if (last_roi.width >= color.cols-1)
                 last_roi.width = color.cols-1;
-
-            if (last_roi.height+1 > color.rows)
+            if (last_roi.y >= color.rows-1)
+                last_roi.y= color.rows-1;
+            if (last_roi.height >= color.rows-1)
                 last_roi.height = color.rows-1;
 
             last_roi.width -= last_roi.x;
@@ -320,6 +326,7 @@ void Tracker::run()
                 cv::rectangle(frame, last_roi, cv::Scalar(255, 0, 255), 1);
         }
         else
+fail:
             last_roi = cv::Rect(65535, 65535, 0, 0);
 
         if (frame.rows > 0)
