@@ -1,7 +1,9 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
 cmake_policy(SET CMP0020 NEW)
-cmake_policy(SET CMP0058 OLD)
+if(POLICY CMP0058)
+	cmake_policy(SET CMP0058 OLD)
+endif()
 
 include(CMakeParseArguments)
 
