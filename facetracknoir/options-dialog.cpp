@@ -35,13 +35,6 @@ OptionsDialog::OptionsDialog()
     tie_setting(s.s_main.tcomp_p, ui.tcomp_enable);
     tie_setting(s.s_main.tcomp_tz, ui.tcomp_rz);
 
-    tie_setting(s.s_main.a_x.zero, ui.pos_tx);
-    tie_setting(s.s_main.a_y.zero, ui.pos_ty);
-    tie_setting(s.s_main.a_z.zero, ui.pos_tz);
-    tie_setting(s.s_main.a_yaw.zero, ui.pos_rx);
-    tie_setting(s.s_main.a_pitch.zero, ui.pos_ry);
-    tie_setting(s.s_main.a_roll.zero, ui.pos_rz);
-
     tie_setting(s.s_main.a_yaw.invert, ui.invert_yaw);
     tie_setting(s.s_main.a_pitch.invert, ui.invert_pitch);
     tie_setting(s.s_main.a_roll.invert, ui.invert_roll);
@@ -59,10 +52,26 @@ OptionsDialog::OptionsDialog()
     tie_setting(s.s_main.camera_yaw, ui.camera_yaw);
     tie_setting(s.s_main.camera_pitch, ui.camera_pitch);
     tie_setting(s.s_main.camera_roll, ui.camera_roll);
+    
+    tie_setting(pt.camera_mode, ui.camera_mode);
+
+    tie_setting(pt.threshold, ui.threshold_slider);
+
+    tie_setting(pt.min_point_size, ui.mindiam_spin);
+    tie_setting(pt.max_point_size, ui.maxdiam_spin);
+
+    tie_setting(pt.t_MH_x, ui.tx_spin);
+    tie_setting(pt.t_MH_y, ui.ty_spin);
+    tie_setting(pt.t_MH_z, ui.tz_spin);
+    
+    tie_setting(pt.fov, ui.camera_fov);
+    
+    tie_setting(pt.is_cap, ui.model_cap);
 }
 
 void OptionsDialog::doOK() {
     s.b->save();
+    pt.b->save();
     s.s_main.b->save();
     ui.game_detector->save();
     this->close();
@@ -71,6 +80,7 @@ void OptionsDialog::doOK() {
 
 void OptionsDialog::doCancel() {
     s.b->reload();
+    pt.b->reload();
     s.s_main.b->reload();
     ui.game_detector->revert();
     close();

@@ -7,11 +7,9 @@
 using namespace options;
 
 struct axis_opts {
-    value<double> zero;
     value<bool> invert, altp;
     value<int> src;
     axis_opts(pbundle b, QString pfx, int idx) :
-        zero(b, n(pfx, "zero-pos"), 0),
         invert(b, n(pfx, "invert-sign"), false),
         altp(b, n(pfx, "alt-axis-sign"), false),
         src(b, n(pfx, "source-index"), idx)

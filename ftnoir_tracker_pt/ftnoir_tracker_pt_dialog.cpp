@@ -39,43 +39,7 @@ TrackerDialog_PT::TrackerDialog_PT()
     }
 #endif
 
-    tie_setting(s.camera_name, ui.camdevice_combo);
-    tie_setting(s.cam_res_x, ui.res_x_spin);
-    tie_setting(s.cam_res_y, ui.res_y_spin);
-    tie_setting(s.cam_fps, ui.fps_spin);
 
-    tie_setting(s.threshold_secondary, ui.threshold_secondary_slider);
-    tie_setting(s.threshold, ui.threshold_slider);
-
-    tie_setting(s.min_point_size, ui.mindiam_spin);
-    tie_setting(s.max_point_size, ui.maxdiam_spin);
-
-    tie_setting(s.clip_by, ui.clip_bheight_spin);
-    tie_setting(s.clip_bz, ui.clip_blength_spin);
-    tie_setting(s.clip_ty, ui.clip_theight_spin);
-    tie_setting(s.clip_tz, ui.clip_tlength_spin);
-
-    tie_setting(s.cap_x, ui.cap_width_spin);
-    tie_setting(s.cap_y, ui.cap_height_spin);
-    tie_setting(s.cap_z, ui.cap_length_spin);
-
-    tie_setting(s.m01_x, ui.m1x_spin);
-    tie_setting(s.m01_y, ui.m1y_spin);
-    tie_setting(s.m01_z, ui.m1z_spin);
-
-    tie_setting(s.m02_x, ui.m2x_spin);
-    tie_setting(s.m02_y, ui.m2y_spin);
-    tie_setting(s.m02_z, ui.m2z_spin);
-
-    tie_setting(s.t_MH_x, ui.tx_spin);
-    tie_setting(s.t_MH_y, ui.ty_spin);
-    tie_setting(s.t_MH_z, ui.tz_spin);
-    
-    tie_setting(s.fov, ui.fov);
-    
-    tie_setting(s.active_model_panel, ui.model_tabs);
-    
-    tie_setting(s.dynamic_pose, ui.dynamic_pose);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
