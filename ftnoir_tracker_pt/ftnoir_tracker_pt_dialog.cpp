@@ -21,7 +21,7 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-TrackerDialog::TrackerDialog()
+TrackerDialog_PT::TrackerDialog_PT()
     : tracker(NULL),
       timer(this),
       trans_calib_running(false)
@@ -86,7 +86,7 @@ TrackerDialog::TrackerDialog()
     timer.start(100);
 }
 
-void TrackerDialog::startstop_trans_calib(bool start)
+void TrackerDialog_PT::startstop_trans_calib(bool start)
 {
     if (start)
     {
@@ -110,7 +110,7 @@ void TrackerDialog::startstop_trans_calib(bool start)
     }
 }
 
-void TrackerDialog::poll_tracker_info()
+void TrackerDialog_PT::poll_tracker_info()
 {
     if (tracker)
     {
@@ -142,7 +142,7 @@ void TrackerDialog::poll_tracker_info()
     }
 }
 
-void TrackerDialog::trans_calib_step()
+void TrackerDialog_PT::trans_calib_step()
 {
     if (tracker)
     {
@@ -151,32 +151,32 @@ void TrackerDialog::trans_calib_step()
     }
 }
 
-void TrackerDialog::save()
+void TrackerDialog_PT::save()
 {
     s.b->save();
 }
 
-void TrackerDialog::doOK()
+void TrackerDialog_PT::doOK()
 {
     save();
     close();
 }
 
-void TrackerDialog::doCancel()
+void TrackerDialog_PT::doCancel()
 {
     s.b->reload();
     close();
 }
 
-void TrackerDialog::register_tracker(ITracker *t)
+void TrackerDialog_PT::register_tracker(ITracker *t)
 {
     qDebug()<<"TrackerDialog:: Tracker registered";
-    tracker = static_cast<Tracker*>(t);
+    tracker = static_cast<Tracker_PT*>(t);
     ui.tcalib_button->setEnabled(true);
     //ui.center_button->setEnabled(true);
 }
 
-void TrackerDialog::unregister_tracker()
+void TrackerDialog_PT::unregister_tracker()
 {
     qDebug()<<"TrackerDialog:: Tracker un-registered";
     tracker = NULL;
@@ -186,5 +186,5 @@ void TrackerDialog::unregister_tracker()
 
 extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 {
-    return new TrackerDialog;
+    return new TrackerDialog_PT;
 }

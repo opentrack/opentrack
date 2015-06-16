@@ -23,11 +23,11 @@
 
 //-----------------------------------------------------------------------------
 // The dialog that shows up when the user presses "Settings"
-class TrackerDialog : public ITrackerDialog
+class TrackerDialog_PT : public ITrackerDialog
 {
 	Q_OBJECT
 public:
-	TrackerDialog();
+	TrackerDialog_PT();
 	void register_tracker(ITracker *tracker) override;
 	void unregister_tracker() override;
     void save();
@@ -40,8 +40,8 @@ public slots:
 	void startstop_trans_calib(bool start);
 	void poll_tracker_info();
 private:
-    settings s;
-	Tracker* tracker;
+    settings_pt s;
+	Tracker_PT* tracker;
 	QTimer timer;
 
 	TranslationCalibrator trans_calib;
