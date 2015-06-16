@@ -33,12 +33,12 @@
 
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
-class Tracker : public QThread, public ITracker
+class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
 public:
-    Tracker();
-    ~Tracker() override;
+    Tracker_PT();
+    ~Tracker_PT() override;
     void start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
 
@@ -69,7 +69,7 @@ private:
     PTVideoWidget* video_widget;
     QFrame*      video_frame;
 
-    settings s;
+    settings_pt s;
     Timer time;
     
     volatile bool ever_success;

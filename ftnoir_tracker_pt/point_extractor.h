@@ -25,7 +25,7 @@ public:
     const std::vector<cv::Vec2f>& get_points() { return points; }
     PointExtractor();
     
-    settings s;
+    settings_pt s;
 private:
     std::vector<cv::Vec2f> points;
     cv::Mat frame_last;

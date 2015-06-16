@@ -13,7 +13,7 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
-struct settings : opts
+struct settings_pt : opts
 {
     value<QString> camera_name;
     value<int> cam_res_x,
@@ -36,7 +36,7 @@ struct settings : opts
     
     value<bool> dynamic_pose;
 
-    settings() :
+    settings_pt() :
         opts("tracker-pt"),
         camera_name(b, "camera-name", ""),
         cam_res_x(b, "camera-res-width", 640),

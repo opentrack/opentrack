@@ -1,7 +1,9 @@
 project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
 cmake_policy(SET CMP0020 NEW)
-cmake_policy(SET CMP0058 OLD)
+if(POLICY CMP0058)
+	cmake_policy(SET CMP0058 OLD)
+endif()
 
 include(CMakeParseArguments)
 
@@ -321,7 +323,7 @@ if(OpenCV_FOUND)
     link_with_dinput8(opentrack-tracker-pt)
 
     if(SDK_ARUCO_LIBPATH)
-        opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco GNU-LINK -fno-ipa-pta)
+        opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
         target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
@@ -368,7 +370,7 @@ if(SDK_HYDRA)
                              )
                     install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
                                   #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
-                            DESTINATION .)
+                            DESTINATION . PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE)
             else()
                     if(SDK_HYDRA_AMD64)
                             set(underscore-sixtyfour _x64)
@@ -479,7 +481,7 @@ endif()
 install(TARGETS opentrack DESTINATION .)
 
 if(SDK_VJOY)
-    install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION .)
+    install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION . PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE)
 endif()
 
 if(WIN32)

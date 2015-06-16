@@ -70,7 +70,7 @@ public:
     }
     bool barycentric_coords(const vec2& px, vec2& uv) const
     {
-        vec2 v2({ px.x() - origin.x(), px.y() - origin.y() });
+        vec2 v2 = px - origin;
         double dot12 = v1.dot(v2);
         double dot02 = v0.dot(v2);
         double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
@@ -162,15 +162,15 @@ void GLWidget::project_quad_texture() {
         for (int x = 0; x < sx; x++) {
             vec2 pos({(double)x, (double)y});
             for (int i = 0; i < 2; i++) {
-                vec2 coords;
-                if (triangles[i].barycentric_coords(pos, coords))
+                vec2 uv;
+                if (triangles[i].barycentric_coords(pos, uv))
                 {
                     const int px = origs[i][0].x()
-                            + coords.x() * (origs[i][2].x() - origs[i][0].x())
-                            + coords.y() * (origs[i][1].x() - origs[i][0].x());
+                            + uv.x() * (origs[i][2].x() - origs[i][0].x())
+                            + uv.y() * (origs[i][1].x() - origs[i][0].x());
                     const int py = origs[i][0].y()
-                            + coords.x() * (origs[i][2].y() - origs[i][0].y())
-                            + coords.y() * (origs[i][1].y() - origs[i][0].y());
+                            + uv.x() * (origs[i][2].y() - origs[i][0].y())
+                            + uv.y() * (origs[i][1].y() - origs[i][0].y());
                     
                     int r = orig[py * orig_pitch + px * orig_depth + 2];
                     int g = orig[py * orig_pitch + px * orig_depth + 1];

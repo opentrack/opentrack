@@ -72,7 +72,7 @@ public:
     
     enum Model { Clip = 0, Cap = 1, Custom = 2 };
         
-    PointModel(settings& s)
+    PointModel(settings_pt& s)
     {
         set_model(s);
         // calculate u
@@ -86,7 +86,7 @@ public:
         P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
     
-    void set_model(settings& s)
+    void set_model(settings_pt& s)
     {
         switch (s.active_model_panel)
         {
