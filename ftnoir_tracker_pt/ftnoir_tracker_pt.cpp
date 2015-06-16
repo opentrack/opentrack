@@ -19,7 +19,7 @@ using namespace cv;
 //#define PT_PERF_LOG	//log performance
 
 //-----------------------------------------------------------------------------
-Tracker::Tracker()
+Tracker_PT::Tracker_PT()
     : mutex(QMutex::Recursive),
       commands(0),
 	  video_widget(NULL),
@@ -29,7 +29,7 @@ Tracker::Tracker()
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
 
-Tracker::~Tracker()
+Tracker_PT::~Tracker_PT()
 {
 	set_command(ABORT);
 	wait();
@@ -38,26 +38,26 @@ Tracker::~Tracker()
     if (video_frame->layout()) delete video_frame->layout();
 }
 
-void Tracker::set_command(Command command)
+void Tracker_PT::set_command(Command command)
 {
     //QMutexLocker lock(&mutex);
 	commands |= command;
 }
 
-void Tracker::reset_command(Command command)
+void Tracker_PT::reset_command(Command command)
 {
     //QMutexLocker lock(&mutex);
 	commands &= ~command;
 }
 
-float Tracker::get_focal_length()
+float Tracker_PT::get_focal_length()
 {
     static constexpr float pi = 3.1415926f;
     const float fov = static_cast<int>(s.fov) * pi / 180.f;
     return 0.5f / tan(0.5f * fov);
 }
 
-void Tracker::run()
+void Tracker_PT::run()
 {
 #ifdef PT_PERF_LOG
 	QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
@@ -130,7 +130,7 @@ void Tracker::run()
 
 int camera_name_to_index(const QString &name);
 
-void Tracker::apply_settings()
+void Tracker_PT::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
     QMutexLocker lock(&mutex);
@@ -140,7 +140,7 @@ void Tracker::apply_settings()
     qDebug()<<"Tracker::apply ends";
 }
 
-void Tracker::start_tracker(QFrame *parent_window)
+void Tracker_PT::start_tracker(QFrame *parent_window)
 {
     this->video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
@@ -167,7 +167,7 @@ void Tracker::StopTracker(bool exit)
 #define THeadPoseData double
 #endif
 
-void Tracker::data(THeadPoseData *data)
+void Tracker_PT::data(THeadPoseData *data)
 {
     if (ever_success)
     {
@@ -211,5 +211,5 @@ extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
 OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
 #endif
 {
-	return new Tracker;
+	return new Tracker_PT;
 }
