@@ -8,8 +8,6 @@
 #ifndef FTNOIR_TRACKER_PT_SETTINGS_H
 #define FTNOIR_TRACKER_PT_SETTINGS_H
 
-#include <opencv2/core/core.hpp>
-
 #include "opentrack/options.hpp"
 using namespace options;
 
