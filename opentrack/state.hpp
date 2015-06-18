@@ -1,11 +1,13 @@
+#pragma once
+
 #include <vector>
 #include "opentrack/options.hpp"
 using namespace options;
 #include "opentrack/plugin-support.hpp"
 #include "opentrack/main-settings.hpp"
 #include "opentrack/mappings.hpp"
-
-struct Work;
+#include "opentrack/selected-libraries.hpp"
+#include "opentrack/work.hpp"
 
 struct State {
     State() :
