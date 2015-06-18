@@ -29,7 +29,7 @@ private:
 	bool trans_calib_running;
 
     Tracker_PT* get_pt();
-    
+private slots:
     void update_ewma_display(int value);
     void update_rot_display(int value);
     void update_trans_display(int value);

@@ -69,6 +69,12 @@ OptionsDialog::OptionsDialog(State& state) : state(state), trans_calib_running(f
     
     tie_setting(pt.model_used, ui.model_used);
     
+    connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
+    connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
+    connect(ui.rot_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_dz_display(int)));
+    connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
+    connect(ui.trans_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_dz_display(int)));
+    
     tie_setting(acc.rot_threshold, ui.rotation_slider);
     tie_setting(acc.trans_threshold, ui.translation_slider);
     tie_setting(acc.ewma, ui.ewma_slider);
@@ -77,6 +83,7 @@ OptionsDialog::OptionsDialog(State& state) : state(state), trans_calib_running(f
     
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
+    
     timer.start(100);
 }
 
