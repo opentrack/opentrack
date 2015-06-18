@@ -57,10 +57,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="styleSheet">
-         <string notr="true">color:#0;
-background:none;</string>
-        </property>
         <property name="text">
          <string>Rotation sensitivity</string>
         </property>
