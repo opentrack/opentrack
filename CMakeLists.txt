@@ -475,11 +475,6 @@ if(SDK_XPLANE)
     install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
-if(WIN32)
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/tracker-ht DESTINATION .)
-    #install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-endif()
-
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
 
 install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION .)
