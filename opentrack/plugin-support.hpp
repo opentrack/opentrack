@@ -52,7 +52,7 @@ extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib {
-    enum Type { Filter, Tracker, Protocol };
+    enum Type { Protocol };
     
     dylib(const QString& filename, Type t) :
         type(t),
@@ -159,17 +159,14 @@ struct dylib {
     
     static QList<mem<dylib>> enum_libraries()
     {
-        const char* filters_n[] = { "opentrack-filter-*.",
-                                    "opentrack-tracker-*.",
-                                    "opentrack-proto-*."
-                                  };
-        const Type filters_t[] = { Filter, Tracker, Protocol };
+        const char* filters_n[] = { "opentrack-proto-*." };
+        const Type filters_t[] = { Protocol };
     
         QDir settingsDir( QCoreApplication::applicationDirPath() );
     
         QList<mem<dylib>> ret;
     
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 1; i++)
         {
             QString filter = filters_n[i];
             auto t = filters_t[i];
@@ -223,8 +220,6 @@ private:
 struct Modules {
     Modules() :
         module_list(dylib::enum_libraries()),
-        filter_modules(filter(dylib::Filter)),
-        tracker_modules(filter(dylib::Tracker)),
         protocol_modules(filter(dylib::Protocol))
     {}
     QList<mem<dylib>>& filters() { return filter_modules; }

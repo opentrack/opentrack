@@ -55,8 +55,6 @@ MainWindow::MainWindow() :
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
 
-    modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
-
     for (auto x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name);
 

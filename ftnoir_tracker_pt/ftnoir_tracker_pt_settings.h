@@ -19,7 +19,7 @@ struct settings_pt : opts
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
     value<int> fov, camera_mode;
-    value<bool> is_cap;
+    value<int> model_used;
 
     settings_pt() :
         opts("tracker-pt"),
@@ -29,9 +29,9 @@ struct settings_pt : opts
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
-        fov(b, "camera-fov", 56),
+        fov(b, "camera-fov", 0),
         camera_mode(b, "camera-mode", 0),
-        is_cap(b, "model-is-cap", true)
+        model_used(b, "model-used", 0)
     {}
 };
 

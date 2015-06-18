@@ -70,8 +70,6 @@ public:
 
     cv::Matx22f P;
     
-    enum Model { Clip = 0, Cap = 1 };
-        
     PointModel(settings_pt& s)
     {
         set_model(s);
@@ -86,9 +84,11 @@ public:
         P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
     
+    enum { Cap = 0, Clip = 1 };
+    
     void set_model(settings_pt& s)
     {
-        if (s.is_cap)
+        if (s.model_used == Cap)
         {
             const double z = 100, x = 120, y = 60;
             M01 = cv::Vec3f(-x, -y, -z);

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>462</width>
-    <height>522</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -629,42 +629,13 @@
          <property name="title">
           <string/>
          </property>
-         <widget class="QRadioButton" name="model_cap">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>10</y>
-            <width>82</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Cap</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="model_clip">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>140</y>
-            <width>82</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Clip</string>
-          </property>
-         </widget>
          <widget class="QLabel" name="label_3">
           <property name="geometry">
            <rect>
-            <x>80</x>
-            <y>0</y>
-            <width>171</width>
-            <height>121</height>
+            <x>40</x>
+            <y>40</y>
+            <width>206</width>
+            <height>156</height>
            </rect>
           </property>
           <property name="text">
@@ -680,10 +651,10 @@
          <widget class="QLabel" name="label_4">
           <property name="geometry">
            <rect>
-            <x>70</x>
-            <y>130</y>
-            <width>201</width>
-            <height>161</height>
+            <x>135</x>
+            <y>150</y>
+            <width>221</width>
+            <height>191</height>
            </rect>
           </property>
           <property name="text">
@@ -695,6 +666,39 @@
           <property name="scaledContents">
            <bool>true</bool>
           </property>
+         </widget>
+         <widget class="QLabel" name="label_31">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>310</y>
+            <width>61</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Model used</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="model_used">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>305</y>
+            <width>81</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>Cap</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Clip</string>
+           </property>
+          </item>
          </widget>
         </widget>
        </item>
@@ -1668,6 +1672,23 @@ background:none;</string>
   <include location="ui-res.qrc"/>
  </resources>
  <connections/>
+ <designerdata>
+  <property name="gridDeltaX">
+   <number>5</number>
+  </property>
+  <property name="gridDeltaY">
+   <number>5</number>
+  </property>
+  <property name="gridSnapX">
+   <bool>true</bool>
+  </property>
+  <property name="gridSnapY">
+   <bool>true</bool>
+  </property>
+  <property name="gridVisible">
+   <bool>true</bool>
+  </property>
+ </designerdata>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>

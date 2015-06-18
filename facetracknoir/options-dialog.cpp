@@ -67,7 +67,7 @@ OptionsDialog::OptionsDialog(State& state) : state(state), trans_calib_running(f
     
     tie_setting(pt.fov, ui.camera_fov);
     
-    tie_setting(pt.is_cap, ui.model_cap);
+    tie_setting(pt.model_used, ui.model_used);
     
     tie_setting(acc.rot_threshold, ui.rotation_slider);
     tie_setting(acc.trans_threshold, ui.translation_slider);
@@ -84,6 +84,7 @@ void OptionsDialog::doOK() {
     s.b->save();
     pt.b->save();
     s.s_main.b->save();
+    acc.b->save();
     ui.game_detector->save();
     this->close();
     emit reload();
@@ -93,6 +94,7 @@ void OptionsDialog::doCancel() {
     s.b->reload();
     pt.b->reload();
     s.s_main.b->reload();
+    acc.b->reload();
     ui.game_detector->revert();
     close();
 }
