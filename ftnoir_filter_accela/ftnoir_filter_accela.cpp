@@ -97,12 +97,3 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     }
 }
 
-extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
-{
-    return new FTNoIR_Filter;
-}
-
-extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
-{
-    return new FTNoIR_FilterDll;
-}

@@ -47,7 +47,7 @@ double Tracker::map(double pos, Mapping& axis)
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
-    return fc.getValue(pos) + axis.opts.zero;
+    return fc.getValue(pos);
 }
 
 void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)

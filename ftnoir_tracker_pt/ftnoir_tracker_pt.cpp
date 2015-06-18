@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "opentrack/thread.hpp"
+#include "opentrack/camera-names.hpp"
 
 using namespace std;
 using namespace cv;
@@ -53,7 +54,19 @@ void Tracker_PT::reset_command(Command command)
 float Tracker_PT::get_focal_length()
 {
     static constexpr float pi = 3.1415926f;
-    const float fov = static_cast<int>(s.fov) * pi / 180.f;
+    float fov_;
+    switch (s.fov)
+    {
+    default:
+    case 0:
+        fov_ = 56;
+        break;
+    case 1:
+        fov_ = 75;
+        break;
+    }
+
+    const float fov = static_cast<int>(fov_) * pi / 180.f;
     return 0.5f / tan(0.5f * fov);
 }
 
@@ -85,7 +98,7 @@ void Tracker_PT::run()
             ever_success |= success;
             
             if (success)
-                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
+                point_tracker.track(points, PointModel(s), get_focal_length(), true);
             
             {
                 Affine X_CM = pose();
@@ -128,15 +141,39 @@ void Tracker_PT::run()
     qDebug()<<"Tracker:: Thread stopping";
 }
 
-int camera_name_to_index(const QString &name);
-
 void Tracker_PT::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
     QMutexLocker lock(&mutex);
-    camera.set_device_index(camera_name_to_index(s.camera_name));
-    camera.set_res(s.cam_res_x, s.cam_res_y);
-    camera.set_fps(s.cam_fps);
+    camera.set_device_index(camera_name_to_index("PS3Eye Camera"));
+    int res_x, res_y, cam_fps;
+    switch (s.camera_mode)
+    {
+    default:
+    case 0:
+        res_x = 640;
+        res_y = 480;
+        cam_fps = 75;
+        break;
+    case 1:
+        res_x = 640;
+        res_y = 480;
+        cam_fps = 60;
+        break;
+    case 2:
+        res_x = 320;
+        res_y = 240;
+        cam_fps = 189;
+        break;
+    case 3:
+        res_x = 320;
+        res_y = 240;
+        cam_fps = 120;
+        break;
+    }
+
+    camera.set_res(res_x, res_y);
+    camera.set_fps(cam_fps);
     qDebug()<<"Tracker::apply ends";
 }
 
@@ -201,15 +238,4 @@ void Tracker_PT::data(THeadPoseData *data)
         data[TY] = t[1] / 10.0;
         data[TZ] = t[2] / 10.0;
     }
-}
-
-//-----------------------------------------------------------------------------
-#ifdef OPENTRACK_API
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-#else
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
-#endif
-{
-	return new Tracker_PT;
 }

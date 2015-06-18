@@ -71,22 +71,12 @@ class MainWindow : public QMainWindow, private State
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
-    mem<IFilterDialog> pFilterDialog;
     mem<IProtocolDialog> pProtocolDialog;
-    mem<ITrackerDialog> pTrackerDialog;
     process_detector_worker det;
 
-    mem<dylib> current_tracker()
-    {
-        return modules.trackers().value(0, nullptr);
-    }
     mem<dylib> current_protocol()
     {
         return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
-    }
-    mem<dylib> current_filter()
-    {
-        return modules.filters().value(0, nullptr);
     }
 
     void changeEvent(QEvent* e) override;
@@ -109,9 +99,7 @@ private slots:
     void exit();
     void profileSelected(int index);
 
-    void showTrackerSettings();
     void showProtocolSettings();
-    void showFilterSettings();
     void showKeyboardShortcuts();
     void showCurveConfiguration();
     void showHeadPose();

@@ -25,58 +25,24 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 	const int W = frame.cols;
 	const int H = frame.rows; 
 
-    if (frame_last.cols != W || frame_last.rows != H)
-    {
-        frame_last = cv::Mat();
-    }
-
 	// clear old points
 	points.clear();
 
-	// convert to grayscale
-	Mat frame_gray;
+    // convert to grayscale
+    Mat frame_gray;
     cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
-
-	int secondary = s.threshold_secondary;
+    
     int primary = s.threshold;
 	
-	// mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-	Mat frame_bin;
-	// only used if draw_output
-	Mat frame_bin_copy;
-	// mask for everything that passes
-	Mat frame_bin_low;
-	// mask for lower-threshold && combined result of last, needs to remain in scope until drawing, but is only used if secondary != 0
-	Mat frame_last_and_low;
-
-	if(secondary==0){
-		threshold(frame_gray, frame_bin, primary, 255, THRESH_BINARY);
-	}else{
-		// we recombine a number of buffers, this might be slower than a single loop of per-pixel logic
-		// but it might as well be faster if openCV makes good use of SIMD
-		float t = primary;
-		//float hyst = float(threshold_secondary_val)/512.;
-		//threshold(frame_gray, frame_bin, (t + ((255.-t)*hyst)), 255, THRESH_BINARY);
-		float hyst = float(primary)/(256.*8.);
-		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY); 
-		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
-
-		frame_bin.copyTo(frame_bin_copy);
-        if(frame_last.empty()){
-			frame_bin.copyTo(frame_last);
-		}else{
-			// keep pixels from last if they are above lower threshold
-			bitwise_and(frame_last, frame_bin_low, frame_last_and_low);
-			// union of pixels >= higher threshold and pixels >= lower threshold
-			bitwise_or(frame_bin, frame_last_and_low, frame_last);
-			frame_last.copyTo(frame_bin);
-		}
-	}
+    // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
+    Mat frame_bin;
+    
+    threshold(frame_gray, frame_bin, primary, 255, THRESH_BINARY);
     
     int min_size = s.min_point_size;
     int max_size = s.max_point_size;
     
-	unsigned int region_size_min = 3.14*min_size*min_size/4.0;
+    unsigned int region_size_min = 3.14*min_size*min_size/4.0;
 	unsigned int region_size_max = 3.14*max_size*max_size/4.0;
 
 	int blob_index = 1;
@@ -121,14 +87,9 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 					if (frame_bin.at<unsigned char>(i,j) != blob_index-1) continue;
 					float val;
 
-					if(secondary==0){
-						val = frame_gray.at<unsigned char>(i,j);
-						val = float(val - primary)/(256 - primary);
-						val = val*val; // makes it more stable (less emphasis on low values, more on the peak)
-					}else{
-						//hysteresis point detection gets stability from ignoring pixel noise so we decidedly leave the actual pixel values out of the picture
-						val = frame_last.at<unsigned char>(i,j) / 256.;
-					}
+                                        val = frame_gray.at<unsigned char>(i,j);
+                                        val = float(val - primary)/(256 - primary);
+                                        val = val*val; // makes it more stable (less emphasis on low values, more on the peak)
 
 					m  +=     val;
 					mx += j * val;
@@ -143,24 +104,15 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 			//qDebug()<<blob_index<<"  => "<<c[0]<<" "<<c[1];
 			points.push_back(c);
 		}
-	}
-	
-	// draw output image
-    vector<Mat> channels;
-    if(secondary==0){
-        frame_bin.setTo(170, frame_bin);
-        channels.push_back(frame_gray + frame_bin);
-        channels.push_back(frame_gray - frame_bin);
-        channels.push_back(frame_gray - frame_bin);
-    }else{
-        frame_bin_copy.setTo(120, frame_bin_copy);
-        //frame_bin_low.setTo(90, frame_bin_low);
-        channels.push_back(frame_gray + frame_bin_copy);
-        channels.push_back(frame_gray - frame_bin_copy);
-        channels.push_back(frame_gray - frame_bin_copy);
-        //channels.push_back(frame_gray + frame_bin);
     }
+    
+    // draw output image
+    vector<Mat> channels;
+    frame_bin.setTo(170, frame_bin);
+    channels.push_back(frame_gray + frame_bin);
+    channels.push_back(frame_gray - frame_bin);
+    channels.push_back(frame_gray - frame_bin);
     merge(channels, frame);
-
+    
 	return points;
 }

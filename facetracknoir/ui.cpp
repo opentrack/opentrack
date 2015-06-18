@@ -24,6 +24,8 @@
 #include "ui.h"
 #include "opentrack/tracker.h"
 #include "opentrack/options.hpp"
+#include "ftnoir_tracker_pt/ftnoir_tracker_pt.h"
+#include "ftnoir_filter_accela/ftnoir_filter_accela.h"
 #include <QFileDialog>
 #include <QFileInfo>
 
@@ -208,7 +210,8 @@ void MainWindow::startTracker() {
     // tracker dtor needs run first
     work = nullptr;
 
-    libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
+    libs = SelectedLibraries(ui.video_frame, std::make_shared<Tracker_PT>(), current_protocol(), std::make_shared<FTNoIR_Filter>());
+    
     work = std::make_shared<Work>(s, pose, libs, this, winId());
 
     {
@@ -224,12 +227,6 @@ void MainWindow::startTracker() {
                              QMessageBox::NoButton);
         return;
     }
-    
-    if (pTrackerDialog)
-        pTrackerDialog->register_tracker(libs.pTracker.get());
-    
-    if (pFilterDialog)
-        pFilterDialog->register_filter(libs.pFilter.get());
     
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
@@ -248,22 +245,10 @@ void MainWindow::stopTracker( ) {
     pose_update_timer.stop();
     ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
 
-    if (pTrackerDialog)
-    {
-        pTrackerDialog->unregister_tracker();
-        pTrackerDialog = nullptr;
-    }
-
     if (pProtocolDialog)
     {
         pProtocolDialog->unregister_protocol();
         pProtocolDialog = nullptr;
-    }
-
-    if (pFilterDialog)
-    {
-        pFilterDialog->unregister_filter();
-        pFilterDialog = nullptr;
     }
 
     work = nullptr;
@@ -338,24 +323,6 @@ mem<t> mk_dialog(mem<dylib> lib)
     return nullptr;
 }
 
-void MainWindow::showTrackerSettings()
-{
-    if (pTrackerDialog && pTrackerDialog->isVisible())
-    {
-        pTrackerDialog->show();
-        pTrackerDialog->raise();
-    }
-    else
-    {
-        auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
-        pTrackerDialog = dialog;
-        if (libs.pTracker != nullptr)
-            dialog->register_tracker(libs.pTracker.get());
-        dialog->show();
-        dialog->raise();
-    }
-}
-
 void MainWindow::showProtocolSettings() {
     if (pProtocolDialog && pProtocolDialog->isVisible())
     {
@@ -372,22 +339,6 @@ void MainWindow::showProtocolSettings() {
     }
 }
 
-void MainWindow::showFilterSettings() {
-    if (pFilterDialog && pFilterDialog->isVisible())
-    {
-        pFilterDialog->show();
-        pFilterDialog->raise();
-    } else
-    {
-        auto dialog = mk_dialog<IFilterDialog>(current_filter());
-        pFilterDialog = dialog;
-        if (libs.pFilter != nullptr)
-            dialog->register_filter(libs.pFilter.get());
-        dialog->show();
-        dialog->raise();
-    }
-}
-
 void MainWindow::showKeyboardShortcuts() {
     if (shortcuts_widget && shortcuts_widget->isVisible())
     {
@@ -396,7 +347,7 @@ void MainWindow::showKeyboardShortcuts() {
     }
     else
     {
-        shortcuts_widget = std::make_shared<OptionsDialog>();
+        shortcuts_widget = std::make_shared<OptionsDialog>(static_cast<State&>(*this));
         shortcuts_widget->setWindowFlags(Qt::Dialog);
         connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
         shortcuts_widget->show();

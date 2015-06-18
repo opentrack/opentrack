@@ -70,7 +70,7 @@ public:
 
     cv::Matx22f P;
     
-    enum Model { Clip = 0, Cap = 1, Custom = 2 };
+    enum Model { Clip = 0, Cap = 1 };
         
     PointModel(settings_pt& s)
     {
@@ -88,20 +88,17 @@ public:
     
     void set_model(settings_pt& s)
     {
-        switch (s.active_model_panel)
+        if (s.is_cap)
         {
-        case Clip:
-            M01 = cv::Vec3f(0, static_cast<double>(s.clip_ty), -static_cast<double>(s.clip_tz));
-            M02 = cv::Vec3f(0, -static_cast<double>(s.clip_by), -static_cast<double>(s.clip_bz));
-            break;
-        case Cap:
-            M01 = cv::Vec3f(-static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
-            M02 = cv::Vec3f(static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
-            break;
-        case Custom:
-            M01 = cv::Vec3f(s.m01_x, s.m01_y, s.m01_z);
-            M02 = cv::Vec3f(s.m02_x, s.m02_y, s.m02_z);
-            break;
+            const double z = 100, x = 120, y = 60;
+            M01 = cv::Vec3f(-x, -y, -z);
+            M02 = cv::Vec3f(x, -y, -z);
+        }
+        else
+        {
+            const double a = 27, b = 43, c = 62, d = 74;
+            M01 = cv::Vec3f(0, b, -a);
+            M02 = cv::Vec3f(0, -c, -d);            
         }
     }
     

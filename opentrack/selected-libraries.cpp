@@ -14,15 +14,15 @@ static mem<t> make_instance(mem<dylib> lib)
     return ret;
 }
 
-SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
+SelectedLibraries::SelectedLibraries(QFrame* frame, mem<ITracker> t, dylibptr p, mem<IFilter> f) :
     pTracker(nullptr),
     pFilter(nullptr),
     pProtocol(nullptr),
     correct(false)
 {
-    pTracker = make_instance<ITracker>(t);
+    pTracker = t;
     pProtocol = make_instance<IProtocol>(p);
-    pFilter = make_instance<IFilter>(f);
+    pFilter = f;
 
     if (!pTracker || !pProtocol)
     {
