@@ -22,7 +22,6 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QTime>
-#include <opencv2/core/core.hpp>
 #include <atomic>
 #ifndef OPENTRACK_API
 #   include <boost/shared_ptr.hpp>

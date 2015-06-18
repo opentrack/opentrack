@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <type_traits>
+#include <cmath>
 
 namespace {
     // last param to fool SFINAE into overloading
@@ -215,22 +216,20 @@ struct Mat
     static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
     {
         static constexpr double pi = 3.141592653;
-        const double up = 90 * pi / 180.;
-        static constexpr double bound = 1. - 2e-4;
-        if (R(0, 2) > bound)
+        const double pitch_1 = asin(-R(0, 2));
+        const double pitch_2 = pi - pitch_1;
+        const double cos_p1 = cos(pitch_1), cos_p2 = cos(pitch_2);
+        const double roll_1 = atan2(R(1, 2) / cos_p1, R(2, 2) / cos_p1);
+        const double roll_2 = atan2(R(1, 2) / cos_p2, R(2, 2) / cos_p2);
+        const double yaw_1 = atan2(R(0, 1) / cos_p1, R(0, 0) / cos_p1);
+        const double yaw_2 = atan2(R(0, 1) / cos_p2, R(0, 0) / cos_p2);
+        if (std::abs(pitch_1) + std::abs(roll_1) + std::abs(yaw_1) > std::abs(pitch_2) + std::abs(roll_2) + std::abs(yaw_2))
         {
-            double roll = atan(R(1, 0) / R(2, 0));
-            return dmat<3, 1>({0., up, roll});
+            bool fix_neg_pitch = pitch_1 < 0;
+            return dmat<3, 1>({yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2});
         }
-        if (R(0, 2) < -bound)
-        {
-            double roll = atan(R(1, 0) / R(2, 0));
-            return dmat<3, 1>({0., -up, roll});
-        }
-        double pitch = asin(-R(0, 2));
-        double roll = atan2(R(1, 2), R(2, 2));
-        double yaw = atan2(R(0, 1), R(0, 0));
-        return dmat<3, 1>({yaw, pitch, roll});
+        else
+            return dmat<3, 1>({yaw_1, pitch_1, roll_1});
     }
     
     // tait-bryan angles, not euler
