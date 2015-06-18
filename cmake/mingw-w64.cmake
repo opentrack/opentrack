@@ -25,16 +25,13 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(lto "-flto -fuse-linker-plugin")
-set(rice "-fmerge-all-constants -fipa-pta -fipa-icf -fweb -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las")
 set(cpu "-O3 -march=i686 -mtune=corei7-avx -ffast-math -mfpmath=both -msse -msse2 -mno-sse3 -mno-avx")
-set(lto-link "${lto} -flto-partition=none -fno-fat-lto-objects")
 
 set(CFLAGS-OVERRIDE "" CACHE STRING "")
 
-set(CMAKE_C_FLAGS_RELEASE "${rice} ${lto} ${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "${rice} ${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${cpu} ${lto-link} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
