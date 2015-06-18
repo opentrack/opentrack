@@ -301,6 +301,7 @@ namespace options {
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define DEFINE_SIGNAL(t) void valueChanged(t)
     public:
+        string name() { return self_name; }
         base_value(pbundle b, const string& name) : b(b), self_name(name) {}
     signals:
         DEFINE_SIGNAL(double);
@@ -342,7 +343,7 @@ namespace options {
         }
         static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
         static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::UniqueConnection;
-        value(pbundle b, const string& name, t def) : base_value(b, name)
+        value(pbundle b, const string& name, t def) : base_value(b, name), def(def)
         {
             QObject::connect(b.get(), SIGNAL(reloading()),
                              this, SLOT(reload()),
@@ -355,11 +356,13 @@ namespace options {
 
         operator t()
         {
-            return b->get<t>(self_name);
+            return b->contains(self_name) ? b->get<t>(self_name) : def;
         }
         void reload() override {
             *this = static_cast<t>(*this);
         }
+    private:
+        t def;
     };
     
     struct opts
