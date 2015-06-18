@@ -30,7 +30,6 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QDir>
-#include <QRadioButton>
 
 #include <cinttypes>
 
@@ -453,13 +452,5 @@ namespace options {
         t->setCurrentIndex(v);
         base_value::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
         base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
-    }
-    
-    template<>
-    inline void tie_setting(value<bool>& v, QRadioButton* t)
-    {
-        t->setChecked(v);
-        base_value::connect(t, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(bool)), t, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
     }
 }
