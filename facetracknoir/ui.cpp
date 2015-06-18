@@ -176,7 +176,7 @@ void MainWindow::fill_profile_combobox()
 {
      QStringList ini_list = group::ini_list();
      QString current = QFileInfo(group::ini_pathname()).fileName();
-     setWindowTitle(QStringLiteral("TrackHat") + QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
+     setWindowTitle(QStringLiteral("TrackHat ") + QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
