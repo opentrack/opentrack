@@ -44,7 +44,6 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
 
-    tie_setting(s.threshold_secondary, ui.threshold_secondary_slider);
     tie_setting(s.threshold, ui.threshold_slider);
 
     tie_setting(s.min_point_size, ui.mindiam_spin);

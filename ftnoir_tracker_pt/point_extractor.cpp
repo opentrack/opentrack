@@ -25,51 +25,15 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
 	const int W = frame.cols;
 	const int H = frame.rows; 
 
-    if (frame_last.cols != W || frame_last.rows != H)
-    {
-        frame_last = cv::Mat();
-    }
-
 	// convert to grayscale
 	Mat frame_gray;
     cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
-	int secondary = s.threshold_secondary;
-    int primary = s.threshold;
-	
 	// mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
 	Mat frame_bin;
-	// only used if draw_output
-	Mat frame_bin_copy;
-	// mask for everything that passes
-	Mat frame_bin_low;
-	// mask for lower-threshold && combined result of last, needs to remain in scope until drawing, but is only used if secondary != 0
-	Mat frame_last_and_low;
 
-	if(secondary==0){
-		threshold(frame_gray, frame_bin, primary, 255, THRESH_BINARY);
-	}else{
-		// we recombine a number of buffers, this might be slower than a single loop of per-pixel logic
-		// but it might as well be faster if openCV makes good use of SIMD
-		float t = primary;
-		//float hyst = float(threshold_secondary_val)/512.;
-		//threshold(frame_gray, frame_bin, (t + ((255.-t)*hyst)), 255, THRESH_BINARY);
-		float hyst = float(primary)/(256.*8.);
-		threshold(frame_gray, frame_bin, t, 255, THRESH_BINARY); 
-		threshold(frame_gray, frame_bin_low,std::max(float(1), t - (t*hyst)), 255, THRESH_BINARY);
-
-		frame_bin.copyTo(frame_bin_copy);
-        if(frame_last.empty()){
-			frame_bin.copyTo(frame_last);
-		}else{
-			// keep pixels from last if they are above lower threshold
-			bitwise_and(frame_last, frame_bin_low, frame_last_and_low);
-			// union of pixels >= higher threshold and pixels >= lower threshold
-			bitwise_or(frame_bin, frame_last_and_low, frame_last);
-			frame_last.copyTo(frame_bin);
-		}
-	}
-    
+    threshold(frame_gray, frame_bin, s.threshold, 255, THRESH_BINARY);
+   
     int min_size = s.min_point_size;
     int max_size = s.max_point_size;
     

@@ -28,7 +28,6 @@ public:
     settings_pt s;
 private:
     std::vector<cv::Vec2f> points;
-    cv::Mat frame_last;
 };
 
 #endif //POINTEXTRACTOR_H

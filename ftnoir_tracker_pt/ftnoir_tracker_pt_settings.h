@@ -18,7 +18,6 @@ struct settings_pt : opts
                cam_res_y,
                cam_fps,
                threshold,
-               threshold_secondary,
                min_point_size,
                max_point_size;
 
@@ -41,7 +40,6 @@ struct settings_pt : opts
         cam_res_y(b, "camera-res-height", 480),
         cam_fps(b, "camera-fps", 30),
         threshold(b, "threshold-primary", 128),
-        threshold_secondary(b, "threshold-secondary", 128),
         min_point_size(b, "min-point-size", 10),
         max_point_size(b, "max-point-size", 50),
         m01_x(b, "m_01-x", 0),
