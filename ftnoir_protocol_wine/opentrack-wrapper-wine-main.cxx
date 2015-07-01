@@ -40,27 +40,23 @@ private:
 
 int main(void)
 {
-	ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
+    ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
     ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
     if(!lck_posix.success()) {
-		printf("Can't open posix map: %d\n", errno);
-		return 1;
-	}
-	if(!lck_wine.success()) {
-		printf("Can't open Wine map\n");
-		return 1;
-	}
+        printf("Can't open posix map: %d\n", errno);
+        return 1;
+    }
+    if(!lck_wine.success()) {
+        printf("Can't open Wine map\n");
+        return 1;
+    }
     WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();
     FTHeap* shm_wine = (FTHeap*) lck_wine.ptr();
     FTData* data = &shm_wine->data;
     create_registry_key();
-	while (1) {
-		lck_posix.lock();
-		if (shm_posix->stop) {
-			lck_posix.unlock();
-			break;
-		}
-		lck_wine.lock();
+    while (1) {
+        if (shm_posix->stop)
+            break;
         data->Yaw = -shm_posix->data[Yaw];
         data->Pitch = -shm_posix->data[Pitch];
         data->Roll = shm_posix->data[Roll];
@@ -74,8 +70,6 @@ int main(void)
         shm_posix->gameid = shm_wine->GameID;
         for (int i = 0; i < 8; i++)
             shm_wine->table[i] = shm_posix->table[i];
-		lck_wine.unlock();
-		lck_posix.unlock();
         (void) Sleep(4);
-	}
+        }
 }

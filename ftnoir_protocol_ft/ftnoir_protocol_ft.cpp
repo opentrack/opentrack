@@ -54,44 +54,51 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     float tx = headpose[TX] * 10.f;
     float ty = headpose[TY] * 10.f;
     float tz = headpose[TZ] * 10.f;
-
-    shm.lock();
-
-    pMemData->data.RawX = 0;
-    pMemData->data.RawY = 0;
-    pMemData->data.RawZ = 0;
-    pMemData->data.RawPitch = 0;
-    pMemData->data.RawYaw = 0;
-    pMemData->data.RawRoll = 0;
-
-    pMemData->data.X = tx;
-    pMemData->data.Y = ty;
-    pMemData->data.Z = tz;
-    pMemData->data.Yaw = yaw;
-    pMemData->data.Pitch = pitch;
-    pMemData->data.Roll = roll;
-
-    pMemData->data.X1 = pMemData->data.DataID;
-    pMemData->data.X2 = 0;
-    pMemData->data.X3 = 0;
-    pMemData->data.X4 = 0;
-    pMemData->data.Y1 = 0;
-    pMemData->data.Y2 = 0;
-    pMemData->data.Y3 = 0;
-    pMemData->data.Y4 = 0;
-
-    if (intGameID != pMemData->GameID)
+    
+    FTHeap* ft = pMemData;
+    FTData* data = &ft->data;
+    
+    data->RawX = 0;
+    data->RawY = 0;
+    data->RawZ = 0;
+    data->RawPitch = 0;
+    data->RawYaw = 0;
+    data->RawRoll = 0;
+    
+    data->X = tx;
+    data->Y = ty;
+    data->Z = tz;
+    data->Yaw = yaw;
+    data->Pitch = pitch;
+    data->Roll = roll;
+    
+    data->X1 = data->DataID;
+    data->X2 = 0;
+    data->X3 = 0;
+    data->X4 = 0;
+    data->Y1 = 0;
+    data->Y2 = 0;
+    data->Y3 = 0;
+    data->Y4 = 0;
+    
+    int32_t id = ft->GameID;
+    
+    if (intGameID != id)
     {
         QString gamename;
-        CSV::getGameData(pMemData->GameID, pMemData->table, gamename);
-        pMemData->GameID2 = pMemData->GameID;
-        intGameID = pMemData->GameID;
+        {
+            unsigned char table[8];
+            for (int i = 0; i < 8; i++) table[i] = pMemData->table[i];
+            CSV::getGameData(id, table, gamename);
+            for (int i = 0; i < 8; i++) pMemData->table[i] = table[i];
+        }
+        ft->GameID2 = id;
+        intGameID = id;
         QMutexLocker foo(&this->game_name_mutex);
         connected_game = gamename;
     }
-
-        pMemData->data.DataID += 1;
-        shm.unlock();
+    
+    data->DataID += 1;
 }
 
 void FTNoIR_Protocol::start_tirviews() {
@@ -165,9 +172,10 @@ bool FTNoIR_Protocol::correct()
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
     pMemData->GameID2 = 0;
-    memset(pMemData->table, 0, 8);
+    for (int i = 0; i < 8; i++)
+        pMemData->table[i] = 0;
 
-        return true;
+    return true;
 }
 
 extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
