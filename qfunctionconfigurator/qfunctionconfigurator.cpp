@@ -131,8 +131,8 @@ void QFunctionConfigurator::drawFunction()
 
     QPen pen(spline_color, 1.2, Qt::SolidLine);
 
-    static constexpr double step = 1.02;
     const double max = _config->maxInput();
+    const double step = std::max(.1, max / 300.);
 
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (double i = 0; i < max; i += step) {
