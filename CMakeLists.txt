@@ -239,6 +239,7 @@ set_target_properties(opentrack-version PROPERTIES
     "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
+target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
 opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
 opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 

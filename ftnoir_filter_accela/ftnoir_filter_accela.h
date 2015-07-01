@@ -1,6 +1,7 @@
 #pragma once
 #include "ui_ftnoir_accela_filtercontrols.h"
 #include "opentrack/plugin-api.hpp"
+#include "qfunctionconfigurator/functionconfig.h"
 #include <atomic>
 #include <QMutex>
 #include <QTimer>
@@ -26,14 +27,13 @@ class FTNoIR_Filter : public IFilter
 public:
     FTNoIR_Filter();
     void filter(const double* input, double *output);
+    Map rot, trans;
 private:
     settings s;
     bool first_run;
     double last_output[6];
     double smoothed_input[6];
     Timer t;
-    
-    double f(double val, const double gains[][2]);
 };
 
 class FilterControls: public IFilterDialog
