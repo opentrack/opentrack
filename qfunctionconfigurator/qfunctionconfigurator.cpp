@@ -141,6 +141,11 @@ void QFunctionConfigurator::drawFunction()
         drawLine(&painter, prev, cur, pen);
         prev = cur;
     }
+    if (points.size())
+    {
+        auto last = point_to_pixel(points[points.size()-1]);
+        drawLine(&painter, prev, last, pen);
+    }
 }
 
 void QFunctionConfigurator::paintEvent(QPaintEvent *e)
