@@ -8,6 +8,9 @@
 #include "point_extractor.h"
 #include <QDebug>
 
+#ifdef DEBUG_EXTRACTION
+#   include "opentrack/timer.hpp"
+#endif
 
 using namespace cv;
 using namespace std;
@@ -39,15 +42,15 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     // that's applicable to poor lighting conditions.
     
     static constexpr int diff = 20;
-    static constexpr int steps = 10;
-    static constexpr int successes = 8;
+    static constexpr int steps = 5;
+    static constexpr int successes = 5;
     
     int thres = s.threshold;
     
     struct blob {
-        double max_radius;
         std::vector<cv::Vec2d> pos;
         std::vector<double> confids;
+        std::vector<double> areas;
         
         cv::Vec2d effective_pos() const
         {
@@ -56,13 +59,13 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
             double norm = 0;
             for (unsigned i = 0; i < pos.size(); i++)
             {
-                x += pos[i][0] * confids[i];
-                y += pos[i][1] * confids[i];
-                norm += confids[i];
+                const double w = confids[i] * areas[i];
+                x += pos[i][0] * w;
+                y += pos[i][1] * w;
+                norm += w;
             }
             cv::Vec2d ret(x, y);
             ret *= 1./norm;
-            //qDebug() << "ret" << ret[0] << ret[1] << "norm" << norm << "count" << pos.size();
             return ret;
         }
     };
@@ -73,7 +76,8 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
         cv::Vec2d pos;
         double confid;
         bool taken;
-        simple_blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid), taken(false)
+        double area;
+        simple_blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
         {
             //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
         }
@@ -85,6 +89,12 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
         }
         static std::vector<blob> merge(std::vector<simple_blob>& blobs)
         {
+#ifdef DEBUG_EXTRACTION
+            static Timer t;
+            bool debug = t.elapsed_ms() > 100;
+            if (debug) t.start();
+#endif
+            
             std::vector<blob> ret;
             for (unsigned i = 0; i < blobs.size(); i++)
             {
@@ -95,7 +105,7 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
                 blob b_;
                 b_.pos.push_back(b.pos);
                 b_.confids.push_back(b.confid);
-                b_.max_radius = b.radius;
+                b_.areas.push_back(b.area);
                 
                 for (unsigned j = i+1; j < blobs.size(); j++)
                 {
@@ -107,12 +117,29 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
                         b2.taken = true;
                         b_.pos.push_back(b2.pos);
                         b_.confids.push_back(b2.confid);
-                        b_.max_radius = std::max(b_.max_radius, b2.radius);
+                        b_.areas.push_back(b2.area);
                     }
                 }
                 if (b_.pos.size() >= successes)
                     ret.push_back(b_);
             }
+#ifdef DEBUG_EXTRACTION
+            if (debug)
+            {
+                double diff = 0;
+                for (unsigned j = 0; j < ret.size(); j++)
+                {
+                    auto& b = ret[j];
+                    cv::Vec2d pos = b.effective_pos();
+                    for (unsigned i = 0; i < b.pos.size(); i++)
+                    {
+                        auto tmp = pos - b.pos[i];
+                        diff += std::abs(tmp.dot(tmp));
+                    }
+                }
+                qDebug() << "diff" << diff;
+            }
+#endif
             return ret;
         }
     };
@@ -136,8 +163,13 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
         
+        int cnt = 0;
+        
         for (auto& c : contours)
         {
+            if (cnt++ > 30)
+                break;
+            
             auto m = cv::moments(cv::Mat(c));
             const double area = m.m00;
             if (area == 0.)
@@ -170,7 +202,7 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
                     confid = imin / imax;
                 }
             }
-            blobs.push_back(simple_blob(radius, pos, confid));
+            blobs.push_back(simple_blob(radius, pos, confid, area));
         }
     }
     
