@@ -72,20 +72,19 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     
     struct simple_blob
     {
-        double radius;
+        double radius_2;
         cv::Vec2d pos;
         double confid;
         bool taken;
         double area;
-        simple_blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
+        simple_blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius_2(radius*radius), pos(pos), confid(confid), taken(false), area(area)
         {
             //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
         }
         bool inside(const simple_blob& other)
         {
             cv::Vec2d tmp = pos - other.pos;
-            double p = sqrt(1e-4 + tmp.dot(tmp));
-            return p < radius;
+            return tmp.dot(tmp) < radius_2;
         }
         static std::vector<blob> merge(std::vector<simple_blob>& blobs)
         {
