@@ -215,11 +215,14 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
         points.push_back(p);
     }
     
+    vector<Mat> channels_;
+    cv::split(frame, channels_);
     // draw output image
+    Mat frame_bin_ = frame_bin * .5;
     vector<Mat> channels;
-    channels.push_back(frame_gray + frame_bin);
-    channels.push_back(frame_gray - frame_bin);
-    channels.push_back(frame_gray - frame_bin);
+    channels.push_back(channels_[0] + frame_bin_);
+    channels.push_back(channels_[1] - frame_bin_);
+    channels.push_back(channels_[2] - frame_bin_);
     merge(channels, frame);
 
 	return points;
