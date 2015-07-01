@@ -31,39 +31,39 @@ typedef __int32 int32_t;
 
 /* only 6 headpose floats and the data id are filled -sh */
 typedef struct __FTData {
-    int DataID;
-    int CamWidth;
-    int CamHeight;
+    volatile int DataID;
+    volatile int CamWidth;
+    volatile int CamHeight;
     /* virtual pose */
-    float Yaw;   /* positive yaw to the left */
-    float Pitch; /* positive pitch up */
-    float Roll;  /* positive roll to the left */
-    float X;
-    float Y;
-    float Z;
+    volatile float Yaw;   /* positive yaw to the left */
+    volatile float Pitch; /* positive pitch up */
+    volatile float Roll;  /* positive roll to the left */
+    volatile float X;
+    volatile float Y;
+    volatile float Z;
     /* raw pose with no smoothing, sensitivity, response curve etc. */
-    float RawYaw;
-    float RawPitch;
-    float RawRoll;
-    float RawX;
-    float RawY;
-    float RawZ;
+    volatile float RawYaw;
+    volatile float RawPitch;
+    volatile float RawRoll;
+    volatile float RawX;
+    volatile float RawY;
+    volatile float RawZ;
     /* raw points, sorted by Y, origin top left corner */
-    float X1;
-    float Y1;
-    float X2;
-    float Y2;
-    float X3;
-    float Y3;
-    float X4;
-    float Y4;
+    volatile float X1;
+    volatile float Y1;
+    volatile float X2;
+    volatile float Y2;
+    volatile float X3;
+    volatile float Y3;
+    volatile float X4;
+    volatile float Y4;
 } FTData;
 
 /* we add some shit at the end for other legacy proto, sadly */
 
 typedef struct __FTHeap {
     FTData data;
-    int32_t GameID;
-    unsigned char table[8];
-    int32_t GameID2;
+    volatile int32_t GameID;
+    volatile unsigned char table[8];
+    volatile int32_t GameID2;
 } FTHeap;
