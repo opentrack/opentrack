@@ -97,7 +97,8 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
     QString gameID = QString::number(id);
     
     /* zero table first, in case unknown game is connecting */
-    memset(table, 0, 8);
+    for (int i = 0; i < 8; i++)
+        table[i] = 0;
     QStringList gameLine;
 	qDebug() << "getGameData, ID = " << gameID;
 

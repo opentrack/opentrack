@@ -12,20 +12,42 @@
 #include "opentrack/plugin-api.hpp"
 using namespace std;
 
+static constexpr double rot_gains[][2] = {
+    { 7, 200 },
+    { 6, 100 },
+    { 5, 45 },
+    { 4, 15 },
+    { 3, 5 },
+    { 2, 1.4 },
+    { 1, .4 },
+    { 0, .2 },
+    { -1, 0 }
+};
+static constexpr double trans_gains[][2] = {
+    { 5, 180 },
+    { 4, 64 },
+    { 3, 20 },
+    { 2, 5 },
+    { 1, .7 },
+    { 0, .1 },
+    { -1, 0 }
+};
+
 FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
-}
-
-double FTNoIR_Filter::f(double val, const double gains[][2])
-{
-    for (int i = 0; gains[i][0] >= 0; i++)
+    rot.setMaxInput(rot_gains[0][0]);
+    trans.setMaxInput(trans_gains[0][0]);
+    rot.setMaxOutput(rot_gains[0][1]);
+    trans.setMaxOutput(trans_gains[0][1]);
+    
+    for (int i = 0; rot_gains[i][0] >= 0; i++)
     {
-        if (val >= gains[i][0])
-        {
-            return gains[i][1] * val;
-        }
+        rot.addPoint(QPointF(rot_gains[i][0], rot_gains[i][1]));
     }
-    return 0;
+    for (int i = 0; trans_gains[i][0] >= 0; i++)
+    {
+        trans.addPoint(QPointF(trans_gains[i][0], trans_gains[i][1]));
+    }
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
@@ -43,25 +65,6 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         return;
     }
     
-    static const double rot_gains[][2] = {
-        { 6, 15 },
-        { 5, 8 },
-        { 4, 4 },
-        { 3, 1.6 },
-        { 2, .7 },
-        { 1, .4 },
-        { 0, .2 },
-        { -1, 0 }
-    };
-    static const double trans_gains[][2] = {
-        { 4, 8 },
-        { 3, 4 },
-        { 2, 2 },
-        { 1, .5 },
-        { 0, .1 },
-        { -1, 0 }
-    };
-
     const double rot_t = 10. * (1+s.rot_threshold) / 100.;
     const double trans_t = 5. * (1+s.trans_threshold) / 100.;
     
@@ -75,6 +78,8 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     
     for (int i = 0; i < 6; i++)
     {
+        Map& m = i >= 3 ? rot : trans;
+        
         smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
         
         const double in = smoothed_input[i];
@@ -83,14 +88,12 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec_ = max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
-        const double val = f(vec_ / thres, i >= 3 ? rot_gains : trans_gains) * thres;
+        const double val = m.getValue(vec_ / thres) * thres;
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
         const bool negp = vec < 0.;
         const bool done = negp
             ? result <= in
             : result >= in;
-        if (i == 3 && val > 0.1 && done)
-            qDebug() << "done";
         const double ret = done ? in : result;
         
         last_output[i] = output[i] = ret;

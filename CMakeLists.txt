@@ -188,6 +188,8 @@ endif()
 
 # ----
 
+set(opentrack-perms PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+
 if(WIN32)
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
@@ -249,6 +251,7 @@ set_target_properties(opentrack-version PROPERTIES
     "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela STATIC TRUE)
+target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
 #opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
@@ -477,8 +480,9 @@ endif()
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
 
-install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION .)
-install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION . ${opentrack-perms})
+install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .
+    ${opentrack-perms})
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/clientfiles" DESTINATION .)
 
 if(NOT WIN32 AND SDK_WINE_PREFIX AND NOT SDK_WINE_NO_WRAPPER)
@@ -489,7 +493,7 @@ endif()
 install(TARGETS opentrack DESTINATION .)
 
 if(SDK_VJOY)
-    install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION . PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE)
+    install(FILES "${SDK_VJOY}/VJoy.dll" DESTINATION . ${opentrack-perms})
 endif()
 
 if(WIN32)
