@@ -115,7 +115,8 @@ struct dylib {
                 {
                     fprintf(stderr, "Error, ignoring: %s\n", err);
                     fflush(stderr);
-                    dlclose(handle);
+                    if (handle)
+                        dlclose(handle);
                     handle = nullptr;
                     return true;
                 }
@@ -138,6 +139,7 @@ struct dylib {
                 return;
         } else {
             (void) _foo::err(handle);
+            return;
         }
 #endif
     
