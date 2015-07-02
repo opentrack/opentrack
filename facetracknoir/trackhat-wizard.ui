@@ -120,6 +120,13 @@
           <string/>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="cap_model">
+            <property name="text">
+             <string>Cap, add a big logo</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QRadioButton" name="clip_model">
             <property name="text">
@@ -128,9 +135,9 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QRadioButton" name="cap_model">
+           <widget class="QRadioButton" name="clip_model_left">
             <property name="text">
-             <string>Cap, add a big logo</string>
+             <string>Clip, left-handed</string>
             </property>
            </widget>
           </item>
