@@ -118,6 +118,10 @@ static int TrackToggleHandler( XPLMCommandRef inCommand,
     {
         //Enable
         XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
+
+        // Reinit the offsets when we re-enable the plugin
+        if ( !translation_disabled )
+            reinit_offset();
     }
     else
     {
@@ -133,6 +137,11 @@ static int TranslationToggleHandler( XPLMCommandRef inCommand,
                                      void * inRefCon )
 {
     translation_disabled = !translation_disabled;
+    if (!translation_disabled)
+    {
+        // Reinit the offsets when we re-enable the translations so that we can "move around"
+        reinit_offset();
+    }
     return 0;
 }
 
