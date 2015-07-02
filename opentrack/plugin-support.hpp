@@ -42,7 +42,7 @@
 #include <iostream>
 
 #ifdef _MSC_VER
-#   error "No support for MSVC anymore"
+#   define OPENTRACK_LIB_PREFIX ""
 #else
 #   define OPENTRACK_LIB_PREFIX "lib"
 #endif

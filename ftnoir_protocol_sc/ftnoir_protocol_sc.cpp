@@ -103,7 +103,7 @@ public:
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
 #ifdef _MSC_VER
-#	error "MSVC support removed"
+#	define PREFIX ""
 #else
 #	define PREFIX "lib"
 #endif 

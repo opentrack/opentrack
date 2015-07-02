@@ -13,7 +13,9 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __GNUC__
+#	pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
     JOYSTICK_STATE state[2] = { 0 };
 
     state[0].POV = (4 << 12) | (4 << 8) | (4 << 4) | 4;

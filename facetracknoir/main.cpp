@@ -20,7 +20,7 @@ static void add_program_library_path()
     {
         char* p = _pgmptr;
         {
-            char path[MAX_PATH];
+            char path[MAX_PATH+1];
             strcpy(path, p);
             char* ptr = strrchr(path, '\\');
             if (ptr)

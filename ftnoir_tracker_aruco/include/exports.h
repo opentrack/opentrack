@@ -36,7 +36,7 @@ or implied, of Rafael Muñoz Salinas.
 #endif
 
 
-#if (defined WIN32 || defined _WIN32 || defined WINCE)   && defined DSO_EXPORTS
+#if ((defined WIN32 || defined _WIN32 || defined WINCE)   && defined DSO_EXPORTS) || defined(_MSC_VER)
      #define ARUCO_EXPORTS __declspec(dllexport)
 #else
     #define ARUCO_EXPORTS __attribute__ ((visibility ("default")))
