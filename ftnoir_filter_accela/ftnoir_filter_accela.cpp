@@ -20,7 +20,7 @@ static constexpr double rot_gains[][2] = {
     { 3, 5 },
     { 2, 1.4 },
     { 1, .4 },
-    { 0, .2 },
+    { 0, 0 },
     { -1, 0 }
 };
 static constexpr double trans_gains[][2] = {
@@ -29,7 +29,7 @@ static constexpr double trans_gains[][2] = {
     { 3, 20 },
     { 2, 5 },
     { 1, .7 },
-    { 0, .1 },
+    { 0, 0 },
     { -1, 0 }
 };
 
