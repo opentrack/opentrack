@@ -8,9 +8,7 @@
 #include <unistd.h>
 
 #include <XPLMPlugin.h>
-#include <XPLMDisplay.h>
 #include <XPLMDataAccess.h>
-#include <XPLMCamera.h>
 #include <XPLMProcessing.h>
 
 #ifndef PLUGIN_API
@@ -87,10 +85,11 @@ void PortableLockedShm_unlock(PortableLockedShm* self)
     flock(self->fd, LOCK_UN);
 }
 
-int write_head_position(
-        XPLMDrawingPhase     OT_UNUSED(inPhase),
-        int                  OT_UNUSED(inIsBefore),
-        void *               OT_UNUSED(inRefcon))
+float write_head_position(
+        float                OT_UNUSED(inElapsedSinceLastCall),
+        float                OT_UNUSED(inElapsedTimeSinceLastFlightLoop),
+        int                  OT_UNUSED(inCounter),
+        void *               OT_UNUSED(inRefcon) )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
@@ -101,7 +100,7 @@ int write_head_position(
         XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / 3.141592654);
         PortableLockedShm_unlock(lck_posix);
     }
-    return 1;
+    return -1.0;
 }
 
 PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
@@ -137,11 +136,11 @@ PLUGIN_API void XPluginStop ( void ) {
 }
 
 PLUGIN_API void XPluginEnable ( void ) {
-    XPLMRegisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
+    XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
 }
 
 PLUGIN_API void XPluginDisable ( void ) {
-    XPLMUnregisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
+    XPLMUnregisterFlightLoopCallback(write_head_position, NULL);
 }
 
 PLUGIN_API void XPluginReceiveMessage(
