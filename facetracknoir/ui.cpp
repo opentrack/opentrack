@@ -112,8 +112,8 @@ void MainWindow::open() {
     
     if (! fileName.isEmpty() ) {
         {
-            QSettings settings(group::org);
-            settings.setValue(group::filename_key, remove_app_path(fileName));
+            QSettings settings(OPENTRACK_ORG);
+            settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
         }
         fill_profile_combobox();
         load_settings();
@@ -161,8 +161,8 @@ void MainWindow::saveAs()
     
     {
         (void) QFile::copy(oldFile, fileName);
-        QSettings settings(group::org);
-        settings.setValue (group::filename_key, remove_app_path(fileName));
+        QSettings settings(OPENTRACK_ORG);
+        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
     }
     
     save();
@@ -460,8 +460,8 @@ void MainWindow::profileSelected(int index)
         return;
     
     {
-        QSettings settings(group::org);
-        settings.setValue (group::filename_key, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
+        QSettings settings(OPENTRACK_ORG);
+        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
                                                                 ui.iconcomboProfile->itemText(index)));
     }
     load_settings();
@@ -540,6 +540,6 @@ void MainWindow::maybe_start_profile_from_executable()
 
 void MainWindow::set_profile(const QString &profile)
 {
-    QSettings settings(group::org);
-    settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
+    QSettings settings(OPENTRACK_ORG);
+    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, MainWindow::remove_app_path(profile));
 }

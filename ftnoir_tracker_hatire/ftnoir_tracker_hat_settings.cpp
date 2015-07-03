@@ -36,12 +36,12 @@
 void TrackerSettings::load_ini()
 {
 #ifdef OPENTRACK_API
-    QSettings settings(options::group::org);	// Registry settings (in HK_USER)
+    QSettings settings(OPENTRACK_ORG);	// Registry settings (in HK_USER)
 #else
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 #endif
 #ifdef OPENTRACK_API
-    QString currentFile = settings.value( options::group::filename_key, QCoreApplication::applicationDirPath() + options::group::default_path ).toString();
+    QString currentFile = settings.value( OPENTRACK_CONFIG_FILENAME_KEY, QCoreApplication::applicationDirPath() + OPENTRACK_DEFAULT_CONFIG_PATH ).toString();
 #else
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 #endif
@@ -106,12 +106,12 @@ void TrackerSettings::save_ini() const
 {
 
 #ifdef OPENTRACK_API
-    QSettings settings(options::group::org);	// Registry settings (in HK_USER)
+    QSettings settings(OPENTRACK_ORG);	// Registry settings (in HK_USER)
 #else
     QSettings settings("opentrack");	// Registry settings (in HK_USER)
 #endif
 #ifdef OPENTRACK_API
-    QString currentFile = settings.value( options::group::filename_key, QCoreApplication::applicationDirPath() + options::group::default_path ).toString();
+    QString currentFile = settings.value( OPENTRACK_CONFIG_FILENAME_KEY, QCoreApplication::applicationDirPath() + OPENTRACK_DEFAULT_CONFIG_PATH ).toString();
 #else
 	QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
 #endif

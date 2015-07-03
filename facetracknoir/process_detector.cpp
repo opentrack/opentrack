@@ -9,25 +9,25 @@
 
 void settings::set_game_list(const QString &game_list)
 {
-    QSettings settings(group::org);
+    QSettings settings(OPENTRACK_ORG);
     settings.setValue("executable-list", game_list);
 }
 
 QString settings::get_game_list()
 {
-    QSettings settings(group::org);
+    QSettings settings(OPENTRACK_ORG);
     return settings.value("executable-list").toString();
 }
 
 bool settings::is_enabled()
 {
-    QSettings settings(group::org);
+    QSettings settings(OPENTRACK_ORG);
     return settings.value("executable-detector-enabled", false).toBool();
 }
 
 void settings::set_is_enabled(bool enabled)
 {
-    QSettings settings(group::org);
+    QSettings settings(OPENTRACK_ORG);
     settings.setValue("executable-detector-enabled", enabled);
 }
 

@@ -38,6 +38,10 @@
 #include <memory>
 template<typename t> using mem = std::shared_ptr<t>;
 
+#define OPENTRACK_CONFIG_FILENAME_KEY "settings-file"
+#define OPENTRACK_DEFAULT_CONFIG_PATH "/settings/default.ini"
+#define OPENTRACK_ORG "opentrack-2.3"
+
 namespace options {
     template<typename k, typename v>
     using map = std::map<k, v>;
@@ -97,7 +101,6 @@ namespace options {
             }
             conf.endGroup();
         }
-        static constexpr const char* org = "opentrack-2.3";
 
         void save()
         {
@@ -129,13 +132,10 @@ namespace options {
             return kvs.count(s) != 0;
         }
 
-        static constexpr const char* filename_key = "settings-file";
-        static constexpr const char* default_path = "/settings/default.ini";
-
         static const QString ini_pathname()
         {
-            QSettings settings(group::org);
-            return settings.value(filename_key, QCoreApplication::applicationDirPath() + default_path).toString();
+            QSettings settings(OPENTRACK_ORG);
+            return settings.value(OPENTRACK_CONFIG_FILENAME_KEY, QCoreApplication::applicationDirPath() + OPENTRACK_DEFAULT_CONFIG_PATH).toString();
         }
         
         static const QStringList ini_list()
