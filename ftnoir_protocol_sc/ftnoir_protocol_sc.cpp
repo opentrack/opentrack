@@ -76,7 +76,7 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
 
 class ActivationContext {
 public:
-    ActivationContext(const int resid) {
+    ActivationContext(const int resid) :ok (false) {
         hactctx = INVALID_HANDLE_VALUE;
         actctx_cookie = 0;
         ACTCTXA actx = {0};
@@ -100,7 +100,7 @@ public:
                 hactctx = INVALID_HANDLE_VALUE;
             }
         } else {
-            qDebug() << "SC: can't create win32 activation context";
+            qDebug() << "SC: can't create win32 activation context" << GetLastError();
         }
     }
     ~ActivationContext() {
@@ -110,9 +110,11 @@ public:
             ReleaseActCtx(hactctx);
         }
     }
+    bool is_ok() { return ok; }
 private:
     ULONG_PTR actctx_cookie;
     HANDLE hactctx;
+    bool ok;
 };
 
 bool FTNoIR_Protocol::correct()
@@ -121,11 +123,16 @@ bool FTNoIR_Protocol::correct()
     {
         ActivationContext ctx(142 + static_cast<int>(s.sxs_manifest));
         
-		SCClientLib.setFileName("SimConnect.dll");
-        if (!SCClientLib.load()) {
-            qDebug() << "SC load" << SCClientLib.errorString();
-            return false;
+        if (ctx.is_ok())
+        {
+            SCClientLib.setFileName("SimConnect.dll");
+            if (!SCClientLib.load()) {
+                qDebug() << "SC load" << SCClientLib.errorString();
+                return false;
+            }
         }
+        else
+            return false;
     }
 
 	//
