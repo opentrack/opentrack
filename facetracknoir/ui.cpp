@@ -360,6 +360,7 @@ void MainWindow::showTrackerSettings()
     else
     {
         auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
+        if (!dialog) return;
         pTrackerDialog = dialog;
         if (libs.pTracker != nullptr)
             dialog->register_tracker(libs.pTracker.get());
@@ -376,6 +377,7 @@ void MainWindow::showProtocolSettings() {
     } else
     {
         auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
+        if (!dialog) return;
         pProtocolDialog = dialog;
         if (libs.pProtocol != nullptr)
             dialog->register_protocol(libs.pProtocol.get());
@@ -392,6 +394,7 @@ void MainWindow::showFilterSettings() {
     } else
     {
         auto dialog = mk_dialog<IFilterDialog>(current_filter());
+        if (!dialog) return;
         pFilterDialog = dialog;
         if (libs.pFilter != nullptr)
             dialog->register_filter(libs.pFilter.get());
