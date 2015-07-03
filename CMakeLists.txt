@@ -199,13 +199,13 @@ if(SDK_XPLANE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin
             PROPERTIES LINK_FLAGS
             "-Wl,--version-script=${CMAKE_SOURCE_DIR}/x-plane-plugin/version-script.txt -shared -rdynamic -nodefaultlibs -undefined_warning -fPIC"
-            COMPILE_FLAGS "-Wall -O2 -pipe -fPIC -DLIN -DXPLM210"
+            COMPILE_FLAGS "-Wall -O2 -pipe -fPIC -DLIN -DXPLM200 -DXPLM210"
             LIBRARY_OUTPUT_NAME "opentrack.xpl"
             PREFIX "" SUFFIX "")
     endif()
     if(APPLE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin PROPERTIES
-                              COMPILE_FLAGS "-iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM210 -framework XPLM -framework XPWidgets"
+                              COMPILE_FLAGS "-iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM200 -DXPLM210 -framework XPLM -framework XPWidgets"
                               LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets")
     endif()
     if(UNIX AND NOT APPLE)
