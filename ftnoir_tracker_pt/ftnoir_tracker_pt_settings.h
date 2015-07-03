@@ -57,9 +57,9 @@ struct settings_pt : opts
         clip_by(b, "clip-by", 70),
         clip_bz(b, "clip-bz", 80),
         active_model_panel(b, "active-model-panel", 0),
-        cap_x(b, "cap-x", 0),
-        cap_y(b, "cap-y", 0),
-        cap_z(b, "cap-z", 0),
+        cap_x(b, "cap-x", 40),
+        cap_y(b, "cap-y", 60),
+        cap_z(b, "cap-z", 100),
         fov(b, "camera-fov", 56),
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 500)
