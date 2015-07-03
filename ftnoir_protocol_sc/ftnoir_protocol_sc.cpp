@@ -43,20 +43,20 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
+    if (!SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0)))
+        return;
+#if 0
         simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
 
         simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
         simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
         simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-    }
-    else
-        return;
+#endif
     
     while (!should_stop)
     {
         (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this)));
-        Sleep(3);
+        Sleep(1);
     }
     
     (void) simconnect_close(hSimConnect);
@@ -216,25 +216,6 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
         self.handle();
-        break;
-    case SIMCONNECT_RECV_ID_EXCEPTION:
-    {
-        SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION*)pData;
-
-        switch (except->dwException)
-        {
-        case SIMCONNECT_EXCEPTION_ERROR:
-            qDebug() << "Camera error";
-            break;
-
-        default:
-            qDebug() << "Exception";
-            break;
-        }
-        break;
-    }
-
-    case SIMCONNECT_RECV_ID_QUIT:
         break;
     }
 }
