@@ -36,6 +36,7 @@ Tracker_PT::~Tracker_PT()
     delete video_widget;
     video_widget = NULL;
     if (video_frame->layout()) delete video_frame->layout();
+    camera.stop();
 }
 
 void Tracker_PT::set_command(Command command)
