@@ -32,6 +32,7 @@ struct settings_pt : opts
     value<int> fov;
     
     value<bool> dynamic_pose;
+    value<int> init_phase_timeout;
 
     settings_pt() :
         opts("tracker-pt"),
@@ -60,7 +61,8 @@ struct settings_pt : opts
         cap_y(b, "cap-y", 0),
         cap_z(b, "cap-z", 0),
         fov(b, "camera-fov", 56),
-        dynamic_pose(b, "dynamic-pose-resolution", true)
+        dynamic_pose(b, "dynamic-pose-resolution", true),
+        init_phase_timeout(b, "init-phase-timeout", 500)
     {}
 };
 

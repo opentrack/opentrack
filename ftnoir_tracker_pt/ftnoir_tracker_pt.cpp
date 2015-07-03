@@ -86,7 +86,7 @@ void Tracker_PT::run()
             ever_success |= success;
             
             if (success)
-                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose);
+                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
             
             {
                 Affine X_CM = pose();

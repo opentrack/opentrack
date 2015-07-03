@@ -15,7 +15,7 @@
 #   include <memory>
 #endif
 #include <vector>
-
+#include "opentrack/timer.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 
 #include <QObject>
@@ -119,7 +119,7 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose);
+    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout);
     Affine pose() const { return X_CM; }
     cv::Vec2f project(const cv::Vec3f& v_M, float f);
 private:
@@ -139,6 +139,9 @@ private:
     int POSIT(const PointModel& point_model, const PointOrder& order, float focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera
+
+	Timer t;
+	bool init_phase;
 };
 
 #endif //POINTTRACKER_H
