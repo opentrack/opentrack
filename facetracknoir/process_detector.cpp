@@ -68,6 +68,7 @@ int process_detector::add_row(QString exe_name, QString profile)
     
     QComboBox* cb = new QComboBox();
     cb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    cb->addItem("");
     cb->addItems(group::ini_list());
     ui.tableWidget->setCellWidget(i, 1, cb);
     
@@ -222,7 +223,7 @@ bool process_detector_worker::config_to_start(QString& str)
         {
             last_exe_name = name;
             str = filenames[name];
-            return true;
+            return str != "";
         }
     }
     
