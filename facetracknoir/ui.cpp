@@ -215,13 +215,11 @@ void MainWindow::bindKeyboardShortcuts()
 void MainWindow::startTracker() {
     s.b->save();
     load_settings();
-    bindKeyboardShortcuts();
 
     // tracker dtor needs run first
     work = nullptr;
 
     libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
-    work = std::make_shared<Work>(s, pose, libs, this, winId());
 
     {
         double p[6] = {0,0,0, 0,0,0};
@@ -234,8 +232,13 @@ void MainWindow::startTracker() {
                              "One of libraries failed to load. Check installation.",
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
+        libs = SelectedLibraries();
         return;
     }
+    
+    work = std::make_shared<Work>(s, pose, libs, this, winId());
+    
+    bindKeyboardShortcuts();
     
     if (pTrackerDialog)
         pTrackerDialog->register_tracker(libs.pTracker.get());
