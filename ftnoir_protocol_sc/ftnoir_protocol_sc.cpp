@@ -29,43 +29,39 @@
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
 
-importSimConnect_CameraSetRelative6DOF FTNoIR_Protocol::simconnect_set6DOF;
-HANDLE FTNoIR_Protocol::hSimConnect = 0;			// Handle to SimConnect
-
-float FTNoIR_Protocol::virtSCPosX = 0.0f;			// Headpose
-float FTNoIR_Protocol::virtSCPosY = 0.0f;
-float FTNoIR_Protocol::virtSCPosZ = 0.0f;
-	
-float FTNoIR_Protocol::virtSCRotX = 0.0f;
-float FTNoIR_Protocol::virtSCRotY = 0.0f;
-float FTNoIR_Protocol::virtSCRotZ = 0.0f;
-
-float FTNoIR_Protocol::prevSCPosX = 0.0f;			// previous Headpose
-float FTNoIR_Protocol::prevSCPosY = 0.0f;
-float FTNoIR_Protocol::prevSCPosZ = 0.0f;
-	
-float FTNoIR_Protocol::prevSCRotX = 0.0f;
-float FTNoIR_Protocol::prevSCRotY = 0.0f;
-float FTNoIR_Protocol::prevSCRotZ = 0.0f;
-
 static QLibrary SCClientLib;
 
-FTNoIR_Protocol::FTNoIR_Protocol()
+FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
-	blnSimConnectActive = false;
-	hSimConnect = 0;
+    start();
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	qDebug() << "~FTNoIR_Protocol says: inside" << FTNoIR_Protocol::hSimConnect;
+    should_stop = true;
+    wait();
 
-	if (hSimConnect != 0) {
-		qDebug() << "~FTNoIR_Protocol says: before simconnect_close";
-		if (SUCCEEDED( simconnect_close( FTNoIR_Protocol::hSimConnect ) ) ) {
-			qDebug() << "~FTNoIR_Protocol says: close SUCCEEDED";
-		}
-	}
+	if (hSimConnect)
+		(void) simconnect_close(hSimConnect);
+}
+
+void FTNoIR_Protocol::run()
+{
+    if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
+        simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
+
+        simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
+        simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
+        simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+    }
+    else
+        return;
+    
+    while (!should_stop)
+    {
+        (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this)));
+        Sleep(3);
+    }
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
@@ -76,19 +72,6 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCPosX = headpose[TX]/100.f;						// cm to meters
     virtSCPosY = headpose[TY]/100.f;
     virtSCPosZ = -headpose[TZ]/100.f;
-
-	if (!blnSimConnectActive) {
-        if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
-            simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
-
-            simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
-            simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
-            simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-            blnSimConnectActive = true;
-        }
-	}
-    else
-        (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, NULL));
 }
 
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
@@ -203,25 +186,37 @@ bool FTNoIR_Protocol::correct()
 	return true;
 }
 
-void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *)
+void FTNoIR_Protocol::handle()
 {
+    if (prevSCPosX != virtSCPosX ||
+        prevSCPosY != virtSCPosY ||
+        prevSCPosZ != virtSCPosZ ||
+        prevSCRotX != virtSCRotX ||
+        prevSCRotY != virtSCRotY ||
+        prevSCRotZ != virtSCRotZ)
+    {
+        (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
+    }
+    
+    prevSCPosX = virtSCPosX;
+    prevSCPosY = virtSCPosY;
+    prevSCPosZ = virtSCPosZ;
+    prevSCRotX = virtSCRotX;
+    prevSCRotY = virtSCRotY;
+    prevSCRotZ = virtSCRotZ;
+}
+
+void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)
+{
+    FTNoIR_Protocol& self = *reinterpret_cast<FTNoIR_Protocol*>(self_);
+    
     switch(pData->dwID)
     {
     default:
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
-    {
-        if ((prevSCPosX != virtSCPosX) || (prevSCPosY != virtSCPosY) || (prevSCPosZ != virtSCPosZ) ||
-                (prevSCRotX != virtSCRotX) || (prevSCRotY != virtSCRotY) || (prevSCRotZ != virtSCRotZ)) {
-            (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
-        }
-        prevSCPosX = virtSCPosX;
-        prevSCPosY = virtSCPosY;
-        prevSCPosZ = virtSCPosZ;
-        prevSCRotX = virtSCRotX;
-        prevSCRotY = virtSCRotY;
-        prevSCRotZ = virtSCRotZ;
-    }
+        self.handle();
+        break;
     case SIMCONNECT_RECV_ID_EXCEPTION:
     {
         SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION*)pData;
@@ -240,9 +235,7 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 
     case SIMCONNECT_RECV_ID_QUIT:
-    {
         break;
-    }
     }
 }
 
