@@ -77,13 +77,17 @@ int main(int argc, char** argv)
 	if (use_profile)
         MainWindow::set_profile(profile);
     
-    MainWindow w;
+    auto w = std::make_shared<MainWindow>();
     
     if (use_profile)
-        w.startTracker();
+        w->startTracker();
 		
-    w.show();
+    w->show();
     app.exec();
 
+	// on MSVC crashes in atexit
+#ifdef _MSC_VER
+	TerminateProcess(GetCurrentProcess(), 0);
+#endif
     return 0;
 }

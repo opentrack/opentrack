@@ -38,7 +38,7 @@ set(my-qt-deps)
 if(WIN32) # hack to avoid breakage on buildbot
     set(my-qt-deps ws2_32)
 endif()
-set(MY_QT_LIBS ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Core_LIBRARIES} ${my-qt-deps})
+set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${my-qt-deps})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
@@ -69,6 +69,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
 endif()
 
+set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
+
 # qt broken as usual
 set(EXTRA-MOCS opentrack/options.hpp)
 
@@ -85,9 +87,16 @@ endmacro()
 macro(opentrack_qt n)
     qt5_wrap_cpp(${n}-moc ${${n}-c} OPTIONS --no-notes)
     QT5_WRAP_UI(${n}-uih ${${n}-ui})
-    QT5_ADD_RESOURCES(${n}-rcc)
+    QT5_ADD_RESOURCES(${n}-rcc ${${n}-rc})
     set(${n}-all ${${n}-c} ${${n}-rc} ${${n}-rcc} ${${n}-uih} ${${n}-moc} ${${n}-res})
 endmacro()
+
+set(msvc-subsystem "/VERSION:5.1 /SUBSYSTEM:WINDOWS,5.01")
+function(opentrack_compat target)
+    if(MSVC)
+        set_target_properties(${target} PROPERTIES LINK_FLAGS "${msvc-subsystem} /DEBUG /OPT:ICF")
+    endif()
+endfunction()
 
 macro(opentrack_library n dir)
     cmake_parse_arguments(foolib "" "LINK;COMPILE;GNU-LINK;GNU-COMPILE" "" ${ARGN})
@@ -104,7 +113,11 @@ macro(opentrack_library n dir)
             COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
-        set_target_properties(${n} PROPERTIES LINK_FLAGS "${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
+        set(link-flags)
+        if(MSVC)
+            set(link-flags "${msvc-subsystem} /DEBUG /OPT:ICF")
+        endif()
+        set_target_properties(${n} PROPERTIES LINK_FLAGS "${link-flags} ${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
     endif()
     install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 endmacro()
@@ -171,6 +184,7 @@ add_custom_target(tarball DEPENDS ${filename})
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
 add_library(opentrack-api STATIC ${opentrack-api-all})
+opentrack_compat(opentrack-api)
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
 
 if(NOT WIN32)
@@ -221,31 +235,36 @@ if(SDK_XPLANE)
 endif()
 
 add_library(opentrack-compat STATIC ${opentrack-compat-c})
+opentrack_compat(opentrack-compat) # uh...
 if(NOT WIN32 AND NOT APPLE)
     target_link_libraries(opentrack-compat rt)
 endif()
 
 opentrack_module(opentrack-csv csv)
 add_library(opentrack-csv STATIC ${opentrack-csv-c})
+opentrack_compat(opentrack-csv)
 target_link_libraries(opentrack-csv ${MY_QT_LIBS})
 
 opentrack_module(opentrack-pose-widget pose-widget)
 opentrack_qt(opentrack-pose-widget)
 
 add_library(opentrack-pose-widget STATIC ${opentrack-pose-widget-all})
+opentrack_compat(opentrack-pose-widget)
 target_include_directories(opentrack-pose-widget PUBLIC pose-widget/) # else Qt moc breaks
 target_link_libraries(opentrack-pose-widget ${MY_QT_LIBS})
 
 opentrack_module(opentrack-spline-widget qfunctionconfigurator)
 opentrack_qt(opentrack-spline-widget)
 add_library(opentrack-spline-widget STATIC ${opentrack-spline-widget-all})
+opentrack_compat(opentrack-spline-widget)
 target_include_directories(opentrack-spline-widget PUBLIC qfunctionconfigurator/)
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
-add_library(opentrack-version STATIC opentrack/version.C)
+add_library(opentrack-version STATIC opentrack/version.cc)
+opentrack_compat(opentrack-version)
 set_target_properties(opentrack-version PROPERTIES
     COMPILE_DEFINITIONS
-    "IN_VERSION_UNIT;OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
+    "OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
 target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
@@ -256,7 +275,12 @@ opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
 if(SDK_VJOY)
     opentrack_library(opentrack-proto-vjoy ftnoir_protocol_vjoy GNU-LINK "-Wl,--enable-stdcall-fixup")
-    target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} ${SDK_VJOY}/VJoy.dll)
+    if(MSVC)
+        set(ext .lib)
+    else()
+        set(ext .dll)
+    endif()
+    target_link_libraries(opentrack-proto-vjoy ${MY_QT_LIBS} ${SDK_VJOY}/VJoy${ext})
     target_include_directories(opentrack-proto-vjoy SYSTEM PUBLIC ${SDK_VJOY})
 endif()
 
@@ -272,6 +296,9 @@ if(SDK_FSUIPC)
     opentrack_library(opentrack-proto-fsuipc ftnoir_protocol_fsuipc)
     target_link_libraries(opentrack-proto-fsuipc ${SDK_FSUIPC}/FSUIPC_User.lib)
     target_include_directories(opentrack-proto-fsuipc SYSTEM PUBLIC ${SDK_FSUIPC})
+    if(MSVC)
+        set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBC.lib")
+    endif()
     #target_link_directories(${SDK_FSUIPC})
 endif()
 
@@ -362,7 +389,14 @@ if(SDK_RIFT)
     opentrack_library(opentrack-tracker-rift ftnoir_tracker_rift LINK ${link-flags} COMPILE ${c-flags})
     target_include_directories(opentrack-tracker-rift SYSTEM PUBLIC ${SDK_RIFT}/Include ${SDK_RIFT}/Src)
     if(WIN32)
-        target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/libLibOVR.a winmm setupapi ws2_32 imagehlp wbemuuid)
+        if(MSVC)
+            set(ext lib)
+            set(p)
+        else()
+            set(ext a)
+            set(p lib)
+        endif()
+        target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/${p}LibOVR.${ext} winmm setupapi ws2_32 imagehlp wbemuuid)
     else()
         if(NOT APPLE)
                 target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/libLibOVR.a udev Xinerama)
@@ -376,9 +410,16 @@ if(SDK_HYDRA)
     opentrack_library(opentrack-tracker-hydra ftnoir_tracker_hydra)
     target_include_directories(opentrack-tracker-hydra SYSTEM PUBLIC ${SDK_HYDRA}/include ${SDK_HYDRA}/include/sixense_utils)
     if(WIN32)
+        if(MSVC)
+            set(dir lib)
+            set(ext lib)
+        else()
+            set(dir bin)
+            set(ext dll)
+        endif()
         target_link_libraries(opentrack-tracker-hydra
-                              "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
-                              #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
+                              "${SDK_HYDRA}/${dir}/win32/release_dll/sixense.${ext}"
+                              #"${SDK_HYDRA}/${dir}/win32/release_dll/sixense_utils.${ext}"
                              )
                     install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
                                   #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
@@ -439,7 +480,7 @@ if(UNIX OR APPLE)
 endif()
 opentrack_qt(opentrack)
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
-
+opentrack_compat(opentrack)
 if(NOT WIN32)
     set_target_properties(opentrack PROPERTIES SUFFIX ".bin")
 endif()
