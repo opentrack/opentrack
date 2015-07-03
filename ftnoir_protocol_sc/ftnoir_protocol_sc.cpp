@@ -31,9 +31,8 @@
 
 static QLibrary SCClientLib;
 
-FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr), should_start(false)
+FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
-    start();
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
@@ -44,9 +43,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    if (!should_start)
-        return;
-    
     if (SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0))) {
         simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
 
@@ -185,7 +181,7 @@ bool FTNoIR_Protocol::correct()
 
 	qDebug() << "FTNoIR_Protocol::correct() says: SimConnect functions resolved in DLL!";
     
-    should_start = true;
+    start();
 
 	return true;
 }
