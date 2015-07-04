@@ -23,6 +23,12 @@ FilterControls::FilterControls() :
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.trans_deadzone, ui.trans_dz_slider);
+    
+    update_rot_display(ui.rotation_slider->value());
+    update_trans_display(ui.translation_slider->value());
+    update_ewma_display(ui.ewma_slider->value());
+    update_rot_dz_display(ui.rot_dz_slider->value());
+    update_trans_dz_display(ui.trans_dz_slider->value());
 }
 
 void FilterControls::register_filter(IFilter* filter)
