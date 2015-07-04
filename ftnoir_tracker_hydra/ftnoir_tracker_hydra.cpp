@@ -10,7 +10,6 @@
 
 Hydra_Tracker::Hydra_Tracker() : should_quit(false) {}
 
-#pragma GCC diagnostic ignored "-Wreorder"
 #include <sixense_math.hpp>
 
 Hydra_Tracker::~Hydra_Tracker()

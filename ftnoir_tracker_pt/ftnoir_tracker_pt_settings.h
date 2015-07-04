@@ -21,6 +21,9 @@ struct settings_pt : opts
     value<int> fov, camera_mode;
     value<int> model_used;
 
+    value<bool> dynamic_pose;
+    value<int> init_phase_timeout;
+
     settings_pt() :
         opts("tracker-pt"),
         threshold(b, "threshold-primary", 128),
@@ -31,7 +34,9 @@ struct settings_pt : opts
         t_MH_z(b, "model-centroid-z", 0),
         fov(b, "camera-fov", 0),
         camera_mode(b, "camera-mode", 0),
-        model_used(b, "model-used", 0)
+        model_used(b, "model-used", 0),
+        dynamic_pose(b, "dynamic-pose-resolution", true),
+        init_phase_timeout(b, "init-phase-timeout", 500)
     {}
 };
 

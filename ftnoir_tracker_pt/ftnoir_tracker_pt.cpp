@@ -37,6 +37,7 @@ Tracker_PT::~Tracker_PT()
     delete video_widget;
     video_widget = NULL;
     if (video_frame->layout()) delete video_frame->layout();
+    camera.stop();
 }
 
 void Tracker_PT::set_command(Command command)
@@ -98,7 +99,7 @@ void Tracker_PT::run()
             ever_success |= success;
             
             if (success)
-                point_tracker.track(points, PointModel(s), get_focal_length(), true);
+                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
             
             {
                 Affine X_CM = pose();

@@ -8,10 +8,9 @@
 #include <unistd.h>
 
 #include <XPLMPlugin.h>
-#include <XPLMDisplay.h>
 #include <XPLMDataAccess.h>
-#include <XPLMCamera.h>
 #include <XPLMProcessing.h>
+#include <XPLMUtilities.h>
 
 #ifndef PLUGIN_API
 #define PLUGIN_API
@@ -41,6 +40,9 @@ static PortableLockedShm* lck_posix = NULL;
 static WineSHM* shm_posix = NULL;
 static void *view_x, *view_y, *view_z, *view_heading, *view_pitch;
 static float offset_x, offset_y, offset_z;
+static XPLMCommandRef track_toggle = NULL, translation_disable_toggle = NULL;
+static int track_disabled = 1;
+static int translation_disabled;
 
 static void reinit_offset() {
     offset_x = XPLMGetDataf(view_x);
@@ -87,21 +89,60 @@ void PortableLockedShm_unlock(PortableLockedShm* self)
     flock(self->fd, LOCK_UN);
 }
 
-int write_head_position(
-        XPLMDrawingPhase     OT_UNUSED(inPhase),
-        int                  OT_UNUSED(inIsBefore),
-        void *               OT_UNUSED(inRefcon))
+float write_head_position(
+        float                OT_UNUSED(inElapsedSinceLastCall),
+        float                OT_UNUSED(inElapsedTimeSinceLastFlightLoop),
+        int                  OT_UNUSED(inCounter),
+        void *               OT_UNUSED(inRefcon) )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         PortableLockedShm_lock(lck_posix);
-        XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
-        XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
-        XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
+        if (!translation_disabled)
+        {
+            XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
+            XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
+            XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
+        }
         XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / 3.141592654);
         XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / 3.141592654);
         PortableLockedShm_unlock(lck_posix);
     }
-    return 1;
+    return -1.0;
+}
+
+static int TrackToggleHandler( XPLMCommandRef inCommand,
+                               XPLMCommandPhase inPhase,
+                               void * inRefCon )
+{
+    if ( track_disabled )
+    {
+        //Enable
+        XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
+
+        // Reinit the offsets when we re-enable the plugin
+        if ( !translation_disabled )
+            reinit_offset();
+    }
+    else
+    {
+        //Disable
+        XPLMUnregisterFlightLoopCallback(write_head_position, NULL);
+    }
+    track_disabled = !track_disabled;
+    return 0;
+}
+
+static int TranslationToggleHandler( XPLMCommandRef inCommand,
+                                     XPLMCommandPhase inPhase,
+                                     void * inRefCon )
+{
+    translation_disabled = !translation_disabled;
+    if (!translation_disabled)
+    {
+        // Reinit the offsets when we re-enable the translations so that we can "move around"
+        reinit_offset();
+    }
+    return 0;
 }
 
 PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
@@ -110,7 +151,22 @@ PLUGIN_API int XPluginStart ( char * outName, char * outSignature, char * outDes
     view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
     view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
     view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
-    if (view_x && view_y && view_z && view_heading && view_pitch) {
+
+    track_toggle = XPLMCreateCommand("opentrack/toggle", "Disable/Enable head tracking");
+    translation_disable_toggle = XPLMCreateCommand("opentrack/toggle_translation", "Disable/Enable input translation from opentrack");
+
+    XPLMRegisterCommandHandler( track_toggle,
+                                TrackToggleHandler,
+                                1,
+                                (void*)0);
+
+    XPLMRegisterCommandHandler( translation_disable_toggle,
+                                TranslationToggleHandler,
+                                1,
+                                (void*)0);
+
+
+    if (view_x && view_y && view_z && view_heading && view_pitch && track_toggle && translation_disable_toggle) {
         lck_posix = PortableLockedShm_init(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
         if (lck_posix->mem == (void*)-1) {
             fprintf(stderr, "opentrack failed to init SHM!\n");
@@ -137,11 +193,13 @@ PLUGIN_API void XPluginStop ( void ) {
 }
 
 PLUGIN_API void XPluginEnable ( void ) {
-    XPLMRegisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
+    XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
+    track_disabled = 0;
 }
 
 PLUGIN_API void XPluginDisable ( void ) {
-    XPLMUnregisterDrawCallback(write_head_position, xplm_Phase_LastScene, 1, NULL);
+    XPLMUnregisterFlightLoopCallback(write_head_position, NULL);
+    track_disabled = 1;
 }
 
 PLUGIN_API void XPluginReceiveMessage(

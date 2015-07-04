@@ -62,7 +62,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 }
 
 
-PointTracker::PointTracker()
+PointTracker::PointTracker() : init_phase(true)
 {
 }
 
@@ -96,6 +96,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vecto
             // if one point is closest to more than one model point, fallback
             if (point_taken[min_idx])
             {
+                init_phase = true;
                 return find_correspondences(points, model);
             }
             point_taken[min_idx] = true;
@@ -104,16 +105,24 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vecto
     return p;
 }
 
-void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f, bool dynamic_pose)
+void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout)
 {
     PointOrder order;
-    
-    if (!dynamic_pose)
-       order = find_correspondences(points, model);
-    else
-        order = find_correspondences_previous(points, model, f);
+
+	if (t.elapsed_ms() > init_phase_timeout)
+	{
+		t.start();
+		init_phase = true;
+	}
+
+    if (!dynamic_pose || init_phase)
+        order = find_correspondences(points, model);
+	else
+		order = find_correspondences_previous(points, model, f);
     
     POSIT(model, order, f);
+	init_phase = false;
+    t.start();
 }
 
 PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv::Vec2f>& points, const PointModel& model)

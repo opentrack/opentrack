@@ -102,8 +102,8 @@ void MainWindow::open() {
     
     if (! fileName.isEmpty() ) {
         {
-            QSettings settings(group::org);
-            settings.setValue(group::filename_key, remove_app_path(fileName));
+            QSettings settings(OPENTRACK_ORG);
+            settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
         }
         fill_profile_combobox();
         load_settings();
@@ -151,8 +151,8 @@ void MainWindow::saveAs()
     
     {
         (void) QFile::copy(oldFile, fileName);
-        QSettings settings(group::org);
-        settings.setValue (group::filename_key, remove_app_path(fileName));
+        QSettings settings(OPENTRACK_ORG);
+        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
     }
     
     save();
@@ -203,14 +203,11 @@ void MainWindow::bindKeyboardShortcuts()
 void MainWindow::startTracker() {
     s.b->save();
     load_settings();
-    bindKeyboardShortcuts();
 
     // tracker dtor needs run first
     work = nullptr;
 
     libs = SelectedLibraries(ui.video_frame, std::make_shared<Tracker_PT>(), current_protocol(), std::make_shared<FTNoIR_Filter>());
-    
-    work = std::make_shared<Work>(s, pose, libs, this, winId());
 
     {
         double p[6] = {0,0,0, 0,0,0};
@@ -223,8 +220,13 @@ void MainWindow::startTracker() {
                              "One of libraries failed to load. Check installation.",
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
+        libs = SelectedLibraries();
         return;
     }
+    
+    work = std::make_shared<Work>(s, pose, libs, this, winId());
+    
+    bindKeyboardShortcuts();
     
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
@@ -329,6 +331,7 @@ void MainWindow::showProtocolSettings() {
     } else
     {
         auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
+        if (!dialog) return;
         pProtocolDialog = dialog;
         if (libs.pProtocol != nullptr)
             dialog->register_protocol(libs.pProtocol.get());
@@ -397,8 +400,8 @@ void MainWindow::profileSelected(int index)
         return;
     
     {
-        QSettings settings(group::org);
-        settings.setValue (group::filename_key, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
+        QSettings settings(OPENTRACK_ORG);
+        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
                                                                 ui.iconcomboProfile->itemText(index)));
     }
     load_settings();
@@ -477,6 +480,6 @@ void MainWindow::maybe_start_profile_from_executable()
 
 void MainWindow::set_profile(const QString &profile)
 {
-    QSettings settings(group::org);
-    settings.setValue(group::filename_key, MainWindow::remove_app_path(profile));
+    QSettings settings(OPENTRACK_ORG);
+    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, MainWindow::remove_app_path(profile));
 }

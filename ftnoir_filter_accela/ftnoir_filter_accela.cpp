@@ -13,23 +13,27 @@
 using namespace std;
 
 static constexpr double rot_gains[][2] = {
-    { 7, 200 },
-    { 6, 100 },
-    { 5, 45 },
-    { 4, 15 },
-    { 3, 5 },
-    { 2, 1.4 },
-    { 1, .4 },
-    { 0, .2 },
+    { 2.66, 110 },
+    { 2.33, 80 },
+    { 2, 50 },
+    { 1.66, 30 },
+    { 1.33, 15 },
+    { 1, 5 },
+    { .66, 1.4 },
+    { .33, .4 },
+    { 0, 0 },
     { -1, 0 }
 };
+
 static constexpr double trans_gains[][2] = {
-    { 5, 180 },
-    { 4, 64 },
-    { 3, 20 },
-    { 2, 5 },
-    { 1, .7 },
-    { 0, .1 },
+    { 2.33, 400 },
+    { 2, 150 },
+    { 1.66, 60 },
+    { 1.33, 20 },
+    { 1, 4 },
+    { .66, 1.5 },
+    { .33, .2 },
+    { 0, 0 },
     { -1, 0 }
 };
 
@@ -88,7 +92,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec_ = max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
-        const double val = m.getValue(vec_ / thres) * thres;
+        const double val = m.getValue(vec_ / thres);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
         const bool negp = vec < 0.;
         const bool done = negp

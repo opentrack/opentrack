@@ -81,6 +81,15 @@ OptionsDialog::OptionsDialog(State& state) : state(state), trans_calib_running(f
     tie_setting(acc.rot_deadzone, ui.rot_dz_slider);
     tie_setting(acc.trans_deadzone, ui.trans_dz_slider);
     
+    update_rot_display(ui.rotation_slider->value());
+    update_trans_display(ui.translation_slider->value());
+    update_ewma_display(ui.ewma_slider->value());
+    update_rot_dz_display(ui.rot_dz_slider->value());
+    update_trans_dz_display(ui.trans_dz_slider->value());
+    
+    tie_setting(pt.dynamic_pose, ui.dynamic_pose);
+    tie_setting(pt.init_phase_timeout, ui.init_phase_timeout);
+    
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
     

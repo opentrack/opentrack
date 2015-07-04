@@ -41,7 +41,9 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
     }
 }
 
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __GNUC__
+#	pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 
 static BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
                                    VOID* pContext )

@@ -42,7 +42,7 @@
 #include <iostream>
 
 #ifdef _MSC_VER
-#   error "No support for MSVC anymore"
+#   define OPENTRACK_LIB_PREFIX ""
 #else
 #   define OPENTRACK_LIB_PREFIX "lib"
 #endif
@@ -115,7 +115,8 @@ struct dylib {
                 {
                     fprintf(stderr, "Error, ignoring: %s\n", err);
                     fflush(stderr);
-                    dlclose(handle);
+                    if (handle)
+                        dlclose(handle);
                     handle = nullptr;
                     return true;
                 }
@@ -138,6 +139,7 @@ struct dylib {
                 return;
         } else {
             (void) _foo::err(handle);
+            return;
         }
 #endif
     

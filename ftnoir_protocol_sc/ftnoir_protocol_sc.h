@@ -39,6 +39,7 @@
 #include <SimConnect.h>
 
 #include "ui_ftnoir_sccontrols.h"
+#include <QThread>
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -83,45 +84,46 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Protocol : public IProtocol
+class FTNoIR_Protocol : public IProtocol, private QThread
 {
 public:
 	FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
     bool correct();
     void pose(const double* headpose);
+    void handle();
     QString game_name() {
         return "FS2004/FSX";
     }
 private:
-	static float virtSCPosX;
-	static float virtSCPosY;
-	static float virtSCPosZ;
-	
-	static float virtSCRotX;
-	static float virtSCRotY;
-	static float virtSCRotZ;
+    void run() override;
+    volatile bool should_stop;
+    
+	volatile float virtSCPosX;
+	volatile float virtSCPosY;
+	volatile float virtSCPosZ;
+	volatile float virtSCRotX;
+	volatile float virtSCRotY;
+	volatile float virtSCRotZ;
 
-	static float prevSCPosX;
-	static float prevSCPosY;
-	static float prevSCPosZ;
+	float prevSCPosX;
+	float prevSCPosY;
+	float prevSCPosZ;
 	
-	static float prevSCRotX;
-	static float prevSCRotY;
-	static float prevSCRotZ;
-
-    bool blnSimConnectActive;
+	float prevSCRotX;
+	float prevSCRotY;
+	float prevSCRotZ;
 
     importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;
-	static importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
+	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 	importSimConnect_CallDispatch simconnect_calldispatch;
 	importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 	importSimConnect_MapClientEventToSimEvent simconnect_mapclienteventtosimevent;
 	importSimConnect_AddClientEventToNotificationGroup simconnect_addclienteventtonotificationgroup;
 	importSimConnect_SetNotificationGroupPriority simconnect_setnotificationgrouppriority;
 
-	static HANDLE hSimConnect;						// Handle to SimConnect
+	HANDLE hSimConnect;						// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
 };
