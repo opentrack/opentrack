@@ -76,7 +76,7 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
 
 class ActivationContext {
 public:
-    ActivationContext(const int resid) :ok (false) {
+    ActivationContext(const int resid) : ok(false) {
         hactctx = INVALID_HANDLE_VALUE;
         actctx_cookie = 0;
         ACTCTXA actx = {0};
@@ -99,6 +99,8 @@ public:
                 ReleaseActCtx(hactctx);
                 hactctx = INVALID_HANDLE_VALUE;
             }
+            else
+                ok = true;
         } else {
             qDebug() << "SC: can't create win32 activation context" << GetLastError();
         }
