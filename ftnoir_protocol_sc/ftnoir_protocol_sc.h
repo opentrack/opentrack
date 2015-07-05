@@ -126,6 +126,7 @@ private:
 	HANDLE hSimConnect;						// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
+    QLibrary SCClientLib;
 };
 
 class SCControls: public IProtocolDialog

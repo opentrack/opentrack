@@ -29,8 +29,6 @@
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
 
-static QLibrary SCClientLib;
-
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
 }
