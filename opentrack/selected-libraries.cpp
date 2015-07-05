@@ -20,19 +20,27 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     pProtocol(nullptr),
     correct(false)
 {
-    pTracker = make_instance<ITracker>(t);
     pProtocol = make_instance<IProtocol>(p);
-    pFilter = make_instance<IFilter>(f);
 
-    if (!pTracker || !pProtocol)
+    if (!pProtocol)
     {
-        qDebug() << "dylib load failure";
+        qDebug() << "protocol dylib load failure";
         return;
     }
 
     if(!pProtocol->correct())
     {
         qDebug() << "protocol load failure";
+        pProtocol = nullptr;
+        return;
+    }
+
+    pTracker = make_instance<ITracker>(t);
+    pFilter = make_instance<IFilter>(f);
+
+    if (!pTracker)
+    {
+        qDebug() << "tracker dylib load failure";
         return;
     }
 
