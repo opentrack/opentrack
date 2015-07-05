@@ -46,14 +46,13 @@ void FTNoIR_Protocol::run()
 
     if (!SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0)))
         return;
-#if 0
-        simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
 
-        simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
-        simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
-        simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-#endif
-    
+    simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
+
+    //simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
+    //simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
+    //simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE);
+
     while (!should_stop)
     {
         (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this)));
