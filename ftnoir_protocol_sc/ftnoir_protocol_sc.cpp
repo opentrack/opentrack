@@ -64,7 +64,7 @@ void FTNoIR_Protocol::run()
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCRotX = -headpose[Pitch];					// degrees
-    virtSCRotY = -headpose[Yaw];
+    virtSCRotY = headpose[Yaw];
     virtSCRotZ = headpose[Roll];
 
     virtSCPosX = headpose[TX]/100.f;						// cm to meters
