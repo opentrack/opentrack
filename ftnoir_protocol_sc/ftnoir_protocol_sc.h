@@ -58,24 +58,6 @@ typedef HRESULT (WINAPI *importSimConnect_MapClientEventToSimEvent)(HANDLE hSimC
 typedef HRESULT (WINAPI *importSimConnect_AddClientEventToNotificationGroup)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_CLIENT_EVENT_ID EventID, BOOL bMaskable);
 typedef HRESULT (WINAPI *importSimConnect_SetNotificationGroupPriority)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, DWORD uPriority);
 
-#define SC_CLIENT_FILENAME "SimConnect.dll"
-
-enum GROUP_ID
-{
-    GROUP0=0,
-};
-
-enum EVENT_ID
-{
-	EVENT_PING=0,
-	EVENT_INIT,
-};
-
-enum INPUT_ID
-{
-    INPUT0=0,
-};
-
 struct settings : opts {
     value<int> sxs_manifest;
     settings() :
