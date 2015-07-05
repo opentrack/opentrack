@@ -28,6 +28,7 @@
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack/thread.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
@@ -41,6 +42,8 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
+    Affinity thr;
+
     if (!SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0)))
         return;
 #if 0
