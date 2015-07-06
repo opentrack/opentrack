@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>178</height>
+    <width>586</width>
+    <height>202</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,6 +59,43 @@
        <widget class="QLabel" name="label_2">
         <property name="text">
          <string>Frames per second</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="resolution">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>640x480</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>320x240</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>320x200</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Default (not recommended!)</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Camera name</string>
         </property>
        </widget>
       </item>
@@ -111,43 +148,6 @@
         </item>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="resolution">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <item>
-         <property name="text">
-          <string>640x480</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>320x240</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>320x200</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Default (not recommended!)</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Camera name</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="cameraName">
         <property name="sizePolicy">
@@ -155,6 +155,20 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Camera settings</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="camera_settings">
+        <property name="text">
+         <string>Open</string>
         </property>
        </widget>
       </item>
@@ -174,7 +188,7 @@
       <item row="2" column="1">
        <widget class="QDoubleSpinBox" name="cy">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -190,7 +204,7 @@
       <item row="1" column="1">
        <widget class="QDoubleSpinBox" name="cx">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -206,7 +220,7 @@
       <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="cz">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
