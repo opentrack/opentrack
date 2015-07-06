@@ -144,9 +144,6 @@ bool FTNoIR_Protocol::correct()
             return false;
     }
 
-	//
-	// Get the functions from the DLL.
-	//
 	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
 	if (simconnect_open == NULL) {
 		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Open function not found in DLL!";
@@ -163,8 +160,6 @@ bool FTNoIR_Protocol::correct()
 		return false;
 	}
 
-	//return true;
-
 	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
 	if (simconnect_calldispatch == NULL) {
 		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CallDispatch function not found in DLL!";
@@ -177,24 +172,6 @@ bool FTNoIR_Protocol::correct()
 		return false;
 	}
 
-	simconnect_mapclienteventtosimevent = (importSimConnect_MapClientEventToSimEvent) SCClientLib.resolve("SimConnect_MapClientEventToSimEvent");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
-		return false;
-	}
-
-	simconnect_addclienteventtonotificationgroup = (importSimConnect_AddClientEventToNotificationGroup) SCClientLib.resolve("SimConnect_AddClientEventToNotificationGroup");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
-		return false;
-	}
-
-	simconnect_setnotificationgrouppriority = (importSimConnect_SetNotificationGroupPriority) SCClientLib.resolve("SimConnect_SetNotificationGroupPriority");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
-		return false;
-	}
-
 	qDebug() << "FTNoIR_Protocol::correct() says: SimConnect functions resolved in DLL!";
     
     start();
@@ -204,22 +181,7 @@ bool FTNoIR_Protocol::correct()
 
 void FTNoIR_Protocol::handle()
 {
-    if (prevSCPosX != virtSCPosX ||
-        prevSCPosY != virtSCPosY ||
-        prevSCPosZ != virtSCPosZ ||
-        prevSCRotX != virtSCRotX ||
-        prevSCRotY != virtSCRotY ||
-        prevSCRotZ != virtSCRotZ)
-    {
-        (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
-    }
-    
-    prevSCPosX = virtSCPosX;
-    prevSCPosY = virtSCPosY;
-    prevSCPosZ = virtSCPosZ;
-    prevSCRotX = virtSCRotX;
-    prevSCRotY = virtSCRotY;
-    prevSCRotZ = virtSCRotZ;
+    (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
 }
 
 void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)
