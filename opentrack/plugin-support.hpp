@@ -247,3 +247,12 @@ private:
         return ret;
     }
 };
+
+template<typename t>
+mem<t> make_dylib_instance(mem<dylib> lib)
+{
+    mem<t> ret;
+    if (lib != nullptr && lib->Constructor)
+        ret = mem<t>(reinterpret_cast<t*>(reinterpret_cast<OPENTRACK_CTOR_FUNPTR>(lib->Constructor)()));
+    return ret;
+}
