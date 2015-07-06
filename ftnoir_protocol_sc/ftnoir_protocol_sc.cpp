@@ -28,7 +28,6 @@
 ********************************************************************************/
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
-#include "opentrack/thread.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
@@ -42,8 +41,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    Affinity thr;
-
     (void) timeBeginPeriod(1);
 
     while (!should_stop)
@@ -56,7 +53,7 @@ void FTNoIR_Protocol::run()
             {
                 if (FAILED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
                     break;
-                Sleep(3);
+                Sleep(16);
             }
 
             (void) simconnect_close(hSimConnect);
