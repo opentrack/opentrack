@@ -84,7 +84,9 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCPosZ = -headpose[TZ]/100.f;
 }
 
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __GNUC__
+#   pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 
 class ActivationContext {
 public:
