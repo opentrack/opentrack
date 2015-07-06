@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "opentrack/thread.hpp"
+#include "opentrack/camera-names.hpp"
 
 using namespace std;
 using namespace cv;
@@ -128,8 +129,6 @@ void Tracker_PT::run()
     }
     qDebug()<<"Tracker:: Thread stopping";
 }
-
-int camera_name_to_index(const QString &name);
 
 void Tracker_PT::apply_settings()
 {
