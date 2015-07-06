@@ -304,7 +304,7 @@ endif()
 
 if(SDK_SIMCONNECT)
     opentrack_library(opentrack-proto-simconnect ftnoir_protocol_sc)
-    target_link_libraries(opentrack-proto-simconnect ${SDK_SIMCONNECT}/lib/SimConnect.lib)
+    target_link_libraries(opentrack-proto-simconnect ${SDK_SIMCONNECT}/lib/SimConnect.lib winmm)
     include_directories(opentrack-proto-simconnect SYSTEM PUBLIC ${SDK_SIMCONNECT}/inc)
 endif()
 

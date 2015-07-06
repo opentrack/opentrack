@@ -44,6 +44,8 @@ void FTNoIR_Protocol::run()
 {
     Affinity thr;
 
+    (void) timeBeginPeriod(1);
+
     while (!should_stop)
     {
         if (SUCCEEDED(simconnect_open(&hSimConnect, "opentrack", NULL, 0, 0, 0)))
@@ -54,7 +56,7 @@ void FTNoIR_Protocol::run()
             {
                 if (FAILED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
                     break;
-                Sleep(1);
+                Sleep(3);
             }
 
             (void) simconnect_close(hSimConnect);
@@ -62,6 +64,8 @@ void FTNoIR_Protocol::run()
 
         Sleep(100);
     }
+
+    (void) timeEndPeriod(1);
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
