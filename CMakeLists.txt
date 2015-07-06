@@ -367,11 +367,13 @@ if(OpenCV_FOUND)
 
     target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
     target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-endif()
 
-opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-target_link_libraries(opentrack-tracker-ht opentrack-compat)
-link_with_dinput8(opentrack-tracker-ht)
+    opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
+    target_link_libraries(opentrack-tracker-ht opentrack-compat)
+    link_with_dinput8(opentrack-tracker-ht)
+    target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
+    target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+endif()
 
 link_with_dinput8(opentrack-tracker-joystick)
 
