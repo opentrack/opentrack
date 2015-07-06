@@ -62,7 +62,8 @@ void FTNoIR_Protocol::run()
             (void) simconnect_close(hSimConnect);
         }
 
-        Sleep(100);
+        if (!should_stop)
+            Sleep(100);
     }
 
     (void) timeEndPeriod(1);
