@@ -83,7 +83,13 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
+    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
     timer.start(100);
+}
+
+void TrackerDialog_PT::camera_settings()
+{
+    open_camera_settings(tracker ? &static_cast<cv::VideoCapture&>(tracker->camera) : nullptr, s.camera_name, tracker ? &tracker->camera_mtx : nullptr);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)

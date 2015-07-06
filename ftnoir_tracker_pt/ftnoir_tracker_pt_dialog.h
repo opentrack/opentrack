@@ -18,12 +18,13 @@
 #include "trans_calib.h"
 #include "pt_video_widget.h"
 #include "ui_FTNoIR_PT_Controls.h"
+#include "opentrack/opencv-camera-dialog.hpp"
 
 #include <QTimer>
 
 //-----------------------------------------------------------------------------
 // The dialog that shows up when the user presses "Settings"
-class TrackerDialog_PT : public ITrackerDialog
+class TrackerDialog_PT : public ITrackerDialog, protected camera_dialog<Tracker_PT>
 {
 	Q_OBJECT
 public:
@@ -39,6 +40,7 @@ public slots:
 
 	void startstop_trans_calib(bool start);
 	void poll_tracker_info();
+    void camera_settings();
 private:
     settings_pt s;
 	Tracker_PT* tracker;

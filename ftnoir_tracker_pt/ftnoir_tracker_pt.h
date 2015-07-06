@@ -17,6 +17,7 @@
 #include "point_tracker.h"
 #include "pt_video_widget.h"
 #include "opentrack/timer.hpp"
+#include "opentrack/opencv-camera-dialog.hpp"
 
 #include <QThread>
 #include <QMutex>
@@ -30,11 +31,15 @@
 #endif
 #include <vector>
 
+class TrackerDialog_PT;
+
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
 class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
+    friend class camera_dialog<Tracker_PT>;
+    friend class TrackerDialog_PT;
 public:
     Tracker_PT();
     ~Tracker_PT() override;
@@ -61,6 +66,7 @@ private:
     
     volatile int commands;
 
+    QMutex camera_mtx;
     CVCamera       camera;
     PointExtractor point_extractor;
     PointTracker   point_tracker;

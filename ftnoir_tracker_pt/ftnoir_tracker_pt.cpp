@@ -74,7 +74,12 @@ void Tracker_PT::run()
         const double dt = time.elapsed() * 1e-9;
         time.start();
         cv::Mat frame;
-        const bool new_frame = camera.get_frame(dt, &frame);
+        bool new_frame;
+
+        {
+            QMutexLocker l(&camera_mtx);
+            new_frame = camera.get_frame(dt, &frame);
+        }
 
         if (new_frame && !frame.empty())
         {
@@ -133,6 +138,7 @@ void Tracker_PT::run()
 void Tracker_PT::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
+    QMutexLocker l(&camera_mtx);
     QMutexLocker lock(&mutex);
     camera.set_device_index(camera_name_to_index(s.camera_name));
     camera.set_res(s.cam_res_x, s.cam_res_y);
