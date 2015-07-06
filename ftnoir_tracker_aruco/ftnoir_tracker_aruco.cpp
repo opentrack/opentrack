@@ -101,25 +101,30 @@ void Tracker::run()
         fps = 200;
         break;
     }
-    camera = cv::VideoCapture(camera_name_to_index(s.camera_name));
-    if (res.width)
+
     {
-        camera.set(cv::CAP_PROP_FRAME_WIDTH, res.width);
-        camera.set(cv::CAP_PROP_FRAME_HEIGHT, res.height);
+        QMutexLocker l(&camera_mtx);
+
+        camera = cv::VideoCapture(camera_name_to_index(s.camera_name));
+        if (res.width)
+        {
+            camera.set(cv::CAP_PROP_FRAME_WIDTH, res.width);
+            camera.set(cv::CAP_PROP_FRAME_HEIGHT, res.height);
+        }
+        if (fps)
+            camera.set(cv::CAP_PROP_FPS, fps);
+
+        if (!camera.isOpened())
+        {
+            qDebug() << "aruco tracker: can't open camera";
+            return;
+        }
     }
-    if (fps)
-        camera.set(cv::CAP_PROP_FPS, fps);
 
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
 
     cv::Rect last_roi(65535, 65535, 0, 0);
-
-    if (!camera.isOpened())
-    {
-        fprintf(stderr, "aruco tracker: can't open camera\n");
-        return;
-    }
 
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
@@ -133,8 +138,12 @@ void Tracker::run()
     while (!stop)
     {
         cv::Mat color;
-        if (!camera.read(color))
-            continue;
+        {
+            QMutexLocker l(&camera_mtx);
+
+            if (!camera.read(color))
+                continue;
+        }
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
@@ -391,6 +400,7 @@ TrackerControls::TrackerControls()
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
+    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
 }
 
 void TrackerControls::toggleCalibrate()
@@ -439,4 +449,9 @@ void TrackerControls::doCancel()
 {
     s.b->reload();
     this->close();
+}
+
+void TrackerControls::camera_settings()
+{
+    open_camera_settings(tracker ? &tracker->camera : nullptr, s.camera_name, tracker ? &tracker->camera_mtx : nullptr);
 }

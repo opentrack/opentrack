@@ -16,6 +16,8 @@
 #include <QObject>
 #include "opentrack/options.hpp"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack/opencv-camera-dialog.hpp"
+
 using namespace options;
 
 struct settings : opts {
@@ -50,7 +52,7 @@ private:
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class TrackerControls : public ITrackerDialog
+class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
 {
     Q_OBJECT
 public:
@@ -65,6 +67,7 @@ private:
 private slots:
 	void doOK();
 	void doCancel();
+    void camera_settings();
 };
 
 #endif

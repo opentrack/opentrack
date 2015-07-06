@@ -170,6 +170,7 @@ TrackerControls::TrackerControls()
     tie_setting(s.resolution, ui.resolution);
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
 }
 
 void TrackerControls::doOK()
@@ -182,4 +183,9 @@ void TrackerControls::doCancel()
 {
     s.b->reload();
     this->close();
+}
+
+void TrackerControls::camera_settings()
+{
+    open_camera_settings(nullptr, s.camera_name, nullptr);
 }

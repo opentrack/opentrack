@@ -54,27 +54,6 @@ typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
 typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
 typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
 typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID, const char * SystemEventName);
-typedef HRESULT (WINAPI *importSimConnect_MapClientEventToSimEvent)(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID, const char * EventName);
-typedef HRESULT (WINAPI *importSimConnect_AddClientEventToNotificationGroup)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_CLIENT_EVENT_ID EventID, BOOL bMaskable);
-typedef HRESULT (WINAPI *importSimConnect_SetNotificationGroupPriority)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, DWORD uPriority);
-
-#define SC_CLIENT_FILENAME "SimConnect.dll"
-
-enum GROUP_ID
-{
-    GROUP0=0,
-};
-
-enum EVENT_ID
-{
-	EVENT_PING=0,
-	EVENT_INIT,
-};
-
-enum INPUT_ID
-{
-    INPUT0=0,
-};
 
 struct settings : opts {
     value<int> sxs_manifest;
@@ -106,26 +85,16 @@ private:
 	volatile float virtSCRotY;
 	volatile float virtSCRotZ;
 
-	float prevSCPosX;
-	float prevSCPosY;
-	float prevSCPosZ;
-	
-	float prevSCRotX;
-	float prevSCRotY;
-	float prevSCRotZ;
-
     importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
 	importSimConnect_Close simconnect_close;
 	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
 	importSimConnect_CallDispatch simconnect_calldispatch;
 	importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
-	importSimConnect_MapClientEventToSimEvent simconnect_mapclienteventtosimevent;
-	importSimConnect_AddClientEventToNotificationGroup simconnect_addclienteventtonotificationgroup;
-	importSimConnect_SetNotificationGroupPriority simconnect_setnotificationgrouppriority;
 
 	HANDLE hSimConnect;						// Handle to SimConnect
 	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
+    QLibrary SCClientLib;
 };
 
 class SCControls: public IProtocolDialog

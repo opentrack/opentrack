@@ -18,6 +18,7 @@
 #include "opentrack/options.hpp"
 #include "ftnoir_tracker_aruco/trans_calib.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack/opencv-camera-dialog.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -40,9 +41,12 @@ struct settings : opts {
     {}
 };
 
+class TrackerControls;
+
 class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
+    friend class TrackerControls;
     static constexpr double c_search_window = 2.65;
 public:
     Tracker();
@@ -52,6 +56,8 @@ public:
     void run();
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
 private:
+    cv::VideoCapture camera;
+    QMutex camera_mtx;
     QMutex mtx;
     volatile bool stop;
     QHBoxLayout* layout;
@@ -59,12 +65,11 @@ private:
     settings s;
     double pose[6];
     cv::Mat frame;
-    cv::VideoCapture camera;
     cv::Matx33d r;
     cv::Vec3d t;
 };
 
-class TrackerControls : public ITrackerDialog
+class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
 {
     Q_OBJECT
 public:
@@ -83,4 +88,5 @@ private slots:
     void toggleCalibrate();
     void cleanupCalib();
     void update_tracker_calibration();
+    void camera_settings();
 };

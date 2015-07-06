@@ -13,6 +13,7 @@
 #   include <unistd.h>
 #endif
 
+template<typename = void>
 QList<QString> get_camera_names() {
     QList<QString> ret;
 #if defined(_WIN32)
@@ -82,6 +83,7 @@ QList<QString> get_camera_names() {
     return ret;
 }
 
+template<typename = void>
 int camera_name_to_index(const QString &name)
 {
     auto list = get_camera_names();

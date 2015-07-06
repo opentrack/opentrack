@@ -29,8 +29,6 @@
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
 
-static QLibrary SCClientLib;
-
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
 }
@@ -43,28 +41,42 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    if (!SUCCEEDED(simconnect_open(&hSimConnect, "FaceTrackNoIR", NULL, 0, 0, 0)))
-        return;
-#if 0
-        simconnect_subscribetosystemevent(hSimConnect, EVENT_PING, "Frame");
+    HANDLE event = CreateEvent(NULL, FALSE, FALSE, nullptr);
 
-        simconnect_mapclienteventtosimevent(hSimConnect, EVENT_INIT, "");
-        simconnect_addclienteventtonotificationgroup(hSimConnect, GROUP0, EVENT_INIT, false);
-        simconnect_setnotificationgrouppriority(hSimConnect, GROUP0, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-#endif
-    
+    if (event == nullptr)
+    {
+        qDebug() << "simconnect: event create" << GetLastError();
+        return;
+    }
+
     while (!should_stop)
     {
-        (void) (simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this)));
-        Sleep(1);
+        if (SUCCEEDED(simconnect_open(&hSimConnect, "opentrack", NULL, 0, event, 0)))
+        {
+            simconnect_subscribetosystemevent(hSimConnect, 0, "Frame");
+
+            while (!should_stop)
+            {
+                if (WaitForSingleObject(event, 10) == WAIT_OBJECT_0)
+                {
+                    if (FAILED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
+                        break;
+                }
+            }
+
+            (void) simconnect_close(hSimConnect);
+        }
+
+        if (!should_stop)
+            Sleep(100);
     }
-    
-    (void) simconnect_close(hSimConnect);
+
+    CloseHandle(event);
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCRotX = -headpose[Pitch];					// degrees
-    virtSCRotY = -headpose[Yaw];
+    virtSCRotY = headpose[Yaw];
     virtSCRotZ = headpose[Roll];
 
     virtSCPosX = headpose[TX]/100.f;						// cm to meters
@@ -72,11 +84,13 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
     virtSCPosZ = -headpose[TZ]/100.f;
 }
 
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#ifdef __GNUC__
+#   pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 
 class ActivationContext {
 public:
-    ActivationContext(const int resid) :ok (false) {
+    ActivationContext(const int resid) : ok(false) {
         hactctx = INVALID_HANDLE_VALUE;
         actctx_cookie = 0;
         ACTCTXA actx = {0};
@@ -99,6 +113,8 @@ public:
                 ReleaseActCtx(hactctx);
                 hactctx = INVALID_HANDLE_VALUE;
             }
+            else
+                ok = true;
         } else {
             qDebug() << "SC: can't create win32 activation context" << GetLastError();
         }
@@ -135,9 +151,6 @@ bool FTNoIR_Protocol::correct()
             return false;
     }
 
-	//
-	// Get the functions from the DLL.
-	//
 	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
 	if (simconnect_open == NULL) {
 		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Open function not found in DLL!";
@@ -154,8 +167,6 @@ bool FTNoIR_Protocol::correct()
 		return false;
 	}
 
-	//return true;
-
 	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
 	if (simconnect_calldispatch == NULL) {
 		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CallDispatch function not found in DLL!";
@@ -168,26 +179,6 @@ bool FTNoIR_Protocol::correct()
 		return false;
 	}
 
-	simconnect_mapclienteventtosimevent = (importSimConnect_MapClientEventToSimEvent) SCClientLib.resolve("SimConnect_MapClientEventToSimEvent");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_MapClientEventToSimEvent function not found in DLL!";
-		return false;
-	}
-
-	simconnect_addclienteventtonotificationgroup = (importSimConnect_AddClientEventToNotificationGroup) SCClientLib.resolve("SimConnect_AddClientEventToNotificationGroup");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_AddClientEventToNotificationGroup function not found in DLL!";
-		return false;
-	}
-
-	simconnect_setnotificationgrouppriority = (importSimConnect_SetNotificationGroupPriority) SCClientLib.resolve("SimConnect_SetNotificationGroupPriority");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SetNotificationGroupPriority function not found in DLL!";
-		return false;
-	}
-
-	qDebug() << "FTNoIR_Protocol::correct() says: SimConnect functions resolved in DLL!";
-    
     start();
 
 	return true;
@@ -195,22 +186,7 @@ bool FTNoIR_Protocol::correct()
 
 void FTNoIR_Protocol::handle()
 {
-    if (prevSCPosX != virtSCPosX ||
-        prevSCPosY != virtSCPosY ||
-        prevSCPosZ != virtSCPosZ ||
-        prevSCRotX != virtSCRotX ||
-        prevSCRotY != virtSCRotY ||
-        prevSCRotZ != virtSCRotZ)
-    {
-        (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
-    }
-    
-    prevSCPosX = virtSCPosX;
-    prevSCPosY = virtSCPosY;
-    prevSCPosZ = virtSCPosZ;
-    prevSCRotX = virtSCRotX;
-    prevSCRotY = virtSCRotY;
-    prevSCRotZ = virtSCRotZ;
+    (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
 }
 
 void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)

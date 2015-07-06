@@ -89,12 +89,13 @@ public:
     void start() override;
     void stop() override;
 
+    operator cv::VideoCapture&() { return *cap; }
+
 protected:
     bool _get_frame(cv::Mat* frame) override;
     void _set_fps() override;
     void _set_res() override;
     void _set_device_index() override;
-
 private:
     cv::VideoCapture* cap;
 };
