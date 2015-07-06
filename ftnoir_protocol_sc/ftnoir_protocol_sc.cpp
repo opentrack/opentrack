@@ -41,19 +41,27 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    (void) timeBeginPeriod(1);
+    HANDLE event = CreateEvent(NULL, FALSE, FALSE, nullptr);
+
+    if (event == nullptr)
+    {
+        qDebug() << "simconnect: event create" << GetLastError();
+        return;
+    }
 
     while (!should_stop)
     {
-        if (SUCCEEDED(simconnect_open(&hSimConnect, "opentrack", NULL, 0, 0, 0)))
+        if (SUCCEEDED(simconnect_open(&hSimConnect, "opentrack", NULL, 0, event, 0)))
         {
             simconnect_subscribetosystemevent(hSimConnect, 0, "Frame");
 
             while (!should_stop)
             {
-                if (FAILED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
-                    break;
-                Sleep(16);
+                if (WaitForSingleObject(event, 10) == WAIT_OBJECT_0)
+                {
+                    if (FAILED(simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
+                        break;
+                }
             }
 
             (void) simconnect_close(hSimConnect);
@@ -63,7 +71,7 @@ void FTNoIR_Protocol::run()
             Sleep(100);
     }
 
-    (void) timeEndPeriod(1);
+    CloseHandle(event);
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
@@ -169,8 +177,6 @@ bool FTNoIR_Protocol::correct()
 		return false;
 	}
 
-	qDebug() << "FTNoIR_Protocol::correct() says: SimConnect functions resolved in DLL!";
-    
     start();
 
 	return true;
