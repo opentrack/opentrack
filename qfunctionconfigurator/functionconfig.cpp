@@ -74,9 +74,6 @@ void Map::reload() {
         QList<QPointF> input = cur.input;
         auto& data = cur.data;
 
-        if (input.size() && input[0].x() > 1e-2)
-            input.prepend(QPointF(0, 0));
-
         data = std::vector<float>(value_count);
         const int mult = precision();
         
@@ -92,6 +89,8 @@ void Map::reload() {
                     data[k] = input[0].y() * k / (input[0].x() * mult);
             }
         }
+        else if (input[0].x() > 1e-2)
+            input.prepend(QPointF(0, 0));
         
         for (int i = 0; i < sz; i++) {
             QPointF p0 = ensureInBounds(input, i - 1);
