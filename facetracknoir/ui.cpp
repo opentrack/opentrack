@@ -372,12 +372,12 @@ void MainWindow::showTrackerSettings()
 }
 
 void MainWindow::showProtocolSettings() {
-    if (mk_dialog(current_tracker(), &pProtocolDialog) && libs.pProtocol)
+    if (mk_dialog(current_protocol(), &pProtocolDialog) && libs.pProtocol)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
 }
 
 void MainWindow::showFilterSettings() {
-    if (mk_dialog(current_tracker(), &pFilterDialog) && libs.pFilter)
+    if (mk_dialog(current_filter(), &pFilterDialog) && libs.pFilter)
         pFilterDialog->register_filter(libs.pFilter.get());
 }
 
