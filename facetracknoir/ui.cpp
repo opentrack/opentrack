@@ -340,100 +340,73 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t>
-mem<t> mk_dialog(mem<dylib> lib)
+bool mk_dialog(mem<dylib> lib, mem<t>* orig)
 {
+    if (*orig && (*orig)->isVisible())
+    {
+        (*orig)->show();
+        (*orig)->raise();
+        return false;
+    }
+
     if (lib && lib->Dialog)
     {
         auto dialog = mem<t>(reinterpret_cast<t*>(lib->Dialog()));
         dialog->setWindowFlags(Qt::Dialog);
         dialog->setFixedSize(dialog->size());
-        return dialog;
+
+        *orig = dialog;
+        dialog->show();
+        dialog->raise();
+
+        return true;
     }
 
-    return nullptr;
+    return false;
 }
 
 void MainWindow::showTrackerSettings()
 {
-    if (pTrackerDialog && pTrackerDialog->isVisible())
-    {
-        pTrackerDialog->show();
-        pTrackerDialog->raise();
-    }
-    else
-    {
-        auto dialog = mk_dialog<ITrackerDialog>(current_tracker());
-        if (!dialog) return;
-        pTrackerDialog = dialog;
-        if (libs.pTracker != nullptr)
-            dialog->register_tracker(libs.pTracker.get());
-        dialog->show();
-        dialog->raise();
-    }
+    if (mk_dialog(current_tracker(), &pTrackerDialog) && libs.pTracker)
+        pTrackerDialog->register_tracker(libs.pTracker.get());
 }
 
 void MainWindow::showProtocolSettings() {
-    if (pProtocolDialog && pProtocolDialog->isVisible())
-    {
-        pProtocolDialog->show();
-        pProtocolDialog->raise();
-    } else
-    {
-        auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
-        if (!dialog) return;
-        pProtocolDialog = dialog;
-        if (libs.pProtocol != nullptr)
-            dialog->register_protocol(libs.pProtocol.get());
-        dialog->show();
-        dialog->raise();
-    }
+    if (mk_dialog(current_tracker(), &pProtocolDialog) && libs.pProtocol)
+        pProtocolDialog->register_protocol(libs.pProtocol.get());
 }
 
 void MainWindow::showFilterSettings() {
-    if (pFilterDialog && pFilterDialog->isVisible())
+    if (mk_dialog(current_tracker(), &pFilterDialog) && libs.pFilter)
+        pFilterDialog->register_filter(libs.pFilter.get());
+}
+
+template<typename t, typename... Args>
+bool mk_window(mem<t>* place, Args... params)
+{
+    if (*place && (*place)->isVisible())
     {
-        pFilterDialog->show();
-        pFilterDialog->raise();
-    } else
+        (*place)->show();
+        (*place)->raise();
+        return false;
+    }
+    else
     {
-        auto dialog = mk_dialog<IFilterDialog>(current_filter());
-        if (!dialog) return;
-        pFilterDialog = dialog;
-        if (libs.pFilter != nullptr)
-            dialog->register_filter(libs.pFilter.get());
-        dialog->show();
-        dialog->raise();
+        *place = std::make_shared<t>(params...);
+        (*place)->setWindowFlags(Qt::Dialog);
+        (*place)->show();
+        (*place)->raise();
+        return true;
     }
 }
 
 void MainWindow::showKeyboardShortcuts() {
-    if (shortcuts_widget && shortcuts_widget->isVisible())
-    {
-        shortcuts_widget->show();
-        shortcuts_widget->raise();
-    }
-    else
-    {
-        shortcuts_widget = std::make_shared<OptionsDialog>();
-        shortcuts_widget->setWindowFlags(Qt::Dialog);
+    if (mk_window(&shortcuts_widget))
         connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
-        shortcuts_widget->show();
-        shortcuts_widget->raise();
-    }
 }
 
 void MainWindow::showCurveConfiguration() {
-    if (mapping_widget && mapping_widget->isVisible())
-    {
-        mapping_widget->show();
-        mapping_widget->raise();
-    }
-    else
-    {
-        mapping_widget = std::make_shared<MapWidget>(pose, s);
-        mapping_widget->setWindowFlags(Qt::Dialog);
-        mapping_widget->show();
-    }
+    mk_window<MapWidget, Mappings&, main_settings&>(&mapping_widget, pose, s);
 }
 
 void MainWindow::exit() {
