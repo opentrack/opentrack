@@ -1,4 +1,4 @@
-#include "../opentrack/options.hpp"
+#include "opentrack/options.hpp"
 using namespace options;
 #include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>

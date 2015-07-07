@@ -10,7 +10,7 @@
 #include <QSettings>
 #include "options.hpp"
 using namespace options;
-#include "../qfunctionconfigurator/functionconfig.h"
+#include "qfunctionconfigurator/functionconfig.h"
 #include "main-settings.hpp"
 
 class Mapping {
