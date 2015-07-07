@@ -257,7 +257,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         QPoint pix = e->pos();
         QPointF new_pt = pixel_coord_to_point(pix);
 
-        static constexpr int limit = 8;
+        static constexpr int limit = 16;
 
         for (int i = 0; i < 2; i++)
         {
