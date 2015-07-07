@@ -98,25 +98,28 @@ void Map::reload() {
             QPointF p1 = ensureInBounds(input, i);
             QPointF p2 = ensureInBounds(input, i + 1);
             QPointF p3 = ensureInBounds(input, i + 2);
+
+            const float p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
+            const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
             
             int end = std::min<int>(sz, p2.x() * mult);
             int start = p1.x() * mult;
             
             for (int j = start; j < end; j++) {
-                double t = (j - start) / (double) (end - start);
-                double t2 = t*t;
-                double t3 = t*t*t;
-                
-                int x = .5 * ((2. * p1.x()) +
-                              (-p0.x() + p2.x()) * t +
-                              (2. * p0.x() - 5. * p1.x() + 4. * p2.x() - p3.x()) * t2 +
-                              (-p0.x() + 3. * p1.x() - 3. * p2.x() + p3.x()) * t3)
+                float t = (j - start) / (float) (end - start);
+                float t2 = t*t;
+                float t3 = t*t*t;
+
+                int x = .5 * ((2. * p1_x) +
+                              (-p0_x + p2_x) * t +
+                              (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
+                              (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
                         * mult;
                 
-                float y = .5 * ((2. * p1.y()) +
-                                (-p0.y() + p2.y()) * t +
-                                (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
-                                (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
+                float y = .5 * ((2. * p1_y) +
+                                (-p0_y + p2_y) * t +
+                                (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
+                                (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
                     data[x] = y;
@@ -126,7 +129,7 @@ void Map::reload() {
         float last = 0;
         for (int i = 0; i < sz; i++)
         {
-            if (data[i] <= 0)
+            if (data[i] < 0)
                 data[i] = last;
             last = data[i];
         }
