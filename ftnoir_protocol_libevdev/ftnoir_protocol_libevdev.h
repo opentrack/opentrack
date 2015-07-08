@@ -18,7 +18,7 @@ extern "C" {
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol();
+    FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
     bool correct() {
         return dev != NULL;
@@ -38,15 +38,15 @@ class LibevdevControls: public IProtocolDialog
 public:
     LibevdevControls();
     void register_protocol(IProtocol *) {}
-	void unregister_protocol() {}
+    void unregister_protocol() {}
 
 private:
     Ui::UICLibevdevControls ui;
-	void save();
+    void save();
 
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_ProtocolDll : public Metadata

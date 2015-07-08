@@ -1,29 +1,29 @@
 /********************************************************************************
-* FaceTrackNoIR		This program is a private project of some enthusiastic		*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2013	Wim Vriend (Developing)									*
-*						Ron Hendriks (Researching and Testing)					*
-*																				*
-* Homepage																		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* FGServer			FGServer is the Class, that communicates headpose-data		*
-*					to FlightGear, using UDP.				         			*
-*					It is based on the (Linux) example made by Melchior FRANZ.	*
+* FaceTrackNoIR         This program is a private project of some enthusiastic          *
+*                                       gamers from Holland, who don't like to pay much for                     *
+*                                       head-tracking.                                                                                          *
+*                                                                                                                                                               *
+* Copyright (C) 2013    Wim Vriend (Developing)                                                                 *
+*                                               Ron Hendriks (Researching and Testing)                                  *
+*                                                                                                                                                               *
+* Homepage                                                                                                                                              *
+*                                                                                                                                                               *
+* This program is free software; you can redistribute it and/or modify it               *
+* under the terms of the GNU General Public License as published by the                 *
+* Free Software Foundation; either version 3 of the License, or (at your                *
+* option) any later version.                                                                                                    *
+*                                                                                                                                                               *
+* This program is distributed in the hope that it will be useful, but                   *
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY    *
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for   *
+* more details.                                                                                                                                 *
+*                                                                                                                                                               *
+* You should have received a copy of the GNU General Public License along               *
+* with this program; if not, see <http://www.gnu.org/licenses/>.                                *
+*                                                                                                                                                               *
+* FGServer                      FGServer is the Class, that communicates headpose-data          *
+*                                       to FlightGear, using UDP.                                                               *
+*                                       It is based on the (Linux) example made by Melchior FRANZ.      *
 ********************************************************************************/
 #pragma once
 #include "ui_ftnoir_vjoy_controls.h"
@@ -35,7 +35,7 @@
 class FTNoIR_Protocol : public IProtocol
 {
 public:
-	FTNoIR_Protocol();
+    FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
     bool correct() {
         return true;
@@ -53,17 +53,17 @@ class VJoyControls: public IProtocolDialog
     Q_OBJECT
 public:
 
-	explicit VJoyControls();
+    explicit VJoyControls();
     void register_protocol(IProtocol *) {}
-	void unregister_protocol() {}
+    void unregister_protocol() {}
 
 private:
-	Ui::UICVJoyControls ui;
-	void save();
+    Ui::UICVJoyControls ui;
+    void save();
 
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_ProtocolDll : public Metadata
@@ -83,17 +83,17 @@ public:
 
 typedef struct _JOYSTICK_STATE
 {
-        UCHAR ReportId;                         // Report Id
-        SHORT XAxis;                            // X Axis
-        SHORT YAxis;                            // Y Axis
-        SHORT ZAxis;                            // Z Axis
-        SHORT XRotation;                        // X Rotation
-        SHORT YRotation;                        // Y Rotation
-        SHORT ZRotation;                        // Z Rotation
-        SHORT Slider;                           // Slider
-        SHORT Dial;                                     // Dial
-        USHORT POV;                                     // POV
-        UINT32 Buttons;                         // 32 Buttons
+    UCHAR ReportId;                         // Report Id
+    SHORT XAxis;                            // X Axis
+    SHORT YAxis;                            // Y Axis
+    SHORT ZAxis;                            // Z Axis
+    SHORT XRotation;                        // X Rotation
+    SHORT YRotation;                        // Y Rotation
+    SHORT ZRotation;                        // Z Rotation
+    SHORT Slider;                           // Slider
+    SHORT Dial;                                     // Dial
+    USHORT POV;                                     // POV
+    UINT32 Buttons;                         // 32 Buttons
 } JOYSTICK_STATE, * PJOYSTICK_STATE;
 
 #ifndef _MSC_VER

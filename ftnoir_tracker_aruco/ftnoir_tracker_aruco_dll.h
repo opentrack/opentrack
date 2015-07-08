@@ -10,9 +10,9 @@
 //-----------------------------------------------------------------------------
 class TrackerDll : public Metadata
 {
-	// ITrackerDll interface
-	void getFullName(QString *strToBeFilled);
-	void getShortName(QString *strToBeFilled);
-	void getDescription(QString *strToBeFilled);
-	void getIcon(QIcon *icon);
+    // ITrackerDll interface
+    void getFullName(QString *strToBeFilled);
+    void getShortName(QString *strToBeFilled);
+    void getDescription(QString *strToBeFilled);
+    void getIcon(QIcon *icon);
 };

@@ -22,12 +22,12 @@ struct settings : opts {
 class FTNoIR_Tracker : public ITracker, protected QThread
 {
 public:
-	FTNoIR_Tracker();
+    FTNoIR_Tracker();
     ~FTNoIR_Tracker();
     void start_tracker(QFrame *);
     void data(double *data);
 protected:
-	void run() override;
+    void run() override;
 private:
     QUdpSocket sock;
     double last_recv_pose[6];
@@ -40,15 +40,15 @@ class TrackerControls: public ITrackerDialog
 {
     Q_OBJECT
 public:
-	TrackerControls();
+    TrackerControls();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 private:
-	Ui::UICFTNClientControls ui;
+    Ui::UICFTNClientControls ui;
     settings s;
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 };
 
 class FTNoIR_TrackerDll : public Metadata

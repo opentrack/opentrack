@@ -21,8 +21,7 @@
 // ----------------------------------------------------------------------------
 class ArucoVideoWidget : public QWidget
 {
-	Q_OBJECT
-    
+    Q_OBJECT
 private:
     QMutex mtx;
     QImage texture;

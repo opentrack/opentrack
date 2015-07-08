@@ -63,22 +63,22 @@ class PointModel
 public:
     static constexpr int N_POINTS = 3;
 
-    cv::Vec3f M01;	// M01 in model frame
-    cv::Vec3f M02;	// M02 in model frame
+    cv::Vec3f M01;      // M01 in model frame
+    cv::Vec3f M02;      // M02 in model frame
 
-    cv::Vec3f u;	// unit vector perpendicular to M01,M02-plane
+    cv::Vec3f u;        // unit vector perpendicular to M01,M02-plane
 
     cv::Matx22f P;
     
     enum Model { Clip = 0, Cap = 1, Custom = 2 };
-        
+
     PointModel(settings_pt& s)
     {
         set_model(s);
         // calculate u
         u = M01.cross(M02);
         u /= norm(u);
-    
+
         // calculate projection matrix on M01,M02 plane
         float s11 = M01.dot(M01);
         float s12 = M01.dot(M02);
@@ -140,8 +140,8 @@ private:
 
     Affine X_CM; // trafo from model to camera
 
-	Timer t;
-	bool init_phase;
+    Timer t;
+    bool init_phase;
 };
 
 #endif //POINTTRACKER_H

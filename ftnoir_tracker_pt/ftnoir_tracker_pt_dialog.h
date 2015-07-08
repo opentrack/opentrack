@@ -26,30 +26,30 @@
 // The dialog that shows up when the user presses "Settings"
 class TrackerDialog_PT : public ITrackerDialog, protected camera_dialog<Tracker_PT>
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	TrackerDialog_PT();
-	void register_tracker(ITracker *tracker) override;
-	void unregister_tracker() override;
+    TrackerDialog_PT();
+    void register_tracker(ITracker *tracker) override;
+    void unregister_tracker() override;
     void save();
-	void trans_calib_step();
+    void trans_calib_step();
 
 public slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
 
-	void startstop_trans_calib(bool start);
-	void poll_tracker_info();
+    void startstop_trans_calib(bool start);
+    void poll_tracker_info();
     void camera_settings();
 private:
     settings_pt s;
-	Tracker_PT* tracker;
-	QTimer timer;
+    Tracker_PT* tracker;
+    QTimer timer;
 
-	TranslationCalibrator trans_calib;
-	bool trans_calib_running;
+    TranslationCalibrator trans_calib;
+    bool trans_calib_running;
 
-	Ui::UICPTClientControls ui;
+    Ui::UICPTClientControls ui;
 };
 
 #endif //FTNOIR_TRACKER_PT_DIALOG_H

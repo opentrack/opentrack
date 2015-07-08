@@ -1,5 +1,5 @@
 /* Copyright (c) 2011-2014 Stanislaw Halik <sthalik@misaki.pl>
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -17,12 +17,12 @@
 
 class QFunctionConfigurator : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
 public:
-	QFunctionConfigurator(QWidget *parent = 0);
+    QFunctionConfigurator(QWidget *parent = 0);
     
-	Map* config();
+    Map* config();
     void setConfig(Map* config, const QString &name);
     
     QColor colorBezier() const
@@ -35,18 +35,18 @@ public:
         update();
     }
 protected slots:
-	void paintEvent(QPaintEvent *e);
-	void mousePressEvent(QMouseEvent *e);
-	void mouseMoveEvent(QMouseEvent *e);
-	void mouseReleaseEvent(QMouseEvent *e);
+    void paintEvent(QPaintEvent *e);
+    void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 private:
     void drawBackground();
-	void drawFunction();
-	void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
-	void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
+    void drawFunction();
+    void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
+    void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 protected:
-	void resizeEvent(QResizeEvent *) override;
+    void resizeEvent(QResizeEvent *) override;
 private:
     void update_range();
 
@@ -56,14 +56,14 @@ private:
     Map* _config;
     
     // bounds of the rectangle user can interact with
-	QRectF  pixel_bounds;
+    QRectF  pixel_bounds;
     
     int moving_control_point_idx;
     QPointF c;
 
-	QColor spline_color;
+    QColor spline_color;
     
-	QPixmap _background;
-	QPixmap _function;
+    QPixmap _background;
+    QPixmap _function;
     bool _draw_function;
 };
