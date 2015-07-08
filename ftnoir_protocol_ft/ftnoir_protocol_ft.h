@@ -38,7 +38,7 @@
 #include <QMutexLocker>
 #include "compat/compat.h"
 #include "opentrack/options.hpp"
-#include "../freetrackclient/fttypes.h"
+#include "freetrackclient/fttypes.h"
 using namespace options;
 
 struct settings : opts {

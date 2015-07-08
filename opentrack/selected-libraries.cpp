@@ -5,15 +5,6 @@ SelectedLibraries::~SelectedLibraries()
 {
 }
 
-template<typename t>
-static mem<t> make_instance(mem<dylib> lib)
-{
-    mem<t> ret;
-    if (lib != nullptr && lib->Constructor)
-        ret = mem<t>(reinterpret_cast<t*>(reinterpret_cast<OPENTRACK_CTOR_FUNPTR>(lib->Constructor)()));
-    return ret;
-}
-
 SelectedLibraries::SelectedLibraries(QFrame* frame, mem<ITracker> t, dylibptr p, mem<IFilter> f) :
     pTracker(nullptr),
     pFilter(nullptr),
@@ -21,7 +12,7 @@ SelectedLibraries::SelectedLibraries(QFrame* frame, mem<ITracker> t, dylibptr p,
     correct(false)
 {
     pTracker = t;
-    pProtocol = make_instance<IProtocol>(p);
+    pProtocol = make_dylib_instance<IProtocol>(p);
     pFilter = f;
 
     if (!pTracker || !pProtocol)

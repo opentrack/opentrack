@@ -310,64 +310,60 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t>
-mem<t> mk_dialog(mem<dylib> lib)
+bool mk_dialog(mem<dylib> lib, mem<t>* orig)
 {
+    if (*orig && (*orig)->isVisible())
+    {
+        (*orig)->show();
+        (*orig)->raise();
+        return false;
+    }
+
     if (lib && lib->Dialog)
     {
         auto dialog = mem<t>(reinterpret_cast<t*>(lib->Dialog()));
         dialog->setWindowFlags(Qt::Dialog);
         dialog->setFixedSize(dialog->size());
-        return dialog;
-    }
 
-    return nullptr;
-}
-
-void MainWindow::showProtocolSettings() {
-    if (pProtocolDialog && pProtocolDialog->isVisible())
-    {
-        pProtocolDialog->show();
-        pProtocolDialog->raise();
-    } else
-    {
-        auto dialog = mk_dialog<IProtocolDialog>(current_protocol());
-        if (!dialog) return;
-        pProtocolDialog = dialog;
-        if (libs.pProtocol != nullptr)
-            dialog->register_protocol(libs.pProtocol.get());
+        *orig = dialog;
         dialog->show();
         dialog->raise();
+
+        return true;
+    }
+
+    return false;
+}
+void MainWindow::showProtocolSettings() {
+    if (mk_dialog(current_protocol(), &pProtocolDialog) && libs.pProtocol)
+        pProtocolDialog->register_protocol(libs.pProtocol.get());
+}
+template<typename t, typename... Args>
+bool mk_window(mem<t>* place, Args... params)
+{
+    if (*place && (*place)->isVisible())
+    {
+        (*place)->show();
+        (*place)->raise();
+        return false;
+    }
+    else
+    {
+        *place = std::make_shared<t>(params...);
+        (*place)->setWindowFlags(Qt::Dialog);
+        (*place)->show();
+        (*place)->raise();
+        return true;
     }
 }
 
 void MainWindow::showKeyboardShortcuts() {
-    if (shortcuts_widget && shortcuts_widget->isVisible())
-    {
-        shortcuts_widget->show();
-        shortcuts_widget->raise();
-    }
-    else
-    {
-        shortcuts_widget = std::make_shared<OptionsDialog>(static_cast<State&>(*this));
-        shortcuts_widget->setWindowFlags(Qt::Dialog);
+    if (mk_window<OptionsDialog, State&>(&shortcuts_widget, *this))
         connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
-        shortcuts_widget->show();
-        shortcuts_widget->raise();
-    }
 }
 
 void MainWindow::showCurveConfiguration() {
-    if (mapping_widget && mapping_widget->isVisible())
-    {
-        mapping_widget->show();
-        mapping_widget->raise();
-    }
-    else
-    {
-        mapping_widget = std::make_shared<MapWidget>(pose, s);
-        mapping_widget->setWindowFlags(Qt::Dialog);
-        mapping_widget->show();
-    }
+    mk_window<MapWidget, Mappings&, main_settings&>(&mapping_widget, pose, s);
 }
 
 void MainWindow::exit() {

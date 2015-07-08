@@ -60,34 +60,14 @@ int main(int argc, char** argv)
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
 
-	QCommandLineParser p;
-	p.setApplicationDescription("opentrack - Head tracking software for MS Windows, Linux, and Apple OSX");
-	p.addHelpOption();
-	QCommandLineOption autostartOption(QStringList() << "a" << "autostart", "Load <profile> and start tracking", "profile");
-	p.addOption(autostartOption);
-	p.process(app);
-
-	QString profile = p.value(autostartOption);
-    
-    bool use_profile = profile.endsWith(".ini") && QFileInfo(profile).exists() && QFileInfo(profile).isFile();
-    if (!profile.isEmpty() && !use_profile)
-        QMessageBox::warning(nullptr, "Can't load profile", "Profile " + profile + " specified but can't be opened!",
-                             QMessageBox::Ok, QMessageBox::NoButton);
-    
-	if (use_profile)
-        MainWindow::set_profile(profile);
-    
     auto w = std::make_shared<MainWindow>();
-    
-    if (use_profile)
-        w->startTracker();
-		
+
     w->show();
     app.exec();
 
-	// on MSVC crashes in atexit
+    // on MSVC crashes in atexit
 #ifdef _MSC_VER
-	TerminateProcess(GetCurrentProcess(), 0);
+    TerminateProcess(GetCurrentProcess(), 0);
 #endif
     return 0;
 }

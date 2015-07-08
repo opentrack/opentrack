@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>
 #include <opencv2/videoio.hpp>
@@ -9,6 +10,14 @@ template<typename tracker>
 class camera_dialog
 {
     cv::VideoCapture fake_capture;
+    QTimer t;
+
+private:
+    void delete_capture()
+    {
+        fake_capture.open("");
+    }
+
 public:
     void open_camera_settings(cv::VideoCapture* cap, const QString& camera_name, QMutex* camera_mtx)
     {
@@ -23,10 +32,20 @@ public:
             }
         }
 
+        if (t.isActive())
+            return;
+
+        // don't hog the camera capture
+        if (!t.isSingleShot())
+            QObject::connect(&t, &QTimer::timeout, [&]() -> void { delete_capture(); });
+
+        t.setSingleShot(true);
+        t.setInterval(3000);
+
         fake_capture = cv::VideoCapture(camera_name_to_index(camera_name));
         fake_capture.set(cv::CAP_PROP_SETTINGS, 1);
-        // don't hog the camera capture
-        fake_capture.open("");
+        // HACK: we're not notified when it's safe to close the capture
+        t.start();
     }
 };
 

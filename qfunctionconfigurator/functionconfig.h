@@ -14,7 +14,7 @@
 #include <QSettings>
 #include <QMutex>
 #include <vector>
-#include "../opentrack/qcopyable-mutex.hpp"
+#include "opentrack/qcopyable-mutex.hpp"
 
 class Map {
 private:
@@ -22,8 +22,10 @@ private:
         QList<QPointF> input;
         std::vector<float> data;        
     };
-    
-    static constexpr long MEMOIZE_PRECISION = 25;
+
+    static constexpr int value_count = 9001;
+
+    int precision() const;
     void reload();
     float getValueInternal(int x);
 
@@ -32,7 +34,7 @@ private:
     volatile bool activep;
     int max_x;
     int max_y;
-    
+
     State cur, saved;
 public:
     int maxInput() const { return max_x; }

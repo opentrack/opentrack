@@ -24,7 +24,7 @@ Map::Map() :
 
 float Map::getValue(float x) {
     QMutexLocker foo(&_mutex);
-    float q  = x * MEMOIZE_PRECISION;
+    float q  = x * precision();
     int    xi = (int)q;
     float  yi = getValueInternal(xi);
     float  yiplus1 = getValueInternal(xi+1);
@@ -69,46 +69,56 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
 void Map::reload() {
     if (cur.input.size())
     {
-        auto& input = cur.input;
+        qStableSort(cur.input.begin(), cur.input.end(), sortFn);
+
+        QList<QPointF> input = cur.input;
         auto& data = cur.data;
-        
-        qStableSort(input.begin(), input.end(), sortFn);
-        data = std::vector<float>(MEMOIZE_PRECISION * input[input.size() - 1].x());
+
+        data = std::vector<float>(value_count);
+        const int mult = precision();
         
         const int sz = data.size();
         
         for (int i = 0; i < sz; i++)
             data[i] = -1;
         
-        for (int k = 0; k < input[0].x() * MEMOIZE_PRECISION; k++) {
-            if (k < sz)
-                data[k] = input[0].y() * k / (input[0].x() * MEMOIZE_PRECISION);
+        if (input.size() == 1)
+        {
+            for (int k = 0; k < input[0].x() * mult; k++) {
+                if (k < sz)
+                    data[k] = input[0].y() * k / (input[0].x() * mult);
+            }
         }
+        else if (input[0].x() > 1e-2)
+            input.prepend(QPointF(0, 0));
         
         for (int i = 0; i < sz; i++) {
             QPointF p0 = ensureInBounds(input, i - 1);
             QPointF p1 = ensureInBounds(input, i);
             QPointF p2 = ensureInBounds(input, i + 1);
             QPointF p3 = ensureInBounds(input, i + 2);
+
+            const float p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
+            const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
             
-            int end = std::min<int>(sz, p2.x() * MEMOIZE_PRECISION);
-            int start = p1.x() * MEMOIZE_PRECISION;
+            int end = std::min<int>(sz, p2.x() * mult);
+            int start = p1.x() * mult;
             
             for (int j = start; j < end; j++) {
-                double t = (j - start) / (double) (end - start);
-                double t2 = t*t;
-                double t3 = t*t*t;
+                float t = (j - start) / (float) (end - start);
+                float t2 = t*t;
+                float t3 = t*t*t;
+
+                int x = .5 * ((2. * p1_x) +
+                              (-p0_x + p2_x) * t +
+                              (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
+                              (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
+                        * mult;
                 
-                int x = .5 * ((2. * p1.x()) +
-                              (-p0.x() + p2.x()) * t +
-                              (2. * p0.x() - 5. * p1.x() + 4. * p2.x() - p3.x()) * t2 +
-                              (-p0.x() + 3. * p1.x() - 3. * p2.x() + p3.x()) * t3)
-                        * MEMOIZE_PRECISION;
-                
-                float y = .5 * ((2. * p1.y()) +
-                                (-p0.y() + p2.y()) * t +
-                                (2. * p0.y() - 5. * p1.y() + 4. * p2.y() - p3.y()) * t2 +
-                                (-p0.y() + 3. * p1.y() - 3. * p2.y() + p3.y()) * t3);
+                float y = .5 * ((2. * p1_y) +
+                                (-p0_y + p2_y) * t +
+                                (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
+                                (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
                     data[x] = y;
@@ -118,7 +128,7 @@ void Map::reload() {
         float last = 0;
         for (int i = 0; i < sz; i++)
         {
-            if (data[i] <= 0)
+            if (data[i] < 0)
                 data[i] = last;
             last = data[i];
         }
@@ -215,4 +225,11 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
     saved = cur;
         
     settings.endGroup();
+}
+
+
+int Map::precision() const {
+    if (cur.input.size())
+        return value_count / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));
+    return 1;
 }

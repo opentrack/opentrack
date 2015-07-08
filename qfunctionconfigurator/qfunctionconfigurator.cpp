@@ -1,4 +1,4 @@
-#include "../opentrack/options.hpp"
+#include "opentrack/options.hpp"
 using namespace options;
 #include "qfunctionconfigurator/qfunctionconfigurator.h"
 #include <QPainter>
@@ -132,7 +132,7 @@ void QFunctionConfigurator::drawFunction()
     QPen pen(spline_color, 1.2, Qt::SolidLine);
 
     const double max = _config->maxInput();
-    const double step = std::max(.1, max / 300.);
+    const double step = std::max(1e-2, max / 500.);
 
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (double i = 0; i < max; i += step) {
@@ -140,11 +140,6 @@ void QFunctionConfigurator::drawFunction()
         QPointF cur = point_to_pixel(QPointF(i, val));
         drawLine(&painter, prev, cur, pen);
         prev = cur;
-    }
-    if (points.size())
-    {
-        auto last = point_to_pixel(points[points.size()-1]);
-        drawLine(&painter, prev, last, pen);
     }
 }
 
@@ -259,16 +254,45 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
         bool overlap = false;
 
-        QPointF new_pt = pixel_coord_to_point(e->pos());
+        QPoint pix = e->pos();
+        QPointF new_pt = pixel_coord_to_point(pix);
 
-        if (moving_control_point_idx + 1 < points.size())
-            overlap |= new_pt.x() > points[moving_control_point_idx+1].x();
-        if (moving_control_point_idx != 0)
-            overlap |= new_pt.x() < points[moving_control_point_idx-1].x();
+        static constexpr int limit = 16;
 
-        if (overlap)
-            moving_control_point_idx = -1;
-        else
+        for (int i = 0; i < 2; i++)
+        {
+            bool bad = false;
+            if (moving_control_point_idx + 1 < points.size())
+            {
+                auto other = points[moving_control_point_idx+1];
+                auto other_pix = point_to_pixel(other);
+                bad = pix.x() + limit > other_pix.x();
+                if (i == 0 && bad)
+                {
+                    pix.setX(other_pix.x() - limit - 1);
+                    new_pt = pixel_coord_to_point(pix);
+                }
+                else
+                    overlap |= bad;
+            }
+            if (moving_control_point_idx != 0)
+            {
+                auto other = points[moving_control_point_idx-1];
+                auto other_pix = point_to_pixel(other);
+                bad = pix.x() - limit < other_pix.x();
+                if (i == 0 && bad)
+                {
+                    pix.setX(other_pix.x() + limit + 1);
+                    new_pt = pixel_coord_to_point(pix);
+                }
+                else
+                    overlap |= bad;
+            }
+            if (!bad)
+                break;
+        }
+
+        if (!overlap)
         {
             points[moving_control_point_idx] = new_pt;
             _config->movePoint(moving_control_point_idx, new_pt);
@@ -299,12 +323,7 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
         return;
 
     if (e->button() == Qt::LeftButton) {
-        QList<QPointF> points = _config->getPoints();
-        if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
-            if (_config) {
-                _config->movePoint(moving_control_point_idx, pixel_coord_to_point(e->pos()));
-            }
-        }
+        mouseMoveEvent(e);
         setCursor(Qt::ArrowCursor);
         moving_control_point_idx = -1;
 
