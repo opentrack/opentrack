@@ -12,59 +12,56 @@
 
 //-----------------------------------------------------------------------------
 struct TrackerSettings
-{	
+{
+    void load_ini();
+    void save_ini() const;
 
-	void load_ini();
-	void save_ini() const;
+    bool EnableRoll;
+    bool EnablePitch;
+    bool EnableYaw;
+    bool EnableX;
+    bool EnableY;
+    bool EnableZ;
 
-	bool EnableRoll;
-	bool EnablePitch;
-	bool EnableYaw;
-	bool EnableX;
-	bool EnableY;
-	bool EnableZ;
-
-	bool InvertRoll;
-	bool InvertPitch;
-	bool InvertYaw;
-	bool InvertX;
-	bool InvertY;
-	bool InvertZ;
+    bool InvertRoll;
+    bool InvertPitch;
+    bool InvertYaw;
+    bool InvertX;
+    bool InvertY;
+    bool InvertZ;
 
 
-	int RollAxe;
-	int PitchAxe;
-	int YawAxe;
-	int XAxe;
-	int YAxe;
-	int ZAxe;
+    int RollAxe;
+    int PitchAxe;
+    int YawAxe;
+    int XAxe;
+    int YAxe;
+    int ZAxe;
 
-	QString  CmdStart;
-	QString  CmdStop;
-	QString  CmdInit;
-	QString  CmdReset;
-	QString  CmdCenter;
-	QString  CmdZero;
+    QString  CmdStart;
+    QString  CmdStop;
+    QString  CmdInit;
+    QString  CmdReset;
+    QString  CmdCenter;
+    QString  CmdZero;
 
-	int DelayInit;
-	int DelayStart;
-	int DelaySeq;
+    int DelayInit;
+    int DelayStart;
+    int DelaySeq;
 
-	bool BigEndian;
-	bool EnableLogging;
+    bool BigEndian;
+    bool EnableLogging;
 
-	QString SerialPortName;
-	QSerialPort::BaudRate pBaudRate;
-	QSerialPort::DataBits pDataBits;
-	QSerialPort::Parity pParity;
-	QSerialPort::StopBits pStopBits;
-	QSerialPort::FlowControl pFlowControl;
+    QString SerialPortName;
+    QSerialPort::BaudRate pBaudRate;
+    QSerialPort::DataBits pDataBits;
+    QSerialPort::Parity pParity;
+    QSerialPort::StopBits pStopBits;
+    QSerialPort::FlowControl pFlowControl;
 
 #ifdef OPENTRACK_API
     int FPSArduino;
 #endif
-
-
 };
 
 

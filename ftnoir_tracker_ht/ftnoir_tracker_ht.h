@@ -37,7 +37,7 @@ class Tracker : public QObject, public ITracker
 {
     Q_OBJECT
 public:
-	Tracker();
+    Tracker();
     ~Tracker() override;
     void start_tracker(QFrame* frame);
     void data(double *data);
@@ -46,9 +46,9 @@ private:
     settings s;
     PortableLockedShm lck_shm;
     ht_shm_t* shm;
-	QProcess subprocess;
+    QProcess subprocess;
     HTVideoWidget* videoWidget;
-	QHBoxLayout* layout;
+    QHBoxLayout* layout;
 };
 
 // Widget that has controls for FTNoIR protocol client-settings.
@@ -56,17 +56,17 @@ class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
 {
     Q_OBJECT
 public:
-	explicit TrackerControls();
+    explicit TrackerControls();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 
 private:
-	Ui::Form ui;
+    Ui::Form ui;
     settings s;
 
 private slots:
-	void doOK();
-	void doCancel();
+    void doOK();
+    void doCancel();
     void camera_settings();
 };
 

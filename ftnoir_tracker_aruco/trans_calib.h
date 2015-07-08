@@ -32,8 +32,8 @@ public:
     cv::Vec3f get_estimate();
 
 private:
-    cv::Matx66f P;	// normalized precision matrix = inverse covariance
-    cv::Vec6f y;	// P*(-t_MH, t_CH)
+    cv::Matx66f P;  // normalized precision matrix = inverse covariance
+    cv::Vec6f y;    // P*(-t_MH, t_CH)
 };
 
 #endif //TRANSCALIB_H

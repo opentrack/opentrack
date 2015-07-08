@@ -1,30 +1,30 @@
 /********************************************************************************
-* FaceTrackNoIR		This program is a private project of some enthusiastic		*
-*					gamers from Holland, who don't like to pay much for			*
-*					head-tracking.												*
-*																				*
-* Copyright (C) 2010-2011	Wim Vriend (Developing)								*
-*							Ron Hendriks (Researching and Testing)				*
-*																				*
-* Homepage																		*
-*																				*
-* This program is free software; you can redistribute it and/or modify it		*
-* under the terms of the GNU General Public License as published by the			*
-* Free Software Foundation; either version 3 of the License, or (at your		*
-* option) any later version.													*
-*																				*
-* This program is distributed in the hope that it will be useful, but			*
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY	*
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for	*
-* more details.																	*
-*																				*
-* You should have received a copy of the GNU General Public License along		*
-* with this program; if not, see <http://www.gnu.org/licenses/>.				*
-*																				*
-* SCServer		SCServer is the Class, that communicates headpose-data			*
-*				to games, using the SimConnect.dll.		         				*
-*				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
-*				must be treated as such...										*
+* FaceTrackNoIR         This program is a private project of some enthusiastic          *
+*                                       gamers from Holland, who don't like to pay much for                     *
+*                                       head-tracking.                                                                                          *
+*                                                                                                                                                               *
+* Copyright (C) 2010-2011       Wim Vriend (Developing)                                                         *
+*                                                       Ron Hendriks (Researching and Testing)                          *
+*                                                                                                                                                               *
+* Homepage                                                                                                                                              *
+*                                                                                                                                                               *
+* This program is free software; you can redistribute it and/or modify it               *
+* under the terms of the GNU General Public License as published by the                 *
+* Free Software Foundation; either version 3 of the License, or (at your                *
+* option) any later version.                                                                                                    *
+*                                                                                                                                                               *
+* This program is distributed in the hope that it will be useful, but                   *
+* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY    *
+* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for   *
+* more details.                                                                                                                                 *
+*                                                                                                                                                               *
+* You should have received a copy of the GNU General Public License along               *
+* with this program; if not, see <http://www.gnu.org/licenses/>.                                *
+*                                                                                                                                                               *
+* SCServer              SCServer is the Class, that communicates headpose-data                  *
+*                               to games, using the SimConnect.dll.                                                     *
+*                               SimConnect.dll is a so called 'side-by-side' assembly, so it    *
+*                               must be treated as such...                                                                              *
 ********************************************************************************/
 #pragma once
 #undef _WIN32_WINNT
@@ -66,7 +66,7 @@ struct settings : opts {
 class FTNoIR_Protocol : public IProtocol, private QThread
 {
 public:
-	FTNoIR_Protocol();
+    FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
     bool correct();
     void pose(const double* headpose);
@@ -77,22 +77,22 @@ public:
 private:
     void run() override;
     volatile bool should_stop;
-    
-	volatile float virtSCPosX;
-	volatile float virtSCPosY;
-	volatile float virtSCPosZ;
-	volatile float virtSCRotX;
-	volatile float virtSCRotY;
-	volatile float virtSCRotZ;
 
-    importSimConnect_Open simconnect_open;							// SimConnect function(s) in DLL
-	importSimConnect_Close simconnect_close;
-	importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
-	importSimConnect_CallDispatch simconnect_calldispatch;
-	importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
+    volatile float virtSCPosX;
+    volatile float virtSCPosY;
+    volatile float virtSCPosZ;
+    volatile float virtSCRotX;
+    volatile float virtSCRotY;
+    volatile float virtSCRotZ;
 
-	HANDLE hSimConnect;						// Handle to SimConnect
-	static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
+    importSimConnect_Open simconnect_open;                                                      // SimConnect function(s) in DLL
+    importSimConnect_Close simconnect_close;
+    importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
+    importSimConnect_CallDispatch simconnect_calldispatch;
+    importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
+
+    HANDLE hSimConnect;                                         // Handle to SimConnect
+    static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;
 };

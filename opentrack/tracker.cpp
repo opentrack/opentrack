@@ -113,10 +113,10 @@ void Tracker::logic()
     {
         for (int i = 0; i < 6; i++)
             if (fabs(newpose[i]) != 0)
-        {
-            can_center = true;
-            break;
-        }
+            {
+                can_center = true;
+                break;
+            }
     }
     
     if (can_center)
