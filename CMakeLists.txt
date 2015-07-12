@@ -150,8 +150,10 @@ SET(SDK_RIFT "" CACHE PATH "libOVR path for Oculus Rift")
 
 set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
 
+set(SDK_HT "" CACHE FILEPATH "Path to headtracker library")
+set(SDK_HT_FLANDMARK "" CACHE FILEPATH "Path to flandmark library for headtracker")
+
 if(WIN32)
-    set(SDK_SIMCONNECT "" CACHE PATH "SimConnect SDK path for MS FSX")
     set(SDK_FSUIPC "" CACHE PATH "FSUIPC for older MS FSX path")
 endif()
 
@@ -366,11 +368,13 @@ if(OpenCV_FOUND)
     target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
     target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 
-    opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-    target_link_libraries(opentrack-tracker-ht opentrack-compat)
-    link_with_dinput8(opentrack-tracker-ht)
-    target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
-    target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    if(SDK_HT AND SDK_HT_FLANDMARK)
+        opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
+        target_link_libraries(opentrack-tracker-ht opentrack-compat ${SDK_HT} ${SDK_HT_FLANDMARK})
+        link_with_dinput8(opentrack-tracker-ht)
+        target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
+        target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    endif()
 endif()
 
 link_with_dinput8(opentrack-tracker-joystick)
@@ -486,8 +490,6 @@ if(NOT WIN32)
 endif()
 target_link_libraries(opentrack opentrack-api opentrack-version opentrack-pose-widget opentrack-spline-widget)
 
-
-
 if(APPLE)
     SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
 endif()
@@ -513,11 +515,6 @@ install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION .)
 
 if(SDK_XPLANE)
     install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION . LIBRARY DESTINATION .  )
-endif()
-
-if(WIN32)
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/bin/tracker-ht DESTINATION .)
-    #install(TARGETS freetrackclient RUNTIME DESTINATION . LIBRARY DESTINATION .  )
 endif()
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
