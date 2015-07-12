@@ -62,27 +62,27 @@ void FilterControls::save() {
 
 void FilterControls::update_rot_display(int value)
 {
-    ui.rot_gain->setText(QString::number((value + 1) * 10 / 100.) + "°");
+    ui.rot_gain->setText(QString::number((value + 1) * s.mult_rot) + "°");
 }
 
 void FilterControls::update_trans_display(int value)
 {
-    ui.trans_gain->setText(QString::number((value + 1) * 5 / 100.) + "mm");
+    ui.trans_gain->setText(QString::number((value + 1) * s.mult_trans) + "mm");
 }
 
 void FilterControls::update_ewma_display(int value)
 {
-    ui.ewma_label->setText(QString::number(value * 2) + "ms");
+    ui.ewma_label->setText(QString::number(value * s.mult_ewma) + "ms");
 }
 
 void FilterControls::update_rot_dz_display(int value)
 {
-    ui.rot_dz->setText(QString::number(value * 2 / 100.) + "°");
+    ui.rot_dz->setText(QString::number(value * s.mult_rot_dz) + "°");
 }
 
 void FilterControls::update_trans_dz_display(int value)
 {
-    ui.trans_dz->setText(QString::number(value * 1 / 100.) + "mm");
+    ui.trans_dz->setText(QString::number(value * s.mult_trans_dz) + "mm");
 }
 
 extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()

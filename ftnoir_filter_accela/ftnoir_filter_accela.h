@@ -12,6 +12,11 @@ using namespace options;
 
 struct settings : opts {
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
+    static constexpr double mult_rot = 10. / 100.;
+    static constexpr double mult_trans = 5. / 100.;
+    static constexpr double mult_rot_dz = 2. / 100.;
+    static constexpr double mult_trans_dz = 1. / 100.;
+    static constexpr double mult_ewma = 2.;
     settings() :
         opts("Accela"),
         rot_threshold(b, "rotation-threshold", 30),
