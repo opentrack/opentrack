@@ -57,7 +57,7 @@ void FTNoIR_Filter::reset() {
     0, 0, 0, 0, b, 0, 0, 0, 0, 0, a, 0,
     0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0, a);
     cv::setIdentity(kalman.measurementMatrix);
-    const double noise_stddev = s.noise_stddev_slider * s.mult_noise_stddev;
+    const double noise_stddev = (1+s.noise_stddev_slider) * s.mult_noise_stddev;
     const double noise_variance = noise_stddev * noise_stddev;
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
