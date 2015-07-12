@@ -27,16 +27,7 @@
 *                               must be treated as such...                                                                              *
 ********************************************************************************/
 #pragma once
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0502
 #include "opentrack/plugin-api.hpp"
-//
-// Prevent the SimConnect manifest from being merged in the application-manifest
-// This is necessary to run FaceTrackNoIR on a PC without FSX
-//
-#define SIMCONNECT_H_NOMANIFEST 
-#include <windows.h>
-#include <SimConnect.h>
 
 #include "ui_ftnoir_sccontrols.h"
 #include <QThread>
@@ -48,12 +39,7 @@
 #include <QFile>
 #include "opentrack/options.hpp"
 using namespace options;
-
-typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
-typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
-typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
-typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
-typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID, const char * SystemEventName);
+#include <windows.h>
 
 struct settings : opts {
     value<int> sxs_manifest;
@@ -75,6 +61,25 @@ public:
         return "FS2004/FSX";
     }
 private:
+    enum { SIMCONNECT_RECV_ID_EVENT_FRAME = 7 };
+
+    #pragma pack(push, 1)
+    struct SIMCONNECT_RECV
+    {
+        DWORD   dwSize;
+        DWORD   dwVersion;
+        DWORD   dwID;
+    };
+    #pragma pack(pop)
+
+    typedef void (CALLBACK *DispatchProc)(SIMCONNECT_RECV*, DWORD, void*);
+
+    typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
+    typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
+    typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
+    typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
+    typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, DWORD EventID, const char * SystemEventName);
+
     void run() override;
     volatile bool should_stop;
 
@@ -85,13 +90,13 @@ private:
     volatile float virtSCRotY;
     volatile float virtSCRotZ;
 
-    importSimConnect_Open simconnect_open;                                                      // SimConnect function(s) in DLL
+    importSimConnect_Open simconnect_open;
     importSimConnect_Close simconnect_close;
     importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
     importSimConnect_CallDispatch simconnect_calldispatch;
     importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 
-    HANDLE hSimConnect;                                         // Handle to SimConnect
+    HANDLE hSimConnect;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;

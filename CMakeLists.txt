@@ -302,10 +302,8 @@ if(SDK_FSUIPC)
     #target_link_directories(${SDK_FSUIPC})
 endif()
 
-if(SDK_SIMCONNECT)
+if(WIN32)
     opentrack_library(opentrack-proto-simconnect ftnoir_protocol_sc)
-    target_link_libraries(opentrack-proto-simconnect ${SDK_SIMCONNECT}/lib/SimConnect.lib)
-    include_directories(opentrack-proto-simconnect SYSTEM PUBLIC ${SDK_SIMCONNECT}/inc)
 endif()
 
 if(WIN32)
