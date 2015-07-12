@@ -11,6 +11,7 @@
 
 FTNoIR_Filter::FTNoIR_Filter() {
     reset();
+    prev_slider_pos = s.noise_stddev_slider;
 }
 
 // the following was written by Donovan Baarda <abo@minkirri.apana.org.au>
@@ -56,7 +57,8 @@ void FTNoIR_Filter::reset() {
     0, 0, 0, 0, b, 0, 0, 0, 0, 0, a, 0,
     0, 0, 0, 0, 0, b, 0, 0, 0, 0, 0, a);
     cv::setIdentity(kalman.measurementMatrix);
-    double noise_variance = noise_stddev * noise_stddev;
+    const double noise_stddev = s.noise_stddev_slider * s.mult_noise_stddev;
+    const double noise_variance = noise_stddev * noise_stddev;
     cv::setIdentity(kalman.measurementNoiseCov, cv::Scalar::all(noise_variance));
     cv::setIdentity(kalman.errorCovPost, cv::Scalar::all(accel_variance * 1e4));
     for (int i = 0; i < 6; i++) {
@@ -67,6 +69,11 @@ void FTNoIR_Filter::reset() {
 
 void FTNoIR_Filter::filter(const double* input, double *output)
 {
+    if (prev_slider_pos != s.noise_stddev_slider)
+    {
+        reset();
+        prev_slider_pos = s.noise_stddev_slider;
+    }
     // Start the timer if it's not running.
     if (!timer.isValid())
         timer.start();
@@ -108,10 +115,12 @@ void FTNoIR_Filter::filter(const double* input, double *output)
 }
 
 void FilterControls::doOK() {
+    s.b->save();
     close();
 }
 
 void FilterControls::doCancel() {
+    s.b->reload();
     close();
 }
 
