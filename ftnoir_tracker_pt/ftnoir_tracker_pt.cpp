@@ -54,9 +54,12 @@ void Tracker_PT::reset_command(Command command)
 
 float Tracker_PT::get_focal_length()
 {
-    static constexpr float pi = 3.1415926f;
-    const float fov = static_cast<int>(s.fov) * pi / 180.f;
-    return 0.5f / tan(0.5f * fov);
+    CamInfo info = camera.get_info();
+    const int w = info.res_x, h = info.res_y;
+    static constexpr double pi = 3.1415926f;
+    const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
+    const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
+    return .5 / tan(.5 * fov);
 }
 
 void Tracker_PT::run()

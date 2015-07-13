@@ -42,6 +42,7 @@ void Tracker::load_settings(ht_config_t* config)
         break;
     }
 
+    static constexpr float pi = 3.14159265358979323846f;
     config->classification_delay = 500;
     config->field_of_view = s.fov;
     config->max_keypoints = 150;

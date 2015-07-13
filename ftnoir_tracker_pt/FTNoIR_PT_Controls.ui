@@ -114,7 +114,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Field of view</string>
+             <string>Diagonal field of view</string>
             </property>
            </widget>
           </item>

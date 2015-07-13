@@ -18,6 +18,7 @@
 #include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
 #include "opentrack/thread.hpp"
+#include "opentrack/opencv-calibration.hpp"
 
 typedef struct {
     int width;
@@ -134,6 +135,9 @@ void Tracker::run()
     double failed = 0;
     const double max_failed = 1.25;
     cv::Vec3d rvec, tvec;
+    double last_fov = -1;
+    cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
+    cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
 
     while (!stop)
     {
@@ -150,15 +154,28 @@ void Tracker::run()
         const int scale = grayscale.cols > 480 ? 2 : 1;
         detector.setThresholdParams(box_sizes[box_idx], 5);
 
-        const float focal_length_w = 0.5 * grayscale.cols / tan(0.5 * s.fov * HT_PI / 180);
-        const float focal_length_h = 0.5 * grayscale.rows / tan(0.5 * s.fov * grayscale.rows / grayscale.cols * HT_PI / 180.0);
-        cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
-        intrinsics.at<float> (0, 0) = focal_length_w;
-        intrinsics.at<float> (1, 1) = focal_length_h;
-        intrinsics.at<float> (0, 2) = grayscale.cols/2;
-        intrinsics.at<float> (1, 2) = grayscale.rows/2;
+        static constexpr double pi = 3.1415926f;
+        const int w = grayscale.cols, h = grayscale.rows;
+        const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
+        const double fov = 2.*atan(tan(diag_fov/2.)/sqrt(1. + diag*diag));
+        const float focal_length_w = .5 * w / tan(.5 * fov);
+        const float focal_length_h = focal_length_w;
 
-        cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
+        if (last_fov != s.fov)
+        {
+            last_fov = s.fov;
+            if (!get_camera_calibration(static_cast<QString>(s.camera_name), intrinsics, dist_coeffs, grayscale.cols, grayscale.rows))
+            {
+                intrinsics.at<float> (0, 0) = focal_length_w;
+                intrinsics.at<float> (1, 1) = focal_length_h;
+                intrinsics.at<float> (0, 2) = grayscale.cols/2;
+                intrinsics.at<float> (1, 2) = grayscale.rows/2;
+            }
+            else
+            {
+                qDebug() << "got calibration";
+            }
+        }
 
         std::vector< aruco::Marker > markers;
 
