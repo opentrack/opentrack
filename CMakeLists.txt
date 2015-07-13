@@ -542,6 +542,8 @@ if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
 endif()
 
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/camera" DESTINATION .)
+
 if(APPLE)
     install(CODE "
         execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/install-fail-tool\" \"${CMAKE_INSTALL_PREFIX}\")
