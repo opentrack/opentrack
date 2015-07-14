@@ -1,4 +1,7 @@
 #include "wizard.h"
+#include "opentrack/state.hpp"
+#include "ftnoir_tracker_pt/ftnoir_tracker_pt_settings.h"
+#include "ftnoir_filter_accela/ftnoir_filter_accela.h"
 
 Wizard::Wizard() : QWizard(nullptr)
 {
@@ -31,7 +34,7 @@ static constexpr double roll[][2] = {
     { -1, -1 },
 };
 
-static void set_mapping(Mapping& m, double* spline[2])
+static void set_mapping(Mapping& m, const double spline[][2])
 {
     m.opts.altp = false;
     m.curve.removeAllPoints();
@@ -53,9 +56,34 @@ void Wizard::set_data()
     auto camera_mode = static_cast<CameraMode>(ui.resolution_select->currentIndex());
 
     settings_pt pt;
-    main_settings s;
+    State state;
+
+    set_mapping(state.pose(TZ), tz);
+    set_mapping(state.pose(Yaw), yaw);
+    set_mapping(state.pose(Pitch), pitch);
+    set_mapping(state.pose(Roll), roll);
 
     pt.threshold = 31;
+    pt.min_point_size = 2;
+    pt.max_point_size = 50;
+
+    switch (m)
+    {
+    default:
+    case Cap: pt.t_MH_x = 0; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
+    case ClipRight: pt.t_MH_x = ClipRightX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
+    case ClipLeft: pt.t_MH_x = ClipLeftX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
+    }
+
+    pt.camera_mode = camera_mode;
+    pt.fov = ui.camera_fov->currentIndex();
+
+    settings_accela acc;
+    acc.ewma = 49;
+    acc.rot_threshold = 29;
+    acc.rot_deadzone = 29;
+    acc.trans_deadzone = 33;
+    acc.trans_threshold = 19;
 
     qDebug() << "wizard done" << "model" << m << "camera-mode" << camera_mode;
 }

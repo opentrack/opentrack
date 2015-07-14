@@ -57,13 +57,6 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Resolution and framerate</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="resolution_select">
          <item>
@@ -84,6 +77,34 @@
          <item>
           <property name="text">
            <string>320x240, 120 Hz</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Resolution and framerate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Field of view</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="camera_fov">
+         <item>
+          <property name="text">
+           <string>56°</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>75°</string>
           </property>
          </item>
         </widget>
