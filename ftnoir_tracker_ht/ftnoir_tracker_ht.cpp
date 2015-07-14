@@ -45,12 +45,12 @@ void Tracker::load_settings(ht_config_t* config)
     config->classification_delay = 500;
     config->field_of_view = s.fov;
     config->max_keypoints = 150;
-    config->keypoint_distance = 3.4;
+    config->keypoint_distance = 3.5;
     config->force_fps = nframes;
     config->camera_index = camera_name_to_index(s.camera_name);
 
-    config->ransac_max_reprojection_error = 8;
-    config->ransac_max_inlier_error = 8;
+    config->ransac_max_reprojection_error = 25;
+    config->ransac_max_inlier_error = config->ransac_max_reprojection_error;
 
     config->pyrlk_pyramids = 0;
     config->pyrlk_win_size_w = config->pyrlk_win_size_h = 21;
@@ -58,8 +58,8 @@ void Tracker::load_settings(ht_config_t* config)
     config->ransac_max_mean_error = 999;
     config->ransac_abs_max_mean_error = 999;
 
-    config->debug = 0;
-    config->ransac_min_features = 0.85;
+    config->debug = 1;
+    config->ransac_min_features = 0.95;
     config->ransac_num_iters = 300;
 
     int res = s.resolution;

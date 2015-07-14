@@ -16,39 +16,39 @@ using namespace cv;
 // ----------------------------------------------------------------------------
 void get_camera_device_names(std::vector<std::string>& device_names)
 {
-	videoInput VI;
-	VI.listDevices();
-	std::string device_name;
-	for(int index = 0; ; ++index) {
-		device_name = VI.getDeviceName(index);
-		if (device_name.empty()) break;
-		device_names.push_back(device_name);
-	}
+    videoInput VI;
+    VI.listDevices();
+    std::string device_name;
+    for(int index = 0; ; ++index) {
+        device_name = VI.getDeviceName(index);
+        if (device_name.empty()) break;
+        device_names.push_back(device_name);
+    }
 }
 #endif
 
 // ----------------------------------------------------------------------------
 void Camera::set_device_index(int index)
 {
-	if (desired_index != index)
-	{
-		desired_index = index;
-		_set_device_index();
+    if (desired_index != index)
+    {
+        desired_index = index;
+        _set_device_index();
 
-		// reset fps
-		dt_valid = 0;
-		dt_mean = 0;
-		active_index = index;
-	}
+        // reset fps
+        dt_valid = 0;
+        dt_mean = 0;
+        active_index = index;
+    }
 }
 
 void Camera::set_fps(int fps)
 {
-	if (cam_desired.fps != fps)
-	{
-		cam_desired.fps = fps;
-		_set_fps();
-	}
+    if (cam_desired.fps != fps)
+    {
+        cam_desired.fps = fps;
+        _set_fps();
+    }
 }
 
 void Camera::set_res(int x_res, int y_res)
@@ -63,17 +63,17 @@ void Camera::set_res(int x_res, int y_res)
 
 bool Camera::get_frame(float dt, cv::Mat* frame)
 {
-	bool new_frame = _get_frame(frame);
-	// measure fps of valid frames
-	const float dt_smoothing_const = 0.9;
-	dt_valid += dt;
-	if (new_frame)
-	{
-		dt_mean = dt_smoothing_const * dt_mean + (1.0 - dt_smoothing_const) * dt_valid;
-		cam_info.fps = dt_mean > 1e-3 ? 1.0 / dt_mean : 0;
-		dt_valid = 0;
-	}
-	return new_frame;
+    bool new_frame = _get_frame(frame);
+    // measure fps of valid frames
+    const float dt_smoothing_const = 0.9;
+    dt_valid += dt;
+    if (new_frame)
+    {
+        dt_mean = dt_smoothing_const * dt_mean + (1.0 - dt_smoothing_const) * dt_valid;
+        cam_info.fps = dt_mean > 1e-3 ? 1.0 / dt_mean : 0;
+        dt_valid = 0;
+    }
+    return new_frame;
 }
 
 void CVCamera::start()
@@ -118,10 +118,10 @@ bool CVCamera::_get_frame(Mat* frame)
         if (img.empty())
             return false;
 
-            *frame = img;
-            cam_info.res_x = img.cols;
-            cam_info.res_y = img.rows;
-            return true;
+        *frame = img;
+        cam_info.res_x = img.cols;
+        cam_info.res_y = img.rows;
+        return true;
     }
     return false;
 }

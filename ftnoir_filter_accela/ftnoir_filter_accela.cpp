@@ -69,16 +69,16 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         return;
     }
     
-    const double rot_t = 10. * (1+s.rot_threshold) / 100.;
-    const double trans_t = 5. * (1+s.trans_threshold) / 100.;
+    const double rot_t = (1+s.rot_threshold) * s.mult_rot;
+    const double trans_t = (1+s.trans_threshold) * s.mult_trans;
     
     const double dt = t.elapsed() * 1e-9;
     t.start();
 
-    const double RC = 2 * s.ewma / 1000.; // seconds
+    const double RC = s.mult_ewma * s.ewma / 1000.; // seconds
     const double alpha = dt/(dt+RC);
-    const double rot_dz = s.rot_deadzone * 2. / 100.;
-    const double trans_dz = s.trans_deadzone * 1. / 100.;
+    const double rot_dz = s.rot_deadzone * s.mult_rot_dz;
+    const double trans_dz = s.trans_deadzone * s.mult_trans_dz;
     
     for (int i = 0; i < 6; i++)
     {

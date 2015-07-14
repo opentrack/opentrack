@@ -19,19 +19,29 @@
 #include "opentrack/options.hpp"
 using namespace options;
 
+struct settings : opts {
+    value<int> noise_stddev_slider;
+    // slider for noise_stddev goes 0->(mult_noise_stddev * 100)
+    static constexpr double mult_noise_stddev = .5;
+    settings() : opts("kalman-filter"), noise_stddev_slider(b, "noise-stddev", 40)
+    {}
+};
+
 class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
     void reset();
     void filter(const double *input, double *output);
-    // Set accel_stddev assuming moving 0.0->100.0 in dt=0.2 is 3 stddevs: (100.0*4/dt^2)/3.
-    const double accel_stddev = (100.0*4/(0.2*0.2))/3.0;
-    // TODO(abo): make noise_stddev a UI setting 0.0->10.0 with 0.1 resolution.
-    const double noise_stddev = 1.0;
+    // Set accel_stddev assuming moving 0.0->accel in dt_ is 3 stddevs: (accel*4/dt_^2)/3.
+    static constexpr double dt_ = .4;
+    static constexpr double accel = 60.;
+    static constexpr double accel_stddev = (accel*4/(dt_*dt_))/3.0;
     cv::KalmanFilter kalman;
     double last_input[6];
     QElapsedTimer timer;
+    settings s;
+    int prev_slider_pos;
 };
 
 class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
@@ -47,13 +57,14 @@ class OPENTRACK_EXPORT FilterControls: public IFilterDialog
 public:
     FilterControls() {
         ui.setupUi(this);
-        connect(ui.btnOk, SIGNAL(clicked()), this, SLOT(doOK()));
-        connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-        show();
+        connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+        connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+        tie_setting(s.noise_stddev_slider, ui.noise_slider);
     }
     Ui::KalmanUICFilterControls ui;
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
+    settings s;
 public slots:
     void doOK();
     void doCancel();
