@@ -2,6 +2,7 @@
 #   include <stdlib.h>
 #endif
 
+#include "wizard.h"
 #include "ui.h"
 #include "opentrack/options.hpp"
 using namespace options;
@@ -59,6 +60,17 @@ int main(int argc, char** argv)
 
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
+
+    {
+        QSettings s(OPENTRACK_ORG);
+        if (!s.contains("wizard-run-once"))
+        {
+            s.setValue("wizard-run-once", true);
+            auto w = std::make_shared<Wizard>();
+            w->show();
+            app.exec();
+        }
+    }
 
     auto w = std::make_shared<MainWindow>();
 

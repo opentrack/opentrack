@@ -1,168 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>wizard</class>
+ <widget class="QWizard" name="wizard">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>488</height>
+    <width>500</width>
+    <height>360</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>New configuration wizard</string>
+  <property name="modal">
+   <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QWizard" name="wizard">
-     <property name="modal">
-      <bool>true</bool>
-     </property>
-     <property name="wizardStyle">
-      <enum>QWizard::AeroStyle</enum>
-     </property>
-     <property name="options">
-      <set>QWizard::NoCancelButton</set>
-     </property>
-     <widget class="QWizardPage" name="page_intro">
-      <property name="title">
-       <string>Introduction</string>
+  <property name="wizardStyle">
+   <enum>QWizard::AeroStyle</enum>
+  </property>
+  <property name="options">
+   <set>QWizard::NoCancelButton</set>
+  </property>
+  <widget class="QWizardPage" name="page_intro">
+   <property name="title">
+    <string>Introduction</string>
+   </property>
+   <property name="subTitle">
+    <string/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>This wizard helps you configure TrackHat hardware. Add a logo here. More placeholder text.</string>
       </property>
-      <property name="subTitle">
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="page_camera">
+   <property name="title">
+    <string>Camera setup</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Detected PS3 Eye camera. Setting it up now. A logo and some more placeholder text.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Resolution and framerate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="resolution_select">
+         <item>
+          <property name="text">
+           <string>640x480, 75 Hz</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>640x480, 60 Hz</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>320x240, 189 Hz</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>320x240, 120 Hz</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="page_model">
+   <property name="title">
+    <string>Select a model</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_6">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Select one of TrackHat models.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="styleSheet">
+       <string notr="true">QGroupBox { border: 0; }</string>
+      </property>
+      <property name="title">
        <string/>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="2" column="0">
+        <widget class="QRadioButton" name="cap_model">
          <property name="text">
-          <string>This wizard helps you configure TrackHat hardware. Add a logo here. More placeholder text.</string>
+          <string>Cap, add a big logo</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWizardPage" name="page_camera">
-      <property name="title">
-       <string>Camera setup</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QRadioButton" name="clip_model">
          <property name="text">
-          <string>Detected PS3 Eye camera. Setting it up now. A logo and some more placeholder text.</string>
+          <string>Clip, add a big logo</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QFrame" name="frame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Resolution and framerate</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="resolution_select">
-            <item>
-             <property name="text">
-              <string>640x480, 75 Hz</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>640x480, 60 Hz</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>320x240, 187 Hz</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>320x240, 120 Hz</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWizardPage" name="page_model">
-      <property name="title">
-       <string>Select a model</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QRadioButton" name="clip_model_left">
          <property name="text">
-          <string>Select one of TrackHat models.</string>
+          <string>Clip, left-handed</string>
          </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="styleSheet">
-          <string notr="true">QGroupBox { border: 0; }</string>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="cap_model">
-            <property name="text">
-             <string>Cap, add a big logo</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="clip_model">
-            <property name="text">
-             <string>Clip, add a big logo</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="clip_model_left">
-            <property name="text">
-             <string>Clip, left-handed</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWizardPage" name="page_done">
-      <property name="title">
-       <string>We're all done!</string>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="page_done">
+   <property name="title">
+    <string>We're all done!</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_7">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can now use your new hardware and thanks for flying TrackHat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can now use your new hardware and thanks for flying TrackHat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </widget>
-    </widget>
-   </item>
-  </layout>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections/>
