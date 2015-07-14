@@ -10,14 +10,14 @@
 using namespace options;
 #include "opentrack/timer.hpp"
 
-struct settings : opts {
+struct settings_accela : opts {
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
     static constexpr double mult_rot = 10. / 100.;
     static constexpr double mult_trans = 5. / 100.;
     static constexpr double mult_rot_dz = 2. / 100.;
     static constexpr double mult_trans_dz = 1. / 100.;
     static constexpr double mult_ewma = 2.;
-    settings() :
+    settings_accela() :
         opts("Accela"),
         rot_threshold(b, "rotation-threshold", 30),
         trans_threshold(b, "translation-threshold", 50),
@@ -34,7 +34,7 @@ public:
     void filter(const double* input, double *output);
     Map rot, trans;
 private:
-    settings s;
+    settings_accela s;
     bool first_run;
     double last_output[6];
     double smoothed_input[6];
@@ -53,7 +53,7 @@ private:
     void discard();
     void save();
     FTNoIR_Filter* accela_filter;
-    settings s;
+    settings_accela s;
 private slots:
     void doOK();
     void doCancel();
