@@ -15,4 +15,7 @@ class Wizard : public QWizard
     main_settings s;
 public:
     Wizard(QWidget* parent);
+    enum Model { Hat, ClipRight, ClipLeft };
+    int fps, res_x, res_y;
+    Model model;
 };
