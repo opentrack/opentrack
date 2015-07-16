@@ -445,6 +445,10 @@ void MainWindow::profileSelected(int index)
         settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
                                                                 ui.iconcomboProfile->itemText(index)));
     }
+
+    QString current = QFileInfo(group::ini_pathname()).fileName();
+    setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
+
     load_settings();
 }
 
