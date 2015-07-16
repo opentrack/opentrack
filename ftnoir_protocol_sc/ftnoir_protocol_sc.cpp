@@ -41,9 +41,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    (void) SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-    (void) SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-
     HANDLE event = CreateEvent(NULL, FALSE, FALSE, nullptr);
 
     if (event == nullptr)
