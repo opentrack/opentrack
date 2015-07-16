@@ -4,6 +4,20 @@
 #include <QFrame>
 #include <QIcon>
 
+#define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
+    extern "C" OPENTRACK_EXPORT ctor_ret_class* GetConstructor() \
+    { \
+        return new ctor_class; \
+    } \
+    extern "C" OPENTRACK_EXPORT Metadata* GetMetadata() \
+    { \
+        return new metadata_class; \
+    } \
+    extern "C" OPENTRACK_EXPORT dialog_ret_class* GetDialog() \
+    { \
+        return new dialog_class; \
+    }
+
 // implement this in all plugins
 struct Metadata
 {
@@ -91,3 +105,7 @@ struct ITrackerDialog : public QWidget
     // received tracker pointer is about to get deleted
     virtual void unregister_tracker() = 0;
 };
+
+// call once with your chosen class names in the plugin
+#define OPENTRACK_DECLARE_TRACKER(tracker_class, dialog_class, metadata_class) \
+    OPENTRACK_DECLARE_PLUGIN_INTERNAL(tracker_class, ITracker, metadata_class, dialog_class, ITrackerDialog)
