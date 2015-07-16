@@ -72,7 +72,3 @@ void FTControls::selectDLL() {
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog()
-{
-    return new FTControls;
-}

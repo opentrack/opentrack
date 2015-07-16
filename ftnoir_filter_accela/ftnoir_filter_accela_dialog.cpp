@@ -85,7 +85,3 @@ void FilterControls::update_trans_dz_display(int value)
     ui.trans_dz->setText(QString::number(value * s.mult_trans_dz) + "mm");
 }
 
-extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog()
-{
-    return new FilterControls;
-}

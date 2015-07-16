@@ -214,11 +214,12 @@ void Tracker_PT::data(THeadPoseData *data)
 
 //-----------------------------------------------------------------------------
 #ifdef OPENTRACK_API
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
+#include "ftnoir_tracker_pt_dialog.h"
+OPENTRACK_DECLARE_TRACKER(Tracker_PT, TrackerDialog_PT, TrackerDll)
 #else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
-#endif
 {
-	return new Tracker_PT;
+    return new Tracker_PT;
 }
+#endif

@@ -90,3 +90,9 @@ private slots:
     void update_tracker_calibration();
     void camera_settings();
 };
+
+class TrackerDll : public Metadata
+{
+    QString name() { return QString("aruco -- paper marker tracker"); }
+    QIcon icon() { return QIcon(":/images/aruco.png"); }
+};

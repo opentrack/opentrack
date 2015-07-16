@@ -20,7 +20,3 @@ void TrackerControls::doCancel() {
     close();
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
-{
-    return new TrackerControls;
-}

@@ -55,7 +55,3 @@ void FSUIPCControls::getLocationOfDLL()
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog(void)
-{
-    return new FSUIPCControls;
-}

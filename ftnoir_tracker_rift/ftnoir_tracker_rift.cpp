@@ -68,7 +68,4 @@ void Rift_Tracker::data(double *data)
     }
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new Rift_Tracker;
-}
+OPENTRACK_DECLARE_TRACKER(Rift_Tracker, TrackerControls, FTNoIR_TrackerDll)

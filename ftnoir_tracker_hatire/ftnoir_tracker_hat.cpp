@@ -603,11 +603,13 @@ void FTNoIR_Tracker::Log(QString message)
 //   _GetTracker@0  - Common name decoration for __stdcall functions in C language.
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef OPENTRACK_API
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
+#include "ftnoir_tracker_hat_dialog.h"
+OPENTRACK_DECLARE_TRACKER(FTNoIR_Tracker, TrackerControls, TrackerDll)
 #else
 #pragma comment(linker, "/export:GetTracker=_GetTracker@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerPtr __stdcall GetTracker()
-#endif
 {
-	return new FTNoIR_Tracker;
+    return new FTNoIR_Tracker;
 }
+#endif
+

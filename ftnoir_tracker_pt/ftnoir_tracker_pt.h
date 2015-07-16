@@ -83,6 +83,10 @@ private:
     static constexpr double deg2rad = 3.14159265/180.0;
 };
 
-#undef VideoWidget
+class TrackerDll : public Metadata
+{
+    QString name() { return QString("PointTracker 1.1"); }
+    QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
+};
 
 #endif // FTNOIR_TRACKER_PT_H

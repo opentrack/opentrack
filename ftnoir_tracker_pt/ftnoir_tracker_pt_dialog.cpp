@@ -190,7 +190,3 @@ void TrackerDialog_PT::unregister_tracker()
     //ui.center_button->setEnabled(false);
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
-{
-    return new TrackerDialog_PT;
-}

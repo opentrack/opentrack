@@ -20,7 +20,3 @@ void VJoyControls::doCancel() {
 void VJoyControls::save() {
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
-{
-    return new VJoyControls;
-}

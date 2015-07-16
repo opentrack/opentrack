@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
-#include "ftnoir_tracker_ht_dll.h"
 #include "ui_ht-trackercontrols.h"
 #include "opentrack/plugin-api.hpp"
 #include <cmath>
@@ -182,21 +181,6 @@ void Tracker::data(double* data)
     }
 }
 
-extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
-{
-	return new TrackerDll;
-}
-
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new Tracker;
-}
-
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
-{
-    return new TrackerControls;
-}
-
 TrackerControls::TrackerControls() : tracker(nullptr)
 {
 	ui.setupUi(this);
@@ -235,3 +219,5 @@ void TrackerControls::camera_settings()
     else
         open_camera_settings(nullptr, s.camera_name, nullptr);
 }
+
+OPENTRACK_DECLARE_TRACKER(Tracker, TrackerControls, TrackerDll)

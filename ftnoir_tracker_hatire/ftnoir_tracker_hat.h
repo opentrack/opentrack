@@ -123,36 +123,35 @@ private:
 //*******************************************************************************************************
 // FaceTrackNoIR Tracker DLL. Functions used to get general info on the Tracker
 //*******************************************************************************************************
-class TrackerDll :
 #if defined(OPENTRACK_API)
-public Metadata
+class TrackerDll : public Metadata
+{
+    QString name() { return QString("Hatire Arduino"); }
+    QIcon icon() { return QIcon(":/images/hatire.png"); }
+};
 #else
+class TrackerDll :
+public Metadata
 public ITrackerDll
-#endif
 {
 public:
     TrackerDll();
     ~TrackerDll();
 
-#ifndef OPENTRACK_API
     void Initialize();
-#endif
 
-#ifdef OPENTRACK_API
     QString name();
     QIcon icon();
-#else
     void getFullName(QString *strToBeFilled);
     void getShortName(QString *strToBeFilled);
     void getDescription(QString *strToBeFilled);
     void getIcon(QIcon *icon);
-#endif
 
 private:
     QString trackerFullName;                                                                    // Trackers' name and description
     QString trackerShortName;
     QString trackerDescription;
 };
-
+#endif
 
 #endif // FTNOIR_TRACKER_HAT_H

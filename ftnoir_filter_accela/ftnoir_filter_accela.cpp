@@ -30,8 +30,8 @@ static constexpr double trans_gains[][2] = {
     { 2, 150 },
     { 1.66, 60 },
     { 1.33, 20 },
-    { 1, 4 },
-    { .66, 1.5 },
+    { 1, 2 },
+    { .66, .6 },
     { .33, .2 },
     { 0, 0 },
     { -1, 0 }
@@ -104,12 +104,5 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     }
 }
 
-extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
-{
-    return new FTNoIR_Filter;
-}
+OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)
 
-extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
-{
-    return new FTNoIR_FilterDll;
-}

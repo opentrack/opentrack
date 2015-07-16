@@ -62,5 +62,5 @@ class FTNoIR_FilterDll : public Metadata
 {
 public:
     QString name() { return QString("EWMA"); }
-   QIcon icon() { return QIcon(":/images/filter-16.png"); }
+    QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

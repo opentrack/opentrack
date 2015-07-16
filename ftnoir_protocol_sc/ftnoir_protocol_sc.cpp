@@ -203,7 +203,4 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
-{
-    return new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, SCControls, FTNoIR_ProtocolDll)
