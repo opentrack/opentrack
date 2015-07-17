@@ -358,12 +358,12 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t>
-bool mk_dialog(mem<dylib> lib, mem<t>* orig)
+bool mk_dialog(mem<dylib> lib, mem<t>& orig)
 {
-    if (*orig && (*orig)->isVisible())
+    if (orig && orig->isVisible())
     {
-        (*orig)->show();
-        (*orig)->raise();
+        orig->show();
+        orig->raise();
         return false;
     }
 
@@ -373,9 +373,11 @@ bool mk_dialog(mem<dylib> lib, mem<t>* orig)
         dialog->setWindowFlags(Qt::Dialog);
         dialog->setFixedSize(dialog->size());
 
-        *orig = dialog;
+        orig = dialog;
         dialog->show();
         dialog->raise();
+
+        QObject::connect(dialog.get(), &BaseDialog::closing, [&]() -> void { orig = nullptr; });
 
         return true;
     }
@@ -385,17 +387,17 @@ bool mk_dialog(mem<dylib> lib, mem<t>* orig)
 
 void MainWindow::showTrackerSettings()
 {
-    if (mk_dialog(current_tracker(), &pTrackerDialog) && libs.pTracker)
+    if (mk_dialog(current_tracker(), pTrackerDialog) && libs.pTracker)
         pTrackerDialog->register_tracker(libs.pTracker.get());
 }
 
 void MainWindow::showProtocolSettings() {
-    if (mk_dialog(current_protocol(), &pProtocolDialog) && libs.pProtocol)
+    if (mk_dialog(current_protocol(), pProtocolDialog) && libs.pProtocol)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
 }
 
 void MainWindow::showFilterSettings() {
-    if (mk_dialog(current_filter(), &pFilterDialog) && libs.pFilter)
+    if (mk_dialog(current_filter(), pFilterDialog) && libs.pFilter)
         pFilterDialog->register_filter(libs.pFilter.get());
 }
 

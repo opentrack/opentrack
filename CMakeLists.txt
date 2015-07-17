@@ -109,7 +109,7 @@ macro(opentrack_library n dir)
     opentrack_module(${n} ${dir})
     opentrack_qt(${n})
     add_library(${n} SHARED ${${n}-all})
-    target_link_libraries(${n} ${MY_QT_LIBS})
+    target_link_libraries(${n} opentrack-api ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
             LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
