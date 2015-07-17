@@ -73,5 +73,5 @@ int main(void)
         for (int i = 0; i < 8; i++)
             shm_wine->table[i] = shm_posix->table[i];
         (void) Sleep(4);
-        }
+    }
 }
