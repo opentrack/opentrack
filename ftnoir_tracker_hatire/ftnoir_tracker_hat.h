@@ -127,7 +127,7 @@ private:
 class TrackerDll : public Metadata
 {
     QString name() { return QString("Hatire Arduino"); }
-    QIcon icon() { return QIcon(":/images/hatire.png"); }
+    QIcon icon() { return QIcon(":/images/hat.png"); }
 };
 #else
 class TrackerDll :
