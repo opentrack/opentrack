@@ -112,7 +112,7 @@ macro(opentrack_library n dir)
     target_link_libraries(${n} opentrack-api ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
+            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
             COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
@@ -365,6 +365,7 @@ if(OpenCV_FOUND)
         opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
         target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+        link_with_dinput8(opentrack-tracker-aruco)
     endif()
 
     opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
@@ -373,9 +374,8 @@ if(OpenCV_FOUND)
 
     if(SDK_HT AND SDK_HT_FLANDMARK)
         opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-        target_link_libraries(opentrack-tracker-ht opentrack-compat ${SDK_HT} ${SDK_HT_FLANDMARK})
+        target_link_libraries(opentrack-tracker-ht opentrack-compat ${SDK_HT} ${SDK_HT_FLANDMARK} ${OpenCV_LIBS})
         link_with_dinput8(opentrack-tracker-ht)
-        target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
 endif()
