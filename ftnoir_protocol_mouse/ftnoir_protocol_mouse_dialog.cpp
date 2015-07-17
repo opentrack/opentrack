@@ -61,7 +61,3 @@ void MOUSEControls::doCancel() {
     this->close();
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
-{
-    return new MOUSEControls;
-}

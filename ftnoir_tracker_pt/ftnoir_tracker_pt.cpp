@@ -250,3 +250,13 @@ void Tracker_PT::data(THeadPoseData *data)
         data[TZ] = t[2] / 10.0;
     }
 }
+
+//-----------------------------------------------------------------------------
+#ifdef OPENTRACK_API
+#else
+#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
+OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
+{
+    return new Tracker_PT;
+}
+#endif

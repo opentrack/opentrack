@@ -56,7 +56,4 @@ bool FTNoIR_Protocol::correct()
     return lck_shm.success();
 }
 
-extern "C" OPENTRACK_EXPORT void* GetConstructor()
-{
-    return (IProtocol*) new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FTControls, FTNoIR_ProtocolDll)

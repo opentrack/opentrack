@@ -2,9 +2,11 @@
 #include <cstdio>
 #include "freetrackclient/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
+#include "opentrack/export.hpp"
 
-#define OPENTRACK_CROSS_ONLY
-#include "../opentrack/plugin-api.hpp"
+enum Axis {
+    TX = 0, TY, TZ, Yaw, Pitch, Roll
+};
 
 #define OPENTRACK_COMPAT_BUNDLED
 #include "compat/compat.h"
@@ -71,5 +73,5 @@ int main(void)
         for (int i = 0; i < 8; i++)
             shm_wine->table[i] = shm_posix->table[i];
         (void) Sleep(4);
-        }
+    }
 }

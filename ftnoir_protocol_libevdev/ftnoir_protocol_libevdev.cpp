@@ -94,7 +94,4 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
-{
-    return new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, LibevdevControls, FTNoIR_ProtocolDll)

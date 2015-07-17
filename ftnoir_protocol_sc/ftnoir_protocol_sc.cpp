@@ -41,9 +41,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 
 void FTNoIR_Protocol::run()
 {
-    (void) SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
-    (void) SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-
     HANDLE event = CreateEvent(NULL, FALSE, FALSE, nullptr);
 
     if (event == nullptr)
@@ -206,7 +203,4 @@ void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData
     }
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
-{
-    return new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, SCControls, FTNoIR_ProtocolDll)

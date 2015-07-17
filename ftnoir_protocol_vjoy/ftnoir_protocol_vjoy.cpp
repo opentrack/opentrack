@@ -30,7 +30,4 @@ void FTNoIR_Protocol::pose( const double *headpose ) {
     VJoy_UpdateJoyState(0, state);
 }
 
-extern "C" OPENTRACK_EXPORT IProtocol* GetConstructor()
-{
-    return new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, VJoyControls, FTNoIR_ProtocolDll)

@@ -57,3 +57,4 @@ public:
     QString name() { return QString("UDP sender"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
+

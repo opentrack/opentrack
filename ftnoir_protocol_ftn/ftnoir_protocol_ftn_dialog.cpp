@@ -54,8 +54,3 @@ void FTNControls::doCancel() {
     s.b->reload();
     this->close();
 }
-
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
-{
-    return new FTNControls;
-}

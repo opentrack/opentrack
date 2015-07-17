@@ -217,7 +217,4 @@ void FTNoIR_Tracker::data(double *data)
     }
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new FTNoIR_Tracker;
-}
+OPENTRACK_DECLARE_TRACKER(FTNoIR_Tracker, TrackerControls, FTNoIR_TrackerDll)

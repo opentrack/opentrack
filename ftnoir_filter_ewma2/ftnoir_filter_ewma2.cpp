@@ -78,7 +78,4 @@ void FTNoIR_Filter::filter(const double *input, double *output)
     }
 }
 
-extern "C" OPENTRACK_EXPORT IFilter* GetConstructor()
-{
-    return new FTNoIR_Filter;
-}
+OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)

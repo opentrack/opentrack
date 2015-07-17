@@ -372,32 +372,6 @@ void Tracker::data(double *data)
     data[TZ] = pose[TZ] * .1;
 }
 
-class TrackerDll : public Metadata
-{
-    QString name() { return QString("aruco -- paper marker tracker"); }
-    QIcon icon() { return QIcon(":/images/aruco.png"); }
-};
-
-//-----------------------------------------------------------------------------
-//#pragma comment(linker, "/export:GetTrackerDll=_GetTrackerDll@0")
-
-extern "C" OPENTRACK_EXPORT Metadata* GetMetadata()
-{
-    return new TrackerDll;
-}
-
-//#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new Tracker;
-}
-
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
-{
-    return new TrackerControls;
-}
-
 TrackerControls::TrackerControls()
 {
     tracker = nullptr;
@@ -472,3 +446,5 @@ void TrackerControls::camera_settings()
 {
     open_camera_settings(tracker ? &tracker->camera : nullptr, s.camera_name, tracker ? &tracker->camera_mtx : nullptr);
 }
+
+OPENTRACK_DECLARE_TRACKER(Tracker, TrackerControls, TrackerDll)

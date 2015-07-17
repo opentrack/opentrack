@@ -25,18 +25,12 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QApplication>
-#include <QWidget>
-#include <QDialog>
-#include <QUrl>
-#include <QList>
 #include <QKeySequence>
 #include <QShortcut>
-#include <QLayout>
 #include <QPixmap>
-#include <QLabel>
 #include <QTimer>
 #include <QSystemTrayIcon>
+#include <QString>
 
 #if !defined(_WIN32)
 #       include "qxt-mini/QxtGlobalShortcut"
@@ -87,6 +81,7 @@ class MainWindow : public QMainWindow, private State
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
+    void set_title(const QString& game_title = QStringLiteral(""));
 public slots:
     void shortcutRecentered();
     void shortcutToggled();

@@ -418,12 +418,11 @@ void TrackerControls::unRegisterTracker()
 //                          Win32 API function.
 //   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
 #ifdef OPENTRACK_API
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog( )
 #else
 #pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
 FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
-#endif
 {
     return new TrackerControls;
 }
+#endif
 

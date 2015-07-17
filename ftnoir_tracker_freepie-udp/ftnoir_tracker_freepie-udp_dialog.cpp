@@ -28,7 +28,3 @@ void TrackerDialog::doCancel() {
     this->close();
 }
 
-extern "C" OPENTRACK_EXPORT ITrackerDialog* GetDialog()
-{
-    return new TrackerDialog;
-}

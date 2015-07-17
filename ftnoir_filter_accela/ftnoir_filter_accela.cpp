@@ -30,8 +30,8 @@ static constexpr double trans_gains[][2] = {
     { 2, 150 },
     { 1.66, 60 },
     { 1.33, 20 },
-    { 1, 4 },
-    { .66, 1.5 },
+    { 1, 2 },
+    { .66, .6 },
     { .33, .2 },
     { 0, 0 },
     { -1, 0 }
@@ -103,4 +103,3 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         last_output[i] = output[i] = ret;
     }
 }
-

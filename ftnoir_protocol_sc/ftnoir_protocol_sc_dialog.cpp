@@ -47,7 +47,3 @@ void SCControls::doCancel() {
     close();
 }
 
-extern "C" OPENTRACK_EXPORT IProtocolDialog* GetDialog( )
-{
-    return new SCControls;
-}

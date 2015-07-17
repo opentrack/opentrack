@@ -158,7 +158,4 @@ bool FTNoIR_Protocol::correct()
 	return true;
 }
 
-extern "C" OPENTRACK_EXPORT FTNoIR_Protocol* GetConstructor(void)
-{
-    return new FTNoIR_Protocol;
-}
+OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FSUIPCControls, FTNoIR_ProtocolDll)

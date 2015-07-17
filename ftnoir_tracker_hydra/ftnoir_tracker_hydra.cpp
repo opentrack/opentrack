@@ -43,7 +43,4 @@ void Hydra_Tracker::data(double *data)
     data[Roll] = ypr[2] * r2d;
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new Hydra_Tracker;
-}
+OPENTRACK_DECLARE_TRACKER(Hydra_Tracker, TrackerControls, FTNoIR_TrackerDll)

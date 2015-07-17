@@ -41,8 +41,3 @@ void FilterControls::save() {
     if (pFilter)
         pFilter->receiveSettings();
 }
-
-extern "C" OPENTRACK_EXPORT IFilterDialog* GetDialog( )
-{
-    return new FilterControls;
-}

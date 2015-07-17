@@ -115,7 +115,4 @@ void TrackerImpl::data(double *data)
     data[Roll] = pose[Roll];
 }
 
-extern "C" OPENTRACK_EXPORT ITracker* GetConstructor()
-{
-    return new TrackerImpl;
-}
+OPENTRACK_DECLARE_TRACKER(TrackerImpl, TrackerDialog, TrackerMeta)

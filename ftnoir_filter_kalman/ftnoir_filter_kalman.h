@@ -27,7 +27,7 @@ struct settings : opts {
     {}
 };
 
-class OPENTRACK_EXPORT FTNoIR_Filter : public IFilter
+class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
@@ -44,14 +44,14 @@ public:
     int prev_slider_pos;
 };
 
-class OPENTRACK_EXPORT FTNoIR_FilterDll : public Metadata
+class FTNoIR_FilterDll : public Metadata
 {
 public:
     QString name() { return QString("Kalman"); }
-   QIcon icon() { return QIcon(":/images/filter-16.png"); }
+    QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
 
-class OPENTRACK_EXPORT FilterControls: public IFilterDialog
+class FilterControls: public IFilterDialog
 {
     Q_OBJECT
 public:
