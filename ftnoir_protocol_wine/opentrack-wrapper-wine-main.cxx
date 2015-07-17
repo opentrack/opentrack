@@ -8,7 +8,6 @@ enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-#define OPENTRACK_COMPAT_BUNDLED
 #include "compat/compat.h"
 
 void create_registry_key(void);

@@ -2,7 +2,6 @@
 #   error "bad cross"
 #endif
 
-#define OPENTRACK_COMPAT_BUNDLED
 #define PortableLockedShm ShmWine
 #include "compat/compat.h"
 #include "compat/compat.cpp"
