@@ -91,6 +91,7 @@ class MainWindow : public QMainWindow, private State
     void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
+    void set_title(const QString& game_title = QStringLiteral(""));
 public slots:
     void shortcutRecentered();
     void shortcutToggled();

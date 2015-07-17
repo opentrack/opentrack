@@ -185,11 +185,11 @@ extern "C" volatile const char* opentrack_version;
 void MainWindow::fill_profile_combobox()
 {
      QStringList ini_list = group::ini_list();
-     QString current = QFileInfo(group::ini_pathname()).fileName();
-     setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
+     set_title();
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
+     QString current = QFileInfo(group::ini_pathname()).fileName();
      ui.iconcomboProfile->setCurrentText(current);
 }
 
@@ -291,6 +291,8 @@ void MainWindow::stopTracker( ) {
         display_pose(p, p);
     }
     updateButtonState(false, false);
+
+    set_title();
 }
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
@@ -322,6 +324,20 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     ui.pose_yaw->display(mapped_[Yaw]);
     ui.pose_pitch->display(mapped_[Pitch]);
     ui.pose_roll->display(mapped_[Roll]);
+
+    QString game_title;
+    if (libs.pProtocol)
+        game_title = libs.pProtocol->game_name();
+    set_title(game_title);
+}
+
+void MainWindow::set_title(const QString& game_title_)
+{
+    QString game_title;
+    if (game_title_ != "")
+        game_title = " :: " + game_title_;
+    QString current = QFileInfo(group::ini_pathname()).fileName();
+    setWindowTitle(const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ") + current + game_title);
 }
 
 void MainWindow::showHeadPose()
@@ -446,8 +462,7 @@ void MainWindow::profileSelected(int index)
                                                                 ui.iconcomboProfile->itemText(index)));
     }
 
-    QString current = QFileInfo(group::ini_pathname()).fileName();
-    setWindowTitle(QString( const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ")) + current);
+    set_title();
 
     load_settings();
 }
