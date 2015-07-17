@@ -25,18 +25,12 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QApplication>
-#include <QWidget>
-#include <QDialog>
-#include <QUrl>
-#include <QList>
 #include <QKeySequence>
 #include <QShortcut>
-#include <QLayout>
 #include <QPixmap>
-#include <QLabel>
 #include <QTimer>
 #include <QSystemTrayIcon>
+#include <QString>
 
 #if !defined(_WIN32)
 #       include "qxt-mini/QxtGlobalShortcut"
