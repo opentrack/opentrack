@@ -85,5 +85,8 @@ void Wizard::set_data()
     acc.trans_deadzone = 33;
     acc.trans_threshold = 19;
 
+    acc.b->save();
+    pt.b->save();
+
     qDebug() << "wizard done" << "model" << m << "camera-mode" << camera_mode;
 }
