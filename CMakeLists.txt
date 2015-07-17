@@ -352,6 +352,13 @@ if(SDK_WINE_PREFIX)
     endif()
 endif()
 
+if(APPLE)
+    install(SCRIPT "
+execute_process(COMMAND /bin/sh \"\${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
+                            \"\${CMAKE_SOURCE_DIR}/macosx\" \"\${CMAKE_INSTALL_PREFIX}\" \"\${CMAKE_BUILD_DIR}\" \"${OPENTRACK__COMMIT}\")
+")
+endif()
+
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
