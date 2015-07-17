@@ -273,7 +273,6 @@ set_target_properties(opentrack-version PROPERTIES
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
 target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
-opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
 opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
@@ -368,6 +367,7 @@ if(OpenCV_FOUND)
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()
 
+    opentrack_library(opentrack-filter-kalman ftnoir_filter_kalman)
     target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
     target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 
