@@ -14,7 +14,6 @@
 
 
 #include "tracker.h"
-#include "opentrack/thread.hpp"
 #include <cmath>
 #include <algorithm>
 
@@ -181,8 +180,6 @@ void Tracker::logic()
 void Tracker::run() {
     const int sleep_ms = 3;
     
-    Affinity thr(CORE_IPC);
-
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
 #endif
