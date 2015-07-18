@@ -353,7 +353,7 @@ if(SDK_WINE_PREFIX)
 endif()
 
 if(APPLE)
-    install(SCRIPT "
+    install(CODE "
 execute_process(COMMAND /bin/sh \"\${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
                             \"\${CMAKE_SOURCE_DIR}/macosx\" \"\${CMAKE_INSTALL_PREFIX}\" \"\${CMAKE_BUILD_DIR}\" \"${OPENTRACK__COMMIT}\")
 ")
