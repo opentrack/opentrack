@@ -107,7 +107,7 @@ struct Mat
     {
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w; i++)
+            for (int i = 0; i < w_; i++)
                 ret(j, i) = this->operator ()(j, i) + other(j, i);
         return ret;
     }
@@ -125,7 +125,7 @@ struct Mat
     {
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w; i++)
+            for (int i = 0; i < w_; i++)
                 ret(j, i) = this->operator ()(j, i) + other;
         return ret;
     }

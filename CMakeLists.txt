@@ -61,11 +61,13 @@ if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
 endif()
 
 if(APPLE)
+    set(CMAKE_MACOSX_RPATH OFF)
     set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
     set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
+    #set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
+    set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
@@ -340,23 +342,14 @@ if(SDK_WINE_PREFIX)
         add_custom_command(
           OUTPUT opentrack-wrapper-wine.exe.so
           DEPENDS ${wine-deps}
-          COMMAND ${SDK_WINE_PREFIX}/bin/wineg++ -g -O2 -m32 -std=c++11 -o
+          COMMAND ${SDK_WINE_PREFIX}/bin/wineg++ -g -DNOMINMAX -O2 -m32 -std=c++11 -o
                   opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx
+                  ${wine-deps}
                   ${my-rt})
         add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
         add_dependencies(opentrack-proto-wine wine-wrapper)
         add_dependencies(wine-wrapper opentrack-compat)
     endif()
-endif()
-
-if(APPLE)
-    install(CODE "
-execute_process(COMMAND /bin/sh \"\${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
-                            \"\${CMAKE_SOURCE_DIR}/macosx\" \"\${CMAKE_INSTALL_PREFIX}\" \"\${CMAKE_BUILD_DIR}\" \"\${OPENTRACK__COMMIT}\")
-")
 endif()
 
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
@@ -552,7 +545,12 @@ endif()
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/camera" DESTINATION .)
 
 if(APPLE)
+    install(FILES "${CMAKE_SOURCE_DIR}/macosx/qt.conf" DESTINATION .)
     install(CODE "
-        execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/install-fail-tool\" \"${CMAKE_INSTALL_PREFIX}\")
+    execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
+                                    \"${CMAKE_SOURCE_DIR}/macosx\"
+                                    \"${CMAKE_INSTALL_PREFIX}\"
+                                    \"${CMAKE_BINARY_DIR}\"
+                                    \"${OPENTRACK__COMMIT}\")
     ")
 endif()

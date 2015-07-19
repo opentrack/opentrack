@@ -1,4 +1,8 @@
 #include <cerrno>
+// OSX sdk 10.8 build error otherwise
+#ifdef _LIBCPP_MSVCRT
+#   undef _LIBCPP_MSVCRT
+#endif
 #include <cstdio>
 #include "freetrackclient/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"

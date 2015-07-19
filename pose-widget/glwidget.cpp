@@ -193,10 +193,10 @@ vec2 GLWidget::project(const vec3 &point)
     double z = std::max(.75, 1. + translation.z()/-60.);
     int w = width(), h = height();
     double x = w * translation.x() / 2. / -40.;
-    if (abs(x) > w/2)
+    if (std::abs(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
     double y = h * translation.y() / 2. / -40.;
-    if (abs(y) > h/2)
+    if (std::abs(y) > h/2)
         y = y > 0 ? h/2 : h/-2;
     return vec2 { z * (ret.x() + x), z * (ret.y() + y) };
 }
