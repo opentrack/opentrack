@@ -16,7 +16,8 @@
 #ifdef __linux
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
+#include <cerrno>
 #endif
 
 template<typename = void>
@@ -89,13 +90,14 @@ QList<QString> get_camera_names() {
             int fd = open(buf, O_RDONLY);
             if (fd == -1)
                 continue;
-            struct video_capability video_cap;
-            if(ioctl(fd, VIDIOCGCAP, &video_cap) == -1)
+            struct v4l2_capability video_cap;
+            if(ioctl(fd, VIDIOC_QUERYCAP, &video_cap) == -1)
             {
+                qDebug() << "VIDIOC_QUERYCAP" << errno;
                 close(fd);
                 continue;
             }
-            ret[ret.size()-1] = video_cap.name;
+            ret[ret.size()-1] = reinterpret_cast<const char*>(video_cap.card);
             close(fd);
         }
     }
