@@ -97,8 +97,6 @@ QList<QString> get_camera_names() {
             }
             ret[ret.size()-1] = video_cap.name;
             close(fd);
-        } else {
-            continue;
         }
     }
 #endif
