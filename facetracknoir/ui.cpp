@@ -111,8 +111,8 @@ void MainWindow::open() {
                 dir_path,
                 tr("Settings file (*.ini);;All Files (*)"));
     set_working_directory();
-    
-    if (! fileName.isEmpty() ) {
+
+    if (!fileName.isEmpty()) {
         {
             QSettings settings(OPENTRACK_ORG);
             settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
@@ -186,10 +186,10 @@ void MainWindow::fill_profile_combobox()
 {
      QStringList ini_list = group::ini_list();
      set_title();
+     QString current = QFileInfo(group::ini_pathname()).fileName();
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
-     QString current = QFileInfo(group::ini_pathname()).fileName();
      ui.iconcomboProfile->setCurrentText(current);
 }
 
