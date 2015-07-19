@@ -14,6 +14,7 @@ template<typename tracker>
 class camera_dialog
 {
 #ifdef __linux
+public:
     void open_camera_settings(cv::VideoCapture *, const QString &camera_name, QMutex *)
     {
         int idx = camera_name_to_index(camera_name);
