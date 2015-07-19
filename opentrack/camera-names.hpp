@@ -80,6 +80,11 @@ QList<QString> get_camera_names() {
     for (int i = 0; i < 16; i++) {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
+        if (access(buf, F_OK) == 0)
+            ret.append("");
+        else
+            continue;
+
         if (access(buf, R_OK | W_OK) == 0) {
             int fd = open(buf, O_RDONLY);
             if (fd == -1)
@@ -90,7 +95,7 @@ QList<QString> get_camera_names() {
                 close(fd);
                 continue;
             }
-            ret.append(video_cap.name);
+            ret[ret.size()-1] = video_cap.name;
             close(fd);
         } else {
             continue;
