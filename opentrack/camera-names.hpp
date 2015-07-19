@@ -81,7 +81,7 @@ QList<QString> get_camera_names() {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
         if (access(buf, F_OK) == 0)
-            ret.append("");
+            ret.append(buf);
         else
             continue;
 
