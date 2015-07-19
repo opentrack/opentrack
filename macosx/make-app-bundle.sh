@@ -14,16 +14,15 @@ test -n "$version" || exit 1
 tmp="$(mktemp -d "/tmp/$APPNAME-tmp.XXXXXXX")"
 test $? -eq 0 || exit 1
 
-"$dir/install-fail-tool" "$install"
+sh "$dir/install-fail-tool" "$install"
 
 cp -R "$dir/opentrack.app" "$tmp/" || exit 1
 cp -R "$install" "$tmp/$APPNAME.app/Contents/MacOS" || exit 1
 sed -i '' -e "s#@OPENTRACK-VERSION@#$version#g" "$tmp/$APPNAME.app/Contents/Info.plist" || exit 1
 
-#cp "$dir/qt.conf" "$tmp/$APPNAME.app/Contents/MacOS" || exit 1
-
 mkdir "$tmp/$APPNAME.iconset" || exit 1
 mkdir "$tmp/$APPNAME.app/Contents/Resources" || exit 1
+cp "$dir"/opentrack.sh "$tmp/$APPNAME.app/Contents/MacOS" || exit 1
 
 sips -z 16 16     "$dir/../facetracknoir/images/facetracknoir.png" --out "$tmp/$APPNAME.iconset/icon_16x16.png" || exit 1
 sips -z 32 32     "$dir/../facetracknoir/images/facetracknoir.png" --out "$tmp/$APPNAME.iconset/icon_16x16@2x.png" || exit 1

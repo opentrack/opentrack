@@ -545,7 +545,6 @@ endif()
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/camera" DESTINATION .)
 
 if(APPLE)
-    install(FILES "${CMAKE_SOURCE_DIR}/macosx/qt.conf" DESTINATION .)
     install(CODE "
     execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
                                     \"${CMAKE_SOURCE_DIR}/macosx\"

@@ -5,7 +5,7 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleExecutable</key>
-  <string>opentrack.bin</string>
+  <string>opentrack.sh</string>
   <key>CFBundleIdentifier</key>
   <string>com.github.opentrack</string>
   <key>CFBundleName</key>

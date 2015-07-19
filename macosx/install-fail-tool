@@ -4,7 +4,7 @@ test -n "$1" || exit 1
 
 dir="$1"
 
-for i in "$dir"/* "$dir"/*/*; do
+for i in "$dir"/* "$dir"/*/* "$dir"/*/*/*; do
         { test -x "$i" && test -f "$i"; } || continue
         case "$i" in
             *.dll|*.exe) continue ;;
@@ -13,7 +13,7 @@ for i in "$dir"/* "$dir"/*/*; do
         case "$i" in
             *.dylib|*.bin) strip -x "$i" ;; esac
         echo ---- $i ----
-        install_name_tool -id "@executable_path/$(basename -- "$i")" "$i"
+        install_name_tool -id "@executable_path/$(echo "$i" | sed -e "s,^$dir/,,")" "$i"
 
         otool -L "$i" | awk '{ print $1 }' |
         while read l; do
