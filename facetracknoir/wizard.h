@@ -16,7 +16,6 @@ public:
 
     enum Model { Cap, ClipRight, ClipLeft };
     enum { ClipRightX = 135, ClipLeftX = -135 };
-    enum CameraMode { x640_480_75, x640_480_60, x320_240_189, x320_240_120 };
 private slots:
     void set_data();
 };

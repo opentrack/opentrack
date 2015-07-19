@@ -53,20 +53,15 @@ void Wizard::set_data()
     else // ui.cap_model
         m = Cap;
 
-    auto camera_mode = static_cast<CameraMode>(ui.resolution_select->currentIndex());
-
-    settings_pt pt;
     State state;
 
     set_mapping(state.pose(TZ), tz);
     set_mapping(state.pose(Yaw), yaw);
     set_mapping(state.pose(Pitch), pitch);
     set_mapping(state.pose(Roll), roll);
+    state.pose.save_mappings();
 
-    pt.threshold = 31;
-    pt.min_point_size = 2;
-    pt.max_point_size = 50;
-
+    settings_pt pt;
     switch (m)
     {
     default:
@@ -74,9 +69,12 @@ void Wizard::set_data()
     case ClipRight: pt.t_MH_x = ClipRightX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
     case ClipLeft: pt.t_MH_x = ClipLeftX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
     }
-
-    pt.camera_mode = camera_mode;
-    pt.fov = ui.camera_fov->currentIndex();
+    pt.threshold = 31;
+    pt.min_point_size = 2;
+    pt.max_point_size = 50;
+    pt.fov = 1;
+    pt.camera_mode = 0;
+    pt.b->save();
 
     settings_accela acc;
     acc.ewma = 49;
@@ -84,9 +82,5 @@ void Wizard::set_data()
     acc.rot_deadzone = 29;
     acc.trans_deadzone = 33;
     acc.trans_threshold = 19;
-
     acc.b->save();
-    pt.b->save();
-
-    qDebug() << "wizard done" << "model" << m << "camera-mode" << camera_mode;
 }
