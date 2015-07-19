@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleExecutable</key>
+  <string>opentrack.sh</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.github.opentrack.trackhat</string>
+  <key>CFBundleName</key>
+  <string>trackhat-opentrack</string>
+  <key>CFBundleIconFile</key>
+  <string>opentrack.icns</string>
+  <key>CFBundleVersion</key>
+  <string>@OPENTRACK-VERSION@</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleDisplayName</key>
+  <string>trackhat-opentrack</string>
+  <key>CFBundleSignature</key>
+  <string>????</string>
+</dict>
+</plist>

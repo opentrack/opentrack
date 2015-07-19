@@ -1,4 +1,8 @@
 #include <cerrno>
+// OSX sdk 10.8 build error otherwise
+#ifdef _LIBCPP_MSVCRT
+#   undef _LIBCPP_MSVCRT
+#endif
 #include <cstdio>
 #include "freetrackclient/fttypes.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
@@ -8,7 +12,6 @@ enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-#define OPENTRACK_COMPAT_BUNDLED
 #include "compat/compat.h"
 
 void create_registry_key(void);

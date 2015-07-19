@@ -61,11 +61,13 @@ if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
 endif()
 
 if(APPLE)
+    set(CMAKE_MACOSX_RPATH OFF)
     set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
     set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
+    #set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
+    set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
@@ -113,15 +115,15 @@ macro(opentrack_library n dir)
         set(link-mode STATIC)
     endif()
     add_library(${n} ${link-mode} ${${n}-all})
-    target_link_libraries(${n} ${MY_QT_LIBS})
+    target_link_libraries(${n} opentrack-api ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         set(visibility "-fvisibility=hidden -fvisibility-inlines-hidden")
         if (foolib_STATIC)
             set(visibility)
         endif()
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
-            COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} ${visibility}"
+            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
+            COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
         set(link-flags)
@@ -350,11 +352,9 @@ if(SDK_WINE_PREFIX AND FALSE)
         add_custom_command(
           OUTPUT opentrack-wrapper-wine.exe.so
           DEPENDS ${wine-deps}
-          COMMAND ${SDK_WINE_PREFIX}/bin/wineg++ -g -O2 -m32 -std=c++11 -o
+          COMMAND ${SDK_WINE_PREFIX}/bin/wineg++ -g -DNOMINMAX -O2 -m32 -std=c++11 -o
                   opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}"
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-main.cxx
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-posix.cxx
-                  ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/opentrack-wrapper-wine-windows.cxx
+                  ${wine-deps}
                   ${my-rt})
         add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
         add_dependencies(opentrack-proto-wine wine-wrapper)
@@ -387,6 +387,7 @@ if(OpenCV_FOUND)
 #target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
 #target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 #endif()
+
 endif()
 
 #opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
@@ -563,6 +564,10 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/camera" DESTINATION .)
 
 if(APPLE)
     install(CODE "
-        execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/install-fail-tool\" \"${CMAKE_INSTALL_PREFIX}\")
+    execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
+                                    \"${CMAKE_SOURCE_DIR}/macosx\"
+                                    \"${CMAKE_INSTALL_PREFIX}\"
+                                    \"${CMAKE_BINARY_DIR}\"
+                                    \"${OPENTRACK__COMMIT}\")
     ")
 endif()

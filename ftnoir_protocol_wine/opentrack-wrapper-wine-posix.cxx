@@ -1,4 +1,3 @@
-#define OPENTRACK_COMPAT_BUNDLED
 #ifdef _WIN32
 #   undef _WIN32
 #endif

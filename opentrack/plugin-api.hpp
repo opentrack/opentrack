@@ -2,11 +2,21 @@
 
 #include "export.hpp"
 #include <QString>
+#include <QWidget>
 #include <QFrame>
 #include <QIcon>
 
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
+};
+
+class BaseDialog : public QWidget
+{
+    Q_OBJECT
+public:
+    void closeEvent(QCloseEvent *) override { emit closing(); }
+signals:
+    void closing();
 };
 
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
@@ -24,9 +34,9 @@ enum Axis {
     }
 
 // implement this in all plugins
+// also you must link against "opentrack-api" in CMakeList.txt to avoid vtable link errors
 struct Metadata
 {
-public:
     // plugin name to be displayed in the interface
     virtual QString name() = 0;
     // plugin icon, you can return an empty QIcon()
@@ -38,7 +48,6 @@ public:
 // implement this in filters
 struct IFilter
 {
-public:
     // optional destructor
     virtual ~IFilter() {}
     // perform filtering step.
@@ -46,7 +55,7 @@ public:
     virtual void filter(const double *input, double *output) = 0;
 };
 
-struct IFilterDialog : public QWidget
+struct IFilterDialog : public BaseDialog
 {
     // optional destructor
     virtual ~IFilterDialog() {}
@@ -63,7 +72,6 @@ struct IFilterDialog : public QWidget
 // implement this in protocols
 struct IProtocol
 {
-public:
     // optional destructor
     virtual ~IProtocol() {}
     // return true if protocol was properly initialized
@@ -75,7 +83,7 @@ public:
     virtual QString game_name() = 0;
 };
 
-struct IProtocolDialog : public QWidget
+struct IProtocolDialog : public BaseDialog
 {
     // optional destructor
     virtual ~IProtocolDialog() {}
@@ -92,7 +100,6 @@ struct IProtocolDialog : public QWidget
 // implement this in trackers
 struct ITracker
 {
-public:
     // optional destructor
     virtual ~ITracker() {}
     // start tracking, and grab a frame to display webcam video in, optionally
@@ -101,7 +108,7 @@ public:
     virtual void data(double *data) = 0;
 };
 
-struct ITrackerDialog : public QWidget
+struct ITrackerDialog : public BaseDialog
 {
     // optional destructor
     virtual ~ITrackerDialog() {}

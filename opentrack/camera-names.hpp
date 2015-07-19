@@ -13,6 +13,13 @@
 #   include <unistd.h>
 #endif
 
+#ifdef __linux
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
+#include <cerrno>
+#endif
+
 template<typename = void>
 QList<QString> get_camera_names() {
     QList<QString> ret;
@@ -69,14 +76,29 @@ QList<QString> get_camera_names() {
         qDebug() << "failed CLSID_VideoInputDeviceCategory" << hr;
     
     pSysDevEnum->Release();
-#else
+#endif
+#ifdef __linux
     for (int i = 0; i < 16; i++) {
         char buf[128];
         sprintf(buf, "/dev/video%d", i);
-        if (access(buf, R_OK | W_OK) == 0) {
+        if (access(buf, F_OK) == 0)
             ret.append(buf);
-        } else {
+        else
             continue;
+
+        if (access(buf, R_OK | W_OK) == 0) {
+            int fd = open(buf, O_RDONLY);
+            if (fd == -1)
+                continue;
+            struct v4l2_capability video_cap;
+            if(ioctl(fd, VIDIOC_QUERYCAP, &video_cap) == -1)
+            {
+                qDebug() << "VIDIOC_QUERYCAP" << errno;
+                close(fd);
+                continue;
+            }
+            ret[ret.size()-1] = reinterpret_cast<const char*>(video_cap.card);
+            close(fd);
         }
     }
 #endif

@@ -6,9 +6,21 @@
 #include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
 
+#ifdef __linux
+#include <QProcess>
+#endif
+
 template<typename tracker>
 class camera_dialog
 {
+#ifdef __linux
+public:
+    void open_camera_settings(cv::VideoCapture *, const QString &camera_name, QMutex *)
+    {
+        int idx = camera_name_to_index(camera_name);
+        QProcess::startDetached("qv4l2", QStringList() << "-d" << ("/dev/video" + QString::number(idx)));
+    }
+#else
     cv::VideoCapture fake_capture;
     QTimer t;
 
@@ -47,5 +59,6 @@ public:
         // HACK: we're not notified when it's safe to close the capture
         t.start();
     }
+#endif
 };
 

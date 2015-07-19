@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <cmath>
 
+constexpr double settings::mult_noise_stddev;
+
 FTNoIR_Filter::FTNoIR_Filter() {
     reset();
     prev_slider_pos = s.noise_stddev_slider;

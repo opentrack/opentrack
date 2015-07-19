@@ -37,6 +37,12 @@ static constexpr double trans_gains[][2] = {
     { -1, 0 }
 };
 
+constexpr double settings_accela::mult_rot;
+constexpr double settings_accela::mult_trans;
+constexpr double settings_accela::mult_rot_dz;
+constexpr double settings_accela::mult_trans_dz;
+constexpr double settings_accela::mult_ewma;
+
 FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
     rot.setMaxInput(rot_gains[0][0]);

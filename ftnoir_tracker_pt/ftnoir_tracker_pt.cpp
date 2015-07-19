@@ -11,7 +11,6 @@
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
-#include "opentrack/thread.hpp"
 #include "opentrack/camera-names.hpp"
 
 using namespace std;
@@ -83,8 +82,6 @@ void Tracker_PT::run()
 	QTextStream log_stream(&log_file);
 #endif
     
-    Affinity thr;
-
     while((commands & ABORT) == 0)
     {
         const double dt = time.elapsed() * 1e-9;
