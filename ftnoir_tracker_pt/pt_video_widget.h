@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2014 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -8,15 +9,9 @@
 #pragma once
 
 #include <QObject>
-#include <QTime>
-#include <QDialog>
+#include <QWidget>
 #include <opencv2/core/core.hpp>
-#ifndef OPENTRACK_API
-#   include <QGLWidget>
-#   include <boost/shared_ptr.hpp>
-#else
-#   include <memory>
-#endif
+#include <memory>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
