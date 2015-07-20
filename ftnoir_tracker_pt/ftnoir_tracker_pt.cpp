@@ -58,7 +58,7 @@ float Tracker_PT::get_focal_length()
     static constexpr double pi = 3.1415926f;
     const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
     const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
-    return .5 / tan(.5 * fov);
+    return w*.5 / tan(.5 * fov);
 }
 
 void Tracker_PT::run()
@@ -108,18 +108,17 @@ void Tracker_PT::run()
             for (unsigned i = 0; i < points.size(); i++)
             {
                 auto& p = points[i];
-                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
                 cv::Scalar color(0, 255, 0);
                 if (i == points.size()-1)
                     color = cv::Scalar(0, 0, 255);
                 cv::line(frame,
-                         cv::Point(p2.x - 20, p2.y),
-                         cv::Point(p2.x + 20, p2.y),
+                         cv::Point(p[0] - 20, p[1]),
+                         cv::Point(p[0] + 20, p[1]),
                          color,
                          4);
                 cv::line(frame,
-                         cv::Point(p2.x, p2.y - 20),
-                         cv::Point(p2.x, p2.y + 20),
+                         cv::Point(p[0], p[1] - 20),
+                         cv::Point(p[0], p[1] + 20),
                          color,
                          4);
             }
