@@ -150,9 +150,8 @@ void TrackerDialog_PT::poll_tracker_info()
     }
     else
     {
-        QString to_print = "Tracker offline";
-        ui.caminfo_label->setText(to_print);
-        ui.pointinfo_label->setText(to_print);
+        ui.caminfo_label->setText("Tracker offline");
+        ui.pointinfo_label->setText("");
     }
 }
 
