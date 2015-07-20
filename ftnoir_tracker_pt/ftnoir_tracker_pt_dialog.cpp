@@ -10,12 +10,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <opencv2/core/core.hpp>
-#ifndef OPENTRACK_API
-#   include <boost/shared_ptr.hpp>
-#else
-#   include <memory>
-#   include "opentrack/camera-names.hpp"
-#endif
+#include <memory>
+#include "opentrack/camera-names.hpp"
 #include <vector>
 
 using namespace std;
@@ -28,16 +24,7 @@ TrackerDialog_PT::TrackerDialog_PT()
 {
     ui.setupUi( this );
 
-#ifdef OPENTRACK_API
     ui.camdevice_combo->addItems(get_camera_names());
-#else
-    vector<string> device_names;
-    get_camera_device_names(device_names);
-    for (vector<string>::iterator iter = device_names.begin(); iter != device_names.end(); ++iter)
-    {
-        ui.camdevice_combo->addItem(iter->c_str());
-    }
-#endif
 
     tie_setting(s.camera_name, ui.camdevice_combo);
     tie_setting(s.cam_res_x, ui.res_x_spin);

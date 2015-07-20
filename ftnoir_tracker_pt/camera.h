@@ -8,21 +8,10 @@
 #pragma once
 
 #include <opencv2/core/core.hpp>
-#ifndef OPENTRACK_API
-#   include <boost/shared_ptr.hpp>
-#else
-#   include <memory>
-#   include <opencv2/highgui/highgui.hpp>
-#   include <opencv2/highgui/highgui_c.h>
-#endif
+#include <memory>
+#include <opencv2/highgui.hpp>
 #include <string>
 
-#ifndef OPENTRACK_API
-// ----------------------------------------------------------------------------
-void get_camera_device_names(std::vector<std::string>& device_names);
-#endif
-
-// ----------------------------------------------------------------------------
 struct CamInfo
 {
     CamInfo() : res_x(0), res_y(0), fps(0) {}

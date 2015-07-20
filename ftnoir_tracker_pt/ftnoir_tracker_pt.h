@@ -8,9 +8,7 @@
 #ifndef FTNOIR_TRACKER_PT_H
 #define FTNOIR_TRACKER_PT_H
 
-#ifdef OPENTRACK_API
-#   include "opentrack/plugin-api.hpp"
-#endif
+#include "opentrack/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 #include "camera.h"
 #include "point_extractor.h"
@@ -24,11 +22,7 @@
 #include <QMutexLocker>
 #include <QTime>
 #include <atomic>
-#ifndef OPENTRACK_API
-#   include <boost/shared_ptr.hpp>
-#else
-#   include <memory>
-#endif
+#include <memory>
 #include <vector>
 
 class TrackerDialog_PT;
@@ -48,7 +42,7 @@ public:
 
     Affine pose() { QMutexLocker lock(&mutex); return point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
-    void get_cam_info(CamInfo* info) { QMutexLocker lock(&mutex); *info = camera.get_info(); }
+    void get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); *info = camera.get_info(); }
 public slots:
     void apply_settings();
 protected:
