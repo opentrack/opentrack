@@ -190,18 +190,7 @@ void Tracker_PT::start_tracker(QFrame *parent_window)
     start();
 }
 
-#ifndef OPENTRACK_API
-void Tracker::StopTracker(bool exit)
-{
-    set_command(PAUSE);
-}
-#endif
-
-#ifdef OPENTRACK_API
-#define THeadPoseData double
-#endif
-
-void Tracker_PT::data(THeadPoseData *data)
+void Tracker_PT::data(double *data)
 {
     if (ever_success)
     {
@@ -237,14 +226,6 @@ void Tracker_PT::data(THeadPoseData *data)
     }
 }
 
-//-----------------------------------------------------------------------------
-#ifdef OPENTRACK_API
 #include "ftnoir_tracker_pt_dialog.h"
 OPENTRACK_DECLARE_TRACKER(Tracker_PT, TrackerDialog_PT, TrackerDll)
-#else
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
-{
-    return new Tracker_PT;
-}
-#endif
+
