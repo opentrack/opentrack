@@ -89,7 +89,13 @@ TrackerDialog_PT::TrackerDialog_PT()
 
 void TrackerDialog_PT::camera_settings()
 {
-    open_camera_settings(tracker ? &static_cast<cv::VideoCapture&>(tracker->camera) : nullptr, s.camera_name, tracker ? &tracker->camera_mtx : nullptr);
+    if (tracker)
+    {
+        QMutexLocker l(&tracker->camera_mtx);
+        open_camera_settings(static_cast<cv::VideoCapture*>(tracker->camera), s.camera_name, &tracker->camera_mtx);
+    }
+    else
+        open_camera_settings(nullptr, s.camera_name, nullptr);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)
@@ -121,11 +127,13 @@ void TrackerDialog_PT::poll_tracker_info()
     if (tracker)
     {
         QString to_print;
-
-        // display caminfo
         CamInfo info;
-        tracker->get_cam_info(&info);
-        to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
+        {
+            QMutexLocker l(&tracker->camera_mtx);
+            // display caminfo
+            tracker->get_cam_info(&info);
+            to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
+        }
         ui.caminfo_label->setText(to_print);
 
         // display pointinfo

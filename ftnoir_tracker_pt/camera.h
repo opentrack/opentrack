@@ -89,7 +89,7 @@ public:
     void start() override;
     void stop() override;
 
-    operator cv::VideoCapture&() { return *cap; }
+    operator cv::VideoCapture*() { return cap; }
 
 protected:
     bool _get_frame(cv::Mat* frame) override;
