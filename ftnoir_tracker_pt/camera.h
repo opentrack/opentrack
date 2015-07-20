@@ -54,8 +54,8 @@ public:
         bool get_frame(float dt, cv::Mat* frame);
 
         // WARNING: returned references are valid as long as object
-        const CamInfo& get_info() const    { return cam_info; }
-        const CamInfo& get_desired() const { return cam_desired; }
+        CamInfo get_info();
+        CamInfo get_desired() const { return cam_desired; }
 
 protected:
         // get a frame from the camera

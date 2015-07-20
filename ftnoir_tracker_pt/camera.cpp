@@ -61,6 +61,16 @@ void Camera::set_res(int x_res, int y_res)
     }
 }
 
+CamInfo Camera::get_info()
+{
+    if (cam_info.res_x == 0 || cam_info.res_y == 0)
+    {
+        cv::Mat tmp;
+        _get_frame(&tmp);
+    }
+    return cam_info;
+}
+
 bool Camera::get_frame(float dt, cv::Mat* frame)
 {
     bool new_frame = _get_frame(frame);
