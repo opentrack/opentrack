@@ -259,14 +259,9 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 	X_CM.t[1] = order[0][1] * Z0/focal_length;
 	X_CM.t[2] = Z0;
 
-	return i;
+    //qDebug() << "iter:" << i;
 
-	//Rodrigues(X_CM.R, r);
-	//qDebug()<<"iter: "<<i;
-	//qDebug()<<"t: "<<X_CM.t[0]<<' '<<X_CM.t[1]<<' '<<X_CM.t[2];
-	//Vec3f r;
-	//
-	//qDebug()<<"r: "<<r[0]<<' '<<r[1]<<' '<<r[2]<<'\n';
+	return i;
 }
 
 cv::Vec2f PointTracker::project(const cv::Vec3f& v_M, float f)
