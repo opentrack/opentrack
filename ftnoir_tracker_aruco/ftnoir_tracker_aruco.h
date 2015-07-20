@@ -26,7 +26,8 @@
 using namespace options;
 
 struct settings : opts {
-    value<double> fov, headpos_x, headpos_y, headpos_z;
+    value<int> fov;
+    value<double> headpos_x, headpos_y, headpos_z;
     value<QString> camera_name;
     value<int> force_fps, resolution;
     settings() :
