@@ -132,7 +132,7 @@ void Tracker::run()
     double failed = 0;
     const double max_failed = 1.25;
     cv::Vec3d rvec, tvec;
-    double last_fov = -1;
+    int last_fov = -1;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
 
@@ -161,7 +161,7 @@ void Tracker::run()
         if (last_fov != s.fov)
         {
             last_fov = s.fov;
-            if (!get_camera_calibration(static_cast<QString>(s.camera_name), intrinsics, dist_coeffs, grayscale.cols, grayscale.rows))
+            if (!get_camera_calibration(s.camera_name, intrinsics, dist_coeffs, grayscale.cols, grayscale.rows, s.fov))
             {
                 intrinsics.at<float> (0, 0) = focal_length_w;
                 intrinsics.at<float> (1, 1) = focal_length_h;
