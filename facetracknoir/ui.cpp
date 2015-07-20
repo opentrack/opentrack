@@ -21,6 +21,15 @@
 * You should have received a copy of the GNU General Public License along
 * with this program; if not, see <http://www.gnu.org/licenses/>.
 *********************************************************************************/
+
+/* Copyright (c) 2013-2015, Stanislaw Halik <sthalik@misaki.pl>
+
+ * Permission to use, copy, modify, and/or distribute this
+ * software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission
+ * notice appear in all copies.
+ */
+
 #include "ui.h"
 #include "opentrack/tracker.h"
 #include "opentrack/options.hpp"

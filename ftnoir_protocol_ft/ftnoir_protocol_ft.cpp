@@ -24,6 +24,14 @@
 * FTServer              FTServer is the Class, that communicates headpose-data
 *                               to games, using the FreeTrackClient.dll.
 ********************************************************************************/
+
+/* Copyright (c) 2013-2015 Stanislaw Halik <sthalik@misaki.pl>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 
