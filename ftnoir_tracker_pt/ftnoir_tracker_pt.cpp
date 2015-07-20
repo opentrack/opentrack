@@ -85,6 +85,8 @@ void Tracker_PT::run()
 	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 	QTextStream log_stream(&log_file);
 #endif
+
+    apply_settings();
     
     while((commands & ABORT) == 0)
     {
@@ -165,6 +167,7 @@ void Tracker_PT::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
     QMutexLocker l(&camera_mtx);
+    camera.stop();
     camera.set_device_index(camera_name_to_index("PS3Eye Camera"));
     int res_x, res_y, cam_fps;
     switch (s.camera_mode)
@@ -194,6 +197,7 @@ void Tracker_PT::apply_settings()
 
     camera.set_res(res_x, res_y);
     camera.set_fps(cam_fps);
+    camera.start();
     cv::Mat intrinsics_ = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs_ = cv::Mat::zeros(5, 1, CV_32FC1);
     intrinsics = cv::Mat();
@@ -228,23 +232,10 @@ void Tracker_PT::start_tracker(QFrame *parent_window)
     video_layout->addWidget(video_widget);
     video_frame->setLayout(video_layout);
     video_widget->resize(video_frame->width(), video_frame->height());
-    apply_settings();
-    camera.start();
     start();
 }
 
-#ifndef OPENTRACK_API
-void Tracker::StopTracker(bool exit)
-{
-    set_command(PAUSE);
-}
-#endif
-
-#ifdef OPENTRACK_API
-#define THeadPoseData double
-#endif
-
-void Tracker_PT::data(THeadPoseData *data)
+void Tracker_PT::data(double *data)
 {
     if (ever_success)
     {
@@ -279,13 +270,3 @@ void Tracker_PT::data(THeadPoseData *data)
         data[TZ] = t[2] / 10.0;
     }
 }
-
-//-----------------------------------------------------------------------------
-#ifdef OPENTRACK_API
-#else
-#pragma comment(linker, "/export:GetTracker=_GetTracker@0")
-OPENTRACK_EXPORT ITrackerPtr __stdcall GetTracker()
-{
-    return new Tracker_PT;
-}
-#endif

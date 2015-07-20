@@ -33,12 +33,10 @@ static void set_row(Matx33f& m, int i, const Vec3f& v)
 	m(i,2) = v[2];
 }
 
-#ifdef OPENTRACK_API
 static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
 {
     return a.first < b.first;
 }
-#endif
 
 void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[], cv::Vec2f d) const
 {
@@ -50,11 +48,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
 
     std::sort(d_vals.begin(),
               d_vals.end(),
-#ifdef OPENTRACK_API
               d_vals_sort
-#else
-              comp
-#endif
               );
 
 	for (unsigned i = 0; i<points.size(); ++i)

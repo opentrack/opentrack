@@ -18,6 +18,5 @@ struct SelectedLibraries {
     mem<IProtocol> pProtocol;
     SelectedLibraries(QFrame* frame, mem<ITracker> t, dylibptr p, mem<IFilter> f);
     SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
-    ~SelectedLibraries();
     bool correct;
 };

@@ -8,26 +8,10 @@
 #include "camera.h"
 #include <string>
 #include <QDebug>
+#include "opentrack/sleep.hpp"
 
 using namespace cv;
 
-#ifdef OPENTRACK_API
-#else
-// ----------------------------------------------------------------------------
-void get_camera_device_names(std::vector<std::string>& device_names)
-{
-    videoInput VI;
-    VI.listDevices();
-    std::string device_name;
-    for(int index = 0; ; ++index) {
-        device_name = VI.getDeviceName(index);
-        if (device_name.empty()) break;
-        device_names.push_back(device_name);
-    }
-}
-#endif
-
-// ----------------------------------------------------------------------------
 void Camera::set_device_index(int index)
 {
     if (desired_index != index)
@@ -113,6 +97,8 @@ void CVCamera::stop()
         cap->release();
         delete cap;
         cap = nullptr;
+        // give opencv time to exit camera threads, etc.
+        portable::sleep(500);
     }
     active = false;
 }

@@ -4,6 +4,7 @@
 #include "opentrack/plugin-api.hpp"
 #include <cmath>
 #include "opentrack/camera-names.hpp"
+#include "opentrack/sleep.hpp"
 
 typedef struct {
 	int width;
@@ -158,6 +159,8 @@ void Tracker::run()
             }
         }
     }
+    // give opencv time to exit camera threads, etc.
+    portable::sleep(500);
 }
 
 void Tracker::data(double* data)
