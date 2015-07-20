@@ -18,6 +18,7 @@
 #include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
 #include "opentrack/opencv-calibration.hpp"
+#include "opentrack/sleep.hpp"
 
 typedef struct {
     int width;
@@ -355,6 +356,9 @@ fail:
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
+
+    // give opencv time to exit camera threads, etc.
+    portable::sleep(500);
 }
 
 void Tracker::data(double *data)

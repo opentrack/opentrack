@@ -8,6 +8,7 @@
 #include "camera.h"
 #include <string>
 #include <QDebug>
+#include "opentrack/sleep.hpp"
 
 using namespace cv;
 
@@ -113,6 +114,8 @@ void CVCamera::stop()
         cap->release();
         delete cap;
         cap = nullptr;
+        // give opencv time to exit camera threads, etc.
+        portable::sleep(500);
     }
     active = false;
 }
