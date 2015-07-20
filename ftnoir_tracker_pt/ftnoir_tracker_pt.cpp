@@ -12,7 +12,6 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "opentrack/camera-names.hpp"
-#include "opentrack/opencv-calibration.hpp"
 
 using namespace std;
 using namespace cv;
@@ -69,8 +68,6 @@ float Tracker_PT::get_focal_length()
 
     const float diag_fov = static_cast<int>(fov_) * pi / 180.f;
     QMutexLocker l(&camera_mtx);
-    if (!intrinsics.empty())
-        return intrinsics.at<float>(0, 0);
     CamInfo info = camera.get_info();
     const int w = info.res_x, h = info.res_y;
     const double diag = sqrt(w * w + h * h)/w;
@@ -112,16 +109,7 @@ void Tracker_PT::run()
             
             if (success)
             {
-                if (!intrinsics.empty())
-                {
-                    std::vector<cv::Vec2f> points_;
-                    cv::undistortPoints(points, points_, intrinsics, dist_coeffs);
-                    point_tracker.track(points_, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
-                }
-                else
-                {
-                    point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
-                }
+                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
             }
             
             {
@@ -198,26 +186,6 @@ void Tracker_PT::apply_settings()
     camera.set_res(res_x, res_y);
     camera.set_fps(cam_fps);
     camera.start();
-    cv::Mat intrinsics_ = cv::Mat::eye(3, 3, CV_32FC1);
-    cv::Mat dist_coeffs_ = cv::Mat::zeros(5, 1, CV_32FC1);
-    intrinsics = cv::Mat();
-    dist_coeffs = cv::Mat();
-    int fov;
-    switch (s.fov)
-    {
-        default:
-        case 0: fov = 56; break;
-        case 1: fov = 75; break;
-    }
-    if (get_camera_calibration("PS3Eye Camera", intrinsics_, dist_coeffs_, res_x, res_y, fov))
-    {
-        intrinsics = intrinsics_.clone();
-        dist_coeffs = dist_coeffs_.clone();
-        qDebug() << "calibrated";
-    }
-    else
-        qDebug() << "not calibrated!";
-
     qDebug()<<"Tracker::apply ends";
 }
 

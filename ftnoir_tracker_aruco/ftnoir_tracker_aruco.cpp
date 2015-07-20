@@ -17,7 +17,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
-#include "opentrack/opencv-calibration.hpp"
 #include "opentrack/sleep.hpp"
 
 typedef struct {
@@ -162,17 +161,10 @@ void Tracker::run()
         if (last_fov != s.fov)
         {
             last_fov = s.fov;
-            if (!get_camera_calibration(s.camera_name, intrinsics, dist_coeffs, grayscale.cols, grayscale.rows, s.fov))
-            {
-                intrinsics.at<float> (0, 0) = focal_length_w;
-                intrinsics.at<float> (1, 1) = focal_length_h;
-                intrinsics.at<float> (0, 2) = grayscale.cols/2;
-                intrinsics.at<float> (1, 2) = grayscale.rows/2;
-            }
-            else
-            {
-                qDebug() << "got calibration";
-            }
+            intrinsics.at<float> (0, 0) = focal_length_w;
+            intrinsics.at<float> (1, 1) = focal_length_h;
+            intrinsics.at<float> (0, 2) = grayscale.cols/2;
+            intrinsics.at<float> (1, 2) = grayscale.rows/2;
         }
 
         std::vector< aruco::Marker > markers;
