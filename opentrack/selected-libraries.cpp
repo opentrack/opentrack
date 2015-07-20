@@ -1,10 +1,6 @@
 #include "opentrack/selected-libraries.hpp"
 #include <QDebug>
 
-SelectedLibraries::~SelectedLibraries()
-{
-}
-
 SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
     pTracker(nullptr),
     pFilter(nullptr),
