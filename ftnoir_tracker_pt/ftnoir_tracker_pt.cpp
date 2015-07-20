@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "opentrack/camera-names.hpp"
+#include "opentrack/opencv-calibration.hpp"
 
 using namespace std;
 using namespace cv;
@@ -67,11 +68,14 @@ float Tracker_PT::get_focal_length()
     }
 
     const float diag_fov = static_cast<int>(fov_) * pi / 180.f;
+    QMutexLocker l(&camera_mtx);
+    if (!intrinsics.empty())
+        return intrinsics.at<float>(0, 0);
     CamInfo info = camera.get_info();
     const int w = info.res_x, h = info.res_y;
     const double diag = sqrt(w * w + h * h)/w;
     const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
-    return .5 / tan(.5 * fov);
+    return w*.5 / tan(.5 * fov);
 }
 
 void Tracker_PT::run()
@@ -105,7 +109,18 @@ void Tracker_PT::run()
             ever_success |= success;
             
             if (success)
-                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
+            {
+                if (!intrinsics.empty())
+                {
+                    std::vector<cv::Vec2f> points_;
+                    cv::undistortPoints(points, points_, intrinsics, dist_coeffs);
+                    point_tracker.track(points_, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
+                }
+                else
+                {
+                    point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
+                }
+            }
             
             {
                 Affine X_CM = pose();
@@ -114,25 +129,23 @@ void Tracker_PT::run()
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 float fx = get_focal_length();
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
-
                 points.push_back(p_);
             }
             
             for (unsigned i = 0; i < points.size(); i++)
             {
                 auto& p = points[i];
-                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
                 cv::Scalar color(0, 255, 0);
                 if (i == points.size()-1)
                     color = cv::Scalar(0, 0, 255);
                 cv::line(frame,
-                         cv::Point(p2.x - 20, p2.y),
-                         cv::Point(p2.x + 20, p2.y),
+                         cv::Point(p[0] - 20, p[1]),
+                         cv::Point(p[0] + 20, p[1]),
                          color,
                          4);
                 cv::line(frame,
-                         cv::Point(p2.x, p2.y - 20),
-                         cv::Point(p2.x, p2.y + 20),
+                         cv::Point(p[0], p[1] - 20),
+                         cv::Point(p[0], p[1] + 20),
                          color,
                          4);
             }
@@ -152,7 +165,6 @@ void Tracker_PT::apply_settings()
 {
     qDebug()<<"Tracker:: Applying settings";
     QMutexLocker l(&camera_mtx);
-    QMutexLocker lock(&mutex);
     camera.set_device_index(camera_name_to_index("PS3Eye Camera"));
     int res_x, res_y, cam_fps;
     switch (s.camera_mode)
@@ -182,6 +194,26 @@ void Tracker_PT::apply_settings()
 
     camera.set_res(res_x, res_y);
     camera.set_fps(cam_fps);
+    cv::Mat intrinsics_ = cv::Mat::eye(3, 3, CV_32FC1);
+    cv::Mat dist_coeffs_ = cv::Mat::zeros(5, 1, CV_32FC1);
+    intrinsics = cv::Mat();
+    dist_coeffs = cv::Mat();
+    int fov;
+    switch (s.fov)
+    {
+        default:
+        case 0: fov = 56; break;
+        case 1: fov = 75; break;
+    }
+    if (get_camera_calibration("PS3Eye Camera", intrinsics_, dist_coeffs_, res_x, res_y, fov))
+    {
+        intrinsics = intrinsics_.clone();
+        dist_coeffs = dist_coeffs_.clone();
+        qDebug() << "calibrated";
+    }
+    else
+        qDebug() << "not calibrated!";
+
     qDebug()<<"Tracker::apply ends";
 }
 

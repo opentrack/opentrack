@@ -9,9 +9,6 @@
 
 #include "pt_video_widget.h"
 
-#include <QDebug>
-#include <QHBoxLayout>
-
 using namespace cv;
 using namespace std;
 

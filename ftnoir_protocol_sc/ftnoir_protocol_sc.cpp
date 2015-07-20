@@ -26,6 +26,14 @@
 *				SimConnect.dll is a so called 'side-by-side' assembly, so it	*
 *				must be treated as such...										*
 ********************************************************************************/
+
+/* Copyright (c) 2015 Stanislaw Halik <sthalik@misaki.pl>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
 

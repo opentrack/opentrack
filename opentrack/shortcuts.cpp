@@ -1,6 +1,13 @@
+/* Copyright (c) 2014, Stanislaw Halik <sthalik@misaki.pl>
+
+ * Permission to use, copy, modify, and/or distribute this
+ * software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission
+ * notice appear in all copies.
+ */
+
 #include "shortcuts.h"
 #include <QMutexLocker>
-
 
 #if defined(_WIN32)
 #include <windows.h>

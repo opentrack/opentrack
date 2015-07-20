@@ -22,6 +22,7 @@
 * with this program; if not, see <http://www.gnu.org/licenses/>.				*
 *																				*
 ********************************************************************************/
+
 #include "ftnoir_protocol_ft.h"
 #include <QDebug>
 #include <QFileDialog>

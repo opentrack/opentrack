@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013-2015 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,7 +26,8 @@
 using namespace options;
 
 struct settings : opts {
-    value<double> fov, headpos_x, headpos_y, headpos_z;
+    value<int> fov;
+    value<double> headpos_x, headpos_y, headpos_z;
     value<QString> camera_name;
     value<int> force_fps, resolution;
     settings() :
