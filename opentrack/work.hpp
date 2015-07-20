@@ -20,7 +20,7 @@
 struct Work
 {
     main_settings& s;
-    SelectedLibraries libs;
+    SelectedLibraries& libs;
     mem<Tracker> tracker;
     mem<Shortcuts> sc;
     WId handle;
