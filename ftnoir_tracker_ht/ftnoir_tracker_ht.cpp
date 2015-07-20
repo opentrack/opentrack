@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ui_ht-trackercontrols.h"
