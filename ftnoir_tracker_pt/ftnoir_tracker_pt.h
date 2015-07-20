@@ -78,6 +78,7 @@ private:
     Timer time;
     
     volatile bool ever_success;
+    cv::Mat intrinsics, dist_coeffs;
 
     static constexpr double rad2deg = 180.0/3.14159265;
     static constexpr double deg2rad = 3.14159265/180.0;
