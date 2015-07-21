@@ -132,7 +132,6 @@ void Tracker::run()
     double failed = 0;
     const double max_failed = 1.25;
     cv::Vec3d rvec, tvec;
-    int last_fov = -1;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
 
@@ -158,14 +157,10 @@ void Tracker::run()
         const float focal_length_w = .5 * w / tan(.5 * fov);
         const float focal_length_h = focal_length_w;
 
-        if (last_fov != s.fov)
-        {
-            last_fov = s.fov;
-            intrinsics.at<float> (0, 0) = focal_length_w;
-            intrinsics.at<float> (1, 1) = focal_length_h;
-            intrinsics.at<float> (0, 2) = grayscale.cols/2;
-            intrinsics.at<float> (1, 2) = grayscale.rows/2;
-        }
+        intrinsics.at<float> (0, 0) = focal_length_w;
+        intrinsics.at<float> (1, 1) = focal_length_h;
+        intrinsics.at<float> (0, 2) = grayscale.cols/2;
+        intrinsics.at<float> (1, 2) = grayscale.rows/2;
 
         std::vector< aruco::Marker > markers;
 
