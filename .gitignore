@@ -4,3 +4,4 @@
 /installer/Output
 # merely git cola saves there
 /patches/
+.DS_Store
