@@ -40,8 +40,8 @@ struct main_settings : opts {
     main_settings() :
         opts("opentrack-ui"),
         tracker_dll(b, "tracker-dll", ""),
-        filter_dll(b, "filter-dll", ""),
-        protocol_dll(b, "protocol-dll", ""),
+        filter_dll(b, "filter-dll", "Accela"),
+        protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced"),
         a_x(b, "x", TX),
         a_y(b, "y", TY),
         a_z(b, "z", TZ),
