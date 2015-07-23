@@ -76,11 +76,8 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
 
-# qt broken as usual
-set(EXTRA-MOCS opentrack/options.hpp)
-
 macro(opentrack_module n dir)
-    file(GLOB ${n}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp ${EXTRA-MOCS})
+    file(GLOB ${n}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp)
     file(GLOB ${n}-res ${dir}/*.rc)
     foreach(f ${n}-res)
         set_source_files_properties(${f} PROPERTIES LANGUAGE RC)
