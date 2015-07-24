@@ -54,17 +54,17 @@ float Map::getValueInternal(int x) {
     return ret * sign;
 }
 
-static __inline QPointF ensureInBounds(QList<QPointF> points, int i) {
-        int siz = points.size();
-        if (siz == 0 || i < 0)
-                return QPointF(0, 0);
-        if (siz > i)
-                return points[i];
-        return points[siz - 1];
+static QPointF ensureInBounds(QList<QPointF> points, int i) {
+    int siz = points.size();
+    if (siz == 0 || i < 0)
+        return QPointF(0, 0);
+    if (siz > i)
+        return points[i];
+    return points[siz - 1];
 }
 
 static bool sortFn(const QPointF& one, const QPointF& two) {
-        return one.x() < two.x();
+    return one.x() < two.x();
 }
 
 void Map::reload() {
@@ -149,8 +149,8 @@ void Map::removePoint(int i) {
 
 void Map::addPoint(QPointF pt) {
     QMutexLocker foo(&_mutex);
-        cur.input.append(pt);
-        reload();
+    cur.input.append(pt);
+    reload();
 }
 
 void Map::movePoint(int idx, QPointF pt) {
@@ -182,15 +182,15 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     int max = settings.value("point-count", 0).toInt();
 
     for (int i = 0; i < max; i++) {
-            newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
-                               settings.value(QString("point-%1-y").arg(i), 0).toFloat());
-            if (newPoint.x() > max_x) {
-                    newPoint.setX(max_x);
-            }
-            if (newPoint.y() > max_y) {
-                    newPoint.setY(max_y);
-            }
-            points.append(newPoint);
+        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
+                           settings.value(QString("point-%1-y").arg(i), 0).toFloat());
+        if (newPoint.x() > max_x) {
+            newPoint.setX(max_x);
+        }
+        if (newPoint.y() > max_y) {
+            newPoint.setY(max_y);
+        }
+        points.append(newPoint);
     }
 
     settings.endGroup();
