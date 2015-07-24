@@ -10,11 +10,14 @@
 #include <algorithm>
 #include <QDoubleSpinBox>
 #include "opentrack/plugin-api.hpp"
+#include "qfunctionconfigurator/qfunctionconfigurator.h"
+#include <QDialog>
 
 FilterControls::FilterControls() :
     accela_filter(nullptr)
 {
     ui.setupUi( this );
+
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     
@@ -40,6 +43,15 @@ FilterControls::FilterControls() :
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
+
+#ifdef LEAKING_DEBUG
+    auto d = new QDialog();
+    auto r = new QFunctionConfigurator(d);
+    r->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    r->setConfig(&accela_filter->rot, "");
+    r->setFixedSize(800, 300);
+    d->show();
+#endif
 }
 
 void FilterControls::unregister_filter()
