@@ -235,7 +235,9 @@ if(SDK_XPLANE)
     if(APPLE)
         SET_TARGET_PROPERTIES(opentrack-xplane-plugin PROPERTIES
                               COMPILE_FLAGS "-iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM200 -DXPLM210 -framework XPLM -framework XPWidgets"
-                              LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets")
+                              LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets"
+                              LIBRARY_OUTPUT_NAME "opentrack.xpl"
+                              PREFIX "" SUFFIX "")
     endif()
     if(UNIX AND NOT APPLE)
         target_link_libraries(opentrack-xplane-plugin rt)
