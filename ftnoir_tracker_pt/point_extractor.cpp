@@ -211,7 +211,8 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     for (auto& b : simple_blob::merge(blobs))
     {
         auto pos = b.effective_pos();
-        points.push_back(pos);
+        Vec2f p((pos[0] - W/2)/W, -(pos[1] - H/2)/W);
+        points.push_back(p);
     }
     
     vector<Mat> channels_;
