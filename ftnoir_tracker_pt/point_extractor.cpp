@@ -12,10 +12,6 @@
 #   include "opentrack/timer.hpp"
 #endif
 
-using namespace cv;
-using namespace std;
-
-
 PointExtractor::PointExtractor(){
 	//if (!AllocConsole()){}
 	//else SetConsoleTitle("debug");
@@ -23,20 +19,20 @@ PointExtractor::PointExtractor(){
 	//freopen("CON", "w", stderr);
 }
 // ----------------------------------------------------------------------------
-std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
+std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
 {
-	const int W = frame.cols;
-	const int H = frame.rows; 
+    const int W = frame.cols;
+    const int H = frame.rows;
 
-	// convert to grayscale
-	Mat frame_gray;
-    cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
-   
+    // convert to grayscale
+    cv::Mat frame_gray;
+    cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
+
     int min_size = s.min_point_size;
     int max_size = s.max_point_size;
     
-	unsigned int region_size_min = 3.14*min_size*min_size/4.0;
-	unsigned int region_size_max = 3.14*max_size*max_size/4.0;
+    unsigned int region_size_min = 3.14*min_size*min_size/4.0;
+    unsigned int region_size_max = 3.14*max_size*max_size/4.0;
     
     // testing indicates threshold difference of 45 from lowest to highest
     // that's applicable to poor lighting conditions.
@@ -144,7 +140,7 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     };
     
     // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-	Mat frame_bin = cv::Mat::zeros(H, W, CV_8U);
+    cv::Mat frame_bin = cv::Mat::zeros(H, W, CV_8U);
     
     const int min = std::max(0, thres - diff/2);
     const int max = std::min(255, thres + diff/2);
@@ -155,8 +151,8 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     // this code is based on OpenCV SimpleBlobDetector
     for (int i = min; i < max; i += step)
     {
-        Mat frame_bin_;
-        threshold(frame_gray, frame_bin_, i, 255, THRESH_BINARY);
+        cv::Mat frame_bin_;
+        cv::threshold(frame_gray, frame_bin_, i, 255, cv::THRESH_BINARY);
         frame_bin.setTo(170, frame_bin_);
         
         std::vector<std::vector<cv::Point>> contours;
@@ -211,19 +207,19 @@ std::vector<Vec2f> PointExtractor::extract_points(Mat& frame)
     for (auto& b : simple_blob::merge(blobs))
     {
         auto pos = b.effective_pos();
-        Vec2f p((pos[0] - W/2)/W, -(pos[1] - H/2)/W);
+        cv::Vec2f p((pos[0] - W/2)/W, -(pos[1] - H/2)/W);
         points.push_back(p);
     }
     
-    vector<Mat> channels_;
+    std::vector<cv::Mat> channels_;
     cv::split(frame, channels_);
     // draw output image
-    Mat frame_bin_ = frame_bin * .5;
-    vector<Mat> channels;
+    cv::Mat frame_bin_ = frame_bin * .5;
+    std::vector<cv::Mat> channels;
     channels.push_back(channels_[0] + frame_bin_);
     channels.push_back(channels_[1] - frame_bin_);
     channels.push_back(channels_[2] - frame_bin_);
-    merge(channels, frame);
+    cv::merge(channels, frame);
 
-	return points;
+    return points;
 }

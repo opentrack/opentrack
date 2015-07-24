@@ -32,11 +32,10 @@ or implied, of Rafael Muñoz Salinas.
 #include "board.h"
 #include "cameraparameters.h"
 #include "markerdetector.h"
-using namespace std;
 
 namespace aruco
 {
-
+using namespace std;
 /**\brief This class detects AR boards
  * Version 1.2
  * There are two modes for board detection.

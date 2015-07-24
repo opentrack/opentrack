@@ -14,8 +14,6 @@
 #include "opentrack/camera-names.hpp"
 #include <vector>
 
-using namespace std;
-
 //-----------------------------------------------------------------------------
 TrackerDialog_PT::TrackerDialog_PT()
     : tracker(NULL),

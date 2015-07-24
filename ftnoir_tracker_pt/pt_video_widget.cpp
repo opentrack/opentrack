@@ -9,9 +9,6 @@
 
 #include "pt_video_widget.h"
 
-using namespace cv;
-using namespace std;
-
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
