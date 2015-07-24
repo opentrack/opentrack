@@ -37,7 +37,7 @@ struct main_settings : opts {
     value<bool> center_at_startup, wizard_done;
     main_settings() :
         opts("opentrack-ui"),
-        protocol_dll(b, "protocol-dll", ""),
+        protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced"),
         a_x(b, "x", TX),
         a_y(b, "y", TY),
         a_z(b, "z", TZ),
