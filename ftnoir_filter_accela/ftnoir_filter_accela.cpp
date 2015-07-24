@@ -10,15 +10,13 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include "opentrack/plugin-api.hpp"
-using namespace std;
 
 static constexpr double rot_gains[][2] = {
     { 2.66, 110 },
-    { 2.33, 80 },
-    { 2, 50 },
-    { 1.66, 30 },
+    { 2.0, 50 },
+    { 1.66, 29 },
     { 1.33, 15 },
-    { 1, 5 },
+    { 1, 6 },
     { .66, 1.4 },
     { .33, .4 },
     { 0, 0 },
@@ -96,7 +94,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         
         const double vec = in - last_output[i];
         const double dz = i >= 3 ? rot_dz : trans_dz;
-        const double vec_ = max(0., fabs(vec) - dz);
+        const double vec_ = std::max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double val = m.getValue(vec_ / thres);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;

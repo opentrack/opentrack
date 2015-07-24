@@ -22,7 +22,8 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
 
 void QFunctionConfigurator::setConfig(Map* config, const QString& name) {
     mem<QSettings> iniFile = group::ini_file();
-    config->loadSettings(*iniFile, name);
+    if (name != "")
+        config->loadSettings(*iniFile, name);
     _config = config;
     _draw_function = true;
     update_range();
@@ -49,8 +50,8 @@ void QFunctionConfigurator::drawBackground()
     QPen pen(QColor(55, 104, 170, 127), 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
-    const int maxx = _config->maxInput();
-    const int maxy = _config->maxOutput();
+    const double maxx = _config->maxInput();
+    const double maxy = _config->maxOutput();
 
     // horizontal grid
     for (int i = 0; i < maxy; i += xstep)
@@ -68,7 +69,7 @@ void QFunctionConfigurator::drawBackground()
     }
 
     {
-        const int i = maxy;
+        const double i = maxy;
         double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
         drawLine(&painter,
                  QPointF(pixel_bounds.x(), y),
@@ -97,7 +98,7 @@ void QFunctionConfigurator::drawBackground()
                          text);
     }
     {
-        const int i = maxx;
+        const double i = maxx;
         double x = pixel_bounds.x() + i * c.x();
         drawLine(&painter,
                  QPointF(x, pixel_bounds.y()),
@@ -132,7 +133,7 @@ void QFunctionConfigurator::drawFunction()
     QPen pen(spline_color, 1.2, Qt::SolidLine);
 
     const double max = _config->maxInput();
-    const double step = std::max(1e-2, max / 500.);
+    const double step = std::max(1e-3, max / 1000.);
 
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (double i = 0; i < max; i += step) {
