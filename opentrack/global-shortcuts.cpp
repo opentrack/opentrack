@@ -107,6 +107,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_X, Qt::Key::Key_X ),
        win_key(DIK_Y, Qt::Key::Key_Y ),
        win_key(DIK_Z, Qt::Key::Key_Z ),
+       win_key(DIK_RETURN, Qt::Key::Key_Return),
     });
 
 bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
