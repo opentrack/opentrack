@@ -26,7 +26,7 @@ public:
             default: break;
             }
         }
-        emit key_pressed(QKeySequence(event->key()));
+        emit key_pressed(QKeySequence(event->key() | event->modifiers()));
     }
 signals:
     void key_pressed(QKeySequence k);
