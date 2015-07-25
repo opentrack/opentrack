@@ -141,12 +141,12 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 #else
     key = K();
     int idx = 0;
-    QKeySequence seq;;
+    QKeySequence code;
 
     if (k.keycode == "")
         code = QKeySequence(Qt::Key_unknown);
     else
-        code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText)
+        code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
 
     Qt::KeyboardModifiers mods = Qt::NoModifier;
     if (code != Qt::Key_unknown)
