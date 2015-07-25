@@ -1,8 +1,8 @@
 #include <QList>
 #include <QKeySequence>
 #include <QVariant>
+#include <QDebug>
 #include "global-shortcuts.h"
-#include <tuple>
 
 #if defined(_WIN32)
 #   ifndef DIRECTINPUT_VERSION
@@ -113,12 +113,11 @@ QList<win_key> windows_key_sequences =
 bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     auto qt = static_cast<QVariant>(qt_).toInt();
-    const auto all_mods = Qt::KeyboardModifierMask;
-    auto our_mods = qt & all_mods;
+    auto our_mods = qt & Qt::KeyboardModifierMask;
 #ifdef _WIN32
     const auto our_mods_ = our_mods;
     our_mods |= Qt::ShiftModifier;
-    switch (qt)
+    switch (qt & ~Qt::ShiftModifier)
     {
     case Qt::Key::Key_BraceLeft: qt = Qt::Key::Key_BracketLeft; break;
     case Qt::Key::Key_BraceRight: qt = Qt::Key::Key_BracketRight; break;
@@ -146,7 +145,7 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
     }
 #endif
 
-    const auto key = qt & ~all_mods;
+    const auto key = qt & ~Qt::KeyboardModifierMask;
     for (auto& wk : windows_key_sequences)
     {
         if (wk.qt == key)
