@@ -27,14 +27,10 @@ using namespace options;
 extern QList<QString> global_key_sequences;
 
 struct key_opts {
-    value<int> key_index;
-    value<bool> ctrl, alt, shift;
+    value<int> keycode;
 
     key_opts(pbundle b, const QString& name) :
-        key_index(b,  QString("key-index-%1").arg(name), 0),
-        ctrl(b,  QString("key-ctrl-%1").arg(name), 0),
-        alt(b,  QString("key-alt-%1").arg(name), 0),
-        shift(b,  QString("key-shift-%1").arg(name), 0)
+        keycode(b,  QString("keycode-%1").arg(name), 0)
     {}
 };
 

@@ -18,4 +18,5 @@ private:
 private slots:
     void doOK();
     void doCancel();
+    void bind_key(value<int>& ret, QLabel* label);
 };

@@ -7,6 +7,7 @@
  */
 
 #include "shortcuts.h"
+#include "global-shortcuts.h"
 #include <QMutexLocker>
 
 #if defined(_WIN32)
@@ -124,38 +125,25 @@ void KeybindingWorker::run() {
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {
 #if !defined(_WIN32)
-    const int idx = k.key_index;
-    if (!key)
-        key = std::make_shared<QxtGlobalShortcut>();
-    else {
-        key->setEnabled(false);
-        key->setShortcut(QKeySequence::UnknownKey);
-    }
-    if (idx > 0)
+    key->setEnabled(false);
+    key->setShortcut(QKeySequence::UnknownKey);
+
+    if (k.keycode)
     {
-        QString seq(global_key_sequences.value(idx, ""));
-        if (!seq.isEmpty())
-        {
-            if (k.shift)
-                seq = "Shift+" + seq;
-            if (k.alt)
-                seq = "Alt+" + seq;
-            if (k.ctrl)
-                seq = "Ctrl+" + seq;
-            key->setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
-            key->setEnabled();
-        }
+        key->setShortcut(Qt::KeySequence(k.keycode));
+        key->setEnabled();
     }
+}
 #else
     key = K();
-    int idx = k.key_index;
-    key.keycode = 0;
-    key.shift = key.alt = key.ctrl = 0;
-    if (idx > 0 && idx < global_windows_key_sequences.size())
-        key.keycode = global_windows_key_sequences[idx];
-    key.shift = k.shift;
-    key.alt = k.alt;
-    key.ctrl = k.ctrl;
+    int idx = 0;
+    Qt::KeyboardModifiers mods = Qt::NoModifier;
+    if (k.keycode != Qt::Key_unknown)
+        win_key::from_qt(QKeySequence(k.keycode), idx, mods);
+    key.shift = !!(mods & Qt::ShiftModifier);
+    key.alt = !!(mods & Qt::AltModifier);
+    key.ctrl = !!(mods & Qt::ControlModifier);
+    key.keycode = idx;
 #endif
 }
 

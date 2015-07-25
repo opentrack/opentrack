@@ -7,6 +7,9 @@
  */
 
 #include "options-dialog.hpp"
+#include "keyboard.h"
+#include <QPushButton>
+#include <QLayout>
 
 OptionsDialog::OptionsDialog()
 {
@@ -14,27 +17,6 @@ OptionsDialog::OptionsDialog()
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-
-    for ( int i = 0; i < global_key_sequences.size(); i++) {
-        ui.cbxCenterKey->addItem(global_key_sequences.at(i));
-        ui.cbxToggleKey->addItem(global_key_sequences.at(i));
-        ui.cbxZeroKey->addItem(global_key_sequences.at(i));
-    }
-
-    tie_setting(s.center.key_index, ui.cbxCenterKey);
-    tie_setting(s.center.alt, ui.chkCenterAlt);
-    tie_setting(s.center.shift, ui.chkCenterShift);
-    tie_setting(s.center.ctrl, ui.chkCenterCtrl);
-
-    tie_setting(s.toggle.key_index, ui.cbxToggleKey);
-    tie_setting(s.toggle.alt, ui.chkToggleAlt);
-    tie_setting(s.toggle.shift, ui.chkToggleShift);
-    tie_setting(s.toggle.ctrl, ui.chkToggleCtrl);
-
-    tie_setting(s.zero.key_index, ui.cbxZeroKey);
-    tie_setting(s.zero.alt, ui.chkZeroAlt);
-    tie_setting(s.zero.shift, ui.chkZeroShift);
-    tie_setting(s.zero.ctrl, ui.chkZeroCtrl);
 
     tie_setting(s.s_main.tray_enabled, ui.trayp);
     
@@ -67,6 +49,32 @@ OptionsDialog::OptionsDialog()
     tie_setting(s.s_main.camera_yaw, ui.camera_yaw);
     tie_setting(s.s_main.camera_pitch, ui.camera_pitch);
     tie_setting(s.s_main.camera_roll, ui.camera_roll);
+
+    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(s.center.keycode, ui.center_text); });
+    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero.keycode, ui.zero_text); });
+    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle.keycode, ui.toggle_text); });
+
+    ui.center_text->setText(QKeySequence(s.center.keycode).toString());
+    ui.zero_text->setText(QKeySequence(s.zero.keycode).toString());
+    ui.toggle_text->setText(QKeySequence(s.toggle.keycode).toString());
+}
+
+void OptionsDialog::bind_key(value<int>& ret, QLabel* label)
+{
+    ret = 0;
+    QDialog d;
+    auto l = new QHBoxLayout;
+    l->setMargin(0);
+    auto k = new KeyboardListener;
+    l->addWidget(k);
+    d.setLayout(l);
+    d.setFixedSize(QSize(500, 500));
+    d.setWindowFlags(Qt::Dialog);
+    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void { ret = static_cast<QVariant>(s).toInt(); d.close(); });
+    d.exec();
+    label->setText(QKeySequence(ret).toString());
+    delete k;
+    delete l;
 }
 
 void OptionsDialog::doOK() {
