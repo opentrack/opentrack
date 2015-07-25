@@ -23,7 +23,7 @@
    <string>Bind a shortcut</string>
   </property>
   <property name="text">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press a key or close this window to cancel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press a key or close this window to remove the keybinding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <property name="textFormat">
    <enum>Qt::RichText</enum>

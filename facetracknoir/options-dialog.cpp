@@ -68,7 +68,7 @@ void OptionsDialog::bind_key(value<QString>& ret, QLabel* label)
     auto k = new KeyboardListener;
     l->addWidget(k);
     d.setLayout(l);
-    d.setFixedSize(QSize(500, 500));
+    d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
     connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void { ret = s.toString(QKeySequence::PortableText); d.close(); });
     d.exec();
