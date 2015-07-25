@@ -1,15 +1,15 @@
-#include <QList>
-#include <QKeySequence>
-#include <QVariant>
-#include <QDebug>
-#include "global-shortcuts.h"
-
 #if defined(_WIN32)
 #   ifndef DIRECTINPUT_VERSION
 #       define DIRECTINPUT_VERSION 0x800
 #   endif
 #   include <windows.h>
 #   include <dinput.h>
+
+#include <QList>
+#include <QKeySequence>
+#include <QVariant>
+#include <QDebug>
+#include "global-shortcuts.h"
 
 QList<win_key> windows_key_mods =
     QList<win_key>({
@@ -108,6 +108,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_Y, Qt::Key::Key_Y ),
        win_key(DIK_Z, Qt::Key::Key_Z ),
        win_key(DIK_RETURN, Qt::Key::Key_Return),
+       win_key(DIK_INSERT, Qt::Key::Key_Insert),
     });
 
 bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)

@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef _WIN32
+
 struct win_key;
 
 extern QList<win_key> windows_key_mods;
@@ -12,3 +14,5 @@ struct win_key
     Qt::Key qt;
     static bool from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers &mods);
 };
+
+#endif
