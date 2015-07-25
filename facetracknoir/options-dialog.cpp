@@ -54,14 +54,14 @@ OptionsDialog::OptionsDialog()
     connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero.keycode, ui.zero_text); });
     connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle.keycode, ui.toggle_text); });
 
-    ui.center_text->setText(QKeySequence(s.center.keycode).toString());
-    ui.zero_text->setText(QKeySequence(s.zero.keycode).toString());
-    ui.toggle_text->setText(QKeySequence(s.toggle.keycode).toString());
+    ui.center_text->setText(s.center.keycode == "" ? "None" : static_cast<QString>(s.center.keycode));
+    ui.toggle_text->setText(s.toggle.keycode == "" ? "None" : static_cast<QString>(s.toggle.keycode));
+    ui.zero_text->setText(s.zero.keycode == "" ? "None" : static_cast<QString>(s.zero.keycode));
 }
 
-void OptionsDialog::bind_key(value<int>& ret, QLabel* label)
+void OptionsDialog::bind_key(value<QString>& ret, QLabel* label)
 {
-    ret = 0;
+    ret = "";
     QDialog d;
     auto l = new QHBoxLayout;
     l->setMargin(0);
@@ -70,9 +70,9 @@ void OptionsDialog::bind_key(value<int>& ret, QLabel* label)
     d.setLayout(l);
     d.setFixedSize(QSize(500, 500));
     d.setWindowFlags(Qt::Dialog);
-    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void { ret = static_cast<QVariant>(s).toInt(); d.close(); });
+    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void { ret = s.toString(QKeySequence::PortableText); d.close(); });
     d.exec();
-    label->setText(QKeySequence(ret).toString());
+    label->setText(ret == "" ? "None" : static_cast<QString>(ret));
     delete k;
     delete l;
 }

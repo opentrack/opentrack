@@ -27,10 +27,10 @@ using namespace options;
 extern QList<QString> global_key_sequences;
 
 struct key_opts {
-    value<int> keycode;
+    value<QString> keycode;
 
     key_opts(pbundle b, const QString& name) :
-        keycode(b,  QString("keycode-%1").arg(name), 0)
+        keycode(b, QString("keycode-%1").arg(name), "")
     {}
 };
 

@@ -132,18 +132,25 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
         key->setShortcut(QKeySequence::UnknownKey);
     }
 
-    if (k.keycode)
+    if (k.keycode != "")
     {
-        key->setShortcut(QKeySequence(k.keycode));
+        key->setShortcut(QKeySequence::fromString(k.keycode, QKeySequence::PortableText));
         key->setEnabled();
     }
 }
 #else
     key = K();
     int idx = 0;
+    QKeySequence seq;;
+
+    if (k.keycode == "")
+        code = QKeySequence(Qt::Key_unknown);
+    else
+        code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText)
+
     Qt::KeyboardModifiers mods = Qt::NoModifier;
-    if (k.keycode != Qt::Key_unknown)
-        win_key::from_qt(QKeySequence(k.keycode), idx, mods);
+    if (code != Qt::Key_unknown)
+        win_key::from_qt(code, idx, mods);
     key.shift = !!(mods & Qt::ShiftModifier);
     key.alt = !!(mods & Qt::AltModifier);
     key.ctrl = !!(mods & Qt::ControlModifier);
