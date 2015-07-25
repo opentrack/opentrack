@@ -4,7 +4,7 @@
 #include "opentrack/plugin-api.hpp"
 #include <cmath>
 #include "opentrack/camera-names.hpp"
-#include "opentrack/sleep.hpp"
+#include "opentrack-compat/sleep.hpp"
 
 typedef struct {
 	int width;

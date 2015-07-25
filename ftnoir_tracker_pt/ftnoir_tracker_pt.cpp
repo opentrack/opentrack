@@ -13,9 +13,6 @@
 #include <QCoreApplication>
 #include "opentrack/camera-names.hpp"
 
-using namespace std;
-using namespace cv;
-
 //#define PT_PERF_LOG	//log performance
 
 //-----------------------------------------------------------------------------
@@ -114,7 +111,7 @@ void Tracker_PT::run()
             
             {
                 Affine X_CM = pose();
-                Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 float fx = get_focal_length();
@@ -210,17 +207,17 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM = pose();
     
-        Affine X_MH(Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+        Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
         Affine X_GH = X_CM * X_MH;
     
-        Matx33f R = X_GH.R;
-        Vec3f   t = X_GH.t;
+        cv::Matx33f R = X_GH.R;
+        cv::Vec3f   t = X_GH.t;
     
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
         // -z -> x, y -> z, x -> -y
-        Matx33f R_EG(0, 0,-1,
-                    -1, 0, 0,
-                     0, 1, 0);
+        cv::Matx33f R_EG(0, 0,-1,
+                         -1, 0, 0,
+                         0, 1, 0);
         R = R_EG * R * R_EG.t();
     
         // extract rotation angles

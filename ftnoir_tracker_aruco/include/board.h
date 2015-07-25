@@ -32,8 +32,8 @@ or implied, of Rafael Muñoz Salinas.
 #include <vector>
 #include "exports.h"
 #include "marker.h"
-using namespace std;
 namespace aruco {
+using namespace std;
 /**
  * 3d representation of a marker
  */

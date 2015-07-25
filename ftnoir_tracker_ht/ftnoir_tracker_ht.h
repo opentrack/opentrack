@@ -10,7 +10,7 @@
 #include "headtracker-ftnoir.h"
 #include "ui_ht-trackercontrols.h"
 #include "ht_video_widget.h"
-#include "compat/compat.h"
+#include "opentrack-compat/shm.h"
 #include <QObject>
 #include "opentrack/options.hpp"
 #include "opentrack/plugin-api.hpp"

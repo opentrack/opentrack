@@ -44,7 +44,7 @@
 #include <QString>
 #include <QMutex>
 #include <QMutexLocker>
-#include "compat/compat.h"
+#include "opentrack-compat/shm.h"
 #include "opentrack/options.hpp"
 #include "freetrackclient/fttypes.h"
 using namespace options;

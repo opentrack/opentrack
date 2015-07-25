@@ -112,14 +112,14 @@ macro(opentrack_library n dir)
         set(link-mode STATIC)
     endif()
     add_library(${n} ${link-mode} ${${n}-all})
-    target_link_libraries(${n} opentrack-api ${MY_QT_LIBS})
+    target_link_libraries(${n} opentrack-api ${MY_QT_LIBS} opentrack-compat)
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         set(visibility "-fvisibility=hidden -fvisibility-inlines-hidden")
         if (foolib_STATIC)
             set(visibility)
         endif()
         SET_TARGET_PROPERTIES(${n} PROPERTIES
-            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack/${version-script}-version-script.txt\""
+            LINK_FLAGS "${foolib_LINK} ${foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\""
             COMPILE_FLAGS "${foolib_COMPILE} ${foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
         )
     else()
@@ -129,7 +129,7 @@ macro(opentrack_library n dir)
         endif()
         set_target_properties(${n} PROPERTIES LINK_FLAGS "${link-flags} ${foolib_LINK}" COMPILE_FLAGS "${foolib_COMPILE}")
     endif()
-    if (NOT foolib_STATIC)
+    if(NOT foolib_STATIC)
         install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
 endmacro()
@@ -200,11 +200,17 @@ opentrack_qt(opentrack-api)
 add_library(opentrack-api STATIC ${opentrack-api-all})
 opentrack_compat(opentrack-api)
 target_link_libraries(opentrack-api ${MY_QT_LIBS})
-
 if(NOT WIN32)
     target_link_libraries(opentrack-api dl)
 else()
     target_link_libraries(opentrack-api winmm)
+endif()
+
+opentrack_module(opentrack-compat opentrack-compat)
+add_library(opentrack-compat STATIC ${opentrack-compat-c})
+opentrack_compat(opentrack-compat) # uh...
+if(NOT WIN32 AND NOT APPLE)
+    target_link_libraries(opentrack-compat rt)
 endif()
 
 # ----
@@ -223,7 +229,6 @@ if(WIN32)
   ENABLE_LANGUAGE(RC)
 endif(WIN32)
 
-opentrack_module(opentrack-compat compat)
 opentrack_module(opentrack-xplane-plugin x-plane-plugin)
 
 if(SDK_XPLANE)
@@ -248,12 +253,6 @@ if(SDK_XPLANE)
     if(UNIX AND NOT APPLE)
         target_link_libraries(opentrack-xplane-plugin rt)
     endif()
-endif()
-
-add_library(opentrack-compat STATIC ${opentrack-compat-c})
-opentrack_compat(opentrack-compat) # uh...
-if(NOT WIN32 AND NOT APPLE)
-    target_link_libraries(opentrack-compat rt)
 endif()
 
 opentrack_module(opentrack-csv csv)

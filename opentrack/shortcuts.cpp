@@ -11,6 +11,7 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#include "win32-shortcuts.h"
 
 void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_, Key kZero_)
 {
@@ -124,59 +125,40 @@ void KeybindingWorker::run() {
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {
 #if !defined(_WIN32)
-    const int idx = k.key_index;
     if (!key)
         key = std::make_shared<QxtGlobalShortcut>();
     else {
-        key->setEnabled(false);
         key->setShortcut(QKeySequence::UnknownKey);
+        key->setEnabled(false);
     }
-    if (idx > 0)
+
+    if (k.keycode != "")
     {
-        QString seq(global_key_sequences.value(idx, ""));
-        if (!seq.isEmpty())
-        {
-            if (k.shift)
-                seq = "Shift+" + seq;
-            if (k.alt)
-                seq = "Alt+" + seq;
-            if (k.ctrl)
-                seq = "Ctrl+" + seq;
-            key->setShortcut(QKeySequence::fromString(seq, QKeySequence::PortableText));
-            key->setEnabled();
-        }
+        key->setShortcut(QKeySequence::fromString(k.keycode, QKeySequence::PortableText));
+        key->setEnabled();
     }
+}
 #else
     key = K();
-    int idx = k.key_index;
-    key.keycode = 0;
-    key.shift = key.alt = key.ctrl = 0;
-    if (idx > 0 && idx < global_windows_key_sequences.size())
-        key.keycode = global_windows_key_sequences[idx];
-    key.shift = k.shift;
-    key.alt = k.alt;
-    key.ctrl = k.ctrl;
-#endif
+    int idx = 0;
+    QKeySequence code;
+
+    if (k.keycode == "")
+        code = QKeySequence(Qt::Key_unknown);
+    else
+        code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
+
+    Qt::KeyboardModifiers mods = Qt::NoModifier;
+    if (code != Qt::Key_unknown)
+        win_key::from_qt(code, idx, mods);
+    key.shift = !!(mods & Qt::ShiftModifier);
+    key.alt = !!(mods & Qt::AltModifier);
+    key.ctrl = !!(mods & Qt::ControlModifier);
+    key.keycode = idx;
 }
+#endif
 
 void Shortcuts::reload() {
-#ifndef _WIN32
-    if (keyCenter)
-    {
-        keyCenter->setShortcut(QKeySequence::UnknownKey);
-        keyCenter->setEnabled(false);
-    }
-    if (keyToggle)
-    {
-        keyToggle->setShortcut(QKeySequence::UnknownKey);
-        keyToggle->setEnabled(false);
-    }
-    if (keyZero)
-    {
-        keyZero->setShortcut(QKeySequence::UnknownKey);
-        keyZero->setEnabled(false);
-    }
-#endif
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
     bind_keyboard_shortcut(keyZero, s.zero);

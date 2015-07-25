@@ -14,7 +14,7 @@
 #include <QSettings>
 #include <QMutex>
 #include <vector>
-#include "opentrack/qcopyable-mutex.hpp"
+#include "opentrack-compat/qcopyable-mutex.hpp"
 
 class Map {
 private:

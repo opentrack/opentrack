@@ -13,7 +13,7 @@
 
 #include "opentrack/options.hpp"
 using namespace options;
-#include "opentrack/timer.hpp"
+#include "opentrack-compat/timer.hpp"
 
 struct settings_accela : opts {
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;

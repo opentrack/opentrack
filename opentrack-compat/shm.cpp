@@ -6,7 +6,7 @@
  */
 
 #include <cstring>
-#include "compat.h"
+#include "shm.h"
 
 #if defined(_WIN32)
 PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName, int mapSize)

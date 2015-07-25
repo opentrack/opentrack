@@ -7,8 +7,6 @@
 
 #include "ar_video_widget.h"
 
-using namespace std;
-
 void ArucoVideoWidget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);

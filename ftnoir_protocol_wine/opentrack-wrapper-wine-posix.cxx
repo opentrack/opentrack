@@ -3,5 +3,5 @@
 #endif
 
 #define PortableLockedShm ShmPosix
-#include "compat/compat.h"
-#include "compat/compat.cpp"
+#include "opentrack-compat/shm.h"
+#include "opentrack-compat/shm.cpp"

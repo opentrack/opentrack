@@ -9,7 +9,7 @@
 #include <QMutexLocker>
 #include <QFile>
 #include "opentrack/plugin-api.hpp"
-#include "compat/compat.h"
+#include "opentrack-compat/shm.h"
 #include "ftnoir_protocol_wine/wine-shm.h"
 
 class FTNoIR_Protocol : public IProtocol

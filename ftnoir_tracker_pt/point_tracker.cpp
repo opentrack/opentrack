@@ -13,46 +13,43 @@
 
 #include <QDebug>
 
-using namespace cv;
-using namespace std;
-
 const float PI = 3.14159265358979323846f;
 
 // ----------------------------------------------------------------------------
-static void get_row(const Matx33f& m, int i, Vec3f& v)
+static void get_row(const cv::Matx33f& m, int i, cv::Vec3f& v)
 {
 	v[0] = m(i,0);
 	v[1] = m(i,1);
 	v[2] = m(i,2);
 }
 
-static void set_row(Matx33f& m, int i, const Vec3f& v)
+static void set_row(cv::Matx33f& m, int i, const cv::Vec3f& v)
 {
 	m(i,0) = v[0];
 	m(i,1) = v[1];
 	m(i,2) = v[2];
 }
 
-static bool d_vals_sort(const pair<float,int> a, const pair<float,int> b)
+static bool d_vals_sort(const std::pair<float,int> a, const std::pair<float,int> b)
 {
     return a.first < b.first;
 }
 
 void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[], cv::Vec2f d) const
 {
-	// fit line to orthographically projected points
-	vector< pair<float,int> > d_vals;
+    // fit line to orthographically projected points
+    std::vector<std::pair<float,int>> d_vals;
     // get sort indices with respect to d scalar product
-	for (unsigned i = 0; i<points.size(); ++i)
-		d_vals.push_back(pair<float, int>(d.dot(points[i]), i));
+    for (unsigned i = 0; i<points.size(); ++i)
+        d_vals.push_back(std::pair<float, int>(d.dot(points[i]), i));
 
     std::sort(d_vals.begin(),
               d_vals.end(),
               d_vals_sort
               );
 
-	for (unsigned i = 0; i<points.size(); ++i)
-		d_order[i] = d_vals[i].second;
+    for (unsigned i = 0; i<points.size(); ++i)
+        d_order[i] = d_vals[i].second;
 }
 
 
@@ -60,10 +57,10 @@ PointTracker::PointTracker() : init_phase(true)
 {
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences_previous(const vector<Vec2f>& points, const PointModel& model, float f)
+PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<cv::Vec2f>& points, const PointModel& model, float f)
 {
     PointTracker::PointOrder p;
-    p.points[0] = project(Vec3f(0,0,0), f);
+    p.points[0] = project(cv::Vec3f(0,0,0), f);
     p.points[1] = project(model.M01, f);
     p.points[2] = project(model.M02, f);
 
@@ -79,7 +76,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vecto
             // find closest point to projected model point i
             for (int j=0; j<PointModel::N_POINTS; ++j)
             {
-                    Vec2f d = p.points[i]-points[j];
+                    cv::Vec2f d = p.points[i]-points[j];
                     float sdist = d.dot(d);
                     if (sdist < min_sdist || j==0)
                     {
@@ -99,7 +96,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vecto
     return p;
 }
 
-void PointTracker::track(const vector<Vec2f>& points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout)
+void PointTracker::track(const std::vector<cv::Vec2f>& points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout)
 {
     PointOrder order;
 
@@ -129,9 +126,9 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     model.get_d_order(points, point_d_order, d);
     // calculate d and d_order for simple freetrack-like point correspondence
     model.get_d_order(std::vector<cv::Vec2f> {
-                          Vec2f{0,0},
-                          Vec2f(model.M01[0], model.M01[1]),
-                          Vec2f(model.M02[0], model.M02[1])
+                          cv::Vec2f{0,0},
+                          cv::Vec2f(model.M01[0], model.M01[1]),
+                          cv::Vec2f(model.M02[0], model.M02[1])
                       },
                       model_d_order,
                       d);
@@ -151,10 +148,10 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 
 	// The expected rotation used for resolving the ambiguity in POSIT:
 	// In every iteration step the rotation closer to R_expected is taken 
-	Matx33f R_expected = Matx33f::eye();	
+        cv::Matx33f R_expected = cv::Matx33f::eye();
 	
 	// initial pose = last (predicted) pose
-	Vec3f k;
+        cv::Vec3f k;
         get_row(R_expected, 2, k);
         float Z0 = 1000.f;
 
@@ -163,17 +160,17 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 	float epsilon_1 = 1;
 	float epsilon_2 = 1;
 
-	Vec3f I0, J0;
-	Vec2f I0_coeff, J0_coeff;
+        cv::Vec3f I0, J0;
+        cv::Vec2f I0_coeff, J0_coeff;
 
-	Vec3f I_1, J_1, I_2, J_2;
-	Matx33f R_1, R_2;
-	Matx33f* R_current;
+        cv::Vec3f I_1, J_1, I_2, J_2;
+        cv::Matx33f R_1, R_2;
+        cv::Matx33f* R_current;
 
 	const int MAX_ITER = 100;
 	const float EPS_THRESHOLD = 1e-4;
     
-    const cv::Vec2f* order = order_.points;
+        const cv::Vec2f* order = order_.points;
 
 	int i=1;
 	for (; i<MAX_ITER; ++i)
@@ -182,10 +179,10 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		epsilon_2 = k.dot(model.M02)/Z0;
 
 		// vector of scalar products <I0, M0i> and <J0, M0i>
-		Vec2f I0_M0i(order[1][0]*(1.0 + epsilon_1) - order[0][0], 
-			         order[2][0]*(1.0 + epsilon_2) - order[0][0]);
-		Vec2f J0_M0i(order[1][1]*(1.0 + epsilon_1) - order[0][1],
-			         order[2][1]*(1.0 + epsilon_2) - order[0][1]);
+                cv::Vec2f I0_M0i(order[1][0]*(1.0 + epsilon_1) - order[0][0],
+                                 order[2][0]*(1.0 + epsilon_2) - order[0][0]);
+                cv::Vec2f J0_M0i(order[1][1]*(1.0 + epsilon_1) - order[0][1],
+                                 order[2][1]*(1.0 + epsilon_2) - order[0][1]);
 
 		// construct projection of I, J onto M0i plane: I0 and J0
 		I0_coeff = model.P * I0_M0i;
@@ -199,7 +196,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		float JJ0 = J0.dot(J0);
 		float rho, theta;
 		if (JJ0 == II0) {
-			rho = sqrt(abs(2*IJ0));
+			rho = std::sqrt(std::abs(2*IJ0));
 			theta = -PI/4;
 			if (IJ0<0) theta *= -1;
 		}
@@ -217,7 +214,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		J_1 = J0 + rho*sin(theta)*model.u;
 		J_2 = J0 - rho*sin(theta)*model.u;
 
-		float norm_const = 1.0/norm(I_1); // all have the same norm
+		float norm_const = 1.0/cv::norm(I_1); // all have the same norm
 		
 		// create rotation matrices
 		I_1 *= norm_const; J_1 *= norm_const;
@@ -236,8 +233,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 
 		// pick the rotation solution closer to the expected one
 		// in simple metric d(A,B) = || I - A * B^T ||
-		float R_1_deviation = norm(Matx33f::eye() - R_expected * R_1.t());
-		float R_2_deviation = norm(Matx33f::eye() - R_expected * R_2.t());
+                float R_1_deviation = cv::norm(cv::Matx33f::eye() - R_expected * R_1.t());
+                float R_2_deviation = cv::norm(cv::Matx33f::eye() - R_expected * R_2.t());
 
 		if (R_1_deviation < R_2_deviation)
 			R_current = &R_1;
@@ -247,7 +244,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		get_row(*R_current, 2, k);
 
 		// check for convergence condition
-		if (abs(epsilon_1 - old_epsilon_1) +  abs(epsilon_2 - old_epsilon_2) < EPS_THRESHOLD)
+		if (std::abs(epsilon_1 - old_epsilon_1) + std::abs(epsilon_2 - old_epsilon_2) < EPS_THRESHOLD)
 			break;
 		old_epsilon_1 = epsilon_1;
 		old_epsilon_2 = epsilon_2;
@@ -259,7 +256,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 	X_CM.t[1] = order[0][1] * Z0/focal_length;
 	X_CM.t[2] = Z0;
 
-    //qDebug() << "iter:" << i;
+        //qDebug() << "iter:" << i;
 
 	return i;
 }

@@ -14,7 +14,7 @@
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "pt_video_widget.h"
-#include "opentrack/timer.hpp"
+#include "opentrack-compat/timer.hpp"
 #include "opentrack/opencv-camera-dialog.hpp"
 
 #include <QThread>

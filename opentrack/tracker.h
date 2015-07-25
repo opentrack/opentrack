@@ -10,10 +10,9 @@
 
 #include <vector>
 
-#include "timer.hpp"
+#include "opentrack-compat/timer.hpp"
 #include "plugin-support.hpp"
 #include "mappings.hpp"
-#include "pose.hpp"
 #include "simple-mat.hpp"
 #include "selected-libraries.hpp"
 
@@ -23,6 +22,23 @@
 
 #include <QMutex>
 #include <QThread>
+
+class Pose {
+private:
+    static constexpr double pi = 3.141592653;
+    static constexpr double d2r = pi/180.0;
+    static constexpr double r2d = 180./pi;
+
+    double axes[6];
+public:
+    Pose() : axes {0,0,0, 0,0,0} {}
+
+    inline operator double*() { return axes; }
+    inline operator const double*() const { return axes; }
+
+    inline double& operator()(int i) { return axes[i]; }
+    inline double operator()(int i) const { return axes[i]; }
+};
 
 class Tracker : private QThread {
     Q_OBJECT

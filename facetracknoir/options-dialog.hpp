@@ -25,8 +25,8 @@ private:
     settings_accela acc;
     QTimer timer;
     State& state;
-	TranslationCalibrator trans_calib;
-	bool trans_calib_running;
+    TranslationCalibrator trans_calib;
+    bool trans_calib_running;
 
     Tracker_PT* get_pt();
 private slots:
@@ -41,4 +41,5 @@ private slots:
     void startstop_trans_calib(bool start);
     void poll_tracker_info();
     void trans_calib_step();
+    void bind_key(value<QString>& ret, QLabel* label);
 };

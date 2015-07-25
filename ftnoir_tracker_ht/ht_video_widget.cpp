@@ -7,8 +7,6 @@
 
 #include "ht_video_widget.h"
 
-using namespace std;
-
 void HTVideoWidget::update_image(unsigned char *frame, int width, int height)
 {
     QMutexLocker foo(&mtx);

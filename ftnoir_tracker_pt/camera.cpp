@@ -8,9 +8,7 @@
 #include "camera.h"
 #include <string>
 #include <QDebug>
-#include "opentrack/sleep.hpp"
-
-using namespace cv;
+#include "opentrack-compat/sleep.hpp"
 
 void Camera::set_device_index(int index)
 {
@@ -74,7 +72,7 @@ void CVCamera::start()
 {
     if (cap)
         delete cap;
-    cap = new VideoCapture(desired_index);
+    cap = new cv::VideoCapture(desired_index);
     _set_res();
     _set_fps();
     // extract camera info
@@ -103,11 +101,11 @@ void CVCamera::stop()
     active = false;
 }
 
-bool CVCamera::_get_frame(Mat* frame)
+bool CVCamera::_get_frame(cv::Mat* frame)
 {
     if (cap && cap->isOpened())
     {
-        Mat img;
+        cv::Mat img;
         for (int i = 0; i < 100 && !cap->read(img); i++)
             ;;
 
@@ -142,5 +140,5 @@ void CVCamera::_set_device_index()
         cap->release();
         delete cap;
     }
-    cap = new VideoCapture(desired_index);
+    cap = new cv::VideoCapture(desired_index);
 }
