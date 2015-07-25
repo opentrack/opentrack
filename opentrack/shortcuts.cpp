@@ -125,12 +125,18 @@ void KeybindingWorker::run() {
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {
 #if !defined(_WIN32)
-    key->setEnabled(false);
-    key->setShortcut(QKeySequence::UnknownKey);
+
+    if (key)
+    {
+        key->setEnabled(false);
+        key->setShortcut(QKeySequence::UnknownKey);
+    }
+
+    key = std::make_shared<QxtGlobalShortcut>();
 
     if (k.keycode)
     {
-        key->setShortcut(Qt::KeySequence(k.keycode));
+        key->setShortcut(QKeySequence(k.keycode));
         key->setEnabled();
     }
 }
@@ -144,8 +150,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     key.alt = !!(mods & Qt::AltModifier);
     key.ctrl = !!(mods & Qt::ControlModifier);
     key.keycode = idx;
-#endif
 }
+#endif
 
 void Shortcuts::reload() {
 #ifndef _WIN32
