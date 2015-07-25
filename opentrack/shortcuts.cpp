@@ -7,11 +7,11 @@
  */
 
 #include "shortcuts.h"
-#include "global-shortcuts.h"
 #include <QMutexLocker>
 
 #if defined(_WIN32)
 #include <windows.h>
+#include "win32-shortcuts.h"
 
 void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_, Key kZero_)
 {

@@ -9,7 +9,7 @@
 #include <QKeySequence>
 #include <QVariant>
 #include <QDebug>
-#include "global-shortcuts.h"
+#include "win32-shortcuts.h"
 
 QList<win_key> windows_key_mods =
     QList<win_key>({
