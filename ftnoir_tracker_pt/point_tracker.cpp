@@ -196,7 +196,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		float JJ0 = J0.dot(J0);
 		float rho, theta;
 		if (JJ0 == II0) {
-			rho = sqrt(abs(2*IJ0));
+			rho = std::sqrt(std::abs(2*IJ0));
 			theta = -PI/4;
 			if (IJ0<0) theta *= -1;
 		}
@@ -214,7 +214,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		J_1 = J0 + rho*sin(theta)*model.u;
 		J_2 = J0 - rho*sin(theta)*model.u;
 
-		float norm_const = 1.0/norm(I_1); // all have the same norm
+		float norm_const = 1.0/cv::norm(I_1); // all have the same norm
 		
 		// create rotation matrices
 		I_1 *= norm_const; J_1 *= norm_const;
@@ -233,8 +233,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 
 		// pick the rotation solution closer to the expected one
 		// in simple metric d(A,B) = || I - A * B^T ||
-                float R_1_deviation = norm(cv::Matx33f::eye() - R_expected * R_1.t());
-                float R_2_deviation = norm(cv::Matx33f::eye() - R_expected * R_2.t());
+                float R_1_deviation = cv::norm(cv::Matx33f::eye() - R_expected * R_1.t());
+                float R_2_deviation = cv::norm(cv::Matx33f::eye() - R_expected * R_2.t());
 
 		if (R_1_deviation < R_2_deviation)
 			R_current = &R_1;
@@ -244,7 +244,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 		get_row(*R_current, 2, k);
 
 		// check for convergence condition
-		if (abs(epsilon_1 - old_epsilon_1) +  abs(epsilon_2 - old_epsilon_2) < EPS_THRESHOLD)
+		if (std::abs(epsilon_1 - old_epsilon_1) + std::abs(epsilon_2 - old_epsilon_2) < EPS_THRESHOLD)
 			break;
 		old_epsilon_1 = epsilon_1;
 		old_epsilon_2 = epsilon_2;
