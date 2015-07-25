@@ -128,8 +128,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     if (!key)
         key = std::make_shared<QxtGlobalShortcut>();
     else {
-        key->setEnabled(false);
         key->setShortcut(QKeySequence::UnknownKey);
+        key->setEnabled(false);
     }
 
     if (k.keycode != "")
@@ -159,23 +159,6 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 #endif
 
 void Shortcuts::reload() {
-#ifndef _WIN32
-    if (keyCenter)
-    {
-        keyCenter->setShortcut(QKeySequence::UnknownKey);
-        keyCenter->setEnabled(false);
-    }
-    if (keyToggle)
-    {
-        keyToggle->setShortcut(QKeySequence::UnknownKey);
-        keyToggle->setEnabled(false);
-    }
-    if (keyZero)
-    {
-        keyZero->setShortcut(QKeySequence::UnknownKey);
-        keyZero->setEnabled(false);
-    }
-#endif
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
     bind_keyboard_shortcut(keyZero, s.zero);
