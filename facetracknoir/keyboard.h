@@ -2,6 +2,7 @@
 #include "ui_keyboard_listener.h"
 #include <QLabel>
 #include <QKeyEvent>
+#include <QDebug>
 
 class KeyboardListener : public QLabel
 {
@@ -15,18 +16,21 @@ public:
     }
     void keyPressEvent(QKeyEvent* event) override
     {
+        //qDebug() << "k" << (event->key() | event->modifiers());
+        switch (event->key() | event->modifiers())
         {
-            switch (event->key() | event->modifiers())
-            {
-            case 83886113: // ctrl
-            case 50331680: // shift
-            case 150994979: // alt
-            case 16777250: // meta
-                return;
-            default: break;
-            }
+        case 83886113: // ctrl
+        case 50331680: // shift
+        case 150994979: // alt
+        case 218103841: // ctrl+alt
+        case 117440545: // ctrl+shift
+        case 184549408: // alt+shift
+        case 251658272: // ctrl+alt+shift
+            break;
+        default:
+            emit key_pressed(QKeySequence(event->key() | event->modifiers()));
+            break;
         }
-        emit key_pressed(QKeySequence(event->key() | event->modifiers()));
     }
 signals:
     void key_pressed(QKeySequence k);
