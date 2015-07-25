@@ -8,7 +8,7 @@
 #include "camera.h"
 #include <string>
 #include <QDebug>
-#include "opentrack/sleep.hpp"
+#include "opentrack-compat/sleep.hpp"
 
 void Camera::set_device_index(int index)
 {

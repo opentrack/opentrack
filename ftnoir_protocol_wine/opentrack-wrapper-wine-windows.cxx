@@ -3,8 +3,8 @@
 #endif
 
 #define PortableLockedShm ShmWine
-#include "compat/compat.h"
-#include "compat/compat.cpp"
+#include "opentrack-compat/shm.h"
+#include "opentrack-compat/shm.cpp"
 #include "wine-shm.h"
 
 static void write_path(const char* key, const char* subkey)

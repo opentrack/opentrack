@@ -9,7 +9,7 @@
 #include <QDebug>
 
 #ifdef DEBUG_EXTRACTION
-#   include "opentrack/timer.hpp"
+#   include "opentrack-compat/timer.hpp"
 #endif
 
 PointExtractor::PointExtractor(){

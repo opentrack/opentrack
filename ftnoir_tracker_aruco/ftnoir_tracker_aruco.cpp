@@ -17,7 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include "opentrack/camera-names.hpp"
-#include "opentrack/sleep.hpp"
+#include "opentrack-compat/sleep.hpp"
 
 typedef struct {
     int width;

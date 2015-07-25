@@ -15,7 +15,7 @@
 #   include <memory>
 #endif
 #include <vector>
-#include "opentrack/timer.hpp"
+#include "opentrack-compat/timer.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 
 #include <QObject>

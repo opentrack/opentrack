@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "export.hpp"
+#include "../opentrack-compat/export.hpp"
 #include <QString>
 #include <QWidget>
 #include <QFrame>
@@ -59,7 +59,7 @@ struct IFilter
     // optional destructor
     virtual ~IFilter() {}
     // perform filtering step.
-    // you have to take care of dt on your own, try "opentrack/timer.hpp"
+    // you have to take care of dt on your own, try "opentrack-compat/timer.hpp"
     virtual void filter(const double *input, double *output) = 0;
 };
 

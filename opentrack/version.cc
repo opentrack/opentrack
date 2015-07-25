@@ -1,4 +1,4 @@
-#include "opentrack/export.hpp"
+#include "opentrack-compat/export.hpp"
 
 #ifdef __cplusplus
 extern "C"
