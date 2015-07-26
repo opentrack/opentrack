@@ -23,14 +23,14 @@ Map::Map() :
 {
 }
 
-float Map::getValue(float x) {
+Map::num Map::getValue(Map::num x) {
     QMutexLocker foo(&_mutex);
-    float q  = x * precision();
-    int    xi = (int)q;
-    float  yi = getValueInternal(xi);
-    float  yiplus1 = getValueInternal(xi+1);
-    float  f = (q-xi);
-    float  ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
+    num q  = x * precision();
+    int xi = (int)q;
+    num yi = getValueInternal(xi);
+    num yiplus1 = getValueInternal(xi+1);
+    num f = (q-xi);
+    num ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
     last_input_value.setX(x);
     last_input_value.setY(ret);
     return ret;
@@ -42,10 +42,10 @@ bool Map::getLastPoint(QPointF& point ) {
     return activep;
 }
 
-float Map::getValueInternal(int x) {
-    float sign = x < 0 ? -1 : 1;
+Map::num Map::getValueInternal(int x) {
+    num sign = x < 0 ? -1 : 1;
     x = abs(x);
-    float ret;
+    num ret;
     int sz = cur.data.size();
     if (sz == 0)
         ret = 0;
@@ -75,7 +75,7 @@ void Map::reload() {
         QList<QPointF> input = cur.input;
         auto& data = cur.data;
 
-        data = std::vector<float>(value_count);
+        data = std::vector<num>(value_count);
         const int mult = precision();
         
         const int sz = data.size();
@@ -99,16 +99,20 @@ void Map::reload() {
             QPointF p2 = ensureInBounds(input, i + 1);
             QPointF p3 = ensureInBounds(input, i + 2);
 
-            const float p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
-            const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
+            using n = double;
+            const n p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
+            const n p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
             
-            int end = std::min<int>(sz, p2.x() * mult);
+            // multiplier helps fill in all the x's needed
+            const int mult_ = mult * 20;
+            int end = std::min<int>(sz, p2.x() * mult_);
             int start = p1.x() * mult;
+            const n max = end - start;
             
             for (int j = start; j < end; j++) {
-                float t = (j - start) / (float) (end - start);
-                float t2 = t*t;
-                float t3 = t*t*t;
+                n t = (j - start) / max;
+                n t2 = t*t;
+                n t3 = t*t*t;
 
                 int x = .5 * ((2. * p1_x) +
                               (-p0_x + p2_x) * t +
@@ -116,17 +120,17 @@ void Map::reload() {
                               (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
                         * mult;
                 
-                float y = .5 * ((2. * p1_y) +
-                                (-p0_y + p2_y) * t +
-                                (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
-                                (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
+                num y = .5 * ((2. * p1_y) +
+                              (-p0_y + p2_y) * t +
+                              (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
+                              (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
                     data[x] = y;
             }
         }
         
-        float last = 0;
+        num last = 0;
         for (int i = 0; i < sz; i++)
         {
             if (data[i] < 0)
@@ -182,8 +186,8 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     int max = settings.value("point-count", 0).toInt();
 
     for (int i = 0; i < max; i++) {
-        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toFloat(),
-                           settings.value(QString("point-%1-y").arg(i), 0).toFloat());
+        newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
+                           settings.value(QString("point-%1-y").arg(i), 0).toDouble());
         if (newPoint.x() > max_x) {
             newPoint.setX(max_x);
         }
@@ -231,6 +235,6 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
 
 int Map::precision() const {
     if (cur.input.size())
-        return value_count / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));
+        return value_count / std::max<num>(1.f, (cur.input[cur.input.size() - 1].x()));
     return 1;
 }
