@@ -28,7 +28,7 @@ Map::num Map::getValue(Map::num x) {
     num q  = x * precision();
     int xi = (int)q;
     num yi = getValueInternal(xi);
-    num yiplus1 = getValueInternal(xi+1);
+    num yiplus1 = getValueInternal(xi + (x < 0 ? -1 : 1));
     num f = (q-xi);
     num ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
     last_input_value.setX(x);
