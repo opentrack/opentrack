@@ -84,21 +84,28 @@ public:
         P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
 
-    enum { Cap = 0, Clip = 1 };
+    enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
 
     void set_model(settings_pt& s)
     {
-        if (s.model_used == Cap)
+        switch (s.model_used)
+        {
+        default:
+        case Cap:
         {
             const double z = 100, x = 120, y = 60;
             M01 = cv::Vec3f(-x, -y, -z);
             M02 = cv::Vec3f(x, -y, -z);
+            break;
         }
-        else
+        case ClipLeft:
+        case ClipRight:
         {
             const double a = 27, b = 43, c = 62, d = 74;
             M01 = cv::Vec3f(0, b, -a);
-            M02 = cv::Vec3f(0, -c, -d);            
+            M02 = cv::Vec3f(0, -c, -d);
+            break;
+        }
         }
     }
 
