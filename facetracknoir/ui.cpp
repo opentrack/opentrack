@@ -135,10 +135,6 @@ void MainWindow::save_mappings() {
     pose.save_mappings();
 }
 
-#if defined(__unix) || defined(__linux) || defined(__APPLE__)
-#   include <unistd.h>
-#endif
-
 void MainWindow::save() {
     s.b->save();
     save_mappings();
