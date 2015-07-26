@@ -18,16 +18,17 @@
 
 class Map {
 private:
+    static constexpr int value_count = 5000;
+    using num = float;
+
     struct State {
         QList<QPointF> input;
-        std::vector<float> data;        
+        std::vector<num> data;
     };
-
-    static constexpr int value_count = 9001;
 
     int precision() const;
     void reload();
-    float getValueInternal(int x);
+    num getValueInternal(int x);
 
     MyMutex _mutex;
     QPointF last_input_value;
@@ -46,7 +47,7 @@ public:
         setMaxOutput(maxy);
     }
 
-    float getValue(float x);
+    num getValue(num x);
     bool getLastPoint(QPointF& point);
     void removePoint(int i);
     void removeAllPoints() {
