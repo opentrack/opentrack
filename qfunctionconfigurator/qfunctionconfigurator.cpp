@@ -224,7 +224,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                 for (int i = 0; i < points.size(); i++)
                 {
                     const QPointF pt = point_to_pixel(points[i]);
-                    const float x = pt.x() - pos.x();
+                    const auto x = pt.x() - pos.x();
                     if (point_closeness_limit * point_closeness_limit >= x * x)
                     {
                         too_close = true;
