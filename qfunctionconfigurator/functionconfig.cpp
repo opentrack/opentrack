@@ -107,9 +107,10 @@ void Map::reload() {
             const int mult_ = mult * 20;
             int end = std::min<int>(sz, p2.x() * mult_);
             int start = p1.x() * mult;
+            const n max = end - start;
             
             for (int j = start; j < end; j++) {
-                n t = (j - start) / (n) (end - start);
+                n t = (j - start) / max;
                 n t2 = t*t;
                 n t3 = t*t*t;
 
