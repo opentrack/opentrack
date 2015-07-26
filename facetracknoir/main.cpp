@@ -18,18 +18,14 @@ using namespace options;
 // workaround QTBUG-38598, allow for launching from another directory
 static void add_program_library_path()
 {
+    char* p = _pgmptr;
+    char path[MAX_PATH+1];
+    strcpy(path, p);
+    char* ptr = strrchr(path, '\\');
+    if (ptr)
     {
-        char* p = _pgmptr;
-        {
-            char path[MAX_PATH+1];
-            strcpy(path, p);
-            char* ptr = strrchr(path, '\\');
-            if (ptr)
-            {
-                *ptr = '\0';
-                QCoreApplication::addLibraryPath(path);
-            }
-        }
+        *ptr = '\0';
+        QCoreApplication::addLibraryPath(path);
     }
 }
 #endif
@@ -38,12 +34,14 @@ int main(int argc, char** argv)
 {
 #ifdef _WIN32
     add_program_library_path();
-#endif
+#elif !defined(__linux)
     // workaround QTBUG-38598
     QCoreApplication::addLibraryPath(".");
+#endif
 
+#if defined(_WIN32) || defined(__APPLE__)
     // qt5 designer-made controls look like shit on 'doze -sh 20140921
-#ifdef _WIN32
+    // also our OSX look leaves a lot to be desired -sh 20150726
     {
         const QStringList preferred { "fusion", "windowsvista", "jazzbands'-marijuana", "macintosh", "windowsxp" };
         for (const auto& style_name : preferred)

@@ -29,13 +29,14 @@ private:
     bool trans_calib_running;
 
     Tracker_PT* get_pt();
+    void closeEvent(QCloseEvent *) override { doCancel(); }
 private slots:
     void update_ewma_display(int value);
     void update_rot_display(int value);
     void update_trans_display(int value);
     void update_rot_dz_display(int value);
     void update_trans_dz_display(int value);
-private slots:
+
     void doOK();
     void doCancel();
     void startstop_trans_calib(bool start);
