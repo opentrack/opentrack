@@ -17,18 +17,14 @@ using namespace options;
 // workaround QTBUG-38598, allow for launching from another directory
 static void add_program_library_path()
 {
+    char* p = _pgmptr;
+    char path[MAX_PATH+1];
+    strcpy(path, p);
+    char* ptr = strrchr(path, '\\');
+    if (ptr)
     {
-        char* p = _pgmptr;
-        {
-            char path[MAX_PATH+1];
-            strcpy(path, p);
-            char* ptr = strrchr(path, '\\');
-            if (ptr)
-            {
-                *ptr = '\0';
-                QCoreApplication::addLibraryPath(path);
-            }
-        }
+        *ptr = '\0';
+        QCoreApplication::addLibraryPath(path);
     }
 }
 #endif
