@@ -57,7 +57,7 @@ bool Camera::get_frame(float dt, cv::Mat* frame)
 {
     bool new_frame = _get_frame(frame);
     // measure fps of valid frames
-    const float dt_smoothing_const = 0.9;
+    const float dt_smoothing_const = 0.95;
     dt_valid += dt;
     if (new_frame)
     {
@@ -102,7 +102,7 @@ void CVCamera::stop()
         // give opencv time to exit camera threads, etc.
         if (opened)
             portable::sleep(500);
-        qDebug() << "camera: assuming stopped";
+        qDebug() << "pt camera: assuming stopped";
     }
 }
 
