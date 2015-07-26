@@ -33,12 +33,14 @@ int main(int argc, char** argv)
 {
 #ifdef _WIN32
     add_program_library_path();
-#endif
+#elif !defined(__linux)
     // workaround QTBUG-38598
     QCoreApplication::addLibraryPath(".");
+#endif
 
+#if defined(_WIN32) || defined(__APPLE__)
     // qt5 designer-made controls look like shit on 'doze -sh 20140921
-#ifdef _WIN32
+    // also our OSX look leaves a lot to be desired -sh 20150726
     {
         const QStringList preferred { "fusion", "windowsvista", "jazzbands'-marijuana", "macintosh", "windowsxp" };
         for (const auto& style_name : preferred)
