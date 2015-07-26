@@ -19,12 +19,18 @@ Map::Map() :
     _mutex(QMutex::Recursive),
     activep(false),
     max_x(0),
-    max_y(0)
+    max_y(0),
+    lazy_reload(true)
 {
 }
 
 Map::num Map::getValue(Map::num x) {
     QMutexLocker foo(&_mutex);
+    if (lazy_reload)
+    {
+        lazy_reload = false;
+        reload();
+    }
     num q  = x * precision();
     int xi = (int)q;
     num yi = getValueInternal(xi);
@@ -87,7 +93,7 @@ void Map::reload() {
         {
             for (int k = 0; k < input[0].x() * mult; k++) {
                 if (k < sz)
-                    data[k] = input[0].y() * k / (input[0].x() * mult) / max_y * integral_max;
+                    data[k] = input[0].y() * k * integral_max / (input[0].x() * mult) / max_y ;
             }
         }
         else if (input[0].x() > 1e-2)
@@ -151,14 +157,15 @@ void Map::removePoint(int i) {
     if (i >= 0 && i < cur.input.size())
     {
         cur.input.removeAt(i);
-        reload();
+        lazy_reload = true;
     }
 }
 
 void Map::addPoint(QPointF pt) {
     QMutexLocker foo(&_mutex);
     cur.input.append(pt);
-    reload();
+    lazy_reload = true;
+    qStableSort(cur.input.begin(), cur.input.end(), sortFn);
 }
 
 void Map::movePoint(int idx, QPointF pt) {
@@ -166,7 +173,8 @@ void Map::movePoint(int idx, QPointF pt) {
     if (idx >= 0 && idx < cur.input.size())
     {
         cur.input[idx] = pt;
-        reload();
+        lazy_reload = true;
+        // we don't allow points to be reodered, so no sort here
     }
 }
 
@@ -179,7 +187,7 @@ void Map::invalidate_unsaved_settings()
 {
     QMutexLocker foo(&_mutex);
     cur = saved;
-    reload();
+    lazy_reload = true;
 }
 
 void Map::loadSettings(QSettings& settings, const QString& title) {
@@ -208,7 +216,7 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
         points.append(QPointF(maxInput(), maxOutput()));
     
     cur.input = points;
-    reload();
+    lazy_reload = true;
     saved = cur;
 }
 

@@ -40,6 +40,7 @@ private:
     double max_y;
 
     State cur, saved;
+    bool lazy_reload;
 public:
     double maxInput() const { return max_x; }
     double maxOutput() const { return max_y; }
@@ -48,7 +49,7 @@ public:
     {
         setMaxInput(maxx);
         setMaxOutput(maxy);
-        reload();
+        lazy_reload = true;
     }
 
     num getValue(num x);
@@ -57,7 +58,7 @@ public:
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
         cur.input.clear();
-        reload();
+        lazy_reload = true;
     }
 
     void addPoint(QPointF pt);
