@@ -6,7 +6,8 @@
         <file>images/facetracknoir.png</file>
         <file>images/no-feed.png</file>
         <file>images/filter-16.png</file>
-        <file>images/trackhat-cap.png</file>
-        <file>images/trackhat-clip.png</file>
+        <file>images/trackhat-clip-left.png</file>
+        <file>images/trackhat-clip-right.png</file>
+        <file>images/trackhat-hat.png</file>
     </qresource>
 </RCC>
