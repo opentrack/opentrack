@@ -74,6 +74,7 @@ void Wizard::set_data()
     pt.max_point_size = 50;
     pt.fov = 1;
     pt.camera_mode = 0;
+    pt.model_used = m;
     pt.b->save();
 
     settings_accela acc;

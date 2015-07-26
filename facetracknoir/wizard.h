@@ -14,7 +14,7 @@ class Wizard : public QWizard
 public:
     Wizard();
 
-    enum Model { Cap, ClipRight, ClipLeft };
+    enum Model { Cap = 0, ClipRight = 1, ClipLeft = 2 };
     enum { ClipRightX = 135, ClipLeftX = -135 };
 private slots:
     void set_data();
