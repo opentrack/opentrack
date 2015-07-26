@@ -14,16 +14,19 @@
 #include <QSettings>
 #include <QMutex>
 #include <vector>
+#include <limits>
 #include "opentrack-compat/qcopyable-mutex.hpp"
 
 class Map {
 private:
     static constexpr int value_count = 5000;
-    using num = float;
+    using num = double;
+    using integral = std::uint16_t;
+    static constexpr integral integral_max = std::numeric_limits<integral>::max();
 
     struct State {
         QList<QPointF> input;
-        std::vector<num> data;
+        std::vector<integral> data;
     };
 
     int precision() const;
@@ -37,6 +40,7 @@ private:
     double max_y;
 
     State cur, saved;
+    bool lazy_reload;
 public:
     double maxInput() const { return max_x; }
     double maxOutput() const { return max_y; }
@@ -45,6 +49,7 @@ public:
     {
         setMaxInput(maxx);
         setMaxOutput(maxy);
+        lazy_reload = true;
     }
 
     num getValue(num x);
@@ -53,7 +58,7 @@ public:
     void removeAllPoints() {
         QMutexLocker foo(&_mutex);
         cur.input.clear();
-        reload();
+        lazy_reload = true;
     }
 
     void addPoint(QPointF pt);
