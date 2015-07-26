@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>744</width>
-    <height>471</height>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -576,15 +576,15 @@
                 <item>
                  <widget class="GLWidget" name="pose_display" native="true">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <property name="maximumSize">
+                  <property name="minimumSize">
                    <size>
-                    <width>80</width>
-                    <height>90</height>
+                    <width>100</width>
+                    <height>110</height>
                    </size>
                   </property>
                  </widget>
