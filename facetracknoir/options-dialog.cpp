@@ -165,13 +165,12 @@ void OptionsDialog::startstop_trans_calib(bool start)
 void OptionsDialog::poll_tracker_info()
 {
     auto tracker = get_pt();
-    if (tracker)
+    CamInfo info;
+    if (tracker && tracker->get_cam_info(&info))
     {
         QString to_print;
 
         // display caminfo
-        CamInfo info;
-        tracker->get_cam_info(&info);
         to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
         ui.caminfo_label->setText(to_print);
 

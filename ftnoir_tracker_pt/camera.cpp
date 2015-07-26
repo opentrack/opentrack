@@ -43,14 +43,14 @@ void Camera::set_res(int x_res, int y_res)
     }
 }
 
-CamInfo Camera::get_info()
+bool Camera::get_info(CamInfo& ret)
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
     {
-        cv::Mat tmp;
-        _get_frame(&tmp);
+        return false;
     }
-    return cam_info;
+    ret = cam_info;
+    return true;
 }
 
 bool Camera::get_frame(float dt, cv::Mat* frame)
@@ -65,26 +65,25 @@ bool Camera::get_frame(float dt, cv::Mat* frame)
         cam_info.fps = dt_mean > 1e-3 ? 1.0 / dt_mean : 0;
         dt_valid = 0;
     }
+    else
+        qDebug() << "pt camera: can't get frame";
     return new_frame;
 }
 
 void CVCamera::start()
 {
-    if (cap)
-        delete cap;
+    stop();
     cap = new cv::VideoCapture(desired_index);
     _set_res();
     _set_fps();
     // extract camera info
     if (cap->isOpened())
     {
-        active = true;
         active_index = desired_index;
         cam_info.res_x = 0;
         cam_info.res_y = 0;
     } else {
-        delete cap;
-        cap = nullptr;
+        stop();
     }
 }
 
@@ -92,13 +91,19 @@ void CVCamera::stop()
 {
     if (cap)
     {
-        cap->release();
+        const bool opened = cap->isOpened();
+        if (opened)
+        {
+            qDebug() << "pt: freeing camera";
+            cap->release();
+        }
         delete cap;
         cap = nullptr;
         // give opencv time to exit camera threads, etc.
-        portable::sleep(500);
+        if (opened)
+            portable::sleep(500);
+        qDebug() << "camera: assuming stopped";
     }
-    active = false;
 }
 
 bool CVCamera::_get_frame(cv::Mat* frame)
@@ -135,10 +140,6 @@ void CVCamera::_set_res()
 }
 void CVCamera::_set_device_index()
 {
-    if (cap)
-    {
-        cap->release();
-        delete cap;
-    }
-    cap = new cv::VideoCapture(desired_index);
+    if (desired_index != active_index)
+        stop();
 }
