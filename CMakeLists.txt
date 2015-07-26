@@ -283,7 +283,6 @@ set_target_properties(opentrack-version PROPERTIES
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela STATIC TRUE)
 target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
-#opentrack_library(opentrack-filter-ewma ftnoir_filter_ewma2)
 
 opentrack_library(opentrack-proto-fgfs ftnoir_protocol_fg)
 
@@ -313,7 +312,6 @@ if(SDK_FSUIPC)
     if(MSVC)
         set_target_properties(opentrack-proto-fsuipc PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBC.lib")
     endif()
-    #target_link_directories(${SDK_FSUIPC})
 endif()
 
 if(WIN32)
@@ -327,10 +325,6 @@ if(WIN32)
 endif()
 
 opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
-
-if(WIN32)
-    #opentrack_library(opentrack-tracker-joystick ftnoir_tracker_joystick)
-endif()
 
 if(Qt5SerialPort_FOUND AND FALSE)
     opentrack_library(opentrack-tracker-hatire ftnoir_tracker_hatire)
@@ -360,118 +354,14 @@ if(SDK_WINE_PREFIX AND FALSE)
     endif()
 endif()
 
-#opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
-#opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
-
 if(OpenCV_FOUND)
     opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt STATIC YES)
     target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
     target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     link_with_dinput8(opentrack-tracker-pt)
-
-    if(SDK_ARUCO_LIBPATH)
-        #opentrack_library(opentrack-tracker-aruco ftnoir_tracker_aruco)
-        #target_link_libraries(opentrack-tracker-aruco ${SDK_ARUCO_LIBPATH} ${OpenCV_LIBS})
-        #target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-    endif()
-
-#target_link_libraries(opentrack-filter-kalman ${OpenCV_LIBS})
-#target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-
-#if(SDK_HT AND SDK_HT_FLANDMARK)
-#opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-#target_link_libraries(opentrack-tracker-ht opentrack-compat ${SDK_HT} ${SDK_HT_FLANDMARK})
-#link_with_dinput8(opentrack-tracker-ht)
-#target_link_libraries(opentrack-tracker-ht ${OpenCV_LIBS})
-#target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-#endif()
-
-endif()
-
-#opentrack_library(opentrack-tracker-ht ftnoir_tracker_ht)
-#target_link_libraries(opentrack-tracker-ht opentrack-compat)
-#link_with_dinput8(opentrack-tracker-ht)
-
-#link_with_dinput8(opentrack-tracker-joystick)
-
-if(SDK_RIFT AND FALSE)
-    set(link-flags)
-    set(c-flags)
-    if(APPLE)
-        set(link-flags "-framework CoreFoundation -framework CoreGraphics -framework IOKit -framework Quartz")
-        set(c-flags "-fno-strict-aliasing")
-    else()
-		if(NOT MSVC)
-			set(c-flags "-fno-strict-aliasing")
-		endif()
-    endif()
-    opentrack_library(opentrack-tracker-rift ftnoir_tracker_rift LINK ${link-flags} COMPILE ${c-flags})
-    target_include_directories(opentrack-tracker-rift SYSTEM PUBLIC ${SDK_RIFT}/Include ${SDK_RIFT}/Src)
-    if(WIN32)
-        if(MSVC)
-            set(ext lib)
-            set(p)
-        else()
-            set(ext a)
-            set(p lib)
-        endif()
-        target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/${p}LibOVR.${ext} winmm setupapi ws2_32 imagehlp wbemuuid)
-    else()
-        if(NOT APPLE)
-                target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/libLibOVR.a udev Xinerama)
-        else()
-                target_link_libraries(opentrack-tracker-rift ${SDK_RIFT}/libLibOVR.a)
-        endif()
-    endif()
-endif()
-
-if(SDK_HYDRA AND FALSE)
-    opentrack_library(opentrack-tracker-hydra ftnoir_tracker_hydra)
-    target_include_directories(opentrack-tracker-hydra SYSTEM PUBLIC ${SDK_HYDRA}/include ${SDK_HYDRA}/include/sixense_utils)
-    if(WIN32)
-        if(MSVC)
-            set(dir lib)
-            set(ext lib)
-        else()
-            set(dir bin)
-            set(ext dll)
-        endif()
-        target_link_libraries(opentrack-tracker-hydra
-                              "${SDK_HYDRA}/${dir}/win32/release_dll/sixense.${ext}"
-                              #"${SDK_HYDRA}/${dir}/win32/release_dll/sixense_utils.${ext}"
-                             )
-                    install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
-                                  #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
-                            DESTINATION . PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE)
-            else()
-                    if(SDK_HYDRA_AMD64)
-                            set(underscore-sixtyfour _x64)
-                    else()
-                            set(underscore-sixtyfour)
-                    endif()
-                    if(APPLE)
-                            set(underscore-dll _dll)
-                            set(soext dylib)
-                            set(sixense-plat osx)
-                    else()
-                            set(underscore-dll)
-                            set(soext so)
-                            set(sixense-plat linux)
-                    endif()
-                    install(FILES
-                            "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
-                            #"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
-                            DESTINATION .
-                    )
-                    target_link_libraries(opentrack-tracker-hydra
-                                          "${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense${underscore-sixtyfour}.${soext}"
-                                          #"${SDK_HYDRA}/lib/${sixense-plat}${underscore-sixtyfour}/release${underscore-dll}/libsixense_utils${underscore-sixtyfour}.${soext}"
-                                         )
-    endif()
 endif()
 
 if(UNIX OR APPLE)
-    # Qxt bundled :: sorry for this, but gentoo ebuild is broken
     include_directories("qxt-mini/")
     if(APPLE)
         set(qxt-plat mac)
