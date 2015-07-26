@@ -175,7 +175,7 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         // This new feature is very handy for tweaking the curves!
         QPointF last;
         if (_config->getLastPoint(last)) {
-            QPointF pixel_pos = point_to_pixel( QPointF(fabs(last.x()), fabs(last.y())) );
+            QPointF pixel_pos = point_to_pixel(last);
             drawPoint(&p, pixel_pos, QColor(255, 0, 0, 120));
         }
     }
