@@ -91,3 +91,4 @@ void OptionsDialog::doCancel() {
     ui.game_detector->revert();
     close();
 }
+

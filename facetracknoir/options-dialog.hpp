@@ -15,6 +15,7 @@ public:
 private:
     Ui::UI_Settings ui;
     Shortcuts::settings s;
+    void closeEvent(QCloseEvent *) override { doCancel(); }
 private slots:
     void doOK();
     void doCancel();
