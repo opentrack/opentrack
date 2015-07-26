@@ -9,11 +9,7 @@
 #define POINTTRACKER_H
 
 #include <opencv2/core/core.hpp>
-#ifndef OPENTRACK_API
-#   include <boost/shared_ptr.hpp>
-#else
-#   include <memory>
-#endif
+#include <memory>
 #include <vector>
 #include "opentrack-compat/timer.hpp"
 #include "ftnoir_tracker_pt_settings.h"

@@ -48,15 +48,21 @@ void Tracker_PT::reset_command(Command command)
 	commands &= ~command;
 }
 
-float Tracker_PT::get_focal_length()
+bool Tracker_PT::get_focal_length(float& ret)
 {
     QMutexLocker l(&camera_mtx);
-    CamInfo info = camera.get_info();
-    const int w = info.res_x, h = info.res_y;
-    static constexpr double pi = 3.1415926f;
-    const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
-    const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
-    return .5 / tan(.5 * fov);
+    CamInfo info;
+    const bool res = camera.get_info(info);
+    if (res)
+    {
+        static constexpr double pi = 3.14159265359;
+        const int w = info.res_x, h = info.res_y;
+        const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
+        const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
+        ret = .5 / tan(.5 * fov);
+        return true;
+    }
+    return false;
 }
 
 void Tracker_PT::run()
@@ -90,10 +96,14 @@ void Tracker_PT::run()
             bool success = points.size() == PointModel::N_POINTS;
             
             ever_success |= success;
+
+            float fx;
+            if (!get_focal_length(fx))
+                continue;
             
             if (success)
             {
-                point_tracker.track(points, PointModel(s), get_focal_length(), s.dynamic_pose, s.init_phase_timeout);
+                point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
             }
             
             {
@@ -101,7 +111,6 @@ void Tracker_PT::run()
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
-                float fx = get_focal_length();
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
                 points.push_back(p_);
             }

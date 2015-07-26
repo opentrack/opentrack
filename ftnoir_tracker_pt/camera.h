@@ -26,7 +26,7 @@ struct CamInfo
 class Camera
 {
 public:
-        Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1), active(false) {}
+        Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1) {}
         virtual ~Camera() = 0;
 
         // start/stop capturing
@@ -43,7 +43,7 @@ public:
         bool get_frame(float dt, cv::Mat* frame);
 
         // WARNING: returned references are valid as long as object
-        CamInfo get_info();
+        bool get_info(CamInfo &ret);
         CamInfo get_desired() const { return cam_desired; }
 
 protected:
@@ -60,7 +60,6 @@ private:
 protected:
         int desired_index;
         int active_index;
-        bool active;
         CamInfo cam_info;
         CamInfo cam_desired;
 };
@@ -68,7 +67,6 @@ inline Camera::~Camera() {}
 
 // ----------------------------------------------------------------------------
 // camera based on OpenCV's videoCapture
-#ifdef OPENTRACK_API
 class CVCamera : public Camera
 {
 public:
@@ -88,29 +86,6 @@ protected:
 private:
     cv::VideoCapture* cap;
 };
-#else
-// ----------------------------------------------------------------------------
-// Camera based on the videoInput library
-class VICamera : public Camera
-{
-public:
-    VICamera();
-    ~VICamera() { stop(); }
-
-    virtual void start();
-    virtual void stop();
-
-protected:
-    virtual bool _get_frame(cv::Mat* frame);
-    virtual void _set_device_index();
-    virtual void _set_fps();
-    virtual void _set_res();
-
-    videoInput VI;
-    cv::Mat new_frame;
-    unsigned char* frame_buffer;
-};
-#endif
 
 enum RotationType
 {

@@ -42,7 +42,7 @@ public:
 
     Affine pose() { QMutexLocker lock(&mutex); return point_tracker.pose(); }
     int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
-    void get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); *info = camera.get_info(); }
+    bool get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); return camera.get_info(*info); }
 public slots:
     void apply_settings();
 protected:
@@ -56,7 +56,7 @@ private:
     void set_command(Command command);
     void reset_command(Command command);
     
-    float get_focal_length();
+    bool get_focal_length(float &ret);
     
     volatile int commands;
 
