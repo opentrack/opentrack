@@ -49,6 +49,7 @@ protected:
     void resizeEvent(QResizeEvent *) override;
 private:
     void update_range();
+    static constexpr int point_closeness_limit = 12;
 
     QPointF pixel_coord_to_point (const QPointF& point);
     QPointF point_to_pixel (const QPointF& point);

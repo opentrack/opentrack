@@ -218,7 +218,22 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
                 }
             }
             if (!bTouchingPoint) {
-                _config->addPoint(pixel_coord_to_point(e->pos()));
+                bool too_close = false;
+                const auto pos = e->pos();
+
+                for (int i = 0; i < points.size(); i++)
+                {
+                    const QPointF pt = point_to_pixel(points[i]);
+                    const float x = pt.x() - pos.x();
+                    if (point_closeness_limit * point_closeness_limit >= x * x)
+                    {
+                        too_close = true;
+                        break;
+                    }
+                }
+
+                if (!too_close)
+                    _config->addPoint(pixel_coord_to_point(e->pos()));
             }
         }
     }
@@ -258,8 +273,6 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         QPoint pix = e->pos();
         QPointF new_pt = pixel_coord_to_point(pix);
 
-        static constexpr int limit = 16;
-
         for (int i = 0; i < 2; i++)
         {
             bool bad = false;
@@ -267,10 +280,10 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
             {
                 auto other = points[moving_control_point_idx+1];
                 auto other_pix = point_to_pixel(other);
-                bad = pix.x() + limit > other_pix.x();
+                bad = pix.x() + point_closeness_limit > other_pix.x();
                 if (i == 0 && bad)
                 {
-                    pix.setX(other_pix.x() - limit - 1);
+                    pix.setX(other_pix.x() - point_closeness_limit - 1);
                     new_pt = pixel_coord_to_point(pix);
                 }
                 else
@@ -280,10 +293,10 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
             {
                 auto other = points[moving_control_point_idx-1];
                 auto other_pix = point_to_pixel(other);
-                bad = pix.x() - limit < other_pix.x();
+                bad = pix.x() - point_closeness_limit < other_pix.x();
                 if (i == 0 && bad)
                 {
-                    pix.setX(other_pix.x() + limit + 1);
+                    pix.setX(other_pix.x() + point_closeness_limit + 1);
                     new_pt = pixel_coord_to_point(pix);
                 }
                 else
@@ -302,14 +315,16 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         }
     }
     else {
-        bool bTouchingPoint = false;
+        bool is_on_point = false;
         for (int i = 0; i < points.size(); i++) {
-            if ( point_within_pixel(points[i], e->pos() ) ) {
-                bTouchingPoint = true;
+            const QPoint pos = e->pos();
+            if (point_within_pixel(points[i], pos)) {
+                is_on_point = true;
+                break;
             }
         }
 
-        if ( bTouchingPoint ) {
+        if (is_on_point) {
             setCursor(Qt::OpenHandCursor);
         }
         else {
