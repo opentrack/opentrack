@@ -50,7 +50,7 @@ bool Map::getLastPoint(QPointF& point ) {
 
 Map::num Map::getValueInternal(int x) {
     num sign = x < 0 ? -1 : 1;
-    x = std::abs(x);
+    x = abs(x);
     num ret;
     int sz = cur.data.size();
     if (sz == 0)
