@@ -177,6 +177,7 @@ const QList<QPointF> Map::getPoints() {
 
 void Map::invalidate_unsaved_settings()
 {
+    QMutexLocker foo(&_mutex);
     cur = saved;
     reload();
 }
