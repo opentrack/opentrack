@@ -44,13 +44,13 @@ bool Map::getLastPoint(QPointF& point ) {
 
 Map::num Map::getValueInternal(int x) {
     num sign = x < 0 ? -1 : 1;
-    x = abs(x);
+    x = std::abs(x);
     num ret;
     int sz = cur.data.size();
     if (sz == 0)
         ret = 0;
     else
-        ret = cur.data[std::min<unsigned>(x, sz-1)];
+        ret = cur.data[std::min<unsigned>(x, sz-1)] * max_y / integral_max;
     return ret * sign;
 }
 
@@ -75,29 +75,29 @@ void Map::reload() {
         QList<QPointF> input = cur.input;
         auto& data = cur.data;
 
-        data = std::vector<num>(value_count);
+        data = std::vector<integral>(value_count);
         const int mult = precision();
         
         const int sz = data.size();
         
         for (int i = 0; i < sz; i++)
-            data[i] = -1;
+            data[i] = integral_max;
         
         if (input.size() == 1)
         {
             for (int k = 0; k < input[0].x() * mult; k++) {
                 if (k < sz)
-                    data[k] = input[0].y() * k / (input[0].x() * mult);
+                    data[k] = input[0].y() * k / (input[0].x() * mult) / max_y * integral_max;
             }
         }
         else if (input[0].x() > 1e-2)
             input.prepend(QPointF(0, 0));
         
         for (int i = 0; i < sz; i++) {
-            QPointF p0 = ensureInBounds(input, i - 1);
-            QPointF p1 = ensureInBounds(input, i);
-            QPointF p2 = ensureInBounds(input, i + 1);
-            QPointF p3 = ensureInBounds(input, i + 2);
+            const QPointF p0 = ensureInBounds(input, i - 1);
+            const QPointF p1 = ensureInBounds(input, i);
+            const QPointF p2 = ensureInBounds(input, i + 1);
+            const QPointF p3 = ensureInBounds(input, i + 2);
 
             using n = double;
             const n p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
@@ -105,35 +105,39 @@ void Map::reload() {
             
             // multiplier helps fill in all the x's needed
             const int mult_ = mult * 20;
-            int end = std::min<int>(sz, p2.x() * mult_);
-            int start = p1.x() * mult;
+            const int end = std::min<int>(sz, p2.x() * mult_);
+            const int start = p1.x() * mult;
             const n max = end - start;
             
             for (int j = start; j < end; j++) {
-                n t = (j - start) / max;
-                n t2 = t*t;
-                n t3 = t*t*t;
+                const n t = (j - start) / max;
+                const n t2 = t*t;
+                const n t3 = t*t*t;
 
-                int x = .5 * ((2. * p1_x) +
-                              (-p0_x + p2_x) * t +
-                              (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
-                              (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
-                        * mult;
+                const int x = .5 * ((2. * p1_x) +
+                                    (-p0_x + p2_x) * t +
+                                    (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
+                                    (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
+                                 * mult;
+
+                if (x < 0 || x >= sz || data[x] != integral_max)
+                    continue;
                 
-                num y = .5 * ((2. * p1_y) +
-                              (-p0_y + p2_y) * t +
-                              (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
-                              (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
-                
-                if (x >= 0 && x < sz)
-                    data[x] = y;
+                const n y = .5 * ((2. * p1_y) +
+                                  (-p0_y + p2_y) * t +
+                                  (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
+                                  (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
+
+                const n y_ = std::min<n>(max_y, std::max<n>(y, 0));
+
+                data[x] = y_ / max_y * integral_max;
             }
         }
         
         num last = 0;
         for (int i = 0; i < sz; i++)
         {
-            if (data[i] < 0)
+            if (data[i] == integral_max)
                 data[i] = last;
             last = data[i];
         }
@@ -235,6 +239,6 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
 
 int Map::precision() const {
     if (cur.input.size())
-        return value_count / std::max<num>(1.f, (cur.input[cur.input.size() - 1].x()));
+        return value_count / std::max<num>(1, (cur.input[cur.input.size() - 1].x()));
     return 1;
 }
