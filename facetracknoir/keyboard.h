@@ -23,9 +23,14 @@ public:
         case 50331680: // shift
         case 150994979: // alt
         case 218103841: // ctrl+alt
+        case 218103843: // ctrl+alt
         case 117440545: // ctrl+shift
+        case 117440544: // ctrl+shift
         case 184549408: // alt+shift
+        case 184549411: // alt+shift
         case 251658272: // ctrl+alt+shift
+        case 251658275: // ctrl+alt+shift
+        case 251658273: // ctrl+alt+shift
             break;
         default:
             emit key_pressed(QKeySequence(event->key() | event->modifiers()));
