@@ -119,7 +119,7 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 #ifdef _WIN32
     const auto our_mods_ = our_mods;
     our_mods |= Qt::ShiftModifier;
-    switch (qt & ~Qt::ShiftModifier)
+    switch (qt & ~Qt::KeyboardModifierMask)
     {
     case Qt::Key::Key_BraceLeft: qt = Qt::Key::Key_BracketLeft; break;
     case Qt::Key::Key_BraceRight: qt = Qt::Key::Key_BracketRight; break;
