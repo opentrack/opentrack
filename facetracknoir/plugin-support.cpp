@@ -1,5 +1,6 @@
 #include "plugin-support.h"
 #include <QCoreApplication>
+#include <QFile>
 
 #if !(defined(_WIN32))
 #   include <dlfcn.h>

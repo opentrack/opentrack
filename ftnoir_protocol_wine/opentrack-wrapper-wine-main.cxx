@@ -34,7 +34,7 @@ private:
 int main(void)
 {
 	ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTMemMap));
+    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
 	if(!lck_posix.success()) {
 		printf("Can't open posix map: %d\n", errno);
 		return 1;
@@ -44,8 +44,8 @@ int main(void)
 		return 1;
 	}
 	WineSHM* shm_posix = (WineSHM*) lck_posix.mem;
-    FTMemMap* shm_wine = (FTMemMap*) lck_wine.mem;
-    TFreeTrackData* data = &shm_wine->data;
+    FTHeap* shm_wine = (FTHeap*) lck_wine.mem;
+    FTData* data = &shm_wine->data;
     create_registry_key();
 	while (1) {
 		(void) Sleep(10);
