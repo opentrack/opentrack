@@ -6,7 +6,6 @@
 #   include <dinput.h>
 
 #include <QList>
-#include <QKeySequence>
 #include <QVariant>
 #include <QDebug>
 #include "win32-shortcuts.h"
