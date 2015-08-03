@@ -136,7 +136,7 @@ void Map::reload() {
 
                 const n y_ = std::min<n>(max_y, std::max<n>(y, 0));
 
-                data[x] = y_ / max_y * integral_max;
+                data[x] = y_ * integral_max / max_y;
             }
         }
         

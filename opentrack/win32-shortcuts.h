@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#include <QKeySequence>
+
 struct win_key;
 
 extern QList<win_key> windows_key_mods;

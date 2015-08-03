@@ -6,7 +6,6 @@
 #   include <dinput.h>
 
 #include <QList>
-#include <QKeySequence>
 #include <QVariant>
 #include <QDebug>
 #include "win32-shortcuts.h"
@@ -116,7 +115,6 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     auto qt = static_cast<QVariant>(qt_).toInt();
     auto our_mods = qt & Qt::KeyboardModifierMask;
-#ifdef _WIN32
     const auto our_mods_ = our_mods;
     our_mods |= Qt::ShiftModifier;
     switch (qt & ~Qt::KeyboardModifierMask)
@@ -145,7 +143,6 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
     case Qt::Key::Key_Bar: qt = Qt::Key::Key_Backslash; break;
     default: our_mods = our_mods_; break;
     }
-#endif
 
     const auto key = qt & ~Qt::KeyboardModifierMask;
     for (auto& wk : windows_key_sequences)
