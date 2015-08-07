@@ -144,11 +144,12 @@ void Tracker::run()
             if (!camera.read(color))
                 continue;
         }
+        static constexpr int thres_param2 = 5;
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
         const int scale = grayscale.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(box_sizes[box_idx], 5);
+        detector.setThresholdParams(box_sizes[box_idx], thres_param2);
 
         static constexpr double pi = 3.1415926f;
         const int w = grayscale.cols, h = grayscale.rows;
@@ -177,7 +178,7 @@ void Tracker::run()
         
         if (last_roi.width > 0 && last_roi.height)
         {
-            detector.setThresholdParams(box_sizes[box_idx], 5);
+            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
 
@@ -206,7 +207,7 @@ void Tracker::run()
                 qDebug() << "aruco: box size now" << box_sizes[box_idx];
                 failed = 0;
             }
-            detector.setThresholdParams(box_sizes[box_idx], 5);
+            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
