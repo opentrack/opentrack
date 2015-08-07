@@ -134,6 +134,7 @@ void Tracker::run()
     cv::Vec3d rvec, tvec;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
+    bool otsu = false;
 
     while (!stop)
     {
@@ -182,7 +183,8 @@ void Tracker::run()
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
 
-            if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
+            cv::Mat grayscale_ = grayscale(last_roi).clone();
+            if (detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
                 failed = std::max(0., failed - dt);
@@ -199,6 +201,8 @@ void Tracker::run()
 
         if (!roi_valid)
         {
+            otsu = !otsu;
+            detector._thresMethod = otsu ? aruco::MarkerDetector::FIXED_THRES : aruco::MarkerDetector::ADPT_THRES;
             failed += dt;
             if (failed > max_failed)
             {

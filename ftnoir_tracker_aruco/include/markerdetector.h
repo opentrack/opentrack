@@ -277,6 +277,7 @@ private:
     * This function returns in candidates all the rectangles found in a thresolded image
     */
     void detectRectangles(const cv::Mat &thresImg,vector<MarkerCandidate> & candidates);
+public:
     //Current threshold method
     ThresholdMethods _thresMethod;
     //Threshold parameters
@@ -297,7 +298,7 @@ private:
     cv::Mat grey,thres,thres2,reduced;
     //pointer to the function that analizes a rectangular region so as to detect its internal marker
     int (* markerIdDetector_ptrfunc)(const cv::Mat &in,int &nRotations);
-
+private:
     /**
      */
     bool isInto(cv::Mat &contour,std::vector<cv::Point2f> &b);
