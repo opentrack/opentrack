@@ -46,7 +46,7 @@ double Tracker::map(double pos, Mapping& axis)
     axis.curve.setTrackingActive( !altp );
     axis.curveAlt.setTrackingActive( altp );
     auto& fc = altp ? axis.curveAlt : axis.curve;
-    return fc.getValue(pos) + axis.opts.zero;
+    return fc.getValue(pos);
 }
 
 void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)
@@ -149,7 +149,7 @@ void Tracker::logic()
         if (libs.pFilter)
             libs.pFilter->filter(tmp, value);
     }
-    
+
     for (int i = 0; i < 6; i++)
         value(i) = map(value(i), m(i));
     
@@ -158,7 +158,10 @@ void Tracker::logic()
                      value,
                      value,
                      s.tcomp_tz);
-    
+
+    for (int i = 0; i < 6; i++)
+        value(i) += m(i).opts.zero;
+
     for (int i = 0; i < 6; i++)
         value[i] *= inverts[i] ? -1. : 1.;
 
