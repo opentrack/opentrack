@@ -81,7 +81,12 @@ void Tracker::logic()
     if (!zero_)
         for (int i = 0; i < 6; i++)
         {
-            value(i) = newpose[i];
+            auto& axis = m(i);
+            int k = axis.opts.src;
+            if (k < 0 || k >= 6)
+                value(i) = 0;
+            else
+                value(i) = newpose[k];
             raw(i) = newpose[i];
         }
     else
@@ -157,23 +162,10 @@ void Tracker::logic()
     for (int i = 0; i < 6; i++)
         value[i] *= inverts[i] ? -1. : 1.;
 
-    Pose output_pose_;
-
-    for (int i = 0; i < 6; i++)
-    {
-        auto& axis = m(i);
-        int k = axis.opts.src;
-        if (k < 0 || k >= 6)
-            output_pose_(i) = 0;
-        else
-            output_pose_(i) = value(k);
-    }
-
-
-    libs.pProtocol->pose(output_pose_);
+    libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
-    output_pose = output_pose_;
+    output_pose = value;
     raw_6dof = raw;
 }
 
