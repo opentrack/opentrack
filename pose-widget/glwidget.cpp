@@ -60,6 +60,8 @@ void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float
 
 class Triangle {
     using num = GLWidget::num;
+    using vec2 = GLWidget::vec2;
+    using vec3 = GLWidget::vec3;
 public:
     Triangle(const vec2& p1,
              const vec2& p2,
@@ -89,10 +91,8 @@ private:
     vec2 v0, v1, origin;
 };
 
-static __inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3)
+inline GLWidget::vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
-    using num = GLWidget::num;
-
     vec3 u = p2 - p1;
     vec3 v = p3 - p1;
      
@@ -194,7 +194,7 @@ void GLWidget::project_quad_texture() {
     this->texture = texture;
 }
 
-vec2 GLWidget::project(const vec3 &point)
+GLWidget::vec2 GLWidget::project(const vec3 &point)
 {
     vec3 ret = rotation * point;
     num z = std::max<num>(.75, 1. + translation.z()/-60);
@@ -208,7 +208,7 @@ vec2 GLWidget::project(const vec3 &point)
     return vec2 { z * (ret.x() + x), z * (ret.y() + y) };
 }
 
-vec3 GLWidget::project2(const vec3 &point)
+GLWidget::vec3 GLWidget::project2(const vec3 &point)
 {
     return rotation * point;
 }
