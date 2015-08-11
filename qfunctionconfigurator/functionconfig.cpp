@@ -141,7 +141,7 @@ void Map::reload() {
             }
         }
         
-        num last = 0;
+        integral last = 0;
         for (int i = 0; i < sz; i++)
         {
             if (data[i] == integral_max)
