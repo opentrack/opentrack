@@ -90,7 +90,7 @@ struct Mat
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
         for (int i = 0; i < len; i++)
-            ret += operator()(i) * p2.operator ()(i);
+            ret += operator()(i) * p2(i);
         return ret;
     }
     
@@ -108,7 +108,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) + other(j, i);
+                ret(j, i) = data[j][i] + other(j, i);
         return ret;
     }
     
@@ -117,7 +117,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) - other(j, i);
+                ret(j, i) = data[j][i] - other(j, i);
         return ret;
     }
     
@@ -126,7 +126,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) + other;
+                ret(j, i) = data[j][i] + other;
         return ret;
     }
     
@@ -135,7 +135,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) - other;
+                ret(j, i) = data[j][i] - other;
         return ret;
     }
     
@@ -144,7 +144,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = operator()(j, i) * other;
+                ret(j, i) = data[j][i] * other;
         return ret;
     }
     
