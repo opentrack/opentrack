@@ -47,6 +47,9 @@ template<typename num, int h_, int w_>
 struct Mat
 {
     num data[h_][w_];
+
+    // parameters w_ and h_ are rebound so that SFINAE occurs
+    // removing them causes a compile-time error -sh 20150811
     
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
     __inline operator()(int i) const { return data[i][0]; }
@@ -108,7 +111,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = data[j][i] + other(j, i);
+                ret(j, i) = data[j][i] + other.data[j][i];
         return ret;
     }
     
@@ -117,7 +120,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = data[j][i] - other(j, i);
+                ret(j, i) = data[j][i] - other.data[j][i];
         return ret;
     }
     
