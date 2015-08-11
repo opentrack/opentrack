@@ -167,7 +167,7 @@ void GLWidget::project_quad_texture() {
 
     for (int y = 0; y < sy; y++)
         for (int x = 0; x < sx; x++) {
-            vec2 pos({(num)x, (num)y});
+            vec2 pos({x, y});
             for (int i = 0; i < 2; i++) {
                 vec2 uv;
                 if (triangles[i].barycentric_coords(pos, uv))
