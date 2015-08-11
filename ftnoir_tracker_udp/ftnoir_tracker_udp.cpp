@@ -59,7 +59,10 @@ void FTNoIR_Tracker::data(double *data)
     };
     
     for (int i = 0; i < 3; i++)
-        data[Yaw + i] += values[indices[i]];
+    {
+        int k = std::min<unsigned>(sizeof(values)/sizeof(values[0]), std::max(0, indices[i]));
+        data[Yaw + i] += values[k];
+    }
 }
 
 
