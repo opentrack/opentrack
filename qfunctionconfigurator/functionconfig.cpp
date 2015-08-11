@@ -120,6 +120,7 @@ void Map::reload() {
                 const n t2 = t*t;
                 const n t3 = t*t*t;
 
+                // XXX we could solve for t instead -sh 20150811
                 const int x = .5 * ((2. * p1_x) +
                                     (-p0_x + p2_x) * t +
                                     (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
