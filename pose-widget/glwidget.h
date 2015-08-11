@@ -12,16 +12,17 @@
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/simple-mat.hpp"
 
-typedef dmat<2, 1> vec2;
-typedef dmat<3, 1> vec3;
-typedef dmat<3, 3> rmat;
+typedef Mat<float, 2, 1> vec2;
+typedef Mat<float, 3, 1> vec3;
+typedef Mat<float, 3, 3> rmat;
 
 class GLWidget : public QWidget
 {
 public:
+    using num = float;
     GLWidget(QWidget *parent);
     ~GLWidget();
-    void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
+    void rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z);
 protected:
     void paintEvent ( QPaintEvent * event ) override;
 private:
