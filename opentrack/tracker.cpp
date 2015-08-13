@@ -55,11 +55,11 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
     dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
     const dmat<3, 1> ret = rmat * tvec;
     if (!rz)
-        output[2] = ret(0, 0);
+        output[2] = ret(0);
     else
         output[2] = xyz[2];
-    output[1] = -ret(2, 0);
-    output[0] = -ret(1, 0);
+    output[1] = -ret(2);
+    output[0] = -ret(1);
 }
 
 void Tracker::logic()
@@ -95,7 +95,7 @@ void Tracker::logic()
         
         for (int i = 0; i < 3; i++)
         {
-            raw(i+3) = value(i+3) = mat(i, 0) * r2d;
+            raw(i+3) = value(i+3) = mat(i) * r2d;
             raw(i) = value(i) = t_b[i];
         }
     }
@@ -127,19 +127,19 @@ void Tracker::logic()
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
-            t_b[i] = t(i, 0);
+            t_b[i] = t(i);
         r_b = r;
     }
     
     {
-        double tmp[3] = { t(0, 0) - t_b[0], t(1, 0) - t_b[1], t(2, 0) - t_b[2] };
+        double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         t_compensate(cam, tmp, tmp, false);
         const rmat m_ = r_b.t() * r;
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
             value(i) = tmp[i];
-            value(i+3) = euler(i, 0) * r2d;
+            value(i+3) = euler(i) * r2d;
         }
     }
     
