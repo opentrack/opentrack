@@ -8,6 +8,7 @@
 
 #include "process_detector.h"
 #include "facetracknoir/ui.h"
+#include "opentrack-compat/process-list.hpp"
 #include <QList>
 #include <QFileDialog>
 #include <QComboBox>
@@ -153,36 +154,6 @@ void process_detector::remove()
         ui.tableWidget->removeRow(r);
 }
 
-#ifdef _WIN32
-
-#include <windows.h>
-#include <TlHelp32.h>
-
-static QStringList get_all_executable_names()
-{
-    QStringList ret;
-    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (h == INVALID_HANDLE_VALUE)
-        return ret;
-    
-    PROCESSENTRY32 e;
-    e.dwSize = sizeof(e);
-
-    if (Process32First(h, &e) != TRUE)
-    {
-        CloseHandle(h);
-        return ret;
-    }
-    
-    do {
-        ret.append(e.szExeFile);
-    } while (Process32Next(h, &e) == TRUE);
-        
-    CloseHandle(h);
-    
-    return ret;
-}
-
 bool process_detector_worker::should_stop()
 {
     if (last_exe_name == "")
@@ -237,6 +208,3 @@ bool process_detector_worker::config_to_start(QString& str)
     
     return false;
 }
-
-
-#endif
