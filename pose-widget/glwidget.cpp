@@ -77,11 +77,11 @@ public:
     }
     bool barycentric_coords(const vec2& px, vec2& uv) const
     {
-        vec2 v2 = px - origin;
-        num dot12 = v1.dot(v2);
-        num dot02 = v0.dot(v2);
-        num u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-        num v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+        const vec2 v2 = px - origin;
+        const num dot12 = v1.dot(v2);
+        const num dot02 = v0.dot(v2);
+        const num u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        const num v = (dot00 * dot12 - dot01 * dot02) * invDenom;
         uv = vec2({u, v});
         return (u >= 0) && (v >= 0) && (u + v <= 1);
     }
