@@ -509,6 +509,11 @@ if(CMAKE_SYSTEM STREQUAL LINUX)
     link_libraries(rt)
 endif()
 
+if(APPLE)
+    # for process detector
+    target_link_libraries(opentrack proc)
+endif()
+
 # ----
 
 # make install

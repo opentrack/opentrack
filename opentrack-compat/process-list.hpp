@@ -36,10 +36,12 @@ static QStringList get_all_executable_names()
 #elif defined __APPLE__
 #include <libproc.h>
 #include <sys/param.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #include <cerrno>
+#include <cstring>
 #include <vector>
 
-// link to libproc
 template<typename = void>
 static QStringList get_all_executable_names()
 {
@@ -51,21 +53,69 @@ static QStringList get_all_executable_names()
         int numproc = proc_listpids(PROC_ALL_PIDS, 0, nullptr, 0);
         if (numproc == -1)
         {
-            qDebug() << "numproc failed" << errno;
-            break;
+            qDebug() << "proc_listpids numproc failed" << errno;
+            return ret;
         }
         vec.resize(numproc);
         int cnt = proc_listpids(PROC_ALL_PIDS, 0, &vec[0], sizeof(int) * numproc);
+
         if (cnt <= numproc)
         {
-            char name[2 * 2 * MAXCOMLEN + 1];
-            for (int i = 0; i < cnt; i++)
+            std::vector<char> arglist;
+            int mib[2] { CTL_KERN, KERN_ARGMAX };
+            size_t sz = sizeof(int);
+            int maxarg = 0;
+            if (sysctl(mib, 2, &maxarg, &sz, NULL, 0) == -1)
             {
-                int ret = proc_name(vec[i], name, sizeof(name)-1);
-                if (ret <= 0)
+                qDebug() << "sysctl KERN_ARGMAX" << errno;
+                return ret;
+            }
+            arglist.resize(maxarg);
+            for (int i = 0; i < numproc; i++)
+            {
+                size_t maxarg_ = (size_t)maxarg;
+                int mib[3] { CTL_KERN, KERN_PROCARGS2, vec[i] };
+                if (sysctl(mib, 3, &arglist[0], &maxarg_, NULL, 0) == -1)
+                {
+                    //qDebug() << "sysctl KERN_PROCARGS2" << vec[i] << errno;
                     continue;
-                name[ret] = '\0';
-                ret.append(name);
+                }
+                QStringList cmdline;
+                for (unsigned j = sizeof(int) + strlen(&arglist[sizeof(int)]); j < maxarg_; j++)
+                {
+                    QString arg(&arglist[j]);
+                    if (arg.size() != 0)
+                    {
+                        cmdline << arg;
+                        j += arg.size();
+                    }
+                }
+                if (cmdline.size() > 0)
+                {
+                    int idx = cmdline[0].lastIndexOf('/');
+                    if (idx != -1)
+                    {
+                        QString tmp = cmdline[0].mid(idx+1);
+                        if (cmdline.size() > 1 && (tmp == "wine.bin" || tmp == "wine"))
+                        {
+                            idx = cmdline[1].lastIndexOf('/');
+                            if (idx == -1)
+                                idx = cmdline[1].lastIndexOf('\\');
+                            if (idx != -1)
+                            {
+                                ret.append(cmdline[1].mid(idx+1));
+                            }
+                            else
+                                ret.append(cmdline[1]);
+                        }
+                        else
+                        {
+                            ret.append(tmp);
+                        }
+                    }
+                    else
+                        ret.append(cmdline[0]);
+                }
             }
             return ret;
         }
