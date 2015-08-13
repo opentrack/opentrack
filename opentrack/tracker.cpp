@@ -197,10 +197,6 @@ void Tracker::run() {
     }
 
     {
-        // do one last pass with origin pose
-        for (int i = 0; i < 6; i++)
-            newpose[i] = 0;
-        logic();
         // filter may inhibit exact origin
         Pose p;
         libs.pProtocol->pose(p);
