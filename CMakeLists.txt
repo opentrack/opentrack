@@ -37,11 +37,7 @@ if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set(my-qt-deps)
-if(WIN32) # hack to avoid breakage on buildbot
-    set(my-qt-deps ws2_32)
-endif()
-set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${my-qt-deps})
+set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
