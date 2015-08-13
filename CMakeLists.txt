@@ -124,6 +124,7 @@ macro(opentrack_library n dir)
     if(NOT foolib_STATIC)
         install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
+    opentrack_compat(${n})
 endmacro()
 
 function(link_with_dinput8 n)
