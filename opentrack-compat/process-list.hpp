@@ -141,7 +141,12 @@ static QStringList get_all_executable_names()
         // note, wine sets argv[0] so no parsing like in OSX case
         auto proc = procs[i];
         if (proc->cmdline && proc->cmdline[0])
-            ret.append(proc->cmdline[0]);
+	{
+	    QString tmp(proc->cmdline[0]);
+	    const int idx = std::max(tmp.lastIndexOf('\\'), tmp.lastIndexOf('/'));
+	    tmp = tmp.mid(idx == -1 ? 0 : idx+1);
+            ret.append(tmp);
+	}
         freeproc(procs[i]);
     }
     free(procs);
