@@ -144,7 +144,11 @@ IF(WIN32)
     SET(SDK_CONSOLE_DEBUG FALSE CACHE BOOL "Console window visible at runtime")
 ENDIF()
 
-IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR APPLE)
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(LINUX TRUE)
+endif()
+
+if(LINUX OR APPLE)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support")
 endif()
@@ -505,13 +509,14 @@ endif()
 link_with_dinput8(opentrack)
 target_link_libraries(opentrack ${MY_QT_LIBS})
 
-if(CMAKE_SYSTEM STREQUAL LINUX)
-    link_libraries(rt)
-endif()
-
 if(APPLE)
     # for process detector
     target_link_libraries(opentrack proc)
+endif()
+
+if(LINUX)
+    # for process detector
+    target_link_libraries(opentrack procps)
 endif()
 
 # ----

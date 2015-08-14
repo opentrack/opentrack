@@ -124,7 +124,6 @@ static QStringList get_all_executable_names()
 
 #elif defined __linux
 
-// link to procps
 #include <proc/readproc.h>
 #include <cerrno>
 template<typename = void>
@@ -139,10 +138,13 @@ static QStringList get_all_executable_names()
     }
     for (int i = 0; procs[i]; i++)
     {
-        auto& proc = *procs[i];
-        ret.append(proc.cmd);
+        // note, wine sets argv[0] so no parsing like in OSX case
+        auto proc = procs[i];
+        if (proc->cmdline && proc->cmdline[0])
+            ret.append(proc->cmdline[0]);
+        freeproc(procs[i]);
     }
-    freeproctab(procs);
+    free(procs);
     return ret;
 }
 
