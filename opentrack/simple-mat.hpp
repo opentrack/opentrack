@@ -89,7 +89,7 @@ struct Mat
     
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
-    __inline dot(const Mat<num, R, S>& p2) const {
+    dot(const Mat<num, R, S>& p2) const {
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
         for (int i = 0; i < len; i++)
@@ -99,7 +99,7 @@ struct Mat
     
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
-    __inline cross(const Mat<num, R, S>& p2) const
+    cross(const Mat<num, R, S>& p2) const
     {
         return Mat<num, R, S>({y() * p2.z() - p2.y() * z(),
                                p2.x() * z() - x() * p2.z(),
