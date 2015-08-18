@@ -12,10 +12,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wnarrowing"
-#endif
-
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
     Q_INIT_RESOURCE(posewidget);
