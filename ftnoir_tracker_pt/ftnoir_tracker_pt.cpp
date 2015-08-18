@@ -57,8 +57,9 @@ bool Tracker_PT::get_focal_length(float& ret)
     {
         static constexpr double pi = 3.14159265359;
         const int w = info.res_x, h = info.res_y;
-        const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
-        const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
+        const double diag = sqrt(1. + h/(double)w * h/(double)w);
+        const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
+        const double fov = 2.*atan(tan(diag_fov/2.0)/diag);
         ret = .5 / tan(.5 * fov);
         return true;
     }

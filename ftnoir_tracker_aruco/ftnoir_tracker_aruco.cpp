@@ -154,10 +154,11 @@ void Tracker::run()
 
         static constexpr double pi = 3.1415926f;
         const int w = grayscale.cols, h = grayscale.rows;
-        const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
-        const double fov = 2.*atan(tan(diag_fov/2.)/sqrt(1. + diag*diag));
-        const float focal_length_w = .5 * w / tan(.5 * fov);
-        const float focal_length_h = focal_length_w;
+        const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
+        const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
+        const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
+        const float focal_length_w = .5 * w / tan(.5 * fov_w);
+        const float focal_length_h = .5 * h / tan(.5 * fov_h);
 
         intrinsics.at<float> (0, 0) = focal_length_w;
         intrinsics.at<float> (1, 1) = focal_length_h;
