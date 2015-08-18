@@ -41,12 +41,42 @@ namespace {
         enum { P = a == 1 ? 1 : 3 };
         enum { Q = a == 1 ? 3 : 1 };
     };
+
+    template<typename... arglist> struct assignable;
+
+    template<typename num>
+    struct assignable<num> {
+        enum { value = true };
+    };
+
+    template<typename num, typename t, typename... ts>
+    struct assignable<num, t, ts...> {
+        enum { value = std::is_assignable<num, t>::value && assignable<num, ts...>::value };
+    };
+
+    template<typename num, int h, int w, typename...ts>
+    struct is_arglist_correct
+    {
+        enum { value = h * w == sizeof...(ts) && assignable<num, ts...>::value };
+    };
 }
 
 template<typename num, int h_, int w_>
-struct Mat
+class Mat
 {
     num data[h_][w_];
+
+    static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
+
+    struct cast
+    {
+        template<typename u>
+        static num _(u x) { return static_cast<num>(x); }
+    };
+
+    Mat(std::initializer_list<num>&& xs) = delete;
+
+public:
 
     // parameters w_ and h_ are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
@@ -101,9 +131,9 @@ struct Mat
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
     cross(const Mat<num, R, S>& p2) const
     {
-        return Mat<num, R, S>({y() * p2.z() - p2.y() * z(),
-                               p2.x() * z() - x() * p2.z(),
-                               x() * p2.y() - y() * p2.x()});
+        return Mat<num, R, S>(y() * p2.z() - p2.y() * z(),
+                              p2.x() * z() - x() * p2.z(),
+                              x() * p2.y() - y() * p2.x());
     }
     
     Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
@@ -161,9 +191,9 @@ struct Mat
                 num sum = num(0);
 
                 for (int k = 0; k < h_; k++)
-                    sum += data[j][k]*other.data[k][i];
+                    sum += data[j][k]*other(k, i);
 
-                ret.data[j][i] = sum;
+                ret(j, i) = sum;
             }
 
         return ret;
@@ -172,19 +202,29 @@ struct Mat
     inline num operator()(int j, int i) const { return data[j][i]; }
     inline num& operator()(int j, int i) { return data[j][i]; }
 
-    Mat(std::initializer_list<num>&& list)
+    template<typename... ts, typename = typename std::enable_if<is_arglist_correct<num, h_, w_, ts...>::value>>
+    Mat(ts const&... xs)
     {
-        auto iter = list.begin();
-        for (int i = 0; i < h_; i++)
-            for (int j = 0; j < w_; j++)
-                data[i][j] = *iter++;
+        const std::initializer_list<num> init = { cast::_(xs)... };
+        auto iter = init.begin();
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = *iter++;
+    }
+
+    template<typename t>
+    Mat(const t* xs)
+    {
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = num(*xs++);
     }
 
     Mat()
     {
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                data[j][i] = 0;
+                data[j][i] = num(0);
     }
 
     Mat(const num* mem)
@@ -193,6 +233,8 @@ struct Mat
             for (int i = 0; i < w_; i++)
                 data[j][i] = mem[i*h_+j];
     }
+
+    Mat(num* mem) : Mat(const_cast<const num*>(mem)) {}
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
@@ -237,10 +279,10 @@ struct Mat
         if (std::abs(pitch_1) + std::abs(roll_1) + std::abs(yaw_1) > std::abs(pitch_2) + std::abs(roll_2) + std::abs(yaw_2))
         {
             bool fix_neg_pitch = pitch_1 < 0;
-            return dmat<3, 1>({yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2});
+            return dmat<3, 1>(yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2);
         }
         else
-            return dmat<3, 1>({yaw_1, pitch_1, roll_1});
+            return dmat<3, 1>(yaw_1, pitch_1, roll_1);
     }
     
     // tait-bryan angles, not euler

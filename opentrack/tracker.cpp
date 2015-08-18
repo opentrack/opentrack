@@ -52,7 +52,7 @@ double Tracker::map(double pos, Mapping& axis)
 void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
+    dmat<3, 1> tvec( xyz[2], -xyz[0], -xyz[1] );
     const dmat<3, 1> ret = rmat * tvec;
     if (!rz)
         output[2] = ret(0);
@@ -107,7 +107,7 @@ void Tracker::logic()
     };
     const rmat cam = rmat::euler_to_rmat(off);
     rmat r = rmat::euler_to_rmat(&value[Yaw]);
-    dmat<3, 1> t { value(0), value(1), value(2) };
+    dmat<3, 1> t(value(0), value(1), value(2));
     
     r = cam * r;
     
