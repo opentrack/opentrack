@@ -52,40 +52,40 @@ struct Mat
     // removing them causes a compile-time error -sh 20150811
     
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
-    __inline operator()(int i) const { return data[i][0]; }
+    inline operator()(int i) const { return data[i][0]; }
     
     template<int P = h_> typename std::enable_if<equals<P, 1, 1>::value, num>::type
-    __inline operator()(int i) const { return data[0][i]; }
+    inline operator()(int i) const { return data[0][i]; }
     
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 2>::value, num&>::type
-    __inline operator()(int i) { return data[i][0]; }
+    inline operator()(int i) { return data[i][0]; }
     
     template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
-    __inline operator()(int i) { return data[0][i]; }
+    inline operator()(int i) { return data[0][i]; }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
-    __inline x() const { return operator()(0); }
+    inline x() const { return operator()(0); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num>::type
-    __inline y() const { return operator()(1); }
+    inline y() const { return operator()(1); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num>::type
-    __inline z() const { return operator()(2); }
+    inline z() const { return operator()(2); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num>::type
-    __inline w() const { return operator()(3); }
+    inline w() const { return operator()(3); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num&>::type
-    __inline x() { return operator()(0); }
+    inline x() { return operator()(0); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num&>::type
-    __inline y() { return operator()(1); }
+    inline y() { return operator()(1); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num&>::type
-    __inline z() { return operator()(2); }
+    inline z() { return operator()(2); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
-    __inline w() { return operator()(3); }
+    inline w() { return operator()(3); }
     
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
@@ -169,8 +169,8 @@ struct Mat
         return ret;
     }
 
-    __inline num operator()(int j, int i) const { return data[j][i]; }
-    __inline num& operator()(int j, int i) { return data[j][i]; }
+    inline num operator()(int j, int i) const { return data[j][i]; }
+    inline num& operator()(int j, int i) { return data[j][i]; }
 
     Mat(std::initializer_list<num>&& list)
     {
