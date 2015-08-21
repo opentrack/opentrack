@@ -360,6 +360,10 @@ endif()
 opentrack_library(opentrack-tracker-udp ftnoir_tracker_udp)
 opentrack_library(opentrack-tracker-freepie-udp ftnoir_tracker_freepie-udp)
 
+if(WIN32)
+	opentrack_library(opentrack-tracker-rs ftnoir_tracker_rs)
+endif()
+
 if(OpenCV_FOUND)
     opentrack_library(opentrack-tracker-pt ftnoir_tracker_pt)
     target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
@@ -551,6 +555,11 @@ endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
+endif()
+
+if(WIN32)
+    install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/rs_impl/bin/opentrack-tracker-rs-impl.exe" DESTINATION . ${opentrack-perms})
+    install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/redist/intel_rs_sdk_runtime_websetup_6.0.21.6598.exe" DESTINATION ./clientfiles/ ${opentrack-perms})
 endif()
 
 if(APPLE)
