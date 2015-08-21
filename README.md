@@ -40,6 +40,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - Tablet-like mouse output (Windows)
 - FlightGear Nasal script
 - FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
+- Intel RealSense 3D cameras (Windows)
 
 ***
 
@@ -60,6 +61,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (PT tracker)
 - Ulf Schreiber (PT tracker)
+- Xavier Hallade (RealSense tracker)
 - furax49 (hatire tracker)
 - Andrzej Czarnowski (quality assurance)
 - uglyDwarf (high CON)
