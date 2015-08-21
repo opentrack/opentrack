@@ -171,9 +171,9 @@ void GLWidget::project_quad_texture() {
                             + uv.x() * (origs[i][2].y() - origs[i][0].y())
                             + uv.y() * (origs[i][1].y() - origs[i][0].y());
                     
-                    int r = orig[py * orig_pitch + px * orig_depth + 2];
-                    int g = orig[py * orig_pitch + px * orig_depth + 1];
-                    int b = orig[py * orig_pitch + px * orig_depth + 0];
+                    const unsigned char r = orig[py * orig_pitch + px * orig_depth + 2];
+                    const unsigned char g = orig[py * orig_pitch + px * orig_depth + 1];
+                    const unsigned char b = orig[py * orig_pitch + px * orig_depth + 0];
 
                     dest[y * dest_pitch + x * dest_depth + 0] = r;
                     dest[y * dest_pitch + x * dest_depth + 1] = g;
