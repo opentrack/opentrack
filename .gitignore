@@ -5,3 +5,6 @@
 # merely git cola saves there
 /patches/
 .DS_Store
+*.obj
+*.exp
+*.pdb
