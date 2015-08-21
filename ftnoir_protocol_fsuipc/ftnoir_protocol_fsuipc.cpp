@@ -39,7 +39,8 @@ FTNoIR_Protocol::FTNoIR_Protocol()
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
 {
-	FSUIPCLib.unload();
+    FSUIPC_Close();
+    FSUIPCLib.unload();
 }
 
 int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
