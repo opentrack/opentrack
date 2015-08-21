@@ -30,7 +30,7 @@ RSTracker::RSTracker() : mPose{ 0,0,0, 0,0,0 } {
     connect(&mThread, &QThread::started,
             &mThread, [this]{
         mSocket.bind(QHostAddress::LocalHost, 4242, QUdpSocket::DontShareAddress);
-        mRealSenseImplProcess.start("clientfiles\\opentrack-tracker-rs-impl.exe", QProcess::NotOpen);
+        mRealSenseImplProcess.start("opentrack-tracker-rs-impl.exe", QProcess::NotOpen);
     }, Qt::DirectConnection);
 
     connect(&mThread, &QThread::finished,
@@ -57,7 +57,7 @@ void RSTracker::readPendingUdpPoseData(){
 
 void RSTracker::rsImplProcessError(QProcess::ProcessError error){
     if(error == QProcess::FailedToStart){
-        QMessageBox::warning(NULL, "RealSense Tracking Error", "Couldn't start the RealSense tracking module.\nMaybe clientfiles\\opentrack-tracker-rs-impl.exe is missing.", QMessageBox::Ok);
+        QMessageBox::warning(NULL, "RealSense Tracking Error", "Couldn't start the RealSense tracking module.\nMaybe opentrack-tracker-rs-impl.exe is missing.", QMessageBox::Ok);
     }
     else if(error == QProcess::Crashed){
         QMessageBox::warning(NULL, "RealSense Tracking Error", "The RealSense tracking module has crashed.", QMessageBox::Ok);
