@@ -80,6 +80,18 @@ MainWindow::MainWindow() :
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
     tie_setting(s.filter_dll, ui.iconcomboFilter);
 
+    connect(ui.iconcomboTrackerSource,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [&](int) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; });
+
+    connect(ui.iconcomboProtocol,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [&](int) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; });
+
+    connect(ui.iconcomboFilter,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [&](int) -> void { if (pFilterDialog) pFilterDialog = nullptr; });
+
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
     connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
@@ -270,22 +282,13 @@ void MainWindow::stopTracker( ) {
     ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
 
     if (pTrackerDialog)
-    {
         pTrackerDialog->unregister_tracker();
-        pTrackerDialog = nullptr;
-    }
 
     if (pProtocolDialog)
-    {
         pProtocolDialog->unregister_protocol();
-        pProtocolDialog = nullptr;
-    }
 
     if (pFilterDialog)
-    {
         pFilterDialog->unregister_filter();
-        pFilterDialog = nullptr;
-    }
 
     work = nullptr;
     libs = SelectedLibraries();
