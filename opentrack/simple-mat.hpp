@@ -68,12 +68,6 @@ class Mat
 
     static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
 
-    struct cast
-    {
-        template<typename u>
-        static num _(u x) { return static_cast<num>(x); }
-    };
-
     Mat(std::initializer_list<num>&& xs) = delete;
 
 public:
@@ -205,7 +199,7 @@ public:
     template<typename... ts, typename = typename std::enable_if<is_arglist_correct<num, h_, w_, ts...>::value>>
     Mat(ts const&... xs)
     {
-        const std::initializer_list<num> init = { cast::_(xs)... };
+        const std::initializer_list<num> init = { static_cast<num>(xs)... };
         auto iter = init.begin();
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
