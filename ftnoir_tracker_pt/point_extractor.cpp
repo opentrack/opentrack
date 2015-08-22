@@ -64,6 +64,18 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
             ret *= 1./norm;
             return ret;
         }
+
+        double effective_area() const
+        {
+            double norm = 0, ret = 0;
+            for (unsigned i = 0; i < areas.size(); i++)
+            {
+                const double w = confids[i];
+                norm += w;
+                ret += w * areas[i];
+            }
+            return ret/norm;
+        }
     };
     
     struct simple_blob
@@ -82,7 +94,7 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
             cv::Vec2d tmp = pos - other.pos;
             return tmp.dot(tmp) < radius_2;
         }
-        static std::vector<blob> merge(std::vector<simple_blob>& blobs)
+        static std::vector<blob> merge(cv::Mat& frame, std::vector<simple_blob>& blobs)
         {
 #ifdef DEBUG_EXTRACTION
             static Timer t;
@@ -117,6 +129,11 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
                 }
                 if (b_.pos.size() >= successes)
                     ret.push_back(b_);
+
+                char buf[64];
+                sprintf(buf, "%d%% %d px", b_.pos.size()*100/successes, (int)(2.*sqrt(b_.effective_area()) / sqrt(3.14)));
+                const auto pos = b_.effective_pos();
+                cv::putText(frame, buf, cv::Point(pos[0]+30, pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
             }
 #ifdef DEBUG_EXTRACTION
             if (debug)
@@ -204,7 +221,7 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     // clear old points
 	points.clear();
     
-    for (auto& b : simple_blob::merge(blobs))
+    for (auto& b : simple_blob::merge(frame, blobs))
     {
         auto pos = b.effective_pos();
         cv::Vec2f p((pos[0] - W/2)/W, -(pos[1] - H/2)/W);
