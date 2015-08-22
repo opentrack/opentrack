@@ -16,12 +16,6 @@
 #include <QSystemTrayIcon>
 #include <QString>
 
-#if !defined(_WIN32)
-#       include "qxt-mini/QxtGlobalShortcut"
-#else
-#       include <windows.h>
-#endif
-
 #include "ui_main.h"
 
 #include "opentrack/options.hpp"
