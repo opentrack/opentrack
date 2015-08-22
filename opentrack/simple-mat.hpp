@@ -42,22 +42,10 @@ namespace {
         enum { Q = a == 1 ? 3 : 1 };
     };
 
-    template<typename... arglist> struct assignable;
-
-    template<typename num>
-    struct assignable<num> {
-        enum { value = true };
-    };
-
-    template<typename num, typename t, typename... ts>
-    struct assignable<num, t, ts...> {
-        enum { value = std::is_assignable<num, t>::value && assignable<num, ts...>::value };
-    };
-
     template<typename num, int h, int w, typename...ts>
     struct is_arglist_correct
     {
-        enum { value = h * w == sizeof...(ts) && assignable<num, ts...>::value };
+        enum { value = h * w == sizeof...(ts) };
     };
 }
 
@@ -196,7 +184,8 @@ public:
     inline num operator()(int j, int i) const { return data[j][i]; }
     inline num& operator()(int j, int i) { return data[j][i]; }
 
-    template<typename... ts, typename = typename std::enable_if<is_arglist_correct<num, h_, w_, ts...>::value>>
+    template<typename... ts, int h__ = h_, int w__ = w_,
+             typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
     Mat(ts const&... xs)
     {
         const std::initializer_list<num> init = { static_cast<num>(xs)... };
