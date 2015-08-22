@@ -116,9 +116,9 @@ MainWindow::MainWindow() :
     if (!QFile(group::ini_pathname()).exists())
     {
         set_profile(OPENTRACK_DEFAULT_CONFIG);
-        if (!QFile(group::ini_pathname()).exists())
+        const auto pathname = group::ini_pathname();
+        if (!QFile(pathname).exists())
         {
-            const auto pathname = group::ini_pathname();
             QFile file(pathname);
             if (file.open(QFile::ReadWrite))
             {
