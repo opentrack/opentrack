@@ -34,7 +34,6 @@
 #include "opentrack/tracker.h"
 #include "opentrack/options.hpp"
 #include <QFileDialog>
-#include <QFileInfo>
 
 #ifndef _WIN32
 #   include <unistd.h>
