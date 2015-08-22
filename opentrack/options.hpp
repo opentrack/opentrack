@@ -30,6 +30,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
 
 #include <cinttypes>
 
@@ -38,8 +39,8 @@
 #include <memory>
 template<typename t> using mem = std::shared_ptr<t>;
 
-#define OPENTRACK_CONFIG_FILENAME_KEY "settings-file"
-#define OPENTRACK_DEFAULT_CONFIG_PATH "/settings/default.ini"
+#define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
+#define OPENTRACK_DEFAULT_CONFIG "default.ini"
 #define OPENTRACK_ORG "opentrack-2.3"
 
 namespace options {
@@ -90,30 +91,30 @@ namespace options {
     public:
         group(const string& name) : name(name)
         {
-            QSettings conf(ini_pathname(), QSettings::IniFormat);
+            auto conf = ini_file();
             auto q_name = QString::fromStdString(name);
-            conf.beginGroup(q_name);
-            for (auto& k_ : conf.childKeys())
+            conf->beginGroup(q_name);
+            for (auto& k_ : conf->childKeys())
             {
                 auto tmp = k_.toUtf8();
                 string k(tmp);
-                kvs[k] = conf.value(k_);
+                kvs[k] = conf->value(k_);
             }
-            conf.endGroup();
+            conf->endGroup();
         }
 
         void save()
         {
-            QSettings s(ini_pathname(), QSettings::IniFormat);
+            auto s = ini_file();
             auto q_name = QString::fromStdString(name);
-            s.beginGroup(q_name);
+            s->beginGroup(q_name);
             for (auto& i : kvs)
             {
                 auto k = QString::fromStdString(i.first);
-                s.setValue(k, i.second);
+                s->setValue(k, i.second);
             }
-            s.endGroup();
-            s.sync();
+            s->endGroup();
+            s->sync();
         }
 
         template<typename t>
@@ -132,22 +133,40 @@ namespace options {
             return kvs.count(s) != 0;
         }
 
-        static const QString ini_pathname()
+        static QString ini_directory()
         {
+            const auto dirs = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+            if (dirs.size() == 0)
+                return "";
+            if (QDir(dirs[0]).mkpath(OPENTRACK_ORG))
+                return dirs[0] + "/" OPENTRACK_ORG;
+            return "";
+        }
+
+        static QString ini_pathname()
+        {
+            const auto dir = ini_directory();
+            if (dir == "")
+                return "";
             QSettings settings(OPENTRACK_ORG);
-            return settings.value(OPENTRACK_CONFIG_FILENAME_KEY, QCoreApplication::applicationDirPath() + OPENTRACK_DEFAULT_CONFIG_PATH).toString();
+            return dir + "/" + settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
         }
         
         static const QStringList ini_list()
         {
-            QFileInfo info(group::ini_pathname());
-            QDir settings_dir(info.dir());
+            const auto dirname = ini_directory();
+            if (dirname == "")
+                return QStringList();
+            QDir settings_dir(dirname);
             return settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
         }
         
         static const mem<QSettings> ini_file()
         {
-            return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
+            const auto pathname = ini_pathname();
+            if (pathname != "")
+                return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
+            return std::make_shared<QSettings>();
         }
     };
 

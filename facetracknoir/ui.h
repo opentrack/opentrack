@@ -93,22 +93,20 @@ class MainWindow : public QMainWindow, private State
 
     void changeEvent(QEvent* e) override;
 
-    void createIconGroupBox();
     void load_settings();
     void updateButtonState(bool running, bool inertialp);
-    void fill_profile_combobox();
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
+    void save();
+    static bool get_new_config_name_from_dialog(QString &ret);
+    static void set_profile(const QString& profile);
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
     void shortcutZeroed();
     void bindKeyboardShortcuts();
 private slots:
-    void open();
-    void save();
-    void saveAs();
     void exit();
     void profileSelected(int index);
 
@@ -121,6 +119,11 @@ private slots:
 
     void restore_from_tray(QSystemTrayIcon::ActivationReason);
     void maybe_start_profile_from_executable();
+
+    void make_empty_config();
+    void make_copied_config();
+    void open_config_directory();
+    void refresh_config_list();
 public slots:
     void startTracker();
     void stopTracker();
@@ -129,7 +132,5 @@ public:
     ~MainWindow();
     void save_mappings();
     void load_mappings();
-    static QString remove_app_path(const QString full_path);
     static void set_working_directory();
-    static void set_profile(const QString& profile);
 };
