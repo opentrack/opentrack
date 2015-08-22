@@ -34,6 +34,8 @@ private slots:
         QString text = ui.lineEdit->text();
         text = text.replace('/', "");
         text = text.replace('\\', "");
+        if (text != "" && !text.endsWith(".ini"))
+            text += ".ini";
         if (text == "" || QFile(options::group::ini_directory() + "/" + text).exists())
         {
             QMessageBox::warning(this,

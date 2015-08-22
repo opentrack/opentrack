@@ -109,10 +109,7 @@ bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 {
     new_file_dialog dlg;
     dlg.exec();
-    bool b = dlg.is_ok(ret);
-    if (b && !ret.endsWith(".ini"))
-        ret += ".ini";
-    return b;
+    return dlg.is_ok(ret);
 }
 
 MainWindow::~MainWindow()
