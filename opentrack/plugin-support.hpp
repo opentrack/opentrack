@@ -103,7 +103,7 @@ struct dylib {
 #   if defined(__APPLE__)
                     RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
-                    RTLD_NOW|RTLD_GLOBAL
+                    RTLD_LOCAL|RTLD_NOW|RTLD_NOW // XXX RTLD_DEEPBIND on Linux?
 #   endif
                         );
     
