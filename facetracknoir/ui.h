@@ -71,10 +71,6 @@ class MainWindow : public QMainWindow, private State
     void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
     void save();
-    void shortcutRecentered();
-    void shortcutToggled();
-    void shortcutZeroed();
-    void bindKeyboardShortcuts();
     static bool get_new_config_name_from_dialog(QString &ret);
     static void set_profile(const QString& profile);
 private slots:
@@ -96,6 +92,10 @@ private slots:
     void open_config_directory();
     void refresh_config_list();
 public slots:
+    void shortcutRecentered();
+    void shortcutToggled();
+    void shortcutZeroed();
+    void bindKeyboardShortcuts();
     void startTracker();
     void stopTracker();
 public:
