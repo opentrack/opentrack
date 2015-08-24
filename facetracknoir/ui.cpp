@@ -96,8 +96,10 @@ MainWindow::MainWindow() :
             QFile file(pathname);
             if (file.open(QFile::ReadWrite))
             {
+#if 0
                 QTextStream stream(&file);
                 stream << "\n";
+#endif
             }
         }
     }
@@ -163,8 +165,10 @@ void MainWindow::make_empty_config()
         QFile filename(dir + "/" + name);
         if (filename.open(QFile::ReadWrite))
         {
+#if 0
             QTextStream stream(&filename);
             stream << "\n";
+#endif
             refresh_config_list();
         }
     }
