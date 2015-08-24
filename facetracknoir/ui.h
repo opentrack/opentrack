@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow, private State
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
     QTimer det_timer;
-    mem<OptionsDialog> shortcuts_widget;
+    mem<OptionsDialog> options_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
     QPixmap no_feed_pixmap;
@@ -80,7 +80,7 @@ private slots:
     void showTrackerSettings();
     void showProtocolSettings();
     void showFilterSettings();
-    void showKeyboardShortcuts();
+    void show_options_dialog();
     void showCurveConfiguration();
     void showHeadPose();
 
@@ -94,7 +94,7 @@ private slots:
 
     void startTracker();
     void stopTracker();
-    void bindKeyboardShortcuts();
+    void reload_options();
 public slots:
     void shortcutRecentered();
     void shortcutToggled();

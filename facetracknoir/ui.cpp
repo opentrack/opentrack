@@ -32,7 +32,7 @@ MainWindow::MainWindow() :
     ui.video_frame_label->setPixmap(no_feed_pixmap);
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
-    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
+    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
@@ -233,7 +233,7 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.profile_button->setEnabled(not_running);
 }
 
-void MainWindow::bindKeyboardShortcuts()
+void MainWindow::reload_options()
 {
     if (work)
         work->reload_shortcuts();
@@ -266,8 +266,8 @@ void MainWindow::startTracker() {
     
     work = std::make_shared<Work>(s, pose, libs, this, winId());
     
-    bindKeyboardShortcuts();
-    
+    reload_options();
+
     if (pTrackerDialog)
         pTrackerDialog->register_tracker(libs.pTracker.get());
     
@@ -437,9 +437,9 @@ bool mk_window(mem<t>* place, Args... params)
     }
 }
 
-void MainWindow::showKeyboardShortcuts() {
-    if (mk_window(&shortcuts_widget))
-        connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
+void MainWindow::show_options_dialog() {
+    if (mk_window(&options_widget))
+        connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
 }
 
 void MainWindow::showCurveConfiguration() {
