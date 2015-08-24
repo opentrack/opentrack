@@ -91,13 +91,14 @@ private slots:
     void make_copied_config();
     void open_config_directory();
     void refresh_config_list();
+
+    void startTracker();
+    void stopTracker();
+    void bindKeyboardShortcuts();
 public slots:
     void shortcutRecentered();
     void shortcutToggled();
     void shortcutZeroed();
-    void bindKeyboardShortcuts();
-    void startTracker();
-    void stopTracker();
 public:
     MainWindow();
     ~MainWindow();
