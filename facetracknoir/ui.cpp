@@ -12,7 +12,6 @@
 #include "facetracknoir/new_file_dialog.h"
 #include <QFileDialog>
 #include <QDesktopServices>
-#include <QMenu>
 
 #ifndef _WIN32
 #   include <unistd.h>
@@ -74,12 +73,11 @@ MainWindow::MainWindow() :
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
 
-    auto menu = new QMenu;
-    menu->addAction("Create new empty config", this, SLOT(make_empty_config()));
-    menu->addAction("Create new copied config", this, SLOT(make_copied_config()));
-    menu->addAction("Open configuration directory", this, SLOT(open_config_directory()));
-    menu->addAction("Refresh configuration list", this, SLOT(refresh_config_list()));
-    ui.profile_button->setMenu(menu);
+    profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
+    profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
+    profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
+    profile_menu.addAction("Refresh configuration list", this, SLOT(refresh_config_list()));
+    ui.profile_button->setMenu(&profile_menu);
 
     kbd_quit.setEnabled(true);
     

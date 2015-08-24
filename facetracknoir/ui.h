@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QSystemTrayIcon>
 #include <QString>
+#include <QMenu>
 
 #include "ui_main.h"
 
@@ -47,6 +48,7 @@ class MainWindow : public QMainWindow, private State
     mem<IProtocolDialog> pProtocolDialog;
     mem<ITrackerDialog> pTrackerDialog;
     process_detector_worker det;
+    QMenu profile_menu;
 
     mem<dylib> current_tracker()
     {
