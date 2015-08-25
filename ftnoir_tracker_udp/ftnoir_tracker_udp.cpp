@@ -37,6 +37,7 @@ void FTNoIR_Tracker::run() {
 void FTNoIR_Tracker::start_tracker(QFrame*)
 {
 	start();
+    sock.moveToThread(this);
 }
 
 void FTNoIR_Tracker::data(double *data)
