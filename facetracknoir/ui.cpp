@@ -206,8 +206,10 @@ void MainWindow::refresh_config_list()
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
         if (filename.open(QFile::ReadWrite))
         {
+#if 0
             QTextStream stream(&filename);
             stream << "\n";
+#endif
         }
     }
 
