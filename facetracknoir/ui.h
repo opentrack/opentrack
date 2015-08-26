@@ -73,7 +73,7 @@ class MainWindow : public QMainWindow, private State
     void set_title(const QString& game_title = QStringLiteral(""));
     void save();
     static bool get_new_config_name_from_dialog(QString &ret);
-    static void set_profile(const QString& profile);
+    void set_profile(const QString& profile);
 private slots:
     void exit();
     void profileSelected(int index);

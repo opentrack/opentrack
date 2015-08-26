@@ -70,7 +70,7 @@ MainWindow::MainWindow() :
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)), Qt::QueuedConnection);
 
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
@@ -438,15 +438,20 @@ void MainWindow::profileSelected(int index)
 {
     if (index == -1)
         return;
-    
+
+    const auto old_name = group::ini_filename();
+    const auto new_name = ui.iconcomboProfile->itemText(index);
+
+    if (old_name != new_name)
     {
-        QSettings settings(OPENTRACK_ORG);
-        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, ui.iconcomboProfile->itemText(index));
+        {
+            QSettings settings(OPENTRACK_ORG);
+            settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, new_name);
+        }
+
+        set_title();
+        load_settings();
     }
-
-    set_title();
-
-    load_settings();
 }
 
 void MainWindow::shortcutRecentered()
