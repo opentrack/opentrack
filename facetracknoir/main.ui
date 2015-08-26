@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>707</width>
-    <height>492</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -938,7 +938,7 @@
                    </sizepolicy>
                   </property>
                   <property name="maxVisibleItems">
-                   <number>10</number>
+                   <number>20</number>
                   </property>
                  </widget>
                 </item>
