@@ -36,7 +36,7 @@ private slots:
         text = text.replace('\\', "");
         if (text != "" && !text.endsWith(".ini"))
             text += ".ini";
-        if (text == "" || QFile(options::group::ini_directory() + "/" + text).exists())
+        if (text == "" || text == ".ini" || QFile(options::group::ini_directory() + "/" + text).exists())
         {
             QMessageBox::warning(this,
                                  "File exists", "This file already exists. Pick another name.",
