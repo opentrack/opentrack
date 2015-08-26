@@ -159,6 +159,8 @@ void MainWindow::make_empty_config()
     {
         QFile filename(dir + "/" + name);
         (void) filename.open(QFile::ReadWrite);
+        refresh_config_list();
+        ui.iconcomboProfile->setCurrentText(name);
     }
 }
 
@@ -173,6 +175,7 @@ void MainWindow::make_copied_config()
         (void) QFile::remove(new_name);
         (void) QFile::copy(cur, new_name);
         refresh_config_list();
+        ui.iconcomboProfile->setCurrentText(name);
     }
 }
 
