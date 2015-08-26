@@ -49,6 +49,8 @@ MainWindow::MainWindow() :
         ui.iconcomboFilter->addItem(x->icon, x->name);
 
     refresh_config_list();
+    connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
+    config_list_timer.start(1000 * 3);
 
     tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
@@ -76,7 +78,6 @@ MainWindow::MainWindow() :
     profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
     profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
     profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
-    profile_menu.addAction("Refresh configuration list", this, SLOT(refresh_config_list()));
     ui.profile_button->setMenu(&profile_menu);
 
     kbd_quit.setEnabled(true);
@@ -201,6 +202,9 @@ extern "C" volatile const char* opentrack_version;
 
 void MainWindow::refresh_config_list()
 {
+    if (work)
+        return;
+
     if (group::ini_list().size() == 0)
     {
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);

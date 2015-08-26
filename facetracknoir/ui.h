@@ -40,6 +40,7 @@ class MainWindow : public QMainWindow, private State
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
     QTimer det_timer;
+    QTimer config_list_timer;
     mem<OptionsDialog> options_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
