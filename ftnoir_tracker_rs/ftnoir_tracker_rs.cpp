@@ -35,8 +35,8 @@ RSTracker::RSTracker() : mPose{ 0,0,0, 0,0,0 } {
 
     connect(&mThread, &QThread::finished,
             &mThread, [this]{
-            mRealSenseImplProcess.kill();
-            mRealSenseImplProcess.waitForFinished();
+        mRealSenseImplProcess.kill();
+        mRealSenseImplProcess.waitForFinished();
     }, Qt::DirectConnection);
 }
 
@@ -85,7 +85,7 @@ void RSTracker::rsImplProcessFinished(int exitCode){
         if(msgBox.clickedButton() == triggerSdkInstallation){
             bool pStarted = QProcess::startDetached("clientfiles\\intel_rs_sdk_runtime_websetup_6.0.21.6598.exe --finstall=core,face3d --fnone=all");
             if(!pStarted){
-                QMessageBox::warning(0, "Intel® RealSenseTM Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
+                QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
             }
         }
     }
@@ -103,11 +103,11 @@ RSTracker::~RSTracker() {
 }
 
 QString RSTrackerMetaData::name() {
-    return QString("RealSense 3D Face Tracking");
+    return QString("RealSense™ 3D Face Tracking");
 }
 
 QIcon RSTrackerMetaData::icon() {
-    return QIcon(":/images/RS.png");
+    return QIcon(":/images/intel-16x16.png");
 }
 
 OPENTRACK_DECLARE_TRACKER(RSTracker, RSTrackerControls, RSTrackerMetaData)
