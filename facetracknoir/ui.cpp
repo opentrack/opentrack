@@ -95,13 +95,7 @@ MainWindow::MainWindow() :
         if (!QFile(pathname).exists())
         {
             QFile file(pathname);
-            if (file.open(QFile::ReadWrite))
-            {
-#if 0
-                QTextStream stream(&file);
-                stream << "\n";
-#endif
-            }
+            (void) file.open(QFile::ReadWrite);
         }
     }
 }
@@ -164,14 +158,7 @@ void MainWindow::make_empty_config()
     if (dir != "" && get_new_config_name_from_dialog(name))
     {
         QFile filename(dir + "/" + name);
-        if (filename.open(QFile::ReadWrite))
-        {
-#if 0
-            QTextStream stream(&filename);
-            stream << "\n";
-#endif
-            refresh_config_list();
-        }
+        (void) filename.open(QFile::ReadWrite);
     }
 }
 
@@ -208,13 +195,7 @@ void MainWindow::refresh_config_list()
     if (group::ini_list().size() == 0)
     {
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
-        if (filename.open(QFile::ReadWrite))
-        {
-#if 0
-            QTextStream stream(&filename);
-            stream << "\n";
-#endif
-        }
+        (void) filename.open(QFile::ReadWrite);
     }
 
      QStringList ini_list = group::ini_list();
@@ -370,14 +351,6 @@ void MainWindow::showHeadPose()
     work->tracker->get_raw_and_mapped_poses(mapped, raw);
 
     display_pose(mapped, raw);
-
-#if 0
-    if (libs.pProtocol)
-    {
-        const QString name = libs.pProtocol->game_name();
-        ui.game_name->setText(name);
-    }
-#endif
 }
 
 template<typename t>
