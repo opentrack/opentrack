@@ -195,6 +195,8 @@ void MainWindow::refresh_config_list()
     if (work)
         return;
 
+    save();
+
     if (group::ini_list().size() == 0)
     {
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
