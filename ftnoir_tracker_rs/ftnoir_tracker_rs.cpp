@@ -50,8 +50,10 @@ void RSTracker::readPendingUdpPoseData(){
 
     while(mSocket.hasPendingDatagrams()) {
         mSocket.readDatagram((char*)pose, sizeof(pose));
-        QMutexLocker foo(&mMutex);
-        memcpy(mPose, pose, sizeof(pose));
+        {
+            QMutexLocker foo(&mMutex);
+            memcpy(mPose, pose, sizeof(pose));
+        }
     }
 }
 
