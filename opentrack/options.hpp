@@ -143,6 +143,12 @@ namespace options {
             return "";
         }
 
+        static QString ini_filename()
+        {
+            QSettings settings(OPENTRACK_ORG);
+            return settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+        }
+
         static QString ini_pathname()
         {
             const auto dir = ini_directory();

@@ -203,7 +203,7 @@ void MainWindow::refresh_config_list()
 
      QStringList ini_list = group::ini_list();
      set_title();
-     QString current = QFileInfo(group::ini_pathname()).fileName();
+     QString current = group::ini_filename();
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
@@ -343,7 +343,7 @@ void MainWindow::set_title(const QString& game_title_)
     QString game_title;
     if (game_title_ != "")
         game_title = " :: " + game_title_;
-    QString current = QFileInfo(group::ini_pathname()).fileName();
+    QString current = group::ini_filename();
     setWindowTitle(const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ") + current + game_title);
 }
 
