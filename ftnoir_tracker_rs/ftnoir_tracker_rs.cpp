@@ -103,7 +103,7 @@ RSTracker::~RSTracker() {
 }
 
 QString RSTrackerMetaData::name() {
-    return QString("RealSense™ 3D Face Tracking");
+    return QString("Intel® RealSense™ Technology");
 }
 
 QIcon RSTrackerMetaData::icon() {
