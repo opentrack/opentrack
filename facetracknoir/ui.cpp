@@ -195,8 +195,6 @@ void MainWindow::refresh_config_list()
     if (work)
         return;
 
-    save();
-
     if (group::ini_list().size() == 0)
     {
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
@@ -444,6 +442,8 @@ void MainWindow::profileSelected(int index)
 
     if (old_name != new_name)
     {
+        save();
+
         {
             QSettings settings(OPENTRACK_ORG);
             settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, new_name);
