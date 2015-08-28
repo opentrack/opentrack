@@ -50,6 +50,7 @@ class MainWindow : public QMainWindow, private State
     mem<ITrackerDialog> pTrackerDialog;
     process_detector_worker det;
     QMenu profile_menu;
+    bool is_refreshing_profiles;
 
     mem<dylib> current_tracker()
     {

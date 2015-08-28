@@ -22,7 +22,8 @@
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/images/no-feed.png")
+    no_feed_pixmap(":/images/no-feed.png"),
+    is_refreshing_profiles(false)
 {
     ui.setupUi(this);
 
@@ -70,7 +71,7 @@ MainWindow::MainWindow() :
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)), Qt::QueuedConnection);
+    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
 
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
@@ -204,9 +205,11 @@ void MainWindow::refresh_config_list()
      QStringList ini_list = group::ini_list();
      set_title();
      QString current = group::ini_filename();
+     is_refreshing_profiles = true;
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
+     is_refreshing_profiles = false;
      ui.iconcomboProfile->setCurrentText(current);
 }
 
@@ -434,7 +437,7 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(int index)
 {
-    if (index == -1)
+    if (index == -1 || is_refreshing_profiles)
         return;
 
     const auto old_name = group::ini_filename();
