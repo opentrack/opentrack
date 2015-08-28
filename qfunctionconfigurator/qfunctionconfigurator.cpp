@@ -162,6 +162,8 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
         if (points.size() && moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
+            if (points[0].x() > 1e-2)
+                points.prepend(QPointF(0, 0));
             QPointF prev = point_to_pixel(points[0]);
             for (int i = 1; i < points.size(); i++) {
                 auto tmp = point_to_pixel(points[i]);
