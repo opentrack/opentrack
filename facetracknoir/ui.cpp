@@ -234,7 +234,6 @@ void MainWindow::reload_options()
 }
 
 void MainWindow::startTracker() {
-    s.b->save();
     load_settings();
 
     // tracker dtor needs run first
