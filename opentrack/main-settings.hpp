@@ -15,10 +15,12 @@
 using namespace options;
 
 struct axis_opts {
+    pbundle b;
     value<double> zero;
     value<bool> invert, altp;
     value<int> src;
     axis_opts(pbundle b, QString pfx, int idx) :
+        b(b),
         zero(b, n(pfx, "zero-pos"), 0),
         invert(b, n(pfx, "invert-sign"), false),
         altp(b, n(pfx, "alt-axis-sign"), false),
