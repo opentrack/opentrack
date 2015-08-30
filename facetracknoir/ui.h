@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow, private State
     process_detector_worker det;
     QMenu profile_menu;
     bool is_refreshing_profiles;
+    QTimer save_timer;
 
     mem<dylib> current_tracker()
     {
@@ -72,10 +73,11 @@ class MainWindow : public QMainWindow, private State
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
-    void save();
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile(const QString& profile);
 private slots:
+    void _save();
+    void save();
     void exit();
     void profileSelected(QString name);
 
