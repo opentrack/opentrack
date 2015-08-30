@@ -83,7 +83,6 @@ public:
     TrackerControls();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
-    QList<GUID> guids;
     Ui::UIJoystickControls ui;
     FTNoIR_Tracker* tracker;
     settings s;
