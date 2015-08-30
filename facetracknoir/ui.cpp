@@ -71,7 +71,7 @@ MainWindow::MainWindow() :
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+    connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profileSelected(QString)));
 
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
@@ -434,13 +434,13 @@ void MainWindow::exit() {
     QCoreApplication::exit(0);
 }
 
-void MainWindow::profileSelected(int index)
+void MainWindow::profileSelected(QString name)
 {
-    if (index == -1 || is_refreshing_profiles)
+    if (name == "" || is_refreshing_profiles)
         return;
 
     const auto old_name = group::ini_filename();
-    const auto new_name = ui.iconcomboProfile->itemText(index);
+    const auto new_name = name;
 
     if (old_name != new_name)
     {

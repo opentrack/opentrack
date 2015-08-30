@@ -77,7 +77,7 @@ class MainWindow : public QMainWindow, private State
     void set_profile(const QString& profile);
 private slots:
     void exit();
-    void profileSelected(int index);
+    void profileSelected(QString name);
 
     void showTrackerSettings();
     void showProtocolSettings();
