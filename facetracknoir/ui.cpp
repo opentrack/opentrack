@@ -58,16 +58,16 @@ MainWindow::MainWindow() :
     tie_setting(s.filter_dll, ui.iconcomboFilter);
 
     connect(ui.iconcomboTrackerSource,
-            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [&](int) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save(); });
+            &QComboBox::currentTextChanged,
+            [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save(); });
 
     connect(ui.iconcomboProtocol,
-            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [&](int) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save(); });
+            &QComboBox::currentTextChanged,
+            [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save(); });
 
     connect(ui.iconcomboFilter,
-            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [&](int) -> void { if (pFilterDialog) pFilterDialog = nullptr; save(); });
+            &QComboBox::currentTextChanged,
+            [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save(); });
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
