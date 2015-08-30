@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>251</width>
+    <width>498</width>
     <height>303</height>
    </rect>
   </property>
@@ -79,6 +79,12 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="1">
        <widget class="QComboBox" name="joy_1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>1</number>
         </property>
@@ -131,6 +137,12 @@
       </item>
       <item row="1" column="1">
        <widget class="QComboBox" name="joy_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>2</number>
         </property>
@@ -183,6 +195,12 @@
       </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="joy_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>3</number>
         </property>
@@ -235,6 +253,12 @@
       </item>
       <item row="3" column="1">
        <widget class="QComboBox" name="joy_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>4</number>
         </property>
@@ -287,6 +311,12 @@
       </item>
       <item row="4" column="1">
        <widget class="QComboBox" name="joy_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>5</number>
         </property>
@@ -339,6 +369,12 @@
       </item>
       <item row="5" column="1">
        <widget class="QComboBox" name="joy_6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>6</number>
         </property>

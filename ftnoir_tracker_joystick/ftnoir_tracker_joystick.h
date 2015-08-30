@@ -14,6 +14,7 @@
 #include <QList>
 #include <QMutex>
 #include <QFrame>
+#include <QStringList>
 #include <cmath>
 #include "opentrack/plugin-api.hpp"
 #ifndef DIRECTINPUT_VERSION
@@ -86,6 +87,11 @@ public:
     Ui::UIJoystickControls ui;
     FTNoIR_Tracker* tracker;
     settings s;
+    struct joys {
+        QString name;
+        QString guid;
+    };
+    QList<joys> _joys;
 private slots:
     void doOK();
     void doCancel();
