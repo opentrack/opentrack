@@ -234,8 +234,6 @@ void MainWindow::reload_options()
 }
 
 void MainWindow::startTracker() {
-    load_settings();
-
     // tracker dtor needs run first
     work = nullptr;
 
