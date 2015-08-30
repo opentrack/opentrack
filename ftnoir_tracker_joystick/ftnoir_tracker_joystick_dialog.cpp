@@ -6,7 +6,8 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
     auto self = ( TrackerControls* )pContext;
 
     self->guids.push_back(pdidInstance->guidInstance);
-    self->ui.joylist->addItem(QString(pdidInstance->tszInstanceName));
+    self->ui.joylist->addItem(QString(pdidInstance->tszInstanceName),
+                              guid_to_string(pdidInstance->guidInstance));
 
     return DIENUM_CONTINUE;
 }
@@ -49,6 +50,7 @@ fin:
 }
 
 void TrackerControls::doOK() {
+    s.guid = ui.joylist->currentData().toString();
     s.b->save();
     if (tracker)
         tracker->reload();

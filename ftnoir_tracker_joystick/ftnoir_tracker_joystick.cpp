@@ -82,6 +82,17 @@ static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance
 
     if (stop)
     {
+        if (self->guid_to_check.size())
+        {
+            QString guid = guid_to_string(pdidInstance->guidInstance);
+            if (guid != self->guid_to_check)
+            {
+                return DIENUM_CONTINUE;
+            }
+            else
+                qDebug() << "guid ok" << self->guid_to_check;
+        }
+
         (void) self->g_pDI->CreateDevice( pdidInstance->guidInstance, &self->g_pJoystick, NULL);
         qDebug() << "device" << static_cast<QString>(self->s.joyid);
     }
@@ -103,13 +114,32 @@ void FTNoIR_Tracker::start_tracker(QFrame* frame)
         goto fail;
     }
 
+    guid_to_check = s.guid;
+
     if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
                                          EnumJoysticksCallback,
                                          this,
                                          DIEDFL_ATTACHEDONLY)))
     {
-        qDebug() << "enum2";
-        goto fail;
+        if (guid_to_check.isEmpty())
+        {
+            qDebug() << "enum1";
+            goto fail;
+        }
+    }
+
+    if (!g_pJoystick && guid_to_check.size())
+    {
+        guid_to_check = "";
+
+        if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
+                                             EnumJoysticksCallback,
+                                             this,
+                                             DIEDFL_ATTACHEDONLY)))
+        {
+            qDebug() << "enum2";
+            goto fail;
+        }
     }
 
     if (!g_pJoystick)
