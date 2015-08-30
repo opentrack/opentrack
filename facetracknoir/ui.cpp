@@ -99,6 +99,12 @@ MainWindow::MainWindow() :
             (void) file.open(QFile::ReadWrite);
         }
     }
+
+    if (group::ini_directory() == "")
+        QMessageBox::warning(this,
+                             "Configuration not saved.",
+                             "Can't create configuration directory! Expect major malfunction.",
+                             QMessageBox::Ok, QMessageBox::NoButton);
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
