@@ -121,11 +121,8 @@ void FTNoIR_Tracker::start_tracker(QFrame* frame)
                                          this,
                                          DIEDFL_ATTACHEDONLY)))
     {
-        if (guid_to_check.isEmpty())
-        {
-            qDebug() << "enum1";
-            goto fail;
-        }
+        qDebug() << "enum1";
+        goto fail;
     }
 
     if (!g_pJoystick && guid_to_check.size())
