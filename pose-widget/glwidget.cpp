@@ -162,6 +162,8 @@ void GLWidget::project_quad_texture() {
             vec2 pos(x, y);
             for (int i = 0; i < 2; i++) {
                 vec2 uv;
+                // XXX knowing center of the lookup pos,
+                // we have symmetry so only one lookup is needed -sh 20150831
                 if (triangles[i].barycentric_coords(pos, uv))
                 {
                     const int px = origs[i][0].x()
