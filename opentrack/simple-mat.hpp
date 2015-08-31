@@ -52,6 +52,9 @@ namespace {
 template<typename num, int h_, int w_>
 class Mat
 {
+#ifdef __GNUC__
+    __restrict
+#endif
     num data[h_][w_];
 
     static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
