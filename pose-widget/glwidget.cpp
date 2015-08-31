@@ -105,11 +105,8 @@ void GLWidget::project_quad_texture() {
         vec3(sx-1, sy-1, 0.)
     };
     
-    for (int i = 0; i < 4; i++) {
-        pt[i] = project(vec3(corners[i].x() - sx/2, corners[i].y() - sy/2, 0));
-        pt[i].x() += sx/2.;
-        pt[i].y() += sy/2.;
-    }
+    for (int i = 0; i < 4; i++)
+        pt[i] = project(vec3(corners[i].x() - sx/2, corners[i].y() - sy/2, 0)) + vec2(sx/2, sy/2);
     
     vec3 normal1(0, 0, 1);
     vec3 normal2;
@@ -126,15 +123,11 @@ void GLWidget::project_quad_texture() {
     
     int ow = tex.width(), oh = tex.height();
 
-    vec2 p2[4];
-
-    for (int i = 0; i < 4; i++)
-        p2[i] = vec2(pt[i].x(), pt[i].y());
     QImage texture(QSize(sx, sy), QImage::Format_RGB888);
     QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
     texture.fill(bgColor);
     
-    const vec2 projected[2][3] = { { p2[0], p2[1], p2[2] }, { p2[3], p2[1], p2[2] } };
+    const vec2 projected[2][3] = { { pt[0], pt[1], pt[2] }, { pt[3], pt[1], pt[2] } };
     const vec2 origs[2][3] = {
         { vec2(0, 0), vec2(ow-1, 0), vec2(0, oh-1) },
         { vec2(ow-1, oh-1), vec2(ow-1, 0), vec2(0, oh-1) }
