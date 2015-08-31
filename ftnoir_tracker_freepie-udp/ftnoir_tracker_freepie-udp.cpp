@@ -104,6 +104,7 @@ void TrackerImpl::run() {
 void TrackerImpl::start_tracker(QFrame*)
 {
     start();
+    sock.moveToThread(this);
 }
 
 void TrackerImpl::data(double *data)
