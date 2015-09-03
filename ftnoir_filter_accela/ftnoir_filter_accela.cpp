@@ -83,18 +83,31 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     const double alpha = dt/(dt+RC);
     const double rot_dz = s.rot_deadzone * s.mult_rot_dz;
     const double trans_dz = s.trans_deadzone * s.mult_trans_dz;
+
+    double rot_dist = 0, trans_dist = 0;
+
+    for (int i = 3; i < 6; i++)
+    {
+        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
+        rot_dist += (last_output[i] - smoothed_input[i]) * (last_output[i] - smoothed_input[i]);
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
+        trans_dist += (last_output[i] - smoothed_input[i]) * (last_output[i] - smoothed_input[i]);
+    }
     
     for (int i = 0; i < 6; i++)
     {
         Map& m = i >= 3 ? rot : trans;
         
-        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
-        
         const double in = smoothed_input[i];
         
         const double vec = in - last_output[i];
         const double dz = i >= 3 ? rot_dz : trans_dz;
-        const double vec_ = std::max(0., fabs(vec) - dz);
+        const bool use_dz = dz*dz > (i >= 3 ? rot_dist : trans_dist);
+        const double vec_ = use_dz ? 0. : std::max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double val = m.getValue(vec_ / thres);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
