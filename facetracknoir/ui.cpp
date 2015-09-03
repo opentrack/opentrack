@@ -299,6 +299,8 @@ void MainWindow::startTracker() {
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
+
+    maybe_save();
 }
 
 void MainWindow::stopTracker( ) {
