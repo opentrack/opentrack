@@ -43,7 +43,7 @@ FilterControls::FilterControls() :
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
-
+//#define LEAKING_DEBUG
 #ifdef LEAKING_DEBUG
     auto d = new QDialog();
     auto r = new QFunctionConfigurator(d);
