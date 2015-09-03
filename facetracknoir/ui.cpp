@@ -124,7 +124,7 @@ MainWindow::~MainWindow()
     if (tray)
         tray->hide();
     stopTracker();
-    _save();
+    maybe_save();
 }
 
 void MainWindow::set_working_directory()
@@ -140,6 +140,15 @@ void MainWindow::save()
 {
     save_timer.stop();
     save_timer.start(5000);
+}
+
+void MainWindow::maybe_save()
+{
+    if (save_timer.isActive())
+    {
+        save_timer.stop();
+        _save();
+    }
 }
 
 void MainWindow::_save() {
@@ -306,6 +315,8 @@ void MainWindow::stopTracker( ) {
 
     if (pFilterDialog)
         pFilterDialog->unregister_filter();
+
+    maybe_save();
 
     work = nullptr;
     libs = SelectedLibraries();
