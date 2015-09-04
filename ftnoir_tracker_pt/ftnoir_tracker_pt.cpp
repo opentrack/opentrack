@@ -93,6 +93,10 @@ void Tracker_PT::run()
             QMutexLocker lock(&mutex);
 
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
+
+            // blobs are sorted in order of circularity
+            if (points.size() > PointModel::N_POINTS)
+                points.resize(PointModel::N_POINTS);
             
             bool success = points.size() == PointModel::N_POINTS;
             
