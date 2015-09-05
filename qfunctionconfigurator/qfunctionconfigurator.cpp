@@ -49,7 +49,12 @@ void QFunctionConfigurator::drawBackground()
     painter.setFont(font);
     QFontMetrics metrics(font);
 
-    QPen pen(QColor(55, 104, 170, 127), 1, Qt::SolidLine);
+    QColor color__(176, 190, 209, 127);
+
+    if (!isEnabled())
+        color__ = QColor(70, 90, 100, 96);
+
+    QPen pen(color__, 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
     const double maxx = _config->maxInput();
@@ -126,13 +131,27 @@ void QFunctionConfigurator::drawFunction()
 
     QList<QPointF> points = _config->getPoints();
 
+    const int alpha = !isEnabled() ? 64 : 120;
     for (int i = 0; i < points.size(); i++) {
         drawPoint(&painter,
                   point_to_pixel(points[i]),
-                  QColor(200, 200, 210, 120));
+                  QColor(200, 200, 210, alpha),
+                  isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
     }
 
-    QPen pen(spline_color, 1.2, Qt::SolidLine);
+    QColor color = spline_color;
+
+    if (!isEnabled())
+    {
+        const int avg = 176;
+        auto color_ = color;
+        color = QColor(color_.red() * .5 + avg * .5,
+                       color_.green() * .5 + avg * .5,
+                       color_.blue() * .5 + avg * .5,
+                       96);
+    }
+
+    QPen pen(color, 1.2, Qt::SolidLine);
 
     const double max = _config->maxInput();
     const double step = std::max(1e-2, max / 1000.);
@@ -181,17 +200,17 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         // Show that point on the graph, with some lines to assist.
         // This new feature is very handy for tweaking the curves!
         QPointF last;
-        if (_config->getLastPoint(last)) {
+        if (_config->getLastPoint(last) && isEnabled()) {
             QPointF pixel_pos = point_to_pixel(last);
             drawPoint(&p, pixel_pos, QColor(255, 0, 0, 120));
         }
     }
 }
 
-void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG )
+void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
 {
     painter->save();
-    painter->setPen(QColor(50, 100, 120, 200));
+    painter->setPen(border);
     painter->setBrush( colBG );
     painter->drawEllipse(QRectF(pos.x() - pointSize,
                                 pos.y() - pointSize,

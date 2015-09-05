@@ -47,7 +47,7 @@ protected slots:
 private:
     void drawBackground();
     void drawFunction();
-    void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG );
+    void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG, QColor border = QColor(50, 100, 120, 200));
     void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 protected:
