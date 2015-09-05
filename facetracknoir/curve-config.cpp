@@ -20,23 +20,24 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
         struct {
             QFunctionConfigurator* qfc;
             Axis axis;
+            QCheckBox* checkbox;
             bool altp;
         } qfcs[] =
         {
-            { ui.rxconfig, Yaw, false },
-            { ui.ryconfig, Pitch, false},
-            { ui.rzconfig, Roll, false },
-            { ui.txconfig, TX, false },
-            { ui.tyconfig, TY, false },
-            { ui.tzconfig, TZ, false },
+            { ui.rxconfig, Yaw,   nullptr, false },
+            { ui.ryconfig, Pitch, nullptr, false },
+            { ui.rzconfig, Roll,  nullptr, false },
+            { ui.txconfig, TX,    nullptr, false },
+            { ui.tyconfig, TY,    nullptr, false },
+            { ui.tzconfig, TZ,    nullptr, false },
 
-            { ui.rxconfig_alt, Yaw, true },
-            { ui.ryconfig_alt, Pitch, true},
-            { ui.rzconfig_alt, Roll, true },
-            { ui.txconfig_alt, TX, true },
-            { ui.tyconfig_alt, TY, true },
-            { ui.tzconfig_alt, TZ, true },
-            { nullptr, Yaw, false }
+            { ui.rxconfig_alt, Yaw,   ui.rx_altp, true },
+            { ui.ryconfig_alt, Pitch, ui.ry_altp, true },
+            { ui.rzconfig_alt, Roll,  ui.rz_altp, true },
+            { ui.txconfig_alt, TX,    ui.tx_altp, true },
+            { ui.tyconfig_alt, TY,    ui.ty_altp, true },
+            { ui.tzconfig_alt, TZ,    ui.tz_altp, true },
+            { nullptr, Yaw, nullptr, false }
         };
 
         for (int i = 0; qfcs[i].qfc; i++)
@@ -45,7 +46,14 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
             Mapping& axis = m(qfcs[i].axis);
             Map* conf = altp ? &axis.curveAlt : &axis.curve;
             const auto& name = qfcs[i].altp ? axis.name2 : axis.name1;
-
+            if (altp)
+            {
+                QFunctionConfigurator& qfc = *qfcs[i].qfc;
+                connect(qfcs[i].checkbox, &QCheckBox::toggled,
+                        [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
+                qfc.setEnabled(qfcs[i].checkbox->isChecked());
+                qfc.force_redraw();
+            }
             qfcs[i].qfc->setConfig(conf, name);
         }
     }

@@ -151,7 +151,10 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
     QPainter p(this);
 
     if (_background.isNull())
+    {
+        _draw_function = true;
         drawBackground();
+    }
 
     if (_draw_function) {
         _draw_function = false;

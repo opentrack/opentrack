@@ -34,6 +34,11 @@ public:
         spline_color = color;
         update();
     }
+    void force_redraw()
+    {
+        _background = QPixmap();
+        update();
+    }
 protected slots:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
