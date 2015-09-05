@@ -187,6 +187,14 @@ struct dylib {
                 std::cout.flush();
                 if (!get_metadata(lib, longName, icon))
                     continue;
+                using d = const mem<dylib>&;
+                if (std::any_of(ret.cbegin(),
+                                ret.cend(),
+                                [&](d a) {return a->type == lib->type && a->name == lib->name;}))
+                {
+                    qDebug() << "Duplicate lib" << lib->filename;
+                    continue;
+                }
                 ret.push_back(lib);
             }
         }
