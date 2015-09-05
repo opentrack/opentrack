@@ -1024,23 +1024,38 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_59">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Only pitch and yaw during calibration.&lt;/p&gt;&lt;p&gt;Don't roll and don't translate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <widget class="QFrame" name="frame">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="tcalib_button">
-            <property name="enabled">
-             <bool>false</bool>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-            <property name="text">
-             <string>Toggle calibration</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_59">
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/model-calibration-for-PT-and-Aruco-trackers&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions on the opentrack wiki&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="openExternalLinks">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="tcalib_button">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Toggle calibration</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -1172,7 +1187,6 @@
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>
-  <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_tracker_pt.qrc"/>
