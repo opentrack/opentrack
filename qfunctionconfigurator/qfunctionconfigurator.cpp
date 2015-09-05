@@ -40,6 +40,8 @@ void QFunctionConfigurator::drawBackground()
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
 
     QColor bg_color(112, 154, 209);
+    if (!isEnabled())
+        bg_color = QColor(176,176,180);
     painter.fillRect(pixel_bounds, bg_color);
 
     QFont font;
@@ -205,7 +207,7 @@ void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, co
 
 void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
     QList<QPointF> points = _config->getPoints();
     if (e->button() == Qt::LeftButton) {
@@ -262,7 +264,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
 
     QList<QPointF> points = _config->getPoints();
@@ -337,7 +339,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
 
     if (e->button() == Qt::LeftButton) {
