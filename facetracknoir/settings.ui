@@ -570,11 +570,6 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_4">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
                <property name="text">
                 <string>Hat</string>
                </property>
@@ -644,11 +639,6 @@
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_35">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
                <property name="text">
                 <string>Right-handed clip</string>
                </property>
@@ -687,11 +677,6 @@
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_37">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
                <property name="text">
                 <string>Left-handed clip</string>
                </property>
@@ -720,11 +705,6 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_31">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
-               </property>
                <property name="text">
                 <string>Model used</string>
                </property>
