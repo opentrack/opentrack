@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>693</width>
-    <height>530</height>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -193,8 +193,8 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>80</width>
-                 <height>90</height>
+                 <width>110</width>
+                 <height>120</height>
                 </size>
                </property>
               </widget>
@@ -578,8 +578,30 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="2">
-                 <widget class="QLabel" name="lblRotY_2">
+                <item row="2" column="0">
+                 <widget class="QLabel" name="lblZ_2">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <property name="text">
+                   <string>TZ</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QLabel" name="lblRotZ_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
                     <horstretch>0</horstretch>
@@ -590,7 +612,7 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <property name="text">
-                   <string>pitch</string>
+                   <string>roll</string>
                   </property>
                  </widget>
                 </item>
@@ -635,8 +657,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2">
-                 <widget class="QLabel" name="lblRotZ_2">
+                <item row="1" column="2">
+                 <widget class="QLabel" name="lblRotY_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
                     <horstretch>0</horstretch>
@@ -647,29 +669,48 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <property name="text">
-                   <string>roll</string>
+                   <string>pitch</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="lblZ_2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="lblx">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <property name="text">
+                   <string>TX</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QLCDNumber" name="pose_pitch">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                  <property name="smallDecimalPoint">
+                   <bool>true</bool>
                   </property>
-                  <property name="text">
-                   <string>TZ</string>
+                  <property name="digitCount">
+                   <number>4</number>
+                  </property>
+                  <property name="segmentStyle">
+                   <enum>QLCDNumber::Flat</enum>
                   </property>
                  </widget>
                 </item>
@@ -723,31 +764,6 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3">
-                 <widget class="QLCDNumber" name="pose_yaw">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="smallDecimalPoint">
-                   <bool>true</bool>
-                  </property>
-                  <property name="digitCount">
-                   <number>4</number>
-                  </property>
-                  <property name="segmentStyle">
-                   <enum>QLCDNumber::Flat</enum>
-                  </property>
-                 </widget>
-                </item>
                 <item row="2" column="1">
                  <widget class="QLCDNumber" name="pose_z">
                   <property name="enabled">
@@ -773,24 +789,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="lblx">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <property name="text">
-                   <string>TX</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3">
-                 <widget class="QLCDNumber" name="pose_pitch">
+                <item row="0" column="3">
+                 <widget class="QLCDNumber" name="pose_yaw">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
