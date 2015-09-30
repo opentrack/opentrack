@@ -42,7 +42,7 @@ signals:
     }
 
 // implement this in all plugins
-// also you must link against "opentrack-api" in CMakeList.txt to avoid vtable link errors
+// also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
 struct Metadata
 {
     // plugin name to be displayed in the interface

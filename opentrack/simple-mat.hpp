@@ -41,66 +41,84 @@ namespace {
         enum { P = a == 1 ? 1 : 3 };
         enum { Q = a == 1 ? 3 : 1 };
     };
+
+    template<typename num, int h, int w, typename...ts>
+    struct is_arglist_correct
+    {
+        enum { value = h * w == sizeof...(ts) };
+    };
 }
 
 template<typename num, int h_, int w_>
-struct Mat
+class Mat
 {
+#ifdef __GNUC__
+    __restrict
+#endif
     num data[h_][w_];
+
+    static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
+
+    Mat(std::initializer_list<num>&& xs) = delete;
+
+public:
+
+    // parameters w_ and h_ are rebound so that SFINAE occurs
+    // removing them causes a compile-time error -sh 20150811
     
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
-    __inline operator()(int i) const { return data[i][0]; }
+    inline operator()(int i) const { return data[i][0]; }
     
     template<int P = h_> typename std::enable_if<equals<P, 1, 1>::value, num>::type
-    __inline operator()(int i) const { return data[0][i]; }
+    inline operator()(int i) const { return data[0][i]; }
     
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 2>::value, num&>::type
-    __inline operator()(int i) { return data[i][0]; }
+    inline operator()(int i) { return data[i][0]; }
     
     template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
-    __inline operator()(int i) { return data[0][i]; }
+    inline operator()(int i) { return data[0][i]; }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
-    __inline x() const { return operator()(0); }
+    inline x() const { return operator()(0); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num>::type
-    __inline y() const { return operator()(1); }
+    inline y() const { return operator()(1); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num>::type
-    __inline z() const { return operator()(2); }
+    inline z() const { return operator()(2); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num>::type
-    __inline w() const { return operator()(3); }
+    inline w() const { return operator()(3); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num&>::type
-    __inline x() { return operator()(0); }
+    inline x() { return operator()(0); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num&>::type
-    __inline y() { return operator()(1); }
+    inline y() { return operator()(1); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num&>::type
-    __inline z() { return operator()(2); }
+    inline z() { return operator()(2); }
     
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
-    __inline w() { return operator()(3); }
+    inline w() { return operator()(3); }
     
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
-    __inline dot(const Mat<num, R, S>& p2) const {
+    dot(const Mat<num, R, S>& p2) const {
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
         for (int i = 0; i < len; i++)
-            ret += operator()(i) * p2.operator ()(i);
+            ret += operator()(i) * p2(i);
         return ret;
     }
     
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
-    __inline cross(const Mat<num, R, S>& p2) const
+    cross(const Mat<num, R, S>& p2) const
     {
-        return Mat<num, R, S>({y() * p2.z() - p2.y() * z(),
-                               p2.x() * z() - x() * p2.z(),
-                               x() * p2.y() - y() * p2.x()});
+        return Mat<num, R, S>(y() * p2.z() - p2.y() * z(),
+                              p2.x() * z() - x() * p2.z(),
+                              x() * p2.y() - y() * p2.x());
     }
     
     Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
@@ -108,7 +126,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) + other(j, i);
+                ret(j, i) = data[j][i] + other.data[j][i];
         return ret;
     }
     
@@ -117,7 +135,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) - other(j, i);
+                ret(j, i) = data[j][i] - other.data[j][i];
         return ret;
     }
     
@@ -126,7 +144,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) + other;
+                ret(j, i) = data[j][i] + other;
         return ret;
     }
     
@@ -135,7 +153,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = this->operator ()(j, i) - other;
+                ret(j, i) = data[j][i] - other;
         return ret;
     }
     
@@ -144,7 +162,7 @@ struct Mat
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret(j, i) = operator()(j, i) * other;
+                ret(j, i) = data[j][i] * other;
         return ret;
     }
     
@@ -158,30 +176,41 @@ struct Mat
                 num sum = num(0);
 
                 for (int k = 0; k < h_; k++)
-                    sum += data[j][k]*other.data[k][i];
+                    sum += data[j][k]*other(k, i);
 
-                ret.data[j][i] = sum;
+                ret(j, i) = sum;
             }
 
         return ret;
     }
 
-    __inline num operator()(int j, int i) const { return data[j][i]; }
-    __inline num& operator()(int j, int i) { return data[j][i]; }
+    inline num operator()(int j, int i) const { return data[j][i]; }
+    inline num& operator()(int j, int i) { return data[j][i]; }
 
-    Mat(std::initializer_list<num>&& list)
+    template<typename... ts, int h__ = h_, int w__ = w_,
+             typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
+    Mat(ts const&... xs)
     {
-        auto iter = list.begin();
-        for (int i = 0; i < h_; i++)
-            for (int j = 0; j < w_; j++)
-                data[i][j] = *iter++;
+        const std::initializer_list<num> init = { static_cast<num>(xs)... };
+        auto iter = init.begin();
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = *iter++;
+    }
+
+    template<typename t>
+    Mat(const t* xs)
+    {
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = num(*xs++);
     }
 
     Mat()
     {
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                data[j][i] = 0;
+                data[j][i] = num(0);
     }
 
     Mat(const num* mem)
@@ -190,6 +219,8 @@ struct Mat
             for (int i = 0; i < w_; i++)
                 data[j][i] = mem[i*h_+j];
     }
+
+    Mat(num* mem) : Mat(const_cast<const num*>(mem)) {}
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
@@ -234,10 +265,10 @@ struct Mat
         if (std::abs(pitch_1) + std::abs(roll_1) + std::abs(yaw_1) > std::abs(pitch_2) + std::abs(roll_2) + std::abs(yaw_2))
         {
             bool fix_neg_pitch = pitch_1 < 0;
-            return dmat<3, 1>({yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2});
+            return dmat<3, 1>(yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2);
         }
         else
-            return dmat<3, 1>({yaw_1, pitch_1, roll_1});
+            return dmat<3, 1>(yaw_1, pitch_1, roll_1);
     }
     
     // tait-bryan angles, not euler

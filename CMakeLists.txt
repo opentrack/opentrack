@@ -37,11 +37,7 @@ if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set(my-qt-deps)
-if(WIN32) # hack to avoid breakage on buildbot
-    set(my-qt-deps ws2_32)
-endif()
-set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES} ${my-qt-deps})
+set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5Xml_LIBRARIES})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
@@ -132,6 +128,7 @@ macro(opentrack_library n dir)
     if(NOT foolib_STATIC)
         install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
     endif()
+    opentrack_compat(${n})
 endmacro()
 
 function(link_with_dinput8 n)
@@ -151,7 +148,11 @@ IF(WIN32)
     SET(SDK_CONSOLE_DEBUG FALSE CACHE BOOL "Console window visible at runtime")
 ENDIF()
 
-IF("${CMAKE_SYSTEM}" MATCHES "Linux" OR APPLE)
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(LINUX TRUE)
+endif()
+
+if(LINUX OR APPLE)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
     set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support")
 endif()
@@ -410,8 +411,14 @@ target_link_libraries(opentrack ${OpenCV_LIBS})
 link_with_dinput8(opentrack)
 target_link_libraries(opentrack ${MY_QT_LIBS})
 
-if(CMAKE_SYSTEM STREQUAL LINUX)
-    link_libraries(rt)
+if(APPLE)
+    # for process detector
+    target_link_libraries(opentrack proc)
+endif()
+
+if(LINUX)
+    # for process detector
+    target_link_libraries(opentrack procps)
 endif()
 
 # ----
@@ -446,6 +453,11 @@ endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
+endif()
+
+if(WIN32)
+    install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/rs_impl/bin/opentrack-tracker-rs-impl.exe" DESTINATION . ${opentrack-perms})
+    install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/redist/intel_rs_sdk_runtime_websetup_6.0.21.6598.exe" DESTINATION ./clientfiles/ ${opentrack-perms})
 endif()
 
 if(APPLE)

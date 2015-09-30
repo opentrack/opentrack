@@ -1,27 +1,3 @@
-/*******************************************************************************
-* FaceTrackNoIR         This program is a private project of the some enthusiastic
-*                                       gamers from Holland, who don't like to pay much for
-*                                       head-tracking.
-*
-* Copyright (C) 2011    Wim Vriend (Developing)
-*                                               Ron Hendriks (Researching and Testing)
-*
-* Homepage
-*
-* This program is free software; you can redistribute it and/or modify it
-* under the terms of the GNU General Public License as published by the
-* Free Software Foundation; either version 3 of the License, or (at your
-* option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-* more details.
-*
-* You should have received a copy of the GNU General Public License along
-* with this program; if not, see <http://www.gnu.org/licenses/>.
-*********************************************************************************/
-
 /* Copyright (c) 2013-2015, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
@@ -35,8 +11,9 @@
 #include "opentrack/options.hpp"
 #include "ftnoir_tracker_pt/ftnoir_tracker_pt.h"
 #include "ftnoir_filter_accela/ftnoir_filter_accela.h"
+#include "facetracknoir/new_file_dialog.h"
 #include <QFileDialog>
-#include <QFileInfo>
+#include <QDesktopServices>
 
 #ifndef _WIN32
 #   include <unistd.h>
@@ -47,7 +24,8 @@
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/images/no-feed.png")
+    no_feed_pixmap(":/images/no-feed.png"),
+    is_refreshing_profiles(false)
 {
     ui.setupUi(this);
 
@@ -56,43 +34,80 @@ MainWindow::MainWindow() :
     updateButtonState(false, false);
     ui.video_frame_label->setPixmap(no_feed_pixmap);
 
-    connect(ui.btnLoad, SIGNAL(clicked()), this, SLOT(open()));
-    connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(save()));
-    connect(ui.btnSaveAs, SIGNAL(clicked()), this, SLOT(saveAs()));
-
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
+    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
 
     for (auto x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name);
 
-    fill_profile_combobox();
+    refresh_config_list();
+    connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
+    config_list_timer.start(1000 * 3);
 
     tie_setting(s.protocol_dll, ui.iconcomboProtocol);
 
+    connect(ui.iconcomboProtocol,
+            &QComboBox::currentTextChanged,
+            [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save(); });
+
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(profileSelected(int)));
+    connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profileSelected(QString)));
 
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
+
+    save_timer.setSingleShot(true);
+    connect(&save_timer, SIGNAL(timeout()), this, SLOT(_save()));
+
+    profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
+    profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
+    profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
+    ui.profile_button->setMenu(&profile_menu);
+
     kbd_quit.setEnabled(true);
     
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
     det_timer.start(1000);
 
     ensure_tray();
-
     set_working_directory();
+
+    if (!QFile(group::ini_pathname()).exists())
+    {
+        set_profile(OPENTRACK_DEFAULT_CONFIG);
+        const auto pathname = group::ini_pathname();
+        if (!QFile(pathname).exists())
+        {
+            QFile file(pathname);
+            (void) file.open(QFile::ReadWrite);
+        }
+    }
+
+    if (group::ini_directory() == "")
+        QMessageBox::warning(this,
+                             "Configuration not saved.",
+                             "Can't create configuration directory! Expect major malfunction.",
+                             QMessageBox::Ok, QMessageBox::NoButton);
+}
+
+bool MainWindow::get_new_config_name_from_dialog(QString& ret)
+{
+    new_file_dialog dlg;
+    dlg.exec();
+    return dlg.is_ok(ret);
 }
 
 MainWindow::~MainWindow()
 {
+    save_timer.stop();
+
     if (tray)
         tray->hide();
     stopTracker();
-    save();
+    maybe_save();
 }
 
 void MainWindow::set_working_directory()
@@ -100,32 +115,26 @@ void MainWindow::set_working_directory()
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 }
 
-void MainWindow::open() {
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
-    QString fileName = dialog.getOpenFileName(
-                this,
-                tr("Open the settings file"),
-                dir_path,
-                tr("Settings file (*.ini);;All Files (*)"));
-    set_working_directory();
-
-    if (!fileName.isEmpty()) {
-        {
-            QSettings settings(OPENTRACK_ORG);
-            settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
-        }
-        fill_profile_combobox();
-        load_settings();
-    }
-}
-
 void MainWindow::save_mappings() {
     pose.save_mappings();
 }
 
-void MainWindow::save() {
+void MainWindow::save()
+{
+    save_timer.stop();
+    save_timer.start(5000);
+}
+
+void MainWindow::maybe_save()
+{
+    if (save_timer.isActive())
+    {
+        save_timer.stop();
+        _save();
+    }
+}
+
+void MainWindow::_save() {
     s.b->save();
     save_mappings();
     mem<QSettings> settings = group::ini_file();
@@ -143,29 +152,6 @@ void MainWindow::save() {
 #endif
 }
 
-void MainWindow::saveAs()
-{
-    QString oldFile = group::ini_pathname();
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
-                                                    oldFile,
-                                                    tr("Settings file (*.ini);;All Files (*)"));
-    set_working_directory();
-    
-    if (fileName.isEmpty())
-        return;
-    
-    (void) QFile::remove(fileName);
-    
-    {
-        (void) QFile::copy(oldFile, fileName);
-        QSettings settings(OPENTRACK_ORG);
-        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(fileName));
-    }
-    
-    save();
-    fill_profile_combobox();
-}
-
 void MainWindow::load_mappings() {
     pose.load_mappings();
 }
@@ -175,16 +161,64 @@ void MainWindow::load_settings() {
     load_mappings();
 }
 
+void MainWindow::make_empty_config()
+{
+    QString name;
+    const QString dir = group::ini_directory();
+    if (dir != "" && get_new_config_name_from_dialog(name))
+    {
+        QFile filename(dir + "/" + name);
+        (void) filename.open(QFile::ReadWrite);
+        refresh_config_list();
+        ui.iconcomboProfile->setCurrentText(name);
+    }
+}
+
+void MainWindow::make_copied_config()
+{
+    const QString dir = group::ini_directory();
+    const QString cur = group::ini_pathname();
+    QString name;
+    if (cur != "" && dir != "" && get_new_config_name_from_dialog(name))
+    {
+        const QString new_name = dir + "/" + name;
+        (void) QFile::remove(new_name);
+        (void) QFile::copy(cur, new_name);
+        refresh_config_list();
+        ui.iconcomboProfile->setCurrentText(name);
+    }
+}
+
+void MainWindow::open_config_directory()
+{
+    const QString path = group::ini_directory();
+    if (path != "")
+    {
+        QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(path));
+    }
+}
+
 extern "C" volatile const char* opentrack_version;
 
-void MainWindow::fill_profile_combobox()
+void MainWindow::refresh_config_list()
 {
+    if (work)
+        return;
+
+    if (group::ini_list().size() == 0)
+    {
+        QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
+        (void) filename.open(QFile::ReadWrite);
+    }
+
      QStringList ini_list = group::ini_list();
      set_title();
-     QString current = QFileInfo(group::ini_pathname()).fileName();
+     QString current = group::ini_filename();
+     is_refreshing_profiles = true;
      ui.iconcomboProfile->clear();
      for (auto x : ini_list)
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
+     is_refreshing_profiles = false;
      ui.iconcomboProfile->setCurrentText(current);
 }
 
@@ -196,11 +230,10 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.btnStopTracker->setEnabled ( running );
     ui.iconcomboProtocol->setEnabled ( not_running );
     ui.video_frame_label->setVisible(not_running || inertialp);
-    ui.btnSaveAs->setEnabled(not_running);
-    ui.btnLoad->setEnabled(not_running);
+    ui.profile_button->setEnabled(not_running);
 }
 
-void MainWindow::bindKeyboardShortcuts()
+void MainWindow::reload_options()
 {
     if (work)
         work->reload_shortcuts();
@@ -208,9 +241,6 @@ void MainWindow::bindKeyboardShortcuts()
 }
 
 void MainWindow::startTracker() {
-    s.b->save();
-    load_settings();
-
     // tracker dtor needs run first
     work = nullptr;
 
@@ -233,8 +263,8 @@ void MainWindow::startTracker() {
     
     work = std::make_shared<Work>(s, pose, libs, this, winId());
     
-    bindKeyboardShortcuts();
-    
+    reload_options();
+
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
     
@@ -244,6 +274,8 @@ void MainWindow::startTracker() {
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
+
+    maybe_save();
 }
 
 void MainWindow::stopTracker( ) {
@@ -253,10 +285,7 @@ void MainWindow::stopTracker( ) {
     ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
 
     if (pProtocolDialog)
-    {
         pProtocolDialog->unregister_protocol();
-        pProtocolDialog = nullptr;
-    }
 
     work = nullptr;
     libs = SelectedLibraries();
@@ -311,7 +340,7 @@ void MainWindow::set_title(const QString& game_title_)
     QString game_title;
     if (game_title_ != "")
         game_title = " :: " + game_title_;
-    QString current = QFileInfo(group::ini_pathname()).fileName();
+    QString current = group::ini_filename();
     setWindowTitle(QStringLiteral("TrackHat ") + const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ") + current + game_title);
 }
 
@@ -322,14 +351,6 @@ void MainWindow::showHeadPose()
     work->tracker->get_raw_and_mapped_poses(mapped, raw);
 
     display_pose(mapped, raw);
-
-#if 0
-    if (libs.pProtocol)
-    {
-        const QString name = libs.pProtocol->game_name();
-        ui.game_name->setText(name);
-    }
-#endif
 }
 
 template<typename t>
@@ -380,9 +401,9 @@ bool mk_window(mem<t>* place, Args... params)
     }
 }
 
-void MainWindow::showKeyboardShortcuts() {
-    if (mk_window<OptionsDialog, State&>(&shortcuts_widget, *this))
-        connect(shortcuts_widget.get(), SIGNAL(reload()), this, SLOT(bindKeyboardShortcuts()));
+void MainWindow::show_options_dialog() {
+    if (mk_window<OptionsDialog, State&>(&options_widget, static_cast<State&>(*this)))
+        connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
 }
 
 void MainWindow::showCurveConfiguration() {
@@ -393,40 +414,26 @@ void MainWindow::exit() {
     QCoreApplication::exit(0);
 }
 
-QString MainWindow::remove_app_path(const QString full_path)
+void MainWindow::profileSelected(QString name)
 {
-    QFileInfo path_info(full_path);
-    QString path = path_info.absolutePath();
-    
-    QFileInfo app_path(QCoreApplication::applicationDirPath());
-    QString app_prefix(app_path.absoluteFilePath());
-    
-    if (path == app_prefix)
-    {
-        path = ".";
-    }
-    else if (path.startsWith(app_prefix + "/"))
-    {
-        path = "./" + path.mid(app_prefix.size() + 1);
-    }
-    
-    return path + "/" + path_info.fileName();
-}
-
-void MainWindow::profileSelected(int index)
-{
-    if (index == -1)
+    if (name == "" || is_refreshing_profiles)
         return;
-    
+
+    const auto old_name = group::ini_filename();
+    const auto new_name = name;
+
+    if (old_name != new_name)
     {
-        QSettings settings(OPENTRACK_ORG);
-        settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, remove_app_path(QFileInfo(group::ini_pathname()).absolutePath() + "/" +
-                                                                ui.iconcomboProfile->itemText(index)));
+        save();
+
+        {
+            QSettings settings(OPENTRACK_ORG);
+            settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, new_name);
+        }
+
+        set_title();
+        load_settings();
     }
-
-    set_title();
-
-    load_settings();
 }
 
 void MainWindow::shortcutRecentered()
@@ -503,5 +510,5 @@ void MainWindow::maybe_start_profile_from_executable()
 void MainWindow::set_profile(const QString &profile)
 {
     QSettings settings(OPENTRACK_ORG);
-    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, MainWindow::remove_app_path(profile));
+    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
 }

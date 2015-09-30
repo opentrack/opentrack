@@ -114,6 +114,20 @@ static void game_data_close()
 
 #define ltr_int_log_message(...) fprintf(stderr, __VA_ARGS__)
 
+static void remove_newlines(const char* str, char* out, int out_len)
+{
+    int i, j;
+    int len = strlen(str);
+    for (i = 0, j = 0; str[i] && j + 1 < out_len; i++)
+    {
+        if (str[i] == '\r' || str[i] == '\n')
+            continue;
+        out[j++] = str[i];
+    }
+    if (j < out_len)
+        out[j] = '\0';
+}
+
 bool get_game_data(const char *input_fname, const char *output_fname, bool from_update)
 {
   FILE *outfile = NULL;
@@ -129,19 +143,21 @@ bool get_game_data(const char *input_fname, const char *output_fname, bool from_
   mxml_node_t *game;
   const char *name;
   const char *id;
-  for(game = mxmlFindElement(tree, tree, "Game", NULL, NULL, MXML_DESCEND); 
+  for(game = mxmlFindElement(tree, tree, "Game", NULL, NULL, MXML_DESCEND);
       game != NULL;
-      game =  mxmlFindElement(game, tree, "Game", NULL, NULL, MXML_DESCEND)){
+      game =  mxmlFindElement(game, tree, "Game", NULL, NULL, MXML_DESCEND))
+  {
     name = mxmlElementGetAttr(game, "Name");
     id = mxmlElementGetAttr(game, "Id");
-      
+
     mxml_node_t *appid = mxmlFindElement(game, game, "ApplicationID", NULL, NULL, MXML_DESCEND);
-    if(appid == NULL){
-      fprintf(outfile, "%s \"%s\"\n", id, name);
-    }else{
-      fprintf(outfile, "%s \"%s\" (%s)\n", id, name, appid->child->value.text.string);
-    }
-  }  
+    char name_[256];
+    remove_newlines(name, name_, sizeof(name_));
+    if(appid == NULL)
+      fprintf(outfile, "%s \"%s\"\n", id, name_);
+    else
+      fprintf(outfile, "%s \"%s\" (%s)\n", id, name_, appid->child->value.text.string);
+  }
   fclose(outfile);
   game_data_close();
   return true;

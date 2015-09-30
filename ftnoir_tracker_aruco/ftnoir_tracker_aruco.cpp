@@ -134,6 +134,7 @@ void Tracker::run()
     cv::Vec3d rvec, tvec;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
+    bool otsu = false;
 
     while (!stop)
     {
@@ -144,18 +145,20 @@ void Tracker::run()
             if (!camera.read(color))
                 continue;
         }
+        static constexpr int thres_param2 = 5;
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
         const int scale = grayscale.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(box_sizes[box_idx], 5);
+        detector.setThresholdParams(box_sizes[box_idx], thres_param2);
 
         static constexpr double pi = 3.1415926f;
         const int w = grayscale.cols, h = grayscale.rows;
-        const double diag = sqrt(w * w + h * h)/w, diag_fov = static_cast<int>(s.fov) * pi / 180.;
-        const double fov = 2.*atan(tan(diag_fov/2.)/sqrt(1. + diag*diag));
-        const float focal_length_w = .5 * w / tan(.5 * fov);
-        const float focal_length_h = focal_length_w;
+        const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
+        const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
+        const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
+        const float focal_length_w = .5 * w / tan(.5 * fov_w);
+        const float focal_length_h = .5 * h / tan(.5 * fov_h);
 
         intrinsics.at<float> (0, 0) = focal_length_w;
         intrinsics.at<float> (1, 1) = focal_length_h;
@@ -164,8 +167,8 @@ void Tracker::run()
 
         std::vector< aruco::Marker > markers;
 
-        const double size_min = 0.02;
-        const double size_max = 0.4;
+        const double size_min = 0.05;
+        const double size_max = 0.3;
 
         bool roi_valid = false;
         
@@ -177,11 +180,12 @@ void Tracker::run()
         
         if (last_roi.width > 0 && last_roi.height)
         {
-            detector.setThresholdParams(box_sizes[box_idx], 5);
+            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
 
-            if (detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false),
+            cv::Mat grayscale_ = grayscale(last_roi).clone();
+            if (detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
                 failed = std::max(0., failed - dt);
@@ -198,6 +202,8 @@ void Tracker::run()
 
         if (!roi_valid)
         {
+            otsu = !otsu;
+            detector._thresMethod = otsu ? aruco::MarkerDetector::FIXED_THRES : aruco::MarkerDetector::ADPT_THRES;
             failed += dt;
             if (failed > max_failed)
             {
@@ -206,7 +212,7 @@ void Tracker::run()
                 qDebug() << "aruco: box size now" << box_sizes[box_idx];
                 failed = 0;
             }
-            detector.setThresholdParams(box_sizes[box_idx], 5);
+            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }

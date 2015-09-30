@@ -28,6 +28,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 - Joystick analog axes (Windows, Linux)
 - Windows Phone [tracker](http://www.windowsphone.com/en-us/store/app/opentrack-head-tracking/1c604f32-6d68-40ef-aa44-3163e30f547f) over opentrack UDP protocol
 - Arduino with custom firmware
+- Intel RealSense 3D cameras (Windows)
 
 # Output
 
@@ -60,6 +61,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Ryan Spicer (OSX tester, contributor)
 - Patrick Ruoff (PT tracker)
 - Ulf Schreiber (PT tracker)
+- Xavier Hallade (RealSense tracker)
 - furax49 (hatire tracker)
 - Andrzej Czarnowski (quality assurance)
 - uglyDwarf (high CON)

@@ -103,7 +103,7 @@ struct dylib {
 #   if defined(__APPLE__)
                     RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
 #   else
-                    RTLD_NOW|RTLD_GLOBAL|RTLD_NODELETE
+                    RTLD_LOCAL|RTLD_NOW // XXX RTLD_DEEPBIND on Linux?
 #   endif
                         );
     
@@ -184,6 +184,14 @@ struct dylib {
                 std::cout.flush();
                 if (!get_metadata(lib, longName, icon))
                     continue;
+                using d = const mem<dylib>&;
+                if (std::any_of(ret.cbegin(),
+                                ret.cend(),
+                                [&](d a) {return a->type == lib->type && a->name == lib->name;}))
+                {
+                    qDebug() << "Duplicate lib" << lib->filename;
+                    continue;
+                }
                 ret.push_back(lib);
             }
         }

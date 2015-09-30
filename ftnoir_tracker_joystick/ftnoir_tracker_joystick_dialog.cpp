@@ -4,9 +4,12 @@
 static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
 {
     auto self = ( TrackerControls* )pContext;
+    auto name = QString(pdidInstance->tszInstanceName);
+    auto guid = guid_to_string(pdidInstance->guidInstance);
+    TrackerControls::joys cur { name, guid };
+    self->_joys.append(cur);
 
-    self->guids.push_back(pdidInstance->guidInstance);
-    self->ui.joylist->addItem(QString(pdidInstance->tszInstanceName));
+    self->ui.joylist->addItem(name + " " + guid);
 
     return DIENUM_CONTINUE;
 }
@@ -38,8 +41,6 @@ fin:
             g_pDI->Release();
     }
 
-    tie_setting(s.joyid, ui.joylist);
-
     tie_setting(s.joy_1, ui.joy_1);
     tie_setting(s.joy_2, ui.joy_2);
     tie_setting(s.joy_3, ui.joy_3);
@@ -49,6 +50,11 @@ fin:
 }
 
 void TrackerControls::doOK() {
+    int idx = ui.joylist->currentIndex();
+    joys def { "", "" };
+    auto val = _joys.value(idx, def);
+    s.guid = val.guid;
+    s.joyid = val.name;
     s.b->save();
     if (tracker)
         tracker->reload();

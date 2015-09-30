@@ -52,14 +52,14 @@ double Tracker::map(double pos, Mapping& axis)
 void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    dmat<3, 1> tvec({ xyz[2], -xyz[0], -xyz[1] });
+    dmat<3, 1> tvec( xyz[2], -xyz[0], -xyz[1] );
     const dmat<3, 1> ret = rmat * tvec;
     if (!rz)
-        output[2] = ret(0, 0);
+        output[2] = ret(0);
     else
         output[2] = xyz[2];
-    output[1] = -ret(2, 0);
-    output[0] = -ret(1, 0);
+    output[1] = -ret(2);
+    output[0] = -ret(1);
 }
 
 void Tracker::logic()
@@ -81,7 +81,12 @@ void Tracker::logic()
     if (!zero_)
         for (int i = 0; i < 6; i++)
         {
-            value(i) = newpose[i];
+            auto& axis = m(i);
+            int k = axis.opts.src;
+            if (k < 0 || k >= 6)
+                value(i) = 0;
+            else
+                value(i) = newpose[k];
             raw(i) = newpose[i];
         }
     else
@@ -90,7 +95,7 @@ void Tracker::logic()
         
         for (int i = 0; i < 3; i++)
         {
-            raw(i+3) = value(i+3) = mat(i, 0) * r2d;
+            raw(i+3) = value(i+3) = mat(i) * r2d;
             raw(i) = value(i) = t_b[i];
         }
     }
@@ -102,7 +107,7 @@ void Tracker::logic()
     };
     const rmat cam = rmat::euler_to_rmat(off);
     rmat r = rmat::euler_to_rmat(&value[Yaw]);
-    dmat<3, 1> t { value(0), value(1), value(2) };
+    dmat<3, 1> t(value(0), value(1), value(2));
     
     r = cam * r;
     
@@ -122,19 +127,19 @@ void Tracker::logic()
     {
         centerp = false;
         for (int i = 0; i < 3; i++)
-            t_b[i] = t(i, 0);
+            t_b[i] = t(i);
         r_b = r;
     }
     
     {
-        double tmp[3] = { t(0, 0) - t_b[0], t(1, 0) - t_b[1], t(2, 0) - t_b[2] };
+        double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         t_compensate(cam, tmp, tmp, false);
-        const rmat m_ = r_b.t() * r;
+        const rmat m_ = r * r_b.t();
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {
             value(i) = tmp[i];
-            value(i+3) = euler(i, 0) * r2d;
+            value(i+3) = euler(i) * r2d;
         }
     }
     
@@ -144,7 +149,7 @@ void Tracker::logic()
         if (libs.pFilter)
             libs.pFilter->filter(tmp, value);
     }
-    
+
     for (int i = 0; i < 6; i++)
         value(i) = map(value(i), m(i));
     
@@ -153,27 +158,14 @@ void Tracker::logic()
                      value,
                      value,
                      s.tcomp_tz);
-    
+
     for (int i = 0; i < 6; i++)
         value[i] *= inverts[i] ? -1. : 1.;
 
-    Pose output_pose_;
-
-    for (int i = 0; i < 6; i++)
-    {
-        auto& axis = m(i);
-        int k = axis.opts.src;
-        if (k < 0 || k >= 6)
-            output_pose_(i) = 0;
-        else
-            output_pose_(i) = value(k);
-    }
-
-
-    libs.pProtocol->pose(output_pose_);
+    libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
-    output_pose = output_pose_;
+    output_pose = value;
     raw_6dof = raw;
 }
 
@@ -202,10 +194,6 @@ void Tracker::run() {
     }
 
     {
-        // do one last pass with origin pose
-        for (int i = 0; i < 6; i++)
-            newpose[i] = 0;
-        logic();
         // filter may inhibit exact origin
         Pose p;
         libs.pProtocol->pose(p);

@@ -25,11 +25,12 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(cpu "-O3 -march=i686 -mtune=corei7-avx -ffast-math -mfpmath=both -msse -msse2 -mno-sse3 -mno-avx")
+# oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
+set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -ffast-math -mfpmath=both -msse -msse2 -mno-sse3")
 
 set(CFLAGS-OVERRIDE "" CACHE STRING "")
 
-set(CMAKE_C_FLAGS_RELEASE "${rice} ${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "" FORCE)

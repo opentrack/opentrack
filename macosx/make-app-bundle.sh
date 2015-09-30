@@ -34,7 +34,7 @@ iconutil -c icns -o "$tmp/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$
 rm -r "$tmp/$APPNAME.iconset"
 
 cd "$tmp" || exit 1
-rm -f "$output_dir/$APPNAME-$version.zip"
-zip -9r "$output_dir/$APPNAME-$version.zip" "$APPNAME.app" || exit 1
+rm -f "$output_dir/$version-macosx.zip"
+zip -9r "$output_dir/$version-macosx.zip" "$APPNAME.app" || exit 1
 rm -rf "$tmp"
-ls -lh "$output_dir/$APPNAME-$version.zip"
+ls -lh "$output_dir/$version-macosx.zip"

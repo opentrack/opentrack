@@ -74,8 +74,6 @@ public slots:
     void browse();
 };
 
-#ifdef _WIN32
-
 class process_detector_worker : QObject
 {
     Q_OBJECT
@@ -86,18 +84,3 @@ public:
     bool should_stop();
 };
 
-#else
-
-class process_detector_worker : QObject
-{
-    Q_OBJECT
-public:
-    bool config_to_start(QString&)
-    {
-        return false;
-    }
-    bool should_stop() { return false; }
-
-};
-
-#endif

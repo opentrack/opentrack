@@ -12,22 +12,24 @@
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/simple-mat.hpp"
 
-typedef dmat<2, 1> vec2;
-typedef dmat<3, 1> vec3;
-typedef dmat<3, 3> rmat;
-
 class GLWidget : public QWidget
 {
 public:
+    using num = float;
+    using vec2 = Mat<num, 2, 1>;
+    using vec3 = Mat<num, 3, 1>;
+    using rmat = Mat<num, 3, 3>;
+
     GLWidget(QWidget *parent);
     ~GLWidget();
-    void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
+    void rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z);
 protected:
     void paintEvent ( QPaintEvent * event ) override;
 private:
     vec2 project(const vec3& point);
     vec3 project2(const vec3& point);
     void project_quad_texture();
+    static inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
     rmat rotation;
     vec3 translation;
     QImage front;

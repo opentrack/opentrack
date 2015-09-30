@@ -40,6 +40,8 @@ void QFunctionConfigurator::drawBackground()
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
 
     QColor bg_color(112, 154, 209);
+    if (!isEnabled())
+        bg_color = QColor(176,176,180);
     painter.fillRect(pixel_bounds, bg_color);
 
     QFont font;
@@ -47,7 +49,12 @@ void QFunctionConfigurator::drawBackground()
     painter.setFont(font);
     QFontMetrics metrics(font);
 
-    QPen pen(QColor(55, 104, 170, 127), 1, Qt::SolidLine);
+    QColor color__(176, 190, 209, 127);
+
+    if (!isEnabled())
+        color__ = QColor(70, 90, 100, 96);
+
+    QPen pen(color__, 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
     const double maxx = _config->maxInput();
@@ -124,13 +131,27 @@ void QFunctionConfigurator::drawFunction()
 
     QList<QPointF> points = _config->getPoints();
 
+    const int alpha = !isEnabled() ? 64 : 120;
     for (int i = 0; i < points.size(); i++) {
         drawPoint(&painter,
                   point_to_pixel(points[i]),
-                  QColor(200, 200, 210, 120));
+                  QColor(200, 200, 210, alpha),
+                  isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
     }
 
-    QPen pen(spline_color, 1.2, Qt::SolidLine);
+    QColor color = spline_color;
+
+    if (!isEnabled())
+    {
+        const int avg = 176;
+        auto color_ = color;
+        color = QColor(color_.red() * .5 + avg * .5,
+                       color_.green() * .5 + avg * .5,
+                       color_.blue() * .5 + avg * .5,
+                       96);
+    }
+
+    QPen pen(color, 1.2, Qt::SolidLine);
 
     const double max = _config->maxInput();
     const double step = std::max(1e-2, max / 1000.);
@@ -149,7 +170,10 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
     QPainter p(this);
 
     if (_background.isNull())
+    {
+        _draw_function = true;
         drawBackground();
+    }
 
     if (_draw_function) {
         _draw_function = false;
@@ -162,6 +186,8 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
         if (points.size() && moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
+            if (points[0].x() > 1e-2)
+                points.prepend(QPointF(0, 0));
             QPointF prev = point_to_pixel(points[0]);
             for (int i = 1; i < points.size(); i++) {
                 auto tmp = point_to_pixel(points[i]);
@@ -174,17 +200,17 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         // Show that point on the graph, with some lines to assist.
         // This new feature is very handy for tweaking the curves!
         QPointF last;
-        if (_config->getLastPoint(last)) {
+        if (_config->getLastPoint(last) && isEnabled()) {
             QPointF pixel_pos = point_to_pixel(last);
             drawPoint(&p, pixel_pos, QColor(255, 0, 0, 120));
         }
     }
 }
 
-void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG )
+void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
 {
     painter->save();
-    painter->setPen(QColor(50, 100, 120, 200));
+    painter->setPen(border);
     painter->setBrush( colBG );
     painter->drawEllipse(QRectF(pos.x() - pointSize,
                                 pos.y() - pointSize,
@@ -203,7 +229,7 @@ void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, co
 
 void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
     QList<QPointF> points = _config->getPoints();
     if (e->button() == Qt::LeftButton) {
@@ -260,7 +286,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
 
     QList<QPointF> points = _config->getPoints();
@@ -335,7 +361,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
 void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (!_config)
+    if (!_config || !isEnabled())
         return;
 
     if (e->button() == Qt::LeftButton) {

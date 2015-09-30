@@ -62,6 +62,7 @@ public:
         {
             axes[i].curve.loadSettings(*iniFile, axes[i].name1);
             axes[i].curveAlt.loadSettings(*iniFile, axes[i].name2);
+            axes[i].opts.b->reload();
         }
     }
     void save_mappings()
@@ -72,6 +73,7 @@ public:
         {
             axes[i].curve.saveSettings(*iniFile, axes[i].name1);
             axes[i].curveAlt.saveSettings(*iniFile, axes[i].name2);
+            axes[i].opts.b->save();
         }
     }
 
@@ -81,6 +83,7 @@ public:
         {
             axes[i].curve.invalidate_unsaved_settings();
             axes[i].curveAlt.invalidate_unsaved_settings();
+            axes[i].opts.b->reload();
         }
     }
 };

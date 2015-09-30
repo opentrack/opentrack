@@ -37,6 +37,7 @@ void FTNoIR_Tracker::run() {
 void FTNoIR_Tracker::start_tracker(QFrame*)
 {
 	start();
+    sock.moveToThread(this);
 }
 
 void FTNoIR_Tracker::data(double *data)
@@ -59,7 +60,10 @@ void FTNoIR_Tracker::data(double *data)
     };
     
     for (int i = 0; i < 3; i++)
-        data[Yaw + i] += values[indices[i]];
+    {
+        int k = std::min<unsigned>(sizeof(values)/sizeof(values[0]), std::max(0, indices[i]));
+        data[Yaw + i] += values[k];
+    }
 }
 
 

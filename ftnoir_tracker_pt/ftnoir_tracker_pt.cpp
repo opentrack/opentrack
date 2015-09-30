@@ -63,15 +63,15 @@ bool Tracker_PT::get_focal_length(float& ret)
         break;
     }
 
-    const float diag_fov = static_cast<int>(fov_) * pi / 180.f;
+    const double diag_fov = static_cast<int>(fov_) * pi / 180.f;
     QMutexLocker l(&camera_mtx);
     CamInfo info;
     const bool res = camera.get_info(info);
     if (res)
     {
         const int w = info.res_x, h = info.res_y;
-        const double diag = sqrt(w * w + h * h)/w;
-        const double fov = 2.*atan(tan(diag_fov/2.0)/sqrt(1. + diag*diag));
+        const double diag = sqrt(1. + h/(double)w * h/(double)w);
+        const double fov = 2.*atan(tan(diag_fov/2.0)/diag);
         ret = .5 / tan(.5 * fov);
         return true;
     }
@@ -105,6 +105,10 @@ void Tracker_PT::run()
             QMutexLocker lock(&mutex);
 
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
+
+            // blobs are sorted in order of circularity
+            if (points.size() > PointModel::N_POINTS)
+                points.resize(PointModel::N_POINTS);
             
             bool success = points.size() == PointModel::N_POINTS;
             
