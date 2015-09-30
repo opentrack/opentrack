@@ -10,6 +10,7 @@
 
 #include <QList>
 #include <QString>
+#include <QDebug>
 
 #if defined(OPENTRACK_API) && defined(_WIN32)
 #   define NO_DSHOW_STRSAFE
