@@ -2,9 +2,11 @@
 #   include <stdlib.h>
 #endif
 
+#include "opentrack/opencv-camera-dialog.hpp"
 #include "wizard.h"
 #include "ui.h"
 #include "opentrack/options.hpp"
+#include "ui_install-driver-dialog.h"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>
@@ -70,10 +72,25 @@ int main(int argc, char** argv)
         }
     }
 
-    auto w = std::make_shared<MainWindow>();
+    if (get_camera_names().contains("PS3Eye Camera"))
+    {
+        auto w = std::make_shared<MainWindow>();
 
-    w->show();
-    app.exec();
+        w->show();
+        app.exec();
+    }
+    else
+    {
+        struct Dialog : QDialog
+        {
+            Ui::DriverDialog dlg;
+            Dialog()
+            {
+                dlg.setupUi(this);
+            }
+        };
+        Dialog().exec();
+    }
 
     // on MSVC crashes in atexit
 #ifdef _MSC_VER
