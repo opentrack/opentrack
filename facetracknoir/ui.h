@@ -66,6 +66,8 @@ class MainWindow : public QMainWindow, private State
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile(const QString& profile);
     void maybe_save();
+    bool maybe_not_close_tracking();
+    void closeEvent(QCloseEvent *e) override;
 private slots:
     void _save();
     void save();

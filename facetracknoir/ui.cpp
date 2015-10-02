@@ -93,6 +93,14 @@ MainWindow::MainWindow() :
                              QMessageBox::Ok, QMessageBox::NoButton);
 }
 
+void MainWindow::closeEvent(QCloseEvent *e)
+{
+    if (maybe_not_close_tracking())
+        e->ignore();
+    else
+        e->accept();
+}
+
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 {
     new_file_dialog dlg;
@@ -410,8 +418,23 @@ void MainWindow::showCurveConfiguration() {
     mk_window<MapWidget, Mappings&, main_settings&>(&mapping_widget, pose, s);
 }
 
+bool MainWindow::maybe_not_close_tracking()
+{
+    if (work != nullptr)
+    {
+        auto btn = QMessageBox::warning(this, "Tracking active",
+                                        "Are you sure you want to exit? This will terminate tracking.",
+                                        QMessageBox::Yes, QMessageBox::No);
+        if (btn == QMessageBox::No)
+            return true;
+    }
+    return false;
+}
+
 void MainWindow::exit() {
-    QCoreApplication::exit(0);
+
+    if (!maybe_not_close_tracking())
+        QCoreApplication::exit(0);
 }
 
 void MainWindow::profileSelected(QString name)
