@@ -111,6 +111,23 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_SPACE, Qt::Key::Key_Space),
     });
 
+bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods)
+{
+    for (auto& wk : windows_key_sequences)
+    {
+        if (wk.win == k.keycode)
+        {
+            qt_ = wk.qt;
+            mods = Qt::NoModifier;
+            if (k.ctrl) mods |= Qt::ControlModifier;
+            if (k.shift) mods |= Qt::ShiftModifier;
+            if (k.alt) mods |= Qt::AltModifier;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     auto qt = static_cast<QVariant>(qt_).toInt();

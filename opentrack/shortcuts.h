@@ -9,7 +9,7 @@
 #pragma once
 #include <QObject>
 #include <QWidget>
-#include <QElapsedTimer>
+#include "opentrack-compat/timer.hpp"
 #include <QThread>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -46,7 +46,7 @@ struct Key {
     bool shift;
     bool ctrl;
     bool alt;
-    QElapsedTimer timer;
+    Timer timer;
 public:
     Key() : keycode(0), shift(false), ctrl(false), alt(false)
     {
@@ -54,7 +54,9 @@ public:
 
     bool should_process()
     {
-        return !timer.isValid() ? (timer.start(), true) : timer.restart() > 100;
+        bool ret = timer.elapsed_ms() > 100;
+        timer.start();
+        return ret;
     }
 };
 #else
@@ -67,19 +69,15 @@ struct Shortcuts;
 struct KeybindingWorker : public QThread {
 #ifdef _WIN32
 private:
-    Shortcuts& sc;
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-    Key kCenter;
-    Key kToggle;
-    Key kZero;
     QMutex mtx;
 public:
     volatile bool should_quit;
+    std::function<void(Key&)> receiver;
     ~KeybindingWorker();
-    KeybindingWorker(Key keyCenter, Key keyToggle, Key keyZero, WId handle, Shortcuts& sc);
+    KeybindingWorker(std::function<void(Key&)> receiver, WId h);
     void run();
-    void set_keys(Key kCenter, Key kToggle, Key kZero);
 #else
 public:
     KeybindingWorker(Key, Key, Key, WId) {}
@@ -124,6 +122,9 @@ public:
     void reload();
 private:
     void bind_keyboard_shortcut(K &key, key_opts& k);
+#ifdef _WIN32
+    void receiver(Key& k);
+#endif
 signals:
     void center();
     void toggle();
