@@ -62,6 +62,8 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.dynamic_pose, ui.dynamic_pose);
 	tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
 
+    tie_setting(s.auto_threshold, ui.auto_threshold);
+
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
