@@ -10,17 +10,9 @@
 #include <QMutexLocker>
 
 #if defined(_WIN32)
+#include <functional>
 #include <windows.h>
 #include "win32-shortcuts.h"
-
-void KeybindingWorker::set_keys(Key kCenter_, Key kToggle_, Key kZero_)
-{
-    QMutexLocker l(&mtx);
-
-    kCenter = kCenter_;
-    kToggle = kToggle_;
-    kZero = kZero_;
-}
 
 KeybindingWorker::~KeybindingWorker() {
     should_quit = true;
@@ -33,9 +25,11 @@ KeybindingWorker::~KeybindingWorker() {
         din->Release();
 }
 
-KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, Key keyZero, WId handle, Shortcuts& sc) :
-    sc(sc), din(0), dinkeyboard(0), kCenter(keyCenter), kToggle(keyToggle), kZero(keyZero), should_quit(true)
+KeybindingWorker::KeybindingWorker(std::function<void(Key&)> receiver, WId h) :
+    should_quit(true), receiver(receiver)
 {
+    HWND handle = reinterpret_cast<HWND>(h);
+
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
         return;
@@ -74,26 +68,6 @@ KeybindingWorker::KeybindingWorker(Key keyCenter, Key keyToggle, Key keyZero, WI
     should_quit = false;
 }
 
-static bool isKeyPressed( const Key *key, const BYTE *keystate ) {
-    bool shift;
-    bool ctrl;
-    bool alt;
-
-    if (key->keycode != 0 && keystate[key->keycode] & 0x80)
-    {
-        shift = ( (keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80) );
-        ctrl  = ( (keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80) );
-        alt   = ( (keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80) );
-
-        if (key->shift && !shift) return false;
-        if (key->ctrl && !ctrl) return false;
-        if (key->alt && !alt) return false;
-
-        return true;
-    }
-    return false;
-}
-
 void KeybindingWorker::run() {
     BYTE keystate[256];
 
@@ -107,14 +81,30 @@ void KeybindingWorker::run() {
 
         QMutexLocker l(&mtx);
 
-        if (isKeyPressed(&kCenter, keystate) && kCenter.should_process())
-            emit sc.center();
-
-        if (isKeyPressed(&kToggle, keystate) && kToggle.should_process())
-            emit sc.toggle();
-
-        if (isKeyPressed(&kZero, keystate) && kZero.should_process())
-            emit sc.zero();
+        for (int i = 0; i < 256; i++)
+        {
+            Key k;
+            if (keystate[i] & 0x80)
+            {
+                switch (i)
+                {
+                case DIK_LCONTROL:
+                case DIK_LSHIFT:
+                case DIK_LALT:
+                case DIK_RCONTROL:
+                case DIK_RSHIFT:
+                case DIK_RALT:
+                    break;
+                default:
+                    k.shift = !!(keystate[DIK_LSHIFT] & 0x80);
+                    k.alt = !!(keystate[DIK_LALT] & 0x80);
+                    k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80);
+                    k.keycode = i;
+                    receiver(k);
+                    break;
+                }
+            }
+        }
 
         // keypresses get dropped with high values
         Sleep(15);
@@ -158,6 +148,30 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 }
 #endif
 
+#ifdef _WIN32
+void Shortcuts::receiver(Key &k)
+{
+    std::vector<K*> ks { &keyCenter, &keyToggle, &keyZero };
+    for (auto& k_ : ks)
+    {
+        if (k.keycode != k_->keycode)
+            continue;
+        if (!k_->should_process())
+            return;
+        if (k_->alt && !k.alt) return;
+        if (k_->ctrl && !k.ctrl) return;
+        if (k_->shift && !k.shift) return;
+
+        if (k.keycode == keyCenter.keycode)
+            emit center();
+        else if (k.keycode == keyToggle.keycode)
+            emit toggle();
+        else if (k.keycode == keyZero.keycode)
+            emit zero();
+    }
+}
+#endif
+
 void Shortcuts::reload() {
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
@@ -166,10 +180,8 @@ void Shortcuts::reload() {
     bool is_new = keybindingWorker == nullptr;
     if (is_new)
     {
-        keybindingWorker = std::make_shared<KeybindingWorker>(keyCenter, keyToggle, keyZero, handle, *this);
+        keybindingWorker = std::make_shared<KeybindingWorker>([&](Key& k) { receiver(k); }, handle);
         keybindingWorker->start();
     }
-    else
-        keybindingWorker->set_keys(keyCenter, keyToggle, keyZero);
 #endif
 }
