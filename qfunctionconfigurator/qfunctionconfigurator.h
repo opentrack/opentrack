@@ -40,10 +40,10 @@ public:
         update();
     }
 protected slots:
-    void paintEvent(QPaintEvent *e);
-    void mousePressEvent(QMouseEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
+    void paintEvent(QPaintEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
 private:
     void drawBackground();
     void drawFunction();
