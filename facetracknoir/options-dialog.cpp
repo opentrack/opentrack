@@ -79,6 +79,7 @@ OptionsDialog::OptionsDialog(State& state) : state(state), trans_calib_running(f
     
     tie_setting(pt.dynamic_pose, ui.dynamic_pose);
     tie_setting(pt.init_phase_timeout, ui.init_phase_timeout);
+    tie_setting(pt.auto_threshold, ui.auto_threshold);
     
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );

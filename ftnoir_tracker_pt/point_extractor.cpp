@@ -31,8 +31,6 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     const int region_size_min = s.min_point_size;
     const int region_size_max = s.max_point_size;
     
-    const int thres = s.threshold;
-    
     struct simple_blob
     {
         double radius;
@@ -56,9 +54,23 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     
     std::vector<simple_blob> blobs;
     std::vector<std::vector<cv::Point>> contours;
+
+    const int thres = s.threshold;
+    if (!s.auto_threshold)
     {
         cv::Mat frame_bin_;
         cv::threshold(frame_gray, frame_bin_, thres, 255, cv::THRESH_BINARY);
+        frame_bin.setTo(170, frame_bin_);
+        cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    }
+    else
+    {
+        cv::Mat frame_bin_, tmp;
+        int scale = frame_gray.cols > 400 ? 2 : 1;
+        constexpr int size = 3;
+        static cv::Mat kernel = cv::getGaussianKernel(size * scale + 1, CV_32F);
+        cv::sepFilter2D(frame_gray, tmp, -1, kernel, kernel);
+        cv::threshold(tmp, frame_bin_, 0, 255, CV_THRESH_BINARY|CV_THRESH_OTSU);
         frame_bin.setTo(170, frame_bin_);
         cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
