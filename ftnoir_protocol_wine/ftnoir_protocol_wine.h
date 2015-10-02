@@ -18,9 +18,9 @@ public:
     FTNoIR_Protocol();
     ~FTNoIR_Protocol() override;
 
-    bool correct();
-    void pose(const double* headpose);
-    QString game_name() {
+    bool correct() override;
+    void pose(const double* headpose) override;
+    QString game_name() override {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }
@@ -38,8 +38,8 @@ class FTControls: public IProtocolDialog
     Q_OBJECT
 public:
     FTControls();
-    void register_protocol(IProtocol *) {}
-    void unregister_protocol() {}
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
 
 private:
     Ui::UICFTControls ui;
@@ -52,6 +52,6 @@ private slots:
 class FTNoIR_ProtocolDll : public Metadata
 {
 public:
-    QString name() { return QString("Wine -- Windows layer for Unix"); }
-    QIcon icon() { return QIcon(":/images/wine.png"); }
+    QString name() override { return QString("Wine -- Windows layer for Unix"); }
+    QIcon icon() override { return QIcon(":/images/wine.png"); }
 };
