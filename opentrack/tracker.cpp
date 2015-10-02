@@ -78,26 +78,15 @@ void Tracker::logic()
     
     Pose value, raw;
     
-    if (!zero_)
-        for (int i = 0; i < 6; i++)
-        {
-            auto& axis = m(i);
-            int k = axis.opts.src;
-            if (k < 0 || k >= 6)
-                value(i) = 0;
-            else
-                value(i) = newpose[k];
-            raw(i) = newpose[i];
-        }
-    else
+    for (int i = 0; i < 6; i++)
     {
-        auto mat = rmat::rmat_to_euler(r_b);
-        
-        for (int i = 0; i < 3; i++)
-        {
-            raw(i+3) = value(i+3) = mat(i) * r2d;
-            raw(i) = value(i) = t_b[i];
-        }
+        auto& axis = m(i);
+        int k = axis.opts.src;
+        if (k < 0 || k >= 6)
+            value(i) = 0;
+        else
+            value(i) = newpose[k];
+        raw(i) = newpose[i];
     }
 
     const double off[] = {
@@ -134,7 +123,17 @@ void Tracker::logic()
     {
         double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         t_compensate(cam, tmp, tmp, false);
-        const rmat m_ = r * r_b.t();
+        rmat m_;
+        switch (s.center_method)
+        {
+        case 0:
+        default:
+            m_ = r * r_b.t();
+            break;
+        case 1:
+            m_ = r_b.t() * r;
+        }
+
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
         {

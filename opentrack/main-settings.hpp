@@ -39,6 +39,7 @@ struct main_settings : opts {
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup;
+    value<int> center_method;
     main_settings() :
         opts("opentrack-ui"),
         tracker_dll(b, "tracker-dll", ""),
@@ -56,6 +57,7 @@ struct main_settings : opts {
         camera_yaw(b, "camera-yaw", 0),
         camera_pitch(b, "camera-pitch", 0),
         camera_roll(b, "camera-roll", 0),
-        center_at_startup(b, "center-at-startup", true)
+        center_at_startup(b, "center-at-startup", true),
+        center_method(b, "centering-method", false)
     {}
 };
