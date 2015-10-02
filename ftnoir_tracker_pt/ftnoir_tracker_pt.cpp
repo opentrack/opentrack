@@ -126,6 +126,20 @@ void Tracker_PT::run()
             {
                 Affine X_CM = pose();
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                if (X_MH.t[0] == 0 && X_MH.t[1] == 0 && X_MH.t[2] == 0)
+                {
+                    int m = s.model_used;
+                    switch (m)
+                    {
+                    default:
+                    // cap
+                    case 0: X_MH.t[0] = 0; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+                    // clip
+                    case 1: X_MH.t[0] = 135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+                    // left clip
+                    case 2: X_MH.t[0] = -135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+                    }
+                }
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen

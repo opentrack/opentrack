@@ -62,13 +62,6 @@ void Wizard::set_data()
     state.pose.save_mappings();
 
     settings_pt pt;
-    switch (m)
-    {
-    default:
-    case Cap: pt.t_MH_x = 0; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
-    case ClipRight: pt.t_MH_x = ClipRightX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
-    case ClipLeft: pt.t_MH_x = ClipLeftX; pt.t_MH_y = 0; pt.t_MH_z = 0; break;
-    }
     pt.threshold = 31;
     pt.min_point_size = 2;
     pt.max_point_size = 50;
