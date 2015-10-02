@@ -65,12 +65,33 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     }
     else
     {
-        cv::Mat frame_bin_, tmp;
-        int scale = frame_gray.cols > 400 ? 2 : 1;
-        constexpr int size = 3;
-        static cv::Mat kernel = cv::getGaussianKernel(size * scale + 1, CV_32F);
-        cv::sepFilter2D(frame_gray, tmp, -1, kernel, kernel);
-        cv::threshold(tmp, frame_bin_, 0, 255, CV_THRESH_BINARY|CV_THRESH_OTSU);
+        cv::Mat hist;
+        cv::calcHist(std::vector<cv::Mat> { frame_gray },
+                     std::vector<int> { 0 },
+                     cv::Mat(),
+                     hist,
+                     std::vector<int> { 256 },
+                     std::vector<float> { 0, 256 },
+                     false);
+        const int sz = hist.rows*hist.cols;
+        int val = 0;
+        int cnt = 0;
+        constexpr int min_pixels = 2000;
+        const int pixels_to_include = std::max(0, static_cast<int>(min_pixels * (1. - s.threshold / 100.)));
+        for (int i = sz-1; i >= 0; i--)
+        {
+            cnt += hist.at<float>(i);
+            if (cnt >= pixels_to_include)
+            {
+                val = i;
+                break;
+            }
+        }
+        val *= .95;
+        //qDebug() << "cnt" << cnt << "val" << val;
+
+        cv::Mat frame_bin_;
+        cv::threshold(frame_gray, frame_bin_, val, 255, CV_THRESH_BINARY);
         frame_bin.setTo(170, frame_bin_);
         cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }

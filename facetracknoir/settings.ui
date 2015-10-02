@@ -234,7 +234,7 @@
              <item row="0" column="1">
               <widget class="QCheckBox" name="auto_threshold">
                <property name="text">
-                <string>Enable, ignore slider</string>
+                <string>Enable, slider sets point size</string>
                </property>
               </widget>
              </item>
