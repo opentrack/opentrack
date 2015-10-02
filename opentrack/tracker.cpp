@@ -165,6 +165,10 @@ void Tracker::logic()
     for (int i = 0; i < 6; i++)
         value[i] *= inverts[i] ? -1. : 1.;
 
+    if (zero_)
+        for (int i = 0; i < 6; i++)
+            value(i) = 0;
+
     libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
