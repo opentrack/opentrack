@@ -9,7 +9,7 @@
 #pragma once
 #include <QObject>
 #include <QWidget>
-#include <QElapsedTimer>
+#include "opentrack-compat/timer.hpp"
 #include <QThread>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -46,7 +46,7 @@ struct Key {
     bool shift;
     bool ctrl;
     bool alt;
-    QElapsedTimer timer;
+    Timer timer;
 public:
     Key() : keycode(0), shift(false), ctrl(false), alt(false)
     {
@@ -54,7 +54,9 @@ public:
 
     bool should_process()
     {
-        return !timer.isValid() ? (timer.start(), true) : timer.restart() > 100;
+        bool ret = timer.elapsed_ms() > 100;
+        timer.start();
+        return ret;
     }
 };
 #else
