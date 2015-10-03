@@ -78,7 +78,7 @@ public:
         uv = vec2(u, v);
         return (u >= 0) && (v >= 0) && (u + v <= 1);
     }
-    
+
 private:
     num dot00, dot01, dot11, invDenom;
     vec2 v0, v1, origin;
@@ -88,11 +88,11 @@ inline GLWidget::vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec
 {
     vec3 u = p2 - p1;
     vec3 v = p3 - p1;
-     
+
     vec3 tmp = u.cross(v);
-    
+
     num i = 1./sqrt(tmp.dot(tmp));
-    
+
     return tmp * i;
 }
 
@@ -105,10 +105,10 @@ void GLWidget::project_quad_texture() {
         vec3(0, sy-1, 0),
         vec3(sx-1, sy-1, 0.)
     };
-    
+
     for (int i = 0; i < 4; i++)
         pt[i] = project(vec3(corners[i].x() - sx/2, corners[i].y() - sy/2, 0)) + vec2(sx/2, sy/2);
-    
+
     vec3 normal1(0, 0, 1);
     vec3 normal2;
     {
@@ -117,17 +117,17 @@ void GLWidget::project_quad_texture() {
             foo[i] = project2(corners[i]);
         normal2 = normal(foo[0], foo[1], foo[2]);
     }
-    
+
     num dir = normal1.dot(normal2);
-    
+
     QImage& tex = dir < 0 ? back : front;
-    
+
     int ow = tex.width(), oh = tex.height();
 
     QImage texture(QSize(sx, sy), QImage::Format_RGB888);
     QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
     texture.fill(bgColor);
-    
+
     const vec2 projected[2][3] = { { pt[0], pt[1], pt[2] }, { pt[3], pt[1], pt[2] } };
     const vec2 origs[2][3] = {
         { vec2(0, 0), vec2(ow-1, 0), vec2(0, oh-1) },
@@ -137,16 +137,16 @@ void GLWidget::project_quad_texture() {
         Triangle(projected[0][0], projected[0][1], projected[0][2]),
         Triangle(projected[1][0], projected[1][1], projected[1][2])
     };
-  
+
     const int orig_pitch = tex.bytesPerLine();
     const int dest_pitch = texture.bytesPerLine();
-    
+
     const unsigned char* orig = tex.bits();
     unsigned char* dest = texture.bits();
-    
+
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = texture.depth() / 8;
-    
+
     /* image breakage? */
     if (orig_depth < 3)
         return;
@@ -167,15 +167,15 @@ void GLWidget::project_quad_texture() {
                             + uv.x() * (origs[i][2].y() - origs[i][0].y())
                             + uv.y() * (origs[i][1].y() - origs[i][0].y());
 
-                    const int px_ = std::max<int>(0, fx - .5f);
-                    const int py_ = std::max<int>(0, fy - .5f);
+                    const int px_ = fx + .5f;
+                    const int py_ = fy + .5f;
                     const int px = fx;
                     const int py = fy;
-                    const float ax_ = fabs(fx - px);
-                    const float ay_ = fabs(fy - py);
+                    const float ax_ = fx - px;
+                    const float ay_ = fy - py;
                     const float ax = 1.f - ax_;
                     const float ay = 1.f - ay_;
-                    
+
                     // 0, 0 -- ax, ay
                     const int orig_pos = py * orig_pitch + px * orig_depth;
                     const unsigned char r = orig[orig_pos + 2];
