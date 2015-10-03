@@ -439,7 +439,7 @@ if(SDK_HYDRA)
                              )
                     install(FILES "${SDK_HYDRA}/bin/win32/release_dll/sixense.dll"
                                   #"${SDK_HYDRA}/bin/win32/release_dll/sixense_utils.dll"
-                            DESTINATION . PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE)
+                            DESTINATION . ${opentrack-perms})
             else()
                     if(SDK_HYDRA_AMD64)
                             set(underscore-sixtyfour _x64)
