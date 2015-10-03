@@ -302,10 +302,11 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
             dbg_report("NP_GetData: Table = %02d %02d %02d %02d %02d %02d %02d %02d\n", table[0],table[1],table[2],table[3],table[4],table[5], table[6], table[7]);
             bEncryptionChecked = pMemData->GameId2 == pMemData->GameId;
         }
+
         ReleaseMutex(hFTMutex);
     }
 
-    data->frame = frameno += 10;
+    data->frame = frameno += 1;
     data->status = 0;
     data->cksum = 0;
 
@@ -330,6 +331,7 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     if(bEncryption) {
         enhance((unsigned char*)data, sizeof(tir_data_t), table, sizeof(table));
     }
+
     return 0;
 }
 /******************************************************************
