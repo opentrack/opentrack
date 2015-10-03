@@ -167,12 +167,12 @@ void GLWidget::project_quad_texture() {
                             + uv.x() * (origs[i][2].y() - origs[i][0].y())
                             + uv.y() * (origs[i][1].y() - origs[i][0].y());
 
-                    const int px_ = std::max<int>(0, fx + .5f);
-                    const int py_ = std::max<int>(0, fy + .5f);
+                    const int px_ = fx + .5f;
+                    const int py_ = fy + .5f;
                     const int px = fx;
                     const int py = fy;
-                    const float ax_ = fabs(fx - px);
-                    const float ay_ = fabs(fy - py);
+                    const float ax_ = fx - px;
+                    const float ay_ = fy - py;
                     const float ax = 1.f - ax_;
                     const float ay = 1.f - ay_;
 
