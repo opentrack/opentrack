@@ -268,7 +268,8 @@ static __inline void enhance(unsigned char buf[], unsigned int size,
 
 NP_EXPORT(int) NP_GetData(tir_data_t * data)
 {
-    static int frameno = 0, i;
+    static int frameno = 0;
+    int i;
 #if DEBUG
     int recv = 0;
 #endif
