@@ -46,7 +46,7 @@ static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
 
 #define NP_DECLSPEC __declspec(dllexport)
 #define NP_EXPORT(t) t NP_DECLSPEC __stdcall
-#define	NP_AXIS_MAX				16383
+#define NP_AXIS_MAX                             16383
 
 static BOOL FTCreateMapping(void);
 static void FTDestroyMapping(void);
@@ -109,7 +109,7 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
     return TRUE;
 }
 /******************************************************************
- *		NPPriv_ClientNotify (NPCLIENT.1)
+ *              NPPriv_ClientNotify (NPCLIENT.1)
  */
 
 NP_EXPORT(int) NPPriv_ClientNotify(void)
@@ -119,7 +119,7 @@ NP_EXPORT(int) NPPriv_ClientNotify(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_GetLastError (NPCLIENT.2)
+ *              NPPriv_GetLastError (NPCLIENT.2)
  */
 
 NP_EXPORT(int) NPPriv_GetLastError(void)
@@ -129,7 +129,7 @@ NP_EXPORT(int) NPPriv_GetLastError(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_SetData (NPCLIENT.3)
+ *              NPPriv_SetData (NPCLIENT.3)
  */
 
 NP_EXPORT(int) NPPriv_SetData(void)
@@ -139,7 +139,7 @@ NP_EXPORT(int) NPPriv_SetData(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_SetLastError (NPCLIENT.4)
+ *              NPPriv_SetLastError (NPCLIENT.4)
  */
 
 NP_EXPORT(int) NPPriv_SetLastError(void)
@@ -149,7 +149,7 @@ NP_EXPORT(int) NPPriv_SetLastError(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_SetParameter (NPCLIENT.5)
+ *              NPPriv_SetParameter (NPCLIENT.5)
  */
 
 NP_EXPORT(int) NPPriv_SetParameter(void)
@@ -159,7 +159,7 @@ NP_EXPORT(int) NPPriv_SetParameter(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_SetSignature (NPCLIENT.6)
+ *              NPPriv_SetSignature (NPCLIENT.6)
  */
 
 NP_EXPORT(int) NPPriv_SetSignature(void)
@@ -169,7 +169,7 @@ NP_EXPORT(int) NPPriv_SetSignature(void)
     return 0;
 }
 /******************************************************************
- *		NPPriv_SetVersion (NPCLIENT.7)
+ *              NPPriv_SetVersion (NPCLIENT.7)
  */
 
 NP_EXPORT(int) NPPriv_SetVersion(void)
@@ -263,12 +263,13 @@ static __inline void enhance(unsigned char buf[], unsigned int size,
 }
 
 /******************************************************************
- *		NP_GetData (NPCLIENT.8)
+ *              NP_GetData (NPCLIENT.8)
  */
 
 NP_EXPORT(int) NP_GetData(tir_data_t * data)
 {
-    static int frameno = 0, i;
+    static int frameno = 0;
+    int i;
 #if DEBUG
     int recv = 0;
 #endif
@@ -301,10 +302,11 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
             dbg_report("NP_GetData: Table = %02d %02d %02d %02d %02d %02d %02d %02d\n", table[0],table[1],table[2],table[3],table[4],table[5], table[6], table[7]);
             bEncryptionChecked = pMemData->GameId2 == pMemData->GameId;
         }
+
         ReleaseMutex(hFTMutex);
     }
 
-    data->frame = frameno += 10;
+    data->frame = frameno += 1;
     data->status = 0;
     data->cksum = 0;
 
@@ -316,7 +318,7 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     data->ty = scale2AnalogLimits (ty, -500.0, 500.0);
     data->tz = scale2AnalogLimits (tz, -500.0, 500.0);
 
-    for(i = 0; i < 9; ++i){
+    for(i = 0; i < 9; ++i) {
         data->padding[i] = 0.0;
     }
 
@@ -325,13 +327,15 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
 #endif
 
     data->cksum = cksum((unsigned char*)data, sizeof(tir_data_t));
-    if(bEncryption){
+
+    if(bEncryption) {
         enhance((unsigned char*)data, sizeof(tir_data_t), table, sizeof(table));
     }
+
     return 0;
 }
 /******************************************************************
- *		NP_GetParameter (NPCLIENT.9)
+ *              NP_GetParameter (NPCLIENT.9)
  */
 
 NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
@@ -341,7 +345,7 @@ NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
 }
 
 /******************************************************************
- *		NP_GetSignature (NPCLIENT.10)
+ *              NP_GetSignature (NPCLIENT.10)
  *
  *
  */
@@ -442,7 +446,7 @@ NP_EXPORT(int) NP_QueryVersion(unsigned short * version)
     return 0;
 }
 /******************************************************************
- *		NP_ReCenter (NPCLIENT.12)
+ *              NP_ReCenter (NPCLIENT.12)
  */
 
 NP_EXPORT(int) NP_ReCenter(void)
@@ -452,7 +456,7 @@ NP_EXPORT(int) NP_ReCenter(void)
 }
 
 /******************************************************************
- *		NP_RegisterProgramProfileID (NPCLIENT.13)
+ *              NP_RegisterProgramProfileID (NPCLIENT.13)
  */
 
 NP_EXPORT(int) NP_RegisterProgramProfileID(unsigned short id)
@@ -463,7 +467,7 @@ NP_EXPORT(int) NP_RegisterProgramProfileID(unsigned short id)
     return 0;
 }
 /******************************************************************
- *		NP_RegisterWindowHandle (NPCLIENT.14)
+ *              NP_RegisterWindowHandle (NPCLIENT.14)
  */
 
 NP_EXPORT(int) NP_RegisterWindowHandle(HWND hwnd)
@@ -472,7 +476,7 @@ NP_EXPORT(int) NP_RegisterWindowHandle(HWND hwnd)
     return (int) 0;
 }
 /******************************************************************
- *		NP_RequestData (NPCLIENT.15)
+ *              NP_RequestData (NPCLIENT.15)
  */
 
 NP_EXPORT(int) NP_RequestData(unsigned short req)
@@ -481,7 +485,7 @@ NP_EXPORT(int) NP_RequestData(unsigned short req)
     return (int) 0;
 }
 /******************************************************************
- *		NP_SetParameter (NPCLIENT.16)
+ *              NP_SetParameter (NPCLIENT.16)
  */
 
 NP_EXPORT(int) NP_SetParameter(int arg0, int arg1)
@@ -490,7 +494,7 @@ NP_EXPORT(int) NP_SetParameter(int arg0, int arg1)
     return (int) 0;
 }
 /******************************************************************
- *		NP_StartCursor (NPCLIENT.17)
+ *              NP_StartCursor (NPCLIENT.17)
  */
 
 NP_EXPORT(int) NP_StartCursor(void)
@@ -499,7 +503,7 @@ NP_EXPORT(int) NP_StartCursor(void)
     return (int) 0;
 }
 /******************************************************************
- *		NP_StartDataTransmission (NPCLIENT.18)
+ *              NP_StartDataTransmission (NPCLIENT.18)
  */
 
 NP_EXPORT(int) NP_StartDataTransmission(void)
@@ -509,7 +513,7 @@ NP_EXPORT(int) NP_StartDataTransmission(void)
     return (int) 0;
 }
 /******************************************************************
- *		NP_StopCursor (NPCLIENT.19)
+ *              NP_StopCursor (NPCLIENT.19)
  */
 
 NP_EXPORT(int) NP_StopCursor(void)
@@ -518,7 +522,7 @@ NP_EXPORT(int) NP_StopCursor(void)
     return (int) 0;
 }
 /******************************************************************
- *		NP_StopDataTransmission (NPCLIENT.20)
+ *              NP_StopDataTransmission (NPCLIENT.20)
  */
 
 NP_EXPORT(int) NP_StopDataTransmission(void)
@@ -526,7 +530,7 @@ NP_EXPORT(int) NP_StopDataTransmission(void)
     return (int) 0;
 }
 /******************************************************************
- *		NP_UnregisterWindowHandle (NPCLIENT.21)
+ *              NP_UnregisterWindowHandle (NPCLIENT.21)
  */
 
 NP_EXPORT(int) NP_UnregisterWindowHandle(void)
@@ -538,9 +542,9 @@ NP_EXPORT(int) NP_UnregisterWindowHandle(void)
 static BOOL FTCreateMapping(void)
 {
     BOOL bMappingExists = FALSE;
-    if ( pMemData != NULL ) {
+
+    if (pMemData)
         return TRUE;
-    }
 
     dbg_report("FTCreateMapping request (pMemData == NULL).\n");
 

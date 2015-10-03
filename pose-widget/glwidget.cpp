@@ -11,6 +11,7 @@
 
 #include <QPainter>
 #include <QPaintEvent>
+//#include <QDebug>
 
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
@@ -159,20 +160,53 @@ void GLWidget::project_quad_texture() {
                 // we have symmetry so only one lookup is needed -sh 20150831
                 if (triangles[i].barycentric_coords(pos, uv))
                 {
-                    const int px = origs[i][0].x()
+                    const float fx = origs[i][0].x()
                             + uv.x() * (origs[i][2].x() - origs[i][0].x())
                             + uv.y() * (origs[i][1].x() - origs[i][0].x());
-                    const int py = origs[i][0].y()
+                    const float fy = origs[i][0].y()
                             + uv.x() * (origs[i][2].y() - origs[i][0].y())
                             + uv.y() * (origs[i][1].y() - origs[i][0].y());
-                    
-                    const unsigned char r = orig[py * orig_pitch + px * orig_depth + 2];
-                    const unsigned char g = orig[py * orig_pitch + px * orig_depth + 1];
-                    const unsigned char b = orig[py * orig_pitch + px * orig_depth + 0];
 
-                    dest[y * dest_pitch + x * dest_depth + 0] = r;
-                    dest[y * dest_pitch + x * dest_depth + 1] = g;
-                    dest[y * dest_pitch + x * dest_depth + 2] = b;
+                    const int px_ = std::max<int>(0, fx - .5f);
+                    const int py_ = std::max<int>(0, fy - .5f);
+                    const int px = fx;
+                    const int py = fy;
+                    const float ax_ = fabs(fx - px);
+                    const float ay_ = fabs(fy - py);
+                    const float ax = 1.f - ax_;
+                    const float ay = 1.f - ay_;
+                    
+                    // 0, 0 -- ax, ay
+                    const int orig_pos = py * orig_pitch + px * orig_depth;
+                    const unsigned char r = orig[orig_pos + 2];
+                    const unsigned char g = orig[orig_pos + 1];
+                    const unsigned char b = orig[orig_pos + 0];
+
+                    // 1, 1 -- ax_, ay_
+                    const int orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
+                    const unsigned char r_ = orig[orig_pos_ + 2];
+                    const unsigned char g_ = orig[orig_pos_ + 1];
+                    const unsigned char b_ = orig[orig_pos_ + 0];
+
+                    // 1, 0 -- ax_, ay
+                    const int orig_pos__ = py * orig_pitch + px_ * orig_depth;
+                    const unsigned char r__ = orig[orig_pos__ + 2];
+                    const unsigned char g__ = orig[orig_pos__ + 1];
+                    const unsigned char b__ = orig[orig_pos__ + 0];
+
+                    // 0, 1 -- ax, ay_
+                    const int orig_pos___ = py_ * orig_pitch + px * orig_depth;
+                    const unsigned char r___ = orig[orig_pos___ + 2];
+                    const unsigned char g___ = orig[orig_pos___ + 1];
+                    const unsigned char b___ = orig[orig_pos___ + 0];
+
+                    const int pos = y * dest_pitch + x * dest_depth;
+
+                    //qDebug() << "pos" << fx << fy << "uv" << ax << ay;
+
+                    dest[pos + 0] = (r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_;
+                    dest[pos + 1] = (g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_;
+                    dest[pos + 2] = (b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_;
 
                     break;
                 }
