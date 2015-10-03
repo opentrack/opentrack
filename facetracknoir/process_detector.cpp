@@ -67,7 +67,8 @@ void BrowseButton::browse()
                 tr("Executable (*.exe);;All Files (*)"));
     MainWindow::set_working_directory();
     filename = QFileInfo(filename).fileName();
-    twi->setText(filename);
+    if (!filename.isNull())
+        twi->setText(filename);
 }
 
 int process_detector::add_row(QString exe_name, QString profile)
