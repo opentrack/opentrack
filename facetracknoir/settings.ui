@@ -141,11 +141,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_9">
+        <widget class="QGroupBox" name="groupBox_911">
          <property name="title">
           <string>Centering method</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="gridLayout111">
           <item row="1" column="0">
            <widget class="QLabel" name="label_26">
             <property name="text">
@@ -410,7 +410,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_25">
+           <widget class="QLabel" name="label_2511">
             <property name="text">
              <string>Mode</string>
             </property>
@@ -1605,7 +1605,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_13">
           <item row="0" column="1">
-           <widget class="QLabel" name="label_26">
+           <widget class="QLabel" name="label_26111">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
