@@ -66,8 +66,6 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     FTHeap* ft = pMemData;
     FTData* data = &ft->data;
 
-    shm.lock();
-    
     data->RawX = 0;
     data->RawY = 0;
     data->RawZ = 0;
@@ -108,8 +106,6 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     }
     
     data->DataID += 1;
-
-    shm.unlock();
 }
 
 void FTNoIR_Protocol::start_tirviews() {
