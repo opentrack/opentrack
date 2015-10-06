@@ -126,12 +126,11 @@ bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 
 MainWindow::~MainWindow()
 {
-    save_timer.stop();
+    maybe_save();
 
     if (tray)
         tray->hide();
     stopTracker();
-    maybe_save();
 }
 
 void MainWindow::set_working_directory()
