@@ -31,7 +31,7 @@ typedef __int32 int32_t;
 
 /* only 6 headpose floats and the data id are filled -sh */
 typedef struct __FTData {
-    volatile int DataID;
+    volatile unsigned int DataID;
     volatile int CamWidth;
     volatile int CamHeight;
     /* virtual pose */

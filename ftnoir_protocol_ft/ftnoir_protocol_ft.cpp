@@ -98,9 +98,8 @@ void FTNoIR_Protocol::pose(const double* headpose) {
         QString gamename;
         {
             unsigned char table[8];
-            for (int i = 0; i < 8; i++) table[i] = pMemData->table[i];
-            CSV::getGameData(id, table, gamename);
-            for (int i = 0; i < 8; i++) pMemData->table[i] = table[i];
+            if (CSV::getGameData(id, table, gamename))
+                for (int i = 0; i < 8; i++) pMemData->table[i] = table[i];
         }
         ft->GameID2 = id;
         intGameID = id;
@@ -148,8 +147,9 @@ void FTNoIR_Protocol::start_dummy() {
 
 bool FTNoIR_Protocol::correct()
 {
-        QSettings settings("Freetrack", "FreetrackClient");                                                     // Registry settings (in HK_USER)
-        QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");       // Registry settings (in HK_USER)
+    // Registry settings (in HK_USER)
+    QSettings settings("Freetrack", "FreetrackClient");
+    QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");
 
     if (!shm.success())
         return false;
@@ -157,20 +157,23 @@ bool FTNoIR_Protocol::correct()
     QString aLocation =  QCoreApplication::applicationDirPath() + "/";
 
     switch (s.intUsedInterface) {
-        case 0:                                                                 // Use both interfaces
-            settings.setValue( "Path" , aLocation );
-            settingsTIR.setValue( "Path" , aLocation );
-            break;
-        case 1:                                                                 // Use FreeTrack, disable TrackIR
-            settings.setValue( "Path" , aLocation );
-            settingsTIR.setValue( "Path" , "" );
-            break;
-        case 2:                                                                 // Use TrackIR, disable FreeTrack
-            settings.setValue( "Path" , "" );
-            settingsTIR.setValue( "Path" , aLocation );
-            break;
-        default:
-            break;
+    case 0:
+        // Use both interfaces
+        settings.setValue( "Path" , aLocation );
+        settingsTIR.setValue( "Path" , aLocation );
+        break;
+    case 1:
+        // Use FreeTrack, disable TrackIR
+        settings.setValue( "Path" , aLocation );
+        settingsTIR.setValue( "Path" , "" );
+        break;
+    case 2:
+        // Use TrackIR, disable FreeTrack
+        settings.setValue( "Path" , "" );
+        settingsTIR.setValue( "Path" , aLocation );
+        break;
+    default:
+        break;
     }
 
     if (s.useTIRViews) {
