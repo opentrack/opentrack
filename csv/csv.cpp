@@ -92,7 +92,7 @@ QStringList CSV::parseLine(QString line){
 	return list;
 }
 
-void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
+bool CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 {
     QString gameID = QString::number(id);
     
@@ -104,12 +104,11 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
 
 	QFile file(QCoreApplication::applicationDirPath() + "/settings/facetracknoir supported games.csv");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-		return;
+        return false;
 	}
 	CSV csv(&file);
-	gameLine = csv.parseLine();
 
-	while (gameLine.count() > 2) {
+    while (gameLine = csv.parseLine(), gameLine.count() > 2) {
 		//qDebug() << "Column 0: " << gameLine.at(0);		// No.
 		//qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
 		//qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
@@ -124,9 +123,11 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
                 QByteArray id = gameLine.at(7).toLatin1();
                 unsigned char tmp[8];
                 unsigned char fuzz[3];
+                bool ret = true;
                 if (gameLine.at(3) == QString("V160"))
                 {
                     qDebug() << "no table";
+                    ret = false;
                 }
                 else if (sscanf(id.constData(),
                            "%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
@@ -143,6 +144,7 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
                            fuzz + 1) != 11)
                 {
                     qDebug() << "scanf failed" << fuzz[0] << fuzz[1] << fuzz[2];
+                    ret = false;
                 }
                 else
                     for (int i = 0; i < 8; i++)
@@ -150,13 +152,12 @@ void CSV::getGameData( const int id, unsigned char* table, QString& gamename)
                 qDebug() << gameID << "game-id" << gameLine.at(7);
                 gamename = gameLine.at(1);
                 file.close();
-                return;
+                return ret;
 			}
 		}
-
-		gameLine = csv.parseLine();
 	}
 
     qDebug() << "Unknown game connected" << gameID;
     file.close();
+    return false;
 }

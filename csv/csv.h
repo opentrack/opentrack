@@ -14,7 +14,7 @@ public:
     static QStringList parseLine(QString line);
 
     void setCodec(const char* codecName);
-    static void getGameData(const int gameID, unsigned char* table, QString& gamename);
+    static bool getGameData(const int gameID, unsigned char* table, QString& gamename);
 private:
     QIODevice *m_device;
     QTextCodec *m_codec;
