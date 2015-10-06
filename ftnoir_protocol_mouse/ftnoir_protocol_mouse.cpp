@@ -6,6 +6,7 @@
  */
 #include "ftnoir_protocol_mouse.h"
 #include "opentrack/plugin-api.hpp"
+#include <windows.h>
 
 #ifndef MOUSEEVENTF_MOVE_NOCOALESCE
 #   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000

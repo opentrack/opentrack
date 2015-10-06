@@ -9,7 +9,6 @@
 
 #include "ui_ftnoir_mousecontrols.h"
 #include <QDebug>
-#include <windows.h>
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/options.hpp"
 using namespace options;

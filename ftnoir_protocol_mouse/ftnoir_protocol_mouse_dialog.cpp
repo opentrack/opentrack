@@ -28,24 +28,9 @@
 MOUSEControls::MOUSEControls()
 {
     ui.setupUi( this );
-    ui.cbxSelectMouse_X->addItem("None");
-    ui.cbxSelectMouse_X->addItem("X");
-    ui.cbxSelectMouse_X->addItem("Y");
-    ui.cbxSelectMouse_X->addItem("Z");
-    ui.cbxSelectMouse_X->addItem("Yaw");
-    ui.cbxSelectMouse_X->addItem("Pitch");
-    ui.cbxSelectMouse_X->addItem("Roll");
 
-    ui.cbxSelectMouse_Y->addItem("None");
-    ui.cbxSelectMouse_Y->addItem("X");
-    ui.cbxSelectMouse_Y->addItem("Y");
-    ui.cbxSelectMouse_Y->addItem("Z");
-    ui.cbxSelectMouse_Y->addItem("Yaw");
-    ui.cbxSelectMouse_Y->addItem("Pitch");
-    ui.cbxSelectMouse_Y->addItem("Roll");
-
-    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.Mouse_X, ui.cbxSelectMouse_X);
     tie_setting(s.Mouse_Y, ui.cbxSelectMouse_Y);
