@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <cinttypes>
 #include <iostream>
+#include <algorithm>
 
 #include <QCoreApplication>
 #include <QFile>
@@ -245,6 +246,12 @@ private:
     QList<mem<dylib>> filter_modules;
     QList<mem<dylib>> tracker_modules;
     QList<mem<dylib>> protocol_modules;
+
+    template<typename t>
+    static void sort(QList<t>& xs)
+    {
+        std::sort(xs.begin(), xs.end(), [&](const t& a, const t& b) { return a->name.toLower() < b->name.toLower(); });
+    }
     
     QList<mem<dylib>> filter(dylib::Type t)
     {
@@ -252,6 +259,9 @@ private:
         for (auto x : module_list)
             if (x->type == t)
                 ret.push_back(x);
+
+        sort(ret);
+
         return ret;
     }
 };
