@@ -19,6 +19,13 @@
 #   include <windows.h>
 #endif
 
+template<typename t>
+static QList<t> sorted(QList<t> xs)
+{
+    std::sort(xs.begin(), xs.end(), [&](const t& a, const t& b) { return a->name.toLower() < b->name.toLower(); });
+    return xs;
+}
+
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
@@ -40,13 +47,13 @@ MainWindow::MainWindow() :
 
     modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
 
-    for (auto x : modules.trackers())
+    for (auto x : sorted(modules.trackers()))
         ui.iconcomboTrackerSource->addItem(x->icon, x->name);
 
-    for (auto x : modules.protocols())
+    for (auto x : sorted(modules.protocols()))
         ui.iconcomboProtocol->addItem(x->icon, x->name);
 
-    for (auto x : modules.filters())
+    for (auto x : sorted(modules.filters()))
         ui.iconcomboFilter->addItem(x->icon, x->name);
 
     refresh_config_list();
