@@ -19,7 +19,7 @@
 
 class Map {
 private:
-    static constexpr int value_count = 5000;
+    static constexpr int value_count = 10000;
     using num = double;
     using integral = std::uint16_t;
     static constexpr integral integral_max = std::numeric_limits<integral>::max();

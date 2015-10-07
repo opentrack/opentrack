@@ -21,13 +21,6 @@
 #   include <windows.h>
 #endif
 
-template<typename t>
-static QList<t> sorted(QList<t> xs)
-{
-    std::sort(xs.begin(), xs.end(), [&](const t& a, const t& b) { return a->name.toLower() < b->name.toLower(); });
-    return xs;
-}
-
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
@@ -46,7 +39,7 @@ MainWindow::MainWindow() :
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
 
-    for (auto x : sorted(modules.protocols()))
+    for (auto x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name);
 
     refresh_config_list();
@@ -117,12 +110,11 @@ bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 
 MainWindow::~MainWindow()
 {
-    save_timer.stop();
+    maybe_save();
 
     if (tray)
         tray->hide();
     stopTracker();
-    maybe_save();
 }
 
 void MainWindow::set_working_directory()
