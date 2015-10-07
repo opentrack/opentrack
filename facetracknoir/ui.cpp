@@ -438,6 +438,8 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(QString name)
 {
+    maybe_save();
+
     if (name == "" || is_refreshing_profiles)
         return;
 
