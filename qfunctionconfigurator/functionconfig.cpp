@@ -109,7 +109,7 @@ void Map::reload() {
             const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
             
             // multiplier helps fill in all the x's needed
-            const int mult_ = mult * 20;
+            const int mult_ = mult * 30;
             const int end = std::min<int>(sz, p2.x() * mult_);
             const int start = p1.x() * mult;
             
