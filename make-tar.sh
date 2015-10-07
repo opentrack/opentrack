@@ -8,6 +8,9 @@ if  : &&
     zip -9r "${filename}" $(basename "${prefix}")
 then
     ls -lh -- "${filename}"
+    case "$(uname -s)" in
+        CYGWIN_*) ls -lh -- "$(cygpath -w -- "$filename")";;
+    esac
 else
     rm -fv -- "${filename}"
     exit 1
