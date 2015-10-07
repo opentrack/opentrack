@@ -35,7 +35,6 @@ MainWindow::MainWindow() :
     ui.video_frame_label->setPixmap(no_feed_pixmap);
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
-    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(showKeyboardShortcuts()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
 
