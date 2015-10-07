@@ -19,19 +19,16 @@
 
 class Map {
 private:
-    static constexpr int value_count = 5000;
-    using num = double;
-    using integral = std::uint32_t;
-    static constexpr integral integral_max = std::numeric_limits<integral>::max();
+    static constexpr int value_count = 10000;
 
     struct State {
         QList<QPointF> input;
-        std::vector<integral> data;
+        std::vector<float> data;        
     };
 
     int precision() const;
     void reload();
-    num getValueInternal(int x);
+    float getValueInternal(int x);
 
     MyMutex _mutex;
     QPointF last_input_value;
@@ -52,7 +49,7 @@ public:
         lazy_reload = true;
     }
 
-    num getValue(num x);
+    float getValue(float x);
     bool getLastPoint(QPointF& point);
     void removePoint(int i);
     void removeAllPoints() {
