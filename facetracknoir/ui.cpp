@@ -348,7 +348,7 @@ void MainWindow::set_title(const QString& game_title_)
     if (game_title_ != "")
         game_title = " :: " + game_title_;
     QString current = group::ini_filename();
-    setWindowTitle(QStringLiteral("TrackHat ") + const_cast<const char*>(opentrack_version) + QStringLiteral(" :: ") + current + game_title);
+    setWindowTitle(const_cast<const char*>(opentrack_version) + QStringLiteral(" opentrack") + QStringLiteral(" :: ") + current + game_title);
 }
 
 void MainWindow::showHeadPose()
