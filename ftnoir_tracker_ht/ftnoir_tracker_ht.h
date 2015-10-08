@@ -44,8 +44,8 @@ public:
     Tracker();
     ~Tracker() override;
     void run() override;
-    void start_tracker(QFrame* frame);
-    void data(double *data);
+    void start_tracker(QFrame* frame) override;
+    void data(double *data) override;
     void load_settings(ht_config_t* config);
     headtracker_t* ht;
     QMutex camera_mtx;
@@ -65,11 +65,12 @@ class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
     Q_OBJECT
 public:
     TrackerControls();
-    void register_tracker(ITracker * t)
+    void register_tracker(ITracker * t) override
     {
         tracker = static_cast<Tracker*>(t);
     }
-    void unregister_tracker() {
+    void unregister_tracker() override
+    {
         tracker = nullptr;
     }
 private:
