@@ -31,8 +31,8 @@ float Map::getValue(float x) {
     float  yiplus1 = getValueInternal(xi+1);
     float  f = (q-xi);
     float  ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
-    last_input_value.setX(x);
-    last_input_value.setY(ret);
+    last_input_value.setX(std::fabs(x));
+    last_input_value.setY(std::fabs(ret));
     return ret;
 }
 
