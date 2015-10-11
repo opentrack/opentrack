@@ -72,8 +72,6 @@ Don't be afraid to submit an issue/feature request if need arises.
 
 # Licensing information
 
-The code originally licensed under GPLv3, new code required legally
-compatible unless resides in separate address space.
-
 Recommended to submit new code under ISC license, shorter boilerplate
-header than MIT/X11 or new BSD.
+header than MIT/X11 or new BSD. Please don't use copyleft licenses for
+lack of legal hell.
