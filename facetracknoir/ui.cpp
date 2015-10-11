@@ -25,7 +25,8 @@ MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     no_feed_pixmap(":/images/no-feed.png"),
-    is_refreshing_profiles(false)
+    is_refreshing_profiles(false),
+    update_query(this)
 {
     ui.setupUi(this);
 
@@ -92,6 +93,8 @@ MainWindow::MainWindow() :
                              QMessageBox::Ok, QMessageBox::NoButton);
 
     ui.btnStartTracker->setFocus();
+
+    update_query.maybe_show_dialog();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)

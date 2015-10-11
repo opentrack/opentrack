@@ -29,6 +29,7 @@
 #include "curve-config.h"
 #include "options-dialog.hpp"
 #include "process_detector.h"
+#include "facetracknoir/software-update-dialog.hpp"
 
 using namespace options;
 
@@ -50,6 +51,7 @@ class MainWindow : public QMainWindow, private State
     QMenu profile_menu;
     bool is_refreshing_profiles;
     QTimer save_timer;
+    update_dialog::query update_query;
 
     mem<dylib> current_protocol()
     {
