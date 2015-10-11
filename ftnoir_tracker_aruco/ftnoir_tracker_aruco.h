@@ -52,9 +52,9 @@ class Tracker : protected QThread, public ITracker
 public:
     Tracker();
     ~Tracker() override;
-    void start_tracker(QFrame* frame);
-    void data(double *data);
-    void run();
+    void start_tracker(QFrame* frame) override;
+    void data(double *data) override;
+    void run() override;
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
 private:
     cv::VideoCapture camera;
@@ -75,8 +75,8 @@ class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
     Q_OBJECT
 public:
     TrackerControls();
-    void register_tracker(ITracker * x) { tracker = static_cast<Tracker*>(x); }
-    void unregister_tracker() { tracker = nullptr; }
+    void register_tracker(ITracker * x) override { tracker = static_cast<Tracker*>(x); }
+    void unregister_tracker() override { tracker = nullptr; }
 private:
     Ui::Form ui;
     Tracker* tracker;

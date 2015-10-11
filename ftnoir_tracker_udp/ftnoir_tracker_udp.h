@@ -23,9 +23,9 @@ class FTNoIR_Tracker : public ITracker, protected QThread
 {
 public:
     FTNoIR_Tracker();
-    ~FTNoIR_Tracker();
-    void start_tracker(QFrame *);
-    void data(double *data);
+    ~FTNoIR_Tracker() override;
+    void start_tracker(QFrame *) override;
+    void data(double *data) override;
 protected:
     void run() override;
 private:
@@ -41,8 +41,8 @@ class TrackerControls: public ITrackerDialog
     Q_OBJECT
 public:
     TrackerControls();
-    void register_tracker(ITracker *) {}
-    void unregister_tracker() {}
+    void register_tracker(ITracker *) override {}
+    void unregister_tracker() override {}
 private:
     Ui::UICFTNClientControls ui;
     settings s;

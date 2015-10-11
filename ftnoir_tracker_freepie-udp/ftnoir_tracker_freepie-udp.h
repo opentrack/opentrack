@@ -33,8 +33,8 @@ class TrackerImpl : public ITracker, private QThread
 public:
     TrackerImpl();
     ~TrackerImpl() override;
-    void start_tracker(QFrame *);
-    void data(double *data);
+    void start_tracker(QFrame *) override;
+    void data(double *data) override;
 protected:
     void run() override;
 private:
@@ -50,8 +50,8 @@ class TrackerDialog : public ITrackerDialog
     Q_OBJECT
 public:
     TrackerDialog();
-    void register_tracker(ITracker *) {}
-    void unregister_tracker() {}
+    void register_tracker(ITracker *) override {}
+    void unregister_tracker() override {}
 private:
     Ui::UI_freepie_udp_dialog ui;
     settings s;
