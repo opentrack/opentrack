@@ -1243,6 +1243,8 @@
   <tabstop>btnShowServerControls</tabstop>
   <tabstop>iconcomboFilter</tabstop>
   <tabstop>btnShowFilterControls</tabstop>
+  <tabstop>profile_button</tabstop>
+  <tabstop>iconcomboProfile</tabstop>
   <tabstop>btnEditCurves</tabstop>
   <tabstop>btnShortcuts</tabstop>
  </tabstops>
