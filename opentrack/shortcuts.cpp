@@ -107,7 +107,7 @@ void KeybindingWorker::run() {
         }
 
         // keypresses get dropped with high values
-        Sleep(8);
+        Sleep(4);
     }
 }
 #endif

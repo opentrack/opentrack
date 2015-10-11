@@ -24,11 +24,12 @@ static inline void opentrack_clock_gettime(int, struct timespec* ts)
 
     (void) QueryPerformanceCounter(&d);
 
-    d.QuadPart *= 1000000000L;
-    d.QuadPart /= freq.QuadPart;
+    long long part = d.QuadPart;
+    part *= 1000000000ULL;
+    part /= freq.QuadPart;
 
-    ts->tv_sec = d.QuadPart / 1000000000L;
-    ts->tv_nsec = d.QuadPart % 1000000000L;
+    ts->tv_sec = part / 1000000000ULL;
+    ts->tv_nsec = part % 1000000000ULL;
 }
 #	define clock_gettime opentrack_clock_gettime
 #else
@@ -53,9 +54,9 @@ static inline void clock_gettime(int, struct timespec* ts)
 class Timer {
 private:
     struct timespec state;
-    long conv(const struct timespec& cur)
+    long long conv(const struct timespec& cur)
     {
-        return (cur.tv_sec - state.tv_sec) * 1000000000L + (cur.tv_nsec - state.tv_nsec);
+        return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
     }
 public:
     Timer() {
@@ -64,7 +65,7 @@ public:
     void start() {
         (void) clock_gettime(CLOCK_MONOTONIC, &state);
     }
-    long elapsed() {
+    long long elapsed() {
         struct timespec cur;
         (void) clock_gettime(CLOCK_MONOTONIC, &cur);
         return conv(cur);
