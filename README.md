@@ -6,6 +6,9 @@ Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
 documentation.
 
+[![user support](https://badge.waffle.io/opentrack/opentrack.svg?label=support&title=User%20issues)](http://waffle.io/opentrack/opentrack)
+[![not started](https://badge.waffle.io/opentrack/opentrack.svg?label=ready&title=TODO)](http://waffle.io/opentrack/opentrack)
+
 ***
 
 **opentrack** is an application dedicated to tracking user's head
@@ -19,7 +22,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift
+- Oculus Rift DK2
 - Paper marker support via the ArUco library <<https://github.com/rmsalinas/aruco>>
 - Human face tracker <<https://github.com/sthalik/headtracker>>
 - Razer Hydra
@@ -69,8 +72,6 @@ Don't be afraid to submit an issue/feature request if need arises.
 
 # Licensing information
 
-The code originally licensed under GPLv3, new code required legally
-compatible unless resides in separate address space.
-
 Recommended to submit new code under ISC license, shorter boilerplate
-header than MIT/X11 or new BSD.
+header than MIT/X11 or new BSD. Please don't use copyleft licenses for
+lack of legal hell.
