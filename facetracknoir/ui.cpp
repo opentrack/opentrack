@@ -90,6 +90,8 @@ MainWindow::MainWindow() :
                              "Configuration not saved.",
                              "Can't create configuration directory! Expect major malfunction.",
                              QMessageBox::Ok, QMessageBox::NoButton);
+
+    ui.btnStartTracker->setFocus();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -282,6 +284,8 @@ void MainWindow::startTracker() {
     updateButtonState(true, is_inertial);
 
     maybe_save();
+
+    ui.btnStopTracker->setFocus();
 }
 
 void MainWindow::stopTracker( ) {
@@ -303,6 +307,8 @@ void MainWindow::stopTracker( ) {
     updateButtonState(false, false);
 
     set_title();
+
+    ui.btnStartTracker->setFocus();
 }
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
