@@ -80,16 +80,16 @@ public:
         P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
 
-    enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
-
     void set_model(settings_pt& s)
     {
+        enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
+
         switch (s.model_used)
         {
         default:
         case Cap:
         {
-            const double z = 100, x = 120, y = 60;
+            const double x = 60, y = 100, z = 120;
             M01 = cv::Vec3f(-x, -y, -z);
             M02 = cv::Vec3f(x, -y, -z);
             break;
