@@ -63,7 +63,7 @@ void Wizard::set_data()
 
     settings_pt pt;
     pt.threshold = 31;
-    pt.min_point_size = 2;
+    pt.min_point_size = 0;
     pt.max_point_size = 50;
     pt.fov = 1;
     pt.camera_mode = 0;
