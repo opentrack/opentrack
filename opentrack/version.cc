@@ -4,6 +4,6 @@
 extern "C"
 #endif
 OPENTRACK_EXPORT
-volatile const char* opentrack_version;
+const char* opentrack_version;
 
-volatile const char* opentrack_version = OPENTRACK_VERSION;
+const char* opentrack_version = OPENTRACK_VERSION;
