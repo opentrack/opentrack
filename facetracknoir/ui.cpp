@@ -209,7 +209,7 @@ void MainWindow::open_config_directory()
     }
 }
 
-extern "C" volatile const char* opentrack_version;
+extern "C" const char* opentrack_version;
 
 void MainWindow::refresh_config_list()
 {
@@ -356,7 +356,7 @@ void MainWindow::set_title(const QString& game_title_)
     if (game_title_ != "")
         game_title = " :: " + game_title_;
     QString current = group::ini_filename();
-    setWindowTitle(const_cast<const char*>(opentrack_version) + QStringLiteral(" opentrack") + QStringLiteral(" :: ") + current + game_title);
+    setWindowTitle(opentrack_version + QStringLiteral(" opentrack") + QStringLiteral(" :: ") + current + game_title);
 }
 
 void MainWindow::showHeadPose()
