@@ -39,7 +39,7 @@ public:
                 QSettings s(OPENTRACK_ORG);
                 QString quiet_version = s.value("quiet-update-version").toString();
 
-                if (!str.isEmpty() && str != const_cast<const char*>(opentrack_version) && str != quiet_version)
+                if (!str.isEmpty() && str != opentrack_version && str != quiet_version)
                 {
                     qDebug() << "update version" << str;
                     update_dialog dlg(parent, *this, str);
