@@ -72,6 +72,4 @@ Don't be afraid to submit an issue/feature request if need arises.
 
 # Licensing information
 
-Recommended to submit new code under ISC license, shorter boilerplate
-header than MIT/X11 or new BSD. Please don't use copyleft licenses for
-lack of legal hell.
+Almost all code is licensed under the [ISC license](https://en.wikipedia.org/wiki/ISC_license). There are very few proprietary dependencies. There is no copyleft code. See individual files for licensing and authorship information.
