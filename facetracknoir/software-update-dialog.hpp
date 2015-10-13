@@ -9,7 +9,7 @@
 #include "ui_software-update.h"
 #include "opentrack/options.hpp"
 
-extern "C" volatile const char* opentrack_version;
+extern "C" const char* opentrack_version;
 
 class update_dialog : public QDialog
 {
