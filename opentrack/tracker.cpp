@@ -114,6 +114,8 @@ void Tracker::logic()
     
     if (can_center)
     {
+        if (libs.pFilter)
+            libs.pFilter->center();
         centerp = false;
         for (int i = 0; i < 3; i++)
             t_b[i] = t(i);

@@ -37,7 +37,8 @@ class FTNoIR_Filter : public IFilter
 {
 public:
     FTNoIR_Filter();
-    void filter(const double* input, double *output);
+    void filter(const double* input, double *output) override;
+    void center() override { first_run = true; }
     Map rot, trans;
 private:
     settings_accela s;
