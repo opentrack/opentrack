@@ -64,9 +64,13 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     {
         for (int i = 0; i < 6; i++)
         {
-            output[i] = input[i];
-            last_output[i] = input[i];
-            smoothed_input[i] = input[i];
+            const bool drop = std::isnan(input[i]) || std::isinf(input[i]);
+            double f = input[i];
+            if (drop)
+                f = 0;
+            output[i] = f;
+            last_output[i] = f;
+            smoothed_input[i] = f;
         }
         first_run = false;
         t.start();
