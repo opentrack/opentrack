@@ -54,6 +54,8 @@ public:
 
     bool should_process()
     {
+        if (keycode == 0)
+            return false;
         bool ret = timer.elapsed_ms() > 100;
         timer.start();
         return ret;
