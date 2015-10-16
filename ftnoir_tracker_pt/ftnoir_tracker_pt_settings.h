@@ -28,7 +28,7 @@ struct settings_pt : opts
     settings_pt() :
         opts("tracker-pt"),
         threshold(b, "threshold-primary", 128),
-        min_point_size(b, "min-point-size", 10),
+        min_point_size(b, "min-point-size", 0),
         max_point_size(b, "max-point-size", 50),
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
