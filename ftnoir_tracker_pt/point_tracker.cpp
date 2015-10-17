@@ -18,16 +18,16 @@ const float PI = 3.14159265358979323846f;
 // ----------------------------------------------------------------------------
 static void get_row(const cv::Matx33f& m, int i, cv::Vec3f& v)
 {
-	v[0] = m(i,0);
-	v[1] = m(i,1);
-	v[2] = m(i,2);
+    v[0] = m(i,0);
+    v[1] = m(i,1);
+    v[2] = m(i,2);
 }
 
 static void set_row(cv::Matx33f& m, int i, const cv::Vec3f& v)
 {
-	m(i,0) = v[0];
-	m(i,1) = v[1];
-	m(i,2) = v[2];
+    m(i,0) = v[0];
+    m(i,1) = v[1];
+    m(i,2) = v[2];
 }
 
 static bool d_vals_sort(const std::pair<float,int> a, const std::pair<float,int> b)
@@ -67,31 +67,31 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
     for (int i=0; i<PointModel::N_POINTS; ++i)
-            point_taken[i] = false;
+        point_taken[i] = false;
 
     for (int i=0; i<PointModel::N_POINTS; ++i)
     {
-            float min_sdist = 0;
-            int min_idx = 0;
-            // find closest point to projected model point i
-            for (int j=0; j<PointModel::N_POINTS; ++j)
+        float min_sdist = 0;
+        int min_idx = 0;
+        // find closest point to projected model point i
+        for (int j=0; j<PointModel::N_POINTS; ++j)
+        {
+            cv::Vec2f d = p.points[i]-points[j];
+            float sdist = d.dot(d);
+            if (sdist < min_sdist || j==0)
             {
-                    cv::Vec2f d = p.points[i]-points[j];
-                    float sdist = d.dot(d);
-                    if (sdist < min_sdist || j==0)
-                    {
-                            min_idx = j;
-                            min_sdist = sdist;
-                    }
+                min_idx = j;
+                min_sdist = sdist;
             }
-            // if one point is closest to more than one model point, fallback
-            if (point_taken[min_idx])
-            {
-                init_phase = true;
-                return find_correspondences(points, model);
-            }
-            point_taken[min_idx] = true;
-            p.points[i] = points[min_idx];
+        }
+        // if one point is closest to more than one model point, fallback
+        if (point_taken[min_idx])
+        {
+            init_phase = true;
+            return find_correspondences(points, model);
+        }
+        point_taken[min_idx] = true;
+        p.points[i] = points[min_idx];
     }
     return p;
 }
@@ -100,19 +100,19 @@ void PointTracker::track(const std::vector<cv::Vec2f>& points, const PointModel&
 {
     PointOrder order;
 
-	if (t.elapsed_ms() > init_phase_timeout)
-	{
-		t.start();
-		init_phase = true;
-	}
+    if (t.elapsed_ms() > init_phase_timeout)
+    {
+        t.start();
+        init_phase = true;
+    }
 
     if (!dynamic_pose || init_phase)
         order = find_correspondences(points, model);
-	else
-		order = find_correspondences_previous(points, model, f);
+    else
+        order = find_correspondences_previous(points, model, f);
 
     POSIT(model, order, f);
-	init_phase = false;
+    init_phase = false;
     t.start();
 }
 
