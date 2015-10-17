@@ -77,15 +77,15 @@ function(git_describe _var)
         if(NOT GIT_FOUND)
                 find_package(Git QUIET)
         endif()
-        get_git_head_revision(refspec hash)
+        #get_git_head_revision(refspec hash)
         if(NOT GIT_FOUND)
                 set(${_var} "GIT-NOTFOUND" PARENT_SCOPE)
                 return()
         endif()
-        if(NOT hash)
-                set(${_var} "HEAD-HASH-NOTFOUND" PARENT_SCOPE)
-                return()
-        endif()
+        #if(NOT hash)
+        #        set(${_var} "HEAD-HASH-NOTFOUND" PARENT_SCOPE)
+        #        return()
+        #endif()
 
         # TODO sanitize
         #if((${ARGN}" MATCHES "&&") OR
@@ -100,7 +100,6 @@ function(git_describe _var)
         execute_process(COMMAND
                 "${GIT_EXECUTABLE}"
                 describe
-                ${hash}
                 ${ARGN}
                 WORKING_DIRECTORY
                 "${CMAKE_SOURCE_DIR}"
