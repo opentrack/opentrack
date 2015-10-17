@@ -21,7 +21,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"
 
 ## start crapola
 
-file(WRITE ${CMAKE_BINARY_DIR}/version.cc "
+set(version-string "
 #include \"opentrack-compat/export.hpp\"
 
 #ifdef __cplusplus
@@ -32,6 +32,15 @@ const char* opentrack_version;
 
 const char* opentrack_version = \"${OPENTRACK_COMMIT}\";
 ")
+
+set(crapola-ver)
+if(EXISTS ${CMAKE_BINARY_DIR}/version.cc)
+    file(READ ${CMAKE_BINARY_DIR}/version.cc crapola-ver)
+endif()
+
+if(NOT (crapola-ver STREQUAL version-string))
+    file(WRITE ${CMAKE_BINARY_DIR}/version.cc "${version-string}")
+endif()
 
 ## end crapola
 
