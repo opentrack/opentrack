@@ -64,13 +64,9 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     {
         for (int i = 0; i < 6; i++)
         {
-            const bool drop = std::isnan(input[i]) || std::isinf(input[i]);
-            double f = input[i];
-            if (drop)
-                f = 0;
-            output[i] = f;
-            last_output[i] = f;
-            smoothed_input[i] = f;
+            output[i] = input[i];
+            last_output[i] = input[i];
+            smoothed_input[i] = input[i];
         }
         first_run = false;
         t.start();
@@ -92,9 +88,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     {
         Map& m = i >= 3 ? rot : trans;
         
-        const bool drop = std::isnan(input[i]) || std::isinf(input[i]);
-        const double f = drop ? last_output[i] : input[i];
-        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + f * alpha;
+        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
         
         const double in = smoothed_input[i];
         
