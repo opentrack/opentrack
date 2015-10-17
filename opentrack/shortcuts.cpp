@@ -96,9 +96,9 @@ void KeybindingWorker::run() {
                 case DIK_RALT:
                     break;
                 default:
-                    k.shift = !!(keystate[DIK_LSHIFT] & 0x80);
-                    k.alt = !!(keystate[DIK_LALT] & 0x80);
-                    k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80);
+                    k.shift = !!(keystate[DIK_LSHIFT] & 0x80) || !!(keystate[DIK_RSHIFT] & 0x80);
+                    k.alt = !!(keystate[DIK_LALT] & 0x80) || !!(keystate[DIK_RALT] & 0x80);
+                    k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80) || !!(keystate[DIK_RCONTROL] & 0x80);
                     k.keycode = i;
                     receiver(k);
                     break;
