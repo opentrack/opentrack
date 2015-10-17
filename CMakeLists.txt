@@ -14,10 +14,26 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(GetGitRevisionDescription)
 find_package(Git QUIET)
 if(GIT_FOUND)
-    git_describe(OPENTRACK__COMMIT --tags --always)
+    git_describe(OPENTRACK_COMMIT --tags --always)
 endif()
 
-file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK__COMMIT}\"")
+file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
+
+## start crapola
+
+file(WRITE ${CMAKE_BINARY_DIR}/version.cc "
+#include \"opentrack-compat/export.hpp\"
+
+#ifdef __cplusplus
+extern \"C\"
+#endif
+OPENTRACK_EXPORT
+const char* opentrack_version;
+
+const char* opentrack_version = \"${OPENTRACK_COMMIT}\";
+")
+
+## end crapola
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -187,7 +203,7 @@ if(filename-hash_0)
 endif()
 string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
 string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
-set(filename_0 "${OPENTRACK__COMMIT}")
+set(filename_0 "${OPENTRACK_COMMIT}")
 set(filename "${CMAKE_BINARY_DIR}/${filename_0}.zip")
 
 add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
@@ -274,11 +290,8 @@ opentrack_compat(opentrack-spline-widget)
 target_include_directories(opentrack-spline-widget PUBLIC qfunctionconfigurator/)
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
-add_library(opentrack-version STATIC opentrack/version.cc)
+add_library(opentrack-version STATIC ${CMAKE_BINARY_DIR}/version.cc)
 opentrack_compat(opentrack-version)
-set_target_properties(opentrack-version PROPERTIES
-    COMPILE_DEFINITIONS
-    "OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela)
 target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
@@ -570,6 +583,6 @@ if(APPLE)
                                     \"${CMAKE_SOURCE_DIR}/macosx\"
                                     \"${CMAKE_INSTALL_PREFIX}\"
                                     \"${CMAKE_BINARY_DIR}\"
-                                    \"${OPENTRACK__COMMIT}\")
+                                    \"${OPENTRACK_COMMIT}\")
     ")
 endif()
