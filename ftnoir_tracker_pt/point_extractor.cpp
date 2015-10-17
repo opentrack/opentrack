@@ -76,8 +76,8 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         const int sz = hist.rows*hist.cols;
         int val = 0;
         int cnt = 0;
-        constexpr int min_pixels = 2000;
-        const int pixels_to_include = std::max(0, static_cast<int>(min_pixels * (1. - s.threshold / 100.)));
+        constexpr int min_pixels = 250;
+        const auto pixels_to_include = std::max<int>(0, min_pixels * s.threshold/100.);
         for (int i = sz-1; i >= 0; i--)
         {
             cnt += hist.at<float>(i);
@@ -87,8 +87,8 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
                 break;
             }
         }
-        val *= .95;
-        //qDebug() << "cnt" << cnt << "val" << val;
+        val *= 240./256.;
+        //qDebug() << "val" << val;
 
         cv::Mat frame_bin_;
         cv::threshold(frame_gray, frame_bin_, val, 255, CV_THRESH_BINARY);
