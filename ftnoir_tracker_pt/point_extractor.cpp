@@ -28,8 +28,8 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     cv::Mat frame_gray;
     cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
-    const int region_size_min = s.min_point_size;
-    const int region_size_max = s.max_point_size;
+    const double region_size_min = s.min_point_size;
+    const double region_size_max = s.max_point_size;
     
     struct simple_blob
     {
