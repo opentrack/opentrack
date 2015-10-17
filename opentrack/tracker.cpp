@@ -62,6 +62,44 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
     output[0] = -ret(1);
 }
 
+static inline bool nanp(double value)
+{
+    return std::isnan(value) || std::isinf(value);
+}
+
+static inline double elide_nan(double value, double def)
+{
+    if (nanp(value))
+    {
+        if (nanp(def))
+            return 0;
+        return def;
+    }
+    return value;
+}
+
+static bool is_nan(const dmat<3,3>& r, const dmat<3, 1>& t)
+{
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (nanp(r(i, j)))
+                return true;
+
+    for (int i = 0; i < 3; i++)
+        if (nanp(t(i)))
+            return true;
+
+    return false;
+}
+
+static bool is_nan(const Pose& value)
+{
+    for (int i = 0; i < 6; i++)
+        if (nanp(value(i)))
+            return true;
+    return false;
+}
+
 void Tracker::logic()
 {
     bool inverts[6] = {
@@ -72,12 +110,12 @@ void Tracker::logic()
         m(4).opts.invert,
         m(5).opts.invert,
     };
-    
+
     static constexpr double pi = 3.141592653;
     static constexpr double r2d = 180. / pi;
-    
+
     Pose value, raw;
-    
+
     for (int i = 0; i < 6; i++)
     {
         auto& axis = m(i);
@@ -89,6 +127,9 @@ void Tracker::logic()
         raw(i) = newpose[i];
     }
 
+    if (is_nan(raw))
+        raw = last_raw;
+
     const double off[] = {
         (double)-s.camera_yaw,
         (double)-s.camera_pitch,
@@ -97,12 +138,13 @@ void Tracker::logic()
     const rmat cam = rmat::euler_to_rmat(off);
     rmat r = rmat::euler_to_rmat(&value[Yaw]);
     dmat<3, 1> t(value(0), value(1), value(2));
-    
+
     r = cam * r;
-    
+
     bool can_center = false;
-    
-    if (centerp)
+    const bool nan = is_nan(r, t);
+
+    if (centerp && !nan)
     {
         for (int i = 0; i < 6; i++)
             if (fabs(newpose[i]) != 0)
@@ -111,7 +153,7 @@ void Tracker::logic()
                 break;
             }
     }
-    
+
     if (can_center)
     {
         if (libs.pFilter)
@@ -121,7 +163,7 @@ void Tracker::logic()
             t_b[i] = t(i);
         r_b = r;
     }
-    
+
     {
         double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         t_compensate(cam, tmp, tmp, false);
@@ -143,34 +185,56 @@ void Tracker::logic()
             value(i+3) = euler(i) * r2d;
         }
     }
-    
+
+    bool nan_ = false;
+    // we're checking NaNs after every block of numeric ops
+    if (is_nan(value))
+    {
+        nan_ = true;
+    }
+    else
     {
         Pose tmp = value;
-        
+
         if (libs.pFilter)
             libs.pFilter->filter(tmp, value);
+
+        for (int i = 0; i < 6; i++)
+            value(i) = map(value(i), m(i));
+
+        if (s.tcomp_p)
+            t_compensate(rmat::euler_to_rmat(&value[Yaw]),
+                         value,
+                         value,
+                         s.tcomp_tz);
+
+        for (int i = 0; i < 6; i++)
+            value(i) += m(i).opts.zero;
+
+        for (int i = 0; i < 6; i++)
+            value[i] *= inverts[i] ? -1. : 1.;
+
+        if (zero_)
+            for (int i = 0; i < 6; i++)
+                value(i) = 0;
+
+        if (is_nan(value))
+            nan_ = true;
     }
 
-    for (int i = 0; i < 6; i++)
-        value(i) = map(value(i), m(i));
-    
-    if (s.tcomp_p)
-        t_compensate(rmat::euler_to_rmat(&value[Yaw]),
-                     value,
-                     value,
-                     s.tcomp_tz);
+    if (nan_)
+    {
+        value = last_mapped;
 
-    for (int i = 0; i < 6; i++)
-        value(i) += m(i).opts.zero;
-
-    for (int i = 0; i < 6; i++)
-        value[i] *= inverts[i] ? -1. : 1.;
-
-    if (zero_)
+        // for widget last value display
         for (int i = 0; i < 6; i++)
-            value(i) = 0;
+            (void) map(value(i), m(i));
+    }
 
     libs.pProtocol->pose(value);
+
+    last_mapped = value;
+    last_raw = raw;
 
     QMutexLocker foo(&mtx);
     output_pose = value;
@@ -179,7 +243,7 @@ void Tracker::logic()
 
 void Tracker::run() {
     const int sleep_ms = 3;
-    
+
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
 #endif
@@ -187,14 +251,14 @@ void Tracker::run() {
     while (!should_quit)
     {
         t.start();
-        
+
         double tmp[6] {0,0,0, 0,0,0};
         libs.pTracker->data(tmp);
-        
+
         if (enabledp)
             for (int i = 0; i < 6; i++)
-                newpose[i] = tmp[i];
-        
+                newpose[i] = elide_nan(tmp[i], newpose[i]);
+
         logic();
 
         long q = sleep_ms * 1000L - t.elapsed()/1000L;

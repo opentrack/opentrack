@@ -48,7 +48,7 @@ private:
     Mappings& m;
 
     Timer t;
-    Pose output_pose, raw_6dof;
+    Pose output_pose, raw_6dof, last_mapped, last_raw;
 
     double newpose[6];
     volatile bool centerp;
