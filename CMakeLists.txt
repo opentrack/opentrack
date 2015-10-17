@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(GetGitRevisionDescription)
 find_package(Git QUIET)
 if(GIT_FOUND)
-    git_describe(OPENTRACK_COMMIT --tags --always)
+    git_describe(OPENTRACK_COMMIT --tags --always --dirty)
 endif()
 
 file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
