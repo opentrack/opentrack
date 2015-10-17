@@ -213,11 +213,11 @@ endif()
 string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
 string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
 set(filename_0 "${OPENTRACK_COMMIT}")
-set(filename "${CMAKE_BINARY_DIR}/${filename_0}.zip")
+string(TIMESTAMP filename_1 "%Y%m%d%H%M%S")
+set(filename "${CMAKE_BINARY_DIR}/${filename_0}-${filename_1}.zip")
 
 add_custom_command(OUTPUT ${filename} COMMAND /usr/bin/env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
 add_custom_target(tarball DEPENDS "${filename}")
-
 
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
