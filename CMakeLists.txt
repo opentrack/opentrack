@@ -207,7 +207,7 @@ set(filename_0 "${OPENTRACK_COMMIT}")
 set(filename "${CMAKE_BINARY_DIR}/${filename_0}.zip")
 
 add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
-add_custom_target(tarball DEPENDS ${filename})
+add_custom_target(tarball)
 
 
 opentrack_module(opentrack-api opentrack)

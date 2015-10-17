@@ -3,6 +3,8 @@
 prefix="$1"
 filename="$2"
 
+rm -fv "$filename"
+
 if  : &&
     cd $(dirname -- "${prefix}") &&
     zip -9r "${filename}" $(basename "${prefix}")
