@@ -66,6 +66,11 @@ bool Tracker_PT::get_focal_length(float& ret)
     return false;
 }
 
+static inline bool nanp(double value)
+{
+    return std::isnan(value) || std::isinf(value);
+}
+
 void Tracker_PT::run()
 {
 #ifdef PT_PERF_LOG
@@ -100,19 +105,43 @@ void Tracker_PT::run()
 
             bool success = points.size() == PointModel::N_POINTS;
 
-            ever_success |= success;
-
             float fx;
             if (!get_focal_length(fx))
                 continue;
 
+            Affine X_CM_ = pose();
+            
             if (success)
             {
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
             }
+            
+            Affine X_CM = pose();
 
             {
-                Affine X_CM = pose();
+                int j = 0;
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    if (nanp(X_CM.t(i)))
+                        goto nannan;
+                    for (; j < 3; j++)
+                        if (nanp(X_CM.R(i, j)))
+                        {
+nannan:                     success = false;
+                            X_CM = X_CM_;
+                            {
+                                QMutexLocker lock(&mutex);
+                                point_tracker.reset(X_CM_);
+                            }
+                            goto nannannan;
+                        }
+                }
+            }
+            
+nannannan:  ever_success |= success;
+
+            {
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
