@@ -24,6 +24,7 @@
 Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     s(s),
     m(m),
+    newpose {0,0,0, 0,0,0},
     centerp(s.center_at_startup),
     enabledp(true),
     zero_(false),
@@ -254,7 +255,7 @@ void Tracker::run() {
 
         double tmp[6] {0,0,0, 0,0,0};
         libs.pTracker->data(tmp);
-
+        
         if (enabledp)
             for (int i = 0; i < 6; i++)
                 newpose[i] = elide_nan(tmp[i], newpose[i]);
