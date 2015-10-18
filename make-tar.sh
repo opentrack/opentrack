@@ -4,7 +4,6 @@ prefix="$1"
 filename="$2"
 bin="$3"
 
-cmake "$bin" || exit 1
 cmake --build "$bin" --target install || exit 1
 
 if  : &&

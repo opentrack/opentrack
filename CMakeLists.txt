@@ -216,10 +216,11 @@ set(filename_0 "${OPENTRACK_COMMIT}")
 string(TIMESTAMP filename_1 "%Y%m%d%H%M%S")
 set(filename "${CMAKE_BINARY_DIR}/${filename_0}-${filename_1}.zip")
 
-add_custom_command(OUTPUT ${filename} COMMAND /usr/bin/env sh
-    "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
-    "${filename}" "${CMAKE_BINARY_DIR}")
-add_custom_target(tarball DEPENDS "${filename}")
+add_custom_target(tarball-real)
+add_custom_target(tarball-real2)
+add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
+add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}" "${CMAKE_BINARY_DIR}")
+add_custom_target(tarball DEPENDS tarball-real)
 
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
