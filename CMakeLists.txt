@@ -15,6 +15,7 @@ include(GetGitRevisionDescription)
 find_package(Git QUIET)
 if(GIT_FOUND)
     git_describe(OPENTRACK_COMMIT --tags --always --dirty)
+    git_describe(OPENTRACK_TAG_EXACT --tag --exact)
 endif()
 
 file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
@@ -198,11 +199,7 @@ if(NOT WIN32)
     set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "disable Wine wrapper -- use Wine only for X-Plane")
 endif()
 
-# ----
-
-# misc
-
-# ----
+# --- tarball
 
 string(TIMESTAMP filename-date "%Y%m%d")
 set(filename-ostype ${CMAKE_SYSTEM_NAME})
@@ -213,14 +210,25 @@ endif()
 string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
 string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
 set(filename_0 "${OPENTRACK_COMMIT}")
-string(TIMESTAMP filename_1 "%Y%m%d%H%M%S")
-set(filename "${CMAKE_BINARY_DIR}/${filename_0}-${filename_1}.zip")
+set(filename_1)
+if(is_exact_p EQUAL 0)
+    string(TIMESTAMP filename_1 "-%Y%m%d%H%M%S")
+endif()
+set(filename "${CMAKE_BINARY_DIR}/${filename_0}${filename_1}.zip")
 
 add_custom_target(tarball-real)
 add_custom_target(tarball-real2)
 add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
-add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}" "${CMAKE_BINARY_DIR}")
+set(is-exact-p 0)
+if (OPENTRACK_TAG_EXACT STREQUAL OPENTRACK_COMMIT)
+    set(is-exact-p 1)
+endif()
+add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh
+    "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
+    "${filename}" "${CMAKE_BINARY_DIR}" ${is-exact-p})
 add_custom_target(tarball DEPENDS tarball-real)
+
+# -- end tarball
 
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
