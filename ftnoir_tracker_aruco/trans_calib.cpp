@@ -7,7 +7,6 @@
 
 #include "trans_calib.h"
 
-//-----------------------------------------------------------------------------
 TranslationCalibrator::TranslationCalibrator()
 {
     reset();
