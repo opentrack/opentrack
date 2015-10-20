@@ -6,3 +6,5 @@
 *.txt text=auto eol=lf
 *.ui text=auto eol=lf
 *.qrc text=auto eol=lf
+*.cc text=auto eol=lf
+*.md text=auto eol=lf
