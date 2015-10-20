@@ -120,6 +120,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     else {
         key->setShortcut(QKeySequence::UnknownKey);
         key->setEnabled(false);
+        std::shared_ptr<QxtGlobalShortcut> ptr = K();
+        key.swap(ptr);
     }
 
     if (k.keycode != "")
