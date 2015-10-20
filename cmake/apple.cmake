@@ -10,7 +10,6 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 10.8)
 # change this
 set(CMAKE_OSX_SYSROOT /var/root/MacOSX10.8.sdk)
 
-# oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-fno-math-errno -funsafe-math-optimizations -fno-signed-zeros")
 set(cpu "-O3 -DNDEBUG -flto ${fpu}")
 set(cxx "-std=c++11 -stdlib=libc++")
