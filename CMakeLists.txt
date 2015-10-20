@@ -211,7 +211,7 @@ string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
 string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
 set(filename_0 "${OPENTRACK_COMMIT}")
 set(filename_1)
-if(is_exact_p EQUAL 0)
+if (NOT OPENTRACK_TAG_EXACT STREQUAL OPENTRACK_COMMIT)
     string(TIMESTAMP filename_1 "-%Y%m%d%H%M%S")
 endif()
 set(filename "${CMAKE_BINARY_DIR}/${filename_0}${filename_1}.zip")
@@ -219,13 +219,10 @@ set(filename "${CMAKE_BINARY_DIR}/${filename_0}${filename_1}.zip")
 add_custom_target(tarball-real)
 add_custom_target(tarball-real2)
 add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
-set(is-exact-p 0)
-if (OPENTRACK_TAG_EXACT STREQUAL OPENTRACK_COMMIT)
-    set(is-exact-p 1)
-endif()
+
 add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh
     "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
-    "${filename}" "${CMAKE_BINARY_DIR}" ${is-exact-p})
+    "${filename}" "${CMAKE_BINARY_DIR}")
 add_custom_target(tarball DEPENDS tarball-real)
 
 # -- end tarball
