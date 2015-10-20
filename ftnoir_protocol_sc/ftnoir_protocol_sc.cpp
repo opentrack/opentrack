@@ -1,9 +1,13 @@
-/* Copyright (c) 2015 Stanislaw Halik <sthalik@misaki.pl>
- * Copyright (c) 2015 Wim Vriend
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+/* Homepage         http://facetracknoir.sourceforge.net/home/default.htm        *
+ *                                                                               *
+ * ISC License (ISC)                                                             *
+ *                                                                               *
+ * Copyright (c) 2015, Wim Vriend
+ * Copyright (c) 2014, Stanislaw Halik <sthalik@misaki.pl>
+ *                                                                               *
+ * Permission to use, copy, modify, and/or distribute this software for any      *
+ * purpose with or without fee is hereby granted, provided that the above        *
+ * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
@@ -80,7 +84,7 @@ public:
 #	define PREFIX ""
 #else
 #	define PREFIX "lib"
-#endif 
+#endif
         QString path = QCoreApplication::applicationDirPath() + "/" PREFIX "opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
@@ -113,11 +117,11 @@ private:
 };
 
 bool FTNoIR_Protocol::correct()
-{   
-    if (!SCClientLib.isLoaded())                           
+{
+    if (!SCClientLib.isLoaded())
     {
         ActivationContext ctx(142 + static_cast<int>(s.sxs_manifest));
-        
+
         if (ctx.is_ok())
         {
             SCClientLib.setFileName("SimConnect.dll");
@@ -171,7 +175,7 @@ void FTNoIR_Protocol::handle()
 void CALLBACK FTNoIR_Protocol::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)
 {
     FTNoIR_Protocol& self = *reinterpret_cast<FTNoIR_Protocol*>(self_);
-    
+
     switch(pData->dwID)
     {
     default:
