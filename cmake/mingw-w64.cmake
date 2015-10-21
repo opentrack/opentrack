@@ -26,7 +26,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(fpu "-fno-math-errno -funsafe-math-optimizations -fno-signed-zeros -mfpmath=both")
+set(fpu "-ffast-math -fno-finite-math-only -mfpmath=both")
 set(cpu "-O3 -march=pentium4 -mtune=corei7-avx ${fpu} -msse -msse2 -mno-sse3")
 
 set(CFLAGS-OVERRIDE "" CACHE STRING "")
