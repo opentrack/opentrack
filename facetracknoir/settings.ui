@@ -300,19 +300,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="mindiam_spin">
-               <property name="toolTip">
-                <string>Minimum point diameter</string>
-               </property>
-               <property name="suffix">
-                <string> px</string>
-               </property>
-               <property name="maximum">
-                <number>1024</number>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="2">
               <widget class="QLabel" name="label_22">
                <property name="text">
@@ -324,15 +311,28 @@
               </widget>
              </item>
              <item row="0" column="3">
-              <widget class="QSpinBox" name="maxdiam_spin">
+              <widget class="QDoubleSpinBox" name="maxdiam_spin">
                <property name="toolTip">
                 <string>Maximum point diameter</string>
                </property>
                <property name="suffix">
                 <string> px</string>
                </property>
-               <property name="maximum">
-                <number>1024</number>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QDoubleSpinBox" name="mindiam_spin">
+               <property name="toolTip">
+                <string>Minimum point diameter</string>
+               </property>
+               <property name="suffix">
+                <string> px</string>
+               </property>
+               <property name="decimals">
+                <number>1</number>
                </property>
               </widget>
              </item>

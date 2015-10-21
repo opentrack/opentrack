@@ -1,4 +1,4 @@
-/* Copyright (c) 2014, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -96,9 +96,9 @@ void KeybindingWorker::run() {
                 case DIK_RALT:
                     break;
                 default:
-                    k.shift = !!(keystate[DIK_LSHIFT] & 0x80);
-                    k.alt = !!(keystate[DIK_LALT] & 0x80);
-                    k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80);
+                    k.shift = !!(keystate[DIK_LSHIFT] & 0x80) || !!(keystate[DIK_RSHIFT] & 0x80);
+                    k.alt = !!(keystate[DIK_LALT] & 0x80) || !!(keystate[DIK_RALT] & 0x80);
+                    k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80) || !!(keystate[DIK_RCONTROL] & 0x80);
                     k.keycode = i;
                     receiver(k);
                     break;
@@ -120,6 +120,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     else {
         key->setShortcut(QKeySequence::UnknownKey);
         key->setEnabled(false);
+        std::shared_ptr<QxtGlobalShortcut> ptr = K();
+        key.swap(ptr);
     }
 
     if (k.keycode != "")

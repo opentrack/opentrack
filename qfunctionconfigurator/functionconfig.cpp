@@ -1,3 +1,11 @@
+/* Copyright (c) 2012-2015, Stanislaw Halik <sthalik@misaki.pl>
+
+ * Permission to use, copy, modify, and/or distribute this
+ * software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission
+ * notice appear in all copies.
+ */
+
 #include <QMutexLocker>
 #include <QCoreApplication>
 #include <QPointF>
@@ -67,6 +75,18 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
     return one.x() < two.x();
 }
 
+static inline bool nanp(double value)
+{
+    return std::isnan(value) || std::isinf(value);
+}
+
+static inline double elide_nan(double value)
+{
+    if (nanp(value))
+        return -1;
+    return value;
+}
+
 void Map::reload() {
     if (cur.input.size())
     {
@@ -124,7 +144,7 @@ void Map::reload() {
                                       (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
-                    data[x] = y;
+                    data[x] = elide_nan(y);
             }
         }
         

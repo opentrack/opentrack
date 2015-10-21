@@ -61,6 +61,8 @@ struct IFilter
     // perform filtering step.
     // you have to take care of dt on your own, try "opentrack-compat/timer.hpp"
     virtual void filter(const double *input, double *output) = 0;
+    // optionally reset the filter when centering
+    virtual void center() {}
 };
 
 struct IFilterDialog : public BaseDialog

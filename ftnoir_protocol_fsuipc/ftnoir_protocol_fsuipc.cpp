@@ -114,7 +114,7 @@ void FTNoIR_Protocol::pose(const double *headpose ) {
                 // FSUIPC checks for already open connections and returns FSUIPC_ERR_OPEN in that case
                 // the connection scope is global for the process. this is why above code doesn't
                 // leak resources or have logic errors. see: http://www.purebasic.fr/english/viewtopic.php?t=31112
-				FSUIPC_Close();							//timeout (1 second) so assume FS closed
+				FSUIPC_Close();
 			}
 		}
 	}

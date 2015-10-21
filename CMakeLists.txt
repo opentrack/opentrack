@@ -7,6 +7,9 @@ endif()
 if(POLICY CMP0028)
     cmake_policy(SET CMP0028 OLD)
 endif()
+if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW)
+endif()
 
 include(CMakeParseArguments)
 
@@ -14,10 +17,36 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(GetGitRevisionDescription)
 find_package(Git QUIET)
 if(GIT_FOUND)
-    git_describe(OPENTRACK__COMMIT --tags --always)
+    git_describe(OPENTRACK_COMMIT --tags --always --dirty)
+    git_describe(OPENTRACK_TAG_EXACT --tag --exact)
 endif()
 
-file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK__COMMIT}\"")
+file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
+
+## start crapola
+
+set(version-string "
+#include \"opentrack-compat/export.hpp\"
+
+#ifdef __cplusplus
+extern \"C\"
+#endif
+OPENTRACK_EXPORT
+const char* opentrack_version;
+
+const char* opentrack_version = \"${OPENTRACK_COMMIT}\";
+")
+
+set(crapola-ver)
+if(EXISTS ${CMAKE_BINARY_DIR}/version.cc)
+    file(READ ${CMAKE_BINARY_DIR}/version.cc crapola-ver)
+endif()
+
+if(NOT (crapola-ver STREQUAL version-string))
+    file(WRITE ${CMAKE_BINARY_DIR}/version.cc "${version-string}")
+endif()
+
+## end crapola
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -177,11 +206,7 @@ if(NOT WIN32)
     set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "disable Wine wrapper -- use Wine only for X-Plane")
 endif()
 
-# ----
-
-# misc
-
-# ----
+# --- tarball
 
 string(TIMESTAMP filename-date "%Y%m%d")
 set(filename-ostype ${CMAKE_SYSTEM_NAME})
@@ -191,12 +216,23 @@ if(filename-hash_0)
 endif()
 string(REPLACE "refs/heads/" "" filename-branch_1 "${filename-branch_0}")
 string(REPLACE "/" "-" filename-branch "${filename-branch_1}")
-set(filename_0 "${OPENTRACK__COMMIT}")
-set(filename "${CMAKE_BINARY_DIR}/${filename_0}.zip")
+set(filename_0 "${OPENTRACK_COMMIT}")
+set(filename_1)
+if (NOT OPENTRACK_TAG_EXACT STREQUAL OPENTRACK_COMMIT)
+    string(TIMESTAMP filename_1 "-%Y%m%d%H%M%S")
+endif()
+set(filename "${CMAKE_BINARY_DIR}/${filename_0}${filename_1}.zip")
 
-add_custom_command(OUTPUT ${filename} COMMAND env sh "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
-add_custom_target(tarball DEPENDS ${filename})
+add_custom_target(tarball-real)
+add_custom_target(tarball-real2)
+add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
 
+add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh
+    "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
+    "${filename}" "${CMAKE_BINARY_DIR}")
+add_custom_target(tarball DEPENDS tarball-real)
+
+# -- end tarball
 
 opentrack_module(opentrack-api opentrack)
 opentrack_qt(opentrack-api)
@@ -278,11 +314,8 @@ opentrack_compat(opentrack-spline-widget)
 target_include_directories(opentrack-spline-widget PUBLIC qfunctionconfigurator/)
 target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
 
-add_library(opentrack-version STATIC opentrack/version.cc)
+add_library(opentrack-version STATIC ${CMAKE_BINARY_DIR}/version.cc)
 opentrack_compat(opentrack-version)
-set_target_properties(opentrack-version PROPERTIES
-    COMPILE_DEFINITIONS
-    "OPENTRACK_VERSION=\"${OPENTRACK__COMMIT}\"")
 
 opentrack_library(opentrack-filter-accela ftnoir_filter_accela STATIC TRUE)
 target_link_libraries(opentrack-filter-accela opentrack-spline-widget)
@@ -463,6 +496,6 @@ if(APPLE)
                                     \"${CMAKE_SOURCE_DIR}/macosx\"
                                     \"${CMAKE_INSTALL_PREFIX}\"
                                     \"${CMAKE_BINARY_DIR}\"
-                                    \"${OPENTRACK__COMMIT}\")
+                                    \"${OPENTRACK_COMMIT}\")
     ")
 endif()

@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2014-2015 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,8 +20,8 @@
 Tracker_PT::Tracker_PT()
     : mutex(QMutex::Recursive),
       commands(0),
-	  video_widget(NULL),
-	  video_frame(NULL),
+      video_widget(NULL),
+      video_frame(NULL),
       ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
@@ -28,8 +29,8 @@ Tracker_PT::Tracker_PT()
 
 Tracker_PT::~Tracker_PT()
 {
-	set_command(ABORT);
-	wait();
+    set_command(ABORT);
+    wait();
     delete video_widget;
     video_widget = NULL;
     if (video_frame->layout()) delete video_frame->layout();
@@ -39,13 +40,13 @@ Tracker_PT::~Tracker_PT()
 void Tracker_PT::set_command(Command command)
 {
     //QMutexLocker lock(&mutex);
-	commands |= command;
+    commands |= command;
 }
 
 void Tracker_PT::reset_command(Command command)
 {
     //QMutexLocker lock(&mutex);
-	commands &= ~command;
+    commands &= ~command;
 }
 
 bool Tracker_PT::get_focal_length(float& ret)
@@ -78,16 +79,21 @@ bool Tracker_PT::get_focal_length(float& ret)
     return false;
 }
 
+static inline bool nanp(double value)
+{
+    return std::isnan(value) || std::isinf(value);
+}
+
 void Tracker_PT::run()
 {
 #ifdef PT_PERF_LOG
-	QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
-	if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
-	QTextStream log_stream(&log_file);
+    QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
+    if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+    QTextStream log_stream(&log_file);
 #endif
 
     apply_settings();
-    
+
     while((commands & ABORT) == 0)
     {
         const double dt = time.elapsed() * 1e-9;
@@ -109,22 +115,46 @@ void Tracker_PT::run()
             // blobs are sorted in order of circularity
             if (points.size() > PointModel::N_POINTS)
                 points.resize(PointModel::N_POINTS);
-            
+
             bool success = points.size() == PointModel::N_POINTS;
-            
-            ever_success |= success;
 
             float fx;
             if (!get_focal_length(fx))
                 continue;
+
+            Affine X_CM_ = pose();
             
             if (success)
             {
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
             }
             
+            Affine X_CM = pose();
+
             {
-                Affine X_CM = pose();
+                int j = 0;
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    if (nanp(X_CM.t(i)))
+                        goto nannan;
+                    for (; j < 3; j++)
+                        if (nanp(X_CM.R(i, j)))
+                        {
+nannan:                     success = false;
+                            X_CM = X_CM_;
+                            {
+                                QMutexLocker lock(&mutex);
+                                point_tracker.reset(X_CM_);
+                            }
+                            goto nannannan;
+                        }
+                }
+            }
+            
+nannannan:  ever_success |= success;
+
+            {
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 if (X_MH.t[0] == 0 && X_MH.t[1] == 0 && X_MH.t[2] == 0)
                 {
@@ -145,7 +175,7 @@ void Tracker_PT::run()
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
                 points.push_back(p_);
             }
-            
+
             for (unsigned i = 0; i < points.size(); i++)
             {
                 auto& p = points[i];
@@ -164,7 +194,7 @@ void Tracker_PT::run()
                          color,
                          4);
             }
-            
+
             video_widget->update_image(frame);
         }
 #ifdef PT_PERF_LOG
@@ -233,26 +263,26 @@ void Tracker_PT::data(double *data)
     if (ever_success)
     {
         Affine X_CM = pose();
-    
+
         Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
         Affine X_GH = X_CM * X_MH;
-    
+
         cv::Matx33f R = X_GH.R;
         cv::Vec3f   t = X_GH.t;
-    
+
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
         // -z -> x, y -> z, x -> -y
         cv::Matx33f R_EG(0, 0,-1,
                          -1, 0, 0,
                          0, 1, 0);
         R = R_EG * R * R_EG.t();
-    
+
         // extract rotation angles
         float alpha, beta, gamma;
         beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
         alpha = atan2( R(1,0), R(0,0));
         gamma = atan2( R(2,1), R(2,2));
-    
+
         // extract rotation angles
         data[Yaw] = rad2deg * alpha;
         data[Pitch] = -rad2deg * beta;

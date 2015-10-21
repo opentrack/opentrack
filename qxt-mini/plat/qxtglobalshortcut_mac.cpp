@@ -29,6 +29,9 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
+#pragma GCC diagnostic ignored "-Wfour-char-constants"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include "qxtglobalshortcut_p.h"
 #include <QMap>
 #include <QHash>

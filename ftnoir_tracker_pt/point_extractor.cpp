@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2014-2015 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -28,21 +29,21 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     cv::Mat frame_gray;
     cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
-    const int region_size_min = s.min_point_size;
-    const int region_size_max = s.max_point_size;
+    const double region_size_min = s.min_point_size;
+    const double region_size_max = s.max_point_size;
     
-    struct simple_blob
+    struct blob
     {
         double radius;
         cv::Vec2d pos;
         double confid;
         bool taken;
         double area;
-        simple_blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
+        blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
         {
             //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
         }
-        bool inside(const simple_blob& other)
+        bool inside(const blob& other)
         {
             cv::Vec2d tmp = pos - other.pos;
             return sqrt(tmp.dot(tmp)) < radius;
@@ -52,7 +53,7 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
     cv::Mat frame_bin = cv::Mat::zeros(H, W, CV_8U);
     
-    std::vector<simple_blob> blobs;
+    std::vector<blob> blobs;
     std::vector<std::vector<cv::Point>> contours;
 
     const int thres = s.threshold;
@@ -76,8 +77,8 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         const int sz = hist.rows*hist.cols;
         int val = 0;
         int cnt = 0;
-        constexpr int min_pixels = 2000;
-        const int pixels_to_include = std::max(0, static_cast<int>(min_pixels * (1. - s.threshold / 100.)));
+        constexpr int min_pixels = 250;
+        const auto pixels_to_include = std::max<int>(0, min_pixels * s.threshold/100.);
         for (int i = sz-1; i >= 0; i--)
         {
             cnt += hist.at<float>(i);
@@ -87,8 +88,8 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
                 break;
             }
         }
-        val *= .95;
-        //qDebug() << "cnt" << cnt << "val" << val;
+        val *= 240./256.;
+        //qDebug() << "val" << val;
 
         cv::Mat frame_bin_;
         cv::threshold(frame_gray, frame_bin_, val, 255, CV_THRESH_BINARY);
@@ -148,13 +149,13 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
             cv::putText(frame, buf, cv::Point(pos[0]+30, pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
         }
 
-        blobs.push_back(simple_blob(radius, pos, confid, area));
+        blobs.push_back(blob(radius, pos, confid, area));
     }
     
     // clear old points
 	points.clear();
 
-    using b = const simple_blob;
+    using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
     
     for (auto& b : blobs)

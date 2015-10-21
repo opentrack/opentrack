@@ -16,6 +16,8 @@
 #define PLUGIN_API
 #endif
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* using Wine name to ease things */
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"

@@ -1,0 +1,8 @@
+execute_process(COMMAND cmake ${CMAKE_BINARY_DIR} RESULT_VARIABLE ret)
+if(NOT ret EQUAL 0)
+    message(FATAL_ERROR "can't regen")
+endif()
+execute_process(COMMAND cmake --build ${CMAKE_BINARY_DIR} --target tarball-real2)
+if(NOT ret EQUAL 0)
+    message(FATAL_ERROR "can't make tarball")
+endif()

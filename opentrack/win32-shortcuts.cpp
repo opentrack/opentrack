@@ -1,3 +1,11 @@
+/* Copyright (c) 2015, Stanislaw Halik <sthalik@misaki.pl>
+
+ * Permission to use, copy, modify, and/or distribute this
+ * software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission
+ * notice appear in all copies.
+ */
+
 #if defined(_WIN32)
 #   ifndef DIRECTINPUT_VERSION
 #       define DIRECTINPUT_VERSION 0x800
@@ -109,6 +117,9 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_RETURN, Qt::Key::Key_Return),
        win_key(DIK_INSERT, Qt::Key::Key_Insert),
        win_key(DIK_SPACE, Qt::Key::Key_Space),
+       win_key(DIK_SYSRQ, Qt::Key::Key_Print),
+       win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),
+       win_key(DIK_PAUSE, Qt::Key::Key_Pause),
     });
 
 bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods)

@@ -58,15 +58,32 @@ FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
     }
 }
 
+static inline bool nanp(double value)
+{
+    return std::isnan(value) || std::isinf(value);
+}
+
+static inline double elide_nan(double value, double def)
+{
+    if (nanp(value))
+    {
+        if (nanp(def))
+            return 0;
+        return def;
+    }
+    return value;
+}
+
 void FTNoIR_Filter::filter(const double* input, double *output)
 {
     if (first_run)
     {
         for (int i = 0; i < 6; i++)
         {
-            output[i] = input[i];
-            last_output[i] = input[i];
-            smoothed_input[i] = input[i];
+            const double f = nanp(input[i]) ? 0 : input[i];
+            output[i] = f;
+            last_output[i] = f;
+            smoothed_input[i] = f;
         }
         first_run = false;
         t.start();
@@ -88,9 +105,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     {
         Map& m = i >= 3 ? rot : trans;
         
-        const bool drop = std::isnan(input[i]) || std::isinf(input[i]);
-        const double f = drop ? last_output[i] : input[i];
-        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + f * alpha;
+        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + elide_nan(input[i], smoothed_input[i]) * alpha;
         
         const double in = smoothed_input[i];
         
@@ -106,6 +121,6 @@ void FTNoIR_Filter::filter(const double* input, double *output)
             : result >= in;
         const double ret = done ? in : result;
         
-        last_output[i] = output[i] = ret;
+        last_output[i] = output[i] = elide_nan(ret, last_output[i]);
     }
 }

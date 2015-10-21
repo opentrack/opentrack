@@ -43,10 +43,13 @@ void PortableLockedShm::unlock()
     (void) ReleaseMutex(hMutex);
 }
 #else
+
+#include <limits.h>
+
 #pragma GCC diagnostic ignored "-Wunused-result"
 PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
-    char filename[512] = {0};
+    char filename[PATH_MAX+2] = {0};
     strcpy(filename, "/");
     strcat(filename, shmName);
     fd = shm_open(filename, O_RDWR | O_CREAT, 0600);

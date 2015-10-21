@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     // qt5 designer-made controls look like shit on 'doze -sh 20140921
     // also our OSX look leaves a lot to be desired -sh 20150726
     {
-        const QStringList preferred { "fusion", "windowsvista", "jazzbands'-marijuana", "macintosh", "windowsxp" };
+        const QStringList preferred { "fusion", "windowsvista", "macintosh", "windowsxp" };
         for (const auto& style_name : preferred)
         {
             QStyle* s = QStyleFactory::create(style_name);

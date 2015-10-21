@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2014-2015 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,9 +14,8 @@ using namespace options;
 
 struct settings_pt : opts
 {
-    value<int> threshold,
-               min_point_size,
-               max_point_size;
+    value<int> threshold;
+    value<double> min_point_size, max_point_size;
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
     value<int> fov, camera_mode;
