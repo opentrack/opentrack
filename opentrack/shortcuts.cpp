@@ -154,21 +154,21 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 void Shortcuts::receiver(Key &k)
 {
     std::vector<K*> ks { &keyCenter, &keyToggle, &keyZero };
-    for (auto& k_ : ks)
+    for (K* k_ : ks)
     {
         if (k.keycode != k_->keycode)
             continue;
         if (!k_->should_process())
-            return;
-        if (k_->alt && !k.alt) return;
-        if (k_->ctrl && !k.ctrl) return;
-        if (k_->shift && !k.shift) return;
-
-        if (k.keycode == keyCenter.keycode)
+            continue;
+        if (k_->alt && !k.alt) continue;
+        if (k_->ctrl && !k.ctrl) continue;
+        if (k_->shift && !k.shift) continue;
+        
+        if (k_ == &keyCenter)
             emit center();
-        else if (k.keycode == keyToggle.keycode)
+        else if (k_ == &keyToggle)
             emit toggle();
-        else if (k.keycode == keyZero.keycode)
+        else if (k_ == &keyZero)
             emit zero();
     }
 }
