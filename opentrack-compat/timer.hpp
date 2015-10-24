@@ -24,9 +24,7 @@ static inline void opentrack_clock_gettime(int, struct timespec* ts)
 
     (void) QueryPerformanceCounter(&d);
 
-    long long part = d.QuadPart;
-    part *= 1000000000ULL;
-    part /= freq.QuadPart;
+    long long part = d.QuadPart / ((long double)freq.QuadPart) * 1000000000.L;
 
     ts->tv_sec = part / 1000000000ULL;
     ts->tv_nsec = part % 1000000000ULL;
