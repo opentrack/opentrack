@@ -115,13 +115,8 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double thres = i >= 3 ? rot_t : trans_t;
         const double val = m.getValue(vec_ / thres);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
-        const bool negp = vec < 0.;
-        const bool done = negp
-            ? result <= in
-            : result >= in;
-        const double ret = done ? in : result;
         
-        last_output[i] = output[i] = elide_nan(ret, last_output[i]);
+        last_output[i] = output[i] = elide_nan(result, last_output[i]);
     }
 }
 
