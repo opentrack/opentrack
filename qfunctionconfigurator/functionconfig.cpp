@@ -104,7 +104,7 @@ void Map::reload() {
         for (int i = 0; i < sz; i++)
             data[i] = -1;
         
-        if (input.size() == 1)
+        if (input.size() == 1 && input[0].x() > 1e-2)
         {
             for (int k = 0; k < input[0].x() * mult; k++) {
                 if (k < sz)
