@@ -166,16 +166,27 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
     auto our_mods = qt & Qt::KeyboardModifierMask;
 
     {
-    }
-
-    const auto key = qt & ~Qt::KeyboardModifierMask;
-    for (auto& wk : windows_key_sequences)
-    {
-        if (wk.qt == key)
+        const auto key_ = qt;
+        for (auto& wk : windows_key_sequences)
         {
-            dik = wk.win;
-            mods = static_cast<Qt::KeyboardModifiers>(our_mods);
-            return true;
+            if (wk.qt == key_)
+            {
+                dik = wk.win;
+                mods = Qt::NoModifier;
+                return true;
+            }
+        }
+    }
+    {
+        const auto key = qt & ~Qt::KeyboardModifierMask;
+        for (auto& wk : windows_key_sequences)
+        {
+            if (wk.qt == key)
+            {
+                dik = wk.win;
+                mods = static_cast<Qt::KeyboardModifiers>(our_mods);
+                return true;
+            }
         }
     }
     return false;
