@@ -164,33 +164,8 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     auto qt = static_cast<QVariant>(qt_).toInt();
     auto our_mods = qt & Qt::KeyboardModifierMask;
-    const auto our_mods_ = our_mods;
-    our_mods |= Qt::ShiftModifier;
-    switch (qt & ~Qt::KeyboardModifierMask)
+
     {
-    case Qt::Key::Key_BraceLeft: qt = Qt::Key::Key_BracketLeft; break;
-    case Qt::Key::Key_BraceRight: qt = Qt::Key::Key_BracketRight; break;
-    case Qt::Key::Key_ParenLeft: qt = Qt::Key::Key_9; break;
-    case Qt::Key::Key_ParenRight: qt = Qt::Key::Key_0; break;
-
-    case Qt::Key::Key_Exclam: qt = Qt::Key::Key_1; break;
-    case Qt::Key::Key_At: qt = Qt::Key::Key_2; break;
-    case Qt::Key::Key_NumberSign: qt = Qt::Key::Key_3; break;
-    case Qt::Key::Key_Dollar: qt = Qt::Key::Key_4; break;
-    case Qt::Key::Key_Percent: qt = Qt::Key::Key_5; break;
-    case Qt::Key::Key_AsciiCircum: qt = Qt::Key::Key_6; break;
-    case Qt::Key::Key_Ampersand: qt = Qt::Key::Key_7; break;
-    case Qt::Key::Key_Asterisk: qt = Qt::Key::Key_8; break;
-
-    case Qt::Key::Key_Underscore: qt = Qt::Key::Key_Minus; break;
-    case Qt::Key::Key_Plus: qt = Qt::Key::Key_Equal; break;
-
-    case Qt::Key::Key_Colon: qt = Qt::Key::Key_Semicolon; break;
-    case Qt::Key::Key_QuoteDbl: qt = Qt::Key::Key_Apostrophe; break;
-    case Qt::Key::Key_Less: qt = Qt::Key::Key_Comma; break;
-    case Qt::Key::Key_Question: qt = Qt::Key::Key_Slash; break;
-    case Qt::Key::Key_Bar: qt = Qt::Key::Key_Backslash; break;
-    default: our_mods = our_mods_; break;
     }
 
     const auto key = qt & ~Qt::KeyboardModifierMask;
