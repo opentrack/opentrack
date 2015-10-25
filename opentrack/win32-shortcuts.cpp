@@ -120,6 +120,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_SYSRQ, Qt::Key::Key_Print),
        win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),
        win_key(DIK_PAUSE, Qt::Key::Key_Pause),
+       win_key(DIK_NUMLOCK, Qt::Key::Key_NumLock),
     });
 
 bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods)
