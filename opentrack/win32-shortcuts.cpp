@@ -121,6 +121,26 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),
        win_key(DIK_PAUSE, Qt::Key::Key_Pause),
        win_key(DIK_NUMLOCK, Qt::Key::Key_NumLock),
+#define mod(x, y) static_cast<Qt::Key>(x | y)
+       win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD1,      mod(Qt::Key::Key_1,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD2,      mod(Qt::Key::Key_2,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD3,      mod(Qt::Key::Key_3,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD4,      mod(Qt::Key::Key_4,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD5,      mod(Qt::Key::Key_5,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD6,      mod(Qt::Key::Key_6,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD7,      mod(Qt::Key::Key_7,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD8,      mod(Qt::Key::Key_8,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD9,      mod(Qt::Key::Key_9,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPADCOMMA,  mod(Qt::Key::Key_Comma,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADENTER,  mod(Qt::Key::Key_Enter,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADEQUALS, mod(Qt::Key::Key_Equal,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADMINUS,  mod(Qt::Key::Key_Minus,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADPERIOD, mod(Qt::Key::Key_Period,   Qt::KeypadModifier)),
+       win_key(DIK_NUMPADPLUS,   mod(Qt::Key::Key_Plus,     Qt::KeypadModifier)),
+       win_key(DIK_NUMPADSLASH,  mod(Qt::Key::Key_Slash,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADSTAR,   mod(Qt::Key::Key_multiply, Qt::KeypadModifier)),
     });
 
 bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods)
