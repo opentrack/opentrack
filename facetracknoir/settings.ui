@@ -157,12 +157,12 @@
            <widget class="QComboBox" name="center_method">
             <item>
              <property name="text">
-              <string>Relative</string>
+              <string>Relative (inertial device)</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Absolute</string>
+              <string>Absolute (camera device)</string>
              </property>
             </item>
            </widget>
