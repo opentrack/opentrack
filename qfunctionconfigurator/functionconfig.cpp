@@ -75,18 +75,6 @@ static bool sortFn(const QPointF& one, const QPointF& two) {
     return one.x() < two.x();
 }
 
-static inline bool nanp(double value)
-{
-    return std::isnan(value) || std::isinf(value);
-}
-
-static inline double elide_nan(double value)
-{
-    if (nanp(value))
-        return -1;
-    return value;
-}
-
 void Map::reload() {
     if (cur.input.size())
     {
@@ -104,7 +92,7 @@ void Map::reload() {
         for (int i = 0; i < sz; i++)
             data[i] = -1;
         
-        if (input.size() == 1)
+        if (input.size() == 1 && input[0].x() > 1e-2)
         {
             for (int k = 0; k < input[0].x() * mult; k++) {
                 if (k < sz)
@@ -144,7 +132,7 @@ void Map::reload() {
                                       (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
-                    data[x] = elide_nan(y);
+                    data[x] = y;
             }
         }
         

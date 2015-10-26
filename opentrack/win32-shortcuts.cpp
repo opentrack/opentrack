@@ -120,6 +120,27 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_SYSRQ, Qt::Key::Key_Print),
        win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),
        win_key(DIK_PAUSE, Qt::Key::Key_Pause),
+       win_key(DIK_NUMLOCK, Qt::Key::Key_NumLock),
+#define mod(x, y) static_cast<Qt::Key>(x | y)
+       win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD1,      mod(Qt::Key::Key_1,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD2,      mod(Qt::Key::Key_2,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD3,      mod(Qt::Key::Key_3,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD4,      mod(Qt::Key::Key_4,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD5,      mod(Qt::Key::Key_5,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD6,      mod(Qt::Key::Key_6,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD7,      mod(Qt::Key::Key_7,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD8,      mod(Qt::Key::Key_8,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPAD9,      mod(Qt::Key::Key_9,        Qt::KeypadModifier)),
+       win_key(DIK_NUMPADCOMMA,  mod(Qt::Key::Key_Comma,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADENTER,  mod(Qt::Key::Key_Enter,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADEQUALS, mod(Qt::Key::Key_Equal,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADMINUS,  mod(Qt::Key::Key_Minus,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADPERIOD, mod(Qt::Key::Key_Period,   Qt::KeypadModifier)),
+       win_key(DIK_NUMPADPLUS,   mod(Qt::Key::Key_Plus,     Qt::KeypadModifier)),
+       win_key(DIK_NUMPADSLASH,  mod(Qt::Key::Key_Slash,    Qt::KeypadModifier)),
+       win_key(DIK_NUMPADSTAR,   mod(Qt::Key::Key_multiply, Qt::KeypadModifier)),
     });
 
 bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods)
@@ -143,43 +164,29 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     auto qt = static_cast<QVariant>(qt_).toInt();
     auto our_mods = qt & Qt::KeyboardModifierMask;
-    const auto our_mods_ = our_mods;
-    our_mods |= Qt::ShiftModifier;
-    switch (qt & ~Qt::KeyboardModifierMask)
+
     {
-    case Qt::Key::Key_BraceLeft: qt = Qt::Key::Key_BracketLeft; break;
-    case Qt::Key::Key_BraceRight: qt = Qt::Key::Key_BracketRight; break;
-    case Qt::Key::Key_ParenLeft: qt = Qt::Key::Key_9; break;
-    case Qt::Key::Key_ParenRight: qt = Qt::Key::Key_0; break;
-
-    case Qt::Key::Key_Exclam: qt = Qt::Key::Key_1; break;
-    case Qt::Key::Key_At: qt = Qt::Key::Key_2; break;
-    case Qt::Key::Key_NumberSign: qt = Qt::Key::Key_3; break;
-    case Qt::Key::Key_Dollar: qt = Qt::Key::Key_4; break;
-    case Qt::Key::Key_Percent: qt = Qt::Key::Key_5; break;
-    case Qt::Key::Key_AsciiCircum: qt = Qt::Key::Key_6; break;
-    case Qt::Key::Key_Ampersand: qt = Qt::Key::Key_7; break;
-    case Qt::Key::Key_Asterisk: qt = Qt::Key::Key_8; break;
-
-    case Qt::Key::Key_Underscore: qt = Qt::Key::Key_Minus; break;
-    case Qt::Key::Key_Plus: qt = Qt::Key::Key_Equal; break;
-
-    case Qt::Key::Key_Colon: qt = Qt::Key::Key_Semicolon; break;
-    case Qt::Key::Key_QuoteDbl: qt = Qt::Key::Key_Apostrophe; break;
-    case Qt::Key::Key_Less: qt = Qt::Key::Key_Comma; break;
-    case Qt::Key::Key_Question: qt = Qt::Key::Key_Slash; break;
-    case Qt::Key::Key_Bar: qt = Qt::Key::Key_Backslash; break;
-    default: our_mods = our_mods_; break;
-    }
-
-    const auto key = qt & ~Qt::KeyboardModifierMask;
-    for (auto& wk : windows_key_sequences)
-    {
-        if (wk.qt == key)
+        const auto key_ = qt;
+        for (auto& wk : windows_key_sequences)
         {
-            dik = wk.win;
-            mods = static_cast<Qt::KeyboardModifiers>(our_mods);
-            return true;
+            if (wk.qt == key_)
+            {
+                dik = wk.win;
+                mods = Qt::NoModifier;
+                return true;
+            }
+        }
+    }
+    {
+        const auto key = qt & ~Qt::KeyboardModifierMask;
+        for (auto& wk : windows_key_sequences)
+        {
+            if (wk.qt == key)
+            {
+                dik = wk.win;
+                mods = static_cast<Qt::KeyboardModifiers>(our_mods);
+                return true;
+            }
         }
     }
     return false;
