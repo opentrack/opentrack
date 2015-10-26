@@ -441,7 +441,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect. Also see &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/choosing-camera-offset&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;description on wiki&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -451,6 +451,9 @@
             </property>
             <property name="margin">
              <number>2</number>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
