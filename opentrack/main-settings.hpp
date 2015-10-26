@@ -58,6 +58,6 @@ struct main_settings : opts {
         camera_pitch(b, "camera-pitch", 0),
         camera_roll(b, "camera-roll", 0),
         center_at_startup(b, "center-at-startup", true),
-        center_method(b, "centering-method", false)
+        center_method(b, "centering-method", true)
     {}
 };
