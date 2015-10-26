@@ -560,233 +560,76 @@
       <attribute name="title">
        <string>Model</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="groupBox_7">
+        <widget class="QFrame" name="frame_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="styleSheet">
-          <string notr="true">QGroupBox { border: 0; }</string>
+          <string notr="true">QFrame { border: 0; }</string>
          </property>
-         <property name="title">
-          <string/>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QFrame" name="frame_5">
-            <property name="styleSheet">
-             <string notr="true">QFrame { border: 0; }</string>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <property name="leftMargin">
+           <number>31</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>Model used</string>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <widget class="QLabel" name="label_4">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>40</y>
-               <width>17</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Hat</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_3">
-             <property name="geometry">
-              <rect>
-               <x>210</x>
-               <y>0</y>
-               <width>120</width>
-               <height>108</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>108</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>108</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="ui-res.qrc">:/images/trackhat-hat.png</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_34">
-             <property name="geometry">
-              <rect>
-               <x>215</x>
-               <y>80</y>
-               <width>130</width>
-               <height>130</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>130</width>
-               <height>130</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>130</width>
-               <height>130</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="ui-res.qrc">:/images/trackhat-clip-right.png</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_35">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>130</y>
-               <width>43</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Right clip</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_36">
-             <property name="geometry">
-              <rect>
-               <x>215</x>
-               <y>170</y>
-               <width>130</width>
-               <height>130</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>130</width>
-               <height>130</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>130</width>
-               <height>130</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="ui-res.qrc">:/images/trackhat-clip-left.png</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_37">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>230</y>
-               <width>37</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Left clip</string>
-             </property>
-            </widget>
            </widget>
           </item>
-          <item>
-           <widget class="QFrame" name="frame_6">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="model_used">
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToMinimumContentsLength</enum>
             </property>
-            <property name="styleSheet">
-             <string notr="true">QFrame { border: 0; }</string>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_17">
-             <property name="leftMargin">
-              <number>31</number>
+            <item>
+             <property name="text">
+              <string>Cap</string>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_31">
-               <property name="text">
-                <string>Model used</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="model_used">
-               <item>
-                <property name="text">
-                 <string>Cap</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Clip</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Clip left-handed</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-            </layout>
+             <property name="icon">
+              <iconset resource="ui-res.qrc">
+               <normaloff>:/images/trackhat-hat.png</normaloff>:/images/trackhat-hat.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Clip</string>
+             </property>
+             <property name="icon">
+              <iconset resource="ui-res.qrc">
+               <normaloff>:/images/trackhat-clip-right.png</normaloff>:/images/trackhat-clip-right.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Clip left-handed</string>
+             </property>
+             <property name="icon">
+              <iconset resource="ui-res.qrc">
+               <normaloff>:/images/trackhat-clip-left.png</normaloff>:/images/trackhat-clip-left.png</iconset>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -916,6 +759,19 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
