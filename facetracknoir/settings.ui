@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>676</height>
+    <width>428</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -33,7 +33,7 @@
       <attribute name="title">
        <string>Shortcuts</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
@@ -173,8 +173,8 @@
       <attribute name="title">
        <string>Camera</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_9">
-       <item row="1" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
         <widget class="QGroupBox" name="groupBox_9">
          <property name="title">
           <string>Device</string>
@@ -269,35 +269,18 @@
          </layout>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QGroupBox" name="groupBox_11">
-         <property name="title">
-          <string>Status</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="caminfo_label">
-            <property name="text">
-             <string>Not running</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="pointinfo_label">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
+       <item>
         <widget class="QGroupBox" name="groupBox_6">
          <property name="title">
           <string>Point extraction</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
           <item>
            <widget class="QFrame" name="frame_2">
             <property name="frameShape">
@@ -310,8 +293,14 @@
              <number>0</number>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
+             <property name="topMargin">
+              <number>2</number>
+             </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>2</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>6</number>
              </property>
              <item row="1" column="1">
               <widget class="QSlider" name="threshold_slider">
@@ -377,6 +366,9 @@
              <property name="topMargin">
               <number>0</number>
              </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <property name="verticalSpacing">
               <number>0</number>
              </property>
@@ -432,116 +424,30 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_5">
+       <item>
+        <widget class="QGroupBox" name="groupBox_11">
          <property name="title">
-          <string>Camera offset</string>
+          <string>Status</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_17">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="caminfo_label">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect. Also see &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/choosing-camera-offset&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;description on wiki&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-            <property name="margin">
-             <number>2</number>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
+             <string>Not running</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" alignment="Qt::AlignLeft">
-           <widget class="QGroupBox" name="groupBox_3">
-            <property name="styleSheet">
-             <string notr="true">QGroupBox
-{
-	border: 0;
-}</string>
+          <item>
+           <widget class="QLabel" name="pointinfo_label">
+            <property name="text">
+             <string/>
             </property>
-            <layout class="QGridLayout" name="gridLayout_7">
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_21">
-               <property name="text">
-                <string>Roll</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="camera_roll">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="minimum">
-                <number>-180</number>
-               </property>
-               <property name="maximum">
-                <number>180</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="camera_yaw">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="minimum">
-                <number>-180</number>
-               </property>
-               <property name="maximum">
-                <number>180</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_19">
-               <property name="text">
-                <string>Pitch</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="camera_pitch">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="minimum">
-                <number>-180</number>
-               </property>
-               <property name="maximum">
-                <number>180</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_18">
-               <property name="text">
-                <string>Yaw</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -761,6 +667,115 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Camera offset</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect. Also see &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/choosing-camera-offset&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;description on wiki&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="margin">
+             <number>2</number>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" alignment="Qt::AlignLeft">
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox
+{
+	border: 0;
+}</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_21">
+               <property name="text">
+                <string>Roll</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="camera_roll">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>-180</number>
+               </property>
+               <property name="maximum">
+                <number>180</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="camera_yaw">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>-180</number>
+               </property>
+               <property name="maximum">
+                <number>180</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>Pitch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="camera_pitch">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="minimum">
+                <number>-180</number>
+               </property>
+               <property name="maximum">
+                <number>180</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>Yaw</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -768,7 +783,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>10</height>
           </size>
          </property>
         </spacer>
@@ -837,7 +852,7 @@
          </layout>
         </widget>
        </item>
-       <item alignment="Qt::AlignTop">
+       <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="maximumSize">
           <size>
@@ -1276,8 +1291,8 @@
       <attribute name="title">
        <string>Filter</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_15">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
         <widget class="QFrame" name="frame_4">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -1529,10 +1544,10 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item>
         <widget class="QGroupBox" name="groupBox_12">
          <property name="title">
-          <string>GroupBox</string>
+          <string/>
          </property>
          <layout class="QGridLayout" name="gridLayout_13">
           <item row="0" column="1">
@@ -1552,7 +1567,7 @@
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Accela by &lt;/span&gt;&lt;a href=&quot;https://github.com/sthalik&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;Stanisław Halik&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;Thanks to &lt;/span&gt;&lt;a href=&quot;https://github.com/dbaarda&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;Donovan Baarda&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2012-2015&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;right&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Accela by &lt;/span&gt;&lt;a href=&quot;https://github.com/sthalik&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;Stanisław Halik&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;br/&gt;Thanks to &lt;/span&gt;&lt;a href=&quot;https://github.com/dbaarda&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;Donovan Baarda&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2012-2015&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>
@@ -1593,7 +1608,7 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item>
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1622,9 +1637,6 @@
           <string>Game detection</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0">
-           <widget class="process_detector" name="game_detector" native="true"/>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_24">
             <property name="sizePolicy">
@@ -1640,6 +1652,9 @@
              <bool>true</bool>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="process_detector" name="game_detector" native="true"/>
           </item>
          </layout>
         </widget>
@@ -1668,9 +1683,6 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>center_at_startup</tabstop>
   <tabstop>trayp</tabstop>
-  <tabstop>camera_yaw</tabstop>
-  <tabstop>camera_pitch</tabstop>
-  <tabstop>camera_roll</tabstop>
   <tabstop>tcomp_enable</tabstop>
   <tabstop>tcomp_rz</tabstop>
   <tabstop>src_yaw</tabstop>
