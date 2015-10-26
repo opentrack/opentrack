@@ -33,14 +33,14 @@
       <attribute name="title">
        <string>Shortcuts</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_9">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
           <string>Global shortcuts</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="0" column="0">
            <widget class="QLabel" name="label_23">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -56,7 +56,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0">
            <widget class="QGroupBox" name="groupBox">
             <property name="styleSheet">
              <string notr="true">QGroupBox { border: 0; }</string>
@@ -140,21 +140,21 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QCheckBox" name="center_at_startup">
          <property name="text">
           <string>Center at startup</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QCheckBox" name="trayp">
          <property name="text">
           <string>Minimize to tray</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -468,7 +468,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QFrame" name="frame_6">
+        <widget class="QGroupBox" name="groupBox_6111">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -478,26 +478,13 @@
          <property name="styleSheet">
           <string notr="true">QFrame { border: 0; }</string>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
          <layout class="QGridLayout" name="gridLayout_17">
           <property name="leftMargin">
            <number>31</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_31">
-            <property name="text">
-             <string>Model used</string>
-            </property>
-           </widget>
-          </item>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
           <item row="0" column="1">
            <widget class="QComboBox" name="model_used">
             <property name="sizeAdjustPolicy">
@@ -536,6 +523,13 @@
                <normaloff>:/images/trackhat-clip-left.png</normaloff>:/images/trackhat-clip-left.png</iconset>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>Model used</string>
+            </property>
            </widget>
           </item>
          </layout>
