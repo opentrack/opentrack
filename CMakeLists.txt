@@ -575,7 +575,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION . ${opentrack-perms})
 install(FILES "${CMAKE_SOURCE_DIR}/bin/NPClient.dll" "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll" "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe" DESTINATION .
     ${opentrack-perms})
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/clientfiles" DESTINATION .)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/settings" "${CMAKE_SOURCE_DIR}/contrib" DESTINATION .)
 
 if(NOT WIN32 AND SDK_WINE_PREFIX AND NOT SDK_WINE_NO_WRAPPER)
     install(FILES "${CMAKE_BINARY_DIR}/opentrack-wrapper-wine.exe.so"
@@ -594,7 +594,8 @@ endif()
 
 if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/rs_impl/bin/opentrack-tracker-rs-impl.exe" DESTINATION . ${opentrack-perms})
-    install(FILES "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/redist/intel_rs_sdk_runtime_websetup_6.0.21.6598.exe" DESTINATION ./clientfiles/ ${opentrack-perms})
+    install(FILES
+        "${CMAKE_SOURCE_DIR}/ftnoir_tracker_rs/redist/intel_rs_sdk_runtime_websetup_6.0.21.6598.exe" DESTINATION ./contrib/ ${opentrack-perms})
 endif()
 
 if(APPLE)

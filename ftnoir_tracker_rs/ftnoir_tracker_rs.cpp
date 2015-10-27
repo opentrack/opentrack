@@ -81,7 +81,7 @@ void RSTracker::rsImplProcessFinished(int exitCode){
         msgBox.exec();
 
         if(msgBox.clickedButton() == triggerSdkInstallation){
-            bool pStarted = QProcess::startDetached("clientfiles\\intel_rs_sdk_runtime_websetup_6.0.21.6598.exe --finstall=core,face3d --fnone=all");
+            bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_6.0.21.6598.exe --finstall=core,face3d --fnone=all");
             if(!pStarted){
                 QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
             }
