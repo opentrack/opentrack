@@ -1,5 +1,5 @@
 #pragma once
-#include "ui_ftnoir_rift_clientcontrols.h"
+#include "ui_ftnoir_rift_clientcontrols_080.h"
 #include <QMessageBox>
 #include <QWaitCondition>
 #include <cmath>
@@ -30,7 +30,7 @@ public:
     void data(double *data) override;
 private:
     double old_yaw;
-    ovrHmd hmd;
+    ovrSession hmd;
     settings s;
 };
 
@@ -54,7 +54,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-    QString name() { return QString("Oculus Rift -- HMD"); }
+    QString name() { return QString("Oculus Rift runtime 0.8.0 -- HMD"); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

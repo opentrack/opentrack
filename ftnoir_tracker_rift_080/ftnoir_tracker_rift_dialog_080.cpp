@@ -1,4 +1,4 @@
-#include "ftnoir_tracker_rift.h"
+#include "ftnoir_tracker_rift_080.h"
 #include "opentrack/plugin-api.hpp"
 
 TrackerControls::TrackerControls()

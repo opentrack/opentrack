@@ -7,7 +7,7 @@ SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 1)
 
 # specify the cross compiler
-set(c i686-w64-mingw32-)
+set(c /c/mingw-w64/i686-4.9.2-posix-sjlj-rt_v4-rev4/mingw32/bin/i686-w64-mingw32-)
 
 SET(CMAKE_C_COMPILER    ${c}gcc)
 SET(CMAKE_CXX_COMPILER  ${c}g++)

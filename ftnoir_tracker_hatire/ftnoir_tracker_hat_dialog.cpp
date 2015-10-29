@@ -37,7 +37,7 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
 
     // Stop if no SerialPort dispo
     if (ui.cbSerialPort->count()<1) {
-        QMessageBox::critical(this,"FaceTrackNoIR Error", "No SerialPort avaible");
+        QMessageBox::critical(this,"Error", "No SerialPort avaible");
     } else {
 
         int indxport =ui.cbSerialPort->findText(settings.SerialPortName,Qt::MatchExactly );
@@ -45,7 +45,7 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
             ui.cbSerialPort->setCurrentIndex(indxport);
         } else {
             if (settings.SerialPortName != "")
-                QMessageBox::warning(this,"FaceTrackNoIR Error", "Selected SerialPort modified");
+                QMessageBox::warning(this,"Error", "Selected SerialPort modified");
             ui.cbSerialPort-> setCurrentIndex(indxport);
         }
     }

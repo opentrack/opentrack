@@ -185,17 +185,7 @@ endif()
 
 if(LINUX OR APPLE)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
-    set(SDK_ENABLE_LIBEVDEV FALSE CACHE BOOL "libevdev virtual joystick protocol support")
 endif()
-
-SET(SDK_HYDRA "" CACHE PATH "libSixense path for Razer Hydra")
-SET(SDK_HYDRA_AMD64 FALSE CACHE BOOL "whether libSixense is amd64 (else ia-32)")
-SET(SDK_RIFT "" CACHE PATH "libOVR path for Oculus Rift")
-
-set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
-
-set(SDK_HT "" CACHE FILEPATH "Path to headtracker library")
-set(SDK_HT_FLANDMARK "" CACHE FILEPATH "Path to flandmark library for headtracker")
 
 if(WIN32)
     set(SDK_FSUIPC "" CACHE PATH "FSUIPC for older MS FSX path")
@@ -362,13 +352,7 @@ endif()
 
 opentrack_library(opentrack-proto-udp ftnoir_protocol_ftn)
 
-if(Qt5SerialPort_FOUND AND FALSE)
-    opentrack_library(opentrack-tracker-hatire ftnoir_tracker_hatire)
-    target_link_libraries(opentrack-tracker-hatire ${Qt5SerialPort_LIBRARIES})
-    target_include_directories(opentrack-tracker-hatire SYSTEM PUBLIC ${Qt5SerialPort_INCLUDE_DIRS})
-endif()
-
-if(SDK_WINE_PREFIX AND FALSE)
+if(SDK_WINE_PREFIX)
     opentrack_library(opentrack-proto-wine ftnoir_protocol_wine)
     target_link_libraries(opentrack-proto-wine opentrack-compat opentrack-csv)
     if(NOT SDK_WINE_NO_WRAPPER)

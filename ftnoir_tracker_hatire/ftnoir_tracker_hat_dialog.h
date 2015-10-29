@@ -26,7 +26,7 @@ class TrackerControls: public QWidget, public ITrackerDialog
     Q_OBJECT
 public:
     explicit TrackerControls();
-    virtual ~TrackerControls();
+    ~TrackerControls() override;
 #ifdef OPENTRACK_API
     void Initialize(QWidget *parent) ; // unused
     void register_tracker(ITracker *tracker);

@@ -230,11 +230,11 @@ void FTNoIR_Tracker::Initialize( QFrame *videoframe )
 				}
 
 		} else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
 		}
 	}
 	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort",QMessageBox::Ok,QMessageBox::NoButton);
+		QMessageBox::warning(0,"Error", "Unable to open ComPort",QMessageBox::Ok,QMessageBox::NoButton);
 		delete ComPort;
 		ComPort = NULL;
 	} 
@@ -351,11 +351,11 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 				Log("Port setup, waiting for HAT frames to process");
                 qDebug()  << QTime::currentTime()  << " HAT wait MPU ";
         } else {
-			QMessageBox::warning(0,"FaceTrackNoIR Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
+			QMessageBox::warning(0,"Error", ComPort->errorString(),QMessageBox::Ok,QMessageBox::NoButton);
 		}
 	}
 	else {
-		QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to open ComPort: " + ComPort->errorString(), QMessageBox::Ok,QMessageBox::NoButton);
+		QMessageBox::warning(0,"Error", "Unable to open ComPort: " + ComPort->errorString(), QMessageBox::Ok,QMessageBox::NoButton);
 		delete ComPort;
 		ComPort = NULL;
 	} 
