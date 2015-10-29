@@ -25,7 +25,7 @@ class Rift_Tracker : public ITracker
 {
 public:
     Rift_Tracker();
-    virtual ~Rift_Tracker() override;
+    ~Rift_Tracker() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
