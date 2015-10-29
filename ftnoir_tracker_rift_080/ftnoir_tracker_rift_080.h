@@ -1,5 +1,5 @@
 #pragma once
-#include "ui_ftnoir_rift_clientcontrols_025.h"
+#include "ui_ftnoir_rift_clientcontrols_080.h"
 #include <QMessageBox>
 #include <QWaitCondition>
 #include <cmath>
@@ -13,7 +13,7 @@ struct settings : opts {
     value<bool> useYawSpring;
     value<double> constant_drift, persistence, deadzone;
     settings() :
-        opts("Rift-025"),
+        opts("Rift"),
         useYawSpring(b, "yaw-spring", false),
         constant_drift(b, "constant-drift", 0.000005),
         persistence(b, "persistence", 0.99999),
@@ -30,11 +30,8 @@ public:
     void data(double *data) override;
 private:
     double old_yaw;
+    ovrSession hmd;
     settings s;
-    static bool isInitialised;
-    OVR::DeviceManager* pManager;
-    OVR::SensorDevice* pSensor;
-    OVR::SensorFusion* pSFusion;
 };
 
 class TrackerControls: public ITrackerDialog
@@ -57,7 +54,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-    QString name() { return QString("Oculus Rift DK1 -- HMD"); }
+    QString name() { return QString("Oculus Rift runtime 0.8.0 -- HMD"); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

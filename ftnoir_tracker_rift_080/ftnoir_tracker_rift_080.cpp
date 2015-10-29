@@ -1,8 +1,9 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
-#include "ftnoir_tracker_rift.h"
+#include "ftnoir_tracker_rift_080.h"
 #include "opentrack/plugin-api.hpp"
 #include "OVR_CAPI.h"
-#include "Kernel/OVR_Math.h"
+#include "Extras/OVR_Math.h"
+#include "OVR_CAPI_0_8_0.h"
 #include <cstdio>
 
 using namespace OVR;
@@ -13,17 +14,18 @@ Rift_Tracker::Rift_Tracker() : old_yaw(0), hmd(nullptr)
 
 Rift_Tracker::~Rift_Tracker()
 {
-    ovrHmd_Destroy(hmd);
+    if (hmd)
+        ovr_Destroy(hmd);
     ovr_Shutdown();
 }
 
 void Rift_Tracker::start_tracker(QFrame*)
 {
-    ovr_Initialize();
-    hmd = ovrHmd_Create(0);
-    if (hmd)
+	ovrGraphicsLuid luid;
+    ovrResult result = ovr_Create(&hmd, &luid);
+    if (OVR_SUCCESS(result))
     {
-        ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
+        ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
     }
     else
     {
@@ -33,15 +35,11 @@ void Rift_Tracker::start_tracker(QFrame*)
     }
 }
 
-
 void Rift_Tracker::data(double *data)
 {
     if (hmd)
     {
-	ovrHSWDisplayState hsw;	
-	if (ovrHmd_GetHSWDisplayState(hmd, &hsw), hsw.Displayed)
-            ovrHmd_DismissHSWDisplay(hmd);
-        ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, 0);
+        ovrTrackingState ss = ovr_GetTrackingState(hmd, 0, false);
         if(ss.StatusFlags & ovrStatus_OrientationTracked) {
             auto pose = ss.HeadPose.ThePose;
             Quatf quat = pose.Orientation;
