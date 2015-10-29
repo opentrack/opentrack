@@ -54,7 +54,7 @@ private slots:
 class FTNoIR_TrackerDll : public Metadata
 {
 public:
-    QString name() { return QString("Oculus Rift -- HMD"); }
+    QString name() { return QString("Oculus Rift DK2 -- HMD"); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

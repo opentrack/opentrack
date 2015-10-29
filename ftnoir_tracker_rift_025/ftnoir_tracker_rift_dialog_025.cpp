@@ -1,4 +1,4 @@
-#include "ftnoir_tracker_rift.h"
+#include "ftnoir_tracker_rift_025.h"
 #include "opentrack/plugin-api.hpp"
 
 TrackerControls::TrackerControls()
@@ -16,7 +16,7 @@ TrackerControls::TrackerControls()
 
 void TrackerControls::doOK() {
     s.b->save();
-	this->close();
+    this->close();
 }
 
 void TrackerControls::doCancel() {

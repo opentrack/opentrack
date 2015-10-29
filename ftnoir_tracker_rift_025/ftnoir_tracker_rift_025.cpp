@@ -1,6 +1,6 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
-#include "ftnoir_tracker_rift.h"
-#include "facetracknoir/global-settings.h"
+#include "ftnoir_tracker_rift_025.h"
+#include "opentrack/plugin-api.hpp"
 #include "OVR.h"
 #include <cstdio>
 
@@ -8,7 +8,6 @@ using namespace OVR;
 
 Rift_Tracker::Rift_Tracker()
 {
-    should_quit = false;
     pManager = NULL;
     pSensor = NULL;
     pSFusion = NULL;
@@ -84,18 +83,9 @@ void Rift_Tracker::data(double *data)
                 newHeadPose[Yaw] += s.constant_drift;
             old_yaw=yaw;
         }
-        if (s.bEnableYaw)
-        {
-            data[Yaw] = newHeadPose[Yaw] * 57.295781f;
-        }
-        if (s.bEnablePitch)
-        {
-            data[Pitch] = newHeadPose[Pitch] * 57.295781f;
-        }
-        if (s.bEnableRoll)
-        {
-            data[Roll] = newHeadPose[Roll] * 57.295781f;
-        }
+        data[Yaw] = newHeadPose[Yaw] * 57.295781f;
+        data[Pitch] = newHeadPose[Pitch] * 57.295781f;
+        data[Roll] = newHeadPose[Roll] * 57.295781f;
     }
 }
 
