@@ -29,7 +29,7 @@ void Rift_Tracker::start_tracker(QFrame*)
     {
         // XXX need change ITracker et al api to allow for failure reporting
         // this qmessagebox doesn't give any relevant details either -sh 20141012
-        QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
     }
 }
 

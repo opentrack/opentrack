@@ -44,18 +44,18 @@ void Rift_Tracker::start_tracker(QFrame*)
             }
             else
             {
-                QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to create Rift sensor",QMessageBox::Ok,QMessageBox::NoButton);
+                QMessageBox::warning(0,"Error", "Unable to create Rift sensor",QMessageBox::Ok,QMessageBox::NoButton);
             }
 
         }
         else
         {
-            QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to enumerate Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+            QMessageBox::warning(0,"Error", "Unable to enumerate Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
         }
     }
     else
     {
-        QMessageBox::warning(0,"FaceTrackNoIR Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
     }
 }
 
