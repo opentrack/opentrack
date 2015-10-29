@@ -21,18 +21,24 @@ Rift_Tracker::~Rift_Tracker()
 
 void Rift_Tracker::start_tracker(QFrame*)
 {
-	ovrGraphicsLuid luid;
-    ovrResult result = ovr_Create(&hmd, &luid);
-    if (OVR_SUCCESS(result))
     {
-        ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
+        ovrInitParams args = {0};
+        if (!OVR_SUCCESS(ovr_Initialize(&args)))
+            goto error;
     }
-    else
     {
-        // XXX need change ITracker et al api to allow for failure reporting
-        // this qmessagebox doesn't give any relevant details either -sh 20141012
-        QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+        ovrGraphicsLuid luid = {0};
+        ovrResult res = ovr_Create(&hmd, &luid);
+        if (OVR_SUCCESS(res))
+        {
+            ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
+        }
+        else
+            goto error;
     }
+    return;
+error:
+    QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
 }
 
 void Rift_Tracker::data(double *data)
