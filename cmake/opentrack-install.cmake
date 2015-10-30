@@ -7,7 +7,7 @@ endif()
 install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION .)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION .)
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib" DESTINATION .)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/settings" DESTINATION .)
 
 install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION . ${opentrack-perms})
 install(FILES
