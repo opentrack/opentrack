@@ -9,7 +9,7 @@
 #include "ui.h"
 #include "opentrack/tracker.h"
 #include "opentrack/options.hpp"
-#include "facetracknoir/new_file_dialog.h"
+#include "new_file_dialog.h"
 #include <QFileDialog>
 #include <QDesktopServices>
 

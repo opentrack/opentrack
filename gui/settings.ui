@@ -1068,7 +1068,7 @@
   <customwidget>
    <class>process_detector</class>
    <extends>QWidget</extends>
-   <header>facetracknoir/process_detector.h</header>
+   <header>process_detector.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -7,7 +7,7 @@
  */
 
 #include "process_detector.h"
-#include "facetracknoir/ui.h"
+#include "ui.h"
 #include "opentrack-compat/process-list.hpp"
 #include <QList>
 #include <QFileDialog>

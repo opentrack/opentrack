@@ -17,7 +17,7 @@ file(GLOB opentrack-subprojects
     "protocol-*/${C}"
     "filter-*/${C}"
     "opentrack*/${C}"
-    "facetracknoir/${C}"
+    "gui/${C}"
     "x-plane-plugin/${C}"
     "csv/${C}"
     "pose-widget/${C}"
