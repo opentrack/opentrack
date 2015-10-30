@@ -368,7 +368,7 @@
   <customwidget>
    <class>QFunctionConfigurator</class>
    <extends>QWidget</extends>
-   <header>qfunctionconfigurator.h</header>
+   <header>spline-widget/qfunctionconfigurator.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,0 +1,6 @@
+opentrack_boilerplate(opentrack-spline-widget NO-LIBRARY)
+opentrack_qt(opentrack-spline-widget)
+add_library(opentrack-spline-widget STATIC ${opentrack-spline-widget-all})
+opentrack_compat(opentrack-spline-widget)
+target_include_directories(opentrack-spline-widget PUBLIC qfunctionconfigurator/)
+target_link_libraries(opentrack-spline-widget ${MY_QT_LIBS})
