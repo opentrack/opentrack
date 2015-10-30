@@ -1,4 +1,6 @@
-#include "../qxtglobalshortcut_p.h"
+#ifndef __APPLE_
+#define QXT_BUILD
+#include "qxtglobalshortcut_p.h"
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
@@ -233,3 +235,4 @@ bool QxtGlobalShortcutPrivate::unregisterShortcut(quint32 nativeKey, quint32 nat
     QxtX11Data x11;
     return x11.isValid() && x11.ungrabKey(nativeKey, nativeMods, x11.rootWindow());
 }
+#endif

@@ -32,7 +32,7 @@ endfunction()
 
 macro(opentrack_library n dir)
     cmake_parse_arguments(opentrack-foolib
-        "NO-LIBRARY;STATIC;NO-COMPAT"
+        "NO-LIBRARY;STATIC;NO-COMPAT;NO-LINKER-SCRIPT"
         "LINK;COMPILE;GNU-LINK;GNU-COMPILE"
         ""
         ${ARGN}
@@ -52,7 +52,7 @@ macro(opentrack_library n dir)
         if(NOT opentrack-foolib_NO-COMPAT)
             target_link_libraries(${n} opentrack-api ${MY_QT_LIBS} opentrack-compat)
         endif()
-        if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+        if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE AND NOT NO-LINKER-SCRIPT)
             SET_TARGET_PROPERTIES(${n} PROPERTIES
                 LINK_FLAGS "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\""
                 COMPILE_FLAGS "${opentrack-foolib_COMPILE} ${opentrack-foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
