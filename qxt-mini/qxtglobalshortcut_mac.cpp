@@ -1,3 +1,5 @@
+#ifdef __APPLE__
+#define QXT_BUILD
 #include <Carbon/Carbon.h>
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
@@ -266,3 +268,4 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 {
     return false;
 }
+#endif

@@ -9,7 +9,7 @@ if(NOT WIN32)
             if(APPLE)
                 set(my-rt)
             endif()
-            file(GLOB wine-deps ${CMAKE_SOURCE_DIR}/ftnoir_protocol_wine/*.cxx)
+            file(GLOB wine-deps ${PROJECT_SOURCE_DIR}/*.cxx)
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
               DEPENDS ${wine-deps}

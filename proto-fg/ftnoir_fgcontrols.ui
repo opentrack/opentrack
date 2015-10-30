@@ -16,10 +16,6 @@
   <property name="windowTitle">
    <string>FlightGear protocol settings</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../ftnoir_filter_ewma2/ewma-filter.qrc">
-    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
-  </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
@@ -131,9 +127,6 @@
   <tabstop>spinIPFourthNibble</tabstop>
   <tabstop>spinPortNumber</tabstop>
  </tabstops>
- <resources>
-  <include location="../ftnoir_filter_ewma2/ewma-filter.qrc"/>
- </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>

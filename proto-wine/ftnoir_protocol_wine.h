@@ -10,7 +10,7 @@
 #include <QFile>
 #include "opentrack/plugin-api.hpp"
 #include "opentrack-compat/shm.h"
-#include "ftnoir_protocol_wine/wine-shm.h"
+#include "wine-shm.h"
 
 class FTNoIR_Protocol : public IProtocol
 {
