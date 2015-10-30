@@ -1,6 +1,6 @@
 set(SDK_HT "" CACHE FILEPATH "Path to headtracker library")
 set(SDK_HT_FLANDMARK "" CACHE FILEPATH "Path to flandmark library for headtracker")
-find_package(OpenCV 3.0)
+find_package(OpenCV 3.0 QUIET)
 if(OpenCV_FOUND)
     if(SDK_HT AND SDK_HT_FLANDMARK)
         opentrack_boilerplate(opentrack-tracker-ht)
