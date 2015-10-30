@@ -18,6 +18,7 @@ static constexpr double tz[][2] = {
 
 static constexpr double yaw[][2] = {
     { 10.7462686567164, 20.9302325581395 },
+    { 30, 115 },
     { 41.9517784118652, 180 },
     { -1, -1 },
 };
