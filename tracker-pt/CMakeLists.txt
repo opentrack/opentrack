@@ -1,0 +1,5 @@
+find_package(OpenCV 3.0)
+opentrack_boilerplate(opentrack-tracker-pt STATIC)
+target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
+target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+link_with_dinput8(opentrack-tracker-pt)

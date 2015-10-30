@@ -16,7 +16,7 @@
 #include "simple-mat.hpp"
 #include "selected-libraries.hpp"
 
-#include "qfunctionconfigurator/functionconfig.h"
+#include "spline-widget/functionconfig.h"
 #include "main-settings.hpp"
 #include "options.hpp"
 
