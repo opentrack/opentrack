@@ -5,7 +5,7 @@
 #endif
 #include <cstdio>
 #include "freetrackclient/fttypes.h"
-#include "ftnoir_protocol_wine/wine-shm.h"
+#include "protocol-wine/wine-shm.h"
 #include "opentrack-compat/export.hpp"
 
 enum Axis {
