@@ -115,14 +115,16 @@ void KeybindingWorker::run() {
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {
 #if !defined(_WIN32)
-    if (!key)
-        key = std::make_shared<QxtGlobalShortcut>();
-    else {
-        key->setShortcut(QKeySequence::UnknownKey);
+    using sh = QxtGlobalShortcut;
+    if (key)
+    {
         key->setEnabled(false);
-        std::shared_ptr<QxtGlobalShortcut> ptr = K();
-        key.swap(ptr);
+        key->setShortcut(QKeySequence::UnknownKey);
+        std::shared_ptr<sh> tmp(nullptr);
+        key.swap(tmp);
     }
+
+    key = std::make_shared<sh>();
 
     if (k.keycode != "")
     {
