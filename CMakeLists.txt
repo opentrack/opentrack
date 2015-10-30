@@ -14,7 +14,7 @@ include(opentrack-install)
 set(C CMakeLists.txt)
 file(GLOB opentrack-subprojects
     "tracker-*/${C}"
-    "protocol-*/${C}"
+    "proto-*/${C}"
     "filter-*/${C}"
     "opentrack*/${C}"
     "gui/${C}"
