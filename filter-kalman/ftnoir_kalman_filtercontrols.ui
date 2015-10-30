@@ -23,7 +23,7 @@
    <string>Kalman settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../facetracknoir/ui-res.qrc">
+   <iconset resource="../gui/ui-res.qrc">
     <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -88,7 +88,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../facetracknoir/ui-res.qrc"/>
+  <include location="../gui/ui-res.qrc"/>
  </resources>
  <connections/>
  <designerdata>
