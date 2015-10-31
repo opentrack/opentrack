@@ -1,4 +1,4 @@
-#ifndef __APPLE_
+#ifndef __APPLE__
 #define QXT_BUILD
 #include "qxtglobalshortcut_p.h"
 /****************************************************************************
