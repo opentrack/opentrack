@@ -14,6 +14,7 @@ test -n "$version" || exit 1
 tmp="$(mktemp -d "/tmp/$APPNAME-tmp.XXXXXXX")"
 test $? -eq 0 || exit 1
 
+rm -f -- "$install/.DS_Store"
 sh "$dir/install-fail-tool" "$install"
 
 cp -R "$dir/opentrack.app" "$tmp/" || exit 1
