@@ -89,9 +89,9 @@ public:
         default:
         case Cap:
         {
-            const double x = 60, y = 100, z = 120;
-            M01 = cv::Vec3f(-x, -y, -z);
-            M02 = cv::Vec3f(x, -y, -z);
+            const double x = 60, y = 90, z = 95;
+            M01 = cv::Vec3f(-x, -y, z);
+            M02 = cv::Vec3f(x, -y, z);
             break;
         }
         case ClipLeft:
