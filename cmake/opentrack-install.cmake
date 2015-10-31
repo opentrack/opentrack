@@ -15,13 +15,3 @@ install(FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe"
     DESTINATION .  ${opentrack-perms})
-
-if(APPLE)
-    install(CODE "
-        execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
-                                        \"${CMAKE_SOURCE_DIR}/macosx\"
-                                        \"${CMAKE_INSTALL_PREFIX}\"
-                                        \"${CMAKE_BINARY_DIR}\"
-                                        \"${OPENTRACK_COMMIT}\")
-    ")
-endif()

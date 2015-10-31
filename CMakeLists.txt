@@ -22,6 +22,7 @@ file(GLOB opentrack-subprojects
     "csv/${C}"
     "pose-widget/${C}"
     "spline-widget/${C}"
+    "macosx/${C}"
 )
 foreach(i ${opentrack-subprojects})
     get_filename_component(i ${i} DIRECTORY)
