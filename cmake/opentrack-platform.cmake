@@ -58,3 +58,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
+
+# nix -rdynamic passed from Linux-GNU.cmake
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(__LINUX_COMPILER_GNU 1)
+    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
+    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
+endif()
