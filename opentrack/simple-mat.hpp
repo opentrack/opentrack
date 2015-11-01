@@ -198,14 +198,6 @@ public:
                 data[j][i] = *iter++;
     }
 
-    template<typename t>
-    Mat(const t* xs)
-    {
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
-                data[j][i] = num(*xs++);
-    }
-
     Mat()
     {
         for (int j = 0; j < h_; j++)
