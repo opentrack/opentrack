@@ -19,6 +19,9 @@
 #include <sys/types.h>
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+
 #ifdef __GNUC__
 #   define COMPAT_GNUC_VISIBILITY __attribute__ ((visibility ("default")))
 #else
@@ -57,3 +60,5 @@ private:
     int fd, size;
 #endif
 };
+
+#pragma GCC diagnostic pop
