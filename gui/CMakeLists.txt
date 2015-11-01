@@ -17,7 +17,7 @@ opentrack_compat(opentrack)
 
 if(UNIX OR APPLE)
     target_include_directories(opentrack PRIVATE "${CMAKE_SOURCE_DIR}/qxt-mini")
-    opentrack_library(opentrack-qxt-mini ${CMAKE_SOURCE_DIR}/qxt-mini NO-LINKER-SCRIPT STATIC)
+    opentrack_library(opentrack-qxt-mini ${CMAKE_SOURCE_DIR}/qxt-mini NO-LINKER-SCRIPT NO-COMPAT)
     if(NOT APPLE)
             target_link_libraries(opentrack-qxt-mini X11)
     endif()
