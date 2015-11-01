@@ -30,18 +30,15 @@
 
 using namespace options;
 
-extern QList<QString> global_key_sequences;
-
-struct key_opts {
-    value<QString> keycode;
-
-    key_opts(pbundle b, const QString& name) :
-        keycode(b, QString("keycode-%1").arg(name), "")
-    {}
-};
+namespace {
+    extern QList<QString> global_key_sequences;
+}
 
 #if defined(_WIN32)
-extern QList<int> global_windows_key_sequences;
+
+namespace {
+    extern QList<int> global_windows_key_sequences;
+}
 #   undef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x0800
 #   include <windows.h>
@@ -111,6 +108,14 @@ public:
 #ifdef _WIN32
     mem<KeybindingWorker> keybindingWorker;
 #endif
+    
+    struct key_opts {
+        value<QString> keycode;
+    
+        key_opts(pbundle b, const QString& name) :
+            keycode(b, QString("keycode-%1").arg(name), "")
+        {}
+    };
 
     struct settings : opts {
         key_opts center, toggle, zero;
@@ -136,5 +141,3 @@ signals:
     void toggle();
     void zero();
 };
-
-
