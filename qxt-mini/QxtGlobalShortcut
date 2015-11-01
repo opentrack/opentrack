@@ -1,2 +1,4 @@
-#include "qxtglobalshortcut.h"
+#ifndef _WIN32
+#   include "qxtglobalshortcut.h"
+#endif
 
