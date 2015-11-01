@@ -39,4 +39,16 @@ if(LINUX)
     target_link_libraries(opentrack procps)
 endif()
 
+set(c-props)
+set(l-props)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+    set(c-props "-fvisibility=hidden -fvisibility-inlines-hidden")
+    set(l-props "-Wl,--as-needed")
+endif()
+
+set_target_properties(opentrack PROPERTIES
+    LINK_FLAGS "${l-props}"
+    COMPILE_FLAGS "${c-props}"
+)
+
 install(TARGETS opentrack DESTINATION .)
