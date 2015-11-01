@@ -8,7 +8,7 @@
 
 #include "ui.h"
 #include "opentrack/tracker.h"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "new_file_dialog.h"
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -411,7 +411,7 @@ bool mk_dialog(mem<dylib> lib, mem<t>& orig)
         dialog->show();
         dialog->raise();
 
-        QObject::connect(dialog.get(), &BaseDialog::closing, [&]() -> void { orig = nullptr; });
+        QObject::connect(dialog.get(), &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
 
         return true;
     }

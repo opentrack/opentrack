@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include "spline-widget/qfunctionconfigurator.h"
 #include <QPainter>

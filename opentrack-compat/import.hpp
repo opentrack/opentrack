@@ -2,7 +2,7 @@
 
 #ifndef OPENTRACK_EXPORT
 #   ifdef _WIN32
-#       define OPENTRACK_LINKAGE __declspec(dllexport)
+#       define OPENTRACK_LINKAGE __declspec(dllimport)
 #   else
 #       define OPENTRACK_LINKAGE
 #   endif

@@ -19,7 +19,7 @@
 
 #include "ui_main.h"
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
 #include "opentrack/plugin-support.hpp"
 #include "opentrack/tracker.h"

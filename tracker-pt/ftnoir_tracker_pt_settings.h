@@ -9,7 +9,7 @@
 #ifndef FTNOIR_TRACKER_PT_SETTINGS_H
 #define FTNOIR_TRACKER_PT_SETTINGS_H
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings_pt : opts

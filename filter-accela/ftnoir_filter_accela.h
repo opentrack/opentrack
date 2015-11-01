@@ -12,7 +12,7 @@
 #include <QMutex>
 #include <QTimer>
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include "opentrack-compat/timer.hpp"
 

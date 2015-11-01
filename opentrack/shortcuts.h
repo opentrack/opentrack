@@ -17,9 +17,15 @@
 #include <QSettings>
 #include <QMutex>
 
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
+
 #include "qxt-mini/QxtGlobalShortcut"
 #include "opentrack/plugin-support.hpp"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
 
 using namespace options;
@@ -66,9 +72,7 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
-struct Shortcuts;
-
-struct KeybindingWorker : public QThread {
+struct OPENTRACK_EXPORT KeybindingWorker : public QThread {
 #ifdef _WIN32
 private:
     LPDIRECTINPUT8 din;
@@ -87,7 +91,7 @@ public:
 #endif
 };
 
-struct Shortcuts : public QObject {
+struct OPENTRACK_EXPORT Shortcuts : public QObject {
     Q_OBJECT
 
 public:

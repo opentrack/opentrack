@@ -3,7 +3,7 @@
 #endif
 
 #include "ui.h"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>

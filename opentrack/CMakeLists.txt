@@ -1,4 +1,4 @@
-opentrack_boilerplate(opentrack-api NO-LINKER-SCRIPT NO-COMPAT)
+opentrack_boilerplate(opentrack-api NO-LINKER-SCRIPT NO-COMPAT LINKAGE)
 if(NOT WIN32)
     target_link_libraries(opentrack-api opentrack-qxt-mini opentrack-compat dl)
 else()

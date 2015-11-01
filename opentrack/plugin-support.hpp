@@ -8,7 +8,7 @@
 #pragma once
 
 #include "plugin-api.hpp"
-#include "options.hpp"
+#include "opentrack-compat/options.hpp"
 
 #include <QWidget>
 #include <QDebug>

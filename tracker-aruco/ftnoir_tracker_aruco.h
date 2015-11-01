@@ -15,7 +15,7 @@
 #include <QHBoxLayout>
 #include <QDialog>
 #include <QTimer>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "trans_calib.h"
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/opencv-camera-dialog.hpp"

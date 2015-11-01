@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_new_config.h"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include <QFile>
 #include <QRegExp>
 #include <QString>

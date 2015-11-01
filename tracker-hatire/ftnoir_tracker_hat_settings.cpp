@@ -14,7 +14,7 @@
 
 #include "ftnoir_tracker_hat_settings.h"
 #ifdef OPENTRACK_API
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #endif
 
 void TrackerSettings::load_ini()

@@ -9,7 +9,7 @@
 #pragma once
 
 #include <vector>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include "opentrack/plugin-support.hpp"
 #include "opentrack/main-settings.hpp"

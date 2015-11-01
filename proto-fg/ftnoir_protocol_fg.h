@@ -15,7 +15,7 @@
 #include <QUdpSocket>
 #include <QMessageBox>
 #include "opentrack/plugin-api.hpp"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {
