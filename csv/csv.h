@@ -1,4 +1,5 @@
 #pragma once
+#include <QtGlobal>
 #include <QObject>
 #include <QStringList>
 #include <QIODevice>
@@ -6,7 +7,13 @@
 #include <QRegExp>
 #include <QtGlobal>
 
-class CSV
+#ifdef BUILD_opentrack_csv
+#   define CSV_EXPORT Q_DECL_EXPORT
+#else
+#   define CSV_EXPORT Q_DECL_IMPORT
+#endif
+
+class CSV_EXPORT CSV
 {
 public:
     QString readLine();

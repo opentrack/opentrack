@@ -51,6 +51,12 @@
 
 #define QXT_DLLEXPORT DO_NOT_USE_THIS_ANYMORE
 
+#ifdef BUILD_opentrack_qxt_mini
+#   define QXT_BUILD
+#   define BUILD_QXT_GUI
+#   define BUILD_QXT
+#endif
+
 #ifdef QXT_BUILD
 #    if defined(BUILD_QXT_CORE)
 #        define QXT_CORE_EXPORT Q_DECL_EXPORT

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <QtGlobal>
 #include <QList>
 #include <QPointF>
 #include <QString>
@@ -17,7 +18,13 @@
 #include <limits>
 #include "opentrack-compat/qcopyable-mutex.hpp"
 
-class Map {
+#ifdef BUILD_opentrack_spline_widget
+#   define SPLINE_WIDGET_EXPORT Q_DECL_EXPORT
+#else
+#   define SPLINE_WIDGET_EXPORT Q_DECL_IMPORT
+#endif
+
+class SPLINE_WIDGET_EXPORT Map {
 private:
     static constexpr int value_count = 10000;
 

@@ -18,8 +18,15 @@
 #include <unistd.h>
 #include <sys/types.h>
 #endif
+#include <QtGlobal>
 
-class PortableLockedShm {
+#ifdef BUILD_opentrack_compat
+#   define COMPAT_EXPORT Q_DECL_EXPORT
+#else
+#   define COMPAT_EXPORT Q_DECL_IMPORT
+#endif
+
+class COMPAT_EXPORT PortableLockedShm {
 public:
     PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
     ~PortableLockedShm();
