@@ -1,5 +1,4 @@
-#ifndef __APPLE_
-#define QXT_BUILD
+#ifndef __APPLE__
 #include "qxtglobalshortcut_p.h"
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.

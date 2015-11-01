@@ -6,11 +6,11 @@
  * notice appear in all copies.
  */
 
+#include "functionconfig.h"
 #include <QMutexLocker>
 #include <QCoreApplication>
 #include <QPointF>
 #include <QList>
-#include "functionconfig.h"
 #include <QtAlgorithms>
 #include <QtAlgorithms>
 #include <QSettings>

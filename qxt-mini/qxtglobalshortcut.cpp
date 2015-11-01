@@ -1,4 +1,3 @@
-#define QXT_BUILD
 #include "qxtglobalshortcut.h"
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.

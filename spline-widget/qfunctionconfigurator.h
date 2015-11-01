@@ -12,10 +12,10 @@
 #include <QWidget>
 #include <QtGui>
 #include <QPointF>
-#include "spline-widget/functionconfig.h"
+#include "functionconfig.h"
 #include "opentrack/plugin-api.hpp"
 
-class QFunctionConfigurator : public QWidget
+class SPLINE_WIDGET_EXPORT QFunctionConfigurator : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)

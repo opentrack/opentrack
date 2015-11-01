@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(CMakeParseArguments)
 include(opentrack-policy)
+include(opentrack-qt)
 include(opentrack-platform)
 include(opentrack-macros)
-include(opentrack-qt)
 include(opentrack-version)
 include(opentrack-tarball)
 include(opentrack-install)
@@ -22,6 +22,8 @@ file(GLOB opentrack-subprojects
     "csv/${C}"
     "pose-widget/${C}"
     "spline-widget/${C}"
+    "macosx/${C}"
+    "qxt-mini/${C}"
 )
 foreach(i ${opentrack-subprojects})
     get_filename_component(i ${i} DIRECTORY)

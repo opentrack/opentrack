@@ -14,32 +14,21 @@ opentrack_qt(opentrack)
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
 opentrack_compat(opentrack)
 
-
-if(UNIX OR APPLE)
-    target_include_directories(opentrack PRIVATE "${CMAKE_SOURCE_DIR}/qxt-mini")
-    opentrack_library(opentrack-qxt-mini ${CMAKE_SOURCE_DIR}/qxt-mini NO-LINKER-SCRIPT STATIC)
-    if(NOT APPLE)
-            target_link_libraries(opentrack-qxt-mini X11)
-    endif()
-endif()
-
 if(NOT WIN32)
     set_target_properties(opentrack PROPERTIES SUFFIX ".bin")
 endif()
 
 target_link_libraries(opentrack
-    opentrack-api opentrack-version opentrack-pose-widget opentrack-spline-widget
+    opentrack-spline-widget
+    opentrack-pose-widget
+    opentrack-api
+    opentrack-compat
+    opentrack-version
+    # trackhat
     opentrack-tracker-pt opentrack-filter-accela
 )
 
-if(APPLE)
-    SET_TARGET_PROPERTIES(opentrack-qxt-mini PROPERTIES LINK_FLAGS "-framework Carbon -framework CoreFoundation")
-endif()
-if(UNIX OR APPLE)
-    target_link_libraries(opentrack opentrack-qxt-mini)
-endif()
 link_with_dinput8(opentrack)
-target_link_libraries(opentrack ${MY_QT_LIBS})
 
 if(APPLE)
     # for process detector
@@ -47,6 +36,7 @@ if(APPLE)
 endif()
 
 if(LINUX)
+    target_link_libraries(opentrack dl)
     # for process detector
     target_link_libraries(opentrack procps)
 endif()
