@@ -17,12 +17,16 @@ opentrack_compat(opentrack)
 if(NOT WIN32)
     set_target_properties(opentrack PROPERTIES SUFFIX ".bin")
 endif()
-target_link_libraries(opentrack opentrack-api opentrack-version opentrack-pose-widget opentrack-spline-widget)
-if(UNIX OR APPLE)
-    target_link_libraries(opentrack opentrack-qxt-mini)
-endif()
+
+target_link_libraries(opentrack
+    opentrack-spline-widget
+    opentrack-pose-widget
+    opentrack-api
+    opentrack-compat
+    opentrack-version
+)
+
 link_with_dinput8(opentrack)
-target_link_libraries(opentrack ${MY_QT_LIBS})
 
 if(APPLE)
     # for process detector
@@ -30,6 +34,7 @@ if(APPLE)
 endif()
 
 if(LINUX)
+    target_link_libraries(opentrack dl)
     # for process detector
     target_link_libraries(opentrack procps)
 endif()
