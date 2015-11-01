@@ -51,8 +51,7 @@ template<typename t> using mem = std::shared_ptr<t>;
 #define OPENTRACK_ORG "opentrack-2.3"
 
 namespace options {
-    template<typename k, typename v>
-    using map = std::map<k, v>;
+    template<typename k, typename v> using map = std::map<k, v>;
     using std::string;
 
     template<typename t>
@@ -405,7 +404,7 @@ namespace options {
             b->reload();
         }
     };
-    
+
     template<typename t, typename q>
     inline void tie_setting(value<t>&, q*);
 
