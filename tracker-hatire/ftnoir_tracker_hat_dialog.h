@@ -29,8 +29,8 @@ public:
     ~TrackerControls() override;
 #ifdef OPENTRACK_API
     void Initialize(QWidget *parent) ; // unused
-    void register_tracker(ITracker *tracker);
-    void unregister_tracker();
+    void register_tracker(ITracker *tracker) override;
+    void unregister_tracker() override;
 #else
     void Initialize(QWidget *parent) ;
     void registerTracker(ITracker *tracker) ;
