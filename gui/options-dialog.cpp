@@ -10,6 +10,7 @@
 #include "keyboard.h"
 #include <QPushButton>
 #include <QLayout>
+#include <QDialog>
 
 OptionsDialog::OptionsDialog()
 {
