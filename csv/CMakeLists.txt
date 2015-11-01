@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-csv NO-LINKER-SCRIPT)
+opentrack_boilerplate(opentrack-csv NO-LINKER-SCRIPT LINKAGE)
