@@ -37,6 +37,13 @@
 #include <QDebug>
 
 #include <memory>
+
+#ifdef BUILD_compat
+#   include "compat-export.hpp"
+#else
+#   include "compat-import.hpp"
+#endif
+
 template<typename t> using mem = std::shared_ptr<t>;
 
 #define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
@@ -176,7 +183,7 @@ namespace options {
         }
     };
 
-    class impl_bundle : public QObject {
+    class OPENTRACK_COMPAT_EXPORT impl_bundle : public QObject {
         Q_OBJECT
     protected:
         QMutex mtx;
@@ -252,12 +259,14 @@ namespace options {
 
     class opt_bundle;
 
-    namespace
+    namespace detail
     {
-        template<typename k, typename v, typename cnt = int>
-        struct opt_singleton
+        struct OPENTRACK_COMPAT_EXPORT opt_singleton
         {
         public:
+            using k = std::string;
+            using v = opt_bundle;
+            using cnt = int;
             using pbundle = std::shared_ptr<v>;
             using tt = std::tuple<cnt, std::weak_ptr<v>>;
         private:
@@ -265,12 +274,6 @@ namespace options {
             map<k, tt> implsgl_data;
         public:
             opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
-
-            static opt_singleton<k, v>& datum()
-            {
-                static auto ret = std::make_shared<opt_singleton<k, v>>();
-                return *ret;
-            }
 
             pbundle bundle(const k& key)
             {
@@ -298,12 +301,13 @@ namespace options {
                     implsgl_data.erase(key);
             }
         };
-
-        using pbundle = std::shared_ptr<opt_bundle>;
-        using t_fact = opt_singleton<string, opt_bundle>;
+        
+        OPENTRACK_COMPAT_EXPORT opt_singleton& singleton();
     }
-
-    static inline t_fact::pbundle bundle(const string name) { return t_fact::datum().bundle(name); }
+    
+    using pbundle = std::shared_ptr<opt_bundle>;
+    
+    static inline pbundle bundle(const string name) { return detail::singleton().bundle(name); }
 
     class opt_bundle : public impl_bundle
     {
@@ -316,11 +320,11 @@ namespace options {
         ~opt_bundle()
         {
             qDebug() << "bundle -" << QString::fromStdString(group_name);
-            t_fact::datum().bundle_decf(group_name);
+            detail::singleton().bundle_decf(group_name);
         }
     };
 
-    class base_value : public QObject
+    class OPENTRACK_COMPAT_EXPORT base_value : public QObject
     {
         Q_OBJECT
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
