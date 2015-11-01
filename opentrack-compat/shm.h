@@ -18,13 +18,28 @@
 #include <unistd.h>
 #include <sys/types.h>
 #endif
-#include <QtGlobal>
+
+#ifdef __GNUC__
+#   define COMPAT_GNUC_VISIBILITY __attribute__ ((visibility ("default")))
+#else
+#   define COMPAT_GNUC_VISIBILITY
+#endif
 
 #ifdef BUILD_opentrack_compat
-#   define COMPAT_EXPORT Q_DECL_EXPORT
+#   ifdef _WIN32
+#       define COMPAT_WIN32_EXPORT __declspec(dllexport)
+#   else
+#       define COMPAT_WIN32_EXPORT
+#   endif
 #else
-#   define COMPAT_EXPORT Q_DECL_IMPORT
+#   ifdef _WIN32
+#       define COMPAT_WIN32_EXPORT __declspec(dllimport)
+#   else
+#       define COMPAT_WIN32_EXPORT
+#   endif
 #endif
+
+#define COMPAT_EXPORT COMPAT_WIN32_EXPORT COMPAT_GNUC_VISIBILITY
 
 class COMPAT_EXPORT PortableLockedShm {
 public:
