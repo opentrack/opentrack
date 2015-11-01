@@ -8,14 +8,6 @@
 
 #pragma once
 #include <QObject>
-#include <QWidget>
-#include "opentrack-compat/timer.hpp"
-#include <QThread>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QSettings>
-#include <QMutex>
 
 #ifdef BUILD_api
 #   include "opentrack-compat/export.hpp"
@@ -24,69 +16,14 @@
 #endif
 
 #include "qxt-mini/QxtGlobalShortcut"
-#include "opentrack/plugin-support.hpp"
 #include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
 
-using namespace options;
-
-namespace {
-    extern QList<QString> global_key_sequences;
-}
-
-#if defined(_WIN32)
-
-namespace {
-    extern QList<int> global_windows_key_sequences;
-}
-#   undef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x0800
-#   include <windows.h>
-#   include <dinput.h>
-
-struct Key {
-    BYTE keycode;
-    bool shift;
-    bool ctrl;
-    bool alt;
-    Timer timer;
-public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false)
-    {
-    }
-
-    bool should_process()
-    {
-        if (keycode == 0)
-            return false;
-        bool ret = timer.elapsed_ms() > 100;
-        timer.start();
-        return ret;
-    }
-};
-#else
-typedef unsigned char BYTE;
-struct Key { int foo; };
-#endif
-
-struct OPENTRACK_EXPORT KeybindingWorker : public QThread {
 #ifdef _WIN32
-private:
-    LPDIRECTINPUT8 din;
-    LPDIRECTINPUTDEVICE8 dinkeyboard;
-    QMutex mtx;
-public:
-    volatile bool should_quit;
-    std::function<void(Key&)> receiver;
-    ~KeybindingWorker();
-    KeybindingWorker(std::function<void(Key&)> receiver, WId h);
-    void run();
-#else
-public:
-    KeybindingWorker(Key, Key, Key, WId) {}
-    void run() {}
+#   include "keybinding-worker.hpp"
 #endif
-};
+
+using namespace options;
 
 struct OPENTRACK_EXPORT Shortcuts : public QObject {
     Q_OBJECT
