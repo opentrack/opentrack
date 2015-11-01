@@ -6,7 +6,7 @@
  */
 
 #include <cstring>
-#include <cstdio>
+#include <stdio.h>
 #include "shm.h"
 
 #if defined(_WIN32)
