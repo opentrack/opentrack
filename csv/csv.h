@@ -7,7 +7,7 @@
 #include <QRegExp>
 #include <QtGlobal>
 
-#ifdef BUILD_opentrack_csv
+#ifdef BUILD_csv
 #   define CSV_EXPORT Q_DECL_EXPORT
 #else
 #   define CSV_EXPORT Q_DECL_IMPORT

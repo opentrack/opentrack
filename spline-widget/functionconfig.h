@@ -18,7 +18,7 @@
 #include <limits>
 #include "opentrack-compat/qcopyable-mutex.hpp"
 
-#ifdef BUILD_opentrack_spline_widget
+#ifdef BUILD_spline_widget
 #   define SPLINE_WIDGET_EXPORT Q_DECL_EXPORT
 #else
 #   define SPLINE_WIDGET_EXPORT Q_DECL_IMPORT

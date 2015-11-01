@@ -28,7 +28,7 @@
 #   define COMPAT_GNUC_VISIBILITY
 #endif
 
-#ifdef BUILD_opentrack_compat
+#ifdef BUILD_compat
 #   ifdef _WIN32
 #       define COMPAT_WIN32_EXPORT __declspec(dllexport)
 #   else
