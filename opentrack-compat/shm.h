@@ -19,8 +19,10 @@
 #include <sys/types.h>
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"
+#ifdef __GNUC__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wattributes"
+#endif
 
 #ifdef BUILD_compat
 #   include "compat-export.hpp"
@@ -45,4 +47,6 @@ private:
 #endif
 };
 
-#pragma GCC diagnostic pop
+#ifdef __GNUC__
+#   pragma GCC diagnostic pop
+#endif
