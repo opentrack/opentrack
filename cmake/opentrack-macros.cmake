@@ -53,9 +53,13 @@ macro(opentrack_library n dir)
             target_link_libraries(${n} opentrack-api opentrack-compat)
         endif()
         target_link_libraries(${n} ${MY_QT_LIBS})
-        if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE AND NOT opentrack-foolib_NO-LINKER-SCRIPT)
+        if(CMAKE_COMPILER_IS_GNUCXX AND NOT opentrack-foolib_NO-LINKER-SCRIPT)
+            set(l-flags)
+            if(NOT APPLE)
+                set(l-flags "-Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\"")
+            endif()
             set_target_properties(${n} PROPERTIES
-                LINK_FLAGS "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\""
+                LINK_FLAGS "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} ${l-flags}"
                 COMPILE_FLAGS "${opentrack-foolib_COMPILE} ${opentrack-foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
             )
         else()

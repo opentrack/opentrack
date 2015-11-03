@@ -41,9 +41,11 @@ endif()
 
 set(c-props)
 set(l-props)
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+if(CMAKE_COMPILER_IS_GNUCXX)
     set(c-props "-fvisibility=hidden -fvisibility-inlines-hidden")
-    set(l-props "-Wl,--as-needed")
+    if(NOT APPLE)
+        set(l-props "-Wl,--as-needed")
+    endif()
 endif()
 
 set_target_properties(opentrack PROPERTIES
