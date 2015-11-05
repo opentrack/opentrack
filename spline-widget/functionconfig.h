@@ -30,7 +30,7 @@ private:
 
     struct State {
         QList<QPointF> input;
-        std::vector<float> data;        
+        std::vector<float> data;
     };
 
     int precision() const;
@@ -52,6 +52,8 @@ public:
     {
         setMaxInput(maxx);
         setMaxOutput(maxy);
+        if (cur.input.size() == 0)
+            cur.input.push_back(QPointF(maxx, maxy));
         reload();
     }
 
