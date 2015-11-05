@@ -36,7 +36,7 @@ struct secattr
         pACL = nullptr;
     }
 
-    secattr() : success(true), pSD(nullptr), pEveryoneSID(nullptr), pACL(nullptr)
+    secattr(DWORD perms) : success(true), pSD(nullptr), pEveryoneSID(nullptr), pACL(nullptr)
     {
         SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
         EXPLICIT_ACCESS ea;
@@ -52,7 +52,7 @@ struct secattr
 
         memset(&ea, 0, sizeof(ea));
 
-        ea.grfAccessPermissions = KEY_READ;
+        ea.grfAccessPermissions = perms;
         ea.grfAccessMode = SET_ACCESS;
         ea.grfInheritance = NO_INHERITANCE;
         ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
@@ -109,9 +109,14 @@ cleanup:
 
 PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName, int mapSize)
 {
-    secattr sa;
+    secattr sa(GENERIC_ALL|SYNCHRONIZE);
 
     hMutex = CreateMutexA(sa.success ? &sa.attrs : nullptr, false, mutexName);
+    if (!hMutex)
+    {
+        fprintf(stderr, "CreateMutexA: %d\n", (int) GetLastError());
+        fflush(stderr);
+    }
     hMapFile = CreateFileMappingA(
                  INVALID_HANDLE_VALUE,
                  sa.success ? &sa.attrs : nullptr,
@@ -119,11 +124,21 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
                  0,
                  mapSize,
                  shmName);
+    if (!hMapFile)
+    {
+        fprintf(stderr, "CreateFileMappingA: %d\n", (int) GetLastError());
+        fflush(stderr);
+    }
     mem = MapViewOfFile(hMapFile,
                         FILE_MAP_WRITE,
                         0,
                         0,
                         mapSize);
+    if (!mem)
+    {
+        fprintf(stderr, "MapViewOfFile: %d\n", (int) GetLastError());
+        fflush(stderr);
+    }
 }
 
 PortableLockedShm::~PortableLockedShm()
