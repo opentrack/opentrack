@@ -39,6 +39,8 @@ public:
         _background = QPixmap();
         update();
     }
+    void set_snap(int x, int y) { snap_x = x; snap_y = y; }
+    void get_snap(int& x, int& y) const { x = snap_x; y = snap_y; }
 protected slots:
     void paintEvent(QPaintEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
@@ -72,4 +74,5 @@ private:
     QPixmap _background;
     QPixmap _function;
     bool _draw_function;
+    int snap_x, snap_y;
 };

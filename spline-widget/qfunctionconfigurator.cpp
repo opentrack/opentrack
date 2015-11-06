@@ -21,7 +21,9 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),
     moving_control_point_idx(-1),
-    _draw_function(true)
+    _draw_function(true),
+    snap_x(0),
+    snap_y(0)
 {
     update_range();
     setMouseTracking(true);
@@ -412,8 +414,13 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     if (!_config)
         return QPointF(-1, -1);
 
-    double x = (point.x() - pixel_bounds.x()) / c.x();
-    double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    int x = (point.x() - pixel_bounds.x()) / c.x();
+    int y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    
+    if (snap_x > 0)
+        x -= x % snap_x;
+    if (snap_y > 0)
+        y -= y % snap_y;
 
     if (x < 0)
         x = 0;
