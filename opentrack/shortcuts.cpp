@@ -68,6 +68,8 @@ void Shortcuts::receiver(Key &k)
             continue;
         if (k.keycode != k_->keycode)
             continue;
+        if (!k.held)
+            continue;
         if (!k_->should_process())
             continue;
         if (k_->alt && !k.alt) continue;
