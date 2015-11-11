@@ -95,7 +95,10 @@ struct win32_joy_ctx
             {
                 const bool state = !!(js.rgbButtons[i] & 0x80);
                 if (state != pressed[i])
+                {
                     f(guid, i, state);
+                    qDebug() << "btn" << guid << i << state;
+                }
                 pressed[i] = state;
             }
             
