@@ -39,6 +39,7 @@ struct win32_joy_ctx
             qDebug() << "got joy" << guid;
             for (int i = 0; i < 128; i++)
                 pressed[i] = false;
+            poll([&](const QString&, int idx, bool held) -> void { pressed[idx] = held; });
         }
         
         ~joy()
