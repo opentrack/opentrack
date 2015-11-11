@@ -83,6 +83,7 @@ struct win32_joy_ctx
             }
             
             DIJOYSTATE2 js;
+            memset(&js, 0, sizeof(js));
             
             if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
             {
