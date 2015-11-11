@@ -38,7 +38,10 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     if (k.guid != "")
     {
         key.guid = k.guid;
-        key.keycode = k.button;
+        key.keycode = k.button & ~Qt::KeyboardModifierMask;
+        key.ctrl = !!(k.button & Qt::ControlModifier);
+        key.alt = !!(k.button & Qt::AltModifier);
+        key.shift = !!(k.button & Qt::ShiftModifier);
     }
     else
     {

@@ -68,28 +68,35 @@ KeybindingWorker::KeybindingWorker(std::function<void(Key&)> receiver, WId h) :
 }
 
 void KeybindingWorker::run() {
-    BYTE keystate[256];
+    BYTE keystate[256] = {0};
 
     while (!should_quit)
     {
+        {
+            const HRESULT hr = dinkeyboard->GetDeviceState(256, (LPVOID)keystate);
+
+            if (hr != DI_OK) {
+                qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
+                Sleep(25);
+                continue;
+            }
+        }
+        
         {
             using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
             
             joy_fn f = [&](const QString& guid, int idx, bool held) -> void {
                 Key k;
                 k.keycode = idx;
+                k.shift = !!(keystate[DIK_LSHIFT] & 0x80 || keystate[DIK_RSHIFT] & 0x80);
+                k.alt = !!(keystate[DIK_LALT] & 0x80 || keystate[DIK_RALT] & 0x80);
+                k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80 || keystate[DIK_RCONTROL] & 0x80);
                 k.guid = guid;
                 k.held = held;
                 receiver(k);
             };
             
             joy_ctx.poll(f);
-        }
-        
-        if (dinkeyboard->GetDeviceState(256, (LPVOID)keystate) != DI_OK) {
-            qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
-            Sleep(25);
-            continue;
         }
 
         QMutexLocker l(&mtx);

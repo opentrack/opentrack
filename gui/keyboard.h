@@ -22,7 +22,11 @@ public:
     {
         if(k.guid != "")
         {
-            joystick_button_pressed(k.guid, k.keycode, k.held);
+            int mods = 0;
+            if (k.alt) mods |= Qt::AltModifier;
+            if (k.shift) mods |= Qt::ShiftModifier;
+            if (k.ctrl) mods |= Qt::ControlModifier;
+            joystick_button_pressed(k.guid, k.keycode | mods, k.held);
         }
         else
         {
