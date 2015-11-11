@@ -19,5 +19,5 @@ private:
 private slots:
     void doOK();
     void doCancel();
-    void bind_key(value<QString>& ret, QLabel* label);
+    void bind_key(Shortcuts::key_opts &kopts, QLabel* label);
 };

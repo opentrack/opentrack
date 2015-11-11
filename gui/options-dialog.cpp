@@ -12,9 +12,18 @@
 #include <QLayout>
 #include <QDialog>
 
+static QString kopts_to_string(const Shortcuts::key_opts& kopts)
+{
+    if (static_cast<QString>(kopts.guid) != "")
+        return "Joystick button " + QString::number(kopts.button);
+    if (static_cast<QString>(kopts.keycode) == "")
+        return "None";
+    return kopts.keycode;
+}
+
 OptionsDialog::OptionsDialog()
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -53,18 +62,20 @@ OptionsDialog::OptionsDialog()
 
     tie_setting(s.s_main.center_method, ui.center_method);
 
-    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(s.center.keycode, ui.center_text); });
-    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero.keycode, ui.zero_text); });
-    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle.keycode, ui.toggle_text); });
+    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(s.center, ui.center_text); });
+    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero, ui.zero_text); });
+    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle, ui.toggle_text); });
 
-    ui.center_text->setText(s.center.keycode == "" ? "None" : static_cast<QString>(s.center.keycode));
-    ui.toggle_text->setText(s.toggle.keycode == "" ? "None" : static_cast<QString>(s.toggle.keycode));
-    ui.zero_text->setText(s.zero.keycode == "" ? "None" : static_cast<QString>(s.zero.keycode));
+    ui.center_text->setText(kopts_to_string(s.center));
+    ui.toggle_text->setText(kopts_to_string(s.toggle));
+    ui.zero_text->setText(kopts_to_string(s.zero));
 }
 
-void OptionsDialog::bind_key(value<QString>& ret, QLabel* label)
+void OptionsDialog::bind_key(Shortcuts::key_opts& kopts, QLabel* label)
 {
-    ret = "";
+    kopts.button = -1;
+    kopts.guid = "";
+    kopts.keycode = "";
     QDialog d;
     auto l = new QHBoxLayout;
     l->setMargin(0);
@@ -73,9 +84,20 @@ void OptionsDialog::bind_key(value<QString>& ret, QLabel* label)
     d.setLayout(l);
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
-    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void { ret = s.toString(QKeySequence::PortableText); d.close(); });
+    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void {
+        kopts.keycode = s.toString(QKeySequence::PortableText);
+        kopts.guid = "";
+        kopts.button = -1;
+        d.close();
+    });
+    connect(k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx) -> void {
+        kopts.guid = guid;
+        kopts.keycode = "";
+        kopts.button = idx;
+        d.close();
+    });
     d.exec();
-    label->setText(ret == "" ? "None" : static_cast<QString>(ret));
+    label->setText(kopts_to_string(kopts));
     delete k;
     delete l;
 }

@@ -34,19 +34,27 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
     key = K();
     int idx = 0;
     QKeySequence code;
-
-    if (k.keycode == "")
-        code = QKeySequence(Qt::Key_unknown);
+    
+    if (k.guid != "")
+    {
+        key.guid = k.guid;
+        key.keycode = k.button;
+    }
     else
-        code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
-
-    Qt::KeyboardModifiers mods = Qt::NoModifier;
-    if (code != Qt::Key_unknown)
-        win_key::from_qt(code, idx, mods);
-    key.shift = !!(mods & Qt::ShiftModifier);
-    key.alt = !!(mods & Qt::AltModifier);
-    key.ctrl = !!(mods & Qt::ControlModifier);
-    key.keycode = idx;
+    {
+        if (k.keycode == "")
+            code = QKeySequence(Qt::Key_unknown);
+        else
+            code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
+    
+        Qt::KeyboardModifiers mods = Qt::NoModifier;
+        if (code != Qt::Key_unknown)
+            win_key::from_qt(code, idx, mods);
+        key.shift = !!(mods & Qt::ShiftModifier);
+        key.alt = !!(mods & Qt::AltModifier);
+        key.ctrl = !!(mods & Qt::ControlModifier);
+        key.keycode = idx;
+    }
 }
 #endif
 
@@ -56,6 +64,8 @@ void Shortcuts::receiver(Key &k)
     std::vector<K*> ks { &keyCenter, &keyToggle, &keyZero };
     for (K* k_ : ks)
     {
+        if (k.guid != k_->guid)
+            continue;
         if (k.keycode != k_->keycode)
             continue;
         if (!k_->should_process())

@@ -20,10 +20,17 @@ public:
 #ifdef _WIN32
       , w([&](Key& k)
     {
-        Qt::KeyboardModifiers m;
-        QKeySequence k_;
-        if (win_key::to_qt(k, k_, m))
-            key_pressed(static_cast<QVariant>(k_).toInt() | m);
+        if(k.guid != "")
+        {
+            joystick_button_pressed(k.guid, k.keycode);
+        }
+        else
+        {
+            Qt::KeyboardModifiers m;
+            QKeySequence k_;
+            if (win_key::to_qt(k, k_, m))
+                key_pressed(static_cast<QVariant>(k_).toInt() | m);
+        }
     }, this->winId())
 #endif
     {
@@ -47,4 +54,5 @@ public:
 #endif
 signals:
     void key_pressed(QKeySequence k);
+    void joystick_button_pressed(QString guid, int idx);
 };

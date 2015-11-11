@@ -15,6 +15,7 @@
 #endif
 
 #include "opentrack-compat/timer.hpp"
+#include "opentrack/win32-joystick-shortcuts.hpp"
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
@@ -27,6 +28,7 @@
 #   include <dinput.h>
 struct Key {
     BYTE keycode;
+    QString guid;
     bool shift;
     bool ctrl;
     bool alt;
@@ -38,7 +40,7 @@ public:
 
     bool should_process()
     {
-        if (keycode == 0)
+        if (keycode == 0 && guid == "")
             return false;
         bool ret = timer.elapsed_ms() > 100;
         timer.start();
@@ -56,6 +58,7 @@ private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     QMutex mtx;
+    win32_joy_ctx joy_ctx;
 public:
     volatile bool should_quit;
     std::function<void(Key&)> receiver;
