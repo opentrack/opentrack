@@ -20,7 +20,7 @@ struct win32_joy_ctx
     
     void poll(fn f)
     {
-        refresh();
+        refresh(false);
         for (int i = joys.size() - 1; i >= 0; i--)
         {
             if (!joys[i]->poll(f))
@@ -126,6 +126,8 @@ struct win32_joy_ctx
                                            nullptr)))
             goto fail;
         
+        refresh(true);
+        
         return;
 fail:
         qDebug() << "dinput8 failed for shortcuts" << hr;
@@ -148,15 +150,17 @@ fail:
         }
     }
     
-    void refresh()
+    void refresh(bool first)
     {
         if (!dinput_handle)
             return;
         
-        if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
-            return;
-        
-        timer_joylist.start();
+        if (!first)
+        {
+            if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
+                return;
+            timer_joylist.start();
+        }
         
         enum_state st(dinput_handle, joys);
     }
