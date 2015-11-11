@@ -32,9 +32,10 @@ struct Key {
     bool shift;
     bool ctrl;
     bool alt;
+    bool held;
     Timer timer;
 public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false)
+    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true)
     {
     }
 

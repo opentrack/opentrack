@@ -16,7 +16,7 @@
 
 struct win32_joy_ctx
 {
-    using fn = std::function<void(const QString& guid, int btn)>;
+    using fn = std::function<void(const QString& guid, int btn, bool held)>;
     
     void poll(fn f)
     {
@@ -32,10 +32,13 @@ struct win32_joy_ctx
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid;
+        bool pressed[128];
         
         joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid) : joy_handle(handle), guid(guid)
         {
             qDebug() << "got joy" << guid;
+            for (int i = 0; i < 128; i++)
+                pressed[i] = false;
         }
         
         ~joy()
@@ -88,8 +91,12 @@ struct win32_joy_ctx
             }
             
             for (int i = 0; i < 128; i++)
-                if (js.rgbButtons[i] & 0x80)
-                    f(guid, i);
+            {
+                const bool state = !!(js.rgbButtons[i] & 0x80);
+                if (state != pressed[i])
+                    f(guid, i, state);
+                pressed[i] = state;
+            }
             
             return true;
         }

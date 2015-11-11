@@ -22,7 +22,7 @@ public:
     {
         if(k.guid != "")
         {
-            joystick_button_pressed(k.guid, k.keycode);
+            joystick_button_pressed(k.guid, k.keycode, k.held);
         }
         else
         {
@@ -54,5 +54,5 @@ public:
 #endif
 signals:
     void key_pressed(QKeySequence k);
-    void joystick_button_pressed(QString guid, int idx);
+    void joystick_button_pressed(QString guid, int idx, bool held);
 };

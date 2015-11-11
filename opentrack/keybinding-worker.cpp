@@ -73,12 +73,13 @@ void KeybindingWorker::run() {
     while (!should_quit)
     {
         {
-            using joy_fn = std::function<void(const QString& guid, int idx)>;
+            using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
             
-            joy_fn f = [&](const QString& guid, int idx) -> void {
+            joy_fn f = [&](const QString& guid, int idx, bool held) -> void {
                 Key k;
                 k.keycode = idx;
                 k.guid = guid;
+                k.held = held;
                 receiver(k);
             };
             

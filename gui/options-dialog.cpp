@@ -90,11 +90,14 @@ void OptionsDialog::bind_key(Shortcuts::key_opts& kopts, QLabel* label)
         kopts.button = -1;
         d.close();
     });
-    connect(k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx) -> void {
-        kopts.guid = guid;
-        kopts.keycode = "";
-        kopts.button = idx;
-        d.close();
+    connect(k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx, bool held) -> void {
+        if (!held)
+        {
+            kopts.guid = guid;
+            kopts.keycode = "";
+            kopts.button = idx;
+            d.close();
+        }
     });
     d.exec();
     label->setText(kopts_to_string(kopts));
