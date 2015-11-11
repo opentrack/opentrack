@@ -15,7 +15,15 @@
 static QString kopts_to_string(const Shortcuts::key_opts& kopts)
 {
     if (static_cast<QString>(kopts.guid) != "")
-        return "Joystick button " + QString::number(kopts.button);
+    {
+        const int btn = kopts.button & ~Qt::KeyboardModifierMask;
+        const int mods = kopts.button & Qt::KeyboardModifierMask;
+        QString mm;
+        if (mods & Qt::ControlModifier) mm += "Control+";
+        if (mods & Qt::AltModifier) mm += "Alt+";
+        if (mods & Qt::ShiftModifier) mm += "Shift+";
+        return mm + "Joy button " + QString::number(btn);
+    }
     if (static_cast<QString>(kopts.keycode) == "")
         return "None";
     return kopts.keycode;
