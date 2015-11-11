@@ -382,7 +382,7 @@ namespace options {
         value(pbundle b, const QString& name, t def) : value(b, string_from_qstring(name), def) {}
         value(pbundle b, const char* name, t def) : value(b, string(name), def) {}
 
-        operator t()
+        operator t() const
         {
             return b->contains(self_name) ? b->get<t>(self_name) : def;
         }
