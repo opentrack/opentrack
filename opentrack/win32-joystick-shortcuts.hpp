@@ -267,5 +267,5 @@ end:        return DIENUM_CONTINUE;
     LPDIRECTINPUT8 dinput_handle;
     std::vector<std::shared_ptr<joy>> joys;
     Timer timer_joylist;
-    enum { joylist_refresh_ms = 2000 };
+    enum { joylist_refresh_ms = 250 };
 };
