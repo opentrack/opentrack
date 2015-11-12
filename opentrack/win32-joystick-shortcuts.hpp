@@ -67,9 +67,6 @@ struct win32_joy_ctx
         {
             HRESULT hr;
             bool ok = false;
-            
-            if (first_timer.elapsed_ms() > first_event_delay_ms)
-                first = true;
 
             for (int i = 0; i < 5; i++)
             {
@@ -99,6 +96,8 @@ struct win32_joy_ctx
                 qDebug() << "joy get state failed" << guid << hr;
                 return false;
             }
+            
+            first |= first_timer.elapsed_ms() > first_event_delay_ms;
 
             for (int i = 0; i < 128; i++)
             {
