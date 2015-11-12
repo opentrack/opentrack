@@ -35,13 +35,16 @@ struct win32_joy_ctx
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid;
         bool pressed[128];
+        Timer first_timer;
+        bool first;
+        
+        enum { first_event_delay_ms = 3000 };
 
-        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid) : joy_handle(handle), guid(guid)
+        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, bool first) : joy_handle(handle), guid(guid), first(first)
         {
             qDebug() << "got joy" << guid;
             for (int i = 0; i < 128; i++)
                 pressed[i] = false;
-            poll([&](const QString&, int idx, bool held) -> void { pressed[idx] = held; });
         }
 
         ~joy()
@@ -64,6 +67,9 @@ struct win32_joy_ctx
         {
             HRESULT hr;
             bool ok = false;
+            
+            if (first_timer.elapsed_ms() > first_event_delay_ms)
+                first = true;
 
             for (int i = 0; i < 5; i++)
             {
@@ -97,7 +103,7 @@ struct win32_joy_ctx
             for (int i = 0; i < 128; i++)
             {
                 const bool state = !!(js.rgbButtons[i] & 0x80);
-                if (state != pressed[i])
+                if (state != pressed[i] && first)
                 {
                     f(guid, i, state);
                     qDebug() << "btn" << guid << i << state;
@@ -169,7 +175,7 @@ fail:
             timer_joylist.start();
         }
 
-        enum_state st(dinput_handle, joys);
+        enum_state st(dinput_handle, joys, first);
     }
 
     struct enum_state
@@ -177,8 +183,9 @@ fail:
         std::vector<std::shared_ptr<joy>>& joys;
         std::vector<QString> all;
         LPDIRECTINPUT8 dinput_handle;
+        bool first;
 
-        enum_state(LPDIRECTINPUT8 di, std::vector<std::shared_ptr<joy>>& joys) : joys(joys), dinput_handle(di)
+        enum_state(LPDIRECTINPUT8 di, std::vector<std::shared_ptr<joy>>& joys, bool first) : joys(joys), dinput_handle(di), first(first)
         {
             HRESULT hr;
 
@@ -246,7 +253,7 @@ fail:
                     goto end;
                 }
 #endif
-                state.joys.push_back(std::make_shared<joy>(h, guid));
+                state.joys.push_back(std::make_shared<joy>(h, guid, state.first));
             }
 
 end:        return DIENUM_CONTINUE;
