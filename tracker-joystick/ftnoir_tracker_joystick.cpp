@@ -19,17 +19,20 @@ FTNoIR_Tracker::FTNoIR_Tracker() :
 void FTNoIR_Tracker::reload()
 {
     s.b->reload();
-    QMutexLocker foo(&mtx);
-    if (g_pJoystick)
     {
-        g_pJoystick->Unacquire();
-        g_pJoystick->Release();
+        QMutexLocker foo(&mtx);
+        
+        if (g_pJoystick)
+        {
+            g_pJoystick->Unacquire();
+            g_pJoystick->Release();
+        }
+        if (g_pDI)
+            g_pDI->Release();
+        
+        g_pJoystick = nullptr;
+        g_pDI = nullptr;
     }
-    if (g_pDI)
-        g_pDI->Release();
-
-    g_pJoystick = nullptr;
-    g_pDI = nullptr;
 
     start_tracker(frame);
 }
