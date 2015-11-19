@@ -58,7 +58,6 @@ struct OPENTRACK_EXPORT KeybindingWorker : public QThread {
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-    QMutex mtx;
     win32_joy_ctx joy_ctx;
 public:
     volatile bool should_quit;

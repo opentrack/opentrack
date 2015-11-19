@@ -8,7 +8,6 @@
 
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
-#include <QMutexLocker>
 
 void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 {

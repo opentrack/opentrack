@@ -99,8 +99,6 @@ void KeybindingWorker::run() {
             joy_ctx.poll(f);
         }
 
-        QMutexLocker l(&mtx);
-
         for (int i = 0; i < 256; i++)
         {
             Key k;
