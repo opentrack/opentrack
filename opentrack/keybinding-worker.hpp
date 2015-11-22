@@ -15,7 +15,9 @@
 #endif
 
 #include "opentrack-compat/timer.hpp"
-#include "opentrack/win32-joystick.hpp"
+#ifdef _WIN32
+#   include "opentrack/win32-joystick.hpp"
+#endif
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
@@ -59,7 +61,9 @@ struct OPENTRACK_EXPORT KeybindingWorker : private QThread
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
+#ifdef _WIN32
     win32_joy_ctx& joy_ctx;
+#endif
     volatile bool should_quit;
     using fun = std::function<void(Key&)>;
     std::vector<fun> receivers;
