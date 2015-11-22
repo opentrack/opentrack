@@ -8,8 +8,17 @@
 #include "opentrack/plugin-api.hpp"
 #include <QMutexLocker>
 
-FTNoIR_Tracker::FTNoIR_Tracker()
+FTNoIR_Tracker::FTNoIR_Tracker() : joy_ctx(win32_joy_ctx::make())
 {
+    if (static_cast<QString>(s.guid) == "")
+    {
+        std::vector<win32_joy_ctx::joy_info> info = joy_ctx.get_joy_info();
+        if (info.size())
+        {
+            s.guid = info[0].guid;
+            s.b->save();
+        }
+    }
 }
 
 FTNoIR_Tracker::~FTNoIR_Tracker()

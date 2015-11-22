@@ -10,20 +10,21 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     {
-        win32_joy_ctx joy_ctx;
+        win32_joy_ctx& joy_ctx(win32_joy_ctx::make());
         
         _joys = QList<joys>();
         
-        for (auto& j : joy_ctx.joys())
-            _joys.push_back(joys { j.second->name, j.first });
+        for (auto j : joy_ctx.get_joy_info())
+            _joys.push_back(joys { j.name, j.guid });
     }
     
     {
+        const QString guid = s.guid;
         int idx = 0;
         for (int i = 0; i < _joys.size(); i++)
         {
             const joys& j = _joys[i];
-            if (j.guid == s.guid && j.name == s.joyid)
+            if (j.guid == guid)
                 idx = i;
             ui.joylist->addItem(j.name + " " + j.guid);
         }

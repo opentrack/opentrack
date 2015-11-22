@@ -59,7 +59,7 @@ struct OPENTRACK_EXPORT KeybindingWorker : private QThread
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-    win32_joy_ctx joy_ctx;
+    win32_joy_ctx& joy_ctx;
     volatile bool should_quit;
     using fun = std::function<void(Key&)>;
     std::vector<fun> receivers;

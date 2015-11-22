@@ -27,7 +27,7 @@ KeybindingWorker::~KeybindingWorker() {
         din->Release();
 }
 
-KeybindingWorker::KeybindingWorker() : should_quit(true)
+KeybindingWorker::KeybindingWorker() : joy_ctx(win32_joy_ctx::make()), should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
