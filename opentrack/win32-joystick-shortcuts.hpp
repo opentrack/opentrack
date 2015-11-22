@@ -55,12 +55,12 @@ struct OPENTRACK_EXPORT win32_joy_ctx
     {
         QMutexLocker l(&mtx);
         
+        refresh(false);
+        
         auto iter = joys().find(guid);
 
         if (iter == joys().end() || iter->second->joy_handle == nullptr)
             return false;
-        
-        refresh(false);
         
         auto& j = iter->second;
         
@@ -107,7 +107,79 @@ struct OPENTRACK_EXPORT win32_joy_ctx
         
         return true;
     }
+    
+    ~win32_joy_ctx()
+    {
+        release();
+    }
+    
+    enum { joy_axis_size = 65535 };
+    
+    struct joy_info
+    {
+        QString name, guid;
+    };
+    
+    std::vector<joy_info> get_joy_info()
+    {
+        QMutexLocker l(&mtx);
+        
+        std::vector<joy_info> ret;
+        
+        for (auto& j : joys())
+            ret.push_back(joy_info { j.second->name, j.first });
+        
+        return ret;
+    }
 
+    static win32_joy_ctx& make();
+    
+    win32_joy_ctx(const win32_joy_ctx&) = delete;
+    win32_joy_ctx& operator=(const win32_joy_ctx&) = delete;
+private:
+    static QString guid_to_string(const GUID guid)
+    {
+        char buf[40] = {0};
+        wchar_t szGuidW[40] = {0};
+
+        StringFromGUID2(guid, szGuidW, 40);
+        WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, NULL, NULL);
+
+        return QString(buf);
+    }
+    
+    static LPDIRECTINPUT8& dinput_handle();
+    
+    win32_joy_ctx()
+    {
+        refresh(true);
+    }
+    void release()
+    {
+        qDebug() << "release joystick dinput handle";
+        joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
+        {
+            auto& di = dinput_handle();
+            di->Release();
+            di = nullptr;
+        }
+    }
+
+    void refresh(bool first)
+    {
+        if (!first)
+        {
+            if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
+                return;
+            timer_joylist.start();
+        }
+
+        enum_state st(joys(), first);
+    }
+    QMutex mtx;
+    Timer timer_joylist;
+    enum { joylist_refresh_ms = 250 };
+    
     struct joy
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
@@ -140,7 +212,7 @@ struct OPENTRACK_EXPORT win32_joy_ctx
                 joy_handle = nullptr;
             }
         }
-
+        
         bool poll(fn f)
         {
             HRESULT hr;
@@ -188,53 +260,6 @@ struct OPENTRACK_EXPORT win32_joy_ctx
             return true;
         }
     };
-
-    static QString guid_to_string(const GUID guid)
-    {
-        char buf[40] = {0};
-        wchar_t szGuidW[40] = {0};
-
-        StringFromGUID2(guid, szGuidW, 40);
-        WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, NULL, NULL);
-
-        return QString(buf);
-    }
-
-    win32_joy_ctx()
-    {
-        refresh(true);
-        return;
-    }
-
-    ~win32_joy_ctx()
-    {
-        release();
-    }
-
-    void release()
-    {
-        qDebug() << "release dinput handle";
-        joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
-        {
-            auto& di = dinput_handle();
-            di->Release();
-            di = nullptr;
-        }
-    }
-
-    void refresh(bool first)
-    {
-        if (!first)
-        {
-            if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
-                return;
-            timer_joylist.start();
-        }
-
-        enum_state st(joys(), first);
-    }
-    
-    enum { joy_axis_size = 65535 };
 
     struct enum_state
     {
@@ -338,13 +363,8 @@ end:        return DIENUM_CONTINUE;
             return DIENUM_CONTINUE;
         }
     };
-
-    static LPDIRECTINPUT8& dinput_handle();
+    
     static std::unordered_map<QString, std::shared_ptr<joy>>& joys();
-
-    QMutex mtx;
-    Timer timer_joylist;
-    enum { joylist_refresh_ms = 250 };
 };
 
 #endif

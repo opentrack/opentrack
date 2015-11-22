@@ -22,3 +22,9 @@ std::unordered_map<QString, std::shared_ptr<win32_joy_ctx::joy>>& win32_joy_ctx:
     
     return js;
 }
+
+win32_joy_ctx& win32_joy_ctx::make()
+{
+    static win32_joy_ctx ret;
+    return ret;
+}
