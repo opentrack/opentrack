@@ -28,7 +28,7 @@ struct Work
     Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv, WId handle) :
         s(s), libs(libs),
         tracker(std::make_shared<Tracker>(s, m, libs)),
-        sc(std::make_shared<Shortcuts>(handle)),
+        sc(std::make_shared<Shortcuts>()),
         handle(handle)
     {
 #ifndef _WIN32
@@ -50,6 +50,7 @@ struct Work
 
     ~Work()
     {
+        sc = nullptr;
         // order matters, otherwise use-after-free -sh
         tracker = nullptr;
         libs = SelectedLibraries();

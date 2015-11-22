@@ -61,7 +61,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 #endif
 
 #ifdef _WIN32
-void Shortcuts::receiver(Key &k)
+void Shortcuts::receiver(const Key& k)
 {
     std::vector<K*> ks { &keyCenter, &keyToggle, &keyZero };
     for (K* k_ : ks)
@@ -92,12 +92,4 @@ void Shortcuts::reload() {
     bind_keyboard_shortcut(keyCenter, s.center);
     bind_keyboard_shortcut(keyToggle, s.toggle);
     bind_keyboard_shortcut(keyZero, s.zero);
-#ifdef _WIN32
-    bool is_new = keybindingWorker == nullptr;
-    if (is_new)
-    {
-        keybindingWorker = std::make_shared<KeybindingWorker>([&](Key& k) { receiver(k); }, handle);
-        keybindingWorker->start();
-    }
-#endif
 }

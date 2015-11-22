@@ -13,13 +13,12 @@ class KeyboardListener : public QLabel
     Q_OBJECT
     Ui_keyboard_listener ui;
 #ifdef _WIN32
-    KeybindingWorker w;
+    KeybindingWorker::Token token;
 #endif
 public:
     KeyboardListener(QWidget* parent = nullptr) : QLabel(parent)
 #ifdef _WIN32
-      , w([&](Key& k)
-    {
+      , token([&](const Key& k) {
         if(k.guid != "")
         {
             int mods = 0;
@@ -35,14 +34,11 @@ public:
             if (win_key::to_qt(k, k_, m))
                 key_pressed(static_cast<QVariant>(k_).toInt() | m);
         }
-    }, this->winId())
+    })
 #endif
     {
         ui.setupUi(this);
         setFocusPolicy(Qt::StrongFocus);
-#ifdef _WIN32
-        w.start();
-#endif
     }
 #ifndef _WIN32
     void keyPressEvent(QKeyEvent* event) override

@@ -40,10 +40,8 @@ public:
     K keyCenter;
     K keyToggle;
     K keyZero;
-
-    WId handle;
 #ifdef _WIN32
-    mem<KeybindingWorker> keybindingWorker;
+    KeybindingWorker::Token key_token;
 #endif
     
     struct key_opts {
@@ -68,13 +66,16 @@ public:
         {}
     } s;
 
-    Shortcuts(WId handle) : handle(handle) { reload(); }
+    Shortcuts() : key_token(KeybindingWorker::add_receiver([&](const Key& k) { receiver(k); }))
+    {
+        reload();
+    }
 
     void reload();
 private:
     void bind_keyboard_shortcut(K &key, key_opts& k);
 #ifdef _WIN32
-    void receiver(Key& k);
+    void receiver(const Key& k);
 #endif
 signals:
     void center();
