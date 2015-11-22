@@ -6,10 +6,9 @@
  * notice appear in all copies.
  */
 
+#ifdef _WIN32
+
 #include "keybinding-worker.hpp"
-
-#if defined(_WIN32)
-
 #include <functional>
 #include <windows.h>
 #include <QDebug>
@@ -29,7 +28,7 @@ KeybindingWorker::~KeybindingWorker() {
 
 KeybindingWorker::KeybindingWorker() :
 #ifdef _WIN32
-    joy_ctx(win32_joy_ctx::make()), 
+    joy_ctx(win32_joy_ctx::make()),
 #endif
     should_quit(true)
 {
@@ -85,23 +84,23 @@ void KeybindingWorker::run() {
     {
         {
             QMutexLocker l(&mtx);
-            
+
             if (receivers.size())
             {
                 {
                     const HRESULT hr = dinkeyboard->GetDeviceState(256, (LPVOID)keystate);
-                    
+
                     if (hr != DI_OK) {
                         qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
                         Sleep(25);
                         continue;
                     }
                 }
-                
+
 #ifdef _WIN32
                 {
                     using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
-                    
+
                     joy_fn f = [&](const QString& guid, int idx, bool held) -> void {
                         Key k;
                         k.keycode = idx;
@@ -110,15 +109,15 @@ void KeybindingWorker::run() {
                         k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80 || keystate[DIK_RCONTROL] & 0x80);
                         k.guid = guid;
                         k.held = held;
-                        
+
                         for (auto& r : receivers)
                             r(k);
                     };
-                    
+
                     joy_ctx.poll(f);
                 }
 #endif
-                
+
                 for (int i = 0; i < 256; i++)
                 {
                     Key k;
@@ -138,7 +137,7 @@ void KeybindingWorker::run() {
                             k.alt = !!(keystate[DIK_LALT] & 0x80) || !!(keystate[DIK_RALT] & 0x80);
                             k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80) || !!(keystate[DIK_RCONTROL] & 0x80);
                             k.keycode = i;
-                            
+
                             for (auto& r : receivers)
                                 r(k);
                             break;
@@ -147,7 +146,7 @@ void KeybindingWorker::run() {
                 }
             }
         }
-        
+
         // keypresses get dropped with high values
         Sleep(4);
     }
@@ -165,7 +164,7 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
 {
     QMutexLocker l(&mtx);
     bool ok = false;
-    
+
     for (int i = receivers.size() - 1; i >= 0; i--)
     {
         if (&receivers[i] == pos)

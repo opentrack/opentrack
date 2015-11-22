@@ -15,20 +15,17 @@
 #endif
 
 #include "opentrack-compat/timer.hpp"
-#ifdef _WIN32
-#   include "opentrack/win32-joystick.hpp"
-#endif
+#include "opentrack/win32-joystick.hpp"
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
 #include <functional>
 #include <vector>
 
-#ifdef _WIN32
-#   undef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x0800
-#   include <windows.h>
-#   include <dinput.h>
+#undef DIRECTINPUT_VERSION
+#define DIRECTINPUT_VERSION 0x0800
+#include <windows.h>
+#include <dinput.h>
 struct Key {
     BYTE keycode;
     QString guid;
@@ -51,15 +48,10 @@ public:
         return ret;
     }
 };
-#else
-typedef unsigned char BYTE;
-struct Key { int foo; };
-#endif
 
 struct OPENTRACK_EXPORT KeybindingWorker : private QThread
 {
 private:
-#ifdef _WIN32
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     win32_joy_ctx& joy_ctx;
@@ -99,7 +91,5 @@ public:
     {
         return Token(receiver);
     }
-#else
     void run() override {}
-#endif
 };
