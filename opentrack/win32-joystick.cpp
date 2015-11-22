@@ -1,4 +1,4 @@
-#include "win32-joystick-shortcuts.hpp"
+#include "win32-joystick.hpp"
 
 LPDIRECTINPUT8& win32_joy_ctx::dinput_handle()
 {

@@ -15,7 +15,7 @@
 #endif
 
 #include "opentrack-compat/timer.hpp"
-#include "opentrack/win32-joystick-shortcuts.hpp"
+#include "opentrack/win32-joystick.hpp"
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
