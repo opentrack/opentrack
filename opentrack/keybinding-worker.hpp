@@ -20,6 +20,7 @@
 #include <QMutex>
 #include <QWidget>
 #include <functional>
+#include <vector>
 
 #ifdef _WIN32
 #   undef DIRECTINPUT_VERSION
@@ -53,21 +54,46 @@ typedef unsigned char BYTE;
 struct Key { int foo; };
 #endif
 
-struct OPENTRACK_EXPORT KeybindingWorker : public QThread {
-#ifdef _WIN32
+struct OPENTRACK_EXPORT KeybindingWorker : private QThread
+{
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     win32_joy_ctx joy_ctx;
-public:
     volatile bool should_quit;
-    std::function<void(Key&)> receiver;
+    using fun = std::function<void(Key&)>;
+    std::vector<fun> receivers;
+    QMutex mtx;
+    
+    void run() override;
+    KeybindingWorker();
+    
+    KeybindingWorker(const KeybindingWorker&) = delete;
+    KeybindingWorker& operator=(KeybindingWorker&) = delete;
+    static KeybindingWorker& make();
+    fun* _add_receiver(fun receiver);
+    void remove_receiver(fun* pos);
     ~KeybindingWorker();
-    KeybindingWorker(std::function<void(Key&)> receiver, WId h);
-    void run();
-#else
 public:
-    KeybindingWorker(Key, Key, Key, WId) {}
-    void run() {}
-#endif
+    class Token
+    {
+        friend class KeybindingWorker;
+        fun* pos;
+        //Token(const Token&) = delete;
+        Token& operator=(Token&) = delete;
+    public:
+        Token(fun receiver)
+        {
+            pos = make()._add_receiver(receiver);
+        }
+        ~Token()
+        {
+            make().remove_receiver(pos);
+        }
+    };
+    friend class Token;
+    static Token add_receiver(fun receiver)
+    {
+        return Token(receiver);
+    }
 };
