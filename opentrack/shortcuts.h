@@ -66,7 +66,10 @@ public:
         {}
     } s;
 
-    Shortcuts() : key_token(KeybindingWorker::add_receiver([&](const Key& k) { receiver(k); }))
+    Shortcuts()
+#ifdef _WIN32
+        : key_token(KeybindingWorker::add_receiver([&](const Key& k) { receiver(k); }))
+#endif
     {
         reload();
     }

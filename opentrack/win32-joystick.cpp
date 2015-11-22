@@ -1,5 +1,7 @@
 #include "win32-joystick.hpp"
 
+#ifdef _WIN32
+
 LPDIRECTINPUT8& win32_joy_ctx::dinput_handle()
 {
     (void) CoInitialize(nullptr);
@@ -28,3 +30,5 @@ win32_joy_ctx& win32_joy_ctx::make()
     static win32_joy_ctx ret;
     return ret;
 }
+
+#endif

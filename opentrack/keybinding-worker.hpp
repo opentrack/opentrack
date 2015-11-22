@@ -59,19 +59,18 @@ struct Key { int foo; };
 struct OPENTRACK_EXPORT KeybindingWorker : private QThread
 {
 private:
+#ifdef _WIN32
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-#ifdef _WIN32
     win32_joy_ctx& joy_ctx;
-#endif
     volatile bool should_quit;
     using fun = std::function<void(Key&)>;
     std::vector<fun> receivers;
     QMutex mtx;
-    
+
     void run() override;
     KeybindingWorker();
-    
+
     KeybindingWorker(const KeybindingWorker&) = delete;
     KeybindingWorker& operator=(KeybindingWorker&) = delete;
     static KeybindingWorker& make();
@@ -100,4 +99,7 @@ public:
     {
         return Token(receiver);
     }
+#else
+    void run() override {}
+#endif
 };
