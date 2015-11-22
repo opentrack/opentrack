@@ -22,11 +22,10 @@
 using namespace options;
 
 struct settings : opts {
-    value<QString> joyid, guid;
+    value<QString> guid;
     value<int> joy_1, joy_2, joy_3, joy_4, joy_5, joy_6;
     settings() :
         opts("tracker-joystick"),
-        joyid(b, "joy-id", ""),
         guid(b, "joy-guid", ""),
         joy_1(b, "axis-map-1", 1),
         joy_2(b, "axis-map-2", 2),

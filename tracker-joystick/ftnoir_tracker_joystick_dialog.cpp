@@ -44,7 +44,6 @@ void TrackerControls::doOK() {
     joys def { "", "" };
     auto val = _joys.value(idx, def);
     s.guid = val.guid;
-    s.joyid = val.name;
     s.b->save();
     this->close();
 }
