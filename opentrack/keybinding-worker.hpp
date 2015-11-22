@@ -91,5 +91,4 @@ public:
     {
         return Token(receiver);
     }
-    void run() override {}
 };
