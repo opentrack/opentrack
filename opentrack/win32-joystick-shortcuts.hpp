@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <unordered_map>
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif
@@ -15,32 +16,109 @@
 #include "opentrack-compat/timer.hpp"
 #include <QString>
 #include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
 
-struct win32_joy_ctx
+namespace std {
+template<>
+struct hash<QString>
+{
+    std::size_t operator()(const QString& value) const
+    {
+        return qHash(value);
+    }
+};
+}
+
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
+
+struct OPENTRACK_EXPORT win32_joy_ctx
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
     void poll(fn f)
     {
+        QMutexLocker l(&mtx);
+
         refresh(false);
-        for (int i = joys.size() - 1; i >= 0; i--)
+        for (auto& j : joys())
         {
-            if (!joys[i]->poll(f))
-                joys.erase(joys.begin() + i);
+            j.second->poll(f);
         }
+    }
+    
+    bool poll_axis(const QString& guid, int axes[8])
+    {
+        QMutexLocker l(&mtx);
+        
+        auto iter = joys().find(guid);
+
+        if (iter == joys().end() || iter->second->joy_handle == nullptr)
+            return false;
+        
+        refresh(false);
+        
+        auto& j = iter->second;
+        
+        auto& joy_handle = j->joy_handle;
+        bool ok = false;
+        HRESULT hr;
+        
+        (void) joy_handle->Acquire();
+        
+        if (!FAILED(hr = joy_handle->Poll()))
+            ok = true;
+        
+        if (!ok)
+        {
+            qDebug() << "joy acquire failed" << guid << hr;
+            (void) joy_handle->Unacquire();
+            return false;
+        }
+        
+        DIJOYSTATE2 js;
+        memset(&js, 0, sizeof(js));
+        
+        if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
+        {
+            qDebug() << "joy get state failed" << guid << hr;
+            return false;
+        }
+        
+        const int values[] = {
+            js.lX,
+            js.lY,
+            js.lZ,
+            js.lRx,
+            js.lRy,
+            js.lRz,
+            js.rglSlider[0],
+            js.rglSlider[1]
+        };
+        
+        for (int i = 0; i < 8; i++)
+            axes[i] = values[i];
+        
+        (void) joy_handle->Unacquire();
+        
+        return true;
     }
 
     struct joy
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
-        QString guid;
+        QString guid, name;
         bool pressed[128];
         Timer first_timer;
         bool first;
         
         enum { first_event_delay_ms = 3000 };
 
-        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, bool first) : joy_handle(handle), guid(guid), first(first)
+        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name, bool first) : joy_handle(handle), guid(guid), name(name), first(first)
         {
             qDebug() << "got joy" << guid;
             for (int i = 0; i < 128; i++)
@@ -67,24 +145,19 @@ struct win32_joy_ctx
         {
             HRESULT hr;
             bool ok = false;
-
-            for (int i = 0; i < 5; i++)
-            {
-                if (!FAILED(joy_handle->Poll()))
-                {
-                    ok = true;
-                    break;
-                }
-                if ((hr = joy_handle->Acquire()) != DI_OK)
-                    continue;
-                else
-                    ok = true;
-                break;
-            }
+            
+            if (joy_handle == nullptr)
+                return false;
+            
+            (void) joy_handle->Acquire();
+            
+            if (!FAILED(joy_handle->Poll()))
+                ok = true;
 
             if (!ok)
             {
                 qDebug() << "joy acquire failed" << guid << hr;
+                (void) joy_handle->Unacquire();
                 return false;
             }
 
@@ -96,6 +169,8 @@ struct win32_joy_ctx
                 qDebug() << "joy get state failed" << guid << hr;
                 return false;
             }
+            
+            (void) joy_handle->Unacquire();
             
             first |= first_timer.elapsed_ms() > first_event_delay_ms;
 
@@ -125,26 +200,10 @@ struct win32_joy_ctx
         return QString(buf);
     }
 
-    win32_joy_ctx() : dinput_handle(nullptr)
+    win32_joy_ctx()
     {
-        (void) CoInitialize(nullptr);
-
-        HRESULT hr;
-
-        if (FAILED(hr = DirectInput8Create(GetModuleHandle(nullptr),
-                                           DIRECTINPUT_VERSION,
-                                           IID_IDirectInput8,
-                                           (void**) &dinput_handle,
-                                           nullptr)))
-            goto fail;
-
         refresh(true);
-
         return;
-fail:
-        qDebug() << "dinput8 failed for shortcuts" << hr;
-
-        release();
     }
 
     ~win32_joy_ctx()
@@ -154,19 +213,17 @@ fail:
 
     void release()
     {
-        joys = std::vector<std::shared_ptr<joy>>();
-        if (dinput_handle)
+        qDebug() << "release dinput handle";
+        joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
         {
-            dinput_handle->Release();
-            dinput_handle = nullptr;
+            auto& di = dinput_handle();
+            di->Release();
+            di = nullptr;
         }
     }
 
     void refresh(bool first)
     {
-        if (!dinput_handle)
-            return;
-
         if (!first)
         {
             if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
@@ -174,34 +231,37 @@ fail:
             timer_joylist.start();
         }
 
-        enum_state st(dinput_handle, joys, first);
+        enum_state st(joys(), first);
     }
+    
+    enum { joy_axis_size = 65535 };
 
     struct enum_state
     {
-        std::vector<std::shared_ptr<joy>>& joys;
+        std::unordered_map<QString, std::shared_ptr<joy>>& joys;
         std::vector<QString> all;
-        LPDIRECTINPUT8 dinput_handle;
         bool first;
 
-        enum_state(LPDIRECTINPUT8 di, std::vector<std::shared_ptr<joy>>& joys, bool first) : joys(joys), dinput_handle(di), first(first)
+        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, bool first) : joys(joys), first(first)
         {
             HRESULT hr;
+            LPDIRECTINPUT8 di = dinput_handle();
 
-            if(FAILED(hr = dinput_handle->EnumDevices(DI8DEVCLASS_GAMECTRL,
-                                                      EnumJoysticksCallback,
-                                                      this,
-                                                      DIEDFL_ATTACHEDONLY)))
+            if(FAILED(hr = di->EnumDevices(DI8DEVCLASS_GAMECTRL,
+                                           EnumJoysticksCallback,
+                                           this,
+                                           DIEDFL_ATTACHEDONLY)))
             {
                 qDebug() << "failed enum joysticks" << hr;
                 return;
             }
-
-            for (int i = joys.size() - 1; i >= 0; i--)
+            
+            for (auto it = joys.begin(); it != joys.end(); )
             {
-                const auto& guid = joys[i]->guid;
-                if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return guid == guid2; }) == all.cend())
-                    joys.erase(joys.begin() + i);
+                if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return it->second->guid == guid2; }) == all.cend())
+                    it = joys.erase(it);
+                else
+                    it++;
             }
         }
 
@@ -209,16 +269,10 @@ fail:
         {
             enum_state& state = *reinterpret_cast<enum_state*>(pContext);
             const QString guid = guid_to_string(pdidInstance->guidInstance);
-#if 0
             const QString name = QString(pdidInstance->tszInstanceName);
-            // the logic here is that iff multiple joysticks of same name exist, then take guids into account at all
-            const int cnt_names = std::count_if(state.joys.begin(), state.joys.end(), [&](const joy& j) -> bool { return j.name == name; });
-            // this is potentially bad since replugged sticks can change guids (?)
-#endif
-
-            const bool exists = std::find_if(state.joys.cbegin(),
-                                             state.joys.cend(),
-                                             [&](const std::shared_ptr<joy>& j) -> bool { return j->guid == guid; }) != state.joys.cend();
+            
+            auto it = state.joys.find(guid);
+            const bool exists = it != state.joys.end() && it->second->joy_handle != nullptr;
 
             state.all.push_back(guid);
 
@@ -226,9 +280,10 @@ fail:
             {
                 HRESULT hr;
                 LPDIRECTINPUTDEVICE8 h;
-                if (FAILED(hr = state.dinput_handle->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
+                LPDIRECTINPUT8 di = dinput_handle();
+                if (FAILED(hr = di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
                 {
-                    qDebug() << "create joystick breakage" << guid << hr;
+                    qDebug() << "createdevice" << guid << hr;
                     goto end;
                 }
                 if (FAILED(h->SetDataFormat(&c_dfDIJoystick2)))
@@ -244,21 +299,20 @@ fail:
                     h->Release();
                     goto end;
                 }
-#if 0
                 if (FAILED(hr = h->EnumObjects(EnumObjectsCallback, h, DIDFT_ALL)))
                 {
                     qDebug() << "enum-objects";
                     h->Release();
                     goto end;
                 }
-#endif
-                state.joys.push_back(std::make_shared<joy>(h, guid, state.first));
+                
+                qDebug() << "add joy" << guid;
+                state.joys[guid] = std::make_shared<joy>(h, guid, name, state.first);
             }
 
 end:        return DIENUM_CONTINUE;
         }
 
-#if 0
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx)
         {
             if (pdidoi->dwType & DIDFT_AXIS)
@@ -269,20 +323,26 @@ end:        return DIENUM_CONTINUE;
                 diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
                 diprg.diph.dwHow = DIPH_BYID;
                 diprg.diph.dwObj = pdidoi->dwType;
-                diprg.lMax = 32;
-                diprg.lMin = -32;
+                diprg.lMax = joy_axis_size;
+                diprg.lMin = -joy_axis_size;
+                
+                HRESULT hr;
 
-                if (FAILED(reinterpret_cast<LPDIRECTINPUTDEVICE8>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
+                if (FAILED(hr = reinterpret_cast<LPDIRECTINPUTDEVICE8>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
+                {
+                    qDebug() << "DIPROP_RANGE" << hr;
                     return DIENUM_STOP;
+                }
             }
 
             return DIENUM_CONTINUE;
         }
-#endif
     };
 
-    LPDIRECTINPUT8 dinput_handle;
-    std::vector<std::shared_ptr<joy>> joys;
+    static LPDIRECTINPUT8& dinput_handle();
+    static std::unordered_map<QString, std::shared_ptr<joy>>& joys();
+
+    QMutex mtx;
     Timer timer_joylist;
     enum { joylist_refresh_ms = 250 };
 };
