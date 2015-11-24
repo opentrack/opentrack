@@ -103,8 +103,6 @@ struct OPENTRACK_EXPORT win32_joy_ctx
         for (int i = 0; i < 8; i++)
             axes[i] = values[i];
         
-        (void) joy_handle->Unacquire();
-        
         return true;
     }
     
@@ -241,8 +239,6 @@ private:
                 qDebug() << "joy get state failed" << guid << hr;
                 return false;
             }
-            
-            (void) joy_handle->Unacquire();
             
             first |= first_timer.elapsed_ms() > first_event_delay_ms;
 
