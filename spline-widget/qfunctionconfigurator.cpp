@@ -15,8 +15,6 @@ using namespace options;
 #include <cmath>
 #include <algorithm>
 
-static const int pointSize = 5;
-
 QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),

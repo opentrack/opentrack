@@ -19,6 +19,7 @@ class SPLINE_WIDGET_EXPORT QFunctionConfigurator : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
+    enum { pointSize = 5 };
 public:
     QFunctionConfigurator(QWidget *parent = 0);
     
