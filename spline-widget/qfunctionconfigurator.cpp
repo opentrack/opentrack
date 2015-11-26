@@ -404,9 +404,8 @@ void QFunctionConfigurator::update_range()
 
 bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
 {
-    QPointF pixel2 = point_to_pixel(pt);
-    return pixel2.x() >= pixel.x() - pointSize && pixel2.x() < pixel.x() + pointSize &&
-           pixel2.y() >= pixel.y() - pointSize && pixel2.y() < pixel.y() + pointSize;
+    QPointF tmp = pixel - point_to_pixel(pt);
+    return sqrt(QPointF::dotProduct(tmp, tmp)) < pointSize;
 }
 
 QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
