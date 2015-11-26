@@ -37,14 +37,14 @@ Intel® RealSense™ SDK. By design, the application has no direct access
 to any camera images.
 
 In order to use this tracker, you need a PC equipped with
-an Intel® RealSense™ R200 camera and the RealSense™ SDK R4 runtime.</string>
+an Intel® RealSense™ R200 camera and the RealSense™ SDK R5 runtime.</string>
      </property>
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
     <widget class="QPushButton" name="triggerSDKInstallButton">
      <property name="text">
-      <string>Install SDK Runtime R4</string>
+      <string>Install SDK Runtime R5</string>
      </property>
     </widget>
    </item>
