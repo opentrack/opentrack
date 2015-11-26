@@ -358,7 +358,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         }
 
         if (is_on_point) {
-            setCursor(Qt::OpenHandCursor);
+            setCursor(Qt::CrossCursor);
         }
         else {
             setCursor(Qt::ArrowCursor);
