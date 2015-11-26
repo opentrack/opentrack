@@ -63,7 +63,6 @@ private:
 public:
     class Token
     {
-        friend class KeybindingWorker;
         fun* pos;
         //Token(const Token&) = delete;
         Token& operator=(Token&) = delete;
@@ -77,7 +76,6 @@ public:
             make().remove_receiver(pos);
         }
     };
-    friend class Token;
     static Token add_receiver(fun receiver)
     {
         return Token(receiver);
