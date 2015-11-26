@@ -14,6 +14,15 @@
 #include <QDebug>
 #include <QMutexLocker>
 
+bool Key::should_process()
+{
+    if (keycode == 0 && guid == "")
+        return false;
+    bool ret = timer.elapsed_ms() > 100;
+    timer.start();
+    return ret;
+}
+
 KeybindingWorker::~KeybindingWorker() {
     qDebug() << "keybinding worker stop";
     should_quit = true;
@@ -172,6 +181,7 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
             ok = true;
             qDebug() << "remove receiver" << (long) pos;
             receivers.erase(receivers.begin() + i);
+            break;
         }
     }
     if (!ok)

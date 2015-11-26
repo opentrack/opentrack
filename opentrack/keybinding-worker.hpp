@@ -35,18 +35,9 @@ struct Key {
     bool held;
     Timer timer;
 public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true)
-    {
-    }
+    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true) {}
 
-    bool should_process()
-    {
-        if (keycode == 0 && guid == "")
-            return false;
-        bool ret = timer.elapsed_ms() > 100;
-        timer.start();
-        return ret;
-    }
+    bool should_process();
 };
 
 struct OPENTRACK_EXPORT KeybindingWorker : private QThread
