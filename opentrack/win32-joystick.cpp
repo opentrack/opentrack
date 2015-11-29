@@ -232,7 +232,7 @@ win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_pt
         return;
     }
     
-    for (auto it = joys.begin(); it != joys.end(); )
+    for (auto it = this->joys.begin(); it != this->joys.end(); )
     {
         if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return it->second->guid == guid2; }) == all.cend())
             it = joys.erase(it);
