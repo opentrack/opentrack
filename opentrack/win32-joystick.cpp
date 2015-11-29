@@ -33,9 +33,10 @@ win32_joy_ctx& win32_joy_ctx::make()
 
 void win32_joy_ctx::poll(fn f)
 {
+    refresh(false);
+    
     QMutexLocker l(&mtx);
     
-    refresh(false);
     for (auto& j : joys())
     {
         j.second->poll(f);
@@ -44,9 +45,9 @@ void win32_joy_ctx::poll(fn f)
 
 bool win32_joy_ctx::poll_axis(const QString &guid, int axes[])
 {
-    QMutexLocker l(&mtx);
-    
     refresh(false);
+    
+    QMutexLocker l(&mtx);
     
     auto iter = joys().find(guid);
     
@@ -134,12 +135,14 @@ void win32_joy_ctx::refresh(bool first)
 {
     if (!first)
     {
+        QMutexLocker l(&mtx);
+        
         if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
             return;
         timer_joylist.start();
     }
     
-    enum_state st(joys(), first);
+    enum_state st(joys(), first, mtx);
 }
 
 QString win32_joy_ctx::guid_to_string(const GUID guid)
@@ -210,10 +213,15 @@ bool win32_joy_ctx::joy::poll(fn f)
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy> > &joys, bool first) : joys(joys), first(first)
+win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy> > &joys, bool first, QMutex& mtx) : first(first)
 {
     HRESULT hr;
     LPDIRECTINPUT8 di = dinput_handle();
+    
+    {
+        QMutexLocker l(&mtx);
+        this->joys = joys;
+    }
     
     if(FAILED(hr = di->EnumDevices(DI8DEVCLASS_GAMECTRL,
                                    EnumJoysticksCallback,
@@ -231,6 +239,9 @@ win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_pt
         else
             it++;
     }
+    
+    QMutexLocker l(&mtx);
+    joys = this->joys;
 }
 
 win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)

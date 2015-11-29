@@ -100,14 +100,14 @@ private:
 
     class enum_state
     {
-        std::unordered_map<QString, std::shared_ptr<joy>>& joys;
+        std::unordered_map<QString, std::shared_ptr<joy>> joys;
         bool first;
         
         std::vector<QString> all;
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
     public:
-        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, bool first);
+        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, bool first, QMutex &mtx);
     };
 };
 
