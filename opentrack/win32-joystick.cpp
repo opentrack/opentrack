@@ -135,8 +135,8 @@ void win32_joy_ctx::refresh(bool first)
 {
     if (!first)
     {
-        QMutexLocker l(&mtx);
-        
+        // accessing struct Timer without a lock. worst can happen is seconds
+        // and nanoseconds getting out of sync. no big deal.
         if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
             return;
         timer_joylist.start();
