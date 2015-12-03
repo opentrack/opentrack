@@ -24,7 +24,6 @@ bool Key::should_process()
 }
 
 KeybindingWorker::~KeybindingWorker() {
-    qDebug() << "keybinding worker stop";
     should_quit = true;
     wait();
     if (dinkeyboard) {

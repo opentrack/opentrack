@@ -122,7 +122,6 @@ win32_joy_ctx::win32_joy_ctx()
 
 void win32_joy_ctx::release()
 {
-    qDebug() << "release joystick dinput handle";
     joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
     {
         auto& di = dinput_handle();

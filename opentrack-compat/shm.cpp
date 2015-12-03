@@ -92,7 +92,6 @@ struct secattr
         attrs.lpSecurityDescriptor = pSD;
         attrs.nLength = sizeof(SECURITY_ATTRIBUTES);
 
-        fprintf(stderr, "security descriptor ok\n");
         fflush(stderr);
 
         return;
