@@ -56,7 +56,7 @@ struct OPENTRACK_EXPORT win32_joy_ctx
     win32_joy_ctx& operator=(const win32_joy_ctx&) = delete;
     
 private:
-    enum { joylist_refresh_ms = 250 };
+    enum { joylist_refresh_ms = 100 };
     
     QMutex mtx;
     Timer timer_joylist;
