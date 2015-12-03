@@ -51,7 +51,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int axes[])
     
     auto iter = joys().find(guid);
     
-    if (iter == joys().end() || iter->second->joy_handle == nullptr)
+    if (iter == joys().end())
         return false;
     
     auto& j = iter->second;
@@ -172,9 +172,6 @@ bool win32_joy_ctx::joy::poll(fn f)
     HRESULT hr;
     bool ok = false;
     
-    if (joy_handle == nullptr)
-        return false;
-    
     (void) joy_handle->Acquire();
     
     if (!FAILED(joy_handle->Poll()))
@@ -252,7 +249,7 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
     const QString name = QString(pdidInstance->tszInstanceName);
     
     auto it = state.joys.find(guid);
-    const bool exists = it != state.joys.end() && it->second->joy_handle != nullptr;
+    const bool exists = it != state.joys.end();
     
     state.all.push_back(guid);
     
