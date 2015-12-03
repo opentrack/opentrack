@@ -121,6 +121,7 @@ void Tracker::run()
 
     aruco::MarkerDetector detector;
     detector.setDesiredSpeed(3);
+    detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
 
     cv::Rect last_roi(65535, 65535, 0, 0);
 
@@ -128,14 +129,13 @@ void Tracker::run()
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
     double cur_fps = 0;
-    std::vector<int> box_sizes { 5, 7, 9, 11 };
+    std::vector<int> box_sizes { 5, 9, 13 };
     int box_idx = 0;
-    double failed_otsu = 0;
-    const double max_failed_otsu = .35;
+    double failed = 0;
+    const double max_failed = .8;
     cv::Vec3d rvec, tvec;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
-    bool otsu = false;
 
     while (!stop)
     {
@@ -181,7 +181,6 @@ void Tracker::run()
         
         if (last_roi.width > 0 && last_roi.height)
         {
-            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
                                    std::min(1.0, size_max * grayscale.cols / last_roi.width));
 
@@ -189,7 +188,7 @@ void Tracker::run()
             if (detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
-                failed_otsu = std::max(0., failed_otsu - dt*.2);
+                failed = std::max(0., failed - dt*.25);
                 auto& m = markers.at(0);
                 for (int i = 0; i < 4; i++)
                 {
@@ -203,19 +202,13 @@ void Tracker::run()
 
         if (!roi_valid)
         {
-            detector._thresMethod = otsu ? aruco::MarkerDetector::FIXED_THRES : aruco::MarkerDetector::ADPT_THRES;
-            failed_otsu += dt;
-            if (failed_otsu > max_failed_otsu)
+            failed += dt;
+            if (failed > max_failed)
             {
-                if (otsu == true)
-                {
-                    box_idx++;
-                    box_idx %= box_sizes.size();
-                    qDebug() << "aruco: box size now" << box_sizes[box_idx];
-                }
-                qDebug() << "aruco: otsu now" << !otsu;
-                failed_otsu = 0;
-                otsu = !otsu;
+                box_idx++;
+                box_idx %= box_sizes.size();
+                qDebug() << "aruco: box size now" << box_sizes[box_idx];
+                failed = 0;
             }
             detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(size_min, size_max);
