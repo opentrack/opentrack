@@ -129,10 +129,6 @@ void Tracker::run()
     auto freq = cv::getTickFrequency();
     auto last_time = cv::getTickCount();
     double cur_fps = 0;
-    std::vector<int> box_sizes { 5, 9, 13 };
-    int box_idx = 0;
-    double failed = 0;
-    const double max_failed = .8;
     cv::Vec3d rvec, tvec;
     cv::Mat intrinsics = cv::Mat::eye(3, 3, CV_32FC1);
     cv::Mat dist_coeffs = cv::Mat::zeros(5, 1, CV_32FC1);
@@ -146,12 +142,12 @@ void Tracker::run()
             if (!camera.read(color))
                 continue;
         }
-        static constexpr int thres_param2 = 5;
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
         
         const int scale = grayscale.cols > 480 ? 2 : 1;
-        detector.setThresholdParams(box_sizes[box_idx], thres_param2);
+        // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
+        detector.setThresholdParams(5, -1);
 
         static constexpr double pi = 3.1415926f;
         const int w = grayscale.cols, h = grayscale.rows;
@@ -188,7 +184,6 @@ void Tracker::run()
             if (detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false),
                 markers.size() == 1 && markers[0].size() == 4)
             {
-                failed = std::max(0., failed - dt*.25);
                 auto& m = markers.at(0);
                 for (int i = 0; i < 4; i++)
                 {
@@ -202,15 +197,6 @@ void Tracker::run()
 
         if (!roi_valid)
         {
-            failed += dt;
-            if (failed > max_failed)
-            {
-                box_idx++;
-                box_idx %= box_sizes.size();
-                qDebug() << "aruco: box size now" << box_sizes[box_idx];
-                failed = 0;
-            }
-            detector.setThresholdParams(box_sizes[box_idx], thres_param2);
             detector.setMinMaxSize(size_min, size_max);
             detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
         }
