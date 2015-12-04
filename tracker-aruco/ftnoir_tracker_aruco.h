@@ -48,7 +48,7 @@ class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
     friend class TrackerControls;
-    static constexpr double c_search_window = 2.65;
+    static constexpr double c_search_window = 1.3;
 public:
     Tracker();
     ~Tracker() override;
