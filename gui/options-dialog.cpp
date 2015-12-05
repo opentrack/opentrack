@@ -12,7 +12,7 @@
 #include <QLayout>
 #include <QDialog>
 
-static QString kopts_to_string(const Shortcuts::key_opts& kopts)
+static QString kopts_to_string(const key_opts& kopts)
 {
     if (static_cast<QString>(kopts.guid) != "")
     {
@@ -29,60 +29,65 @@ static QString kopts_to_string(const Shortcuts::key_opts& kopts)
     return kopts.keycode;
 }
 
-OptionsDialog::OptionsDialog()
+OptionsDialog::OptionsDialog(main_settings& main, std::function<void()> register_global_keys)
+    : main(main), register_global_keys(register_global_keys)
 {
     ui.setupUi(this);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.s_main.tray_enabled, ui.trayp);
+    tie_setting(main.tray_enabled, ui.trayp);
     
-    tie_setting(s.s_main.center_at_startup, ui.center_at_startup);
+    tie_setting(main.center_at_startup, ui.center_at_startup);
     
-    tie_setting(s.s_main.tcomp_p, ui.tcomp_enable);
-    tie_setting(s.s_main.tcomp_tz, ui.tcomp_rz);
+    tie_setting(main.tcomp_p, ui.tcomp_enable);
+    tie_setting(main.tcomp_tz, ui.tcomp_rz);
 
-    tie_setting(s.s_main.a_x.zero, ui.pos_tx);
-    tie_setting(s.s_main.a_y.zero, ui.pos_ty);
-    tie_setting(s.s_main.a_z.zero, ui.pos_tz);
-    tie_setting(s.s_main.a_yaw.zero, ui.pos_rx);
-    tie_setting(s.s_main.a_pitch.zero, ui.pos_ry);
-    tie_setting(s.s_main.a_roll.zero, ui.pos_rz);
+    tie_setting(main.a_x.zero, ui.pos_tx);
+    tie_setting(main.a_y.zero, ui.pos_ty);
+    tie_setting(main.a_z.zero, ui.pos_tz);
+    tie_setting(main.a_yaw.zero, ui.pos_rx);
+    tie_setting(main.a_pitch.zero, ui.pos_ry);
+    tie_setting(main.a_roll.zero, ui.pos_rz);
 
-    tie_setting(s.s_main.a_yaw.invert, ui.invert_yaw);
-    tie_setting(s.s_main.a_pitch.invert, ui.invert_pitch);
-    tie_setting(s.s_main.a_roll.invert, ui.invert_roll);
-    tie_setting(s.s_main.a_x.invert, ui.invert_x);
-    tie_setting(s.s_main.a_y.invert, ui.invert_y);
-    tie_setting(s.s_main.a_z.invert, ui.invert_z);
+    tie_setting(main.a_yaw.invert, ui.invert_yaw);
+    tie_setting(main.a_pitch.invert, ui.invert_pitch);
+    tie_setting(main.a_roll.invert, ui.invert_roll);
+    tie_setting(main.a_x.invert, ui.invert_x);
+    tie_setting(main.a_y.invert, ui.invert_y);
+    tie_setting(main.a_z.invert, ui.invert_z);
 
-    tie_setting(s.s_main.a_yaw.src, ui.src_yaw);
-    tie_setting(s.s_main.a_pitch.src, ui.src_pitch);
-    tie_setting(s.s_main.a_roll.src, ui.src_roll);
-    tie_setting(s.s_main.a_x.src, ui.src_x);
-    tie_setting(s.s_main.a_y.src, ui.src_y);
-    tie_setting(s.s_main.a_z.src, ui.src_z);
+    tie_setting(main.a_yaw.src, ui.src_yaw);
+    tie_setting(main.a_pitch.src, ui.src_pitch);
+    tie_setting(main.a_roll.src, ui.src_roll);
+    tie_setting(main.a_x.src, ui.src_x);
+    tie_setting(main.a_y.src, ui.src_y);
+    tie_setting(main.a_z.src, ui.src_z);
     
-    tie_setting(s.s_main.camera_yaw, ui.camera_yaw);
-    tie_setting(s.s_main.camera_pitch, ui.camera_pitch);
-    tie_setting(s.s_main.camera_roll, ui.camera_roll);
+    tie_setting(main.camera_yaw, ui.camera_yaw);
+    tie_setting(main.camera_pitch, ui.camera_pitch);
+    tie_setting(main.camera_roll, ui.camera_roll);
 
-    tie_setting(s.s_main.center_method, ui.center_method);
+    tie_setting(main.center_method, ui.center_method);
 
-    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(s.center, ui.center_text); });
-    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero, ui.zero_text); });
-    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle, ui.toggle_text); });
-    connect(ui.bind_start, &QPushButton::pressed, [&]() -> void { bind_key(s.start_tracking, ui.start_tracking_text); });
-    connect(ui.bind_stop, &QPushButton::pressed, [&]() -> void { bind_key(s.stop_tracking, ui.stop_tracking_text); });
-    connect(ui.bind_toggle_tracking, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle_tracking, ui.toggle_tracking_text); });
+    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(main.key_center, ui.center_text); });
+    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero, ui.zero_text); });
+    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle, ui.toggle_text); });
+    connect(ui.bind_start, &QPushButton::pressed, [&]() -> void { bind_key(main.key_start_tracking, ui.start_tracking_text); });
+    connect(ui.bind_stop, &QPushButton::pressed, [&]() -> void { bind_key(main.key_stop_tracking, ui.stop_tracking_text); });
+    connect(ui.bind_toggle_tracking, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle_tracking, ui.toggle_tracking_text); });
 
-    ui.center_text->setText(kopts_to_string(s.center));
-    ui.toggle_text->setText(kopts_to_string(s.toggle));
-    ui.zero_text->setText(kopts_to_string(s.zero));
+    ui.center_text->setText(kopts_to_string(main.key_center));
+    ui.toggle_text->setText(kopts_to_string(main.key_toggle));
+    ui.zero_text->setText(kopts_to_string(main.key_zero));
+    
+    ui.start_tracking_text->setText(kopts_to_string(main.key_start_tracking));
+    ui.stop_tracking_text->setText(kopts_to_string(main.key_stop_tracking));
+    ui.toggle_tracking_text->setText(kopts_to_string(main.key_toggle_tracking));
 }
 
-void OptionsDialog::bind_key(Shortcuts::key_opts& kopts, QLabel* label)
+void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
 {
     kopts.button = -1;
     kopts.guid = "";
@@ -111,22 +116,21 @@ void OptionsDialog::bind_key(Shortcuts::key_opts& kopts, QLabel* label)
         }
     });
     d.exec();
+    register_global_keys();
     label->setText(kopts_to_string(kopts));
     delete k;
     delete l;
 }
 
 void OptionsDialog::doOK() {
-    s.b->save();
-    s.s_main.b->save();
+    main.b->save();
     ui.game_detector->save();
     this->close();
     emit reload();
 }
 
 void OptionsDialog::doCancel() {
-    s.b->reload();
-    s.s_main.b->reload();
+    main.b->reload();
     ui.game_detector->revert();
     close();
 }

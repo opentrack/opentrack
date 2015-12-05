@@ -46,31 +46,6 @@ public:
 #ifdef _WIN32
     KeybindingWorker::Token key_token;
 #endif
-    
-    struct key_opts {
-        value<QString> keycode, guid;
-        value<int> button;
-    
-        key_opts(pbundle b, const QString& name) :
-            keycode(b, QString("keycode-%1").arg(name), ""),
-            guid(b, QString("guid-%1").arg(name), ""),
-            button(b, QString("button-%1").arg(name), -1)
-        {}
-    };
-
-    struct settings : opts {
-        key_opts center, toggle, zero, start_tracking, stop_tracking, toggle_tracking;
-        main_settings s_main;
-        settings() :
-            opts("keyboard-shortcuts"),
-            center(b, "center"),
-            toggle(b, "toggle"),
-            zero(b, "zero"),
-            start_tracking(b, "start-tracking"),
-            stop_tracking(b, "stop-tracking"),
-            toggle_tracking(b, "toggle-tracking")
-        {}
-    } s;
 
     Shortcuts() :
 #ifdef _WIN32
@@ -78,7 +53,7 @@ public:
 #endif
     {}
 
-    void reload(const std::vector<std::tuple<Shortcuts::key_opts &, Shortcuts::fun> > &keys);
+    void reload(const std::vector<std::tuple<key_opts &, fun> > &keys);
 private:
     void bind_keyboard_shortcut(K &key, const key_opts& k);
 #ifdef _WIN32

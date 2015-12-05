@@ -17,6 +17,9 @@
 #include <QString>
 #include <QMenu>
 
+#include <vector>
+#include <tuple>
+
 #include "ui_main.h"
 
 #include "opentrack-compat/options.hpp"
@@ -35,6 +38,8 @@ using namespace options;
 class MainWindow : public QMainWindow, private State
 {
     Q_OBJECT
+    
+    Shortcuts global_shortcuts;
 
     Ui::OpentrackUI ui;
     mem<QSystemTrayIcon> tray;
@@ -76,6 +81,7 @@ class MainWindow : public QMainWindow, private State
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile(const QString& profile);
     void maybe_save();
+    void register_shortcuts();
 private slots:
     void _save();
     void save();
@@ -100,6 +106,10 @@ private slots:
     void startTracker();
     void stopTracker();
     void reload_options();
+signals:
+    void emit_start_tracker();
+    void emit_stop_tracker();
+    void emit_toggle_tracker();
 public:
     MainWindow();
     ~MainWindow();

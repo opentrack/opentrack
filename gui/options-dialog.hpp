@@ -1,9 +1,10 @@
 #pragma once
 
-#include <QObject>
-#include <QWidget>
 #include "ui_settings.h"
 #include "opentrack/shortcuts.h"
+#include <QObject>
+#include <QWidget>
+#include <functional>
 
 class OptionsDialog: public QWidget
 {
@@ -11,13 +12,14 @@ class OptionsDialog: public QWidget
 signals:
     void reload();
 public:
-    OptionsDialog();
+    OptionsDialog(main_settings& main, std::function<void()> register_global_keys);
 private:
+    main_settings& main;
+    std::function<void()> register_global_keys;
     Ui::UI_Settings ui;
-    Shortcuts::settings s;
     void closeEvent(QCloseEvent *) override { doCancel(); }
 private slots:
     void doOK();
     void doCancel();
-    void bind_key(Shortcuts::key_opts &kopts, QLabel* label);
+    void bind_key(key_opts &kopts, QLabel* label);
 };

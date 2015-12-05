@@ -28,7 +28,6 @@ struct Work
     mem<Shortcuts> sc;
     WId handle;
     using fn = std::function<void(void)>;
-    using key_opts = Shortcuts::key_opts;
     using tt = std::tuple<key_opts&, fn>;
     std::vector<std::tuple<key_opts&, fn>> keys;
     
@@ -38,9 +37,9 @@ struct Work
         sc(std::make_shared<Shortcuts>()),
         handle(handle),
         keys {
-            tt(sc->s.center, [&]() -> void { tracker->center(); }),
-            tt(sc->s.toggle, [&]() -> void { tracker->toggle_enabled(); }),
-            tt(sc->s.zero, [&]() -> void { tracker->zero(); }),
+            tt(s.key_center, [&]() -> void { tracker->center(); }),
+            tt(s.key_toggle, [&]() -> void { tracker->toggle_enabled(); }),
+            tt(s.key_zero, [&]() -> void { tracker->zero(); }),
         }
     {
         reload_shortcuts();

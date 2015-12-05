@@ -108,8 +108,38 @@ MainWindow::MainWindow() :
                              "Configuration not saved.",
                              "Can't create configuration directory! Expect major malfunction.",
                              QMessageBox::Ok, QMessageBox::NoButton);
-
+    
+    connect(this, &MainWindow::emit_start_tracker,
+            this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
+            Qt::QueuedConnection);
+    
+    connect(this, &MainWindow::emit_stop_tracker,
+            this, [&]() -> void { qDebug() << "stop tracker"; stopTracker(); },
+            Qt::QueuedConnection);
+    
+    connect(this, &MainWindow::emit_toggle_tracker,
+            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
+            Qt::QueuedConnection);
+    
+    register_shortcuts();
+    
     ui.btnStartTracker->setFocus();
+}
+
+void MainWindow::register_shortcuts()
+{
+    using t_shortcut = std::tuple<key_opts&, Shortcuts::fun>;
+    
+    std::vector<t_shortcut> keys {
+        t_shortcut(s.key_start_tracking, [&]() -> void { emit_start_tracker(); }),
+        t_shortcut(s.key_stop_tracking, [&]() -> void { emit_stop_tracker(); }),
+        t_shortcut(s.key_toggle_tracking, [&]() -> void { emit_toggle_tracker(); }),
+    };
+    
+    global_shortcuts.reload(keys);
+    
+    if (work)
+        work->reload_shortcuts();
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
@@ -261,6 +291,9 @@ void MainWindow::reload_options()
 }
 
 void MainWindow::startTracker() {
+    if (work)
+        return;
+    
     // tracker dtor needs run first
     work = nullptr;
 
@@ -306,7 +339,10 @@ void MainWindow::startTracker() {
     ui.btnStopTracker->setFocus();
 }
 
-void MainWindow::stopTracker( ) {
+void MainWindow::stopTracker() {
+    if (!work)
+        return;
+    
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
@@ -436,7 +472,7 @@ void MainWindow::showFilterSettings() {
 }
 
 template<typename t, typename... Args>
-bool mk_window(mem<t>* place, Args... params)
+bool mk_window(mem<t>* place, Args&&... params)
 {
     if (*place && (*place)->isVisible())
     {
@@ -446,7 +482,7 @@ bool mk_window(mem<t>* place, Args... params)
     }
     else
     {
-        *place = std::make_shared<t>(params...);
+        *place = std::make_shared<t>(std::forward<Args>(params)...);
         (*place)->setWindowFlags(Qt::Dialog);
         (*place)->show();
         (*place)->raise();
@@ -455,12 +491,14 @@ bool mk_window(mem<t>* place, Args... params)
 }
 
 void MainWindow::show_options_dialog() {
-    if (mk_window(&options_widget))
+    if (mk_window(&options_widget,
+                  s,
+                  [&]() -> void { register_shortcuts(); }))
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
 }
 
 void MainWindow::showCurveConfiguration() {
-    mk_window<MapWidget, Mappings&, main_settings&>(&mapping_widget, pose, s);
+    mk_window(&mapping_widget, pose, s);
 }
 
 void MainWindow::exit() {
