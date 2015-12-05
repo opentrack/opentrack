@@ -99,7 +99,7 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun> > &keys_)
         bind_keyboard_shortcut(k, opts);
         keys.push_back(std::tuple<K, Shortcuts::fun>(k, fun));
 #ifndef _WIN32
-        connect(k.get(), &QGlobalShortcut::activated, fun);
+        connect(k.get(), &QxtGlobalShortcut::activated, fun);
 #endif
     }
 }

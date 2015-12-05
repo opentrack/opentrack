@@ -47,9 +47,9 @@ public:
     KeybindingWorker::Token key_token;
 #endif
 
-    Shortcuts() :
+    Shortcuts()
 #ifdef _WIN32
-        key_token([&](const Key& k) { receiver(k); })
+        : key_token([&](const Key& k) { receiver(k); })
 #endif
     {}
 
