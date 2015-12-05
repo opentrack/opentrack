@@ -119,7 +119,7 @@ void KeybindingWorker::run() {
                         k.held = held;
 
                         for (auto& r : receivers)
-                            r(k);
+                            r->operator()(k);
                     };
 
                     joy_ctx.poll(f);
@@ -147,7 +147,7 @@ void KeybindingWorker::run() {
                             k.keycode = i;
 
                             for (auto& r : receivers)
-                                r(k);
+                                r->operator()(k);
                             break;
                         }
                     }
@@ -160,12 +160,13 @@ void KeybindingWorker::run() {
     }
 }
 
-KeybindingWorker::fun* KeybindingWorker::_add_receiver(KeybindingWorker::fun receiver)
+KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
 {
     QMutexLocker l(&mtx);
-    receivers.push_back(receiver);
-    qDebug() << "add receiver" << (long) &receivers[receivers.size()-1];
-    return &receivers[receivers.size()-1];
+    receivers.push_back(std::unique_ptr<fun>(new fun(receiver)));
+    fun* f = receivers[receivers.size() - 1].get();
+    qDebug() << "add receiver" << (long) f;
+    return f;
 }
 
 void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
@@ -175,7 +176,7 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
 
     for (int i = receivers.size() - 1; i >= 0; i--)
     {
-        if (&receivers[i] == pos)
+        if (receivers[i].get() == pos)
         {
             ok = true;
             qDebug() << "remove receiver" << (long) pos;
