@@ -43,6 +43,8 @@ Tracker::~Tracker()
         delete videoWidget;
     if(layout)
         delete layout;
+    // fast start/stop causes breakage
+    portable::sleep(1000);
     camera.release();
 }
 

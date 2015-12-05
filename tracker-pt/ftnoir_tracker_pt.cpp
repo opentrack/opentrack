@@ -13,6 +13,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "opentrack/camera-names.hpp"
+#include "opentrack-compat/sleep.hpp"
 
 //#define PT_PERF_LOG	//log performance
 
@@ -34,6 +35,8 @@ Tracker_PT::~Tracker_PT()
     delete video_widget;
     video_widget = NULL;
     if (video_frame->layout()) delete video_frame->layout();
+    // fast start/stop causes breakage
+    portable::sleep(1000);
     camera.stop();
 }
 
