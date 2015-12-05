@@ -9,7 +9,7 @@
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
 
-void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
+void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k)
 {
 #if !defined(_WIN32)
     using sh = QxtGlobalShortcut;
@@ -63,33 +63,43 @@ void Shortcuts::bind_keyboard_shortcut(K &key, key_opts& k)
 #ifdef _WIN32
 void Shortcuts::receiver(const Key& k)
 {
-    std::vector<K*> ks { &keyCenter, &keyToggle, &keyZero };
-    for (K* k_ : ks)
+    const int sz = keys.size();
+    for (int i = 0; i < sz; i++)
     {
-        if (k.guid != k_->guid)
+        K& k_ = std::get<0>(keys[i]);
+        auto& fun = std::get<1>(keys[i]);
+        if (k.guid != k_.guid)
             continue;
-        if (k.keycode != k_->keycode)
+        if (k.keycode != k_.keycode)
             continue;
         if (!k.held)
             continue;
-        if (!k_->should_process())
+        if (!k_.should_process())
             continue;
-        if (k_->alt && !k.alt) continue;
-        if (k_->ctrl && !k.ctrl) continue;
-        if (k_->shift && !k.shift) continue;
+        if (k_.alt && !k.alt) continue;
+        if (k_.ctrl && !k.ctrl) continue;
+        if (k_.shift && !k.shift) continue;
         
-        if (k_ == &keyCenter)
-            emit center();
-        else if (k_ == &keyToggle)
-            emit toggle();
-        else if (k_ == &keyZero)
-            emit zero();
+        fun();
     }
 }
 #endif
 
-void Shortcuts::reload() {
-    bind_keyboard_shortcut(keyCenter, s.center);
-    bind_keyboard_shortcut(keyToggle, s.toggle);
-    bind_keyboard_shortcut(keyZero, s.zero);
+void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun> > &keys_)
+{
+    const int sz = keys_.size();
+    keys = std::vector<tt>();
+    
+    for (int i = 0; i < sz; i++)
+    {
+        const auto& kk = keys_[i];
+        const key_opts& opts = std::get<0>(kk);
+        auto& fun = std::get<1>(kk);
+        K k;
+        bind_keyboard_shortcut(k, opts);
+        keys.push_back(std::tuple<K, Shortcuts::fun>(k, fun));
+#ifndef _WIN32
+        connect(k.get(), &QGlobalShortcut::activated, fun);
+#endif
+    }
 }

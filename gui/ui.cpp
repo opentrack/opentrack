@@ -281,7 +281,7 @@ void MainWindow::startTracker() {
         return;
     }
     
-    work = std::make_shared<Work>(s, pose, libs, this, winId());
+    work = std::make_shared<Work>(s, pose, libs, winId());
     
     reload_options();
 
@@ -487,27 +487,6 @@ void MainWindow::profileSelected(QString name)
         set_title();
         load_settings();
     }
-}
-
-void MainWindow::shortcutRecentered()
-{
-    qDebug() << "Center";
-    if (work)
-        work->tracker->center();
-}
-
-void MainWindow::shortcutToggled()
-{
-    qDebug() << "Toggle";
-    if (work)
-        work->tracker->toggle_enabled();
-}
-
-void MainWindow::shortcutZeroed()
-{
-    qDebug() << "Zero";
-    if (work)
-        work->tracker->zero();
 }
 
 void MainWindow::ensure_tray()

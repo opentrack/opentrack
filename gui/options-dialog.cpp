@@ -73,6 +73,9 @@ OptionsDialog::OptionsDialog()
     connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(s.center, ui.center_text); });
     connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(s.zero, ui.zero_text); });
     connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle, ui.toggle_text); });
+    connect(ui.bind_start, &QPushButton::pressed, [&]() -> void { bind_key(s.start_tracking, ui.start_tracking_text); });
+    connect(ui.bind_stop, &QPushButton::pressed, [&]() -> void { bind_key(s.stop_tracking, ui.stop_tracking_text); });
+    connect(ui.bind_toggle_tracking, &QPushButton::pressed, [&]() -> void { bind_key(s.toggle_tracking, ui.toggle_tracking_text); });
 
     ui.center_text->setText(kopts_to_string(s.center));
     ui.toggle_text->setText(kopts_to_string(s.toggle));

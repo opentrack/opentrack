@@ -8,6 +8,9 @@
 
 #pragma once
 #include <QObject>
+#include <tuple>
+#include <vector>
+#include <functional>
 
 #ifdef BUILD_api
 #   include "opentrack-compat/export.hpp"
@@ -36,10 +39,10 @@ public:
     Key
 #endif
     ;
-
-    K keyCenter;
-    K keyToggle;
-    K keyZero;
+    
+    using fun = std::function<void(void)>;
+    using tt = std::tuple<K, fun>;
+    std::vector<tt> keys;
 #ifdef _WIN32
     KeybindingWorker::Token key_token;
 #endif
@@ -56,32 +59,29 @@ public:
     };
 
     struct settings : opts {
-        key_opts center, toggle, zero;
+        key_opts center, toggle, zero, start_tracking, stop_tracking, toggle_tracking;
         main_settings s_main;
         settings() :
             opts("keyboard-shortcuts"),
             center(b, "center"),
             toggle(b, "toggle"),
-            zero(b, "zero")
+            zero(b, "zero"),
+            start_tracking(b, "start-tracking"),
+            stop_tracking(b, "stop-tracking"),
+            toggle_tracking(b, "toggle-tracking")
         {}
     } s;
 
-    Shortcuts()
+    Shortcuts() :
 #ifdef _WIN32
-        : key_token(KeybindingWorker::add_receiver([&](const Key& k) { receiver(k); }))
+        key_token([&](const Key& k) { receiver(k); })
 #endif
-    {
-        reload();
-    }
+    {}
 
-    void reload();
+    void reload(const std::vector<std::tuple<Shortcuts::key_opts &, Shortcuts::fun> > &keys);
 private:
-    void bind_keyboard_shortcut(K &key, key_opts& k);
+    void bind_keyboard_shortcut(K &key, const key_opts& k);
 #ifdef _WIN32
     void receiver(const Key& k);
 #endif
-signals:
-    void center();
-    void toggle();
-    void zero();
 };

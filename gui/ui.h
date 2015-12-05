@@ -100,10 +100,6 @@ private slots:
     void startTracker();
     void stopTracker();
     void reload_options();
-public slots:
-    void shortcutRecentered();
-    void shortcutToggled();
-    void shortcutZeroed();
 public:
     MainWindow();
     ~MainWindow();
