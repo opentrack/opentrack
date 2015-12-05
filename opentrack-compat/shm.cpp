@@ -5,11 +5,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#include "shm.h"
+
 #if defined(_WIN32)
 
 #include <cstring>
 #include <stdio.h>
-#include "shm.h"
 
 #include <accctrl.h>
 #include <aclapi.h>
