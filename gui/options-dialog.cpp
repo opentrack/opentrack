@@ -96,7 +96,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = "";
     kopts.keycode = "";
-    QDialog d;
+    QDialog d(this);
     auto l = new QHBoxLayout;
     l->setMargin(0);
     KeyboardListener k;
@@ -104,6 +104,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     d.setLayout(l);
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
+    d.setWindowModality(Qt::ApplicationModal);
     connect(&k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void {
         kopts.keycode = s.toString(QKeySequence::PortableText);
         kopts.guid = "";
