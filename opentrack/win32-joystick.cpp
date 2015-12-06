@@ -174,7 +174,7 @@ bool win32_joy_ctx::joy::poll(fn f)
     
     (void) joy_handle->Acquire();
     
-    if (!FAILED(joy_handle->Poll()))
+    if (!FAILED(hr = joy_handle->Poll()))
         ok = true;
     
     if (!ok)
