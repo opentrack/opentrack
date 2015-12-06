@@ -169,7 +169,7 @@ bool win32_joy_ctx::joy::poll(fn f)
     
     for (int i = 0; i < 128; i++)
     {
-        const bool state = !!(js.rgbButtons[i] & 0x80);
+        const bool state = !!(js.rgbButtons[i] & 0x80) && js.rgbButtons[i] != js_old.rgbButtons[i];
         if (state != pressed[i])
         {
             f(guid, i, state);
@@ -177,6 +177,8 @@ bool win32_joy_ctx::joy::poll(fn f)
         }
         pressed[i] = state;
     }
+    
+    js_old = js;
     
     return true;
 }
