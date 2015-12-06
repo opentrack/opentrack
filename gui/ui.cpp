@@ -446,7 +446,6 @@ bool mk_dialog(mem<dylib> lib, mem<t>& orig)
 
         orig = dialog;
         dialog->show();
-        dialog->raise();
 
         QObject::connect(dialog.get(), &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
 
@@ -486,7 +485,6 @@ bool mk_window(mem<t>* place, Args&&... params)
         *place = std::make_shared<t>(std::forward<Args>(params)...);
         (*place)->setWindowFlags(Qt::Dialog);
         (*place)->show();
-        (*place)->raise();
         return true;
     }
 }
