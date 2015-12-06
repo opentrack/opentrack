@@ -18,7 +18,7 @@ void win32_joy_ctx::poll(fn f)
 
 bool win32_joy_ctx::poll_axis(const QString &guid, int axes[])
 {
-    refresh(false);
+    //refresh(false);
     
     QMutexLocker l(&mtx);
     
