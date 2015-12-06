@@ -13,15 +13,14 @@ OPENTRACK_COMPAT_EXPORT opt_singleton& singleton()
 
 }
 
-group::group(const string& name) : name(name)
+group::group(const QString& name) : name(name)
 {
     auto conf = ini_file();
-    auto q_name = QString::fromStdString(name);
-    conf->beginGroup(q_name);
+    conf->beginGroup(name);
     for (auto& k_ : conf->childKeys())
     {
         auto tmp = k_.toUtf8();
-        string k(tmp);
+        QString k(tmp);
         kvs[k] = conf->value(k_);
     }
     conf->endGroup();
@@ -30,23 +29,19 @@ group::group(const string& name) : name(name)
 void group::save()
 {
     auto s = ini_file();
-    auto q_name = QString::fromStdString(name);
-    s->beginGroup(q_name);
+    s->beginGroup(name);
     for (auto& i : kvs)
-    {
-        auto k = QString::fromStdString(i.first);
-        s->setValue(k, i.second);
-    }
+        s->setValue(i.first, i.second);
     s->endGroup();
     s->sync();
 }
 
-void group::put(const std::string &s, const QVariant &d)
+void group::put(const QString &s, const QVariant &d)
 {
     kvs[s] = d;
 }
 
-bool group::contains(const std::string &s)
+bool group::contains(const QString &s)
 {
     return kvs.count(s) != 0;
 }
@@ -93,7 +88,7 @@ const mem<QSettings> group::ini_file()
     return std::make_shared<QSettings>();
 }
 
-impl_bundle::impl_bundle(const std::string &group_name)
+impl_bundle::impl_bundle(const QString &group_name)
     :
       mtx(QMutex::Recursive),
       group_name(group_name),
@@ -113,7 +108,7 @@ void impl_bundle::reload()
     emit reloading();
 }
 
-void impl_bundle::store_kv(const std::string &name, const QVariant &datum)
+void impl_bundle::store_kv(const QString &name, const QVariant &datum)
 {
     QMutexLocker l(&mtx);
 
@@ -125,7 +120,7 @@ void impl_bundle::store_kv(const std::string &name, const QVariant &datum)
     }
 }
 
-bool impl_bundle::contains(const std::string &name)
+bool impl_bundle::contains(const QString &name)
 {
     QMutexLocker l(&mtx);
     return transient.contains(name);
@@ -162,7 +157,7 @@ pbundle opt_singleton::bundle(const opt_singleton::k &key)
             return shared;
     }
     
-    qDebug() << "bundle +" << QString::fromStdString(key);
+    qDebug() << "bundle +" << key;
 
     auto shr = std::make_shared<v>(key);
     implsgl_data[key] = tt(cnt(1), shr);
@@ -181,26 +176,24 @@ opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
 
 }
 
-opt_bundle::opt_bundle(const std::string &group_name)
+opt_bundle::opt_bundle(const QString &group_name)
     : impl_bundle(group_name)
 {
 }
 
 opt_bundle::~opt_bundle()
 {
-    qDebug() << "bundle -" << QString::fromStdString(group_name);
+    qDebug() << "bundle -" << group_name;
     detail::singleton().bundle_decf(group_name);
 }
 
-base_value::base_value(pbundle b, const std::string &name) : b(b), self_name(name) {}
+base_value::base_value(pbundle b, const QString &name) : b(b), self_name(name) {}
 
 opts::~opts()
 {
     b->reload();
 }
 
-opts::opts(const std::string &name) : b(bundle(name)) {}
-
-
+opts::opts(const QString &name) : b(bundle(name)) {}
 
 }
