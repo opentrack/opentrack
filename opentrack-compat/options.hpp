@@ -90,95 +90,25 @@ namespace options {
     }
 
     // snapshot of qsettings group at given time
-    class group {
+    class OPENTRACK_COMPAT_EXPORT group {
     private:
         map<string, QVariant> kvs;
         string name;
     public:
-        group(const string& name) : name(name)
-        {
-            auto conf = ini_file();
-            auto q_name = QString::fromStdString(name);
-            conf->beginGroup(q_name);
-            for (auto& k_ : conf->childKeys())
-            {
-                auto tmp = k_.toUtf8();
-                string k(tmp);
-                kvs[k] = conf->value(k_);
-            }
-            conf->endGroup();
-        }
-
-        void save()
-        {
-            auto s = ini_file();
-            auto q_name = QString::fromStdString(name);
-            s->beginGroup(q_name);
-            for (auto& i : kvs)
-            {
-                auto k = QString::fromStdString(i.first);
-                s->setValue(k, i.second);
-            }
-            s->endGroup();
-            s->sync();
-        }
+        group(const string& name);
+        void save();
+        void put(const string& s, const QVariant& d);
+        bool contains(const string& s);
+        static QString ini_directory();
+        static QString ini_filename();
+        static QString ini_pathname();
+        static const QStringList ini_list();
+        static const mem<QSettings> ini_file();
 
         template<typename t>
         t get(const string& k)
         {
             return qcruft_to_t<t>(kvs[k]);
-        }
-
-        void put(const string& s, const QVariant& d)
-        {
-            kvs[s] = d;
-        }
-
-        bool contains(const string& s)
-        {
-            return kvs.count(s) != 0;
-        }
-
-        static QString ini_directory()
-        {
-            const auto dirs = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-            if (dirs.size() == 0)
-                return "";
-            if (QDir(dirs[0]).mkpath(OPENTRACK_ORG))
-                return dirs[0] + "/" OPENTRACK_ORG;
-            return "";
-        }
-
-        static QString ini_filename()
-        {
-            QSettings settings(OPENTRACK_ORG);
-            return settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
-        }
-
-        static QString ini_pathname()
-        {
-            const auto dir = ini_directory();
-            if (dir == "")
-                return "";
-            QSettings settings(OPENTRACK_ORG);
-            return dir + "/" + settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
-        }
-        
-        static const QStringList ini_list()
-        {
-            const auto dirname = ini_directory();
-            if (dirname == "")
-                return QStringList();
-            QDir settings_dir(dirname);
-            return settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
-        }
-        
-        static const mem<QSettings> ini_file()
-        {
-            const auto pathname = ini_pathname();
-            if (pathname != "")
-                return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
-            return std::make_shared<QSettings>();
         }
     };
 
@@ -196,63 +126,19 @@ namespace options {
         void reloading();
         void saving();
     public:
-        impl_bundle(const string& group_name) :
-            mtx(QMutex::Recursive),
-            group_name(group_name),
-            saved(group_name),
-            transient(saved),
-            modified(false)
-        {
-        }
-
+        impl_bundle(const string& group_name);
         string name() { return group_name; }
-
-        void reload() {
-            {
-                QMutexLocker l(&mtx);
-                saved = group(group_name);
-                transient = saved;
-                modified = false;
-            }
-            emit reloading();
-        }
-
-        void store_kv(const string& name, const QVariant& datum)
-        {
-            QMutexLocker l(&mtx);
-
-            auto old = transient.get<QVariant>(name);
-            if (!transient.contains(name) || datum != old)
-            {
-                modified = true;
-                transient.put(name, datum);
-            }
-        }
-        bool contains(const string& name)
-        {
-            QMutexLocker l(&mtx);
-            return transient.contains(name);
-        }
+        void reload();
+        void store_kv(const string& name, const QVariant& datum);
+        bool contains(const string& name);
+        void save();
+        bool modifiedp();
+        
         template<typename t>
         t get(const string& name)
         {
             QMutexLocker l(&mtx);
             return transient.get<t>(name);
-        }
-        void save()
-        {
-            {
-                QMutexLocker l(&mtx);
-                modified = false;
-                saved = transient;
-                transient.save();
-            }
-            emit saving();
-        }
-
-        bool modifiedp() {
-            QMutexLocker l(&mtx);
-            return modified;
         }
     };
 
@@ -272,33 +158,9 @@ namespace options {
             QMutex implsgl_mtx;
             map<k, tt> implsgl_data;
         public:
-            opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
-
-            pbundle bundle(const k& key)
-            {
-                QMutexLocker l(&implsgl_mtx);
-
-                if (implsgl_data.count(key) != 0)
-                {
-                    auto shared = std::get<1>(implsgl_data[key]).lock();
-                    if (shared != nullptr)
-                        return shared;
-                }
-                
-                qDebug() << "bundle +" << QString::fromStdString(key);
-
-                auto shr = std::make_shared<v>(key);
-                implsgl_data[key] = tt(cnt(1), shr);
-                return shr;
-            }
-
-            void bundle_decf(const k& key)
-            {
-                QMutexLocker l(&implsgl_mtx);
-
-                if (--std::get<0>(implsgl_data[key]) == 0)
-                    implsgl_data.erase(key);
-            }
+            opt_singleton();
+            pbundle bundle(const k& key);
+            void bundle_decf(const k& key);
         };
         
         OPENTRACK_COMPAT_EXPORT opt_singleton& singleton();
@@ -308,19 +170,12 @@ namespace options {
     
     static inline pbundle bundle(const string name) { return detail::singleton().bundle(name); }
 
-    class opt_bundle : public impl_bundle
+    class OPENTRACK_COMPAT_EXPORT opt_bundle : public impl_bundle
     {
     public:
         opt_bundle() : impl_bundle("i-have-no-name") {}
-        opt_bundle(const string& group_name) : impl_bundle(group_name)
-        {
-        }
-
-        ~opt_bundle()
-        {
-            qDebug() << "bundle -" << QString::fromStdString(group_name);
-            detail::singleton().bundle_decf(group_name);
-        }
+        opt_bundle(const string& group_name);
+        ~opt_bundle();
     };
 
     class OPENTRACK_COMPAT_EXPORT base_value : public QObject
@@ -330,7 +185,7 @@ namespace options {
 #define DEFINE_SIGNAL(t) void valueChanged(t)
     public:
         string name() { return self_name; }
-        base_value(pbundle b, const string& name) : b(b), self_name(name) {}
+        base_value(pbundle b, const string& name);
     signals:
         DEFINE_SIGNAL(double);
         DEFINE_SIGNAL(int);
@@ -355,7 +210,7 @@ namespace options {
         virtual void reload() = 0;
     };
 
-    static inline string string_from_qstring(const QString& datum)
+    static inline std::string string_from_qstring(const QString &datum)
     {
         auto tmp = datum.toUtf8();
         return string(tmp.constData());
@@ -393,16 +248,11 @@ namespace options {
         t def;
     };
     
-    struct opts
+    struct OPENTRACK_COMPAT_EXPORT opts
     {
         pbundle b;
-        
-        opts(const std::string& name) : b(bundle(name)) {}
-        
-        ~opts()
-        {
-            b->reload();
-        }
+        opts(const std::string& name);
+        ~opts();
     };
 
     template<typename t, typename q>
