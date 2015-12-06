@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow, private State
     process_detector_worker det;
     QMenu profile_menu;
     bool is_refreshing_profiles;
+    volatile bool keys_paused;
     QTimer save_timer;
 
     mem<dylib> current_tracker()

@@ -23,7 +23,8 @@ MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     no_feed_pixmap(":/images/no-feed.png"),
-    is_refreshing_profiles(false)
+    is_refreshing_profiles(false),
+    keys_paused(false)
 {
     ui.setupUi(this);
 
@@ -110,15 +111,15 @@ MainWindow::MainWindow() :
                              QMessageBox::Ok, QMessageBox::NoButton);
     
     connect(this, &MainWindow::emit_start_tracker,
-            this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "start tracker"; startTracker(); },
             Qt::QueuedConnection);
     
     connect(this, &MainWindow::emit_stop_tracker,
-            this, [&]() -> void { qDebug() << "stop tracker"; stopTracker(); },
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "stop tracker"; stopTracker(); },
             Qt::QueuedConnection);
     
     connect(this, &MainWindow::emit_toggle_tracker,
-            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
             Qt::QueuedConnection);
     
     register_shortcuts();
@@ -493,7 +494,8 @@ bool mk_window(mem<t>* place, Args&&... params)
 void MainWindow::show_options_dialog() {
     if (mk_window(&options_widget,
                   s,
-                  [&]() -> void { register_shortcuts(); }))
+                  [&]() -> void { register_shortcuts(); },
+                  [&](bool flag) -> void { keys_paused = flag; }))
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
 }
 
