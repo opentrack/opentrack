@@ -292,4 +292,19 @@ win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdi
     return DIENUM_CONTINUE;
 }
 
+win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const QString &name)
+    : joy_handle(handle), guid(guid), name(name)
+{
+    qDebug() << "got joy" << guid;
+    for (int i = 0; i < 128; i++)
+        pressed[i] = false;
+    memset(&js_old, 0, sizeof(js_old));
+}
+
+win32_joy_ctx::joy::~joy()
+{
+    qDebug() << "nix joy" << guid;
+    release();
+}
+
 #endif

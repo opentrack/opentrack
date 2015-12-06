@@ -24,7 +24,7 @@ namespace std {
 template<>
 struct hash<QString>
 {
-    std::size_t operator()(const QString& value) const
+    inline std::size_t operator()(const QString& value) const
     {
         return qHash(value);
     }
@@ -78,19 +78,8 @@ private:
         Timer first_timer;
         DIJOYSTATE2 js_old;
 
-        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name)
-            : joy_handle(handle), guid(guid), name(name)
-        {
-            qDebug() << "got joy" << guid;
-            for (int i = 0; i < 128; i++)
-                pressed[i] = false;
-        }
-
-        ~joy()
-        {
-            qDebug() << "nix joy" << guid;
-            release();
-        }
+        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name);
+        ~joy();
 
         void release();
         bool poll(fn f);
