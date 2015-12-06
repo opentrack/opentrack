@@ -99,18 +99,18 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     QDialog d;
     auto l = new QHBoxLayout;
     l->setMargin(0);
-    auto k = new KeyboardListener;
-    l->addWidget(k);
+    KeyboardListener k;
+    l->addWidget(&k);
     d.setLayout(l);
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
-    connect(k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void {
+    connect(&k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void {
         kopts.keycode = s.toString(QKeySequence::PortableText);
         kopts.guid = "";
         kopts.button = -1;
         d.close();
     });
-    connect(k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx, bool held) -> void {
+    connect(&k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx, bool held) -> void {
         if (!held)
         {
             kopts.guid = guid;
@@ -120,11 +120,11 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
         }
     });
     pause_keybindings(true);
+    d.show();
     d.exec();
     pause_keybindings(false);
     register_global_keys();
     label->setText(kopts_to_string(kopts));
-    delete k;
     delete l;
 }
 
