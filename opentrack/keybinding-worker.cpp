@@ -85,6 +85,7 @@ KeybindingWorker& KeybindingWorker::make()
 
 void KeybindingWorker::run() {
     BYTE keystate[256] = {0};
+    BYTE old_keystate[256] = {0};
 
     while (!should_quit)
     {
@@ -125,7 +126,7 @@ void KeybindingWorker::run() {
                 for (int i = 0; i < 256; i++)
                 {
                     Key k;
-                    if (keystate[i] & 0x80)
+                    if (old_keystate[i] != keystate[i] && keystate[i] & 0x80)
                     {
                         switch (i)
                         {
@@ -147,6 +148,7 @@ void KeybindingWorker::run() {
                             break;
                         }
                     }
+                    old_keystate[i] = keystate[i];
                 }
             }
         }
