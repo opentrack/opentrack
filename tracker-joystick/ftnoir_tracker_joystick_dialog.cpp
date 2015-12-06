@@ -10,7 +10,7 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     {
-        win32_joy_ctx& joy_ctx(win32_joy_ctx::make());
+        win32_joy_ctx joy_ctx;
         
         _joys = QList<joys>();
         

@@ -46,7 +46,7 @@ public:
     settings s;
     QString guid;
     static constexpr int AXIS_MAX = win32_joy_ctx::joy_axis_size - 1;
-    win32_joy_ctx& joy_ctx;
+    win32_joy_ctx joy_ctx;
 };
 
 class TrackerControls: public ITrackerDialog
