@@ -4,20 +4,13 @@
 
 #ifdef _WIN32
 
-std::unordered_map<QString, std::shared_ptr<win32_joy_ctx::joy>>& win32_joy_ctx::joys()
-{
-    static std::unordered_map<QString, std::shared_ptr<joy>> js;
-    
-    return js;
-}
-
 void win32_joy_ctx::poll(fn f)
 {
     refresh(false);
     
     QMutexLocker l(&mtx);
     
-    for (auto& j : joys())
+    for (auto& j : joys)
     {
         j.second->poll(f);
     }
@@ -29,9 +22,9 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int axes[])
     
     QMutexLocker l(&mtx);
     
-    auto iter = joys().find(guid);
+    auto iter = joys.find(guid);
     
-    if (iter == joys().end())
+    if (iter == joys.end())
         return false;
     
     auto& j = iter->second;
@@ -89,7 +82,7 @@ std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
     
     std::vector<joy_info> ret;
     
-    for (auto& j : joys())
+    for (auto& j : joys)
         ret.push_back(joy_info { j.second->name, j.first });
     
     return ret;
@@ -106,7 +99,7 @@ win32_joy_ctx::win32_joy_ctx()
 
 void win32_joy_ctx::release()
 {
-    joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
+    joys = std::unordered_map<QString, std::shared_ptr<joy>>();
     di->Release();
     di = nullptr;
 }
@@ -122,7 +115,7 @@ void win32_joy_ctx::refresh(bool first)
         timer_joylist.start();
     }
     
-    enum_state st(joys(), mtx, fake_main_window, di);
+    enum_state st(joys, mtx, fake_main_window, di);
 }
 
 QString win32_joy_ctx::guid_to_string(const GUID guid)

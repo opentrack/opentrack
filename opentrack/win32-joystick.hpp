@@ -70,9 +70,6 @@ private:
     void release();
     void refresh(bool first);
     
-    struct joy;
-    static std::unordered_map<QString, std::shared_ptr<joy>>& joys();
-    
     struct joy
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
@@ -97,6 +94,8 @@ private:
         void release();
         bool poll(fn f);
     };
+    
+    std::unordered_map<QString, std::shared_ptr<joy>> joys;
 
     class enum_state
     {
