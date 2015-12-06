@@ -105,7 +105,6 @@ void KeybindingWorker::run() {
                     }
                 }
 
-#ifdef _WIN32
                 {
                     using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
 
@@ -124,7 +123,6 @@ void KeybindingWorker::run() {
 
                     joy_ctx.poll(f);
                 }
-#endif
 
                 for (int i = 0; i < 256; i++)
                 {
