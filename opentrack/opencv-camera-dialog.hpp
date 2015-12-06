@@ -12,7 +12,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <opencv2/videoio.hpp>
-#include "opentrack/camera-names.hpp"
+#include "opentrack-compat/camera-names.hpp"
 
 #ifdef __linux
 #include <QProcess>

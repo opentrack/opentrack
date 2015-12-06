@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <opencv2/core/core.hpp>
 #include <memory>
-#include "opentrack/camera-names.hpp"
+#include "opentrack-compat/camera-names.hpp"
 #include <vector>
 
 //-----------------------------------------------------------------------------

@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
-#include "opentrack/camera-names.hpp"
+#include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
 
 //#define PT_PERF_LOG	//log performance

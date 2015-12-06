@@ -16,7 +16,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/videoio.hpp>
-#include "opentrack/camera-names.hpp"
+#include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
 
 typedef struct {

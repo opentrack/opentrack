@@ -11,6 +11,12 @@
 #include <QList>
 #include <QString>
 
-QList<QString> get_camera_names();
-int camera_name_to_index(const QString &name);
+#ifdef BUILD_compat
+#   include "compat-export.hpp"
+#else
+#   include "compat-import.hpp"
+#endif
+
+OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names();
+OPENTRACK_COMPAT_EXPORT int camera_name_to_index(const QString &name);
 
