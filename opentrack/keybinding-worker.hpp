@@ -19,6 +19,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
+#include <QMainWindow>
 #include <functional>
 #include <vector>
 
@@ -45,11 +46,12 @@ struct OPENTRACK_EXPORT KeybindingWorker : private QThread
 private:
     LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
-    win32_joy_ctx& joy_ctx;
+    win32_joy_ctx joy_ctx;
     volatile bool should_quit;
     using fun = std::function<void(const Key&)>;
     std::vector<std::unique_ptr<fun>> receivers;
     QMutex mtx;
+    QMainWindow fake_main_window;
 
     void run() override;
     KeybindingWorker();

@@ -35,9 +35,6 @@ KeybindingWorker::~KeybindingWorker() {
 }
 
 KeybindingWorker::KeybindingWorker() :
-#ifdef _WIN32
-    joy_ctx(win32_joy_ctx::make()),
-#endif
     should_quit(true)
 {
     if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
@@ -58,7 +55,8 @@ KeybindingWorker::KeybindingWorker() :
         din = 0;
         return;
     }
-    if (dinkeyboard->SetCooperativeLevel(GetDesktopWindow(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
+    
+    if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         din->Release();
         din = 0;
