@@ -1,34 +1,14 @@
+#undef NDEBUG
+#include <cassert>
 #include "win32-joystick.hpp"
 
 #ifdef _WIN32
-
-LPDIRECTINPUT8& win32_joy_ctx::dinput_handle()
-{
-    (void) CoInitialize(nullptr);
-    
-    static LPDIRECTINPUT8 dinput_handle_ = nullptr;
-    
-    if (dinput_handle_ == nullptr)
-        (void) DirectInput8Create(GetModuleHandle(nullptr),
-                                  DIRECTINPUT_VERSION,
-                                  IID_IDirectInput8,
-                                  (void**) &dinput_handle_,
-                                  nullptr);
-    
-    return dinput_handle_;
-}
 
 std::unordered_map<QString, std::shared_ptr<win32_joy_ctx::joy>>& win32_joy_ctx::joys()
 {
     static std::unordered_map<QString, std::shared_ptr<joy>> js;
     
     return js;
-}
-
-win32_joy_ctx& win32_joy_ctx::make()
-{
-    static win32_joy_ctx ret;
-    return ret;
 }
 
 void win32_joy_ctx::poll(fn f)
@@ -117,17 +97,18 @@ std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
 
 win32_joy_ctx::win32_joy_ctx()
 {
+    if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di, NULL) != DI_OK) {
+        qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
+        assert(!"direct input handle can't be created");
+    }
     refresh(true);
 }
 
 void win32_joy_ctx::release()
 {
     joys() = std::unordered_map<QString, std::shared_ptr<joy>>();
-    {
-        auto& di = dinput_handle();
-        di->Release();
-        di = nullptr;
-    }
+    di->Release();
+    di = nullptr;
 }
 
 void win32_joy_ctx::refresh(bool first)
@@ -141,7 +122,7 @@ void win32_joy_ctx::refresh(bool first)
         timer_joylist.start();
     }
     
-    enum_state st(joys(), first, mtx);
+    enum_state st(joys(), mtx, fake_main_window, di);
 }
 
 QString win32_joy_ctx::guid_to_string(const GUID guid)
@@ -193,12 +174,10 @@ bool win32_joy_ctx::joy::poll(fn f)
         return false;
     }
     
-    first |= first_timer.elapsed_ms() > first_event_delay_ms;
-    
     for (int i = 0; i < 128; i++)
     {
         const bool state = !!(js.rgbButtons[i] & 0x80);
-        if (state != pressed[i] && first)
+        if (state != pressed[i])
         {
             f(guid, i, state);
             qDebug() << "btn" << guid << i << state;
@@ -209,15 +188,19 @@ bool win32_joy_ctx::joy::poll(fn f)
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy> > &joys, bool first, QMutex& mtx) : first(first)
+win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy>> &joys,
+                                      QMutex& mtx,
+                                      QMainWindow &fake_main_window,
+                                      LPDIRECTINPUT8 di) :
+    fake_main_window(fake_main_window),
+    di(di)
 {
-    HRESULT hr;
-    LPDIRECTINPUT8 di = dinput_handle();
-    
     {
         QMutexLocker l(&mtx);
         this->joys = joys;
     }
+    
+    HRESULT hr;
 
     if(FAILED(hr = di->EnumDevices(DI8DEVCLASS_GAMECTRL,
                                    EnumJoysticksCallback,
@@ -257,8 +240,7 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
     {
         HRESULT hr;
         LPDIRECTINPUTDEVICE8 h;
-        LPDIRECTINPUT8 di = dinput_handle();
-        if (FAILED(hr = di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
+        if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
             qDebug() << "createdevice" << guid << hr;
             goto end;
@@ -270,7 +252,7 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
             goto end;
         }
         
-        if (FAILED(h->SetCooperativeLevel((HWND) GetDesktopWindow(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+        if (FAILED(h->SetCooperativeLevel((HWND) state.fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
         {
             qDebug() << "coop";
             h->Release();
@@ -284,7 +266,7 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
         }
         
         qDebug() << "add joy" << guid;
-        state.joys[guid] = std::make_shared<joy>(h, guid, name, state.first);
+        state.joys[guid] = std::make_shared<joy>(h, guid, name);
     }
 end:
     return DIENUM_CONTINUE;
