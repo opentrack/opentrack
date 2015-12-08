@@ -67,12 +67,13 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     else
     {
         cv::Mat hist;
+        constexpr int hist_c = 6;
         cv::calcHist(std::vector<cv::Mat> { frame_gray },
                      std::vector<int> { 0 },
                      cv::Mat(),
                      hist,
-                     std::vector<int> { 256 },
-                     std::vector<float> { 0, 256 },
+                     std::vector<int> { 256/hist_c },
+                     std::vector<float> { 0, 256/hist_c },
                      false);
         const int sz = hist.rows*hist.cols;
         int val = 0;
@@ -88,6 +89,7 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
                 break;
             }
         }
+        val *= hist_c;
         val *= 240./256.;
         //qDebug() << "val" << val;
 
