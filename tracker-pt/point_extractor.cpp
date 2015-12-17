@@ -67,7 +67,7 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     else
     {
         cv::Mat hist;
-        constexpr int hist_c = 6;
+        constexpr int hist_c = 8;
         cv::calcHist(std::vector<cv::Mat> { frame_gray },
                      std::vector<int> { 0 },
                      cv::Mat(),
