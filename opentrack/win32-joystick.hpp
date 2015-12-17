@@ -57,18 +57,14 @@ struct OPENTRACK_EXPORT win32_joy_ctx
     
     win32_joy_ctx();
     ~win32_joy_ctx();
-    
+    void refresh();
 private:
-    enum { joylist_refresh_ms = 100 };
-    
     QMutex mtx;
-    Timer timer_joylist;
     QMainWindow fake_main_window;
     LPDIRECTINPUT8 di;
     
     static QString guid_to_string(const GUID guid);
     void release();
-    void refresh(bool first);
     
     struct joy
     {
@@ -97,7 +93,7 @@ private:
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
     public:
-        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, QMutex &mtx, QMainWindow& fake_main_window, LPDIRECTINPUT8 di);
+        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, QMainWindow& fake_main_window, LPDIRECTINPUT8 di);
     };
 };
 

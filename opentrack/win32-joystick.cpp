@@ -6,7 +6,7 @@
 
 void win32_joy_ctx::poll(fn f)
 {
-    refresh(false);
+    //refresh(false);
     
     QMutexLocker l(&mtx);
     
@@ -94,7 +94,7 @@ win32_joy_ctx::win32_joy_ctx()
         qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
         assert(!"direct input handle can't be created");
     }
-    refresh(true);
+    refresh();
 }
 
 void win32_joy_ctx::release()
@@ -104,18 +104,12 @@ void win32_joy_ctx::release()
     di = nullptr;
 }
 
-void win32_joy_ctx::refresh(bool first)
+void win32_joy_ctx::refresh()
 {
-    if (!first)
-    {
-        // accessing struct Timer without a lock. worst can happen is seconds
-        // and nanoseconds getting out of sync. no big deal.
-        if (timer_joylist.elapsed_ms() < joylist_refresh_ms)
-            return;
-        timer_joylist.start();
-    }
+    QMutexLocker l(&mtx);
     
-    enum_state st(joys, mtx, fake_main_window, di);
+    qDebug() << "joy list refresh";
+    enum_state st(joys, fake_main_window, di);
 }
 
 QString win32_joy_ctx::guid_to_string(const GUID guid)
@@ -184,16 +178,12 @@ bool win32_joy_ctx::joy::poll(fn f)
 }
 
 win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy>> &joys,
-                                      QMutex& mtx,
                                       QMainWindow &fake_main_window,
                                       LPDIRECTINPUT8 di) :
     fake_main_window(fake_main_window),
     di(di)
 {
-    {
-        QMutexLocker l(&mtx);
-        this->joys = joys;
-    }
+    this->joys = joys;
     
     HRESULT hr;
 
@@ -216,7 +206,6 @@ win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_pt
             it++;
     }
     
-    QMutexLocker l(&mtx);
     joys = this->joys;
 }
 

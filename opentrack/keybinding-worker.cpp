@@ -164,6 +164,7 @@ KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
     receivers.push_back(std::unique_ptr<fun>(new fun(receiver)));
     fun* f = receivers[receivers.size() - 1].get();
     qDebug() << "add receiver" << (long) f;
+    joy_ctx.refresh();
     return f;
 }
 
