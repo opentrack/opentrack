@@ -49,7 +49,6 @@ class MainWindow : public QMainWindow, private State
     mem<OptionsDialog> options_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
-    QPixmap no_feed_pixmap;
     mem<IFilterDialog> pFilterDialog;
     mem<IProtocolDialog> pProtocolDialog;
     mem<ITrackerDialog> pTrackerDialog;

@@ -22,7 +22,6 @@
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/images/no-feed.png"),
     is_refreshing_profiles(false),
     keys_paused(false)
 {
@@ -31,7 +30,6 @@ MainWindow::MainWindow() :
     setFixedSize(size());
 
     updateButtonState(false, false);
-    ui.video_frame_label->setPixmap(no_feed_pixmap);
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
