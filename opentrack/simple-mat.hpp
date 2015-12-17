@@ -157,7 +157,7 @@ public:
         return ret;
     }
     
-    Mat<num, h_, w_> operator*(const num& other) const
+    Mat<num, h_, w_> operator*(const num other) const
     {
         Mat<num, h_, w_> ret;
         for (int j = 0; j < h_; j++)
@@ -167,20 +167,16 @@ public:
     }
     
     template<int p>
-    Mat<num, w_, p> operator*(const Mat<num, w_, p>& other) const
+    Mat<num, h_, p> operator*(const Mat<num, w_, p>& other) const
     {
-        Mat<num, w_, p> ret;
-        for (int j = 0; j < w_; j++)
+        Mat<num, h_, p> ret;
+        for (int k = 0; k < h_; k++)
             for (int i = 0; i < p; i++)
             {
-                num sum = num(0);
-
-                for (int k = 0; k < h_; k++)
-                    sum += data[j][k]*other(k, i);
-
-                ret(j, i) = sum;
+                ret(k, i) = 0;
+                for (int j = 0; j < w_; j++)
+                    ret(k, i) += data[k][j] * other(j, i);
             }
-
         return ret;
     }
 
@@ -189,7 +185,7 @@ public:
 
     template<typename... ts, int h__ = h_, int w__ = w_,
              typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
-    Mat(ts const&... xs)
+    Mat(const ts... xs)
     {
         const std::initializer_list<num> init = { static_cast<num>(xs)... };
         auto iter = init.begin();
@@ -236,7 +232,7 @@ public:
 
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
-                ret.data[i][j] = data[j][i];
+                ret(i, j) = data[j][i];
 
         return ret;
     }
