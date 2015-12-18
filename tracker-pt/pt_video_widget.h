@@ -28,7 +28,7 @@ public:
         freshp(false)
     {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
-        timer.start(40);
+        timer.start(50);
     }
     void update_image(const cv::Mat &frame);
 protected slots:
