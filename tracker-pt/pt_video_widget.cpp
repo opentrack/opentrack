@@ -16,7 +16,13 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     
     if (!freshp)
     {
-        _frame = frame.clone();
+        if (_frame.cols != frame.cols ||
+            _frame.rows != frame.rows ||
+            _frame.channels() != frame.channels())
+        {
+            _frame = cv::Mat();
+        }
+        frame.copyTo(_frame);
         freshp = true;
     }
 }
