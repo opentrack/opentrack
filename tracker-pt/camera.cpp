@@ -117,6 +117,9 @@ bool CVCamera::_get_frame(cv::Mat* frame)
         if (img.empty())
             return false;
 
+        if (frame->rows != img.rows || frame->cols != img.cols)
+            *frame = cv::Mat();
+        
         *frame = img;
         cam_info.res_x = img.cols;
         cam_info.res_y = img.rows;

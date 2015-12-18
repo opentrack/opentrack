@@ -79,12 +79,12 @@ void Tracker_PT::run()
 #endif
 
     apply_settings();
+    cv::Mat frame;
 
     while((commands & ABORT) == 0)
     {
         const double dt = time.elapsed() * 1e-9;
         time.start();
-        cv::Mat frame;
         bool new_frame;
 
         {
