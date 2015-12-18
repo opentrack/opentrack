@@ -118,10 +118,6 @@ public:
     void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout);
     Affine pose() const { return X_CM; }
     cv::Vec2f project(const cv::Vec3f& v_M, float f);
-    void reset(const Affine& pose)
-    {
-        X_CM = pose;
-    }
 private:
     // the points in model order
     struct PointOrder
