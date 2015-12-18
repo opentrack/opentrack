@@ -51,7 +51,6 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     };
     
     // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-    cv::Mat frame_bin = cv::Mat::zeros(H, W, CV_8U);
     
     std::vector<blob> blobs;
     std::vector<std::vector<cv::Point>> contours;
@@ -59,10 +58,9 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     const int thres = s.threshold;
     if (!s.auto_threshold)
     {
-        cv::Mat frame_bin_;
-        cv::threshold(frame_gray, frame_bin_, thres, 255, cv::THRESH_BINARY);
-        frame_bin.setTo(170, frame_bin_);
-        cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::Mat frame_bin;
+        cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
+        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
     else
     {
@@ -93,10 +91,9 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         val *= 240./256.;
         //qDebug() << "val" << val;
 
-        cv::Mat frame_bin_;
-        cv::threshold(frame_gray, frame_bin_, val, 255, CV_THRESH_BINARY);
-        frame_bin.setTo(170, frame_bin_);
-        cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::Mat frame_bin;
+        cv::threshold(frame_gray, frame_bin, val, 255, CV_THRESH_BINARY);
+        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
 
     int cnt = 0;
@@ -166,17 +163,5 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         points.push_back(p);
     }
     
-    // draw output image
-    std::vector<cv::Mat> channels_;
-    cv::split(frame, channels_);
-    std::vector<cv::Mat> channels;
-    {
-        cv::Mat frame_bin__ = frame_bin * .5;
-        channels.push_back(channels_[0] + frame_bin__);
-        channels.push_back(channels_[1] - frame_bin__);
-        channels.push_back(channels_[2] - frame_bin__);
-        cv::merge(channels, frame);
-    }
-
     return points;
 }
