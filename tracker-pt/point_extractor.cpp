@@ -13,13 +13,9 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
-PointExtractor::PointExtractor(){
-	//if (!AllocConsole()){}
-	//else SetConsoleTitle("debug");
-	//freopen("CON", "w", stdout);
-	//freopen("CON", "w", stderr);
+PointExtractor::PointExtractor()
+{
 }
-// ----------------------------------------------------------------------------
 std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
 {
     const int W = frame.cols;
