@@ -15,9 +15,8 @@
 #include "ftnoir_tracker_pt_settings.h"
 
 #include <QObject>
+#include <QMutex>
 
-// ----------------------------------------------------------------------------
-// Affine frame trafo
 class Affine
 {
 public:
@@ -116,7 +115,7 @@ public:
     // f : (focal length)/(sensor width)
     // dt : time since last call
     void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout);
-    Affine pose() const { return X_CM; }
+    Affine pose() { QMutexLocker l(&mtx); return X_CM; }
     cv::Vec2f project(const cv::Vec3f& v_M, float f);
 private:
     // the points in model order
@@ -138,6 +137,7 @@ private:
 
     Timer t;
     bool init_phase;
+    QMutex mtx;
 };
 
 #endif //POINTTRACKER_H

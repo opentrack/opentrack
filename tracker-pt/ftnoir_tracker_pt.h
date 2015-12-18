@@ -40,15 +40,14 @@ public:
     void start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
 
-    Affine pose() { QMutexLocker lock(&mutex); return point_tracker.pose(); }
-    int  get_n_points() { QMutexLocker lock(&mutex); return point_extractor.get_points().size(); }
+    Affine pose() { return point_tracker.pose(); }
+    int  get_n_points() { return point_extractor.get_points().size(); }
     bool get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); return camera.get_info(*info); }
 public slots:
     void apply_settings();
 protected:
     void run() override;
 private:
-    QMutex mutex;
     // thread commands
     enum Command {
         ABORT = 1<<0

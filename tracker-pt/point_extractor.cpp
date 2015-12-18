@@ -147,11 +147,12 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         blobs.push_back(blob(radius, pos, confid, area));
     }
     
-    // clear old points
-	points.clear();
-
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
+    
+    QMutexLocker l(&mtx);
+    
+	points.clear();
     
     for (auto& b : blobs)
     {

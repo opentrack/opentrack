@@ -19,8 +19,7 @@
 
 //-----------------------------------------------------------------------------
 Tracker_PT::Tracker_PT()
-    : mutex(QMutex::Recursive),
-      commands(0),
+    : commands(0),
       video_widget(NULL),
       video_frame(NULL),
       ever_success(false)
@@ -94,28 +93,25 @@ void Tracker_PT::run()
 
         if (new_frame && !frame.empty())
         {
-            QMutexLocker lock(&mutex);
-
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
 
             // blobs are sorted in order of circularity
             if (points.size() > PointModel::N_POINTS)
                 points.resize(PointModel::N_POINTS);
 
-            bool success = points.size() == PointModel::N_POINTS;
-
             float fx;
             if (!get_focal_length(fx))
                 continue;
+            
+            const bool success = points.size() == PointModel::N_POINTS;
 
             if (success)
             {
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
+                ever_success = true;
             }
             
             Affine X_CM = pose();
-
-            ever_success |= success;
 
             {
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
