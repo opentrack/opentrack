@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>664</width>
-    <height>497</height>
+    <width>646</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <property name="leftMargin">
-     <number>6</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
      <number>0</number>
@@ -71,6 +71,12 @@
        </property>
        <item>
         <widget class="QFrame" name="top">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -197,7 +203,7 @@
            <number>6</number>
           </property>
           <property name="leftMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -833,7 +839,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="leftMargin">
-           <number>0</number>
+           <number>6</number>
           </property>
           <property name="topMargin">
            <number>0</number>
