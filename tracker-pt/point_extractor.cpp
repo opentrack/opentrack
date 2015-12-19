@@ -16,10 +16,17 @@
 PointExtractor::PointExtractor()
 {
 }
-std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
+
+const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
 {
     const int W = frame.cols;
     const int H = frame.rows;
+    
+    if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
+    {
+        frame_gray = cv::Mat(frame.rows, frame.cols, CV_8U);
+        frame_bin = cv::Mat(frame.rows, frame.cols, CV_8U);;
+    }
 
     // convert to grayscale
     cv::Mat frame_gray;
@@ -151,9 +158,11 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
     
+    points.reserve(blobs.size());
+    
     QMutexLocker l(&mtx);
     
-	points.clear();
+    points.clear();
     
     for (auto& b : blobs)
     {

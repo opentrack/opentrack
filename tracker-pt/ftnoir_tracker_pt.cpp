@@ -97,17 +97,13 @@ void Tracker_PT::run()
 
         if (new_frame && !frame_.empty())
         {
-            std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
-
-            // blobs are sorted in order of circularity
-            if (points.size() > PointModel::N_POINTS)
-                points.resize(PointModel::N_POINTS);
+            const auto& points = point_extractor.extract_points(frame_);
 
             float fx;
             if (!get_focal_length(fx))
                 continue;
             
-            const bool success = points.size() == PointModel::N_POINTS;
+            const bool success = points.size() >= PointModel::N_POINTS;
 
             if (success)
             {
@@ -116,35 +112,36 @@ void Tracker_PT::run()
             }
             
             Affine X_CM = pose();
+            
+            std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
+            {
+                auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
+                cv::line(frame_,
+                         cv::Point(p2.x - 20, p2.y),
+                         cv::Point(p2.x + 20, p2.y),
+                         color,
+                         4);
+                cv::line(frame_,
+                         cv::Point(p2.x, p2.y - 20),
+                         cv::Point(p2.x, p2.y + 20),
+                         color,
+                         4);                
+            };
 
+            for (unsigned i = 0; i < points.size(); i++)
+            {
+                fun(points[i], cv::Scalar(0, 255, 0));
+            }
+            
             {
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
-                points.push_back(p_);
+                fun(p_, cv::Scalar(0, 0, 255));
             }
 
-            for (unsigned i = 0; i < points.size(); i++)
-            {
-                auto& p = points[i];
-                auto p2 = cv::Point(p[0] * frame.cols + frame.cols/2, -p[1] * frame.cols + frame.rows/2);
-                cv::Scalar color(0, 255, 0);
-                if (i == points.size()-1)
-                    color = cv::Scalar(0, 0, 255);
-                cv::line(frame,
-                         cv::Point(p2.x - 20, p2.y),
-                         cv::Point(p2.x + 20, p2.y),
-                         color,
-                         4);
-                cv::line(frame,
-                         cv::Point(p2.x, p2.y - 20),
-                         cv::Point(p2.x, p2.y + 20),
-                         color,
-                         4);
-            }
-
-            video_widget->update_image(frame);
+            video_widget->update_image(frame_);
         }
     }
     qDebug()<<"Tracker:: Thread stopping";
