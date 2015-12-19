@@ -69,6 +69,7 @@ private:
 
     settings_pt s;
     Timer time;
+    cv::Mat frame;
     
     volatile bool ever_success;
 

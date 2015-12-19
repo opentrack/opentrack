@@ -14,6 +14,7 @@
 #include <QCoreApplication>
 #include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
+#include <functional>
 
 //#define PT_PERF_LOG	//log performance
 
@@ -78,7 +79,7 @@ void Tracker_PT::run()
 #endif
 
     apply_settings();
-    cv::Mat frame;
+    cv::Mat frame_;
 
     while((commands & ABORT) == 0)
     {
@@ -89,9 +90,12 @@ void Tracker_PT::run()
         {
             QMutexLocker l(&camera_mtx);
             new_frame = camera.get_frame(dt, &frame);
+            if (frame.rows != frame_.rows || frame.cols != frame_.cols)
+                frame_ = cv::Mat(frame.rows, frame.cols, CV_8UC3);
+            frame.copyTo(frame_);
         }
 
-        if (new_frame && !frame.empty())
+        if (new_frame && !frame_.empty())
         {
             std::vector<cv::Vec2f> points = point_extractor.extract_points(frame);
 
@@ -142,11 +146,6 @@ void Tracker_PT::run()
 
             video_widget->update_image(frame);
         }
-#ifdef PT_PERF_LOG
-        log_stream<<"dt: "<<dt;
-        if (!frame.empty()) log_stream<<" fps: "<<camera.get_info().fps;
-        log_stream<<"\n";
-#endif
     }
     qDebug()<<"Tracker:: Thread stopping";
 }
@@ -160,6 +159,7 @@ void Tracker_PT::apply_settings()
     camera.set_res(s.cam_res_x, s.cam_res_y);
     camera.set_fps(s.cam_fps);
     camera.start();
+    frame = cv::Mat();
     qDebug()<<"Tracker::apply ends";
 }
 
