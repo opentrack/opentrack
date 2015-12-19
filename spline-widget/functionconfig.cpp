@@ -62,7 +62,7 @@ float Map::getValueInternal(int x) {
     return ret * sign;
 }
 
-static QPointF ensureInBounds(QList<QPointF> points, int i) {
+static QPointF ensureInBounds(const QList<QPointF>& points, int i) {
     int siz = points.size();
     if (siz == 0 || i < 0)
         return QPointF(0, 0);
