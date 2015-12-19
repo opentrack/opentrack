@@ -29,7 +29,6 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     }
 
     // convert to grayscale
-    cv::Mat frame_gray;
     cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
     const double region_size_min = s.min_point_size;
@@ -61,14 +60,11 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     const int thres = s.threshold;
     if (!s.auto_threshold)
     {
-        cv::Mat frame_bin;
         cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
         cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
     else
     {
-        cv::Mat hist;
-        constexpr int hist_c = 8;
         cv::calcHist(std::vector<cv::Mat> { frame_gray },
                      std::vector<int> { 0 },
                      cv::Mat(),
@@ -76,7 +72,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
                      std::vector<int> { 256/hist_c },
                      std::vector<float> { 0, 256/hist_c },
                      false);
-        const int sz = hist.rows*hist.cols;
+        const int sz = hist.cols * hist.rows;
         int val = 0;
         int cnt = 0;
         constexpr int min_pixels = 250;
@@ -95,7 +91,6 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         val *= 240./256.;
         //qDebug() << "val" << val;
 
-        cv::Mat frame_bin;
         cv::threshold(frame_gray, frame_bin, val, 255, CV_THRESH_BINARY);
         cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }

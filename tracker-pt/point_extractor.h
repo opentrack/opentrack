@@ -27,8 +27,12 @@ public:
     
     settings_pt s;
 private:
+    enum { hist_c = 8 };
     std::vector<cv::Vec2f> points;
     QMutex mtx;
+    cv::Mat frame_gray;
+    cv::Mat frame_bin;
+    cv::Mat hist;
 };
 
 #endif //POINTEXTRACTOR_H
