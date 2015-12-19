@@ -42,6 +42,6 @@ private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
-    cv::Mat _frame;
+    cv::Mat _frame, _frame2, _frame3;
     bool freshp;
 };
