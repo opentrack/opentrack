@@ -122,6 +122,8 @@ MainWindow::MainWindow() :
     
     register_shortcuts();
     
+    connect(this, &MainWindow::emit_minimized, this, &MainWindow::mark_minimized, Qt::QueuedConnection);
+    
     ui.btnStartTracker->setFocus();
 }
 
@@ -419,6 +421,9 @@ void MainWindow::set_title(const QString& game_title_)
 
 void MainWindow::showHeadPose()
 {
+    if (!ui.video_frame->isEnabled())
+        return;
+
     double mapped[6], raw[6];
 
     work->tracker->get_raw_and_mapped_poses(mapped, raw);
@@ -548,13 +553,26 @@ void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
 
 void MainWindow::changeEvent(QEvent* e)
 {
-    if (s.tray_enabled && e->type() == QEvent::WindowStateChange && (windowState() & Qt::WindowMinimized))
+    if (e->type() == QEvent::WindowStateChange)
     {
-        if (!tray)
-            ensure_tray();
-        hide();
+        const bool is_minimized = windowState() & Qt::WindowMinimized;
+        
+        if (s.tray_enabled && is_minimized)
+        {
+            if (!tray)
+                ensure_tray();
+            hide();
+        }
+        
+        emit_minimized(is_minimized);
     }
+    
     QMainWindow::changeEvent(e);
+}
+
+void MainWindow::mark_minimized(bool is_minimized)
+{
+    ui.video_frame->setEnabled(!is_minimized);
 }
 
 void MainWindow::maybe_start_profile_from_executable()

@@ -106,10 +106,13 @@ private slots:
     void startTracker();
     void stopTracker();
     void reload_options();
+    void mark_minimized(bool is_minimized);
 signals:
     void emit_start_tracker();
     void emit_stop_tracker();
     void emit_toggle_tracker();
+    
+    void emit_minimized(bool);
 public:
     MainWindow();
     ~MainWindow();
