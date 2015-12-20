@@ -39,7 +39,7 @@ void PTVideoWidget::update_and_repaint()
     
     cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
     
-    texture = QImage((const unsigned char*) _frame2.data, _frame2.cols, _frame2.rows, QImage::Format_RGB888);
     freshp = false;
     update();
+        texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
 }
