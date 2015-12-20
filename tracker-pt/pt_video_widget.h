@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QDebug>
 
 class PTVideoWidget : public QWidget
 {

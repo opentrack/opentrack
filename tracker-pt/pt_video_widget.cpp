@@ -29,17 +29,20 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
 
 void PTVideoWidget::update_and_repaint()
 {
-    QMutexLocker foo(&mtx);
-    if (_frame.empty() || !freshp)
-        return;
-    cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
-    
-    if (_frame3.cols != width() || _frame3.rows != height())
-        _frame3 = cv::Mat(height(), width(), CV_8U);
-    
-    cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
-    
-    freshp = false;
-    update();
+    if (static_cast<QWidget*>(parent())->isEnabled())
+    {
+        QMutexLocker foo(&mtx);
+        if (_frame.empty() || !freshp)
+            return;
+        cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
+        
+        if (_frame3.cols != width() || _frame3.rows != height())
+            _frame3 = cv::Mat(height(), width(), CV_8U);
+
+        cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
+        
         texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
+        freshp = false;
+        update();
+    }
 }
