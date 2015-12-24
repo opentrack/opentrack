@@ -148,6 +148,11 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         }
 
         blobs.push_back(blob(radius, pos, confid, area));
+        
+        enum { max_blobs = 16 };
+        
+        if (blobs.size() == max_blobs)
+            break;
     }
     
     using b = const blob;
