@@ -27,7 +27,7 @@ public:
     
     settings_pt s;
 private:
-    enum { hist_c = 8 };
+    enum { hist_c = 2 };
     std::vector<cv::Vec2f> points;
     QMutex mtx;
     cv::Mat frame_gray;
