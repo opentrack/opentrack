@@ -32,9 +32,13 @@ Tracker_PT::~Tracker_PT()
 {
     set_command(ABORT);
     wait();
-    delete video_widget;
+    if (video_widget)
+        delete video_widget;
     video_widget = NULL;
-    if (video_frame->layout()) delete video_frame->layout();
+    if (video_frame)
+    {
+        if (video_frame->layout()) delete video_frame->layout();
+    }
     // fast start/stop causes breakage
     portable::sleep(1000);
     camera.stop();
