@@ -4,7 +4,7 @@ prefix="$1"
 filename="$2"
 bin="$3"
 
-cmake --build "$bin" --target install || exit 1
+cmake --build "$bin" --target install -- -j4 || exit 1
 
 if  : &&
     cd $(dirname -- "${prefix}") &&

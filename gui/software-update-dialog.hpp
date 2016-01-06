@@ -7,7 +7,7 @@
 #include <QRegExp>
 #include <functional>
 #include "ui_software-update.h"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 
 extern "C" const char* opentrack_version;
 

@@ -18,7 +18,7 @@
 
 #include "spline-widget/functionconfig.h"
 #include "main-settings.hpp"
-#include "options.hpp"
+#include "opentrack-compat/options.hpp"
 
 #include <QMutex>
 #include <QThread>
@@ -40,7 +40,13 @@ public:
     inline double operator()(int i) const { return axes[i]; }
 };
 
-class Tracker : private QThread {
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
+
+class OPENTRACK_EXPORT Tracker : private QThread {
     Q_OBJECT
 private:
     QMutex mtx;
@@ -74,7 +80,7 @@ public:
 
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
-    void toggle_enabled() { enabledp = !enabledp; }
-    void center() { centerp = !centerp; }
-    void zero() { zero_ = !zero_; }
+    void toggle_enabled() { qDebug() << "toggle enabled"; enabledp = !enabledp; }
+    void center() { qDebug() << "toggle center"; centerp = !centerp; }
+    void zero() { qDebug() << "toggle zero"; zero_ = !zero_; }
 };

@@ -9,6 +9,7 @@
  */
 
 #include "pt_video_widget.h"
+#include <opencv2/imgproc.hpp>
 
 void PTVideoWidget::update_image(const cv::Mat& frame)
 {
@@ -16,40 +17,32 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     
     if (!freshp)
     {
-        _frame = frame.clone();
+        if (_frame.cols != frame.cols || _frame.rows != frame.rows)
+        {
+            _frame = cv::Mat(frame.rows, frame.cols, CV_8U);
+            _frame2 = cv::Mat(frame.rows, frame.cols, CV_8U);
+        }
+        frame.copyTo(_frame);
         freshp = true;
     }
 }
 
 void PTVideoWidget::update_and_repaint()
 {
-    QImage qframe;
+    if (static_cast<QWidget*>(parent())->isEnabled())
     {
         QMutexLocker foo(&mtx);
         if (_frame.empty() || !freshp)
             return;
-        qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
+        cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
+        
+        if (_frame3.cols != width() || _frame3.rows != height())
+            _frame3 = cv::Mat(height(), width(), CV_8U);
+
+        cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
+        
+        texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
         freshp = false;
-        uchar* data = qframe.bits();
-        const int pitch = qframe.bytesPerLine();
-        unsigned char *input = (unsigned char*) _frame.data;
-        const int chans = _frame.channels();
-        for (int y = 0; y < _frame.rows; y++)
-        {
-            const int step = y * _frame.step;
-            const int pitch_ = y * pitch;
-            for (int x = 0; x < _frame.cols; x++)
-            {
-                data[pitch_ + x * 3 + 0] = input[step + x * chans + 2];
-                data[pitch_ + x * 3 + 1] = input[step + x * chans + 1];
-                data[pitch_ + x * 3 + 2] = input[step + x * chans + 0];
-            }
-        }
+        update();
     }
-    qframe = qframe.scaled(size(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-    {
-        QMutexLocker foo(&mtx);
-        texture = qframe;
-    }
-    update();
 }

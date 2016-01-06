@@ -98,16 +98,18 @@ inline GLWidget::vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec
 
 void GLWidget::project_quad_texture() {
     const int sx = width(), sy = height();
-    vec2 pt[4];
+    const int ow = front.width(), oh = front.height();
     const vec3 corners[] = {
-        vec3(0., 0, 0),
-        vec3(sx-1, 0, 0),
-        vec3(0, sy-1, 0),
-        vec3(sx-1, sy-1, 0.)
+        vec3(-ow/2., -oh/2, 0),
+        vec3(ow/2, -oh/2, 0),
+        vec3(-ow/2, oh/2, 0),
+        vec3(ow/2, oh/2, 0.)
     };
 
+    vec2 pt[4];
+    vec2 sz((sx-ow)/2, (sy-oh)/2);
     for (int i = 0; i < 4; i++)
-        pt[i] = project(vec3(corners[i].x() - sx/2, corners[i].y() - sy/2, 0)) + vec2(sx/2, sy/2);
+        pt[i] = project(corners[i]) + vec2(sx/2, sy/2);
 
     vec3 normal1(0, 0, 1);
     vec3 normal2;
@@ -122,9 +124,7 @@ void GLWidget::project_quad_texture() {
 
     QImage& tex = dir < 0 ? back : front;
 
-    int ow = tex.width(), oh = tex.height();
-
-    QImage texture(QSize(sx, sy), QImage::Format_RGB888);
+    QImage texture(QSize(sx, sy), QImage::Format_RGBA8888);
     QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
     texture.fill(bgColor);
 
@@ -199,6 +199,11 @@ void GLWidget::project_quad_texture() {
                     const unsigned char r___ = orig[orig_pos___ + 2];
                     const unsigned char g___ = orig[orig_pos___ + 1];
                     const unsigned char b___ = orig[orig_pos___ + 0];
+                    
+                    const unsigned char a1 = orig[orig_pos + 3];
+                    const unsigned char a2 = orig[orig_pos_ + 3];
+                    const unsigned char a3 = orig[orig_pos__ + 3];
+                    const unsigned char a4 = orig[orig_pos___ + 3];
 
                     const int pos = y * dest_pitch + x * dest_depth;
 
@@ -207,6 +212,7 @@ void GLWidget::project_quad_texture() {
                     dest[pos + 0] = (r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_;
                     dest[pos + 1] = (g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_;
                     dest[pos + 2] = (b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_;
+                    dest[pos + 3] = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
 
                     break;
                 }

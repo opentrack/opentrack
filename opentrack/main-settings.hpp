@@ -9,7 +9,7 @@
 #pragma once
 
 #include <QString>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/plugin-api.hpp"
 
 using namespace options;
@@ -30,13 +30,27 @@ private:
     }
 };
 
-struct main_settings : opts {
+struct key_opts {
+    value<QString> keycode, guid;
+    value<int> button;
+
+    key_opts(pbundle b, const QString& name) :
+        keycode(b, QString("keycode-%1").arg(name), ""),
+        guid(b, QString("guid-%1").arg(name), ""),
+        button(b, QString("button-%1").arg(name), -1)
+    {}
+};
+
+struct main_settings : opts {    
     value<QString> protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup, wizard_done;
+    value<int> center_method;
+    key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking;
+    key_opts key_center, key_toggle, key_zero;
     main_settings() :
         opts("opentrack-ui"),
         protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced"),
@@ -53,6 +67,14 @@ struct main_settings : opts {
         camera_pitch(b, "camera-pitch", 0),
         camera_roll(b, "camera-roll", 0),
         center_at_startup(b, "center-at-startup", true),
-        wizard_done(b, "wizard-done", false)
-    {}
+        wizard_done(b, "wizard-done", false),
+        center_method(b, "centering-method", true),
+        key_start_tracking(b, "start-tracking"),
+        key_stop_tracking(b, "stop-tracking"),
+        key_toggle_tracking(b, "toggle-tracking"),
+        key_center(b, "center"),
+        key_toggle(b, "toggle"),
+        key_zero(b, "zero")
+    {
+    }
 };

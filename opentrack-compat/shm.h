@@ -19,32 +19,18 @@
 #include <sys/types.h>
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wattributes"
-
 #ifdef __GNUC__
-#   define COMPAT_GNUC_VISIBILITY __attribute__ ((visibility ("default")))
-#else
-#   define COMPAT_GNUC_VISIBILITY
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
-#ifdef BUILD_opentrack_compat
-#   ifdef _WIN32
-#       define COMPAT_WIN32_EXPORT __declspec(dllexport)
-#   else
-#       define COMPAT_WIN32_EXPORT
-#   endif
+#ifdef BUILD_compat
+#   include "compat-export.hpp"
 #else
-#   ifdef _WIN32
-#       define COMPAT_WIN32_EXPORT __declspec(dllimport)
-#   else
-#       define COMPAT_WIN32_EXPORT
-#   endif
+#   include "compat-import.hpp"
 #endif
 
-#define COMPAT_EXPORT COMPAT_WIN32_EXPORT COMPAT_GNUC_VISIBILITY
-
-class COMPAT_EXPORT PortableLockedShm {
+class OPENTRACK_COMPAT_EXPORT PortableLockedShm {
 public:
     PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
     ~PortableLockedShm();
@@ -61,4 +47,6 @@ private:
 #endif
 };
 
-#pragma GCC diagnostic pop
+#ifdef __GNUC__
+#   pragma GCC diagnostic pop
+#endif

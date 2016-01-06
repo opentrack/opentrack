@@ -5,7 +5,7 @@
 #include <QElapsedTimer>
 #include <QWidget>
 #include <QMutex>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

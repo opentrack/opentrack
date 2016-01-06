@@ -54,6 +54,12 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
                 qfc.setEnabled(qfcs[i].checkbox->isChecked());
                 qfc.force_redraw();
             }
+            
+            if (qfcs[i].axis >= 3)
+                qfcs[i].qfc->set_snap(2, 5);
+            else
+                qfcs[i].qfc->set_snap(1, 5);
+            
             qfcs[i].qfc->setConfig(conf, name);
         }
     }

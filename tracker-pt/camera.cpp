@@ -110,16 +110,14 @@ bool CVCamera::_get_frame(cv::Mat* frame)
 {
     if (cap && cap->isOpened())
     {
-        cv::Mat img;
-        for (int i = 0; i < 100 && !cap->read(img); i++)
+        for (int i = 0; i < 100 && !cap->read(*frame); i++)
             ;;
 
-        if (img.empty())
+        if (frame->empty())
             return false;
 
-        *frame = img;
-        cam_info.res_x = img.cols;
-        cam_info.res_y = img.rows;
+        cam_info.res_x = frame->cols;
+        cam_info.res_y = frame->rows;
         return true;
     }
     return false;

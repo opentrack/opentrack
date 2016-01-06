@@ -1,19 +1,6 @@
 #include "ftnoir_tracker_joystick.h"
 #include "opentrack/plugin-api.hpp"
 
-static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance, VOID* pContext )
-{
-    auto self = ( TrackerControls* )pContext;
-    auto name = QString(pdidInstance->tszInstanceName);
-    auto guid = guid_to_string(pdidInstance->guidInstance);
-    TrackerControls::joys cur { name, guid };
-    self->_joys.append(cur);
-
-    self->ui.joylist->addItem(name + " " + guid);
-
-    return DIENUM_CONTINUE;
-}
-
 TrackerControls::TrackerControls() : tracker(nullptr)
 {
     ui.setupUi( this );
@@ -23,22 +10,25 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     {
-        auto hr = CoInitialize( nullptr );
-        LPDIRECTINPUT8 g_pDI = nullptr;
-
-        if( FAILED( hr = DirectInput8Create( GetModuleHandle( NULL ), DIRECTINPUT_VERSION,
-                                             IID_IDirectInput8, ( VOID** )&g_pDI, NULL ) ) )
-            goto fin;
-
-        if( FAILED( hr = g_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL,
-                                             EnumJoysticksCallback,
-                                             this,
-                                             DIEDFL_ATTACHEDONLY )))
-            goto fin;
-
-fin:
-        if (g_pDI)
-            g_pDI->Release();
+        win32_joy_ctx joy_ctx;
+        
+        _joys = QList<joys>();
+        
+        for (auto j : joy_ctx.get_joy_info())
+            _joys.push_back(joys { j.name, j.guid });
+    }
+    
+    {
+        const QString guid = s.guid;
+        int idx = 0;
+        for (int i = 0; i < _joys.size(); i++)
+        {
+            const joys& j = _joys[i];
+            if (j.guid == guid)
+                idx = i;
+            ui.joylist->addItem(j.name + " " + j.guid);
+        }
+        ui.joylist->setCurrentIndex(idx);
     }
 
     tie_setting(s.joy_1, ui.joy_1);
@@ -54,10 +44,7 @@ void TrackerControls::doOK() {
     joys def { "", "" };
     auto val = _joys.value(idx, def);
     s.guid = val.guid;
-    s.joyid = val.name;
     s.b->save();
-    if (tracker)
-        tracker->reload();
     this->close();
 }
 
@@ -65,5 +52,3 @@ void TrackerControls::doCancel() {
     s.b->reload();
     this->close();
 }
-
-

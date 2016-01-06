@@ -13,7 +13,7 @@
 #include <QTableWidget>
 #include <QResizeEvent>
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 class FancyTable : public QTableWidget

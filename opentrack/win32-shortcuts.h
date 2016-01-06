@@ -10,7 +10,13 @@ struct win_key;
 extern QList<win_key> windows_key_mods;
 extern QList<win_key> windows_key_sequences;
 
-struct win_key
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
+
+struct OPENTRACK_EXPORT win_key
 {
     win_key(int win, Qt::Key qt) : win(win), qt(qt) {}
     int win;

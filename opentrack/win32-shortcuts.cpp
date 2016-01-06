@@ -116,6 +116,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_Z, Qt::Key::Key_Z ),
        win_key(DIK_RETURN, Qt::Key::Key_Return),
        win_key(DIK_INSERT, Qt::Key::Key_Insert),
+       win_key(DIK_DELETE, Qt::Key::Key_Delete),
        win_key(DIK_SPACE, Qt::Key::Key_Space),
        win_key(DIK_SYSRQ, Qt::Key::Key_Print),
        win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),

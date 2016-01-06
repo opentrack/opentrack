@@ -5,8 +5,8 @@
 #include "opentrack/opencv-camera-dialog.hpp"
 #include "wizard.h"
 #include "ui.h"
-#include "opentrack/options.hpp"
 #include "ui_install-driver-dialog.h"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>

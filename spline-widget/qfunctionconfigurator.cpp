@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include "spline-widget/qfunctionconfigurator.h"
 #include <QPainter>
@@ -15,13 +15,13 @@ using namespace options;
 #include <cmath>
 #include <algorithm>
 
-static const int pointSize = 5;
-
 QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),
     moving_control_point_idx(-1),
-    _draw_function(true)
+    _draw_function(true),
+    snap_x(0),
+    snap_y(0)
 {
     update_range();
     setMouseTracking(true);
@@ -358,7 +358,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
         }
 
         if (is_on_point) {
-            setCursor(Qt::OpenHandCursor);
+            setCursor(Qt::CrossCursor);
         }
         else {
             setCursor(Qt::ArrowCursor);
@@ -402,9 +402,8 @@ void QFunctionConfigurator::update_range()
 
 bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
 {
-    QPointF pixel2 = point_to_pixel(pt);
-    return pixel2.x() >= pixel.x() - pointSize && pixel2.x() < pixel.x() + pointSize &&
-           pixel2.y() >= pixel.y() - pointSize && pixel2.y() < pixel.y() + pointSize;
+    QPointF tmp = pixel - point_to_pixel(pt);
+    return sqrt(QPointF::dotProduct(tmp, tmp)) < pointSize;
 }
 
 QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
@@ -412,8 +411,13 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     if (!_config)
         return QPointF(-1, -1);
 
-    double x = (point.x() - pixel_bounds.x()) / c.x();
-    double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    int x = (point.x() - pixel_bounds.x()) / c.x();
+    int y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    
+    if (snap_x > 0)
+        x -= x % snap_x;
+    if (snap_y > 0)
+        y -= y % snap_y;
 
     if (x < 0)
         x = 0;

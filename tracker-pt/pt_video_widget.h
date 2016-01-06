@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QDebug>
 
 class PTVideoWidget : public QWidget
 {
@@ -28,7 +29,7 @@ public:
         freshp(false)
     {
         connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
-        timer.start(40);
+        timer.start(50);
     }
     void update_image(const cv::Mat &frame);
 protected slots:
@@ -42,6 +43,6 @@ private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
-    cv::Mat _frame;
+    cv::Mat _frame, _frame2, _frame3;
     bool freshp;
 };

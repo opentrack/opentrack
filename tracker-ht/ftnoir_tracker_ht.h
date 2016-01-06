@@ -12,7 +12,7 @@
 #include "ht_video_widget.h"
 #include "opentrack-compat/shm.h"
 #include <QObject>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/opencv-camera-dialog.hpp"
 

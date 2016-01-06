@@ -8,9 +8,9 @@
 
 #include "ui.h"
 #include "opentrack/tracker.h"
-#include "opentrack/options.hpp"
 #include "tracker-pt/ftnoir_tracker_pt.h"
 #include "filter-accela/ftnoir_filter_accela.h"
+#include "opentrack-compat/options.hpp"
 #include "new_file_dialog.h"
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -24,8 +24,8 @@
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    no_feed_pixmap(":/images/no-feed.png"),
     is_refreshing_profiles(false),
+    keys_paused(false),
     update_query(this)
 {
     ui.setupUi(this);
@@ -33,7 +33,6 @@ MainWindow::MainWindow() :
     setFixedSize(size());
 
     updateButtonState(false, false);
-    ui.video_frame_label->setPixmap(no_feed_pixmap);
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
@@ -91,7 +90,23 @@ MainWindow::MainWindow() :
                              "Configuration not saved.",
                              "Can't create configuration directory! Expect major malfunction.",
                              QMessageBox::Ok, QMessageBox::NoButton);
-
+    
+    connect(this, &MainWindow::emit_start_tracker,
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "start tracker"; startTracker(); },
+            Qt::QueuedConnection);
+    
+    connect(this, &MainWindow::emit_stop_tracker,
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "stop tracker"; stopTracker(); },
+            Qt::QueuedConnection);
+    
+    connect(this, &MainWindow::emit_toggle_tracker,
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
+            Qt::QueuedConnection);
+    
+    register_shortcuts();
+    
+    connect(this, &MainWindow::emit_minimized, this, &MainWindow::mark_minimized, Qt::QueuedConnection);
+    
     ui.btnStartTracker->setFocus();
 
     update_query.maybe_show_dialog();
@@ -103,6 +118,22 @@ void MainWindow::closeEvent(QCloseEvent *e)
         e->ignore();
     else
         e->accept();
+}
+
+void MainWindow::register_shortcuts()
+{
+    using t_shortcut = std::tuple<key_opts&, Shortcuts::fun>;
+    
+    std::vector<t_shortcut> keys {
+        t_shortcut(s.key_start_tracking, [&]() -> void { emit_start_tracker(); }),
+        t_shortcut(s.key_stop_tracking, [&]() -> void { emit_stop_tracker(); }),
+        t_shortcut(s.key_toggle_tracking, [&]() -> void { emit_toggle_tracker(); }),
+    };
+    
+    global_shortcuts.reload(keys);
+    
+    if (work)
+        work->reload_shortcuts();
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
@@ -252,6 +283,9 @@ void MainWindow::reload_options()
 }
 
 void MainWindow::startTracker() {
+    if (work)
+        return;
+    
     // tracker dtor needs run first
     work = nullptr;
 
@@ -272,7 +306,7 @@ void MainWindow::startTracker() {
         return;
     }
     
-    work = std::make_shared<Work>(s, pose, libs, this, winId());
+    work = std::make_shared<Work>(s, pose, libs, winId());
     
     reload_options();
 
@@ -291,7 +325,10 @@ void MainWindow::startTracker() {
     ui.btnStopTracker->setFocus();
 }
 
-void MainWindow::stopTracker( ) {
+void MainWindow::stopTracker() {
+    if (!work)
+        return;
+    
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
@@ -361,6 +398,9 @@ void MainWindow::set_title(const QString& game_title_)
 
 void MainWindow::showHeadPose()
 {
+    if (!ui.video_frame->isEnabled())
+        return;
+
     double mapped[6], raw[6];
 
     work->tracker->get_raw_and_mapped_poses(mapped, raw);
@@ -386,7 +426,6 @@ bool mk_dialog(mem<dylib> lib, mem<t>* orig)
 
         *orig = dialog;
         dialog->show();
-        dialog->raise();
 
         return true;
     }
@@ -398,7 +437,7 @@ void MainWindow::showProtocolSettings() {
         pProtocolDialog->register_protocol(libs.pProtocol.get());
 }
 template<typename t, typename... Args>
-bool mk_window(mem<t>* place, Args... params)
+bool mk_window(mem<t>* place, Args&&... params)
 {
     if (*place && (*place)->isVisible())
     {
@@ -408,21 +447,24 @@ bool mk_window(mem<t>* place, Args... params)
     }
     else
     {
-        *place = std::make_shared<t>(params...);
+        *place = std::make_shared<t>(std::forward<Args>(params)...);
         (*place)->setWindowFlags(Qt::Dialog);
         (*place)->show();
-        (*place)->raise();
         return true;
     }
 }
 
 void MainWindow::show_options_dialog() {
-    if (mk_window<OptionsDialog, State&>(&options_widget, static_cast<State&>(*this)))
+    if (mk_window(&options_widget,
+                  s,
+                  *this,
+                  [&]() -> void { register_shortcuts(); },
+                  [&](bool flag) -> void { keys_paused = flag; }))
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
 }
 
 void MainWindow::showCurveConfiguration() {
-    mk_window<MapWidget, Mappings&, main_settings&>(&mapping_widget, pose, s);
+    mk_window(&mapping_widget, pose, s);
 }
 
 bool MainWindow::maybe_not_close_tracking()
@@ -468,27 +510,6 @@ void MainWindow::profileSelected(QString name)
     }
 }
 
-void MainWindow::shortcutRecentered()
-{
-    qDebug() << "Center";
-    if (work)
-        work->tracker->center();
-}
-
-void MainWindow::shortcutToggled()
-{
-    qDebug() << "Toggle";
-    if (work)
-        work->tracker->toggle_enabled();
-}
-
-void MainWindow::shortcutZeroed()
-{
-    qDebug() << "Zero";
-    if (work)
-        work->tracker->zero();
-}
-
 void MainWindow::ensure_tray()
 {
     if (tray)
@@ -512,13 +533,26 @@ void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
 
 void MainWindow::changeEvent(QEvent* e)
 {
-    if (s.tray_enabled && e->type() == QEvent::WindowStateChange && (windowState() & Qt::WindowMinimized))
+    if (e->type() == QEvent::WindowStateChange)
     {
-        if (!tray)
-            ensure_tray();
-        hide();
+        const bool is_minimized = windowState() & Qt::WindowMinimized;
+        
+        if (s.tray_enabled && is_minimized)
+        {
+            if (!tray)
+                ensure_tray();
+            hide();
+        }
+        
+        emit_minimized(is_minimized);
     }
+    
     QMainWindow::changeEvent(e);
+}
+
+void MainWindow::mark_minimized(bool is_minimized)
+{
+    ui.video_frame->setEnabled(!is_minimized);
 }
 
 void MainWindow::maybe_start_profile_from_executable()

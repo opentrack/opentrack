@@ -16,6 +16,9 @@
 #include <QObject>
 #include <QFrame>
 #include <memory>
+#include <vector>
+#include <functional>
+#include <tuple>
 
 struct Work
 {
@@ -24,32 +27,33 @@ struct Work
     mem<Tracker> tracker;
     mem<Shortcuts> sc;
     WId handle;
-
-    Work(main_settings& s, Mappings& m, SelectedLibraries& libs, QObject* recv, WId handle) :
+    using fn = std::function<void(void)>;
+    using tt = std::tuple<key_opts&, fn>;
+    std::vector<std::tuple<key_opts&, fn>> keys;
+    
+    Work(main_settings& s, Mappings& m, SelectedLibraries& libs, WId handle) :
         s(s), libs(libs),
         tracker(std::make_shared<Tracker>(s, m, libs)),
-        sc(std::make_shared<Shortcuts>(handle)),
-        handle(handle)
+        sc(std::make_shared<Shortcuts>()),
+        handle(handle),
+        keys {
+            tt(s.key_center, [&]() -> void { tracker->center(); }),
+            tt(s.key_toggle, [&]() -> void { tracker->toggle_enabled(); }),
+            tt(s.key_zero, [&]() -> void { tracker->zero(); }),
+        }
     {
-#ifndef _WIN32
-        QObject::connect(sc->keyCenter.get(), SIGNAL(activated()), recv, SLOT(shortcutRecentered()));
-        QObject::connect(sc->keyToggle.get(), SIGNAL(activated()), recv, SLOT(shortcutToggled()));
-        QObject::connect(sc->keyZero.get(), SIGNAL(activated()), recv, SLOT(shortcutZeroed()));
-#else
-        QObject::connect(sc.get(), SIGNAL(center()), recv, SLOT(shortcutRecentered()));
-        QObject::connect(sc.get(), SIGNAL(toggle()), recv, SLOT(shortcutToggled()));
-        QObject::connect(sc.get(), SIGNAL(zero()), recv, SLOT(shortcutZeroed()));
-#endif
-        tracker->start();
+        reload_shortcuts();
+        tracker->start();   
     }
 
     void reload_shortcuts()
     {
-        sc->reload();
+        sc->reload(keys);
     }
 
     ~Work()
     {
+        sc = nullptr;
         // order matters, otherwise use-after-free -sh
         tracker = nullptr;
         libs = SelectedLibraries();

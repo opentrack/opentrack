@@ -2,7 +2,7 @@
 #include "ui_keyboard_listener.h"
 #ifdef _WIN32
 #include "opentrack/win32-shortcuts.h"
-#include "opentrack/shortcuts.h"
+#include "opentrack/keybinding-worker.hpp"
 #endif
 #include <QLabel>
 #include <QKeyEvent>
@@ -13,25 +13,32 @@ class KeyboardListener : public QLabel
     Q_OBJECT
     Ui_keyboard_listener ui;
 #ifdef _WIN32
-    KeybindingWorker w;
+    KeybindingWorker::Token token;
 #endif
 public:
     KeyboardListener(QWidget* parent = nullptr) : QLabel(parent)
 #ifdef _WIN32
-      , w([&](Key& k)
-    {
-        Qt::KeyboardModifiers m;
-        QKeySequence k_;
-        if (win_key::to_qt(k, k_, m))
-            key_pressed(static_cast<QVariant>(k_).toInt() | m);
-    }, this->winId())
+      , token([&](const Key& k) {
+        if(k.guid != "")
+        {
+            int mods = 0;
+            if (k.alt) mods |= Qt::AltModifier;
+            if (k.shift) mods |= Qt::ShiftModifier;
+            if (k.ctrl) mods |= Qt::ControlModifier;
+            joystick_button_pressed(k.guid, k.keycode | mods, k.held);
+        }
+        else
+        {
+            Qt::KeyboardModifiers m;
+            QKeySequence k_;
+            if (win_key::to_qt(k, k_, m))
+                key_pressed(static_cast<QVariant>(k_).toInt() | m);
+        }
+    })
 #endif
     {
         ui.setupUi(this);
         setFocusPolicy(Qt::StrongFocus);
-#ifdef _WIN32
-        w.start();
-#endif
     }
 #ifndef _WIN32
     void keyPressEvent(QKeyEvent* event) override
@@ -47,4 +54,5 @@ public:
 #endif
 signals:
     void key_pressed(QKeySequence k);
+    void joystick_button_pressed(QString guid, int idx, bool held);
 };

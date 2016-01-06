@@ -13,21 +13,26 @@
 
 #include "ftnoir_tracker_pt_settings.h"
 
-// ----------------------------------------------------------------------------
-// Extracts points from an opencv image
+#include <QMutex>
+
 class PointExtractor
 {
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
-    std::vector<cv::Vec2f> extract_points(cv::Mat &frame);
-    const std::vector<cv::Vec2f>& get_points() { return points; }
+    const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
+    const std::vector<cv::Vec2f>& get_points() { QMutexLocker l(&mtx); return points; }
     PointExtractor();
     
     settings_pt s;
 private:
+    enum { hist_c = 2 };
     std::vector<cv::Vec2f> points;
+    QMutex mtx;
+    cv::Mat frame_gray;
+    cv::Mat frame_bin;
+    cv::Mat hist;
 };
 
 #endif //POINTEXTRACTOR_H

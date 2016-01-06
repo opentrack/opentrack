@@ -20,7 +20,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 #include <windows.h>
 

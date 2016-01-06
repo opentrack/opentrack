@@ -22,7 +22,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift DK2
+- Oculus Rift DK1, DK2 and legacy versions
 - Paper marker support via the ArUco library <<https://github.com/rmsalinas/aruco>>
 - Human face tracker <<https://github.com/sthalik/headtracker>>
 - Razer Hydra

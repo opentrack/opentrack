@@ -8,17 +8,38 @@
 
 #pragma once
 
-#include "../opentrack-compat/export.hpp"
 #include <QString>
 #include <QWidget>
 #include <QFrame>
 #include <QIcon>
 
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
+
+#ifndef OPENTRACK_PLUGIN_EXPORT
+#   ifdef _WIN32
+#       define OPENTRACK_PLUGIN_LINKAGE __declspec(dllexport)
+#   else
+#       define OPENTRACK_PLUGIN_LINKAGE
+#   endif
+#   ifndef _MSC_VER
+#       define OPENTRACK_PLUGIN_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_PLUGIN_LINKAGE
+#   else
+#       define OPENTRACK_PLUGIN_EXPORT OPENTRACK_PLUGIN_LINKAGE
+#   endif
+#endif
+
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-class BaseDialog : public QWidget
+namespace plugin_api {
+namespace detail {
+
+class OPENTRACK_EXPORT BaseDialog : public QWidget
 {
     Q_OBJECT
 public:
@@ -27,16 +48,19 @@ signals:
     void closing();
 };
 
+} // ns
+} // ns
+
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
-    extern "C" OPENTRACK_EXPORT ctor_ret_class* GetConstructor() \
+    extern "C" OPENTRACK_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
     { \
         return new ctor_class; \
     } \
-    extern "C" OPENTRACK_EXPORT Metadata* GetMetadata() \
+    extern "C" OPENTRACK_PLUGIN_EXPORT Metadata* GetMetadata() \
     { \
         return new metadata_class; \
     } \
-    extern "C" OPENTRACK_EXPORT dialog_ret_class* GetDialog() \
+    extern "C" OPENTRACK_PLUGIN_EXPORT dialog_ret_class* GetDialog() \
     { \
         return new dialog_class; \
     }
@@ -65,7 +89,7 @@ struct IFilter
     virtual void center() {}
 };
 
-struct IFilterDialog : public BaseDialog
+struct IFilterDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~IFilterDialog() {}
@@ -93,7 +117,7 @@ struct IProtocol
     virtual QString game_name() = 0;
 };
 
-struct IProtocolDialog : public BaseDialog
+struct IProtocolDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~IProtocolDialog() {}
@@ -118,7 +142,7 @@ struct ITracker
     virtual void data(double *data) = 0;
 };
 
-struct ITrackerDialog : public BaseDialog
+struct ITrackerDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~ITrackerDialog() {}

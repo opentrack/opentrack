@@ -10,6 +10,9 @@
 #include "trans_calib.h"
 #include "tracker-pt/ftnoir_tracker_pt.h"
 #include "filter-accela/ftnoir_filter_accela.h"
+#include <QObject>
+#include <QWidget>
+#include <functional>
 
 class OptionsDialog: public QWidget
 {
@@ -17,14 +20,16 @@ class OptionsDialog: public QWidget
 signals:
     void reload();
 public:
-    OptionsDialog(State &state);
+    OptionsDialog(main_settings& main, State& state, std::function<void()> register_global_keys, std::function<void(bool)> pause_keybindings);
 private:
+    main_settings& main;
+    State& state;
+    std::function<void()> register_global_keys;
+    std::function<void(bool)> pause_keybindings;
     Ui::UI_Settings ui;
-    Shortcuts::settings s;
     settings_pt pt;
     settings_accela acc;
     QTimer timer;
-    State& state;
     TranslationCalibrator trans_calib;
     bool trans_calib_running;
 
@@ -42,5 +47,5 @@ private slots:
     void startstop_trans_calib(bool start);
     void poll_tracker_info();
     void trans_calib_step();
-    void bind_key(value<QString>& ret, QLabel* label);
+    void bind_key(key_opts &kopts, QLabel* label);
 };

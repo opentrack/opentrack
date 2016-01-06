@@ -6,7 +6,7 @@
 #include "opentrack/plugin-api.hpp"
 #include "OVR.h"
 #include <memory>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

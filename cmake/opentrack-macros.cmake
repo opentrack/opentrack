@@ -32,7 +32,7 @@ endfunction()
 
 macro(opentrack_library n dir)
     cmake_parse_arguments(opentrack-foolib
-        "NO-LIBRARY;STATIC;NO-COMPAT;NO-LINKER-SCRIPT"
+        "NO-LIBRARY;STATIC;NO-COMPAT;NO-LINKER-SCRIPT;LINKAGE"
         "LINK;COMPILE;GNU-LINK;GNU-COMPILE"
         ""
         ${ARGN}
@@ -53,20 +53,33 @@ macro(opentrack_library n dir)
             target_link_libraries(${n} opentrack-api opentrack-compat)
         endif()
         target_link_libraries(${n} ${MY_QT_LIBS})
-        if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE AND NOT opentrack-foolib_NO-LINKER-SCRIPT)
-            SET_TARGET_PROPERTIES(${n} PROPERTIES
-                LINK_FLAGS "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} -Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\""
+        if(CMAKE_COMPILER_IS_GNUCXX AND NOT opentrack-foolib_NO-LINKER-SCRIPT)
+            set(l-flags)
+            if(NOT APPLE)
+                set(l-flags "-Wl,--as-needed -Wl,--version-script=\"${CMAKE_SOURCE_DIR}/opentrack-compat/${version-script}-version-script.txt\"")
+            endif()
+            set_target_properties(${n} PROPERTIES
+                LINK_FLAGS "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} ${l-flags}"
                 COMPILE_FLAGS "${opentrack-foolib_COMPILE} ${opentrack-foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden"
             )
         else()
-            set(link-flags)
-            if(MSVC)
-                set(link-flags "${msvc-subsystem} /DEBUG /OPT:ICF")
+            set(c-props)
+            set(l-props)
+            if(opentrack-foolib_LINKAGE AND CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+                set(c-props "${opentrack-foolib_COMPILE} ${opentrack-foolib_GNU-COMPILE} -fvisibility=hidden -fvisibility-inlines-hidden")
+                set(l-props "${opentrack-foolib_LINK} ${opentrack-foolib_GNU-LINK} -Wl,--as-needed")
+            else()
+                if(MSVC)
+                    set(l-props "${msvc-subsystem} /DEBUG /OPT:ICF")
+                endif()
             endif()
-            set_target_properties(${n} PROPERTIES LINK_FLAGS "${link-flags} ${opentrack-foolib_LINK}" COMPILE_FLAGS "${opentrack-foolib_COMPILE}")
-            set(link-flags)
+            set_target_properties(${n} PROPERTIES
+                LINK_FLAGS "${l-props} ${opentrack-foolib_LINK}"
+                COMPILE_FLAGS "${c-props} ${opentrack-foolib_COMPILE}"
+            )
         endif()
-        string(REPLACE "-" "_" n_ ${n})
+        string(REGEX REPLACE "^opentrack-" "" n_ ${n})
+        string(REPLACE "-" "_" n_ ${n_})
         target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
         if(NOT opentrack-foolib_STATIC)
             install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)

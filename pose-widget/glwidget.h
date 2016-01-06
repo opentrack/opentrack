@@ -13,7 +13,7 @@
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/simple-mat.hpp"
 
-#ifdef BUILD_opentrack_pose_widget
+#ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
 #else
 #   define POSE_WIDGET_EXPORT Q_DECL_IMPORT

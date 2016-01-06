@@ -8,86 +8,27 @@
 
 #pragma once
 #include <QObject>
-#include <QWidget>
-#include "opentrack-compat/timer.hpp"
-#include <QThread>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QSettings>
-#include <QMutex>
+#include <tuple>
+#include <vector>
+#include <functional>
+
+#ifdef BUILD_api
+#   include "opentrack-compat/export.hpp"
+#else
+#   include "opentrack-compat/import.hpp"
+#endif
 
 #include "qxt-mini/QxtGlobalShortcut"
-#include "opentrack/plugin-support.hpp"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
+
+#ifdef _WIN32
+#   include "keybinding-worker.hpp"
+#endif
 
 using namespace options;
 
-extern QList<QString> global_key_sequences;
-
-struct key_opts {
-    value<QString> keycode;
-
-    key_opts(pbundle b, const QString& name) :
-        keycode(b, QString("keycode-%1").arg(name), "")
-    {}
-};
-
-#if defined(_WIN32)
-extern QList<int> global_windows_key_sequences;
-#   undef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x0800
-#   include <windows.h>
-#   include <dinput.h>
-
-struct Key {
-    BYTE keycode;
-    bool shift;
-    bool ctrl;
-    bool alt;
-    Timer timer;
-public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false)
-    {
-    }
-
-    bool should_process()
-    {
-        if (keycode == 0)
-            return false;
-        bool ret = timer.elapsed_ms() > 100;
-        timer.start();
-        return ret;
-    }
-};
-#else
-typedef unsigned char BYTE;
-struct Key { int foo; };
-#endif
-
-struct Shortcuts;
-
-struct KeybindingWorker : public QThread {
-#ifdef _WIN32
-private:
-    LPDIRECTINPUT8 din;
-    LPDIRECTINPUTDEVICE8 dinkeyboard;
-    QMutex mtx;
-public:
-    volatile bool should_quit;
-    std::function<void(Key&)> receiver;
-    ~KeybindingWorker();
-    KeybindingWorker(std::function<void(Key&)> receiver, WId h);
-    void run();
-#else
-public:
-    KeybindingWorker(Key, Key, Key, WId) {}
-    void run() {}
-#endif
-};
-
-struct Shortcuts : public QObject {
+struct OPENTRACK_EXPORT Shortcuts : public QObject {
     Q_OBJECT
 
 public:
@@ -98,39 +39,24 @@ public:
     Key
 #endif
     ;
-
-    K keyCenter;
-    K keyToggle;
-    K keyZero;
-
-    WId handle;
+    
+    using fun = std::function<void(void)>;
+    using tt = std::tuple<K, fun>;
+    std::vector<tt> keys;
 #ifdef _WIN32
-    mem<KeybindingWorker> keybindingWorker;
+    KeybindingWorker::Token key_token;
 #endif
 
-    struct settings : opts {
-        key_opts center, toggle, zero;
-        main_settings s_main;
-        settings() :
-            opts("keyboard-shortcuts"),
-            center(b, "center"),
-            toggle(b, "toggle"),
-            zero(b, "zero")
-        {}
-    } s;
+    Shortcuts()
+#ifdef _WIN32
+        : key_token([&](const Key& k) { receiver(k); })
+#endif
+    {}
 
-    Shortcuts(WId handle) : handle(handle) { reload(); }
-
-    void reload();
+    void reload(const std::vector<std::tuple<key_opts &, fun> > &keys);
 private:
-    void bind_keyboard_shortcut(K &key, key_opts& k);
+    void bind_keyboard_shortcut(K &key, const key_opts& k);
 #ifdef _WIN32
-    void receiver(Key& k);
+    void receiver(const Key& k);
 #endif
-signals:
-    void center();
-    void toggle();
-    void zero();
 };
-
-

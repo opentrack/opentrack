@@ -17,9 +17,12 @@
 #include <QString>
 #include <QMenu>
 
+#include <vector>
+#include <tuple>
+
 #include "ui_main.h"
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
 #include "opentrack/plugin-support.hpp"
 #include "opentrack/tracker.h"
@@ -33,9 +36,11 @@
 
 using namespace options;
 
-class MainWindow : public QMainWindow, private State
+class MainWindow : public QMainWindow, public State
 {
     Q_OBJECT
+    
+    Shortcuts global_shortcuts;
 
     Ui::OpentrackUI ui;
     mem<QSystemTrayIcon> tray;
@@ -45,11 +50,11 @@ class MainWindow : public QMainWindow, private State
     mem<OptionsDialog> options_widget;
     mem<MapWidget> mapping_widget;
     QShortcut kbd_quit;
-    QPixmap no_feed_pixmap;
     mem<IProtocolDialog> pProtocolDialog;
     process_detector_worker det;
     QMenu profile_menu;
     bool is_refreshing_profiles;
+    volatile bool keys_paused;
     QTimer save_timer;
     update_dialog::query update_query;
 
@@ -70,6 +75,7 @@ class MainWindow : public QMainWindow, private State
     void maybe_save();
     bool maybe_not_close_tracking();
     void closeEvent(QCloseEvent *e) override;
+    void register_shortcuts();
 private slots:
     void _save();
     void save();
@@ -92,10 +98,13 @@ private slots:
     void startTracker();
     void stopTracker();
     void reload_options();
-public slots:
-    void shortcutRecentered();
-    void shortcutToggled();
-    void shortcutZeroed();
+    void mark_minimized(bool is_minimized);
+signals:
+    void emit_start_tracker();
+    void emit_stop_tracker();
+    void emit_toggle_tracker();
+    
+    void emit_minimized(bool);
 public:
     MainWindow();
     ~MainWindow();

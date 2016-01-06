@@ -58,7 +58,7 @@ sub merge {
 		}
 	}
 	print "No;Game Name;Game protocol;Supported since;Verified;By;INTERNATIONAL_ID;FTN_ID\n";
-	for (sort { lc($a->{name}) cmp lc($b->{name}) } values %game_hash) {
+	for (sort { $a->{name} cmp $b->{name} } values %game_hash) {
 		my $g = {%$_};
 		if (!defined $g->{key}) {
 			$g->{key} = (sprintf "%04X", $g->{no}) . (join"", map { sprintf "%02X", int rand 256 } 0 .. 7) . '00';

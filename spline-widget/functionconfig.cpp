@@ -62,7 +62,7 @@ float Map::getValueInternal(int x) {
     return ret * sign;
 }
 
-static QPointF ensureInBounds(QList<QPointF> points, int i) {
+static QPointF ensureInBounds(const QList<QPointF>& points, int i) {
     int siz = points.size();
     if (siz == 0 || i < 0)
         return QPointF(0, 0);
@@ -219,7 +219,11 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
 void Map::saveSettings(QSettings& settings, const QString& title) {
     QMutexLocker foo(&_mutex);
     settings.beginGroup(QString("Curves-%1").arg(title));
-    int max = cur.input.size();
+
+    if (cur.input.size() == 0)
+        cur.input.push_back(QPointF(max_x, max_y));
+
+    const int max = cur.input.size();
     settings.setValue("point-count", max);
 
     for (int i = 0; i < max; i++) {

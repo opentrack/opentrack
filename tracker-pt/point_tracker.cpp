@@ -249,6 +249,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         old_epsilon_2 = epsilon_2;
     }
 
+    QMutexLocker l(&mtx);
     // apply results
     X_CM.R = *R_current;
     X_CM.t[0] = order[0][0] * Z0/focal_length;

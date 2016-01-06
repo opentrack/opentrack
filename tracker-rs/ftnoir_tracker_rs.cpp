@@ -71,17 +71,17 @@ void RSTracker::rsImplProcessFinished(int exitCode){
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setText("RealSense Tracking Error");
         if(exitCode==-101){ //The implementation got an invalid handle from the RealSense SDK session/modules
-            msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please install SDK Runtime R4.");
+            msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please install SDK Runtime R5.");
         }
         else {
-            msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime R4 to be installed.");
+            msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime R5 to be installed.");
         }
         QPushButton* triggerSdkInstallation = msgBox.addButton("Install Runtime", QMessageBox::ActionRole);
         msgBox.addButton(QMessageBox::Ok);
         msgBox.exec();
 
         if(msgBox.clickedButton() == triggerSdkInstallation){
-            bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_6.0.21.6598.exe --finstall=core,face3d --fnone=all");
+            bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_7.0.23.8048.exe --finstall=core,face3d --fnone=all");
             if(!pStarted){
                 QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
             }

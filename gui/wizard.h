@@ -1,6 +1,6 @@
 #pragma once
 
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "opentrack/main-settings.hpp"
 #include "opentrack/mappings.hpp"
 #include "ui_trackhat-wizard.h"

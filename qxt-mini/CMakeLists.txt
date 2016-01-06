@@ -1,5 +1,5 @@
 if(UNIX OR APPLE)
-    opentrack_boilerplate(opentrack-qxt-mini NO-LINKER-SCRIPT NO-COMPAT)
+    opentrack_boilerplate(opentrack-qxt-mini NO-LINKER-SCRIPT NO-COMPAT LINKAGE)
     if(NOT APPLE)
         target_link_libraries(opentrack-qxt-mini X11)
     else()

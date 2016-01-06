@@ -13,20 +13,22 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
-PointExtractor::PointExtractor(){
-	//if (!AllocConsole()){}
-	//else SetConsoleTitle("debug");
-	//freopen("CON", "w", stdout);
-	//freopen("CON", "w", stderr);
+PointExtractor::PointExtractor()
+{
 }
-// ----------------------------------------------------------------------------
-std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
+
+const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
 {
     const int W = frame.cols;
     const int H = frame.rows;
+    
+    if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
+    {
+        frame_gray = cv::Mat(frame.rows, frame.cols, CV_8U);
+        frame_bin = cv::Mat(frame.rows, frame.cols, CV_8U);;
+    }
 
     // convert to grayscale
-    cv::Mat frame_gray;
     cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
     const double region_size_min = s.min_point_size;
@@ -51,7 +53,6 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     };
     
     // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-    cv::Mat frame_bin = cv::Mat::zeros(H, W, CV_8U);
     
     std::vector<blob> blobs;
     std::vector<std::vector<cv::Point>> contours;
@@ -59,42 +60,39 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
     const int thres = s.threshold;
     if (!s.auto_threshold)
     {
-        cv::Mat frame_bin_;
-        cv::threshold(frame_gray, frame_bin_, thres, 255, cv::THRESH_BINARY);
-        frame_bin.setTo(170, frame_bin_);
-        cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
+        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
     else
     {
-        cv::Mat hist;
         cv::calcHist(std::vector<cv::Mat> { frame_gray },
                      std::vector<int> { 0 },
                      cv::Mat(),
                      hist,
-                     std::vector<int> { 256 },
-                     std::vector<float> { 0, 256 },
+                     std::vector<int> { 256/hist_c },
+                     std::vector<float> { 0, 256/hist_c },
                      false);
-        const int sz = hist.rows*hist.cols;
+        const int sz = hist.cols * hist.rows;
         int val = 0;
         int cnt = 0;
         constexpr int min_pixels = 250;
         const auto pixels_to_include = std::max<int>(0, min_pixels * s.threshold/100.);
+        auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i >= 0; i--)
         {
-            cnt += hist.at<float>(i);
+            cnt += ptr[i];
             if (cnt >= pixels_to_include)
             {
                 val = i;
                 break;
             }
         }
+        val *= hist_c;
         val *= 240./256.;
         //qDebug() << "val" << val;
 
-        cv::Mat frame_bin_;
-        cv::threshold(frame_gray, frame_bin_, val, 255, CV_THRESH_BINARY);
-        frame_bin.setTo(170, frame_bin_);
-        cv::findContours(frame_bin_, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::threshold(frame_gray, frame_bin, val, 255, CV_THRESH_BINARY);
+        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
 
     int cnt = 0;
@@ -150,13 +148,21 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         }
 
         blobs.push_back(blob(radius, pos, confid, area));
+        
+        enum { max_blobs = 16 };
+        
+        if (blobs.size() == max_blobs)
+            break;
     }
     
-    // clear old points
-	points.clear();
-
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
+    
+    points.reserve(blobs.size());
+    
+    QMutexLocker l(&mtx);
+    
+    points.clear();
     
     for (auto& b : blobs)
     {
@@ -164,17 +170,5 @@ std::vector<cv::Vec2f> PointExtractor::extract_points(cv::Mat& frame)
         points.push_back(p);
     }
     
-    // draw output image
-    std::vector<cv::Mat> channels_;
-    cv::split(frame, channels_);
-    std::vector<cv::Mat> channels;
-    {
-        cv::Mat frame_bin__ = frame_bin * .5;
-        channels.push_back(channels_[0] + frame_bin__);
-        channels.push_back(channels_[1] - frame_bin__);
-        channels.push_back(channels_[2] - frame_bin__);
-        cv::merge(channels, frame);
-    }
-
     return points;
 }

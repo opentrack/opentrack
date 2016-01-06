@@ -1,16 +1,4 @@
-/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
-
- * Permission to use, copy, modify, and/or distribute this
- * software for any purpose with or without fee is hereby granted,
- * provided that the above copyright notice and this permission
- * notice appear in all copies.
- */
-
-#pragma once
-
-#include <QList>
-#include <QString>
-#include <QDebug>
+#include "camera-names.hpp"
 
 #if defined(OPENTRACK_API) && defined(_WIN32)
 #   define NO_DSHOW_STRSAFE
@@ -29,8 +17,18 @@
 #include <cerrno>
 #endif
 
-template<typename = void>
-QList<QString> get_camera_names() {
+#include <QDebug>
+
+OPENTRACK_COMPAT_EXPORT int camera_name_to_index(const QString &name)
+{
+    auto list = get_camera_names();
+    int ret = list.indexOf(name);
+    if (ret < 0)
+        ret = 0;
+    return ret;
+}
+
+OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names() {
     QList<QString> ret;
 #if defined(_WIN32)
     // Create the System Device Enumerator.
@@ -111,15 +109,5 @@ QList<QString> get_camera_names() {
         }
     }
 #endif
-    return ret;
-}
-
-template<typename = void>
-int camera_name_to_index(const QString &name)
-{
-    auto list = get_camera_names();
-    int ret = list.indexOf(name);
-    if (ret < 0)
-        ret = 0;
     return ret;
 }

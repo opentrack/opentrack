@@ -12,30 +12,20 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QList>
-#include <QMutex>
 #include <QFrame>
 #include <QStringList>
 #include <cmath>
 #include "opentrack/plugin-api.hpp"
-#ifndef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x800
-#endif
-#include <windows.h>
-#include <commctrl.h>
-#include <basetsd.h>
-#include <dinput.h>
-#include <oleauto.h>
-#include <shellapi.h>
 
-#include "opentrack/options.hpp"
+#include "opentrack/win32-joystick.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {
-    value<QString> joyid, guid;
+    value<QString> guid;
     value<int> joy_1, joy_2, joy_3, joy_4, joy_5, joy_6;
     settings() :
         opts("tracker-joystick"),
-        joyid(b, "joy-id", ""),
         guid(b, "joy-guid", ""),
         joy_1(b, "axis-map-1", 1),
         joy_2(b, "axis-map-2", 2),
@@ -46,35 +36,17 @@ struct settings : opts {
     {}
 };
 
-template<typename = void>
-QString guid_to_string(const GUID guid)
-{
-    char buf[40] = {0};
-    wchar_t szGuidW[40] = {0};
-
-    StringFromGUID2(guid, szGuidW, 40);
-    WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, NULL, NULL);
-
-    return QString(buf);
-}
-
 class FTNoIR_Tracker : public ITracker
 {
 public:
     FTNoIR_Tracker();
     ~FTNoIR_Tracker();
-    void start_tracker(QFrame *frame);
+    void start_tracker(QFrame *);
     void data(double *data);
-    void reload();
-    LPDIRECTINPUT8          g_pDI;
-    LPDIRECTINPUTDEVICE8    g_pJoystick;
-    QMutex mtx;
-    QFrame* frame;
-    DIDEVICEINSTANCE def;
-    int iter; // XXX bad style
     settings s;
-    QString guid_to_check;
-    static constexpr int AXIS_MAX = 65535;
+    QString guid;
+    static constexpr int AXIS_MAX = win32_joy_ctx::joy_axis_size - 1;
+    win32_joy_ctx joy_ctx;
 };
 
 class TrackerControls: public ITrackerDialog

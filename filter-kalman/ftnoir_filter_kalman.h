@@ -16,7 +16,7 @@
 #include <QString>
 #include <QElapsedTimer>
 #include <QWidget>
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

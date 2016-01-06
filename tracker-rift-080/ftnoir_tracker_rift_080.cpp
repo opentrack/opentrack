@@ -21,11 +21,8 @@ Rift_Tracker::~Rift_Tracker()
 
 void Rift_Tracker::start_tracker(QFrame*)
 {
-    {
-        ovrInitParams args = {0};
-        if (!OVR_SUCCESS(ovr_Initialize(&args)))
-            goto error;
-    }
+    if (!OVR_SUCCESS(ovr_Initialize(nullptr)))
+        goto error;
     {
         ovrGraphicsLuid luid = {0};
         ovrResult res = ovr_Create(&hmd, &luid);

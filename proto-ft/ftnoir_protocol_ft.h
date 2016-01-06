@@ -19,7 +19,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include "opentrack-compat/shm.h"
-#include "opentrack/options.hpp"
+#include "opentrack-compat/options.hpp"
 #include "freetrackclient/fttypes.h"
 using namespace options;
 
