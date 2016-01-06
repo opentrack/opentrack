@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>646</width>
-    <height>435</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -869,7 +869,7 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="spacing">
-              <number>2</number>
+              <number>8</number>
              </property>
              <property name="leftMargin">
               <number>3</number>
