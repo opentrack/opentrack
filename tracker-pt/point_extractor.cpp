@@ -39,16 +39,9 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         double radius;
         cv::Vec2d pos;
         double confid;
-        bool taken;
-        double area;
-        blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
+        blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid)
         {
             //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
-        }
-        bool inside(const blob& other)
-        {
-            cv::Vec2d tmp = pos - other.pos;
-            return sqrt(tmp.dot(tmp)) < radius;
         }
     };
     
@@ -103,9 +96,6 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
             break;
 
         const auto m = cv::moments(cv::Mat(c));
-        const double area = m.m00;
-        if (area == 0.)
-            continue;
         const cv::Vec2d pos(m.m10 / m.m00, m.m01 / m.m00);
 
         double radius;
@@ -147,7 +137,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
             cv::putText(frame, buf, cv::Point(pos[0]+30, pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
         }
 
-        blobs.push_back(blob(radius, pos, confid, area));
+        blobs.push_back(blob(radius, pos, confid));
         
         enum { max_blobs = 16 };
         
