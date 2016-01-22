@@ -56,6 +56,7 @@ private:
     void reset_command(Command command);
     
     bool get_focal_length(float &ret);
+    Affine get_model_pos();
     
     volatile int commands;
 

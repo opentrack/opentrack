@@ -86,6 +86,26 @@ bool Tracker_PT::get_focal_length(float& ret)
     return false;
 }
 
+Affine Tracker_PT::get_model_pos()
+{
+    Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+    if (X_MH.t[0] == 0 && X_MH.t[1] == 0 && X_MH.t[2] == 0)
+    {
+        int m = s.model_used;
+        switch (m)
+        {
+        default:
+        // cap
+        case 0: X_MH.t[0] = 0; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+        // clip
+        case 1: X_MH.t[0] = 135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+        // left clip
+        case 2: X_MH.t[0] = -135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
+        }
+    }
+    return X_MH;
+}
+
 void Tracker_PT::run()
 {
 #ifdef PT_PERF_LOG
@@ -129,25 +149,6 @@ void Tracker_PT::run()
             
             Affine X_CM = pose();
 
-            {
-                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
-                if (X_MH.t[0] == 0 && X_MH.t[1] == 0 && X_MH.t[2] == 0)
-                {
-                    int m = s.model_used;
-                    switch (m)
-                    {
-                    default:
-                    // cap
-                    case 0: X_MH.t[0] = 0; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    // clip
-                    case 1: X_MH.t[0] = 135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    // left clip
-                    case 2: X_MH.t[0] = -135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    }
-                }
-            }
-
-            
             std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
             {
                 auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
@@ -169,7 +170,7 @@ void Tracker_PT::run()
             }
             
             {
-                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                Affine X_MH = get_model_pos();
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
@@ -241,7 +242,7 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM = pose();
 
-        Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+        Affine X_MH = get_model_pos();
         Affine X_GH = X_CM * X_MH;
 
         cv::Matx33f R = X_GH.R;
