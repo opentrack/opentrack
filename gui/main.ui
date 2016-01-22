@@ -609,19 +609,19 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="spacing">
-              <number>8</number>
+              <number>0</number>
              </property>
              <property name="leftMargin">
-              <number>3</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="rightMargin">
-              <number>3</number>
+              <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>8</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QGroupBox" name="groupStartStop">
