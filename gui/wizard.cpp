@@ -63,9 +63,10 @@ void Wizard::set_data()
     state.pose.save_mappings();
 
     settings_pt pt;
-    pt.threshold = 31;
-    pt.min_point_size = 0;
-    pt.max_point_size = 50;
+    pt.threshold = 75;
+    pt.auto_threshold = true;
+    pt.min_point_size = 1.4;
+    pt.max_point_size = 10;
     pt.fov = 1;
     pt.camera_mode = 0;
     pt.model_used = m;
