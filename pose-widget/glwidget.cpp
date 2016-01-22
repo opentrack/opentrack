@@ -125,8 +125,7 @@ void GLWidget::project_quad_texture() {
     QImage& tex = dir < 0 ? back : front;
 
     QImage texture(QSize(sx, sy), QImage::Format_RGBA8888);
-    QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
-    texture.fill(bgColor);
+    texture.fill(QColor(0xcc, 0xcc, 0xcc, 0xff));
 
     const vec2 projected[2][3] = { { pt[0], pt[1], pt[2] }, { pt[3], pt[1], pt[2] } };
     const vec2 origs[2][3] = {
