@@ -359,11 +359,10 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     if (mapping_widget)
         mapping_widget->update();
 
-    double mapped_[6], raw_[6];
+    double raw_[6];
 
     for (int i = 0; i < 6; i++)
     {
-        mapped_[i] = (int) mapped[i];
         raw_[i] = (int) raw[i];
     }
 
@@ -373,13 +372,6 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     ui.raw_yaw->display(raw_[Yaw]);
     ui.raw_pitch->display(raw_[Pitch]);
     ui.raw_roll->display(raw_[Roll]);
-
-    ui.pose_x->display(mapped_[TX]);
-    ui.pose_y->display(mapped_[TY]);
-    ui.pose_z->display(mapped_[TZ]);
-    ui.pose_yaw->display(mapped_[Yaw]);
-    ui.pose_pitch->display(mapped_[Pitch]);
-    ui.pose_roll->display(mapped_[Roll]);
 
     QString game_title;
     if (libs.pProtocol)
