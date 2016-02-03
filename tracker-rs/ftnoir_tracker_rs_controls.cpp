@@ -7,9 +7,6 @@
 
 #include "ftnoir_tracker_rs_controls.h"
 
-#include <QProcess>
-#include <QMessageBox>
-
 RSTrackerControls::RSTrackerControls()
 {
     ui.setupUi(this);
@@ -20,13 +17,9 @@ RSTrackerControls::RSTrackerControls()
 
 void RSTrackerControls::doInstallRSRuntime()
 {
-    bool processStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_7.0.23.8048.exe --finstall=core,face3d --fnone=all");
-    if(processStarted){
+    bool pStarted = RSTracker::startSdkInstallationProcess();
+    if(pStarted == true)
         this->close();
-    }
-    else{
-        QMessageBox::warning(0, "Intel® RealSenseTM Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
-    }
 }
 
 void RSTrackerControls::doOK()

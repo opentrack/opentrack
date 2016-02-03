@@ -5,16 +5,23 @@
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#pragma once
-#ifdef EXPORT_RS_IMPL
-#define RSTRACKERIMPL_VISIBILITY   __declspec( dllexport ) 
-#else
-#define RSTRACKERIMPL_VISIBILITY  
-#endif
+#include "imagewidget.h"
+#include <QPainter>
 
-extern "C" {                
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_start();
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_update_pose(double *pose);
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_get_preview(void* data, int width, int height);
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_end();
+ImageWidget::ImageWidget(QWidget *parent) :
+    QWidget(parent), mImage(640, 480, QImage::Format_Grayscale8)
+{
+    mImage.fill(Qt::gray);
+}
+
+void ImageWidget::setImage(const QImage image)
+{
+    mImage = image;
+    repaint();
+}
+
+void ImageWidget::paintEvent(QPaintEvent*)
+{
+    QPainter painter(this);
+    painter.drawImage(rect(), mImage, mImage.rect());
 }

@@ -7,97 +7,112 @@
 
 #include "ftnoir_tracker_rs.h"
 #include "ftnoir_tracker_rs_controls.h"
-
+#include "imagewidget.h"
 #include "opentrack/plugin-api.hpp"
 #include <QMessageBox>
+#include <QProcess>
+#include <QStackedLayout>
 
-RSTracker::RSTracker() : mPose{ 0,0,0, 0,0,0 } {
-    mThread.setObjectName("RSTrackerWorkerThread");
+RSTracker::RSTracker() {
+    connect(&mTrackerWorkerThread, &RSTrackerWorkerThread::trackingHasFinished,
+            this, &RSTracker::handleTrackingEnded);
 
-    mRealSenseImplProcess.moveToThread(&mThread);
-    mSocket.moveToThread(&mThread);
-
-    connect(&mRealSenseImplProcess, SIGNAL(finished(int)),
-            this, SLOT(rsImplProcessFinished(int)), Qt::QueuedConnection);
-
-    qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
-    connect(&mRealSenseImplProcess, SIGNAL(error(QProcess::ProcessError)),
-            this, SLOT(rsImplProcessError(QProcess::ProcessError)), Qt::QueuedConnection);
-
-    connect(&mSocket, SIGNAL(readyRead()),
-            this, SLOT(readPendingUdpPoseData()), Qt::DirectConnection);
-
-    connect(&mThread, &QThread::started,
-            &mThread, [this]{
-        mSocket.bind(QHostAddress::LocalHost, 4242, QUdpSocket::DontShareAddress);
-        mRealSenseImplProcess.start("opentrack-tracker-rs-impl.exe", QProcess::NotOpen);
-    }, Qt::DirectConnection);
-
-    connect(&mThread, &QThread::finished,
-            &mThread, [this]{
-        mRealSenseImplProcess.kill();
-        mRealSenseImplProcess.waitForFinished();
-    }, Qt::DirectConnection);
+    connect(&mPreviewUpdateTimer, &QTimer::timeout,
+            this, &RSTracker::updatePreview);
 }
 
-void RSTracker::start_tracker(QFrame*)
+void RSTracker::configurePreviewFrame()
 {
-    mThread.start();
+    if(mImageWidget!=nullptr || mPreviewFrame==nullptr)
+        return;
+
+    mImageWidget = new ImageWidget(mPreviewFrame);
+    mImageWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+    if(mPreviewFrame->layout() != nullptr){
+        delete mPreviewFrame->layout();
+    }
+
+    QLayout* layout = new QStackedLayout();
+    mPreviewFrame->setLayout(layout);
+
+    layout->addWidget(mImageWidget);
 }
 
-void RSTracker::readPendingUdpPoseData(){
-    double pose[6];
+void RSTracker::start_tracker(QFrame* previewFrame)
+{
+    mPreviewFrame = previewFrame;
 
-    while(mSocket.hasPendingDatagrams()) {
-        mSocket.readDatagram((char*)pose, sizeof(pose));
-        QMutexLocker foo(&mMutex);
-        memcpy(mPose, pose, sizeof(pose));
-    }
+    mTrackerWorkerThread.start(QThread::HighPriority);
+
+    configurePreviewFrame();
+
+    startPreview();
 }
 
-void RSTracker::rsImplProcessError(QProcess::ProcessError error){
-    if(error == QProcess::FailedToStart){
-        QMessageBox::warning(NULL, "RealSense Tracking Error", "Couldn't start the RealSense tracking module.\nMaybe opentrack-tracker-rs-impl.exe is missing.", QMessageBox::Ok);
-    }
-    else if(error == QProcess::Crashed){
-        QMessageBox::warning(NULL, "RealSense Tracking Error", "The RealSense tracking module has crashed.", QMessageBox::Ok);
-    }
+void RSTracker::startPreview(){
+    mPreviewUpdateTimer.start(kPreviewUpdateInterval);
 }
 
+void RSTracker::updatePreview(){
+    if(mImageWidget->isEnabled())
+        mImageWidget->setImage(mTrackerWorkerThread.getPreview());
+}
 
-void RSTracker::rsImplProcessFinished(int exitCode){
-    if(exitCode!=0){
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText("RealSense Tracking Error");
-        if(exitCode==-101){ //The implementation got an invalid handle from the RealSense SDK session/modules
-            msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please install SDK Runtime R5.");
-        }
-        else {
-            msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime R5 to be installed.");
-        }
-        QPushButton* triggerSdkInstallation = msgBox.addButton("Install Runtime", QMessageBox::ActionRole);
-        msgBox.addButton(QMessageBox::Ok);
-        msgBox.exec();
+void RSTracker::stopPreview(){
+    mPreviewUpdateTimer.stop();
+}
 
-        if(msgBox.clickedButton() == triggerSdkInstallation){
-            bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_7.0.23.8048.exe --finstall=core,face3d --fnone=all");
-            if(!pStarted){
-                QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
-            }
-        }
+void RSTracker::handleTrackingEnded(int exitCode){
+    stopPreview();
+
+    if(exitCode!=0)
+        showRealSenseErrorMessageBox(exitCode);
+}
+
+bool RSTracker::startSdkInstallationProcess()
+{
+    bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_7.0.23.8048.exe --finstall=core,face3d --fnone=all");
+    if(!pStarted){
+        QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
     }
+    return pStarted;
+}
+
+void RSTracker::showRealSenseErrorMessageBox(int exitCode)
+{
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText("RealSense Tracking Error");
+    if(exitCode==-101){ //The implementation got an invalid handle from the RealSense SDK session/modules
+        msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please install SDK Runtime R5.");
+    }
+    else {
+        msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime R5 to be installed.");
+    }
+
+    QPushButton* triggerSdkInstallation = msgBox.addButton("Install Runtime", QMessageBox::ActionRole);
+    msgBox.addButton(QMessageBox::Ok);
+    msgBox.exec();
+
+    if(msgBox.clickedButton() == triggerSdkInstallation)
+        startSdkInstallationProcess();
 }
 
 void RSTracker::data(double *data)
 {
-    QMutexLocker foo(&mMutex);
-    memcpy(data, mPose, sizeof(mPose));
+    mTrackerWorkerThread.getPose(data);
 }
 
 RSTracker::~RSTracker() {
-    mThread.quit();
-    mThread.wait();
+    stopPreview();
+
+    if (mPreviewFrame!=nullptr && mPreviewFrame->layout()!=nullptr)
+        delete mPreviewFrame->layout();
+
+    mTrackerWorkerThread.requestInterruption();
+    mTrackerWorkerThread.quit();
+    mTrackerWorkerThread.wait();
 }
 
 QString RSTrackerMetaData::name() {
