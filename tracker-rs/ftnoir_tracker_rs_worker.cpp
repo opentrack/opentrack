@@ -29,13 +29,14 @@ void RSTrackerWorkerThread::run(){
 
     while(!isInterruptionRequested()){
         retValue = rs_tracker_impl_update_pose(pose);
-        if(retValue!=0 && retValue!=-303){ // -303 is only a timeout.
+        if(retValue == 0){ // success
+            QMutexLocker lock(&mMutex);
+            memcpy(mPose, pose, sizeof(pose));
+        }
+        else if(retValue != -303){ // pose update failed. -303 is OK as it's only a timeout.
             emit trackingHasFinished(retValue);
             break;
         }
-
-        QMutexLocker lock(&mMutex);
-        memcpy(mPose, pose, sizeof(pose));
     }
 
     rs_tracker_impl_end();
