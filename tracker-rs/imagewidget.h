@@ -9,6 +9,7 @@
 
 #include <QWidget>
 #include <QImage>
+#include <QMutex>
 
 class ImageWidget : public QWidget {
   Q_OBJECT
@@ -18,7 +19,7 @@ public:
 
 private:
   QImage mImage;
-  uchar* mRawData;
+  QMutex mMutex;
 
 protected:
   void paintEvent(QPaintEvent* event);

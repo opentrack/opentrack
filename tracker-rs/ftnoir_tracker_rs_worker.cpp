@@ -11,7 +11,7 @@
 
 RSTrackerWorkerThread::RSTrackerWorkerThread(): mPose{0,0,0,0,0,0}{
     setObjectName("RSTrackerWorkerThread");
-    mPreviewRawData = (uchar*)malloc(kPreviewStreamWidth*kPreviewStreamHeight);
+    mPreviewRawData = (uchar*)malloc(1*kPreviewStreamWidth*kPreviewStreamHeight);
     memset(mPreviewRawData, 125, kPreviewStreamWidth*kPreviewStreamHeight); //start with a gray image.
 }
 
@@ -33,7 +33,7 @@ void RSTrackerWorkerThread::run(){
             QMutexLocker lock(&mMutex);
             memcpy(mPose, pose, sizeof(pose));
         }
-        else if(retValue != -303){ // pose update failed. -303 is OK as it's only a timeout.
+        else if(retValue != -303){ // pose update failed and not because of a timeout (-303)
             emit trackingHasFinished(retValue);
             break;
         }

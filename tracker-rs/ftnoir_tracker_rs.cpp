@@ -26,6 +26,8 @@ void RSTracker::configurePreviewFrame()
     if(mImageWidget!=nullptr || mPreviewFrame==nullptr)
         return;
 
+    mPreviewFrame->show();
+
     mImageWidget = new ImageWidget(mPreviewFrame);
     mImageWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
@@ -35,19 +37,20 @@ void RSTracker::configurePreviewFrame()
 
     QLayout* layout = new QStackedLayout();
     mPreviewFrame->setLayout(layout);
-
     layout->addWidget(mImageWidget);
+
+    mImageWidget->show();
 }
 
 void RSTracker::start_tracker(QFrame* previewFrame)
 {
     mPreviewFrame = previewFrame;
 
-    mTrackerWorkerThread.start(QThread::HighPriority);
-
     configurePreviewFrame();
 
     startPreview();
+
+    mTrackerWorkerThread.start(QThread::HighPriority);
 }
 
 void RSTracker::startPreview(){
@@ -55,7 +58,7 @@ void RSTracker::startPreview(){
 }
 
 void RSTracker::updatePreview(){
-    if(mImageWidget->isEnabled())
+    if(mImageWidget!=nullptr && mImageWidget->isEnabled())
         mImageWidget->setImage(mTrackerWorkerThread.getPreview());
 }
 
@@ -106,6 +109,9 @@ void RSTracker::data(double *data)
 
 RSTracker::~RSTracker() {
     stopPreview();
+
+    if(mImageWidget!=nullptr)
+        delete mImageWidget;
 
     if (mPreviewFrame!=nullptr && mPreviewFrame->layout()!=nullptr)
         delete mPreviewFrame->layout();

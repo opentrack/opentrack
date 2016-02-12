@@ -16,12 +16,15 @@ ImageWidget::ImageWidget(QWidget *parent) :
 
 void ImageWidget::setImage(const QImage image)
 {
-    mImage = image;
+    {
+        QMutexLocker lock(&mMutex);
+        mImage = image;
+    }
     repaint();
 }
 
 void ImageWidget::paintEvent(QPaintEvent*)
 {
-    QPainter painter(this);
-    painter.drawImage(rect(), mImage, mImage.rect());
+    QMutexLocker lock(&mMutex);
+    QPainter(this).drawImage(rect(), mImage, mImage.rect());
 }
