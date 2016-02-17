@@ -22,7 +22,6 @@ public:
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
     const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
-    const std::vector<cv::Vec2f>& get_points() { QMutexLocker l(&mtx); return points; }
     int get_n_points() const { QMutexLocker l(&mtx); return points.size(); }
     PointExtractor();
     
