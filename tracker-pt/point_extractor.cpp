@@ -148,10 +148,8 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
     
-    points.reserve(blobs.size());
-    
     QMutexLocker l(&mtx);
-    
+    points.reserve(blobs.size());
     points.clear();
     
     for (auto& b : blobs)
