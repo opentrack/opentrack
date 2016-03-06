@@ -202,7 +202,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         else {
             rho = sqrt(sqrt( (JJ0-II0)*(JJ0-II0) + 4*IJ0*IJ0 ));
             theta = atan( -2*IJ0 / (JJ0-II0) );
-            if (JJ0 - II0 < 0) theta += PI;
+            // avoid branch misprediction
+            theta += (JJ0 - II0 < 0) * PI;
             theta /= 2;
         }
 
