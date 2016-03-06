@@ -7,15 +7,19 @@ SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 1)
 
 # specify the cross compiler
-set(c /c/mingw-w64/i686-5.2.0-posix-sjlj-rt_v4-rev0/mingw32/bin/i686-w64-mingw32-)
+set(p c:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin)
+set(c ${p}/i686-w64-mingw32-)
+set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
 
-SET(CMAKE_C_COMPILER    ${c}gcc)
-SET(CMAKE_CXX_COMPILER  ${c}g++)
-set(CMAKE_RC_COMPILER   ${c}windres)
-set(CMAKE_LINKER        ${c}ld)
-set(CMAKE_AR            ${c}gcc-ar      CACHE STRING "" FORCE)
-set(CMAKE_NM            ${c}gcc-nm      CACHE STRING "" FORCE)
-set(CMAKE_RANLIB        ${c}gcc-ranlib  CACHE STRING "" FORCE)
+set(e .exe)
+
+SET(CMAKE_C_COMPILER    ${c}gcc${e})
+SET(CMAKE_CXX_COMPILER  ${c}g++${e})
+set(CMAKE_RC_COMPILER   ${c}windres${e})
+set(CMAKE_LINKER        ${c}ld${e})
+set(CMAKE_AR            ${c}gcc-ar${e}      CACHE STRING "" FORCE)
+set(CMAKE_NM            ${c}gcc-nm${e}      CACHE STRING "" FORCE)
+set(CMAKE_RANLIB        ${c}gcc-ranlib${e}  CACHE STRING "" FORCE)
 
 SET(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
 
