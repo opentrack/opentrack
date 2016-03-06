@@ -20,7 +20,7 @@ add_custom_target(tarball-real)
 add_custom_target(tarball-real2)
 add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
 
-add_custom_command(TARGET tarball-real2 COMMAND /usr/bin/env sh
+add_custom_command(TARGET tarball-real2 COMMAND sh
     "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
     "${filename}" "${CMAKE_BINARY_DIR}")
 add_custom_target(tarball DEPENDS tarball-real)
