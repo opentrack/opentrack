@@ -15,6 +15,8 @@
 
 PointExtractor::PointExtractor()
 {
+    blobs.reserve(max_blobs);
+    points.reserve(max_blobs);
 }
 
 const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
@@ -34,23 +36,10 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
     
-    struct blob
-    {
-        double radius;
-        cv::Vec2d pos;
-        double confid;
-        blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid)
-        {
-            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
-        }
-    };
-    
-    // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-    
-    std::vector<blob> blobs;
-    std::vector<std::vector<cv::Point>> contours;
-
     const int thres = s.threshold;
+
+    contours.clear();
+
     if (!s.auto_threshold)
     {
         cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
@@ -88,13 +77,10 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
 
-    int cnt = 0;
+    blobs.clear();
 
     for (auto& c : contours)
     {
-        if (cnt++ > 30)
-            break;
-
         const auto m = cv::moments(cv::Mat(c));
         const cv::Vec2d pos(m.m10 / m.m00, m.m01 / m.m00);
 
@@ -139,8 +125,6 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
 
         blobs.push_back(blob(radius, pos, confid));
         
-        enum { max_blobs = 16 };
-        
         if (blobs.size() == max_blobs)
             break;
     }
@@ -149,7 +133,6 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
     
     QMutexLocker l(&mtx);
-    points.reserve(blobs.size());
     points.clear();
     
     for (auto& b : blobs)
