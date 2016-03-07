@@ -194,7 +194,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         float IJ0 = I0.dot(J0);
         float JJ0 = J0.dot(J0);
         float rho, theta;
-        if (std::abs(JJ0 - II0) < 1e-6f) {
+        if (JJ0 == II0) {
             rho = std::sqrt(std::abs(2*IJ0));
             theta = -PI/4;
             if (IJ0<0) theta *= -1;
