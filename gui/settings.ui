@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>525</height>
+    <width>441</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,33 +34,6 @@
        <string>Shortcuts</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="center_at_startup">
-         <property name="text">
-          <string>Center at startup</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="trayp">
-         <property name="text">
-          <string>Minimize to tray</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
@@ -240,43 +213,30 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_9111">
-         <property name="title">
-          <string>Centering method</string>
+        <widget class="QCheckBox" name="center_at_startup">
+         <property name="text">
+          <string>Center at startup</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout111">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_26">
-            <property name="text">
-             <string>Method</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="center_method">
-            <item>
-             <property name="text">
-              <string>Relative (inertial device)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Absolute (camera device)</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_25">
-            <property name="text">
-             <string>Try changing this if centering doesn't perform correctly for your input device.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="trayp">
+         <property name="text">
+          <string>Minimize to tray</string>
+         </property>
         </widget>
        </item>
       </layout>

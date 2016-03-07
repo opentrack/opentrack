@@ -111,8 +111,6 @@ OptionsDialog::OptionsDialog(main_settings& main,
     tie_setting(main.camera_pitch, ui.camera_pitch);
     tie_setting(main.camera_roll, ui.camera_roll);
 
-    tie_setting(main.center_method, ui.center_method);
-
     connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(main.key_center, ui.center_text); });
     connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero, ui.zero_text); });
     connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle, ui.toggle_text); });

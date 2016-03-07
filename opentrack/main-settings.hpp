@@ -48,7 +48,6 @@ struct main_settings : opts {
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup, wizard_done;
-    value<int> center_method;
     key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking;
     key_opts key_center, key_toggle, key_zero;
     main_settings() :
@@ -68,7 +67,6 @@ struct main_settings : opts {
         camera_roll(b, "camera-roll", 0),
         center_at_startup(b, "center-at-startup", true),
         wizard_done(b, "wizard-done", false),
-        center_method(b, "centering-method", true),
         key_start_tracking(b, "start-tracking"),
         key_stop_tracking(b, "stop-tracking"),
         key_toggle_tracking(b, "toggle-tracking"),

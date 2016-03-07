@@ -169,15 +169,7 @@ void Tracker::logic()
         double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         t_compensate(cam, tmp, tmp, false);
         rmat m_;
-        switch (1)
-        {
-        case 0:
-        default:
-            m_ = r * r_b.t();
-            break;
-        case 1:
-            m_ = r_b.t() * r;
-        }
+        m_ = r_b.t() * r;
 
         const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
         for (int i = 0; i < 3; i++)
