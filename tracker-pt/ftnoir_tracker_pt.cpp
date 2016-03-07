@@ -150,7 +150,7 @@ void Tracker_PT::run()
             }
             
             {
-                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                Affine X_MH(cv::Matx33f::eye(), get_model_offset()); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 cv::Vec3f p = X_GH.t; // head (center?) position in global space
                 cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
@@ -161,6 +161,26 @@ void Tracker_PT::run()
         }
     }
     qDebug()<<"Tracker:: Thread stopping";
+}
+
+cv::Vec3f Tracker_PT::get_model_offset()
+{
+    cv::Vec3f offset(s.t_MH_x, s.t_MH_y, s.t_MH_z);
+    if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
+    {
+        int m = s.model_used;
+        switch (m)
+        {
+        default:
+        // cap
+        case 0: offset[0] = 0; offset[1] = 0; offset[2] = 0; break;
+        // clip
+        case 1: offset[0] = 135; offset[1] = 0; offset[2] = 0; break;
+        // left clip
+        case 2: offset[0] = -135; offset[1] = 0; offset[2] = 0; break;
+        }
+    }
+    return offset;
 }
 
 void Tracker_PT::apply_settings()
@@ -222,7 +242,7 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM = pose();
 
-        Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+        Affine X_MH(cv::Matx33f::eye(), get_model_offset());
         Affine X_GH = X_CM * X_MH;
 
         cv::Matx33f R = X_GH.R;
