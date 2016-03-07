@@ -6,8 +6,6 @@ bin="$3"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
-cmake --build "$bin" --target install -- -j4 || exit 1
-
 if : &&
     cd $(dirname -- "${prefix}") &&
     zip -9r "${filename}" $(basename "${prefix}")

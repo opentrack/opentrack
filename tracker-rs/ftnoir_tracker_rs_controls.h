@@ -16,7 +16,7 @@ public:
     void unregister_tracker() {}
 private:
     Ui::UIRSControls ui;
-    private slots:
+private slots:
     void doOK();
     void doCancel();
     void doInstallRSRuntime();

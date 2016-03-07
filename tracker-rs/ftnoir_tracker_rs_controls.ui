@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>378</width>
-    <height>193</height>
+    <width>484</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,15 +36,15 @@ The application will activate your camera for face tracking by the
 Intel® RealSense™ SDK. By design, the application has no direct access
 to any camera images.
 
-In order to use this tracker, you need a PC equipped with
-an Intel® RealSense™ R200 camera and the RealSense™ SDK R5 runtime.</string>
+In order to use this tracker, you need a PC equipped with an Intel® RealSense™ 
+F200 or SR300 camera and the RealSense™ SDK 2016 R1 runtime.</string>
      </property>
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
     <widget class="QPushButton" name="triggerSDKInstallButton">
      <property name="text">
-      <string>Install SDK Runtime R5</string>
+      <string>Install Runtime</string>
      </property>
     </widget>
    </item>

@@ -41,7 +41,7 @@ public:
     void data(double* data) override;
 
     Affine pose() { return point_tracker.pose(); }
-    int  get_n_points() { return point_extractor.get_points().size(); }
+    int  get_n_points() { return point_extractor.get_n_points(); }
     bool get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); return camera.get_info(*info); }
 public slots:
     void apply_settings();

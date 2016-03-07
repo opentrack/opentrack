@@ -3,4 +3,5 @@ IF DEFINED %VS120COMNTOOLS%] (
 	) ELSE (
 	cd "%VS140COMNTOOLS%\..\..\VC"
 	)
-vcvarsall x64 && cd %~dp0 && CL /nologo /Ox /DUNICODE /D_UNICODE /MT /I"%RSSDK_DIR%\opensource\include" ftnoir_tracker_rs_impl.cpp udp_sender.cpp "%RSSDK_DIR%\opensource\src\libpxc\libpxc.cpp" /link ADVAPI32.LIB Ws2_32.lib /SUBSYSTEM:CONSOLE /OUT:bin\opentrack-tracker-rs-impl.exe 
+
+vcvarsall x86 && cd %~dp0 && CL /nologo /Ox /DUNICODE /D_UNICODE /DEXPORT_RS_IMPL /MT /I"%RSSDK_DIR%\opensource\include" ftnoir_tracker_rs_impl.cpp "%RSSDK_DIR%\opensource\src\libpxc\libpxc.cpp" /link ADVAPI32.LIB /DLL /OUT:bin\opentrack-tracker-rs-impl.dll

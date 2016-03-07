@@ -7,34 +7,42 @@
  
 #pragma once
 
-#include "ui_ftnoir_tracker_rs_controls.h"
 #include "opentrack/plugin-api.hpp"
-#include <QProcess>
-#include <QMutex>
-#include <QThread>
-#include <QUdpSocket>
+#include "ui_ftnoir_tracker_rs_controls.h"
+#include  "ftnoir_tracker_rs_worker.h"
+#include <QTimer>
 
-class RSTracker : protected QObject, public ITracker
+class ImageWidget;
+
+class RSTracker : public QObject, public ITracker
 {
     Q_OBJECT
 
 public:
     RSTracker();
     ~RSTracker();
-	void start_tracker(QFrame *) override;
-	void data(double *data) override;
+    void start_tracker(QFrame *) override;
+    void data(double *data) override;
+
+public slots:
+    static bool startSdkInstallationProcess();
+
+protected:
+    void configurePreviewFrame();
 
 private:
-    QMutex mMutex;
-    QThread mThread;
-    QProcess mRealSenseImplProcess;
-    QUdpSocket mSocket;
-    double mPose[6];
+    RSTrackerWorkerThread mTrackerWorkerThread;
+    QTimer mPreviewUpdateTimer;
+    QWidget *mPreviewFrame;
+    ImageWidget *mImageWidget = nullptr;
+    const int kPreviewUpdateInterval = 30;
 
 private slots:
-    void rsImplProcessError(QProcess::ProcessError);
-    void rsImplProcessFinished(int);
-    void readPendingUdpPoseData();
+    void showRealSenseErrorMessageBox(int exitCode);
+    void startPreview();
+    void updatePreview();
+    void stopPreview();
+    void handleTrackingEnded(int exitCode);
 
 };
 

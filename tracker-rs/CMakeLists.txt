@@ -1,5 +1,6 @@
 if(WIN32)
     opentrack_boilerplate(opentrack-tracker-rs)
-    install(FILES "${CMAKE_SOURCE_DIR}/tracker-rs/rs_impl/bin/opentrack-tracker-rs-impl.exe" DESTINATION . ${opentrack-perms})
-    install(FILES "${CMAKE_SOURCE_DIR}/tracker-rs/redist/intel_rs_sdk_runtime_websetup_7.0.23.8048.exe" DESTINATION ./contrib/ ${opentrack-perms})
+    target_link_libraries(opentrack-tracker-rs "${CMAKE_SOURCE_DIR}/tracker-rs/rs_impl/bin/opentrack-tracker-rs-impl.lib")
+    install(FILES "${CMAKE_SOURCE_DIR}/tracker-rs/rs_impl/bin/opentrack-tracker-rs-impl.dll" DESTINATION . ${opentrack-perms})
+    install(FILES "${CMAKE_SOURCE_DIR}/tracker-rs/redist/intel_rs_sdk_runtime_websetup_8.0.24.6528.exe" DESTINATION ./contrib/ ${opentrack-perms})
 endif()

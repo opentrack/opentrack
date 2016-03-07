@@ -12,8 +12,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
-
 #include <QMutex>
+
+#include <vector>
 
 class PointExtractor
 {
@@ -22,7 +23,7 @@ public:
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
     const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
-    const std::vector<cv::Vec2f>& get_points() { QMutexLocker l(&mtx); return points; }
+    int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
     PointExtractor();
     
     settings_pt s;
@@ -33,6 +34,22 @@ private:
     cv::Mat frame_gray;
     cv::Mat frame_bin;
     cv::Mat hist;
+
+    enum { max_blobs = 16 };
+
+    struct blob
+    {
+        double radius;
+        cv::Vec2d pos;
+        double confid;
+        blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid)
+        {
+            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
+        }
+    };
+
+    std::vector<blob> blobs;
+    std::vector<std::vector<cv::Point>> contours;
 };
 
 #endif //POINTEXTRACTOR_H

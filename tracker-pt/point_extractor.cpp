@@ -15,6 +15,8 @@
 
 PointExtractor::PointExtractor()
 {
+    blobs.reserve(max_blobs);
+    points.reserve(max_blobs);
 }
 
 const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
@@ -34,30 +36,10 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
     
-    struct blob
-    {
-        double radius;
-        cv::Vec2d pos;
-        double confid;
-        bool taken;
-        double area;
-        blob(double radius, const cv::Vec2d& pos, double confid, double area) : radius(radius), pos(pos), confid(confid), taken(false), area(area)
-        {
-            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
-        }
-        bool inside(const blob& other)
-        {
-            cv::Vec2d tmp = pos - other.pos;
-            return sqrt(tmp.dot(tmp)) < radius;
-        }
-    };
-    
-    // mask for everything that passes the threshold (or: the upper threshold of the hysteresis)
-    
-    std::vector<blob> blobs;
-    std::vector<std::vector<cv::Point>> contours;
-
     const int thres = s.threshold;
+
+    contours.clear();
+
     if (!s.auto_threshold)
     {
         cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
@@ -95,17 +77,11 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
 
-    int cnt = 0;
+    blobs.clear();
 
     for (auto& c : contours)
     {
-        if (cnt++ > 30)
-            break;
-
         const auto m = cv::moments(cv::Mat(c));
-        const double area = m.m00;
-        if (area == 0.)
-            continue;
         const cv::Vec2d pos(m.m10 / m.m00, m.m01 / m.m00);
 
         double radius;
@@ -147,9 +123,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
             cv::putText(frame, buf, cv::Point(pos[0]+30, pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
         }
 
-        blobs.push_back(blob(radius, pos, confid, area));
-        
-        enum { max_blobs = 16 };
+        blobs.push_back(blob(radius, pos, confid));
         
         if (blobs.size() == max_blobs)
             break;
@@ -158,10 +132,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
     
-    points.reserve(blobs.size());
-    
     QMutexLocker l(&mtx);
-    
     points.clear();
     
     for (auto& b : blobs)

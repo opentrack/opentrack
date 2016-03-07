@@ -8,11 +8,18 @@
 #include "ftnoir_tracker_rs_impl.h"
 #include <pxcsensemanager.h>
 #include <pxcfaceconfiguration.h>
+#include <windows.h>
+
+const size_t kPreviewStreamWidth = 640;
+const size_t kPreviewStreamHeight = 480;
 
 PXCSenseManager* g_senseManager = NULL;
 PXCFaceData* g_faceData = NULL;
+void* g_previewImage = NULL;
 
-pxcStatus rs_tracker_set_configuration(PXCFaceModule *faceModule){
+CRITICAL_SECTION g_criticalSection;
+
+pxcStatus set_face_module_configuration(PXCFaceModule *faceModule){
 	pxcStatus retStatus;
 	PXCFaceConfiguration *faceConfig = NULL;
 
@@ -43,7 +50,37 @@ pxcStatus rs_tracker_set_configuration(PXCFaceModule *faceModule){
 	return PXC_STATUS_NO_ERROR;
 }
 
+pxcStatus retrieve_preview_from_frame(){
+	pxcStatus retStatus = PXC_STATUS_NO_ERROR;
+	PXCCapture::Sample* sample = g_senseManager->QuerySample();
+	PXCImage::ImageInfo info = sample->depth->QueryInfo();
+	
+	if(info.width>kPreviewStreamWidth || info.height>kPreviewStreamHeight)
+		return PXC_STATUS_PARAM_UNSUPPORTED;
+		
+	PXCImage::ImageData depthData;
+	retStatus = sample->depth->AcquireAccess(PXCImage::Access::ACCESS_READ, PXCImage::PIXEL_FORMAT_RGB32, &depthData);
+
+	if(retStatus == PXC_STATUS_NO_ERROR){
+		EnterCriticalSection(&g_criticalSection);
+		
+		for(int i=0; i<info.height; ++i) 
+			for(int j=0; j<info.width; ++j)
+				((unsigned char*)g_previewImage)[i*info.width+j]=((unsigned char*)depthData.planes[0])[(i+1)*4*info.width-4*(j+1)]; //mirror and convert from RGB32 to Y8.
+				
+		LeaveCriticalSection(&g_criticalSection);
+		
+		sample->depth->ReleaseAccess(&depthData);
+	}
+	
+	return retStatus;
+}
+
 int rs_tracker_impl_start(){
+	InitializeCriticalSection(&g_criticalSection);
+	g_previewImage = malloc(kPreviewStreamWidth*kPreviewStreamHeight);
+    memset(g_previewImage, 0, kPreviewStreamWidth*kPreviewStreamHeight);
+
 	pxcStatus retStatus;
 	PXCFaceModule *faceModule = NULL;
 
@@ -65,7 +102,7 @@ int rs_tracker_impl_start(){
 		return PXC_STATUS_HANDLE_INVALID;
 	}
 
-	retStatus = rs_tracker_set_configuration(faceModule);
+	retStatus = set_face_module_configuration(faceModule);
 	if (retStatus != PXC_STATUS_NO_ERROR){
 		rs_tracker_impl_end();
 		return PXC_STATUS_HANDLE_INVALID;
@@ -86,7 +123,18 @@ int rs_tracker_impl_start(){
 	return PXC_STATUS_NO_ERROR;
 }
 
-int rs_tracker_impl_update_pose(double *data){
+int rs_tracker_impl_get_preview(void* previewImageOut, int width, int height){
+	if(width!=kPreviewStreamWidth || height!=kPreviewStreamHeight || g_previewImage == NULL)
+		return -1;//TODO: improve errors communication.
+
+	EnterCriticalSection(&g_criticalSection);
+	memcpy(previewImageOut, g_previewImage, kPreviewStreamWidth*kPreviewStreamHeight);
+	LeaveCriticalSection(&g_criticalSection);
+
+	return PXC_STATUS_HANDLE_INVALID;
+}
+
+int rs_tracker_impl_update_pose(double *data){//TODO: add bool preview activated.
 	pxcStatus retStatus;
 	PXCFaceData::PoseEulerAngles angles;
 	PXCFaceData::HeadPosition headPosition;
@@ -95,9 +143,11 @@ int rs_tracker_impl_update_pose(double *data){
 	bool poseAnglesAvailable = false;
 	bool headPositionAvailable = false;
 
-	if (g_senseManager != NULL && g_faceData != NULL
+	if (g_senseManager != NULL && g_faceData != NULL && g_previewImage != NULL
                 && (retStatus = g_senseManager->AcquireFrame(true, 16)) == PXC_STATUS_NO_ERROR){
-
+				
+		retrieve_preview_from_frame();
+		
 		retStatus = g_faceData->Update();
 		if (retStatus != PXC_STATUS_NO_ERROR){
 			rs_tracker_impl_end();
@@ -105,8 +155,8 @@ int rs_tracker_impl_update_pose(double *data){
 		}
 
 		pxcI32 numberOfDetectedFaces = g_faceData->QueryNumberOfDetectedFaces();
-		for (pxcI32 i = 0; i < numberOfDetectedFaces; ++i) {
-			face = g_faceData->QueryFaceByIndex(0);
+		for(int i=0; i<numberOfDetectedFaces; ++i) {
+			face = g_faceData->QueryFaceByIndex(i);
 			if (face == NULL) continue;
 
 			pose = face->QueryPose();
@@ -128,13 +178,15 @@ int rs_tracker_impl_update_pose(double *data){
 			//yaw, pitch, roll: degrees
 			data[3] = -angles.yaw;
 			data[4] = angles.pitch;
-			data[5] = -angles.roll;
+			data[5] = angles.roll;
+			
+			break;
 		}
 
 		g_senseManager->ReleaseFrame();
 	}
 
-        return retStatus;
+    return retStatus;
 }
 
 int rs_tracker_impl_end(){
@@ -147,5 +199,10 @@ int rs_tracker_impl_end(){
 		g_senseManager->Release();
 		g_senseManager = NULL;
 	}
+	
+	DeleteCriticalSection(&g_criticalSection);
+	
+	free(g_previewImage);
+	
 	return PXC_STATUS_NO_ERROR;
 }
