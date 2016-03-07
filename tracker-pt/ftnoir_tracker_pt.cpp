@@ -129,25 +129,6 @@ void Tracker_PT::run()
             
             Affine X_CM = pose();
 
-            {
-                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
-                if (X_MH.t[0] == 0 && X_MH.t[1] == 0 && X_MH.t[2] == 0)
-                {
-                    int m = s.model_used;
-                    switch (m)
-                    {
-                    default:
-                    // cap
-                    case 0: X_MH.t[0] = 0; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    // clip
-                    case 1: X_MH.t[0] = 135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    // left clip
-                    case 2: X_MH.t[0] = -135; X_MH.t[1] = 0; X_MH.t[2] = 0; break;
-                    }
-                }
-            }
-
-            
             std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
             {
                 auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
