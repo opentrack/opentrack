@@ -31,13 +31,35 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -fno-finite-math-only -mfpmath=both")
-set(cpu "-O3 -march=pentium4 -mtune=corei7-avx ${fpu} -msse -msse2 -mno-sse3 -frename-registers")
+set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -frename-registers -fno-PIC ")
 
-set(CFLAGS-OVERRIDE "" CACHE STRING "")
+set(_CFLAGS " -fvisibility=hidden ")
+set(_CXXFLAGS " -fvisibility-inlines-hidden ${_CFLAGS} ")
+set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ${lnk-cc} ")
+set(_CFLAGS_DEBUG "-g -ggdb")
+set(_CXXFLAGS_RELEASE " ${_CFLAGS_RELEASE} ")
+set(_CXXFLAGS_DEBUG " ${_CFLAGS_DEBUG} ")
 
-set(CMAKE_C_FLAGS_RELEASE "${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${cpu} ${CFLAGS-OVERRIDE}" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "" FORCE)
-set(CMAKE_MODULE_LINKER_FLAGS_RELEASE ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "" FORCE)
-set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+set(_LDFLAGS " -Wl,--as-needed ${_CXXFLAGS} ")
+set(_LDFLAGS_RELEASE " ${_CXXFLAGS_RELEASE} ")
+set(_LDFLAGS_DEBUG " ${_CXXFLAGS_DEBUG} ")
+
+foreach(j C CXX)
+    foreach(i "" _DEBUG _RELEASE)
+        set(OVERRIDE_${j}_FLAGS${i} "" CACHE STRING "")
+        set(CMAKE_${j}_FLAGS${i} " ${_${j}FLAGS${i}} ${OVERRIDE_${j}_FLAGS${i}} " CACHE STRING "" FORCE)
+    endforeach()
+endforeach()
+
+foreach (i "" _DEBUG _RELEASE)
+    set(CMAKE_CXX_FLAGS${i} " ${CMAKE_CXX_FLAGS${i}} ${OVERRIDE_C_FLAGS${i}} " CACHE STRING "" FORCE)
+endforeach()
+
+foreach(j "" _DEBUG _RELEASE)
+    foreach(i MODULE EXE SHARED)
+        set(OVERRIDE_LDFLAGS${j} "" CACHE STRING "")
+        set(CMAKE_${i}_LINKER_FLAGS${j} " ${_LDFLAGS${j}} ${OVERRIDE_LDFLAGS${j}} " CACHE STRING "" FORCE)
+    endforeach()
+endforeach()
+
+set(CMAKE_BUILD_TYPE_INIT "RELEASE")
