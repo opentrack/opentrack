@@ -1,0 +1,7 @@
+find_package(OpenCV 3.0 QUIET)
+if(OpenCV_FOUND)
+    opentrack_boilerplate(opentrack-tracker-wiimote)
+    target_link_libraries(opentrack-tracker-wiimote ${OpenCV_LIBS})
+    target_include_directories(opentrack-tracker-wiimote SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    link_with_dinput8(opentrack-tracker-wiimote)
+endif()
