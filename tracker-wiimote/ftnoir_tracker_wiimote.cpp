@@ -50,23 +50,17 @@ void Tracker_WiiMote::run()
     Timer t_mon;
     t_mon.start();
     
-    
     while((commands & ABORT) == 0)
     {
     
-        bool freshpoints = camera.points_updated(points);
-        
-        while (!freshpoints && (commands & ABORT) == 0) {
-            portable::sleep(3);
-            freshpoints = camera.points_updated(points);
-        
-            // limit update() frequency
+        if (static_cast<QWidget*>(monitor_widget->parent())->isEnabled()) {
             if (t_mon.elapsed_ms() >= 20) {
-                if (static_cast<QWidget*>(monitor_widget->parent())->isEnabled())
-                    monitor_widget->update_image(points);
+                monitor_widget->update_image(points);
                 t_mon.start();
-            }
+            }    
         }
+
+        bool freshpoints = camera.points_updated(points);
         
         // for thread-extern monitoring
         num_points = points.size();

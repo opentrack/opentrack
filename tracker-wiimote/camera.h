@@ -41,7 +41,7 @@ public:
     void stop();
     void set_res() {};
     bool get_info(CamInfo &ret);
-    bool points_updated( std::vector<cv::Vec2f>& p);
+    bool points_updated(std::vector<cv::Vec2f>& p);
 
 protected:
     CamInfo cam_info;

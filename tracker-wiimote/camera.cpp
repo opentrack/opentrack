@@ -20,7 +20,7 @@ void Camera::start()
 
 	const char *device = EVENT_DEV_NAME;
 
-	if ((wii_ir_fd = open(device, O_RDONLY | O_NONBLOCK | O_CLOEXEC)) < 0) {
+	if ((wii_ir_fd = open(device, O_RDONLY | O_CLOEXEC)) < 0) {
 		perror("ev_wii_ir");
 		if (errno == EACCES && getuid() != 0)
 			fprintf(stderr, "You do not have access to %s.\n", device);
@@ -45,7 +45,7 @@ void Camera::stop()
     }
 }
 
-bool Camera::points_updated( std::vector<cv::Vec2f>& points)
+bool Camera::points_updated(std::vector<cv::Vec2f>& points)
 {
     struct input_event ev[16];
 	fd_set rdfs;
@@ -57,7 +57,7 @@ bool Camera::points_updated( std::vector<cv::Vec2f>& points)
 	FD_ZERO(&rdfs);
 	FD_SET(wii_ir_fd, &rdfs);
     tv.tv_sec = 0;
-    tv.tv_usec = 1;
+    tv.tv_usec = 50000;
 	
     int ret = select(wii_ir_fd + 1, &rdfs, NULL, NULL, &tv);
 	
