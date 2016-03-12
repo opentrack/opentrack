@@ -1,5 +1,6 @@
 string(TIMESTAMP filename-date "%Y%m%d")
 set(filename-ostype ${CMAKE_SYSTEM_NAME})
+
 get_git_head_revision(filename-branch_0 filename-hash_0)
 if(filename-hash_0)
     string(SUBSTRING "${filename-hash_0}" 0 7 filename-hash)
@@ -21,6 +22,5 @@ add_custom_target(tarball-real2)
 add_custom_command(TARGET tarball-real COMMAND cmake -P ${CMAKE_SOURCE_DIR}/cmake/tarball.cmake)
 
 add_custom_command(TARGET tarball-real2 COMMAND sh
-    "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}"
-    "${filename}" "${CMAKE_BINARY_DIR}")
+    "${CMAKE_SOURCE_DIR}/make-tar.sh" "${CMAKE_INSTALL_PREFIX}" "${filename}")
 add_custom_target(tarball DEPENDS tarball-real)

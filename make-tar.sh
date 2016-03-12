@@ -2,7 +2,6 @@
 
 prefix="$1"
 filename="$2"
-bin="$3"
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
