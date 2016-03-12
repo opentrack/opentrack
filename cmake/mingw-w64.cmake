@@ -9,7 +9,7 @@ SET(CMAKE_SYSTEM_VERSION 1)
 # specify the cross compiler
 set(p c:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin)
 set(c ${p}/i686-w64-mingw32-)
-set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
+#set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
 
 set(e .exe)
 
@@ -35,8 +35,8 @@ set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -frename-r
 
 set(_CFLAGS " -fvisibility=hidden ")
 set(_CXXFLAGS " -fvisibility-inlines-hidden ${_CFLAGS} ")
-set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ${lnk-cc} ")
-set(_CFLAGS_DEBUG "-g -ggdb")
+set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ")
+set(_CFLAGS_DEBUG "-g -ggdb ${cpu} ${fpu} ")
 set(_CXXFLAGS_RELEASE " ${_CFLAGS_RELEASE} ")
 set(_CXXFLAGS_DEBUG " ${_CFLAGS_DEBUG} ")
 
