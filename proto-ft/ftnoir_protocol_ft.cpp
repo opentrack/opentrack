@@ -32,7 +32,6 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     dummyTrackIR.terminate();
     dummyTrackIR.kill();
     dummyTrackIR.waitForFinished(50);
-    runonce_check->try_exit();
 }
 
 void FTNoIR_Protocol::pose(const double* headpose) {

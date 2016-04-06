@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>413</height>
+    <width>503</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -212,7 +212,7 @@ Starting tracking will again overwrite the DLL locations.</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Disable on protocol exit</string>
+         <string>Disable on program exit</string>
         </property>
        </widget>
       </item>

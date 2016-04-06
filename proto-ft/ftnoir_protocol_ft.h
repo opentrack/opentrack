@@ -43,7 +43,6 @@ typedef void (__stdcall *importTIRViewsStop)(void);
 struct runonce
 {
     virtual void try_runonce() = 0;
-    virtual void try_exit() = 0;
     virtual bool is_first_run() = 0;
     virtual ~runonce() {}
     virtual void set_enabled(bool flag) = 0;
