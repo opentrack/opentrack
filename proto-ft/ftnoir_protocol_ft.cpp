@@ -16,6 +16,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() :
     viewsStop(nullptr),
     intGameID(0)
 {
+    runonce_check->try_runonce();
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
@@ -27,6 +28,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     dummyTrackIR.terminate();
     dummyTrackIR.kill();
     dummyTrackIR.waitForFinished(50);
+    runonce_check->try_exit();
 }
 
 void FTNoIR_Protocol::pose(const double* headpose) {
@@ -108,43 +110,53 @@ void FTNoIR_Protocol::start_tirviews() {
 }
 
 void FTNoIR_Protocol::start_dummy() {
-
-
     QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
 }
 
+void FTNoIR_Protocol::set_protocols(bool ft, bool npclient)
+{
+    const QString program_dir =  QCoreApplication::applicationDirPath() + "/";
+
+    // Registry settings (in HK_USER)
+    QSettings settings_ft("Freetrack", "FreetrackClient");
+    QSettings settings_npclient("NaturalPoint", "NATURALPOINT\\NPClient Location");
+
+    if (ft)
+        settings_ft.setValue("Path", program_dir);
+    else
+        settings_ft.setValue("Path", "");
+
+    if (npclient)
+        settings_npclient.setValue("Path", program_dir);
+    else
+        settings_npclient.setValue("Path", "");
+}
+
 bool FTNoIR_Protocol::correct()
 {
-    // Registry settings (in HK_USER)
-    QSettings settings("Freetrack", "FreetrackClient");
-    QSettings settingsTIR("NaturalPoint", "NATURALPOINT\\NPClient Location");
-
     if (!shm.success())
         return false;
 
-    QString aLocation =  QCoreApplication::applicationDirPath() + "/";
+    bool use_ft = false, use_npclient = false;
 
     switch (s.intUsedInterface) {
     case 0:
-        // Use both interfaces
-        settings.setValue( "Path" , aLocation );
-        settingsTIR.setValue( "Path" , aLocation );
+        use_ft = true;
+        use_npclient = true;
         break;
     case 1:
-        // Use FreeTrack, disable TrackIR
-        settings.setValue( "Path" , aLocation );
-        settingsTIR.setValue( "Path" , "" );
+        use_ft = true;
         break;
     case 2:
-        // Use TrackIR, disable FreeTrack
-        settings.setValue( "Path" , "" );
-        settingsTIR.setValue( "Path" , aLocation );
+        use_npclient = true;
         break;
     default:
         break;
     }
+
+    set_protocols(use_ft, use_npclient);
 
     if (s.useTIRViews) {
         start_tirviews();
