@@ -27,11 +27,12 @@ using namespace options;
 
 struct settings : opts {
     value<int> intUsedInterface;
-    value<bool> useTIRViews;
+    value<bool> useTIRViews, close_protocols_on_exit;
     settings() :
         opts("proto-freetrack"),
         intUsedInterface(b, "used-interfaces", 0),
-        useTIRViews(b, "use-memory-hacks", false)
+        useTIRViews(b, "use-memory-hacks", false),
+        close_protocols_on_exit(b, "close-protocols-on-exit", false)
     {}
 };
 
@@ -45,6 +46,7 @@ struct runonce
     virtual void try_exit() = 0;
     virtual bool is_first_run() = 0;
     virtual ~runonce() {}
+    virtual void set_enabled(bool flag) = 0;
 };
 
 class FTNoIR_Protocol : public IProtocol

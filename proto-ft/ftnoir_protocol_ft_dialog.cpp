@@ -21,6 +21,7 @@ FTControls::FTControls()
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
     tie_setting(s.useTIRViews, ui.chkTIRViews);
+    tie_setting(s.close_protocols_on_exit, ui.close_on_exit);
 
     ui.cbxSelectInterface->addItem("Enable both");
     ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");

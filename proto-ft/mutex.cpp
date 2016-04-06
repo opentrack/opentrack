@@ -5,6 +5,7 @@ class check_for_first_run : public runonce
 {
     bool checked_for_first_run;
     bool is_first_instance;
+    bool enabled;
 
 public:
     bool is_first_run() override
@@ -12,11 +13,17 @@ public:
         return checked_for_first_run && is_first_instance;
     }
 
+    void set_enabled(bool flag) override
+    {
+        enabled = flag;
+        qDebug() << "ft runonce:" << "enabled" << flag;
+    }
+
     void try_runonce() override
     {
         constexpr const char* name = "opentrack-freetrack-runonce";
 
-        if (checked_for_first_run)
+        if (checked_for_first_run || !enabled)
             return;
 
         // just leak it, no issue
@@ -44,7 +51,7 @@ public:
 
     void try_exit() override
     {
-        if (is_first_instance)
+        if (is_first_instance && enabled)
         {
             qDebug() << "ft runonce: removing registry keys";
             FTNoIR_Protocol::set_protocols(false, false);
@@ -52,9 +59,10 @@ public:
     }
 
 public:
-    check_for_first_run() : checked_for_first_run(false), is_first_instance(false)
+    check_for_first_run() : checked_for_first_run(false), is_first_instance(false), enabled(false)
     {
     }
+
     ~check_for_first_run()
     {
         try_exit();
