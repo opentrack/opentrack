@@ -7,7 +7,7 @@ if(GIT_FOUND)
 endif()
 
 unset(_build_type)
-if(NOT MSVC)
+if(CMAKE_BUILD_TYPE)
     string(TOUPPER ${CMAKE_BUILD_TYPE} _build_type)
     if (NOT _build_type STREQUAL "DEBUG")
     	unset(_build_type)
