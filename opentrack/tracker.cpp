@@ -65,7 +65,8 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
 
 static inline bool nanp(double value)
 {
-    return std::isnan(value) || std::isinf(value);
+    const volatile double x = value;
+    return std::isnan(x) || std::isinf(x);
 }
 
 static inline double elide_nan(double value, double def)
