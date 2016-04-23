@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>503</width>
-    <height>379</height>
+    <width>515</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -219,7 +219,7 @@ Starting tracking will again overwrite the DLL locations.</string>
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Use this for games that disable mouselook when opentrack isn't running, and you're not running opentrack that much.</string>
+         <string>Use this for games that disable mouselook when opentrack isn't running, and you're not running opentrack that much. To use opentrack with this option you need to start it before the games to have it work at all.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
