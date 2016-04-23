@@ -194,6 +194,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         float IJ0 = I0.dot(J0);
         float JJ0 = J0.dot(J0);
         float rho, theta;
+        // CAVEAT don't change to comparison with a small epsilon, e.g. 1e-4. -sh 20160423
         if (JJ0 == II0) {
             rho = std::sqrt(std::abs(2*IJ0));
             theta = -PI/4;
