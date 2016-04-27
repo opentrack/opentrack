@@ -6,5 +6,6 @@
         <file>images/facetracknoir.png</file>
         <file>images/no-feed.png</file>
         <file>images/filter-16.png</file>
+        <file>images/tracking-not-started.png</file>
     </qresource>
 </RCC>

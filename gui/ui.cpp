@@ -280,8 +280,14 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.iconcomboProtocol->setEnabled ( not_running );
     ui.iconcomboFilter->setEnabled ( not_running );
     ui.iconcomboTrackerSource->setEnabled(not_running);
-    ui.video_frame_label->setVisible(not_running || inertialp);
     ui.profile_button->setEnabled(not_running);
+    ui.video_frame_label->setVisible(not_running || inertialp);
+    if(not_running) {
+        ui.video_frame_label->setPixmap(QPixmap(":/images/tracking-not-started.png"));
+    }
+    else {
+        ui.video_frame_label->setPixmap(QPixmap(":/images/no-feed.png"));
+    }
 }
 
 void MainWindow::reload_options()
