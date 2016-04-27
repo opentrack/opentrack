@@ -13,10 +13,71 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
+//#define DEBUG_SUM_OF_SQUARES
+#ifdef DEBUG_SUM_OF_SQUARES
+#   define SUM_OF_SQUARES_WINNAME "sum-of-squares-debug"
+#   include <opencv2/highgui.hpp>
+#endif
+
 PointExtractor::PointExtractor()
 {
+#ifdef DEBUG_SUM_OF_SQUARES
+    cv::namedWindow(SUM_OF_SQUARES_WINNAME);
+#endif
     blobs.reserve(max_blobs);
     points.reserve(max_blobs);
+}
+
+PointExtractor::~PointExtractor()
+{
+#ifdef DEBUG_SUM_OF_SQUARES
+    cv::destroyWindow(SUM_OF_SQUARES_WINNAME);
+#endif
+}
+
+void PointExtractor::gray_square_diff(const cv::Mat &frame, cv::Mat &frame_gray)
+{
+    const unsigned nchans = frame.channels();
+    const int rows = frame.rows;
+    const int cols = frame.cols;
+    cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
+
+    if (nchans == 1 || !s.auto_threshold)
+        return;
+
+    cv::split(frame, gray_split_channels);
+
+    if (nchans > gray_absdiff_channels.size())
+        gray_absdiff_channels.resize(nchans);
+
+    for (unsigned i = 0; i < nchans; i++)
+        cv::absdiff(frame_gray, gray_split_channels[i], gray_absdiff_channels[i]);
+
+    if (frame_gray_tmp.rows != rows || frame_gray_tmp.cols != cols)
+        frame_gray_tmp = cv::Mat(rows, cols, CV_32FC1);
+
+    frame_gray.convertTo(frame_gray_tmp, CV_32FC1);
+
+    constexpr float scale = .9;
+
+    if (float_absdiff_channel.cols != cols || float_absdiff_channel.rows != rows)
+        float_absdiff_channel = cv::Mat(rows, cols, CV_32FC1);
+
+    for (unsigned i = 0; i < nchans; i++)
+    {
+        gray_absdiff_channels[i].convertTo(float_absdiff_channel, CV_32FC1);
+
+        frame_gray_tmp -= float_absdiff_channel.mul(float_absdiff_channel, scale);
+    }
+
+    frame_gray_tmp = cv::max(0., frame_gray_tmp);
+
+    frame_gray_tmp.convertTo(frame_gray, CV_8UC1);
+
+#ifdef DEBUG_SUM_OF_SQUARES
+    cv::imshow(SUM_OF_SQUARES_WINNAME, frame_gray);
+    cv::waitKey(1);
+#endif
 }
 
 const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
@@ -31,7 +92,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
     }
 
     // convert to grayscale
-    cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
+    gray_square_diff(frame, frame_gray);
 
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
