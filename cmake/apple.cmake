@@ -1,11 +1,12 @@
 set(CMAKE_BUILD_TYPE RELEASE CACHE STRING "" FORCE)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-arch x86_64 -std=c++11 -stdlib=libc++" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-arch x86_64" CACHE STRING "" FORCE)
 
 set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -fvisibility=hidden" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE " ${CMAKE_C_FLAGS_RELEASE} -fvisibility-inlines-hidden " CACHE STRING "" FORCE)
 
-set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++ -std=c++11" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++ -std=c++11 -arch x86_64" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} CACHE STRING "" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} CACHE STRING "" FORCE)
 
@@ -17,4 +18,4 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8" CACHE STRING "" FORCE)
 
 set(OpenCV_DIR ~/dev/opentrack-depends/opencv/build)
-set(Qt5_DIR ~/Qt5.5.1/5.5/clang_64/lib/cmake/Qt5)
+set(Qt5_DIR ~/Qt5.6.0/5.6/clang_64/lib/cmake/Qt5)
