@@ -548,7 +548,9 @@ void MainWindow::ensure_tray()
 void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
 {
     show();
-    setWindowState(Qt::WindowNoState);
+    setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    raise();  // for MacOS
+    activateWindow(); // for Windows
 }
 
 void MainWindow::changeEvent(QEvent* e)
