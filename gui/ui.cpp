@@ -119,6 +119,10 @@ MainWindow::MainWindow() :
     connect(this, &MainWindow::emit_toggle_tracker,
             this, [&]() -> void { if (keys_paused) return; qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
             Qt::QueuedConnection);
+
+    connect(this, &MainWindow::emit_restart_tracker,
+            this, [&]() -> void { if (keys_paused) return; qDebug() << "retart tracker"; stopTracker(); startTracker(); },
+            Qt::QueuedConnection);
     
     register_shortcuts();
     
@@ -129,12 +133,13 @@ MainWindow::MainWindow() :
 
 void MainWindow::register_shortcuts()
 {
-    using t_shortcut = std::tuple<key_opts&, Shortcuts::fun>;
+    using t_shortcut = std::tuple<key_opts&, Shortcuts::fun, bool>;
     
     std::vector<t_shortcut> keys {
-        t_shortcut(s.key_start_tracking, [&]() -> void { emit_start_tracker(); }),
-        t_shortcut(s.key_stop_tracking, [&]() -> void { emit_stop_tracker(); }),
-        t_shortcut(s.key_toggle_tracking, [&]() -> void { emit_toggle_tracker(); }),
+        t_shortcut(s.key_start_tracking, [&](bool) -> void { emit_start_tracker(); }, true),
+        t_shortcut(s.key_stop_tracking, [&](bool) -> void { emit_stop_tracker(); }, true),
+        t_shortcut(s.key_toggle_tracking, [&](bool) -> void { emit_toggle_tracker(); }, true),
+        t_shortcut(s.key_restart_tracking, [&](bool) -> void { emit_restart_tracker(); }, true),
     };
     
     global_shortcuts.reload(keys);

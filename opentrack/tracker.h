@@ -81,6 +81,8 @@ public:
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
     void toggle_enabled() { qDebug() << "toggle enabled"; enabledp = !enabledp; }
+    void set_toggle(bool value) { qDebug() << "enabled" << value; enabledp = value; }
+    void set_zero(bool value) { qDebug() << "zero" << value; zero_ = value; }
     void center() { qDebug() << "toggle center"; centerp = !centerp; }
     void zero() { qDebug() << "toggle zero"; zero_ = !zero_; }
 };

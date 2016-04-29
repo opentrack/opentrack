@@ -111,7 +111,8 @@ signals:
     void emit_start_tracker();
     void emit_stop_tracker();
     void emit_toggle_tracker();
-    
+    void emit_restart_tracker();
+
     void emit_minimized(bool);
 public:
     MainWindow();

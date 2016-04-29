@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>381</width>
-    <height>603</height>
+    <width>384</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,14 +62,59 @@
              <string notr="true">QGroupBox { border: 0; }</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_8">
-             <item row="8" column="2">
-              <widget class="QPushButton" name="bind_stop">
+             <item row="11" column="2">
+              <widget class="QPushButton" name="bind_toggle_tracking">
                <property name="text">
                 <string>Bind</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="0">
+             <item row="11" column="0">
+              <widget class="QLabel" name="textLabel2_9">
+               <property name="text">
+                <string>Toggle tracking</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_27">
+               <property name="text">
+                <string>Toggle while held</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QLabel" name="start_tracking_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="2">
+              <widget class="QPushButton" name="bind_start">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QPushButton" name="bind_toggle">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="1">
+              <widget class="QLabel" name="stop_tracking_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
               <widget class="QLabel" name="textLabel2_7">
                <property name="text">
                 <string>Start tracking</string>
@@ -79,7 +124,21 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="0">
+             <item row="11" column="1">
+              <widget class="QLabel" name="toggle_tracking_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="2">
+              <widget class="QPushButton" name="bind_stop">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="0">
               <widget class="QLabel" name="textLabel2_8">
                <property name="text">
                 <string>Stop tracking</string>
@@ -106,6 +165,13 @@
                </property>
               </widget>
              </item>
+             <item row="7" column="1">
+              <widget class="QLabel" name="zero_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
              <item row="5" column="1">
               <widget class="QLabel" name="toggle_text">
                <property name="text">
@@ -113,20 +179,20 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
-              <widget class="QLabel" name="zero_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
+             <item row="7" column="0">
               <widget class="QLabel" name="textLabel2_6">
                <property name="text">
                 <string>Zero</string>
                </property>
                <property name="wordWrap">
                 <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_28">
+               <property name="text">
+                <string>Zero while held</string>
                </property>
               </widget>
              </item>
@@ -147,62 +213,62 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
+             <item row="7" column="2">
               <widget class="QPushButton" name="bind_zero">
                <property name="text">
                 <string>Bind</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="2">
-              <widget class="QPushButton" name="bind_toggle">
+             <item row="6" column="2">
+              <widget class="QPushButton" name="bind_toggle_held">
                <property name="text">
                 <string>Bind</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="2">
-              <widget class="QPushButton" name="bind_start">
+             <item row="8" column="1">
+              <widget class="QLabel" name="zero_held_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="QPushButton" name="bind_zero_held">
                <property name="text">
                 <string>Bind</string>
                </property>
               </widget>
              </item>
-             <item row="9" column="0">
-              <widget class="QLabel" name="textLabel2_9">
+             <item row="6" column="1">
+              <widget class="QLabel" name="toggle_held_text">
                <property name="text">
-                <string>Toggle tracking</string>
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="0">
+              <widget class="QLabel" name="textLabel2_10">
+               <property name="text">
+                <string>Restart tracking</string>
                </property>
                <property name="wordWrap">
                 <bool>false</bool>
                </property>
               </widget>
              </item>
-             <item row="9" column="2">
-              <widget class="QPushButton" name="bind_toggle_tracking">
+             <item row="12" column="1">
+              <widget class="QLabel" name="restart_tracking_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="2">
+              <widget class="QPushButton" name="bind_restart_tracking">
                <property name="text">
                 <string>Bind</string>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="1">
-              <widget class="QLabel" name="start_tracking_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="1">
-              <widget class="QLabel" name="stop_tracking_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QLabel" name="toggle_tracking_text">
-               <property name="text">
-                <string/>
                </property>
               </widget>
              </item>
@@ -265,19 +331,6 @@
           <string>Minimize to tray</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

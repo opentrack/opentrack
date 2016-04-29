@@ -51,8 +51,9 @@ struct main_settings : opts {
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup;
     value<int> center_method;
-    key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking;
+    key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
     key_opts key_center, key_toggle, key_zero;
+    key_opts key_toggle_press, key_zero_press;
     main_settings() :
         opts("opentrack-ui"),
         tracker_dll(b, "tracker-dll", ""),
@@ -75,9 +76,12 @@ struct main_settings : opts {
         key_start_tracking(b, "start-tracking"),
         key_stop_tracking(b, "stop-tracking"),
         key_toggle_tracking(b, "toggle-tracking"),
+        key_restart_tracking(b, "restart-tracking"),
         key_center(b, "center"),
         key_toggle(b, "toggle"),
-        key_zero(b, "zero")
+        key_zero(b, "zero"),
+        key_toggle_press(b, "toggle-press"),
+        key_zero_press(b, "zero-press")
     {
     }
 };

@@ -78,17 +78,24 @@ OptionsDialog::OptionsDialog(main_settings& main,
     connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(main.key_center, ui.center_text); });
     connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero, ui.zero_text); });
     connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle, ui.toggle_text); });
+    connect(ui.bind_toggle_held, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle_press, ui.toggle_held_text); });
+    connect(ui.bind_zero_held, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero_press, ui.zero_held_text); });
+
     connect(ui.bind_start, &QPushButton::pressed, [&]() -> void { bind_key(main.key_start_tracking, ui.start_tracking_text); });
     connect(ui.bind_stop, &QPushButton::pressed, [&]() -> void { bind_key(main.key_stop_tracking, ui.stop_tracking_text); });
     connect(ui.bind_toggle_tracking, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle_tracking, ui.toggle_tracking_text); });
+    connect(ui.bind_restart_tracking, &QPushButton::pressed, [&]() -> void { bind_key(main.key_restart_tracking, ui.restart_tracking_text); });
 
     ui.center_text->setText(kopts_to_string(main.key_center));
     ui.toggle_text->setText(kopts_to_string(main.key_toggle));
+    ui.toggle_held_text->setText(kopts_to_string(main.key_toggle_press));
     ui.zero_text->setText(kopts_to_string(main.key_zero));
+    ui.zero_held_text->setText(kopts_to_string(main.key_zero_press));
     
     ui.start_tracking_text->setText(kopts_to_string(main.key_start_tracking));
     ui.stop_tracking_text->setText(kopts_to_string(main.key_stop_tracking));
     ui.toggle_tracking_text->setText(kopts_to_string(main.key_toggle_tracking));
+    ui.restart_tracking_text->setText(kopts_to_string(main.key_restart_tracking));
 }
 
 void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)

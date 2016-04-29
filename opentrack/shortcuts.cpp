@@ -9,7 +9,7 @@
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
 
-void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k)
+void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused(bool, held))
 {
 #if !defined(_WIN32)
     using sh = QxtGlobalShortcut;
@@ -56,6 +56,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k)
         key.alt = !!(mods & Qt::AltModifier);
         key.ctrl = !!(mods & Qt::ControlModifier);
         key.keycode = idx;
+        key.held = held;
     }
 }
 #endif
@@ -72,20 +73,19 @@ void Shortcuts::receiver(const Key& k)
             continue;
         if (k.keycode != k_.keycode)
             continue;
-        if (!k.held)
-            continue;
-        if (!k_.should_process())
-            continue;
+        if (k_.held && !k.held) continue;
         if (k_.alt && !k.alt) continue;
         if (k_.ctrl && !k.ctrl) continue;
         if (k_.shift && !k.shift) continue;
+        if (!k_.should_process())
+            continue;
         
-        fun();
+        fun(k.held);
     }
 }
 #endif
 
-void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun> > &keys_)
+void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_)
 {
     const int sz = keys_.size();
     keys = std::vector<tt>();
@@ -94,10 +94,11 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun> > &keys_)
     {
         const auto& kk = keys_[i];
         const key_opts& opts = std::get<0>(kk);
+        const bool held = std::get<2>(kk);
         auto& fun = std::get<1>(kk);
         K k;
-        bind_keyboard_shortcut(k, opts);
-        keys.push_back(std::tuple<K, Shortcuts::fun>(k, fun));
+        bind_keyboard_shortcut(k, opts, held);
+        keys.push_back(tt(k, fun, held));
 #ifndef _WIN32
         connect(k.get(), &QxtGlobalShortcut::activated, fun);
 #endif

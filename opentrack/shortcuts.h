@@ -26,6 +26,12 @@
 #   include "keybinding-worker.hpp"
 #endif
 
+#ifdef __GNUC__
+#   define unused(t, i) t __attribute__((unused)) i
+#else
+#   define unused(t, i) t i
+#endif
+
 using namespace options;
 
 struct OPENTRACK_EXPORT Shortcuts : public QObject {
@@ -40,8 +46,8 @@ public:
 #endif
     ;
     
-    using fun = std::function<void(void)>;
-    using tt = std::tuple<K, fun>;
+    using fun = std::function<void(bool)>;
+    using tt = std::tuple<K, fun, bool>;
     std::vector<tt> keys;
 #ifdef _WIN32
     KeybindingWorker::Token key_token;
@@ -53,9 +59,9 @@ public:
 #endif
     {}
 
-    void reload(const std::vector<std::tuple<key_opts &, fun> > &keys);
+    void reload(const std::vector<std::tuple<key_opts &, fun, bool>> &keys);
 private:
-    void bind_keyboard_shortcut(K &key, const key_opts& k);
+    void bind_keyboard_shortcut(K &key, const key_opts& k, bool held);
 #ifdef _WIN32
     void receiver(const Key& k);
 #endif

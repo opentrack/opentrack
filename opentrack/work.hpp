@@ -27,9 +27,9 @@ struct Work
     mem<Tracker> tracker;
     mem<Shortcuts> sc;
     WId handle;
-    using fn = std::function<void(void)>;
-    using tt = std::tuple<key_opts&, fn>;
-    std::vector<std::tuple<key_opts&, fn>> keys;
+    using fn = std::function<void(bool)>;
+    using tt = std::tuple<key_opts&, fn, bool>;
+    std::vector<tt> keys;
     
     Work(main_settings& s, Mappings& m, SelectedLibraries& libs, WId handle) :
         s(s), libs(libs),
@@ -37,13 +37,15 @@ struct Work
         sc(std::make_shared<Shortcuts>()),
         handle(handle),
         keys {
-            tt(s.key_center, [&]() -> void { tracker->center(); }),
-            tt(s.key_toggle, [&]() -> void { tracker->toggle_enabled(); }),
-            tt(s.key_zero, [&]() -> void { tracker->zero(); }),
+            tt(s.key_center, [&](bool) -> void { tracker->center(); }, true),
+            tt(s.key_toggle, [&](bool) -> void { tracker->toggle_enabled(); }, true),
+            tt(s.key_zero, [&](bool) -> void { tracker->zero(); }, true),
+            tt(s.key_toggle_press, [&](bool x) -> void { tracker->set_toggle(!x); }, false),
+            tt(s.key_zero_press, [&](bool x) -> void { tracker->set_zero(x); }, false),
         }
     {
         reload_shortcuts();
-        tracker->start();   
+        tracker->start();
     }
 
     void reload_shortcuts()
