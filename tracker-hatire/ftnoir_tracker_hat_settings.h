@@ -5,12 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_HAT_SETTINGS_H
-#define FTNOIR_TRACKER_HAT_SETTINGS_H
+#pragma once
 
 #include <QtSerialPort/QSerialPort>
 
-//-----------------------------------------------------------------------------
 struct TrackerSettings
 {
     void load_ini();
@@ -29,7 +27,6 @@ struct TrackerSettings
     bool InvertX;
     bool InvertY;
     bool InvertZ;
-
 
     int RollAxe;
     int PitchAxe;
@@ -59,10 +56,5 @@ struct TrackerSettings
     QSerialPort::StopBits pStopBits;
     QSerialPort::FlowControl pFlowControl;
 
-#ifdef OPENTRACK_API
     int FPSArduino;
-#endif
 };
-
-
-#endif //FTNOIR_TRACKER_HAT_SETTINGS_H

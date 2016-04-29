@@ -1,11 +1,4 @@
-#ifndef FTNOIR_TRACKER_HAT_DIALOG_H
-#define FTNOIR_TRACKER_HAT_DIALOG_H
-
-#ifdef OPENTRACK_API
 #include "opentrack/plugin-api.hpp"
-#else
-#include "..\ftnoir_tracker_base\ftnoir_tracker_base.h"
-#endif
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_tracker_hat.h"
 #include "ui_ftnoir_hatcontrols.h"
@@ -17,29 +10,19 @@
 #include <QMetaType>
 
 // Widget that has controls for FTNoIR protocol client-settings.
-#ifdef OPENTRACK_API
 class TrackerControls: public ITrackerDialog
-        #else
-class TrackerControls: public QWidget, public ITrackerDialog
-        #endif
 {
     Q_OBJECT
 public:
     explicit TrackerControls();
     ~TrackerControls() override;
-#ifdef OPENTRACK_API
     void Initialize(QWidget *parent) ; // unused
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
-#else
-    void Initialize(QWidget *parent) ;
-    void registerTracker(ITracker *tracker) ;
-    void unRegisterTracker() ;
-#endif
 
 private:
     Ui::UIHATControls ui;
-    FTNoIR_Tracker *theTracker;
+    hatire *theTracker;
     QTime last_time;
 
 public  slots:
@@ -83,9 +66,8 @@ protected slots:
     void set_DelaySeq(int val)         { settings.DelaySeq = val;       settings_changed(); }
 
     void set_endian(bool val)     { settings.BigEndian = val;       settings_changed(); }
-#ifdef OPENTRACK_API
+
     void set_Fps(int val)         { settings.FPSArduino = val;      settings_changed(); }
-#endif
 
     void set_mod_baud(int val)        { settings.pBaudRate    = static_cast<QSerialPort::BaudRate>(ui.QCB_Serial_baudRate->itemData(val).toInt()) ;       settings_changed();   }
     void set_mod_dataBits(int val)    { settings.pDataBits    = static_cast<QSerialPort::DataBits>(ui.QCB_Serial_dataBits->itemData(val).toInt()) ;       settings_changed();   }
@@ -97,7 +79,7 @@ protected slots:
     void doCancel();
     void doSave();
     void doReset();
-    void doCenter();
+    //void doCenter();
     void doZero();
     void doSend();
     void poll_tracker_info();
@@ -112,5 +94,3 @@ protected:
 private slots:
     void on_lineSend_returnPressed();
 };
-
-#endif //FTNOIR_TRACKER_HAT_DIALOG_H

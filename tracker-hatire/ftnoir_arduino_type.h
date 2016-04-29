@@ -1,5 +1,4 @@
-#ifndef FTNOIR_TARDUINO_TYPE_H
-#define FTNOIR_TARDUINO_TYPE_H
+#pragma once
 
 #include <QDataStream>
 
@@ -15,7 +14,6 @@ struct TArduinoData
 } ;
 #pragma pack(pop) 
 
-
 inline QDataStream & operator >> ( QDataStream& in, TArduinoData& out )
 {
     in.setFloatingPointPrecision(QDataStream::SinglePrecision );
@@ -27,6 +25,4 @@ inline QDataStream & operator >> ( QDataStream& in, TArduinoData& out )
     return in;
 }
 
-
-
-#endif
+static_assert(sizeof(TArduinoData) == 30, "sizeof packet != 30");

@@ -13,13 +13,6 @@
 
 #include <QScrollBar>
 
-//*******************************************************************************************************
-// FaceTrackNoIR Client Settings-dialog.
-//*******************************************************************************************************
-
-//
-// Constructor for server-settings-dialog
-//
 TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), timer(this)
 {
 
@@ -180,7 +173,7 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     connect(ui.QCB_Serial_flowControl,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_flowControl(int)) );
 
     connect(ui.btnReset, SIGNAL(clicked()), this, SLOT(doReset()));
-    connect(ui.btnCenter, SIGNAL(clicked()), this, SLOT(doCenter()));
+    //connect(ui.btnCenter, SIGNAL(clicked()), this, SLOT(doCenter()));
     connect(ui.btnZero, SIGNAL(clicked()), this, SLOT(doZero()));
     connect(ui.btnSend, SIGNAL(clicked()), this, SLOT(doSend()));
 
@@ -209,8 +202,6 @@ void TrackerControls::Initialize(QWidget *parent) {
     show();
 }
 
-
-
 //
 // Apply online settings to tracker
 //
@@ -220,26 +211,12 @@ void TrackerControls::settings_changed()
     if (theTracker) theTracker->applysettings(settings);
 }
 
-
-//
-// Center asked to ARDUINO
-//
-void TrackerControls::doCenter() {
-#ifdef OPENTRACK_API
-    if (theTracker) theTracker->center();
-#else
-    if (theTracker) theTracker->notifyCenter();
-#endif
-}
-
-
 //
 // Zero asked to ARDUINO
 //
 void TrackerControls::doZero() {
-    if (theTracker) theTracker->notifyZeroed();
+    //if (theTracker) theTracker->notifyZeroed();
 }
-
 
 //
 // Reset asked to ARDUINO
@@ -253,9 +230,8 @@ void TrackerControls::doReset() {
 // Serial Info debug
 //
 void TrackerControls::doSerialInfo() {
-    if (theTracker) theTracker->SerialInfo();
+    if (theTracker) theTracker->serial_info();
 }
-
 
 //
 // Send command to ARDUINO
@@ -263,11 +239,10 @@ void TrackerControls::doSerialInfo() {
 void TrackerControls::doSend() {
     if (theTracker) {
         if (!ui.lineSend->text().isEmpty()) {
-            theTracker->sendcmd(ui.lineSend->text().toLatin1());
+            theTracker->send_serial_command(ui.lineSend->text().toLatin1());
         }
     }
 }
-
 
 //
 // Enter on lineSend for send to ARDUINO
@@ -275,9 +250,7 @@ void TrackerControls::doSend() {
 void TrackerControls::on_lineSend_returnPressed()
 {
     this->doSend();
-
 }
-
 
 //
 // Display FPS  of Arduino.
@@ -295,7 +268,6 @@ void TrackerControls::poll_tracker_info()
 
 }
 
-
 void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
 {
     QApplication::beep();
@@ -305,13 +277,10 @@ void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
     bar->setValue(bar->maximum());
 }
 
-
-
 void TrackerControls::doSave() {
     settingsDirty=false;
     settings.save_ini();
 }
-
 
 //
 // OK clicked on server-dialog
@@ -358,7 +327,7 @@ void TrackerControls::register_tracker(ITracker *tracker)
 void TrackerControls::registerTracker(ITracker *tracker)
 #endif
 {
-    theTracker = static_cast<FTNoIR_Tracker*>(tracker);
+    theTracker = static_cast<hatire*>(tracker);
     connect(theTracker, SIGNAL(sendMsgInfo(QByteArray)),this , SLOT(WriteMsgInfo(QByteArray)));
 
     if (isVisible() && settingsDirty) theTracker->applysettings(settings);

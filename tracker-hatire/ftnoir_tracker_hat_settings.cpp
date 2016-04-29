@@ -13,18 +13,13 @@
 #include <QVariant>
 
 #include "ftnoir_tracker_hat_settings.h"
-#ifdef OPENTRACK_API
 #include "opentrack-compat/options.hpp"
-#endif
+
+// XXX TODO move to opentrack settings api -sh 20160410
 
 void TrackerSettings::load_ini()
 {
-#ifndef OPENTRACK_API
-    QSettings settings(OPENTRACK_ORG);	// Registry settings (in HK_USER)
-    QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-#else
     QString currentFile = options::group::ini_pathname();
-#endif
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup( "HAT" );
@@ -66,9 +61,8 @@ void TrackerSettings::load_ini()
 	DelayStart=iniFile.value("DelayStart",0).toInt();
 	DelaySeq=iniFile.value("DelaySeq",0).toInt();
 
-#ifdef OPENTRACK_API
     FPSArduino=iniFile.value("FPSArduino",30).toInt();
-#endif
+
 	BigEndian=iniFile.value("BigEndian",0).toBool();
 
 
@@ -84,12 +78,8 @@ void TrackerSettings::load_ini()
 void TrackerSettings::save_ini() const
 {
 
-#ifndef OPENTRACK_API
-    QSettings settings(OPENTRACK_ORG);	// Registry settings (in HK_USER)
-    QString currentFile = settings.value( "SettingsFile", QCoreApplication::applicationDirPath() + "/Settings/default.ini" ).toString();
-#else
     QString currentFile = options::group::ini_pathname();
-#endif
+
 	QSettings iniFile( currentFile, QSettings::IniFormat );		// Application settings (in INI-file)
 
 	iniFile.beginGroup ( "HAT" );
@@ -129,9 +119,8 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue ( "DelayStart",DelayStart);
 	iniFile.setValue ( "DelaySeq",DelaySeq);
 
-#ifdef OPENTRACK_API
     iniFile.setValue ( "FPSArduino", FPSArduino );
-#endif
+
     iniFile.setValue("BigEndian",BigEndian);
 
 	iniFile.setValue("BaudRate",pBaudRate);
@@ -143,4 +132,3 @@ void TrackerSettings::save_ini() const
 
 	iniFile.endGroup();
 }
-
