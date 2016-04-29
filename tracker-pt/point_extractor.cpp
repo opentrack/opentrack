@@ -70,8 +70,6 @@ void PointExtractor::gray_square_diff(const cv::Mat &frame, cv::Mat &frame_gray)
         frame_gray_tmp -= float_absdiff_channel.mul(float_absdiff_channel, scale);
     }
 
-    frame_gray_tmp = cv::max(0., frame_gray_tmp);
-
     frame_gray_tmp.convertTo(frame_gray, CV_8UC1);
 
 #ifdef DEBUG_SUM_OF_SQUARES
