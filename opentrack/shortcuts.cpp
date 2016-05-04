@@ -85,7 +85,7 @@ void Shortcuts::receiver(const Key& k)
 }
 #endif
 
-void Shortcuts::reload(std::vector<std::tuple<key_opts&, fun, bool>> &keys_)
+void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_)
 {
     const int sz = keys_.size();
     keys = std::vector<tt>();
