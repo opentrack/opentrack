@@ -22,6 +22,12 @@ enum results
 #   include <QTimer>
 #endif
 
+#ifdef __GNUC__
+#   define unused(t, i) t __attribute__((unused)) i
+#else
+#   define unused(t, i) t i
+#endif
+
 struct thread_settings
 {
     QByteArray  sCmdStart;
@@ -94,7 +100,6 @@ class hatire_thread : public QThread
     QByteArray data_read;
     serial_t com_port;
     thread_settings s;
-    QMutex data_mtx;
 
     void run() override;
 
@@ -102,7 +107,7 @@ private slots:
     void on_serial_read();
     void teardown_serial();
 
-    void sendcmd_impl(const QByteArray& cmd)
+    void sendcmd_impl(unused(const QByteArray, &cmd))
     {
 #ifndef HATIRE_DEBUG_LOGFILE
         QByteArray Msg;
@@ -160,8 +165,10 @@ public:
     ~hatire_thread() override;
     hatire_thread();
 
-    void prepend_unread_data(const QByteArray& data);
+    void prepend_unread_data_nolock(const QByteArray& data);
 
-    QByteArray flush_data_read();
+    QByteArray flush_data_read_nolock();
     void Log(const QString& message);
+
+    QMutex data_mtx;
 };

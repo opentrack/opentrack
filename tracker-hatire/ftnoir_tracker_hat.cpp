@@ -85,46 +85,50 @@ void hatire::send_serial_command(const QByteArray& x)
 //
 void hatire::data(double *data)
 {
-    QByteArray dataRead(t.flush_data_read());
-
-    while (dataRead.length() >= 30)
     {
-        t.Log(dataRead.toHex());
-        if (dataRead.startsWith(Begin) && dataRead.mid(28,2) == End)
-        { // .Begin==0xAAAA .End==0x5555
-            QDataStream datastream(dataRead.left(30));
-            if (ts.bBigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
-            else datastream.setByteOrder(QDataStream::LittleEndian);
-			datastream>>ArduinoData;
-			frame_cnt++;
-            if (ArduinoData.Code <= 1000)
-            {
-				HAT=ArduinoData;
-                new_frame=true;
+        QMutexLocker l(&t.data_mtx);
+
+        QByteArray dataRead(t.flush_data_read_nolock());
+
+        while (dataRead.length() >= 30)
+        {
+            t.Log(dataRead.toHex());
+            if (dataRead.startsWith(Begin) && dataRead.mid(28,2) == End)
+            { // .Begin==0xAAAA .End==0x5555
+                QDataStream datastream(dataRead.left(30));
+                if (ts.bBigEndian)	datastream.setByteOrder(QDataStream::BigEndian );
+                else datastream.setByteOrder(QDataStream::LittleEndian);
+                datastream>>ArduinoData;
+                frame_cnt++;
+                if (ArduinoData.Code <= 1000)
+                {
+                    HAT=ArduinoData;
+                    new_frame=true;
+                }
+                else
+                {
+                    emit t.serial_debug_info(dataRead.mid(4,24))  ;
+                }
+                dataRead.remove(0,30);
             }
             else
             {
-                emit t.serial_debug_info(dataRead.mid(4,24))  ;
-			}
-			dataRead.remove(0,30);
+                bool ok = true;
+                // resynchro trame
+                int index =	dataRead.indexOf(Begin);
+                if (index==-1) {
+                    ok = false;
+                    index=dataRead.length();
+                }
+                emit t.serial_debug_info(dataRead.mid(0,index))  ;
+                dataRead.remove(0,index);
+                CptError++;
+                qDebug() << QTime::currentTime() << "hatire resync stream" << "index" << index << "ok" << ok;
+            }
         }
-        else
-        {
-            bool ok = true;
-			// resynchro trame 
-			int index =	dataRead.indexOf(Begin);
-			if (index==-1) {
-                ok = false;
-				index=dataRead.length();
-			} 
-            emit t.serial_debug_info(dataRead.mid(0,index))  ;
-			dataRead.remove(0,index);
-			CptError++;
-			qDebug() << QTime::currentTime() << "hatire resync stream" << "index" << index << "ok" << ok;
-		}
-	}
 
-    t.prepend_unread_data(dataRead);
+        t.prepend_unread_data_nolock(dataRead);
+    }
 
     if (CptError > 50)
     {

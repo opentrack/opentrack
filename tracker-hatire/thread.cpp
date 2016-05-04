@@ -275,16 +275,13 @@ void hatire_thread::on_serial_read()
     portable::sleep(ms);
 }
 
-void hatire_thread::prepend_unread_data(const QByteArray &data)
+void hatire_thread::prepend_unread_data_nolock(const QByteArray &data)
 {
-    QMutexLocker lck(&data_mtx);
     data_read.prepend(data);
 }
 
-QByteArray hatire_thread::flush_data_read()
+QByteArray hatire_thread::flush_data_read_nolock()
 {
-    QMutexLocker lck(&data_mtx);
-
     constexpr int packet_len = 30;
 
     if (data_read.length() < 4 * packet_len)
