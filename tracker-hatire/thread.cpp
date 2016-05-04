@@ -254,7 +254,7 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
-    static constexpr int ms = 1000/60;
+    static constexpr int ms = 1000/200;
 
     {
         QMutexLocker lck(&data_mtx);
