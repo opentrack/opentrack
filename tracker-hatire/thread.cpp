@@ -254,7 +254,8 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
-    static constexpr int ms = 1000/200;
+    constexpr int hz = 90;
+    constexpr int ms = 1000/hz;
 
     {
         QMutexLocker lck(&data_mtx);
@@ -275,23 +276,24 @@ void hatire_thread::on_serial_read()
     portable::sleep(ms);
 }
 
-void hatire_thread::prepend_unread_data_nolock(const QByteArray &data)
+void hatire_thread::replace_data_nolock(QByteArray&& data)
 {
-    data_read.prepend(data);
+    data_read = std::move(data);
 }
 
-QByteArray hatire_thread::flush_data_read_nolock()
+QByteArray& hatire_thread::send_data_read_nolock(bool& ret)
 {
     constexpr int packet_len = 30;
+    constexpr int cnt = 4;
+    constexpr int len = cnt * packet_len;
 
-    if (data_read.length() < 4 * packet_len)
+    if (data_read.length() < len)
     {
         // we're requesting more than packet length to help resync the stream if needed
-        return QByteArray();
+        ret = false;
     }
+    else
+        ret = true;
 
-    QByteArray ret = data_read.left(90);
-    data_read = data_read.mid(90);
-
-    return ret;
+    return data_read;
 }

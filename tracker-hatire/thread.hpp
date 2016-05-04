@@ -165,9 +165,10 @@ public:
     ~hatire_thread() override;
     hatire_thread();
 
-    void prepend_unread_data_nolock(const QByteArray& data);
+    void replace_data_nolock(QByteArray&& data);
 
-    QByteArray flush_data_read_nolock();
+    QByteArray& send_data_read_nolock(bool& ret);
+
     void Log(const QString& message);
 
     QMutex data_mtx;
