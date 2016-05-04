@@ -15,6 +15,7 @@
 
 TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), timer(this)
 {
+    // TODO move to settings api -sh 20160504
 
     ui.setupUi( this );
     settings.load_ini();
@@ -26,7 +27,6 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     foreach (QSerialPortInfo PortInfo , QSerialPortInfo::availablePorts() ) {
         ui.cbSerialPort->addItem(PortInfo.portName());
     }
-
 
     // Stop if no SerialPort dispo
     if (ui.cbSerialPort->count()<1) {
@@ -116,11 +116,6 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     ui.spb_AfterStart->setValue(settings.DelaySeq);
 
     ui.cb_Endian->setChecked(settings.BigEndian);
-
-#ifdef OPENTRACK_API
-    ui.spb_Fps->setValue(settings.FPSArduino);
-    connect(ui.spb_Fps, SIGNAL(valueChanged (  int  )),   this,SLOT(set_Fps(int)));
-#endif
 
     // Connect Qt signals to member-functions
     connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
@@ -259,10 +254,10 @@ void TrackerControls::poll_tracker_info()
 {
     if (theTracker)
     {
-        int nb_trame;
+        int frame_cnt;
 
-        theTracker->get_info(&nb_trame);
-        ui.lab_vtps->setText(QString::number(nb_trame*(1000/last_time.elapsed())));
+        theTracker->get_info(&frame_cnt);
+        ui.lab_vtps->setText(QString::number(frame_cnt*(1000/last_time.elapsed())));
         last_time.restart();
     }
 

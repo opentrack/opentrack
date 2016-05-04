@@ -67,8 +67,6 @@ protected slots:
 
     void set_endian(bool val)     { settings.BigEndian = val;       settings_changed(); }
 
-    void set_Fps(int val)         { settings.FPSArduino = val;      settings_changed(); }
-
     void set_mod_baud(int val)        { settings.pBaudRate    = static_cast<QSerialPort::BaudRate>(ui.QCB_Serial_baudRate->itemData(val).toInt()) ;       settings_changed();   }
     void set_mod_dataBits(int val)    { settings.pDataBits    = static_cast<QSerialPort::DataBits>(ui.QCB_Serial_dataBits->itemData(val).toInt()) ;       settings_changed();   }
     void set_mod_parity(int val)      { settings.pParity      = static_cast<QSerialPort::Parity>(ui.QCB_Serial_parity->itemData(val).toInt()) ;           settings_changed();   }

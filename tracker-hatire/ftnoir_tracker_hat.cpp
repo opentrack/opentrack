@@ -48,7 +48,6 @@ void hatire::start_tracker(QFrame*)
 {
 	CptError=0;
 	frame_cnt=0;
-    new_frame=false;
 	settings.load_ini();
 	applysettings(settings);
     t.Log("Starting Tracker");

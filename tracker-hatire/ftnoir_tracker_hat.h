@@ -46,7 +46,6 @@ private:
     TrackerSettings settings;
 
     int frame_cnt;
-    bool new_frame;
 
     bool bEnableRoll;
     bool bEnablePitch;
