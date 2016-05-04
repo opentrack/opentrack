@@ -160,38 +160,27 @@ void hatire::data(double *data)
 	// if we have no new data, we don't populate it and so 0 pose gets handed back which is wrong. By always running the code below, if we 
 	// have no new data, we will just give it the previous pose data which is the best thing we can do really.
 
-    if (bEnableYaw) {
-        if (bInvertYaw )	data[Yaw] =  HAT.Rot[iYawAxe] *  -1.0f;
-        else 	data[Yaw] = HAT.Rot[iYawAxe];
-			
-    } else data[Yaw] =0;
+    const struct
+    {
+        bool enable;
+        bool sign;
+        float input;
+        double& place;
+    } spec[] =
+    {
+        { bEnableX, bInvertX, HAT.Trans[iXAxis], data[TX] },
+        { bEnableY, bInvertY, HAT.Trans[iYAxis], data[TY] },
+        { bEnableZ, bInvertZ, HAT.Trans[iZAxis], data[TZ] },
+        { bEnableYaw, bInvertYaw, HAT.Rot[iYawAxis], data[Yaw] },
+        { bEnablePitch, bInvertPitch, HAT.Rot[iPitchAxis], data[Pitch] },
+        { bEnableRoll, bInvertRoll, HAT.Rot[iRollAxis], data[Roll] },
+    };
 
-	if (bEnablePitch) {
-        if (bInvertPitch) data[Pitch] =  HAT.Rot[iPitchAxe] *  -1.0f;
-        else data[Pitch] =   HAT.Rot[iPitchAxe];
-    } else data[Pitch] = 0;
-
-	if (bEnableRoll) {
-        if (bInvertRoll) data[Roll] =  HAT.Rot[iRollAxe] *  -1.0f;
-        else data[Roll] =  HAT.Rot[iRollAxe];
-    } else data[Roll] =0;
-
-	if (bEnableX) {
-        if (bInvertX) data[TX] =  HAT.Trans[iXAxe]*  -1.0f;
-        else data[TX] =   HAT.Trans[iXAxe];
-    } else data[TX] =0;
-
-	if (bEnableY) {
-        if (bInvertY) data[TY] =  HAT.Trans[iYAxe]*  -1.0f;
-        else data[TY] =  HAT.Trans[iYAxe];
-    } else data[TY] =0;
-
-	if (bEnableZ) {
-        if (bInvertZ)  data[TZ] =   HAT.Trans[iZAxe]*  -1.0f;
-        else data[TZ] =   HAT.Trans[iZAxe];
-    } else data[TZ] =0;
-
-    new_frame=false;
+    for (unsigned i = 0; i < sizeof(spec) / sizeof(*spec); i++)
+    {
+        auto& k = spec[i];
+        k.place = (k.sign ? -1.f : 1.f) * (k.enable ? k.input : 0.f);
+    }
 
 	// For debug
 	//data->x=dataRead.length();
