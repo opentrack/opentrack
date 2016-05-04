@@ -2,15 +2,15 @@
 
 #include <QDataStream>
 
-// Arduino trame structure
+// Arduino frame structure
 #pragma pack(push,2)
 struct TArduinoData
 {
-    quint16  Begin;    // Header trame 0xAAAA;
-    quint16  Code;     // 0->999 Num Trame  >=2000  Info >=3000 Init  >=5000 Start Command  >=9000 Error
+    quint16  Begin;    // Header frame 0xAAAA;
+    quint16  Code;     // 0->999 Num frame  >=2000  Info >=3000 Init  >=5000 Start Command  >=9000 Error
     float Rot[3];
     float Trans[3];
-    quint16  End;     // End trame   0x5555;
+    quint16  End;     // End frame   0x5555;
 } ;
 #pragma pack(pop) 
 

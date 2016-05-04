@@ -42,12 +42,12 @@ void TrackerSettings::load_ini()
 	InvertZ = iniFile.value( "InvertZ", 0 ).toBool();
 
 
-	RollAxe=iniFile.value("RollAxe",1).toInt();
-	PitchAxe=iniFile.value("PitchAxe",2).toInt();
-	YawAxe=iniFile.value("YawAxe",0).toInt();
-	XAxe=iniFile.value("XAxe",1).toInt();
-	YAxe=iniFile.value("YAxe",2).toInt();
-	ZAxe=iniFile.value("ZAxe",0).toInt();
+	RollAxis=iniFile.value("RollAxe",1).toInt();
+	PitchAxis=iniFile.value("PitchAxe",2).toInt();
+	YawAxis=iniFile.value("YawAxe",0).toInt();
+	XAxis=iniFile.value("XAxe",1).toInt();
+	YAxis=iniFile.value("YAxe",2).toInt();
+	ZAxis=iniFile.value("ZAxe",0).toInt();
 
 
     CmdStart=iniFile.value ( "CmdStart").toString();
@@ -101,12 +101,12 @@ void TrackerSettings::save_ini() const
 	iniFile.setValue( "InvertY", InvertY );
 	iniFile.setValue( "InvertZ", InvertZ );
 
-	iniFile.setValue ( "RollAxe", RollAxe );
-	iniFile.setValue ( "PitchAxe", PitchAxe );
-	iniFile.setValue ( "YawAxe",YawAxe );
-	iniFile.setValue ( "XAxe", XAxe );
-	iniFile.setValue ( "YAxe", YAxe );
-	iniFile.setValue ( "ZAxe", ZAxe );
+	iniFile.setValue ( "RollAxe", RollAxis );
+	iniFile.setValue ( "PitchAxe", PitchAxis );
+	iniFile.setValue ( "YawAxe",YawAxis );
+	iniFile.setValue ( "XAxe", XAxis );
+	iniFile.setValue ( "YAxe", YAxis );
+	iniFile.setValue ( "ZAxe", ZAxis );
 
 	iniFile.setValue ( "CmdStart",CmdStart.toLatin1());
 	iniFile.setValue ( "CmdStop",CmdStop.toLatin1());

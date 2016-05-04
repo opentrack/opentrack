@@ -28,12 +28,12 @@ struct TrackerSettings
     bool InvertY;
     bool InvertZ;
 
-    int RollAxe;
-    int PitchAxe;
-    int YawAxe;
-    int XAxe;
-    int YAxe;
-    int ZAxe;
+    int RollAxis;
+    int PitchAxis;
+    int YawAxis;
+    int XAxis;
+    int YAxis;
+    int ZAxis;
 
     QString  CmdStart;
     QString  CmdStop;

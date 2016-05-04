@@ -204,12 +204,12 @@ void hatire::applysettings(const TrackerSettings& settings)
 	bInvertZ = settings.InvertZ;
     ts.bEnableLogging = settings.EnableLogging;
 
-	iRollAxe= settings.RollAxe;
-	iPitchAxe= settings.PitchAxe;
-	iYawAxe= settings.YawAxe;
-	iXAxe= settings.XAxe;
-	iYAxe= settings.YAxe;
-	iZAxe= settings.ZAxe;
+	iRollAxis= settings.RollAxis;
+	iPitchAxis= settings.PitchAxis;
+	iYawAxis= settings.YawAxis;
+	iXAxis= settings.XAxis;
+	iYAxis= settings.YAxis;
+	iZAxis= settings.ZAxis;
 
     ts.iBaudRate=settings.pBaudRate;
     ts.iDataBits=settings.pDataBits;

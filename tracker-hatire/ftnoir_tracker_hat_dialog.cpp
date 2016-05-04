@@ -97,12 +97,12 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
 	ui.chkEnableLogging->setChecked(settings.EnableLogging);
 
 
-    ui.cb_roll->setCurrentIndex(settings.RollAxe);
-    ui.cb_pitch->setCurrentIndex(settings.PitchAxe);
-    ui.cb_yaw->setCurrentIndex(settings.YawAxe);
-    ui.cb_x->setCurrentIndex(settings.XAxe);
-    ui.cb_y->setCurrentIndex(settings.YAxe);
-    ui.cb_z->setCurrentIndex(settings.ZAxe);
+    ui.cb_roll->setCurrentIndex(settings.RollAxis);
+    ui.cb_pitch->setCurrentIndex(settings.PitchAxis);
+    ui.cb_yaw->setCurrentIndex(settings.YawAxis);
+    ui.cb_x->setCurrentIndex(settings.XAxis);
+    ui.cb_y->setCurrentIndex(settings.YAxis);
+    ui.cb_z->setCurrentIndex(settings.ZAxis);
 
     ui.le_cmd_start->setText(settings.CmdStart);
     ui.le_cmd_stop->setText(settings.CmdStop);

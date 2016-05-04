@@ -47,12 +47,12 @@ protected slots:
     void set_diag_logging(bool val)     { settings.EnableLogging = val;       settings_changed(); }
 
 
-    void set_rot_roll(int val)    { settings.RollAxe = val;    settings_changed(); }
-    void set_rot_pitch(int val)   { settings.PitchAxe = val;   settings_changed(); }
-    void set_rot_yaw(int val)     { settings.YawAxe = val;     settings_changed(); }
-    void set_acc_x(int val)       { settings.XAxe = val;       settings_changed(); }
-    void set_acc_y(int val)       { settings.YAxe = val;       settings_changed(); }
-    void set_acc_z(int val)       { settings.ZAxe = val;       settings_changed(); }
+    void set_rot_roll(int val)    { settings.RollAxis = val;    settings_changed(); }
+    void set_rot_pitch(int val)   { settings.PitchAxis = val;   settings_changed(); }
+    void set_rot_yaw(int val)     { settings.YawAxis = val;     settings_changed(); }
+    void set_acc_x(int val)       { settings.XAxis = val;       settings_changed(); }
+    void set_acc_y(int val)       { settings.YAxis = val;       settings_changed(); }
+    void set_acc_z(int val)       { settings.ZAxis = val;       settings_changed(); }
 
     void set_cmd_start(const QString &val)  { settings.CmdStart = val;   settings_changed(); }
     void set_cmd_stop(const QString &val)   { settings.CmdStop = val;    settings_changed(); }

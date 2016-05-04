@@ -62,12 +62,12 @@ private:
     bool bInvertY;
     bool bInvertZ;
 
-    int iRollAxe;
-    int iPitchAxe;
-    int iYawAxe;
-    int iXAxe;
-    int iYAxe;
-    int iZAxe;
+    int iRollAxis;
+    int iPitchAxis;
+    int iYawAxis;
+    int iXAxis;
+    int iYAxis;
+    int iZAxis;
 
     volatile int CptError;
 };
