@@ -294,9 +294,6 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
-    constexpr int hz = 90;
-    constexpr int ms = 1000/hz;
-
     {
         QMutexLocker lck(&data_mtx);
 #ifndef HATIRE_DEBUG_LOGFILE
@@ -311,8 +308,20 @@ void hatire_thread::on_serial_read()
         }
 #endif
     }
+
+    stat.input(timer.elapsed_ms());
+    timer.start();
+
+    if (throttle_timer.elapsed_ms() >= 1000)
+    {
+        throttle_timer.start();
+        qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
+    }
+
     // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
     // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
+    constexpr int hz = 90;
+    constexpr int ms = 1000/hz;
     portable::sleep(ms);
 }
 

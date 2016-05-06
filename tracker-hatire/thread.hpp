@@ -8,6 +8,9 @@
 #include <QFile>
 #include <QCoreApplication>
 
+#include "opentrack/variance.hpp"
+#include "opentrack-compat/timer.hpp"
+
 enum results
 {
     result_ok,
@@ -100,6 +103,8 @@ class hatire_thread : public QThread
     QByteArray data_read;
     serial_t com_port;
     thread_settings s;
+    variance stat;
+    Timer timer, throttle_timer;
 
     void run() override;
 
