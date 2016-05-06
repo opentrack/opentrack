@@ -10,6 +10,7 @@
  */
 #include <QDebug>
 #include "ftnoir_tracker_hat.h"
+#include <algorithm>
 
 hatire::hatire()
 {
@@ -93,7 +94,6 @@ void hatire::data(double *data)
 
         if (ok)
         {
-
             while (data_read.length() >= 30)
             {
                 //t.Log(data_read.toHex());
@@ -120,28 +120,28 @@ void hatire::data(double *data)
                 }
                 else
                 {
-                    bool ok = true;
                     // resync frame
                     int index =	data_read.indexOf(Begin, 1);
                     if (index == -1)
                     {
-                        ok = false;
                         index = data_read.length();
                     }
                     emit t.serial_debug_info(data_read.mid(0,index));
 
                     if (!ok)
+                    {
                         data_read.clear();
+                    }
                     else
+                    {
                         data_read.remove(0, index);
+                    }
 
                     CptError++;
 
-                    qDebug() << QTime::currentTime() << "hatire resync stream" << "index" << index << "ok" << ok;
+                    qDebug() << QTime::currentTime() << "hatire resync stream" << "index" << index << "remaining" << data_read.size();
                 }
             }
-
-            t.replace_data_nolock(std::move(data_read));
         }
     }
 

@@ -276,11 +276,6 @@ void hatire_thread::on_serial_read()
     portable::sleep(ms);
 }
 
-void hatire_thread::replace_data_nolock(QByteArray&& data)
-{
-    data_read = std::move(data);
-}
-
 QByteArray& hatire_thread::send_data_read_nolock(bool& ret)
 {
     constexpr int packet_len = 30;
