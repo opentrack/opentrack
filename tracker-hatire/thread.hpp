@@ -107,45 +107,7 @@ private slots:
     void on_serial_read();
     void teardown_serial();
 
-    void sendcmd_impl(unused(const QByteArray, &cmd))
-    {
-#ifndef HATIRE_DEBUG_LOGFILE
-        QByteArray Msg;
-
-        if (cmd.length() > 0)
-        {
-            if (com_port.isOpen())
-            {
-                QString logMess;
-                logMess.append("SEND '");
-                logMess.append(cmd);
-                logMess.append("'");
-                Log(logMess);
-                com_port.write(cmd);
-                if (!com_port.waitForBytesWritten(1000)) {
-                    emit serial_debug_info("TimeOut in writing CMD");
-                } else
-                {
-                    Msg.append("\r\n");
-                    Msg.append("SEND '");
-                    Msg.append(cmd);
-                    Msg.append("'\r\n");
-                }
-#if 0 // WaitForReadyRead isn't working well and there are some reports of it being a win32 issue. We can live without it anyway
-                if  ( !com_port.waitForReadyRead(1000)) {
-                    emit serial_debug_info("TimeOut in response to CMD") ;
-                } else {
-                    emit serial_debug_info(Msg);
-                }
-#else
-                emit serial_debug_info(Msg);
-#endif
-            } else {
-                emit serial_debug_info("ComPort not open")  ;
-            }
-        }
-#endif
-    }
+    void sendcmd_impl(unused(const QByteArray, &cmd));
     void serial_info_impl();
     serial_result init_serial_port_impl();
     void update_serial_settings_impl(const thread_settings& s);
