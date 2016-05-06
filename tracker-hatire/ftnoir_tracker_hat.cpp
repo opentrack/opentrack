@@ -122,7 +122,7 @@ void hatire::data(double *data)
                 {
                     bool ok = true;
                     // resync frame
-                    int index =	data_read.indexOf(Begin);
+                    int index =	data_read.indexOf(Begin, 1);
                     if (index == -1)
                     {
                         ok = false;
