@@ -4,6 +4,7 @@
 #include "OVR_CAPI.h"
 #include "Kernel/OVR_Math.h"
 #include <cstdio>
+#include <cstring>
 
 using namespace OVR;
 
@@ -38,16 +39,18 @@ void Rift_Tracker::data(double *data)
 {
     if (hmd)
     {
-	ovrHSWDisplayState hsw;	
-	if (ovrHmd_GetHSWDisplayState(hmd, &hsw), hsw.Displayed)
+        ovrHSWDisplayState hsw;
+        std::memset(&hsw, 0, sizeof(hsw));
+        ovrHmd_GetHSWDisplayState(hmd, &hsw);
+        if (hsw.Displayed)
             ovrHmd_DismissHSWDisplay(hmd);
         ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, 0);
-        if(ss.StatusFlags & ovrStatus_OrientationTracked) {
+        if (ss.StatusFlags & ovrStatus_OrientationTracked)
+        {
             auto pose = ss.HeadPose.ThePose;
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-            // XXX TODO move to core
             if (s.useYawSpring)
             {
                 yaw = old_yaw*s.persistence + (yaw-old_yaw);
