@@ -132,7 +132,7 @@ public:
     ~hatire_thread() override;
     hatire_thread();
 
-    QByteArray& send_data_read_nolock(bool& ret);
+    QByteArray& send_data_read_nolock();
 
     void Log(const QString& message);
 

@@ -88,54 +88,46 @@ void hatire::data(double *data)
     {
         QMutexLocker l(&t.data_mtx);
 
-        bool ok = false;
+        QByteArray& data_read = t.send_data_read_nolock();
 
-        QByteArray& data_read = t.send_data_read_nolock(ok);
-
-        if (ok)
+        while (data_read.length() >= 30)
         {
-            while (data_read.length() >= 30)
+            //t.Log(data_read.toHex());
+            // .Begin==0xAAAA .End==0x5555
+            if (data_read[0] == Begin[0] && data_read[1] == Begin[1] &&
+                data_read[28] == End[0] && data_read[29] == End[1])
             {
-                //t.Log(data_read.toHex());
-                // .Begin==0xAAAA .End==0x5555
-                if (data_read[0] == Begin[0] && data_read[1] == Begin[1] &&
-                    data_read[28] == End[0] && data_read[29] == End[1])
-                {
-                    QDataStream stream(&data_read, QIODevice::ReadOnly);
+                QDataStream stream(&data_read, QIODevice::ReadOnly);
 
-                    if (ts.bBigEndian)
-                        stream.setByteOrder(QDataStream::BigEndian);
-                    else
-                        stream.setByteOrder(QDataStream::LittleEndian);
-
-                    stream >> ArduinoData;
-
-                    frame_cnt++;
-
-                    if (ArduinoData.Code <= 1000)
-                        HAT = ArduinoData;
-                    else
-                        emit t.serial_debug_info(data_read.mid(4,24))  ;
-                    data_read.remove(0, 30);
-                }
+                if (ts.bBigEndian)
+                    stream.setByteOrder(QDataStream::BigEndian);
                 else
+                    stream.setByteOrder(QDataStream::LittleEndian);
+
+                stream >> ArduinoData;
+
+                frame_cnt++;
+
+                if (ArduinoData.Code <= 1000)
+                    HAT = ArduinoData;
+                else
+                    emit t.serial_debug_info(data_read.mid(4,24))  ;
+                data_read.remove(0, 30);
+            }
+            else
+            {
+                // resync frame
+                int index =	data_read.indexOf(Begin, 1);
+                if (index == -1)
                 {
-                    // resync frame
-                    int index =	data_read.indexOf(Begin, 1);
-                    if (index == -1)
-                    {
-                        index = data_read.length();
-                    }
+                    index = data_read.length();
+                }
+
+                if (data_read.length() != 0)
+                {
                     emit t.serial_debug_info(data_read.mid(0,index));
 
-                    if (!ok)
-                    {
-                        data_read.clear();
-                    }
-                    else
-                    {
-                        data_read.remove(0, index);
-                    }
+                    data_read.remove(0, index);
 
                     CptError++;
 

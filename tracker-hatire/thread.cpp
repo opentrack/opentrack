@@ -325,17 +325,7 @@ void hatire_thread::on_serial_read()
     portable::sleep(ms);
 }
 
-QByteArray& hatire_thread::send_data_read_nolock(bool& ret)
+QByteArray& hatire_thread::send_data_read_nolock()
 {
-    constexpr int packet_len = 30;
-
-    if (data_read.length() < packet_len)
-    {
-        // we're requesting more than packet length to help resync the stream if needed
-        ret = false;
-    }
-    else
-        ret = true;
-
     return data_read;
 }
