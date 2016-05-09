@@ -13,35 +13,18 @@
 
 #include <QScrollBar>
 
-TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), timer(this)
+TrackerControls::TrackerControls() : theTracker(nullptr), timer(this)
 {
-    // TODO move to settings api -sh 20160504
-
-    ui.setupUi( this );
-    settings.load_ini();
+    ui.setupUi(this);
 
     ui.label_version->setText(VER_FILEVERSION_STR);
 
     // make SerialPort list
     ui.cbSerialPort->clear();
-    foreach (QSerialPortInfo PortInfo , QSerialPortInfo::availablePorts() ) {
-        ui.cbSerialPort->addItem(PortInfo.portName());
+    for (const QSerialPortInfo& port_info : QSerialPortInfo::availablePorts() ) {
+        ui.cbSerialPort->addItem(port_info.portName());
     }
 
-    // Stop if no SerialPort dispo
-    if (ui.cbSerialPort->count()<1) {
-        QMessageBox::critical(this,"Error", "No SerialPort avaible");
-    } else {
-
-        int indxport =ui.cbSerialPort->findText(settings.SerialPortName,Qt::MatchExactly );
-        if (indxport!=-1) {
-            ui.cbSerialPort->setCurrentIndex(indxport);
-        } else {
-            if (settings.SerialPortName != "")
-                QMessageBox::warning(this,"Error", "Selected SerialPort modified");
-            ui.cbSerialPort-> setCurrentIndex(indxport);
-        }
-    }
     // Serial config
     ui.QCB_Serial_baudRate->clear();
     ui.QCB_Serial_baudRate->addItem(QLatin1String("9600"),QSerialPort::Baud9600);
@@ -49,14 +32,12 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     ui.QCB_Serial_baudRate->addItem(QLatin1String("38400"),QSerialPort::Baud38400);
     ui.QCB_Serial_baudRate->addItem(QLatin1String("57600"),QSerialPort:: Baud57600);
     ui.QCB_Serial_baudRate->addItem(QLatin1String("115200"),QSerialPort::Baud115200);
-    ui.QCB_Serial_baudRate->setCurrentIndex(ui.QCB_Serial_baudRate->findData(settings.pBaudRate));
 
     ui.QCB_Serial_dataBits->clear();
     ui.QCB_Serial_dataBits->addItem(QLatin1String("5"), QSerialPort::Data5);
     ui.QCB_Serial_dataBits->addItem(QLatin1String("6"), QSerialPort::Data6);
     ui.QCB_Serial_dataBits->addItem(QLatin1String("7"), QSerialPort::Data7);
     ui.QCB_Serial_dataBits->addItem(QLatin1String("8"), QSerialPort::Data8);
-    ui.QCB_Serial_dataBits->setCurrentIndex(ui.QCB_Serial_dataBits->findData(settings.pDataBits));
 
     ui.QCB_Serial_parity->clear();
     ui.QCB_Serial_parity->addItem(QLatin1String("None"), QSerialPort::NoParity);
@@ -64,108 +45,61 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     ui.QCB_Serial_parity->addItem(QLatin1String("Odd"), QSerialPort::OddParity);
     ui.QCB_Serial_parity->addItem(QLatin1String("Space"), QSerialPort::SpaceParity);
     ui.QCB_Serial_parity->addItem(QLatin1String("Mark"), QSerialPort::MarkParity);
-    ui.QCB_Serial_parity->setCurrentIndex(ui.QCB_Serial_parity->findData(settings.pParity));
 
     ui.QCB_Serial_stopBits->clear();
     ui.QCB_Serial_stopBits->addItem(QLatin1String("1"), QSerialPort::OneStop);
     ui.QCB_Serial_stopBits->addItem(QLatin1String("1.5"), QSerialPort::OneAndHalfStop);
     ui.QCB_Serial_stopBits->addItem(QLatin1String("2"), QSerialPort::TwoStop);
-    ui.QCB_Serial_stopBits->setCurrentIndex(ui.QCB_Serial_stopBits->findData(settings.pStopBits));
-
 
     ui.QCB_Serial_flowControl->clear();
     ui.QCB_Serial_flowControl->addItem(QLatin1String("None"), QSerialPort::NoFlowControl);
     ui.QCB_Serial_flowControl->addItem(QLatin1String("RTS/CTS"), QSerialPort::HardwareControl);
     ui.QCB_Serial_flowControl->addItem(QLatin1String("XON/XOFF"), QSerialPort::SoftwareControl);
-    ui.QCB_Serial_flowControl->setCurrentIndex(ui.QCB_Serial_flowControl->findData(settings.pFlowControl));
 
+    tie_setting(s.EnableYaw, ui.chkEnableYaw);
+    tie_setting(s.EnablePitch, ui.chkEnablePitch);
+    tie_setting(s.EnableRoll, ui.chkEnableRoll);
+    tie_setting(s.EnableX, ui.chkEnableX);
+    tie_setting(s.EnableY, ui.chkEnableY);
+    tie_setting(s.EnableZ, ui.chkEnableZ);
 
-    ui.chkEnableRoll->setChecked(settings.EnableRoll);
-    ui.chkEnablePitch->setChecked(settings.EnablePitch);
-    ui.chkEnableYaw->setChecked(settings.EnableYaw);
-    ui.chkEnableX->setChecked(settings.EnableX);
-    ui.chkEnableY->setChecked(settings.EnableY);
-    ui.chkEnableZ->setChecked(settings.EnableZ);
+    tie_setting(s.InvertYaw, ui.chkInvertYaw);
+    tie_setting(s.InvertPitch, ui.chkInvertPitch);
+    tie_setting(s.InvertRoll, ui.chkInvertRoll);
+    tie_setting(s.InvertX, ui.chkInvertX);
+    tie_setting(s.InvertY, ui.chkInvertY);
+    tie_setting(s.InvertZ, ui.chkInvertZ);
 
-    ui.chkInvertRoll->setChecked(settings.InvertRoll);
-    ui.chkInvertPitch->setChecked(settings.InvertPitch);
-    ui.chkInvertYaw->setChecked(settings.InvertYaw);
-    ui.chkInvertX->setChecked(settings.InvertX);
-    ui.chkInvertY->setChecked(settings.InvertY);
-    ui.chkInvertZ->setChecked(settings.InvertZ);
-	
-	ui.chkEnableLogging->setChecked(settings.EnableLogging);
+    tie_setting(s.EnableLogging, ui.chkEnableLogging);
 
+    tie_setting(s.YawAxis, ui.cb_yaw);
+    tie_setting(s.PitchAxis, ui.cb_pitch);
+    tie_setting(s.RollAxis, ui.cb_roll);
+    tie_setting(s.XAxis, ui.cb_x);
+    tie_setting(s.YAxis, ui.cb_y);
+    tie_setting(s.ZAxis, ui.cb_z);
 
-    ui.cb_roll->setCurrentIndex(settings.RollAxis);
-    ui.cb_pitch->setCurrentIndex(settings.PitchAxis);
-    ui.cb_yaw->setCurrentIndex(settings.YawAxis);
-    ui.cb_x->setCurrentIndex(settings.XAxis);
-    ui.cb_y->setCurrentIndex(settings.YAxis);
-    ui.cb_z->setCurrentIndex(settings.ZAxis);
+    tie_setting(s.CmdStart, ui.le_cmd_start);
+    tie_setting(s.CmdStop, ui.le_cmd_stop);
+    tie_setting(s.CmdInit, ui.le_cmd_init);
+    tie_setting(s.CmdReset, ui.le_cmd_reset);
+    tie_setting(s.CmdCenter, ui.le_cmd_center);
+    tie_setting(s.CmdZero, ui.le_cmd_zero);
 
-    ui.le_cmd_start->setText(settings.CmdStart);
-    ui.le_cmd_stop->setText(settings.CmdStop);
-    ui.le_cmd_init->setText(settings.CmdInit);
-    ui.le_cmd_reset->setText(settings.CmdReset);
-    ui.le_cmd_center->setText(settings.CmdCenter);
-    ui.le_cmd_zero->setText(settings.CmdZero);
+    tie_setting(s.DelayInit, ui.spb_BeforeInit);
+    tie_setting(s.DelayStart, ui.spb_BeforeStart);
+    tie_setting(s.DelaySeq, ui.spb_AfterStart);
 
-    ui.spb_BeforeInit->setValue(settings.DelayInit);
-    ui.spb_BeforeStart->setValue(settings.DelayStart);
-    ui.spb_AfterStart->setValue(settings.DelaySeq);
+    tie_setting(s.BigEndian, ui.cb_Endian);
 
-    ui.cb_Endian->setChecked(settings.BigEndian);
+    tie_setting(s.pBaudRate, ui.QCB_Serial_baudRate);
+    tie_setting(s.pDataBits, ui.QCB_Serial_dataBits);
+    tie_setting(s.pFlowControl, ui.QCB_Serial_flowControl);
+    tie_setting(s.pParity, ui.QCB_Serial_parity);
+    tie_setting(s.pStopBits, ui.QCB_Serial_stopBits);
 
-    // Connect Qt signals to member-functions
-    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
-    connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(doSave()));
-
-
-    connect(ui.cbSerialPort,  SIGNAL(currentIndexChanged(QString)), this,SLOT(set_mod_port(QString)) );
-
-    connect( ui.chkEnableRoll,SIGNAL(toggled(bool)),		 this,SLOT(set_ena_roll(bool)) );
-    connect( ui.chkEnablePitch,SIGNAL(toggled(bool)),		 this,SLOT(set_ena_pitch(bool)) );
-    connect( ui.chkEnableYaw,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_yaw(bool)) );
-    connect( ui.chkEnableX,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_x(bool)) );
-    connect( ui.chkEnableY,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_y(bool)) );
-    connect( ui.chkEnableZ,SIGNAL(toggled(bool)),			 this,SLOT(set_ena_z(bool)) );
-
-    connect( ui.chkInvertRoll,SIGNAL(toggled(bool)),		 this,SLOT(set_inv_roll(bool)) );
-    connect( ui.chkInvertPitch,SIGNAL(toggled(bool)),		 this,SLOT(set_inv_pitch(bool)) );
-    connect( ui.chkInvertYaw,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_yaw(bool)) );
-    connect( ui.chkInvertX,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_x(bool)) );
-    connect( ui.chkInvertY,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_y(bool)) );
-    connect( ui.chkInvertZ,SIGNAL(toggled(bool)),			 this,SLOT(set_inv_z(bool)) );
-	connect( ui.chkEnableLogging,SIGNAL(toggled(bool)),      this,SLOT(set_diag_logging(bool)) );
-
-    connect(ui.cb_roll, SIGNAL(currentIndexChanged(int)), this,SLOT(set_rot_roll(int)));
-    connect(ui.cb_pitch, SIGNAL(currentIndexChanged(int)),this,SLOT(set_rot_pitch(int)));
-    connect(ui.cb_yaw, SIGNAL(currentIndexChanged(int)),  this,SLOT(set_rot_yaw(int)));
-    connect(ui.cb_x, SIGNAL(currentIndexChanged(int)),    this,SLOT(set_acc_x(int)));
-    connect(ui.cb_y, SIGNAL(currentIndexChanged(int)),    this,SLOT(set_acc_y(int)));
-    connect(ui.cb_z, SIGNAL(currentIndexChanged(int)),    this,SLOT(set_acc_z(int)));
-
-    connect(ui.le_cmd_start, SIGNAL(textEdited (QString )),     this,SLOT(set_cmd_start(QString)));
-    connect(ui.le_cmd_stop, SIGNAL(textEdited (  QString  )),   this,SLOT(set_cmd_stop(QString)));
-    connect(ui.le_cmd_init, SIGNAL(textChanged (  QString  )),  this,SLOT(set_cmd_init(QString)));
-    connect(ui.le_cmd_reset, SIGNAL(textChanged (  QString  )), this,SLOT(set_cmd_reset(QString)));
-    connect(ui.le_cmd_center, SIGNAL(textChanged (  QString  )),this,SLOT(set_cmd_center(QString)));
-    connect(ui.le_cmd_zero, SIGNAL(textChanged (  QString  )),this,SLOT(set_cmd_zero(QString)));
-
-    connect(ui.spb_BeforeInit, SIGNAL(valueChanged (  int  )),   this,SLOT(set_DelayInit(int)));
-    connect(ui.spb_BeforeStart, SIGNAL(valueChanged (  int  )),  this,SLOT(set_DelayStart(int)));
-    connect(ui.spb_AfterStart, SIGNAL(valueChanged (  int  )),   this,SLOT(set_DelaySeq(int)));
-
-    connect( ui.cb_Endian,SIGNAL(toggled(bool)),			 this,SLOT(set_endian(bool)) );
-
-
-    connect(ui.QCB_Serial_baudRate,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_baud(int)) );
-    connect(ui.QCB_Serial_dataBits,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_dataBits(int)) );
-    connect(ui.QCB_Serial_parity,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_parity(int)) );
-    connect(ui.QCB_Serial_stopBits,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_stopBits(int)) );
-    connect(ui.QCB_Serial_flowControl,  SIGNAL(currentIndexChanged(int)), this,SLOT(set_mod_flowControl(int)) );
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     connect(ui.btnReset, SIGNAL(clicked()), this, SLOT(doReset()));
     //connect(ui.btnCenter, SIGNAL(clicked()), this, SLOT(doCenter()));
@@ -180,30 +114,16 @@ TrackerControls::TrackerControls() : theTracker(NULL), settingsDirty(false), tim
     //connect(ui.lineSend,SIGNAL(keyPressEvent),this,SLOT(on_lineSend_returnPressed()) );
 }
 
-//
-// Destructor for server-dialog
-//
 TrackerControls::~TrackerControls() {
 }
 
-//
-// Initialize tracker-client-dialog
-//
-void TrackerControls::Initialize(QWidget *parent) {
+void TrackerControls::Initialize(QWidget *parent)
+{
     QPoint offsetpos(100, 100);
     if (parent) {
         this->move(parent->pos() + offsetpos);
     }
     show();
-}
-
-//
-// Apply online settings to tracker
-//
-void TrackerControls::settings_changed()
-{
-    settingsDirty = true;
-    if (theTracker) theTracker->applysettings(settings);
 }
 
 //
@@ -260,7 +180,6 @@ void TrackerControls::poll_tracker_info()
         ui.lab_vtps->setText(QString::number(frame_cnt*(1000/last_time.elapsed())));
         last_time.restart();
     }
-
 }
 
 void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
@@ -272,104 +191,41 @@ void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
     bar->setValue(bar->maximum());
 }
 
-void TrackerControls::doSave() {
-    settingsDirty=false;
-    settings.save_ini();
+void TrackerControls::doOK()
+{
+    s.b->save();
+    close();
 }
 
-//
-// OK clicked on server-dialog
-//
-void TrackerControls::doOK() {
-    settingsDirty=false;
-    settings.save_ini();
-    this->close();
+void TrackerControls::doCancel()
+{
+    s.b->reload();
+    close();
 }
 
-//
-// Cancel clicked on server-dialog
-//
-void TrackerControls::doCancel() {
-    //
-    // Ask if changed Settings should be saved
-    //
-    if (settingsDirty) {
-        int ret = QMessageBox::question ( this, "Settings have changed", "Do you want to save the settings?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Discard );
-        switch (ret) {
-        case QMessageBox::Save:
-            settings.save_ini();
-            close();
-            break;
-        case QMessageBox::Discard:
-            close();
-            break;
-        case QMessageBox::Cancel:
-            // Cancel was clicked
-            break;
-        default:
-            // should never be reached
-            break;
-        }
-    }
-    else {
-        close();
-    }
-}
-
-#ifdef OPENTRACK_API
 void TrackerControls::register_tracker(ITracker *tracker)
-#else
-void TrackerControls::registerTracker(ITracker *tracker)
-#endif
 {
     theTracker = static_cast<hatire*>(tracker);
-    connect(theTracker, SIGNAL(sendMsgInfo(QByteArray)),this , SLOT(WriteMsgInfo(QByteArray)));
-
-    if (isVisible() && settingsDirty) theTracker->applysettings(settings);
+    connect(&theTracker->t, SIGNAL(serial_debug_info(QByteArray)), this, SLOT(WriteMsgInfo(QByteArray)));
 
     ui.cbSerialPort->setEnabled(false);
     ui.btnZero->setEnabled(true);
-    ui.btnCenter->setEnabled(true);
+    //ui.btnCenter->setEnabled(true);
     ui.btnReset->setEnabled(true);
     ui.pteINFO->clear();
     ui.lab_vstatus->setText("HAT START");
     last_time.start();
     timer.start(250);
-
 }
 
-#ifdef OPENTRACK_API
 void TrackerControls::unregister_tracker()
-#else
-void TrackerControls::unRegisterTracker()
-#endif
 {
     timer.stop();
-    theTracker=NULL;
+    theTracker = nullptr;
     ui.cbSerialPort->setEnabled(true);
     ui.btnZero->setEnabled(false);
-    ui.btnCenter->setEnabled(false);
+    //ui.btnCenter->setEnabled(false);
     ui.btnReset->setEnabled(false);
     ui.lab_vstatus->setText("HAT STOPPED");
     ui.lab_vtps->setText("");
 }
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Factory function that creates instances if the Tracker-settings dialog object.
-
-// Export both decorated and undecorated names.
-//   GetTrackerDialog     - Undecorated name, which can be easily used with GetProcAddress
-//                          Win32 API function.
-//   _GetTrackerDialog@0  - Common name decoration for __stdcall functions in C language.
-#ifdef OPENTRACK_API
-#else
-#pragma comment(linker, "/export:GetTrackerDialog=_GetTrackerDialog@0")
-FTNOIR_TRACKER_BASE_EXPORT ITrackerDialogPtr __stdcall GetTrackerDialog( )
-{
-    return new TrackerControls;
-}
-#endif
-

@@ -52,7 +52,7 @@ void hatire_thread::Log(const QString& message)
 {
     // Drop out immediately if logging is off. Yes, there is still some overhead because of passing strings around for no reason.
     // that's unfortunate and I'll monitor the impact and see if it needs a more involved fix.
-    if (!s.bEnableLogging) return;
+    if (!s.EnableLogging) return;
 
     Diag flDiagnostics;
 
@@ -67,9 +67,8 @@ void hatire_thread::Log(const QString& message)
     }
 }
 
-void hatire_thread::start(const thread_settings& s_)
+void hatire_thread::start()
 {
-    s = s_;
     com_port.moveToThread(this);
 #ifdef HATIRE_DEBUG_LOGFILE
     read_timer.moveToThread(this);
@@ -83,21 +82,15 @@ hatire_thread::~hatire_thread()
     wait();
 }
 
-thread_settings hatire_thread::serial_settings_impl()
-{
-    return s;
-}
-
 hatire_thread::hatire_thread()
 {
     data_read.reserve(65536);
 
     connect(this, &QThread::finished, this, &hatire_thread::teardown_serial);
-    connect(this, &hatire_thread::update_serial_settings, this, &hatire_thread::update_serial_settings_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl, Qt::QueuedConnection);
-    connect(this, &hatire_thread::serial_settings, this, &hatire_thread::serial_settings_impl, Qt::QueuedConnection);
+    connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl, Qt::QueuedConnection);
 }
 
 void hatire_thread::teardown_serial()
@@ -106,7 +99,7 @@ void hatire_thread::teardown_serial()
     {
         QByteArray msg;
         Log("Tracker shut down");
-        com_port.write(s.sCmdStop);
+        com_port.write(to_latin1(s.CmdStop));
         if (!com_port.waitForBytesWritten(1000))
         {
             emit serial_debug_info("TimeOut in writing CMD");
@@ -115,7 +108,7 @@ void hatire_thread::teardown_serial()
         {
             msg.append("\r\n");
             msg.append("SEND '");
-            msg.append(s.sCmdStop);
+            msg.append(s.CmdStop);
             msg.append("'\r\n");
         }
         emit serial_debug_info(msg);
@@ -139,25 +132,20 @@ void hatire_thread::run()
     (void) exec();
 }
 
-void hatire_thread::update_serial_settings_impl(const thread_settings &s_)
-{
-    s = s_;
-}
-
 serial_result hatire_thread::init_serial_port_impl()
 {
 #ifndef HATIRE_DEBUG_LOGFILE
-    com_port.setPortName(s.sSerialPortName);
+    com_port.setPortName(s.QSerialPortName);
 
     if (com_port.open(QIODevice::ReadWrite))
     {
         Log("Port Open");
         if (
-            com_port.setBaudRate((QSerialPort::BaudRate)s.iBaudRate)
-            && com_port.setDataBits((QSerialPort::DataBits)s.iDataBits)
-            && com_port.setParity((QSerialPort::Parity)s.iParity)
-            && com_port.setStopBits((QSerialPort::StopBits)s.iStopBits)
-            && com_port.setFlowControl((QSerialPort::FlowControl)s.iFlowControl)
+            com_port.setBaudRate((QSerialPort::BaudRate)s.pBaudRate)
+            && com_port.setDataBits((QSerialPort::DataBits)s.pDataBits)
+            && com_port.setParity((QSerialPort::Parity)s.pParity)
+            && com_port.setStopBits((QSerialPort::StopBits)s.pStopBits)
+            && com_port.setFlowControl((QSerialPort::FlowControl)s.pFlowControl)
             && com_port.clear(QSerialPort::AllDirections)
             && com_port.setDataErrorPolicy(QSerialPort::IgnorePolicy)
            )
@@ -178,22 +166,25 @@ serial_result hatire_thread::init_serial_port_impl()
                     Log("Couldn't set RTS");
             }
             // Wait init arduino sequence
-            for (int i = 1; i <=s.iDelayInit;  i+=50) {
+            for (int i = 1; i <= s.DelayInit; i+=50)
+            {
                 if (com_port.waitForReadyRead(50)) break;
             }
             Log("Waiting on init");
             qDebug()  << QTime::currentTime()  << " HAT send INIT ";
-            sendcmd(s.sCmdInit);
+            sendcmd_str(s.CmdInit);
             // Wait init MPU sequence
-            for (int i = 1; i <=s.iDelayStart;  i+=50) {
+            for (int i = 1; i <= s.DelayStart; i+=50)
+            {
                 if (com_port.waitForReadyRead(50)) break;
             }
             // Send  START cmd to IMU
             qDebug()  << QTime::currentTime()  << " HAT send START ";
-            sendcmd(s.sCmdStart);
+            sendcmd_str(s.CmdStart);
 
             // Wait start MPU sequence
-            for (int i = 1; i <=s.iDelaySeq;  i+=50) {
+            for (int i = 1; i <=s.DelaySeq; i+=50)
+            {
                 if (com_port.waitForReadyRead(50)) break;
             }
             Log("Port setup, waiting for HAT frames to process");

@@ -7,54 +7,67 @@
 
 #pragma once
 
-#include <QtSerialPort/QSerialPort>
+#include <QSerialPort>
+#include "opentrack-compat/options.hpp"
 
-struct TrackerSettings
+using namespace options;
+
+struct TrackerSettings : opts
 {
-    void load_ini();
-    void save_ini() const;
+    value<bool> EnableRoll, EnablePitch, EnableYaw, EnableX, EnableY, EnableZ;
+    value<bool> InvertRoll, InvertPitch, InvertYaw, InvertX, InvertY, InvertZ;
+    value<int> RollAxis, PitchAxis, YawAxis, XAxis, YAxis, ZAxis;
 
-    bool EnableRoll;
-    bool EnablePitch;
-    bool EnableYaw;
-    bool EnableX;
-    bool EnableY;
-    bool EnableZ;
+    value<QString> CmdStart, CmdStop, CmdInit, CmdReset, CmdCenter, CmdZero;
 
-    bool InvertRoll;
-    bool InvertPitch;
-    bool InvertYaw;
-    bool InvertX;
-    bool InvertY;
-    bool InvertZ;
+    value<int> DelayInit, DelayStart, DelaySeq;
 
-    int RollAxis;
-    int PitchAxis;
-    int YawAxis;
-    int XAxis;
-    int YAxis;
-    int ZAxis;
+    value<bool> BigEndian, EnableLogging;
 
-    QString  CmdStart;
-    QString  CmdStop;
-    QString  CmdInit;
-    QString  CmdReset;
-    QString  CmdCenter;
-    QString  CmdZero;
+    value<QString> QSerialPortName;
 
-    int DelayInit;
-    int DelayStart;
-    int DelaySeq;
+    value<QSerialPort::BaudRate> pBaudRate;
+    value<QSerialPort::DataBits> pDataBits;
+    value<QSerialPort::Parity> pParity;
+    value<QSerialPort::StopBits> pStopBits;
+    value<QSerialPort::FlowControl> pFlowControl;
 
-    bool BigEndian;
-    bool EnableLogging;
-
-    QString SerialPortName;
-    QSerialPort::BaudRate pBaudRate;
-    QSerialPort::DataBits pDataBits;
-    QSerialPort::Parity pParity;
-    QSerialPort::StopBits pStopBits;
-    QSerialPort::FlowControl pFlowControl;
-
-    int FPSArduino;
+    TrackerSettings() :
+        opts("hatire-tracker"),
+        EnableRoll(b, "enable-roll", true),
+        EnablePitch(b, "enable-pitch", true),
+        EnableYaw(b, "enable-yaw", true),
+        EnableX(b, "enable-x", false),
+        EnableY(b, "enable-y", false),
+        EnableZ(b, "enable-z", false),
+        InvertRoll(b, "invert-roll", false),
+        InvertPitch(b, "invert-pitch", false),
+        InvertYaw(b, "invert-yaw", false),
+        InvertX(b, "invert-x", false),
+        InvertY(b, "invert-y", false),
+        InvertZ(b, "invert-z", false),
+        RollAxis(b, "roll-axis", 1),
+        PitchAxis(b, "pitch-axis", 2),
+        YawAxis(b, "pitch-axis", 0),
+        XAxis(b, "x-axis", 0),
+        YAxis(b, "y-axis", 2),
+        ZAxis(b, "z-axis", 1),
+        CmdStart(b, "start-command", ""),
+        CmdStop(b, "stop-command", ""),
+        CmdInit(b, "init-command", ""),
+        CmdReset(b, "reset-command", ""),
+        CmdCenter(b, "center-command", ""),
+        CmdZero(b, "zero-command", ""),
+        DelayInit(b, "init-delay", 0),
+        DelayStart(b, "start-delay", 0),
+        DelaySeq(b, "after-start-delay", 0),
+        BigEndian(b, "is-big-endian", false),
+        EnableLogging(b, "enable-logging", false),
+        QSerialPortName(b, "serial-port-name", ""),
+        pBaudRate(b, "baud-rate", QSerialPort::Baud115200),
+        pDataBits(b, "data-bits", QSerialPort::Data8),
+        pParity(b, "parity", QSerialPort::NoParity),
+        pStopBits(b, "stop-bits", QSerialPort::OneStop),
+        pFlowControl(b, "flow-control", QSerialPort::HardwareControl)
+    {}
 };

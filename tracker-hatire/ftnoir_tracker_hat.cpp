@@ -25,8 +25,6 @@ hatire::hatire()
 	Begin.append((char) 0xAA);
 	End.append((char) 0x55);
 	End.append((char) 0x55);
-	
-	settings.load_ini();
 }
 
 hatire::~hatire()
@@ -36,7 +34,7 @@ hatire::~hatire()
 //send RESET to Arduino
 void hatire::reset()
 {
-    t.sendcmd(ts.sCmdReset);
+    t.sendcmd_str(s.CmdReset);
 }
 
 // return FPS 
@@ -49,8 +47,6 @@ void hatire::start_tracker(QFrame*)
 {
 	CptError=0;
 	frame_cnt=0;
-	settings.load_ini();
-	applysettings(settings);
     t.Log("Starting Tracker");
 
     serial_result ret = t.init_serial_port();
@@ -67,7 +63,7 @@ void hatire::start_tracker(QFrame*)
         break;
     }
 
-    t.start(ts);
+    t.start();
 }
 
 void hatire::serial_info()
@@ -99,7 +95,7 @@ void hatire::data(double *data)
             {
                 QDataStream stream(&data_read, QIODevice::ReadOnly);
 
-                if (ts.bBigEndian)
+                if (s.BigEndian)
                     stream.setByteOrder(QDataStream::BigEndian);
                 else
                     stream.setByteOrder(QDataStream::LittleEndian);
@@ -159,12 +155,12 @@ void hatire::data(double *data)
         double& place;
     } spec[] =
     {
-        { bEnableX, bInvertX, HAT.Trans[iXAxis], data[TX] },
-        { bEnableY, bInvertY, HAT.Trans[iYAxis], data[TY] },
-        { bEnableZ, bInvertZ, HAT.Trans[iZAxis], data[TZ] },
-        { bEnableYaw, bInvertYaw, HAT.Rot[iYawAxis], data[Yaw] },
-        { bEnablePitch, bInvertPitch, HAT.Rot[iPitchAxis], data[Pitch] },
-        { bEnableRoll, bInvertRoll, HAT.Rot[iRollAxis], data[Roll] },
+        { s.EnableX, s.InvertX, HAT.Trans[s.XAxis], data[TX] },
+        { s.EnableY, s.InvertY, HAT.Trans[s.YAxis], data[TY] },
+        { s.EnableZ, s.InvertZ, HAT.Trans[s.ZAxis], data[TZ] },
+        { s.EnableYaw, s.InvertYaw, HAT.Rot[s.YawAxis], data[Yaw] },
+        { s.EnablePitch, s.InvertPitch, HAT.Rot[s.PitchAxis], data[Pitch] },
+        { s.EnableRoll, s.InvertRoll, HAT.Rot[s.RollAxis], data[Roll] },
     };
 
     for (unsigned i = 0; i < sizeof(spec) / sizeof(*spec); i++)
@@ -176,55 +172,6 @@ void hatire::data(double *data)
 	// For debug
 	//data->x=dataRead.length();
 	//data->y=CptError;
-}
-
-//
-// Apply modification Settings 
-//
-void hatire::applysettings(const TrackerSettings& settings)
-{
-    ts.sSerialPortName = settings.SerialPortName;
-
-	bEnableRoll = settings.EnableRoll;
-	bEnablePitch = settings.EnablePitch;
-	bEnableYaw = settings.EnableYaw;
-	bEnableX = settings.EnableX;
-	bEnableY = settings.EnableY;
-	bEnableZ = settings.EnableZ;
-
-	bInvertRoll = settings.InvertRoll;
-	bInvertPitch = settings.InvertPitch;
-	bInvertYaw = settings.InvertYaw;
-	bInvertX = settings.InvertX;
-	bInvertY = settings.InvertY;
-	bInvertZ = settings.InvertZ;
-    ts.bEnableLogging = settings.EnableLogging;
-
-	iRollAxis= settings.RollAxis;
-	iPitchAxis= settings.PitchAxis;
-	iYawAxis= settings.YawAxis;
-	iXAxis= settings.XAxis;
-	iYAxis= settings.YAxis;
-	iZAxis= settings.ZAxis;
-
-    ts.iBaudRate=settings.pBaudRate;
-    ts.iDataBits=settings.pDataBits;
-    ts.iParity=settings.pParity;
-    ts.iStopBits=settings.pStopBits;
-    ts.iFlowControl=settings.pFlowControl;
-
-    ts.sCmdStart= settings.CmdStart.toLatin1();
-    ts.sCmdStop= settings.CmdStop.toLatin1();
-    ts.sCmdInit= settings.CmdInit.toLatin1();
-    ts.sCmdReset= settings.CmdReset.toLatin1();
-    ts.sCmdCenter= settings.CmdCenter.toLatin1();
-    ts.sCmdZero= settings.CmdZero.toLatin1();
-    ts.iDelayInit=settings.DelayInit;
-    ts.iDelayStart=settings.DelayStart;
-    ts.iDelaySeq=settings.DelaySeq;
-    ts.bBigEndian=settings.BigEndian;
-
-    t.update_serial_settings(ts);
 }
 
 #include "ftnoir_tracker_hat_dialog.h"

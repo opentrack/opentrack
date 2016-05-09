@@ -27,48 +27,26 @@ public:
     void start_tracker(QFrame*);
     void data(double *data);
     //void center();
-    void applysettings(const TrackerSettings& settings);
     //bool notifyZeroed();
     void reset();
     void get_info( int *tps );
     void serial_info();
     void send_serial_command(const QByteArray& x);
 
+    hatire_thread t;
 private:
     TArduinoData ArduinoData, HAT;
     QByteArray Begin;
     QByteArray End;
 
-    hatire_thread t;
-    thread_settings ts;
-
     // XXX move to settings api -sh 20160410
-    TrackerSettings settings;
+    TrackerSettings s;
 
     int frame_cnt;
 
-    bool bEnableRoll;
-    bool bEnablePitch;
-    bool bEnableYaw;
-    bool bEnableX;
-    bool bEnableY;
-    bool bEnableZ;
-
-    bool bInvertRoll;
-    bool bInvertPitch;
-    bool bInvertYaw;
-    bool bInvertX;
-    bool bInvertY;
-    bool bInvertZ;
-
-    int iRollAxis;
-    int iPitchAxis;
-    int iYawAxis;
-    int iXAxis;
-    int iYAxis;
-    int iZAxis;
-
     volatile int CptError;
+
+    static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 };
 
 class TrackerDll : public Metadata
