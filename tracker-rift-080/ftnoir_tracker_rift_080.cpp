@@ -48,7 +48,6 @@ void Rift_Tracker::data(double *data)
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-            // XXX TODO move to core
             if (s.useYawSpring)
             {
                 yaw = old_yaw*s.persistence + (yaw-old_yaw);

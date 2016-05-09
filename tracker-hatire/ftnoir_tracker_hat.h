@@ -39,7 +39,6 @@ private:
     QByteArray Begin;
     QByteArray End;
 
-    // XXX move to settings api -sh 20160410
     TrackerSettings s;
 
     int frame_cnt;

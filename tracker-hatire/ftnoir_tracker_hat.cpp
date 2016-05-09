@@ -139,8 +139,6 @@ void hatire::data(double *data)
 		CptError=0;
 	}
 
-    // XXX fix copy-pasted code -sh 20160410
-
 	// Need to handle this differently in opentrack as opposed to tracknoir
     //if  (new_frame) { 
 	// in open track always populate the data, it seems opentrack always gives us a zeroed data structure to populate with pose data.
