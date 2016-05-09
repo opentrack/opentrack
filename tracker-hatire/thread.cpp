@@ -309,11 +309,14 @@ void hatire_thread::on_serial_read()
         qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
     }
 
-    // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
-    // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
-    constexpr int hz = 90;
-    constexpr int ms = 1000/hz;
-    portable::sleep(ms);
+    if (s.serial_bug_workaround)
+    {
+        // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
+        // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
+        constexpr int hz = 90;
+        constexpr int ms = 1000/hz;
+        portable::sleep(ms);
+    }
 }
 
 QByteArray& hatire_thread::send_data_read_nolock()

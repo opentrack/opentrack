@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
-    <height>740</height>
+    <width>341</width>
+    <height>525</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,58 +42,14 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
-   <item row="1" column="2">
-    <widget class="QPushButton" name="btnCancel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="btnOK">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>OK</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -114,6 +70,15 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
@@ -126,25 +91,6 @@
           <property name="spacing">
            <number>4</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>65536</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Serial port</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="cbSerialPort">
             <property name="sizePolicy">
@@ -170,6 +116,51 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>65536</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Serial port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="serial_bug_workaround">
+            <property name="text">
+             <string>Buggy serial port uses too much CPU</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>65536</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Workaround</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -186,22 +177,6 @@
          </property>
          <property name="text">
           <string>Zero</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnCenter">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>80</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Center</string>
          </property>
         </widget>
        </item>
@@ -852,31 +827,10 @@
           <string>Arduino Commands</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="1">
-           <widget class="QLabel" name="lab_cmd_init_2">
-            <property name="text">
-             <string>Delay Init</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="lab_cmd_init">
             <property name="text">
              <string>Init</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="le_cmd_init">
-            <property name="toolTip">
-             <string>Command for Initialising Arduino</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="lab_cmd_init_3">
-            <property name="text">
-             <string>Delay Start</string>
             </property>
            </widget>
           </item>
@@ -894,34 +848,10 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="lab_cmd_init_4">
-            <property name="text">
-             <string>Delay Sequence</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QSpinBox" name="spb_AfterStart">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="le_cmd_init">
             <property name="toolTip">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Delay after Start Command in ms&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="maximum">
-             <number>5000</number>
-            </property>
-            <property name="singleStep">
-             <number>50</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="lab_cmd_stop">
-            <property name="text">
-             <string>Stop:</string>
+             <string>Command for Initialising Arduino</string>
             </property>
            </widget>
           </item>
@@ -939,10 +869,31 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="lab_cmd_stop">
+            <property name="text">
+             <string>Stop:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="lab_cmd_reset">
+            <property name="text">
+             <string>Reset:</string>
+            </property>
+           </widget>
+          </item>
           <item row="6" column="1">
            <widget class="QLineEdit" name="le_cmd_center">
             <property name="toolTip">
              <string>Command for read Center  Gyro arduino</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QLineEdit" name="le_cmd_reset">
+            <property name="toolTip">
+             <string>Command for Reset Arduino</string>
             </property>
            </widget>
           </item>
@@ -957,20 +908,6 @@ p, li { white-space: pre-wrap; }
            <widget class="QLineEdit" name="le_cmd_zero">
             <property name="toolTip">
              <string>Command for reset Center  Gyro arduino</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="lab_cmd_reset">
-            <property name="text">
-             <string>Reset:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QLineEdit" name="le_cmd_reset">
-            <property name="toolTip">
-             <string>Command for Reset Arduino</string>
             </property>
            </widget>
           </item>
@@ -989,7 +926,26 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="7" column="2">
+           <widget class="QSpinBox" name="spb_Fps">
+            <property name="maximumSize">
+             <size>
+              <width>51</width>
+              <height>19</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at OpenTrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="minimum">
+             <number>10</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
            <widget class="QSpinBox" name="spb_BeforeInit">
             <property name="maximumSize">
              <size>
@@ -1012,7 +968,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="3" column="2">
            <widget class="QSpinBox" name="spb_BeforeStart">
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1029,22 +985,40 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="7" column="2">
-           <widget class="QSpinBox" name="spb_Fps">
-            <property name="maximumSize">
-             <size>
-              <width>51</width>
-              <height>19</height>
-             </size>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
+            <property name="text">
+             <string>Delay</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QSpinBox" name="spb_AfterStart">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at OpenTrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="minimum">
-             <number>10</number>
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Delay after Start Command in ms&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="maximum">
-             <number>200</number>
+             <number>5000</number>
+            </property>
+            <property name="singleStep">
+             <number>50</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="lab_cmd_init_4">
+            <property name="text">
+             <string>Delay after startup</string>
             </property>
            </widget>
           </item>
@@ -1172,34 +1146,18 @@ p, li { white-space: pre-wrap; }
      </widget>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="btnSave">
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Save</string>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>btnOK</tabstop>
-  <tabstop>btnSave</tabstop>
-  <tabstop>btnCancel</tabstop>
   <tabstop>cbSerialPort</tabstop>
   <tabstop>btnZero</tabstop>
-  <tabstop>btnCenter</tabstop>
   <tabstop>btnReset</tabstop>
   <tabstop>chkEnableYaw</tabstop>
   <tabstop>cb_yaw</tabstop>
@@ -1219,9 +1177,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>chkEnableZ</tabstop>
   <tabstop>cb_z</tabstop>
   <tabstop>chkInvertZ</tabstop>
-  <tabstop>spb_BeforeInit</tabstop>
   <tabstop>le_cmd_init</tabstop>
-  <tabstop>spb_BeforeStart</tabstop>
   <tabstop>le_cmd_start</tabstop>
   <tabstop>spb_AfterStart</tabstop>
   <tabstop>le_cmd_stop</tabstop>

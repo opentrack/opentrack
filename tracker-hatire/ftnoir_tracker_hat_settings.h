@@ -22,7 +22,7 @@ struct TrackerSettings : opts
 
     value<int> DelayInit, DelayStart, DelaySeq;
 
-    value<bool> BigEndian, EnableLogging;
+    value<bool> BigEndian, EnableLogging, serial_bug_workaround;
 
     value<QString> QSerialPortName;
 
@@ -63,6 +63,7 @@ struct TrackerSettings : opts
         DelaySeq(b, "after-start-delay", 0),
         BigEndian(b, "is-big-endian", false),
         EnableLogging(b, "enable-logging", false),
+        serial_bug_workaround(b, "serial-bug-workaround", false),
         QSerialPortName(b, "serial-port-name", ""),
         pBaudRate(b, "baud-rate", QSerialPort::Baud115200),
         pDataBits(b, "data-bits", QSerialPort::Data8),
