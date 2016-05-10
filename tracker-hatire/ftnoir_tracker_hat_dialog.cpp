@@ -100,6 +100,8 @@ TrackerControls::TrackerControls() : theTracker(nullptr), timer(this)
 
     tie_setting(s.serial_bug_workaround, ui.serial_bug_workaround);
 
+    tie_setting(s.QSerialPortName, ui.cbSerialPort);
+
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
