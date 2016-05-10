@@ -214,7 +214,7 @@ namespace options {
             store(static_cast<underlying_t>(datum));
             return datum;
         }
-        static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::UniqueConnection;
+        static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::AutoConnection;
         static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
         value(pbundle b, const QString& name, t def) : base_value(b, name), def(static_cast<underlying_t>(def))
         {
@@ -310,12 +310,12 @@ namespace options {
                             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                             &v,
                             fn1(v, cb, enum_cases),
-                            v.SAFE_CONNTYPE);
+                            v.DIRECT_CONNTYPE);
         base_value::connect(&v,
                             static_cast<void (base_value::*)(int)>(&base_value::valueChanged),
                             cb,
                             fn2(v, cb, enum_cases),
-                            v.SAFE_CONNTYPE);
+                            v.DIRECT_CONNTYPE);
     }
 
     template<>
