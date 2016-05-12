@@ -18,14 +18,13 @@ endif()
 
 file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${_build_type}${OPENTRACK_COMMIT}\"")
 
-add_library(opentrack-version STATIC ${CMAKE_BINARY_DIR}/version.cc)
-opentrack_compat(opentrack-version)
-
 set(version-string "
 #include \"opentrack-compat/export.hpp\"
 
 #ifdef __cplusplus
 extern \"C\"
+#else
+extern
 #endif
 OPENTRACK_EXPORT
 const char* opentrack_version;
@@ -34,10 +33,16 @@ const char* opentrack_version = \"${_build_type}${OPENTRACK_COMMIT}\";
 ")
 
 set(crapola-ver)
-if(EXISTS ${CMAKE_BINARY_DIR}/version.cc)
-    file(READ ${CMAKE_BINARY_DIR}/version.cc crapola-ver)
+if(EXISTS ${CMAKE_BINARY_DIR}/version.c)
+    file(READ ${CMAKE_BINARY_DIR}/version.c crapola-ver)
 endif()
 
 if(NOT (crapola-ver STREQUAL version-string))
-    file(WRITE ${CMAKE_BINARY_DIR}/version.cc "${version-string}")
+    file(WRITE ${CMAKE_BINARY_DIR}/version.c "${version-string}")
 endif()
+
+add_library(opentrack-version STATIC ${CMAKE_BINARY_DIR}/version.c)
+if(NOT MSVC)
+    SET_TARGET_PROPERTIES(opentrack-version PROPERTIES COMPILE_FLAGS "-fno-lto")
+endif()
+opentrack_compat(opentrack-version)
