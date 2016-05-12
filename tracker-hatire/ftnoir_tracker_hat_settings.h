@@ -48,7 +48,7 @@ struct TrackerSettings : opts
         InvertZ(b, "invert-z", false),
         RollAxis(b, "roll-axis", 1),
         PitchAxis(b, "pitch-axis", 2),
-        YawAxis(b, "pitch-axis", 0),
+        YawAxis(b, "yaw-axis", 0),
         XAxis(b, "x-axis", 0),
         YAxis(b, "y-axis", 2),
         ZAxis(b, "z-axis", 1),
