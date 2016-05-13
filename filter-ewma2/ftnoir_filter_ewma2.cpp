@@ -49,7 +49,7 @@ void FTNoIR_Filter::filter(const double *input, double *output)
         }
     }
     // Get the time in seconds since last run and restart the timer.
-    const double dt = timer.restart() / 1000;
+    const double dt = timer.restart() / 1000.;
     // Calculate delta_alpha and noise_alpha from dt.
     double delta_alpha = dt/(dt + delta_RC);
     double noise_alpha = dt/(dt + noise_RC);

@@ -80,7 +80,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     if (!timer.isValid())
         timer.start();
     // Get the time in seconds since last run and restart the timer.
-    const double dt = timer.restart() / 1000;
+    const double dt = timer.restart() / 1000.;
     // Note this is a terrible way to detect when there is a new
     // frame of tracker input, but it is the best we have.
     bool new_input = false;
