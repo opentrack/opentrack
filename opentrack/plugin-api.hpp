@@ -67,21 +67,21 @@ signals:
 
 // implement this in all plugins
 // also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
-struct Metadata
+struct OPENTRACK_EXPORT Metadata
 {
     // plugin name to be displayed in the interface
     virtual QString name() = 0;
     // plugin icon, you can return an empty QIcon()
     virtual QIcon icon() = 0;
     // optional destructor
-    virtual ~Metadata() {}
+    virtual ~Metadata();
 };
 
 // implement this in filters
-struct IFilter
+struct OPENTRACK_EXPORT IFilter
 {
     // optional destructor
-    virtual ~IFilter() {}
+    virtual ~IFilter();
     // perform filtering step.
     // you have to take care of dt on your own, try "opentrack-compat/timer.hpp"
     virtual void filter(const double *input, double *output) = 0;
@@ -89,10 +89,10 @@ struct IFilter
     virtual void center() {}
 };
 
-struct IFilterDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
-    virtual ~IFilterDialog() {}
+    virtual ~IFilterDialog();
     // receive a pointer to the filter from ui thread
     virtual void register_filter(IFilter* filter) = 0;
     // received filter pointer is about to get deleted
@@ -104,10 +104,10 @@ struct IFilterDialog : public plugin_api::detail::BaseDialog
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(filter_class, IFilter, metadata_class, dialog_class, IFilterDialog)
 
 // implement this in protocols
-struct IProtocol
+struct OPENTRACK_EXPORT IProtocol
 {
     // optional destructor
-    virtual ~IProtocol() {}
+    virtual ~IProtocol();
     // return true if protocol was properly initialized
     virtual bool correct() = 0;
     // called 250 times a second with XYZ yaw pitch roll pose
@@ -117,10 +117,10 @@ struct IProtocol
     virtual QString game_name() = 0;
 };
 
-struct IProtocolDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
-    virtual ~IProtocolDialog() {}
+    virtual ~IProtocolDialog();
     // receive a pointer to the protocol from ui thread
     virtual void register_protocol(IProtocol *protocol) = 0;
     // received protocol pointer is about to get deleted
@@ -132,20 +132,20 @@ struct IProtocolDialog : public plugin_api::detail::BaseDialog
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(protocol_class, IProtocol, metadata_class, dialog_class, IProtocolDialog)
 
 // implement this in trackers
-struct ITracker
+struct OPENTRACK_EXPORT ITracker
 {
     // optional destructor
-    virtual ~ITracker() {}
+    virtual ~ITracker();
     // start tracking, and grab a frame to display webcam video in, optionally
     virtual void start_tracker(QFrame* frame) = 0;
     // return XYZ yaw pitch roll data. don't block here, use a separate thread for computation.
     virtual void data(double *data) = 0;
 };
 
-struct ITrackerDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
-    virtual ~ITrackerDialog() {}
+    virtual ~ITrackerDialog();
     // receive a pointer to the tracker from ui thread
     virtual void register_tracker(ITracker *tracker) = 0;
     // received tracker pointer is about to get deleted
