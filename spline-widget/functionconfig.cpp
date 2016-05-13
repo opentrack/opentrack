@@ -84,8 +84,8 @@ void Map::reload() {
         auto& data = cur.data;
 
         data = std::vector<float>(value_count);
-        const int mult = precision();
-        const int mult_ = mult * 30;
+        const float mult = precision();
+        const float mult_ = mult * 30;
         
         const int sz = data.size();
         
@@ -112,24 +112,24 @@ void Map::reload() {
             const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
             
             // multiplier helps fill in all the x's needed
-            const int end = std::min<int>(sz, p2.x() * mult_);
-            const int start = p1.x() * mult;
+            const int end = std::min<int>(sz, p2_x * mult_);
+            const int start = p1_x * mult;
             
             for (int j = start; j < end; j++) {
                 const float t = (j - start) / (float) (end - start);
                 const float t2 = t*t;
                 const float t3 = t*t*t;
 
-                const int x = .5 * ((2. * p1_x) +
+                const int x = .5f * ((2.f * p1_x) +
                                     (-p0_x + p2_x) * t +
-                                    (2. * p0_x - 5. * p1_x + 4. * p2_x - p3_x) * t2 +
-                                    (-p0_x + 3. * p1_x - 3. * p2_x + p3_x) * t3)
+                                    (2.f * p0_x - 5.f * p1_x + 4.f * p2_x - p3_x) * t2 +
+                                    (-p0_x + 3.f * p1_x - 3.f * p2_x + p3_x) * t3)
                         * mult;
                 
-                const float y = .5 * ((2. * p1_y) +
+                const float y = .5f * ((2.f * p1_y) +
                                       (-p0_y + p2_y) * t +
-                                      (2. * p0_y - 5. * p1_y + 4. * p2_y - p3_y) * t2 +
-                                      (-p0_y + 3. * p1_y - 3. * p2_y + p3_y) * t3);
+                                      (2. * p0_y - 5.f * p1_y + 4.f * p2_y - p3_y) * t2 +
+                                      (-p0_y + 3.f * p1_y - 3.f * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
                     data[x] = y;

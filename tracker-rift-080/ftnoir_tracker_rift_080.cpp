@@ -57,7 +57,7 @@ void Rift_Tracker::data(double *data)
                     yaw += s.constant_drift;
                 old_yaw=yaw;
             }
-            constexpr double d2r = 57.295781;
+            constexpr float d2r = 57.295781f;
             data[Yaw] = yaw * -d2r;
             data[Pitch] = pitch * d2r;
             data[Roll] = roll * d2r;

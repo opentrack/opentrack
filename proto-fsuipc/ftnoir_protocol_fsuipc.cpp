@@ -28,8 +28,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 }
 
 int FTNoIR_Protocol::scale2AnalogLimits( float x, float min_x, float max_x ) {
-double y;
-double local_x;
+    float y, local_x;
 	
 	local_x = x;
 	if (local_x > max_x) {

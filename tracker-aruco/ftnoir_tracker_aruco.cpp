@@ -216,27 +216,29 @@ void Tracker::run()
         ::sprintf(buf, "Hz: %d", (int)cur_fps);
         cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, scale, cv::Scalar(0, 255, 0), scale*2);
 
+        const float hx = s.headpos_x, hy = s.headpos_y, hz = s.headpos_z;
+
         if (markers.size() == 1 && markers[0].size() == 4) {
             const auto& m = markers.at(0);
-            const float size = 40;
+            constexpr float size = 40;
 
             cv::Mat obj_points(4,3,CV_32FC1);
             const int x1=1, x2=2, x3=3, x4=0;
-            obj_points.at<float>(x1,0)=-size + s.headpos_x;
-            obj_points.at<float>(x1,1)=-size + s.headpos_y;
-            obj_points.at<float>(x1,2)= 0 + s.headpos_z;
+            obj_points.at<float>(x1,0)=-size + hx;
+            obj_points.at<float>(x1,1)=-size + hy;
+            obj_points.at<float>(x1,2)= 0 + hz;
 
-            obj_points.at<float>(x2,0)=size + s.headpos_x;
-            obj_points.at<float>(x2,1)=-size + s.headpos_y;
-            obj_points.at<float>(x2,2)= 0 + s.headpos_z;
+            obj_points.at<float>(x2,0)=size + hx;
+            obj_points.at<float>(x2,1)=-size + hy;
+            obj_points.at<float>(x2,2)= 0 + hz;
 
-            obj_points.at<float>(x3,0)=size + s.headpos_x;
-            obj_points.at<float>(x3,1)=size + s.headpos_y;
-            obj_points.at<float>(x3,2)= 0 + s.headpos_z;
+            obj_points.at<float>(x3,0)=size + hx;
+            obj_points.at<float>(x3,1)=size + hy;
+            obj_points.at<float>(x3,2)= 0 + hz;
 
-            obj_points.at<float>(x4,0)= -size + s.headpos_x;
-            obj_points.at<float>(x4,1)= size + s.headpos_y;
-            obj_points.at<float>(x4,2)= 0 + s.headpos_z;
+            obj_points.at<float>(x4,0)= -size + hx;
+            obj_points.at<float>(x4,1)= size + hy;
+            obj_points.at<float>(x4,2)= 0 + hz;
             
             std::vector<cv::Point2f> img_points = m;
             if (!cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
@@ -256,9 +258,9 @@ void Tracker::run()
 
             for (int i = 0; i < 4; i++)
             {
-                obj_points.at<float>(i, 0) -= s.headpos_x;
-                obj_points.at<float>(i, 1) -= s.headpos_y;
-                obj_points.at<float>(i, 2) -= s.headpos_z;
+                obj_points.at<float>(i, 0) -= hx;
+                obj_points.at<float>(i, 1) -= hy;
+                obj_points.at<float>(i, 2) -= hz;
             }
 
             cv::Mat rvec_, tvec_;

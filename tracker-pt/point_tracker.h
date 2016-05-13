@@ -78,7 +78,7 @@ public:
         float s11 = M01.dot(M01);
         float s12 = M01.dot(M02);
         float s22 = M02.dot(M02);
-        P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
+        P = 1/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
     
     void set_model(settings_pt& s)

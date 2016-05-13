@@ -160,7 +160,7 @@ pbundle opt_singleton::bundle(const opt_singleton::k &key)
     qDebug() << "bundle +" << key;
 
     auto shr = std::make_shared<v>(key);
-    implsgl_data[key] = tt(cnt(1), shr);
+    implsgl_data[key] = tt(1, shr);
     return shr;
 }
 

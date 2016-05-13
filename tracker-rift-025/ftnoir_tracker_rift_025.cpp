@@ -67,9 +67,9 @@ void Rift_Tracker::data(double *data)
         Quatf hmdOrient = pSFusion->GetOrientation();
         double newHeadPose[6];
 
-        float yaw = 0.0f;
-        float pitch = 0.0f;
-        float roll = 0.0f;
+        float yaw = 0;
+        float pitch = 0;
+        float roll = 0;
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
         newHeadPose[Pitch] = pitch;
         newHeadPose[Roll] = roll;

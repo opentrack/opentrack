@@ -166,10 +166,13 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
     cv::Matx33f R_1, R_2;
     cv::Matx33f* R_current;
 
-    const int MAX_ITER = 100;
-    const float EPS_THRESHOLD = 1e-4;
+    constexpr int MAX_ITER = 100;
+    const float EPS_THRESHOLD = 1e-4f;
 
     const cv::Vec2f* order = order_.points;
+
+    using std::sqrt;
+    using std::atan;
 
     int i=1;
     for (; i<MAX_ITER; ++i)
@@ -178,10 +181,10 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         epsilon_2 = k.dot(model.M02)/Z0;
 
         // vector of scalar products <I0, M0i> and <J0, M0i>
-        cv::Vec2f I0_M0i(order[1][0]*(1.0 + epsilon_1) - order[0][0],
-                order[2][0]*(1.0 + epsilon_2) - order[0][0]);
-        cv::Vec2f J0_M0i(order[1][1]*(1.0 + epsilon_1) - order[0][1],
-                order[2][1]*(1.0 + epsilon_2) - order[0][1]);
+        cv::Vec2f I0_M0i(order[1][0]*(1 + epsilon_1) - order[0][0],
+                order[2][0]*(1 + epsilon_2) - order[0][0]);
+        cv::Vec2f J0_M0i(order[1][1]*(1 + epsilon_1) - order[0][1],
+                order[2][1]*(1 + epsilon_2) - order[0][1]);
 
         // construct projection of I, J onto M0i plane: I0 and J0
         I0_coeff = model.P * I0_M0i;
@@ -194,7 +197,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         float IJ0 = I0.dot(J0);
         float JJ0 = J0.dot(J0);
         float rho, theta;
-        // CAVEAT don't change to comparison with a small epsilon, e.g. 1e-4. -sh 20160423
+        // CAVEAT don't change to comparison with an epsilon -sh 20160423
         if (JJ0 == II0) {
             rho = std::sqrt(std::abs(2*IJ0));
             theta = -PI/4;
@@ -215,7 +218,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
         J_1 = J0 + rho*sin(theta)*model.u;
         J_2 = J0 - rho*sin(theta)*model.u;
 
-        float norm_const = 1.0/cv::norm(I_1); // all have the same norm
+        float norm_const = 1/cv::norm(I_1); // all have the same norm
 
         // create rotation matrices
         I_1 *= norm_const; J_1 *= norm_const;

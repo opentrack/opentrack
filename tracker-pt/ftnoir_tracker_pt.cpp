@@ -197,6 +197,9 @@ void Tracker_PT::data(double *data)
                          0, 1, 0);
         R = R_EG * R * R_EG.t();
 
+        using std::atan2;
+        using std::sqrt;
+
         // extract rotation angles
         float alpha, beta, gamma;
         beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
