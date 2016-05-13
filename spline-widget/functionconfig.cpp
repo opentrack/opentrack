@@ -120,16 +120,16 @@ void Map::reload() {
                 const float t2 = t*t;
                 const float t3 = t*t*t;
 
-                const int x = .5f * ((2.f * p1_x) +
+                const int x = .5f * ((2 * p1_x) +
                                     (-p0_x + p2_x) * t +
-                                    (2.f * p0_x - 5.f * p1_x + 4.f * p2_x - p3_x) * t2 +
-                                    (-p0_x + 3.f * p1_x - 3.f * p2_x + p3_x) * t3)
+                                    (2 * p0_x - 5 * p1_x + 4.f * p2_x - p3_x) * t2 +
+                                    (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
                         * mult;
                 
-                const float y = .5f * ((2.f * p1_y) +
+                const float y = .5f * ((2 * p1_y) +
                                       (-p0_y + p2_y) * t +
-                                      (2. * p0_y - 5.f * p1_y + 4.f * p2_y - p3_y) * t2 +
-                                      (-p0_y + 3.f * p1_y - 3.f * p2_y + p3_y) * t3);
+                                      (2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y) * t2 +
+                                      (-p0_y + 3 * p1_y - 3 * p2_y + p3_y) * t3);
                 
                 if (x >= 0 && x < sz)
                     data[x] = y;
