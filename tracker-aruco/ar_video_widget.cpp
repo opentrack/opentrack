@@ -28,18 +28,20 @@ void ArucoVideoWidget::update_and_repaint()
         fresh = false;
         qframe = QImage(_frame.cols, _frame.rows, QImage::Format_RGB888);
         uchar* data = qframe.bits();
-        const int pitch = qframe.bytesPerLine();
-        unsigned char *input = (unsigned char*)(_frame.data);
-        const int chans = _frame.channels();
-        for (int y = 0; y < _frame.rows; y++)
+        const unsigned pitch = qframe.bytesPerLine();
+        unsigned char *input = _frame.data;
+        const unsigned chans = _frame.channels();
+        const unsigned rows = _frame.rows, cols = _frame.cols;
+        const unsigned step = _frame.step;
+        for (unsigned y = 0; y < rows; y++)
         {
-            const int step = y * _frame.step;
-            const int pitch_ = y * pitch;
-            for (int x = 0; x < _frame.cols; x++)
+            const unsigned step_ = y * step;
+            const unsigned pitch_ = y * pitch;
+            for (unsigned x = 0; x < cols; x++)
             {
-                data[pitch_ + x * 3 + 0] = input[step + x * chans + 2];
-                data[pitch_ + x * 3 + 1] = input[step + x * chans + 1];
-                data[pitch_ + x * 3 + 2] = input[step + x * chans + 0];
+                data[pitch_ + x * 3 + 0] = input[step_ + x * chans + 2];
+                data[pitch_ + x * 3 + 1] = input[step_ + x * chans + 1];
+                data[pitch_ + x * 3 + 2] = input[step_ + x * chans + 0];
             }
         }
     }

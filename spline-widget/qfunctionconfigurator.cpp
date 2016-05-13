@@ -132,7 +132,7 @@ void QFunctionConfigurator::drawFunction()
     if (!_config)
         return;
 
-    _function = QPixmap(_background);
+    _function = _background;
     QPainter painter(&_function);
     painter.setRenderHint(QPainter::Antialiasing, true);
 

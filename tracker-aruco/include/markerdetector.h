@@ -52,7 +52,7 @@ class ARUCO_EXPORTS  MarkerDetector
       idx=M.idx;
     }
     MarkerCandidate & operator=(const  MarkerCandidate &M){
-      (*(Marker*)this)=(*(Marker*)&M);
+      *(Marker*)this = M;
       contour=M.contour;
       idx=M.idx;
       return *this;
