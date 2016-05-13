@@ -30,12 +30,13 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(fpu "-ffast-math -fno-finite-math-only -mfpmath=both")
+set(fpu "-ffast-math -fno-finite-math-only -mfpmath=both -mstackrealign -ftree-vectorize")
 set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -frename-registers -fno-PIC")
+set(lto "-flto -fuse-linker-plugin")
 
 set(_CFLAGS " -fvisibility=hidden ")
 set(_CXXFLAGS " -fvisibility-inlines-hidden ${_CFLAGS} ")
-set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ")
+set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ${lto} ")
 set(_CFLAGS_DEBUG "-g -ggdb ${cpu} ${fpu} ")
 set(_CXXFLAGS_RELEASE " ${_CFLAGS_RELEASE} ")
 set(_CXXFLAGS_DEBUG " ${_CFLAGS_DEBUG} ")
