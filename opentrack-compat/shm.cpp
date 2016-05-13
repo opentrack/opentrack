@@ -192,8 +192,8 @@ void PortableLockedShm::unlock()
 bool PortableLockedShm::success()
 {
 #ifndef _WIN32
-    return (void*) mem != (void*) -1;
+    return mem != (void*) -1;
 #else
-    return (void*) mem != NULL;
+    return mem != NULL;
 #endif
 }
