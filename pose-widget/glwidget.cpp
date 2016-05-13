@@ -11,7 +11,6 @@
 
 #include <QPainter>
 #include <QPaintEvent>
-//#include <QDebug>
 
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
@@ -68,7 +67,17 @@ public:
         dot00 = v0.dot(v0);
         dot01 = v0.dot(v1);
         dot11 = v1.dot(v1);
-        invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+        const num denom = dot00 * dot11 - dot01 * dot01;
+        if (std::fabs(denom) < 1e-1f)
+        {
+            // for perpendicular plane, ensure u and v don't come out right
+            // this is done here to avoid branching below, in a hot loop
+            invDenom = -1;
+            dot00 = dot01 = dot11 = 1;
+            v0 = v1 = vec2(1, 1);
+        }
+        else
+            invDenom = 1 / denom;
     }
     bool barycentric_coords(const vec2& px, vec2& uv) const
     {
