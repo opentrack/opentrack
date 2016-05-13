@@ -116,8 +116,8 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         const int sz = hist.cols * hist.rows;
         int val = 0;
         int cnt = 0;
-        constexpr int min_pixels = 20;
-        const auto pixels_to_include = std::max<int>(0, min_pixels * s.threshold/100.);
+        constexpr int min_pixels = 400;
+        const int pixels_to_include = std::max<int>(0, min_pixels * s.threshold / 255);
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i >= 0; i--)
         {
