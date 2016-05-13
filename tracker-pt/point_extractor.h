@@ -25,22 +25,15 @@ public:
     const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
     int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
     PointExtractor();
-    ~PointExtractor();
     
     settings_pt s;
 private:
-    void gray_square_diff(const cv::Mat& frame, cv::Mat& frame_gray);
-
     enum { hist_c = 2 };
     std::vector<cv::Vec2f> points;
     QMutex mtx;
     cv::Mat frame_gray;
-    cv::Mat frame_gray_tmp;
     cv::Mat frame_bin;
     cv::Mat hist;
-    std::vector<cv::Mat> gray_split_channels;
-    std::vector<cv::Mat> gray_absdiff_channels;
-    cv::Mat float_absdiff_channel;
 
     enum { max_blobs = 16 };
 
