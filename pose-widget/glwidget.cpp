@@ -68,7 +68,7 @@ public:
         dot01 = v0.dot(v1);
         dot11 = v1.dot(v1);
         const num denom = dot00 * dot11 - dot01 * dot01;
-        if (std::fabs(denom) < 1e3)
+        if (std::fabs(denom) < 1e3f)
         {
             // for perpendicular plane, ensure u and v don't come out right
             // this is done here to avoid branching below, in a hot loop
