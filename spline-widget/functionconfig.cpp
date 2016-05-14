@@ -122,7 +122,7 @@ void Map::reload() {
 
                 const int x = .5f * ((2 * p1_x) +
                                     (-p0_x + p2_x) * t +
-                                    (2 * p0_x - 5 * p1_x + 4.f * p2_x - p3_x) * t2 +
+                                    (2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x) * t2 +
                                     (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
                         * mult;
                 
