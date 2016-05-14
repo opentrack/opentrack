@@ -6,9 +6,6 @@ Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
 documentation.
 
-[![user support](https://badge.waffle.io/opentrack/opentrack.svg?label=support&title=User%20issues)](http://waffle.io/opentrack/opentrack)
-[![not started](https://badge.waffle.io/opentrack/opentrack.svg?label=ready&title=TODO)](http://waffle.io/opentrack/opentrack)
-
 ***
 
 **opentrack** is an application dedicated to tracking user's head
@@ -22,7 +19,7 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift DK1, DK2 and legacy versions
+- Oculus Rift DK1, DK2 and legacy/knockoff versions (Windows only)
 - Paper marker support via the ArUco library <<https://github.com/rmsalinas/aruco>>
 - Human face tracker <<https://github.com/sthalik/headtracker>>
 - Razer Hydra
@@ -59,16 +56,18 @@ Don't be afraid to submit an issue/feature request if need arises.
 # Credits
 
 - Stanisław Halik (maintainer)
-- Chris Thompson (aka mm0zct)
-- Donovan Baarda (filtering/control theory expert)
-- Ryan Spicer (OSX tester, contributor)
-- Patrick Ruoff (PT tracker)
-- Ulf Schreiber (PT tracker)
-- Xavier Hallade (RealSense tracker)
-- furax49 (hatire tracker)
-- Andrzej Czarnowski (quality assurance)
+- Chris Thompson (aka mm0zct, Rift and Razer Hydra author and maintainer)
+- Patrick Ruoff (PT tracker author)
+- Xavier Hallade (Intel RealSense tracker author and maintainer)
+- furax49 (hatire tracker author)
+
+# Thanks
+
 - uglyDwarf (high CON)
-- Wim Vriend (historically)
+- Andrzej Czarnowski (FreePIE tracker and Google Cardboard assistance, testing)
+- Wim Vriend (original codebase author and maintainer)
+- Ryan Spicer (OSX tester, contributor)
+- Donovan Baarda (filtering/control theory expert)
 
 # Licensing information
 
