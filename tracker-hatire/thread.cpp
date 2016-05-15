@@ -274,15 +274,6 @@ void hatire_thread::serial_info_impl()
 #endif
 }
 
-#ifdef __GNUC__
-#   define unused(t, i) t __attribute__((unused)) i
-#else
-#   define unused(t, i) t i
-#endif
-
-//send command  to Arduino
-
-
 void hatire_thread::on_serial_read()
 {
     {

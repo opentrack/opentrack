@@ -27,12 +27,6 @@ enum results
 #   include <QTimer>
 #endif
 
-#ifdef __GNUC__
-#   define unused(t, i) t __attribute__((unused)) i
-#else
-#   define unused(t, i) t i
-#endif
-
 struct serial_result
 {
     serial_result() : code(result_ok) {}
@@ -74,7 +68,7 @@ private slots:
     void on_serial_read();
     void teardown_serial();
 
-    void sendcmd_impl(unused(const QByteArray, &cmd));
+    void sendcmd_impl(const QByteArray, &cmd);
     void sendcmd_str_impl(const QString& str) { sendcmd(str.toLatin1()); }
     void serial_info_impl();
     serial_result init_serial_port_impl();
