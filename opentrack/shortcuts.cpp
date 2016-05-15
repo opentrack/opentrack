@@ -25,7 +25,7 @@ void Shortcuts::free_binding(K& key)
 #endif
 }
 
-void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused(bool, held))
+void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused_on_unix(bool, held))
 {
 #if !defined(_WIN32)
     using sh = QxtGlobalShortcut;

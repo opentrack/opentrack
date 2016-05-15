@@ -26,10 +26,10 @@
 #   include "keybinding-worker.hpp"
 #endif
 
-#ifdef __GNUC__
-#   define unused(t, i) t __attribute__((unused)) i
+#if defined(__GNUC__) && !defined(_WIN32)
+#   define unused_on_unix(t, i) t __attribute__((unused)) i
 #else
-#   define unused(t, i) t i
+#   define unused_on_unix(t, i) t i
 #endif
 
 using namespace options;
