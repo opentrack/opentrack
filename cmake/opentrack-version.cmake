@@ -16,6 +16,8 @@ if(CMAKE_BUILD_TYPE)
     endif()
 endif()
 
+file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${_build_type}${OPENTRACK_COMMIT}\"")
+
 set(version-string "
 #include \"opentrack-compat/export.hpp\"
 
