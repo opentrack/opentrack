@@ -68,7 +68,7 @@ private slots:
     void on_serial_read();
     void teardown_serial();
 
-    void sendcmd_impl(const QByteArray, &cmd);
+    void sendcmd_impl(const QByteArray& cmd);
     void sendcmd_str_impl(const QString& str) { sendcmd(str.toLatin1()); }
     void serial_info_impl();
     serial_result init_serial_port_impl();
