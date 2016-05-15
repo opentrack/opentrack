@@ -112,10 +112,10 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
         K k;
         bind_keyboard_shortcut(k, opts, held);
         keys.push_back(tt(k, [=](bool) -> void { fun(true); }, held));
+#ifndef _WIN32
         const int idx = keys.size() - 1;
         tt& kk_ = keys[idx];
         auto& fn = std::get<1>(kk_);
-#ifndef _WIN32
         connect(k.get(), &QxtGlobalShortcut::activated, [=]() -> void { fn(true); });
 #endif
     }

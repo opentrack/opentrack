@@ -16,7 +16,7 @@
 
 bool Key::should_process()
 {
-    if (!enabled || keycode == 0 && guid == "")
+    if (!enabled || (keycode == 0 && guid == ""))
         return false;
     bool ret = timer.elapsed_ms() > 100;
     timer.start();
