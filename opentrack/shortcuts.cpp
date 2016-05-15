@@ -111,7 +111,15 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
         auto fun = std::get<1>(kk);
         K k;
         bind_keyboard_shortcut(k, opts, held);
-        keys.push_back(tt(k, [=](bool) -> void { fun(true); }, held));
+        keys.push_back(tt(k,
+        [=](unused_on_unix(bool, flag)) -> void {
+#ifdef _WIN32
+            fun(flag);
+#else
+            fun(true);
+#endif
+        },
+        held));
 #ifndef _WIN32
         const int idx = keys.size() - 1;
         tt& kk_ = keys[idx];
