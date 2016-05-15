@@ -104,7 +104,7 @@ end;
 
 procedure InitializeWizard();
 var
-  EULAText: String;
+  EULAText: AnsiString;
 begin
 
 EulaAccepted := false
