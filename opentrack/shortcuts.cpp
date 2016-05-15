@@ -95,12 +95,15 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
         const auto& kk = keys_[i];
         const key_opts& opts = std::get<0>(kk);
         const bool held = std::get<2>(kk);
-        auto& fun = std::get<1>(kk);
+        auto fun = std::get<1>(kk);
         K k;
         bind_keyboard_shortcut(k, opts, held);
-        keys.push_back(tt(k, fun, held));
+        keys.push_back(tt(k, [=](bool) -> void { fun(true); }, held));
+        const int idx = keys.size() - 1;
+        tt& kk_ = keys[idx];
+        auto& fn = std::get<1>(kk_);
 #ifndef _WIN32
-        connect(k.get(), &QxtGlobalShortcut::activated, [&]() -> void { fun(true);  });
+        connect(k.get(), &QxtGlobalShortcut::activated, [=]() -> void { fn(true); });
 #endif
     }
 }
