@@ -30,10 +30,8 @@ static QString kopts_to_string(const key_opts& kopts)
 }
 
 OptionsDialog::OptionsDialog(main_settings& main,
-                             std::function<void()> register_global_keys,
                              std::function<void(bool)> pause_keybindings) :
     main(main),
-    register_global_keys(register_global_keys),
     pause_keybindings(pause_keybindings)
 {
     ui.setupUi(this);
@@ -131,7 +129,6 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     d.show();
     d.exec();
     pause_keybindings(false);
-    register_global_keys();
     label->setText(kopts_to_string(kopts));
     delete l;
 }

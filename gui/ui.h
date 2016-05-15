@@ -55,7 +55,6 @@ class MainWindow : public QMainWindow, private State
     process_detector_worker det;
     QMenu profile_menu;
     bool is_refreshing_profiles;
-    volatile bool keys_paused;
     QTimer save_timer;
 
     mem<dylib> current_tracker()
@@ -120,4 +119,5 @@ public:
     void save_mappings();
     void load_mappings();
     static void set_working_directory();
+    void set_keys_enabled(bool flag);
 };

@@ -22,8 +22,7 @@
 MainWindow::MainWindow() :
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
-    is_refreshing_profiles(false),
-    keys_paused(false)
+    is_refreshing_profiles(false)
 {
     ui.setupUi(this);
 
@@ -109,19 +108,19 @@ MainWindow::MainWindow() :
                              QMessageBox::Ok, QMessageBox::NoButton);
     
     connect(this, &MainWindow::emit_start_tracker,
-            this, [&]() -> void { if (keys_paused) return; qDebug() << "start tracker"; startTracker(); },
+            this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
             Qt::QueuedConnection);
     
     connect(this, &MainWindow::emit_stop_tracker,
-            this, [&]() -> void { if (keys_paused) return; qDebug() << "stop tracker"; stopTracker(); },
+            this, [&]() -> void { qDebug() << "stop tracker"; stopTracker(); },
             Qt::QueuedConnection);
     
     connect(this, &MainWindow::emit_toggle_tracker,
-            this, [&]() -> void { if (keys_paused) return; qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
+            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
             Qt::QueuedConnection);
 
     connect(this, &MainWindow::emit_restart_tracker,
-            this, [&]() -> void { if (keys_paused) return; qDebug() << "retart tracker"; stopTracker(); startTracker(); },
+            this, [&]() -> void { qDebug() << "restart tracker"; stopTracker(); startTracker(); },
             Qt::QueuedConnection);
     
     register_shortcuts();
@@ -504,11 +503,10 @@ bool mk_window(mem<t>* place, Args&&... params)
 }
 
 void MainWindow::show_options_dialog() {
-    if (mk_window(&options_widget,
-                  s,
-                  [&]() -> void { register_shortcuts(); },
-                  [&](bool flag) -> void { keys_paused = flag; }))
+    if (mk_window(&options_widget, s, [&](bool flag) -> void { set_keys_enabled(!flag); }))
+    {
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
+    }
 }
 
 void MainWindow::showCurveConfiguration() {
@@ -604,6 +602,21 @@ void MainWindow::maybe_start_profile_from_executable()
         if (det.should_stop())
             stopTracker();
     }
+}
+
+void MainWindow::set_keys_enabled(bool flag)
+{
+    if (!flag)
+    {
+        if (work)
+            work->sc->reload({});
+        global_shortcuts.reload({});
+    }
+    else
+    {
+        register_shortcuts();
+    }
+    qDebug() << "keybindings set to" << flag;
 }
 
 void MainWindow::set_profile(const QString &profile)

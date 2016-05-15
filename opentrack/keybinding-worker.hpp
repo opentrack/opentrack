@@ -34,9 +34,10 @@ struct Key {
     bool ctrl;
     bool alt;
     bool held;
+    bool enabled;
     Timer timer;
 public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true) {}
+    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true), enabled(true) {}
 
     bool should_process();
 };

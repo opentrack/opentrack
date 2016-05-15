@@ -9,16 +9,29 @@
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
 
+void Shortcuts::free_binding(K& key)
+{
+#ifndef _WIN32
+    if (key)
+    {
+        key->setEnabled(false);
+        key->setShortcut(QKeySequence::UnknownKey);
+        std::shared_ptr<QxtGlobalShortcut> tmp(nullptr);
+        key.swap(tmp);
+    }
+#else
+    key.keycode = 0;
+    key.guid = "";
+#endif
+}
+
 void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused(bool, held))
 {
 #if !defined(_WIN32)
     using sh = QxtGlobalShortcut;
     if (key)
     {
-        key->setEnabled(false);
-        key->setShortcut(QKeySequence::UnknownKey);
-        std::shared_ptr<sh> tmp(nullptr);
-        key.swap(tmp);
+        free_binding(key);
     }
 
     key = std::make_shared<sh>();

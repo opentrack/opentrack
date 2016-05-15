@@ -12,10 +12,9 @@ class OptionsDialog: public QWidget
 signals:
     void reload();
 public:
-    OptionsDialog(main_settings& main, std::function<void()> register_global_keys, std::function<void(bool)> pause_keybindings);
+    OptionsDialog(main_settings& main, std::function<void(bool)> pause_keybindings);
 private:
     main_settings& main;
-    std::function<void()> register_global_keys;
     std::function<void(bool)> pause_keybindings;
     Ui::UI_Settings ui;
     void closeEvent(QCloseEvent *) override { doCancel(); }

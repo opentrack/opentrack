@@ -61,6 +61,7 @@ public:
 
     void reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_);
 private:
+    void free_binding(K& key);
     void bind_keyboard_shortcut(K &key, const key_opts& k, bool held);
 #ifdef _WIN32
     void receiver(const Key& k);
