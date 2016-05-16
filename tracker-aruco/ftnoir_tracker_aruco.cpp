@@ -179,8 +179,8 @@ void Tracker::run()
         
         if (last_roi.width > 0 && last_roi.height)
         {
-            detector.setMinMaxSize(std::max(0.01, size_min * grayscale.cols / last_roi.width),
-                                   std::min(1.0, size_max * grayscale.cols / last_roi.width));
+            detector.setMinMaxSize(std::min(1., std::max(0.01, size_min * grayscale.cols / last_roi.width)),
+                                   std::max(0.01, std::min(1.0, size_max * grayscale.cols / last_roi.width)));
 
             cv::Mat grayscale_ = grayscale(last_roi).clone();
             if (detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false),
