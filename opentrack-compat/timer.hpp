@@ -71,4 +71,8 @@ public:
     long elapsed_ms() const {
         return elapsed() / 1000000L;
     }
+    double elapsed_seconds() const
+    {
+        return elapsed() * 1e-9;
+    }
 };
