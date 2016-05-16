@@ -1,0 +1,21 @@
+if(WIN32)
+    set(SDK_TOBII_EYEX "" CACHE PATH "")
+    if(SDK_TOBII_EYEX)
+        opentrack_boilerplate(opentrack-tracker-tobii-eyex)
+        set(tobii-libdir ${SDK_TOBII_EYEX}/lib/x86/)
+        set(tobii-dll ${tobii-libdir}/Tobii.EyeX.Client.dll)
+        # we only care about the .lib for MSVC++ build anyway
+        set(tobii-link ${tobii-libdir}/Tobii.EyeX.Client.lib)
+        target_include_directories(opentrack-tracker-tobii-eyex PRIVATE ${CMAKE_SOURCE_DIR}/spline-widget)
+        target_link_libraries(opentrack-tracker-tobii-eyex ${tobii-link} opentrack-spline-widget)
+        # we only ever use the C headers due to Microsoft CRT ABI incompatibility with GNU
+        set(tobii-incdir ${SDK_TOBII_EYEX}/include/eyex)
+        target_include_directories(opentrack-tracker-tobii-eyex SYSTEM PUBLIC ${tobii-incdir})
+        install(FILES ${tobii-dll} DESTINATION ${opentrack-hier-pfx} ${opentrack-perms})
+        if((CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows") AND (CMAKE_SYSTEM_NAME STREQUAL "Windows"))
+            # let's assume 32-bit Windows host systems doesn't exist at all
+            install(FILES c:/windows/syswow64/msvcp110.dll DESTINATION ${opentrack-hier-pfx} ${opentrack-perms})
+            install(FILES c:/windows/syswow64/msvcr110.dll DESTINATION ${opentrack-hier-pfx} ${opentrack-perms})
+        endif()
+    endif()
+endif()
