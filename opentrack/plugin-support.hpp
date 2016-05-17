@@ -48,7 +48,7 @@
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
-struct dylib {
+struct dylib final {
     enum Type { Filter, Tracker, Protocol };
 
     dylib(const QString& filename, Type t) :
