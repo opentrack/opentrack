@@ -28,10 +28,6 @@
 #include <QList>
 #include <QStringList>
 
-#ifndef _WIN32
-#   include <dlfcn.h>
-#endif
-
 #if defined(__APPLE__)
 #   define OPENTRACK_SONAME "dylib"
 #elif defined(_WIN32)
@@ -67,7 +63,6 @@ struct dylib {
         if (filename.size() == 0)
             return;
 
-#if defined(_WIN32)
         QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
         handle = new QLibrary(fullPath);
 
@@ -98,51 +93,6 @@ struct dylib {
         Meta = (OPENTRACK_METADATA_FUNPTR) handle->resolve("GetMetadata");
         if (_foo::die(handle, !Meta))
             return;
-#else
-        QByteArray latin1 = QFile::encodeName(filename);
-        handle = dlopen(latin1.constData(),
-#   if defined(__APPLE__)
-                    RTLD_LOCAL|RTLD_FIRST|RTLD_NOW
-#   else
-                    RTLD_LOCAL|RTLD_NOW // XXX RTLD_DEEPBIND on Linux?
-#   endif
-                        );
-
-        struct _foo {
-            static bool err(void*& handle)
-            {
-                const char* err = dlerror();
-                if (err)
-                {
-                    fprintf(stderr, "Error, ignoring: %s\n", err);
-                    fflush(stderr);
-                    if (handle)
-                        dlclose(handle);
-                    handle = nullptr;
-                    return true;
-                }
-                return false;
-            }
-        };
-
-        if (handle)
-        {
-            if (_foo::err(handle))
-                return;
-            Dialog = (OPENTRACK_CTOR_FUNPTR) dlsym(handle, "GetDialog");
-            if (_foo::err(handle))
-                return;
-            Constructor = (OPENTRACK_CTOR_FUNPTR) dlsym(handle, "GetConstructor");
-            if (_foo::err(handle))
-                return;
-            Meta = (OPENTRACK_METADATA_FUNPTR) dlsym(handle, "GetMetadata");
-            if (_foo::err(handle))
-                return;
-        } else {
-            (void) _foo::err(handle);
-            return;
-        }
-#endif
 
         auto m = mem<Metadata>(Meta());
 
@@ -151,13 +101,8 @@ struct dylib {
     }
     ~dylib()
     {
-#if defined(_WIN32)
         if (handle)
             delete handle;
-#else
-        if (handle)
-            (void) dlclose(handle);
-#endif
     }
 
     static QList<mem<dylib>> enum_libraries()
@@ -213,11 +158,7 @@ struct dylib {
     OPENTRACK_CTOR_FUNPTR Constructor;
     OPENTRACK_METADATA_FUNPTR Meta;
 private:
-#if defined(_WIN32)
     QLibrary* handle;
-#else
-    void* handle;
-#endif
 
     static bool get_metadata(mem<dylib> lib, QString& name, QIcon& icon)
     {
