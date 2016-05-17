@@ -54,7 +54,7 @@ extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib {
     enum Type { Filter, Tracker, Protocol };
-    
+
     dylib(const QString& filename, Type t) :
         type(t),
         filename(filename),
@@ -66,11 +66,11 @@ struct dylib {
         // otherwise dlopen opens the calling executable
         if (filename.size() == 0)
             return;
-    
+
 #if defined(_WIN32)
         QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
         handle = new QLibrary(fullPath);
-    
+
         struct _foo {
             static bool die(QLibrary*& l, bool failp)
             {
@@ -83,18 +83,18 @@ struct dylib {
                 return failp;
             }
         };
-    
+
         if (_foo::die(handle, !handle->load()))
             return;
-    
+
         Dialog = (OPENTRACK_CTOR_FUNPTR) handle->resolve("GetDialog");
         if (_foo::die(handle, !Dialog))
             return;
-    
+
         Constructor = (OPENTRACK_CTOR_FUNPTR) handle->resolve("GetConstructor");
         if (_foo::die(handle, !Constructor))
             return;
-    
+
         Meta = (OPENTRACK_METADATA_FUNPTR) handle->resolve("GetMetadata");
         if (_foo::die(handle, !Meta))
             return;
@@ -107,7 +107,7 @@ struct dylib {
                     RTLD_LOCAL|RTLD_NOW // XXX RTLD_DEEPBIND on Linux?
 #   endif
                         );
-    
+
         struct _foo {
             static bool err(void*& handle)
             {
@@ -124,7 +124,7 @@ struct dylib {
                 return false;
             }
         };
-    
+
         if (handle)
         {
             if (_foo::err(handle))
@@ -143,9 +143,9 @@ struct dylib {
             return;
         }
 #endif
-    
+
         auto m = mem<Metadata>(Meta());
-    
+
         icon = m->icon();
         name = m->name();
     }
@@ -159,7 +159,7 @@ struct dylib {
             (void) dlclose(handle);
 #endif
     }
-    
+
     static QList<mem<dylib>> enum_libraries()
     {
         const char* filters_n[] = { "opentrack-filter-*.",
@@ -167,11 +167,11 @@ struct dylib {
                                     "opentrack-proto-*."
                                   };
         const Type filters_t[] = { Filter, Tracker, Protocol };
-    
+
         QDir settingsDir( QCoreApplication::applicationDirPath() );
-    
+
         QList<mem<dylib>> ret;
-    
+
         for (int i = 0; i < 3; i++)
         {
             QString filter = filters_n[i];
@@ -199,16 +199,16 @@ struct dylib {
                 ret.push_back(lib);
             }
         }
-    
+
         return ret;
     }
-    
+
     Type type;
     QString filename;
-    
+
     QIcon icon;
     QString name;
-    
+
     OPENTRACK_CTOR_FUNPTR Dialog;
     OPENTRACK_CTOR_FUNPTR Constructor;
     OPENTRACK_METADATA_FUNPTR Meta;
@@ -218,7 +218,7 @@ private:
 #else
     void* handle;
 #endif
-    
+
     static bool get_metadata(mem<dylib> lib, QString& name, QIcon& icon)
     {
         Metadata* meta;
@@ -252,7 +252,7 @@ private:
     {
         std::sort(xs.begin(), xs.end(), [&](const t& a, const t& b) { return a->name.toLower() < b->name.toLower(); });
     }
-    
+
     QList<mem<dylib>> filter(dylib::Type t)
     {
         QList<mem<dylib>> ret;
