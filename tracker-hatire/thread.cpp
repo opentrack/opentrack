@@ -48,6 +48,14 @@ void hatire_thread::sendcmd_impl(const QByteArray &cmd)
 #endif
 }
 
+struct Diag final : public QFile
+{
+    Diag()
+    {
+        setFileName(QCoreApplication::applicationDirPath() + "/HATDiagnostics.txt");
+    }
+};
+
 void hatire_thread::Log(const QString& message)
 {
     // Drop out immediately if logging is off. Yes, there is still some overhead because of passing strings around for no reason.

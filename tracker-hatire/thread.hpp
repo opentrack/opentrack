@@ -36,14 +36,6 @@ struct serial_result
     results code;
 };
 
-struct Diag : public QFile
-{
-    Diag()
-    {
-        setFileName(QCoreApplication::applicationDirPath() + "/HATDiagnostics.txt");
-    }
-};
-
 class hatire_thread : public QThread
 {
     Q_OBJECT
