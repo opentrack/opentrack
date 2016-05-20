@@ -72,7 +72,7 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
-    timer.start(100);
+    timer.start(250);
 }
 
 void TrackerDialog_PT::camera_settings()

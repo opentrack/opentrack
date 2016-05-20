@@ -357,7 +357,7 @@ void Tracker::data(double *data)
 TrackerControls::TrackerControls()
 {
     tracker = nullptr;
-    calib_timer.setInterval(200);
+    calib_timer.setInterval(250);
     ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     ui.cameraName->addItems(get_camera_names());
