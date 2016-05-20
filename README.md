@@ -68,7 +68,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Wim Vriend (original codebase author and maintainer)
 - Ryan Spicer (OSX tester, contributor)
 - Donovan Baarda (filtering/control theory expert)
-- Mathijs Groothuis (@MathijsG, dozens of bugs and other issues submitted)
+- Mathijs Groothuis (@MathijsG, dozens of bugs and other issues reported)
 
 # Licensing information
 
