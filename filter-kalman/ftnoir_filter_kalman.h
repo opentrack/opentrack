@@ -10,8 +10,8 @@
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include "opentrack/plugin-api.hpp"
-#include <opencv2/core/core.hpp>
-#include <opencv2/video/video.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/video/tracking.hpp>
 #include <vector>
 #include <QString>
 #include <QElapsedTimer>
