@@ -60,7 +60,7 @@ private:
     volatile bool should_stop;
 };
 
-class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
+class TrackerControls : public ITrackerDialog, protected camera_dialog
 {
     Q_OBJECT
 public:

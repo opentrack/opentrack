@@ -32,7 +32,7 @@ class TrackerDialog_PT;
 class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
-    friend class camera_dialog<Tracker_PT>;
+    friend class camera_dialog;
     friend class TrackerDialog_PT;
 public:
     Tracker_PT();

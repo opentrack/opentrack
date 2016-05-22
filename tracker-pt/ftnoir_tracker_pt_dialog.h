@@ -20,7 +20,7 @@
 
 //-----------------------------------------------------------------------------
 // The dialog that shows up when the user presses "Settings"
-class TrackerDialog_PT : public ITrackerDialog, protected camera_dialog<Tracker_PT>
+class TrackerDialog_PT : public ITrackerDialog, protected camera_dialog
 {
     Q_OBJECT
 public:

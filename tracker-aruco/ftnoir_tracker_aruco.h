@@ -70,7 +70,7 @@ private:
     cv::Vec3d t;
 };
 
-class TrackerControls : public ITrackerDialog, protected camera_dialog<Tracker>
+class TrackerControls : public ITrackerDialog, protected camera_dialog
 {
     Q_OBJECT
 public:
