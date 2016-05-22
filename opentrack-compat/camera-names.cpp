@@ -1,20 +1,18 @@
 #include "camera-names.hpp"
 
-#if defined(OPENTRACK_API) && defined(_WIN32)
+#ifdef _WIN32
 #   define NO_DSHOW_STRSAFE
 #   include <windows.h>
 #   include <dshow.h>
-#endif
-
-#if defined(OPENTRACK_API) && (defined(__unix) || defined(__linux) || defined(__APPLE__))
+#elif defined(__unix) || defined(__linux) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
 
 #ifdef __linux
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-#include <cerrno>
+#   include <fcntl.h>
+#   include <sys/ioctl.h>
+#   include <linux/videodev2.h>
+#   include <cerrno>
 #endif
 
 #include <QDebug>
@@ -33,9 +31,9 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names() {
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
-    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     if (FAILED(hr))
-        qDebug() << "failed CoInitializeEx" << hr;
+        qDebug() << "failed CoInitializeEx" << hr << GetLastError();
     ICreateDevEnum *pSysDevEnum = NULL;
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
