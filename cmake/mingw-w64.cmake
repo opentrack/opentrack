@@ -35,7 +35,7 @@ set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -
 set(lto "-flto -fuse-linker-plugin")
 
 set(_CFLAGS " -fvisibility=hidden ")
-set(_CXXFLAGS " -fvisibility-inlines-hidden ${_CFLAGS} ")
+set(_CXXFLAGS " ${_CFLAGS} ")
 set(_CFLAGS_RELEASE " -s ${cpu} ${fpu} ${lto} ")
 set(_CFLAGS_DEBUG "-g -ggdb ${cpu} ${fpu} ")
 set(_CXXFLAGS_RELEASE " ${_CFLAGS_RELEASE} ")
