@@ -9,6 +9,8 @@
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 
+check_for_first_run FTNoIR_Protocol::runonce_check = check_for_first_run();
+
 FTNoIR_Protocol::FTNoIR_Protocol() :
     shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
     pMemData((FTHeap*) shm.ptr()),
@@ -16,11 +18,11 @@ FTNoIR_Protocol::FTNoIR_Protocol() :
     viewsStop(nullptr),
     intGameID(0)
 {
-    runonce_check->set_enabled(s.close_protocols_on_exit);
+    runonce_check.set_enabled(s.close_protocols_on_exit);
     QObject::connect(&s.close_protocols_on_exit,
                      static_cast<void (base_value::*)(bool)>(&value<bool>::valueChanged),
-                     [] (bool flag) -> void { runonce_check->set_enabled(flag); });
-    runonce_check->try_runonce();
+                     [] (bool flag) -> void { runonce_check.set_enabled(flag); });
+    runonce_check.try_runonce();
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()

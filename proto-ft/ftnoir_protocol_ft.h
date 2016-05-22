@@ -22,6 +22,7 @@
 #include "opentrack-compat/options.hpp"
 #include "freetrackclient/fttypes.h"
 #include <memory>
+#include "mutex.hpp"
 
 using namespace options;
 
@@ -38,15 +39,6 @@ struct settings : opts {
 
 typedef void (__stdcall *importTIRViewsStart)(void);
 typedef void (__stdcall *importTIRViewsStop)(void);
-
-// for runonce, see mutex.cpp
-struct runonce
-{
-    virtual void try_runonce() = 0;
-    virtual bool is_first_run() = 0;
-    virtual ~runonce() {}
-    virtual void set_enabled(bool flag) = 0;
-};
 
 class FTNoIR_Protocol : public IProtocol
 {
@@ -72,8 +64,7 @@ private:
     int intGameID;
     QString connected_game;
     QMutex game_name_mutex;
-
-    static std::unique_ptr<runonce> runonce_check;
+    static check_for_first_run runonce_check;
 
     static inline double getRadsFromDegrees(double degrees) { return degrees * 0.017453; }
     void start_tirviews();
