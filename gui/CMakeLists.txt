@@ -26,8 +26,6 @@ target_link_libraries(opentrack
     opentrack-version
 )
 
-link_with_dinput8(opentrack)
-
 if(APPLE)
     # for process detector
     target_link_libraries(opentrack proc)
