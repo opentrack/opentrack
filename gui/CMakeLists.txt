@@ -34,5 +34,4 @@ if(LINUX)
 endif()
 
 opentrack_boilerplate(opentrack STAGE2)
-install(TARGETS opentrack DESTINATION .)
 
