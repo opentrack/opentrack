@@ -35,20 +35,19 @@ function(opentrack_compat target)
     endif()
 endfunction()
 
-function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile_ link_)
-    set(link-mode SHARED)
-    if (static_)
-        set(link-mode STATIC)
+function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile_ link_ stage2_)
+    if((NOT no-library_) AND (NOT stage2_))
+        set(link-mode SHARED)
+        if (static_)
+            set(link-mode STATIC)
+        endif()
+        add_library(${n} ${link-mode} ${files_})
+        opentrack_compat(${n})
     endif()
-    add_library(${n} ${link-mode} ${files_})
-    opentrack_compat(${n})
-    set(link-mode)
     if(NOT no-compat_)
         target_link_libraries(${n} opentrack-api opentrack-compat)
     endif()
     target_link_libraries(${n} ${MY_QT_LIBS})
-    set(c-props)
-    set(l-props)
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(c-props "-fvisibility=hidden -fuse-cxa-atexit")
     endif()
@@ -80,7 +79,7 @@ endfunction()
 
 macro(opentrack_boilerplate n)
     cmake_parse_arguments(${n}-args
-        "NO-LIBRARY;STATIC;NO-COMPAT"
+        "NO-LIBRARY;STATIC;NO-COMPAT;STAGE2"
         "LINK;COMPILE"
         ""
         ${ARGN}
@@ -88,15 +87,18 @@ macro(opentrack_boilerplate n)
     if(NOT "${${n}-args_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "opentrack_boilerplate bad formals ${${n}-args_UNPARSED_ARGUMENTS}")
     endif()
-    project(${n})
-    opentrack_set_globs(${n})
-    opentrack_qt(${n})
-    if(NOT ${n}-args_NO-LIBRARY)
+    if(NOT ${n}-args_STAGE2)
+        project(${n})
+        opentrack_set_globs(${n})
+        opentrack_qt(${n})
+    endif()
+    if((NOT ${n}-args_NO-LIBRARY) OR ${n}-args_STAGE2)
         opentrack_boilerplate__("${n}" "${${n}-all}"
                                        "${${n}-args_NO-LIBRARY}"
                                        "${${n}-args_STATIC}"
                                        "${${n}-args_NO-COMPAT}"
                                        "${${n}-args_COMPILE}"
-                                       "${${n}-args_LINK}")
+                                       "${${n}-args_LINK}"
+                                       "${${n}-args_STAGE2}")
     endif()
 endmacro()

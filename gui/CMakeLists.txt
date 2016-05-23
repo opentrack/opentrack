@@ -10,9 +10,7 @@ else()
     set(opentrack-win32-executable "")
 endif()
 
-opentrack_qt(opentrack)
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
-opentrack_compat(opentrack)
 
 if(NOT WIN32)
     set_target_properties(opentrack PROPERTIES SUFFIX ".bin")
@@ -21,8 +19,6 @@ endif()
 target_link_libraries(opentrack
     opentrack-spline-widget
     opentrack-pose-widget
-    opentrack-api
-    opentrack-compat
     opentrack-version
 )
 
@@ -37,18 +33,6 @@ if(LINUX)
     target_link_libraries(opentrack procps)
 endif()
 
-set(c-props)
-set(l-props)
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(c-props "-fvisibility=hidden ")
-    if(NOT APPLE)
-        set(l-props "-Wl,--as-needed")
-    endif()
-endif()
-
-set_target_properties(opentrack PROPERTIES
-    LINK_FLAGS "${l-props}"
-    COMPILE_FLAGS "${c-props}"
-)
-
+opentrack_boilerplate(opentrack STAGE2)
 install(TARGETS opentrack DESTINATION .)
+
