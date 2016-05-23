@@ -69,6 +69,11 @@ signals:
 // also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
 struct OPENTRACK_EXPORT Metadata
 {
+    Metadata(const Metadata&) = delete;
+    Metadata(Metadata&&) = delete;
+    Metadata& operator=(const Metadata&) = delete;
+    inline Metadata() {}
+
     // plugin name to be displayed in the interface
     virtual QString name() = 0;
     // plugin icon, you can return an empty QIcon()
@@ -80,6 +85,11 @@ struct OPENTRACK_EXPORT Metadata
 // implement this in filters
 struct OPENTRACK_EXPORT IFilter
 {
+    IFilter(const IFilter&) = delete;
+    IFilter(IFilter&&) = delete;
+    IFilter& operator=(const IFilter&) = delete;
+    inline IFilter() {}
+
     // optional destructor
     virtual ~IFilter();
     // perform filtering step.
@@ -106,6 +116,11 @@ struct OPENTRACK_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 // implement this in protocols
 struct OPENTRACK_EXPORT IProtocol
 {
+    IProtocol(const IProtocol&) = delete;
+    IProtocol(IProtocol&&) = delete;
+    IProtocol& operator=(const IProtocol&) = delete;
+    inline IProtocol() {}
+
     // optional destructor
     virtual ~IProtocol();
     // return true if protocol was properly initialized
@@ -134,6 +149,11 @@ struct OPENTRACK_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 // implement this in trackers
 struct OPENTRACK_EXPORT ITracker
 {
+    ITracker(const ITracker&) = delete;
+    ITracker(ITracker&&) = delete;
+    ITracker& operator=(const ITracker&) = delete;
+    inline ITracker() {}
+
     // optional destructor
     virtual ~ITracker();
     // start tracking, and grab a frame to display webcam video in, optionally
