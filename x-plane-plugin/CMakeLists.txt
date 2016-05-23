@@ -7,7 +7,7 @@ if(LINUX OR APPLE)
         add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
         target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
         set(vis "-fvisibility=hidden")
-        if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC AND NOT APPLE)
+        if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
             SET_TARGET_PROPERTIES(opentrack-xplane-plugin
                 PROPERTIES LINK_FLAGS
                 "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC"
