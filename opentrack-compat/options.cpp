@@ -26,7 +26,7 @@ group::group(const QString& name) : name(name)
     conf->endGroup();
 }
 
-void group::save()
+void group::save() const
 {
     auto s = ini_file();
     s->beginGroup(name);
@@ -41,7 +41,7 @@ void group::put(const QString &s, const QVariant &d)
     kvs[s] = d;
 }
 
-bool group::contains(const QString &s)
+bool group::contains(const QString &s) const
 {
     return kvs.count(s) != 0;
 }
@@ -120,9 +120,9 @@ void impl_bundle::store_kv(const QString &name, const QVariant &datum)
     }
 }
 
-bool impl_bundle::contains(const QString &name)
+bool impl_bundle::contains(const QString &name) const
 {
-    QMutexLocker l(&mtx);
+    QMutexLocker l(const_cast<QMutex*>(&mtx));
     return transient.contains(name);
 }
 
@@ -137,9 +137,9 @@ void impl_bundle::save()
     emit saving();
 }
 
-bool impl_bundle::modifiedp()
+bool impl_bundle::modifiedp() const
 {
-    QMutexLocker l(&mtx);
+    QMutexLocker l(const_cast<QMutex*>(&mtx));
     return modified;
 }
 
@@ -156,7 +156,7 @@ pbundle opt_singleton::bundle(const opt_singleton::k &key)
         if (shared != nullptr)
             return shared;
     }
-    
+
     qDebug() << "bundle +" << key;
 
     auto shr = std::make_shared<v>(key);
@@ -196,4 +196,12 @@ opts::~opts()
 
 opts::opts(const QString &name) : b(bundle(name)) {}
 
+pbundle bundle(const QString& name)
+{
+     return detail::singleton().bundle(name);
+}
+
+
+
+// end
 }

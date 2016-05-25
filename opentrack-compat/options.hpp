@@ -78,9 +78,9 @@ namespace options {
         QString name;
     public:
         group(const QString& name);
-        void save();
+        void save() const;
         void put(const QString& s, const QVariant& d);
-        bool contains(const QString& s);
+        bool contains(const QString& s) const;
         static QString ini_directory();
         static QString ini_filename();
         static QString ini_pathname();
@@ -88,9 +88,12 @@ namespace options {
         static const mem<QSettings> ini_file();
 
         template<typename t>
-        t get(const QString& k)
+        t get(const QString& k) const
         {
-            return qcruft_to_t<t>(kvs[k]);
+            auto value = kvs.find(k);
+            if (value != kvs.cend())
+                return qcruft_to_t<t>(value->second);
+            return t();
         }
     };
 
@@ -106,20 +109,20 @@ namespace options {
         impl_bundle& operator=(const impl_bundle&) = delete;
     signals:
         void reloading();
-        void saving();
+        void saving() const;
     public:
         impl_bundle(const QString& group_name);
         QString name() { return group_name; }
         void reload();
         void store_kv(const QString& name, const QVariant& datum);
-        bool contains(const QString& name);
+        bool contains(const QString& name) const;
         void save();
-        bool modifiedp();
-        
+        bool modifiedp() const;
+
         template<typename t>
-        t get(const QString& name)
+        t get(const QString& name) const
         {
-            QMutexLocker l(&mtx);
+            QMutexLocker l(const_cast<QMutex*>(&mtx));
             return transient.get<t>(name);
         }
     };
@@ -144,13 +147,13 @@ namespace options {
             pbundle bundle(const k& key);
             void bundle_decf(const k& key);
         };
-        
+
         OPENTRACK_COMPAT_EXPORT opt_singleton& singleton();
     }
-    
+
     using pbundle = std::shared_ptr<opt_bundle>;
-    
-    static inline pbundle bundle(const QString name) { return detail::singleton().bundle(name); }
+
+    pbundle bundle(const QString& name);
 
     class OPENTRACK_COMPAT_EXPORT opt_bundle : public impl_bundle
     {
@@ -166,7 +169,7 @@ namespace options {
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define DEFINE_SIGNAL(t) void valueChanged(t)
     public:
-        QString name() { return self_name; }
+        QString name() const { return self_name; }
         base_value(pbundle b, const QString& name);
     signals:
         DEFINE_SIGNAL(double);
@@ -236,12 +239,14 @@ namespace options {
     private:
         underlying_t def;
     };
-    
+
     struct OPENTRACK_COMPAT_EXPORT opts
     {
         pbundle b;
         opts(const QString& name);
-        ~opts();
+        opts& operator=(const opts&) = delete;
+        opts(const opts&) = delete;
+        virtual ~opts();
     };
 
     template<typename t, typename q>
@@ -383,7 +388,7 @@ namespace options {
         lb->setText(v);
         base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.DIRECT_CONNTYPE);
     }
-    
+
     template<>
     inline void tie_setting(value<int>& v, QTabWidget* t)
     {
