@@ -396,4 +396,29 @@ namespace options {
         base_value::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
         base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.DIRECT_CONNTYPE);
     }
+
+    template<>
+    inline void tie_setting(value<double>& v, QSlider* w)
+    {
+        // we can't get these at runtime since signals cross threads
+        const int min = w->minimum();
+        const int max = w->maximum();
+        const int max_ = max - min;
+
+        w->setValue(int(v * max_) + min);
+        v = max_ <= 0 ? 0 : (w->value() - min) / (double)max_;
+
+        base_value::connect(w, &QSlider::valueChanged, &v,
+                         [=, &v](int pos) -> void
+        {
+            v = max_ <= 0 ? 0 : (pos - min) / (double)max_;
+        },
+        v.DIRECT_CONNTYPE);
+        base_value::connect(&v, static_cast<void(base_value::*)(double)>(&base_value::valueChanged), w,
+                            [=](double value) -> void
+        {
+            w->setValue(int(value * max_) + min);
+        },
+        v.DIRECT_CONNTYPE);
+    }
 }
