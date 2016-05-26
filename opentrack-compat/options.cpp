@@ -201,7 +201,21 @@ pbundle bundle(const QString& name)
      return detail::singleton().bundle(name);
 }
 
+slider_value::operator double() const
+{
+    return min + cur * (max-min);
+}
 
+slider_value slider_value::from_abs(double val, double min, double max)
+{
+    if (min > max)
+        min = max;
+    if (val < min)
+        val = min;
+    if (val > max)
+        val = max;
+    return slider_value((val - min) / (max - min), min, max);
+}
 
 // end
 }

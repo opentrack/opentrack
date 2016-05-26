@@ -34,6 +34,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QApplication>
+#include <QMetaType>
 
 #include <QDebug>
 
@@ -48,6 +49,25 @@ template<typename t> using mem = std::shared_ptr<t>;
 #define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
 #define OPENTRACK_DEFAULT_CONFIG "default.ini"
 #define OPENTRACK_ORG "opentrack-2.3"
+
+namespace options
+{
+    struct OPENTRACK_COMPAT_EXPORT slider_value
+    {
+        double cur, min, max;
+        slider_value(double cur, double min, double max) :
+            cur(cur),
+            min(min),
+            max(max)
+        {}
+        slider_value() : slider_value(0, 0, 0) {}
+        operator double() const;
+        double to_abs() const { return operator double(); }
+        static slider_value from_abs(double val, double min, double max);
+    };
+}
+
+Q_DECLARE_METATYPE(options::slider_value)
 
 namespace options {
     template<typename k, typename v> using map = std::map<k, v>;
@@ -144,11 +164,12 @@ namespace options {
         ~opt_bundle();
     };
 
+#define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
+#define DEFINE_SIGNAL(t) void valueChanged(t)
+
     class OPENTRACK_COMPAT_EXPORT base_value : public QObject
     {
         Q_OBJECT
-#define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
-#define DEFINE_SIGNAL(t) void valueChanged(t)
     public:
         QString name() const { return self_name; }
         base_value(pbundle b, const QString& name);
@@ -157,6 +178,7 @@ namespace options {
         DEFINE_SIGNAL(int);
         DEFINE_SIGNAL(bool);
         DEFINE_SIGNAL(QString);
+        DEFINE_SIGNAL(slider_value);
     protected:
         pbundle b;
         QString self_name;
@@ -172,6 +194,7 @@ namespace options {
         DEFINE_SLOT(int)
         DEFINE_SLOT(QString)
         DEFINE_SLOT(bool)
+        DEFINE_SLOT(slider_value)
     public slots:
         virtual void reload() = 0;
     };
@@ -198,8 +221,10 @@ namespace options {
             store(static_cast<underlying_t>(datum));
             return datum;
         }
+
         static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::AutoConnection;
         static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
+
         value(pbundle b, const QString& name, t def) : base_value(b, name), def(static_cast<underlying_t>(def))
         {
             QObject::connect(b.get(), SIGNAL(reloading()),
@@ -208,13 +233,16 @@ namespace options {
             if (!b->contains(name) || b->get<QVariant>(name).type() == QVariant::Invalid)
                 *this = def;
         }
+
         value(pbundle b, const char* name, t def) : value(b, QString(name), def) {}
 
         operator t() const
         {
             return static_cast<t>(b->contains(self_name) ? b->get<underlying_t>(self_name) : def);
         }
-        void reload() override {
+
+        void reload() override
+        {
             *this = static_cast<t>(*this);
         }
     private:
@@ -379,20 +407,22 @@ namespace options {
     }
 
     template<>
-    inline void tie_setting(value<double>& v, QSlider* w)
+    inline void tie_setting(value<slider_value>& v, QSlider* w)
     {
         // we can't get these at runtime since signals cross threads
         const int min = w->minimum();
         const int max = w->maximum();
         const int max_ = max - min;
 
-        w->setValue(int(v * max_) + min);
-        v = max_ <= 0 ? 0 : (w->value() - min) / (double)max_;
+        slider_value sv(v);
+
+        w->setValue(int(sv.cur * max_) + min);
+        v = slider_value(max_ <= 0 ? 0 : (w->value() - min) / (double)max_, sv.min, sv.max);
 
         base_value::connect(w, &QSlider::valueChanged, &v,
                          [=, &v](int pos) -> void
         {
-            v = max_ <= 0 ? 0 : (pos - min) / (double)max_;
+            v = slider_value(max_ <= 0 ? 0 : (pos - min) / (double)max_, sv.min, sv.max);
         },
         v.DIRECT_CONNTYPE);
         base_value::connect(&v, static_cast<void(base_value::*)(double)>(&base_value::valueChanged), w,
@@ -403,3 +433,4 @@ namespace options {
         v.DIRECT_CONNTYPE);
     }
 }
+
