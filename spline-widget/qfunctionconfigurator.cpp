@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2012-2016 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -64,13 +64,13 @@ void QFunctionConfigurator::drawBackground()
     QPen pen(color__, 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
-    const double maxx = _config->maxInput();
-    const double maxy = _config->maxOutput();
+    const double maxx = _config->maxInput() + ystep;
+    const double maxy = _config->maxOutput() + xstep;
 
     // horizontal grid
     for (int i = 0; i < maxy; i += xstep)
     {
-        double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
+        const double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
         drawLine(&painter,
                  QPointF(pixel_bounds.x(), y),
                  QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
@@ -82,38 +82,10 @@ void QFunctionConfigurator::drawBackground()
                          QString::number(i));
     }
 
-    {
-        const double i = maxy;
-        double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
-        drawLine(&painter,
-                 QPointF(pixel_bounds.x(), y),
-                 QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
-                 pen);
-        painter.drawText(QRectF(10,
-                                y - metrics.height()/2,
-                                pixel_bounds.x() - 10,
-                                metrics.height()),
-                         QString::number(i));
-    }
-
     // vertical grid
     for (int i = 0; i < maxx; i += ystep)
     {
-        double x = pixel_bounds.x() + i * c.x();
-        drawLine(&painter,
-                 QPointF(x, pixel_bounds.y()),
-                 QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
-                 pen);
-        const QString text = QString::number(i);
-        painter.drawText(QRectF(x - metrics.width(text)/2,
-                                pixel_bounds.height() + 10 + metrics.height(),
-                                metrics.width(text),
-                                metrics.height()),
-                         text);
-    }
-    {
-        const double i = maxx;
-        double x = pixel_bounds.x() + i * c.x();
+        const double x = pixel_bounds.x() + i * c.x();
         drawLine(&painter,
                  QPointF(x, pixel_bounds.y()),
                  QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
@@ -163,13 +135,25 @@ void QFunctionConfigurator::drawFunction()
     const double max = _config->maxInput();
     const double step = std::max(1e-2, max / 1000.);
 
+    painter.save();
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (double i = 0; i < max; i += step) {
-        double val = _config->getValue(i);
+        const double val = _config->getValue(i);
         QPointF cur = point_to_pixel(QPointF(i, val));
-        drawLine(&painter, prev, cur, pen);
+        painter.drawLine(prev, cur);
         prev = cur;
     }
+
+    {
+        const double val = _config->getValue(max);
+        QPointF last = point_to_pixel(QPointF(max, val));
+        painter.drawLine(prev, last);
+    }
+
+    painter.restore();
 }
 
 void QFunctionConfigurator::paintEvent(QPaintEvent *e)
@@ -219,9 +203,9 @@ void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QCo
     painter->save();
     painter->setPen(border);
     painter->setBrush( colBG );
-    painter->drawEllipse(QRectF(pos.x() - pointSize,
-                                pos.y() - pointSize,
-                                pointSize*2, pointSize*2));
+    painter->drawEllipse(QRectF(pos.x() - point_size,
+                                pos.y() - point_size,
+                                point_size*2, point_size*2));
     painter->restore();
 }
 
@@ -303,7 +287,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
         bool overlap = false;
 
-        QPoint pix = e->pos();
+        QPointF pix = e->pos();
         QPointF new_pt = pixel_coord_to_point(pix);
 
         for (int i = 0; i < 2; i++)
@@ -396,14 +380,14 @@ void QFunctionConfigurator::update_range()
 
     _background = QPixmap();
     _function = QPixmap();
-    
+
     update();
 }
 
 bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
 {
     QPointF tmp = pixel - point_to_pixel(pt);
-    return sqrt(QPointF::dotProduct(tmp, tmp)) < pointSize;
+    return sqrt(QPointF::dotProduct(tmp, tmp)) < point_size;
 }
 
 QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
@@ -411,13 +395,13 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     if (!_config)
         return QPointF(-1, -1);
 
-    int x = (point.x() - pixel_bounds.x()) / c.x();
-    int y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
-    
+    double x = (point.x() - pixel_bounds.x()) / c.x();
+    double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+
     if (snap_x > 0)
-        x -= x % snap_x;
+        x -= int(x) % snap_x;
     if (snap_y > 0)
-        y -= y % snap_y;
+        y -= int(y) % snap_y;
 
     if (x < 0)
         x = 0;
