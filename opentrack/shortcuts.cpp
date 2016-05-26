@@ -46,7 +46,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused_on_unix
     key = K();
     int idx = 0;
     QKeySequence code;
-    
+
     if (k.guid != "")
     {
         key.guid = k.guid;
@@ -61,7 +61,7 @@ void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused_on_unix
             code = QKeySequence(Qt::Key_unknown);
         else
             code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
-    
+
         Qt::KeyboardModifiers mods = Qt::NoModifier;
         if (code != Qt::Key_unknown)
             win_key::from_qt(code, idx, mods);
@@ -87,12 +87,12 @@ void Shortcuts::receiver(const Key& k)
         if (k.keycode != k_.keycode)
             continue;
         if (k_.held && !k.held) continue;
-        if (k_.alt && !k.alt) continue;
-        if (k_.ctrl && !k.ctrl) continue;
-        if (k_.shift && !k.shift) continue;
+        if (k_.alt != k.alt) continue;
+        if (k_.ctrl != k.ctrl) continue;
+        if (k_.shift != k.shift) continue;
         if (!k_.should_process())
             continue;
-        
+
         fun(k.held);
     }
 }
@@ -102,7 +102,7 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
 {
     const int sz = keys_.size();
     keys = std::vector<tt>();
-    
+
     for (int i = 0; i < sz; i++)
     {
         const auto& kk = keys_[i];
