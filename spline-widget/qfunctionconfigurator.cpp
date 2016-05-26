@@ -386,9 +386,9 @@ void QFunctionConfigurator::update_range()
     if (!_config)
         return;
 
-    const double w = width(), h = height();
-    const double mwl = 40, mhl = 20;
-    const double mwr = 15, mhr = 35;
+    const int w = width(), h = height();
+    const int mwl = 40, mhl = 20;
+    const int mwr = 15, mhr = 35;
 
     pixel_bounds = QRectF(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
     c = QPointF(pixel_bounds.width() / _config->maxInput(), pixel_bounds.height() / _config->maxOutput());

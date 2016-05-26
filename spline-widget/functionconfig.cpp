@@ -34,31 +34,31 @@ void Map::removeAllPoints()
     reload();
 }
 
-void Map::setMaxInput(double max_input)
+void Map::setMaxInput(float max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
 }
 
-void Map::setMaxOutput(double max_output)
+void Map::setMaxOutput(float max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
 }
 
-double Map::maxInput() const
+float Map::maxInput() const
 {
     QMutexLocker l(&_mutex);
     return max_x;
 }
 
-double Map::maxOutput() const
+float Map::maxOutput() const
 {
     QMutexLocker l(&_mutex);
     return max_y;
 }
 
-Map::Map(double maxx, double maxy) :
+Map::Map(float maxx, float maxy) :
     _mutex(QMutex::Recursive),
     max_x(0),
     max_y(0),
