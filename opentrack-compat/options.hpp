@@ -246,7 +246,7 @@ namespace options {
         opts(const QString& name);
         opts& operator=(const opts&) = delete;
         opts(const opts&) = delete;
-        virtual ~opts();
+        ~opts();
     };
 
     template<typename t, typename q>
