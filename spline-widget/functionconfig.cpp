@@ -288,6 +288,6 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
 
 int Map::precision() const {
     if (cur.input.size())
-        return value_count / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));
+        return (value_count-1) / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));
     return 1;
 }
