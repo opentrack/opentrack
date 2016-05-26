@@ -27,13 +27,13 @@ void FilterControls::unregister_filter()
 }
 
 void FilterControls::doOK() {
-	save();
-	this->close();
+    save();
+    close();
 }
 
-void FilterControls::doCancel() {
-    s.b->reload();
-    this->close();
+void FilterControls::doCancel()
+{
+    close();
 }
 
 void FilterControls::save() {

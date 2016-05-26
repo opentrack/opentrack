@@ -22,7 +22,7 @@
 //
 FGControls::FGControls()
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
     tie_setting(s.ip1, ui.spinIPFirstNibble);
     tie_setting(s.ip2, ui.spinIPSecondNibble);
@@ -36,11 +36,10 @@ FGControls::FGControls()
 
 void FGControls::doOK() {
     s.b->save();
-	this->close();
+    close();
 }
 
 void FGControls::doCancel() {
-    s.b->reload();
-    this->close();
+    close();
 }
 

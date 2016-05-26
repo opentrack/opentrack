@@ -23,11 +23,11 @@ FSUIPCControls::FSUIPCControls()
 
 void FSUIPCControls::doOK() {
     s.b->save();
-    this->close();
+    close();
 }
 
-void FSUIPCControls::doCancel() {
-    s.b->reload();
+void FSUIPCControls::doCancel()
+{
     close();
 }
 

@@ -63,7 +63,7 @@ struct dylib final {
         if (filename.size() == 0)
             return;
 
-        QString fullPath = QCoreApplication::applicationDirPath() + "/" + this->filename;
+        QString fullPath = QCoreApplication::applicationDirPath() + "/" + filename;
         handle = new QLibrary(fullPath);
 
         struct _foo {

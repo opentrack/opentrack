@@ -45,10 +45,10 @@ void TrackerControls::doOK() {
     auto val = _joys.value(idx, def);
     s.guid = val.guid;
     s.b->save();
-    this->close();
+    close();
 }
 
 void TrackerControls::doCancel() {
     s.b->reload();
-    this->close();
+    close();
 }

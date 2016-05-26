@@ -16,7 +16,7 @@ TrackerControls::TrackerControls()
 
 void TrackerControls::doOK() {
     s.b->save();
-    this->close();
+    close();
 }
 
 void TrackerControls::doCancel() {

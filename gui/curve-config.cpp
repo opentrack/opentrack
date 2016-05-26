@@ -78,10 +78,10 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
 
 void MapWidget::doOK() {
     m.save_mappings();
-    this->close();
+    close();
 }
 
 void MapWidget::doCancel() {
     m.invalidate_unsaved();
-    this->close();
+    close();
 }

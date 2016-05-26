@@ -40,9 +40,9 @@ OptionsDialog::OptionsDialog(main_settings& main,
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(main.tray_enabled, ui.trayp);
-    
+
     tie_setting(main.center_at_startup, ui.center_at_startup);
-    
+
     tie_setting(main.tcomp_p, ui.tcomp_enable);
     tie_setting(main.tcomp_tz, ui.tcomp_rz);
 
@@ -66,7 +66,7 @@ OptionsDialog::OptionsDialog(main_settings& main,
     tie_setting(main.a_x.src, ui.src_x);
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
-    
+
     tie_setting(main.camera_yaw, ui.camera_yaw);
     tie_setting(main.camera_pitch, ui.camera_pitch);
     tie_setting(main.camera_roll, ui.camera_roll);
@@ -89,7 +89,7 @@ OptionsDialog::OptionsDialog(main_settings& main,
     ui.toggle_held_text->setText(kopts_to_string(main.key_toggle_press));
     ui.zero_text->setText(kopts_to_string(main.key_zero));
     ui.zero_held_text->setText(kopts_to_string(main.key_zero_press));
-    
+
     ui.start_tracking_text->setText(kopts_to_string(main.key_start_tracking));
     ui.stop_tracking_text->setText(kopts_to_string(main.key_stop_tracking));
     ui.toggle_tracking_text->setText(kopts_to_string(main.key_toggle_tracking));
@@ -136,12 +136,12 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
 void OptionsDialog::doOK() {
     main.b->save();
     ui.game_detector->save();
-    this->close();
+    close();
     emit reload();
 }
 
-void OptionsDialog::doCancel() {
-    main.b->reload();
+void OptionsDialog::doCancel()
+{
     ui.game_detector->revert();
     close();
 }

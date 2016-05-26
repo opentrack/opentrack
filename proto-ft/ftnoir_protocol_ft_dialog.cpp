@@ -41,12 +41,12 @@ FTControls::FTControls()
 
 void FTControls::doOK() {
     s.b->save();
-    this->close();
+    close();
 }
 
-void FTControls::doCancel() {
-    s.b->reload();
-    this->close();
+void FTControls::doCancel()
+{
+    close();
 }
 
 void FTControls::selectDLL() {

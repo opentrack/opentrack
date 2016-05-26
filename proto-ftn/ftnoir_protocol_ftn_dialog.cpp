@@ -30,13 +30,13 @@ FTNControls::FTNControls()
 //
 void FTNControls::doOK() {
     s.b->save();
-	this->close();
+    close();
 }
 
 //
 // Cancel clicked on server-dialog
 //
-void FTNControls::doCancel() {
-    s.b->reload();
-    this->close();
+void FTNControls::doCancel()
+{
+    close();
 }

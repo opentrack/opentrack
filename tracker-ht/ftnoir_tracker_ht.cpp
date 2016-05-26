@@ -96,14 +96,14 @@ void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new HTVideoWidget(videoframe);
-    QHBoxLayout* layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(videoWidget);
+    QHBoxLayout* layout_ = new QHBoxLayout();
+    layout_->setContentsMargins(0, 0, 0, 0);
+    layout_->addWidget(videoWidget);
     if (videoframe->layout())
         delete videoframe->layout();
-    videoframe->setLayout(layout);
+    videoframe->setLayout(layout_);
     videoWidget->show();
-    this->layout = layout;
+    layout = layout_;
 
     load_settings(&conf);
     ht = ht_make_context(&conf, nullptr);
@@ -185,7 +185,7 @@ void Tracker::data(double* data)
 
 TrackerControls::TrackerControls() : tracker(nullptr)
 {
-	ui.setupUi(this);
+        ui.setupUi(this);
     ui.cameraName->clear();
     QList<QString> names = get_camera_names();
     names.prepend("Any available");
@@ -202,13 +202,12 @@ TrackerControls::TrackerControls() : tracker(nullptr)
 void TrackerControls::doOK()
 {
     s.b->save();
-	this->close();
+        close();
 }
 
 void TrackerControls::doCancel()
 {
-    s.b->reload();
-    this->close();
+    close();
 }
 
 void TrackerControls::camera_settings()

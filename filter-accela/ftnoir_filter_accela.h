@@ -57,7 +57,6 @@ public:
     void unregister_filter();
 private:
     Ui::AccelaUICFilterControls ui;
-    void discard();
     void save();
     FTNoIR_Filter* accela_filter;
     settings_accela s;

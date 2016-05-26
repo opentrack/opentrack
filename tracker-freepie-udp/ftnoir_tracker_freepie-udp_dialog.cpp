@@ -20,11 +20,11 @@ TrackerDialog::TrackerDialog()
 
 void TrackerDialog::doOK() {
     s.b->save();
-    this->close();
+    close();
 }
 
-void TrackerDialog::doCancel() {
-    s.b->reload();
-    this->close();
+void TrackerDialog::doCancel()
+{
+    close();
 }
 

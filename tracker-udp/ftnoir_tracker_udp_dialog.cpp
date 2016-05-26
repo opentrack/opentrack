@@ -3,10 +3,10 @@
 
 TrackerControls::TrackerControls()
 {
-	ui.setupUi( this );
+    ui.setupUi( this );
 
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.port, ui.spinPortNumber);
     tie_setting(s.add_yaw, ui.add_yaw);
@@ -16,11 +16,11 @@ TrackerControls::TrackerControls()
 
 void TrackerControls::doOK() {
     s.b->save();
-	this->close();
+    close();
 }
 
 void TrackerControls::doCancel() {
     s.b->reload();
-    this->close();
+    close();
 }
 

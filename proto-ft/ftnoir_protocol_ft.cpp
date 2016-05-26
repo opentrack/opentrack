@@ -82,7 +82,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
         }
         ft->GameID2 = id;
         intGameID = id;
-        QMutexLocker foo(&this->game_name_mutex);
+        QMutexLocker foo(&game_name_mutex);
         connected_game = gamename;
     }
     

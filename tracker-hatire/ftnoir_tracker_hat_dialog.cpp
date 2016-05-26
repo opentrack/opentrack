@@ -124,9 +124,8 @@ TrackerControls::~TrackerControls() {
 void TrackerControls::Initialize(QWidget *parent)
 {
     QPoint offsetpos(100, 100);
-    if (parent) {
-        this->move(parent->pos() + offsetpos);
-    }
+    if (parent)
+        move(parent->pos() + offsetpos);
     show();
 }
 
@@ -168,7 +167,7 @@ void TrackerControls::doSend() {
 //
 void TrackerControls::on_lineSend_returnPressed()
 {
-    this->doSend();
+    doSend();
 }
 
 //
@@ -203,7 +202,6 @@ void TrackerControls::doOK()
 
 void TrackerControls::doCancel()
 {
-    s.b->reload();
     close();
 }
 

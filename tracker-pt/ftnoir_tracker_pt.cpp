@@ -166,7 +166,7 @@ void Tracker_PT::apply_settings()
 
 void Tracker_PT::start_tracker(QFrame *parent_window)
 {
-    this->video_frame = parent_window;
+    video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
     video_frame->show();
     video_widget = new PTVideoWidget(video_frame);

@@ -7,15 +7,15 @@
 
 #include "ht_video_widget.h"
 
-void HTVideoWidget::update_image(unsigned char *frame, int width, int height)
+void HTVideoWidget::update_image(unsigned char *frame, int width_, int height_)
 {
     QMutexLocker foo(&mtx);
     if (!fresh)
     {
-        memcpy(fb, frame, width * height * 3);
-        this->width = width;
-        this->height = height;
+        width = width_;
+        height = height_;
         fresh = true;
+        memcpy(fb, frame, width_ * height_ * 3);
     }
 }
 

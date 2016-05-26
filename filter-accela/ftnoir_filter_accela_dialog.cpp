@@ -20,7 +20,7 @@ FilterControls::FilterControls() :
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    
+
     connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
     connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
     connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
@@ -32,7 +32,7 @@ FilterControls::FilterControls() :
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.trans_deadzone, ui.trans_dz_slider);
-    
+
     update_rot_display(ui.rotation_slider->value());
     update_trans_display(ui.translation_slider->value());
     update_ewma_display(ui.ewma_slider->value());
@@ -61,17 +61,11 @@ void FilterControls::unregister_filter()
 
 void FilterControls::doOK() {
     save();
-    this->close();
-}
-
-void FilterControls::doCancel() {
-    discard();
     close();
 }
 
-void FilterControls::discard()
-{
-    s.b->reload();
+void FilterControls::doCancel() {
+    close();
 }
 
 void FilterControls::save() {

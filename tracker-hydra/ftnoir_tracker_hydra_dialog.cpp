@@ -3,20 +3,19 @@
 
 TrackerControls::TrackerControls()
 {
-	ui.setupUi( this );
+    ui.setupUi(this);
 
-	// Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
 void TrackerControls::doOK() {
     s.b->save();
-	this->close();
+    close();
 }
 
-void TrackerControls::doCancel() {
-    s.b->reload();
+void TrackerControls::doCancel()
+{
     close();
 }
 

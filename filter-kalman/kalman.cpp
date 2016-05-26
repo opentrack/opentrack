@@ -121,8 +121,8 @@ void FilterControls::doOK() {
     close();
 }
 
-void FilterControls::doCancel() {
-    s.b->reload();
+void FilterControls::doCancel()
+{
     close();
 }
 

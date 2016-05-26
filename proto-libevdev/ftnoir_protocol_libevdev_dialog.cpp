@@ -10,11 +10,11 @@ LibevdevControls::LibevdevControls()
 
 void LibevdevControls::doOK() {
 	save();
-	this->close();
+	close();
 }
 
 void LibevdevControls::doCancel() {
-    this->close();
+    close();
 }
 
 void LibevdevControls::save() {

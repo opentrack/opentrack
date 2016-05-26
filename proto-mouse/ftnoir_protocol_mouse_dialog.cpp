@@ -14,11 +14,11 @@ MOUSEControls::MOUSEControls()
 
 void MOUSEControls::doOK() {
     s.b->save();
-    this->close();
+    close();
 }
 
-void MOUSEControls::doCancel() {
-    s.b->reload();
-    this->close();
+void MOUSEControls::doCancel()
+{
+    close();
 }
 

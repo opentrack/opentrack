@@ -41,5 +41,5 @@ private:
     vec3 translation;
     QImage front;
     QImage back;
-    QImage texture;
+    QImage image;
 };

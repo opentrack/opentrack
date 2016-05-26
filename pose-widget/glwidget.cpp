@@ -28,7 +28,7 @@ GLWidget::~GLWidget()
 void GLWidget::paintEvent ( QPaintEvent * event ) {
     QPainter p(this);
     project_quad_texture();
-    p.drawImage(event->rect(), texture);
+    p.drawImage(event->rect(), image);
 }
 
 void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z)
@@ -231,7 +231,7 @@ void GLWidget::project_quad_texture() {
                 }
             }
         }
-    this->texture = texture;
+    image = texture;
 }
 
 GLWidget::vec2 GLWidget::project(const vec3 &point)

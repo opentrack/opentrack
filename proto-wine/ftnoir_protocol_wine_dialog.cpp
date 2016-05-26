@@ -10,10 +10,10 @@ FTControls::FTControls()
 }
 
 void FTControls::doOK() {
-    this->close();
+    close();
 }
 
 void FTControls::doCancel() {
-    this->close();
+    close();
 }
 

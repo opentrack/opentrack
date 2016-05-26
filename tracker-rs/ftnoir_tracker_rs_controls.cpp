@@ -19,15 +19,15 @@ void RSTrackerControls::doInstallRSRuntime()
 {
     bool pStarted = RSTracker::startSdkInstallationProcess();
     if(pStarted == true)
-        this->close();
+        close();
 }
 
 void RSTrackerControls::doOK()
 {
-    this->close();
+    close();
 }
 
 void RSTrackerControls::doCancel()
 {
-    this->close();
+    close();
 }

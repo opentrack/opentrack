@@ -10,11 +10,11 @@ VJoyControls::VJoyControls()
 
 void VJoyControls::doOK() {
 	save();
-	this->close();
+	close();
 }
 
 void VJoyControls::doCancel() {
-    this->close();
+    close();
 }
 
 void VJoyControls::save() {

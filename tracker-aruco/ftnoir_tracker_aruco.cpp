@@ -52,17 +52,17 @@ void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new ArucoVideoWidget(videoframe);
-    QHBoxLayout* layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(videoWidget);
+    QHBoxLayout* layout_ = new QHBoxLayout();
+    layout_->setContentsMargins(0, 0, 0, 0);
+    layout_->addWidget(videoWidget);
     if (videoframe->layout())
         delete videoframe->layout();
-    videoframe->setLayout(layout);
+    videoframe->setLayout(layout_);
     videoWidget->show();
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
-    this->layout = layout;
+    layout = layout_;
 }
 
 #define HT_PI 3.1415926535
@@ -146,7 +146,7 @@ void Tracker::run()
         }
         cv::Mat grayscale;
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
-        
+
         const int scale = grayscale.cols > 480 ? 2 : 1;
         // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
         detector.setThresholdParams(5, -1);
@@ -170,13 +170,13 @@ void Tracker::run()
         const double size_max = 0.3;
 
         bool roi_valid = false;
-        
+
         auto time = cv::getTickCount();
-        
+
         const double dt = (time - last_time) / freq;
         last_time = time;
         cur_fps = cur_fps * 0.97 + 0.03 * (dt == 0 ? 0 : 1./dt);
-        
+
         if (last_roi.width > 0 && last_roi.height)
         {
             detector.setMinMaxSize(std::min(1., std::max(0.01, size_min * grayscale.cols / last_roi.width)),
@@ -239,7 +239,7 @@ void Tracker::run()
             obj_points.at<float>(x4,0)= -size + hx;
             obj_points.at<float>(x4,1)= size + hy;
             obj_points.at<float>(x4,2)= 0 + hz;
-            
+
             std::vector<cv::Point2f> img_points = m;
             if (!cv::solvePnP(obj_points, img_points, intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
                 goto fail;
@@ -387,7 +387,7 @@ void TrackerControls::toggleCalibrate()
         calib_timer.start();
     } else {
         cleanupCalib();
-        
+
         auto pos = calibrator.get_estimate();
         s.headpos_x = pos(0);
         s.headpos_y = pos(1);
@@ -415,13 +415,12 @@ void TrackerControls::update_tracker_calibration()
 void TrackerControls::doOK()
 {
     s.b->save();
-    this->close();
+    close();
 }
 
 void TrackerControls::doCancel()
 {
-    s.b->reload();
-    this->close();
+    close();
 }
 
 void TrackerControls::camera_settings()
