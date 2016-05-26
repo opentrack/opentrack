@@ -52,25 +52,6 @@ template<typename t> using mem = std::shared_ptr<t>;
 namespace options {
     template<typename k, typename v> using map = std::map<k, v>;
 
-    template<typename t>
-    // don't elide usages of the function, qvariant default implicit
-    // conversion results in nonsensical runtime behavior -sh
-    inline t qcruft_to_t (const QVariant& datum);
-
-    template<> inline unsigned qcruft_to_t<unsigned>(const QVariant &t) { return t.toUInt(); }
-
-    template<> inline int qcruft_to_t<int>(const QVariant& t) { return t.toInt(); }
-
-    template<> inline QString qcruft_to_t<QString>(const QVariant& t) { return t.toString(); }
-
-    template<> inline bool qcruft_to_t<bool>(const QVariant& t) { return t.toBool(); }
-
-    template<> inline double qcruft_to_t<double>(const QVariant& t) { return t.toDouble(); }
-
-    template<> inline QVariant qcruft_to_t<QVariant>(const QVariant& t) { return t; }
-
-    template<> inline float qcruft_to_t<float>(const QVariant& t) { return t.toFloat(); }
-
     // snapshot of qsettings group at given time
     class OPENTRACK_COMPAT_EXPORT group {
     private:
@@ -92,7 +73,7 @@ namespace options {
         {
             auto value = kvs.find(k);
             if (value != kvs.cend())
-                return qcruft_to_t<t>(value->second);
+                return value->second.value<t>();
             return t();
         }
     };
@@ -183,7 +164,7 @@ namespace options {
         template<typename t>
         void store(const t& datum)
         {
-            b->store_kv(self_name, datum);
+            b->store_kv(self_name, QVariant::fromValue(datum));
             emit valueChanged(static_cast<t>(datum));
         }
     public slots:
