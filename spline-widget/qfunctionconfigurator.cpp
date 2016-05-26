@@ -132,8 +132,9 @@ void QFunctionConfigurator::drawFunction()
 
     QPen pen(color, 1.2, Qt::SolidLine);
 
+    const double step_ = line_length_pixels / c.x();
+    const double step = std::max(1e-2, step_);
     const double max = _config->maxInput();
-    const double step = std::max(1e-2, max / 1000.);
 
     painter.save();
     painter.setPen(pen);
