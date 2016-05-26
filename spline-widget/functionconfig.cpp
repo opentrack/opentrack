@@ -27,6 +27,37 @@ Map::Map() : Map(0, 0)
 {
 }
 
+void Map::removeAllPoints()
+{
+    QMutexLocker foo(&_mutex);
+    cur.input.clear();
+    reload();
+}
+
+void Map::setMaxInput(double max_input)
+{
+    QMutexLocker l(&_mutex);
+    max_x = max_input;
+}
+
+void Map::setMaxOutput(double max_output)
+{
+    QMutexLocker l(&_mutex);
+    max_y = max_output;
+}
+
+double Map::maxInput() const
+{
+    QMutexLocker l(&_mutex);
+    return max_x;
+}
+
+double Map::maxOutput() const
+{
+    QMutexLocker l(&_mutex);
+    return max_y;
+}
+
 Map::Map(double maxx, double maxy) :
     _mutex(QMutex::Recursive),
     max_x(0),

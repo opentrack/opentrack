@@ -44,29 +44,21 @@ private:
     volatile bool activep;
     State cur, saved;
 public:
-    double maxInput() const { return max_x; }
-    double maxOutput() const { return max_y; }
+    double maxInput() const;
+    double maxOutput() const;
     Map();
     Map(double maxx, double maxy);
 
     float getValue(float x);
     bool getLastPoint(QPointF& point);
     void removePoint(int i);
-    void removeAllPoints() {
-        QMutexLocker foo(&_mutex);
-        cur.input.clear();
-        reload();
-    }
+    void removeAllPoints();
 
     void addPoint(QPointF pt);
     void movePoint(int idx, QPointF pt);
     const QList<QPointF> getPoints();
-    void setMaxInput(double MaxInput) {
-        max_x = MaxInput;
-    }
-    void setMaxOutput(double MaxOutput) {
-        max_y = MaxOutput;
-    }
+    void setMaxInput(double MaxInput);
+    void setMaxOutput(double MaxOutput);
 
     void saveSettings(QSettings& settings, const QString& title);
     void loadSettings(QSettings& settings, const QString& title);
