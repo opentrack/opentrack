@@ -19,6 +19,7 @@ class SPLINE_WIDGET_EXPORT QFunctionConfigurator : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
+    Q_PROPERTY(bool is_preview_only READ is_preview_only WRITE set_preview_only)
 public:
     QFunctionConfigurator(QWidget *parent = 0);
 
@@ -39,6 +40,8 @@ public:
         _background = QPixmap();
         update();
     }
+    void set_preview_only(bool val);
+    bool is_preview_only() const;
     void set_snap(int x, int y) { snap_x = x; snap_y = y; }
     void get_snap(int& x, int& y) const { x = snap_x; y = snap_y; }
 protected slots:
@@ -72,8 +75,8 @@ private:
 
     QPixmap _background;
     QPixmap _function;
-    bool _draw_function;
     int snap_x, snap_y;
+    bool _draw_function, _preview_only;
 
     static constexpr int line_length_pixels = 3;
     static constexpr int point_size = 5;

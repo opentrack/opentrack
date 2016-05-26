@@ -19,9 +19,10 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),
     moving_control_point_idx(-1),
-    _draw_function(true),
     snap_x(0),
-    snap_y(0)
+    snap_y(0),
+    _draw_function(true),
+    _preview_only(false)
 {
     update_range();
     setMouseTracking(true);
@@ -37,6 +38,16 @@ void QFunctionConfigurator::setConfig(Map* config, const QString& name) {
     update();
 }
 
+void QFunctionConfigurator::set_preview_only(bool val)
+{
+    _preview_only = val;
+}
+
+bool QFunctionConfigurator::is_preview_only() const
+{
+    return _preview_only;
+}
+
 void QFunctionConfigurator::drawBackground()
 {
     if (!_config)
@@ -47,7 +58,7 @@ void QFunctionConfigurator::drawBackground()
     painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
 
     QColor bg_color(112, 154, 209);
-    if (!isEnabled())
+    if (!isEnabled() && !_preview_only)
         bg_color = QColor(176,176,180);
     painter.fillRect(pixel_bounds, bg_color);
 
@@ -120,13 +131,13 @@ void QFunctionConfigurator::drawFunction()
 
     QColor color = spline_color;
 
-    if (!isEnabled())
+    if (!isEnabled() && !_preview_only)
     {
-        const int avg = 176;
+        const float avg = (color.red() + color.green() + color.blue())/3.f;
         auto color_ = color;
-        color = QColor(color_.red() * .5 + avg * .5,
-                       color_.green() * .5 + avg * .5,
-                       color_.blue() * .5 + avg * .5,
+        color = QColor(int(color_.red() * .5 + avg * .5),
+                       int(color_.green() * .5 + avg * .5),
+                       int(color_.blue() * .5 + avg * .5),
                        96);
     }
 
@@ -201,6 +212,9 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 
 void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
 {
+    if (_preview_only)
+        return;
+
     painter->save();
     painter->setPen(border);
     painter->setBrush( colBG );
