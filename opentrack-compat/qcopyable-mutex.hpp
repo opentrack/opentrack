@@ -30,8 +30,8 @@ public:
     {
     }
 
-    QMutex* operator&()
+    QMutex* operator&() const
     {
-        return &inner;
+        return const_cast<QMutex*>(&inner);
     }
 };
