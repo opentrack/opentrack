@@ -39,23 +39,15 @@ private:
 
     MyMutex _mutex;
     QPointF last_input_value;
-    volatile bool activep;
     double max_x;
     double max_y;
-
+    volatile bool activep;
     State cur, saved;
 public:
     double maxInput() const { return max_x; }
     double maxOutput() const { return max_y; }
     Map();
-    Map(double maxx, double maxy)
-    {
-        setMaxInput(maxx);
-        setMaxOutput(maxy);
-        if (cur.input.size() == 0)
-            cur.input.push_back(QPointF(maxx, maxy));
-        reload();
-    }
+    Map(double maxx, double maxy);
 
     float getValue(float x);
     bool getLastPoint(QPointF& point);

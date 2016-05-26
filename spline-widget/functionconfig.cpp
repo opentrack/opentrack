@@ -23,12 +23,21 @@ void Map::setTrackingActive(bool blnActive)
     activep = blnActive;
 }
 
-Map::Map() :
-    _mutex(QMutex::Recursive),
-    activep(false),
-    max_x(0),
-    max_y(0)
+Map::Map() : Map(0, 0)
 {
+}
+
+Map::Map(double maxx, double maxy) :
+    _mutex(QMutex::Recursive),
+    max_x(0),
+    max_y(0),
+    activep(false)
+{
+    setMaxInput(maxx);
+    setMaxOutput(maxy);
+    if (cur.input.size() == 0)
+        cur.input.push_back(QPointF(maxx, maxy));
+    reload();
 }
 
 float Map::getValue(float x) {
@@ -86,12 +95,12 @@ void Map::reload() {
         data = std::vector<float>(value_count);
         const float mult = precision();
         const float mult_ = mult * 30;
-        
+
         const int sz = data.size();
-        
+
         for (int i = 0; i < sz; i++)
             data[i] = -1;
-        
+
         if (input.size() == 1 && input[0].x() > 1e-2)
         {
             for (int k = 0; k < input[0].x() * mult; k++) {
@@ -101,7 +110,7 @@ void Map::reload() {
         }
         else if (input[0].x() > 1e-2)
             input.prepend(QPointF(0, 0));
-        
+
         for (int i = 0; i < sz; i++) {
             const QPointF p0 = ensureInBounds(input, i - 1);
             const QPointF p1 = ensureInBounds(input, i);
@@ -110,11 +119,11 @@ void Map::reload() {
 
             const float p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
             const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
-            
+
             // multiplier helps fill in all the x's needed
             const int end = std::min<int>(sz, p2_x * mult_);
             const int start = p1_x * mult;
-            
+
             for (int j = start; j < end; j++) {
                 const float t = (j - start) / (float) (end - start);
                 const float t2 = t*t;
@@ -125,17 +134,17 @@ void Map::reload() {
                                     (2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x) * t2 +
                                     (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
                         * mult;
-                
+
                 const float y = .5f * ((2 * p1_y) +
                                       (-p0_y + p2_y) * t +
                                       (2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y) * t2 +
                                       (-p0_y + 3 * p1_y - 3 * p2_y + p3_y) * t3);
-                
+
                 if (x >= 0 && x < sz)
                     data[x] = y;
             }
         }
-        
+
         float last = 0;
         for (int i = 0; i < sz; i++)
         {
@@ -207,10 +216,10 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     }
 
     settings.endGroup();
-    
+
     if (max == 0)
         points.append(QPointF(maxInput(), maxOutput()));
-    
+
     cur.input = points;
     reload();
     saved = cur;
@@ -239,9 +248,9 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
         settings.remove(x);
         settings.remove(QString("point-%1-y").arg(i));
     }
-    
+
     saved = cur;
-        
+
     settings.endGroup();
 }
 
