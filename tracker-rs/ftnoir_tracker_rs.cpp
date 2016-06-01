@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Intel Corporation
+ * Copyright (c) 2015-2016, Intel Corporation
  *   Author: Xavier Hallade <xavier.hallade@intel.com>
  * Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStackedLayout>
+#include <QDebug>
 
 RSTracker::RSTracker() {
     connect(&mTrackerWorkerThread, &RSTrackerWorkerThread::trackingHasFinished,
@@ -44,6 +45,8 @@ void RSTracker::configurePreviewFrame()
 
 void RSTracker::start_tracker(QFrame* previewFrame)
 {
+	qDebug() << "tracker_rs: starting tracker";
+
     mPreviewFrame = previewFrame;
 
     configurePreviewFrame();
@@ -54,16 +57,20 @@ void RSTracker::start_tracker(QFrame* previewFrame)
 }
 
 void RSTracker::startPreview(){
+	qDebug() << "tracker_rs: starting preview";
     mPreviewUpdateTimer.start(kPreviewUpdateInterval);
 }
 
 void RSTracker::updatePreview(){
-    if(mImageWidget!=nullptr && mImageWidget->isEnabled())
-        mImageWidget->setImage(mTrackerWorkerThread.getPreview());
+	if (mImageWidget != nullptr && mImageWidget->isEnabled() && mTrackerWorkerThread.isRunning())
+		mImageWidget->setImage(mTrackerWorkerThread.getPreview());
+	else
+		qDebug() << "tracker_rs: not updating preview. worker thread running: " << mTrackerWorkerThread.isRunning();
 }
 
 void RSTracker::stopPreview(){
-    mPreviewUpdateTimer.stop();
+	mPreviewUpdateTimer.stop();
+	qDebug() << "tracker_rs: stopped preview";
 }
 
 void RSTracker::handleTrackingEnded(int exitCode){
@@ -75,7 +82,7 @@ void RSTracker::handleTrackingEnded(int exitCode){
 
 bool RSTracker::startSdkInstallationProcess()
 {
-    bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_8.0.24.6528.exe --finstall=core,face3d --fnone=all");
+    bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_10.0.26.0396.exe --finstall=core,face3d --fnone=all");
     if(!pStarted){
         QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
     }
@@ -87,11 +94,19 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.setText("RealSense Tracking Error");
-    if(exitCode==-101){ //The implementation got an invalid handle from the RealSense SDK session/modules
-        msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please install SDK Runtime R5.");
-    }
-    else {
-        msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R1 to be installed.");
+
+	switch(exitCode){
+	case -101: //The implementation got an invalid handle from the RealSense SDK session/modules
+        msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R2 is installed.");
+		break;
+	case -301: //RealSense SDK runtime execution aborted.
+		msgBox.setInformativeText("Tracking stopped after the RealSense SDK Runtime execution has aborted.");
+		break;
+	case -601: //RealSense Camera stream configuration has changed.
+		msgBox.setInformativeText("Tracking stopped after another program changed camera streams configuration.");
+		break;
+	default:
+        msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R2 to be installed.");
     }
 
     QPushButton* triggerSdkInstallation = msgBox.addButton("Install Runtime", QMessageBox::ActionRole);
@@ -108,6 +123,8 @@ void RSTracker::data(double *data)
 }
 
 RSTracker::~RSTracker() {
+	qDebug() << "tracker is being destroyed.";
+
     stopPreview();
 
     if(mImageWidget!=nullptr)

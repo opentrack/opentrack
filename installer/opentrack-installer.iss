@@ -89,7 +89,7 @@ var
 begin
 if RSCameraDriverDetectedAndEulaAccepted then
   begin
-    NonUiBlockingExec(ExpandConstant('{app}\contrib\intel_rs_sdk_runtime_websetup_8.0.24.6528.exe'), 
+    NonUiBlockingExec(ExpandConstant('{app}\contrib\intel_rs_sdk_runtime_websetup_10.0.26.0396.exe'), 
     '--silent --no-progress --acceptlicense=yes --front --finstall=core,face3d --fnone=all');
   end
 end;

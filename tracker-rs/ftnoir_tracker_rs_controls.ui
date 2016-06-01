@@ -37,7 +37,7 @@ Intel® RealSense™ SDK. By design, the application has no direct access
 to any camera images.
 
 In order to use this tracker, you need a PC equipped with an Intel® RealSense™ 
-F200 or SR300 camera and the RealSense™ SDK 2016 R1 runtime.</string>
+F200 or SR300 camera and the RealSense™ SDK 2016 R2 runtime.</string>
      </property>
     </widget>
    </item>

@@ -8,10 +8,11 @@
 #include "ftnoir_tracker_rs_worker.h"
 #include "rs_impl/ftnoir_tracker_rs_impl.h"
 #include <QImage>
+#include <QDebug>
 
 RSTrackerWorkerThread::RSTrackerWorkerThread(): mPose{0,0,0,0,0,0}{
     setObjectName("RSTrackerWorkerThread");
-    mPreviewRawData = (uchar*)malloc(1*kPreviewStreamWidth*kPreviewStreamHeight);
+    mPreviewRawData = (uchar*)malloc(1*kPreviewStreamWidth*kPreviewStreamHeight); // Y8 format
     memset(mPreviewRawData, 125, kPreviewStreamWidth*kPreviewStreamHeight); //start with a gray image.
 }
 
@@ -20,6 +21,8 @@ void RSTrackerWorkerThread::run(){
     int retValue;
 
     retValue = rs_tracker_impl_start();
+	qDebug() << "tracker_rs: tracking has started. retValue: " << retValue;
+
     if(retValue==0)
         emit trackingHasStarted();
     else {
@@ -29,17 +32,23 @@ void RSTrackerWorkerThread::run(){
 
     while(!isInterruptionRequested()){
         retValue = rs_tracker_impl_update_pose(pose);
-        if(retValue == 0){ // success
-            QMutexLocker lock(&mMutex);
-            memcpy(mPose, pose, sizeof(pose));
-        }
-        else if(retValue != -303){ // pose update failed and not because of a timeout (-303)
-            emit trackingHasFinished(retValue);
-            break;
-        }
+		if (retValue == 0) { // success
+			QMutexLocker lock(&mMutex);
+			memcpy(mPose, pose, sizeof(pose));
+		}
+		else if (retValue != -303) { // pose update failed and not because of a timeout (-303)
+			emit trackingHasFinished(retValue);
+			break;
+		}
+		else
+			qDebug() << "tracker_rs: timeout in pose update.";
     }
 
-    rs_tracker_impl_end();
+	qDebug() << "tracker_rs: tracking is ending. retValue: " << retValue;
+
+	retValue = rs_tracker_impl_end();
+
+	qDebug() << "tracker_rs: tracking has ended. retValue: " << retValue;
 }
 
 void RSTrackerWorkerThread::getPose(double *pose){
@@ -48,7 +57,8 @@ void RSTrackerWorkerThread::getPose(double *pose){
 }
 
 const QImage RSTrackerWorkerThread::getPreview(){
-    rs_tracker_impl_get_preview(mPreviewRawData, kPreviewStreamWidth, kPreviewStreamHeight);
+	if(!isInterruptionRequested() && isRunning())
+	    rs_tracker_impl_get_preview(mPreviewRawData, kPreviewStreamWidth, kPreviewStreamHeight);
     return QImage((const uchar*)mPreviewRawData, kPreviewStreamWidth, kPreviewStreamHeight, QImage::Format_Grayscale8).copy();//TODO: avoid deep copy?
 }
 
