@@ -156,7 +156,7 @@ namespace options {
 
     pbundle bundle(const QString& name);
 
-    class OPENTRACK_COMPAT_EXPORT opt_bundle : public impl_bundle
+    class OPENTRACK_COMPAT_EXPORT opt_bundle final : public impl_bundle
     {
     public:
         opt_bundle() : impl_bundle("i-have-no-name") {}
@@ -290,7 +290,7 @@ namespace options {
 
             void operator()(int idx)
             {
-                if (idx < 0u || idx >= (int)enum_cases.size())
+                if (idx < 0 || idx >= (int)enum_cases.size())
                     v = static_cast<t>(-1);
                 else
                     v = static_cast<t>(enum_cases[idx]);
