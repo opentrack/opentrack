@@ -173,6 +173,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float
 
     using std::sqrt;
     using std::atan;
+    using std::cos;
+    using std::sin;
 
     int i=1;
     for (; i<MAX_ITER; ++i)
