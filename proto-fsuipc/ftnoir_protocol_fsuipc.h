@@ -52,14 +52,17 @@ public:
     ~FTNoIR_Protocol() override;
     bool correct();
     void pose(const double* headpose);
-    QString game_name() {
+    QString game_name()
+    {
         return "Microsoft Flight Simulator X";
     }
 private:
     QLibrary FSUIPCLib;
     double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
-    static int scale2AnalogLimits( float x, float min_x, float max_x );
     settings s;
+
+    template<typename t>
+    static int scale2AnalogLimits(t x, t min_x, t max_x );
 };
 
 class FSUIPCControls: public IProtocolDialog
