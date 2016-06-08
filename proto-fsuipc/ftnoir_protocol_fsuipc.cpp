@@ -114,10 +114,10 @@ void FTNoIR_Protocol::pose(const double *headpose ) {
             yaw.Value = scale2AnalogLimits(virtRotY, -180., 180.);
             FSUIPC_Write(0x3110, 8, &yaw, &result);
 
-			FSZoom = (WORD) (64/50) * virtPosZ + 64;
             roll.Value = scale2AnalogLimits(virtRotZ, -180., 180.);
             FSUIPC_Write(0x3110, 8, &roll, &result);
 
+            FSZoom = WORD(virtPosZ + 64);
             FSUIPC_Write(0x832E, 2, &FSZoom, &result);
 
             //
