@@ -34,31 +34,31 @@ void Map::removeAllPoints()
     reload();
 }
 
-void Map::setMaxInput(float max_input)
+void Map::setMaxInput(qreal max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
 }
 
-void Map::setMaxOutput(float max_output)
+void Map::setMaxOutput(qreal max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
 }
 
-float Map::maxInput() const
+qreal Map::maxInput() const
 {
     QMutexLocker l(&_mutex);
     return max_x;
 }
 
-float Map::maxOutput() const
+qreal Map::maxOutput() const
 {
     QMutexLocker l(&_mutex);
     return max_y;
 }
 
-Map::Map(float maxx, float maxy) :
+Map::Map(qreal maxx, qreal maxy) :
     _mutex(QMutex::Recursive),
     max_x(0),
     max_y(0),
@@ -125,24 +125,27 @@ void Map::reload() {
 
         data = std::vector<float>(value_count);
         const float mult = precision();
-        const float mult_ = mult * 30;
+        const unsigned mult_ = unsigned(mult * 30);
 
-        const int sz = data.size();
+        const unsigned sz = data.size();
 
-        for (int i = 0; i < sz; i++)
+        for (unsigned i = 0; i < sz; i++)
             data[i] = -1;
 
         if (input.size() == 1 && input[0].x() > 1e-2)
         {
-            for (int k = 0; k < input[0].x() * mult; k++) {
+            const float x = float(input[0].x());
+            const float y = float(input[0].y());
+            const unsigned max = unsigned(x * mult);
+            for (unsigned k = 0; k < max; k++) {
                 if (k < sz)
-                    data[k] = input[0].y() * k / (input[0].x() * mult);
+                    data[k] = y * k / max;
             }
         }
         else if (input[0].x() > 1e-2)
             input.prepend(QPointF(0, 0));
 
-        for (int i = 0; i < sz; i++) {
+        for (unsigned i = 0; i < sz; i++) {
             const QPointF p0 = ensureInBounds(input, i - 1);
             const QPointF p1 = ensureInBounds(input, i);
             const QPointF p2 = ensureInBounds(input, i + 1);
@@ -152,32 +155,32 @@ void Map::reload() {
             const float p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
 
             // multiplier helps fill in all the x's needed
-            const int end = std::min<int>(sz, p2_x * mult_);
-            const int start = p1_x * mult;
+            const unsigned end = std::min(sz, unsigned(p2_x * mult_));
+            const unsigned start = unsigned(p1_x * mult);
 
-            for (int j = start; j < end; j++) {
+            for (unsigned j = start; j < end; j++) {
                 const float t = (j - start) / (float) (end - start);
                 const float t2 = t*t;
                 const float t3 = t*t*t;
 
                 const int x = .5f * ((2 * p1_x) +
-                                    (-p0_x + p2_x) * t +
-                                    (2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x) * t2 +
-                                    (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
-                        * mult;
+                                     (-p0_x + p2_x) * t +
+                                     (2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x) * t2 +
+                                     (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
+                              * mult;
 
                 const float y = .5f * ((2 * p1_y) +
-                                      (-p0_y + p2_y) * t +
-                                      (2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y) * t2 +
-                                      (-p0_y + 3 * p1_y - 3 * p2_y + p3_y) * t3);
+                                       (-p0_y + p2_y) * t +
+                                       (2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y) * t2 +
+                                       (-p0_y + 3 * p1_y - 3 * p2_y + p3_y) * t3);
 
-                if (x >= 0 && x < sz)
+                if (x >= 0 && x < (int)sz)
                     data[x] = y;
             }
         }
 
         float last = 0;
-        for (int i = 0; i < sz; i++)
+        for (int i = 0; i < (int)sz; i++)
         {
             if (data[i] < 0)
                 data[i] = last;

@@ -28,7 +28,8 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     setMouseTracking(true);
 }
 
-void QFunctionConfigurator::setConfig(Map* config, const QString& name) {
+void QFunctionConfigurator::setConfig(Map* config, const QString& name)
+{
     mem<QSettings> iniFile = group::ini_file();
     if (name != "")
         config->loadSettings(*iniFile, name);
@@ -75,13 +76,13 @@ void QFunctionConfigurator::drawBackground()
     QPen pen(color__, 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
-    const double maxx = _config->maxInput() + ystep;
-    const double maxy = _config->maxOutput() + xstep;
+    const qreal maxx = _config->maxInput() + ystep;
+    const qreal maxy = _config->maxOutput() + xstep;
 
     // horizontal grid
     for (int i = 0; i < maxy; i += xstep)
     {
-        const double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
+        const qreal y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
         drawLine(&painter,
                  QPointF(pixel_bounds.x(), y),
                  QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
@@ -96,7 +97,7 @@ void QFunctionConfigurator::drawBackground()
     // vertical grid
     for (int i = 0; i < maxx; i += ystep)
     {
-        const double x = pixel_bounds.x() + i * c.x();
+        const qreal x = pixel_bounds.x() + i * c.x();
         drawLine(&painter,
                  QPointF(x, pixel_bounds.y()),
                  QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
@@ -122,45 +123,49 @@ void QFunctionConfigurator::drawFunction()
     QList<QPointF> points = _config->getPoints();
 
     const int alpha = !isEnabled() ? 64 : 120;
-    for (int i = 0; i < points.size(); i++) {
-        drawPoint(&painter,
-                  point_to_pixel(points[i]),
-                  QColor(200, 200, 210, alpha),
-                  isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
+    if (!_preview_only)
+    {
+        for (int i = 0; i < points.size(); i++)
+        {
+            drawPoint(&painter,
+                      point_to_pixel(points[i]),
+                      QColor(200, 200, 210, alpha),
+                      isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
+        }
     }
 
     QColor color = spline_color;
 
     if (!isEnabled() && !_preview_only)
     {
-        const float avg = (color.red() + color.green() + color.blue())/3.f;
-        auto color_ = color;
-        color = QColor(int(color_.red() * .5 + avg * .5),
-                       int(color_.green() * .5 + avg * .5),
-                       int(color_.blue() * .5 + avg * .5),
+        const int avg = int(float(color.red() + color.green() + color.blue())/3);
+        color = QColor(int(float(color.red() + avg) * .5f),
+                       int(float(color.green() + avg) * .5f),
+                       int(float(color.blue() + avg) * .5f),
                        96);
     }
 
     QPen pen(color, 1.2, Qt::SolidLine);
 
-    const double step_ = line_length_pixels / c.x();
-    const double step = std::max(1e-2, step_);
-    const double max = _config->maxInput();
+    const qreal step_ = line_length_pixels / c.x();
+    const qreal step = std::max(1e-2, step_);
+    const qreal max = _config->maxInput();
 
     painter.save();
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);
 
     QPointF prev = point_to_pixel(QPointF(0, 0));
-    for (double i = 0; i < max; i += step) {
-        const double val = _config->getValue(i);
+    for (qreal i = 0; i < max; i += step)
+    {
+        const qreal val = qreal(_config->getValue(float(i)));
         QPointF cur = point_to_pixel(QPointF(i, val));
         painter.drawLine(prev, cur);
         prev = cur;
     }
 
     {
-        const double val = _config->getValue(max);
+        const qreal val = _config->getValue(float(max));
         QPointF last = point_to_pixel(QPointF(max, val));
         painter.drawLine(prev, last);
     }
@@ -185,14 +190,19 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 
     p.drawPixmap(e->rect(), _function);
 
-    if (_config) {
+    if (_config)
+    {
         QPen pen(Qt::white, 1, Qt::SolidLine);
         QList<QPointF> points = _config->getPoints();
-        if (points.size() && moving_control_point_idx >= 0 && moving_control_point_idx < points.size()) {
+        if (points.size() &&
+            moving_control_point_idx >= 0 &&
+            moving_control_point_idx < points.size())
+        {
             if (points[0].x() > 1e-2)
                 points.prepend(QPointF(0, 0));
             QPointF prev = point_to_pixel(points[0]);
-            for (int i = 1; i < points.size(); i++) {
+            for (int i = 1; i < points.size(); i++)
+            {
                 auto tmp = point_to_pixel(points[i]);
                 drawLine(&p, prev, tmp, pen);
                 prev = tmp;
@@ -203,7 +213,8 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
         // Show that point on the graph, with some lines to assist.
         // This new feature is very handy for tweaking the curves!
         QPointF last;
-        if (_config->getLastPoint(last) && isEnabled()) {
+        if (_config->getLastPoint(last) && isEnabled())
+        {
             QPointF pixel_pos = point_to_pixel(last);
             drawPoint(&p, pixel_pos, QColor(255, 0, 0, 120));
         }
@@ -212,9 +223,6 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
 
 void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
 {
-    if (_preview_only)
-        return;
-
     painter->save();
     painter->setPen(border);
     painter->setBrush( colBG );
@@ -238,18 +246,23 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
     if (!_config || !isEnabled())
         return;
     QList<QPointF> points = _config->getPoints();
-    if (e->button() == Qt::LeftButton) {
+    if (e->button() == Qt::LeftButton)
+    {
         bool bTouchingPoint = false;
         moving_control_point_idx = -1;
-        if (_config) {
-            for (int i = 0; i < points.size(); i++) {
-                if (point_within_pixel(points[i], e->pos())) {
+        if (_config)
+        {
+            for (int i = 0; i < points.size(); i++)
+            {
+                if (point_within_pixel(points[i], e->pos()))
+                {
                     bTouchingPoint = true;
                     moving_control_point_idx = i;
                     break;
                 }
             }
-            if (!bTouchingPoint) {
+            if (!bTouchingPoint)
+            {
                 bool too_close = false;
                 const auto pos = e->pos();
 
@@ -270,17 +283,22 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
         }
     }
 
-    if (e->button() == Qt::RightButton) {
-        if (_config) {
+    if (e->button() == Qt::RightButton)
+    {
+        if (_config)
+        {
             int found_pt = -1;
-            for (int i = 0; i < points.size(); i++) {
-                if (point_within_pixel(points[i], e->pos())) {
+            for (int i = 0; i < points.size(); i++)
+            {
+                if (point_within_pixel(points[i], e->pos()))
+                {
                     found_pt = i;
                     break;
                 }
             }
 
-            if (found_pt != -1) {
+            if (found_pt != -1)
+            {
                 _config->removePoint(found_pt);
             }
             moving_control_point_idx = -1;
@@ -297,7 +315,9 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
 
     QList<QPointF> points = _config->getPoints();
 
-    if (moving_control_point_idx != -1 && moving_control_point_idx < points.size()) {
+    if (moving_control_point_idx != -1 &&
+        moving_control_point_idx < points.size())
+    {
         setCursor(Qt::ClosedHandCursor);
 
         bool overlap = false;
@@ -346,20 +366,25 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
             update();
         }
     }
-    else {
+    else
+    {
         bool is_on_point = false;
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); i++)
+        {
             const QPoint pos = e->pos();
-            if (point_within_pixel(points[i], pos)) {
+            if (point_within_pixel(points[i], pos))
+            {
                 is_on_point = true;
                 break;
             }
         }
 
-        if (is_on_point) {
+        if (is_on_point)
+        {
             setCursor(Qt::CrossCursor);
         }
-        else {
+        else
+        {
             setCursor(Qt::ArrowCursor);
         }
     }
@@ -370,7 +395,8 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     if (!_config || !isEnabled())
         return;
 
-    if (e->button() == Qt::LeftButton) {
+    if (e->button() == Qt::LeftButton)
+    {
         mouseMoveEvent(e);
         setCursor(Qt::ArrowCursor);
         moving_control_point_idx = -1;
@@ -410,8 +436,8 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     if (!_config)
         return QPointF(-1, -1);
 
-    double x = (point.x() - pixel_bounds.x()) / c.x();
-    double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    qreal x = (point.x() - pixel_bounds.x()) / c.x();
+    qreal y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
 
     if (snap_x > 0)
         x -= int(x) % snap_x;

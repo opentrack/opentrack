@@ -39,15 +39,15 @@ private:
 
     MyMutex _mutex;
     QPointF last_input_value;
-    float max_x;
-    float max_y;
+    qreal max_x;
+    qreal max_y;
     volatile bool activep;
     State cur, saved;
 public:
-    float maxInput() const;
-    float maxOutput() const;
+    qreal maxInput() const;
+    qreal maxOutput() const;
     Map();
-    Map(float maxx, float maxy);
+    Map(qreal maxx, qreal maxy);
 
     float getValue(float x);
     bool getLastPoint(QPointF& point);
@@ -57,8 +57,8 @@ public:
     void addPoint(QPointF pt);
     void movePoint(int idx, QPointF pt);
     const QList<QPointF> getPoints();
-    void setMaxInput(float MaxInput);
-    void setMaxOutput(float MaxOutput);
+    void setMaxInput(qreal MaxInput);
+    void setMaxOutput(qreal MaxOutput);
 
     void saveSettings(QSettings& settings, const QString& title);
     void loadSettings(QSettings& settings, const QString& title);
