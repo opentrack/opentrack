@@ -106,7 +106,7 @@ void Tracker_PT::run()
             float fx;
             if (!get_focal_length(fx))
                 continue;
-            
+
             const bool success = points.size() >= PointModel::N_POINTS;
 
             if (success)
@@ -114,9 +114,9 @@ void Tracker_PT::run()
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
                 ever_success = true;
             }
-            
+
             Affine X_CM = pose();
-            
+
             std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
             {
                 auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
@@ -129,14 +129,14 @@ void Tracker_PT::run()
                          cv::Point(p2.x, p2.y - 20),
                          cv::Point(p2.x, p2.y + 20),
                          color,
-                         4);                
+                         4);
             };
 
             for (unsigned i = 0; i < points.size(); i++)
             {
                 fun(points[i], cv::Scalar(0, 255, 0));
             }
-            
+
             {
                 Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
@@ -211,9 +211,10 @@ void Tracker_PT::data(double *data)
         data[Pitch] = -rad2deg * beta;
         data[Roll] = rad2deg * gamma;
         // get translation(s)
-        data[TX] = t[0] / 10.0;	// convert to cm
-        data[TY] = t[1] / 10.0;
-        data[TZ] = t[2] / 10.0;
+        // convert to cm
+        data[TX] = t[0] / 10;
+        data[TY] = t[1] / 10;
+        data[TZ] = t[2] / 10;
     }
 }
 
