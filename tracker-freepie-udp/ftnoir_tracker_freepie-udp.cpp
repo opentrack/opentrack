@@ -3,6 +3,11 @@
 
 #include <cinttypes>
 #include <algorithm>
+#include <cmath>
+
+#ifndef M_PI
+#   define M_PI 3.14159265358979323846
+#endif
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
 {
@@ -37,7 +42,7 @@ void TrackerImpl::run() {
         flag_Orient = 1 << 1,
         Mask = flag_Raw | flag_Orient
     };
-    
+
     (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
     while (!should_quit) {
@@ -46,7 +51,7 @@ void TrackerImpl::run() {
             bound<int>(s.idx_y, 0, 2),
             bound<int>(s.idx_z, 0, 2)
         };
-        float orient[3];
+        double orient[3] = {0, 0, 0};
         bool filled = false;
 
         while (sock.hasPendingDatagrams())
@@ -87,7 +92,7 @@ void TrackerImpl::run() {
             };
             int indices[] = { s.add_yaw, s.add_pitch, s.add_roll };
             QMutexLocker foo(&mtx);
-            static constexpr double r2d = 57.295781;
+            static constexpr double r2d = 180 / M_PI;
             for (int i = 0; i < 3; i++)
             {
                 int val = 0;
