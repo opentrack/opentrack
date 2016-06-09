@@ -37,13 +37,13 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
 }
 
 void FTNoIR_Protocol::pose(const double* headpose) {
-    float yaw = -getRadsFromDegrees(headpose[Yaw]);
-    float pitch = -getRadsFromDegrees(headpose[Pitch]);
-    float roll = getRadsFromDegrees(headpose[Roll]);
-    float tx = headpose[TX] * 10.f;
-    float ty = headpose[TY] * 10.f;
-    float tz = headpose[TZ] * 10.f;
-    
+    const float yaw = -rads_to_degrees(headpose[Yaw]);
+    const float pitch = -rads_to_degrees(headpose[Pitch]);
+    const float roll = rads_to_degrees(headpose[Roll]);
+    const float tx = float(headpose[TX] * 10);
+    const float ty = float(headpose[TY] * 10);
+    const float tz = float(headpose[TZ] * 10);
+
     FTHeap* ft = pMemData;
     FTData* data = &ft->data;
 
@@ -53,14 +53,14 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     data->RawPitch = 0;
     data->RawYaw = 0;
     data->RawRoll = 0;
-    
+
     data->X = tx;
     data->Y = ty;
     data->Z = tz;
     data->Yaw = yaw;
     data->Pitch = pitch;
     data->Roll = roll;
-    
+
     data->X1 = data->DataID;
     data->X2 = 0;
     data->X3 = 0;
@@ -69,9 +69,9 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     data->Y2 = 0;
     data->Y3 = 0;
     data->Y4 = 0;
-    
+
     int32_t id = ft->GameID;
-    
+
     if (intGameID != id)
     {
         QString gamename;
@@ -85,7 +85,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
         QMutexLocker foo(&game_name_mutex);
         connected_game = gamename;
     }
-    
+
     data->DataID += 1;
 }
 

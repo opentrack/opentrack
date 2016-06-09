@@ -66,7 +66,7 @@ private:
     QMutex game_name_mutex;
     static check_for_first_run runonce_check;
 
-    static inline double getRadsFromDegrees(double degrees) { return degrees * 0.017453; }
+    static inline float rads_to_degrees(double degrees) { return float(degrees * 0.017453); }
     void start_tirviews();
     void start_dummy();
 
