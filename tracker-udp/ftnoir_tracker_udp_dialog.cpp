@@ -20,7 +20,6 @@ void TrackerControls::doOK() {
 }
 
 void TrackerControls::doCancel() {
-    s.b->reload();
     close();
 }
 

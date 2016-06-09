@@ -55,13 +55,13 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.t_MH_x, ui.tx_spin);
     tie_setting(s.t_MH_y, ui.ty_spin);
     tie_setting(s.t_MH_z, ui.tz_spin);
-    
+
     tie_setting(s.fov, ui.fov);
-    
+
     tie_setting(s.active_model_panel, ui.model_tabs);
-    
+
     tie_setting(s.dynamic_pose, ui.dynamic_pose);
-	tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
+    tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
 
     tie_setting(s.auto_threshold, ui.auto_threshold);
 
@@ -160,7 +160,6 @@ void TrackerDialog_PT::doOK()
 
 void TrackerDialog_PT::doCancel()
 {
-    s.b->reload();
     close();
 }
 
