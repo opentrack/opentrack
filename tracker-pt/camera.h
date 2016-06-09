@@ -11,6 +11,7 @@
 #include <memory>
 #include <opencv2/highgui.hpp>
 #include <string>
+#include <QString>
 
 struct CamInfo
 {
@@ -35,7 +36,7 @@ public:
         void restart() { stop(); start(); }
 
         // calls corresponding template methods and reinitializes frame rate calculation
-        void set_device_index(int index);
+        void set_device(const QString& name);
         void set_fps(int fps);
         void set_res(int x_res, int y_res);
 
@@ -46,6 +47,7 @@ public:
         bool get_info(CamInfo &ret);
         CamInfo get_desired() const { return cam_desired; }
 
+        QString get_desired_name() const;
 protected:
         // get a frame from the camera
         virtual bool _get_frame(cv::Mat* frame) = 0;
@@ -58,10 +60,11 @@ private:
         float dt_valid;
         float dt_mean;
 protected:
-        int desired_index;
-        int active_index;
         CamInfo cam_info;
         CamInfo cam_desired;
+        QString desired_name;
+        int desired_index;
+        int active_index;
 };
 inline Camera::~Camera() {}
 

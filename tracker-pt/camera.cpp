@@ -9,9 +9,14 @@
 #include <string>
 #include <QDebug>
 #include "opentrack-compat/sleep.hpp"
+#include "opentrack-compat/camera-names.hpp"
 
-void Camera::set_device_index(int index)
+void Camera::set_device(const QString& name)
 {
+    const int index = camera_name_to_index(name);
+
+    desired_name = name;
+
     if (desired_index != index)
     {
         desired_index = index;
@@ -22,6 +27,11 @@ void Camera::set_device_index(int index)
         dt_mean = 0;
         active_index = index;
     }
+}
+
+QString Camera::get_desired_name() const
+{
+    return desired_name;
 }
 
 void Camera::set_fps(int fps)

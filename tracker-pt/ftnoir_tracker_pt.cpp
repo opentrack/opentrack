@@ -153,15 +153,29 @@ void Tracker_PT::run()
 
 void Tracker_PT::apply_settings()
 {
-    qDebug()<<"Tracker:: Applying settings";
+    qDebug() << "Tracker:: Applying settings";
     QMutexLocker l(&camera_mtx);
-    camera.stop();
-    camera.set_device_index(camera_name_to_index(s.camera_name));
-    camera.set_res(s.cam_res_x, s.cam_res_y);
-    camera.set_fps(s.cam_fps);
-    camera.start();
-    frame = cv::Mat();
-    qDebug()<<"Tracker::apply ends";
+
+    CamInfo info = camera.get_desired();
+    const QString name = camera.get_desired_name();
+
+    if (s.cam_fps != info.fps ||
+        s.cam_res_x != info.res_x ||
+        s.cam_res_y != info.res_y ||
+        s.camera_name != name)
+    {
+        qDebug() << "pt: camera reset needed";
+        camera.stop();
+        camera.set_device(s.camera_name);
+        camera.set_res(s.cam_res_x, s.cam_res_y);
+        camera.set_fps(s.cam_fps);
+        frame = cv::Mat();
+        camera.start();
+    }
+    else
+        qDebug() << "pt: camera not needing reset";
+
+    qDebug() << "Tracker::apply ends";
 }
 
 void Tracker_PT::start_tracker(QFrame *parent_window)
