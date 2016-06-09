@@ -58,13 +58,15 @@ void FTNoIR_Protocol::run()
 }
 
 void FTNoIR_Protocol::pose( const double *headpose ) {
-    virtSCRotX = -headpose[Pitch];					// degrees
-    virtSCRotY = headpose[Yaw];
-    virtSCRotZ = headpose[Roll];
+    // euler degrees
+    virtSCRotX = float(-headpose[Pitch]);
+    virtSCRotY = float(headpose[Yaw]);
+    virtSCRotZ = float(headpose[Roll]);
 
-    virtSCPosX = headpose[TX]/100.f;						// cm to meters
-    virtSCPosY = headpose[TY]/100.f;
-    virtSCPosZ = -headpose[TZ]/100.f;
+    // cm to meters
+    virtSCPosX = float(headpose[TX]/100);
+    virtSCPosY = float(headpose[TY]/100);
+    virtSCPosZ = float(-headpose[TZ]/100);
 }
 
 #ifdef __GNUC__
@@ -134,37 +136,37 @@ bool FTNoIR_Protocol::correct()
             return false;
     }
 
-	simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
-	if (simconnect_open == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Open function not found in DLL!";
-		return false;
-	}
-	simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
-	if (simconnect_set6DOF == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
-		return false;
-	}
-	simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
-	if (simconnect_close == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Close function not found in DLL!";
-		return false;
-	}
+    simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
+    if (simconnect_open == NULL) {
+        qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Open function not found in DLL!";
+        return false;
+    }
+    simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
+    if (simconnect_set6DOF == NULL) {
+        qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CameraSetRelative6DOF function not found in DLL!";
+        return false;
+    }
+    simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
+    if (simconnect_close == NULL) {
+        qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_Close function not found in DLL!";
+        return false;
+    }
 
-	simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
-	if (simconnect_calldispatch == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CallDispatch function not found in DLL!";
-		return false;
-	}
+    simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
+    if (simconnect_calldispatch == NULL) {
+        qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_CallDispatch function not found in DLL!";
+        return false;
+    }
 
-	simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
-	if (simconnect_subscribetosystemevent == NULL) {
-		qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
-		return false;
-	}
+    simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
+    if (simconnect_subscribetosystemevent == NULL) {
+        qDebug() << "FTNoIR_Protocol::correct() says: SimConnect_SubscribeToSystemEvent function not found in DLL!";
+        return false;
+    }
 
     start();
 
-	return true;
+    return true;
 }
 
 void FTNoIR_Protocol::handle()
