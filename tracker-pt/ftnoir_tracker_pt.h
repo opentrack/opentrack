@@ -49,15 +49,14 @@ protected:
     void run() override;
 private:
     // thread commands
-    enum Command {
+    enum Command : unsigned char
+    {
         ABORT = 1<<0
     };
     void set_command(Command command);
     void reset_command(Command command);
 
     bool get_focal_length(float &ret);
-
-    volatile int commands;
 
     QMutex camera_mtx;
     CVCamera       camera;
@@ -72,6 +71,7 @@ private:
     cv::Mat frame;
 
     volatile bool ever_success;
+    volatile unsigned char commands;
 
     static constexpr float rad2deg = float(180/3.14159265);
     //static constexpr float deg2rad = float(3.14159265/180);

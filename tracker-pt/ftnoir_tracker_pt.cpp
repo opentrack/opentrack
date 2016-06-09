@@ -19,11 +19,11 @@
 //#define PT_PERF_LOG	//log performance
 
 //-----------------------------------------------------------------------------
-Tracker_PT::Tracker_PT()
-    : commands(0),
+Tracker_PT::Tracker_PT() :
       video_widget(NULL),
       video_frame(NULL),
-      ever_success(false)
+      ever_success(false),
+      commands(0)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
