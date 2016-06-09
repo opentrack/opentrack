@@ -3,6 +3,11 @@
 #include "opentrack/plugin-api.hpp"
 #include "OVR.h"
 #include <cstdio>
+#include <cmath>
+
+#ifndef M_PI
+#   define M_PI 3.14159265358979323846
+#endif
 
 using namespace OVR;
 
@@ -65,27 +70,28 @@ void Rift_Tracker::data(double *data)
     if (pSFusion != NULL && pSensor != NULL)
     {
         Quatf hmdOrient = pSFusion->GetOrientation();
-        double newHeadPose[6];
 
-        float yaw = 0;
-        float pitch = 0;
-        float roll = 0;
+        float yaw = 0, pitch = 0, roll = 0;
+
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
-        newHeadPose[Pitch] = pitch;
-        newHeadPose[Roll] = roll;
-        newHeadPose[Yaw] = yaw;
+
+        double yaw_ = yaw;
+
         if (s.useYawSpring)
         {
-            newHeadPose[Yaw] = old_yaw*s.persistence + (yaw-old_yaw);
-            if(newHeadPose[Yaw] > s.deadzone)
-                newHeadPose[Yaw] -= s.constant_drift;
-            if(newHeadPose[Yaw] < -s.deadzone)
-                newHeadPose[Yaw] += s.constant_drift;
-            old_yaw=yaw;
+            yaw_ = old_yaw*s.persistence + (yaw_-old_yaw);
+            if (yaw_ > s.deadzone)
+                yaw_ -= s.constant_drift;
+            if (yaw_ < -s.deadzone)
+                yaw_ += s.constant_drift;
+            old_yaw = yaw_;
         }
-        data[Yaw] = newHeadPose[Yaw] * 57.295781f;
-        data[Pitch] = newHeadPose[Pitch] * 57.295781f;
-        data[Roll] = newHeadPose[Roll] * 57.295781f;
+
+        static constexpr double r2d = 180 / M_PI;
+
+        data[Yaw] = yaw_ * r2d;
+        data[Pitch] = double(pitch) * r2d;
+        data[Roll] = double(roll) * r2d;
     }
 }
 
