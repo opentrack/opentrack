@@ -24,10 +24,13 @@ static inline void opentrack_clock_gettime(int, struct timespec* ts)
 
     (void) QueryPerformanceCounter(&d);
 
-    long long part = d.QuadPart / ((long double)freq.QuadPart) * 1000000000.L;
+    using t = long long;
+    const long long part = t(d.QuadPart / ((long double)freq.QuadPart) * 1000000000.L);
+    using t_s = decltype(ts->tv_sec);
+    using t_ns = decltype(ts->tv_nsec);
 
-    ts->tv_sec = part / 1000000000ULL;
-    ts->tv_nsec = part % 1000000000ULL;
+    ts->tv_sec = t_s(part / 1000000000LL);
+    ts->tv_nsec = t_ns(part % 1000000000LL);
 }
 #	define clock_gettime opentrack_clock_gettime
 #else
@@ -61,15 +64,15 @@ public:
         start();
     }
     void start() {
-        (void) clock_gettime(CLOCK_MONOTONIC, &state);
+        clock_gettime(CLOCK_MONOTONIC, &state);
     }
     long long elapsed() const {
         struct timespec cur;
-        (void) clock_gettime(CLOCK_MONOTONIC, &cur);
+        clock_gettime(CLOCK_MONOTONIC, &cur);
         return conv(cur);
     }
     long elapsed_ms() const {
-        return elapsed() / 1000000L;
+        return long(elapsed() / 1000000LL);
     }
     double elapsed_seconds() const
     {
