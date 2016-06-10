@@ -93,12 +93,6 @@ hatire_thread::~hatire_thread()
 hatire_thread::hatire_thread()
 {
     data_read.reserve(65536);
-
-    connect(this, &QThread::finished, this, &hatire_thread::teardown_serial);
-    connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl, Qt::QueuedConnection);
-    connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl, Qt::QueuedConnection);
-    connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl, Qt::QueuedConnection);
-    connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl, Qt::QueuedConnection);
 }
 
 void hatire_thread::teardown_serial()
@@ -128,6 +122,12 @@ void hatire_thread::teardown_serial()
 
 void hatire_thread::run()
 {
+    connect(this, &QThread::finished, this, &hatire_thread::teardown_serial);
+    connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl);
+    connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl);
+    connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl);
+    connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl);
+
 #ifdef HATIRE_DEBUG_LOGFILE
     com_port.setFileName(HATIRE_DEBUG_LOGFILE);
     com_port.open(QIODevice::ReadOnly);
