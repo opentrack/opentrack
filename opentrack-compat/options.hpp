@@ -175,6 +175,7 @@ namespace options {
         base_value(pbundle b, const QString& name);
     signals:
         DEFINE_SIGNAL(double);
+        DEFINE_SIGNAL(float);
         DEFINE_SIGNAL(int);
         DEFINE_SIGNAL(bool);
         DEFINE_SIGNAL(QString);
@@ -189,6 +190,11 @@ namespace options {
             b->store_kv(self_name, QVariant::fromValue(datum));
             emit valueChanged(static_cast<t>(datum));
         }
+        void store(float datum)
+        {
+            store(double(datum));
+        }
+
     public slots:
         DEFINE_SLOT(double)
         DEFINE_SLOT(int)
