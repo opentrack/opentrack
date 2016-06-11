@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>367</height>
+    <width>657</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
        <widget class="QLabel" name="ewma_label">
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
@@ -116,7 +116,7 @@
        <widget class="QLabel" name="rot_gain">
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
@@ -155,7 +155,7 @@
        <widget class="QLabel" name="rot_dz">
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
@@ -212,7 +212,7 @@
        <widget class="QLabel" name="trans_gain">
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
@@ -251,7 +251,7 @@
        <widget class="QLabel" name="trans_dz">
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>50</width>
           <height>0</height>
          </size>
         </property>
