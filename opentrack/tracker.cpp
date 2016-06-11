@@ -132,10 +132,11 @@ void Tracker::logic()
     if (is_nan(raw))
         raw = last_raw;
 
-    const double off[] = {
+    const double off[] =
+    {
         (double)-s.camera_yaw,
         (double)-s.camera_pitch,
-        (double)s.camera_roll
+        (double)-s.camera_roll
     };
     const rmat cam = rmat::euler_to_rmat(off);
     rmat r = rmat::euler_to_rmat(&value[Yaw]);
@@ -256,7 +257,7 @@ void Tracker::run() {
 
         double tmp[6] {0,0,0, 0,0,0};
         libs.pTracker->data(tmp);
-        
+
         if (enabledp)
             for (int i = 0; i < 6; i++)
                 newpose[i] = elide_nan(tmp[i], newpose[i]);
