@@ -310,6 +310,8 @@ void MainWindow::startTracker()
         return;
     }
 
+    save();
+
     work = std::make_shared<Work>(s, pose, libs, winId());
 
     reload_options();
@@ -329,8 +331,6 @@ void MainWindow::startTracker()
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
-
-    save();
 
     ui.btnStopTracker->setFocus();
 }
