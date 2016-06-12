@@ -1,6 +1,6 @@
 opentrack project home at <<http://github.com/opentrack/opentrack>>.
 
-Binary releases at <<https://github.com/opentrack/opentrack/releases>>.
+Downloads are at <<https://github.com/opentrack/opentrack/releases>>.
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for new user guide, frequent questions, specific tracker/filter
