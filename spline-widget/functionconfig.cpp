@@ -15,6 +15,7 @@
 #include <QtAlgorithms>
 #include <QSettings>
 #include <QPixmap>
+#include <QString>
 #include <algorithm>
 #include <cmath>
 
@@ -271,10 +272,36 @@ void Map::loadSettings(QSettings& settings, const QString& title)
     saved = cur;
 }
 
+bool Map::State::operator==(const State& other) const
+{
+    if (input.size() != other.input.size())
+        return false;
+
+    const int sz = input.size();
+
+    using std::fabs;
+
+    for (int i = 0; i < sz; i++)
+    {
+        const qreal eps = 1e-3;
+
+        if (fabs(input[i].x() - other.input[i].x()) > eps ||
+            fabs(input[i].y() - other.input[i].y()) > eps)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Map::saveSettings(QSettings& settings, const QString& title)
 {
     QMutexLocker foo(&_mutex);
-    settings.beginGroup(QString("Curves-%1").arg(title));
+
+    if (cur == saved)
+        return;
+
+    settings.beginGroup(QStringLiteral("Curves-%1").arg(title));
 
     if (cur.input.size() == 0)
         cur.input.push_back(QPointF(max_x, max_y));

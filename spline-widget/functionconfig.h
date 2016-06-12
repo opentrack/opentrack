@@ -28,9 +28,11 @@ class SPLINE_WIDGET_EXPORT Map {
 private:
     static constexpr int value_count = 10000;
 
-    struct State {
+    struct State
+    {
         QList<QPointF> input;
         std::vector<float> data;
+        bool operator==(const State& s) const;
     };
 
     int precision() const;

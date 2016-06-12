@@ -88,7 +88,7 @@ const mem<QSettings> group::ini_file()
     return std::make_shared<QSettings>();
 }
 
-impl_bundle::impl_bundle(const QString &group_name)
+impl_bundle::impl_bundle(const QString& group_name)
     :
       mtx(QMutex::Recursive),
       group_name(group_name),
@@ -101,20 +101,25 @@ void impl_bundle::reload()
 {
     {
         QMutexLocker l(&mtx);
-        saved = group(group_name);
-        transient = saved;
-        modified = false;
+        if (modified)
+        {
+            saved = group(group_name);
+            transient = saved;
+            modified = false;
+        }
     }
     emit reloading();
 }
 
-void impl_bundle::store_kv(const QString &name, const QVariant &datum)
+void impl_bundle::store_kv(const QString& name, const QVariant& datum)
 {
     QMutexLocker l(&mtx);
 
     auto old = transient.get<QVariant>(name);
     if (!transient.contains(name) || datum != old)
     {
+        if (!modified)
+            qDebug() << "bundle" << group_name << "modified" << "key" << name << "to" << datum << "from" << old;
         modified = true;
         transient.put(name, datum);
     }
@@ -128,13 +133,20 @@ bool impl_bundle::contains(const QString &name) const
 
 void impl_bundle::save()
 {
+    bool modified_ = false;
     {
         QMutexLocker l(&mtx);
-        modified = false;
-        saved = transient;
-        transient.save();
+        if (modified)
+        {
+            qDebug() << "bundle" << group_name << "saved";
+            modified_ = true;
+            modified = false;
+            saved = transient;
+            transient.save();
+        }
     }
-    emit saving();
+    if (modified_)
+        emit saving();
 }
 
 bool impl_bundle::modifiedp() const
@@ -220,7 +232,6 @@ custom_type_initializer custom_type_initializer::singleton = custom_type_initial
 QDataStream& operator <<(QDataStream& out, const options::slider_value& v)
 {
     out << v.cur() << v.min() << v.max();
-    qDebug() << "out cur" << v.cur();
     return out;
 }
 
@@ -231,6 +242,5 @@ QDataStream& operator >>(QDataStream& in, options::slider_value& v)
     in >> min;
     in >> max;
     v = options::slider_value(cur, min, max);
-    qDebug() << "in cur" << v.cur();
     return in;
 }

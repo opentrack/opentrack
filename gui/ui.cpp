@@ -74,9 +74,6 @@ MainWindow::MainWindow() :
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
 
-    save_timer.setSingleShot(true);
-    connect(&save_timer, SIGNAL(timeout()), this, SLOT(_save()));
-
     profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
     profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
     profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
@@ -156,11 +153,10 @@ bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 
 MainWindow::~MainWindow()
 {
-    maybe_save();
-
     if (tray)
         tray->hide();
     stopTracker();
+    save();
 }
 
 void MainWindow::set_working_directory()
@@ -168,30 +164,15 @@ void MainWindow::set_working_directory()
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 }
 
-void MainWindow::save_mappings() {
+void MainWindow::save_mappings()
+{
     pose.save_mappings();
 }
 
 void MainWindow::save()
 {
-    save_timer.stop();
-    save_timer.start(5000);
-}
-
-void MainWindow::maybe_save()
-{
-    if (save_timer.isActive())
-    {
-        save_timer.stop();
-        _save();
-    }
-}
-
-void MainWindow::_save() {
     s.b->save();
     save_mappings();
-    mem<QSettings> settings = group::ini_file();
-    settings->sync();
 
 #if defined(__unix) || defined(__linux)
     QString currentFile = group::ini_pathname();
