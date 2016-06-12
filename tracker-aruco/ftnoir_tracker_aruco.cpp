@@ -187,7 +187,7 @@ void Tracker::run()
                 markers.size() == 1 && markers[0].size() == 4)
             {
                 auto& m = markers.at(0);
-                for (int i = 0; i < 4; i++)
+                for (unsigned i = 0; i < 4; i++)
                 {
                     auto& p = m.at(i);
                     p.x += last_roi.x;
