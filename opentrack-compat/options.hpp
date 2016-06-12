@@ -70,10 +70,32 @@ namespace options
     };
 }
 
-QDebug operator << (QDebug dbg, const options::slider_value& val);
+QT_BEGIN_NAMESPACE
 
-QDataStream& operator << (QDataStream& out, const options::slider_value& v);
-QDataStream& operator >> (QDataStream& in, options::slider_value& v);
+inline QDebug operator << (QDebug dbg, const options::slider_value& val)
+{
+    return dbg << val.cur();
+}
+
+inline QDataStream& operator << (QDataStream& out, const options::slider_value& v)
+{
+    out << v.cur()
+        << v.min()
+        << v.max();
+    return out;
+}
+
+inline QDataStream& operator >> (QDataStream& in, options::slider_value& v)
+{
+    double cur, min, max;
+    in >> cur;
+    in >> min;
+    in >> max;
+    v = options::slider_value(cur, min, max);
+    return in;
+}
+
+QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(options::slider_value)
 

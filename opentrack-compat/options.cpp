@@ -285,31 +285,3 @@ bool slider_value::operator==(const slider_value& v) const
 
 } // end options
 
-QT_BEGIN_NAMESPACE
-
-QDebug operator << (QDebug dbg, const options::slider_value& val)
-{
-    dbg.nospace() << "cur=" << val.cur()
-                  << ", min=" << val.min()
-                  << ", max=" << val.max();
-
-    return dbg.space();
-}
-
-QDataStream& operator <<(QDataStream& out, const options::slider_value& v)
-{
-    out << v.cur() << v.min() << v.max();
-    return out;
-}
-
-QDataStream& operator >>(QDataStream& in, options::slider_value& v)
-{
-    double cur, min, max;
-    in >> cur;
-    in >> min;
-    in >> max;
-    v = options::slider_value(cur, min, max);
-    return in;
-}
-
-QT_END_NAMESPACE
