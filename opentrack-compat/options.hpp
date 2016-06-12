@@ -34,7 +34,9 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QApplication>
+
 #include <QMetaType>
+#include <QDataStream>
 
 #include <QDebug>
 
@@ -52,28 +54,45 @@ template<typename t> using mem = std::shared_ptr<t>;
 
 namespace options
 {
-    struct OPENTRACK_COMPAT_EXPORT slider_value
+    class OPENTRACK_COMPAT_EXPORT slider_value final
     {
-        double cur, min, max;
+        double cur_, min_, max_;
+    public:
         slider_value(double cur, double min, double max) :
-            cur(cur),
-            min(min),
-            max(max)
+            cur_(cur),
+            min_(min),
+            max_(max)
         {}
+        slider_value(const slider_value& v) : slider_value(v.cur(), v.min(), v.max()) {}
         slider_value() : slider_value(0, 0, 0) {}
+        slider_value& operator=(const slider_value& v) { cur_ = v.cur_; min_ = v.min_; max_ = v.max_; return *this; }
         operator double() const;
-        double to_abs() const { return operator double(); }
-        static slider_value from_abs(double val, double min, double max);
+        double cur() const { return cur_; }
+        double min() const { return min_; }
+        double max() const { return max_; }
     };
 }
 
 Q_DECLARE_METATYPE(options::slider_value)
 
+QDataStream& operator << (QDataStream& out, const options::slider_value& v);
+
+QDataStream& operator >> (QDataStream& in, options::slider_value& v);
+
 namespace options {
+    namespace {
+        class custom_type_initializer
+        {
+            custom_type_initializer();
+            static custom_type_initializer singleton;
+        };
+    }
+
     template<typename k, typename v> using map = std::map<k, v>;
 
     // snapshot of qsettings group at given time
-    class OPENTRACK_COMPAT_EXPORT group {
+    class OPENTRACK_COMPAT_EXPORT group
+    {
     private:
         map<QString, QVariant> kvs;
         QString name;
@@ -98,7 +117,8 @@ namespace options {
         }
     };
 
-    class OPENTRACK_COMPAT_EXPORT impl_bundle : public QObject {
+    class OPENTRACK_COMPAT_EXPORT impl_bundle : public QObject
+    {
         Q_OBJECT
     protected:
         QMutex mtx;
@@ -280,7 +300,7 @@ namespace options {
         // Hence we go for a verbose implementation.
 
         std::vector<int> enum_cases;
-        enum_cases.reserve(cb->count());
+        enum_cases.reserve(unsigned(cb->count()));
 
         for (int i = 0; i < cb->count(); i++)
             enum_cases.push_back(cb->itemData(i).toInt());
@@ -291,7 +311,10 @@ namespace options {
             QComboBox* cb;
             std::vector<int> enum_cases;
 
-            fn1(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) : v(v), cb(cb), enum_cases(enum_cases)
+            fn1(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) :
+                v(v),
+                cb(cb),
+                enum_cases(enum_cases)
             {}
 
             void operator()(int idx)
@@ -299,7 +322,7 @@ namespace options {
                 if (idx < 0 || idx >= (int)enum_cases.size())
                     v = static_cast<t>(-1);
                 else
-                    v = static_cast<t>(enum_cases[idx]);
+                    v = static_cast<t>(t(std::intptr_t(enum_cases[idx])));
             }
         };
 
@@ -309,7 +332,10 @@ namespace options {
             QComboBox* cb;
             std::vector<int> enum_cases;
 
-            fn2(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) : v(v), cb(cb), enum_cases(enum_cases)
+            fn2(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) :
+                v(v),
+                cb(cb),
+                enum_cases(enum_cases)
             {}
 
             void operator()(int val)
@@ -416,25 +442,38 @@ namespace options {
     inline void tie_setting(value<slider_value>& v, QSlider* w)
     {
         // we can't get these at runtime since signals cross threads
-        const int min = w->minimum();
-        const int max = w->maximum();
-        const int max_ = max - min;
+        const int q_min = w->minimum();
+        const int q_max = w->maximum();
+        const int q_diff = q_max - q_min;
 
         slider_value sv(v);
 
-        w->setValue(int(sv.cur * max_) + min);
-        v = slider_value(max_ <= 0 ? 0 : (w->value() - min) / (double)max_, sv.min, sv.max);
+        using std::max;
 
-        base_value::connect(w, &QSlider::valueChanged, &v,
-                         [=, &v](int pos) -> void
+        const double sv_max = sv.max();
+        const double sv_min = sv.min();
+        const double sv_c = sv_max - sv_min;
+
+        w->setValue(int((sv.cur() - sv_min) / sv_c * q_diff + q_min));
+        v = slider_value(q_diff <= 0 ? 0 : (w->value() - q_min) * sv_c / (double)q_diff + sv_min, sv_min, sv_max);
+
+        base_value::connect(w,
+                            &QSlider::valueChanged,
+                            &v,
+                            [=, &v](int pos) -> void
         {
-            v = slider_value(max_ <= 0 ? 0 : (pos - min) / (double)max_, sv.min, sv.max);
+            if (q_diff <= 0 || pos <= 0)
+                v = slider_value(sv_min, sv_min, sv_max);
+            else
+                v = slider_value((pos - q_min) * sv_c / (double)q_diff + sv_min, sv_min, sv_max);
         },
         v.DIRECT_CONNTYPE);
-        base_value::connect(&v, static_cast<void(base_value::*)(double)>(&base_value::valueChanged), w,
+        base_value::connect(&v,
+                            static_cast<void(base_value::*)(double)>(&base_value::valueChanged),
+                            w,
                             [=](double value) -> void
         {
-            w->setValue(int(value * max_) + min);
+            w->setValue(int(value * q_diff) + q_min);
         },
         v.DIRECT_CONNTYPE);
     }

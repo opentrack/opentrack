@@ -203,19 +203,34 @@ pbundle bundle(const QString& name)
 
 slider_value::operator double() const
 {
-    return min + cur * (max-min);
+    return cur_;
 }
 
-slider_value slider_value::from_abs(double val, double min, double max)
+custom_type_initializer::custom_type_initializer()
 {
-    if (min > max)
-        min = max;
-    if (val < min)
-        val = min;
-    if (val > max)
-        val = max;
-    return slider_value((val - min) / (max - min), min, max);
+    qDebug() << "options: registering stream operators";
+
+    qRegisterMetaTypeStreamOperators<slider_value>("slider_value");
 }
 
-// end
+custom_type_initializer custom_type_initializer::singleton = custom_type_initializer();
+
+} // end
+
+QDataStream& operator <<(QDataStream& out, const options::slider_value& v)
+{
+    out << v.cur() << v.min() << v.max();
+    qDebug() << "out cur" << v.cur();
+    return out;
+}
+
+QDataStream& operator >>(QDataStream& in, options::slider_value& v)
+{
+    double cur, min, max;
+    in >> cur;
+    in >> min;
+    in >> max;
+    v = options::slider_value(cur, min, max);
+    qDebug() << "in cur" << v.cur();
+    return in;
 }
