@@ -186,11 +186,13 @@ void MainWindow::save()
 #endif
 }
 
-void MainWindow::load_mappings() {
+void MainWindow::load_mappings()
+{
     pose.load_mappings();
 }
 
-void MainWindow::load_settings() {
+void MainWindow::load_settings()
+{
     s.b->reload();
     load_mappings();
 }
@@ -267,7 +269,8 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.iconcomboTrackerSource->setEnabled(not_running);
     ui.profile_button->setEnabled(not_running);
     ui.video_frame_label->setVisible(not_running || inertialp);
-    if(not_running) {
+    if(not_running)
+    {
         ui.video_frame_label->setPixmap(QPixmap(":/images/tracking-not-started.png"));
     }
     else {
@@ -282,7 +285,8 @@ void MainWindow::reload_options()
     ensure_tray();
 }
 
-void MainWindow::startTracker() {
+void MainWindow::startTracker()
+{
     if (work)
         return;
 
@@ -326,12 +330,13 @@ void MainWindow::startTracker() {
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
 
-    maybe_save();
+    save();
 
     ui.btnStopTracker->setFocus();
 }
 
-void MainWindow::stopTracker() {
+void MainWindow::stopTracker()
+{
     if (!work)
         return;
 
@@ -349,7 +354,7 @@ void MainWindow::stopTracker() {
     if (pFilterDialog)
         pFilterDialog->unregister_filter();
 
-    maybe_save();
+    save();
 
     work = nullptr;
     libs = SelectedLibraries();
@@ -455,12 +460,14 @@ void MainWindow::showTrackerSettings()
         pTrackerDialog->register_tracker(libs.pTracker.get());
 }
 
-void MainWindow::showProtocolSettings() {
+void MainWindow::showProtocolSettings()
+{
     if (mk_dialog(current_protocol(), pProtocolDialog) && libs.pProtocol)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
 }
 
-void MainWindow::showFilterSettings() {
+void MainWindow::showFilterSettings()
+{
     if (mk_dialog(current_filter(), pFilterDialog) && libs.pFilter)
         pFilterDialog->register_filter(libs.pFilter.get());
 }
@@ -483,18 +490,21 @@ bool mk_window(mem<t>* place, Args&&... params)
     }
 }
 
-void MainWindow::show_options_dialog() {
+void MainWindow::show_options_dialog()
+{
     if (mk_window(&options_widget, s, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
     }
 }
 
-void MainWindow::showCurveConfiguration() {
+void MainWindow::showCurveConfiguration()
+{
     mk_window(&mapping_widget, pose, s);
 }
 
-void MainWindow::exit() {
+void MainWindow::exit()
+{
     QCoreApplication::exit(0);
 }
 
