@@ -7,7 +7,6 @@
  */
 
 #pragma once
-#include <algorithm>
 #include <initializer_list>
 #include <type_traits>
 #include <cmath>
@@ -250,15 +249,21 @@ public:
         const double roll_2 = atan2(R(1, 2) / cos_p2, R(2, 2) / cos_p2);
         const double yaw_1 = atan2(R(0, 1) / cos_p1, R(0, 0) / cos_p1);
         const double yaw_2 = atan2(R(0, 1) / cos_p2, R(0, 0) / cos_p2);
-        if (std::abs(pitch_1) + std::abs(roll_1) + std::abs(yaw_1) > std::abs(pitch_2) + std::abs(roll_2) + std::abs(yaw_2))
+
+        using std::fabs;
+
+        const double err1 = fabs(pitch_1) + fabs(roll_1) + fabs(yaw_1);
+        const double err2 = fabs(pitch_2) + fabs(roll_2) + fabs(yaw_2);
+
+        if (err1 > err2)
         {
             bool fix_neg_pitch = pitch_1 < 0;
-            return dmat<3, 1>(yaw_2, std::fmod(fix_neg_pitch ? -pi - pitch_1 : pitch_2, pi), roll_2);
+            return dmat<3, 1>(yaw_2, fix_neg_pitch ? -pi - pitch_1 : pitch_2, roll_2);
         }
         else
             return dmat<3, 1>(yaw_1, pitch_1, roll_1);
     }
-    
+
     // tait-bryan angles, not euler
     static dmat<3, 3> euler_to_rmat(const double* input)
     {
