@@ -100,11 +100,11 @@ float Map::getValueInternal(int x)
     float sign = x < 0 ? -1 : 1;
     x = abs(x);
     float ret;
-    int sz = cur.data.size();
+    unsigned sz = cur.data.size();
     if (sz == 0)
         ret = 0;
     else
-        ret = cur.data[std::min<unsigned>(x, sz-1)];
+        ret = cur.data[std::min(unsigned(x), sz-1u)];
     return ret * sign;
 }
 
