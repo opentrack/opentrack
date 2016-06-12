@@ -1,9 +1,11 @@
-/* Copyright (c) 2013-2015 Stanislaw Halik
+/* Copyright (c) 2013-2016 Stanislaw Halik
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
+
+// XXX TODO this header is too long
 
 #pragma once
 
@@ -243,6 +245,27 @@ namespace options {
         virtual void reload() = 0;
     };
 
+    namespace detail {
+        template<typename t>
+        struct value_get_traits
+        {
+            static inline t get(const t& val, const t&)
+            {
+                return val;
+            }
+        };
+
+        template<>
+        struct value_get_traits<slider_value>
+        {
+            using t = slider_value;
+            static inline t get(const t& val, const t& def)
+            {
+                return t(val.cur(), def.min(), def.max());
+            }
+        };
+    }
+
     template<typename t_>
     class value : public base_value
     {
@@ -269,7 +292,7 @@ namespace options {
         static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::AutoConnection;
         static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-        value(pbundle b, const QString& name, t def) : base_value(b, name), def(static_cast<underlying_t>(def))
+        value(pbundle b, const QString& name, t def) : base_value(b, name), def(def)
         {
             QObject::connect(b.get(), SIGNAL(reloading()),
                              this, SLOT(reload()),
@@ -284,7 +307,10 @@ namespace options {
 
         operator t() const
         {
-            return static_cast<t>(b->contains(self_name) ? b->get<underlying_t>(self_name) : def);
+            t val = b->contains(self_name)
+                    ? static_cast<t>(b->get<underlying_t>(self_name))
+                    : def;
+            return detail::value_get_traits<t>::get(val, def);
         }
 
         void reload() override
@@ -292,7 +318,7 @@ namespace options {
             *this = static_cast<t>(*this);
         }
     private:
-        underlying_t def;
+        t def;
     };
 
     struct OPENTRACK_COMPAT_EXPORT opts
@@ -469,8 +495,6 @@ namespace options {
         const int q_diff = q_max - q_min;
 
         slider_value sv(v);
-
-        using std::max;
 
         const double sv_max = sv.max();
         const double sv_min = sv.min();

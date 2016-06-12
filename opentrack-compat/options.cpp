@@ -253,6 +253,12 @@ slider_value::slider_value(double cur, double min, double max) :
     min_(min),
     max_(max)
 {
+    if (min_ > max_)
+        min_ = max_;
+    if (cur_ > max_)
+        cur_ = max;
+    if (cur_ < min_)
+        cur_ = min_;
 }
 
 slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(), v.max())
@@ -266,6 +272,7 @@ slider_value::slider_value() : slider_value(0, 0, 0)
 slider_value& slider_value::operator=(const slider_value& v)
 {
     cur_ = v.cur_;
+
     min_ = v.min_;
     max_ = v.max_;
 
