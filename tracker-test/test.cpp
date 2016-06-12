@@ -14,7 +14,7 @@
 
 const double FTNoIR_Tracker::incr[6] =
 {
-    2, 3, 4,
+    50, 40, 80,
     70, 5, 3
 };
 
@@ -44,20 +44,23 @@ void FTNoIR_Tracker::data(double *data)
 
     for (int i = 0; i < 6; i++)
     {
-        double x = last_x[i] + incr[i] * d2r * dt;
-
-        x = fmod(x , 2 * pi);
-
+        double x = fmod(last_x[i] + incr[i] * d2r * dt,
+                        2 * pi);
         last_x[i] = x;
 
-        if (x > pi + pi/2)
+        if (i >= 3)
         {
-            x -= pi;
+            if (x > pi + pi/2)
+                x -= pi;
+            else if (x > pi/2 && x < pi)
+                x += pi;
+
+            data[i] = sin(x) * 180;
         }
-
-        double ret = sin(x) * 180;
-
-        data[i] = ret;
+        else
+        {
+            data[i] = sin(x) * 100;
+        }
     }
 }
 
