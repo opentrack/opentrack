@@ -71,7 +71,8 @@ Map::Map(qreal maxx, qreal maxy) :
     reload();
 }
 
-float Map::getValue(float x) {
+float Map::getValue(float x)
+{
     QMutexLocker foo(&_mutex);
     float q  = x * precision();
     int    xi = (int)q;
@@ -84,13 +85,15 @@ float Map::getValue(float x) {
     return ret;
 }
 
-bool Map::getLastPoint(QPointF& point ) {
+bool Map::getLastPoint(QPointF& point )
+{
     QMutexLocker foo(&_mutex);
     point = last_input_value;
     return activep;
 }
 
-float Map::getValueInternal(int x) {
+float Map::getValueInternal(int x)
+{
     float sign = x < 0 ? -1 : 1;
     x = abs(x);
     float ret;
@@ -102,7 +105,8 @@ float Map::getValueInternal(int x) {
     return ret * sign;
 }
 
-static QPointF ensureInBounds(const QList<QPointF>& points, int i) {
+static QPointF ensureInBounds(const QList<QPointF>& points, int i)
+{
     int siz = points.size();
     if (siz == 0 || i < 0)
         return QPointF(0, 0);
@@ -111,11 +115,13 @@ static QPointF ensureInBounds(const QList<QPointF>& points, int i) {
     return points[siz - 1];
 }
 
-static bool sortFn(const QPointF& one, const QPointF& two) {
+static bool sortFn(const QPointF& one, const QPointF& two)
+{
     return one.x() < two.x();
 }
 
-void Map::reload() {
+void Map::reload()
+{
     if (cur.input.size())
     {
         qStableSort(cur.input.begin(), cur.input.end(), sortFn);
@@ -159,7 +165,8 @@ void Map::reload() {
             const unsigned end = std::min(sz, unsigned(p2_x * mult_));
             const unsigned start = unsigned(p1_x * mult);
 
-            for (unsigned j = start; j < end; j++) {
+            for (unsigned j = start; j < end; j++)
+            {
                 const float t = (j - start) / (float) (end - start);
                 const float t2 = t*t;
                 const float t3 = t*t*t;
@@ -192,7 +199,8 @@ void Map::reload() {
         cur.data.clear();
 }
 
-void Map::removePoint(int i) {
+void Map::removePoint(int i)
+{
     QMutexLocker foo(&_mutex);
     if (i >= 0 && i < cur.input.size())
     {
@@ -201,14 +209,16 @@ void Map::removePoint(int i) {
     }
 }
 
-void Map::addPoint(QPointF pt) {
+void Map::addPoint(QPointF pt)
+{
     QMutexLocker foo(&_mutex);
     cur.input.append(pt);
     reload();
     qStableSort(cur.input.begin(), cur.input.end(), sortFn);
 }
 
-void Map::movePoint(int idx, QPointF pt) {
+void Map::movePoint(int idx, QPointF pt)
+{
     QMutexLocker foo(&_mutex);
     if (idx >= 0 && idx < cur.input.size())
     {
@@ -218,7 +228,8 @@ void Map::movePoint(int idx, QPointF pt) {
     }
 }
 
-const QList<QPointF> Map::getPoints() {
+const QList<QPointF> Map::getPoints()
+{
     QMutexLocker foo(&_mutex);
     return cur.input;
 }
@@ -230,7 +241,8 @@ void Map::invalidate_unsaved_settings()
     reload();
 }
 
-void Map::loadSettings(QSettings& settings, const QString& title) {
+void Map::loadSettings(QSettings& settings, const QString& title)
+{
     QMutexLocker foo(&_mutex);
     QPointF newPoint;
     QList<QPointF> points;
@@ -238,15 +250,14 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
 
     int max = settings.value("point-count", 0).toInt();
 
-    for (int i = 0; i < max; i++) {
+    for (int i = 0; i < max; i++)
+    {
         newPoint = QPointF(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
                            settings.value(QString("point-%1-y").arg(i), 0).toDouble());
-        if (newPoint.x() > max_x) {
+        if (newPoint.x() > max_x)
             newPoint.setX(max_x);
-        }
-        if (newPoint.y() > max_y) {
+        if (newPoint.y() > max_y)
             newPoint.setY(max_y);
-        }
         points.append(newPoint);
     }
 
@@ -260,7 +271,8 @@ void Map::loadSettings(QSettings& settings, const QString& title) {
     saved = cur;
 }
 
-void Map::saveSettings(QSettings& settings, const QString& title) {
+void Map::saveSettings(QSettings& settings, const QString& title)
+{
     QMutexLocker foo(&_mutex);
     settings.beginGroup(QString("Curves-%1").arg(title));
 
@@ -270,7 +282,8 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
     const int max = cur.input.size();
     settings.setValue("point-count", max);
 
-    for (int i = 0; i < max; i++) {
+    for (int i = 0; i < max; i++)
+    {
         settings.setValue(QString("point-%1-x").arg(i), cur.input[i].x());
         settings.setValue(QString("point-%1-y").arg(i), cur.input[i].y());
     }
@@ -290,7 +303,8 @@ void Map::saveSettings(QSettings& settings, const QString& title) {
 }
 
 
-int Map::precision() const {
+int Map::precision() const
+{
     if (cur.input.size())
         return (value_count-1) / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));
     return 1;
