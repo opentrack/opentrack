@@ -56,7 +56,7 @@ class PointModel
 {
     friend class PointTracker;
 public:
-    static constexpr int N_POINTS = 3;
+    static constexpr unsigned N_POINTS = 3;
 
     cv::Vec3f M01;      // M01 in model frame
     cv::Vec3f M02;      // M02 in model frame
@@ -64,7 +64,7 @@ public:
     cv::Vec3f u;        // unit vector perpendicular to M01,M02-plane
 
     cv::Matx22f P;
-    
+
     enum Model { Clip = 0, Cap = 1, Custom = 2 };
 
     PointModel(settings_pt& s)
@@ -80,7 +80,7 @@ public:
         float s22 = M02.dot(M02);
         P = 1/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
     }
-    
+
     void set_model(settings_pt& s)
     {
         switch (s.active_model_panel)
@@ -99,7 +99,7 @@ public:
             break;
         }
     }
-    
+
     void get_d_order(const std::vector<cv::Vec2f>& points, int* d_order, cv::Vec2f d) const;
 };
 
@@ -124,7 +124,7 @@ private:
         cv::Vec2f points[PointModel::N_POINTS];
         PointOrder()
         {
-            for (int i = 0; i < PointModel::N_POINTS; i++)
+            for (unsigned i = 0; i < PointModel::N_POINTS; i++)
                 points[i] = cv::Vec2f(0, 0);
         }
     };

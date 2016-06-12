@@ -65,15 +65,15 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
 
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
-    for (int i=0; i<PointModel::N_POINTS; ++i)
+    for (unsigned i=0; i<PointModel::N_POINTS; ++i)
         point_taken[i] = false;
 
-    for (int i=0; i<PointModel::N_POINTS; ++i)
+    for (unsigned i=0; i<PointModel::N_POINTS; ++i)
     {
         float min_sdist = 0;
-        int min_idx = 0;
+        unsigned min_idx = 0;
         // find closest point to projected model point i
-        for (int j=0; j<PointModel::N_POINTS; ++j)
+        for (unsigned j=0; j<PointModel::N_POINTS; ++j)
         {
             cv::Vec2f d = p.points[i]-points[j];
             float sdist = d.dot(d);
@@ -133,7 +133,7 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
                       d);
     // set correspondences
     PointOrder p;
-    for (int i=0; i<PointModel::N_POINTS; ++i)
+    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
         p.points[model_d_order[i]] = points[point_d_order[i]];
 
     return p;
