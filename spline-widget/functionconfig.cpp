@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include <QDebug>
+
 void Map::setTrackingActive(bool blnActive)
 {
     activep = blnActive;
@@ -300,6 +302,8 @@ void Map::saveSettings(QSettings& settings, const QString& title)
 
     if (cur == saved)
         return;
+
+    qDebug() << "spline-widget: saving" << title;
 
     settings.beginGroup(QStringLiteral("Curves-%1").arg(title));
 
