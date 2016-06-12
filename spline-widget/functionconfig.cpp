@@ -145,7 +145,8 @@ void Map::reload() {
         else if (input[0].x() > 1e-2)
             input.prepend(QPointF(0, 0));
 
-        for (unsigned i = 0; i < sz; i++) {
+        for (int i = 0; i < int(sz); i++)
+        {
             const QPointF p0 = ensureInBounds(input, i - 1);
             const QPointF p1 = ensureInBounds(input, i);
             const QPointF p2 = ensureInBounds(input, i + 1);
@@ -180,7 +181,7 @@ void Map::reload() {
         }
 
         float last = 0;
-        for (int i = 0; i < (int)sz; i++)
+        for (unsigned i = 0; i < sz; i++)
         {
             if (data[i] < 0)
                 data[i] = last;
