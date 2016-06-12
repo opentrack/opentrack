@@ -51,9 +51,6 @@ namespace {
 template<typename num, int h_, int w_>
 class Mat
 {
-#ifdef __GNUC__
-    __restrict
-#endif
     num data[h_][w_];
 
     static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
@@ -64,43 +61,43 @@ public:
 
     // parameters w_ and h_ are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
-    
+
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
     inline operator()(int i) const { return data[i][0]; }
-    
+
     template<int P = h_> typename std::enable_if<equals<P, 1, 1>::value, num>::type
     inline operator()(int i) const { return data[0][i]; }
-    
+
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 2>::value, num&>::type
     inline operator()(int i) { return data[i][0]; }
-    
+
     template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
     inline operator()(int i) { return data[0][i]; }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
     inline x() const { return operator()(0); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num>::type
     inline y() const { return operator()(1); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num>::type
     inline z() const { return operator()(2); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num>::type
     inline w() const { return operator()(3); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num&>::type
     inline x() { return operator()(0); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num&>::type
     inline y() { return operator()(1); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num&>::type
     inline z() { return operator()(2); }
-    
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
     inline w() { return operator()(3); }
-    
+
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
     dot(const Mat<num, R, S>& p2) const {
@@ -110,7 +107,7 @@ public:
             ret += operator()(i) * p2(i);
         return ret;
     }
-    
+
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
     cross(const Mat<num, R, S>& p2) const
@@ -119,7 +116,7 @@ public:
                               p2.x() * z() - x() * p2.z(),
                               x() * p2.y() - y() * p2.x());
     }
-    
+
     Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
     {
         Mat<num, h_, w_> ret;
@@ -128,7 +125,7 @@ public:
                 ret(j, i) = data[j][i] + other.data[j][i];
         return ret;
     }
-    
+
     Mat<num, h_, w_> operator-(const Mat<num, h_, w_>& other) const
     {
         Mat<num, h_, w_> ret;
@@ -137,7 +134,7 @@ public:
                 ret(j, i) = data[j][i] - other.data[j][i];
         return ret;
     }
-    
+
     Mat<num, h_, w_> operator+(const num& other) const
     {
         Mat<num, h_, w_> ret;
@@ -146,7 +143,7 @@ public:
                 ret(j, i) = data[j][i] + other;
         return ret;
     }
-    
+
     Mat<num, h_, w_> operator-(const num& other) const
     {
         Mat<num, h_, w_> ret;
@@ -155,7 +152,7 @@ public:
                 ret(j, i) = data[j][i] - other;
         return ret;
     }
-    
+
     Mat<num, h_, w_> operator*(const num other) const
     {
         Mat<num, h_, w_> ret;
@@ -164,7 +161,7 @@ public:
                 ret(j, i) = data[j][i] * other;
         return ret;
     }
-    
+
     template<int p>
     Mat<num, h_, p> operator*(const Mat<num, w_, p>& other) const
     {
@@ -235,9 +232,9 @@ public:
 
         return ret;
     }
-    
+
     template<int h__, int w__> using dmat = Mat<double, h__, w__>;
-    
+
     // http://stackoverflow.com/a/18436193
     static dmat<3, 1> rmat_to_euler(const dmat<3, 3>& R)
     {
@@ -271,14 +268,14 @@ public:
         auto H = input[0] * pi / 180;
         auto P = input[1] * pi / 180;
         auto B = input[2] * pi / 180;
-    
+
         const auto c1 = cos(H);
         const auto s1 = sin(H);
         const auto c2 = cos(P);
         const auto s2 = sin(P);
         const auto c3 = cos(B);
         const auto s3 = sin(B);
-    
+
         double foo[] = {
             // z
             c1 * c2,
@@ -293,9 +290,9 @@ public:
             c2 * s3,
             c2 * c3
         };
-    
+
         return dmat<3, 3>(foo);
     }
 };
-   
+
 template<int h_, int w_> using dmat = Mat<double, h_, w_>;
