@@ -106,6 +106,8 @@ namespace options {
         static QString ini_pathname();
         static const QStringList ini_list();
         static const mem<QSettings> ini_file();
+        bool operator==(const group& other) const;
+        bool operator!=(const group& other) const { return !(*this == other); }
 
         template<typename t>
         t get(const QString& k) const
@@ -125,7 +127,6 @@ namespace options {
         const QString group_name;
         group saved;
         group transient;
-        bool modified;
         impl_bundle(const impl_bundle&) = delete;
         impl_bundle& operator=(const impl_bundle&) = delete;
     signals:
@@ -148,10 +149,15 @@ namespace options {
         }
     };
 
-    class opt_bundle;
-
     namespace detail
     {
+        class OPENTRACK_COMPAT_EXPORT opt_bundle final : public impl_bundle
+        {
+        public:
+            opt_bundle(const QString& group_name);
+            ~opt_bundle();
+        };
+
         struct OPENTRACK_COMPAT_EXPORT opt_singleton
         {
         public:
@@ -172,17 +178,9 @@ namespace options {
         OPENTRACK_COMPAT_EXPORT opt_singleton& singleton();
     }
 
-    using pbundle = std::shared_ptr<opt_bundle>;
+    using pbundle = std::shared_ptr<detail::opt_bundle>;
 
     pbundle bundle(const QString& name);
-
-    class OPENTRACK_COMPAT_EXPORT opt_bundle final : public impl_bundle
-    {
-    public:
-        opt_bundle() : impl_bundle("i-have-no-name") {}
-        opt_bundle(const QString& group_name);
-        ~opt_bundle();
-    };
 
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define DEFINE_SIGNAL(t) void valueChanged(t)

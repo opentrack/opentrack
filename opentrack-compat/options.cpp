@@ -33,7 +33,6 @@ void group::save() const
     for (auto& i : kvs)
         s->setValue(i.first, i.second);
     s->endGroup();
-    s->sync();
 }
 
 void group::put(const QString &s, const QVariant &d)
@@ -88,25 +87,44 @@ const mem<QSettings> group::ini_file()
     return std::make_shared<QSettings>();
 }
 
+bool group::operator==(const group& other) const
+{
+    for (const auto& kv : kvs)
+    {
+        const QVariant val = other.get<QVariant>(kv.first);
+        if (!other.contains(kv.first) || kv.second != val)
+        {
+            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "to" << kv.second << "from" << val;
+            return false;
+        }
+    }
+
+    for (const auto& kv : other.kvs)
+    {
+        const QVariant val = get<QVariant>(kv.first);
+        if (!contains(kv.first) || kv.second != val)
+        {
+            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "to" << kv.second << "from" << val;
+            return false;
+        }
+    }
+    return true;
+}
+
 impl_bundle::impl_bundle(const QString& group_name)
     :
       mtx(QMutex::Recursive),
       group_name(group_name),
       saved(group_name),
-      transient(saved),
-      modified(false)
+      transient(saved)
 {}
 
 void impl_bundle::reload()
 {
     {
         QMutexLocker l(&mtx);
-        if (modified)
-        {
-            saved = group(group_name);
-            transient = saved;
-            modified = false;
-        }
+        saved = group(group_name);
+        transient = saved;
     }
     emit reloading();
 }
@@ -115,14 +133,7 @@ void impl_bundle::store_kv(const QString& name, const QVariant& datum)
 {
     QMutexLocker l(&mtx);
 
-    auto old = transient.get<QVariant>(name);
-    if (!transient.contains(name) || datum != old)
-    {
-        if (!modified)
-            qDebug() << "bundle" << group_name << "modified" << "key" << name << "to" << datum << "from" << old;
-        modified = true;
-        transient.put(name, datum);
-    }
+    transient.put(name, datum);
 }
 
 bool impl_bundle::contains(const QString &name) const
@@ -134,29 +145,54 @@ bool impl_bundle::contains(const QString &name) const
 void impl_bundle::save()
 {
     bool modified_ = false;
+
     {
         QMutexLocker l(&mtx);
-        if (modified)
+        if (saved != transient)
         {
-            qDebug() << "bundle" << group_name << "saved";
+            qDebug() << "bundle" << group_name << "changed, saving";
             modified_ = true;
-            modified = false;
             saved = transient;
-            transient.save();
+            saved.save();
         }
     }
+
     if (modified_)
         emit saving();
 }
 
-bool impl_bundle::modifiedp() const
+bool impl_bundle::modifiedp() const // XXX unused
 {
     QMutexLocker l(const_cast<QMutex*>(&mtx));
-    return modified;
+    return transient != saved;
 }
 
 namespace detail
 {
+
+void opt_singleton::bundle_decf(const opt_singleton::k& key)
+{
+    QMutexLocker l(&implsgl_mtx);
+
+    if (--std::get<0>(implsgl_data[key]) == 0)
+    {
+        qDebug() << "bundle -" << key;
+
+        implsgl_data.erase(key);
+    }
+}
+
+opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
+
+opt_bundle::opt_bundle(const QString& group_name)
+    : impl_bundle(group_name)
+{
+}
+
+opt_bundle::~opt_bundle()
+{
+    detail::singleton().bundle_decf(group_name);
+}
 
 pbundle opt_singleton::bundle(const opt_singleton::k &key)
 {
@@ -176,30 +212,12 @@ pbundle opt_singleton::bundle(const opt_singleton::k &key)
     return shr;
 }
 
-void opt_singleton::bundle_decf(const opt_singleton::k &key)
-{
-    QMutexLocker l(&implsgl_mtx);
-
-    if (--std::get<0>(implsgl_data[key]) == 0)
-        implsgl_data.erase(key);
 }
 
-opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
-
-}
-
-opt_bundle::opt_bundle(const QString &group_name)
-    : impl_bundle(group_name)
-{
-}
-
-opt_bundle::~opt_bundle()
-{
-    qDebug() << "bundle -" << group_name;
-    detail::singleton().bundle_decf(group_name);
-}
-
-base_value::base_value(pbundle b, const QString &name) : b(b), self_name(name) {}
+base_value::base_value(pbundle b, const QString &name) :
+    b(b),
+    self_name(name)
+{}
 
 opts::~opts()
 {
