@@ -3,16 +3,6 @@
 namespace options
 {
 
-namespace detail
-{
-OPENTRACK_COMPAT_EXPORT opt_singleton& singleton()
-{
-    static opt_singleton ret;
-    return ret;
-}
-
-}
-
 group::group(const QString& name) : name(name)
 {
     auto conf = ini_file();
@@ -94,7 +84,7 @@ bool group::operator==(const group& other) const
         const QVariant val = other.get<QVariant>(kv.first);
         if (!other.contains(kv.first) || kv.second != val)
         {
-            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "to" << kv.second << "from" << val;
+            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "-" << val << "<>" << kv.second;
             return false;
         }
     }
@@ -104,7 +94,7 @@ bool group::operator==(const group& other) const
         const QVariant val = get<QVariant>(kv.first);
         if (!contains(kv.first) || kv.second != val)
         {
-            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "to" << kv.second << "from" << val;
+            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "-" << kv.second << "<>" << val;
             return false;
         }
     }
@@ -117,7 +107,8 @@ impl_bundle::impl_bundle(const QString& group_name)
       group_name(group_name),
       saved(group_name),
       transient(saved)
-{}
+{
+}
 
 void impl_bundle::reload()
 {
@@ -167,8 +158,47 @@ bool impl_bundle::modifiedp() const // XXX unused
     return transient != saved;
 }
 
-namespace detail
+base_value::base_value(pbundle b, const QString &name) :
+    b(b),
+    self_name(name)
 {
+}
+
+opts::~opts()
+{
+    b->reload();
+}
+
+opts::opts(const QString &name) : b(bundle(name))
+{
+}
+
+pbundle bundle(const QString& name)
+{
+     return detail::singleton().bundle(name);
+}
+
+custom_type_initializer::custom_type_initializer()
+{
+    qDebug() << "options: registering stream operators";
+
+    qRegisterMetaTypeStreamOperators<slider_value>("slider_value");
+    QMetaType::registerDebugStreamOperator<slider_value>();
+}
+
+custom_type_initializer custom_type_initializer::singleton = custom_type_initializer();
+
+namespace detail {
+
+opt_bundle::opt_bundle(const QString& group_name)
+    : impl_bundle(group_name)
+{
+}
+
+opt_bundle::~opt_bundle()
+{
+    detail::singleton().bundle_decf(group_name);
+}
 
 void opt_singleton::bundle_decf(const opt_singleton::k& key)
 {
@@ -182,16 +212,8 @@ void opt_singleton::bundle_decf(const opt_singleton::k& key)
     }
 }
 
-opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive) {}
-
-opt_bundle::opt_bundle(const QString& group_name)
-    : impl_bundle(group_name)
+opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive)
 {
-}
-
-opt_bundle::~opt_bundle()
-{
-    detail::singleton().bundle_decf(group_name);
 }
 
 pbundle opt_singleton::bundle(const opt_singleton::k &key)
@@ -212,40 +234,67 @@ pbundle opt_singleton::bundle(const opt_singleton::k &key)
     return shr;
 }
 
-}
-
-base_value::base_value(pbundle b, const QString &name) :
-    b(b),
-    self_name(name)
-{}
-
-opts::~opts()
+OPENTRACK_COMPAT_EXPORT opt_singleton& singleton()
 {
-    b->reload();
+    static opt_singleton ret;
+    return ret;
 }
 
-opts::opts(const QString &name) : b(bundle(name)) {}
 
-pbundle bundle(const QString& name)
-{
-     return detail::singleton().bundle(name);
-}
+} // end options::detail
 
 slider_value::operator double() const
 {
     return cur_;
 }
 
-custom_type_initializer::custom_type_initializer()
+slider_value::slider_value(double cur, double min, double max) :
+    cur_(cur),
+    min_(min),
+    max_(max)
 {
-    qDebug() << "options: registering stream operators";
-
-    qRegisterMetaTypeStreamOperators<slider_value>("slider_value");
 }
 
-custom_type_initializer custom_type_initializer::singleton = custom_type_initializer();
+slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(), v.max())
+{
+}
 
-} // end
+slider_value::slider_value() : slider_value(0, 0, 0)
+{
+}
+
+slider_value& slider_value::operator=(const slider_value& v)
+{
+    cur_ = v.cur_;
+    min_ = v.min_;
+    max_ = v.max_;
+
+    return *this;
+}
+
+bool slider_value::operator==(const slider_value& v) const
+{
+    using std::fabs;
+
+    static constexpr double eps = 1e-3;
+
+    return (fabs(v.cur_ - cur_) < eps &&
+            fabs(v.min_ - min_) < eps &&
+            fabs(v.max_ - max_) < eps);
+}
+
+} // end options
+
+QT_BEGIN_NAMESPACE
+
+QDebug operator << (QDebug dbg, const options::slider_value& val)
+{
+    dbg.nospace() << "cur=" << val.cur()
+                  << ", min=" << val.min()
+                  << ", max=" << val.max();
+
+    return dbg.space();
+}
 
 QDataStream& operator <<(QDataStream& out, const options::slider_value& v)
 {
@@ -262,3 +311,5 @@ QDataStream& operator >>(QDataStream& in, options::slider_value& v)
     v = options::slider_value(cur, min, max);
     return in;
 }
+
+QT_END_NAMESPACE

@@ -58,14 +58,11 @@ namespace options
     {
         double cur_, min_, max_;
     public:
-        slider_value(double cur, double min, double max) :
-            cur_(cur),
-            min_(min),
-            max_(max)
-        {}
-        slider_value(const slider_value& v) : slider_value(v.cur(), v.min(), v.max()) {}
-        slider_value() : slider_value(0, 0, 0) {}
-        slider_value& operator=(const slider_value& v) { cur_ = v.cur_; min_ = v.min_; max_ = v.max_; return *this; }
+        slider_value(double cur, double min, double max);
+        slider_value(const slider_value& v);
+        slider_value();
+        slider_value& operator=(const slider_value& v);
+        bool operator==(const slider_value& v) const;
         operator double() const;
         double cur() const { return cur_; }
         double min() const { return min_; }
@@ -73,11 +70,12 @@ namespace options
     };
 }
 
-Q_DECLARE_METATYPE(options::slider_value)
+QDebug operator << (QDebug dbg, const options::slider_value& val);
 
 QDataStream& operator << (QDataStream& out, const options::slider_value& v);
-
 QDataStream& operator >> (QDataStream& in, options::slider_value& v);
+
+Q_DECLARE_METATYPE(options::slider_value)
 
 namespace options {
     namespace {
@@ -258,7 +256,9 @@ namespace options {
                 *this = def;
         }
 
-        value(pbundle b, const char* name, t def) : value(b, QString(name), def) {}
+        value(pbundle b, const char* name, t def) : value(b, QString(name), def)
+        {
+        }
 
         operator t() const
         {
@@ -313,7 +313,8 @@ namespace options {
                 v(v),
                 cb(cb),
                 enum_cases(enum_cases)
-            {}
+            {
+            }
 
             void operator()(int idx)
             {
@@ -334,7 +335,8 @@ namespace options {
                 v(v),
                 cb(cb),
                 enum_cases(enum_cases)
-            {}
+            {
+            }
 
             void operator()(int val)
             {
