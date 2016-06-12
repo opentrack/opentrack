@@ -163,8 +163,9 @@ bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods
 
 bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
-    auto qt = static_cast<QVariant>(qt_).toInt();
-    auto our_mods = qt & Qt::KeyboardModifierMask;
+    // CAVEAT don't use QVariant::toUInt() or conversion fails
+    const unsigned qt = static_cast<unsigned>(QVariant(qt_).toInt());
+    const unsigned our_mods = qt & Qt::KeyboardModifierMask;
 
     {
         const auto key_ = qt;
@@ -179,7 +180,7 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
         }
     }
     {
-        const auto key = qt & ~Qt::KeyboardModifierMask;
+        const unsigned key = qt & ~Qt::KeyboardModifierMask;
         for (auto& wk : windows_key_sequences)
         {
             if (wk.qt == key)

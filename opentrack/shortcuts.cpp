@@ -77,8 +77,8 @@ void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused_on_unix
 #ifdef _WIN32
 void Shortcuts::receiver(const Key& k)
 {
-    const int sz = keys.size();
-    for (int i = 0; i < sz; i++)
+    const unsigned sz = keys.size();
+    for (unsigned i = 0; i < sz; i++)
     {
         K& k_ = std::get<0>(keys[i]);
         auto& fun = std::get<1>(keys[i]);
@@ -100,10 +100,10 @@ void Shortcuts::receiver(const Key& k)
 
 void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_)
 {
-    const int sz = keys_.size();
+    const unsigned sz = keys_.size();
     keys = std::vector<tt>();
 
-    for (int i = 0; i < sz; i++)
+    for (unsigned i = 0; i < sz; i++)
     {
         const auto& kk = keys_[i];
         const key_opts& opts = std::get<0>(kk);
@@ -111,8 +111,8 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
         auto fun = std::get<1>(kk);
         K k;
         bind_keyboard_shortcut(k, opts, held);
-        keys.push_back(tt(k,
-        [=](unused_on_unix(bool, flag)) -> void {
+        keys.push_back(tt(k, [=](unused_on_unix(bool, flag)) -> void
+        {
 #ifdef _WIN32
             fun(flag);
 #else
