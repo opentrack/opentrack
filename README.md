@@ -16,6 +16,10 @@ Not to be confused with railway planning software <<http://opentrack.ch>>
 
 ***
 
+# Downloads
+
+For the latest releases visit: <<https://github.com/opentrack/opentrack/releases>> . You will find the software there as well as the source code.
+
 # Tracking sources
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
