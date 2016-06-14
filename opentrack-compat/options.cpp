@@ -1,5 +1,7 @@
 #include "options.hpp"
 
+#include <cmath>
+
 namespace options
 {
 

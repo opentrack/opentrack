@@ -11,6 +11,8 @@
 #include "ftnoir_protocol_fsuipc.h"
 #include "opentrack/plugin-api.hpp"
 
+#include <cmath>
+
 FTNoIR_Protocol::FTNoIR_Protocol()
 {
     prevPosX = 0.0f;
