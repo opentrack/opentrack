@@ -8,20 +8,23 @@
  * purpose with or without fee is hereby granted, provided that the above        *
  * copyright notice and this permission notice appear in all copies.             *
  */
+
 #include "csv.h"
 #include <QTextDecoder>
 #include <QFile>
 #include <QCoreApplication>
 #include <QDebug>
 
-CSV::CSV(QIODevice * device)
+CSV::CSV(QIODevice* device)
 {
     m_device = device;
     m_codec = QTextCodec::codecForLocale();
     m_pos = 0;
     m_rx = QRegExp("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)\\n");
 }
-CSV::CSV(QString &string){
+
+CSV::CSV(QString& string)
+{
     m_device = NULL;
     m_codec = QTextCodec::codecForLocale();
     m_string = string;
@@ -29,50 +32,63 @@ CSV::CSV(QString &string){
     m_rx = QRegExp("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)\\n");
 }
 
-void CSV::setCodec(const char* codecName){
+void CSV::setCodec(const char* codecName)
+{
     m_codec = QTextCodec::codecForName(codecName);
 }
 
-QString CSV::readLine(){
+QString CSV::readLine()
+{
     QString line;
 
-    if(m_string.isNull()){
-        if(m_device && m_device->isReadable()){
+    if (m_string.isNull()){
+        if (m_device && m_device->isReadable())
+        {
             QTextDecoder dec(m_codec);
             m_string = dec.toUnicode(m_device->readAll());
-        }else{
+        }
+        else
+        {
             return QString();
         }
     }
-    if((m_pos = m_rx.indexIn(m_string,m_pos)) != -1) {
+    if ((m_pos = m_rx.indexIn(m_string,m_pos)) != -1)
+    {
         line = m_rx.cap(1);
         m_pos += m_rx.matchedLength();
     }
     return line;
-
 }
-QStringList CSV::parseLine(){
+QStringList CSV::parseLine()
+{
     return parseLine(readLine());
 }
-QStringList CSV::parseLine(QString line){
+QStringList CSV::parseLine(QString line)
+{
     QStringList list;
     int pos2 = 0;
     QRegExp rx2("(?:\"([^\"]*)\";?)|(?:([^;]*);?)");
-    if(line.size()<1){
+    if (line.size() < 1)
+    {
         list << "";
-    }else while (line.size()>pos2 && (pos2 = rx2.indexIn(line, pos2)) != -1) {
-        QString col;
-        if(rx2.cap(1).size()>0)
-            col = rx2.cap(1);
-        else if(rx2.cap(2).size()>0)
-            col = rx2.cap(2);
+    }
+    else
+    {
+        while (line.size() > pos2 && (pos2 = rx2.indexIn(line, pos2)) != -1)
+        {
+            QString col;
+            if (rx2.cap(1).size() > 0)
+                col = rx2.cap(1);
+            else if (rx2.cap(2).size() > 0)
+                col = rx2.cap(2);
 
-        list << col;
+            list << col;
 
-        if(col.size())
-            pos2 += rx2.matchedLength();
-        else
-            pos2++;
+            if (col.size())
+                pos2 += rx2.matchedLength();
+            else
+                pos2++;
+        }
     }
     return list;
 }
@@ -93,7 +109,8 @@ bool CSV::getGameData( const int id, unsigned char* table, QString& gamename)
     }
     CSV csv(&file);
 
-    while (gameLine = csv.parseLine(), gameLine.count() > 2) {
+    while (gameLine = csv.parseLine(), gameLine.count() > 2)
+    {
         //qDebug() << "Column 0: " << gameLine.at(0);		// No.
         //qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
         //qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
@@ -103,8 +120,10 @@ bool CSV::getGameData( const int id, unsigned char* table, QString& gamename)
         //qDebug() << "Column 6: " << gameLine.at(6);		// International ID
         //qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
 
-        if (gameLine.count() > 6) {
-            if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0) {
+        if (gameLine.count() > 6)
+        {
+            if (gameLine.at(6).compare( gameID, Qt::CaseInsensitive ) == 0)
+            {
                 QByteArray id = gameLine.at(7).toLatin1();
                 unsigned int tmp[8];
                 unsigned int fuzz[3];
