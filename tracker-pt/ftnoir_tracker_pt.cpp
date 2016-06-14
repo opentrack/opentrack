@@ -76,6 +76,8 @@ bool Tracker_PT::get_focal_length(float& ret)
 
 void Tracker_PT::run()
 {
+    cv::setNumThreads(0);
+
 #ifdef PT_PERF_LOG
     QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
     if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;

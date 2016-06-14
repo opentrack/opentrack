@@ -24,14 +24,18 @@ typedef struct {
     int height;
 } resolution_tuple;
 
-static resolution_tuple resolution_choices[] = {
+static resolution_tuple resolution_choices[] =
+{
     { 640, 480 },
     { 320, 240 },
     { 320, 200 },
     { 0, 0 }
 };
 
-Tracker::Tracker() : stop(false), layout(nullptr), videoWidget(nullptr)
+Tracker::Tracker() :
+    stop(false),
+    layout(nullptr),
+    videoWidget(nullptr)
 {
 }
 
@@ -77,6 +81,8 @@ void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 
 void Tracker::run()
 {
+    cv::setNumThreads(0);
+
     int rint = s.resolution;
     if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
         rint = 0;
