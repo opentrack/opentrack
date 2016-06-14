@@ -33,7 +33,7 @@
 #endif
 
 enum Axis {
-    TX = 0, TY, TZ, Yaw, Pitch, Roll
+    TX, TY, TZ, Yaw, Pitch, Roll
 };
 
 namespace plugin_api {
