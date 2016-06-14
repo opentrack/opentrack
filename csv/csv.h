@@ -17,17 +17,17 @@ class CSV_EXPORT CSV
 {
 public:
     QString readLine();
-    QStringList parseLine();
-    static QStringList parseLine(QString line);
+    bool parseLine(QStringList& ret);
 
     void setCodec(const char* codecName);
     static bool getGameData(const int gameID, unsigned char* table, QString& gamename);
 private:
-    QIODevice *m_device;
-    QTextCodec *m_codec;
+    CSV(QIODevice* device);
+
+    QIODevice* m_device;
     QString m_string;
     int m_pos;
-    QRegExp m_rx;
-    CSV(QIODevice * device);
-    CSV(QString &string);
+
+    static const QTextCodec* m_codec;
+    static const QRegExp m_rx, m_rx2;
 };

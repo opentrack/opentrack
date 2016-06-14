@@ -76,9 +76,12 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     {
         QString gamename;
         {
-            unsigned char table[8];
-            if (CSV::getGameData(id, table, gamename))
-                for (int i = 0; i < 8; i++) pMemData->table[i] = table[i];
+            unsigned char table[8] = { 0,0,0,0, 0,0,0,0 };
+
+            (void) CSV::getGameData(id, table, gamename);
+
+            for (int i = 0; i < 8; i++)
+                pMemData->table[i] = table[i];
         }
         ft->GameID2 = id;
         intGameID = id;
