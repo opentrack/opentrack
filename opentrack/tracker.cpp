@@ -63,11 +63,13 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
     output[0] = -ret(1);
 }
 
-static inline bool nanp(double value)
-{
-    const volatile double x = value;
-    return std::isnan(x) || std::isinf(x);
-}
+#ifdef _WIN32
+__declspec(noinline) bool nanp(double value);
+#elif defined(__GNUC__)
+bool __attribute__ ((noinline)) nanp(double value);
+#else
+bool nanp(double value);
+#endif
 
 static inline double elide_nan(double value, double def)
 {
@@ -116,6 +118,8 @@ void Tracker::logic()
     static constexpr double pi = 3.141592653;
     static constexpr double r2d = 180. / pi;
 
+    using namespace euler;
+
     Pose value, raw;
 
     for (int i = 0; i < 6; i++)
@@ -138,9 +142,9 @@ void Tracker::logic()
         (double)-s.camera_pitch,
         (double)-s.camera_roll
     };
-    const rmat cam = rmat::euler_to_rmat(off);
-    rmat r = rmat::euler_to_rmat(&value[Yaw]);
-    dmat<3, 1> t(value(0), value(1), value(2));
+    const rmat cam = euler_to_rmat(off);
+    rmat r = euler_to_rmat(&value[Yaw]);
+    euler_t t(value(0), value(1), value(2));
 
     r = cam * r;
 
@@ -181,7 +185,8 @@ void Tracker::logic()
             m_ = r_b.t() * r;
         }
 
-        const dmat<3, 1> euler = rmat::rmat_to_euler(m_);
+        const euler_t euler = rmat_to_euler(m_);
+
         for (int i = 0; i < 3; i++)
         {
             value(i) = tmp[i];
@@ -190,23 +195,32 @@ void Tracker::logic()
     }
 
     bool nan_ = false;
-    // we're checking NaNs after every block of numeric ops
+    // whenever something can corrupt its internal state due to nan/inf, elide the call
     if (is_nan(value))
     {
         nan_ = true;
     }
     else
     {
-        Pose tmp = value;
+        {
+            Pose tmp = value;
 
-        if (libs.pFilter)
-            libs.pFilter->filter(tmp, value);
+            if (libs.pFilter)
+                libs.pFilter->filter(tmp, value);
+        }
+
+        {
+            euler_t e(value(Yaw), value(Pitch), value(Roll));
+            e = euler_filter(e);
+            for (int i = 0; i < 3; i++)
+                value(i + Yaw) = e(i);
+        }
 
         for (int i = 0; i < 6; i++)
             value(i) = map(value(i), m(i));
 
         if (s.tcomp_p)
-            t_compensate(rmat::euler_to_rmat(&value[Yaw]),
+            t_compensate(euler_to_rmat(&value[Yaw]),
                          value,
                          value,
                          s.tcomp_tz);
@@ -244,7 +258,8 @@ void Tracker::logic()
     raw_6dof = raw;
 }
 
-void Tracker::run() {
+void Tracker::run()
+{
     const int sleep_ms = 3;
 
 #if defined(_WIN32)
@@ -265,7 +280,8 @@ void Tracker::run() {
         logic();
 
         long q = sleep_ms * 1000L - t.elapsed()/1000L;
-        usleep(std::max(1L, q));
+        using std::max;
+        usleep(max(1L, q));
     }
 
     {

@@ -9,7 +9,7 @@ enum Axis
     TX, TY, TZ, Yaw, Pitch, Roll
 };
 
-static constexpr double eps_ = 1e-1;
+static constexpr double eps_ = 2e1;
 static constexpr double d2r = pi / 180;
 static constexpr double eps = eps_ * d2r;
 
@@ -25,15 +25,24 @@ euler_t euler_filter(const euler_t& rot_)
         pi, pi/2, pi
     };
 
+    double changed_eps[] = { 0, 0, 0 };
+
     for (int i = 0; i < 3; i++)
         if (fabs(rot(i)) > thres[i] - eps && fabs(rot(i)) < thres[i] + eps)
         {
             const double eps__ = copysign(eps, rot(i));
+            changed_eps[i] = eps__;
+
             rot(i) -= eps__;
-            rmat tmp = euler_to_rmat(rot);
-            rot = rmat_to_euler(tmp);
-            rot(i) += eps__;
+            rot = rmat_to_euler(euler_to_rmat(rot));
         }
+
+    for (int i = 0; i < 3; i++)
+    {
+        rot(i) += changed_eps[i];
+        if (fabs(rot(i)) > 2*pi)
+            rot(i) = copysign(2*pi, rot(i));
+    }
     return rot;
 }
 
