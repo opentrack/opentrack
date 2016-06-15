@@ -209,13 +209,6 @@ void Tracker::logic()
                 libs.pFilter->filter(tmp, value);
         }
 
-        {
-            euler_t e(value(Yaw), value(Pitch), value(Roll));
-            e = euler_filter(e);
-            for (int i = 0; i < 3; i++)
-                value(i + Yaw) = e(i);
-        }
-
         for (int i = 0; i < 6; i++)
             value(i) = map(value(i), m(i));
 

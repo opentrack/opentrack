@@ -248,8 +248,6 @@ template<int y, int x> using dmat = Mat<double, y, x>;
 using rmat = dmat<3, 3>;
 using euler_t = dmat<3, 1>;
 
-euler_t euler_filter(const euler_t& rot_);
-
 rmat euler_to_rmat(const double* input);
 
 // http://stackoverflow.com/a/18436193
