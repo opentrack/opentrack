@@ -50,10 +50,12 @@ void FTNoIR_Tracker::data(double *data)
 
         if (i >= 3)
         {
+#if 0
             if (x > pi + pi/2)
                 x -= pi;
             else if (x > pi/2 && x < pi)
                 x += pi;
+#endif
 
             data[i] = sin(x) * 180;
         }
