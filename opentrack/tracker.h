@@ -71,7 +71,7 @@ private:
     double map(double pos, Mapping& axis);
     void logic();
 
-    void t_compensate(const dmat<3, 3>& rmat, const double* ypr, double* output, bool rz);
+    void t_compensate(const rmat& rmat, const double* ypr, double* output, bool rz);
     void run() override;
 public:
     Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);
