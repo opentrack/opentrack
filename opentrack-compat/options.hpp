@@ -42,11 +42,7 @@
 
 #include <QDebug>
 
-#ifdef BUILD_compat
-#   include "compat-export.hpp"
-#else
-#   include "compat-import.hpp"
-#endif
+#include "export.hpp"
 
 template<typename t> using mem = std::shared_ptr<t>;
 

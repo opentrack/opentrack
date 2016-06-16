@@ -22,18 +22,21 @@
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
 
+#define BUILD_compat
 #include "../opentrack-compat/export.hpp"
 
 enum Axis {
         TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-typedef struct PortableLockedShm {
+typedef struct PortableLockedShm
+{
     void* mem;
     int fd, size;
 } PortableLockedShm;
 
-typedef struct WineSHM {
+typedef struct WineSHM
+{
     double data[6];
     int gameid, gameid2;
     unsigned char table[8];
@@ -68,7 +71,7 @@ PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *OT_UN
     strncpy(shm_filename+1, shmName, NAME_MAX-2);
     shm_filename[NAME_MAX-1] = '\0';
     /* (void) shm_unlink(shm_filename); */
-    
+
     self->fd = shm_open(shm_filename, O_RDWR | O_CREAT, 0600);
     (void) ftruncate(self->fd, mapSize);
     self->mem = mmap(NULL, mapSize, PROT_READ|PROT_WRITE, MAP_SHARED, self->fd, (off_t)0);
@@ -149,7 +152,7 @@ static int TranslationToggleHandler( XPLMCommandRef inCommand,
     return 0;
 }
 
-PLUGIN_API OPENTRACK_EXPORT int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
+PLUGIN_API OPENTRACK_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
     view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
     view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
     view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
@@ -187,7 +190,7 @@ PLUGIN_API OPENTRACK_EXPORT int XPluginStart ( char * outName, char * outSignatu
     return 0;
 }
 
-PLUGIN_API OPENTRACK_EXPORT void XPluginStop ( void ) {
+PLUGIN_API OPENTRACK_COMPAT_EXPORT void XPluginStop ( void ) {
     if (lck_posix)
     {
         PortableLockedShm_free(lck_posix);
@@ -196,17 +199,17 @@ PLUGIN_API OPENTRACK_EXPORT void XPluginStop ( void ) {
     }
 }
 
-PLUGIN_API OPENTRACK_EXPORT void XPluginEnable ( void ) {
+PLUGIN_API OPENTRACK_COMPAT_EXPORT void XPluginEnable ( void ) {
     XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
     track_disabled = 0;
 }
 
-PLUGIN_API OPENTRACK_EXPORT void XPluginDisable ( void ) {
+PLUGIN_API OPENTRACK_COMPAT_EXPORT void XPluginDisable ( void ) {
     XPLMUnregisterFlightLoopCallback(write_head_position, NULL);
     track_disabled = 1;
 }
 
-PLUGIN_API OPENTRACK_EXPORT void XPluginReceiveMessage(
+PLUGIN_API OPENTRACK_COMPAT_EXPORT void XPluginReceiveMessage(
         XPLMPluginID    OT_UNUSED(inFromWho),
         int             OT_UNUSED(inMessage),
         void *          OT_UNUSED(inParam))

@@ -8,6 +8,9 @@
 
 #pragma once
 #include <ctime>
+
+#include "export.hpp"
+
 #if defined (_WIN32)
 #   include <windows.h>
 #	ifndef CLOCK_MONOTONIC
@@ -52,7 +55,8 @@ static inline void clock_gettime(int, struct timespec* ts)
 }
 #   endif
 #endif
-class Timer {
+class OPENTRACK_COMPAT_EXPORT Timer
+{
 private:
     struct timespec state;
     long long conv(const struct timespec& cur) const

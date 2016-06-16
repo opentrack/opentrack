@@ -1,8 +1,8 @@
 #pragma once
 #include "ui_keyboard_listener.h"
 #ifdef _WIN32
-#include "opentrack/win32-shortcuts.h"
-#include "opentrack/keybinding-worker.hpp"
+#include "opentrack-logic/win32-shortcuts.h"
+#include "opentrack-logic/keybinding-worker.hpp"
 #endif
 #include <QLabel>
 #include <QKeyEvent>

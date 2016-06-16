@@ -14,7 +14,10 @@
 
 using namespace options;
 
-struct axis_opts {
+#include "export.hpp"
+
+struct axis_opts
+{
     pbundle b;
     value<double> zero;
     value<bool> invert, altp;
@@ -32,7 +35,8 @@ private:
     }
 };
 
-struct key_opts {
+struct key_opts
+{
     value<QString> keycode, guid;
     value<int> button;
 
@@ -43,7 +47,8 @@ struct key_opts {
     {}
 };
 
-struct main_settings : opts {    
+struct main_settings : opts
+{
     value<QString> tracker_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;

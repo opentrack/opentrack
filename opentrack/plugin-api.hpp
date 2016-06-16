@@ -13,11 +13,7 @@
 #include <QFrame>
 #include <QIcon>
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
 #ifndef OPENTRACK_PLUGIN_EXPORT
 #   ifdef _WIN32
@@ -39,7 +35,7 @@ enum Axis {
 namespace plugin_api {
 namespace detail {
 
-class OPENTRACK_EXPORT BaseDialog : public QWidget
+class OPENTRACK_API_EXPORT BaseDialog : public QWidget
 {
     Q_OBJECT
 public:
@@ -67,7 +63,7 @@ signals:
 
 // implement this in all plugins
 // also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
-struct OPENTRACK_EXPORT Metadata
+struct OPENTRACK_API_EXPORT Metadata
 {
     Metadata(const Metadata&) = delete;
     Metadata(Metadata&&) = delete;
@@ -83,7 +79,7 @@ struct OPENTRACK_EXPORT Metadata
 };
 
 // implement this in filters
-struct OPENTRACK_EXPORT IFilter
+struct OPENTRACK_API_EXPORT IFilter
 {
     IFilter(const IFilter&) = delete;
     IFilter(IFilter&&) = delete;
@@ -99,7 +95,7 @@ struct OPENTRACK_EXPORT IFilter
     virtual void center() {}
 };
 
-struct OPENTRACK_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~IFilterDialog();
@@ -114,7 +110,7 @@ struct OPENTRACK_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(filter_class, IFilter, metadata_class, dialog_class, IFilterDialog)
 
 // implement this in protocols
-struct OPENTRACK_EXPORT IProtocol
+struct OPENTRACK_API_EXPORT IProtocol
 {
     IProtocol(const IProtocol&) = delete;
     IProtocol(IProtocol&&) = delete;
@@ -132,7 +128,7 @@ struct OPENTRACK_EXPORT IProtocol
     virtual QString game_name() = 0;
 };
 
-struct OPENTRACK_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~IProtocolDialog();
@@ -147,7 +143,7 @@ struct OPENTRACK_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(protocol_class, IProtocol, metadata_class, dialog_class, IProtocolDialog)
 
 // implement this in trackers
-struct OPENTRACK_EXPORT ITracker
+struct OPENTRACK_API_EXPORT ITracker
 {
     ITracker(const ITracker&) = delete;
     ITracker(ITracker&&) = delete;
@@ -162,7 +158,7 @@ struct OPENTRACK_EXPORT ITracker
     virtual void data(double *data) = 0;
 };
 
-struct OPENTRACK_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
+struct OPENTRACK_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~ITrackerDialog();

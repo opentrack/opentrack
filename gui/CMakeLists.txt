@@ -17,6 +17,7 @@ if(NOT WIN32)
 endif()
 
 target_link_libraries(opentrack
+    opentrack-logic
     opentrack-spline-widget
     opentrack-pose-widget
     opentrack-version

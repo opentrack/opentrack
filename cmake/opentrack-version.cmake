@@ -19,6 +19,7 @@ endif()
 file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${_build_type}${OPENTRACK_COMMIT}\"")
 
 set(version-string "
+#define BUILD_compat
 #include \"opentrack-compat/export.hpp\"
 
 #ifdef __cplusplus
@@ -26,7 +27,7 @@ extern \"C\"
 #else
 extern
 #endif
-OPENTRACK_EXPORT
+OPENTRACK_COMPAT_EXPORT
 const char* opentrack_version;
 
 const char* opentrack_version = \"${_build_type}${OPENTRACK_COMMIT}\";

@@ -7,7 +7,7 @@
  */
 
 #include "curve-config.h"
-#include "opentrack/main-settings.hpp"
+#include "opentrack-logic/main-settings.hpp"
 MapWidget::MapWidget(Mappings& m, main_settings& s) :
     m(m)
 {
@@ -54,12 +54,12 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
                 qfc.setEnabled(qfcs[i].checkbox->isChecked());
                 qfc.force_redraw();
             }
-            
+
             if (qfcs[i].axis >= 3)
                 qfcs[i].qfc->set_snap(2, 5);
             else
                 qfcs[i].qfc->set_snap(1, 5);
-            
+
             qfcs[i].qfc->setConfig(conf, name);
         }
     }

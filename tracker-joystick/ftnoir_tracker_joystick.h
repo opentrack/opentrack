@@ -17,7 +17,7 @@
 #include <cmath>
 #include "opentrack/plugin-api.hpp"
 
-#include "opentrack/win32-joystick.hpp"
+#include "opentrack-logic/win32-joystick.hpp"
 #include "opentrack-compat/options.hpp"
 using namespace options;
 

@@ -24,11 +24,7 @@
 #   pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
-#ifdef BUILD_compat
-#   include "compat-export.hpp"
-#else
-#   include "compat-import.hpp"
-#endif
+#include "export.hpp"
 
 class OPENTRACK_COMPAT_EXPORT PortableLockedShm {
 public:

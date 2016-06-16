@@ -11,9 +11,9 @@
 #include <vector>
 
 #include "opentrack-compat/timer.hpp"
-#include "plugin-support.hpp"
+#include "opentrack/plugin-support.hpp"
 #include "mappings.hpp"
-#include "simple-mat.hpp"
+#include "opentrack/simple-mat.hpp"
 #include "selected-libraries.hpp"
 
 #include "spline-widget/functionconfig.h"
@@ -23,7 +23,10 @@
 #include <QMutex>
 #include <QThread>
 
-class Pose {
+#include "export.hpp"
+
+class Pose
+{
 private:
     static constexpr double pi = 3.141592653;
     static constexpr double d2r = pi/180.0;
@@ -40,13 +43,8 @@ public:
     inline double operator()(int i) const { return axes[i]; }
 };
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
-
-class OPENTRACK_EXPORT Tracker : private QThread {
+class OPENTRACK_LOGIC_EXPORT Tracker : private QThread
+{
     Q_OBJECT
 private:
     QMutex mtx;
@@ -65,7 +63,7 @@ private:
 
     using rmat = dmat<3, 3>;
 
-    dmat<3, 3> r_b;
+    rmat r_b;
     double t_b[3];
 
     double map(double pos, Mapping& axis);

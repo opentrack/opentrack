@@ -1,5 +1,4 @@
 #include "plugin-api.hpp"
-#include "main-settings.hpp"
 
 // these exist only so that vtable is emitted in a single compilation unit, not all of them.
 

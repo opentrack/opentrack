@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "opentrack/main-settings.hpp"
+#include "main-settings.hpp"
 #include "opentrack/plugin-support.hpp"
-#include "opentrack/tracker.h"
-#include "opentrack/shortcuts.h"
+#include "tracker.h"
+#include "shortcuts.h"
 
 #include <QObject>
 #include <QFrame>
@@ -30,7 +30,7 @@ struct Work
     using fn = std::function<void(bool)>;
     using tt = std::tuple<key_opts&, fn, bool>;
     std::vector<tt> keys;
-    
+
     Work(main_settings& s, Mappings& m, SelectedLibraries& libs, WId handle) :
         s(s), libs(libs),
         tracker(std::make_shared<Tracker>(s, m, libs)),

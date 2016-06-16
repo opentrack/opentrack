@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "opentrack/mappings.hpp"
+#include "opentrack-logic/mappings.hpp"
 #include "ui_mapping.h"
 
 class MapWidget: public QWidget

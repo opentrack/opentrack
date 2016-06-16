@@ -7,7 +7,7 @@
  */
 
 #include "ui.h"
-#include "opentrack/tracker.h"
+#include "opentrack-logic/tracker.h"
 #include "opentrack-compat/options.hpp"
 #include "new_file_dialog.h"
 #include <QFileDialog>

@@ -30,7 +30,7 @@ Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
     zero_(false),
     should_quit(false),
     libs(libs),
-    r_b(dmat<3,3>::eye()),
+    r_b(rmat::eye()),
     t_b {0,0,0}
 {
 }
@@ -173,7 +173,6 @@ void Tracker::logic()
 
     {
         double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
-        t_compensate(cam, tmp, tmp, false);
         rmat m_;
         switch (s.center_method)
         {
@@ -264,6 +263,7 @@ void Tracker::run()
         t.start();
 
         double tmp[6] {0,0,0, 0,0,0};
+        t_compensate(cam, tmp, tmp, false);
         libs.pTracker->data(tmp);
 
         if (enabledp)

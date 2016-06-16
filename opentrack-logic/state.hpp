@@ -12,10 +12,10 @@
 #include "opentrack-compat/options.hpp"
 using namespace options;
 #include "opentrack/plugin-support.hpp"
-#include "opentrack/main-settings.hpp"
-#include "opentrack/mappings.hpp"
-#include "opentrack/selected-libraries.hpp"
-#include "opentrack/work.hpp"
+#include "main-settings.hpp"
+#include "mappings.hpp"
+#include "selected-libraries.hpp"
+#include "work.hpp"
 
 struct State {
     State() :

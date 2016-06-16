@@ -4,9 +4,7 @@
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
 
 // OSX sdk 10.8 build error otherwise
-#ifdef _LIBCPP_MSVCRT
-#   undef _LIBCPP_MSVCRT
-#endif
+#undef _LIBCPP_MSVCRT
 
 #include <memory>
 
