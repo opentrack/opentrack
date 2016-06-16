@@ -263,7 +263,7 @@ void Tracker::run()
         t.start();
 
         double tmp[6] {0,0,0, 0,0,0};
-        t_compensate(cam, tmp, tmp, false);
+        //t_compensate(cam, tmp, tmp, false);
         libs.pTracker->data(tmp);
 
         if (enabledp)
