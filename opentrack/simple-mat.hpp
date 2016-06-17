@@ -206,13 +206,8 @@ public:
 
     Mat(num* mem) : Mat(const_cast<const num*>(mem)) {}
 
-    template<int h = h_,
-             int w = w_,
-             typename = typename std::enable_if<h == 1 || w == 1>::type>
-    operator const double*() const
-    {
-        return reinterpret_cast<const double*>(data);
-    }
+    operator num*() { return reinterpret_cast<double*>(data); }
+    operator const num*() const { return reinterpret_cast<const double*>(data); }
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
