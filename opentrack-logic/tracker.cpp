@@ -148,6 +148,8 @@ void Tracker::logic()
 
     r = cam * r;
 
+    t_compensate(cam, t, t, true);
+
     bool can_center = false;
     const bool nan = is_nan(r, t);
 
@@ -263,7 +265,6 @@ void Tracker::run()
         t.start();
 
         double tmp[6] {0,0,0, 0,0,0};
-        //t_compensate(cam, tmp, tmp, false);
         libs.pTracker->data(tmp);
 
         if (enabledp)
