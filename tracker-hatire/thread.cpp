@@ -139,7 +139,9 @@ void hatire_thread::run()
 #endif
     (void) exec();
 
+#ifdef HATIRE_DEBUG_LOGFILE
     read_timer.stop();
+#endif
 }
 
 serial_result hatire_thread::init_serial_port_impl()
