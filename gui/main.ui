@@ -1132,7 +1132,7 @@
              <item>
               <widget class="QGroupBox" name="groupTrackerSource">
                <property name="title">
-                <string>Tracker</string>
+                <string>Input</string>
                </property>
                <layout class="QGridLayout" name="gridLayout">
                 <property name="leftMargin">
@@ -1188,7 +1188,7 @@
              <item>
               <widget class="QGroupBox" name="groupGameProtocol">
                <property name="title">
-                <string>Protocol</string>
+                <string>Output</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_4">
                 <property name="leftMargin">
