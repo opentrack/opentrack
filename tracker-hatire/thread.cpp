@@ -132,12 +132,14 @@ void hatire_thread::run()
     com_port.setFileName(HATIRE_DEBUG_LOGFILE);
     com_port.open(QIODevice::ReadOnly);
 
-    connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read);
     read_timer.start(10);
+    connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
 #else
     connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read);
 #endif
     (void) exec();
+
+    read_timer.stop();
 }
 
 serial_result hatire_thread::init_serial_port_impl()
@@ -291,7 +293,7 @@ void hatire_thread::on_serial_read()
 #else
         QByteArray tmp = com_port.read(30);
         data_read += tmp;
-        if (tmp.length() == 0)
+        if (tmp.length() == 0 && read_timer.isActive())
         {
             qDebug() << "eof";
             read_timer.stop();
@@ -302,7 +304,7 @@ void hatire_thread::on_serial_read()
     stat.input(timer.elapsed_ms());
     timer.start();
 
-    if (throttle_timer.elapsed_ms() >= 1000)
+    if (throttle_timer.elapsed_ms() >= 3000)
     {
         throttle_timer.start();
         qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
