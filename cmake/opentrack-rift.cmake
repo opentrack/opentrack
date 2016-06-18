@@ -1,5 +1,5 @@
 function(opentrack_rift_boilerplate proj opt)
-    if(opt)
+    if(${opt})
         set(link-flags)
         set(c-flags)
         if(APPLE)
