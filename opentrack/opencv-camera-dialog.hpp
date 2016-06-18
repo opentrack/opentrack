@@ -57,9 +57,9 @@ public:
         int idx = camera_name_to_index(camera_name);
         QProcess::startDetached("qv4l2", QStringList() << "-d" << ("/dev/video" + QString::number(idx)));
     }
+#elif defined(_WIN32)
     void open_camera_settings(cv::VideoCapture* cap, const QString& camera_name, QMutex* camera_mtx)
     {
-#elif defined(_WIN32)
         if (cap)
         {
             QMutexLocker l(camera_mtx);
