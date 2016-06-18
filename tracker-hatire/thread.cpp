@@ -122,11 +122,11 @@ void hatire_thread::teardown_serial()
 
 void hatire_thread::run()
 {
-    connect(this, &QThread::finished, this, &hatire_thread::teardown_serial);
-    connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl);
-    connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl);
-    connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl);
-    connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl);
+    connect(this, &QThread::finished, this, &hatire_thread::teardown_serial, Qt::DirectConnection);
+    connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl, Qt::QueuedConnection);
+    connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl, Qt::QueuedConnection);
+    connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl, Qt::QueuedConnection);
+    connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl, Qt::QueuedConnection);
 
 #ifdef HATIRE_DEBUG_LOGFILE
     com_port.setFileName(HATIRE_DEBUG_LOGFILE);
@@ -135,7 +135,7 @@ void hatire_thread::run()
     read_timer.start(10);
     connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
 #else
-    connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read);
+    connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
 #endif
     (void) exec();
 
