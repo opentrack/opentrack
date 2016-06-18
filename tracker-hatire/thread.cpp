@@ -133,7 +133,7 @@ void hatire_thread::run()
     com_port.open(QIODevice::ReadOnly);
 
     connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read);
-    read_timer.start(1);
+    read_timer.start(10);
 #else
     connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read);
 #endif
