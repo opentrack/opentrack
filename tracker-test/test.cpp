@@ -32,6 +32,10 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
     t.start();
 }
 
+#ifdef EMIT_NAN
+#   include <cstdlib>
+#endif
+
 void FTNoIR_Tracker::data(double *data)
 {
     using std::fmod;
@@ -42,28 +46,36 @@ void FTNoIR_Tracker::data(double *data)
     const double dt = t.elapsed_seconds();
     t.start();
 
-    for (int i = 0; i < 6; i++)
+#ifdef EMIT_NAN
+    if ((rand()%4) == 0)
     {
-        double x = fmod(last_x[i] + incr[i] * d2r * dt,
-                        2 * pi);
-        last_x[i] = x;
-
-        if (i >= 3)
+        for (int i = 0; i < 6; i++)
+            data[i] = 0./0.;
+    }
+    else
+#endif
+        for (int i = 0; i < 6; i++)
         {
-#if 0
-            if (x > pi + pi/2)
-                x -= pi;
-            else if (x > pi/2 && x < pi)
-                x += pi;
+            double x = fmod(last_x[i] + incr[i] * d2r * dt,
+                            2 * pi);
+            last_x[i] = x;
+
+            if (i >= 3)
+            {
+#ifdef DISCONTINUITY
+                if (x > pi + pi/2)
+                    x -= pi;
+                else if (x > pi/2 && x < pi)
+                    x += pi;
 #endif
 
-            data[i] = sin(x) * 180;
+                data[i] = sin(x) * 180;
+            }
+            else
+            {
+                data[i] = sin(x) * 100;
+            }
         }
-        else
-        {
-            data[i] = sin(x) * 100;
-        }
-    }
 }
 
 TrackerControls::TrackerControls()
