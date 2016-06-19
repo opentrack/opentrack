@@ -77,11 +77,6 @@ void hatire_thread::Log(const QString& message)
 
 void hatire_thread::start()
 {
-    com_port.moveToThread(this);
-#ifdef HATIRE_DEBUG_LOGFILE
-    read_timer.moveToThread(this);
-#endif
-
     QThread::start();
 }
 
@@ -100,6 +95,13 @@ hatire_thread::hatire_thread()
     connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl, Qt::QueuedConnection);
+
+    com_port.moveToThread(this);
+#ifdef HATIRE_DEBUG_LOGFILE
+    read_timer.moveToThread(this);
+#endif
+
+    connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
 }
 
 void hatire_thread::teardown_serial()
@@ -135,8 +137,6 @@ void hatire_thread::run()
 
     read_timer.start(10);
     connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
-#else
-    connect(&com_port, &serial_t::readyRead, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
 #endif
     (void) exec();
 
