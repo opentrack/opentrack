@@ -24,9 +24,12 @@
 #   define SPLINE_WIDGET_EXPORT Q_DECL_IMPORT
 #endif
 
-class SPLINE_WIDGET_EXPORT Map {
+class SPLINE_WIDGET_EXPORT Map
+{
 private:
-    static constexpr int value_count = 10000;
+    int precision() const;
+    void reload();
+    float getValueInternal(int x);
 
     struct State
     {
@@ -35,16 +38,13 @@ private:
         bool operator==(const State& s) const;
     };
 
-    int precision() const;
-    void reload();
-    float getValueInternal(int x);
-
     MyMutex _mutex;
     QPointF last_input_value;
-    qreal max_x;
-    qreal max_y;
-    volatile bool activep;
     State cur, saved;
+    qreal max_x, max_y;
+    volatile bool activep;
+
+    static constexpr int value_count = 10000;
 public:
     qreal maxInput() const;
     qreal maxOutput() const;
