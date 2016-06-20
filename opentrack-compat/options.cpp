@@ -245,11 +245,6 @@ OPENTRACK_COMPAT_EXPORT opt_singleton& singleton()
 
 } // end options::detail
 
-slider_value::operator double() const
-{
-    return cur_;
-}
-
 slider_value::slider_value(double cur, double min, double max) :
     cur_(cur),
     min_(min),
