@@ -13,11 +13,17 @@
     <height>380</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>EWMA2 filter settings</string>
+   <string>EWMA filter settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ewma-filter.qrc">
+   <iconset resource="../gui/ui-res.qrc">
     <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -39,6 +45,53 @@
       <property name="bottomMargin">
        <number>2</number>
       </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblInvert1_7">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Max</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSlider" name="maxSmooth">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>5</number>
+        </property>
+        <property name="pageStep">
+         <number>50</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="lblInvert1_6">
         <property name="sizePolicy">
@@ -73,13 +126,16 @@
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>1000</number>
         </property>
-        <property name="pageStep">
+        <property name="singleStep">
          <number>5</number>
         </property>
+        <property name="pageStep">
+         <number>50</number>
+        </property>
         <property name="value">
-         <number>2</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -89,113 +145,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QSpinBox" name="spinMinSmooth">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background:none;</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::PlusMinus</enum>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>120</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-        <property name="value">
-         <number>2</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="lblInvert1_7">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>Max</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSlider" name="maxSmooth">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="pageStep">
-         <number>5</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::NoTicks</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QSpinBox" name="spinMaxSmooth">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background:none;</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::PlusMinus</enum>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>120</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="lblInvert1_8">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -211,7 +161,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QSlider" name="powCurve">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -220,16 +170,19 @@
          </sizepolicy>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>1000</number>
         </property>
-        <property name="pageStep">
+        <property name="singleStep">
          <number>5</number>
         </property>
+        <property name="pageStep">
+         <number>50</number>
+        </property>
         <property name="value">
-         <number>10</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -239,31 +192,51 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QSpinBox" name="spinPowCurve">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="0" column="2">
+       <widget class="QLabel" name="min_label">
+        <property name="minimumSize">
+         <size>
+          <width>45</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">background:none;</string>
+        <property name="text">
+         <string>100%</string>
         </property>
-        <property name="readOnly">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::PlusMinus</enum>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="max_label">
+        <property name="minimumSize">
+         <size>
+          <width>45</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="maximum">
-         <number>100</number>
+        <property name="text">
+         <string>100%</string>
         </property>
-        <property name="singleStep">
-         <number>5</number>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="value">
-         <number>10</number>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLabel" name="curve_label">
+        <property name="minimumSize">
+         <size>
+          <width>45</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>100%</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -312,58 +285,9 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="ewma-filter.qrc"/>
+  <include location="../gui/ui-res.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>minSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinMinSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>303</x>
-     <y>33</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>391</x>
-     <y>36</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>maxSmooth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinMaxSmooth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>281</x>
-     <y>61</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>390</x>
-     <y>74</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>powCurve</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinPowCurve</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>236</x>
-     <y>101</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>391</x>
-     <y>98</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
   <slot>stopEngineClicked()</slot>
