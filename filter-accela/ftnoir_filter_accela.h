@@ -25,7 +25,7 @@ struct settings_accela : opts {
     static constexpr double mult_ewma = 1.25;
     settings_accela() :
         opts("Accela"),
-        rot_threshold(b, "rotation-threshold", 30),
+        rot_threshold(b, "rotation-threshold", 45),
         trans_threshold(b, "translation-threshold", 50),
         ewma(b, "ewma", 2),
         rot_deadzone(b, "rotation-deadzone", 0),
