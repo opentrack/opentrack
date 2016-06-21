@@ -120,7 +120,9 @@ void Tracker_PT::run()
 
             std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
             {
-                auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
+                using std::round;
+                cv::Point p2(round(p[0] * frame_.cols + frame_.cols/2),
+                             round(-p[1] * frame_.cols + frame_.rows/2));
                 cv::line(frame_,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
