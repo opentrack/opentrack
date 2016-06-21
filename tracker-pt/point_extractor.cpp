@@ -13,6 +13,8 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
+#include <cmath>
+
 PointExtractor::PointExtractor()
 {
     blobs.reserve(max_blobs);
@@ -81,7 +83,13 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
 
     for (auto& c : contours)
     {
+        using std::fabs;
+
         const auto m = cv::moments(cv::Mat(c));
+
+        if (fabs(m.m00) < 1e-3)
+            continue;
+
         const cv::Vec2d pos(m.m10 / m.m00, m.m01 / m.m00);
 
         double radius;
