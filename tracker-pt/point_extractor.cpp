@@ -59,7 +59,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         const int sz = hist.cols * hist.rows;
         int val = 0;
         int cnt = 0;
-        constexpr int min_pixels = 400;
+        constexpr int min_pixels = int(10 * 10 * 3 * pi);
         const int pixels_to_include = std::max<int>(0, min_pixels * s.threshold / 255);
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i >= 0; i--)
@@ -132,22 +132,21 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
         }
 
         blobs.push_back(blob(radius, pos, confid));
-        
+
         if (blobs.size() == max_blobs)
             break;
     }
-    
+
     using b = const blob;
     std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
-    
+
     QMutexLocker l(&mtx);
     points.clear();
-    
+
     for (auto& b : blobs)
     {
         cv::Vec2f p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
         points.push_back(p);
     }
-    
     return points;
 }

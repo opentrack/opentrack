@@ -25,7 +25,7 @@ public:
     const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
     int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
     PointExtractor();
-    
+
     settings_pt s;
 private:
     static constexpr double pi = 3.14159265359;
