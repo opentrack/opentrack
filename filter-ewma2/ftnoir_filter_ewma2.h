@@ -15,7 +15,7 @@ struct settings : opts {
         opts("ewma-filter"),
         kMinSmoothing(b, "min-smoothing", slider_value(.02, .01, 1)),
         kMaxSmoothing(b, "max-smoothing", slider_value(.7, .01, 1)),
-        kSmoothingScaleCurve(b, "smoothing-scale-curve", slider_value(.7, .01, 1))
+        kSmoothingScaleCurve(b, "smoothing-scale-curve", slider_value(.7, .01, 2))
     {}
 };
 
