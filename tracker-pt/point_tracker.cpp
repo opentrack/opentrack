@@ -13,8 +13,6 @@
 
 #include <QDebug>
 
-const float PI = 3.14159265358979323846f;
-
 static void get_row(const cv::Matx33f& m, int i, cv::Vec3f& v)
 {
     v[0] = m(i,0);

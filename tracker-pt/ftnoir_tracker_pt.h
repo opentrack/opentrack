@@ -31,6 +31,8 @@ class TrackerDialog_PT;
 // Constantly processes the tracking chain in a separate thread
 class Tracker_PT : public QThread, public ITracker
 {
+    static constexpr double pi = 3.14159265359;
+
     Q_OBJECT
     friend class camera_dialog;
     friend class TrackerDialog_PT;

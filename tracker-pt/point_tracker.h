@@ -118,6 +118,8 @@ public:
     Affine pose() { QMutexLocker l(&mtx); return X_CM; }
     cv::Vec2f project(const cv::Vec3f& v_M, float f);
 private:
+    static constexpr float PI = 3.14159265358979323846f;
+
     // the points in model order
     struct PointOrder
     {

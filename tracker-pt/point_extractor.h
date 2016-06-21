@@ -28,7 +28,9 @@ public:
     
     settings_pt s;
 private:
-    enum { hist_c = 2 };
+    static constexpr double pi = 3.14159265359;
+    static constexpr int hist_c = 1;
+
     std::vector<cv::Vec2f> points;
     QMutex mtx;
     cv::Mat frame_gray;
