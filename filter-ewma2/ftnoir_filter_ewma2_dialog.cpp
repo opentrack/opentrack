@@ -28,6 +28,8 @@ FilterControls::FilterControls()
 
     connect(ui.maxSmooth, &QSlider::valueChanged, this,
             [&](int v) -> void { if (ui.minSmooth->value() > v) ui.minSmooth->setValue(v); });
+
+    update_labels(0);
 }
 
 void FilterControls::doOK()
