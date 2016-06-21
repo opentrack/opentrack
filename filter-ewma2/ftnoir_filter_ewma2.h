@@ -26,8 +26,8 @@ public:
     FTNoIR_Filter();
     void filter(const double *input, double *output);
 private:
-    // Deltas are smoothed over the last 1/20sec.
-    const double delta_RC = 1./20;
+    // Deltas are smoothed over the last 1/60sec.
+    const double delta_RC = 1./60;
     // Noise is smoothed over the last 60sec.
     const double noise_RC = 60.0;
     double last_delta[6];
