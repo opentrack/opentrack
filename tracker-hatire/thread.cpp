@@ -96,7 +96,7 @@ hatire_thread::hatire_thread()
     connect(this, &hatire_thread::sendcmd, this, &hatire_thread::sendcmd_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::sendcmd_str, this, &hatire_thread::sendcmd_str_impl, Qt::QueuedConnection);
 
-    com_port.moveToThread(this);
+    //com_port.moveToThread(this);
 #ifdef HATIRE_DEBUG_LOGFILE
     read_timer.moveToThread(this);
 #endif
