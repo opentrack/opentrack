@@ -18,7 +18,6 @@
 
 #ifdef __linux
 #   include <QProcess>
-#else
 #   include "opentrack-compat/sleep.hpp"
 #endif
 
