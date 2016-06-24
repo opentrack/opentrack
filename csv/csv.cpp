@@ -91,7 +91,7 @@ bool CSV::parseLine(QStringList& ret)
     return true;
 }
 
-bool CSV::getGameData(const int id, unsigned char* table, QString& gamename)
+bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 {
     for (int i = 0; i < 8; i++)
         table[i] = 0;

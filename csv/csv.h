@@ -7,20 +7,16 @@
 #include <QRegExp>
 #include <QtGlobal>
 
-#ifdef BUILD_csv
-#   define CSV_EXPORT Q_DECL_EXPORT
-#else
-#   define CSV_EXPORT Q_DECL_IMPORT
-#endif
+#include "export.hpp"
 
-class CSV_EXPORT CSV
+class OPENTRACK_CSV_EXPORT CSV
 {
 public:
     QString readLine();
     bool parseLine(QStringList& ret);
 
     void setCodec(const char* codecName);
-    static bool getGameData(const int gameID, unsigned char* table, QString& gamename);
+    static bool getGameData(int gameID, unsigned char* table, QString& gamename);
 private:
     CSV(QIODevice* device);
 

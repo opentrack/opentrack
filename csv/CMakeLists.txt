@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-csv STATIC)
+opentrack_boilerplate(opentrack-csv)
