@@ -9,16 +9,20 @@
 
 #include "ui_aruco-trackercontrols.h"
 #include "ar_video_widget.h"
+#include "opentrack-compat/options.hpp"
+#include "trans_calib.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack/opencv-camera-dialog.hpp"
+#include "include/markerdetector.h"
+
 #include <QObject>
 #include <QThread>
 #include <QMutex>
 #include <QHBoxLayout>
 #include <QDialog>
 #include <QTimer>
-#include "opentrack-compat/options.hpp"
-#include "trans_calib.h"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack/opencv-camera-dialog.hpp"
+
+#include <cinttypes>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -48,7 +52,7 @@ class Tracker : protected QThread, public ITracker
 {
     Q_OBJECT
     friend class TrackerControls;
-    static constexpr double c_search_window = 1.3;
+    static constexpr float c_search_window = 1.3f;
 public:
     Tracker();
     ~Tracker() override;
@@ -57,6 +61,19 @@ public:
     void run() override;
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
 private:
+    bool detect_with_roi();
+    bool detect_without_roi();
+    bool open_camera();
+    void set_intrinsics();
+    void update_fps(double dt);
+    void draw_ar(bool ok);
+    void clamp_last_roi();
+    void set_points();
+    void draw_centroid();
+    bool set_last_roi();
+    void set_rmat();
+    void set_roi_from_projection();
+
     cv::VideoCapture camera;
     QMutex camera_mtx;
     QMutex mtx;
@@ -65,9 +82,29 @@ private:
     ArucoVideoWidget* videoWidget;
     settings s;
     double pose[6];
-    cv::Mat frame;
+    cv::Mat frame, grayscale, color;
     cv::Matx33d r;
+    std::vector<cv::Point3f> obj_points;
+    cv::Matx33d intrinsics;
+    cv::Matx14f dist_coeffs;
+    aruco::MarkerDetector detector;
+    std::vector<aruco::Marker> markers;
     cv::Vec3d t;
+    cv::Vec3d rvec, tvec, rvec_, tvec_;
+    std::vector<cv::Point2f> roi_projection;
+    std::vector<cv::Point2f> repr2;
+    std::vector<cv::Point3f> centroid;
+    cv::Matx33d m_r, m_q, rmat;
+    cv::Vec3d euler;
+    std::vector<cv::Point3f> roi_points;
+    cv::Rect last_roi;
+    double freq, cur_fps;
+    std::uint64_t last_time;
+
+    static constexpr float size_min = 0.05f;
+    static constexpr float size_max = 0.3f;
+
+    static constexpr double alpha_ = .985;
 };
 
 class TrackerControls : public ITrackerDialog, protected camera_dialog
