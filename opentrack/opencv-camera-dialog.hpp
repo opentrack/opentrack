@@ -18,8 +18,9 @@
 
 #ifdef __linux
 #   include <QProcess>
-#   include "opentrack-compat/sleep.hpp"
 #endif
+
+#include "opentrack-compat/sleep.hpp"
 
 #ifdef _WIN32
 #   include <objbase.h>
