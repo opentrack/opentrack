@@ -6,15 +6,19 @@
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 1)
 
+unset(c)
+unset(e)
 # specify the cross compiler
-set(p C:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin)
-set(c ${p}/i686-w64-mingw32-)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    set(p C:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin/)
+    set(e .exe)
+endif()
+set(c ${p}i686-w64-mingw32-)
 #set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
 
-set(e .exe)
 
-SET(CMAKE_C_COMPILER    ${c}cc${e})
-SET(CMAKE_CXX_COMPILER  ${c}c++${e})
+SET(CMAKE_C_COMPILER    ${c}gcc${e})
+SET(CMAKE_CXX_COMPILER  ${c}g++${e})
 set(CMAKE_RC_COMPILER   ${c}windres${e})
 set(CMAKE_LINKER        ${c}ld${e})
 set(CMAKE_AR            ${c}gcc-ar${e}      CACHE STRING "" FORCE)
@@ -35,7 +39,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -mfpmath=both -mstackrealign -ftree-vectorize")
 set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -frename-registers -fno-PIC")
-set(lto "-flto -fuse-linker-plugin -flto-compression-level=3 -fno-fat-lto-objects -flto-partition=balanced -fno-ipa-pta")
+set(lto "-flto -fuse-linker-plugin -flto-compression-level=3 -flto-partition=balanced -fno-ipa-pta")
 
 set(_CFLAGS " -fvisibility=hidden ")
 set(_CXXFLAGS "${_CFLAGS}")
