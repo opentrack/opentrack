@@ -43,7 +43,6 @@ Tracker::Tracker() :
     obj_points(4),
     intrinsics(decltype(intrinsics)::eye()),
     dist_coeffs(decltype(dist_coeffs)::zeros()),
-    centroid { cv::Point3f(0, 0, 0) },
     rmat(decltype(rmat)::eye()),
     roi_points(4),
     last_roi(65535, 65535, 0, 0),
@@ -98,25 +97,29 @@ void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 
 bool Tracker::detect_with_roi()
 {
-    if (last_roi.width > 0)
+    if (last_roi.width > 1 && last_roi.height > 1)
     {
-        detector.setMinMaxSize(std::min(1.f, std::max(0.01f, size_min * grayscale.cols / last_roi.width)),
-                               std::max(.01f, std::min(1.0f, size_max * grayscale.cols / last_roi.width)));
+        float min = std::min(1.f, std::max(.01f, size_min * grayscale.cols / last_roi.width));
+        float max = std::max(.01f, std::min(1.f, size_max * grayscale.cols / last_roi.width));
+        detector.setMinMaxSize(min, max);
 
-        detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false);
+        cv::Mat grayscale_ = grayscale(last_roi);
+
+        detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false);
 
         if (markers.size() == 1 && markers[0].size() == 4)
         {
-            auto& m = markers.at(0);
+            auto& m = markers[0];
             for (unsigned i = 0; i < 4; i++)
             {
-                auto& p = m.at(i);
+                auto& p = m[i];
                 p.x += last_roi.x;
                 p.y += last_roi.y;
             }
             return true;
         }
     }
+
     last_roi = cv::Rect(65535, 65535, 0, 0);
     return false;
 }
@@ -203,13 +206,14 @@ void Tracker::draw_ar(bool ok)
 {
     if (ok)
     {
-        const auto& m = markers.at(0);
+        const auto& m = markers[0];
         for (unsigned i = 0; i < 4; i++)
             cv::line(frame, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 2, 8);
     }
 
     char buf[32];
-    ::sprintf(buf, "Hz: %d", (unsigned short)cur_fps);
+    ::snprintf(buf, sizeof(buf)-1, "Hz: %d", (int)(unsigned short)cur_fps);
+    buf[sizeof(buf)-1] = '\0';
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 
@@ -219,10 +223,10 @@ void Tracker::clamp_last_roi()
         last_roi.x = 0;
     if (last_roi.y < 0)
         last_roi.y = 0;
-    if (last_roi.width < 0)
-        last_roi.width = 0;
-    if (last_roi.height < 0)
-        last_roi.height = 0;
+    if (last_roi.width < 1)
+        last_roi.width = 1;
+    if (last_roi.height < 1)
+        last_roi.height = 1;
     if (last_roi.x >= color.cols-1)
         last_roi.x = color.cols-1;
     if (last_roi.width >= color.cols-1)
@@ -231,6 +235,9 @@ void Tracker::clamp_last_roi()
         last_roi.y = color.rows-1;
     if (last_roi.height >= color.rows-1)
         last_roi.height = color.rows-1;
+
+    last_roi.width -= last_roi.x;
+    last_roi.height -= last_roi.y;
 }
 
 void Tracker::set_points()
@@ -251,30 +258,30 @@ void Tracker::set_points()
 void Tracker::draw_centroid()
 {
     repr2.clear();
+
+    static const std::vector<cv::Point3f> centroid { cv::Point3f(0, 0, 0) };
+
     cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
 
     auto s = cv::Scalar(255, 0, 255);
-    cv::circle(frame, repr2.at(0), 4, s, -1);
+    cv::circle(frame, repr2[0], 4, s, -1);
 }
 
-bool Tracker::set_last_roi()
+void Tracker::set_last_roi()
 {
     roi_projection.clear();
 
-    if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec_, tvec_, false, cv::SOLVEPNP_ITERATIVE))
-        return false;
-
+    using f = float;
+    cv::Point3f h(f(s.headpos_x), f(s.headpos_y), f(s.headpos_z));
     for (unsigned i = 0; i < 4; i++)
     {
-        using f = float;
-        cv::Point3f pt(obj_points[i] - cv::Point3f(f(s.headpos_x), f(s.headpos_y), f(s.headpos_z)));
+        cv::Point3f pt(obj_points[i] - h);
         roi_points[i] = pt * c_search_window;
     }
-    cv::projectPoints(roi_points, rvec_, tvec_, intrinsics, dist_coeffs, roi_projection);
+
+    cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
 
     set_roi_from_projection();
-
-    return true;
 }
 
 void Tracker::set_rmat()
@@ -316,9 +323,6 @@ void Tracker::set_roi_from_projection()
         last_roi.height = max_y;
     }
 
-    last_roi.width -= last_roi.x;
-    last_roi.height -= last_roi.y;
-
     clamp_last_roi();
 }
 
@@ -346,9 +350,11 @@ void Tracker::run()
         }
 
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
+
         color.copyTo(frame);
 
         set_intrinsics();
+
         update_fps(alpha_);
 
         markers.clear();
@@ -362,9 +368,7 @@ void Tracker::run()
             if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
                 goto fail;
 
-            if (!set_last_roi())
-                goto fail;
-
+            set_last_roi();
             draw_centroid();
             set_rmat();
         }

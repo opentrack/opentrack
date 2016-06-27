@@ -70,7 +70,7 @@ private:
     void clamp_last_roi();
     void set_points();
     void draw_centroid();
-    bool set_last_roi();
+    void set_last_roi();
     void set_rmat();
     void set_roi_from_projection();
 
@@ -90,10 +90,9 @@ private:
     aruco::MarkerDetector detector;
     std::vector<aruco::Marker> markers;
     cv::Vec3d t;
-    cv::Vec3d rvec, tvec, rvec_, tvec_;
+    cv::Vec3d rvec, tvec;
     std::vector<cv::Point2f> roi_projection;
     std::vector<cv::Point2f> repr2;
-    std::vector<cv::Point3f> centroid;
     cv::Matx33d m_r, m_q, rmat;
     cv::Vec3d euler;
     std::vector<cv::Point3f> roi_points;
@@ -104,7 +103,7 @@ private:
     static constexpr float size_min = 0.05f;
     static constexpr float size_max = 0.3f;
 
-    static constexpr double alpha_ = .985;
+    static constexpr double alpha_ = .95;
 };
 
 class TrackerControls : public ITrackerDialog, protected camera_dialog
