@@ -88,7 +88,7 @@ if(WARNINGS_ENABLE)
 endif()
 
 foreach(j C CXX)
-    foreach(i _DEBUG _RELEASE)
+    foreach(i "" _DEBUG _RELEASE)
         set(OVERRIDE_${j}_FLAGS${i} "" CACHE STRING "")
         set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}} ${OVERRIDE_${j}_FLAGS${i}}" CACHE STRING "" FORCE)
     endforeach()
