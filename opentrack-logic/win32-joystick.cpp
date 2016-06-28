@@ -1,14 +1,21 @@
+#ifdef _WIN32
+
 #undef NDEBUG
 #include <cassert>
+#include <algorithm>
 #include "win32-joystick.hpp"
+#include "opentrack-compat/sleep.hpp"
 
-#ifdef _WIN32
+QMutex win32_joy_ctx::enum_state::mtx;
+win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
 
 void win32_joy_ctx::poll(fn f)
 {
     //refresh(false);
 
-    QMutexLocker l(&mtx);
+    QMutexLocker l(&enumerator.mtx);
+
+    auto& joys = enumerator.get_joys();
 
     for (auto& j : joys)
     {
@@ -16,100 +23,115 @@ void win32_joy_ctx::poll(fn f)
     }
 }
 
-bool win32_joy_ctx::poll_axis(const QString &guid, int axes[])
+bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 {
-    //refresh(false);
+    QMutexLocker l(&enumerator.mtx);
 
-    QMutexLocker l(&mtx);
-
-    auto iter = joys.find(guid);
-
-    if (iter == joys.end())
-        return false;
-
-    auto& j = iter->second;
-
-    auto& joy_handle = j->joy_handle;
-    bool ok = false;
-    HRESULT hr;
-
-    (void) joy_handle->Acquire();
-
-    if (!FAILED(hr = joy_handle->Poll()))
-        ok = true;
-
-    if (!ok)
+    for (int k = 0; k < 10; k++)
     {
-        qDebug() << "joy acquire failed" << guid << hr;
-        (void) joy_handle->Unacquire();
-        return false;
+        if (k > 0)
+            enumerator.refresh();
+
+        const joys_t& joys = enumerator.get_joys();
+        auto iter = joys.find(guid);
+
+        if (iter == joys.end())
+            return false;
+
+        auto& j = iter->second;
+
+        auto& joy_handle = j->joy_handle;
+        bool ok = false;
+        HRESULT hr;
+
+        if (!FAILED(hr = joy_handle->Poll()))
+        {
+            ok = true;
+        }
+
+        if (!ok && FAILED(hr = joy_handle->Acquire()))
+        {
+            //qDebug() << "joy acquire failed" << hr;
+        }
+
+        if (!ok)
+        {
+            portable::sleep(25);
+            (void) joy_handle->Unacquire();
+            continue;
+        }
+
+        DIJOYSTATE2 js;
+        memset(&js, 0, sizeof(js));
+
+        if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
+        {
+            qDebug() << "joy get state failed" << guid << hr;
+            continue;
+        }
+
+        const int values[] =
+        {
+            js.lX,
+            js.lY,
+            js.lZ,
+            js.lRx,
+            js.lRy,
+            js.lRz,
+            js.rglSlider[0],
+            js.rglSlider[1]
+        };
+
+        for (int i = 0; i < 8; i++)
+            axes[i] = values[i];
+
+        return true;
     }
 
-    DIJOYSTATE2 js;
-    memset(&js, 0, sizeof(js));
-
-    if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
-    {
-        qDebug() << "joy get state failed" << guid << hr;
-        return false;
-    }
-
-    const int values[] = {
-        js.lX,
-        js.lY,
-        js.lZ,
-        js.lRx,
-        js.lRy,
-        js.lRz,
-        js.rglSlider[0],
-        js.rglSlider[1]
-    };
-
-    for (int i = 0; i < 8; i++)
-        axes[i] = values[i];
-
-    return true;
-}
-
-win32_joy_ctx::~win32_joy_ctx()
-{
-    release();
+    return false;
 }
 
 std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
 {
-    QMutexLocker l(&mtx);
-
     std::vector<joy_info> ret;
+    QMutexLocker l(&enumerator.mtx);
+    auto& joys = enumerator.get_joys();
+    ret.reserve(joys.size());
 
     for (auto& j : joys)
         ret.push_back(joy_info { j.second->name, j.first });
 
+    std::sort(ret.begin(), ret.end(), [&](const joy_info& fst, const joy_info& snd) -> bool { return fst.name < snd.name; });
+
     return ret;
+}
+
+win32_joy_ctx::di_t& win32_joy_ctx::make_di()
+{
+    static LPDIRECTINPUT8 di_ = nullptr;
+    if (di_ == nullptr)
+    {
+        if (SUCCEEDED(DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di_, NULL)))
+        {
+            return di_;
+        }
+        else
+        {
+            return di_ = nullptr;
+        }
+    }
+    return di_;
 }
 
 win32_joy_ctx::win32_joy_ctx()
 {
-    if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di, NULL) != DI_OK) {
-        qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
-        assert(!"direct input handle can't be created");
-    }
     refresh();
-}
-
-void win32_joy_ctx::release()
-{
-    joys = std::unordered_map<QString, std::shared_ptr<joy>>();
-    di->Release();
-    di = nullptr;
 }
 
 void win32_joy_ctx::refresh()
 {
-    QMutexLocker l(&mtx);
-
-    qDebug() << "joy list refresh";
-    enum_state st(joys, fake_main_window, di);
+    QMutexLocker l(&enumerator.mtx);
+    enumerator.refresh();
 }
 
 QString win32_joy_ctx::guid_to_string(const GUID guid)
@@ -177,13 +199,36 @@ bool win32_joy_ctx::joy::poll(fn f)
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_ptr<joy>> &joys_,
-                                      QMainWindow &fake_main_window,
-                                      LPDIRECTINPUT8 di) :
-    fake_main_window(fake_main_window),
-    di(di)
+win32_joy_ctx::enum_state::enum_state()
 {
-    joys = joys_;
+}
+
+win32_joy_ctx::enum_state::~enum_state()
+{
+    QMutexLocker l(&mtx);
+
+    di_t& di = make_di();
+    if (!di)
+    {
+        qDebug() << "can't create dinput";
+        return;
+    }
+
+    joys = std::unordered_map<QString, std::shared_ptr<joy>>();
+    di->Release();
+    di = nullptr;
+}
+
+void win32_joy_ctx::enum_state::refresh()
+{
+    all.clear();
+
+    di_t di = make_di();
+    if (!di)
+    {
+        qDebug() << "can't create dinput";
+        return;
+    }
 
     HRESULT hr;
 
@@ -198,31 +243,41 @@ win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_pt
 
     for (auto it = joys.begin(); it != joys.end(); )
     {
-        if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return it->second->guid == guid2; }) == all.cend())
+        if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return it->second->guid == guid2; }) == all.end())
+        {
             it = joys.erase(it);
+        }
         else
-            it++;
+        {
+            ++it;
+        }
     }
-
-    joys_ = joys;
 }
 
-win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
 {
+    di_t di = make_di();
+    if (!di)
+    {
+        qDebug() << "can't create dinput";
+        return DIENUM_STOP;
+    }
+
     enum_state& state = *reinterpret_cast<enum_state*>(pContext);
     const QString guid = guid_to_string(pdidInstance->guidInstance);
     const QString name = QString(pdidInstance->tszInstanceName);
 
-    auto it = state.joys.find(guid);
-    const bool exists = it != state.joys.end();
+    const bool exists = state.joys.find(guid) != state.joys.end();
 
     state.all.push_back(guid);
 
-    if (!exists)
+    if (exists)
+        goto end;
+
     {
         HRESULT hr;
         LPDIRECTINPUTDEVICE8 h;
-        if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
+        if (FAILED(hr = di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
             qDebug() << "createdevice" << guid << hr;
             goto end;
@@ -234,7 +289,10 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
             goto end;
         }
 
-        if (FAILED(h->SetCooperativeLevel((HWND) state.fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+        // not a static member - need main() to run for some time first
+        static const QWidget fake_window;
+
+        if (FAILED(h->SetCooperativeLevel(reinterpret_cast<HWND>(fake_window.winId()), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
         {
             qDebug() << "coop";
             h->Release();
@@ -247,14 +305,13 @@ win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidIns
             goto end;
         }
 
-        qDebug() << "add joy" << guid;
         state.joys[guid] = std::make_shared<joy>(h, guid, name);
     }
 end:
     return DIENUM_CONTINUE;
 }
 
-win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdidoi, void *ctx)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdidoi, void *ctx)
 {
     if (pdidoi->dwType & DIDFT_AXIS)
     {
@@ -282,7 +339,7 @@ win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdi
 win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const QString &name)
     : joy_handle(handle), guid(guid), name(name)
 {
-    qDebug() << "got joy" << guid;
+    qDebug() << "make joy" << guid << name << joy_handle;
     for (int i = 0; i < 128; i++)
         pressed[i] = false;
     memset(&js_old, 0, sizeof(js_old));

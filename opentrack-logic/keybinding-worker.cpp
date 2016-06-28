@@ -55,7 +55,7 @@ KeybindingWorker::KeybindingWorker() :
         din = 0;
         return;
     }
-    
+
     if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         din->Release();
@@ -165,7 +165,7 @@ KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
     QMutexLocker l(&mtx);
     receivers.push_back(std::unique_ptr<fun>(new fun(receiver)));
     fun* f = receivers[receivers.size() - 1].get();
-    qDebug() << "add receiver" << (long) f;
+    //qDebug() << "add receiver" << (long) f;
     joy_ctx.refresh();
     return f;
 }
@@ -175,12 +175,15 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
     QMutexLocker l(&mtx);
     bool ok = false;
 
-    for (int i = receivers.size() - 1; i >= 0; i--)
+    using s = int;
+
+    for (int i = s(receivers.size()) - 1; i >= 0; i--)
     {
-        if (receivers[i].get() == pos)
+        using u = unsigned;
+        if (receivers[u(i)].get() == pos)
         {
             ok = true;
-            qDebug() << "remove receiver" << (long) pos;
+            //qDebug() << "remove receiver" << (long) pos;
             receivers.erase(receivers.begin() + i);
             break;
         }

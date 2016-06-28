@@ -20,7 +20,7 @@
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QMainWindow>
+#include <QWidget>
 
 namespace std {
 template<>
@@ -35,32 +35,8 @@ struct hash<QString>
 
 struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
 {
+    using di_t = LPDIRECTINPUT8;
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
-
-    enum { joy_axis_size = 65535 };
-
-    struct joy_info
-    {
-        QString name, guid;
-    };
-
-    void poll(fn f);
-    bool poll_axis(const QString& guid, int axes[8]);
-    std::vector<joy_info> get_joy_info();
-
-    win32_joy_ctx(const win32_joy_ctx&) = delete;
-    win32_joy_ctx& operator=(const win32_joy_ctx&) = delete;
-
-    win32_joy_ctx();
-    ~win32_joy_ctx();
-    void refresh();
-private:
-    QMutex mtx;
-    QMainWindow fake_main_window;
-    LPDIRECTINPUT8 di;
-
-    static QString guid_to_string(const GUID guid);
-    void release();
 
     struct joy
     {
@@ -77,20 +53,46 @@ private:
         bool poll(fn f);
     };
 
-    std::unordered_map<QString, std::shared_ptr<joy>> joys;
+    using joys_t = std::unordered_map<QString, std::shared_ptr<joy>>;
 
-    class enum_state
+    static constexpr int joy_axis_size = 65535;
+
+    struct joy_info
     {
-        std::unordered_map<QString, std::shared_ptr<joy>> joys;
-        QMainWindow& fake_main_window;
-        LPDIRECTINPUT8 di;
+        QString name, guid;
+    };
 
+    void poll(fn f);
+    bool poll_axis(const QString& guid, int* axes);
+    std::vector<joy_info> get_joy_info();
+
+    win32_joy_ctx(const win32_joy_ctx&) = delete;
+    win32_joy_ctx& operator=(const win32_joy_ctx&) = delete;
+
+    win32_joy_ctx();
+    void refresh();
+    static di_t& make_di();
+private:
+    static QString guid_to_string(const GUID guid);
+
+    class enum_state final
+    {
         std::vector<QString> all;
+        joys_t joys;
+
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
+
     public:
-        enum_state(std::unordered_map<QString, std::shared_ptr<joy>>& joys, QMainWindow& fake_main_window, LPDIRECTINPUT8 di);
+        static QMutex mtx;
+
+        enum_state();
+        ~enum_state();
+        void refresh();
+        const joys_t& get_joys() const { return joys; }
     };
+
+    static enum_state enumerator;
 };
 
 #endif
