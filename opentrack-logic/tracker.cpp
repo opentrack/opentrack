@@ -63,13 +63,7 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
     output[0] = -ret(1);
 }
 
-#ifdef _WIN32
-__declspec(noinline) bool nanp(double value);
-#elif defined(__GNUC__)
-bool __attribute__ ((noinline)) nanp(double value);
-#else
-bool nanp(double value);
-#endif
+#include "nan.hpp"
 
 static inline double elide_nan(double value, double def)
 {
