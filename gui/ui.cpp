@@ -69,7 +69,7 @@ MainWindow::MainWindow() :
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profileSelected(QString)));
+    connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profile_selected(QString)));
 
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
@@ -172,7 +172,7 @@ void MainWindow::save_mappings()
 void MainWindow::save()
 {
     s.b->save();
-    save_mappings();
+    //save_mappings();
 
 #if defined(__unix) || defined(__linux)
     QString currentFile = group::ini_pathname();
@@ -189,6 +189,8 @@ void MainWindow::save()
 void MainWindow::load_mappings()
 {
     pose.load_mappings();
+    if (mapping_widget)
+        mapping_widget->reload();
 }
 
 void MainWindow::load_settings()
@@ -312,7 +314,7 @@ void MainWindow::startTracker()
 
     save();
 
-    work = std::make_shared<Work>(s, pose, libs, winId());
+    work = std::make_shared<Work>(pose, libs, winId());
 
     reload_options();
 
@@ -500,7 +502,7 @@ void MainWindow::show_options_dialog()
 
 void MainWindow::showCurveConfiguration()
 {
-    mk_window(&mapping_widget, pose, s);
+    mk_window(&mapping_widget, pose);
 }
 
 void MainWindow::exit()
@@ -508,7 +510,7 @@ void MainWindow::exit()
     QCoreApplication::exit(0);
 }
 
-void MainWindow::profileSelected(QString name)
+void MainWindow::profile_selected(const QString& name)
 {
     if (name == "" || is_refreshing_profiles)
         return;

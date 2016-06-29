@@ -48,7 +48,7 @@ class OPENTRACK_LOGIC_EXPORT Tracker : private QThread
     Q_OBJECT
 private:
     QMutex mtx;
-    main_settings& s;
+    main_settings s;
     Mappings& m;
 
     Timer t;
@@ -72,7 +72,7 @@ private:
     void t_compensate(const rmat& rmat, const double* ypr, double* output, bool rz);
     void run() override;
 public:
-    Tracker(main_settings& s, Mappings& m, SelectedLibraries& libs);
+    Tracker(Mappings& m, SelectedLibraries& libs);
     ~Tracker();
 
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;

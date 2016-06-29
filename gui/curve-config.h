@@ -7,7 +7,7 @@ class MapWidget: public QWidget
 {
     Q_OBJECT
 public:
-    MapWidget(Mappings &m, main_settings &s);
+    MapWidget(Mappings &m);
 private:
     Ui::UICCurveConfigurationDialog ui;
     Mappings& m;

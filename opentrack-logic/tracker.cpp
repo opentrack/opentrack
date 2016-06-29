@@ -21,8 +21,7 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker(main_settings& s, Mappings &m, SelectedLibraries &libs) :
-    s(s),
+Tracker::Tracker(Mappings &m, SelectedLibraries &libs) :
     m(m),
     newpose {0,0,0, 0,0,0},
     centerp(s.center_at_startup),

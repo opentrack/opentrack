@@ -22,7 +22,7 @@
 
 struct Work
 {
-    main_settings& s;
+    main_settings s;
     SelectedLibraries& libs;
     mem<Tracker> tracker;
     mem<Shortcuts> sc;
@@ -31,9 +31,9 @@ struct Work
     using tt = std::tuple<key_opts&, fn, bool>;
     std::vector<tt> keys;
 
-    Work(main_settings& s, Mappings& m, SelectedLibraries& libs, WId handle) :
-        s(s), libs(libs),
-        tracker(std::make_shared<Tracker>(s, m, libs)),
+    Work(Mappings& m, SelectedLibraries& libs, WId handle) :
+        libs(libs),
+        tracker(std::make_shared<Tracker>(m, libs)),
         sc(std::make_shared<Shortcuts>()),
         handle(handle),
         keys {

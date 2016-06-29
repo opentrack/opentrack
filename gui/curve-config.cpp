@@ -8,7 +8,7 @@
 
 #include "curve-config.h"
 #include "opentrack-logic/main-settings.hpp"
-MapWidget::MapWidget(Mappings& m, main_settings& s) :
+MapWidget::MapWidget(Mappings& m) :
     m(m)
 {
     ui.setupUi( this );
@@ -67,6 +67,8 @@ MapWidget::MapWidget(Mappings& m, main_settings& s) :
     setFont(qApp->font());
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+
+    main_settings s;
 
     tie_setting(s.a_x.altp, ui.tx_altp);
     tie_setting(s.a_y.altp, ui.ty_altp);
