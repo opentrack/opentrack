@@ -152,7 +152,7 @@ void OptionsDialog::doOK()
     main.b->save();
     ui.game_detector->save();
     close();
-    emit reload();
+    emit saving();
 }
 
 void OptionsDialog::doCancel()
