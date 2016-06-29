@@ -42,9 +42,8 @@ struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid, name;
-        bool pressed[128];
+        bool pressed[128 + 4 * 4];
         Timer first_timer;
-        DIJOYSTATE2 js_old;
 
         joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name);
         ~joy();

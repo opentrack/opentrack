@@ -2,7 +2,9 @@
 
 #undef NDEBUG
 #include <cassert>
+#include <cstring>
 #include <algorithm>
+#include <cmath>
 #include "win32-joystick.hpp"
 #include "opentrack-compat/sleep.hpp"
 
@@ -62,7 +64,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
         }
 
         DIJOYSTATE2 js;
-        memset(&js, 0, sizeof(js));
+        std::memset(&js, 0, sizeof(js));
 
         if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
         {
@@ -175,7 +177,7 @@ bool win32_joy_ctx::joy::poll(fn f)
     }
 
     DIJOYSTATE2 js;
-    memset(&js, 0, sizeof(js));
+    std::memset(&js, 0, sizeof(js));
 
     if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
     {
@@ -183,9 +185,46 @@ bool win32_joy_ctx::joy::poll(fn f)
         return false;
     }
 
+    for (unsigned i = 0; i < 4; i++)
+    {
+        using std::round;
+
+        unsigned char pos;
+        unsigned pos_ = js.rgdwPOV[i];
+        if ((pos_ & 0xffff) == 0xffff)
+            pos = 0;
+        else if (pos_ == ~0u)
+            pos = 0;
+        else
+        {
+            using uc = unsigned char;
+            pos = uc(((pos_ / 9000u) % 4u) + 1u);
+        }
+
+        const bool state[] =
+        {
+            pos == 1,
+            pos == 2,
+            pos == 3,
+            pos == 4
+        };
+
+        unsigned idx = 128u + i * 4u;
+
+        for (unsigned j = 0; j < 4; j++, idx++)
+        {
+            if (state[j] != pressed[idx])
+            {
+                f(guid, int(idx), state[j]);
+                qDebug() << "hat" << guid << i << "btn" << j << state[j];
+                pressed[idx] = state[j];
+            }
+        }
+    }
+
     for (int i = 0; i < 128; i++)
     {
-        const bool state = !!(js.rgbButtons[i] & 0x80) && js.rgbButtons[i] != js_old.rgbButtons[i];
+        const bool state = !!(js.rgbButtons[i] & 0x80);
         if (state != pressed[i])
         {
             f(guid, i, state);
@@ -193,8 +232,6 @@ bool win32_joy_ctx::joy::poll(fn f)
         }
         pressed[i] = state;
     }
-
-    js_old = js;
 
     return true;
 }
@@ -316,7 +353,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
     if (pdidoi->dwType & DIDFT_AXIS)
     {
         DIPROPRANGE diprg;
-        memset(&diprg, 0, sizeof(diprg));
+        std::memset(&diprg, 0, sizeof(diprg));
         diprg.diph.dwSize = sizeof( DIPROPRANGE );
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
@@ -340,9 +377,7 @@ win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const 
     : joy_handle(handle), guid(guid), name(name)
 {
     qDebug() << "make joy" << guid << name << joy_handle;
-    for (int i = 0; i < 128; i++)
-        pressed[i] = false;
-    memset(&js_old, 0, sizeof(js_old));
+    std::memset(pressed, 0, sizeof(pressed));
 }
 
 win32_joy_ctx::joy::~joy()
