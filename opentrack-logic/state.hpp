@@ -17,13 +17,15 @@ using namespace options;
 #include "selected-libraries.hpp"
 #include "work.hpp"
 
-struct State {
+struct State
+{
     State() :
         pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll})
     {}
     Modules modules;
     SelectedLibraries libs;
     main_settings s;
+    module_settings m;
     Mappings pose;
     mem<Work> work;
 };

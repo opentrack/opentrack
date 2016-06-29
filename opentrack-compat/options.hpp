@@ -203,8 +203,8 @@ namespace options {
          return detail::singleton().bundle(name);
     }
 
-#define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
-#define DEFINE_SIGNAL(t) void valueChanged(t)
+#define OPENTRACK_DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
+#define OPENTRACK_DEFINE_SIGNAL(t) void valueChanged(t)
 
     class OPENTRACK_COMPAT_EXPORT base_value : public QObject
     {
@@ -213,12 +213,12 @@ namespace options {
         QString name() const { return self_name; }
         base_value(pbundle b, const QString& name);
     signals:
-        DEFINE_SIGNAL(double);
-        DEFINE_SIGNAL(float);
-        DEFINE_SIGNAL(int);
-        DEFINE_SIGNAL(bool);
-        DEFINE_SIGNAL(QString);
-        DEFINE_SIGNAL(slider_value);
+        OPENTRACK_DEFINE_SIGNAL(double);
+        OPENTRACK_DEFINE_SIGNAL(float);
+        OPENTRACK_DEFINE_SIGNAL(int);
+        OPENTRACK_DEFINE_SIGNAL(bool);
+        OPENTRACK_DEFINE_SIGNAL(const QString&);
+        OPENTRACK_DEFINE_SIGNAL(const slider_value&);
     protected:
         pbundle b;
         QString self_name;
@@ -235,11 +235,11 @@ namespace options {
         }
 
     public slots:
-        DEFINE_SLOT(double)
-        DEFINE_SLOT(int)
-        DEFINE_SLOT(QString)
-        DEFINE_SLOT(bool)
-        DEFINE_SLOT(slider_value)
+        OPENTRACK_DEFINE_SLOT(double)
+        OPENTRACK_DEFINE_SLOT(int)
+        OPENTRACK_DEFINE_SLOT(QString)
+        OPENTRACK_DEFINE_SLOT(bool)
+        OPENTRACK_DEFINE_SLOT(slider_value)
     public slots:
         virtual void reload() = 0;
     };

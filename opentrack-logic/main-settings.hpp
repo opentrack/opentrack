@@ -47,9 +47,22 @@ struct key_opts
     {}
 };
 
+struct module_settings
+{
+    pbundle b;
+    value<QString> tracker_dll, filter_dll, protocol_dll;
+    module_settings() :
+        b(bundle("modules")),
+        tracker_dll(b, "tracker-dll", ""),
+        filter_dll(b, "filter-dll", "Accela"),
+        protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced")
+    {
+    }
+};
+
 struct main_settings
 {
-    value<QString> tracker_dll, filter_dll, protocol_dll;
+    pbundle b;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
@@ -60,10 +73,7 @@ struct main_settings
     key_opts key_center, key_toggle, key_zero;
     key_opts key_toggle_press, key_zero_press;
     main_settings() :
-        opts("opentrack-ui"),
-        tracker_dll(b, "tracker-dll", ""),
-        filter_dll(b, "filter-dll", "Accela"),
-        protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced"),
+        b(bundle("opentrack-ui")),
         a_x(b, "x", TX),
         a_y(b, "y", TY),
         a_z(b, "z", TZ),

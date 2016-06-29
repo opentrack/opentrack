@@ -51,21 +51,21 @@ MainWindow::MainWindow() :
     connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
     config_list_timer.start(1000 * 3);
 
-    tie_setting(s.tracker_dll, ui.iconcomboTrackerSource);
-    tie_setting(s.protocol_dll, ui.iconcomboProtocol);
-    tie_setting(s.filter_dll, ui.iconcomboFilter);
+    tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
+    tie_setting(m.protocol_dll, ui.iconcomboProtocol);
+    tie_setting(m.filter_dll, ui.iconcomboFilter);
 
     connect(ui.iconcomboTrackerSource,
             &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save(); });
+            [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
 
     connect(ui.iconcomboProtocol,
             &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save(); });
+            [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
 
     connect(ui.iconcomboFilter,
             &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save(); });
+            [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
 
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
@@ -146,36 +146,8 @@ void MainWindow::register_shortcuts()
         work->reload_shortcuts();
 }
 
-bool MainWindow::get_new_config_name_from_dialog(QString& ret)
+void MainWindow::warn_on_config_not_writable()
 {
-    new_file_dialog dlg;
-    dlg.exec();
-    return dlg.is_ok(ret);
-}
-
-MainWindow::~MainWindow()
-{
-    if (tray)
-        tray->hide();
-    stopTracker();
-    save();
-}
-
-void MainWindow::set_working_directory()
-{
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-}
-
-void MainWindow::save_mappings()
-{
-    pose.save_mappings();
-}
-
-void MainWindow::save()
-{
-    s.b->save();
-    //save_mappings();
-
 #if defined(__unix) || defined(__linux)
     QString currentFile = group::ini_pathname();
     QByteArray bytes = QFile::encodeName(currentFile);
@@ -188,6 +160,32 @@ void MainWindow::save()
 #endif
 }
 
+bool MainWindow::get_new_config_name_from_dialog(QString& ret)
+{
+    new_file_dialog dlg;
+    dlg.exec();
+    return dlg.is_ok(ret);
+}
+
+MainWindow::~MainWindow()
+{
+    if (tray)
+        tray->hide();
+    stopTracker();
+    save_modules();
+}
+
+void MainWindow::set_working_directory()
+{
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+}
+
+void MainWindow::save_modules()
+{
+    m.b->save();
+    warn_on_config_not_writable();
+}
+
 void MainWindow::load_mappings()
 {
     pose.load_mappings();
@@ -197,6 +195,7 @@ void MainWindow::load_mappings()
 
 void MainWindow::load_settings()
 {
+    m.b->reload();
     s.b->reload();
     load_mappings();
 }
@@ -314,7 +313,7 @@ void MainWindow::startTracker()
         return;
     }
 
-    save();
+    save_modules();
 
     work = std::make_shared<Work>(pose, libs, winId());
 
@@ -358,7 +357,7 @@ void MainWindow::stopTracker()
     if (pFilterDialog)
         pFilterDialog->unregister_filter();
 
-    save();
+    save_modules();
 
     work = nullptr;
     libs = SelectedLibraries();
@@ -522,7 +521,7 @@ void MainWindow::profile_selected(const QString& name)
 
     if (old_name != new_name)
     {
-        save();
+        save_modules();
 
         {
             QSettings settings(OPENTRACK_ORG);

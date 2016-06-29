@@ -72,6 +72,7 @@ class MainWindow : public QMainWindow, private State
     void changeEvent(QEvent* e) override;
 
     void load_settings();
+    void load_mappings();
     void updateButtonState(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
@@ -79,8 +80,9 @@ class MainWindow : public QMainWindow, private State
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile(const QString& profile);
     void register_shortcuts();
+    void set_keys_enabled(bool flag);
 private slots:
-    void save();
+    void save_modules();
     void exit();
     void profile_selected(const QString& name);
 
@@ -113,8 +115,6 @@ signals:
 public:
     MainWindow();
     ~MainWindow();
-    void save_mappings();
-    void load_mappings();
     static void set_working_directory();
-    void set_keys_enabled(bool flag);
+    static void warn_on_config_not_writable();
 };
