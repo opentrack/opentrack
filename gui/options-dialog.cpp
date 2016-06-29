@@ -71,27 +71,36 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.center_method, ui.center_method);
 
-    connect(ui.bind_center, &QPushButton::pressed, [&]() -> void { bind_key(main.key_center, ui.center_text); });
-    connect(ui.bind_zero, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero, ui.zero_text); });
-    connect(ui.bind_toggle, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle, ui.toggle_text); });
-    connect(ui.bind_toggle_held, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle_press, ui.toggle_held_text); });
-    connect(ui.bind_zero_held, &QPushButton::pressed, [&]() -> void { bind_key(main.key_zero_press, ui.zero_held_text); });
+    struct tmp
+    {
+        key_opts& opt;
+        QLabel* label;
+        QPushButton* button;
+    } tuples[] =
+    {
+        { main.key_center, ui.center_text, ui.bind_center },
+        { main.key_toggle, ui.toggle_text, ui.bind_toggle },
+        { main.key_toggle_press, ui.toggle_held_text, ui.bind_toggle_held },
+        { main.key_zero, ui.zero_text, ui.bind_zero },
+        { main.key_zero_press, ui.zero_held_text, ui.bind_zero_held },
+        { main.key_start_tracking, ui.start_tracking_text, ui.bind_start },
+        { main.key_stop_tracking, ui.stop_tracking_text , ui.bind_stop},
+        { main.key_toggle_tracking, ui.toggle_tracking_text, ui.bind_toggle_tracking },
+        { main.key_restart_tracking, ui.restart_tracking_text, ui.bind_restart_tracking }
+    };
 
-    connect(ui.bind_start, &QPushButton::pressed, [&]() -> void { bind_key(main.key_start_tracking, ui.start_tracking_text); });
-    connect(ui.bind_stop, &QPushButton::pressed, [&]() -> void { bind_key(main.key_stop_tracking, ui.stop_tracking_text); });
-    connect(ui.bind_toggle_tracking, &QPushButton::pressed, [&]() -> void { bind_key(main.key_toggle_tracking, ui.toggle_tracking_text); });
-    connect(ui.bind_restart_tracking, &QPushButton::pressed, [&]() -> void { bind_key(main.key_restart_tracking, ui.restart_tracking_text); });
-
-    ui.center_text->setText(kopts_to_string(main.key_center));
-    ui.toggle_text->setText(kopts_to_string(main.key_toggle));
-    ui.toggle_held_text->setText(kopts_to_string(main.key_toggle_press));
-    ui.zero_text->setText(kopts_to_string(main.key_zero));
-    ui.zero_held_text->setText(kopts_to_string(main.key_zero_press));
-
-    ui.start_tracking_text->setText(kopts_to_string(main.key_start_tracking));
-    ui.stop_tracking_text->setText(kopts_to_string(main.key_stop_tracking));
-    ui.toggle_tracking_text->setText(kopts_to_string(main.key_toggle_tracking));
-    ui.restart_tracking_text->setText(kopts_to_string(main.key_restart_tracking));
+    for (const tmp& val_ : tuples)
+    {
+        tmp val = val_;
+        val.label->setText(kopts_to_string(val.opt));
+        connect(&val.opt.keycode,
+                static_cast<void (base_value::*)(const QString&)>(&base_value::valueChanged),
+                val.label,
+                [=](const QString&) -> void { val.label->setText(kopts_to_string(val.opt)); });
+        {
+            connect(val.button, &QPushButton::pressed, this, [=]() -> void { bind_key(val.opt, val.label); });
+        }
+    }
 }
 
 void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
@@ -99,7 +108,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = "";
     kopts.keycode = "";
-    QDialog d(this);
+    QDialog d;
     auto l = new QHBoxLayout;
     l->setMargin(0);
     KeyboardListener k;
@@ -108,21 +117,29 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
     d.setWindowModality(Qt::ApplicationModal);
-    connect(&k, &KeyboardListener::key_pressed, [&] (QKeySequence s) -> void {
-        kopts.keycode = s.toString(QKeySequence::PortableText);
-        kopts.guid = "";
-        kopts.button = -1;
-        d.close();
-    });
-    connect(&k, &KeyboardListener::joystick_button_pressed, [&](QString guid, int idx, bool held) -> void {
-        if (!held)
-        {
-            kopts.guid = guid;
-            kopts.keycode = "";
-            kopts.button = idx;
-            d.close();
-        }
-    });
+    connect(&k,
+            &KeyboardListener::key_pressed,
+            &d,
+            [&](QKeySequence s) -> void
+            {
+                kopts.keycode = s.toString(QKeySequence::PortableText);
+                kopts.guid = "";
+                kopts.button = -1;
+                d.close();
+            });
+    connect(&k, &KeyboardListener::joystick_button_pressed,
+            &d,
+            [&](QString guid, int idx, bool held) -> void
+            {
+                if (!held)
+                {
+                    kopts.guid = guid;
+                    kopts.keycode = "";
+                    kopts.button = idx;
+                    d.close();
+                }
+            });
+    connect(main.b.get(), &options::detail::opt_bundle::reloading, &d, &QDialog::close);
     pause_keybindings(true);
     d.show();
     d.exec();

@@ -25,7 +25,7 @@ void Shortcuts::free_binding(K& key)
 #endif
 }
 
-void Shortcuts::bind_keyboard_shortcut(K &key, const key_opts& k, unused_on_unix(bool, held))
+void Shortcuts::bind_shortcut(K &key, const key_opts& k, unused_on_unix(bool, held))
 {
 #if !defined(_WIN32)
     using sh = QxtGlobalShortcut;
@@ -98,7 +98,7 @@ void Shortcuts::receiver(const Key& k)
 }
 #endif
 
-void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_)
+void Shortcuts::reload(const t_keys& keys_)
 {
     const unsigned sz = keys_.size();
     keys = std::vector<tt>();
@@ -110,7 +110,7 @@ void Shortcuts::reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys
         const bool held = std::get<2>(kk);
         auto fun = std::get<1>(kk);
         K k;
-        bind_keyboard_shortcut(k, opts, held);
+        bind_shortcut(k, opts, held);
         keys.push_back(tt(k, [=](unused_on_unix(bool, flag)) -> void
         {
 #ifdef _WIN32

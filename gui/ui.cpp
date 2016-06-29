@@ -129,13 +129,15 @@ MainWindow::MainWindow() :
 
 void MainWindow::register_shortcuts()
 {
-    using t_shortcut = std::tuple<key_opts&, Shortcuts::fun, bool>;
+    using t_key = Shortcuts::t_key;
+    using t_keys = Shortcuts::t_keys;
 
-    std::vector<t_shortcut> keys {
-        t_shortcut(s.key_start_tracking, [&](bool) -> void { emit_start_tracker(); }, true),
-        t_shortcut(s.key_stop_tracking, [&](bool) -> void { emit_stop_tracker(); }, true),
-        t_shortcut(s.key_toggle_tracking, [&](bool) -> void { emit_toggle_tracker(); }, true),
-        t_shortcut(s.key_restart_tracking, [&](bool) -> void { emit_restart_tracker(); }, true),
+    t_keys keys
+    {
+        t_key(s.key_start_tracking, [&](bool) -> void { emit_start_tracker(); }, true),
+        t_key(s.key_stop_tracking, [&](bool) -> void { emit_stop_tracker(); }, true),
+        t_key(s.key_toggle_tracking, [&](bool) -> void { emit_toggle_tracker(); }, true),
+        t_key(s.key_restart_tracking, [&](bool) -> void { emit_restart_tracker(); }, true),
     };
 
     global_shortcuts.reload(keys);

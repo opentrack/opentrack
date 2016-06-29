@@ -45,6 +45,8 @@ public:
 
     using fun = std::function<void(bool)>;
     using tt = std::tuple<K, fun, bool>;
+    using t_key = std::tuple<key_opts&, fun, bool>;
+    using t_keys = std::vector<t_key>;
     std::vector<tt> keys;
 #ifdef _WIN32
     KeybindingWorker::Token key_token;
@@ -56,10 +58,10 @@ public:
 #endif
     {}
 
-    void reload(const std::vector<std::tuple<key_opts&, fun, bool>> &keys_);
+    void reload(const t_keys& keys_);
 private:
     void free_binding(K& key);
-    void bind_keyboard_shortcut(K &key, const key_opts& k, bool held);
+    void bind_shortcut(K &key, const key_opts& k, bool held);
 #ifdef _WIN32
     void receiver(const Key& k);
 #endif
