@@ -65,6 +65,7 @@ struct dylib final {
 
         QString fullPath = QCoreApplication::applicationDirPath() + "/" + filename;
         handle = new QLibrary(fullPath);
+        handle->setLoadHints(QLibrary::PreventUnloadHint | handle->loadHints());
 
         struct _foo {
             static bool die(QLibrary*& l, bool failp)
