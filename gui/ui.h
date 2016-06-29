@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow, private State
     Q_OBJECT
 
     Shortcuts global_shortcuts;
-
+    module_settings m;
     Ui::OpentrackUI ui;
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;

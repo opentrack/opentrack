@@ -25,7 +25,6 @@ struct State
     Modules modules;
     SelectedLibraries libs;
     main_settings s;
-    module_settings m;
     Mappings pose;
     mem<Work> work;
 };
