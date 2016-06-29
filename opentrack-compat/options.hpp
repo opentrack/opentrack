@@ -237,9 +237,9 @@ namespace options {
     public slots:
         OPENTRACK_DEFINE_SLOT(double)
         OPENTRACK_DEFINE_SLOT(int)
-        OPENTRACK_DEFINE_SLOT(QString)
         OPENTRACK_DEFINE_SLOT(bool)
-        OPENTRACK_DEFINE_SLOT(slider_value)
+        OPENTRACK_DEFINE_SLOT(const QString&)
+        OPENTRACK_DEFINE_SLOT(const slider_value&)
     public slots:
         virtual void reload() = 0;
     };
