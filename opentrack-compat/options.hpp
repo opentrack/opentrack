@@ -198,7 +198,10 @@ namespace options {
 
     using pbundle = std::shared_ptr<detail::opt_bundle>;
 
-    pbundle bundle(const QString& name);
+    inline pbundle bundle(const QString& name)
+    {
+         return detail::singleton().bundle(name);
+    }
 
 #define DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define DEFINE_SIGNAL(t) void valueChanged(t)

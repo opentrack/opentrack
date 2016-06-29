@@ -175,11 +175,6 @@ opts::opts(const QString &name) : b(bundle(name))
 {
 }
 
-pbundle bundle(const QString& name)
-{
-     return detail::singleton().bundle(name);
-}
-
 custom_type_initializer::custom_type_initializer()
 {
     qDebug() << "options: registering stream operators";
@@ -188,7 +183,7 @@ custom_type_initializer::custom_type_initializer()
     QMetaType::registerDebugStreamOperator<slider_value>();
 }
 
-custom_type_initializer custom_type_initializer::singleton = custom_type_initializer();
+custom_type_initializer custom_type_initializer::singleton;
 
 namespace detail {
 
