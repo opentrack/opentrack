@@ -8,6 +8,7 @@ class MapWidget: public QWidget
     Q_OBJECT
 public:
     MapWidget(Mappings &m);
+    void reload();
 private:
     Ui::UICCurveConfigurationDialog ui;
     Mappings& m;

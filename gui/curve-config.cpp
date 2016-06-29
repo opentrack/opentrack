@@ -13,9 +13,26 @@ MapWidget::MapWidget(Mappings& m) :
 {
     ui.setupUi( this );
 
-    // rest of mapping settings taken care of by options::value<t>
     m.load_mappings();
 
+    reload();
+
+    setFont(qApp->font());
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+
+    main_settings s;
+
+    tie_setting(s.a_x.altp, ui.tx_altp);
+    tie_setting(s.a_y.altp, ui.ty_altp);
+    tie_setting(s.a_z.altp, ui.tz_altp);
+    tie_setting(s.a_yaw.altp, ui.rx_altp);
+    tie_setting(s.a_pitch.altp, ui.ry_altp);
+    tie_setting(s.a_roll.altp, ui.rz_altp);
+}
+
+void MapWidget::reload()
+{
     {
         struct {
             QFunctionConfigurator* qfc;
@@ -63,19 +80,6 @@ MapWidget::MapWidget(Mappings& m) :
             qfcs[i].qfc->setConfig(conf, name);
         }
     }
-
-    setFont(qApp->font());
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-
-    main_settings s;
-
-    tie_setting(s.a_x.altp, ui.tx_altp);
-    tie_setting(s.a_y.altp, ui.ty_altp);
-    tie_setting(s.a_z.altp, ui.tz_altp);
-    tie_setting(s.a_yaw.altp, ui.rx_altp);
-    tie_setting(s.a_pitch.altp, ui.ry_altp);
-    tie_setting(s.a_roll.altp, ui.rz_altp);
 }
 
 void MapWidget::doOK() {
