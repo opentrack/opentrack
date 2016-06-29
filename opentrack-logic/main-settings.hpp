@@ -47,7 +47,7 @@ struct key_opts
     {}
 };
 
-struct main_settings : opts
+struct main_settings
 {
     value<QString> tracker_dll, filter_dll, protocol_dll;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;

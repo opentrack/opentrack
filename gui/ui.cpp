@@ -492,7 +492,7 @@ bool mk_window(mem<t>* place, Args&&... params)
 
 void MainWindow::show_options_dialog()
 {
-    if (mk_window(&options_widget, s, [&](bool flag) -> void { set_keys_enabled(!flag); }))
+    if (mk_window(&options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), SIGNAL(reload()), this, SLOT(reload_options()));
     }

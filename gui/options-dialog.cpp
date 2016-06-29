@@ -29,9 +29,7 @@ static QString kopts_to_string(const key_opts& kopts)
     return kopts.keycode;
 }
 
-OptionsDialog::OptionsDialog(main_settings& main,
-                             std::function<void(bool)> pause_keybindings) :
-    main(main),
+OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     pause_keybindings(pause_keybindings)
 {
     ui.setupUi(this);
@@ -133,7 +131,8 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     delete l;
 }
 
-void OptionsDialog::doOK() {
+void OptionsDialog::doOK()
+{
     main.b->save();
     ui.game_detector->save();
     close();
@@ -142,6 +141,7 @@ void OptionsDialog::doOK() {
 
 void OptionsDialog::doCancel()
 {
+    main.b->reload();
     ui.game_detector->revert();
     close();
 }
