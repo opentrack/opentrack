@@ -109,11 +109,11 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.guid = "";
     kopts.keycode = "";
     QDialog d;
-    auto l = new QHBoxLayout;
-    l->setMargin(0);
+    QHBoxLayout l;
+    l.setMargin(0);
     KeyboardListener k;
-    l->addWidget(&k);
-    d.setLayout(l);
+    l.addWidget(&k);
+    d.setLayout(&l);
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
     d.setWindowModality(Qt::ApplicationModal);
@@ -145,7 +145,6 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     d.exec();
     pause_keybindings(false);
     label->setText(kopts_to_string(kopts));
-    delete l;
 }
 
 void OptionsDialog::doOK()
