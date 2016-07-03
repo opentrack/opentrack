@@ -13,7 +13,7 @@
 #if defined _WIN32
 
 #include <windows.h>
-#include <TlHelp32.h>
+#include <tlhelp32.h>
 
 template<typename = void>
 static QStringList get_all_executable_names()
