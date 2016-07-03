@@ -282,5 +282,30 @@ bool slider_value::operator==(const slider_value& v) const
             fabs(v.max_ - max_) < eps);
 }
 
+slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
+{
+    slider_value v(*this);
+
+    const int q_diff = q_max - q_min;
+    const double sv_pos = q_diff == 0
+                          ? -1e6
+                          : (((pos - q_min) * (v.max() - v.min())) / q_diff + v.min());
+
+    if (sv_pos < v.min())
+        v = slider_value(v.min(), v.min(), v.max());
+    else if (sv_pos > v.max())
+        v = slider_value(v.max(), v.min(), v.max());
+    else
+        v = slider_value(sv_pos, v.min(), v.max());
+    return v;
+}
+
+int slider_value::to_slider_pos(int q_min, int q_max) const
+{
+    const int q_diff = q_max - q_min;
+
+    return int(std::round(((cur() - min()) * q_diff / (max() - min())) + q_min));
+}
+
 } // end options
 

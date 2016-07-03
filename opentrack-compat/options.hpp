@@ -65,6 +65,8 @@ namespace options
         double cur() const { return cur_; }
         double min() const { return min_; }
         double max() const { return max_; }
+        slider_value update_from_slider(int pos, int q_min, int q_max) const;
+        int to_slider_pos(int q_min, int q_max) const;
     };
 }
 
