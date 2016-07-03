@@ -12,6 +12,8 @@ public:
 private:
     Ui::UICCurveConfigurationDialog ui;
     Mappings& m;
+    main_settings s;
+
     void closeEvent(QCloseEvent *) override { doCancel(); }
 private slots:
     void doOK();

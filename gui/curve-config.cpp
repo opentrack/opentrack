@@ -11,7 +11,7 @@
 MapWidget::MapWidget(Mappings& m) :
     m(m)
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
     m.load_mappings();
 
@@ -20,8 +20,6 @@ MapWidget::MapWidget(Mappings& m) :
     setFont(qApp->font());
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-
-    main_settings s;
 
     tie_setting(s.a_x.altp, ui.tx_altp);
     tie_setting(s.a_y.altp, ui.ty_altp);
@@ -67,6 +65,7 @@ void MapWidget::reload()
             {
                 QFunctionConfigurator& qfc = *qfcs[i].qfc;
                 connect(qfcs[i].checkbox, &QCheckBox::toggled,
+                        this,
                         [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
                 qfc.setEnabled(qfcs[i].checkbox->isChecked());
                 qfc.force_redraw();
@@ -82,12 +81,14 @@ void MapWidget::reload()
     }
 }
 
-void MapWidget::doOK() {
+void MapWidget::doOK()
+{
     m.save_mappings();
     close();
 }
 
-void MapWidget::doCancel() {
+void MapWidget::doCancel()
+{
     m.invalidate_unsaved();
     close();
 }
