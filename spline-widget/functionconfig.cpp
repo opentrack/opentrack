@@ -127,7 +127,7 @@ void Map::reload()
 {
     if (cur.input.size())
     {
-        qStableSort(cur.input.begin(), cur.input.end(), sortFn);
+        std::stable_sort(cur.input.begin(), cur.input.end(), sortFn);
 
         QList<QPointF> input = cur.input;
         auto& data = cur.data;
@@ -217,7 +217,7 @@ void Map::addPoint(QPointF pt)
     QMutexLocker foo(&_mutex);
     cur.input.append(pt);
     reload();
-    qStableSort(cur.input.begin(), cur.input.end(), sortFn);
+    std::stable_sort(cur.input.begin(), cur.input.end(), sortFn);
 }
 
 void Map::movePoint(int idx, QPointF pt)
