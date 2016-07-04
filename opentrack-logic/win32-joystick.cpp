@@ -216,7 +216,6 @@ bool win32_joy_ctx::joy::poll(fn f)
             if (state[j] != pressed[idx])
             {
                 f(guid, int(idx), state[j]);
-                qDebug() << "hat" << guid << i << "btn" << j << state[j];
                 pressed[idx] = state[j];
             }
         }
@@ -228,7 +227,6 @@ bool win32_joy_ctx::joy::poll(fn f)
         if (state != pressed[i])
         {
             f(guid, i, state);
-            qDebug() << "btn" << guid << i << state;
         }
         pressed[i] = state;
     }
