@@ -226,8 +226,9 @@ void Map::movePoint(int idx, QPointF pt)
     if (idx >= 0 && idx < cur.input.size())
     {
         cur.input[idx] = pt;
+        // we don't allow points to be reordered, but sort due to possible caller logic error
+        std::stable_sort(cur.input.begin(), cur.input.end(), sortFn);
         reload();
-        // we don't allow points to be reordered, so no sort here
     }
 }
 
