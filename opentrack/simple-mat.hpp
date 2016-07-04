@@ -253,3 +253,9 @@ euler_t OPENTRACK_API_EXPORT rmat_to_euler(const dmat<3, 3>& R);
 } // end ns euler
 
 template<int h_, int w_> using dmat = Mat<double, h_, w_>;
+
+template<typename num, int h, int w>
+inline Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
+{
+    return mat * scalar;
+}

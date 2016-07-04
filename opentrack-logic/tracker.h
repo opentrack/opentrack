@@ -61,7 +61,8 @@ private:
     volatile bool should_quit;
     SelectedLibraries const& libs;
 
-    using rmat = dmat<3, 3>;
+    using rmat = euler::rmat;
+    using euler_t = euler::euler_t;
 
     rmat r_b;
     double t_b[3];

@@ -110,6 +110,7 @@ void Tracker::logic()
 
     static constexpr double pi = 3.141592653;
     static constexpr double r2d = 180. / pi;
+    static constexpr double d2r = pi / 180.;
 
     using namespace euler;
 
@@ -131,12 +132,17 @@ void Tracker::logic()
 
     const double off[] =
     {
-        (double)-s.camera_yaw,
-        (double)-s.camera_pitch,
-        (double)-s.camera_roll
+        d2r * (double)-s.camera_yaw,
+        d2r * (double)-s.camera_pitch,
+        d2r * (double)-s.camera_roll
     };
     const rmat cam = euler_to_rmat(off);
-    rmat r = euler_to_rmat(&value[Yaw]);
+    rmat r;
+    {
+        euler_t tmp(&value[Yaw]);
+        tmp = d2r * tmp;
+        r = euler_to_rmat(&tmp[0]);
+    }
     euler_t t(value(0), value(1), value(2));
 
     r = cam * r;
@@ -179,12 +185,12 @@ void Tracker::logic()
             m_ = r_b.t() * r;
         }
 
-        const euler_t euler = rmat_to_euler(m_);
+        const euler_t euler = r2d * rmat_to_euler(m_);
 
         for (int i = 0; i < 3; i++)
         {
             value(i) = tmp[i];
-            value(i+3) = euler(i) * r2d;
+            value(i+3) = euler(i);
         }
     }
 
@@ -207,10 +213,15 @@ void Tracker::logic()
             value(i) = map(value(i), m(i));
 
         if (s.tcomp_p)
-            t_compensate(euler_to_rmat(&value[Yaw]),
+        {
+            euler_t value_(value(Yaw) * d2r,
+                           value(Pitch) * d2r,
+                           value(Roll) * d2r);
+            t_compensate(euler_to_rmat(&value_[0]),
                          value,
                          value,
                          s.tcomp_tz);
+        }
 
         for (int i = 0; i < 6; i++)
             value(i) += m(i).opts.zero;
@@ -266,9 +277,10 @@ void Tracker::run()
 
         logic();
 
-        long q = sleep_ms * 1000L - t.elapsed()/1000L;
+        long q = long(sleep_ms * 1000L - t.elapsed()/1000L);
         using std::max;
-        usleep(max(1L, q));
+        using ulong = unsigned long;
+        usleep(ulong(max(1L, q)));
     }
 
     {
