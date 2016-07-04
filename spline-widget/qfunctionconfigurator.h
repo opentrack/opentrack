@@ -79,6 +79,6 @@ private:
     bool _draw_function, _preview_only;
 
     static constexpr int line_length_pixels = 3;
-    static constexpr int point_size = 5;
-    static constexpr int point_closeness_limit = 12;
+    static constexpr int point_size = 4;
+    static constexpr int point_closeness_limit = 5;
 };

@@ -335,7 +335,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
                 bad = pix.x() + point_closeness_limit > other_pix.x();
                 if (i == 0 && bad)
                 {
-                    pix.setX(other_pix.x() - point_closeness_limit - 1);
+                    pix.setX(other_pix.x() - point_closeness_limit);
                     new_pt = pixel_coord_to_point(pix);
                 }
                 else
@@ -348,7 +348,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
                 bad = pix.x() - point_closeness_limit < other_pix.x();
                 if (i == 0 && bad)
                 {
-                    pix.setX(other_pix.x() + point_closeness_limit + 1);
+                    pix.setX(other_pix.x() + point_closeness_limit);
                     new_pt = pixel_coord_to_point(pix);
                 }
                 else
