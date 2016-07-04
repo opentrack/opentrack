@@ -177,12 +177,17 @@ void Tracker::logic()
         rmat m_;
         switch (s.center_method)
         {
+        // inertial
         case 0:
         default:
             m_ = r * r_b.t();
             break;
+        // relative
         case 1:
-            m_ = r_b.t() * r;
+            euler_t degs = rmat_to_euler(r_b.t() * r);
+            degs(2) = rmat_to_euler(r * r_b.t())(2);
+            m_ = euler_to_rmat(degs);
+            break;
         }
 
         const euler_t euler = r2d * rmat_to_euler(m_);
