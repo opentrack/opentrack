@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2014-2016, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -7,13 +7,17 @@
  */
 
 #pragma once
+
+#include "export.hpp"
+
 #include <initializer_list>
 #include <type_traits>
 #include <cmath>
+#include <utility>
 
 namespace {
     // last param to fool SFINAE into overloading
-    template<int i, int j, int ignored>
+    template<int i, int j, int>
     struct equals
     {
         enum { value = i == j };
@@ -49,19 +53,12 @@ namespace {
 }
 
 template<typename num, int h_, int w_>
-class Mat
+class OPENTRACK_API_EXPORT Mat
 {
+    static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
     num data[h_][w_];
 
-    static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
-
-    Mat(std::initializer_list<num>&& xs) = delete;
-
 public:
-
-    // parameters w_ and h_ are rebound so that SFINAE occurs
-    // removing them causes a compile-time error -sh 20150811
-
     template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
     inline operator()(int i) const { return data[i][0]; }
 
@@ -74,33 +71,40 @@ public:
     template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
     inline operator()(int i) { return data[0][i]; }
 
+#define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_, "")
+
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
-    inline x() const { return operator()(0); }
+    x() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num>::type
-    inline y() const { return operator()(1); }
+    y() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num>::type
-    inline z() const { return operator()(2); }
+    z() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num>::type
-    inline w() const { return operator()(3); }
+    w() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num&>::type
-    inline x() { return operator()(0); }
+    x() { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 2>::value, num&>::type
-    inline y() { return operator()(1); }
+    y() { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 3>::value, num&>::type
-    inline z() { return operator()(2); }
+    z() { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
-    inline w() { return operator()(3); }
+    w() { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
+    // parameters w_ and h_ are rebound so that SFINAE occurs
+    // removing them causes a compile-time error -sh 20150811
 
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
-    dot(const Mat<num, R, S>& p2) const {
+    dot(const Mat<num, R, S>& p2) const
+    {
+        static_assert(P == h_ && Q == w_, "");
+
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
         for (int i = 0; i < len; i++)
@@ -112,9 +116,12 @@ public:
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
     cross(const Mat<num, R, S>& p2) const
     {
-        return Mat<num, R, S>(y() * p2.z() - p2.y() * z(),
-                              p2.x() * z() - x() * p2.z(),
-                              x() * p2.y() - y() * p2.x());
+        static_assert(P == h_ && Q == w_, "");
+        decltype(*this)& p1 = *this;
+
+        return Mat<num, R, S>(p1.y() * p2.z() - p2.y() * p1.z(),
+                              p2.x() * p1.z() - p1.x() * p2.z(),
+                              p1.x() * p2.y() - p1.y() * p2.x());
     }
 
     Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
@@ -153,15 +160,6 @@ public:
         return ret;
     }
 
-    Mat<num, h_, w_> operator*(const num other) const
-    {
-        Mat<num, h_, w_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
-                ret(j, i) = data[j][i] * other;
-        return ret;
-    }
-
     template<int p>
     Mat<num, h_, p> operator*(const Mat<num, w_, p>& other) const
     {
@@ -183,11 +181,11 @@ public:
              typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
     Mat(const ts... xs)
     {
-        const std::initializer_list<num> init = { static_cast<num>(xs)... };
-        auto iter = init.begin();
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
-                data[j][i] = *iter++;
+        static_assert(h__ == h_ && w__ == w_, "");
+
+        std::initializer_list<num> init = { static_cast<num>(xs)... };
+
+        *this = Mat(std::move(init));
     }
 
     Mat()
@@ -204,16 +202,25 @@ public:
                 data[j][i] = mem[i*h_+j];
     }
 
-    Mat(num* mem) : Mat(const_cast<const num*>(mem)) {}
+    Mat(std::initializer_list<num>&& init)
+    {
+        auto iter = init.begin();
+        for (int j = 0; j < h_; j++)
+            for (int i = 0; i < w_; i++)
+                data[j][i] = *iter++;
+    }
 
-    operator num*() { return reinterpret_cast<double*>(data); }
-    operator const num*() const { return reinterpret_cast<const double*>(data); }
+    operator num*() { return reinterpret_cast<num*>(data); }
+    operator const num*() const { return reinterpret_cast<const num*>(data); }
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
 
-    static Mat<num, h_, h_> eye()
+    template<int h__ = h_>
+    static typename std::enable_if<h_ == w_, Mat<num, h__, h__>>::type eye()
     {
+        static_assert(h_ == h__, "");
+
         Mat<num, h_, h_> ret;
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
@@ -237,7 +244,23 @@ public:
     }
 };
 
-#include "export.hpp"
+template<int h_, int w_> using dmat = Mat<double, h_, w_>;
+
+template<typename num, int h, int w>
+Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
+{
+    return mat * scalar;
+}
+
+template<typename num, int h_, int w_>
+Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
+{
+    Mat<num, h_, w_> ret;
+    for (int j = 0; j < h_; j++)
+        for (int i = 0; i < w_; i++)
+            ret(j, i) = self(j, i) * other;
+    return ret;
+}
 
 namespace euler {
 
@@ -251,11 +274,3 @@ rmat OPENTRACK_API_EXPORT euler_to_rmat(const double* input);
 euler_t OPENTRACK_API_EXPORT rmat_to_euler(const dmat<3, 3>& R);
 
 } // end ns euler
-
-template<int h_, int w_> using dmat = Mat<double, h_, w_>;
-
-template<typename num, int h, int w>
-inline Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
-{
-    return mat * scalar;
-}
