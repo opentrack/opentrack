@@ -37,7 +37,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
     // fit line to orthographically projected points
     std::vector<std::pair<float,int>> d_vals;
     // get sort indices with respect to d scalar product
-    for (unsigned i = 0; i<points.size(); ++i)
+    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
         d_vals.push_back(std::pair<float, int>(d.dot(points[i]), i));
 
     std::sort(d_vals.begin(),
@@ -45,7 +45,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2f>& points, int d_order[]
               d_vals_sort
               );
 
-    for (unsigned i = 0; i<points.size(); ++i)
+    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
         d_order[i] = d_vals[i].second;
 }
 
