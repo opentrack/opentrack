@@ -1,6 +1,7 @@
-opentrack_boilerplate(opentrack-xplane-plugin NO-LIBRARY)
 
 if(LINUX OR APPLE)
+    opentrack_boilerplate(opentrack-xplane-plugin NO-LIBRARY)
+    include(opentrack-hier)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
     if(SDK_XPLANE)
         # probably librt already included
@@ -25,6 +26,6 @@ if(LINUX OR APPLE)
         if(UNIX AND NOT APPLE)
             target_link_libraries(opentrack-xplane-plugin rt)
         endif()
-        install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION . LIBRARY DESTINATION .  )
+        install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx} )
     endif()
 endif()
