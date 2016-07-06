@@ -1,3 +1,4 @@
+include(opentrack-hier)
 opentrack_boilerplate(opentrack NO-LIBRARY)
 
 if(WIN32)
@@ -12,9 +13,7 @@ endif()
 
 add_executable(opentrack ${opentrack-win32-executable} ${opentrack-all})
 
-if(NOT WIN32)
-    set_target_properties(opentrack PROPERTIES SUFFIX ".bin")
-endif()
+set_target_properties(opentrack PROPERTIES SUFFIX "${opentrack-binary-suffix}")
 
 target_link_libraries(opentrack
     opentrack-logic

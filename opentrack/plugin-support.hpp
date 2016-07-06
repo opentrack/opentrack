@@ -9,6 +9,7 @@
 
 #include "plugin-api.hpp"
 #include "opentrack-compat/options.hpp"
+#include "library-path.hpp"
 
 #include <QWidget>
 #include <QDebug>
@@ -29,21 +30,20 @@
 #include <QStringList>
 
 #if defined(__APPLE__)
-#   define OPENTRACK_SONAME "dylib"
+#   define OPENTRACK_SOLIB_EXT "dylib"
 #elif defined(_WIN32)
-#   define OPENTRACK_SONAME "dll"
+#   define OPENTRACK_SOLIB_EXT "dll"
 #else
-#   define OPENTRACK_SONAME "so"
+#   define OPENTRACK_SOLIB_EXT "so"
 #endif
 
 #include <iostream>
 
 #ifdef _MSC_VER
-#   define OPENTRACK_LIB_PREFIX ""
+#   define OPENTRACK_SOLIB_PREFIX ""
 #else
-#   define OPENTRACK_LIB_PREFIX "lib"
+#   define OPENTRACK_SOLIB_PREFIX "lib"
 #endif
-
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
@@ -108,29 +108,30 @@ struct dylib final {
 
     static QList<mem<dylib>> enum_libraries()
     {
-        const char* filters_n[] = { "opentrack-filter-*.",
-                                    "opentrack-tracker-*.",
-                                    "opentrack-proto-*."
+        const char* filters_n[] = { OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT,
+                                    OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT,
+                                    OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT,
                                   };
         const Type filters_t[] = { Filter, Tracker, Protocol };
 
-        QDir settingsDir( QCoreApplication::applicationDirPath() );
+        static const QString libexec_path(QStringLiteral("./") + opentrack_library_path);
+
+        QDir settingsDir(libexec_path);
 
         QList<mem<dylib>> ret;
 
         for (int i = 0; i < 3; i++)
         {
-            QString filter = filters_n[i];
-            auto t = filters_t[i];
-            QStringList filenames = settingsDir.entryList(QStringList { OPENTRACK_LIB_PREFIX + filter + OPENTRACK_SONAME },
-                                                          QDir::Files,
-                                                          QDir::Name);
-            for (int i = 0; i < filenames.size(); i++) {
+            QString glob = filters_n[i];
+            Type t = filters_t[i];
+            QStringList filenames = settingsDir.entryList(QStringList { glob }, QDir::Files, QDir::Name);
+
+            for (const QString& filename : filenames)
+            {
                 QIcon icon;
                 QString longName;
-                QString str = filenames.at(i);
-                auto lib = std::make_shared<dylib>(str, t);
-                qDebug() << "Loading" << str;
+                auto lib = std::make_shared<dylib>(libexec_path + QStringLiteral("/") + filename, t);
+                qDebug() << "Loading" << filename;
                 std::cout.flush();
                 if (!get_metadata(lib, longName, icon))
                     continue;

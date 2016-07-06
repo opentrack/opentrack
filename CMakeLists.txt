@@ -29,7 +29,5 @@ file(GLOB opentrack-subprojects
 )
 foreach(i ${opentrack-subprojects})
     get_filename_component(i ${i} DIRECTORY)
-    get_filename_component(j ${i} NAME)
-    message(STATUS "project ${j}")
     add_subdirectory(${i})
 endforeach()

@@ -85,7 +85,6 @@ MainWindow::MainWindow() :
     det_timer.start(1000);
 
     ensure_tray();
-    set_working_directory();
 
     if (!QFile(group::ini_pathname()).exists())
     {

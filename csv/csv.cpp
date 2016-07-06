@@ -10,6 +10,7 @@
  */
 
 #include "csv.h"
+#include "opentrack/library-path.hpp"
 #include <QTextDecoder>
 #include <QFile>
 #include <QCoreApplication>
@@ -98,7 +99,11 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 
     QString id_str(move(QString::number(id)));
 
-    QFile file(QCoreApplication::applicationDirPath() + "/settings/facetracknoir supported games.csv");
+    static const QString libexec_path(QStringLiteral("./") +
+                                      QString(opentrack_library_path) +
+                                      QStringLiteral("/settings/facetracknoir supported games.csv"));
+
+    QFile file(QCoreApplication::applicationDirPath() + libexec_path);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;

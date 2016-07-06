@@ -1,3 +1,18 @@
+include(opentrack-hier)
+
+set(new-hier-path "#pragma once
+#define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
+")
+
+set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.h")
+set(orig-hier-path "")
+if(EXISTS ${hier-path-filename})
+    file(READ ${hier-path-filename} orig-hier-path)
+endif()
+if(NOT (orig-hier-path STREQUAL new-hier-path))
+    file(WRITE ${hier-path-filename} "${new-hier-path}")
+endif()
+
 function(opentrack_set_globs n)
     set(dir ${PROJECT_SOURCE_DIR})
     file(GLOB ${n}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp)
@@ -42,6 +57,7 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
             set(link-mode STATIC)
         endif()
         add_library(${n} ${link-mode} ${files_})
+        message(STATUS "module ${n}")
     endif()
     if(NOT no-library_)
         opentrack_compat(${n})
@@ -75,7 +91,7 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
     string(REPLACE "-" "_" n_ ${n_})
     target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
     if((NOT static_) AND (NOT no-library_))
-        install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
+        install(TARGETS ${n} ${opentrack-hier-str})
     endif()
 endfunction()
 
