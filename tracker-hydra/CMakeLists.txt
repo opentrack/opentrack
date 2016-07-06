@@ -27,9 +27,9 @@ if(SDK_HYDRA)
             set(under-dll)
             set(soext so)
             set(plat linux)
-            execute_process(COMMAND uname -m OUTPUT_VARIABLE architecture)
-            string(REPLACE "\n" "" architecture ${architecture})
-            if(architecture STREQUAL "x86_64")
+            if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
+               CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64"
+              )
                 set(six4 _x64)
             else()
                 set(six4)
