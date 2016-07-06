@@ -1,7 +1,8 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/)
 include(opentrack-check-build-directory)
+include(opentrack-build)
 
-project(opentrack)
+project(opentrack C CXX)
 cmake_minimum_required(VERSION 2.8.11)
 
 include(CMakeParseArguments)
