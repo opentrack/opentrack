@@ -55,7 +55,7 @@ static inline void clock_gettime(int, struct timespec* ts)
 }
 #   endif
 #endif
-class OPENTRACK_COMPAT_EXPORT Timer
+class Timer
 {
 private:
     struct timespec state;

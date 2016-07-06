@@ -25,5 +25,6 @@ private:
     int m_pos;
 
     static const QTextCodec* m_codec;
-    static const QRegExp m_rx, m_rx2;
+    static const QRegExp m_rx;
+    static const QRegExp m_rx2; // Silly M$ compiler! It will generate an error if both of these variables are declared on the same line! (M$ Visual Studio Community 2015, Update 3)
 };
