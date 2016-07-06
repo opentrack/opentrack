@@ -116,5 +116,5 @@ public:
     MainWindow();
     ~MainWindow();
     static void set_working_directory();
-    static void warn_on_config_not_writable();
+    void warn_on_config_not_writable();
 };
