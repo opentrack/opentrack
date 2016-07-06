@@ -1,4 +1,8 @@
 #include "ftnoir_protocol_wine.h"
+#include "opentrack/library-path.hpp"
+#include <QString>
+#include <QStringList>
+#include <QCoreApplication>
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
@@ -11,7 +15,8 @@ FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeo
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
     }
-    wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + "/opentrack-wrapper-wine.exe.so"));
+    static const QString library_path(opentrack_library_path);
+    wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + library_path + "opentrack-wrapper-wine.exe.so"));
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
@@ -29,7 +34,8 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
-void FTNoIR_Protocol::pose( const double *headpose ) {
+void FTNoIR_Protocol::pose( const double *headpose )
+{
     if (shm)
     {
         lck_shm.lock();

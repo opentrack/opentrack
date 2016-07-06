@@ -6,10 +6,15 @@
 #include "opentrack-compat/shm.h"
 #include "opentrack-compat/shm.cpp"
 #include "wine-shm.h"
+#include "opentrack-library-path.h"
+#include <cstring>
+
+using std::strcat;
 
 static void write_path(const char* key, const char* subkey)
 {
     char dir[8192];
+    dir[sizeof(dir)-1] = '\0';
 
     if (GetCurrentDirectoryA(8192, dir) < 8190)
     {
@@ -27,7 +32,9 @@ static void write_path(const char* key, const char* subkey)
             for (int i = 0; dir[i]; i++)
                 if (dir[i] == '\\')
                     dir[i] = '/';
-            strcat(dir, "/");
+            // there's always a leading and trailing slash
+            strcat(dir, OPENTRACK_LIBRARY_PATH);
+            //strcat(dir, "/");
             (void) RegSetValueExA(hkpath, subkey, 0, REG_SZ, (BYTE*) dir, strlen(dir) + 1);
             RegCloseKey(hkpath);
         }
