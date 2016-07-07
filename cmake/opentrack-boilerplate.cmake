@@ -50,6 +50,8 @@ function(opentrack_compat target)
     endif()
 endfunction()
 
+include(CMakeParseArguments)
+
 function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile_ link_ stage2_)
     if((NOT no-library_) AND (NOT stage2_))
         set(link-mode SHARED)
