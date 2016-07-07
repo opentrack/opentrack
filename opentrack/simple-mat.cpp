@@ -4,11 +4,6 @@ namespace euler {
 
 static constexpr double pi = 3.141592653;
 
-enum Axis
-{
-    TX, TY, TZ, Yaw, Pitch, Roll
-};
-
 euler_t rmat_to_euler(const dmat<3, 3>& R)
 {
     const double pitch_1 = asin(-R(0, 2));
