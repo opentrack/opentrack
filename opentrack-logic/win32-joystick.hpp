@@ -71,6 +71,13 @@ struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
     win32_joy_ctx();
     void refresh();
     static di_t& make_di();
+
+    class di_initializer final
+    {
+        static di_initializer self;
+        di_initializer();
+    };
+
 private:
     static QString guid_to_string(const GUID guid);
 

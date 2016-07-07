@@ -1,12 +1,13 @@
 #ifdef _WIN32
 
 #undef NDEBUG
+#include "win32-joystick.hpp"
+#include "opentrack-compat/sleep.hpp"
 #include <cassert>
 #include <cstring>
 #include <algorithm>
 #include <cmath>
-#include "win32-joystick.hpp"
-#include "opentrack-compat/sleep.hpp"
+#include <objbase.h>
 
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
@@ -115,6 +116,7 @@ win32_joy_ctx::di_t& win32_joy_ctx::make_di()
     {
         if (SUCCEEDED(DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di_, NULL)))
         {
+            qDebug() << "made di handle";
             return di_;
         }
         else
@@ -382,6 +384,15 @@ win32_joy_ctx::joy::~joy()
 {
     qDebug() << "nix joy" << guid;
     release();
+}
+
+win32_joy_ctx::di_initializer::di_initializer()
+{
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    if (FAILED(hr))
+        qDebug() << "dinput: failed CoInitializeEx" << hr << GetLastError();
+    win32_joy_ctx::make_di();
+    qDebug() << "made directinput8 handle";
 }
 
 #endif
