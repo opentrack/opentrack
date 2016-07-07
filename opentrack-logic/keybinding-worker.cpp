@@ -23,56 +23,47 @@ bool Key::should_process()
     return ret;
 }
 
-KeybindingWorker::~KeybindingWorker() {
+KeybindingWorker::~KeybindingWorker()
+{
     should_quit = true;
     wait();
     if (dinkeyboard) {
         dinkeyboard->Unacquire();
         dinkeyboard->Release();
     }
-    if (din)
-        din->Release();
 }
 
-KeybindingWorker::KeybindingWorker() :
-    should_quit(true)
+KeybindingWorker::KeybindingWorker() : should_quit(true)
 {
-    if (DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&din, NULL) != DI_OK) {
-        qDebug() << "setup DirectInput8 Creation failed!" << GetLastError();
-        return;
-    }
+    LPDIRECTINPUT8 din = dinput_handle::make_di();
+
     if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
-        din->Release();
-        din = 0;
         qDebug() << "setup CreateDevice function failed!" << GetLastError();
         return;
     }
+
     if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
         qDebug() << "setup SetDataFormat function failed!" << GetLastError();
         dinkeyboard->Release();
         dinkeyboard = 0;
-        din->Release();
-        din = 0;
         return;
     }
 
     if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
-        din->Release();
-        din = 0;
         dinkeyboard = 0;
         qDebug() << "setup SetCooperativeLevel function failed!" << GetLastError();
         return;
     }
+
     if (dinkeyboard->Acquire() != DI_OK)
     {
         dinkeyboard->Release();
-        din->Release();
-        din = 0;
         dinkeyboard = 0;
         qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
         return;
     }
+
     should_quit = false;
     start();
 }
@@ -83,7 +74,8 @@ KeybindingWorker& KeybindingWorker::make()
     return k;
 }
 
-void KeybindingWorker::run() {
+void KeybindingWorker::run()
+{
     BYTE keystate[256] = {0};
     BYTE old_keystate[256] = {0};
 

@@ -13,10 +13,10 @@
 #   include <windows.h>
 #   include <dinput.h>
 
+#include "win32-shortcuts.h"
 #include <QList>
 #include <QVariant>
 #include <QDebug>
-#include "win32-shortcuts.h"
 
 QList<win_key> windows_key_mods =
     QList<win_key>({

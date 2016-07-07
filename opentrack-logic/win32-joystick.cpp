@@ -109,24 +109,6 @@ std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
     return ret;
 }
 
-win32_joy_ctx::di_t& win32_joy_ctx::make_di()
-{
-    static LPDIRECTINPUT8 di_ = nullptr;
-    if (di_ == nullptr)
-    {
-        if (SUCCEEDED(DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di_, NULL)))
-        {
-            qDebug() << "made di handle";
-            return di_;
-        }
-        else
-        {
-            return di_ = nullptr;
-        }
-    }
-    return di_;
-}
-
 win32_joy_ctx::win32_joy_ctx()
 {
     refresh();
@@ -244,23 +226,14 @@ win32_joy_ctx::enum_state::~enum_state()
 {
     QMutexLocker l(&mtx);
 
-    di_t& di = make_di();
-    if (!di)
-    {
-        qDebug() << "can't create dinput";
-        return;
-    }
-
     joys = std::unordered_map<QString, std::shared_ptr<joy>>();
-    di->Release();
-    di = nullptr;
 }
 
 void win32_joy_ctx::enum_state::refresh()
 {
     all.clear();
 
-    di_t di = make_di();
+    di_t di = dinput_handle::make_di();
     if (!di)
     {
         qDebug() << "can't create dinput";
@@ -293,7 +266,7 @@ void win32_joy_ctx::enum_state::refresh()
 
 BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
 {
-    di_t di = make_di();
+    di_t di = dinput_handle::make_di();
     if (!di)
     {
         qDebug() << "can't create dinput";
@@ -384,15 +357,6 @@ win32_joy_ctx::joy::~joy()
 {
     qDebug() << "nix joy" << guid;
     release();
-}
-
-win32_joy_ctx::di_initializer::di_initializer()
-{
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-    if (FAILED(hr))
-        qDebug() << "dinput: failed CoInitializeEx" << hr << GetLastError();
-    win32_joy_ctx::make_di();
-    qDebug() << "made directinput8 handle";
 }
 
 #endif

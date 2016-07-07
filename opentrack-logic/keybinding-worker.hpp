@@ -12,6 +12,7 @@
 
 #include "opentrack-compat/timer.hpp"
 #include "win32-joystick.hpp"
+#include "dinput.hpp"
 #include <QThread>
 #include <QMutex>
 #include <QWidget>
@@ -40,25 +41,26 @@ public:
 
 struct OPENTRACK_LOGIC_EXPORT KeybindingWorker : private QThread
 {
+    using fun = std::function<void(const Key&)>;
+
 private:
-    LPDIRECTINPUT8 din;
     LPDIRECTINPUTDEVICE8 dinkeyboard;
     win32_joy_ctx joy_ctx;
-    volatile bool should_quit;
-    using fun = std::function<void(const Key&)>;
     std::vector<std::unique_ptr<fun>> receivers;
     QMutex mtx;
     QMainWindow fake_main_window;
+    volatile bool should_quit;
 
     void run() override;
     KeybindingWorker();
 
-    KeybindingWorker(const KeybindingWorker&) = delete;
-    KeybindingWorker& operator=(KeybindingWorker&) = delete;
     static KeybindingWorker& make();
     fun* _add_receiver(fun &receiver);
     void remove_receiver(fun* pos);
     ~KeybindingWorker();
+
+    KeybindingWorker(const KeybindingWorker&) = delete;
+    KeybindingWorker& operator=(KeybindingWorker&) = delete;
 public:
     class Token
     {

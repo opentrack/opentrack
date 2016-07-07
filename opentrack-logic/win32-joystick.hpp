@@ -2,20 +2,15 @@
 
 #ifdef _WIN32
 
+#include "dinput.hpp"
+#include "opentrack-compat/timer.hpp"
 #include "export.hpp"
-
 #include <cstring>
 #include <memory>
 #include <vector>
 #include <functional>
 #include <algorithm>
 #include <unordered_map>
-#ifndef DIRECTINPUT_VERSION
-#   define DIRECTINPUT_VERSION 0x800
-#endif
-#include <dinput.h>
-#include <windows.h>
-#include "opentrack-compat/timer.hpp"
 #include <QString>
 #include <QDebug>
 #include <QMutex>
@@ -35,7 +30,6 @@ struct hash<QString>
 
 struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
 {
-    using di_t = LPDIRECTINPUT8;
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
     struct joy
@@ -70,13 +64,8 @@ struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
 
     win32_joy_ctx();
     void refresh();
-    static di_t& make_di();
 
-    class di_initializer final
-    {
-        static di_initializer self;
-        di_initializer();
-    };
+    using di_t = dinput_handle::di_t;
 
 private:
     static QString guid_to_string(const GUID guid);
