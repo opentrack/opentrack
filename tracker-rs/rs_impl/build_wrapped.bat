@@ -14,10 +14,8 @@ if %errorlevel% neq 0 exit 1
 
 set rs_objs=ftnoir_tracker_rs_impl.obj libpxc.obj
 
-set rs_subdir=ia32
-set vs_var=x86
+set rs_subdir=ia32&set vs_var=x86
 cmd /c "call .\build_common.bat"
 
-set rs_subdir=amd64
-set vs_var=%vs_64%
+set rs_subdir=amd64&set vs_var=%vs_64%
 cmd /c "call .\build_common.bat"
