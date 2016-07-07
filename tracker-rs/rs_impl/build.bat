@@ -1,2 +1,2 @@
-@cmd /c .\build_wrapped.bat
+@cmd /c %~dp0\build_wrapped.bat
 @pause

@@ -6,5 +6,5 @@
     set vs_64=amd64
 	)
 
-cmd /c .\build_x86.bat
-cmd /c .\build_amd64.bat
+cmd /c %~dp0\build_x86.bat
+cmd /c %~dp0\build_amd64.bat
