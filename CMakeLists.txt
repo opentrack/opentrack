@@ -6,6 +6,8 @@ project(opentrack C CXX)
 cmake_minimum_required(VERSION 2.8.11)
 
 include(CMakeParseArguments)
+include(opentrack-word-size)
+include(opentrack-hier)
 include(opentrack-policy)
 include(opentrack-qt)
 include(opentrack-platform)
