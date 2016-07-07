@@ -1,7 +1,6 @@
 
 if(LINUX OR APPLE)
     opentrack_boilerplate(opentrack-xplane-plugin NO-LIBRARY)
-    include(opentrack-hier)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
     if(SDK_XPLANE)
         # probably librt already included

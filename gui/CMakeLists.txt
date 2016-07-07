@@ -1,4 +1,3 @@
-include(opentrack-hier)
 opentrack_boilerplate(opentrack NO-LIBRARY)
 
 if(WIN32)
