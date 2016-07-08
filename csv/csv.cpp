@@ -60,14 +60,14 @@ QString CSV::readLine()
 
 bool CSV::parseLine(QStringList& ret)
 {
-    QString line(move(readLine()));
+    QString line(readLine());
 
     QStringList list;
     int pos2 = 0;
 
     if (line.size() == 0)
     {
-        ret = move(QStringList());
+        ret = QStringList();
         return m_device->size() > m_pos;
     }
     else
@@ -76,9 +76,9 @@ bool CSV::parseLine(QStringList& ret)
         {
             QString col;
             if (m_rx2.cap(1).size() > 0)
-                col = move(m_rx2.cap(1));
+                col = m_rx2.cap(1);
             else if (m_rx2.cap(2).size() > 0)
-                col = move(m_rx2.cap(2));
+                col = m_rx2.cap(2);
 
             list << move(col);
 
@@ -97,11 +97,10 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
     for (int i = 0; i < 8; i++)
         table[i] = 0;
 
-    QString id_str(move(QString::number(id)));
+    QString id_str(QString::number(id));
 
-    static const QString libexec_path(QStringLiteral("./") +
-                                      QStringLiteral(OPENTRACK_LIBRARY_PATH) +
-                                      QStringLiteral("/settings/facetracknoir supported games.csv"));
+    static const QString libexec_path(QString(OPENTRACK_LIBRARY_PATH) +
+                                      QString("settings/facetracknoir supported games.csv"));
 
     QFile file(QCoreApplication::applicationDirPath() + libexec_path);
 
@@ -134,9 +133,9 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
                 const QString proto(move(gameLine.at(3)));
                 const QString name(move(gameLine.at(1)));
 
-                const QByteArray id_cstr = move(gameLine.at(7).toLatin1());
+                const QByteArray id_cstr = gameLine.at(7).toLatin1();
 
-                if (proto == QStringLiteral("V160"))
+                if (proto == QString("V160"))
                 {
                     /* nothing */
                 }
