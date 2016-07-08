@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>228</width>
+    <width>280</width>
     <height>69</height>
    </rect>
   </property>
@@ -30,7 +30,13 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>No settings necessary</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to &lt;a href=&quot;http://headsoft.com.au/index.php?category=vjoy&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Headsoft's site&lt;/span&gt;&lt;/a&gt; for driver download first.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
