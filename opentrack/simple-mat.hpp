@@ -53,7 +53,7 @@ namespace {
 }
 
 template<typename num, int h_, int w_>
-class OPENTRACK_API_EXPORT Mat
+class Mat
 {
     static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
     num data[h_][w_];
