@@ -79,8 +79,8 @@ typedef struct _JOYSTICK_STATE
     UINT32 Buttons;                         // 32 Buttons
 } JOYSTICK_STATE, * PJOYSTICK_STATE;
 
-#define VJOY_API extern "C"
 #ifndef _MSC_VER
+#define VJOY_API extern "C"
 VJOY_API BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
 VJOY_API VOID __stdcall VJoy_Shutdown();
 VJOY_API BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);
