@@ -53,6 +53,7 @@ Tracker::Tracker() :
     detector.setThresholdParams(5, -1);
     detector.setDesiredSpeed(3);
     detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
+    detector.setCornerRefinementMethod(aruco::MarkerDetector::HARRIS);
 }
 
 Tracker::~Tracker()
@@ -365,7 +366,10 @@ void Tracker::run()
         {
             set_points();
 
-            if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
+            if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_DLS))
+                goto fail;
+
+            if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, true, cv::SOLVEPNP_ITERATIVE))
                 goto fail;
 
             set_last_roi();
