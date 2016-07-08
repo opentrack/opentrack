@@ -62,8 +62,7 @@ struct dylib final {
         if (filename.size() == 0)
             return;
 
-        QString fullPath = QCoreApplication::applicationDirPath() + "/" + filename;
-        handle = new QLibrary(fullPath);
+        handle = new QLibrary(filename);
         handle->setLoadHints(QLibrary::PreventUnloadHint | handle->loadHints());
 
         struct _foo {
@@ -113,9 +112,7 @@ struct dylib final {
                                   };
         const Type filters_t[] = { Filter, Tracker, Protocol };
 
-        static const QString libexec_path(QStringLiteral("./") + library_path);
-
-        QDir settingsDir(libexec_path);
+        QDir settingsDir(library_path);
 
         QList<mem<dylib>> ret;
 
@@ -129,7 +126,7 @@ struct dylib final {
             {
                 QIcon icon;
                 QString longName;
-                auto lib = std::make_shared<dylib>(libexec_path + QStringLiteral("/") + filename, t);
+                auto lib = std::make_shared<dylib>(library_path + filename, t);
                 qDebug() << "Loading" << filename;
                 std::cout.flush();
                 if (!get_metadata(lib, longName, icon))

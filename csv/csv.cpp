@@ -15,7 +15,6 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QString>
-
 #include <QDebug>
 
 #include <utility>
@@ -99,7 +98,8 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 
     QString id_str(QString::number(id));
 
-    static const QString libexec_path(QString(OPENTRACK_LIBRARY_PATH) +
+    static const QString libexec_path(QCoreApplication::applicationDirPath() +
+                                      QString(OPENTRACK_LIBRARY_PATH) +
                                       QString("settings/facetracknoir supported games.csv"));
 
     QFile file(QCoreApplication::applicationDirPath() + libexec_path);

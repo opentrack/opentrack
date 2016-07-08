@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_wine.h"
-#include "opentrack/library-path.hpp"
+#include "opentrack-library-path.h"
 #include <QString>
 #include <QStringList>
 #include <QCoreApplication>
@@ -15,8 +15,9 @@ FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeo
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
     }
-    static const QString library_path(opentrack_library_path);
-    wrapper.start("wine", QStringList() << (QCoreApplication::applicationDirPath() + library_path + "opentrack-wrapper-wine.exe.so"));
+    static const QString library_path(QCoreApplication::applicationDirPath() + OPENTRACK_LIBRARY_PATH);
+    wrapper.setWorkingDirectory(QCoreApplication::applicationDirPath());
+    wrapper.start("wine", QStringList() << (library_path + "opentrack-wrapper-wine.exe.so"));
 }
 
 FTNoIR_Protocol::~FTNoIR_Protocol()
