@@ -53,7 +53,6 @@ Tracker::Tracker() :
     detector.setThresholdParams(5, -1);
     detector.setDesiredSpeed(3);
     detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
-    detector.setCornerRefinementMethod(aruco::MarkerDetector::HARRIS);
 }
 
 Tracker::~Tracker()
