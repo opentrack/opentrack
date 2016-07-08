@@ -24,8 +24,8 @@
 using std::move;
 
 const QTextCodec* CSV::m_codec = QTextCodec::codecForName("System");
-const QRegExp CSV::m_rx = QRegExp(QStringLiteral("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
-const QRegExp CSV::m_rx2 = QRegExp(QStringLiteral("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
+const QRegExp CSV::m_rx = QRegExp(QString("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
+const QRegExp CSV::m_rx2 = QRegExp(QString("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
 
 CSV::CSV(QIODevice* device) :
     m_device(device),
