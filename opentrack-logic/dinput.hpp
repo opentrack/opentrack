@@ -5,10 +5,11 @@
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif
+#include "export.hpp"
 #include <dinput.h>
 #include <windows.h>
 
-struct dinput_handle final
+struct OPENTRACK_LOGIC_EXPORT dinput_handle final
 {
     using di_t = LPDIRECTINPUT8;
 private:
