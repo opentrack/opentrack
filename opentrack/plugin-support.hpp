@@ -9,7 +9,6 @@
 
 #include "plugin-api.hpp"
 #include "opentrack-compat/options.hpp"
-#include "library-path.hpp"
 
 #include <QWidget>
 #include <QDebug>
@@ -106,7 +105,7 @@ struct dylib final {
             delete handle;
     }
 
-    static QList<mem<dylib>> enum_libraries()
+    static QList<mem<dylib>> enum_libraries(const QString& library_path)
     {
         const char* filters_n[] = { OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT,
                                     OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT,
@@ -114,7 +113,7 @@ struct dylib final {
                                   };
         const Type filters_t[] = { Filter, Tracker, Protocol };
 
-        static const QString libexec_path(QStringLiteral("./") + opentrack_library_path);
+        static const QString libexec_path(QStringLiteral("./") + library_path);
 
         QDir settingsDir(libexec_path);
 
@@ -174,9 +173,10 @@ private:
     }
 };
 
-struct Modules {
-    Modules() :
-        module_list(dylib::enum_libraries()),
+struct Modules
+{
+    Modules(const QString& library_path) :
+        module_list(dylib::enum_libraries(library_path)),
         filter_modules(filter(dylib::Filter)),
         tracker_modules(filter(dylib::Tracker)),
         protocol_modules(filter(dylib::Protocol))

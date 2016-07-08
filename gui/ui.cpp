@@ -9,6 +9,7 @@
 #include "ui.h"
 #include "opentrack-logic/tracker.h"
 #include "opentrack-compat/options.hpp"
+#include "library-path.hpp"
 #include "new_file_dialog.h"
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -20,6 +21,7 @@
 #endif
 
 MainWindow::MainWindow() :
+    State(opentrack_library_path),
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     is_refreshing_profiles(false)
