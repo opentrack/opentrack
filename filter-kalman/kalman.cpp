@@ -66,7 +66,7 @@ void FTNoIR_Filter::reset() {
     for (int i = 0; i < 6; i++) {
         last_input[i] = 0;
     }
-    timer.invalidate();
+    first_run = true;
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
@@ -76,16 +76,24 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         reset();
         prev_slider_pos = s.noise_stddev_slider;
     }
-    // Start the timer if it's not running.
-    if (!timer.isValid())
+    // Start the timer on first filter evaluation.
+    if (first_run)
+    {
         timer.start();
+        first_run = false;
+        return;
+    }
+
     // Get the time in seconds since last run and restart the timer.
-    const double dt = timer.restart() / 1000.;
+    const double dt = timer.elapsed_seconds();
+    timer.start();
+    
     // Note this is a terrible way to detect when there is a new
     // frame of tracker input, but it is the best we have.
     bool new_input = false;
     for (int i = 0; i < 6 && !new_input; i++)
         new_input = (input[i] != last_input[i]);
+
     // Update the transitionMatrix and processNoiseCov for dt.
     double accel_variance = accel_stddev * accel_stddev;
     double a = dt * dt * accel_variance;  // dt^2 * accel_variance.
