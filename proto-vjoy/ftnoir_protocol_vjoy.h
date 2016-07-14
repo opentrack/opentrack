@@ -80,12 +80,12 @@ typedef struct _JOYSTICK_STATE
 } JOYSTICK_STATE, * PJOYSTICK_STATE;
 
 #ifndef _MSC_VER
-#define VJOY_API extern "C" __declspec(dllimport)
+#define VJOY_API extern "C"
 VJOY_API BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
 VJOY_API VOID __stdcall VJoy_Shutdown();
 VJOY_API BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);
 #else
-#define VJOY_API __declspec(dllimport)
+#define VJOY_API extern "C"
 VJOY_API BOOL __stdcall VJoy_Initialize(PCHAR name, PCHAR serial);
 VJOY_API VOID __stdcall VJoy_Shutdown();
 VJOY_API BOOL __stdcall VJoy_UpdateJoyState(int id, PJOYSTICK_STATE pJoyState);
