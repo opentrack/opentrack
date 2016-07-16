@@ -5,10 +5,9 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef TRANSCALIB_H
-#define TRANSCALIB_H
+#pragma once
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 
 //-----------------------------------------------------------------------------
 // Calibrates the translation from head to model = t_MH
@@ -17,7 +16,7 @@
 // measurement equation when head position = t_CH is fixed:
 // (R_CM_k , Id)*(-t_MH, t_CH) = t_CM_k
 
-class TranslationCalibrator
+class TranslationCalibrator final
 {
 public:
     TranslationCalibrator();
@@ -35,5 +34,3 @@ private:
     cv::Matx66f P;      // normalized precision matrix = inverse covariance
     cv::Vec6f y;        // P*(-t_MH, t_CH)
 };
-
-#endif //TRANSCALIB_H
