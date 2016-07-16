@@ -29,7 +29,7 @@ class TrackerDialog_PT;
 
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
-class Tracker_PT : public QThread, public ITracker
+class Tracker_PT : public QThread, public ITracker, private pt_types
 {
     static constexpr double pi = 3.14159265359;
 
@@ -58,7 +58,7 @@ private:
     void set_command(Command command);
     void reset_command(Command command);
 
-    bool get_focal_length(float &ret);
+    bool get_focal_length(f& ret);
 
     QMutex camera_mtx;
     CVCamera       camera;
@@ -75,7 +75,7 @@ private:
     volatile bool ever_success;
     volatile unsigned char commands;
 
-    static constexpr float rad2deg = float(180/3.14159265);
+    static constexpr f rad2deg = f(180/3.14159265);
     //static constexpr float deg2rad = float(3.14159265/180);
 };
 

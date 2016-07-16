@@ -56,7 +56,7 @@ void Tracker_PT::reset_command(Command command)
     commands &= ~command;
 }
 
-bool Tracker_PT::get_focal_length(float& ret)
+bool Tracker_PT::get_focal_length(f& ret)
 {
     QMutexLocker l(&camera_mtx);
     CamInfo info;
@@ -104,7 +104,7 @@ void Tracker_PT::run()
         {
             const auto& points = point_extractor.extract_points(frame_);
 
-            float fx;
+            f fx;
             if (!get_focal_length(fx))
                 continue;
 
@@ -118,7 +118,7 @@ void Tracker_PT::run()
 
             Affine X_CM = pose();
 
-            std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
+            std::function<void(const vec2&, const cv::Scalar)> fun = [&](const vec2& p, const cv::Scalar color)
             {
                 using std::round;
                 cv::Point p2(round(p[0] * frame_.cols + frame_.cols/2),
@@ -141,10 +141,10 @@ void Tracker_PT::run()
             }
 
             {
-                Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
-                cv::Vec3f p = X_GH.t; // head (center?) position in global space
-                cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
+                vec3 p = X_GH.t; // head (center?) position in global space
+                vec2 p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
                 fun(p_, cv::Scalar(0, 0, 255));
             }
 
@@ -201,33 +201,34 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM = pose();
 
-        Affine X_MH(cv::Matx33f::eye(), cv::Vec3f(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+        Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
         Affine X_GH = X_CM * X_MH;
-
-        cv::Matx33f R = X_GH.R;
-        cv::Vec3f   t = X_GH.t;
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
         // -z -> x, y -> z, x -> -y
-        cv::Matx33f R_EG(0, 0,-1,
-                         -1, 0, 0,
-                         0, 1, 0);
-        R = R_EG * R * R_EG.t();
+        mat33 R_EG(0, 0,-1,
+                   -1, 0, 0,
+                   0, 1, 0);
+        mat33 R = R_EG *  X_GH.R * R_EG.t();
 
         using std::atan2;
         using std::sqrt;
 
         // extract rotation angles
-        float alpha, beta, gamma;
-        beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-        alpha = atan2( R(1,0), R(0,0));
-        gamma = atan2( R(2,1), R(2,2));
+        {
+            f alpha, beta, gamma;
+            beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+            alpha = atan2( R(1,0), R(0,0));
+            gamma = atan2( R(2,1), R(2,2));
 
-        // extract rotation angles
-        data[Yaw] = rad2deg * alpha;
-        data[Pitch] = -rad2deg * beta;
-        data[Roll] = rad2deg * gamma;
+            data[Yaw] = rad2deg * alpha;
+            data[Pitch] = -rad2deg * beta;
+            data[Roll] = rad2deg * gamma;
+        }
         // get translation(s)
+
+        const vec3& t = X_GH.t;
+
         // convert to cm
         data[TX] = t[0] / 10;
         data[TY] = t[1] / 10;

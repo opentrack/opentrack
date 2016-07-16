@@ -21,7 +21,9 @@ PointExtractor::PointExtractor()
     points.reserve(max_blobs);
 }
 
-const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
+using vec2 = pt_types::vec2;
+
+const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
 {
     const int W = frame.cols;
     const int H = frame.rows;
@@ -53,8 +55,8 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
                      std::vector<int> { 0 },
                      cv::Mat(),
                      hist,
-                     std::vector<int> { 256/hist_c },
-                     std::vector<float> { 0, 256/hist_c },
+                     std::vector<int> { 256 },
+                     std::vector<float> { 0, 256 },
                      false);
         const int sz = hist.cols * hist.rows;
         int val = 0;
@@ -145,7 +147,7 @@ const std::vector<cv::Vec2f>& PointExtractor::extract_points(cv::Mat& frame)
 
     for (auto& b : blobs)
     {
-        cv::Vec2f p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
+        vec2 p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
         points.push_back(p);
     }
     return points;

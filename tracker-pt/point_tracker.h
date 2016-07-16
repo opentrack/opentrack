@@ -8,23 +8,22 @@
 #ifndef POINTTRACKER_H
 #define POINTTRACKER_H
 
+#include "opentrack-compat/timer.hpp"
+#include "ftnoir_tracker_pt_settings.h"
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <vector>
-#include "opentrack-compat/timer.hpp"
-#include "ftnoir_tracker_pt_settings.h"
-
 #include <QObject>
 #include <QMutex>
 
-class Affine
+class Affine final : private pt_types
 {
 public:
-    Affine() : R(cv::Matx33f::eye()), t(0,0,0) {}
-    Affine(const cv::Matx33f& R, const cv::Vec3f& t) : R(R),t(t) {}
+    Affine() : R(mat33::eye()), t(0,0,0) {}
+    Affine(const mat33& R, const vec3& t) : R(R),t(t) {}
 
-    cv::Matx33f R;
-    cv::Vec3f t;
+    mat33 R;
+    vec3 t;
 };
 
 inline Affine operator*(const Affine& X, const Affine& Y)
@@ -32,114 +31,81 @@ inline Affine operator*(const Affine& X, const Affine& Y)
     return Affine(X.R*Y.R, X.R*Y.t + X.t);
 }
 
-inline Affine operator*(const cv::Matx33f& X, const Affine& Y)
+inline Affine operator*(const pt_types::mat33& X, const Affine& Y)
 {
     return Affine(X*Y.R, X*Y.t);
 }
 
-inline Affine operator*(const Affine& X, const cv::Matx33f& Y)
+inline Affine operator*(const Affine& X, const pt_types::mat33& Y)
 {
     return Affine(X.R*Y, X.t);
 }
 
-inline cv::Vec3f operator*(const Affine& X, const cv::Vec3f& v)
+inline pt_types::vec3 operator*(const Affine& X, const pt_types::vec3& v)
 {
     return X.R*v + X.t;
 }
-
 
 // ----------------------------------------------------------------------------
 // Describes a 3-point model
 // nomenclature as in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointModel
+class PointModel final : private pt_types
 {
     friend class PointTracker;
 public:
     static constexpr unsigned N_POINTS = 3;
 
-    cv::Vec3f M01;      // M01 in model frame
-    cv::Vec3f M02;      // M02 in model frame
+    vec3 M01;      // M01 in model frame
+    vec3 M02;      // M02 in model frame
 
-    cv::Vec3f u;        // unit vector perpendicular to M01,M02-plane
+    vec3 u;        // unit vector perpendicular to M01,M02-plane
 
-    cv::Matx22f P;
+    mat22 P;
 
-    enum Model { Clip = 0, Cap = 1, Custom = 2 };
+    enum Model { Clip, Cap, Custom };
 
-    PointModel(settings_pt& s)
-    {
-        set_model(s);
-        // calculate u
-        u = M01.cross(M02);
-        u /= norm(u);
-
-        // calculate projection matrix on M01,M02 plane
-        float s11 = M01.dot(M01);
-        float s12 = M01.dot(M02);
-        float s22 = M02.dot(M02);
-        P = 1/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
-    }
-
-    void set_model(settings_pt& s)
-    {
-        switch (s.active_model_panel)
-        {
-        case Clip:
-            M01 = cv::Vec3f(0, static_cast<double>(s.clip_ty), -static_cast<double>(s.clip_tz));
-            M02 = cv::Vec3f(0, -static_cast<double>(s.clip_by), -static_cast<double>(s.clip_bz));
-            break;
-        case Cap:
-            M01 = cv::Vec3f(-static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
-            M02 = cv::Vec3f(static_cast<double>(s.cap_x), -static_cast<double>(s.cap_y), -static_cast<double>(s.cap_z));
-            break;
-        case Custom:
-            M01 = cv::Vec3f(s.m01_x, s.m01_y, s.m01_z);
-            M02 = cv::Vec3f(s.m02_x, s.m02_y, s.m02_z);
-            break;
-        }
-    }
-
-    void get_d_order(const std::vector<cv::Vec2f>& points, int* d_order, cv::Vec2f d) const;
+    PointModel(settings_pt& s);
+    void set_model(settings_pt& s);
+    void get_d_order(const std::vector<vec2>& points, int* d_order, vec2 d) const;
 };
 
 // ----------------------------------------------------------------------------
 // Tracks a 3-point model
 // implementing the POSIT algorithm for coplanar points as presented in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointTracker
+class PointTracker final : private pt_types
 {
 public:
     PointTracker();
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout);
+    void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout);
     Affine pose() { QMutexLocker l(&mtx); return X_CM; }
-    cv::Vec2f project(const cv::Vec3f& v_M, float f);
-private:
-    static constexpr float PI = 3.14159265358979323846f;
+    vec2 project(const vec3& v_M, PointTracker::f focal_length);
 
+private:
     // the points in model order
     struct PointOrder
     {
-        cv::Vec2f points[PointModel::N_POINTS];
+        vec2 points[PointModel::N_POINTS];
         PointOrder()
         {
             for (unsigned i = 0; i < PointModel::N_POINTS; i++)
-                points[i] = cv::Vec2f(0, 0);
+                points[i] = vec2(0, 0);
         }
     };
 
-    PointOrder find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel &model);
-    PointOrder find_correspondences_previous(const std::vector<cv::Vec2f>& points, const PointModel &model, float f);
-    int POSIT(const PointModel& point_model, const PointOrder& order, float focal_length);  // The POSIT algorithm, returns the number of iterations
+    PointOrder find_correspondences(const std::vector<vec2>& projected_points, const PointModel &model);
+    PointOrder find_correspondences_previous(const std::vector<vec2>& points, const PointModel &model, f focal_length);
+    int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera
 
     Timer t;
-    bool init_phase;
     QMutex mtx;
+    bool init_phase;
 };
 
 #endif //POINTTRACKER_H

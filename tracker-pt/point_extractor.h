@@ -16,13 +16,13 @@
 
 #include <vector>
 
-class PointExtractor
+class PointExtractor final : private pt_types
 {
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
-    const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
+    const std::vector<vec2>& extract_points(cv::Mat &frame);
     int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
     PointExtractor();
 
@@ -31,7 +31,7 @@ private:
     static constexpr double pi = 3.14159265359;
     static constexpr int hist_c = 1;
 
-    std::vector<cv::Vec2f> points;
+    std::vector<vec2> points;
     QMutex mtx;
     cv::Mat frame_gray;
     cv::Mat frame_bin;

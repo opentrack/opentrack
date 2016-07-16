@@ -6,8 +6,26 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_PT_SETTINGS_H
-#define FTNOIR_TRACKER_PT_SETTINGS_H
+#pragma once
+
+#include <limits>
+#include <opencv2/core.hpp>
+
+struct pt_types
+{
+    using f = double;
+
+    static constexpr f eps = std::numeric_limits<f>::epsilon();
+    static constexpr f pi = f(3.14159265358979323846);
+
+    template<int n> using vec = cv::Vec<f, n>;
+    using vec2 = vec<2>;
+    using vec3 = vec<3>;
+
+    template<int y, int x> using mat = cv::Matx<f, y, x>;
+    using mat33 = mat<3, 3>;
+    using mat22 = mat<2, 2>;
+};
 
 #include "opentrack-compat/options.hpp"
 using namespace options;
@@ -28,9 +46,9 @@ struct settings_pt : opts
 
     value<int> clip_ty, clip_tz, clip_by, clip_bz;
     value<int> active_model_panel, cap_x, cap_y, cap_z;
-    
+
     value<int> fov;
-    
+
     value<bool> dynamic_pose;
     value<int> init_phase_timeout;
     value<bool> auto_threshold;
@@ -67,5 +85,3 @@ struct settings_pt : opts
         auto_threshold(b, "automatic-threshold", false)
     {}
 };
-
-#endif //FTNOIR_TRACKER_PT_SETTINGS_H
