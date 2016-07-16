@@ -7,9 +7,11 @@
 
 #include "ftnoir_tracker_aruco.h"
 #include "opentrack/plugin-api.hpp"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
 #include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
 
@@ -71,7 +73,7 @@ Tracker::~Tracker()
 void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new ArucoVideoWidget(videoframe);
+    videoWidget = new PTVideoWidget(videoframe);
     QHBoxLayout* layout_ = new QHBoxLayout();
     layout_->setContentsMargins(0, 0, 0, 0);
     layout_->addWidget(videoWidget);

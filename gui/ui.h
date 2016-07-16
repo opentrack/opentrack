@@ -69,8 +69,6 @@ class MainWindow : public QMainWindow, private State
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
-    void changeEvent(QEvent* e) override;
-
     void load_settings();
     void load_mappings();
     void updateButtonState(bool running, bool inertialp);
@@ -104,14 +102,11 @@ private slots:
     void startTracker();
     void stopTracker();
     void reload_options();
-    void mark_minimized(bool is_minimized);
 signals:
     void emit_start_tracker();
     void emit_stop_tracker();
     void emit_toggle_tracker();
     void emit_restart_tracker();
-
-    void emit_minimized(bool);
 public:
     MainWindow();
     ~MainWindow();

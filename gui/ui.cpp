@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013-2016, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -123,8 +123,6 @@ MainWindow::MainWindow() :
             Qt::QueuedConnection);
 
     register_shortcuts();
-
-    connect(this, &MainWindow::emit_minimized, this, &MainWindow::mark_minimized, Qt::QueuedConnection);
 
     ui.btnStartTracker->setFocus();
 }
@@ -556,30 +554,6 @@ void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
     setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     raise();  // for MacOS
     activateWindow(); // for Windows
-}
-
-void MainWindow::changeEvent(QEvent* e)
-{
-    if (e->type() == QEvent::WindowStateChange)
-    {
-        const bool is_minimized = windowState() & Qt::WindowMinimized;
-
-        if (s.tray_enabled && is_minimized)
-        {
-            if (!tray)
-                ensure_tray();
-            hide();
-        }
-
-        emit_minimized(is_minimized);
-    }
-
-    QMainWindow::changeEvent(e);
-}
-
-void MainWindow::mark_minimized(bool is_minimized)
-{
-    ui.video_frame->setEnabled(!is_minimized);
 }
 
 void MainWindow::maybe_start_profile_from_executable()

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "ui_aruco-trackercontrols.h"
-#include "ar_video_widget.h"
+#include "pt_video_widget.h"
 #include "opentrack-compat/options.hpp"
 #include "trans_calib.h"
 #include "opentrack/plugin-api.hpp"
@@ -79,7 +79,7 @@ private:
     QMutex mtx;
     volatile bool stop;
     QHBoxLayout* layout;
-    ArucoVideoWidget* videoWidget;
+    PTVideoWidget* videoWidget;
     settings s;
     double pose[6];
     cv::Mat frame, grayscale, color;
