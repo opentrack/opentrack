@@ -375,7 +375,7 @@ void MainWindow::stopTracker()
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll],
+    ui.pose_display->rotateBy(mapped[Yaw], -mapped[Pitch], -mapped[Roll],
                               mapped[TX], mapped[TY], mapped[TZ]);
 
     if (mapping_widget)
