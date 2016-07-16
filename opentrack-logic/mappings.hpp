@@ -42,9 +42,9 @@ private:
 public:
     Mappings(std::vector<axis_opts*> opts) :
         axes {
-            Mapping("tx","tx_alt", 100, 100, *opts[TX]),
-            Mapping("ty","ty_alt", 100, 100, *opts[TY]),
-            Mapping("tz","tz_alt", 100, 100, *opts[TZ]),
+            Mapping("tx","tx_alt", 30, 50, *opts[TX]),
+            Mapping("ty","ty_alt", 30, 50, *opts[TY]),
+            Mapping("tz","tz_alt", 30, 50, *opts[TZ]),
             Mapping("rx", "rx_alt", 180, 180, *opts[Yaw]),
             Mapping("ry", "ry_alt", 180, 180, *opts[Pitch]),
             Mapping("rz", "rz_alt", 180, 180, *opts[Roll])
