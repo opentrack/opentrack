@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanisław Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -87,7 +87,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     // Get the time in seconds since last run and restart the timer.
     const double dt = timer.elapsed_seconds();
     timer.start();
-    
+
     // Note this is a terrible way to detect when there is a new
     // frame of tracker input, but it is the best we have.
     bool new_input = false;
