@@ -22,10 +22,10 @@
 #   warning "expect misnamed symbols"
 #endif
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-
-#define NP_AXIS_MAX 16383
+#endif
 
 #include <string.h>
 #include <windows.h>
@@ -110,8 +110,10 @@ FT_EXPORT(const char*) FTProvider(void)
     return dllProvider;
 }
 
+#ifdef _MSC_VER
 #pragma comment (linker, "/export:FTReportID=_FTReportID@4")
 #pragma comment (linker, "/export:FTReportName=_FTReportName@4")
 #pragma comment (linker, "/export:FTGetDllVersion=_FTGetDllVersion@0")
 #pragma comment (linker, "/export:FTProvider=_FTProvider@0")
 #pragma comment (linker, "/export:FTGetData=_FTGetData@4")
+#endif
