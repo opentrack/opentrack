@@ -27,11 +27,11 @@ static constexpr double rot_gains[][2] = {
 };
 
 static constexpr double trans_gains[][2] = {
-    { 2, 400 },
-    { 1.66, 120 },
-    { 1.33, 40 },
-    { 1, 10 },
-    { .66, 2 },
+    //{ 3, 200 },
+    { 1.66, 40 },
+    { 1.33, 15 },
+    { 1, 5 },
+    { .66, 1 },
     { .33, .6 },
     { 0, 0 },
     { -1, 0 }
@@ -49,7 +49,7 @@ FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
     trans.setMaxInput(trans_gains[0][0]);
     rot.setMaxOutput(rot_gains[0][1]);
     trans.setMaxOutput(trans_gains[0][1]);
-    
+
     for (int i = 0; rot_gains[i][0] >= 0; i++)
     {
         rot.addPoint(QPointF(rot_gains[i][0], rot_gains[i][1]));
@@ -75,10 +75,10 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         t.start();
         return;
     }
-    
+
     const double rot_t = (1+s.rot_threshold) * s.mult_rot;
     const double trans_t = (1+s.trans_threshold) * s.mult_trans;
-    
+
     const double dt = t.elapsed() * 1e-9;
     t.start();
 
@@ -86,22 +86,22 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     const double alpha = dt/(dt+RC);
     const double rot_dz = s.rot_deadzone * s.mult_rot_dz;
     const double trans_dz = s.trans_deadzone * s.mult_trans_dz;
-    
+
     for (int i = 0; i < 6; i++)
     {
         Map& m = i >= 3 ? rot : trans;
-        
+
         smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
-        
+
         const double in = smoothed_input[i];
-        
+
         const double vec = in - last_output[i];
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec_ = std::max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double val = m.getValue(vec_ / thres);
         const double result = last_output[i] + (vec < 0 ? -1 : 1) * dt * val;
-        
+
         last_output[i] = output[i] = result;
     }
 }
