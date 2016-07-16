@@ -1,5 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2014-2015 Stanislaw Halik <sthalik@misaki.pl>
+ * Copyright (c) 2015-2016 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -62,7 +62,7 @@ const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
         int val = 0;
         int cnt = 0;
         constexpr int min_pixels = int(10 * 10 * 3 * pi);
-        const int pixels_to_include = std::max<int>(0, min_pixels * s.threshold / 255);
+        const int pixels_to_include = std::max<int>(0, min_pixels * s.threshold * s.threshold / (256 * 256));
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i >= 0; i--)
         {
@@ -73,8 +73,7 @@ const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
                 break;
             }
         }
-        val *= hist_c;
-        val *= 240./256.;
+        //val *= 240./256.;
         //qDebug() << "val" << val;
 
         cv::threshold(frame_gray, frame_bin, val, 255, CV_THRESH_BINARY);

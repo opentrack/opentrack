@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2015-2016 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -29,7 +30,6 @@ public:
     settings_pt s;
 private:
     static constexpr double pi = 3.14159265359;
-    static constexpr int hist_c = 1;
 
     std::vector<vec2> points;
     QMutex mtx;
