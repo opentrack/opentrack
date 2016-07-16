@@ -1,6 +1,6 @@
 if(WIN32 OR APPLE OR CYGWIN)
     set(opentrack-hier-pfx ".")
-    set(opentrack-hier-path "/./")
+    set(opentrack-hier-path "/")
     set(opentrack-hier-doc ".")
     set(opentrack-hier-str RUNTIME DESTINATION . LIBRARY DESTINATION .)
 else()
