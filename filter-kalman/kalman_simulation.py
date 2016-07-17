@@ -56,7 +56,7 @@ xhat[0] = measurement[0]
 for k in range(1,N):
     # time update
     xhatminus[k] = A * xhat[k-1]
-    Pminus[k]    = A * P[k-1] + Q
+    Pminus[k]    = A * P[k-1] * A.T + Q
 
     # measurement update
     K[k] = Pminus[k] * H.T * np.linalg.inv( H * Pminus[k] * H.T + R )
