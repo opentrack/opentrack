@@ -14,6 +14,7 @@
 #include <opencv2/calib3d.hpp>
 #include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
+#include "opentrack-compat/pi-constant.hpp"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -87,7 +88,7 @@ void Tracker::start_tracker(QFrame* videoframe)
     layout = layout_;
 }
 
-#define HT_PI 3.1415926535
+#define HT_PI OPENTRACK_PI
 
 void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 {
@@ -181,7 +182,7 @@ bool Tracker::open_camera()
 
 void Tracker::set_intrinsics()
 {
-    static constexpr double pi = 3.1415926f;
+    static constexpr double pi = OPENTRACK_PI;
     const int w = grayscale.cols, h = grayscale.rows;
     const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));

@@ -10,6 +10,7 @@
 
 #include <vector>
 
+#include "opentrack-compat/pi-constant.hpp"
 #include "opentrack-compat/timer.hpp"
 #include "opentrack/plugin-support.hpp"
 #include "mappings.hpp"
@@ -28,7 +29,7 @@
 class Pose
 {
 private:
-    static constexpr double pi = 3.141592653;
+    static constexpr double pi = OPENTRACK_PI;
     static constexpr double d2r = pi/180.0;
     static constexpr double r2d = 180./pi;
 

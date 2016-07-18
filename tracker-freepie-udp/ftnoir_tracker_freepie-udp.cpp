@@ -1,13 +1,11 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack-compat/pi-constant.hpp"
 
 #include <cinttypes>
 #include <algorithm>
 #include <cmath>
 
-#ifndef M_PI
-#   define M_PI 3.14159265358979323846
-#endif
 
 TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
 {
@@ -43,7 +41,7 @@ void TrackerImpl::run() {
         Mask = flag_Raw | flag_Orient
     };
 
-    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    sock.bind(QHostAddress::Any, (unsigned short) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
     while (!should_quit) {
         int order[] = {
@@ -92,7 +90,7 @@ void TrackerImpl::run() {
             };
             int indices[] = { s.add_yaw, s.add_pitch, s.add_roll };
             QMutexLocker foo(&mtx);
-            static constexpr double r2d = 180 / M_PI;
+            static constexpr double r2d = 180 / OPENTRACK_PI;
             for (int i = 0; i < 3; i++)
             {
                 int val = 0;

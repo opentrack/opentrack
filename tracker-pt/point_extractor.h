@@ -13,6 +13,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
+#include "opentrack-compat/pi-constant.hpp"
 #include <QMutex>
 
 #include <vector>
@@ -29,7 +30,7 @@ public:
 
     settings_pt s;
 private:
-    static constexpr double pi = 3.14159265359;
+    static constexpr double pi = OPENTRACK_PI;
 
     std::vector<vec2> points;
     QMutex mtx;

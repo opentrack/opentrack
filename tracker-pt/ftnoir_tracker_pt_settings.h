@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "opentrack-compat/pi-constant.hpp"
 #include <limits>
 #include <opencv2/core.hpp>
 
@@ -16,7 +17,7 @@ struct pt_types
     using f = double;
 
     static constexpr f eps = std::numeric_limits<f>::epsilon();
-    static constexpr f pi = f(3.14159265358979323846);
+    static constexpr f pi = f(OPENTRACK_PI);
 
     template<int n> using vec = cv::Vec<f, n>;
     using vec2 = vec<2>;

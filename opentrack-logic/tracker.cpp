@@ -108,7 +108,7 @@ void Tracker::logic()
         m(5).opts.invert,
     };
 
-    static constexpr double pi = 3.141592653;
+    static constexpr double pi = OPENTRACK_PI;
     static constexpr double r2d = 180. / pi;
     static constexpr double d2r = pi / 180.;
 

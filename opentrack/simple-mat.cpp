@@ -1,8 +1,9 @@
 #include "simple-mat.hpp"
+#include "opentrack-compat/pi-constant.hpp"
 
 namespace euler {
 
-static constexpr double pi = 3.141592653;
+static constexpr double pi = OPENTRACK_PI;
 
 euler_t rmat_to_euler(const dmat<3, 3>& R)
 {

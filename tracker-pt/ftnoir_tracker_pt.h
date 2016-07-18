@@ -17,6 +17,7 @@
 #include "pt_video_widget.h"
 #include "opentrack-compat/timer.hpp"
 #include "opentrack/opencv-camera-dialog.hpp"
+#include "opentrack-compat/pi-constant.hpp"
 
 #include <QThread>
 #include <QMutex>
@@ -32,7 +33,7 @@ class TrackerDialog_PT;
 // Constantly processes the tracking chain in a separate thread
 class Tracker_PT : public QThread, public ITracker, private pt_types
 {
-    static constexpr double pi = 3.14159265359;
+    static constexpr double pi = OPENTRACK_PI;
 
     Q_OBJECT
     friend class camera_dialog;
@@ -76,8 +77,8 @@ private:
     volatile bool ever_success;
     volatile unsigned char commands;
 
-    static constexpr f rad2deg = f(180/3.14159265);
-    //static constexpr float deg2rad = float(3.14159265/180);
+    static constexpr f rad2deg = f(180/OPENTRACK_PI);
+    //static constexpr float deg2rad = float(OPENTRACK_PI/180);
 };
 
 class TrackerDll : public Metadata

@@ -4,11 +4,8 @@
 #include "OVR_CAPI.h"
 #include "Extras/OVR_Math.h"
 #include "OVR_CAPI_0_8_0.h"
+#include "opentrack-compat/pi-constant.hpp"
 #include <cstdio>
-
-#ifndef M_PI
-#   define M_PI 3.14159265358979323846
-#endif
 
 using namespace OVR;
 
@@ -63,7 +60,7 @@ void Rift_Tracker::data(double *data)
                     yaw_ += s.constant_drift;
                 old_yaw = yaw_;
             }
-            static constexpr double d2r = 180 / M_PI;
+            static constexpr double d2r = 180 / OPENTRACK_PI;
             data[Yaw] = yaw_                   * -d2r;
             data[Pitch] = double(pitch)        *  d2r;
             data[Roll] = double(roll)          *  d2r;
