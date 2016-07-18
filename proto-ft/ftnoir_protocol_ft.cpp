@@ -8,6 +8,7 @@
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
+#include "opentrack-library-path.h"
 
 check_for_first_run FTNoIR_Protocol::runonce_check = check_for_first_run();
 
@@ -93,7 +94,7 @@ void FTNoIR_Protocol::pose(const double* headpose) {
 }
 
 void FTNoIR_Protocol::start_tirviews() {
-    QString aFileName = QCoreApplication::applicationDirPath() + "/TIRViews.dll";
+    QString aFileName = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll";
     if ( QFile::exists( aFileName )) {
         FTIRViewsLib.setFileName(aFileName);
         FTIRViewsLib.load();
@@ -118,14 +119,14 @@ void FTNoIR_Protocol::start_tirviews() {
 }
 
 void FTNoIR_Protocol::start_dummy() {
-    QString program = QCoreApplication::applicationDirPath() + "/TrackIR.exe";
+    QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
 }
 
 void FTNoIR_Protocol::set_protocols(bool ft, bool npclient)
 {
-    const QString program_dir =  QCoreApplication::applicationDirPath() + "/";
+    const QString program_dir = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
 
     // Registry settings (in HK_USER)
     QSettings settings_ft("Freetrack", "FreetrackClient");

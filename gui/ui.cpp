@@ -22,7 +22,7 @@
 #endif
 
 MainWindow::MainWindow() :
-    State(QCoreApplication::applicationDirPath() + OPENTRACK_LIBRARY_PATH),
+    State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
     is_refreshing_profiles(false)
@@ -177,7 +177,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::set_working_directory()
 {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QDir::setCurrent(OPENTRACK_BASE_PATH);
 }
 
 void MainWindow::save_modules()

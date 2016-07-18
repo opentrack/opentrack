@@ -9,6 +9,7 @@
 #include "ftnoir_tracker_rs_controls.h"
 #include "imagewidget.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack-library-path.h"
 #include <QMessageBox>
 #include <QProcess>
 #include <QStackedLayout>
@@ -82,7 +83,9 @@ void RSTracker::handleTrackingEnded(int exitCode){
 
 bool RSTracker::startSdkInstallationProcess()
 {
-    bool pStarted = QProcess::startDetached("contrib\\intel_rs_sdk_runtime_websetup_10.0.26.0396.exe --finstall=core,face3d --fnone=all");
+    static const QString contrib_path(OPENTRACK_BASE_PATH + QString(OPENTRACK_CONTRIB_PATH));
+
+    bool pStarted = QProcess::startDetached(contrib_path + "intel_rs_sdk_runtime_websetup_10.0.26.0396.exe --finstall=core,face3d --fnone=all");
     if(!pStarted){
         QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
     }
