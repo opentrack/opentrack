@@ -1,5 +1,11 @@
 #ifdef _WIN32
+#   define MINGW_HAS_SECURE_API 1
+#   include "opentrack-library-path.h"
 #   include <stdlib.h>
+#   include <vector>
+#   include <QCoreApplication>
+#   include <QFile>
+#   include <QString>
 #endif
 
 #include "ui.h"
@@ -57,6 +63,57 @@ int main(int argc, char** argv)
 
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
+
+#ifdef _WIN32
+    // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
+    static char env_path[4096] { '\0', };
+    {
+        QString lib_path = OPENTRACK_BASE_PATH;
+        lib_path.replace("/", "\\");
+        const QByteArray lib_path_ = QFile::encodeName(lib_path);
+
+        QString mod_path = OPENTRACK_BASE_PATH + QString(OPENTRACK_LIBRARY_PATH);
+        mod_path.replace("/", "\\");
+        const QByteArray mod_path_ = QFile::encodeName(mod_path);
+
+        std::vector<const char*> contents
+        {
+            "PATH=",
+            lib_path_.constData(),
+            ";",
+            mod_path_.constData(),
+            ";",
+            getenv("PATH"),
+        };
+
+        bool ok = true;
+
+        for (const char* ptr : contents)
+        {
+            strcat_s(env_path, sizeof(env_path), ptr);
+
+            if (ptr == nullptr || ptr[0] == '\0' || env_path[0] == '\0')
+            {
+                qDebug() << "bad path element, debug info:"
+                         << (ptr == nullptr ? "<null>" : ptr)
+                         << (ptr != nullptr && ptr[0] == '\0')
+                         << (env_path[0] == '\0');
+                ok = false;
+                break;
+            }
+        }
+
+        if (ok)
+        {
+            const int error = _putenv(env_path);
+
+            if (error)
+                qDebug() << "can't _putenv win32 path";
+        }
+        else
+            qDebug() << "can't set win32 path";
+    }
+#endif
 
     MainWindow::set_working_directory();
 
