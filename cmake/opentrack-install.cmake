@@ -6,10 +6,10 @@ if(WIN32)
     install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
 endif()
 
-install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${opentrack-hier-doc})
+install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${opentrack-doc-pfx})
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION ${opentrack-hier-doc})
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib" DESTINATION ${opentrack-hier-doc})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty-notices DESTINATION ${opentrack-doc-pfx})
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib" DESTINATION ${opentrack-doc-pfx})
 
 install(FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll" DESTINATION ${opentrack-hier-pfx} ${opentrack-perms})
 install(FILES

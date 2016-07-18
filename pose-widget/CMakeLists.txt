@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-pose-widget)
+opentrack_boilerplate(opentrack-pose-widget BIN)

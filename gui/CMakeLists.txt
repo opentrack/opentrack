@@ -32,5 +32,5 @@ if(LINUX)
     target_link_libraries(opentrack procps)
 endif()
 
-opentrack_boilerplate(opentrack STAGE2)
+opentrack_boilerplate(opentrack STAGE2 BIN)
 
