@@ -98,14 +98,17 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 
     QString id_str(QString::number(id));
 
-    static const QString libexec_path(QCoreApplication::applicationDirPath() +
-                                      QString(OPENTRACK_LIBRARY_PATH) +
-                                      QString("settings/facetracknoir supported games.csv"));
+    static const QString csv_path(QCoreApplication::applicationDirPath() +
+                                  QString(OPENTRACK_LIBRARY_PATH) +
+                                  QString("settings/facetracknoir supported games.csv"));
 
-    QFile file(QCoreApplication::applicationDirPath() + libexec_path);
+    QFile file(csv_path);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "csv: can't open game list for freetrack protocol!";
         return false;
+    }
 
     CSV csv(&file);
 
