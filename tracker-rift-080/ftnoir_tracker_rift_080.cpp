@@ -1,10 +1,10 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift_080.h"
 #include "opentrack/plugin-api.hpp"
-#include "OVR_CAPI.h"
-#include "Extras/OVR_Math.h"
-#include "OVR_CAPI_0_8_0.h"
 #include "opentrack-compat/pi-constant.hpp"
+#include <OVR_CAPI.h>
+#include <Extras/OVR_Math.h>
+#include <OVR_CAPI_0_8_0.h>
 #include <cstdio>
 
 using namespace OVR;

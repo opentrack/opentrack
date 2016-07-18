@@ -1,12 +1,11 @@
 #pragma once
 #include "ui_ftnoir_rift_clientcontrols_080.h"
+#include "opentrack/plugin-api.hpp"
+#include "opentrack-compat/options.hpp"
+#include <OVR.h>
+#include <cmath>
 #include <QMessageBox>
 #include <QWaitCondition>
-#include <cmath>
-#include "opentrack/plugin-api.hpp"
-#include "OVR.h"
-#include <memory>
-#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

@@ -1,8 +1,8 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift_025.h"
 #include "opentrack/plugin-api.hpp"
-#include "OVR.h"
 #include "opentrack-compat/pi-constant.hpp"
+#include <OVR.h>
 #include <cstdio>
 #include <cmath>
 
