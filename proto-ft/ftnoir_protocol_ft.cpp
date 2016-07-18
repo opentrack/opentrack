@@ -37,10 +37,11 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     dummyTrackIR.waitForFinished(50);
 }
 
-void FTNoIR_Protocol::pose(const double* headpose) {
-    const float yaw = -rads_to_degrees(headpose[Yaw]);
-    const float pitch = -rads_to_degrees(headpose[Pitch]);
-    const float roll = rads_to_degrees(headpose[Roll]);
+void FTNoIR_Protocol::pose(const double* headpose)
+{
+    const float yaw = -degrees_to_rads(headpose[Yaw]);
+    const float pitch = -degrees_to_rads(headpose[Pitch]);
+    const float roll = degrees_to_rads(headpose[Roll]);
     const float tx = float(headpose[TX] * 10);
     const float ty = float(headpose[TY] * 10);
     const float tz = float(headpose[TZ] * 10);
@@ -93,7 +94,14 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     data->DataID += 1;
 }
 
-void FTNoIR_Protocol::start_tirviews() {
+float FTNoIR_Protocol::degrees_to_rads(double degrees)
+{
+    static constexpr double pi = 3.14159265358979323846;
+    return float(degrees*pi/180);
+}
+
+void FTNoIR_Protocol::start_tirviews()
+{
     QString aFileName = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll";
     if ( QFile::exists( aFileName )) {
         FTIRViewsLib.setFileName(aFileName);
