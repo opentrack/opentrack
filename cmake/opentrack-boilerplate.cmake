@@ -52,7 +52,7 @@ endfunction()
 
 include(CMakeParseArguments)
 
-function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile_ link_ stage2_)
+function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile_ link_ stage2_ bin_)
     if((NOT no-library_) AND (NOT stage2_))
         set(link-mode SHARED)
         if (static_)
@@ -93,13 +93,17 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
     string(REPLACE "-" "_" n_ ${n_})
     target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
     if((NOT static_) AND (NOT no-library_))
-        install(TARGETS ${n} ${opentrack-hier-str})
+        if(bin_ AND WIN32)
+            install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
+        else()
+            install(TARGETS ${n} ${opentrack-hier-str})
+        endif()
     endif()
 endfunction()
 
 macro(opentrack_boilerplate n)
     cmake_parse_arguments(${n}-args
-        "NO-LIBRARY;STATIC;NO-COMPAT;STAGE2"
+        "NO-LIBRARY;STATIC;NO-COMPAT;STAGE2;BIN"
         "LINK;COMPILE"
         ""
         ${ARGN}
@@ -119,6 +123,7 @@ macro(opentrack_boilerplate n)
                                        "${${n}-args_NO-COMPAT}"
                                        "${${n}-args_COMPILE}"
                                        "${${n}-args_LINK}"
-                                       "${${n}-args_STAGE2}")
+                                       "${${n}-args_STAGE2}"
+                                       "${${n}-args_BIN}")
     endif()
 endmacro()
