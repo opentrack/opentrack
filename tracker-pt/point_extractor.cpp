@@ -13,7 +13,11 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
+#include <opencv2/highgui.hpp>
+
 #include <cmath>
+#include <algorithm>
+#include <cinttypes>
 
 PointExtractor::PointExtractor()
 {
@@ -21,9 +25,7 @@ PointExtractor::PointExtractor()
     points.reserve(max_blobs);
 }
 
-using vec2 = pt_types::vec2;
-
-const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
+const std::vector<PointExtractor::vec2>& PointExtractor::extract_points(cv::Mat& frame)
 {
     const int W = frame.cols;
     const int H = frame.rows;
@@ -31,7 +33,8 @@ const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
     if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
     {
         frame_gray = cv::Mat(frame.rows, frame.cols, CV_8U);
-        frame_bin = cv::Mat(frame.rows, frame.cols, CV_8U);;
+        frame_bin = cv::Mat(frame.rows, frame.cols, CV_8U);
+        frame_blobs = cv::Mat(frame.rows, frame.cols, CV_8U);
     }
 
     // convert to grayscale
@@ -40,14 +43,10 @@ const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
 
-    const int thres = s.threshold;
-
-    contours.clear();
-
     if (!s.auto_threshold)
     {
+        const int thres = s.threshold;
         cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
-        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     }
     else
     {
@@ -59,87 +58,90 @@ const std::vector<vec2>& PointExtractor::extract_points(cv::Mat& frame)
                      std::vector<float> { 0, 256 },
                      false);
         const int sz = hist.cols * hist.rows;
-        int val = 0;
+        int thres = s.threshold;
         int cnt = 0;
-        constexpr int min_pixels = int(10 * 10 * 3 * pi);
-        const int pixels_to_include = std::max<int>(0, min_pixels * s.threshold * s.threshold / (256 * 256));
+        constexpr double min_pixels = 2 * 2 * 3 * pi;
+        constexpr double max_pixels = 7 * 7 * 3 * pi;
+        constexpr double range_pixels = max_pixels - min_pixels;
+        const int pixels_to_include = std::max<int>(0, int(min_pixels + range_pixels * s.threshold / 256));
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
-        for (int i = sz-1; i >= 0; i--)
+        for (int i = sz-1; i > 0; i--)
         {
             cnt += ptr[i];
             if (cnt >= pixels_to_include)
             {
-                val = i;
+                thres = i;
                 break;
             }
         }
         //val *= 240./256.;
         //qDebug() << "val" << val;
 
-        cv::threshold(frame_gray, frame_bin, val, 255, CV_THRESH_BINARY);
-        cv::findContours(frame_bin, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::threshold(frame_gray, frame_bin, thres, 255, CV_THRESH_BINARY);
     }
 
     blobs.clear();
+    frame_gray.copyTo(frame_blobs);
 
-    for (auto& c : contours)
+    unsigned idx = 0;
+    for (int y=0; y < frame_gray.rows; y++)
     {
-        using std::fabs;
+        if (idx > max_blobs) break;
 
-        const auto m = cv::moments(cv::Mat(c));
-
-        if (fabs(m.m00) < 1e-3)
-            continue;
-
-        const cv::Vec2d pos(m.m10 / m.m00, m.m01 / m.m00);
-
-        double radius;
-// following based on OpenCV SimpleBlobDetector
+        const unsigned char* ptr_bin = frame_bin.ptr(y);
+        for (int x=0; x < frame_gray.cols; x++)
         {
-            std::vector<double> dists;
-            for (auto& k : c)
+            if (idx > max_blobs) break;
+
+            if (ptr_bin[x] != 255)
+                continue;
+            idx = blobs.size();
+            cv::Rect rect;
+            cv::floodFill(frame_blobs,
+                          cv::Point(x,y),
+                          cv::Scalar(idx),
+                          &rect,
+                          cv::Scalar(0),
+                          cv::Scalar(0),
+                          4);
+            long m00 = 0;
+            long m10 = 0;
+            long m01 = 0;
+            long cnt = 0;
+            for (int i=rect.y; i < (rect.y+rect.height); i++)
             {
-                dists.push_back(cv::norm(pos - cv::Vec2d(k.x, k.y)));
+                const unsigned char* ptr_blobs = frame_blobs.ptr(i);
+                const unsigned char* ptr_gray = frame_gray.ptr(i);
+                unsigned char* ptr_bin = frame_bin.ptr(i);
+                for (int j=rect.x; j < (rect.x+rect.width); j++)
+                {
+                    if (ptr_blobs[j] != idx) continue;
+                    ptr_bin[j] = 0;
+                    const long val = ptr_gray[j];
+                    m00 += val;
+                    m01 += i * val;
+                    m10 += j * val;
+                    cnt++;
+                }
             }
-            std::sort(dists.begin(), dists.end());
-            radius = (dists[(dists.size() - 1)/2] + dists[dists.size()/2])/2;
-        }
-
-        if (radius < region_size_min || radius > region_size_max)
-            continue;
-
-        double confid = 1;
-        {
-            double denominator = std::sqrt(std::pow(2 * m.mu11, 2) + std::pow(m.mu20 - m.mu02, 2));
-            const double eps = 1e-2;
-            if (denominator > eps)
+            if (m00 > 0)
             {
-                double cosmin = (m.mu20 - m.mu02) / denominator;
-                double sinmin = 2 * m.mu11 / denominator;
-                double cosmax = -cosmin;
-                double sinmax = -sinmin;
-
-                double imin = 0.5 * (m.mu20 + m.mu02) - 0.5 * (m.mu20 - m.mu02) * cosmin - m.mu11 * sinmin;
-                double imax = 0.5 * (m.mu20 + m.mu02) - 0.5 * (m.mu20 - m.mu02) * cosmax - m.mu11 * sinmax;
-                confid = imin / imax;
+                const double radius = std::sqrt(cnt / pi);
+                if (radius > region_size_max || radius < region_size_min)
+                    continue;
+                const double norm = double(m00);
+                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm));
+                blobs.push_back(b);
+                {
+                    char buf[64];
+                    sprintf(buf, "%.2fpx", radius);
+                    cv::putText(frame, buf, cv::Point(b.pos[0]+30, b.pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
+                }
             }
         }
-// end SimpleBlobDetector
-
-        {
-            char buf[64];
-            sprintf(buf, "%.2fpx %.2fc", radius, confid);
-            cv::putText(frame, buf, cv::Point(pos[0]+30, pos[1]+20), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 255), 1);
-        }
-
-        blobs.push_back(blob(radius, pos, confid));
-
-        if (blobs.size() == max_blobs)
-            break;
     }
 
-    using b = const blob;
-    std::sort(blobs.begin(), blobs.end(), [](b& b1, b& b2) {return b1.confid > b2.confid;});
+    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.radius < b1.radius; });
 
     QMutexLocker l(&mtx);
     points.clear();

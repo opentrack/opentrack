@@ -37,22 +37,21 @@ private:
     cv::Mat frame_gray;
     cv::Mat frame_bin;
     cv::Mat hist;
+    cv::Mat frame_blobs;
 
-    enum { max_blobs = 16 };
+    static constexpr int max_blobs = 16;
 
     struct blob
     {
         double radius;
-        cv::Vec2d pos;
-        double confid;
-        blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid)
+        vec2 pos;
+        blob(double radius, const cv::Vec2d& pos) : radius(radius), pos(pos)
         {
-            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
+            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
         }
     };
 
     std::vector<blob> blobs;
-    std::vector<std::vector<cv::Point>> contours;
 };
 
 #endif //POINTEXTRACTOR_H
