@@ -1,11 +1,11 @@
 #include <cmath>
 
 #if defined(__GNUC__)
-bool __attribute__ ((noinline)) nanp(double value)
+extern "C" bool __attribute__ ((noinline)) nanp(double value)
 #elif defined(_WIN32)
-__declspec(noinline) bool nanp(double value)
+extern "C" __declspec(noinline) bool nanp(double value)
 #else
-bool nanp(double value)
+extern "C" bool nanp(double value)
 #endif
 {
     using std::isnan;

@@ -137,7 +137,7 @@ const std::vector<PointExtractor::vec2>& PointExtractor::extract_points(cv::Mat&
                     sprintf(buf, "%.2fpx", radius);
                     cv::putText(frame,
                                 buf,
-                                cv::Point(std::round(b.pos[0]+30), std::round(b.pos[1]+20)),
+                                cv::Point((int)std::round(b.pos[0]+30), (int)std::round(b.pos[1]+20)),
                                 cv::FONT_HERSHEY_DUPLEX,
                                 1,
                                 cv::Scalar(0, 0, 255),

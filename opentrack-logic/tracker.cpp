@@ -62,7 +62,7 @@ void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, 
     output[0] = -ret(1);
 }
 
-#include "nan.hpp"
+#include "opentrack-compat/nan.hpp"
 
 static inline double elide_nan(double value, double def)
 {
