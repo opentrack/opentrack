@@ -58,8 +58,7 @@ QString group::ini_pathname()
     const auto dir = ini_directory();
     if (dir == "")
         return "";
-    QSettings settings(OPENTRACK_ORG);
-    return dir + "/" + settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+    return dir + "/" + ini_filename();
 }
 
 const QStringList group::ini_list()
