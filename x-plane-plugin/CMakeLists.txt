@@ -5,6 +5,7 @@ if(LINUX OR APPLE)
     if(SDK_XPLANE)
         # probably librt already included
         add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
+        install(FILES ${opentrack-xplane-plugin-c} DESTINATION "${opentrack-doc-src-pfx}/opentrack-xplane-plugin")
         target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
         set(vis "-fvisibility=hidden")
         if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)

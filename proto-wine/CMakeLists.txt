@@ -10,6 +10,7 @@ if(NOT WIN32)
                 set(my-rt)
             endif()
             file(GLOB wine-deps ${PROJECT_SOURCE_DIR}/*.cxx)
+            install(FILES ${wine-deps} DESTINATION "${opentrack-doc-src-pfx}/proto-wine")
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
               DEPENDS ${wine-deps}

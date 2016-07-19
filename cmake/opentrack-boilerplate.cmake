@@ -1,5 +1,3 @@
-include(opentrack-hier)
-
 set(new-hier-path "#pragma once
 #include <QCoreApplication>
 #include <QString>
@@ -68,6 +66,8 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
             set(link-mode STATIC)
         endif()
         add_library(${n} ${link-mode} ${files_})
+        set(all-files ${${n}-c} ${${n}-res} ${${n}-ui} ${${n}-rc})
+        install(FILES ${all-files} DESTINATION "${opentrack-doc-src-pfx}/${n}")
         message(STATUS "module ${n}")
     endif()
     if(NOT no-library_)
