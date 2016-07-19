@@ -14,7 +14,6 @@
 
 #include "ftnoir_tracker_pt_settings.h"
 #include "opentrack-compat/pi-constant.hpp"
-#include <QMutex>
 
 #include <vector>
 
@@ -24,22 +23,18 @@ public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
-    const std::vector<vec2>& extract_points(cv::Mat &frame);
-    int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
+    void extract_points(cv::Mat &frame, std::vector<vec2>& points);
     PointExtractor();
 
     settings_pt s;
 private:
     static constexpr double pi = OPENTRACK_PI;
+    static constexpr int max_blobs = 16;
 
-    std::vector<vec2> points;
-    QMutex mtx;
     cv::Mat frame_gray;
     cv::Mat frame_bin;
     cv::Mat hist;
     cv::Mat frame_blobs;
-
-    static constexpr int max_blobs = 16;
 
     struct blob
     {

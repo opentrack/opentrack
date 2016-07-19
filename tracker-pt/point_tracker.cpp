@@ -311,7 +311,6 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
         if (nanp(t[i]))
             return -1;
 
-    QMutexLocker l(&mtx);
     // apply results
     X_CM.R = r;
     X_CM.t[0] = t[0];

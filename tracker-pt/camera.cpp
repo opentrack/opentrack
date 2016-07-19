@@ -112,7 +112,7 @@ void CVCamera::stop()
         // give opencv time to exit camera threads, etc.
         if (opened)
             portable::sleep(500);
-        qDebug() << "pt camera: assuming stopped";
+        qDebug() << "pt camera: stopped";
     }
 }
 

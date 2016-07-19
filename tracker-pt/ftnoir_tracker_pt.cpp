@@ -20,10 +20,11 @@
 
 //-----------------------------------------------------------------------------
 Tracker_PT::Tracker_PT() :
-      video_widget(NULL),
-      video_frame(NULL),
-      ever_success(false),
-      commands(0)
+      video_widget(nullptr),
+      video_frame(nullptr),
+      point_count(0),
+      commands(0),
+      ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
@@ -102,9 +103,11 @@ void Tracker_PT::run()
 
         if (new_frame && !frame_.empty())
         {
-            const auto& points = point_extractor.extract_points(frame_);
+            point_extractor.extract_points(frame_, points);
+            point_count = points.size();
 
             f fx;
+
             if (!get_focal_length(fx))
                 continue;
 
@@ -115,8 +118,6 @@ void Tracker_PT::run()
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
                 ever_success = true;
             }
-
-            Affine X_CM = pose();
 
             std::function<void(const vec2&, const cv::Scalar)> fun = [&](const vec2& p, const cv::Scalar color)
             {
@@ -141,6 +142,12 @@ void Tracker_PT::run()
             }
 
             {
+                Affine X_CM;
+                {
+                    QMutexLocker l(&data_mtx);
+                    X_CM = point_tracker.pose();
+                }
+
                 Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 vec3 p = X_GH.t; // head (center?) position in global space
@@ -234,6 +241,25 @@ void Tracker_PT::data(double *data)
         data[TY] = t[1] / 10;
         data[TZ] = t[2] / 10;
     }
+}
+
+Affine Tracker_PT::pose()
+{
+    QMutexLocker l(&data_mtx);
+
+    return point_tracker.pose();
+}
+
+int Tracker_PT::get_n_points()
+{
+    return int(point_count);
+}
+
+bool Tracker_PT::get_cam_info(CamInfo* info)
+{
+    QMutexLocker lock(&camera_mtx);
+
+    return camera.get_info(*info);
 }
 
 #include "ftnoir_tracker_pt_dialog.h"

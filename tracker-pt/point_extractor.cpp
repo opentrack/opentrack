@@ -22,10 +22,9 @@
 PointExtractor::PointExtractor()
 {
     blobs.reserve(max_blobs);
-    points.reserve(max_blobs);
 }
 
-const std::vector<PointExtractor::vec2>& PointExtractor::extract_points(cv::Mat& frame)
+void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::vec2>& points)
 {
     const int W = frame.cols;
     const int H = frame.rows;
@@ -149,7 +148,7 @@ const std::vector<PointExtractor::vec2>& PointExtractor::extract_points(cv::Mat&
 
     std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.radius < b1.radius; });
 
-    QMutexLocker l(&mtx);
+    points.reserve(max_blobs);
     points.clear();
 
     for (auto& b : blobs)
@@ -157,5 +156,4 @@ const std::vector<PointExtractor::vec2>& PointExtractor::extract_points(cv::Mat&
         vec2 p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
         points.push_back(p);
     }
-    return points;
 }

@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 #include <QObject>
-#include <QMutex>
 
 class Affine final : private pt_types
 {
@@ -82,7 +81,7 @@ public:
     // f : (focal length)/(sensor width)
     // dt : time since last call
     void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout);
-    Affine pose() { QMutexLocker l(&mtx); return X_CM; }
+    Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, PointTracker::f focal_length);
 
 private:
@@ -104,7 +103,6 @@ private:
     Affine X_CM; // trafo from model to camera
 
     Timer t;
-    QMutex mtx;
     bool init_phase;
 };
 
