@@ -1,6 +1,6 @@
 if(NOT opentrack-hier-included)
     set(opentrack-hier-included TRUE)
-
+    set(opentrack-install-rpath "")
     if(APPLE)
         set(opentrack-hier-pfx ".")
         set(opentrack-hier-path "/")
@@ -21,7 +21,7 @@ if(NOT opentrack-hier-included)
         set(opentrack-hier-doc "/share/doc/opentrack/")
         set(opentrack-doc-pfx "./share/doc/opentrack")
         set(opentrack-doc-src-pfx "./share/doc/opentrack/source-code")
-        set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${opentrack-hier-pfx}")
+        set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/${opentrack-hier-pfx}")
         set(opentrack-hier-str ARCHIVE DESTINATION lib/opentrack LIBRARY DESTINATION ${opentrack-hier-pfx} RUNTIME DESTINATION bin)
     endif()
 
