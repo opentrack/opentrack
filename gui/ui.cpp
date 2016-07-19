@@ -11,13 +11,12 @@
 #include "opentrack-compat/options.hpp"
 #include "opentrack-library-path.h"
 #include "new_file_dialog.h"
+#include <QFile>
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QCoreApplication>
 
-#ifndef _WIN32
-#   include <unistd.h>
-#else
+#ifdef _WIN32
 #   include <windows.h>
 #endif
 
@@ -148,16 +147,14 @@ void MainWindow::register_shortcuts()
 
 void MainWindow::warn_on_config_not_writable()
 {
-#if defined(__unix) || defined(__linux)
-    QString currentFile = group::ini_pathname();
-    QByteArray bytes = QFile::encodeName(currentFile);
-    const char* filename_as_asciiz = bytes.constData();
+    QString current_file = group::ini_pathname();
+    QFile f(current_file);
+    f.open(QFile::ReadWrite);
 
-    if (access(filename_as_asciiz, R_OK | W_OK))
+    if (!f.isOpen())
     {
         QMessageBox::warning(this, "Something went wrong", "Check permissions and ownership for your .ini file!", QMessageBox::Ok, QMessageBox::NoButton);
     }
-#endif
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
@@ -183,7 +180,6 @@ void MainWindow::set_working_directory()
 void MainWindow::save_modules()
 {
     m.b->save();
-    warn_on_config_not_writable();
 }
 
 void MainWindow::load_mappings()
@@ -259,6 +255,7 @@ void MainWindow::refresh_config_list()
          ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
      is_refreshing_profiles = false;
      ui.iconcomboProfile->setCurrentText(current);
+     warn_on_config_not_writable();
 }
 
 void MainWindow::updateButtonState(bool running, bool inertialp)
@@ -522,12 +519,7 @@ void MainWindow::profile_selected(const QString& name)
     if (old_name != new_name)
     {
         save_modules();
-
-        {
-            QSettings settings(OPENTRACK_ORG);
-            settings.setValue (OPENTRACK_CONFIG_FILENAME_KEY, new_name);
-        }
-
+        set_profile(new_name);
         set_title();
         load_settings();
     }
@@ -593,4 +585,5 @@ void MainWindow::set_profile(const QString &profile)
 {
     QSettings settings(OPENTRACK_ORG);
     settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
+    warn_on_config_not_writable();
 }
