@@ -6,6 +6,7 @@
  */
 
 #include "point_tracker.h"
+#include "opentrack-compat/nan.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -145,8 +146,8 @@ void PointTracker::track(const std::vector<vec2>& points, const PointModel& mode
     else
         order = find_correspondences_previous(points, model, focal_length);
 
-    POSIT(model, order, focal_length);
-    init_phase = false;
+    const int iters = POSIT(model, order, focal_length);
+    init_phase = iters != -1;
     t.start();
 }
 
@@ -294,12 +295,28 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
         old_epsilon_2 = epsilon_2;
     }
 
+    const f t[3] = {
+        order[0][0] * Z0/focal_length,
+        order[0][1] * Z0/focal_length,
+        Z0
+    };
+    const mat33& r = *R_current;
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (nanp(r(i, j)))
+                return -1;
+
+    for (unsigned i = 0; i < 3; i++)
+        if (nanp(t[i]))
+            return -1;
+
     QMutexLocker l(&mtx);
     // apply results
-    X_CM.R = *R_current;
-    X_CM.t[0] = order[0][0] * Z0/focal_length;
-    X_CM.t[1] = order[0][1] * Z0/focal_length;
-    X_CM.t[2] = Z0;
+    X_CM.R = r;
+    X_CM.t[0] = t[0];
+    X_CM.t[1] = t[1];
+    X_CM.t[2] = t[2];
 
     //qDebug() << "iter:" << i;
 
