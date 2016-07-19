@@ -176,8 +176,6 @@ opts::opts(const QString &name) : b(bundle(name))
 
 custom_type_initializer::custom_type_initializer()
 {
-    qDebug() << "options: registering stream operators";
-
     qRegisterMetaTypeStreamOperators<slider_value>("slider_value");
     QMetaType::registerDebugStreamOperator<slider_value>();
 }

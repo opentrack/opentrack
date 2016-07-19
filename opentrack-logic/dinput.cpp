@@ -29,7 +29,6 @@ dinput_handle::di_t dinput_handle::init_di()
     {
         if (SUCCEEDED(DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di_, NULL)))
         {
-            qDebug() << "made dinput8 handle";
             return di_;
         }
         else
