@@ -6,6 +6,7 @@
 #include "opentrack-compat/shm.h"
 #include "opentrack-compat/shm.cpp"
 #include "wine-shm.h"
+#define OPENTRACK_NO_QT_PATH
 #include "opentrack-library-path.h"
 #include <cstring>
 

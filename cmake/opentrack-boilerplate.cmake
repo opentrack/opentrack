@@ -1,11 +1,14 @@
 set(new-hier-path "#pragma once
-#include <QCoreApplication>
-#include <QString>
+#ifndef OPENTRACK_NO_QT_PATH
 
-#define OPENTRACK_BASE_PATH (([]() -> const QString& { \\
-    const static QString const__path___ = QCoreApplication::applicationDirPath(); \\
-    return const__path___; \\
-    })())
+#   include <QCoreApplication>
+#   include <QString>
+
+#   define OPENTRACK_BASE_PATH (([]() -> const QString& { \\
+        const static QString const__path___ = QCoreApplication::applicationDirPath(); \\
+        return const__path___; \\
+        })())
+#endif
 #define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
 #define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
 #define OPENTRACK_CONTRIB_PATH \"${opentrack-hier-doc}contrib/\"
