@@ -33,9 +33,8 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
         viewsStop();
         FTIRViewsLib.unload();
     }
-    dummyTrackIR.terminate();
     dummyTrackIR.kill();
-    dummyTrackIR.waitForFinished(50);
+    dummyTrackIR.close();
 }
 
 void FTNoIR_Protocol::pose(const double* headpose)
