@@ -26,6 +26,11 @@ PointExtractor::PointExtractor()
 
 void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::vec2>& points)
 {
+    using std::sqrt;
+    using std::max;
+    using std::round;
+    using std::sort;
+
     const int W = frame.cols;
     const int H = frame.rows;
 
@@ -57,12 +62,12 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                      std::vector<float> { 0, 256 },
                      false);
         const int sz = hist.cols * hist.rows;
-        int thres = s.threshold;
+        int thres = 255;
         int cnt = 0;
-        constexpr double min_pixels = 2 * 2 * 3 * pi;
-        constexpr double max_pixels = 7 * 7 * 3 * pi;
-        constexpr double range_pixels = max_pixels - min_pixels;
-        const int pixels_to_include = std::max<int>(0, int(min_pixels + range_pixels * s.threshold / 256));
+        constexpr double min_radius = 4;
+        constexpr double max_radius = 15;
+        const double radius = max(0., (max_radius-min_radius) * s.threshold / 256);
+        const int pixels_to_include = int((min_radius + radius)*(min_radius+radius) * 3);
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i > 0; i--)
         {
@@ -74,7 +79,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
             }
         }
         //val *= 240./256.;
-        //qDebug() << "val" << val;
+        //qDebug() << "thres" << thres;
 
         cv::threshold(frame_gray, frame_bin, thres, 255, CV_THRESH_BINARY);
     }
