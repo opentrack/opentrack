@@ -80,21 +80,21 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
     }
 
     blobs.clear();
-    frame_gray.copyTo(frame_blobs);
+    frame_bin.copyTo(frame_blobs);
 
     unsigned idx = 0;
-    for (int y=0; y < frame_gray.rows; y++)
+    for (int y=0; y < frame_blobs.rows; y++)
     {
         if (idx > max_blobs) break;
 
-        const unsigned char* ptr_bin = frame_bin.ptr(y);
-        for (int x=0; x < frame_gray.cols; x++)
+        const unsigned char* ptr_bin = frame_blobs.ptr(y);
+        for (int x=0; x < frame_blobs.cols; x++)
         {
             if (idx > max_blobs) break;
 
             if (ptr_bin[x] != 255)
                 continue;
-            idx = blobs.size();
+            idx = blobs.size() + 1;
             cv::Rect rect;
             cv::floodFill(frame_blobs,
                           cv::Point(x,y),
@@ -102,24 +102,26 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                           &rect,
                           cv::Scalar(0),
                           cv::Scalar(0),
-                          4);
-            long m00 = 0;
-            long m10 = 0;
-            long m01 = 0;
-            long cnt = 0;
+                          8);
+            unsigned m00 = 0;
+            unsigned m10 = 0;
+            unsigned m01 = 0;
+            unsigned cnt = 0;
+            unsigned vals = 0;
+
             for (int i=rect.y; i < (rect.y+rect.height); i++)
             {
-                const unsigned char* ptr_blobs = frame_blobs.ptr(i);
+                unsigned char* ptr_blobs = frame_blobs.ptr(i);
                 const unsigned char* ptr_gray = frame_gray.ptr(i);
-                unsigned char* ptr_bin = frame_bin.ptr(i);
                 for (int j=rect.x; j < (rect.x+rect.width); j++)
                 {
                     if (ptr_blobs[j] != idx) continue;
-                    ptr_bin[j] = 0;
-                    const long val = ptr_gray[j];
+                    ptr_blobs[j] = 0;
+                    const unsigned val = ptr_gray[j];
                     m00 += val;
                     m01 += i * val;
                     m10 += j * val;
+                    vals += val;
                     cnt++;
                 }
             }
@@ -129,7 +131,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                 if (radius > region_size_max || radius < region_size_min)
                     continue;
                 const double norm = double(m00);
-                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm));
+                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), vals/(double)cnt);
                 blobs.push_back(b);
                 {
                     char buf[64];
@@ -146,7 +148,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
         }
     }
 
-    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.radius < b1.radius; });
+    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
 
     points.reserve(max_blobs);
     points.clear();

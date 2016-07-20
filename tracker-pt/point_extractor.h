@@ -38,9 +38,9 @@ private:
 
     struct blob
     {
-        double radius;
+        double radius, brightness;
         vec2 pos;
-        blob(double radius, const cv::Vec2d& pos) : radius(radius), pos(pos)
+        blob(double radius, const cv::Vec2d& pos, double brightness) : radius(radius), brightness(brightness), pos(pos)
         {
             //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
         }
