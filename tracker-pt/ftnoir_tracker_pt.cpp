@@ -128,12 +128,12 @@ void Tracker_PT::run()
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
                          color,
-                         4);
+                         2);
                 cv::line(frame_,
                          cv::Point(p2.x, p2.y - 20),
                          cv::Point(p2.x, p2.y + 20),
                          color,
-                         4);
+                         2);
             };
 
             for (unsigned i = 0; i < points.size(); i++)
