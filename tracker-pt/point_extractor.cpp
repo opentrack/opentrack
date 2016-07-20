@@ -132,18 +132,18 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
             }
             if (m00 > 0)
             {
-                const double radius = std::sqrt(cnt / pi);
+                const double radius = sqrt(cnt / pi);
                 if (radius > region_size_max || radius < region_size_min)
                     continue;
                 const double norm = double(m00);
-                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), vals/(double)cnt);
+                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), vals/sqrt(double(cnt)));
                 blobs.push_back(b);
                 {
                     char buf[64];
                     sprintf(buf, "%.2fpx", radius);
                     cv::putText(frame,
                                 buf,
-                                cv::Point((int)std::round(b.pos[0]+30), (int)std::round(b.pos[1]+20)),
+                                cv::Point((int)round(b.pos[0]+30), (int)round(b.pos[1]+20)),
                                 cv::FONT_HERSHEY_DUPLEX,
                                 1,
                                 cv::Scalar(0, 0, 255),
@@ -153,7 +153,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
         }
     }
 
-    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
+    sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
 
     points.reserve(max_blobs);
     points.clear();
