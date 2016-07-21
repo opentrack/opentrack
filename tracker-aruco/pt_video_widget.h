@@ -8,10 +8,11 @@
 
 #pragma once
 
-#include <QObject>
-#include <QWidget>
+#include "opentrack-compat/timer.hpp"
 #include <opencv2/core/core.hpp>
 #include <memory>
+#include <QObject>
+#include <QWidget>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTimer>
@@ -22,17 +23,17 @@
 class PTVideoWidget final : public QWidget
 {
     Q_OBJECT
-
 public:
     PTVideoWidget(QWidget *parent);
     void update_image(const cv::Mat &frame);
 protected slots:
-    void paintEvent(QPaintEvent* e) override;
+    void paintEvent(QPaintEvent*) override;
     void update_and_repaint();
 private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
+    Timer window_check_timer;
     cv::Mat _frame, _frame2, _frame3;
-    bool freshp;
+    bool freshp, visible;
 };

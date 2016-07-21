@@ -13,7 +13,8 @@
 
 PTVideoWidget::PTVideoWidget(QWidget* parent) :
     QWidget(parent),
-    freshp(false)
+    freshp(false),
+    visible(true)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
     timer.start(50);
@@ -44,9 +45,16 @@ void PTVideoWidget::paintEvent(QPaintEvent* e)
 
 void PTVideoWidget::update_and_repaint()
 {
-    if (is_window_visible(this))
+    QMutexLocker l(&mtx);
+
+    if (window_check_timer.elapsed_ms() > 2000)
     {
-        QMutexLocker foo(&mtx);
+        visible = is_window_visible(this);
+        window_check_timer.start();
+    }
+
+    if (visible)
+    {
         if (_frame.empty() || !freshp)
             return;
         cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
