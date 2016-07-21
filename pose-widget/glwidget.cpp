@@ -6,13 +6,14 @@
  */
 
 #include "glwidget.h"
+#include "opentrack/is-window-visible.hpp"
+#include "opentrack-compat/pi-constant.hpp"
 #include <cmath>
 #include <algorithm>
-
 #include <QPainter>
 #include <QPaintEvent>
 
-GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
+GLWidget::GLWidget(QWidget *parent) : QWidget(parent), visible(true)
 {
     Q_INIT_RESOURCE(posewidget);
 
@@ -25,7 +26,8 @@ GLWidget::~GLWidget()
 {
 }
 
-void GLWidget::paintEvent ( QPaintEvent * event ) {
+void GLWidget::paintEvent (QPaintEvent * event)
+{
     QPainter p(this);
     project_quad_texture();
     p.drawImage(event->rect(), image);
@@ -33,6 +35,15 @@ void GLWidget::paintEvent ( QPaintEvent * event ) {
 
 void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z)
 {
+    if (visible_timer.elapsed_ms() > 2000)
+    {
+        visible = is_window_visible(this);
+        visible_timer.start();
+    }
+
+    if (!visible)
+        return;
+
     using std::sin;
     using std::cos;
 

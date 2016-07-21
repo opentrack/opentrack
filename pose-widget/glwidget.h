@@ -12,6 +12,7 @@
 #include <QPixmap>
 #include "opentrack/plugin-api.hpp"
 #include "opentrack/simple-mat.hpp"
+#include "opentrack-compat/timer.hpp"
 
 #ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -37,9 +38,12 @@ private:
     vec3 project2(const vec3& point);
     void project_quad_texture();
     static inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
+
     rmat rotation;
     vec3 translation;
     QImage front;
     QImage back;
     QImage image;
+    Timer visible_timer;
+    bool visible;
 };
