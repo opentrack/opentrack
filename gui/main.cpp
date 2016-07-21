@@ -20,51 +20,9 @@ using namespace options;
 #include <cstring>
 
 #ifdef _WIN32
-// workaround QTBUG-38598, allow for launching from another directory
-static void add_program_library_path()
+
+void add_win32_path()
 {
-    char* p = _pgmptr;
-    char path[MAX_PATH+1];
-    strcpy(path, p);
-    char* ptr = strrchr(path, '\\');
-    if (ptr)
-    {
-        *ptr = '\0';
-        QCoreApplication::addLibraryPath(path);
-    }
-}
-#endif
-
-int main(int argc, char** argv)
-{
-#ifdef _WIN32
-    add_program_library_path();
-#elif !defined(__linux)
-    // workaround QTBUG-38598
-    QCoreApplication::addLibraryPath(".");
-#endif
-
-#if defined(_WIN32) || defined(__APPLE__)
-    // qt5 designer-made controls look like shit on 'doze -sh 20140921
-    // also our OSX look leaves a lot to be desired -sh 20150726
-    {
-        const QStringList preferred { "fusion", "windowsvista", "macintosh", "windowsxp" };
-        for (const auto& style_name : preferred)
-        {
-            QStyle* s = QStyleFactory::create(style_name);
-            if (s)
-            {
-                QApplication::setStyle(s);
-                break;
-            }
-        }
-    }
-#endif
-
-    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
-    QApplication app(argc, argv);
-
-#ifdef _WIN32
     // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
     static char env_path[4096] { '\0', };
     {
@@ -113,6 +71,54 @@ int main(int argc, char** argv)
         else
             qDebug() << "can't set win32 path";
     }
+}
+// workaround QTBUG-38598, allow for launching from another directory
+static void add_program_library_path()
+{
+    char* p = _pgmptr;
+    char path[MAX_PATH+1];
+    strcpy(path, p);
+    char* ptr = strrchr(path, '\\');
+    if (ptr)
+    {
+        *ptr = '\0';
+        QCoreApplication::addLibraryPath(path);
+    }
+}
+#endif
+
+int main(int argc, char** argv)
+{
+#ifdef _WIN32
+    add_program_library_path();
+#elif !defined(__linux)
+    // workaround QTBUG-38598
+    QCoreApplication::addLibraryPath(".");
+#endif
+
+#if defined(_WIN32) || defined(__APPLE__)
+    // qt5 designer-made controls look like shit on 'doze -sh 20140921
+    // also our OSX look leaves a lot to be desired -sh 20150726
+    {
+        const QStringList preferred { "fusion", "windowsvista", "macintosh", "windowsxp" };
+        for (const auto& style_name : preferred)
+        {
+            QStyle* s = QStyleFactory::create(style_name);
+            if (s)
+            {
+                QApplication::setStyle(s);
+                break;
+            }
+        }
+    }
+#endif
+
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
+    QApplication app(argc, argv);
+
+#ifdef _WIN32
+    add_win32_path();
 #endif
 
     MainWindow::set_working_directory();
