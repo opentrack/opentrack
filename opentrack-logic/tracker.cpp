@@ -145,7 +145,7 @@ void Tracker::logic()
     }
     euler_t t(value(0), value(1), value(2));
 
-    //r = cam * r;
+    r = cam * r;
 
     t_compensate(cam, t, t, false);
 
