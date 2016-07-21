@@ -36,11 +36,11 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     }
 }
 
-void PTVideoWidget::paintEvent(QPaintEvent* e)
+void PTVideoWidget::paintEvent(QPaintEvent*)
 {
     QMutexLocker foo(&mtx);
     QPainter painter(this);
-    painter.drawImage(e->rect(), texture);
+    painter.drawImage(rect(), texture);
 }
 
 void PTVideoWidget::update_and_repaint()
