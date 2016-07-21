@@ -47,17 +47,16 @@ void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float
     using std::sin;
     using std::cos;
 
-    float c1 = cos(yAngle / 57.295781f);
-    float s1 = sin(yAngle / 57.295781f);
-    float c2 = cos(xAngle / 57.295781f);
-    float s2 = sin(xAngle / 57.295781f);
-    float c3 = cos(zAngle / 57.295781f);
-    float s3 = sin(zAngle / 57.295781f);
+    static constexpr num d2r = float(OPENTRACK_PI / 180);
 
-    rotation = rmat(c2*c3,           -c2*s3,          s2,
-                    c1*s3+c3*s1*s2,  c1*c3-s1*s2*s3,  -c2*s1,
-                    s1*s3-c1*c3*s2,  c3*s1+c1*s2*s3,  c1*c2);
     translation = vec3(x, y, z);
+
+    euler::euler_t euler(-zAngle * d2r, xAngle * d2r, yAngle * d2r);
+    euler::rmat r = euler::euler_to_rmat(euler);
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            rotation(i, j) = num(r(i, j));
 
     update();
 }
