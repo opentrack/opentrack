@@ -436,8 +436,10 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     if (!_config)
         return QPointF(-1, -1);
 
-    qreal x = (point.x() - pixel_bounds.x()) / c.x();
-    qreal y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    using std::round;
+
+    qreal x = round((point.x() - pixel_bounds.x()) / c.x());
+    qreal y = round((pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y());
 
     if (snap_x > 0)
         x -= int(x) % snap_x;
