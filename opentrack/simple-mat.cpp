@@ -30,11 +30,11 @@ euler_t rmat_to_euler(const dmat<3, 3>& R)
 }
 
 // tait-bryan angles, not euler
-rmat euler_to_rmat(const double* input)
+rmat euler_to_rmat(const euler_t input)
 {
-    const double H = input[0];
-    const double P = input[1];
-    const double B = input[2];
+    const double H = input(0);
+    const double P = input(1);
+    const double B = input(2);
 
     const auto c1 = cos(H);
     const auto s1 = sin(H);

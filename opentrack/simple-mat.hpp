@@ -268,7 +268,7 @@ template<int y, int x> using dmat = Mat<double, y, x>;
 using rmat = dmat<3, 3>;
 using euler_t = dmat<3, 1>;
 
-rmat OPENTRACK_API_EXPORT euler_to_rmat(const double* input);
+rmat OPENTRACK_API_EXPORT euler_to_rmat(const euler_t input);
 
 // http://stackoverflow.com/a/18436193
 euler_t OPENTRACK_API_EXPORT rmat_to_euler(const dmat<3, 3>& R);

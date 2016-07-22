@@ -194,7 +194,7 @@ void Tracker::logic()
 
         for (int i = 0; i < 3; i++)
         {
-            value(i) = tmp[i];
+            value(i) = tmp(i);
             value(i+3) = euler(i);
         }
     }
@@ -223,9 +223,11 @@ void Tracker::logic()
                            value(Pitch) * d2r,
                            value(Roll) * d2r);
             t_compensate(euler_to_rmat(&value_[0]),
-                         value,
-                         value,
+                         value_,
+                         value_,
                          s.tcomp_tz);
+            for (int i = 3; i < 6; i++)
+                value(i) = value_(i);
         }
 
         for (int i = 0; i < 6; i++)
