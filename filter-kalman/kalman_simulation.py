@@ -61,7 +61,7 @@ for k in range(1,N):
     # measurement update
     K[k] = Pminus[k] * H.T * np.linalg.inv( H * Pminus[k] * H.T + R )
     xhat[k] = xhatminus[k] + K[k] * (measurement[k] - H * xhatminus[k])
-    P[k] = ( I - K[k] ) * Pminus[k]
+    P[k] = ( I - K[k]*H ) * Pminus[k]
     
 t = np.arange(N) * dt
 plt.figure()
