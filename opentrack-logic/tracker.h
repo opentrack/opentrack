@@ -70,13 +70,17 @@ private:
 
     double map(double pos, Mapping& axis);
     void logic();
-
-    void t_compensate(const rmat& rmat, const double* ypr, double* output, bool rz);
+    void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output, bool rz);
     void run() override;
+
+    static constexpr double pi = OPENTRACK_PI;
+    static constexpr double r2d = 180. / pi;
+    static constexpr double d2r = pi / 180.;
 public:
     Tracker(Mappings& m, SelectedLibraries& libs);
     ~Tracker();
 
+    rmat get_camera_offset_matrix();
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
     void toggle_enabled() { qDebug() << "toggle enabled"; enabledp = !enabledp; }

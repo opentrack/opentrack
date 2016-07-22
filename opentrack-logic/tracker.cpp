@@ -29,7 +29,7 @@ Tracker::Tracker(Mappings &m, SelectedLibraries &libs) :
     zero_(false),
     should_quit(false),
     libs(libs),
-    r_b(rmat::eye()),
+    r_b(get_camera_offset_matrix().t()),
     t_b {0,0,0}
 {
 }
@@ -38,6 +38,18 @@ Tracker::~Tracker()
 {
     should_quit = true;
     wait();
+}
+
+Tracker::rmat Tracker::get_camera_offset_matrix()
+{
+    const double off[] =
+    {
+        d2r * (double)-s.camera_yaw,
+        d2r * (double)-s.camera_pitch,
+        d2r * (double)-s.camera_roll
+    };
+
+    return euler::euler_to_rmat(off);
 }
 
 double Tracker::map(double pos, Mapping& axis)
@@ -49,15 +61,15 @@ double Tracker::map(double pos, Mapping& axis)
     return fc.getValue(pos);
 }
 
-void Tracker::t_compensate(const rmat& rmat, const double* xyz, double* output, bool rz)
+void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    dmat<3, 1> tvec( xyz[2], -xyz[0], -xyz[1] );
+    dmat<3, 1> tvec( xyz(2), -xyz(0), -xyz(1) );
     const dmat<3, 1> ret = rmat * tvec;
     if (!rz)
         output[2] = ret(0);
     else
-        output[2] = xyz[2];
+        output[2] = xyz(2);
     output[1] = -ret(2);
     output[0] = -ret(1);
 }
@@ -108,10 +120,6 @@ void Tracker::logic()
         m(5).opts.invert,
     };
 
-    static constexpr double pi = OPENTRACK_PI;
-    static constexpr double r2d = 180. / pi;
-    static constexpr double d2r = pi / 180.;
-
     using namespace euler;
 
     Pose value, raw;
@@ -130,26 +138,17 @@ void Tracker::logic()
     if (is_nan(raw))
         raw = last_raw;
 
-    const double off[] =
-    {
-        d2r * (double)-s.camera_yaw,
-        d2r * (double)-s.camera_pitch,
-        d2r * (double)-s.camera_roll
-    };
-    const rmat cam = euler_to_rmat(off);
     rmat r;
+
     {
         euler_t tmp(&value[Yaw]);
         tmp = d2r * tmp;
         r = euler_to_rmat(&tmp[0]);
     }
+
     euler_t t(value(0), value(1), value(2));
 
-    r = cam * r;
-
-    t_compensate(cam, t, t, false);
-
-    bool can_center = false;
+    bool do_center_now = false;
     const bool nan = is_nan(r, t);
 
     if (centerp && !nan)
@@ -157,35 +156,39 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             if (fabs(newpose[i]) != 0)
             {
-                can_center = true;
+                do_center_now = true;
                 break;
             }
     }
 
-    if (can_center)
+    rmat cam = get_camera_offset_matrix();
+
+    r = r * cam;
+
+    if (do_center_now)
     {
         if (libs.pFilter)
             libs.pFilter->center();
         centerp = false;
         for (int i = 0; i < 3; i++)
             t_b[i] = t(i);
-        r_b = r;
+
+        r_b = r.t();
     }
 
     {
-        double tmp[3] = { t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2] };
         rmat m_;
         switch (s.center_method)
         {
         // inertial
         case 0:
         default:
-            m_ = r * r_b.t();
+            m_ = r * r_b;
             break;
-        // relative
+        // camera
         case 1:
-            euler_t degs = rmat_to_euler(r_b.t() * r);
-            degs(2) = rmat_to_euler(r * r_b.t())(2);
+            euler_t degs = rmat_to_euler(r_b * r);
+            degs(2) = rmat_to_euler(r * r_b)(2);
             m_ = euler_to_rmat(degs);
             break;
         }
