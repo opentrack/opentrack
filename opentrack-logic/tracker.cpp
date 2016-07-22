@@ -195,6 +195,13 @@ void Tracker::logic()
 
         const euler_t euler = r2d * rmat_to_euler(m_);
 
+        euler_t tmp(t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2]);
+
+        if (s.use_camera_offset_from_centering)
+            t_compensate(r_b.t() * cam.t(), tmp, tmp, false);
+        else
+            t_compensate(cam.t(), tmp, tmp, false);
+
         for (int i = 0; i < 3; i++)
         {
             value(i) = tmp(i);

@@ -67,6 +67,7 @@ struct main_settings
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
     value<int> camera_yaw, camera_pitch, camera_roll;
+    value<bool> use_camera_offset_from_centering;
     value<bool> center_at_startup;
     value<int> center_method;
     key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
@@ -86,6 +87,7 @@ struct main_settings
         camera_yaw(b, "camera-yaw", 0),
         camera_pitch(b, "camera-pitch", 0),
         camera_roll(b, "camera-roll", 0),
+        use_camera_offset_from_centering(b, "use-camera-offset-from-centering", false),
         center_at_startup(b, "center-at-startup", true),
         center_method(b, "centering-method", true),
         key_start_tracking(b, "start-tracking"),

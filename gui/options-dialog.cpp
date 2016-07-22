@@ -68,6 +68,7 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.camera_yaw, ui.camera_yaw);
     tie_setting(main.camera_pitch, ui.camera_pitch);
     tie_setting(main.camera_roll, ui.camera_roll);
+    tie_setting(main.use_camera_offset_from_centering, ui.use_center_as_translation_camera_offset);
 
     tie_setting(main.center_method, ui.center_method);
 
