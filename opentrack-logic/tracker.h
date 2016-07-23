@@ -36,6 +36,7 @@ private:
     double axes[6];
 public:
     Pose() : axes {0,0,0, 0,0,0} {}
+    Pose(double x, double y, double z, double yaw, double pitch, double roll) : axes { x, y, z, yaw, pitch, roll } {}
 
     inline operator double*() { return axes; }
     inline operator const double*() const { return axes; }
@@ -74,8 +75,8 @@ private:
     void run() override;
 
     static constexpr double pi = OPENTRACK_PI;
-    static constexpr double r2d = 180. / pi;
-    static constexpr double d2r = pi / 180.;
+    static constexpr double r2d = 180. / OPENTRACK_PI;
+    static constexpr double d2r = OPENTRACK_PI / 180.;
 public:
     Tracker(Mappings& m, SelectedLibraries& libs);
     ~Tracker();

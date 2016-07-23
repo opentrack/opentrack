@@ -61,14 +61,14 @@ double Tracker::map(double pos, Mapping& axis)
     return fc.getValue(pos);
 }
 
-void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output, bool rz)
+void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz_, euler_t& output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    const dmat<3, 1> ret = rmat * xyz;
+    const euler_t ret = rmat * euler_t(xyz_(TZ), -xyz_(TX), -xyz_(TY));
     if (!rz)
         output(2) = ret(0);
     else
-        output(2) = xyz(2);
+        output(2) = xyz_(2);
     output(1) = -ret(2);
     output(0) = -ret(1);
 }
@@ -148,7 +148,7 @@ void Tracker::logic()
     euler_t t(value(0), value(1), value(2));
 
     bool do_center_now = false;
-    const bool nan = is_nan(r, t);
+    bool nan = is_nan(r, t);
 
     if (centerp && !nan)
     {
@@ -176,23 +176,22 @@ void Tracker::logic()
     }
 
     {
-        rmat m_;
         switch (s.center_method)
         {
         // inertial
         case 0:
         default:
-            m_ = r * r_b;
+            r = r * r_b;
             break;
         // camera
         case 1:
             euler_t degs = rmat_to_euler(r_b * r);
             degs(2) = rmat_to_euler(r * r_b)(2);
-            m_ = euler_to_rmat(degs);
+            r = euler_to_rmat(degs);
             break;
         }
 
-        const euler_t euler = r2d * rmat_to_euler(m_);
+        const euler_t euler = r2d * rmat_to_euler(r);
 
         euler_t tmp(t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2]);
 
@@ -208,11 +207,10 @@ void Tracker::logic()
         }
     }
 
-    bool nan_ = false;
     // whenever something can corrupt its internal state due to nan/inf, elide the call
     if (is_nan(value))
     {
-        nan_ = true;
+        nan = true;
     }
     else
     {
@@ -223,37 +221,42 @@ void Tracker::logic()
                 libs.pFilter->filter(tmp, value);
         }
 
-        for (int i = 0; i < 6; i++)
+        // CAVEAT rotation only, due to tcomp
+        for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
-
-        if (s.tcomp_p)
-        {
-            euler_t value_(value(Yaw) * d2r,
-                           value(Pitch) * d2r,
-                           value(Roll) * d2r);
-            t_compensate(euler_to_rmat(&value_[0]),
-                         value_,
-                         value_,
-                         s.tcomp_tz);
-            for (int i = 0; i < 3; i++)
-                value(i) = value_(i);
-        }
 
         for (int i = 0; i < 6; i++)
             value(i) += m(i).opts.zero;
 
         for (int i = 0; i < 6; i++)
-            value(i) *= inverts[i] ? -1. : 1.;
+            value(i) *= int(inverts[i]) * -2 + 1;
 
         if (zero_)
             for (int i = 0; i < 6; i++)
                 value(i) = 0;
 
         if (is_nan(value))
-            nan_ = true;
+            nan = true;
     }
 
-    if (nan_)
+    if (s.tcomp_p)
+    {
+        euler_t value_(value(TX), value(TY), value(TZ));
+        t_compensate(euler_to_rmat(euler_t(value(Yaw) * d2r, value(Pitch) * d2r, value(Roll) * d2r)),
+                     value_,
+                     value_,
+                     s.tcomp_tz);
+        if (is_nan(r, value_))
+            nan = true;
+        for (int i = 0; i < 3; i++)
+            value(i) = value_(i);
+    }
+
+    // CAVEAT translation only, due to tcomp
+    for (int i = 0; i < 3; i++)
+        value(i) = map(value(i), m(i));
+
+    if (nan)
     {
         value = last_mapped;
 
