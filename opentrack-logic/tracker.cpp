@@ -64,13 +64,13 @@ double Tracker::map(double pos, Mapping& axis)
 void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz_, euler_t& output, bool rz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    const euler_t ret = rmat * euler_t(xyz_(TZ), xyz_(TX), xyz_(TY));
+    const euler_t ret = rmat * euler_t(xyz_(TZ), -xyz_(TX), -xyz_(TY));
     if (!rz)
         output(2) = ret(0);
     else
         output(2) = xyz_(2);
-    output(1) = ret(2);
-    output(0) = ret(1);
+    output(1) = -ret(2);
+    output(0) = -ret(1);
 }
 
 #include "opentrack-compat/nan.hpp"
