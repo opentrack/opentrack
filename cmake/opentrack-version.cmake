@@ -3,7 +3,6 @@ include(GetGitRevisionDescription)
 find_package(Git QUIET)
 if(GIT_FOUND)
     git_describe(OPENTRACK_COMMIT --tags --always --dirty)
-    git_describe(OPENTRACK_TAG_EXACT --tag --exact)
 endif()
 
 unset(_build_type)
