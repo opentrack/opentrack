@@ -128,6 +128,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
         point_taken[min_idx] = true;
         p.points[i] = points[min_idx];
     }
+
     return p;
 }
 
@@ -144,10 +145,12 @@ void PointTracker::track(const std::vector<vec2>& points, const PointModel& mode
     if (!dynamic_pose || init_phase)
         order = find_correspondences(points, model);
     else
+    {
         order = find_correspondences_previous(points, model, focal_length);
+    }
 
-    const int iters = POSIT(model, order, focal_length);
-    init_phase = iters != -1;
+    POSIT(model, order, focal_length);
+    init_phase = false;
     t.start();
 }
 
