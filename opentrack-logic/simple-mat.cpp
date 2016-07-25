@@ -4,7 +4,7 @@
 
 namespace euler {
 
-euler_t rmat_to_euler(const dmat<3, 3>& R)
+euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const dmat<3, 3>& R)
 {
     using std::atan2;
     using std::sqrt;
@@ -22,7 +22,7 @@ euler_t rmat_to_euler(const dmat<3, 3>& R)
 }
 
 // tait-bryan angles, not euler
-rmat euler_to_rmat(const euler_t& input)
+rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input)
 {
     const double H = input(0);
     const double P = input(1);
@@ -38,7 +38,7 @@ rmat euler_to_rmat(const euler_t& input)
     const auto c3 = cos(B);
     const auto s3 = sin(B);
 
-    return dmat<3, 3>(
+    return rmat(
                 // z
                 c1 * c2,
                 c1 * s2 * s3 - c3 * s1,

@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QPixmap>
 #include "opentrack/plugin-api.hpp"
-#include "opentrack/simple-mat.hpp"
+#include "opentrack-logic/simple-mat.hpp"
 #include "opentrack-compat/timer.hpp"
 
 #ifdef BUILD_pose_widget

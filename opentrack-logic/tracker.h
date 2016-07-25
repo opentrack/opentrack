@@ -14,7 +14,7 @@
 #include "opentrack-compat/timer.hpp"
 #include "opentrack/plugin-support.hpp"
 #include "mappings.hpp"
-#include "opentrack/simple-mat.hpp"
+#include "simple-mat.hpp"
 #include "selected-libraries.hpp"
 
 #include "spline-widget/functionconfig.h"
