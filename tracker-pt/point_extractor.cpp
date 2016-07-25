@@ -108,11 +108,11 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                           cv::Scalar(0),
                           cv::Scalar(0),
                           8);
-            unsigned m00 = 0;
-            unsigned m10 = 0;
-            unsigned m01 = 0;
-            unsigned cnt = 0;
-            unsigned vals = 0;
+            int m00 = 0;
+            int m10 = 0;
+            int m01 = 0;
+            int cnt = 0;
+            int vals = 0;
 
             for (int i=rect.y; i < (rect.y+rect.height); i++)
             {
@@ -122,7 +122,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                 {
                     if (ptr_blobs[j] != idx) continue;
                     ptr_blobs[j] = 0;
-                    const unsigned val = ptr_gray[j];
+                    const int val = int(ptr_gray[j]);
                     m00 += val;
                     m01 += i * val;
                     m10 += j * val;
