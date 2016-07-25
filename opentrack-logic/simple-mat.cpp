@@ -26,7 +26,7 @@ rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input)
 {
     const double H = input(0);
     const double P = input(1);
-    const double B = -input(2);
+    const double B = input(2);
 
     using std::cos;
     using std::sin;
