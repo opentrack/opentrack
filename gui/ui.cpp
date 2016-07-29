@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QCoreApplication>
+#include <cassert>
 
 #ifdef _WIN32
 #   include <windows.h>
@@ -285,6 +286,45 @@ void MainWindow::reload_options()
     ensure_tray();
 }
 
+/*
+    Allocates a new logger instance depending on main settings. Result is assigned to logger variable of State object.
+    May open warning dialogs.
+    May also assign nullptr in case of an error.
+*/
+void MainWindow::initialize_logger()
+{
+    logger = nullptr;
+    if (s.tracklogging_enabled)
+    {
+        if (static_cast<QString>(s.tracklogging_filename).isEmpty())
+        {
+            QMessageBox::warning(this, tr("Logging Error"),
+                tr("No filename given for track logging. Aborting."),
+                QMessageBox::Ok,
+                QMessageBox::NoButton);
+            return;
+        }
+        try
+        {
+            logger = TrackLoggerCSV::make(s);
+        }
+        catch (std::ios_base::failure &)
+        {
+            QMessageBox::warning(this, tr("Logging Error"),
+                tr("Unable to open file: ") + s.tracklogging_filename + tr(". Aborting."),
+                QMessageBox::Ok,
+                QMessageBox::NoButton);
+            return;
+        }
+    }
+    else
+    {
+        logger = TrackLogger::make();
+    }
+    assert(logger != nullptr);
+}
+
+
 void MainWindow::startTracker()
 {
     if (work)
@@ -310,9 +350,17 @@ void MainWindow::startTracker()
         return;
     }
 
+    initialize_logger();
+    if (logger == nullptr)
+    {
+        // error -> rollback
+        libs = SelectedLibraries();
+        return;
+    }
+
     save_modules();
 
-    work = std::make_shared<Work>(pose, libs, winId());
+    work = std::make_shared<Work>(pose, libs, *logger, winId());
 
     reload_options();
 
@@ -331,6 +379,12 @@ void MainWindow::startTracker()
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
+    
+    // Update the state of the options window directly.
+    // Might be better to emit signals and allow the options window
+    // to connect its slots to them (?)
+    if (options_widget)
+        options_widget->update_widgets_states(true);
 
     ui.btnStopTracker->setFocus();
 }
@@ -358,12 +412,16 @@ void MainWindow::stopTracker()
 
     work = nullptr;
     libs = SelectedLibraries();
+    logger = nullptr;
 
     {
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
     }
     updateButtonState(false, false);
+    
+    if (options_widget)
+        options_widget->update_widgets_states(false);
 
     set_title();
 
@@ -495,6 +553,7 @@ void MainWindow::show_options_dialog()
     if (mk_window(&options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), &OptionsDialog::saving, this, &MainWindow::reload_options);
+        options_widget->update_widgets_states(work != nullptr);
     }
 }
 

@@ -13,6 +13,8 @@ signals:
     void saving();
 public:
     OptionsDialog(std::function<void(bool)> pause_keybindings);
+public slots:
+    void update_widgets_states(bool tracker_is_running);
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;
@@ -22,4 +24,5 @@ private slots:
     void doOK();
     void doCancel();
     void bind_key(key_opts &kopts, QLabel* label);
+    void browse_datalogging_file();
 };

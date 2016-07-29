@@ -1,9 +1,9 @@
 #include "work.hpp"
 
 
-Work::Work(Mappings& m, SelectedLibraries& libs, WId handle) :
+Work::Work(Mappings& m, SelectedLibraries& libs, TrackLogger &logger, WId handle) :
     libs(libs),
-    tracker(std::make_shared<Tracker>(m, libs)),
+    tracker(std::make_shared<Tracker>(m, libs, logger)),
     sc(std::make_shared<Shortcuts>()),
     handle(handle),
     keys {

@@ -33,7 +33,7 @@ struct OPENTRACK_LOGIC_EXPORT Work
     std::vector<key_tuple> keys;
     main_settings s;
 
-    Work(Mappings& m, SelectedLibraries& libs, WId handle);
+    Work(Mappings& m, SelectedLibraries& libs, TrackLogger &logger, WId handle);
     ~Work();
     void reload_shortcuts();
 };

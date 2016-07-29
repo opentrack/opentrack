@@ -14,6 +14,7 @@ using namespace options;
 #include "main-settings.hpp"
 #include "mappings.hpp"
 #include "selected-libraries.hpp"
+#include "tracklogger.hpp"
 #include "work.hpp"
 #include <vector>
 #include <QString>
@@ -29,4 +30,5 @@ struct State
     main_settings s;
     Mappings pose;
     mem<Work> work;
+    mem<TrackLogger> logger;
 };
