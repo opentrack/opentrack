@@ -39,6 +39,7 @@ class OPENTRACK_LOGIC_EXPORT TrackLoggerCSV : public TrackLogger
 {
     std::ofstream out;
     bool first_col;
+    inline void handle_first_col_sep();
 public:
     TrackLoggerCSV(const QString &filename)  :  TrackLogger(),
         first_col(true)

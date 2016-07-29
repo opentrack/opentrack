@@ -135,7 +135,7 @@ void Tracker::logic()
         raw(i) = newpose[i];
     }
 
-    logger.write_pose(raw); // raw tracker input
+    logger.write_pose(raw); // raw
 
     if (is_nan(raw))
         raw = last_raw;
@@ -210,13 +210,13 @@ void Tracker::logic()
         }
     }
 
-    logger.write_pose(value); // after various transformations to account for camera position
+    logger.write_pose(value); // "corrected" - after various transformations to account for camera position
 
     // whenever something can corrupt its internal state due to nan/inf, elide the call
     if (is_nan(value))
     {
         nan = true;
-        logger.write_pose(value); // for consistency with filtered value
+        logger.write_pose(value); // "filtered"
     }
     else
     {
@@ -224,11 +224,9 @@ void Tracker::logic()
             Pose tmp = value;
 
             if (libs.pFilter)
-            {
                 libs.pFilter->filter(tmp, value);
-            }
         }
-        logger.write_pose(value); // filtered value if filter present
+        logger.write_pose(value); // "filtered"
 
         // CAVEAT rotation only, due to tcomp
         for (int i = 3; i < 6; i++)
@@ -265,7 +263,7 @@ void Tracker::logic()
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
 
-    logger.write_pose(value); // after mapping
+    logger.write_pose(value); // "mapped"
 
     if (nan)
     {
@@ -296,7 +294,20 @@ void Tracker::run()
     (void) timeBeginPeriod(1);
 #endif
 
-    logger.write("//dt;raw;before filter;after filter;after mapping; every pose has channels TX, TY, TZ, Yaw, Pitch, Roll");
+    {
+        const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        logger.write(datachannels[0]);
+        char buffer[128];
+        for (int j = 1; j < 5; ++j)
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                snprintf(buffer, 128, "%s%s", datachannels[j], posechannels[i]);
+                logger.write(buffer);
+            }
+        }
+    }
     logger.next_line();
 
     while (!should_quit)
