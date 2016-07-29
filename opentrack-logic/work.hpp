@@ -13,6 +13,7 @@
 #include "tracker.h"
 #include "shortcuts.h"
 #include "export.hpp"
+#include "tracklogger.hpp"
 
 #include <QObject>
 #include <QFrame>
@@ -25,15 +26,18 @@ struct OPENTRACK_LOGIC_EXPORT Work
 {
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
-
+    main_settings s; // tracker needs settings, so settings must come before it
     SelectedLibraries& libs;
+    std::shared_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
     std::shared_ptr<Tracker> tracker;
     std::shared_ptr<Shortcuts> sc;
     WId handle;
     std::vector<key_tuple> keys;
-    main_settings s;
 
-    Work(Mappings& m, SelectedLibraries& libs, TrackLogger &logger, WId handle);
+    Work(Mappings& m, SelectedLibraries& libs, WId handle);
     ~Work();
     void reload_shortcuts();
+
+private:
+    std::shared_ptr<TrackLogger> make_logger(const main_settings &s);
 };

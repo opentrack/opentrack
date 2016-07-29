@@ -103,8 +103,6 @@ private slots:
     void stopTracker();
     void reload_options();
 
-    void initialize_logger();
-
 signals:
     void emit_start_tracker();
     void emit_stop_tracker();

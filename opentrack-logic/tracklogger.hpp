@@ -14,8 +14,6 @@ public:
     {
     }
 
-    static mem<TrackLogger> make() { return std::make_shared<TrackLogger>(); }
-
     virtual void write(const char *)
     {
     }
@@ -45,12 +43,9 @@ public:
         first_col(true)
     {
         out.open(filename.toStdString());
-        if (!out.is_open())
-            throw std::ios_base::failure("unable to open file");
     }
 
-    static mem<TrackLogger> make(const main_settings &s) { return std::static_pointer_cast<TrackLogger>(std::make_shared<TrackLoggerCSV>(s.tracklogging_filename)); }
-
+    bool is_open() const { return out.is_open(); }
     virtual void write(const char *s);
     virtual void write(const double *p, int n);
     virtual void next_line();

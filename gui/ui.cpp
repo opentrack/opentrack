@@ -15,7 +15,6 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QCoreApplication>
-#include <cassert>
 
 #ifdef _WIN32
 #   include <windows.h>
@@ -286,44 +285,6 @@ void MainWindow::reload_options()
     ensure_tray();
 }
 
-/*
-    Allocates a new logger instance depending on main settings. Result is assigned to logger variable of State object.
-    May open warning dialogs.
-    May also assign nullptr in case of an error.
-*/
-void MainWindow::initialize_logger()
-{
-    logger = nullptr;
-    if (s.tracklogging_enabled)
-    {
-        if (static_cast<QString>(s.tracklogging_filename).isEmpty())
-        {
-            QMessageBox::warning(this, tr("Logging Error"),
-                tr("No filename given for track logging. Aborting."),
-                QMessageBox::Ok,
-                QMessageBox::NoButton);
-            return;
-        }
-        try
-        {
-            logger = TrackLoggerCSV::make(s);
-        }
-        catch (std::ios_base::failure &)
-        {
-            QMessageBox::warning(this, tr("Logging Error"),
-                tr("Unable to open file: ") + s.tracklogging_filename + tr(". Aborting."),
-                QMessageBox::Ok,
-                QMessageBox::NoButton);
-            return;
-        }
-    }
-    else
-    {
-        logger = TrackLogger::make();
-    }
-    assert(logger != nullptr);
-}
-
 
 void MainWindow::startTracker()
 {
@@ -350,17 +311,9 @@ void MainWindow::startTracker()
         return;
     }
 
-    initialize_logger();
-    if (logger == nullptr)
-    {
-        // error -> rollback
-        libs = SelectedLibraries();
-        return;
-    }
-
     save_modules();
 
-    work = std::make_shared<Work>(pose, libs, *logger, winId());
+    work = std::make_shared<Work>(pose, libs, winId());
 
     reload_options();
 
@@ -412,7 +365,6 @@ void MainWindow::stopTracker()
 
     work = nullptr;
     libs = SelectedLibraries();
-    logger = nullptr;
 
     {
         double p[6] = {0,0,0, 0,0,0};
