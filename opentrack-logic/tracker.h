@@ -20,6 +20,7 @@
 #include "spline-widget/functionconfig.h"
 #include "main-settings.hpp"
 #include "opentrack-compat/options.hpp"
+#include "tracklogger.hpp"
 
 #include <QMutex>
 #include <QThread>
@@ -62,6 +63,10 @@ private:
     volatile bool zero_;
     volatile bool should_quit;
     SelectedLibraries const& libs;
+    // The owner of the reference is the main window. 
+    // This design might be usefull if we decide later on to swap out 
+    // the logger while the tracker is running.
+    TrackLogger &logger;  
 
     using rmat = euler::rmat;
     using euler_t = euler::euler_t;
@@ -78,7 +83,7 @@ private:
     static constexpr double r2d = 180. / OPENTRACK_PI;
     static constexpr double d2r = OPENTRACK_PI / 180.;
 public:
-    Tracker(Mappings& m, SelectedLibraries& libs);
+    Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger &logger);
     ~Tracker();
 
     rmat get_camera_offset_matrix();

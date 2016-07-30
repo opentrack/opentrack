@@ -73,6 +73,8 @@ struct main_settings
     key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
     key_opts key_center, key_toggle, key_zero;
     key_opts key_toggle_press, key_zero_press;
+    value<bool> tracklogging_enabled;
+    value<QString> tracklogging_filename;
     main_settings() :
         b(bundle("opentrack-ui")),
         a_x(b, "x", TX),
@@ -98,7 +100,9 @@ struct main_settings
         key_toggle(b, "toggle"),
         key_zero(b, "zero"),
         key_toggle_press(b, "toggle-press"),
-        key_zero_press(b, "zero-press")
+        key_zero_press(b, "zero-press"),
+        tracklogging_enabled(b, "tracklogging-enabled", false),
+        tracklogging_filename(b, "tracklogging-filename", QString())
     {
     }
 };

@@ -21,7 +21,7 @@
 #   include <windows.h>
 #endif
 
-Tracker::Tracker(Mappings &m, SelectedLibraries &libs) :
+Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
     newpose {0,0,0, 0,0,0},
     centerp(s.center_at_startup),
@@ -29,6 +29,7 @@ Tracker::Tracker(Mappings &m, SelectedLibraries &libs) :
     zero_(false),
     should_quit(false),
     libs(libs),
+    logger(logger),
     r_b(get_camera_offset_matrix().t()),
     t_b {0,0,0}
 {
@@ -134,6 +135,8 @@ void Tracker::logic()
         raw(i) = newpose[i];
     }
 
+    logger.write_pose(raw); // raw
+
     if (is_nan(raw))
         raw = last_raw;
 
@@ -207,10 +210,13 @@ void Tracker::logic()
         }
     }
 
+    logger.write_pose(value); // "corrected" - after various transformations to account for camera position
+
     // whenever something can corrupt its internal state due to nan/inf, elide the call
     if (is_nan(value))
     {
         nan = true;
+        logger.write_pose(value); // "filtered"
     }
     else
     {
@@ -220,6 +226,7 @@ void Tracker::logic()
             if (libs.pFilter)
                 libs.pFilter->filter(tmp, value);
         }
+        logger.write_pose(value); // "filtered"
 
         // CAVEAT rotation only, due to tcomp
         for (int i = 3; i < 6; i++)
@@ -256,6 +263,8 @@ void Tracker::logic()
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
 
+    logger.write_pose(value); // "mapped"
+
     if (nan)
     {
         value = last_mapped;
@@ -264,6 +273,8 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             (void) map(value(i), m(i));
     }
+
+    logger.next_line();
 
     libs.pProtocol->pose(value);
 
@@ -283,8 +294,28 @@ void Tracker::run()
     (void) timeBeginPeriod(1);
 #endif
 
+    {
+        const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        logger.write(datachannels[0]);
+        char buffer[128];
+        for (int j = 1; j < 5; ++j)
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                snprintf(buffer, 128, "%s%s", datachannels[j], posechannels[i]);
+                logger.write(buffer);
+            }
+        }
+    }
+    logger.next_line();
+
     while (!should_quit)
     {
+        {
+            double dt = t.elapsed_seconds();
+            logger.write(&dt, 1);
+        }
         t.start();
 
         double tmp[6] {0,0,0, 0,0,0};

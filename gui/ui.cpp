@@ -285,6 +285,7 @@ void MainWindow::reload_options()
     ensure_tray();
 }
 
+
 void MainWindow::startTracker()
 {
     if (work)
@@ -331,6 +332,12 @@ void MainWindow::startTracker()
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
+    
+    // Update the state of the options window directly.
+    // Might be better to emit signals and allow the options window
+    // to connect its slots to them (?)
+    if (options_widget)
+        options_widget->update_widgets_states(true);
 
     ui.btnStopTracker->setFocus();
 }
@@ -364,6 +371,9 @@ void MainWindow::stopTracker()
         display_pose(p, p);
     }
     updateButtonState(false, false);
+    
+    if (options_widget)
+        options_widget->update_widgets_states(false);
 
     set_title();
 
@@ -495,6 +505,7 @@ void MainWindow::show_options_dialog()
     if (mk_window(&options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), &OptionsDialog::saving, this, &MainWindow::reload_options);
+        options_widget->update_widgets_states(work != nullptr);
     }
 }
 
