@@ -19,6 +19,26 @@ using namespace options;
 #include <memory>
 #include <cstring>
 
+void set_qt_style()
+{
+#if defined(_WIN32) || defined(__APPLE__)
+    // qt5 designer-made controls look like shit on 'doze -sh 20140921
+    // also our OSX look leaves a lot to be desired -sh 20150726
+    {
+        const QStringList preferred { "fusion", "windowsvista", "macintosh" };
+        for (const auto& style_name : preferred)
+        {
+            QStyle* s = QStyleFactory::create(style_name);
+            if (s)
+            {
+                QApplication::setStyle(s);
+                break;
+            }
+        }
+    }
+#endif
+}
+
 #ifdef _WIN32
 
 void add_win32_path()
@@ -96,27 +116,11 @@ int main(int argc, char** argv)
     QCoreApplication::addLibraryPath(".");
 #endif
 
-#if defined(_WIN32) || defined(__APPLE__)
-    // qt5 designer-made controls look like shit on 'doze -sh 20140921
-    // also our OSX look leaves a lot to be desired -sh 20150726
-    {
-        const QStringList preferred { "fusion", "windowsvista", "macintosh" };
-        for (const auto& style_name : preferred)
-        {
-            QStyle* s = QStyleFactory::create(style_name);
-            if (s)
-            {
-                QApplication::setStyle(s);
-                break;
-            }
-        }
-    }
-#endif
-
-
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
+
+    set_qt_style();
 
 #ifdef _WIN32
     add_win32_path();
