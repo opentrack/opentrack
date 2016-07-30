@@ -9,6 +9,11 @@
 
 class OPENTRACK_LOGIC_EXPORT TrackLogger
 {
+    TrackLogger(TrackLogger&&) = delete;
+    TrackLogger(const TrackLogger&) = delete;
+    TrackLogger& operator=(const TrackLogger&) = delete;
+    TrackLogger& operator=(TrackLogger&&) = delete;
+
 public:
     TrackLogger()
     {
@@ -20,7 +25,7 @@ public:
     {
     }
 
-    virtual void write(const double *, int n)
+    virtual void write(const double *, int)
     {
     }
 
