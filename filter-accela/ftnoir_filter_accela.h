@@ -18,18 +18,21 @@ using namespace options;
 
 struct settings_accela : opts {
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
+    value<slider_value> rot_nonlinearity;
     static constexpr double mult_rot = 4. / 100.;
     static constexpr double mult_trans = 4. / 100.;
     static constexpr double mult_rot_dz = 2. / 100.;
     static constexpr double mult_trans_dz = 2. / 100.;
     static constexpr double mult_ewma = 1.25;
+    static constexpr double max_rot_nl = 1.33;
     settings_accela() :
         opts("Accela"),
         rot_threshold(b, "rotation-threshold", 45),
         trans_threshold(b, "translation-threshold", 50),
         ewma(b, "ewma", 2),
         rot_deadzone(b, "rotation-deadzone", 0),
-        trans_deadzone(b, "translation-deadzone", 0)
+        trans_deadzone(b, "translation-deadzone", 0),
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1., .66, 2))
     {}
 };
 
@@ -68,6 +71,7 @@ private slots:
     void update_trans_display(int value);
     void update_rot_dz_display(int value);
     void update_trans_dz_display(int value);
+    void update_rot_nl_slider(const slider_value& sl);
 };
 
 class FTNoIR_FilterDll : public Metadata

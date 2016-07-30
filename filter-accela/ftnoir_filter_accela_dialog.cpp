@@ -16,7 +16,7 @@
 FilterControls::FilterControls() :
     accela_filter(nullptr)
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -26,6 +26,7 @@ FilterControls::FilterControls() :
     connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
     connect(ui.rot_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_dz_display(int)));
     connect(ui.trans_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_dz_display(int)));
+    connect(&s.rot_nonlinearity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_nl_slider(const slider_value&)));
 
     tie_setting(s.rot_threshold, ui.rotation_slider);
     tie_setting(s.trans_threshold, ui.translation_slider);
@@ -33,24 +34,32 @@ FilterControls::FilterControls() :
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.trans_deadzone, ui.trans_dz_slider);
 
+    tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
+
     update_rot_display(ui.rotation_slider->value());
     update_trans_display(ui.translation_slider->value());
     update_ewma_display(ui.ewma_slider->value());
     update_rot_dz_display(ui.rot_dz_slider->value());
     update_trans_dz_display(ui.trans_dz_slider->value());
+    update_rot_nl_slider(s.rot_nonlinearity);
 }
 
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
-//#define LEAKING_DEBUG
-#ifdef LEAKING_DEBUG
-    auto d = new QDialog();
-    auto r = new QFunctionConfigurator(d);
-    r->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    r->setConfig(&accela_filter->rot, "");
-    r->setFixedSize(800, 300);
-    d->show();
+//#define SPLINE_ROT_DEBUG
+#if defined(SPLINE_ROT_DEBUG) || defined(SPLINE_TRANS_DEBUG)
+    QDialog d;
+    QFunctionConfigurator r(&d);
+    r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+#if defined(SPLINE_TRANS_DEBUG)
+    r.setConfig(&accela_filter->trans, "");
+#else
+    r.setConfig(&accela_filter->rot, "");
+#endif
+    r.setFixedSize(800, 300);
+    d.show();
+    d.exec();
 #endif
 }
 
@@ -59,16 +68,19 @@ void FilterControls::unregister_filter()
     accela_filter = nullptr;
 }
 
-void FilterControls::doOK() {
+void FilterControls::doOK()
+{
     save();
     close();
 }
 
-void FilterControls::doCancel() {
+void FilterControls::doCancel()
+{
     close();
 }
 
-void FilterControls::save() {
+void FilterControls::save()
+{
     s.b->save();
 }
 
@@ -95,5 +107,12 @@ void FilterControls::update_rot_dz_display(int value)
 void FilterControls::update_trans_dz_display(int value)
 {
     ui.trans_dz->setText(QString::number(value * s.mult_trans_dz) + "mm");
+}
+
+void FilterControls::update_rot_nl_slider(const slider_value& sl)
+{
+    ui.rot_nl->setText("<html><head/><body><p>x<span style='vertical-align:super;'>" +
+                       QString::number(sl.cur()) +
+                       "</span></p></body></html>");
 }
 
