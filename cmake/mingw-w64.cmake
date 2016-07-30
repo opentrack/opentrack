@@ -40,7 +40,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -mfpmath=both -mstackrealign -ftree-vectorize -falign-functions=16 -falign-loops=16")
 set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -frename-registers -fno-PIC")
-set(lto "-flto -fuse-linker-plugin -flto-compression-level=9 -flto-partition=balanced -fno-ipa-pta")
+set(lto "-flto -fuse-linker-plugin -flto-compression-level=9 -flto-partition=none -fno-ipa-pta")
 
 set(_CFLAGS " -fvisibility=hidden")
 set(_CXXFLAGS "${_CFLAGS}")
@@ -49,7 +49,7 @@ set(_CFLAGS_DEBUG "-g -ggdb")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-Wl,--as-needed -Wl,--nxcompat,--no-seh")
+set(_LDFLAGS "-Wl,--as-needed,--nxcompat,--no-seh")
 set(_LDFLAGS_RELEASE "")
 set(_LDFLAGS_DEBUG "")
 
