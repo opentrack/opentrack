@@ -16,6 +16,7 @@ endif()
 set(c ${p}i686-w64-mingw32-)
 #set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
 
+add_definitions(-D_USE_MATH_DEFINES=1)
 
 SET(CMAKE_C_COMPILER    ${c}gcc${e})
 SET(CMAKE_CXX_COMPILER  ${c}g++${e})
