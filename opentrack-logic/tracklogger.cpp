@@ -1,6 +1,8 @@
 #include "tracklogger.hpp"
 #include "tracker.h"
 
+TrackLogger::~TrackLogger() {}
+
 void TrackLoggerCSV::handle_first_col_sep()
 {
     if (!first_col)

@@ -17,6 +17,7 @@ public:
     virtual void write(const char *)
     {
     }
+    virtual ~TrackLogger();
 
     virtual void write(const double *, int n)
     {
