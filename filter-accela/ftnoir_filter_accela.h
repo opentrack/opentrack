@@ -16,7 +16,8 @@
 using namespace options;
 #include "opentrack-compat/timer.hpp"
 
-struct settings_accela : opts {
+struct settings_accela : opts
+{
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
     value<slider_value> rot_nonlinearity;
     static constexpr double mult_rot = 4. / 100.;
@@ -32,7 +33,7 @@ struct settings_accela : opts {
         ewma(b, "ewma", 2),
         rot_deadzone(b, "rotation-deadzone", 0),
         trans_deadzone(b, "translation-deadzone", 0),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1., .66, 2))
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.1, 1, 1.75))
     {}
 };
 

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>411</height>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -345,8 +345,14 @@
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="2">
        <widget class="QSlider" name="rot_nl_slider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
-         <number>134</number>
+         <number>75</number>
+        </property>
+        <property name="value">
+         <number>0</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
