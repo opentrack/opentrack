@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
-    <height>153</height>
+    <width>431</width>
+    <height>141</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -124,13 +124,6 @@
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Written by Donovan Baarda, 2014</string>
-     </property>
     </widget>
    </item>
    <item>
