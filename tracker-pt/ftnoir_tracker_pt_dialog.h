@@ -14,7 +14,7 @@
 #include "trans_calib.h"
 #include "pt_video_widget.h"
 #include "ui_FTNoIR_PT_Controls.h"
-#include "opentrack/opencv-camera-dialog.hpp"
+#include "cv/camera-dialog.hpp"
 
 #include <QTimer>
 

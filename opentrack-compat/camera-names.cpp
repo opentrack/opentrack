@@ -26,7 +26,8 @@ OPENTRACK_COMPAT_EXPORT int camera_name_to_index(const QString &name)
     return ret;
 }
 
-OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names() {
+OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
+{
     QList<QString> ret;
 #if defined(_WIN32)
     // Create the System Device Enumerator.
@@ -79,7 +80,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names() {
     }
     else
         qDebug() << "failed CLSID_VideoInputDeviceCategory" << hr;
-    
+
     pSysDevEnum->Release();
 #endif
 #ifdef __linux

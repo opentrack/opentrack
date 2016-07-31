@@ -1,0 +1,6 @@
+find_package(OpenCV 3.0 QUIET)
+if(OpenCV_FOUND)
+    opentrack_boilerplate(opentrack-cv STATIC)
+    target_link_libraries(opentrack-cv ${OpenCV_LIBS})
+    target_include_directories(opentrack-cv SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+endif()
