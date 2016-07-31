@@ -8,6 +8,7 @@
 
 #include "options-dialog.hpp"
 #include "keyboard.h"
+#include "opentrack-library-path.h"
 #include <QPushButton>
 #include <QLayout>
 #include <QDialog>
@@ -173,7 +174,7 @@ void OptionsDialog::browse_datalogging_file()
 {
     QString filename = ui.tracklogging_filenameedit->text();
     if (filename.isEmpty())
-        filename = QDir::currentPath();
+        filename = OPENTRACK_BASE_PATH;
     /* Sometimes this function freezes the app before opening the dialog.
        Might be related to https://forum.qt.io/topic/49209/qfiledialog-getopenfilename-hangs-in-windows-when-using-the-native-dialog/8
        and be a known problem. Possible solution is to use the QFileDialog::DontUseNativeDialog flag.
@@ -182,6 +183,9 @@ void OptionsDialog::browse_datalogging_file()
     QString newfilename = QFileDialog::getSaveFileName(this, tr("Select Filename"), filename, tr("CSV File (*.csv)"), nullptr, QFileDialog::DontUseNativeDialog);
     if (!newfilename.isEmpty())
         ui.tracklogging_filenameedit->setText(newfilename);
+
+    // dialog likes to mess with current directory
+    QDir::setCurrent(OPENTRACK_BASE_PATH);
 }
 
 void OptionsDialog::update_widgets_states(bool tracker_is_running)
