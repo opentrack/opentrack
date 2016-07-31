@@ -38,9 +38,6 @@
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: #ccc;</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -54,6 +51,9 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabWidgetPage1">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>Yaw</string>
       </attribute>
@@ -104,6 +104,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage2">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>Pitch</string>
       </attribute>
@@ -154,6 +157,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage3">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>Roll</string>
       </attribute>
@@ -204,6 +210,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage4">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>X</string>
       </attribute>
@@ -254,6 +263,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage5">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>Y</string>
       </attribute>
@@ -304,6 +316,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage6">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ccc;</string>
+      </property>
       <attribute name="title">
        <string>Z</string>
       </attribute>
