@@ -1,14 +1,19 @@
-﻿/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#include "ftnoir_filter_kalman.h"
+#include "kalman.h"
 #include "opentrack/plugin-api.hpp"
 #include <QDebug>
 #include <cmath>
 
+constexpr double settings::adaptivity_window_length;
+constexpr double settings::deadzone_scale;
+constexpr double settings::deadzone_exponent;
+constexpr double settings::process_sigma_pos;
+constexpr double settings::process_simga_rot;
 
 void KalmanFilter::init()
 {
@@ -55,9 +60,9 @@ void KalmanProcessNoiseScaler::init()
 }
 
 
-/* Uses 
+/* Uses
     innovation, measurement_matrix, measurement_noise_cov, and state_cov_prior
-   found in KalmanFilter. It sets 
+   found in KalmanFilter. It sets
     process_noise_cov
 */
 void KalmanProcessNoiseScaler::update(KalmanFilter &kf, double dt)
@@ -161,7 +166,7 @@ FTNoIR_Filter::FTNoIR_Filter() {
 
 // The original code was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
-void FTNoIR_Filter::reset() 
+void FTNoIR_Filter::reset()
 {
     kf.init();
     kf_adaptive_process_noise_cov.init();
@@ -177,7 +182,7 @@ void FTNoIR_Filter::reset()
     double noise_variance_position = settings::map_slider_value(s.noise_pos_slider_value);
     double noise_variance_angle = settings::map_slider_value(s.noise_rot_slider_value);
     for (int i = 0; i < 3; ++i)
-    { 
+    {
         kf.measurement_noise_cov(i    , i    ) = noise_variance_position;
         kf.measurement_noise_cov(i + 3, i + 3) = noise_variance_angle;
     }
@@ -233,14 +238,14 @@ void FTNoIR_Filter::filter(const double* input_, double *output_)
     timer.start();
 
     output = do_kalman_filter(input, dt, new_input);
-    
+
     {
         // Compute deadzone size base on estimated state variance.
         // Given a constant input plus noise, KF should converge to the true (constant) input.
         // This works indeed. That is the output pose becomes very still afte some time.
         // At this point the estimated cov should be minimal. We can use this to
         // calculate the size of the deadzone, so that in the stationary state the
-        // deadzone size is zero. Thus the tracking error due to the dz-filter 
+        // deadzone size is zero. Thus the tracking error due to the dz-filter
         // becomes zero.
         PoseVector variance = kf.state_cov.diagonal().head(6);
         minimal_state_var = minimal_state_var.cwiseMin(variance);
@@ -268,7 +273,7 @@ FilterControls::FilterControls()
             // M$ hates unicode! (M$ autoconverts source code of one kind of utf-8 format, the one without BOM, to another kind that QT does not like)
             // We could use QChar(0x00b0). It should be totally backward compatible.
             // u8"°" is c++11. u8 means that the string is encoded in utf8. It happens to be compatible with QT.
-            QString::number(settings::map_slider_value(value), 'f', 3) + u8" °"); 
+            QString::number(settings::map_slider_value(value), 'f', 3) + u8" °");
     });
     connect(ui.noisePosSlider, &QSlider::valueChanged, [=](int value) {
         this->ui.noisePosLabel->setText(
