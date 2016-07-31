@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "export.hpp"
 #include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
 
@@ -17,16 +16,16 @@
 #endif
 
 #ifdef _WIN32
+#   include <opencv2/videoio.hpp>
+#   include <QTimer>
 #   include <objbase.h>
 #   include <winerror.h>
 #   include <windows.h>
-#   include <opencv2/videoio.hpp>
-#   include <QTimer>
 #endif
 
 #include <QMutex>
 
-class OPENTRACK_CV_EXPORT camera_dialog
+class camera_dialog
 {
     static void maybe_grab_frame(cv::VideoCapture& cap);
 #ifdef _WIN32
