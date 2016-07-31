@@ -35,7 +35,7 @@ void GLWidget::paintEvent (QPaintEvent * event)
 
 void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z)
 {
-    if (visible_timer.elapsed_ms() > 2000)
+    if (visible_timer.elapsed_ms() > 250)
     {
         visible = is_window_visible(this);
         visible_timer.start();

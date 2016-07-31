@@ -47,7 +47,7 @@ void PTVideoWidget::update_and_repaint()
 {
     QMutexLocker l(&mtx);
 
-    if (window_check_timer.elapsed_ms() > 2000)
+    if (window_check_timer.elapsed_ms() > 250)
     {
         visible = is_window_visible(this);
         window_check_timer.start();
