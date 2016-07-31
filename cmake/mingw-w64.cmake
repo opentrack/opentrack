@@ -10,7 +10,7 @@ unset(c)
 unset(e)
 # specify the cross compiler
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    set(p C:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin/)
+    set(p P:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin/)
     set(e .exe)
 endif()
 set(c ${p}i686-w64-mingw32-)
