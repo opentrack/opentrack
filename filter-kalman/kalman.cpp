@@ -5,7 +5,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "kalman.h"
-#include "opentrack/plugin-api.hpp"
 #include <QDebug>
 #include <cmath>
 
@@ -95,7 +94,7 @@ PoseVector DeadzoneFilter::filter(const PoseVector &input)
         if (dz > 0.)
         {
             const double delta = input[i] - last_output[i];
-            const double f = pow(abs(delta) / dz, settings::deadzone_exponent);
+            const double f = std::pow(std::fabs(delta) / dz, settings::deadzone_exponent);
             const double response = f / (f + 1.) * delta;
             out[i] = last_output[i] + response;
         }
