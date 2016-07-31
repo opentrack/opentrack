@@ -12,7 +12,7 @@
 #include "opentrack-compat/options.hpp"
 #include "trans_calib.h"
 #include "opentrack/plugin-api.hpp"
-#include "opentrack/opencv-camera-dialog.hpp"
+#include "cv/camera-dialog.hpp"
 #include "include/markerdetector.h"
 
 #include <QObject>
@@ -25,7 +25,6 @@
 #include <cinttypes>
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 using namespace options;
 

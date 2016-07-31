@@ -13,7 +13,7 @@
 #   include "opentrack-compat/timer.hpp"
 #endif
 
-#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 #include <cmath>
 #include <algorithm>

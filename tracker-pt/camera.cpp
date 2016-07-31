@@ -6,10 +6,10 @@
  */
 
 #include "camera.h"
-#include <string>
-#include <QDebug>
 #include "opentrack-compat/sleep.hpp"
 #include "opentrack-compat/camera-names.hpp"
+#include <string>
+#include <QDebug>
 
 void Camera::set_device(const QString& name)
 {
@@ -135,15 +135,15 @@ bool CVCamera::_get_frame(cv::Mat* frame)
 
 void CVCamera::_set_fps()
 {
-    if (cap) cap->set(CV_CAP_PROP_FPS, cam_desired.fps);
+    if (cap) cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
 }
 
 void CVCamera::_set_res()
 {
     if (cap)
     {
-        cap->set(CV_CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
-        cap->set(CV_CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
+        cap->set(cv::CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
+        cap->set(cv::CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
     }
 }
 void CVCamera::_set_device_index()
