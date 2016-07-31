@@ -30,6 +30,7 @@ file(GLOB opentrack-subprojects
     "spline-widget/${C}"
     "qxt-mini/${C}"
     "macosx/${C}"
+    "cv/${C}"
 )
 foreach(i ${opentrack-subprojects})
     get_filename_component(i ${i} DIRECTORY)
