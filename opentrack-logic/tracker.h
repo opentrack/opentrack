@@ -63,10 +63,10 @@ private:
     volatile bool zero_;
     volatile bool should_quit;
     SelectedLibraries const& libs;
-    // The owner of the reference is the main window. 
-    // This design might be usefull if we decide later on to swap out 
+    // The owner of the reference is the main window.
+    // This design might be usefull if we decide later on to swap out
     // the logger while the tracker is running.
-    TrackLogger &logger;  
+    TrackLogger &logger;
 
     using rmat = euler::rmat;
     using euler_t = euler::euler_t;
@@ -89,9 +89,9 @@ public:
     rmat get_camera_offset_matrix();
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
-    void toggle_enabled() { qDebug() << "toggle enabled"; enabledp = !enabledp; }
-    void set_toggle(bool value) { qDebug() << "enabled" << value; enabledp = value; }
-    void set_zero(bool value) { qDebug() << "zero" << value; zero_ = value; }
-    void center() { qDebug() << "toggle center"; centerp = !centerp; }
-    void zero() { qDebug() << "toggle zero"; zero_ = !zero_; }
+    void toggle_enabled() { enabledp = !enabledp; }
+    void set_toggle(bool value) { enabledp = value; }
+    void set_zero(bool value) { zero_ = value; }
+    void center() { centerp = !centerp; }
+    void zero() { zero_ = !zero_; }
 };
