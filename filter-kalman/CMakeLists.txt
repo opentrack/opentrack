@@ -1,3 +1,5 @@
-opentrack_boilerplate(opentrack-filter-kalman)
-target_link_libraries(opentrack-filter-kalman opentrack-spline-widget)
-target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC)
+find_package(Eigen3 QUIET)
+if(EIGEN3_FOUND)
+    opentrack_boilerplate(opentrack-filter-kalman)
+    target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${EIGEN3_INCLUDE_DIR})
+endif()
