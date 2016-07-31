@@ -5,23 +5,20 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#ifndef INCLUDED_FTN_FILTER_H
-#define INCLUDED_FTN_FILTER_H
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack-compat/options.hpp"
+using namespace options;
+#include "opentrack-compat/timer.hpp"
 
-#include <atomic>
 #include <Eigen/Core>
 #include <Eigen/LU>
 
 #include <QString>
 #include <QWidget>
 
-#include "opentrack-compat/options.hpp"
-using namespace options;
-#include "opentrack-compat/timer.hpp"
-
+#include <atomic>
 
 static constexpr int NUM_STATE_DOF = 12;
 static constexpr int NUM_MEASUREMENT_DOF = 6;
@@ -48,6 +45,8 @@ struct KalmanFilter
     void init();
     void time_update();
     void measurement_update(const PoseVector &measurement);
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 struct KalmanProcessNoiseScaler
@@ -57,6 +56,8 @@ struct KalmanProcessNoiseScaler
         base_cov; // baseline (unscaled) process noise covariance matrix
     void init();
     void update(KalmanFilter &kf, double dt);
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 
@@ -73,6 +74,8 @@ struct DeadzoneFilter
         last_output = PoseVector::Zero();
     }
     PoseVector filter(const PoseVector &input);
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 
@@ -83,7 +86,7 @@ struct settings : opts {
     static constexpr double adaptivity_window_length = 0.5; // seconds
     static constexpr double deadzone_scale = 2.;
     static constexpr double deadzone_exponent = 4.0;
-    // these values worked best for me (MW) when taken with acompanying measured noise stddev of ca 0.1 (rot) and 0.01 (pos). 
+    // these values worked best for me (MW) when taken with acompanying measured noise stddev of ca 0.1 (rot) and 0.01 (pos).
     static constexpr double process_sigma_pos = 0.05;
     static constexpr double process_simga_rot = 0.5;
 
@@ -92,9 +95,9 @@ struct settings : opts {
         return std::pow(10., v * 0.04 - 3.);
     }
 
-    settings() :  
-        opts("kalman-filter"), 
-        noise_rot_slider_value(b, "noise-rotation-slider", 40), 
+    settings() :
+        opts("kalman-filter"),
+        noise_rot_slider_value(b, "noise-rotation-slider", 40),
         noise_pos_slider_value(b, "noise-position-slider", 40)
     {}
 
@@ -119,6 +122,8 @@ public:
     PoseVector minimal_state_var;
     DeadzoneFilter dz_filter;
     int prev_slider_pos[2];
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 class FTNoIR_FilterDll : public Metadata
@@ -142,5 +147,3 @@ public slots:
     void doOK();
     void doCancel();
 };
-
-#endif
