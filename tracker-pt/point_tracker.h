@@ -80,7 +80,7 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout);
+    void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout, int w, int h);
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, PointTracker::f focal_length);
 
@@ -97,7 +97,7 @@ private:
     };
 
     PointOrder find_correspondences(const std::vector<vec2>& projected_points, const PointModel &model);
-    PointOrder find_correspondences_previous(const std::vector<vec2>& points, const PointModel &model, f focal_length);
+    PointOrder find_correspondences_previous(const std::vector<vec2>& points, const PointModel &model, f focal_length, int w, int h);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera

@@ -92,12 +92,20 @@ PointTracker::PointTracker() : init_phase(true)
 {
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<vec2>& points, const PointModel& model, f focal_length)
+PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<vec2>& points,
+                                                                     const PointModel& model,
+                                                                     f focal_length,
+                                                                     int w,
+                                                                     int h)
 {
     PointTracker::PointOrder p;
     p.points[0] = project(vec3(0,0,0), focal_length);
     p.points[1] = project(model.M01, focal_length);
     p.points[2] = project(model.M02, focal_length);
+
+    const int diagonal = int(std::sqrt(w*w + h*h));
+    constexpr int div = 50;
+    const int max_dist = diagonal / div; // 16 pixels for 640x480
 
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
@@ -119,6 +127,9 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
                 min_sdist = sdist;
             }
         }
+        if (min_sdist > max_dist)
+            return find_correspondences(points, model);
+
         // if one point is closest to more than one model point, fallback
         if (point_taken[min_idx])
         {
@@ -132,7 +143,13 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
     return p;
 }
 
-void PointTracker::track(const std::vector<vec2>& points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout)
+void PointTracker::track(const std::vector<vec2>& points,
+                         const PointModel& model,
+                         f focal_length,
+                         bool dynamic_pose,
+                         int init_phase_timeout,
+                         int w,
+                         int h)
 {
     PointOrder order;
 
@@ -146,7 +163,7 @@ void PointTracker::track(const std::vector<vec2>& points, const PointModel& mode
         order = find_correspondences(points, model);
     else
     {
-        order = find_correspondences_previous(points, model, focal_length);
+        order = find_correspondences_previous(points, model, focal_length, w, h);
     }
 
     POSIT(model, order, focal_length);

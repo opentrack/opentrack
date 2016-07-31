@@ -103,6 +103,11 @@ void Tracker_PT::run()
 
         if (new_frame && !frame_.empty())
         {
+            CamInfo cam_info;
+
+            if (!camera.get_info(cam_info))
+                continue;
+
             point_extractor.extract_points(frame_, points);
             point_count = points.size();
 
@@ -115,7 +120,13 @@ void Tracker_PT::run()
 
             if (success)
             {
-                point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
+                point_tracker.track(points,
+                                    PointModel(s),
+                                    fx,
+                                    s.dynamic_pose,
+                                    s.init_phase_timeout,
+                                    cam_info.res_x,
+                                    cam_info.res_y);
                 ever_success = true;
             }
 
