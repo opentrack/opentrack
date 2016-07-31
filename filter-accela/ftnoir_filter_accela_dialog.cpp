@@ -47,7 +47,7 @@ FilterControls::FilterControls() :
 void FilterControls::register_filter(IFilter* filter)
 {
     accela_filter = static_cast<FTNoIR_Filter*>(filter);
-//#define SPLINE_ROT_DEBUG
+#define SPLINE_ROT_DEBUG
 #if defined(SPLINE_ROT_DEBUG) || defined(SPLINE_TRANS_DEBUG)
     QDialog d;
     QFunctionConfigurator r(&d);
@@ -57,7 +57,7 @@ void FilterControls::register_filter(IFilter* filter)
 #else
     r.setConfig(&accela_filter->rot, "");
 #endif
-    r.setFixedSize(800, 300);
+    r.setFixedSize(800, 600);
     d.show();
     d.exec();
 #endif
