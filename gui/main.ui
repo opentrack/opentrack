@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>652</width>
-    <height>498</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -1175,7 +1175,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>...</string>
+                   <string>🔨</string>
                   </property>
                   <property name="flat" stdset="0">
                    <bool>false</bool>
@@ -1231,7 +1231,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>...</string>
+                   <string>🔨</string>
                   </property>
                   <property name="flat" stdset="0">
                    <bool>false</bool>
@@ -1287,7 +1287,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>...</string>
+                   <string>🔨</string>
                   </property>
                   <property name="flat" stdset="0">
                    <bool>false</bool>
