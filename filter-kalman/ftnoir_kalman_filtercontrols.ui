@@ -52,7 +52,7 @@
       <item row="0" column="1">
        <widget class="QSlider" name="noiseRotSlider">
         <property name="maximum">
-         <number>100</number>
+         <number>10000</number>
         </property>
         <property name="singleStep">
          <number>1</number>
@@ -67,7 +67,7 @@
          <bool>false</bool>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
         <property name="tickInterval">
          <number>10</number>
@@ -84,13 +84,13 @@
       <item row="1" column="1">
        <widget class="QSlider" name="noisePosSlider">
         <property name="maximum">
-         <number>100</number>
+         <number>10000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
+         <enum>QSlider::NoTicks</enum>
         </property>
         <property name="tickInterval">
          <number>10</number>

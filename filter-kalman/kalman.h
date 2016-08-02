@@ -87,25 +87,26 @@ struct DeadzoneFilter
 
 
 struct settings : opts {
-    value<int> noise_rot_slider_value;
-    value<int> noise_pos_slider_value;
+    value<slider_value> noise_rot_slider_value;
+    value<slider_value> noise_pos_slider_value;
 
     static constexpr double adaptivity_window_length = 0.5; // seconds
     static constexpr double deadzone_scale = 2.;
     static constexpr double deadzone_exponent = 4.0;
     // these values worked best for me (MW) when taken with acompanying measured noise stddev of ca 0.1 (rot) and 0.01 (pos).
-    static constexpr double process_sigma_pos = 0.05;
+    static constexpr double process_sigma_pos = 0.5;
     static constexpr double process_simga_rot = 0.5;
 
-    static double map_slider_value(int v)
+    static double map_slider_value(const slider_value &v)
     {
-        return std::pow(10., v * 0.04 - 3.);
+        //return std::pow(4., v * 5. - 4.) / 4. * 10.; // not so much difference, except that it is harder to adjust the min-max range.
+        return std::pow(10., v * 4. - 3.);
     }
 
     settings() :
         opts("kalman-filter"),
-        noise_rot_slider_value(b, "noise-rotation-slider", 40),
-        noise_pos_slider_value(b, "noise-position-slider", 40)
+        noise_rot_slider_value(b, "noise-rotation-slider", slider_value(0.5, 0., 1.)),
+        noise_pos_slider_value(b, "noise-position-slider", slider_value(0.5, 0., 1.))
     {}
 
 };
@@ -128,7 +129,7 @@ public:
     KalmanProcessNoiseScaler kf_adaptive_process_noise_cov;
     PoseVector minimal_state_var;
     DeadzoneFilter dz_filter;
-    int prev_slider_pos[2];
+    slider_value prev_slider_pos[2];
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
@@ -153,4 +154,5 @@ public:
 public slots:
     void doOK();
     void doCancel();
+    void updateLabels(const slider_value&);
 };

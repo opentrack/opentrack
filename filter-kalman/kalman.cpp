@@ -196,8 +196,8 @@ void FTNoIR_Filter::reset()
     first_run = true;
     dt_since_last_input = 0;
 
-    prev_slider_pos[0] = s.noise_pos_slider_value;
-    prev_slider_pos[1] = s.noise_rot_slider_value;
+    prev_slider_pos[0] = static_cast<slider_value>(s.noise_pos_slider_value);
+    prev_slider_pos[1] = static_cast<slider_value>(s.noise_rot_slider_value);
 
     minimal_state_var = PoseVector::Constant(std::numeric_limits<double>::max());
 
@@ -211,8 +211,8 @@ void FTNoIR_Filter::filter(const double* input_, double *output_)
     Eigen::Map<const PoseVector> input(input_, PoseVector::RowsAtCompileTime, 1);
     Eigen::Map<PoseVector> output(output_, PoseVector::RowsAtCompileTime, 1);
 
-    if (prev_slider_pos[0] != s.noise_pos_slider_value ||
-        prev_slider_pos[1] != s.noise_rot_slider_value)
+    if (!(prev_slider_pos[0] == s.noise_pos_slider_value &&
+          prev_slider_pos[1] == s.noise_rot_slider_value))
     {
         reset();
     }
@@ -265,19 +265,28 @@ FilterControls::FilterControls()
     ui.setupUi(this);
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    connect(ui.noiseRotSlider, &QSlider::valueChanged, [=](int value) {
-        this->ui.noiseRotLabel->setText(
-            // M$ hates unicode! (M$ autoconverts source code of one kind of utf-8 format, the one without BOM, to another kind that QT does not like)
-            // We could use QChar(0x00b0). It should be totally backward compatible.
-            // u8"°" is c++11. u8 means that the string is encoded in utf8. It happens to be compatible with QT.
-            QString::number(settings::map_slider_value(value), 'f', 3) + u8" °");
-    });
-    connect(ui.noisePosSlider, &QSlider::valueChanged, [=](int value) {
-        this->ui.noisePosLabel->setText(
-            QString::number(settings::map_slider_value(value), 'f', 3) + " cm");
-    });
+
     tie_setting(s.noise_rot_slider_value, ui.noiseRotSlider);
     tie_setting(s.noise_pos_slider_value, ui.noisePosSlider);
+
+    connect(&s.noise_rot_slider_value, SIGNAL(valueChanged(const slider_value&)), this, SLOT(updateLabels(const slider_value&)));
+    connect(&s.noise_pos_slider_value, SIGNAL(valueChanged(const slider_value&)), this, SLOT(updateLabels(const slider_value&)));
+
+    updateLabels(slider_value());
+}
+
+
+void FilterControls::updateLabels(const slider_value&)
+{
+    // M$ hates unicode! (M$ autoconverts source code of one kind of utf-8 format, 
+    // the one without BOM, to another kind that QT does not like)
+    // Previous attempt to use c++11 utf8 strings like u8" °" now failed for unkown 
+    // reasons where it worked before. Hence fallback to QChar(0x00b0).
+    this->ui.noiseRotLabel->setText(
+        QString::number(settings::map_slider_value(s.noise_rot_slider_value), 'f', 3) + " " + QChar(0x00b0));
+
+    this->ui.noisePosLabel->setText(
+        QString::number(settings::map_slider_value(s.noise_pos_slider_value), 'f', 3) + " cm");
 }
 
 
