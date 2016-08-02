@@ -199,7 +199,7 @@ void FTNoIR_Filter::reset()
     prev_slider_pos[0] = static_cast<slider_value>(s.noise_pos_slider_value);
     prev_slider_pos[1] = static_cast<slider_value>(s.noise_rot_slider_value);
 
-    minimal_state_var = PoseVector::Constant(std::numeric_limits<double>::max());
+    //minimal_state_var = PoseVector::Constant(std::numeric_limits<double>::max());
 
     dz_filter.reset();
 }
@@ -245,8 +245,9 @@ void FTNoIR_Filter::filter(const double* input_, double *output_)
         // deadzone size is zero. Thus the tracking error due to the dz-filter
         // becomes zero.
         PoseVector variance = kf.state_cov.diagonal().head(6);
-        minimal_state_var = minimal_state_var.cwiseMin(variance);
-        dz_filter.dz_size = (variance - minimal_state_var).cwiseSqrt() * s.deadzone_scale;
+        //minimal_state_var = minimal_state_var.cwiseMin(variance);
+        //dz_filter.dz_size = (variance - minimal_state_var).cwiseSqrt() * s.deadzone_scale;
+        dz_filter.dz_size = variance.cwiseSqrt() * s.deadzone_scale;
     }
     output = dz_filter.filter(output);
 
