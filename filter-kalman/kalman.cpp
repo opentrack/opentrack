@@ -16,16 +16,14 @@ constexpr double settings::process_simga_rot;
 
 void KalmanFilter::init()
 {
-    static constexpr int NS = NUM_STATE_DOF;
-    static constexpr int NZ = NUM_MEASUREMENT_DOF;
     // allocate and initialize matrices
-    measurement_noise_cov = Matrix::Zero(NZ, NZ);
-    process_noise_cov = Matrix::Zero(NS, NS);
-    kalman_gain = Matrix::Zero(NS, NZ);
-    measurement_matrix = Matrix::Zero(NZ, NS);
-    state_cov = Matrix::Zero(NS, NS);
-    state_cov_prior = Matrix::Zero(NS, NS);
-    transition_matrix = Matrix::Zero(NS, NS);
+    measurement_noise_cov = MeasureMatrix::Zero();
+    process_noise_cov = StateMatrix::Zero();
+    state_cov = StateMatrix::Zero();
+    state_cov_prior = StateMatrix::Zero();
+    transition_matrix = StateMatrix::Zero();
+    measurement_matrix = StateToMeasureMatrix::Zero();
+    kalman_gain = MeasureToStateMatrix::Zero();
     // initialize state variables
     state = StateVector::Zero();
     state_prior = StateVector::Zero();
@@ -42,8 +40,8 @@ void KalmanFilter::time_update()
 
 void KalmanFilter::measurement_update(const PoseVector &measurement)
 {
-    Matrix tmp     = measurement_matrix * state_cov_prior * measurement_matrix.transpose() + measurement_noise_cov;
-    Matrix tmp_inv = tmp.inverse();
+    MeasureMatrix tmp     = measurement_matrix * state_cov_prior * measurement_matrix.transpose() + measurement_noise_cov;
+    MeasureMatrix tmp_inv = tmp.inverse();
     kalman_gain = state_cov_prior * measurement_matrix.transpose() * tmp_inv;
     innovation = measurement - measurement_matrix * state_prior;
     state     = state_prior + kalman_gain * innovation;
@@ -54,8 +52,8 @@ void KalmanFilter::measurement_update(const PoseVector &measurement)
 
 void KalmanProcessNoiseScaler::init()
 {
-    base_cov = Matrix::Zero(NUM_STATE_DOF, NUM_STATE_DOF);
-    innovation_cov_estimate = Matrix::Zero(NUM_MEASUREMENT_DOF, NUM_MEASUREMENT_DOF);
+    base_cov = StateMatrix::Zero(NUM_STATE_DOF, NUM_STATE_DOF);
+    innovation_cov_estimate = MeasureMatrix::Zero(NUM_MEASUREMENT_DOF, NUM_MEASUREMENT_DOF);
 }
 
 
@@ -66,7 +64,7 @@ void KalmanProcessNoiseScaler::init()
 */
 void KalmanProcessNoiseScaler::update(KalmanFilter &kf, double dt)
 {
-    Matrix ddT = kf.innovation * kf.innovation.transpose();
+    MeasureMatrix ddT = kf.innovation * kf.innovation.transpose();
     double f = dt / (dt + settings::adaptivity_window_length);
     innovation_cov_estimate =
         f * ddT + (1. - f) * innovation_cov_estimate;
@@ -114,7 +112,7 @@ void FTNoIR_Filter::fill_transition_matrix(double dt)
     }
 }
 
-void FTNoIR_Filter::fill_process_noise_cov_matrix(Matrix &target, double dt) const
+void FTNoIR_Filter::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
 {
     // This model is like movement at fixed velocity plus superimposed
     // brownian motion. Unlike standard models for tracking of objects

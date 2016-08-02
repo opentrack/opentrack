@@ -22,20 +22,26 @@ using namespace options;
 
 static constexpr int NUM_STATE_DOF = 12;
 static constexpr int NUM_MEASUREMENT_DOF = 6;
-using Matrix = Eigen::MatrixXd; // variable size, heap allocated, double valued
 // These vectors are compile time fixed size, stack allocated
+using StateToMeasureMatrix = Eigen::Matrix<double, NUM_MEASUREMENT_DOF, NUM_STATE_DOF>;
+using StateMatrix = Eigen::Matrix<double, NUM_STATE_DOF, NUM_STATE_DOF>;
+using MeasureToStateMatrix = Eigen::Matrix<double, NUM_STATE_DOF, NUM_MEASUREMENT_DOF>;
+using MeasureMatrix = Eigen::Matrix<double, NUM_MEASUREMENT_DOF, NUM_MEASUREMENT_DOF>;
 using StateVector = Eigen::Matrix<double, NUM_STATE_DOF, 1>;
 using PoseVector = Eigen::Matrix<double, NUM_MEASUREMENT_DOF, 1>;
 
 struct KalmanFilter
 {
-    Matrix
-        measurement_noise_cov,
+    MeasureMatrix
+        measurement_noise_cov;
+    StateMatrix
         process_noise_cov,
         state_cov,
         state_cov_prior,
-        kalman_gain,
-        transition_matrix,
+        transition_matrix;
+    MeasureToStateMatrix
+        kalman_gain;
+    StateToMeasureMatrix
         measurement_matrix;
     StateVector
         state,
@@ -51,8 +57,9 @@ struct KalmanFilter
 
 struct KalmanProcessNoiseScaler
 {
-    Matrix
-        innovation_cov_estimate,
+    MeasureMatrix
+        innovation_cov_estimate;
+    StateMatrix
         base_cov; // baseline (unscaled) process noise covariance matrix
     void init();
     void update(KalmanFilter &kf, double dt);
@@ -107,7 +114,7 @@ class FTNoIR_Filter : public IFilter
 {
     PoseVector do_kalman_filter(const PoseVector &input, double dt, bool new_input);
     void fill_transition_matrix(double dt);
-    void fill_process_noise_cov_matrix(Matrix &target, double dt) const;
+    void fill_process_noise_cov_matrix(StateMatrix &target, double dt) const;
 public:
     FTNoIR_Filter();
     void reset();
