@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2016 Michael Welter <mw.pub@welter-4d.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
