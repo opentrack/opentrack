@@ -42,10 +42,9 @@ private:
     {
         double radius, brightness;
         vec2 pos;
-        blob(double radius, const cv::Vec2d& pos, double brightness) : radius(radius), brightness(brightness), pos(pos)
-        {
-            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
-        }
+        cv::Rect rect;
+
+        blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
     };
 
     std::vector<blob> blobs;
