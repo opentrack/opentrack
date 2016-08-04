@@ -96,10 +96,31 @@ struct settings : opts {
     static constexpr double process_sigma_pos = 0.5;
     static constexpr double process_simga_rot = 0.5;
 
-    static double map_slider_value(const slider_value &v)
+    static double map_slider_value(const slider_value &v_)
     {
-        //return std::pow(4., v * 5. - 4.) / 4. * 10.; // not so much difference, except that it is harder to adjust the min-max range.
-        return std::pow(10., v * 4. - 3.);
+        const double v = v_;
+#if 0
+        //return std::pow(10., v * 4. - 3.);
+#else
+        constexpr int min_log10 = -3;
+        constexpr int max_log10 = 1;
+        constexpr int num_divisions = max_log10 - min_log10;
+        /* ascii art representation of slider
+          // ----- //  ------//  ------// ------- //   4 divisions
+         -3    -   2         -1        0           1    power of 10
+                   |      |
+                   |      f + left_side_log10
+                   |
+                   left_side_log10
+        */
+        const int k = v * num_divisions; // in which division are we?!
+        const double f = v * num_divisions - k; // where in the division are we?!
+        const double ff = f * 9. + 1.;
+        const double multiplier = int(ff * 10.) / 10.;
+        const int left_side_log10 = min_log10 + k;
+        const double val = std::pow(10., left_side_log10) * multiplier;
+        return val;
+#endif
     }
 
     settings() :

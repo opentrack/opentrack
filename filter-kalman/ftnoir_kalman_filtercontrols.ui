@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
+    <width>438</width>
     <height>141</height>
    </rect>
   </property>
@@ -52,10 +52,13 @@
       <item row="0" column="1">
        <widget class="QSlider" name="noiseRotSlider">
         <property name="maximum">
-         <number>10000</number>
+         <number>400</number>
         </property>
         <property name="singleStep">
          <number>1</number>
+        </property>
+        <property name="pageStep">
+         <number>100</number>
         </property>
         <property name="tracking">
          <bool>true</bool>
@@ -67,10 +70,10 @@
          <bool>false</bool>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::NoTicks</enum>
+         <enum>QSlider::TicksBelow</enum>
         </property>
         <property name="tickInterval">
-         <number>10</number>
+         <number>100</number>
         </property>
        </widget>
       </item>
@@ -84,16 +87,19 @@
       <item row="1" column="1">
        <widget class="QSlider" name="noisePosSlider">
         <property name="maximum">
-         <number>10000</number>
+         <number>400</number>
+        </property>
+        <property name="pageStep">
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::NoTicks</enum>
+         <enum>QSlider::TicksBelow</enum>
         </property>
         <property name="tickInterval">
-         <number>10</number>
+         <number>100</number>
         </property>
        </widget>
       </item>
@@ -101,7 +107,7 @@
        <widget class="QLabel" name="noiseRotLabel">
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>65</width>
           <height>0</height>
          </size>
         </property>
@@ -114,7 +120,7 @@
        <widget class="QLabel" name="noisePosLabel">
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>65</width>
           <height>0</height>
          </size>
         </property>
