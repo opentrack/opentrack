@@ -199,8 +199,6 @@ void FTNoIR_Filter::reset()
     prev_slider_pos[0] = static_cast<slider_value>(s.noise_pos_slider_value);
     prev_slider_pos[1] = static_cast<slider_value>(s.noise_rot_slider_value);
 
-    //minimal_state_var = PoseVector::Constant(std::numeric_limits<double>::max());
-
     dz_filter.reset();
 }
 
@@ -238,15 +236,14 @@ void FTNoIR_Filter::filter(const double* input_, double *output_)
 
     {
         // Compute deadzone size base on estimated state variance.
-        // Given a constant input plus noise, KF should converge to the true (constant) input.
-        // This works indeed. That is the output pose becomes very still afte some time.
-        // At this point the estimated cov should be minimal. We can use this to
-        // calculate the size of the deadzone, so that in the stationary state the
-        // deadzone size is zero. Thus the tracking error due to the dz-filter
-        // becomes zero.
+        // Given a constant input plus measurement noise, KF should converge to the true input.
+        // This works well. That is the output pose becomes very still afte some time.
+        // The QScaling adaptive filter makes the state cov vary depending on the estimated noise
+        // and the measured noise of the innovation sequence. After a sudden movement it peaks
+        // and then decays asymptotically to some constant value taken in stationary state. 
+        // We can use this to calculate the size of the deadzone, so that in the stationary state the
+        // deadzone size is small. Thus the tracking error due to the dz-filter becomes also small.
         PoseVector variance = kf.state_cov.diagonal().head(6);
-        //minimal_state_var = minimal_state_var.cwiseMin(variance);
-        //dz_filter.dz_size = (variance - minimal_state_var).cwiseSqrt() * s.deadzone_scale;
         dz_filter.dz_size = variance.cwiseSqrt() * s.deadzone_scale;
     }
     output = dz_filter.filter(output);

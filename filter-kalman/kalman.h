@@ -91,8 +91,8 @@ struct settings : opts {
     value<slider_value> noise_pos_slider_value;
 
     static constexpr double adaptivity_window_length = 0.5; // seconds
-    static constexpr double deadzone_scale = 2.;
-    static constexpr double deadzone_exponent = 4.0;
+    static constexpr double deadzone_scale = 2;
+    static constexpr double deadzone_exponent = 2.0;
     static constexpr double process_sigma_pos = 0.5;
     static constexpr double process_simga_rot = 0.5;
 
@@ -147,7 +147,6 @@ public:
     settings s;
     KalmanFilter kf;
     KalmanProcessNoiseScaler kf_adaptive_process_noise_cov;
-    //PoseVector minimal_state_var;
     DeadzoneFilter dz_filter;
     slider_value prev_slider_pos[2];
 
