@@ -1,11 +1,12 @@
 set(opentrack-perms PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 
 if(WIN32)
-    install(FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf" DESTINATION .)
+    install(FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf" DESTINATION . ${opentrack-perms})
 endif()
 
 if(WIN32)
-    install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION .)
+    install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION . ${opentrack-perms})
+    install(FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config" DESTINATION ${opentrack-hier-pfx} ${opentrack-perms})
 endif()
 
 install(FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${opentrack-doc-pfx})
