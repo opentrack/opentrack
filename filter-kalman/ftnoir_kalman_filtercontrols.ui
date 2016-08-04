@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>132</height>
+    <width>438</width>
+    <height>141</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,45 +37,99 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Measurement Noise</string>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Noise standard deviation</string>
+         <string>Rotation</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QSlider" name="noise_slider">
+       <widget class="QSlider" name="noiseRotSlider">
+        <property name="maximum">
+         <number>400</number>
+        </property>
         <property name="singleStep">
          <number>1</number>
+        </property>
+        <property name="pageStep">
+         <number>100</number>
+        </property>
+        <property name="tracking">
+         <bool>true</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedAppearance">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Position</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSlider" name="noisePosSlider">
+        <property name="maximum">
+         <number>400</number>
+        </property>
+        <property name="pageStep">
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
+         <enum>QSlider::TicksBelow</enum>
         </property>
         <property name="tickInterval">
-         <number>10</number>
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="noiseRotLabel">
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>°</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="noisePosLabel">
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>-</string>
         </property>
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Written by Donovan Baarda, 2014</string>
-     </property>
     </widget>
    </item>
    <item>
