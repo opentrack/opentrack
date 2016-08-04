@@ -33,7 +33,7 @@ struct settings_accela : opts
         ewma(b, "ewma", 2),
         rot_deadzone(b, "rotation-deadzone", 0),
         trans_deadzone(b, "translation-deadzone", 0),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.1, 1, 1.75))
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 2))
     {}
 };
 

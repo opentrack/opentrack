@@ -96,7 +96,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double thres = i >= 3 ? rot_t : trans_t;
         const double out_ = vec_ / thres;
         const double out = i >= 3 && std::fabs(rot_nl - 1) > 5e-3
-                               ? (out_ * std::min(1., std::pow(out_/s.max_rot_nl, rot_nl)) * s.max_rot_nl)
+                               ? (std::pow(out_/s.max_rot_nl, rot_nl) * s.max_rot_nl)
                                : out_;
         const double val = m.getValue(float(out));
         const double signum = int(vec < 0) * -2 + 1;
