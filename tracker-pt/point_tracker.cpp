@@ -104,8 +104,8 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
     p.points[2] = project(model.M02, focal_length);
 
     const int diagonal = int(std::sqrt(w*w + h*h));
-    constexpr int div = 50;
-    const int max_dist = diagonal / div; // 16 pixels for 640x480
+    static constexpr int div = 100;
+    const int max_dist = diagonal / div; // 8 pixels for 640x480
 
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
