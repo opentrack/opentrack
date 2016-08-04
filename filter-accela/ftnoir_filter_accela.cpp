@@ -99,10 +99,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
                                ? (std::pow(out_/s.max_rot_nl, rot_nl) * s.max_rot_nl)
                                : out_;
         const double val = m.getValue(float(out));
-        const double signum = int(vec < 0) * -2 + 1;
-        const double result = last_output[i] + signum * dt * val;
-
-        last_output[i] = output[i] = result;
+        last_output[i] = output[i] = last_output[i] + signum(vec) * dt * val;
     }
 }
 

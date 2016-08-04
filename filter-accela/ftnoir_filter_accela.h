@@ -50,6 +50,24 @@ private:
     double last_output[6];
     double smoothed_input[6];
     Timer t;
+
+    template <typename T>
+    static inline int signum(T x, std::false_type)
+    {
+        return T(0) < x;
+    }
+
+    template <typename T>
+    static inline int signum(T x, std::true_type)
+    {
+        return (T(0) < x) - (x < T(0));
+    }
+
+    template <typename T>
+    static inline int signum(T x)
+    {
+        return signum(x, std::is_signed<T>());
+    }
 };
 
 class FilterControls: public IFilterDialog
