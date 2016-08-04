@@ -54,6 +54,8 @@ struct settings_pt : opts
     value<int> init_phase_timeout;
     value<bool> auto_threshold;
 
+    value<bool> mean_shift_filter_blobs;
+
     settings_pt() :
         opts("tracker-pt"),
         camera_name(b, "camera-name", ""),
@@ -83,6 +85,7 @@ struct settings_pt : opts
         fov(b, "camera-fov", 56),
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 500),
-        auto_threshold(b, "automatic-threshold", false)
+        auto_threshold(b, "automatic-threshold", false),
+        mean_shift_filter_blobs(b, "mean-shift-filter_blobs", false)
     {}
 };

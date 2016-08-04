@@ -65,6 +65,7 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
 
     tie_setting(s.auto_threshold, ui.auto_threshold);
+    tie_setting(s.mean_shift_filter_blobs, ui.mean_shift_enable_checkbox);
 
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
 
