@@ -234,7 +234,7 @@ namespace options {
     public:
         using underlying_t = typename get_t<t_>::t;
 
-        t operator=(const t datum)
+        t operator=(const t& datum)
         {
             store(static_cast<underlying_t>(datum));
             return datum;
@@ -256,7 +256,7 @@ namespace options {
         {
         }
 
-        operator t() const
+        t get() const
         {
             t val = b->contains(self_name)
                     ? static_cast<t>(b->get<underlying_t>(self_name))
@@ -264,10 +264,13 @@ namespace options {
             return detail::value_get_traits<t>::get(val, def);
         }
 
+        operator t() const { return get(); }
+
         void reload() override
         {
             *this = static_cast<t>(*this);
         }
+
     private:
         t def;
     };
