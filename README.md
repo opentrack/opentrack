@@ -64,6 +64,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Patrick Ruoff (PT tracker author)
 - Xavier Hallade (Intel RealSense tracker author and maintainer)
 - furax49 (hatire tracker author)
+- Michael Welter (contributor)
 
 # Thanks
 
@@ -73,7 +74,6 @@ Don't be afraid to submit an issue/feature request if need arises.
 - Ryan Spicer (OSX tester, contributor)
 - Donovan Baarda (filtering/control theory expert)
 - Mathijs Groothuis (@MathijsG, dozens of bugs and other issues reported)
-- Michael Welter (contributor)
 
 # Licensing information
 
