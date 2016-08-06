@@ -71,7 +71,7 @@ private:
     using rmat = euler::rmat;
     using euler_t = euler::euler_t;
 
-    rmat r_b;
+    rmat r_b, r_b_real;
     double t_b[3];
 
     double map(double pos, Mapping& axis);
@@ -82,11 +82,15 @@ private:
     static constexpr double pi = OPENTRACK_PI;
     static constexpr double r2d = 180. / OPENTRACK_PI;
     static constexpr double d2r = OPENTRACK_PI / 180.;
+
+    // note: float exponent base is 2
+    static constexpr double c_mult = 4;
+    static constexpr double c_div = 1./c_mult;
 public:
     Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger &logger);
     ~Tracker();
 
-    rmat get_camera_offset_matrix();
+    rmat get_camera_offset_matrix(double c);
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
     void toggle_enabled() { enabledp = !enabledp; }

@@ -30,7 +30,8 @@ Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     should_quit(false),
     libs(libs),
     logger(logger),
-    r_b(get_camera_offset_matrix().t()),
+    r_b(get_camera_offset_matrix(c_div).t()),
+    r_b_real(get_camera_offset_matrix(1).t()),
     t_b {0,0,0}
 {
 }
@@ -41,13 +42,13 @@ Tracker::~Tracker()
     wait();
 }
 
-Tracker::rmat Tracker::get_camera_offset_matrix()
+Tracker::rmat Tracker::get_camera_offset_matrix(double c)
 {
     const double off[] =
     {
-        d2r * (double)-s.camera_yaw,
-        d2r * (double)-s.camera_pitch,
-        d2r * (double)-s.camera_roll
+        d2r * c * (double)-s.camera_yaw,
+        d2r * c * (double)-s.camera_pitch,
+        d2r * c * (double)-s.camera_roll
     };
 
     return euler::euler_to_rmat(off);
@@ -109,6 +110,9 @@ static bool is_nan(const Pose& value)
     return false;
 }
 
+constexpr double Tracker::c_mult;
+constexpr double Tracker::c_div;
+
 void Tracker::logic()
 {
     bool inverts[6] = {
@@ -140,12 +144,15 @@ void Tracker::logic()
     if (is_nan(raw))
         raw = last_raw;
 
-    rmat r;
+    // TODO fix gimbal lock by dividing euler angle input by >=3.
+    // maintain the real rmat separately for translation compensation
+    // TODO split this function, it's too big
+    rmat r, r_real;
 
     {
-        euler_t tmp(&value[Yaw]);
-        tmp = d2r * tmp;
-        r = euler_to_rmat(&tmp[0]);
+        euler_t tmp = d2r * euler_t(&value[Yaw]);
+        r = euler_to_rmat(c_div * tmp);
+        r_real = euler_to_rmat(tmp);
     }
 
     euler_t t(value(0), value(1), value(2));
@@ -163,19 +170,34 @@ void Tracker::logic()
             }
     }
 
-    rmat cam = get_camera_offset_matrix();
+    const rmat cam = get_camera_offset_matrix(c_div);
+    const rmat cam_real = get_camera_offset_matrix(1);
 
     r = r * cam;
+    r_real = r_real * cam_real;
 
     if (do_center_now)
     {
+        centerp = false;
+
         if (libs.pFilter)
             libs.pFilter->center();
-        centerp = false;
+
+        if (libs.pTracker->center())
+        {
+            r_b = cam.t();
+            r_b_real = cam_real.t();
+            r = rmat::eye();
+            r_real = rmat::eye();
+        }
+        else
+        {
+            r_b = r.t();
+            r_b_real = r_real.t();
+        }
+
         for (int i = 0; i < 3; i++)
             t_b[i] = t(i);
-
-        r_b = r.t();
     }
 
     {
@@ -184,29 +206,26 @@ void Tracker::logic()
         // inertial
         case 0:
         default:
-            r = r * r_b;
+            r = r_b * r;
             break;
         // camera
         case 1:
-            euler_t degs = rmat_to_euler(r_b * r);
-            degs(2) = rmat_to_euler(r * r_b)(2);
-            r = euler_to_rmat(degs);
+            r = r * r_b;
             break;
         }
 
-        const euler_t euler = r2d * rmat_to_euler(r);
-
-        euler_t tmp(t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2]);
+        const euler_t rot = r2d * c_mult * rmat_to_euler(r);
+        euler_t pos(t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2]);
 
         if (s.use_camera_offset_from_centering)
-            t_compensate(r_b.t() * cam.t(), tmp, tmp, false);
+            t_compensate(r_b_real.t() * cam_real.t(), pos, pos, false);
         else
-            t_compensate(cam.t(), tmp, tmp, false);
+            t_compensate(cam_real.t(), pos, pos, false);
 
         for (int i = 0; i < 3; i++)
         {
-            value(i) = tmp(i);
-            value(i+3) = euler(i);
+            value(i) = pos(i);
+            value(i+3) = rot(i);
         }
     }
 
@@ -350,8 +369,10 @@ void Tracker::run()
     }
 }
 
-void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const {
+void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const
+{
     QMutexLocker foo(&const_cast<Tracker&>(*this).mtx);
+
     for (int i = 0; i < 6; i++)
     {
         raw[i] = raw_6dof(i);
