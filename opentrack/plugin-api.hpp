@@ -156,6 +156,9 @@ struct OPENTRACK_API_EXPORT ITracker
     virtual void start_tracker(QFrame* frame) = 0;
     // return XYZ yaw pitch roll data. don't block here, use a separate thread for computation.
     virtual void data(double *data) = 0;
+    // tracker notified of centering
+    // returning true makes identity the center pose
+    virtual bool center() { return false; }
 };
 
 struct OPENTRACK_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
