@@ -42,13 +42,46 @@ static constexpr t clamp(t datum, t min, t max)
     return ((datum > max) ? max : ((datum < min) ? min : datum));
 }
 
+void rel_settings::draw_spline()
+{
+    Map& spline = acc_mode_spline;
+
+    spline.removeAllPoints();
+
+    static constexpr float std_norm_expt = 1.f/3;
+    const float norm_expt = std_norm_expt * float(expt_norm.get());
+    static constexpr float std_norm_lin = 2.f/3;
+    const float norm_lin = clamp<float>((1-norm_expt) * lin_norm.get() * std_norm_lin, 0, 1);
+
+}
+
 rel_settings::rel_settings() :
     opts("tobii-eyex-relative-mode"),
     speed(b, "speed", s(5, .1, 10)),
-    dz_end_pt(b, "deadzone-length", s(.05, 0, .2)),
-    expt_val(b, "exponent", s(1.75, 1.25, 2.25)),
-    log_base(b, "logarithm-base", s(1.75, 1.1, 5))
-{}
+    dz_end_pt(b, "deadzone-length", s(4, 0, 15)),
+    expt_slope(b, "exponent-slope", s(1.5, 1.25, 3)),
+    expt_norm(b, "exponent-norm", s(1, .25, 4)),
+    lin_norm(b, "linear-norm", s(1, .25, 4)),
+    acc_mode_spline(100, 100)
+{
+    QObject::connect(&dz_end_pt,
+                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     this,
+                     &rel_settings::draw_spline);
+    QObject::connect(&expt_slope,
+                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     this,
+                     &rel_settings::draw_spline);
+    QObject::connect(&expt_norm,
+                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     this,
+                     &rel_settings::draw_spline);
+    QObject::connect(&lin_norm,
+                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     this,
+                     &rel_settings::draw_spline);
+    draw_spline();
+}
 
 tobii_eyex_tracker::tobii_eyex_tracker() :
     dev_ctx(TX_EMPTY_HANDLE),
@@ -310,74 +343,9 @@ plot_fn(lambda x: piecewise(x, [zero, f, g, h], [.05, .25, .7, 1.]))
 
 */
 
-template<typename funs_seq, typename bounds_seq>
-tobii_eyex_tracker::num tobii_eyex_tracker::piecewise(num x, const funs_seq& funs, const bounds_seq& bounds)
-{
-    using fn = std::function<num(num)>;
-
-    auto funs_it = std::begin(funs);
-    auto bounds_it = std::begin(bounds);
-
-    auto funs_end = std::end(funs);
-    auto bounds_end = std::end(bounds);
-
-    num norm = 0;
-
-    for (const fn& f : funs)
-    {
-        norm += f(1);
-    }
-
-    norm = std::max(num(1e-4), norm);
-
-    num last_bound = 0, y = 0;
-
-    for (;
-         bounds_it != bounds_end && funs_it != funs_end;
-         bounds_it++, funs_it++)
-    {
-        const fn& fun = *funs_it;
-        const num bound = *bounds_it;
-
-        if (x > bound)
-        {
-            y += fun(1);
-            last_bound = bound;
-        }
-        else
-        {
-            const num b = bound - last_bound;
-            // rescale x to 0->1
-            const num x_ = (x - last_bound) / b;
-            y += fun(x_);
-            break;
-        }
-    }
-    return clamp(y / norm, num(0), num(1));
-}
-
 tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x_)
 {
-    const num x = std::fabs(x_);
-
-    static const fun_t funs[] =
-    {
-        [](num) -> num { return num(0); },
-        [](num x) -> num { return std::pow(x, 1.1)*.08; },
-        [](num x) -> num { return x*.5; },
-    };
-
-    static constexpr num dz_l = .1, expt_l = .3;
-
-    static constexpr num ends[] =
-    {
-        dz_l,
-        expt_l,
-        1,
-    };
-
-    const num ret = piecewise(x, funs, ends);
-    return std::copysign(clamp(ret, num(0), num(1)), x_);
+    return 1;
 }
 
 void tobii_eyex_tracker::data(double* data)

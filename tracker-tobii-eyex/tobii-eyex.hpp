@@ -16,7 +16,7 @@
 using namespace options;
 #include "opentrack-compat/timer.hpp"
 #include "spline-widget/functionconfig.h"
-#include "spline-widget/qfunctionconfigurator.h"
+#include "qfunctionconfigurator.h"
 
 #include <atomic>
 #include <QObject>
@@ -28,17 +28,19 @@ enum tobii_mode
     tobii_absolute,
 };
 
-struct rel_settings : public QObject, public opts
+class rel_settings final : public QObject, public opts
 {
+    Q_OBJECT
+public:
     using s = slider_value;
-    value<slider_value> speed, dz_end_pt, expt_val, log_base;
+    value<slider_value> speed, dz_end_pt, expt_slope, expt_norm, lin_norm;
+    Map acc_mode_spline;
     rel_settings();
-private:
-    // linear coefficient to be the same as exponent
-    Map spline;
+private slots:
+    void draw_spline();
 };
 
-struct settings : public opts
+struct settings final : public opts
 {
     value<tobii_mode> mode;
     settings() :
@@ -74,11 +76,6 @@ private:
     void process_display_state(TX_HANDLE display_state_handle);
 
     using num = double;
-
-    template<typename funs_seq, typename bounds_seq>
-    static num piecewise(num x, const funs_seq& funs, const bounds_seq& bounds);
-
-    using fun_t = std::function<num(num)>;
 
     num gain(num x);
 
