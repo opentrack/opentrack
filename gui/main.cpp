@@ -116,7 +116,9 @@ int main(int argc, char** argv)
     QCoreApplication::addLibraryPath(".");
 #endif
 
+#if QT_VERSION >= 0x050600 // flag introduced in QT 5.6. It is non-essential so might as well allow compilation on older systems.
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
     QApplication app(argc, argv);
 

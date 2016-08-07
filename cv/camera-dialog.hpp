@@ -16,13 +16,13 @@
 #endif
 
 #ifdef _WIN32
-#   include <opencv2/videoio.hpp>
 #   include <QTimer>
 #   include <objbase.h>
 #   include <winerror.h>
 #   include <windows.h>
 #endif
 
+#include <opencv2/videoio.hpp>
 #include <QMutex>
 
 class camera_dialog

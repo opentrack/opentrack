@@ -20,12 +20,14 @@ void camera_dialog::maybe_grab_frame(cv::VideoCapture& cap)
     }
 }
 
+#ifdef _WIN32
 void camera_dialog::init_com_threading()
 {
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     if (FAILED(hr))
         qDebug() << "failed CoInitializeEx" << hr << "code" << GetLastError();
 }
+#endif
 
 camera_dialog::~camera_dialog() {}
 
