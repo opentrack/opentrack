@@ -71,7 +71,7 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
-    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
+    connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
     timer.start(250);
 }
 

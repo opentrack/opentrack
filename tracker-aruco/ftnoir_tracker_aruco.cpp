@@ -423,7 +423,7 @@ TrackerControls::TrackerControls()
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
-    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
+    connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 }
 
 void TrackerControls::toggleCalibrate()
