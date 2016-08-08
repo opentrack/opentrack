@@ -30,7 +30,7 @@ public:
 
     GLWidget(QWidget *parent);
     ~GLWidget();
-    void rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z);
+    void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 protected:
     void paintEvent (QPaintEvent *event) override;
 private:

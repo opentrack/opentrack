@@ -33,7 +33,7 @@ void GLWidget::paintEvent (QPaintEvent * event)
     p.drawImage(event->rect(), image);
 }
 
-void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float y, float z)
+void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
     if (visible_timer.elapsed_ms() > 250)
     {
@@ -47,11 +47,11 @@ void GLWidget::rotateBy(float xAngle, float yAngle, float zAngle, float x, float
     using std::sin;
     using std::cos;
 
-    static constexpr num d2r = float(OPENTRACK_PI / 180);
+    static constexpr double d2r = OPENTRACK_PI / 180;
 
     translation = vec3(x, y, z);
 
-    euler::euler_t euler(-zAngle * d2r, xAngle * d2r, yAngle * d2r);
+    euler::euler_t euler(-zAngle * d2r, xAngle * d2r, -yAngle * d2r);
     euler::rmat r = euler::euler_to_rmat(euler);
 
     for (int i = 0; i < 3; i++)

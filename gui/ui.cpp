@@ -332,7 +332,7 @@ void MainWindow::startTracker()
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
     updateButtonState(true, is_inertial);
-    
+
     // Update the state of the options window directly.
     // Might be better to emit signals and allow the options window
     // to connect its slots to them (?)
@@ -371,7 +371,7 @@ void MainWindow::stopTracker()
         display_pose(p, p);
     }
     updateButtonState(false, false);
-    
+
     if (options_widget)
         options_widget->update_widgets_states(false);
 
@@ -382,7 +382,7 @@ void MainWindow::stopTracker()
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
-    ui.pose_display->rotateBy(mapped[Yaw], -mapped[Pitch], -mapped[Roll],
+    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                               mapped[TX], mapped[TY], mapped[TZ]);
 
     if (mapping_widget)
