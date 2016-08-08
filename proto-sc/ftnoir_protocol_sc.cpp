@@ -11,6 +11,7 @@
  */
 #include "ftnoir_protocol_sc.h"
 #include "opentrack/plugin-api.hpp"
+#include "opentrack-library-path.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)
 {
@@ -87,7 +88,8 @@ public:
 #else
 #	define PREFIX "lib"
 #endif
-        QString path = QCoreApplication::applicationDirPath() + "/" PREFIX "opentrack-proto-simconnect.dll";
+        static const QString prefix = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
+        QString path = prefix + PREFIX "opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
         hactctx = CreateActCtxA(&actx);
