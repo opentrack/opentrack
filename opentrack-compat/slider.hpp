@@ -11,7 +11,6 @@
 #include <QMetaType>
 #include <QDataStream>
 #include <QDebug>
-#include <cmath>
 
 namespace options
 {

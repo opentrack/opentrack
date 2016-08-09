@@ -1,4 +1,5 @@
 #include "slider.hpp"
+#include <cmath>
 
 namespace options {
 
