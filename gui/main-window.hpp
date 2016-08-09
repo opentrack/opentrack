@@ -16,6 +16,7 @@
 #include <QSystemTrayIcon>
 #include <QString>
 #include <QMenu>
+#include <QEvent>
 
 #include <vector>
 #include <tuple>
@@ -39,7 +40,7 @@ class MainWindow : public QMainWindow, private State
 {
     Q_OBJECT
 
-    Ui::ui_main_window ui;
+    Ui::main_window ui;
 
     Shortcuts global_shortcuts;
     module_settings m;
@@ -80,6 +81,10 @@ class MainWindow : public QMainWindow, private State
     void set_profile(const QString& profile);
     void register_shortcuts();
     void set_keys_enabled(bool flag);
+
+    void changeEvent(QEvent* e) override;
+    bool maybe_hide_to_tray(QEvent* e);
+
 private slots:
     void save_modules();
     void exit();
@@ -92,7 +97,6 @@ private slots:
     void showCurveConfiguration();
     void showHeadPose();
 
-    void restore_from_tray(QSystemTrayIcon::ActivationReason);
     void maybe_start_profile_from_executable();
 
     void make_empty_config();
@@ -104,6 +108,8 @@ private slots:
     void stopTracker();
     void reload_options();
 
+    void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
+
 signals:
     void emit_start_tracker();
     void emit_stop_tracker();
@@ -114,4 +120,5 @@ public:
     ~MainWindow();
     static void set_working_directory();
     void warn_on_config_not_writable();
+    bool is_tray_enabled();
 };

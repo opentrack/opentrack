@@ -130,9 +130,15 @@ int main(int argc, char** argv)
 
     MainWindow::set_working_directory();
 
-    auto w = std::make_shared<MainWindow>();
+    mem<MainWindow> w = std::make_shared<MainWindow>();
 
-    w->show();
+    if (!w->is_tray_enabled())
+        w->show();
+    else
+    {
+        w->setVisible(false);
+        w->setHidden(true);
+    }
     app.exec();
 
     // on MSVC crashes in atexit

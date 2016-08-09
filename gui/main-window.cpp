@@ -86,8 +86,6 @@ MainWindow::MainWindow() :
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
     det_timer.start(1000);
 
-    ensure_tray();
-
     if (!QFile(group::ini_pathname()).exists())
     {
         set_profile(OPENTRACK_DEFAULT_CONFIG);
@@ -124,6 +122,12 @@ MainWindow::MainWindow() :
     register_shortcuts();
 
     ui.btnStartTracker->setFocus();
+
+    connect(&s.tray_enabled,
+            static_cast<void (base_value::*)(bool)>(&base_value::valueChanged),
+            this,
+            [&](bool) { ensure_tray(); });
+    ensure_tray();
 }
 
 void MainWindow::register_shortcuts()
@@ -282,9 +286,7 @@ void MainWindow::reload_options()
 {
     if (work)
         work->reload_shortcuts();
-    ensure_tray();
 }
-
 
 void MainWindow::startTracker()
 {
@@ -538,25 +540,78 @@ void MainWindow::profile_selected(const QString& name)
 
 void MainWindow::ensure_tray()
 {
-    if (tray)
-        tray->hide();
-    tray = nullptr;
+    if (!QSystemTrayIcon::isSystemTrayAvailable())
+        return;
+
     if (s.tray_enabled)
     {
-        tray = std::make_shared<QSystemTrayIcon>(this);
-        tray->setIcon(QIcon(":/images/facetracknoir.png"));
-        tray->show();
-        connect(tray.get(), SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-                this, SLOT(restore_from_tray(QSystemTrayIcon::ActivationReason)));
+        if (!tray)
+        {
+            tray = std::make_shared<QSystemTrayIcon>(this);
+            tray->setIcon(QIcon(":/images/facetracknoir.png"));
+            tray->show();
+
+            connect(tray.get(),
+                    &QSystemTrayIcon::activated,
+                    this,
+                    &MainWindow::toggle_restore_from_tray);
+        }
+    }
+    else
+    {
+        if (isHidden())
+            show();
+        if (!isVisible())
+            setVisible(true);
+
+        raise(); // for OSX
+        activateWindow(); // for Windows
+
+        if (tray)
+            tray->hide();
+        tray = nullptr;
     }
 }
 
-void MainWindow::restore_from_tray(QSystemTrayIcon::ActivationReason)
+void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 {
-    show();
-    setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-    raise();  // for MacOS
-    activateWindow(); // for Windows
+    if (e != QSystemTrayIcon::DoubleClick)
+        return;
+
+    ensure_tray();
+
+    const bool is_minimized = isHidden() || !is_tray_enabled();
+
+    setVisible(is_minimized);
+    setHidden(!is_minimized);
+
+    if (!is_minimized)
+        setWindowState(Qt::WindowNoState);
+
+    if (is_minimized)
+    {
+        raise(); // for OSX
+        activateWindow(); // for Windows
+    }
+    else
+    {
+        lower();
+        clearFocus();
+    }
+}
+
+bool MainWindow::maybe_hide_to_tray(QEvent* e)
+{
+    if (e->type() == QEvent::WindowStateChange && is_tray_enabled())
+    {
+        e->accept();
+        ensure_tray();
+        hide();
+
+        return true;
+    }
+
+    return false;
 }
 
 void MainWindow::maybe_start_profile_from_executable()
@@ -590,6 +645,19 @@ void MainWindow::set_keys_enabled(bool flag)
         register_shortcuts();
     }
     qDebug() << "keybindings set to" << flag;
+}
+
+void MainWindow::changeEvent(QEvent* e)
+{
+    if (maybe_hide_to_tray(e))
+        e->accept();
+    else
+        QMainWindow::changeEvent(e);
+}
+
+bool MainWindow::is_tray_enabled()
+{
+    return s.tray_enabled && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
 void MainWindow::set_profile(const QString &profile)
