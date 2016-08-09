@@ -20,7 +20,7 @@
 #include <vector>
 #include <tuple>
 
-#include "ui_main.h"
+#include "ui_main-window.h"
 
 #include "opentrack-compat/options.hpp"
 #include "opentrack-logic/main-settings.hpp"
@@ -39,9 +39,10 @@ class MainWindow : public QMainWindow, private State
 {
     Q_OBJECT
 
+    Ui::ui_main_window ui;
+
     Shortcuts global_shortcuts;
     module_settings m;
-    Ui::OpentrackUI ui;
     mem<QSystemTrayIcon> tray;
     QTimer pose_update_timer;
     QTimer det_timer;

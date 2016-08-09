@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>Lovecraftian Octopus</author>
- <class>OpentrackUI</class>
- <widget class="QMainWindow" name="OpentrackUI">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowIcon">
-   <iconset resource="ui-res.qrc">
+   <iconset resource="opentrack-res.qrc">
     <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
   </property>
   <property name="styleSheet">
@@ -202,7 +202,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="ui-res.qrc">:/images/tracking-not-started.png</pixmap>
+               <pixmap resource="opentrack-res.qrc">:/images/tracking-not-started.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>false</bool>
@@ -994,7 +994,7 @@
                 <string>Options</string>
                </property>
                <property name="icon">
-                <iconset resource="ui-res.qrc">
+                <iconset resource="opentrack-res.qrc">
                  <normaloff>:/images/tools.png</normaloff>:/images/tools.png</iconset>
                </property>
                <property name="iconSize">
@@ -1011,7 +1011,7 @@
                 <string>Mapping</string>
                </property>
                <property name="icon">
-                <iconset resource="ui-res.qrc">
+                <iconset resource="opentrack-res.qrc">
                  <normaloff>:/images/curves.png</normaloff>:/images/curves.png</iconset>
                </property>
                <property name="iconSize">
@@ -1332,7 +1332,7 @@
   <tabstop>iconcomboProfile</tabstop>
  </tabstops>
  <resources>
-  <include location="ui-res.qrc"/>
+  <include location="opentrack-res.qrc"/>
  </resources>
  <connections/>
 </ui>

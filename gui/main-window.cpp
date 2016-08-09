@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "ui.h"
+#include "main-window.hpp"
 #include "opentrack-logic/tracker.h"
 #include "opentrack-compat/options.hpp"
 #include "opentrack-library-path.h"

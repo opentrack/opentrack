@@ -8,7 +8,7 @@
 #   include <QString>
 #endif
 
-#include "ui.h"
+#include "main-window.hpp"
 #include "opentrack-compat/options.hpp"
 using namespace options;
 #include <QApplication>
