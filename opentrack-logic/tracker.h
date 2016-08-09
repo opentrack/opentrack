@@ -27,24 +27,7 @@
 
 #include "export.hpp"
 
-class Pose
-{
-private:
-    static constexpr double pi = OPENTRACK_PI;
-    static constexpr double d2r = pi/180.0;
-    static constexpr double r2d = 180./pi;
-
-    double axes[6];
-public:
-    Pose() : axes {0,0,0, 0,0,0} {}
-    Pose(double x, double y, double z, double yaw, double pitch, double roll) : axes { x, y, z, yaw, pitch, roll } {}
-
-    inline operator double*() { return axes; }
-    inline operator const double*() const { return axes; }
-
-    inline double& operator()(int i) { return axes[i]; }
-    inline double operator()(int i) const { return axes[i]; }
-};
+using Pose = Mat<double, 6, 1>;
 
 class OPENTRACK_LOGIC_EXPORT Tracker : private QThread
 {

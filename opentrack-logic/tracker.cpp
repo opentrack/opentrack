@@ -115,15 +115,6 @@ constexpr double Tracker::c_div;
 
 void Tracker::logic()
 {
-    bool inverts[6] = {
-        m(0).opts.invert,
-        m(1).opts.invert,
-        m(2).opts.invert,
-        m(3).opts.invert,
-        m(4).opts.invert,
-        m(5).opts.invert,
-    };
-
     using namespace euler;
 
     Pose value, raw;
@@ -255,7 +246,7 @@ void Tracker::logic()
             value(i) += m(i).opts.zero;
 
         for (int i = 0; i < 6; i++)
-            value(i) *= int(inverts[i]) * -2 + 1;
+            value(i) *= int(m(i).opts.invert) * -2 + 1;
 
         if (zero_)
             for (int i = 0; i < 6; i++)
@@ -314,13 +305,13 @@ void Tracker::run()
 #endif
 
     {
-        const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
-        const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        static constexpr const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
         logger.write(datachannels[0]);
         char buffer[128];
-        for (int j = 1; j < 5; ++j)
+        for (unsigned j = 1; j < 5; ++j)
         {
-            for (int i = 0; i < 6; ++i)
+            for (unsigned i = 0; i < 6; ++i)
             {
                 snprintf(buffer, 128, "%s%s", datachannels[j], posechannels[i]);
                 logger.write(buffer);
