@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ui_settings.h"
+#include "ui_options-dialog.h"
 #include "opentrack-logic/shortcuts.h"
 #include <QObject>
 #include <QWidget>
 #include <functional>
 
-class OptionsDialog: public QWidget
+class OptionsDialog : public QWidget
 {
     Q_OBJECT
 signals:
@@ -18,7 +18,7 @@ public slots:
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;
-    Ui::UI_Settings ui;
+    Ui::options_dialog ui;
     void closeEvent(QCloseEvent *) override { doCancel(); }
 private slots:
     void doOK();
