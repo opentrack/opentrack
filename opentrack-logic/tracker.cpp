@@ -54,12 +54,12 @@ Tracker::rmat Tracker::get_camera_offset_matrix(double c)
     return euler::euler_to_rmat(off);
 }
 
-double Tracker::map(double pos, Mapping& axis)
+double Tracker::map(double pos, Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
-    axis.curve.setTrackingActive( !altp );
-    axis.curveAlt.setTrackingActive( altp );
-    auto& fc = altp ? axis.curveAlt : axis.curve;
+    axis.spline_main.setTrackingActive( !altp );
+    axis.spline_alt.setTrackingActive( altp );
+    auto& fc = altp ? axis.spline_alt : axis.spline_main;
     return fc.getValue(pos);
 }
 
@@ -355,8 +355,8 @@ void Tracker::run()
 
     for (int i = 0; i < 6; i++)
     {
-        m(i).curve.setTrackingActive(false);
-        m(i).curveAlt.setTrackingActive(false);
+        m(i).spline_main.setTrackingActive(false);
+        m(i).spline_alt.setTrackingActive(false);
     }
 }
 

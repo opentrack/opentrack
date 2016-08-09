@@ -30,7 +30,7 @@
 #include "opentrack-logic/shortcuts.h"
 #include "opentrack-logic/work.hpp"
 #include "opentrack-logic/state.hpp"
-#include "curve-config.h"
+#include "mapping-window.hpp"
 #include "options-dialog.hpp"
 #include "process_detector.h"
 

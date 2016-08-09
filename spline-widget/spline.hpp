@@ -24,7 +24,7 @@
 #   define SPLINE_WIDGET_EXPORT Q_DECL_IMPORT
 #endif
 
-class SPLINE_WIDGET_EXPORT Map
+class SPLINE_WIDGET_EXPORT spline
 {
 private:
     int precision() const;
@@ -48,8 +48,8 @@ private:
 public:
     qreal maxInput() const;
     qreal maxOutput() const;
-    Map();
-    Map(qreal maxx, qreal maxy);
+    spline();
+    spline(qreal maxx, qreal maxy);
 
     float getValue(float x);
     bool getLastPoint(QPointF& point);

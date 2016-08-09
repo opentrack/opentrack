@@ -15,7 +15,7 @@ using namespace options;
 #include <cmath>
 #include <algorithm>
 
-QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
+spline_widget::spline_widget(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),
     moving_control_point_idx(-1),
@@ -28,7 +28,7 @@ QFunctionConfigurator::QFunctionConfigurator(QWidget *parent) :
     setMouseTracking(true);
 }
 
-void QFunctionConfigurator::setConfig(Map* config, const QString& name)
+void spline_widget::setConfig(spline* config, const QString& name)
 {
     mem<QSettings> iniFile = group::ini_file();
     if (name != "")
@@ -39,17 +39,17 @@ void QFunctionConfigurator::setConfig(Map* config, const QString& name)
     update();
 }
 
-void QFunctionConfigurator::set_preview_only(bool val)
+void spline_widget::set_preview_only(bool val)
 {
     _preview_only = val;
 }
 
-bool QFunctionConfigurator::is_preview_only() const
+bool spline_widget::is_preview_only() const
 {
     return _preview_only;
 }
 
-void QFunctionConfigurator::drawBackground()
+void spline_widget::drawBackground()
 {
     if (!_config)
         return;
@@ -111,7 +111,7 @@ void QFunctionConfigurator::drawBackground()
     }
 }
 
-void QFunctionConfigurator::drawFunction()
+void spline_widget::drawFunction()
 {
     if (!_config)
         return;
@@ -173,7 +173,7 @@ void QFunctionConfigurator::drawFunction()
     painter.restore();
 }
 
-void QFunctionConfigurator::paintEvent(QPaintEvent *e)
+void spline_widget::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
 
@@ -221,7 +221,7 @@ void QFunctionConfigurator::paintEvent(QPaintEvent *e)
     }
 }
 
-void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
+void spline_widget::drawPoint(QPainter *painter, const QPointF &pos, QColor colBG, QColor border)
 {
     painter->save();
     painter->setPen(border);
@@ -232,7 +232,7 @@ void QFunctionConfigurator::drawPoint(QPainter *painter, const QPointF &pos, QCo
     painter->restore();
 }
 
-void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen &pen)
+void spline_widget::drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen &pen)
 {
     painter->save();
     painter->setPen(pen);
@@ -241,7 +241,7 @@ void QFunctionConfigurator::drawLine(QPainter *painter, const QPointF &start, co
     painter->restore();
 }
 
-void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
+void spline_widget::mousePressEvent(QMouseEvent *e)
 {
     if (!_config || !isEnabled())
         return;
@@ -308,7 +308,7 @@ void QFunctionConfigurator::mousePressEvent(QMouseEvent *e)
     update();
 }
 
-void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
+void spline_widget::mouseMoveEvent(QMouseEvent *e)
 {
     if (!_config || !isEnabled())
         return;
@@ -390,7 +390,7 @@ void QFunctionConfigurator::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
+void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 {
     if (!_config || !isEnabled())
         return;
@@ -406,7 +406,7 @@ void QFunctionConfigurator::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void QFunctionConfigurator::update_range()
+void spline_widget::update_range()
 {
     if (!_config)
         return;
@@ -425,13 +425,13 @@ void QFunctionConfigurator::update_range()
     update();
 }
 
-bool QFunctionConfigurator::point_within_pixel(const QPointF &pt, const QPointF &pixel)
+bool spline_widget::point_within_pixel(const QPointF &pt, const QPointF &pixel)
 {
     QPointF tmp = pixel - point_to_pixel(pt);
     return sqrt(QPointF::dotProduct(tmp, tmp)) < point_size;
 }
 
-QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
+QPointF spline_widget::pixel_coord_to_point(const QPointF& point)
 {
     if (!_config)
         return QPointF(-1, -1);
@@ -459,13 +459,13 @@ QPointF QFunctionConfigurator::pixel_coord_to_point(const QPointF& point)
     return QPointF(x, y);
 }
 
-QPointF QFunctionConfigurator::point_to_pixel(const QPointF& point)
+QPointF spline_widget::point_to_pixel(const QPointF& point)
 {
     return QPointF(pixel_bounds.x() + point.x() * c.x(),
                    pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y());
 }
 
-void QFunctionConfigurator::resizeEvent(QResizeEvent *)
+void spline_widget::resizeEvent(QResizeEvent *)
 {
     update_range();
 }

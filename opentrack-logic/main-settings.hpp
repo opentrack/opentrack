@@ -62,7 +62,7 @@ struct module_settings
 
 struct main_settings
 {
-    pbundle b;
+    pbundle b, b_map;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
@@ -77,12 +77,13 @@ struct main_settings
     value<QString> tracklogging_filename;
     main_settings() :
         b(bundle("opentrack-ui")),
-        a_x(b, "x", TX),
-        a_y(b, "y", TY),
-        a_z(b, "z", TZ),
-        a_yaw(b, "yaw", Yaw),
-        a_pitch(b, "pitch", Pitch),
-        a_roll(b, "roll", Roll),
+        b_map(bundle("opentrack-mappings")),
+        a_x(b_map, "x", TX),
+        a_y(b_map, "y", TY),
+        a_z(b_map, "z", TZ),
+        a_yaw(b_map, "yaw", Yaw),
+        a_pitch(b_map, "pitch", Pitch),
+        a_roll(b_map, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
         tcomp_tz(b, "compensate-translation-disable-z-axis", false),
         tray_enabled(b, "use-system-tray", false),

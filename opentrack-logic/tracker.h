@@ -57,7 +57,7 @@ private:
     rmat r_b, r_b_real;
     double t_b[3];
 
-    double map(double pos, Mapping& axis);
+    double map(double pos, Map& axis);
     void logic();
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output, bool rz);
     void run() override;

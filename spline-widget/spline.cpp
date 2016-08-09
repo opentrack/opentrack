@@ -21,47 +21,47 @@
 
 #include <QDebug>
 
-void Map::setTrackingActive(bool blnActive)
+void spline::setTrackingActive(bool blnActive)
 {
     activep = blnActive;
 }
 
-Map::Map() : Map(0, 0)
+spline::spline() : spline(0, 0)
 {
 }
 
-void Map::removeAllPoints()
+void spline::removeAllPoints()
 {
     QMutexLocker foo(&_mutex);
     cur.input.clear();
     reload();
 }
 
-void Map::setMaxInput(qreal max_input)
+void spline::setMaxInput(qreal max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
 }
 
-void Map::setMaxOutput(qreal max_output)
+void spline::setMaxOutput(qreal max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
 }
 
-qreal Map::maxInput() const
+qreal spline::maxInput() const
 {
     QMutexLocker l(&_mutex);
     return max_x;
 }
 
-qreal Map::maxOutput() const
+qreal spline::maxOutput() const
 {
     QMutexLocker l(&_mutex);
     return max_y;
 }
 
-Map::Map(qreal maxx, qreal maxy) :
+spline::spline(qreal maxx, qreal maxy) :
     _mutex(QMutex::Recursive),
     max_x(0),
     max_y(0),
@@ -74,7 +74,7 @@ Map::Map(qreal maxx, qreal maxy) :
     reload();
 }
 
-float Map::getValue(float x)
+float spline::getValue(float x)
 {
     QMutexLocker foo(&_mutex);
     float q  = x * precision();
@@ -88,14 +88,14 @@ float Map::getValue(float x)
     return ret;
 }
 
-bool Map::getLastPoint(QPointF& point )
+bool spline::getLastPoint(QPointF& point )
 {
     QMutexLocker foo(&_mutex);
     point = last_input_value;
     return activep;
 }
 
-float Map::getValueInternal(int x)
+float spline::getValueInternal(int x)
 {
     float sign = x < 0 ? -1 : 1;
     x = abs(x);
@@ -123,7 +123,7 @@ static bool sortFn(const QPointF& one, const QPointF& two)
     return one.x() < two.x();
 }
 
-void Map::reload()
+void spline::reload()
 {
     if (cur.input.size())
     {
@@ -202,7 +202,7 @@ void Map::reload()
         cur.data.clear();
 }
 
-void Map::removePoint(int i)
+void spline::removePoint(int i)
 {
     QMutexLocker foo(&_mutex);
     if (i >= 0 && i < cur.input.size())
@@ -212,7 +212,7 @@ void Map::removePoint(int i)
     }
 }
 
-void Map::addPoint(QPointF pt)
+void spline::addPoint(QPointF pt)
 {
     QMutexLocker foo(&_mutex);
     cur.input.append(pt);
@@ -220,7 +220,7 @@ void Map::addPoint(QPointF pt)
     std::stable_sort(cur.input.begin(), cur.input.end(), sortFn);
 }
 
-void Map::movePoint(int idx, QPointF pt)
+void spline::movePoint(int idx, QPointF pt)
 {
     QMutexLocker foo(&_mutex);
     if (idx >= 0 && idx < cur.input.size())
@@ -232,20 +232,20 @@ void Map::movePoint(int idx, QPointF pt)
     }
 }
 
-const QList<QPointF> Map::getPoints()
+const QList<QPointF> spline::getPoints()
 {
     QMutexLocker foo(&_mutex);
     return cur.input;
 }
 
-void Map::invalidate_unsaved_settings()
+void spline::invalidate_unsaved_settings()
 {
     QMutexLocker foo(&_mutex);
     cur = saved;
     reload();
 }
 
-void Map::loadSettings(QSettings& settings, const QString& title)
+void spline::loadSettings(QSettings& settings, const QString& title)
 {
     QMutexLocker foo(&_mutex);
     QPointF newPoint;
@@ -275,7 +275,7 @@ void Map::loadSettings(QSettings& settings, const QString& title)
     saved = cur;
 }
 
-bool Map::State::operator==(const State& other) const
+bool spline::State::operator==(const State& other) const
 {
     if (input.size() != other.input.size())
         return false;
@@ -297,7 +297,7 @@ bool Map::State::operator==(const State& other) const
     return true;
 }
 
-void Map::saveSettings(QSettings& settings, const QString& title)
+void spline::saveSettings(QSettings& settings, const QString& title)
 {
     QMutexLocker foo(&_mutex);
 
@@ -335,7 +335,7 @@ void Map::saveSettings(QSettings& settings, const QString& title)
 }
 
 
-int Map::precision() const
+int spline::precision() const
 {
     if (cur.input.size())
         return (value_count-1) / std::max<float>(1.f, (cur.input[cur.input.size() - 1].x()));

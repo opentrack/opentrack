@@ -84,7 +84,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
 
     for (int i = 0; i < 6; i++)
     {
-        Map& m = i >= 3 ? rot : trans;
+        spline& m = i >= 3 ? rot : trans;
 
         smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
 

@@ -15,16 +15,16 @@
 #include "spline.hpp"
 #include "opentrack/plugin-api.hpp"
 
-class SPLINE_WIDGET_EXPORT QFunctionConfigurator : public QWidget
+class SPLINE_WIDGET_EXPORT spline_widget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
     Q_PROPERTY(bool is_preview_only READ is_preview_only WRITE set_preview_only)
 public:
-    QFunctionConfigurator(QWidget *parent = 0);
+    spline_widget(QWidget *parent = 0);
 
-    Map* config();
-    void setConfig(Map* config, const QString &name);
+    spline* config();
+    void setConfig(spline* config, const QString &name);
 
     QColor colorBezier() const
     {
@@ -63,7 +63,7 @@ private:
     QPointF pixel_coord_to_point (const QPointF& point);
     QPointF point_to_pixel(const QPointF& point);
 
-    Map* _config;
+    spline* _config;
 
     // bounds of the rectangle user can interact with
     QRectF  pixel_bounds;

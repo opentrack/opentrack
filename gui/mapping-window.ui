@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UICCurveConfigurationDialog</class>
- <widget class="QWidget" name="UICCurveConfigurationDialog">
+ <class>mapping_window</class>
+ <widget class="QWidget" name="mapping_window">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -59,7 +59,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QFunctionConfigurator" name="rxconfig" native="true">
+        <widget class="spline_widget" name="rxconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -84,7 +84,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="rxconfig_alt" native="true">
+        <widget class="spline_widget" name="rxconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -112,7 +112,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QFunctionConfigurator" name="ryconfig" native="true">
+        <widget class="spline_widget" name="ryconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -137,7 +137,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="ryconfig_alt" native="true">
+        <widget class="spline_widget" name="ryconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -165,7 +165,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QFunctionConfigurator" name="rzconfig" native="true">
+        <widget class="spline_widget" name="rzconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -190,7 +190,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="rzconfig_alt" native="true">
+        <widget class="spline_widget" name="rzconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -218,7 +218,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QFunctionConfigurator" name="txconfig" native="true">
+        <widget class="spline_widget" name="txconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -243,7 +243,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="txconfig_alt" native="true">
+        <widget class="spline_widget" name="txconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -271,7 +271,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QFunctionConfigurator" name="tyconfig" native="true">
+        <widget class="spline_widget" name="tyconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -296,7 +296,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="tyconfig_alt" native="true">
+        <widget class="spline_widget" name="tyconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>255</red>
@@ -324,7 +324,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <widget class="QFunctionConfigurator" name="tzconfig" native="true">
+        <widget class="spline_widget" name="tzconfig" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -349,7 +349,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFunctionConfigurator" name="tzconfig_alt" native="true">
+        <widget class="spline_widget" name="tzconfig_alt" native="true">
          <property name="colorBezier" stdset="0">
           <color>
            <red>0</red>
@@ -381,7 +381,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QFunctionConfigurator</class>
+   <class>spline_widget</class>
    <extends>QWidget</extends>
    <header>spline-widget/spline-widget.hpp</header>
   </customwidget>

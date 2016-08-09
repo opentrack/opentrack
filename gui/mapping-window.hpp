@@ -1,16 +1,16 @@
 #pragma once
 #include <QWidget>
 #include "opentrack-logic/mappings.hpp"
-#include "ui_mapping.h"
+#include "ui_mapping-window.h"
 
 class MapWidget final : public QWidget
 {
     Q_OBJECT
 public:
-    MapWidget(Mappings &m);
+    MapWidget(Mappings& m);
     void reload();
 private:
-    Ui::UICCurveConfigurationDialog ui;
+    Ui::mapping_window ui;
     Mappings& m;
     main_settings s;
 

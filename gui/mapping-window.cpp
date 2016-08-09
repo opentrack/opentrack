@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "curve-config.h"
+#include "mapping-window.hpp"
 #include "opentrack-logic/main-settings.hpp"
 #include "spline-widget/spline-widget.hpp"
 MapWidget::MapWidget(Mappings& m) :
@@ -33,7 +33,7 @@ void MapWidget::reload()
 {
     {
         struct {
-            QFunctionConfigurator* qfc;
+            spline_widget* qfc;
             Axis axis;
             QCheckBox* checkbox;
             bool altp;
@@ -58,12 +58,12 @@ void MapWidget::reload()
         for (int i = 0; qfcs[i].qfc; i++)
         {
             const bool altp = qfcs[i].altp;
-            Mapping& axis = m(qfcs[i].axis);
-            Map* conf = altp ? &axis.curveAlt : &axis.curve;
+            Map& axis = m(qfcs[i].axis);
+            spline* conf = altp ? &axis.spline_alt : &axis.spline_main;
             const auto& name = qfcs[i].altp ? axis.name2 : axis.name1;
             if (altp)
             {
-                QFunctionConfigurator& qfc = *qfcs[i].qfc;
+                spline_widget& qfc = *qfcs[i].qfc;
                 connect(qfcs[i].checkbox, &QCheckBox::toggled,
                         this,
                         [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});

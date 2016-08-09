@@ -13,46 +13,46 @@ using namespace options;
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
 
-class Mapping {
+class Map {
 public:
-    Mapping(QString primary,
+    Map(QString primary,
             QString secondary,
             int max_x,
             int max_y,
             axis_opts& opts) :
-        curve(max_x, max_y),
-        curveAlt(max_x, max_y),
+        spline_main(max_x, max_y),
+        spline_alt(max_x, max_y),
         opts(opts),
         name1(primary),
         name2(secondary)
     {
         mem<QSettings> iniFile = group::ini_file();
-        curve.loadSettings(*iniFile, primary);
-        curveAlt.loadSettings(*iniFile, secondary);
+        spline_main.loadSettings(*iniFile, primary);
+        spline_alt.loadSettings(*iniFile, secondary);
     }
-    Map curve;
-    Map curveAlt;
+    spline spline_main;
+    spline spline_alt;
     axis_opts& opts;
     QString name1, name2;
 };
 
 class Mappings {
 private:
-    Mapping axes[6];
+    Map axes[6];
 public:
     Mappings(std::vector<axis_opts*> opts) :
         axes {
-            Mapping("tx","tx_alt", 30, 75, *opts[TX]),
-            Mapping("ty","ty_alt", 30, 75, *opts[TY]),
-            Mapping("tz","tz_alt", 30, 75, *opts[TZ]),
-            Mapping("rx", "rx_alt", 180, 180, *opts[Yaw]),
-            Mapping("ry", "ry_alt", 180, 180, *opts[Pitch]),
-            Mapping("rz", "rz_alt", 180, 180, *opts[Roll])
+            Map("tx","tx_alt", 30, 75, *opts[TX]),
+            Map("ty","ty_alt", 30, 75, *opts[TY]),
+            Map("tz","tz_alt", 30, 75, *opts[TZ]),
+            Map("rx", "rx_alt", 180, 180, *opts[Yaw]),
+            Map("ry", "ry_alt", 180, 180, *opts[Pitch]),
+            Map("rz", "rz_alt", 180, 180, *opts[Roll])
         }
     {}
 
-    inline Mapping& operator()(int i) { return axes[i]; }
-    inline const Mapping& operator()(int i) const { return axes[i]; }
+    inline Map& operator()(int i) { return axes[i]; }
+    inline const Map& operator()(int i) const { return axes[i]; }
 
     void load_mappings()
     {
@@ -60,8 +60,8 @@ public:
 
         for (int i = 0; i < 6; i++)
         {
-            axes[i].curve.loadSettings(*iniFile, axes[i].name1);
-            axes[i].curveAlt.loadSettings(*iniFile, axes[i].name2);
+            axes[i].spline_main.loadSettings(*iniFile, axes[i].name1);
+            axes[i].spline_alt.loadSettings(*iniFile, axes[i].name2);
             axes[i].opts.b->reload();
         }
     }
@@ -71,8 +71,8 @@ public:
 
         for (int i = 0; i < 6; i++)
         {
-            axes[i].curve.saveSettings(*iniFile, axes[i].name1);
-            axes[i].curveAlt.saveSettings(*iniFile, axes[i].name2);
+            axes[i].spline_main.saveSettings(*iniFile, axes[i].name1);
+            axes[i].spline_alt.saveSettings(*iniFile, axes[i].name2);
             axes[i].opts.b->save();
         }
     }
@@ -81,8 +81,8 @@ public:
     {
         for (int i = 0; i < 6; i++)
         {
-            axes[i].curve.invalidate_unsaved_settings();
-            axes[i].curveAlt.invalidate_unsaved_settings();
+            axes[i].spline_main.invalidate_unsaved_settings();
+            axes[i].spline_alt.invalidate_unsaved_settings();
             axes[i].opts.b->reload();
         }
     }

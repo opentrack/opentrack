@@ -43,7 +43,7 @@ public:
     FTNoIR_Filter();
     void filter(const double* input, double *output) override;
     void center() override { first_run = true; }
-    Map rot, trans;
+    spline rot, trans;
 private:
     settings_accela s;
     bool first_run;
