@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <QDoubleSpinBox>
 #include "opentrack/plugin-api.hpp"
-#include "spline-widget/qfunctionconfigurator.h"
+#include "spline-widget/spline-widget.hpp"
 #include <QDialog>
 
 FilterControls::FilterControls() :

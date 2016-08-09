@@ -7,7 +7,7 @@
 
 #include "opentrack-compat/options.hpp"
 using namespace options;
-#include "spline-widget/qfunctionconfigurator.h"
+#include "spline-widget.hpp"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPen>

@@ -12,7 +12,7 @@
 #include <QWidget>
 #include <QtGui>
 #include <QPointF>
-#include "functionconfig.h"
+#include "spline.hpp"
 #include "opentrack/plugin-api.hpp"
 
 class SPLINE_WIDGET_EXPORT QFunctionConfigurator : public QWidget

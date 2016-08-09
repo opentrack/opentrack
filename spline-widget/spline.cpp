@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "functionconfig.h"
+#include "spline.hpp"
 #include <QMutexLocker>
 #include <QCoreApplication>
 #include <QPointF>

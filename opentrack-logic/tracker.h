@@ -17,7 +17,7 @@
 #include "simple-mat.hpp"
 #include "selected-libraries.hpp"
 
-#include "spline-widget/functionconfig.h"
+#include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
 #include "opentrack-compat/options.hpp"
 #include "tracklogger.hpp"

@@ -3,7 +3,7 @@
 #include "opentrack-logic/mappings.hpp"
 #include "ui_mapping.h"
 
-class MapWidget: public QWidget
+class MapWidget final : public QWidget
 {
     Q_OBJECT
 public:

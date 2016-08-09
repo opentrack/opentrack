@@ -10,7 +10,7 @@
 #include <QSettings>
 #include "opentrack-compat/options.hpp"
 using namespace options;
-#include "spline-widget/functionconfig.h"
+#include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
 
 class Mapping {

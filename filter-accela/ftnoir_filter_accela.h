@@ -7,7 +7,7 @@
 #pragma once
 #include "ui_ftnoir_accela_filtercontrols.h"
 #include "opentrack/plugin-api.hpp"
-#include "spline-widget/functionconfig.h"
+#include "spline-widget/spline.hpp"
 #include <atomic>
 #include <QMutex>
 #include <QTimer>
