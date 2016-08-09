@@ -372,7 +372,7 @@ namespace options {
         cb->setCurrentIndex(v);
         v = cb->currentIndex();
         base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -381,7 +381,7 @@ namespace options {
         cb->setCurrentText(v);
         v = cb->currentText();
         base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -389,7 +389,7 @@ namespace options {
     {
         cb->setChecked(v);
         base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -397,7 +397,7 @@ namespace options {
     {
         dsb->setValue(v);
         base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -405,7 +405,7 @@ namespace options {
     {
         sb->setValue(v);
         base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -414,7 +414,7 @@ namespace options {
         sl->setValue(v);
         v = sl->value();
         base_value::connect(sl, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), sl, SLOT(setValue(int)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -422,7 +422,7 @@ namespace options {
     {
         le->setText(v);
         base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(QString)),le, SLOT(setText(QString)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -437,7 +437,7 @@ namespace options {
     {
         t->setCurrentIndex(v);
         base_value::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-        base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.DIRECT_CONNTYPE);
+        base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
     }
 
     template<>
@@ -475,7 +475,7 @@ namespace options {
         {
             w->setValue(int(value * q_diff) + q_min);
         },
-        v.DIRECT_CONNTYPE);
+        v.SAFE_CONNTYPE);
     }
 }
 
