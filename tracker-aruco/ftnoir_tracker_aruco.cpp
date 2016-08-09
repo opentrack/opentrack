@@ -247,7 +247,7 @@ void Tracker::set_points()
     using f = float;
     const f hx = f(s.headpos_x), hy = f(s.headpos_y), hz = f(s.headpos_z);
 
-    static constexpr float size = 40;
+    static constexpr float size = 100;
 
     const int x1=1, x2=2, x3=3, x4=0;
 
