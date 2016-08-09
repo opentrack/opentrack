@@ -20,7 +20,7 @@ dinput_handle::~dinput_handle()
 
 dinput_handle::di_t dinput_handle::init_di()
 {
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (FAILED(hr))
         qDebug() << "dinput: failed CoInitializeEx" << hr << GetLastError();
 

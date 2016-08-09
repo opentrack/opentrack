@@ -32,7 +32,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
-    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (FAILED(hr))
         qDebug() << "failed CoInitializeEx" << hr << GetLastError();
     ICreateDevEnum *pSysDevEnum = NULL;
