@@ -16,6 +16,7 @@ using namespace options;
 #include <QStyleFactory>
 #include <QStringList>
 #include <QMessageBox>
+#include <QDebug>
 #include <memory>
 #include <cstring>
 
@@ -130,16 +131,26 @@ int main(int argc, char** argv)
 
     MainWindow::set_working_directory();
 
-    mem<MainWindow> w = std::make_shared<MainWindow>();
-
-    if (!w->is_tray_enabled())
-        w->show();
-    else
     {
-        w->setVisible(false);
-        w->setHidden(true);
+        mem<MainWindow> w = std::make_shared<MainWindow>();
+
+        if (!w->is_tray_enabled())
+        {
+            w->setHidden(false);
+            w->show();
+        }
+        else
+        {
+            w->setVisible(false);
+            w->setHidden(true);
+        }
+
+        app.exec();
+
+        qDebug() << "exit: now deleting main control";
     }
-    app.exec();
+
+    qDebug() << "exit: main() now exits";
 
     return 0;
 }
