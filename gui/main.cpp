@@ -145,6 +145,8 @@ int main(int argc, char** argv)
             w->setHidden(true);
         }
 
+        app.setQuitOnLastWindowClosed(false);
+
         app.exec();
 
         qDebug() << "exit: now deleting main control";
