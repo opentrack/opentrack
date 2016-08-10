@@ -23,6 +23,9 @@ if(NOT (orig-hier-path STREQUAL new-hier-path))
     file(WRITE ${hier-path-filename} "${new-hier-path}")
 endif()
 
+install(FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/cmake" DESTINATION "${opentrack-doc-src-pfx}")
+
 function(opentrack_set_globs n)
     set(dir ${PROJECT_SOURCE_DIR})
     file(GLOB ${n}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp)
@@ -70,6 +73,7 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
         endif()
         add_library(${n} ${link-mode} ${files_})
         set(all-files ${${n}-c} ${${n}-res} ${${n}-ui} ${${n}-rc})
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}/${n}")
         install(FILES ${all-files} DESTINATION "${opentrack-doc-src-pfx}/${n}")
         message(STATUS "module ${n}")
     endif()
