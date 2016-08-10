@@ -141,9 +141,5 @@ int main(int argc, char** argv)
     }
     app.exec();
 
-    // on MSVC crashes in atexit
-#ifdef _MSC_VER
-    TerminateProcess(GetCurrentProcess(), 0);
-#endif
     return 0;
 }
