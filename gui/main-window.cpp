@@ -575,7 +575,16 @@ void MainWindow::ensure_tray()
 
 void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 {
-    if (e != QSystemTrayIcon::DoubleClick)
+    if (progn(switch (e)
+              {
+              // if we enable double click also then it causes
+              // toggle back to the original state
+              //case QSystemTrayIcon::DoubleClick:
+              case QSystemTrayIcon::Trigger: // single click
+                  return false;
+              default:
+                  return true;
+              }))
         return;
 
     ensure_tray();
