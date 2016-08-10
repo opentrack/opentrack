@@ -15,10 +15,15 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QCoreApplication>
+#include <QIcon>
+#include <QString>
+#include <QChar>
 
 #ifdef _WIN32
 #   include <windows.h>
 #endif
+
+extern "C" const char* opentrack_version;
 
 MainWindow::MainWindow() :
     State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
@@ -123,11 +128,70 @@ MainWindow::MainWindow() :
 
     ui.btnStartTracker->setFocus();
 
+    init_tray_menu();
+
     connect(&s.tray_enabled,
             static_cast<void (base_value::*)(bool)>(&base_value::valueChanged),
             this,
             [&](bool) { ensure_tray(); });
     ensure_tray();
+}
+
+void MainWindow::init_tray_menu()
+{
+    tray_menu.clear();
+
+    QString display_name(opentrack_version);
+    if (display_name.startsWith("opentrack-"))
+        display_name.replace(sizeof("opentrack") - 1, 1, QChar(' '));
+    if (display_name.endsWith("-DEBUG"))
+        display_name.replace(display_name.size() - int(sizeof("DEBUG")), display_name.size(), " (debug)");
+
+    menu_action_header.setEnabled(false);
+    menu_action_header.setText(display_name);
+    menu_action_header.setIcon(QIcon(":/images/facetracknoir.png"));
+    tray_menu.addAction(&menu_action_header);
+
+    menu_action_show.setIconVisibleInMenu(true);
+    menu_action_show.setText(isHidden() ? "Show the Octopus" : "Hide the Octopus");
+    menu_action_show.setIcon(QIcon(":/images/facetracknoir.png"));
+    QObject::connect(&menu_action_show, &QAction::triggered, this, [&]() { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
+    tray_menu.addAction(&menu_action_show);
+
+    tray_menu.addSeparator();
+
+    menu_action_tracker.setText("Tracker settings");
+    menu_action_tracker.setIcon(QIcon(":/images/tools.png"));
+    QObject::connect(&menu_action_tracker, &QAction::triggered, this, &MainWindow::showTrackerSettings);
+    tray_menu.addAction(&menu_action_tracker);
+
+    menu_action_filter.setText("Filter settings");
+    menu_action_filter.setIcon(QIcon(":/images/filter-16.png"));
+    QObject::connect(&menu_action_filter, &QAction::triggered, this, &MainWindow::showFilterSettings);
+    tray_menu.addAction(&menu_action_filter);
+
+    menu_action_proto.setText("Protocol settings");
+    menu_action_proto.setIcon(QIcon(":/images/settings16.png"));
+    QObject::connect(&menu_action_proto, &QAction::triggered, this, &MainWindow::showProtocolSettings);
+    tray_menu.addAction(&menu_action_proto);
+
+    tray_menu.addSeparator();
+
+    menu_action_mappings.setIcon(QIcon(":/images/curves.png"));
+    menu_action_mappings.setText("Mappings");
+    QObject::connect(&menu_action_mappings, &QAction::triggered, this, &MainWindow::showCurveConfiguration);
+    tray_menu.addAction(&menu_action_mappings);
+
+    menu_action_options.setIcon(QIcon(":/images/tools.png"));
+    menu_action_options.setText("Options");
+    QObject::connect(&menu_action_options, &QAction::triggered, this, &MainWindow::show_options_dialog);
+    tray_menu.addAction(&menu_action_options);
+
+    tray_menu.addSeparator();
+
+    menu_action_exit.setText("Exit");
+    QObject::connect(&menu_action_exit, &QAction::triggered, this, &MainWindow::exit);
+    tray_menu.addAction(&menu_action_exit);
 }
 
 void MainWindow::register_shortcuts()
@@ -236,8 +300,6 @@ void MainWindow::open_config_directory()
         QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(path));
     }
 }
-
-extern "C" const char* opentrack_version;
 
 void MainWindow::refresh_config_list()
 {
@@ -394,8 +456,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
 
     for (int i = 0; i < 6; i++)
     {
-        mapped_[i] = (int) mapped[i];
-        raw_[i] = (int) raw[i];
+        mapped_[i] = int(mapped[i]);
+        raw_[i] = int(raw[i]);
     }
 
     ui.raw_x->display(raw_[TX]);
@@ -440,7 +502,7 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t>
-bool mk_dialog(mem<dylib> lib, mem<t>& orig)
+bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
 {
     if (orig && orig->isVisible())
     {
@@ -451,14 +513,14 @@ bool mk_dialog(mem<dylib> lib, mem<t>& orig)
 
     if (lib && lib->Dialog)
     {
-        auto dialog = mem<t>(reinterpret_cast<t*>(lib->Dialog()));
+        t* dialog = reinterpret_cast<t*>(lib->Dialog());
         dialog->setWindowFlags(Qt::Dialog);
         dialog->setFixedSize(dialog->size());
 
-        orig = dialog;
+        orig.reset(dialog);
         dialog->show();
 
-        QObject::connect(dialog.get(), &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
+        QObject::connect(dialog, &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
 
         return true;
     }
@@ -485,7 +547,7 @@ void MainWindow::showFilterSettings()
 }
 
 template<typename t, typename... Args>
-bool mk_window(mem<t>* place, Args&&... params)
+static bool mk_window(ptr<t>* place, Args&&... params)
 {
     if (*place && (*place)->isVisible())
     {
@@ -495,7 +557,7 @@ bool mk_window(mem<t>* place, Args&&... params)
     }
     else
     {
-        *place = std::make_shared<t>(std::forward<Args>(params)...);
+        *place = make_unique<t>(std::forward<Args>(params)...);
         (*place)->setWindowFlags(Qt::Dialog);
         (*place)->show();
         return true;
@@ -547,8 +609,9 @@ void MainWindow::ensure_tray()
     {
         if (!tray)
         {
-            tray = std::make_shared<QSystemTrayIcon>(this);
+            tray = make_unique<QSystemTrayIcon>(this);
             tray->setIcon(QIcon(":/images/facetracknoir.png"));
+            tray->setContextMenu(&tray_menu);
             tray->show();
 
             connect(tray.get(),
@@ -591,6 +654,8 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 
     const bool is_minimized = isHidden() || !is_tray_enabled();
 
+    menu_action_show.setText(!isHidden() ? "Show the Octopus" : "Hide the Octopus");
+
     setVisible(is_minimized);
     setHidden(!is_minimized);
 
@@ -611,7 +676,9 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 
 bool MainWindow::maybe_hide_to_tray(QEvent* e)
 {
-    if (e->type() == QEvent::WindowStateChange && is_tray_enabled())
+    if (e->type() == QEvent::WindowStateChange &&
+        (windowState() & Qt::WindowMinimized) &&
+        is_tray_enabled())
     {
         e->accept();
         ensure_tray();
@@ -661,7 +728,14 @@ void MainWindow::changeEvent(QEvent* e)
     if (maybe_hide_to_tray(e))
         e->accept();
     else
+    {
         QMainWindow::changeEvent(e);
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent*)
+{
+    exit();
 }
 
 bool MainWindow::is_tray_enabled()

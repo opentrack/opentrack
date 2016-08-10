@@ -8,6 +8,17 @@
 
 #pragma once
 
+#include "opentrack/plugin-support.hpp"
+#include "mapping-window.hpp"
+#include "options-dialog.hpp"
+#include "process_detector.h"
+#include "opentrack-logic/main-settings.hpp"
+#include "opentrack-logic/tracker.h"
+#include "opentrack-logic/shortcuts.h"
+#include "opentrack-logic/work.hpp"
+#include "opentrack-logic/state.hpp"
+#include "opentrack-compat/options.hpp"
+
 #include <QMainWindow>
 #include <QKeySequence>
 #include <QShortcut>
@@ -16,23 +27,15 @@
 #include <QSystemTrayIcon>
 #include <QString>
 #include <QMenu>
+#include <QAction>
 #include <QEvent>
+#include <QCloseEvent>
 
 #include <vector>
 #include <tuple>
+#include <memory>
 
 #include "ui_main-window.h"
-
-#include "opentrack-compat/options.hpp"
-#include "opentrack-logic/main-settings.hpp"
-#include "opentrack/plugin-support.hpp"
-#include "opentrack-logic/tracker.h"
-#include "opentrack-logic/shortcuts.h"
-#include "opentrack-logic/work.hpp"
-#include "opentrack-logic/state.hpp"
-#include "mapping-window.hpp"
-#include "options-dialog.hpp"
-#include "process_detector.h"
 
 using namespace options;
 
@@ -44,18 +47,24 @@ class MainWindow : public QMainWindow, private State
 
     Shortcuts global_shortcuts;
     module_settings m;
-    mem<QSystemTrayIcon> tray;
+    ptr<QSystemTrayIcon> tray;
+    QMenu tray_menu;
     QTimer pose_update_timer;
     QTimer det_timer;
     QTimer config_list_timer;
-    mem<OptionsDialog> options_widget;
-    mem<MapWidget> mapping_widget;
+    ptr<OptionsDialog> options_widget;
+    ptr<MapWidget> mapping_widget;
     QShortcut kbd_quit;
-    mem<IFilterDialog> pFilterDialog;
-    mem<IProtocolDialog> pProtocolDialog;
-    mem<ITrackerDialog> pTrackerDialog;
+    ptr<IFilterDialog> pFilterDialog;
+    ptr<IProtocolDialog> pProtocolDialog;
+    ptr<ITrackerDialog> pTrackerDialog;
     process_detector_worker det;
     QMenu profile_menu;
+
+    QAction menu_action_header, menu_action_show, menu_action_exit,
+            menu_action_tracker, menu_action_filter, menu_action_proto,
+            menu_action_options, menu_action_mappings;
+
     bool is_refreshing_profiles;
 
     mem<dylib> current_tracker()
@@ -82,7 +91,10 @@ class MainWindow : public QMainWindow, private State
     void register_shortcuts();
     void set_keys_enabled(bool flag);
 
+    void init_tray_menu();
+
     void changeEvent(QEvent* e) override;
+    void closeEvent(QCloseEvent*) override;
     bool maybe_hide_to_tray(QEvent* e);
 
 private slots:
