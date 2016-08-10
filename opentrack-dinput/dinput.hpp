@@ -1,28 +1,55 @@
+/* Copyright (c) 2016, Stanislaw Halik <sthalik@misaki.pl>
+
+ * Permission to use, copy, modify, and/or distribute this
+ * software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission
+ * notice appear in all copies.
+ */
+
 #pragma once
 
 #ifdef _WIN32
 
+#include "export.hpp"
+
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
 #endif
-#include "export.hpp"
 #include <dinput.h>
-#include <windows.h>
 
-struct OPENTRACK_DINPUT_EXPORT dinput_handle final
+#include <atomic>
+
+class OPENTRACK_DINPUT_EXPORT dinput_handle final
 {
-    using di_t = LPDIRECTINPUT8;
-private:
-    static dinput_handle self;
-    dinput_handle();
-    ~dinput_handle();
-    static di_t init_di();
-    di_t handle;
 public:
-     static di_t make_di();
+    class di_t;
 
-     dinput_handle(const dinput_handle&) = delete;
-     dinput_handle(dinput_handle&&) = delete;
+private:
+    static std::atomic<int> refcnt;
+    static std::atomic_flag init_lock;
+    static di_t handle;
+
+    static LPDIRECTINPUT8& init_di();
+public:
+    class di_t final
+    {
+        friend class dinput_handle;
+
+        LPDIRECTINPUT8& handle;
+
+        di_t(LPDIRECTINPUT8& handle);
+        void free_di();
+
+    public:
+        LPDIRECTINPUT8 operator->() { return handle; }
+        operator LPDIRECTINPUT8() { return handle; }
+        LPDIRECTINPUT8 di() { return handle; }
+
+        ~di_t();
+    };
+
+    static di_t make_di();
+    dinput_handle() = delete;
 };
 
 #endif
