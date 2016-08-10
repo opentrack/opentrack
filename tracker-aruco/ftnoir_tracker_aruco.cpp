@@ -73,7 +73,7 @@ Tracker::~Tracker()
 void Tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new PTVideoWidget(videoframe);
+    videoWidget = new cv_video_widget(videoframe);
     QHBoxLayout* layout_ = new QHBoxLayout();
     layout_->setContentsMargins(0, 0, 0, 0);
     layout_->addWidget(videoWidget);

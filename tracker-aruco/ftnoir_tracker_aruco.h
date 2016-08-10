@@ -8,12 +8,14 @@
 #pragma once
 
 #include "ui_aruco-trackercontrols.h"
-#include "pt_video_widget.h"
-#include "opentrack-compat/options.hpp"
-#include "trans_calib.h"
 #include "opentrack/plugin-api.hpp"
-#include "cv/camera-dialog.hpp"
 #include "include/markerdetector.h"
+
+#include "cv/camera-dialog.hpp"
+#include "cv/video-widget.hpp"
+#include "cv/translation-calibrator.hpp"
+
+#include <opencv2/core/core.hpp>
 
 #include <QObject>
 #include <QThread>
@@ -24,8 +26,7 @@
 
 #include <cinttypes>
 
-#include <opencv2/core/core.hpp>
-
+#include "opentrack-compat/options.hpp"
 using namespace options;
 
 struct settings : opts {
@@ -78,7 +79,7 @@ private:
     QMutex mtx;
     volatile bool stop;
     QHBoxLayout* layout;
-    PTVideoWidget* videoWidget;
+    cv_video_widget* videoWidget;
     settings s;
     double pose[6];
     cv::Mat frame, grayscale, color;

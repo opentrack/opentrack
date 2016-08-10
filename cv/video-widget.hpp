@@ -20,11 +20,11 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-class PTVideoWidget final : public QWidget
+class cv_video_widget final : public QWidget
 {
     Q_OBJECT
 public:
-    PTVideoWidget(QWidget *parent);
+    cv_video_widget(QWidget *parent);
     void update_image(const cv::Mat &frame);
 protected slots:
     void paintEvent(QPaintEvent*) override;

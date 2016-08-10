@@ -89,7 +89,7 @@ void Tracker_PT::run()
 
     while((commands & ABORT) == 0)
     {
-        const double dt = time.elapsed() * 1e-9;
+        const double dt = time.elapsed_seconds();
         time.start();
         bool new_frame;
 
@@ -204,7 +204,7 @@ void Tracker_PT::start_tracker(QFrame *parent_window)
     video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
     video_frame->show();
-    video_widget = new PTVideoWidget(video_frame);
+    video_widget = new cv_video_widget(video_frame);
     QHBoxLayout* video_layout = new QHBoxLayout(parent_window);
     video_layout->setContentsMargins(0, 0, 0, 0);
     video_layout->addWidget(video_widget);

@@ -14,9 +14,9 @@
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
-#include "pt_video_widget.h"
 #include "opentrack-compat/timer.hpp"
 #include "cv/camera-dialog.hpp"
+#include "cv/video-widget.hpp"
 #include "opentrack-compat/pi-constant.hpp"
 
 #include <QThread>
@@ -68,7 +68,7 @@ private:
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
-    PTVideoWidget* video_widget;
+    cv_video_widget* video_widget;
     QFrame*      video_frame;
 
     settings_pt s;

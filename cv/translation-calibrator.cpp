@@ -5,11 +5,11 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "trans_calib.h"
+#include "translation-calibrator.hpp"
 
 TranslationCalibrator::TranslationCalibrator()
 {
-	reset();
+    reset();
 }
 
 void TranslationCalibrator::reset()
@@ -18,24 +18,24 @@ void TranslationCalibrator::reset()
     y = cv::Vec6f(0,0,0, 0,0,0);
 }
 
-void TranslationCalibrator::update(const cv::Matx33f& R_CM_k, const cv::Vec3f& t_CM_k)
+void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t_CM_k)
 {
-    cv::Matx<float, 6,3> H_k_T = cv::Matx<float, 6,3>::zeros();
-	for (int i=0; i<3; ++i) {
-		for (int j=0; j<3; ++j) {
-			H_k_T(i,j) = R_CM_k(j,i);
-		}
-	}
-	for (int i=0; i<3; ++i)
-	{
-		H_k_T(3+i,i) = 1.0;
-	}
-	P += H_k_T * H_k_T.t();
-	y += H_k_T * t_CM_k;
+    cv::Matx<double, 6,3> H_k_T = cv::Matx<double, 6,3>::zeros();
+    for (int i=0; i<3; ++i) {
+        for (int j=0; j<3; ++j) {
+            H_k_T(i,j) = R_CM_k(j,i);
+        }
+    }
+    for (int i=0; i<3; ++i)
+    {
+        H_k_T(3+i,i) = 1.0;
+    }
+    P += H_k_T * H_k_T.t();
+    y += H_k_T * t_CM_k;
 }
 
 cv::Vec3f TranslationCalibrator::get_estimate()
 {
     cv::Vec6f x = P.inv() * y;
-    return cv::Vec3f(-x[0], -x[1], -x[2]);
+    return cv::Vec3f(x[0], x[1], x[2]);
 }

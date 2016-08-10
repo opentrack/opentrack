@@ -6,12 +6,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "pt_video_widget.h"
+#include "video-widget.hpp"
 #include <opencv2/imgproc.hpp>
 
 #include "opentrack/is-window-visible.hpp"
 
-PTVideoWidget::PTVideoWidget(QWidget* parent) :
+cv_video_widget::cv_video_widget(QWidget* parent) :
     QWidget(parent),
     freshp(false),
     visible(true)
@@ -20,7 +20,7 @@ PTVideoWidget::PTVideoWidget(QWidget* parent) :
     timer.start(50);
 }
 
-void PTVideoWidget::update_image(const cv::Mat& frame)
+void cv_video_widget::update_image(const cv::Mat& frame)
 {
     QMutexLocker foo(&mtx);
 
@@ -36,14 +36,14 @@ void PTVideoWidget::update_image(const cv::Mat& frame)
     }
 }
 
-void PTVideoWidget::paintEvent(QPaintEvent*)
+void cv_video_widget::paintEvent(QPaintEvent*)
 {
     QMutexLocker foo(&mtx);
     QPainter painter(this);
     painter.drawImage(rect(), texture);
 }
 
-void PTVideoWidget::update_and_repaint()
+void cv_video_widget::update_and_repaint()
 {
     QMutexLocker l(&mtx);
 
