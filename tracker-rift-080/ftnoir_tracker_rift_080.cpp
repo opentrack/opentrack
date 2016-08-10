@@ -22,21 +22,30 @@ Rift_Tracker::~Rift_Tracker()
 
 void Rift_Tracker::start_tracker(QFrame*)
 {
-    if (!OVR_SUCCESS(ovr_Initialize(nullptr)))
+    QString reason;
+    ovrResult code;
+
+    if (!OVR_SUCCESS(code = ovr_Initialize(nullptr)))
+    {
+        reason = "initialize failed";
         goto error;
+    }
     {
         ovrGraphicsLuid luid = {0};
         ovrResult res = ovr_Create(&hmd, &luid);
-        if (OVR_SUCCESS(res))
+        if (OVR_SUCCESS(code = res))
         {
             ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
         }
         else
+        {
+            reason = "can't open hmd";
             goto error;
+        }
     }
     return;
 error:
-    QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+    QMessageBox::warning(0,"Error", QString("Unable to start Rift tracker: %1 (%2)").arg(reason, code), QMessageBox::Ok,QMessageBox::NoButton);
 }
 
 void Rift_Tracker::data(double *data)
