@@ -20,11 +20,6 @@
 #include <functional>
 #include <vector>
 
-#undef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x0800
-#include <windows.h>
-#include <dinput.h>
-
 struct OPENTRACK_DINPUT_EXPORT Key
 {
     BYTE keycode;

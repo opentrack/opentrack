@@ -10,7 +10,6 @@
 #   ifndef DIRECTINPUT_VERSION
 #       define DIRECTINPUT_VERSION 0x800
 #   endif
-#   include <windows.h>
 #   include <dinput.h>
 
 #include "win32-shortcuts.h"
