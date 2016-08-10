@@ -27,8 +27,9 @@ static inline void opentrack_clock_gettime(int, struct timespec* ts)
 
     (void) QueryPerformanceCounter(&d);
 
-    using t = long long;
-    const long long part = t(d.QuadPart / ((long double)freq.QuadPart) * 1000000000.L);
+    using ll = long long;
+    using ld = long double;
+    const long long part = ll(d.QuadPart / ld(freq.QuadPart) * 1000000000.L);
     using t_s = decltype(ts->tv_sec);
     using t_ns = decltype(ts->tv_nsec);
 
@@ -59,27 +60,41 @@ class Timer
 {
 private:
     struct timespec state;
-    long long conv(const struct timespec& cur) const
+    long long conv_nsecs(const struct timespec& cur) const
     {
         return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
     }
+    long conv_usecs(const struct timespec& cur) const
+    {
+        return long(cur.tv_sec - state.tv_sec) * 1000000L + long(cur.tv_nsec - state.tv_nsec) / 1000l;
+    }
 public:
-    Timer() {
+    Timer()
+    {
         start();
     }
-    void start() {
+    void start()
+    {
         clock_gettime(CLOCK_MONOTONIC, &state);
     }
-    long long elapsed() const {
+    long long elapsed_nsecs() const
+    {
         struct timespec cur;
         clock_gettime(CLOCK_MONOTONIC, &cur);
-        return conv(cur);
+        return conv_nsecs(cur);
     }
-    long elapsed_ms() const {
-        return long(elapsed() / 1000000LL);
+    long elapsed_usecs() const
+    {
+        struct timespec cur;
+        clock_gettime(CLOCK_MONOTONIC, &cur);
+        return long(conv_usecs(cur));
+    }
+    long elapsed_ms() const
+    {
+        return elapsed_usecs() / 1000L;
     }
     double elapsed_seconds() const
     {
-        return elapsed() * 1e-9;
+        return double(elapsed_nsecs() * 1e-9L);
     }
 };
