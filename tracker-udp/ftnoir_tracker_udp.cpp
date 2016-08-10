@@ -17,18 +17,20 @@ FTNoIR_Tracker::~FTNoIR_Tracker()
     wait();
 }
 
-void FTNoIR_Tracker::run() {
+void FTNoIR_Tracker::run()
+{
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
-    (void) sock.bind(QHostAddress::Any, (int) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-    for (;;) {
-        if (should_quit)
-            break;
+
+    should_quit = sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+
+    while (!should_quit)
+    {
         {
             QMutexLocker foo(&mutex);
-            while (sock.hasPendingDatagrams()) {
-                sock.readDatagram((char * ) last_recv_pose, sizeof(double[6]));
-            }
+
+            while (sock.hasPendingDatagrams())
+                sock.readDatagram(reinterpret_cast<char*>(last_recv_pose), sizeof(double[6]));
         }
         msleep(1);
     }
@@ -36,7 +38,7 @@ void FTNoIR_Tracker::run() {
 
 void FTNoIR_Tracker::start_tracker(QFrame*)
 {
-	start();
+        start();
     sock.moveToThread(this);
 }
 
@@ -45,7 +47,7 @@ void FTNoIR_Tracker::data(double *data)
     QMutexLocker foo(&mutex);
     for (int i = 0; i < 6; i++)
         data[i] = last_recv_pose[i];
-    
+
     int values[] = {
         0,
         90,
@@ -58,7 +60,7 @@ void FTNoIR_Tracker::data(double *data)
         s.add_pitch,
         s.add_roll,
     };
-    
+
     for (int i = 0; i < 3; i++)
     {
         int k = std::min<unsigned>(sizeof(values)/sizeof(values[0]), std::max(0, indices[i]));
