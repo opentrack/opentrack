@@ -12,10 +12,12 @@
  * originally written by Wim Vriend.
  */
 
+#include "opentrack-compat/sleep.hpp"
 
 #include "tracker.h"
 #include <cmath>
 #include <algorithm>
+#include <cstdio>
 
 #if defined(_WIN32)
 #   include <windows.h>
@@ -24,15 +26,15 @@
 Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
     newpose {0,0,0, 0,0,0},
-    centerp(s.center_at_startup),
-    enabledp(true),
-    zero_(false),
-    should_quit(false),
     libs(libs),
     logger(logger),
     r_b(get_camera_offset_matrix(c_div).t()),
     r_b_real(get_camera_offset_matrix(1).t()),
-    t_b {0,0,0}
+    t_b {0,0,0},
+    centerp(s.center_at_startup),
+    enabledp(true),
+    zero_(false),
+    should_quit(false)
 {
 }
 
@@ -116,6 +118,9 @@ constexpr double Tracker::c_div;
 void Tracker::logic()
 {
     using namespace euler;
+
+    logger.write_dt();
+    logger.reset_dt();
 
     Pose value, raw;
 
@@ -284,8 +289,6 @@ void Tracker::logic()
             (void) map(value(i), m(i));
     }
 
-    logger.next_line();
-
     libs.pProtocol->pose(value);
 
     last_mapped = value;
@@ -294,15 +297,18 @@ void Tracker::logic()
     QMutexLocker foo(&mtx);
     output_pose = value;
     raw_6dof = raw;
+
+    logger.reset_dt();
+    logger.next_line();
 }
 
 void Tracker::run()
 {
-    const int sleep_ms = 3;
-
 #if defined(_WIN32)
     (void) timeBeginPeriod(1);
 #endif
+
+    setPriority(QThread::HighPriority);
 
     {
         static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
@@ -313,21 +319,18 @@ void Tracker::run()
         {
             for (unsigned i = 0; i < 6; ++i)
             {
-                snprintf(buffer, 128, "%s%s", datachannels[j], posechannels[i]);
+                std::sprintf(buffer, "%s%s", datachannels[j], posechannels[i]);
                 logger.write(buffer);
             }
         }
+        logger.next_line();
     }
-    logger.next_line();
+
+    t.start();
+    logger.reset_dt();
 
     while (!should_quit)
     {
-        {
-            double dt = t.elapsed_seconds();
-            logger.write(&dt, 1);
-        }
-        t.start();
-
         double tmp[6] {0,0,0, 0,0,0};
         libs.pTracker->data(tmp);
 
@@ -337,10 +340,19 @@ void Tracker::run()
 
         logic();
 
-        long q = long(sleep_ms * 1000L - t.elapsed()/1000L);
+        static constexpr long const_sleep_us = 4000;
+
         using std::max;
-        using ulong = unsigned long;
-        usleep(ulong(max(1L, q)));
+        using std::min;
+
+        const long elapsed_usecs = t.elapsed_usecs();
+        const long sleep_us = const_sleep_us * 2 - elapsed_usecs;
+
+        const unsigned sleep_time = unsigned(max(1l, min(const_sleep_us * 4, max(1l, (sleep_us + 200l)/1000l))));
+
+        t.start();
+
+        portable::sleep(unsigned(max(1u, sleep_time)));
     }
 
     {

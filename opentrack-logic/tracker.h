@@ -33,6 +33,9 @@ class OPENTRACK_LOGIC_EXPORT Tracker : private QThread
 {
     Q_OBJECT
 private:
+    using rmat = euler::rmat;
+    using euler_t = euler::euler_t;
+
     QMutex mtx;
     main_settings s;
     Mappings& m;
@@ -41,21 +44,19 @@ private:
     Pose output_pose, raw_6dof, last_mapped, last_raw;
 
     double newpose[6];
-    volatile bool centerp;
-    volatile bool enabledp;
-    volatile bool zero_;
-    volatile bool should_quit;
     SelectedLibraries const& libs;
     // The owner of the reference is the main window.
     // This design might be usefull if we decide later on to swap out
     // the logger while the tracker is running.
     TrackLogger &logger;
 
-    using rmat = euler::rmat;
-    using euler_t = euler::euler_t;
-
     rmat r_b, r_b_real;
     double t_b[3];
+
+    volatile bool centerp;
+    volatile bool enabledp;
+    volatile bool zero_;
+    volatile bool should_quit;
 
     double map(double pos, Map& axis);
     void logic();
