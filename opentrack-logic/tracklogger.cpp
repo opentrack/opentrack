@@ -3,6 +3,17 @@
 
 TrackLogger::~TrackLogger() {}
 
+void TrackLogger::reset_dt()
+{
+    t.start();
+}
+
+void TrackLogger::write_dt()
+{
+    const double dt = t.elapsed_seconds();
+    write(&dt, 1);
+}
+
 void TrackLoggerCSV::handle_first_col_sep()
 {
     if (!first_col)
@@ -33,3 +44,4 @@ void TrackLoggerCSV::next_line()
     out << std::endl;
     first_col = true;
 }
+

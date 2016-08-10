@@ -1,6 +1,7 @@
 #pragma once
 #include "main-settings.hpp"
 #include "opentrack-compat/options.hpp"
+#include "opentrack-compat/timer.hpp"
 
 #include <fstream>
 #include <QString>
@@ -13,6 +14,8 @@ class OPENTRACK_LOGIC_EXPORT TrackLogger
     TrackLogger(const TrackLogger&) = delete;
     TrackLogger& operator=(const TrackLogger&) = delete;
     TrackLogger& operator=(TrackLogger&&) = delete;
+
+    Timer t;
 
 public:
     TrackLogger()
@@ -37,6 +40,9 @@ public:
     {
         write(p, 6);
     }
+
+    void reset_dt();
+    void write_dt();
 };
 
 
