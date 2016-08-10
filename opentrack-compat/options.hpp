@@ -43,6 +43,8 @@
 #include "export.hpp"
 #include "slider.hpp"
 
+// just put them here for lack of util header
+#define progn(...) ([&]() { __VA_ARGS__ }())
 template<typename t> using mem = std::shared_ptr<t>;
 
 #define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
