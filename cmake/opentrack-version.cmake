@@ -11,7 +11,7 @@ if(CMAKE_BUILD_TYPE)
     if (NOT _build_type STREQUAL "DEBUG")
         unset(_build_type)
     else()
-        set(_build_type "${_build_type}-")
+        set(_build_type "${_build_type}")
     endif()
 endif()
 
@@ -29,7 +29,7 @@ extern
 OPENTRACK_COMPAT_EXPORT
 const char* opentrack_version;
 
-const char* opentrack_version = \"${_build_type}${OPENTRACK_COMMIT}\";
+const char* opentrack_version = \"${OPENTRACK_COMMIT}-${_build_type}\";
 ")
 
 set(crapola-ver)
