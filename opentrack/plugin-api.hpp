@@ -48,6 +48,10 @@ signals:
 } // ns
 
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
+    extern "C" OPENTRACK_PLUGIN_EXPORT ctor_ret_class* GetConstructor(); \
+    extern "C" OPENTRACK_PLUGIN_EXPORT Metadata* GetMetadata(); \
+    extern "C" OPENTRACK_PLUGIN_EXPORT dialog_ret_class* GetDialog(); \
+    \
     extern "C" OPENTRACK_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
     { \
         return new ctor_class; \
