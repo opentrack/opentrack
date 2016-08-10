@@ -13,13 +13,15 @@
 #include <QPainter>
 #include <QPaintEvent>
 
+#include <QDebug>
+
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent), visible(true)
 {
     Q_INIT_RESOURCE(posewidget);
 
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
-    rotateBy(0, 0, 0, 0, 0, 0);
+    rotateBy_real(0, 0, 0, 0, 0, 0);
 }
 
 GLWidget::~GLWidget()
@@ -41,9 +43,12 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, d
         visible_timer.start();
     }
 
-    if (!visible)
-        return;
+    if (visible)
+        rotateBy_real(xAngle, yAngle, zAngle, x, y, z);
+}
 
+void GLWidget::rotateBy_real(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+{
     using std::sin;
     using std::cos;
 

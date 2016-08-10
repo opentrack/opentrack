@@ -352,7 +352,7 @@ void MainWindow::stopTracker()
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
-    ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
+    ui.pose_display->rotateBy_real(0, 0, 0, 0, 0, 0);
 
     if (pTrackerDialog)
         pTrackerDialog->unregister_tracker();
