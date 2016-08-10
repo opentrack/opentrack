@@ -9,7 +9,7 @@
 #include <dinput.h>
 #include <windows.h>
 
-struct OPENTRACK_LOGIC_EXPORT dinput_handle final
+struct OPENTRACK_DINPUT_EXPORT dinput_handle final
 {
     using di_t = LPDIRECTINPUT8;
 private:

@@ -24,7 +24,9 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <windows.h>
 #include <dinput.h>
-struct Key {
+
+struct OPENTRACK_DINPUT_EXPORT Key
+{
     BYTE keycode;
     QString guid;
     bool shift;
@@ -39,7 +41,7 @@ public:
     bool should_process();
 };
 
-struct OPENTRACK_LOGIC_EXPORT KeybindingWorker : private QThread
+struct OPENTRACK_DINPUT_EXPORT KeybindingWorker : private QThread
 {
     using fun = std::function<void(const Key&)>;
 

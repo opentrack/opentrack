@@ -19,7 +19,7 @@
 #include "main-settings.hpp"
 
 #ifdef _WIN32
-#   include "keybinding-worker.hpp"
+#   include "opentrack-dinput/keybinding-worker.hpp"
 #endif
 
 #if defined(__GNUC__) && !defined(_WIN32)

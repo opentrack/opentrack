@@ -2,7 +2,7 @@
 #include "ui_keyboard_listener.h"
 #ifdef _WIN32
 #include "opentrack-logic/win32-shortcuts.h"
-#include "opentrack-logic/keybinding-worker.hpp"
+#include "opentrack-dinput/keybinding-worker.hpp"
 #endif
 #include <QLabel>
 #include <QKeyEvent>

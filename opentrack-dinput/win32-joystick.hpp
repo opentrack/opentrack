@@ -28,7 +28,7 @@ struct hash<QString>
 };
 }
 
-struct OPENTRACK_LOGIC_EXPORT win32_joy_ctx
+struct OPENTRACK_DINPUT_EXPORT win32_joy_ctx
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
