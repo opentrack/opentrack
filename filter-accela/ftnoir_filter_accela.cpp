@@ -73,7 +73,7 @@ void FTNoIR_Filter::filter(const double* input, double *output)
     const double rot_t = (1+s.rot_threshold) * s.mult_rot;
     const double trans_t = (1+s.trans_threshold) * s.mult_trans;
 
-    const double dt = t.elapsed() * 1e-9;
+    const double dt = t.elapsed_seconds();
     t.start();
 
     const double RC = s.mult_ewma * s.ewma / 1000.; // seconds
