@@ -35,16 +35,19 @@ public:
     {
         friend class dinput_handle;
 
-        LPDIRECTINPUT8& handle;
+        LPDIRECTINPUT8* handle;
 
         di_t(LPDIRECTINPUT8& handle);
         void free_di();
+        void unref_di();
+        void ref_di();
 
     public:
-        LPDIRECTINPUT8 operator->() { return handle; }
-        operator LPDIRECTINPUT8() { return handle; }
-        LPDIRECTINPUT8 di() { return handle; }
-
+        LPDIRECTINPUT8 operator->() { return *handle; }
+        operator LPDIRECTINPUT8() { return *handle; }
+        LPDIRECTINPUT8 di() { return *handle; }
+        di_t& operator=(const di_t& new_di);
+        di_t();
         ~di_t();
     };
 
