@@ -47,7 +47,7 @@ set(_CFLAGS_DEBUG "-g -ggdb")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-Wl,--as-needed,--nxcompat,--no-seh")
+set(_LDFLAGS "-Wl,--as-needed,--nxcompat,--no-seh,--gc-sections")
 set(_LDFLAGS_RELEASE "")
 set(_LDFLAGS_DEBUG "")
 
@@ -59,7 +59,7 @@ endif()
 set(WARNINGS_ENABLE ${enable-val} CACHE BOOL "Emit additional warnings at compile-time")
 # these are very noisy, high false positive rate. only for development.
 set(WARNINGS_FINAL_SUGGESTIONS FALSE CACHE BOOL "Emit very noisy warnings at compile-time")
-set(WARNINGS_NUMERIC FALSE CACHE BOOL "Emit very noisy warnings at compile-time")
+set(WARNINGS_NUMERIC ${enable-val} CACHE BOOL "Emit very noisy warnings at compile-time")
 set(WARNINGS_MISSING_OVERRIDE FALSE CACHE BOOL "Emit very noisy warnings at compile-time")
 
 set(noisy-warns "")
