@@ -1,6 +1,7 @@
 #ifdef _WIN32
 
 #include "dinput.hpp"
+#include "opentrack-compat/win32-com.hpp"
 #include <QDebug>
 
 std::atomic<int> dinput_handle::refcnt;
@@ -9,9 +10,7 @@ dinput_handle::di_t dinput_handle::handle(dinput_handle::make_di());
 
 LPDIRECTINPUT8& dinput_handle::init_di()
 {
-    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-        qDebug() << "dinput: failed CoInitializeEx" << hr << GetLastError();
+    init_com_threading(com_multithreaded);
 
     static LPDIRECTINPUT8 di_ = nullptr;
     if (di_ == nullptr)

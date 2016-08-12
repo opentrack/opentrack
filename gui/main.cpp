@@ -10,6 +10,7 @@
 
 #include "main-window.hpp"
 #include "opentrack-compat/options.hpp"
+#include "opentrack-compat/win32-com.hpp"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>
@@ -111,6 +112,7 @@ static void add_program_library_path()
 int main(int argc, char** argv)
 {
 #ifdef _WIN32
+    init_com_threading(com_apartment);
     add_program_library_path();
 #elif !defined(__linux)
     // workaround QTBUG-38598

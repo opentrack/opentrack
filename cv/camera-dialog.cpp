@@ -20,27 +20,19 @@ void camera_dialog::maybe_grab_frame(cv::VideoCapture& cap)
     }
 }
 
-#ifdef _WIN32
-void camera_dialog::init_com_threading()
-{
-    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-        qDebug() << "failed CoInitializeEx" << hr << "code" << GetLastError();
-}
-#endif
-
 camera_dialog::~camera_dialog() {}
 
 void camera_dialog::open_camera_settings(cv::VideoCapture* cap, const QString& camera_name, QMutex* camera_mtx)
 {
 #ifdef _WIN32
+    init_com_threading(com_apartment);
+
     if (cap)
     {
         QMutexLocker l(camera_mtx);
 
         if (cap->isOpened())
         {
-            init_com_threading();
             maybe_grab_frame(*cap);
             cap->set(cv::CAP_PROP_SETTINGS, 1);
             return;
@@ -54,7 +46,6 @@ void camera_dialog::open_camera_settings(cv::VideoCapture* cap, const QString& c
     if (!t.isSingleShot())
         QObject::connect(&t, &QTimer::timeout, [&]() -> void { delete_capture(); });
 
-    init_com_threading();
     fake_capture = cv::VideoCapture(camera_name_to_index(camera_name));
     maybe_grab_frame(fake_capture);
     fake_capture.set(cv::CAP_PROP_SETTINGS, 1);

@@ -10,6 +10,7 @@
 
 #include "opentrack-compat/camera-names.hpp"
 #include "opentrack-compat/sleep.hpp"
+#include "opentrack-compat/win32-com.hpp"
 
 #ifdef __linux
 #   include <QProcess>
@@ -17,9 +18,6 @@
 
 #ifdef _WIN32
 #   include <QTimer>
-#   include <objbase.h>
-#   include <winerror.h>
-#   include <windows.h>
 #endif
 
 #include <opencv2/videoio.hpp>
@@ -28,10 +26,6 @@
 class camera_dialog
 {
     static void maybe_grab_frame(cv::VideoCapture& cap);
-#ifdef _WIN32
-    static void init_com_threading();
-#endif
-
 public:
     virtual ~camera_dialog();
     void open_camera_settings(cv::VideoCapture*, const QString&, QMutex*);

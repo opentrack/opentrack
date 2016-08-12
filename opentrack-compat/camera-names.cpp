@@ -2,8 +2,9 @@
 
 #ifdef _WIN32
 #   define NO_DSHOW_STRSAFE
-#   include <windows.h>
 #   include <dshow.h>
+#   include "win32-com.hpp"
+#   include <cwchar>
 #elif defined(__unix) || defined(__linux) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
@@ -32,9 +33,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
-    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-        qDebug() << "failed CoInitializeEx" << hr << GetLastError();
+    init_com_threading(com_apartment);
     ICreateDevEnum *pSysDevEnum = NULL;
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
@@ -61,7 +60,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
                 if (SUCCEEDED(hr))
                 {
                     // Display the name in your UI somehow.
-                    QString str((QChar*)varName.bstrVal, wcslen(varName.bstrVal));
+                    QString str((QChar*)varName.bstrVal, int(std::wcslen(varName.bstrVal)));
                     ret.append(str);
                 }
                 VariantClear(&varName);
