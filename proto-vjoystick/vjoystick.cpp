@@ -45,6 +45,7 @@ constexpr double handle::val_minmax[6];
 
 void handle::init()
 {
+#if 0
     bool ret = true;
 
     for (unsigned i = 0; i < axis_count; i++)
@@ -64,6 +65,9 @@ void handle::init()
     }
     else
         (void) ResetVJD(OPENTRACK_VJOYSTICK_ID);
+#else
+    (void) ResetVJD(OPENTRACK_VJOYSTICK_ID);
+#endif
 }
 
 handle::handle()
