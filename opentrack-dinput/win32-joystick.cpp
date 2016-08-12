@@ -71,7 +71,8 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 
         if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
         {
-            qDebug() << "joy get state failed" << guid << hr;
+            //qDebug() << "joy get state failed" << guid << hr;
+            portable::sleep(50);
             continue;
         }
 
