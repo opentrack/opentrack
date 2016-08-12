@@ -9,6 +9,8 @@
 #include <cmath>
 #include <objbase.h>
 
+#include <QDebug>
+
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
 
@@ -120,7 +122,7 @@ void win32_joy_ctx::refresh()
     enumerator.refresh();
 }
 
-QString win32_joy_ctx::guid_to_string(const GUID guid)
+QString win32_joy_ctx::guid_to_string(const GUID& guid)
 {
     char buf[40] = {0};
     wchar_t szGuidW[40] = {0};
@@ -218,7 +220,7 @@ bool win32_joy_ctx::joy::poll(fn f)
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state()
+win32_joy_ctx::enum_state::enum_state() : di(dinput_handle::make_di())
 {
 }
 
@@ -233,7 +235,6 @@ void win32_joy_ctx::enum_state::refresh()
 {
     all.clear();
 
-    di_t di = dinput_handle::make_di();
     if (!di)
     {
         qDebug() << "can't create dinput";
@@ -264,15 +265,10 @@ void win32_joy_ctx::enum_state::refresh()
     }
 }
 
+const win32_joy_ctx::joys_t& win32_joy_ctx::enum_state::get_joys() const { return joys; }
+
 BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
 {
-    di_t di = dinput_handle::make_di();
-    if (!di)
-    {
-        qDebug() << "can't create dinput";
-        return DIENUM_STOP;
-    }
-
     enum_state& state = *reinterpret_cast<enum_state*>(pContext);
     const QString guid = guid_to_string(pdidInstance->guidInstance);
     const QString name = QString(pdidInstance->tszInstanceName);
@@ -287,7 +283,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
     {
         HRESULT hr;
         LPDIRECTINPUTDEVICE8 h;
-        if (FAILED(hr = di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
+        if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
             qDebug() << "createdevice" << guid << hr;
             goto end;

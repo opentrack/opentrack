@@ -75,12 +75,13 @@ struct OPENTRACK_DINPUT_EXPORT win32_joy_ctx
     using di_t = dinput_handle::di_t;
 
 private:
-    static QString guid_to_string(const GUID guid);
+    static QString guid_to_string(const GUID& guid);
 
-    class enum_state final
+    class OPENTRACK_DINPUT_EXPORT enum_state final
     {
         std::vector<QString> all;
         joys_t joys;
+        dinput_handle::di_t di;
 
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
@@ -91,7 +92,7 @@ private:
         enum_state();
         ~enum_state();
         void refresh();
-        const joys_t& get_joys() const { return joys; }
+        const joys_t& get_joys() const;
     };
 
     static enum_state enumerator;

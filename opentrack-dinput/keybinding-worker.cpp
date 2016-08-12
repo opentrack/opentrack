@@ -25,6 +25,8 @@ bool Key::should_process()
 
 KeybindingWorker::~KeybindingWorker()
 {
+    qDebug() << "exit: destroying keybinding worker";
+
     should_quit = true;
     wait();
     if (dinkeyboard) {
@@ -33,9 +35,15 @@ KeybindingWorker::~KeybindingWorker()
     }
 }
 
-KeybindingWorker::KeybindingWorker() : should_quit(true)
+void KeybindingWorker::init()
 {
-    LPDIRECTINPUT8 din = dinput_handle::make_di();
+    din = dinput_handle::make_di();
+
+    if (!din)
+    {
+        qDebug() << "can't create dinput handle";
+        return;
+    }
 
     if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
         qDebug() << "setup CreateDevice function failed!" << GetLastError();
@@ -63,8 +71,10 @@ KeybindingWorker::KeybindingWorker() : should_quit(true)
         qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
         return;
     }
+}
 
-    should_quit = false;
+KeybindingWorker::KeybindingWorker() : should_quit(false)
+{
     start();
 }
 
@@ -76,6 +86,8 @@ KeybindingWorker& KeybindingWorker::make()
 
 void KeybindingWorker::run()
 {
+    init();
+
     BYTE keystate[256] = {0};
     BYTE old_keystate[256] = {0};
 

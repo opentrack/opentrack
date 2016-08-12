@@ -17,6 +17,7 @@
 #include <QMutex>
 #include <QWidget>
 #include <QMainWindow>
+#include <QDebug>
 #include <functional>
 #include <vector>
 
@@ -46,9 +47,11 @@ private:
     std::vector<std::unique_ptr<fun>> receivers;
     QMutex mtx;
     QMainWindow fake_main_window;
+    dinput_handle::di_t din;
     volatile bool should_quit;
 
     void run() override;
+    void init();
     KeybindingWorker();
 
     static KeybindingWorker& make();
