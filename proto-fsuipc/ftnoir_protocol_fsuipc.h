@@ -15,7 +15,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include "FSUIPC_User.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ui_ftnoir_fsuipccontrols.h"
 #include <QMessageBox>
 #include <QSettings>
@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 #define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"

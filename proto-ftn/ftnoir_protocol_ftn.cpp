@@ -10,7 +10,7 @@
  */
 #include "ftnoir_protocol_ftn.h"
 #include <QFile>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 FTNoIR_Protocol::FTNoIR_Protocol()
 {

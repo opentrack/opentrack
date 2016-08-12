@@ -8,7 +8,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QWidget>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include <algorithm>
 #include <QMutexLocker>
 

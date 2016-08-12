@@ -7,7 +7,7 @@
  */
 #pragma once
 #include "ui_vjoystick.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 #include <windows.h>
 

@@ -13,7 +13,7 @@
 #include <QtGui>
 #include <QPointF>
 #include "spline.hpp"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 class SPLINE_WIDGET_EXPORT spline_widget : public QWidget
 {

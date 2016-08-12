@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
-#include "opentrack/plugin-support.hpp"
+#include "api/plugin-support.hpp"
 #include "main-settings.hpp"
 #include "mappings.hpp"
 #include "selected-libraries.hpp"

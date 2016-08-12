@@ -1,8 +1,8 @@
 #pragma once
 #include "ui_test.h"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/timer.hpp"
-#include "opentrack-compat/pi-constant.hpp"
+#include "api/plugin-api.hpp"
+#include "compat/timer.hpp"
+#include "compat/pi-constant.hpp"
 
 class FTNoIR_Tracker : public ITracker
 {

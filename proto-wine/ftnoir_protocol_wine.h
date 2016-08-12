@@ -8,8 +8,8 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/shm.h"
+#include "api/plugin-api.hpp"
+#include "compat/shm.h"
 #include "wine-shm.h"
 
 class FTNoIR_Protocol : public IProtocol

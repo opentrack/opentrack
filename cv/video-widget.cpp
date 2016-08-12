@@ -9,7 +9,7 @@
 #include "video-widget.hpp"
 #include <opencv2/imgproc.hpp>
 
-#include "opentrack/is-window-visible.hpp"
+#include "api/is-window-visible.hpp"
 
 cv_video_widget::cv_video_widget(QWidget* parent) :
     QWidget(parent),

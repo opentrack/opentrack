@@ -15,10 +15,10 @@
 #include <QFrame>
 #include <QStringList>
 #include <cmath>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
-#include "opentrack-dinput/win32-joystick.hpp"
-#include "opentrack-compat/options.hpp"
+#include "dinput/win32-joystick.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

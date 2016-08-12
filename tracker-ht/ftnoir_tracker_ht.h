@@ -10,11 +10,11 @@
 #include "headtracker-ftnoir.h"
 #include "ui_ht-trackercontrols.h"
 #include "ht_video_widget.h"
-#include "opentrack-compat/shm.h"
+#include "compat/shm.h"
 #include <QObject>
-#include "opentrack-compat/options.hpp"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack/opencv-camera-dialog.hpp"
+#include "compat/options.hpp"
+#include "api/plugin-api.hpp"
+#include "api/opencv-camera-dialog.hpp"
 
 #include <QThread>
 #include <QMutex>

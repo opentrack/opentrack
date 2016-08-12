@@ -9,7 +9,7 @@
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 #include "opentrack-library-path.h"
-#include "opentrack-compat/pi-constant.hpp"
+#include "compat/pi-constant.hpp"
 
 check_for_first_run FTNoIR_Protocol::runonce_check = check_for_first_run();
 

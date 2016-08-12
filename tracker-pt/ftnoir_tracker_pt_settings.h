@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "opentrack-compat/pi-constant.hpp"
+#include "compat/pi-constant.hpp"
 #include <limits>
 #include <opencv2/core.hpp>
 
@@ -28,7 +28,7 @@ struct pt_types
     using mat22 = mat<2, 2>;
 };
 
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 struct settings_pt : opts

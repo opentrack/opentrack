@@ -10,8 +10,8 @@
 #include <QFile>
 #include <QCoreApplication>
 
-#include "opentrack/variance.hpp"
-#include "opentrack-compat/timer.hpp"
+#include "api/variance.hpp"
+#include "compat/timer.hpp"
 
 enum results
 {

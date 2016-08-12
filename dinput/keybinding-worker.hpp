@@ -10,7 +10,7 @@
 
 #include "export.hpp"
 
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 #include "win32-joystick.hpp"
 #include "dinput.hpp"
 #include <QThread>

@@ -1,5 +1,5 @@
 #include "thread.hpp"
-#include "opentrack-compat/sleep.hpp"
+#include "compat/sleep.hpp"
 #include <utility>
 
 #include <QTextStream>

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <QObject>

@@ -19,7 +19,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"
 
 set(version-string "
 #define BUILD_compat
-#include \"opentrack-compat/export.hpp\"
+#include \"compat/export.hpp\"
 
 #ifdef __cplusplus
 extern \"C\"

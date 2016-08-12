@@ -8,16 +8,16 @@
 
 #pragma once
 
-#include "opentrack/plugin-support.hpp"
+#include "api/plugin-support.hpp"
 #include "mapping-window.hpp"
 #include "options-dialog.hpp"
 #include "process_detector.h"
-#include "opentrack-logic/main-settings.hpp"
-#include "opentrack-logic/tracker.h"
-#include "opentrack-logic/shortcuts.h"
-#include "opentrack-logic/work.hpp"
-#include "opentrack-logic/state.hpp"
-#include "opentrack-compat/options.hpp"
+#include "logic/main-settings.hpp"
+#include "logic/tracker.h"
+#include "logic/shortcuts.h"
+#include "logic/work.hpp"
+#include "logic/state.hpp"
+#include "compat/options.hpp"
 
 #include <QMainWindow>
 #include <QKeySequence>

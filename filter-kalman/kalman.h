@@ -7,10 +7,10 @@
  */
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/options.hpp"
+#include "api/plugin-api.hpp"
+#include "compat/options.hpp"
 using namespace options;
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 
 #include <Eigen/Core>
 #include <Eigen/LU>

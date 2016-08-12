@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_tracker_joystick.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include <QMutexLocker>
 
 FTNoIR_Tracker::FTNoIR_Tracker()

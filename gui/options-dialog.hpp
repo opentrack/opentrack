@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_options-dialog.h"
-#include "opentrack-logic/shortcuts.h"
+#include "logic/shortcuts.h"
 #include <QObject>
 #include <QWidget>
 #include <functional>

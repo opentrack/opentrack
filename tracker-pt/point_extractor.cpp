@@ -10,7 +10,7 @@
 #include <QDebug>
 
 #ifdef DEBUG_EXTRACTION
-#   include "opentrack-compat/timer.hpp"
+#   include "compat/timer.hpp"
 #endif
 
 #include <opencv2/videoio.hpp>

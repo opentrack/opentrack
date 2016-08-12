@@ -10,7 +10,7 @@
  */
 #include "ftnoir_protocol_sc.h"
 #include <QDebug>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 SCControls::SCControls()
 {

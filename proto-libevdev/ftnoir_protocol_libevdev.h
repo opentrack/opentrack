@@ -8,7 +8,7 @@
 #include "ui_ftnoir_libevdev_controls.h"
 
 #include <QMessageBox>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 extern "C" {
 #   include <libevdev/libevdev.h>

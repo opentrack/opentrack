@@ -10,16 +10,16 @@
 
 #include <vector>
 
-#include "opentrack-compat/pi-constant.hpp"
-#include "opentrack-compat/timer.hpp"
-#include "opentrack/plugin-support.hpp"
+#include "compat/pi-constant.hpp"
+#include "compat/timer.hpp"
+#include "api/plugin-support.hpp"
 #include "mappings.hpp"
 #include "simple-mat.hpp"
 #include "selected-libraries.hpp"
 
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 #include "tracklogger.hpp"
 
 #include <QMutex>

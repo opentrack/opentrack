@@ -15,11 +15,11 @@
 #include "export.hpp"
 
 #include "qxt-mini/QxtGlobalShortcut"
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 #include "main-settings.hpp"
 
 #ifdef _WIN32
-#   include "opentrack-dinput/keybinding-worker.hpp"
+#   include "dinput/keybinding-worker.hpp"
 #endif
 
 #if defined(__GNUC__) && !defined(_WIN32)

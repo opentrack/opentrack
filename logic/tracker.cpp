@@ -12,7 +12,7 @@
  * originally written by Wim Vriend.
  */
 
-#include "opentrack-compat/sleep.hpp"
+#include "compat/sleep.hpp"
 
 #include "tracker.h"
 #include <cmath>
@@ -77,7 +77,7 @@ void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz_, euler_t& outpu
     output(0) = -ret(1);
 }
 
-#include "opentrack-compat/nan.hpp"
+#include "compat/nan.hpp"
 
 static inline double elide_nan(double value, double def)
 {

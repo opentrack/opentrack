@@ -8,7 +8,7 @@
 
 #include "process_detector.h"
 #include "main-window.hpp"
-#include "opentrack-compat/process-list.hpp"
+#include "compat/process-list.hpp"
 #include <QList>
 #include <QFileDialog>
 #include <QComboBox>

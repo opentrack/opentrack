@@ -9,7 +9,7 @@
 #pragma once
 
 #include "main-settings.hpp"
-#include "opentrack/plugin-support.hpp"
+#include "api/plugin-support.hpp"
 #include "tracker.h"
 #include "shortcuts.h"
 #include "export.hpp"

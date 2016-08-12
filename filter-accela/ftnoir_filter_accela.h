@@ -6,15 +6,15 @@
  */
 #pragma once
 #include "ui_ftnoir_accela_filtercontrols.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "spline-widget/spline.hpp"
 #include <atomic>
 #include <QMutex>
 #include <QTimer>
 
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 
 struct settings_accela : opts
 {

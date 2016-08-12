@@ -6,8 +6,8 @@
  */
 
 #include "camera.h"
-#include "opentrack-compat/sleep.hpp"
-#include "opentrack-compat/camera-names.hpp"
+#include "compat/sleep.hpp"
+#include "compat/camera-names.hpp"
 #include <string>
 #include <QDebug>
 

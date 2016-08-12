@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "opentrack-compat/camera-names.hpp"
-#include "opentrack-compat/sleep.hpp"
-#include "opentrack-compat/win32-com.hpp"
+#include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
+#include "compat/win32-com.hpp"
 
 #ifdef __linux
 #   include <QProcess>

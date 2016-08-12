@@ -1,11 +1,11 @@
 #pragma once
 
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>
-#include "opentrack-compat/options.hpp"
-#include "opentrack-compat/timer.hpp"
+#include "compat/options.hpp"
+#include "compat/timer.hpp"
 using namespace options;
 
 struct settings : opts {

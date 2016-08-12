@@ -6,14 +6,14 @@
  */
 
 #include "ftnoir_tracker_aruco.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
-#include "opentrack-compat/camera-names.hpp"
-#include "opentrack-compat/sleep.hpp"
-#include "opentrack-compat/pi-constant.hpp"
+#include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
+#include "compat/pi-constant.hpp"
 
 #include <QMutexLocker>
 #include <QDebug>

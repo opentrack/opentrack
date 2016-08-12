@@ -1,7 +1,7 @@
 #ifdef _WIN32
 
 #include "dinput.hpp"
-#include "opentrack-compat/win32-com.hpp"
+#include "compat/win32-com.hpp"
 #include <QDebug>
 
 std::atomic<int> dinput_handle::refcnt;

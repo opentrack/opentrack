@@ -1,7 +1,7 @@
 #pragma once
 
 #include "thread.hpp"
-#include "opentrack/plugin-support.hpp"
+#include "api/plugin-support.hpp"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_arduino_type.h"
 

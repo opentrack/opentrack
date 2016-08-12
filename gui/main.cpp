@@ -9,8 +9,8 @@
 #endif
 
 #include "main-window.hpp"
-#include "opentrack-compat/options.hpp"
-#include "opentrack-compat/win32-com.hpp"
+#include "compat/options.hpp"
+#include "compat/win32-com.hpp"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>

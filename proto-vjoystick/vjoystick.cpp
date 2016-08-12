@@ -1,5 +1,5 @@
 #include "vjoystick.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 #include <cstring>
 #include <QDebug>

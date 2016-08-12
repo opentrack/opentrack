@@ -10,9 +10,9 @@
 #include <QtGlobal>
 #include <QWidget>
 #include <QPixmap>
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-logic/simple-mat.hpp"
-#include "opentrack-compat/timer.hpp"
+#include "api/plugin-api.hpp"
+#include "logic/simple-mat.hpp"
+#include "compat/timer.hpp"
 
 #ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT

@@ -6,8 +6,8 @@
  */
 
 #include "glwidget.h"
-#include "opentrack/is-window-visible.hpp"
-#include "opentrack-compat/pi-constant.hpp"
+#include "api/is-window-visible.hpp"
+#include "compat/pi-constant.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>

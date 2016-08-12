@@ -10,7 +10,7 @@
 #ifdef _WIN32
 
 #include "dinput.hpp"
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 #include "export.hpp"
 #include <cstring>
 #include <memory>

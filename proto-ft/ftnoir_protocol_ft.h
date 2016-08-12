@@ -8,7 +8,7 @@
 
 #pragma once
 #include "ui_ftnoir_ftcontrols.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -18,8 +18,8 @@
 #include <QString>
 #include <QMutex>
 #include <QMutexLocker>
-#include "opentrack-compat/shm.h"
-#include "opentrack-compat/options.hpp"
+#include "compat/shm.h"
+#include "compat/options.hpp"
 #include "freetrackclient/fttypes.h"
 #include <memory>
 #include "mutex.hpp"

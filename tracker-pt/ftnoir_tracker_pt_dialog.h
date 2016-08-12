@@ -8,7 +8,7 @@
 #ifndef FTNOIR_TRACKER_PT_DIALOG_H
 #define FTNOIR_TRACKER_PT_DIALOG_H
 
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "ui_FTNoIR_PT_Controls.h"

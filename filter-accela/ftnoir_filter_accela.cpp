@@ -9,7 +9,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QMutexLocker>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 static constexpr double rot_gains[][2] = {
     { 6, 200 },

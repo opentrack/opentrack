@@ -8,7 +8,7 @@
 #ifndef POINTTRACKER_H
 #define POINTTRACKER_H
 
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 #include <opencv2/core/core.hpp>
 #include <memory>

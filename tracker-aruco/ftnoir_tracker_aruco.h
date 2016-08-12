@@ -8,7 +8,7 @@
 #pragma once
 
 #include "ui_aruco-trackercontrols.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "include/markerdetector.h"
 
 #include "cv/camera-dialog.hpp"
@@ -26,7 +26,7 @@
 
 #include <cinttypes>
 
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <QSettings>
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"

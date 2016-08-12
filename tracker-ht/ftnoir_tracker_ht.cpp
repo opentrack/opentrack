@@ -1,21 +1,21 @@
 #include "headtracker-ftnoir.h"
 #include "ftnoir_tracker_ht.h"
 #include "ui_ht-trackercontrols.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include <cmath>
-#include "opentrack/camera-names.hpp"
-#include "opentrack-compat/sleep.hpp"
+#include "api/camera-names.hpp"
+#include "compat/sleep.hpp"
 
 typedef struct {
-	int width;
-	int height;
+        int width;
+        int height;
 } resolution_tuple;
 
 static resolution_tuple resolution_choices[] = {
-	{ 640, 480 },
-	{ 320, 240 },
-	{ 320, 200 },
-	{ 0, 0 }
+        { 640, 480 },
+        { 320, 240 },
+        { 320, 200 },
+        { 0, 0 }
 };
 
 void Tracker::load_settings(ht_config_t* config)
@@ -63,9 +63,9 @@ void Tracker::load_settings(ht_config_t* config)
 
     int res = s.resolution;
     if (res < 0 || res >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
-		res = 0;
-	resolution_tuple r = resolution_choices[res];
-	config->force_width = r.width;
+                res = 0;
+        resolution_tuple r = resolution_choices[res];
+        config->force_width = r.width;
     config->force_height = r.height;
     config->flandmark_delay = 50;
     for (int i = 0; i < 5; i++)
@@ -86,10 +86,10 @@ Tracker::~Tracker()
     should_stop = true;
     wait();
     ht_free_context(ht);
-	if (layout)
-		delete layout;
-	if (videoWidget)
-		delete videoWidget;
+        if (layout)
+                delete layout;
+        if (videoWidget)
+                delete videoWidget;
 }
 
 void Tracker::start_tracker(QFrame* videoframe)

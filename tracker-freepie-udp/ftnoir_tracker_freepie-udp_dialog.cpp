@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_freepie-udp.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 TrackerDialog::TrackerDialog()
 {

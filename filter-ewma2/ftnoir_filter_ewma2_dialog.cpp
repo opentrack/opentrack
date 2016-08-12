@@ -2,7 +2,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QString>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 
 FilterControls::FilterControls()

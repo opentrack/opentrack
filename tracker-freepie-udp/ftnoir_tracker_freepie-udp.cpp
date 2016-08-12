@@ -1,6 +1,6 @@
 #include "ftnoir_tracker_freepie-udp.h"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/pi-constant.hpp"
+#include "api/plugin-api.hpp"
+#include "compat/pi-constant.hpp"
 
 #include <cinttypes>
 #include <algorithm>

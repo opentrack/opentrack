@@ -1,7 +1,7 @@
 #pragma once
 #include "main-settings.hpp"
-#include "opentrack-compat/options.hpp"
-#include "opentrack-compat/timer.hpp"
+#include "compat/options.hpp"
+#include "compat/timer.hpp"
 
 #include <fstream>
 #include <QString>

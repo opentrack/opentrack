@@ -10,7 +10,7 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_sc.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "opentrack-library-path.h"
 
 FTNoIR_Protocol::FTNoIR_Protocol() : should_stop(false), hSimConnect(nullptr)

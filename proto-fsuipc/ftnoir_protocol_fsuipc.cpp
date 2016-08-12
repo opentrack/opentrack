@@ -9,7 +9,7 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_fsuipc.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 #include <cmath>
 

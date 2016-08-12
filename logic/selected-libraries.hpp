@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "opentrack/plugin-support.hpp"
+#include "api/plugin-support.hpp"
 #include <QFrame>
 
 #include "export.hpp"

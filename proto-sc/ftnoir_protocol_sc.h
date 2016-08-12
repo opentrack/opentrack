@@ -10,7 +10,7 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #pragma once
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 #include "ui_ftnoir_sccontrols.h"
 #include <QThread>
@@ -20,7 +20,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 #include <windows.h>
 

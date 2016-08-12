@@ -2,7 +2,7 @@
 
 #undef NDEBUG
 #include "win32-joystick.hpp"
-#include "opentrack-compat/sleep.hpp"
+#include "compat/sleep.hpp"
 #include <cassert>
 #include <cstring>
 #include <algorithm>

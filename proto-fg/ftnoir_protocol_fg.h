@@ -14,8 +14,8 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/options.hpp"
+#include "api/plugin-api.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 struct settings : opts {

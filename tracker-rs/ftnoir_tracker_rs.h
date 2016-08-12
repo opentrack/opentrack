@@ -7,7 +7,7 @@
  
 #pragma once
 
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ui_ftnoir_tracker_rs_controls.h"
 #include  "ftnoir_tracker_rs_worker.h"
 #include <QTimer>

@@ -7,7 +7,7 @@
  */
 
 #include "mapping-window.hpp"
-#include "opentrack-logic/main-settings.hpp"
+#include "logic/main-settings.hpp"
 #include "spline-widget/spline-widget.hpp"
 MapWidget::MapWidget(Mappings& m) :
     m(m)

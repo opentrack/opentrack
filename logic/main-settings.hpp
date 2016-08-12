@@ -9,8 +9,8 @@
 #pragma once
 
 #include <QString>
-#include "opentrack-compat/options.hpp"
-#include "opentrack/plugin-api.hpp"
+#include "compat/options.hpp"
+#include "api/plugin-api.hpp"
 
 using namespace options;
 

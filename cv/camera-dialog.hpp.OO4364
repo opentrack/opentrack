@@ -9,8 +9,8 @@
 #pragma once
 
 #include "export.hpp"
-#include "opentrack-compat/camera-names.hpp"
-#include "opentrack-compat/sleep.hpp"
+#include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
 
 #ifdef __linux
 #   include <QProcess>

@@ -13,7 +13,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
-#include "opentrack-compat/pi-constant.hpp"
+#include "compat/pi-constant.hpp"
 
 #include <vector>
 

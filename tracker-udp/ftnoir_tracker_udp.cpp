@@ -7,7 +7,7 @@
  */
 
 #include "ftnoir_tracker_udp.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 FTNoIR_Tracker::FTNoIR_Tracker() : last_recv_pose { 0,0,0, 0,0,0 }, should_quit(false) {}
 

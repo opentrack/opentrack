@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <algorithm>
 #include <QDoubleSpinBox>
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "spline-widget/spline-widget.hpp"
 #include <QDialog>
 

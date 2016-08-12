@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_mouse.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 MOUSEControls::MOUSEControls()
 {

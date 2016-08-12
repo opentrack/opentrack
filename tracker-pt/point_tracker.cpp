@@ -6,7 +6,7 @@
  */
 
 #include "point_tracker.h"
-#include "opentrack-compat/nan.hpp"
+#include "compat/nan.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -325,11 +325,17 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
             if (nanp(r(i, j)))
+            {
+                qDebug() << "posit nan";
                 return -1;
+            }
 
     for (unsigned i = 0; i < 3; i++)
         if (nanp(t[i]))
+        {
+            qDebug() << "posit nan";
             return -1;
+        }
 
     // apply results
     X_CM.R = r;

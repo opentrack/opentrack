@@ -8,7 +8,7 @@
 #pragma once
 
 #include <QSerialPort>
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 
 using namespace options;
 

@@ -9,15 +9,15 @@
 #ifndef FTNOIR_TRACKER_PT_H
 #define FTNOIR_TRACKER_PT_H
 
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
-#include "opentrack-compat/timer.hpp"
+#include "compat/timer.hpp"
 #include "cv/camera-dialog.hpp"
 #include "cv/video-widget.hpp"
-#include "opentrack-compat/pi-constant.hpp"
+#include "compat/pi-constant.hpp"
 
 #include <QThread>
 #include <QMutex>

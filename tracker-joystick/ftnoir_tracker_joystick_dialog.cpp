@@ -1,5 +1,5 @@
 #include "ftnoir_tracker_joystick.h"
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 
 TrackerControls::TrackerControls() : tracker(nullptr)
 {

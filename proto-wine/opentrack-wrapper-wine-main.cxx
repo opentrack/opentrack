@@ -6,13 +6,13 @@
 #include <cstdio>
 #include "freetrackclient/fttypes.h"
 #include "wine-shm.h"
-#include "opentrack-compat/export.hpp"
+#include "compat/export.hpp"
 
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-#include "opentrack-compat/shm.h"
+#include "compat/shm.h"
 
 void create_registry_key(void);
 

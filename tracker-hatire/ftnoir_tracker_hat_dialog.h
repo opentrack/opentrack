@@ -1,4 +1,4 @@
-#include "opentrack/plugin-api.hpp"
+#include "api/plugin-api.hpp"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_tracker_hat.h"
 #include "ui_ftnoir_hatcontrols.h"

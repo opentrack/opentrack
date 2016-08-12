@@ -13,7 +13,7 @@
 #include <QTableWidget>
 #include <QResizeEvent>
 
-#include "opentrack-compat/options.hpp"
+#include "compat/options.hpp"
 using namespace options;
 
 class FancyTable : public QTableWidget
@@ -47,10 +47,10 @@ struct settings
 class process_detector : public QWidget
 {
     Q_OBJECT
-    
+
     Ui_Dialog ui;
     settings s;
-    
+
     int add_row(QString exe_name = "...", QString profile = "");
     void add_items();
 public:
