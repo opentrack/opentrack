@@ -269,7 +269,11 @@ using euler_t = dmat<3, 1>;
 
 rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input);
 
-// http://stackoverflow.com/a/18436193
-euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const dmat<3, 3>& R);
+euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const rmat& R);
+
+void OPENTRACK_LOGIC_EXPORT tait_bryan_to_matrices(const euler_t& input,
+                                                   rmat& r_roll,
+                                                   rmat& r_pitch,
+                                                   rmat& r_yaw);
 
 } // end ns euler

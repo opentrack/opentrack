@@ -4,7 +4,7 @@
 
 namespace euler {
 
-euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const dmat<3, 3>& R)
+euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const rmat& R)
 {
     using std::atan2;
     using std::sqrt;
@@ -52,6 +52,46 @@ rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input)
                 c2 * s3,
                 c2 * c3
                 );
+}
+
+// https://en.wikipedia.org/wiki/Davenport_chained_rotations#Tait.E2.80.93Bryan_chained_rotations
+void OPENTRACK_LOGIC_EXPORT tait_bryan_to_matrices(const euler_t& input,
+                                                   rmat& r_roll,
+                                                   rmat& r_pitch,
+                                                   rmat& r_yaw)
+{
+    using std::cos;
+    using std::sin;
+
+    {
+        const double phi = -input(2);
+        const double sin_phi = sin(phi);
+        const double cos_phi = cos(phi);
+
+        r_roll = rmat(1, 0, 0,
+                      0, cos_phi, -sin_phi,
+                      0, sin_phi, cos_phi);
+    }
+
+    {
+        const double theta = -input(1);
+        const double sin_theta = sin(theta);
+        const double cos_theta = cos(theta);
+
+        r_pitch = rmat(cos_theta, 0, -sin_theta,
+                       0, 1, 0,
+                       sin_theta, 0, cos_theta);
+    }
+
+    {
+        const double psi = -input(0);
+        const double sin_psi = sin(psi);
+        const double cos_psi = cos(psi);
+
+        r_yaw = rmat(cos_psi, -sin_psi, 0,
+                     sin_psi, cos_psi, 0,
+                     0, 0, 1);
+    }
 }
 
 } // end ns euler
