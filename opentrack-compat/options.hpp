@@ -43,11 +43,7 @@
 #include "export.hpp"
 #include "slider.hpp"
 
-// just put them here for lack of util header
-#define progn(...) ([&]() { __VA_ARGS__ }())
-template<typename t> using mem = std::shared_ptr<t>;
-template<typename t> using ptr = std::unique_ptr<t>;
-#include "make-unique.hpp"
+#include "util.hpp"
 
 #define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
 #define OPENTRACK_DEFAULT_CONFIG "default.ini"
