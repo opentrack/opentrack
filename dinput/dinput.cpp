@@ -10,7 +10,7 @@ dinput_handle::di_t dinput_handle::handle(dinput_handle::make_di());
 
 LPDIRECTINPUT8& dinput_handle::init_di()
 {
-    init_com_threading(com_multithreaded);
+    init_com_threading(com_apartment);
 
     static LPDIRECTINPUT8 di_ = nullptr;
     if (di_ == nullptr)
