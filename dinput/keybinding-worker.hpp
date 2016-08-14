@@ -51,7 +51,7 @@ private:
     volatile bool should_quit;
 
     void run() override;
-    void init();
+    bool init();
     KeybindingWorker();
 
     static KeybindingWorker& make();

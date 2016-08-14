@@ -30,7 +30,7 @@
 
 using namespace options;
 
-struct OPENTRACK_LOGIC_EXPORT Shortcuts : public QObject
+struct OPENTRACK_LOGIC_EXPORT Shortcuts final : public QObject
 {
     Q_OBJECT
 

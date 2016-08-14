@@ -346,13 +346,13 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const QString &name)
     : joy_handle(handle), guid(guid), name(name)
 {
-    qDebug() << "make joy" << guid << name << joy_handle;
+    //qDebug() << "make joy" << guid << name << joy_handle;
     std::memset(pressed, 0, sizeof(pressed));
 }
 
 win32_joy_ctx::joy::~joy()
 {
-    qDebug() << "nix joy" << guid;
+    //qDebug() << "nix joy" << guid;
     release();
 }
 

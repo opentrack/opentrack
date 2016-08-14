@@ -35,33 +35,31 @@ KeybindingWorker::~KeybindingWorker()
     }
 }
 
-void KeybindingWorker::init()
+bool KeybindingWorker::init()
 {
-    din = dinput_handle::make_di();
-
     if (!din)
     {
         qDebug() << "can't create dinput handle";
-        return;
+        return false;
     }
 
     if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
         qDebug() << "setup CreateDevice function failed!" << GetLastError();
-        return;
+        return false;
     }
 
     if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
         qDebug() << "setup SetDataFormat function failed!" << GetLastError();
         dinkeyboard->Release();
         dinkeyboard = 0;
-        return;
+        return false;
     }
 
     if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         dinkeyboard = 0;
         qDebug() << "setup SetCooperativeLevel function failed!" << GetLastError();
-        return;
+        return false;
     }
 
     if (dinkeyboard->Acquire() != DI_OK)
@@ -69,12 +67,16 @@ void KeybindingWorker::init()
         dinkeyboard->Release();
         dinkeyboard = 0;
         qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
-        return;
+        return false;
     }
+
+    return true;
 }
 
-KeybindingWorker::KeybindingWorker() : should_quit(false)
+KeybindingWorker::KeybindingWorker() : dinkeyboard(nullptr), din(dinput_handle::make_di()), should_quit(false)
 {
+    should_quit = !init();
+
     start();
 }
 
@@ -86,8 +88,6 @@ KeybindingWorker& KeybindingWorker::make()
 
 void KeybindingWorker::run()
 {
-    init();
-
     BYTE keystate[256] = {0};
     BYTE old_keystate[256] = {0};
 
