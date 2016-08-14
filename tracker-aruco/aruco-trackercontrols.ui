@@ -116,6 +116,11 @@
         </item>
         <item>
          <property name="text">
+          <string>75</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>125</string>
          </property>
         </item>

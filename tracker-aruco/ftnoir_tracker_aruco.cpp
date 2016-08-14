@@ -153,9 +153,12 @@ bool Tracker::open_camera()
         fps = 60;
         break;
     case 3:
-        fps = 125;
+        fps = 75;
         break;
     case 4:
+        fps = 125;
+        break;
+    case 5:
         fps = 200;
         break;
     }
