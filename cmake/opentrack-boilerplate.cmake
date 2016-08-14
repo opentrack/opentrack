@@ -25,6 +25,9 @@ endif()
 
 install(FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}")
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/cmake" DESTINATION "${opentrack-doc-src-pfx}")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin" DESTINATION "${opentrack-doc-src-pfx}")
+install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION "${opentrack-doc-src-pfx}")
+install(FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md" DESTINATION "${opentrack-doc-src-pfx}")
 
 function(opentrack_set_globs n)
     set(dir ${PROJECT_SOURCE_DIR})
