@@ -43,6 +43,7 @@ bool OPENTRACK_COMPAT_EXPORT init_com_threading(com_type t)
         return false;
     }
 
+#if 0
     if (t == com_apartment)
     {
         ret = OleInitialize(nullptr);
@@ -52,6 +53,7 @@ bool OPENTRACK_COMPAT_EXPORT init_com_threading(com_type t)
 
         return false;
     }
+#endif
 
     initialized = t;
 
