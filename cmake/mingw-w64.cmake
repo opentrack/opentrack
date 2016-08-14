@@ -10,7 +10,7 @@ unset(c)
 unset(e)
 # specify the cross compiler
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    set(p P:/mingw-w64/i686-6.1.0-posix-dwarf-rt_v5-rev0/mingw32/bin/)
+    set(p P:/mingw-w64/i686-5.3.0-posix-dwarf-rt_v4-rev0/mingw32/bin/)
     set(e .exe)
 endif()
 set(c ${p}i686-w64-mingw32-)
@@ -37,18 +37,19 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -mfpmath=both -mstackrealign -ftree-vectorize -falign-functions=16 -falign-loops=16")
-set(cpu "-O3 -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -frename-registers -fno-PIC")
-set(lto "-flto -fuse-linker-plugin -flto-compression-level=9 -flto-partition=none -fno-ipa-pta")
+set(cpu "-O3 -pipe -march=pentium4 -mtune=corei7-avx -msse -msse2 -mno-sse3 -mno-avx -frename-registers -fno-PIC")
+set(lto "-flto -fuse-linker-plugin -flto-compression-level=9 -flto-partition=none -fipa-icf -fipa-pta -flto-odr-type-merging")
+set(bloat "-fno-exceptions -fno-rtti")
 
 set(_CFLAGS " -fvisibility=hidden")
 set(_CXXFLAGS "${_CFLAGS}")
-set(_CFLAGS_RELEASE "-s ${cpu} ${fpu} ${lto}")
-set(_CFLAGS_DEBUG "-g -ggdb")
+set(_CFLAGS_RELEASE "-s ${cpu} ${fpu} ${lto} ${bloat}")
+set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-Wl,--as-needed,--nxcompat,--no-seh,--gc-sections")
-set(_LDFLAGS_RELEASE "")
+set(_LDFLAGS "")
+set(_LDFLAGS_RELEASE "-Wl,--no-seh,--gc-sections,--exclude-libs,ALL,--as-needed,--nxcompat")
 set(_LDFLAGS_DEBUG "")
 
 set(enable-val FALSE)
@@ -106,6 +107,6 @@ foreach(j "" _DEBUG _RELEASE)
     endforeach()
 endforeach()
 
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
 
