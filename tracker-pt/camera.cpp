@@ -63,16 +63,16 @@ bool Camera::get_info(CamInfo& ret)
     return true;
 }
 
-bool Camera::get_frame(float dt, cv::Mat* frame)
+bool Camera::get_frame(double dt, cv::Mat* frame)
 {
     bool new_frame = _get_frame(frame);
     // measure fps of valid frames
-    constexpr float dt_smoothing_const = 0.95f;
+    static constexpr double dt_smoothing_const = 0.95;
     dt_valid += dt;
     if (new_frame)
     {
         dt_mean = dt_smoothing_const * dt_mean + (1 - dt_smoothing_const) * dt_valid;
-        cam_info.fps = int(std::round(dt_mean > 1e-3f ? 1 / dt_mean : 0));
+        cam_info.fps = int(std::round(dt_mean > 1e-3 ? 1 / dt_mean : 0));
         dt_valid = 0;
     }
     else
