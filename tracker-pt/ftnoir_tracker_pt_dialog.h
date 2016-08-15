@@ -28,19 +28,18 @@ public:
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
     void save();
-    void trans_calib_step();
-
 public slots:
     void doOK();
     void doCancel();
 
     void startstop_trans_calib(bool start);
+    void trans_calib_step();
     void poll_tracker_info();
     void camera_settings();
 private:
     settings_pt s;
     Tracker_PT* tracker;
-    QTimer timer;
+    QTimer timer, calib_timer;
 
     TranslationCalibrator trans_calib;
     bool trans_calib_running;

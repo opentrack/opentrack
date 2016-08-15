@@ -8,12 +8,13 @@
 
 #include "ftnoir_tracker_pt_dialog.h"
 
-#include <QMessageBox>
-#include <QDebug>
+#include "compat/camera-names.hpp"
 #include <opencv2/core/core.hpp>
 #include <memory>
-#include "compat/camera-names.hpp"
 #include <vector>
+#include <QMessageBox>
+#include <QString>
+#include <QDebug>
 
 //-----------------------------------------------------------------------------
 TrackerDialog_PT::TrackerDialog_PT()
@@ -73,6 +74,9 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
     timer.start(250);
+
+    connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
+    calib_timer.setInterval(100);
 }
 
 void TrackerDialog_PT::camera_settings()
@@ -88,6 +92,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     if (start)
     {
         qDebug()<<"TrackerDialog:: Starting translation calibration";
+        calib_timer.start();
         trans_calib.reset();
         trans_calib_running = true;
         s.t_MH_x = 0;
@@ -96,6 +101,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     }
     else
     {
+        calib_timer.stop();
         qDebug()<<"TrackerDialog:: Stopping translation calibration";
         trans_calib_running = false;
         {
@@ -105,6 +111,15 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
             s.t_MH_z = tmp[2];
         }
     }
+    ui.tx_spin->setEnabled(!start);
+    ui.ty_spin->setEnabled(!start);
+    ui.tz_spin->setEnabled(!start);
+    ui.tcalib_button->setText(progn(
+                                  if (start)
+                                      return QStringLiteral("Stop calibration");
+                                  else
+                                      return QStringLiteral("Start calibration");
+                                  ));
 }
 
 void TrackerDialog_PT::poll_tracker_info()
@@ -145,6 +160,8 @@ void TrackerDialog_PT::trans_calib_step()
         Affine X_CM = tracker->pose();
         trans_calib.update(X_CM.R, X_CM.t);
     }
+    else
+        startstop_trans_calib(false);
 }
 
 void TrackerDialog_PT::save()

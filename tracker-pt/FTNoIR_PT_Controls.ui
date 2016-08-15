@@ -1074,7 +1074,7 @@
                 <bool>false</bool>
                </property>
                <property name="text">
-                <string>Toggle calibration</string>
+                <string>Start calibration</string>
                </property>
                <property name="checkable">
                 <bool>true</bool>
