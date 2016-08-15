@@ -6,11 +6,10 @@
 
 std::atomic<int> dinput_handle::refcnt;
 std::atomic_flag dinput_handle::init_lock = ATOMIC_FLAG_INIT;
-dinput_handle::di_t dinput_handle::handle(dinput_handle::make_di());
 
 LPDIRECTINPUT8& dinput_handle::init_di()
 {
-    init_com_threading(com_apartment);
+    init_com_threading(com_multithreaded);
 
     static LPDIRECTINPUT8 di_ = nullptr;
     if (di_ == nullptr)

@@ -27,7 +27,6 @@ public:
 private:
     static std::atomic<int> refcnt;
     static std::atomic_flag init_lock;
-    static di_t handle;
 
     static LPDIRECTINPUT8& init_di();
 public:
