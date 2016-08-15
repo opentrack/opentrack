@@ -50,7 +50,7 @@
 #define OPENTRACK_ORG "opentrack-2.3"
 
 namespace options {
-namespace {
+namespace detail {
 class custom_type_initializer
 {
     custom_type_initializer();

@@ -174,13 +174,13 @@ opts::opts(const QString &name) : b(bundle(name))
 {
 }
 
-custom_type_initializer::custom_type_initializer()
+detail::custom_type_initializer::custom_type_initializer()
 {
     qRegisterMetaTypeStreamOperators<slider_value>("slider_value");
     QMetaType::registerDebugStreamOperator<slider_value>();
 }
 
-custom_type_initializer custom_type_initializer::singleton;
+detail::custom_type_initializer detail::custom_type_initializer::singleton;
 
 namespace detail {
 
