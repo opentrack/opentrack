@@ -233,6 +233,11 @@ opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive)
 {
 }
 
+opt_singleton::~opt_singleton()
+{
+    qDebug() << "exit: bundle singleton";
+}
+
 pbundle opt_singleton::bundle(const opt_singleton::k &key)
 {
     QMutexLocker l(&implsgl_mtx);

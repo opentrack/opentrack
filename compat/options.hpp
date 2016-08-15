@@ -142,6 +142,7 @@ namespace options {
             void after_profile_changed_();
         public:
             opt_singleton();
+            ~opt_singleton();
             pbundle bundle(const k& key);
             void bundle_decf(const k& key);
             static void refresh_all_bundles();
