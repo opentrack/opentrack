@@ -65,8 +65,6 @@ class MainWindow : public QMainWindow, private State
             menu_action_tracker, menu_action_filter, menu_action_proto,
             menu_action_options, menu_action_mappings;
 
-    bool is_refreshing_profiles;
-
     mem<dylib> current_tracker()
     {
         return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);

@@ -28,8 +28,7 @@ extern "C" const char* opentrack_version;
 MainWindow::MainWindow() :
     State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
     pose_update_timer(this),
-    kbd_quit(QKeySequence("Ctrl+Q"), this),
-    is_refreshing_profiles(false)
+    kbd_quit(QKeySequence("Ctrl+Q"), this)
 {
     ui.setupUi(this);
 
@@ -306,22 +305,58 @@ void MainWindow::refresh_config_list()
     if (work)
         return;
 
-    if (group::ini_list().size() == 0)
+    QStringList ini_list = group::ini_list();
+
+    if (ini_list.size() == 0)
     {
         QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
         (void) filename.open(QFile::ReadWrite);
+        ini_list.append(OPENTRACK_DEFAULT_CONFIG);
     }
 
-     QStringList ini_list = group::ini_list();
-     set_title();
-     QString current = group::ini_filename();
-     is_refreshing_profiles = true;
-     ui.iconcomboProfile->clear();
-     for (auto x : ini_list)
-         ui.iconcomboProfile->addItem(QIcon(":/images/settings16.png"), x);
-     is_refreshing_profiles = false;
-     ui.iconcomboProfile->setCurrentText(current);
-     warn_on_config_not_writable();
+    if (progn(
+                if (ini_list.size() == ui.iconcomboProfile->count())
+                {
+                    const int sz = ini_list.size();
+                    for (int i = 0; i < sz; i++)
+                    {
+                        if (ini_list[i] != ui.iconcomboProfile->itemText(i))
+                            return false;
+                    }
+                    return true;
+                }
+
+                return false;
+             ))
+    {
+        // don't even warn on non-writable.
+        // it'd happen all the time since refresh is on a timer.
+        return;
+    }
+
+    set_title();
+
+    QString current = group::ini_filename();
+
+    {
+        inhibit_qt_signals l(*ui.iconcomboProfile);
+
+        ui.iconcomboProfile->clear();
+        ui.iconcomboProfile->addItems(ini_list);
+
+        QIcon icon(":/images/settings16.png");
+
+        {
+            const int sz = ini_list.size();
+
+            for (int i = 0; i < sz; i++)
+                ui.iconcomboProfile->setItemIcon(i, icon);
+        }
+
+        ui.iconcomboProfile->setCurrentText(current);
+    }
+
+    warn_on_config_not_writable();
 }
 
 void MainWindow::updateButtonState(bool running, bool inertialp)
@@ -585,11 +620,11 @@ void MainWindow::exit()
 
 void MainWindow::profile_selected(const QString& name)
 {
-    if (name == "" || is_refreshing_profiles)
-        return;
-
     const auto old_name = group::ini_filename();
     const auto new_name = name;
+
+    if (name == "")
+        return;
 
     if (old_name != new_name)
     {
