@@ -37,5 +37,5 @@ void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t
 cv::Vec3f TranslationCalibrator::get_estimate()
 {
     cv::Vec6f x = P.inv() * y;
-    return cv::Vec3f(x[0], x[1], x[2]);
+    return cv::Vec3f(-x[0], -x[1], -x[2]);
 }
