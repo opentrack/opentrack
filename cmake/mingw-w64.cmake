@@ -43,14 +43,14 @@ set(bloat "-fno-exceptions -fno-rtti")
 set(sections "-ffunction-sections -fdata-sections")
 
 set(_CFLAGS "-fvisibility=hidden")
-set(_CXXFLAGS "${bloat} ${_CFLAGS}")
+set(_CXXFLAGS "${bloat} ${_CFLAGS} -std=c++14")
 set(_CFLAGS_RELEASE "-s ${cpu} ${fpu} ${lto} ${sections}")
 set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "")
-set(_LDFLAGS_RELEASE "-Wl,--no-seh,--gc-sections,--exclude-libs,ALL,--as-needed,--nxcompat")
+set(_LDFLAGS "-Wl,--dynamicbase,--no-seh,--nxcompat,--as-needed")
+set(_LDFLAGS_RELEASE "-Wl,--gc-sections,--exclude-libs,ALL -ffunction-sections")
 set(_LDFLAGS_DEBUG "")
 
 set(enable-val FALSE)
