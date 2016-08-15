@@ -160,6 +160,13 @@ namespace options {
 #define OPENTRACK_DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
 #define OPENTRACK_DEFINE_SIGNAL(t) void valueChanged(t)
 
+    namespace detail {
+        template<typename t> struct value_type_traits { using type = t;};
+        template<> struct value_type_traits<QString> { using type = const QString&; };
+        template<> struct value_type_traits<slider_value> { using type = const slider_value&; };
+        template<typename t> using value_type_t = typename value_type_traits<t>::type;
+    }
+
     class OPENTRACK_COMPAT_EXPORT base_value : public QObject
     {
         Q_OBJECT
@@ -181,7 +188,7 @@ namespace options {
         void store(const t& datum)
         {
             b->store_kv(self_name, QVariant::fromValue(datum));
-            emit valueChanged(static_cast<t>(datum));
+            emit valueChanged(static_cast<detail::value_type_t<t>>(datum));
         }
         void store(float datum)
         {
