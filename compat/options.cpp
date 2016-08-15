@@ -65,7 +65,9 @@ const QStringList group::ini_list()
     if (dirname == "")
         return QStringList();
     QDir settings_dir(dirname);
-    return settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+    QStringList list = settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+    std::sort(list.begin(), list.end());
+    return list;
 }
 
 const mem<QSettings> group::ini_file()
