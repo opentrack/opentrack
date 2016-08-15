@@ -8,6 +8,7 @@
 #include <thread>
 #include <condition_variable>
 
+#include <QObject>
 #include <QDebug>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
@@ -21,6 +22,24 @@ void run_in_thread_async(QObject* obj, F&& fun)
     src.moveToThread(obj->thread());
     QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
 }
+
+class inhibit_qt_signals final
+{
+    QObject& val;
+    bool operate_p;
+
+public:
+    inhibit_qt_signals(QObject& val) : val(val), operate_p(!val.signalsBlocked())
+    {
+        if (operate_p)
+            val.blockSignals(true);
+    }
+    ~inhibit_qt_signals()
+    {
+        if (operate_p)
+            val.blockSignals(false);
+    }
+};
 
 namespace detail {
 
