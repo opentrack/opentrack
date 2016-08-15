@@ -204,6 +204,29 @@ void opt_singleton::bundle_decf(const opt_singleton::k& key)
     }
 }
 
+void opt_singleton::after_profile_changed_()
+{
+    QMutexLocker l(&implsgl_mtx);
+
+    for (auto& kv : implsgl_data)
+    {
+        tt& tuple = kv.second;
+        std::weak_ptr<v>& bundle = std::get<1>(tuple);
+
+        mem<v> bundle_ = bundle.lock();
+        if (bundle_)
+        {
+            qDebug() << "bundle: reverting" << kv.first << "due to profile change";
+            bundle_->reload();
+        }
+    }
+}
+
+void opt_singleton::refresh_all_bundles()
+{
+    singleton().after_profile_changed_();
+}
+
 opt_singleton::opt_singleton() : implsgl_mtx(QMutex::Recursive)
 {
 }
