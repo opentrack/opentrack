@@ -15,10 +15,10 @@ using namespace options;
 struct Map final
 {
     Map(QString primary,
-            QString secondary,
-            int max_x,
-            int max_y,
-            axis_opts& opts) :
+        QString secondary,
+        int max_x,
+        int max_y,
+        axis_opts& opts) :
         opts(opts),
         name1(primary),
         name2(secondary),
