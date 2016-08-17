@@ -10,7 +10,7 @@ class OptionsDialog : public QWidget
 {
     Q_OBJECT
 signals:
-    void saving();
+    void closing();
 public:
     OptionsDialog(std::function<void(bool)> pause_keybindings);
 public slots:

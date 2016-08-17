@@ -147,7 +147,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
                     d.close();
                 }
             });
-    connect(main.b.get(), &options::detail::opt_bundle::reloading, &d, &QDialog::close);
+    connect(main.b.get(), &options::detail::bundle::reloading, &d, &QDialog::close);
     pause_keybindings(true);
     d.show();
     d.exec();
@@ -160,7 +160,7 @@ void OptionsDialog::doOK()
     main.b->save();
     ui.game_detector->save();
     close();
-    emit saving();
+    emit closing();
 }
 
 void OptionsDialog::doCancel()
@@ -168,6 +168,7 @@ void OptionsDialog::doCancel()
     main.b->reload();
     ui.game_detector->revert();
     close();
+    emit closing();
 }
 
 void OptionsDialog::browse_datalogging_file()

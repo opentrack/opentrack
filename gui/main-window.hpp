@@ -114,7 +114,6 @@ private slots:
 
     void startTracker();
     void stopTracker();
-    void reload_options();
 
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
 

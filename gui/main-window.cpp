@@ -374,12 +374,6 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     }
 }
 
-void MainWindow::reload_options()
-{
-    if (work)
-        work->reload_shortcuts();
-}
-
 void MainWindow::startTracker()
 {
     if (work)
@@ -408,8 +402,7 @@ void MainWindow::startTracker()
     save_modules();
 
     work = std::make_shared<Work>(pose, libs, winId());
-
-    reload_options();
+    work->reload_shortcuts();
 
     if (pTrackerDialog)
         pTrackerDialog->register_tracker(libs.pTracker.get());
@@ -598,7 +591,7 @@ void MainWindow::show_options_dialog()
 {
     if (mk_window(&options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
-        connect(options_widget.get(), &OptionsDialog::saving, this, &MainWindow::reload_options);
+        connect(options_widget.get(), &OptionsDialog::closing, this, &MainWindow::register_shortcuts);
         options_widget->update_widgets_states(work != nullptr);
     }
 }
