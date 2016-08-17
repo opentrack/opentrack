@@ -8,7 +8,7 @@
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include "api/plugin-api.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 #include "compat/timer.hpp"
 

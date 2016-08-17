@@ -14,19 +14,26 @@
 
 namespace options
 {
-    class OPENTRACK_COMPAT_EXPORT slider_value final
+    class OPENTRACK_OPTIONS_EXPORT slider_value final
     {
-        double cur_, min_, max_;
+        float cur_, min_, max_;
     public:
-        slider_value(double cur, double min, double max);
+        slider_value(float cur, float min, float max);
+
+        template<typename t, typename u, typename v> slider_value(t cur, u min, v max) :
+            cur_(float(cur)),
+            min_(float(min)),
+            max_(float(max))
+        {}
+
         slider_value(const slider_value& v);
         slider_value();
         slider_value& operator=(const slider_value& v);
         bool operator==(const slider_value& v) const;
-        operator double() const { return cur_; }
-        double cur() const { return cur_; }
-        double min() const { return min_; }
-        double max() const { return max_; }
+        operator float() const { return cur_; }
+        double cur() const { return double(cur_); }
+        double min() const { return double(min_); }
+        double max() const { return double(max_); }
         slider_value update_from_slider(int pos, int q_min, int q_max) const;
         int to_slider_pos(int q_min, int q_max) const;
     };
@@ -41,15 +48,15 @@ inline QDebug operator << (QDebug dbg, const options::slider_value& val)
 
 inline QDataStream& operator << (QDataStream& out, const options::slider_value& v)
 {
-    out << v.cur()
-        << v.min()
-        << v.max();
+    out << float(v.cur())
+        << float(v.min())
+        << float(v.max());
     return out;
 }
 
 inline QDataStream& operator >> (QDataStream& in, options::slider_value& v)
 {
-    double cur, min, max;
+    float cur, min, max;
     in >> cur;
     in >> min;
     in >> max;

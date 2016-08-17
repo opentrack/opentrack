@@ -8,7 +8,7 @@
 #pragma once
 
 #include <QSerialPort>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 
 using namespace options;
 

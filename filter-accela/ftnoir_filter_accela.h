@@ -12,7 +12,7 @@
 #include <QMutex>
 #include <QTimer>
 
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 #include "compat/timer.hpp"
 

@@ -3,7 +3,7 @@
 
 namespace options {
 
-slider_value::slider_value(double cur, double min, double max) :
+slider_value::slider_value(float cur, float min, float max) :
     cur_(cur),
     min_(min),
     max_(max)
@@ -20,7 +20,9 @@ slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(
 {
 }
 
-slider_value::slider_value() : slider_value(0, 0, 0)
+
+
+slider_value::slider_value() : slider_value(0.f, 0.f, 0.f)
 {
 }
 
@@ -38,7 +40,7 @@ bool slider_value::operator==(const slider_value& v) const
 {
     using std::fabs;
 
-    static constexpr double eps = 1e-3;
+    static constexpr float eps = 1e-3f;
 
     return (fabs(v.cur_ - cur_) < eps &&
             fabs(v.min_ - min_) < eps &&

@@ -13,7 +13,7 @@
 #include <QTableWidget>
 #include <QResizeEvent>
 
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 
 class FancyTable : public QTableWidget

@@ -19,7 +19,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include "compat/shm.h"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "freetrackclient/fttypes.h"
 #include <memory>
 #include "mutex.hpp"

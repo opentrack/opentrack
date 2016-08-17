@@ -20,7 +20,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 #include <windows.h>
 

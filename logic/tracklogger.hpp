@@ -1,6 +1,6 @@
 #pragma once
 #include "main-settings.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "compat/timer.hpp"
 
 #include <fstream>

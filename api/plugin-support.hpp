@@ -8,7 +8,7 @@
 #pragma once
 
 #include "plugin-api.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 
 #include <QWidget>
 #include <QDebug>

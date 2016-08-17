@@ -9,7 +9,7 @@
 #pragma once
 
 #include <QString>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "api/plugin-api.hpp"
 
 using namespace options;

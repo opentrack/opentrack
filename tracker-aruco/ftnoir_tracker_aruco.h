@@ -26,7 +26,7 @@
 
 #include <cinttypes>
 
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 
 struct settings : opts {

@@ -15,7 +15,7 @@
 #include "export.hpp"
 
 #include "qxt-mini/QxtGlobalShortcut"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "main-settings.hpp"
 
 #ifdef _WIN32

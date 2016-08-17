@@ -1,7 +1,7 @@
 #pragma once
 #include "ui_ftnoir_rift_clientcontrols_025.h"
 #include "api/plugin-api.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include <OVR.h>
 #include <cmath>
 #include <memory>

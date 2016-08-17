@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 #include "api/plugin-support.hpp"
 #include "main-settings.hpp"

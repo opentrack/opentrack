@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 
 #define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"

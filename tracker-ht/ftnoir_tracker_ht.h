@@ -12,7 +12,7 @@
 #include "ht_video_widget.h"
 #include "compat/shm.h"
 #include <QObject>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "api/opencv-camera-dialog.hpp"
 

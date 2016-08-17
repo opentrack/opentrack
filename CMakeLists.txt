@@ -19,6 +19,7 @@ file(GLOB opentrack-subprojects
     "tracker-*/${C}"
     "proto-*/${C}"
     "filter-*/${C}"
+    "options/${C}"
     "api/${C}"
     "compat/${C}"
     "logic/${C}"

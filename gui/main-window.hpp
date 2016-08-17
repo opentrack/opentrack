@@ -17,7 +17,7 @@
 #include "logic/shortcuts.h"
 #include "logic/work.hpp"
 #include "logic/state.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 
 #include <QMainWindow>
 #include <QKeySequence>

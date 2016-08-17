@@ -19,7 +19,7 @@
 
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "tracklogger.hpp"
 
 #include <QMutex>

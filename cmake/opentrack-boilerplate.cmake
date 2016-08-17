@@ -87,7 +87,7 @@ function(opentrack_boilerplate__ n files_ no-library_ static_ no-compat_ compile
         opentrack_compat(${n})
     endif()
     if(NOT no-compat_)
-        target_link_libraries(${n} opentrack-api opentrack-compat)
+        target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
     endif()
     target_link_libraries(${n} ${MY_QT_LIBS})
     if(CMAKE_COMPILER_IS_GNUCXX)

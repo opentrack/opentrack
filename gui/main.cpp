@@ -9,7 +9,7 @@
 #endif
 
 #include "main-window.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "compat/win32-com.hpp"
 using namespace options;
 #include <QApplication>

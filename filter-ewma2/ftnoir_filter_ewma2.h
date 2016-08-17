@@ -4,7 +4,7 @@
 #include "ui_ftnoir_ewma_filtercontrols.h"
 #include <QWidget>
 #include <QMutex>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "compat/timer.hpp"
 using namespace options;
 

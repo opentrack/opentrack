@@ -18,7 +18,7 @@
 #include "api/plugin-api.hpp"
 
 #include "dinput/win32-joystick.hpp"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 
 struct settings : opts {

@@ -8,7 +8,7 @@
 
 #include "main-window.hpp"
 #include "logic/tracker.h"
-#include "compat/options.hpp"
+#include "options/options.hpp"
 #include "opentrack-library-path.h"
 #include "new_file_dialog.h"
 #include <QFile>

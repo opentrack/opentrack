@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include <QSettings>
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"

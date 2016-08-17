@@ -28,7 +28,7 @@ struct pt_types
     using mat22 = mat<2, 2>;
 };
 
-#include "compat/options.hpp"
+#include "options/options.hpp"
 using namespace options;
 
 struct settings_pt : opts
