@@ -31,64 +31,69 @@ MainWindow::MainWindow() :
     kbd_quit(QKeySequence("Ctrl+Q"), this)
 {
     ui.setupUi(this);
-
     setFixedSize(size());
-
     updateButtonState(false, false);
+    ui.btnStartTracker->setFocus();
+
+    refresh_config_list();
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
-
-    modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
-
-    for (auto x : modules.trackers())
-        ui.iconcomboTrackerSource->addItem(x->icon, x->name);
-
-    for (auto x : modules.protocols())
-        ui.iconcomboProtocol->addItem(x->icon, x->name);
-
-    for (auto x : modules.filters())
-        ui.iconcomboFilter->addItem(x->icon, x->name);
-
-    refresh_config_list();
-    connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
-    config_list_timer.start(1000 * 3);
-
-    tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
-    tie_setting(m.protocol_dll, ui.iconcomboProtocol);
-    tie_setting(m.filter_dll, ui.iconcomboFilter);
-
-    connect(ui.iconcomboTrackerSource,
-            &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
-
-    connect(ui.iconcomboProtocol,
-            &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
-
-    connect(ui.iconcomboFilter,
-            &QComboBox::currentTextChanged,
-            [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
-
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
     connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profile_selected(QString)));
 
+    // fill dylib comboboxen
+    {
+        modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
+
+        for (mem<dylib>& x : modules.trackers())
+            ui.iconcomboTrackerSource->addItem(x->icon, x->name);
+
+        for (mem<dylib>& x : modules.protocols())
+            ui.iconcomboProtocol->addItem(x->icon, x->name);
+
+        for (mem<dylib>& x : modules.filters())
+            ui.iconcomboFilter->addItem(x->icon, x->name);
+    }
+
+    // dylibs
+    {
+        tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
+        tie_setting(m.protocol_dll, ui.iconcomboProtocol);
+        tie_setting(m.filter_dll, ui.iconcomboFilter);
+
+        connect(ui.iconcomboTrackerSource,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
+
+        connect(ui.iconcomboProtocol,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
+
+        connect(ui.iconcomboFilter,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
+    }
+
+    // timers
+    connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+    connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
+
+    // ctrl+q exits
     connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
 
-    profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
-    profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
-    profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
-    ui.profile_button->setMenu(&profile_menu);
-
-    kbd_quit.setEnabled(true);
-
-    connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
-    det_timer.start(1000);
+    // profile menu
+    {
+        profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
+        profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
+        profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
+        ui.profile_button->setMenu(&profile_menu);
+    }
 
     if (!QFile(group::ini_pathname()).exists())
     {
@@ -100,12 +105,6 @@ MainWindow::MainWindow() :
             (void) file.open(QFile::ReadWrite);
         }
     }
-
-    if (group::ini_directory() == "")
-        QMessageBox::warning(this,
-                             "Configuration not saved.",
-                             "Can't create configuration directory! Expect major malfunction.",
-                             QMessageBox::Ok, QMessageBox::NoButton);
 
     connect(this, &MainWindow::emit_start_tracker,
             this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
@@ -123,17 +122,31 @@ MainWindow::MainWindow() :
             this, [&]() -> void { qDebug() << "restart tracker"; stopTracker(); startTracker(); },
             Qt::QueuedConnection);
 
+    // this sort of makes sense since the cancel button on the mapping window
+    // emits this signal.
+    connect(s.b_map.get(), &bundle_type::reloading, this, &MainWindow::reload_splines);
+
+    // tray
+    {
+        init_tray_menu();
+
+        connect(&s.tray_enabled,
+                static_cast<void (base_value::*)(bool)>(&base_value::valueChanged),
+                this,
+                [&](bool) { ensure_tray(); });
+        ensure_tray();
+    }
+
+    if (group::ini_directory() == "")
+        QMessageBox::warning(this,
+                             "Configuration not saved.",
+                             "Can't create configuration directory! Expect major malfunction.",
+                             QMessageBox::Ok, QMessageBox::NoButton);
+
     register_shortcuts();
-
-    ui.btnStartTracker->setFocus();
-
-    init_tray_menu();
-
-    connect(&s.tray_enabled,
-            static_cast<void (base_value::*)(bool)>(&base_value::valueChanged),
-            this,
-            [&](bool) { ensure_tray(); });
-    ensure_tray();
+    det_timer.start(1000);
+    config_list_timer.start(1000 * 5);
+    kbd_quit.setEnabled(true);
 }
 
 void MainWindow::init_tray_menu()
