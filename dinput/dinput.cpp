@@ -9,7 +9,7 @@ std::atomic_flag dinput_handle::init_lock = ATOMIC_FLAG_INIT;
 
 LPDIRECTINPUT8& dinput_handle::init_di()
 {
-    init_com_threading(com_multithreaded);
+    init_com_threading();
 
     static LPDIRECTINPUT8 di_ = nullptr;
     if (di_ == nullptr)

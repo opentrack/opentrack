@@ -25,7 +25,7 @@ camera_dialog::~camera_dialog() {}
 void camera_dialog::open_camera_settings(cv::VideoCapture* cap, const QString& camera_name, QMutex* camera_mtx)
 {
 #ifdef _WIN32
-    init_com_threading(com_apartment);
+    init_com_threading();
 
     if (cap)
     {

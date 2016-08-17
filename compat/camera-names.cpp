@@ -33,7 +33,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
-    init_com_threading(com_apartment);
+    init_com_threading();
     ICreateDevEnum *pSysDevEnum = NULL;
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))

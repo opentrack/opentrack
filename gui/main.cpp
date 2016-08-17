@@ -112,7 +112,7 @@ static void add_program_library_path()
 int main(int argc, char** argv)
 {
 #ifdef _WIN32
-    init_com_threading(com_apartment);
+    init_com_threading();
     add_program_library_path();
 #elif !defined(__linux)
     // workaround QTBUG-38598
@@ -126,12 +126,11 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
 
     set_qt_style();
+    MainWindow::set_working_directory();
 
 #ifdef _WIN32
     add_win32_path();
 #endif
-
-    MainWindow::set_working_directory();
 
     {
         mem<MainWindow> w = std::make_shared<MainWindow>();
