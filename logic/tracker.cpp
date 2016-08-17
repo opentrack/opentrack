@@ -28,9 +28,6 @@ Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     newpose {0,0,0, 0,0,0},
     libs(libs),
     logger(logger),
-    r_b(get_camera_offset_matrix(c_div).t()),
-    r_b_real(get_camera_offset_matrix(1).t()),
-    t_b {0,0,0},
     centerp(s.center_at_startup),
     enabledp(true),
     zero_(false),
@@ -90,25 +87,14 @@ static inline double elide_nan(double value, double def)
     return value;
 }
 
-static bool is_nan(const dmat<3,3>& r, const dmat<3, 1>& t)
+template<int u, int w>
+static bool is_nan(const dmat<u,w>& r)
 {
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            if (nanp(r(i, j)))
+    for (int i = 0; i < u; i++)
+        for (int j = 0; j < w; j++)
+            if (nanp(r(u, w)))
                 return true;
 
-    for (int i = 0; i < 3; i++)
-        if (nanp(t(i)))
-            return true;
-
-    return false;
-}
-
-static bool is_nan(const Pose& value)
-{
-    for (int i = 0; i < 6; i++)
-        if (nanp(value(i)))
-            return true;
     return false;
 }
 
@@ -140,83 +126,107 @@ void Tracker::logic()
     if (is_nan(raw))
         raw = last_raw;
 
-    // TODO fix gimbal lock by dividing euler angle input by >=3.
-    // maintain the real rmat separately for translation compensation
     // TODO split this function, it's too big
-    rmat r, r_real;
 
     {
         euler_t tmp = d2r * euler_t(&value[Yaw]);
-        r = euler_to_rmat(c_div * tmp);
-        r_real = euler_to_rmat(tmp);
+        scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
+        real_rotation.rotation = euler_to_rmat(tmp);
+        tait_bryan_to_matrices(c_div * tmp, scaled_rotation.rr, scaled_rotation.ry, scaled_rotation.rp);
     }
 
-    euler_t t(value(0), value(1), value(2));
+    scaled_rotation.camera = get_camera_offset_matrix(c_div);
+    real_rotation.camera = get_camera_offset_matrix(1);
 
-    bool do_center_now = false;
-    bool nan = is_nan(r, t);
+    scaled_rotation.rotation = scaled_rotation.camera * scaled_rotation.rotation;
+    real_rotation.rotation = real_rotation.camera * real_rotation.rotation;
 
-    if (centerp && !nan)
+    bool nanp = is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
+
+    if (!nanp)
     {
-        for (int i = 0; i < 6; i++)
-            if (fabs(newpose[i]) != 0)
+        bool can_center = false;
+
+        if (centerp && !nanp)
+        {
+            for (int i = 0; i < 6; i++)
+                if (fabs(newpose[i]) != 0)
+                {
+                    can_center = true;
+                    break;
+                }
+        }
+
+        if (can_center)
+        {
+
+            centerp = false;
+
+            if (libs.pFilter)
+                libs.pFilter->center();
+
+            if (libs.pTracker->center())
             {
-                do_center_now = true;
-                break;
+                scaled_rotation.rotation = scaled_rotation.camera.t();
+                real_rotation.rotation = real_rotation.camera.t();
+
+                scaled_rotation.rotation = rmat::eye();
+                real_rotation.rotation = rmat::eye();
             }
-    }
+            else
+            {
+                euler::tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation),
+                                              scaled_rotation.center_roll,
+                                              scaled_rotation.center_pitch,
+                                              scaled_rotation.center_yaw);
+                euler::tait_bryan_to_matrices(rmat_to_euler(real_rotation.rotation),
+                                              real_rotation.center_roll,
+                                              real_rotation.center_pitch,
+                                              real_rotation.center_yaw);
+                real_rotation.rot_center = real_rotation.rotation.t();
+                scaled_rotation.rot_center = scaled_rotation.rotation.t();
+            }
 
-    const rmat cam = get_camera_offset_matrix(c_div);
-    const rmat cam_real = get_camera_offset_matrix(1);
-
-    r = r * cam;
-    r_real = r_real * cam_real;
-
-    if (do_center_now)
-    {
-        centerp = false;
-
-        if (libs.pFilter)
-            libs.pFilter->center();
-
-        if (libs.pTracker->center())
-        {
-            r_b = cam.t();
-            r_b_real = cam_real.t();
-            r = rmat::eye();
-            r_real = rmat::eye();
+            t_center = euler_t(&value(TX));
         }
-        else
-        {
-            r_b = r.t();
-            r_b_real = r_real.t();
-        }
-
-        for (int i = 0; i < 3; i++)
-            t_b[i] = t(i);
     }
 
     {
+        rmat rotation;
+
         switch (s.center_method)
         {
         // inertial
         case 0:
         default:
-            r = r_b * r;
+            //scaled_rotation.rotation = scaled_rotation
+            rotation = scaled_rotation.rot_center * scaled_rotation.rotation;
             break;
         // camera
         case 1:
-            r = r * r_b;
+            rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
+            break;
+        // alternative camera
+        case 2:
+            rmat cy, cp, cr;
+            tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation), cr, cp, cy);
+
+            rmat ry = cy * scaled_rotation.center_yaw.t();
+            rmat rp = cp * scaled_rotation.center_pitch.t();
+            rmat rr = cr * scaled_rotation.center_roll.t();
+
+            // roll yaw pitch
+            rotation = rr * ry * rp;
             break;
         }
 
-        const euler_t rot = r2d * c_mult * rmat_to_euler(r);
-        euler_t pos(t(0) - t_b[0], t(1) - t_b[1], t(2) - t_b[2]);
+        const euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
+        euler_t pos = euler_t(&value[TX]) - t_center;
 
         if (s.use_camera_offset_from_centering)
-            t_compensate(r_b_real.t() * cam_real.t(), pos, pos, false);
+            t_compensate(real_rotation.rot_center.t() * real_rotation.camera.t(), pos, pos, false);
         else
-            t_compensate(cam_real.t(), pos, pos, false);
+            t_compensate(real_rotation.camera.t(), pos, pos, false);
 
         for (int i = 0; i < 3; i++)
         {
@@ -230,7 +240,7 @@ void Tracker::logic()
     // whenever something can corrupt its internal state due to nan/inf, elide the call
     if (is_nan(value))
     {
-        nan = true;
+        nanp = true;
         logger.write_pose(value); // "filtered"
     }
     else
@@ -258,7 +268,7 @@ void Tracker::logic()
                 value(i) = 0;
 
         if (is_nan(value))
-            nan = true;
+            nanp = true;
     }
 
     if (s.tcomp_p)
@@ -268,8 +278,8 @@ void Tracker::logic()
                      value_,
                      value_,
                      s.tcomp_tz);
-        if (is_nan(r, value_))
-            nan = true;
+        if (is_nan(value_))
+            nanp = true;
         for (int i = 0; i < 3; i++)
             value(i) = value_(i);
     }
@@ -280,7 +290,7 @@ void Tracker::logic()
 
     logger.write_pose(value); // "mapped"
 
-    if (nan)
+    if (nanp)
     {
         value = last_mapped;
 

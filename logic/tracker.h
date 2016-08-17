@@ -50,8 +50,19 @@ private:
     // the logger while the tracker is running.
     TrackLogger &logger;
 
-    rmat r_b, r_b_real;
-    double t_b[3];
+    struct state
+    {
+        rmat center_yaw, center_pitch, center_roll;
+        rmat rot_center;
+        rmat camera;
+        rmat rotation, ry, rp, rr;
+
+        state() : center_yaw(rmat::eye()), center_pitch(rmat::eye()), center_roll(rmat::eye()), rot_center(rmat::eye())
+        {}
+    };
+
+    state real_rotation, scaled_rotation;
+    euler_t t_center;
 
     volatile bool centerp;
     volatile bool enabledp;
