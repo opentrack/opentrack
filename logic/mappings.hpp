@@ -12,77 +12,64 @@ using namespace options;
 #include "spline-widget/spline.hpp"
 #include "main-settings.hpp"
 
-class Map {
-public:
+struct Map final
+{
     Map(QString primary,
             QString secondary,
             int max_x,
             int max_y,
             axis_opts& opts) :
-        spline_main(max_x, max_y),
-        spline_alt(max_x, max_y),
         opts(opts),
         name1(primary),
-        name2(secondary)
+        name2(secondary),
+        spline_main(max_x, max_y, primary),
+        spline_alt(max_x, max_y, secondary)
     {
-        mem<QSettings> iniFile = group::ini_file();
-        spline_main.loadSettings(*iniFile, primary);
-        spline_alt.loadSettings(*iniFile, secondary);
     }
-    spline spline_main;
-    spline spline_alt;
+
+    void save()
+    {
+        spline_main.save();
+        spline_alt.save();
+    }
+
+    void load()
+    {
+        spline_main.reload();
+        spline_alt.reload();
+    }
+
     axis_opts& opts;
     QString name1, name2;
+    spline spline_main, spline_alt;
 };
 
-class Mappings {
+class Mappings
+{
 private:
     Map axes[6];
 public:
     Mappings(std::vector<axis_opts*> opts) :
         axes {
-            Map("tx","tx_alt", 30, 75, *opts[TX]),
-            Map("ty","ty_alt", 30, 75, *opts[TY]),
-            Map("tz","tz_alt", 30, 75, *opts[TZ]),
-            Map("rx", "rx_alt", 180, 180, *opts[Yaw]),
-            Map("ry", "ry_alt", 180, 180, *opts[Pitch]),
-            Map("rz", "rz_alt", 180, 180, *opts[Roll])
+            Map("spline-X", "alt-spline-X", 30, 75, *opts[TX]),
+            Map("spline-Y", "alt-spline-Y", 30, 75, *opts[TY]),
+            Map("spline-Z", "alt-spline-Z", 30, 75, *opts[TZ]),
+            Map("spline-yaw", "alt-spline-yaw", 180, 180, *opts[Yaw]),
+            Map("spline-pitch", "alt-spline-pitch", 180, 180, *opts[Pitch]),
+            Map("spline-roll", "alt-spline-roll", 180, 180, *opts[Roll])
         }
     {}
 
     inline Map& operator()(int i) { return axes[i]; }
     inline const Map& operator()(int i) const { return axes[i]; }
+    inline Map& operator()(unsigned i) { return axes[i]; }
+    inline const Map& operator()(unsigned  i) const { return axes[i]; }
 
-    void load_mappings()
+    template<typename f> void forall(f&& fun)
     {
-        mem<QSettings> iniFile = group::ini_file();
-
-        for (int i = 0; i < 6; i++)
+        for (unsigned i = 0; i < 6; i++)
         {
-            axes[i].spline_main.loadSettings(*iniFile, axes[i].name1);
-            axes[i].spline_alt.loadSettings(*iniFile, axes[i].name2);
-            axes[i].opts.b->reload();
-        }
-    }
-    void save_mappings()
-    {
-        mem<QSettings> iniFile = group::ini_file();
-
-        for (int i = 0; i < 6; i++)
-        {
-            axes[i].spline_main.saveSettings(*iniFile, axes[i].name1);
-            axes[i].spline_alt.saveSettings(*iniFile, axes[i].name2);
-            axes[i].opts.b->save();
-        }
-    }
-
-    void invalidate_unsaved()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            axes[i].spline_main.invalidate_unsaved_settings();
-            axes[i].spline_alt.invalidate_unsaved_settings();
-            axes[i].opts.b->reload();
+            fun(axes[i]);
         }
     }
 };
