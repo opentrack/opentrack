@@ -5,8 +5,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "compat/options.hpp"
-using namespace options;
 #include "spline-widget.hpp"
 #include <QPainter>
 #include <QPaintEvent>
@@ -28,13 +26,21 @@ spline_widget::spline_widget(QWidget *parent) :
     setMouseTracking(true);
 }
 
-void spline_widget::setConfig(spline* config, const QString& name)
+void spline_widget::setConfig(spline* config, bundle b)
 {
-    mem<QSettings> iniFile = group::ini_file();
-    if (name != "")
-        config->loadSettings(*iniFile, name);
+    if (config && config->get_bundle() && config->get_bundle() != b)
+    {
+        QObject::disconnect(connection);
+        connection = QMetaObject::Connection();
+    }
+
+    if (config && config->get_bundle() != b)
+        config->set_bundle(b);
     _config = config;
-    _draw_function = true;
+    if (b)
+        connection = connect(b.get(), &bundle_type::reloading,
+                             this, &spline_widget::reload_spline,
+                             Qt::QueuedConnection);
     update_range();
     update();
 }
@@ -76,11 +82,11 @@ void spline_widget::drawBackground()
     QPen pen(color__, 1, Qt::SolidLine);
 
     const int xstep = 10, ystep = 10;
-    const qreal maxx = _config->maxInput() + ystep;
-    const qreal maxy = _config->maxOutput() + xstep;
+    const qreal maxx = _config->maxInput();
+    const qreal maxy = _config->maxOutput();
 
     // horizontal grid
-    for (int i = 0; i < maxy; i += xstep)
+    for (int i = 0; i <= maxy; i += xstep)
     {
         const qreal y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
         drawLine(&painter,
@@ -95,7 +101,7 @@ void spline_widget::drawBackground()
     }
 
     // vertical grid
-    for (int i = 0; i < maxx; i += ystep)
+    for (int i = 0; i <= maxx; i += ystep)
     {
         const qreal x = pixel_bounds.x() + i * c.x();
         drawLine(&painter,
@@ -120,7 +126,7 @@ void spline_widget::drawFunction()
     QPainter painter(&_function);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QList<QPointF> points = _config->getPoints();
+    points_t points = _config->getPoints();
 
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
@@ -158,14 +164,14 @@ void spline_widget::drawFunction()
     QPointF prev = point_to_pixel(QPointF(0, 0));
     for (qreal i = 0; i < max; i += step)
     {
-        const qreal val = qreal(_config->getValue(float(i)));
+        const qreal val = qreal(_config->getValue(i));
         QPointF cur = point_to_pixel(QPointF(i, val));
         painter.drawLine(prev, cur);
         prev = cur;
     }
 
     {
-        const qreal val = _config->getValue(float(max));
+        const qreal val = qreal(_config->getValue(max));
         QPointF last = point_to_pixel(QPointF(max, val));
         painter.drawLine(prev, last);
     }
@@ -183,7 +189,8 @@ void spline_widget::paintEvent(QPaintEvent *e)
         drawBackground();
     }
 
-    if (_draw_function) {
+    if (_draw_function)
+    {
         _draw_function = false;
         drawFunction();
     }
@@ -193,13 +200,13 @@ void spline_widget::paintEvent(QPaintEvent *e)
     if (_config)
     {
         QPen pen(Qt::white, 1, Qt::SolidLine);
-        QList<QPointF> points = _config->getPoints();
+        points_t points = _config->getPoints();
         if (points.size() &&
             moving_control_point_idx >= 0 &&
             moving_control_point_idx < points.size())
         {
             if (points[0].x() > 1e-2)
-                points.prepend(QPointF(0, 0));
+                points.push_front(QPointF(0, 0));
             QPointF prev = point_to_pixel(points[0]);
             for (int i = 1; i < points.size(); i++)
             {
@@ -245,7 +252,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 {
     if (!_config || !isEnabled())
         return;
-    QList<QPointF> points = _config->getPoints();
+    points_t points = _config->getPoints();
     if (e->button() == Qt::LeftButton)
     {
         bool bTouchingPoint = false;
@@ -257,7 +264,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 if (point_within_pixel(points[i], e->pos()))
                 {
                     bTouchingPoint = true;
-                    moving_control_point_idx = i;
+                    moving_control_point_idx = int(i);
                     break;
                 }
             }
@@ -269,7 +276,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 for (int i = 0; i < points.size(); i++)
                 {
                     const QPointF pt = point_to_pixel(points[i]);
-                    const auto x = pt.x() - pos.x();
+                    const qreal x = pt.x() - pos.x();
                     if (point_closeness_limit * point_closeness_limit >= x * x)
                     {
                         too_close = true;
@@ -313,11 +320,13 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
     if (!_config || !isEnabled())
         return;
 
-    QList<QPointF> points = _config->getPoints();
+    points_t points = _config->getPoints();
 
-    if (moving_control_point_idx != -1 &&
+    if (moving_control_point_idx >= 0 &&
         moving_control_point_idx < points.size())
     {
+        const int idx = moving_control_point_idx;
+
         setCursor(Qt::ClosedHandCursor);
 
         bool overlap = false;
@@ -328,9 +337,9 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         for (int i = 0; i < 2; i++)
         {
             bool bad = false;
-            if (moving_control_point_idx + 1 < points.size())
+            if (idx + 1 < points.size())
             {
-                auto other = points[moving_control_point_idx+1];
+                auto other = points[idx+1];
                 auto other_pix = point_to_pixel(other);
                 bad = pix.x() + point_closeness_limit > other_pix.x();
                 if (i == 0 && bad)
@@ -341,9 +350,9 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
                 else
                     overlap |= bad;
             }
-            if (moving_control_point_idx != 0)
+            if (idx != 0)
             {
-                auto other = points[moving_control_point_idx-1];
+                auto other = points[idx-1];
                 auto other_pix = point_to_pixel(other);
                 bad = pix.x() - point_closeness_limit < other_pix.x();
                 if (i == 0 && bad)
@@ -360,8 +369,8 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
         if (!overlap)
         {
-            points[moving_control_point_idx] = new_pt;
-            _config->movePoint(moving_control_point_idx, new_pt);
+            points[idx] = new_pt;
+            _config->movePoint(int(idx), new_pt);
             _draw_function = true;
             update();
         }
@@ -403,6 +412,15 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 
         _draw_function = true;
         update();
+    }
+}
+
+void spline_widget::reload_spline()
+{
+    if (_config && _config->get_bundle() != nullptr)
+    {
+        _config->set_bundle(_config->get_bundle());
+        update_range();
     }
 }
 

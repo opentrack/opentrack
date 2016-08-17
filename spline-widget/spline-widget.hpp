@@ -9,22 +9,29 @@
 
 #pragma once
 
-#include <QWidget>
-#include <QtGui>
-#include <QPointF>
 #include "spline.hpp"
 #include "api/plugin-api.hpp"
+#include "options/options.hpp"
+#include <QWidget>
+#include <QtGui>
+#include <QMetaObject>
+#include <QPointF>
+#include <QDebug>
+using namespace options;
 
-class SPLINE_WIDGET_EXPORT spline_widget : public QWidget
+class SPLINE_WIDGET_EXPORT spline_widget final : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
     Q_PROPERTY(bool is_preview_only READ is_preview_only WRITE set_preview_only)
+
+    using points_t = spline::points_t;
 public:
     spline_widget(QWidget *parent = 0);
 
     spline* config();
-    void setConfig(spline* config, const QString &name);
+
+    void setConfig(spline* config, bundle b);
 
     QColor colorBezier() const
     {
@@ -49,6 +56,7 @@ protected slots:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
+    void reload_spline();
 private:
     void drawBackground();
     void drawFunction();
@@ -68,13 +76,17 @@ private:
     // bounds of the rectangle user can interact with
     QRectF  pixel_bounds;
 
-    int moving_control_point_idx;
     QPointF c;
 
     QColor spline_color;
 
     QPixmap _background;
     QPixmap _function;
+
+    QMetaObject::Connection connection;
+
+    int moving_control_point_idx;
+
     int snap_x, snap_y;
     bool _draw_function, _preview_only;
 

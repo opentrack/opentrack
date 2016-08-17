@@ -78,8 +78,6 @@ class MainWindow : public QMainWindow, private State
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
-    void load_settings();
-    void load_mappings();
     void updateButtonState(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();

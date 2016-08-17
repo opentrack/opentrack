@@ -122,10 +122,6 @@ MainWindow::MainWindow() :
             this, [&]() -> void { qDebug() << "restart tracker"; stopTracker(); startTracker(); },
             Qt::QueuedConnection);
 
-    // this sort of makes sense since the cancel button on the mapping window
-    // emits this signal.
-    connect(s.b_map.get(), &bundle_type::reloading, this, &MainWindow::reload_splines);
-
     // tray
     {
         init_tray_menu();
@@ -260,20 +256,6 @@ void MainWindow::set_working_directory()
 void MainWindow::save_modules()
 {
     m.b->save();
-}
-
-void MainWindow::load_mappings()
-{
-    pose.load_mappings();
-    if (mapping_widget)
-        mapping_widget->reload();
-}
-
-void MainWindow::load_settings()
-{
-    m.b->reload();
-    s.b->reload();
-    load_mappings();
 }
 
 void MainWindow::make_empty_config()
@@ -644,7 +626,7 @@ void MainWindow::profile_selected(const QString& name)
         save_modules();
         set_profile(new_name);
         set_title();
-        load_settings();
+        options::detail::bundler::refresh_all_bundles();
     }
 }
 
