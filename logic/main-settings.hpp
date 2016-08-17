@@ -16,21 +16,24 @@ using namespace options;
 
 #include "export.hpp"
 
-struct axis_opts
+struct axis_opts final
 {
-    pbundle b;
+    // note, these two bundles can be the same value with no issues
+    bundle b_settings_window, b_mapping_window;
     value<double> zero;
-    value<bool> invert, altp;
     value<int> src;
-    axis_opts(pbundle b, QString pfx, int idx) :
-        b(b),
-        zero(b, n(pfx, "zero-pos"), 0),
-        invert(b, n(pfx, "invert-sign"), false),
-        altp(b, n(pfx, "alt-axis-sign"), false),
-        src(b, n(pfx, "source-index"), idx)
+    value<bool> invert, altp;
+    axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, int idx) :
+        b_settings_window(b_settings_window),
+        b_mapping_window(b_mapping_window),
+        zero(b_settings_window, n(pfx, "zero-pos"), 0),
+        src(b_settings_window, n(pfx, "source-index"), idx),
+        invert(b_settings_window, n(pfx, "invert-sign"), false),
+        altp(b_mapping_window, n(pfx, "alt-axis-sign"), false)
     {}
 private:
-    static inline QString n(QString pfx, QString name) {
+    static inline QString n(QString pfx, QString name)
+    {
         return QString("%1-%2").arg(pfx, name);
     }
 };
@@ -40,7 +43,7 @@ struct key_opts
     value<QString> keycode, guid;
     value<int> button;
 
-    key_opts(pbundle b, const QString& name) :
+    key_opts(bundle b, const QString& name) :
         keycode(b, QString("keycode-%1").arg(name), ""),
         guid(b, QString("guid-%1").arg(name), ""),
         button(b, QString("button-%1").arg(name), -1)
@@ -49,10 +52,10 @@ struct key_opts
 
 struct module_settings
 {
-    pbundle b;
+    bundle b;
     value<QString> tracker_dll, filter_dll, protocol_dll;
     module_settings() :
-        b(bundle("modules")),
+        b(make_bundle("modules")),
         tracker_dll(b, "tracker-dll", ""),
         filter_dll(b, "filter-dll", "Accela"),
         protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced")
@@ -62,7 +65,7 @@ struct module_settings
 
 struct main_settings
 {
-    pbundle b, b_map;
+    bundle b, b_map;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_tz;
     value<bool> tray_enabled;
@@ -76,14 +79,14 @@ struct main_settings
     value<bool> tracklogging_enabled;
     value<QString> tracklogging_filename;
     main_settings() :
-        b(bundle("opentrack-ui")),
-        b_map(bundle("opentrack-mappings")),
-        a_x(b_map, "x", TX),
-        a_y(b_map, "y", TY),
-        a_z(b_map, "z", TZ),
-        a_yaw(b_map, "yaw", Yaw),
-        a_pitch(b_map, "pitch", Pitch),
-        a_roll(b_map, "roll", Roll),
+        b(make_bundle("opentrack-ui")),
+        b_map(make_bundle("opentrack-mappings")),
+        a_x(b, b_map, "x", TX),
+        a_y(b, b_map, "y", TY),
+        a_z(b, b_map, "z", TZ),
+        a_yaw(b, b_map, "yaw", Yaw),
+        a_pitch(b, b_map, "pitch", Pitch),
+        a_roll(b, b_map, "roll", Roll),
         tcomp_p(b, "compensate-translation", true),
         tcomp_tz(b, "compensate-translation-disable-z-axis", false),
         tray_enabled(b, "use-system-tray", false),
