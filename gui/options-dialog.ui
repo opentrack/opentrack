@@ -690,6 +690,11 @@ It won't work properly with translation compensation enabled.</string>
               <string>Absolute (camera device)</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Experimental (camera device)</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="0" column="1">
