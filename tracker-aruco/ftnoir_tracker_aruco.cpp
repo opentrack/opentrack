@@ -402,8 +402,8 @@ void Tracker::data(double *data)
     data[Yaw] = pose[Yaw];
     data[Pitch] = pose[Pitch];
     data[Roll] = pose[Roll];
-    data[TX] = pose[TX];
-    data[TY] = pose[TY];
+    data[TX] = pose[TX] * .5;
+    data[TY] = pose[TY] * .5;
     data[TZ] = pose[TZ];
 }
 
