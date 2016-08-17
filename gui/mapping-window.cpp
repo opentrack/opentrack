@@ -89,15 +89,18 @@ void MapWidget::closeEvent(QCloseEvent*)
 
 void MapWidget::save_dialog()
 {
-    s.b_map->save();
+    mem<QSettings> settings_ = group::ini_file();
+    QSettings& settings = *settings_;
+
+    s.b_map->save_deferred(settings);
 
     for (int i = 0; i < 6; i++)
     {
         m.forall([&](Map& s)
         {
-            s.spline_main.save();
-            s.spline_alt.save();
-            s.opts.b_mapping_window->save();
+            s.spline_main.save(settings);
+            s.spline_alt.save(settings);
+            s.opts.b_mapping_window->save_deferred(settings);
         });
     }
 }

@@ -254,10 +254,15 @@ void spline::reload()
         s->b->reload();
 }
 
-void spline::save()
+void spline::save(QSettings& settings)
 {
     if (s && s->b)
-        s->b->save();
+        s->b->save_deferred(settings);
+}
+
+void spline::save()
+{
+    save(*group::ini_file());
 }
 
 void spline::set_bundle(bundle b)

@@ -27,10 +27,10 @@ struct Map final
     {
     }
 
-    void save()
+    void save(QSettings& s)
     {
-        spline_main.save();
-        spline_alt.save();
+        spline_main.save(s);
+        spline_alt.save(s);
     }
 
     void load()

@@ -41,6 +41,7 @@ public:
     void store_kv(const QString& name, const QVariant& datum);
     bool contains(const QString& name) const;
     void save();
+    void save_deferred(QSettings& s);
     bool modifiedp() const;
 
     template<typename t>

@@ -37,7 +37,7 @@ bool bundle::contains(const QString &name) const
     return transient.contains(name);
 }
 
-void bundle::save()
+void bundle::save_deferred(QSettings& s)
 {
     if (group_name == "")
         return;
@@ -51,12 +51,17 @@ void bundle::save()
             qDebug() << "bundle" << group_name << "changed, saving";
             modified_ = true;
             saved = transient;
-            saved.save();
+            saved.save_deferred(s);
         }
     }
 
     if (modified_)
         emit saving();
+}
+
+void bundle::save()
+{
+    save_deferred(*group::ini_file());
 }
 
 bool bundle::modifiedp() const // XXX unused

@@ -70,6 +70,7 @@ private:
 
 public:
     void reload();
+    void save(QSettings& s);
     void save();
     void set_bundle(bundle b);
 

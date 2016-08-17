@@ -24,14 +24,18 @@ group::group(const QString& name) : name(name)
 
 void group::save() const
 {
+    save_deferred(*ini_file());
+}
+
+void group::save_deferred(QSettings& s) const
+{
     if (name == "")
         return;
 
-    auto s = ini_file();
-    s->beginGroup(name);
+    s.beginGroup(name);
     for (auto& i : kvs)
-        s->setValue(i.first, i.second);
-    s->endGroup();
+        s.setValue(i.first, i.second);
+    s.endGroup();
 }
 
 void group::put(const QString &s, const QVariant &d)

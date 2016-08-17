@@ -1,6 +1,7 @@
 #pragma once
 
 #include "export.hpp"
+#include "compat/util.hpp"
 #include <map>
 #include <memory>
 #include <QString>
@@ -19,6 +20,7 @@ private:
 public:
     group(const QString& name);
     void save() const;
+    void save_deferred(QSettings& s) const;
     void put(const QString& s, const QVariant& d);
     bool contains(const QString& s) const;
     static QString ini_directory();
