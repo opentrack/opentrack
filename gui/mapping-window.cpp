@@ -14,8 +14,6 @@ MapWidget::MapWidget(Mappings& m) :
 {
     ui.setupUi(this);
 
-    m.load_mappings();
-
     reload();
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
@@ -58,9 +56,14 @@ void MapWidget::reload()
         for (int i = 0; qfcs[i].qfc; i++)
         {
             const bool altp = qfcs[i].altp;
+
             Map& axis = m(qfcs[i].axis);
-            spline* conf = altp ? &axis.spline_alt : &axis.spline_main;
-            const auto& name = qfcs[i].altp ? axis.name2 : axis.name1;
+            spline& conf = altp ? axis.spline_alt : axis.spline_main;
+            const QString& name = altp ? axis.name2 : axis.name1;
+            bundle b = make_bundle(name);
+            conf.set_bundle(b);
+            qfcs[i].qfc->setConfig(&conf, b);
+
             if (altp)
             {
                 spline_widget& qfc = *qfcs[i].qfc;
@@ -75,20 +78,50 @@ void MapWidget::reload()
                 qfcs[i].qfc->set_snap(1, 5);
             else
                 qfcs[i].qfc->set_snap(1, 5);
-
-            qfcs[i].qfc->setConfig(conf, name);
         }
     }
 }
 
+void MapWidget::closeEvent(QCloseEvent*)
+{
+    invalidate_dialog();
+}
+
+void MapWidget::save_dialog()
+{
+    s.b_map->save();
+
+    for (int i = 0; i < 6; i++)
+    {
+        m.forall([&](Map& s)
+        {
+            s.spline_main.save();
+            s.spline_alt.save();
+            s.opts.b_mapping_window->save();
+        });
+    }
+}
+
+void MapWidget::invalidate_dialog()
+{
+    s.b_map->reload();
+
+    m.forall([](Map& s)
+    {
+        s.spline_main.reload();
+        s.spline_alt.reload();
+        s.opts.b_mapping_window->reload();
+    });
+}
+
 void MapWidget::doOK()
 {
-    m.save_mappings();
+    save_dialog();
     close();
 }
 
 void MapWidget::doCancel()
 {
-    m.invalidate_unsaved();
+    invalidate_dialog();
     close();
 }

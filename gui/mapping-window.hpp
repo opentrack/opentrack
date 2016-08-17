@@ -14,7 +14,11 @@ private:
     Mappings& m;
     main_settings s;
 
-    void closeEvent(QCloseEvent *) override { doCancel(); }
+    void closeEvent(QCloseEvent*) override;
+
+    void save_dialog();
+    void invalidate_dialog();
+
 private slots:
     void doOK();
     void doCancel();
