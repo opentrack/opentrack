@@ -1,4 +1,7 @@
 #include "bundle.hpp"
+#include "value.hpp"
+
+using options::base_value;
 
 namespace options
 {
@@ -20,6 +23,8 @@ void bundle::reload()
         QMutexLocker l(&mtx);
         saved = group(group_name);
         transient = saved;
+
+        connector::notify_all_values();
     }
     emit reloading();
 }
@@ -29,6 +34,8 @@ void bundle::store_kv(const QString& name, const QVariant& datum)
     QMutexLocker l(&mtx);
 
     transient.put(name, datum);
+
+    connector::notify_values(name);
 }
 
 bool bundle::contains(const QString &name) const

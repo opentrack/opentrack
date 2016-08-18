@@ -1,5 +1,7 @@
 #pragma once
 
+#include "connector.hpp"
+
 #include "bundle.hpp"
 #include "slider.hpp"
 #include <type_traits>
@@ -17,7 +19,7 @@ template<> struct value_type_traits<QString> { using type = const QString&; };
 template<> struct value_type_traits<slider_value> { using type = const slider_value&; };
 template<typename u> struct value_type_traits<QList<u>>
 {
-    using type = const QList<typename std::remove_const<typename std::remove_reference<u>::type>::type>&;
+    using type = const QList<u>&;
 };
 template<typename t> using value_type_t = typename value_type_traits<t>::type;
 }
@@ -27,7 +29,10 @@ class OPENTRACK_OPTIONS_EXPORT base_value : public QObject
     Q_OBJECT
 public:
     QString name() const { return self_name; }
-    base_value(bundle b, const QString& name) : b(b), self_name(name) {}
+    base_value(bundle b, const QString& name) : b(b), self_name(name)
+    {
+        b->on_bundle_created(name, this);
+    }
 signals:
     OPENTRACK_DEFINE_SIGNAL(double);
     OPENTRACK_DEFINE_SIGNAL(float);
@@ -52,7 +57,6 @@ protected:
     void store(const t& datum)
     {
         b->store_kv(self_name, QVariant::fromValue(datum));
-        emit valueChanged(static_cast<detail::value_type_t<t>>(datum));
     }
 
     void store(float datum)
@@ -77,6 +81,7 @@ public slots:
     OPENTRACK_DEFINE_SLOT(const QList<QPointF>&)
     public slots:
         virtual void reload() = 0;
+        virtual void bundle_value_changed() const = 0;
 };
 
 namespace detail {
@@ -157,6 +162,11 @@ public:
     void reload() override
     {
         *this = static_cast<t>(*this);
+    }
+
+    void bundle_value_changed() const override
+    {
+        emit valueChanged(static_cast<detail::value_type_t<t>>(get()));
     }
 
 private:

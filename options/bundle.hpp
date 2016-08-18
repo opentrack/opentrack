@@ -1,9 +1,13 @@
 #pragma once
 
+#include "group.hpp"
+#include "connector.hpp"
+
 #include <memory>
 #include <tuple>
 #include <map>
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QString>
@@ -13,7 +17,6 @@
 
 #include <QDebug>
 
-#include "group.hpp"
 #include "compat/util.hpp"
 #include "export.hpp"
 
@@ -21,21 +24,25 @@ namespace options {
 
 namespace detail {
 
-class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject
+class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public virtual connector
 {
     Q_OBJECT
-protected:
+private:
     QMutex mtx;
     const QString group_name;
     group saved;
     group transient;
+
     bundle(const bundle&) = delete;
     bundle& operator=(const bundle&) = delete;
+    QMutex* get_mtx() override { return &mtx; }
+
 signals:
     void reloading();
     void saving() const;
 public:
     bundle(const QString& group_name);
+    ~bundle() override {}
     QString name() { return group_name; }
     void reload();
     void store_kv(const QString& name, const QVariant& datum);
