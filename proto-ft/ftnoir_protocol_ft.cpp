@@ -22,7 +22,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() :
 {
     runonce_check.set_enabled(s.close_protocols_on_exit);
     QObject::connect(&s.close_protocols_on_exit,
-                     static_cast<void (base_value::*)(bool)>(&value<bool>::valueChanged),
+                     static_cast<void (base_value::*)(bool) const>(&value<bool>::valueChanged),
                      [] (bool flag) -> void { runonce_check.set_enabled(flag); });
     runonce_check.try_runonce();
 }

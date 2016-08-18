@@ -8,7 +8,7 @@
 #include <QList>
 
 #define OPENTRACK_DEFINE_SLOT(t) void setValue(t datum) { store(datum); }
-#define OPENTRACK_DEFINE_SIGNAL(t) void valueChanged(t)
+#define OPENTRACK_DEFINE_SIGNAL(t) void valueChanged(t) const
 namespace options {
 
 namespace detail {

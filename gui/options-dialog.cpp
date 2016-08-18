@@ -100,7 +100,7 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
         tmp val = val_;
         val.label->setText(kopts_to_string(val.opt));
         connect(&val.opt.keycode,
-                static_cast<void (base_value::*)(const QString&)>(&base_value::valueChanged),
+                static_cast<void (base_value::*)(const QString&) const>(&base_value::valueChanged),
                 val.label,
                 [=](const QString&) -> void { val.label->setText(kopts_to_string(val.opt)); });
         {

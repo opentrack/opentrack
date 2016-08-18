@@ -91,7 +91,7 @@ tie_setting(value<t>& v, QComboBox* cb)
                         fn1(v, cb, enum_cases),
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
-                        static_cast<void (base_value::*)(int)>(&base_value::valueChanged),
+                        static_cast<void (base_value::*)(int) const>(&base_value::valueChanged),
                         cb,
                         fn2(v, cb, enum_cases),
                         v.DIRECT_CONNTYPE);
@@ -203,7 +203,7 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
                         },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
-                        static_cast<void(base_value::*)(double)>(&base_value::valueChanged),
+                        static_cast<void(base_value::*)(double) const>(&base_value::valueChanged),
                         w,
                         [=](double value) { w->setValue(int(round(value * q_diff) + q_min)); },
     v.SAFE_CONNTYPE);

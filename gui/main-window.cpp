@@ -127,7 +127,7 @@ MainWindow::MainWindow() :
         init_tray_menu();
 
         connect(&s.tray_enabled,
-                static_cast<void (base_value::*)(bool)>(&base_value::valueChanged),
+                static_cast<void (base_value::*)(bool) const>(&base_value::valueChanged),
                 this,
                 [&](bool) { ensure_tray(); });
         ensure_tray();
