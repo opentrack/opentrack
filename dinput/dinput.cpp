@@ -43,12 +43,8 @@ void dinput_handle::di_t::free_di()
 
 void dinput_handle::di_t::ref_di()
 {
-    while (init_lock.test_and_set()) { /* busy loop */ }
-
     const int refcnt_ = refcnt.fetch_add(1) + 1;
-    qDebug() << "start: dinput refcount now" << (refcnt_);
-
-    init_lock.clear();
+    qDebug() << "start: dinput refcount now" << refcnt_;
 }
 
 dinput_handle::di_t& dinput_handle::di_t::operator=(const di_t& new_di)
@@ -66,19 +62,19 @@ dinput_handle::di_t& dinput_handle::di_t::operator=(const di_t& new_di)
 
 void dinput_handle::di_t::unref_di()
 {
-    while (init_lock.test_and_set()) { /* busy loop */ }
-
     const int refcnt_ = refcnt.fetch_sub(1) - 1;
 
     qDebug() << "exit: dinput refcount now" << refcnt_;
 
     if (refcnt_ == 0)
     {
+        while (init_lock.test_and_set()) { /* busy loop */ }
+
         qDebug() << "exit: deleting di handle";
         free_di();
-    }
 
-    init_lock.clear();
+        init_lock.clear();
+    }
 }
 
 dinput_handle::di_t::di_t(LPDIRECTINPUT8& handle) : handle(&handle)
