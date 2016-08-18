@@ -182,10 +182,12 @@ void Tracker::logic()
                                               scaled_rotation.center_roll,
                                               scaled_rotation.center_pitch,
                                               scaled_rotation.center_yaw);
+#if 0
                 euler::tait_bryan_to_matrices(rmat_to_euler(real_rotation.rotation),
                                               real_rotation.center_roll,
                                               real_rotation.center_pitch,
                                               real_rotation.center_yaw);
+#endif
                 real_rotation.rot_center = real_rotation.rotation.t();
                 scaled_rotation.rot_center = scaled_rotation.rotation.t();
             }
