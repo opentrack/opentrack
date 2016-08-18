@@ -172,6 +172,9 @@ void Tracker::logic()
 
                 scaled_rotation.rotation = rmat::eye();
                 real_rotation.rotation = rmat::eye();
+                scaled_rotation.center_roll = rmat::eye();
+                scaled_rotation.center_yaw = rmat::eye();
+                scaled_rotation.center_pitch = rmat::eye();
             }
             else
             {
