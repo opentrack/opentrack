@@ -11,6 +11,9 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
     QMutexLocker l(get_mtx());
 
     auto it = connected_values.find(name);
+
+    bool ok = false;
+
     if (it != connected_values.end())
     {
         std::vector<const base_value*>& values = (*it).second;
@@ -19,10 +22,16 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
             if (*it == val)
             {
                 values.erase(it);
+                ok = true;
                 break;
             }
         }
     }
+
+    if (!ok)
+        qWarning() << "connector: bundle destructed without creating;"
+                   << "name" << name
+                   << "ptr" << quintptr(val);
 }
 
 void connector::on_value_created(const QString& name, const base_value* val)
