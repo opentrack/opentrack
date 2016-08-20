@@ -267,10 +267,44 @@ void spline::save()
 
 void spline::set_bundle(bundle b)
 {
-    if (b)
-        s = std::unique_ptr<settings>(new settings(b));
-    else
-        s = std::unique_ptr<settings>(new settings(options::make_bundle("")));
+    QMutexLocker foo(&_mutex);
+
+    if (b && (!s || s->b != b))
+        s = ::make_unique<settings>(b);
+    else if (!b)
+        s = ::make_unique<settings>(nullptr);
+
+    QList<QPointF> list = s->points;
+
+    const int sz = list.size();
+
+    QList<QPointF> ret_list;
+    ret_list.reserve(sz);
+
+    for (int i = 0; i < sz; i++)
+    {
+        QPointF& pt(list[i]);
+
+        pt = QPointF(clamp(pt.x(), 0, max_x),
+                     clamp(pt.y(), 0, max_y));
+
+        const bool overlap = progn(
+                                for (int j = 0; j < i; j++)
+                                {
+                                    QPointF& pt2(list[j]);
+                                    const double dist_sq = (pt.x() - pt2.x())*(pt.x() - pt2.x());
+                                    if (dist_sq < .33)
+                                    {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                             );
+        if (!overlap)
+            ret_list.push_back(pt);
+    }
+
+    s->points = ret_list;
 
     last_input_value = QPointF(0, 0);
     activep = false;
