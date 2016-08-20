@@ -31,7 +31,11 @@ public:
     QString name() const { return self_name; }
     base_value(bundle b, const QString& name) : b(b), self_name(name)
     {
-        b->on_bundle_created(name, this);
+        b->on_value_created(name, this);
+    }
+    ~base_value() override
+    {
+        b->on_value_destructed(self_name, this);
     }
 signals:
     OPENTRACK_DEFINE_SIGNAL(double);

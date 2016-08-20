@@ -6,12 +6,12 @@ namespace detail {
 
 connector::~connector() {}
 
-void connector::on_bundle_destructed(const QString& name, const base_value* val)
+void connector::on_value_destructed(const QString& name, const base_value* val)
 {
     QMutexLocker l(get_mtx());
 
     auto it = connected_values.find(name);
-    if (it != connected_values.end())
+    if (it != connected_values.cend())
     {
         std::vector<const base_value*>& values = (*it).second;
         for (auto it = values.begin(); it != values.end(); )
@@ -25,7 +25,7 @@ void connector::on_bundle_destructed(const QString& name, const base_value* val)
     }
 }
 
-void connector::on_bundle_created(const QString& name, const base_value* val)
+void connector::on_value_created(const QString& name, const base_value* val)
 {
     QMutexLocker l(get_mtx());
     auto it = connected_values.find(name);
@@ -46,7 +46,7 @@ void connector::on_bundle_created(const QString& name, const base_value* val)
 void connector::notify_values(const QString& name) const
 {
     auto it = connected_values.find(name);
-    if (it != connected_values.end())
+    if (it != connected_values.cend())
     {
         for (const base_value* val : (*it).second)
         {
