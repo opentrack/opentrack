@@ -1,3 +1,4 @@
+#include "compat/util.hpp"
 #include "connector.hpp"
 #include "value.hpp"
 
@@ -6,37 +7,58 @@ namespace detail {
 
 connector::~connector() {}
 
-void connector::on_value_destructed(const QString& name, const base_value* val)
+bool connector::on_value_destructed_impl(const QString& name, const base_value* val)
 {
     QMutexLocker l(get_mtx());
 
-    auto it = connected_values.find(name);
+    const bool ok = progn(
+        auto it = connected_values.find(name);
 
-    bool ok = false;
-
-    if (it != connected_values.end())
-    {
-        std::vector<const base_value*>& values = (*it).second;
-        for (auto it = values.begin(); it != values.end(); it++)
+        if (it != connected_values.end())
         {
-            if (*it == val)
+            std::vector<const base_value*>& values = (*it).second;
+            for (auto it = values.begin(); it != values.end(); it++)
             {
-                values.erase(it);
-                ok = true;
-                break;
+                if (*it == val)
+                {
+                    values.erase(it);
+                    return true;
+                }
             }
         }
-    }
+        return false;
+    );
+
+    return ok;
+}
+
+
+
+void connector::on_value_destructed(const QString& name, const base_value* val)
+{
+    const bool ok = on_value_destructed_impl(name, val);
 
     if (!ok)
-        qWarning() << "connector: bundle destructed without creating;"
-                   << "name" << name
-                   << "ptr" << quintptr(val);
+        qWarning() << "options/connector: value destructed without creating;"
+                   << "bundle"
+                   << (val && val->b ? val->b->name() : "<NULL>")
+                   << "value-name" << name
+                   << "value-ptr" << quintptr(val);
 }
 
 void connector::on_value_created(const QString& name, const base_value* val)
 {
     QMutexLocker l(get_mtx());
+
+    if (on_value_destructed_impl(name, val))
+    {
+        qWarning() << "options/connector: value created twice;"
+                   << "bundle"
+                   << (val && val->b ? val->b->name() : "<NULL>")
+                   << "value-name" << name
+                   << "value-ptr" << quintptr(val);
+    }
+
     auto it = connected_values.find(name);
 
     if (it != connected_values.end())

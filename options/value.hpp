@@ -27,6 +27,7 @@ template<typename t> using value_type_t = typename value_type_traits<t>::type;
 class OPENTRACK_OPTIONS_EXPORT base_value : public QObject
 {
     Q_OBJECT
+    friend class ::options::detail::connector;
 public:
     QString name() const { return self_name; }
     base_value(bundle b, const QString& name) : b(b), self_name(name)

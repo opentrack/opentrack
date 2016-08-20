@@ -22,6 +22,7 @@ class OPENTRACK_OPTIONS_EXPORT connector
 
     void on_value_destructed(const QString& name, const base_value* val);
     void on_value_created(const QString& name, const base_value* val);
+    bool on_value_destructed_impl(const QString& name, const base_value* val);
 
 protected:
     void notify_values(const QString& name) const;
