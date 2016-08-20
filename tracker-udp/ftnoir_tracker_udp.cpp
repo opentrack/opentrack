@@ -22,7 +22,7 @@ void FTNoIR_Tracker::run()
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
 
-    should_quit = sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    should_quit = !sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
     while (!should_quit)
     {
