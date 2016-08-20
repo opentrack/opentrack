@@ -11,10 +11,10 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
     QMutexLocker l(get_mtx());
 
     auto it = connected_values.find(name);
-    if (it != connected_values.cend())
+    if (it != connected_values.end())
     {
         std::vector<const base_value*>& values = (*it).second;
-        for (auto it = values.begin(); it != values.end(); )
+        for (auto it = values.begin(); it != values.end(); it++)
         {
             if (*it == val)
             {
