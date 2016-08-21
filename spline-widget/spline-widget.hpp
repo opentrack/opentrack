@@ -31,6 +31,7 @@ class OPENTRACK_SPLINE_EXPORT spline_widget final : public QWidget
     using points_t = spline::points_t;
 public:
     spline_widget(QWidget *parent = 0);
+    ~spline_widget();
 
     spline* config();
 

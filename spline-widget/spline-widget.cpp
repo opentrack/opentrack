@@ -29,6 +29,12 @@ spline_widget::spline_widget(QWidget *parent) :
     setMouseTracking(true);
 }
 
+spline_widget::~spline_widget()
+{
+    if (connection)
+        QObject::disconnect(connection);
+}
+
 void spline_widget::setConfig(spline* spl)
 {
     if (spl != _config)
