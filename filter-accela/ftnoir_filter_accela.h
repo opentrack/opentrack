@@ -18,6 +18,28 @@ using namespace options;
 
 struct settings_accela : opts
 {
+    static constexpr double rot_gains[][2] = {
+        { 6, 200 },
+        { 2.66, 50 },
+        { 1.66, 17 },
+        { 1, 4 },
+        { .5, .53 },
+        { 0, 0 },
+        { -1, 0 }
+    };
+
+    static constexpr double trans_gains[][2] = {
+        { 2.33, 40 },
+        { 1.66, 13 },
+        { 1.33, 5 },
+        { .66, 1 },
+        { .33, .5 },
+        { 0, 0 },
+        { -1, 0 }
+    };
+
+    static void make_splines(spline& rot, spline& trans);
+
     value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
     value<slider_value> rot_nonlinearity;
     static constexpr double mult_rot = 4. / 100.;
@@ -75,12 +97,11 @@ class FilterControls: public IFilterDialog
     Q_OBJECT
 public:
     FilterControls();
-    void register_filter(IFilter* filter);
-    void unregister_filter();
+    void register_filter(IFilter*) override {}
+    void unregister_filter() override {}
 private:
     Ui::AccelaUICFilterControls ui;
     void save();
-    FTNoIR_Filter* accela_filter;
     settings_accela s;
 private slots:
     void doOK();

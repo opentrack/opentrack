@@ -13,8 +13,7 @@
 #include "spline-widget/spline-widget.hpp"
 #include <QDialog>
 
-FilterControls::FilterControls() :
-    accela_filter(nullptr)
+FilterControls::FilterControls()
 {
     ui.setupUi(this);
 
@@ -42,30 +41,29 @@ FilterControls::FilterControls() :
     update_rot_dz_display(ui.rot_dz_slider->value());
     update_trans_dz_display(ui.trans_dz_slider->value());
     update_rot_nl_slider(s.rot_nonlinearity);
-}
 
-void FilterControls::register_filter(IFilter* filter)
-{
-    accela_filter = static_cast<FTNoIR_Filter*>(filter);
+    {
 //#define SPLINE_ROT_DEBUG
 #if defined(SPLINE_ROT_DEBUG) || defined(SPLINE_TRANS_DEBUG)
+    spline rot, trans;
+    s.make_splines(rot, trans);
     QDialog d;
-    QFunctionConfigurator r(&d);
+
+    spline_widget r(&d);
+    r.set_preview_only(true);
+    r.setEnabled(false);
     r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 #if defined(SPLINE_TRANS_DEBUG)
-    r.setConfig(&accela_filter->trans, "");
+    r.setConfig(&trans);
 #else
-    r.setConfig(&accela_filter->rot, "");
+    r.setConfig(&rot);
 #endif
-    r.setFixedSize(800, 600);
+    r.setFixedSize(1024, 600);
     d.show();
     d.exec();
 #endif
-}
-
-void FilterControls::unregister_filter()
-{
-    accela_filter = nullptr;
+    }
 }
 
 void FilterControls::doOK()

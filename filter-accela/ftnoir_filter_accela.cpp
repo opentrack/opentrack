@@ -11,47 +11,18 @@
 #include <QMutexLocker>
 #include "api/plugin-api.hpp"
 
-static constexpr double rot_gains[][2] = {
-    { 6, 200 },
-    { 2.66, 50 },
-    { 1.66, 17 },
-    { 1, 4 },
-    { .5, .53 },
-    { 0, 0 },
-    { -1, 0 }
-};
-
-static constexpr double trans_gains[][2] = {
-    { 2.33, 40 },
-    { 1.66, 13 },
-    { 1.33, 5 },
-    { .66, 1 },
-    { .33, .5 },
-    { 0, 0 },
-    { -1, 0 }
-};
-
 constexpr double settings_accela::mult_rot;
 constexpr double settings_accela::mult_trans;
 constexpr double settings_accela::mult_rot_dz;
 constexpr double settings_accela::mult_trans_dz;
 constexpr double settings_accela::mult_ewma;
 
+constexpr double settings_accela::rot_gains[][2];
+constexpr double settings_accela::trans_gains[][2];
+
 FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {
-    rot.setMaxInput(rot_gains[0][0]);
-    trans.setMaxInput(trans_gains[0][0]);
-    rot.setMaxOutput(rot_gains[0][1]);
-    trans.setMaxOutput(trans_gains[0][1]);
-
-    for (int i = 0; rot_gains[i][0] >= 0; i++)
-    {
-        rot.addPoint(QPointF(rot_gains[i][0], rot_gains[i][1]));
-    }
-    for (int i = 0; trans_gains[i][0] >= 0; i++)
-    {
-        trans.addPoint(QPointF(trans_gains[i][0], trans_gains[i][1]));
-    }
+    s.make_splines(rot, trans);
 }
 
 void FTNoIR_Filter::filter(const double* input, double *output)
@@ -98,9 +69,28 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double out = i >= 3 && std::fabs(rot_nl - 1) > 5e-3 && vec_ < s.max_rot_nl
                                ? (std::pow(out_/s.max_rot_nl, rot_nl) * s.max_rot_nl)
                                : out_;
-        const double val = m.getValue(float(out));
+        const double val = double(m.getValue(out));
         last_output[i] = output[i] = last_output[i] + signum(vec) * dt * val;
     }
+}
+
+
+
+void settings_accela::make_splines(spline& rot, spline& trans)
+{
+    rot = spline();
+    trans = spline();
+
+    rot.setMaxInput(rot_gains[0][0]);
+    trans.setMaxInput(trans_gains[0][0]);
+    rot.setMaxOutput(rot_gains[0][1]);
+    trans.setMaxOutput(trans_gains[0][1]);
+
+    for (int i = 0; rot_gains[i][0] >= 0; i++)
+        rot.addPoint(QPointF(rot_gains[i][0], rot_gains[i][1]));
+
+    for (int i = 0; trans_gains[i][0] >= 0; i++)
+        trans.addPoint(QPointF(trans_gains[i][0], trans_gains[i][1]));
 }
 
 OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)
