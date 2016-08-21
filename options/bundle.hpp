@@ -26,16 +26,23 @@ namespace detail {
 
 class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public virtual connector
 {
+    class OPENTRACK_OPTIONS_EXPORT mutex final : public QMutex
+    {
+    public:
+        mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
+        operator QMutex*() const { return const_cast<QMutex*>(static_cast<const QMutex*>(this)); }
+    };
+
     Q_OBJECT
 private:
-    QMutex mtx;
+    mutex mtx;
     const QString group_name;
     group saved;
     group transient;
 
     bundle(const bundle&) = delete;
     bundle& operator=(const bundle&) = delete;
-    QMutex* get_mtx() override { return &mtx; }
+    QMutex* get_mtx() const override;
 
 signals:
     void reloading();
@@ -50,12 +57,12 @@ public:
     bool contains(const QString& name) const;
     void save();
     void save_deferred(QSettings& s);
-    bool modifiedp() const;
+    bool is_modified() const;
 
     template<typename t>
     t get(const QString& name) const
     {
-        QMutexLocker l(const_cast<QMutex*>(&mtx));
+        QMutexLocker l(mtx);
         return transient.get<t>(name);
     }
 };
@@ -85,6 +92,6 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton();
 using bundle_type = detail::bundle;
 using bundle = std::shared_ptr<bundle_type>;
 
-OPENTRACK_OPTIONS_EXPORT bundle make_bundle(const QString& name);
+OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_type> make_bundle(const QString& name);
 
 }

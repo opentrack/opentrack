@@ -49,7 +49,7 @@ void bundle::store_kv(const QString& name, const QVariant& datum)
 
 bool bundle::contains(const QString &name) const
 {
-    QMutexLocker l(const_cast<QMutex*>(&mtx));
+    QMutexLocker l(mtx);
     return transient.contains(name);
 }
 
@@ -80,9 +80,9 @@ void bundle::save()
     save_deferred(*group::ini_file());
 }
 
-bool bundle::modifiedp() const // XXX unused
+bool bundle::is_modified() const // XXX unused
 {
-    QMutexLocker l(const_cast<QMutex*>(&mtx));
+    QMutexLocker l(mtx);
     return transient != saved;
 }
 
@@ -155,11 +155,9 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton()
     return ret;
 }
 
-}
+} // end options::detail
 
-// end options::detail
-
-OPENTRACK_OPTIONS_EXPORT bundle make_bundle(const QString& name)
+OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_type> make_bundle(const QString& name)
 {
     if (name.size())
         return detail::singleton().make_bundle(name);
@@ -167,5 +165,6 @@ OPENTRACK_OPTIONS_EXPORT bundle make_bundle(const QString& name)
         return std::make_shared<bundle_type>(QStringLiteral(""));
 }
 
-} // end options
+QMutex* options::detail::bundle::get_mtx() const { return mtx; }
 
+} // end options
