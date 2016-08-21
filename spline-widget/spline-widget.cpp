@@ -5,6 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#include "compat/util.hpp"
 #include "spline-widget.hpp"
 #include <QPainter>
 #include <QPaintEvent>
@@ -40,8 +41,8 @@ void spline_widget::setConfig(spline* spl)
 
         if (spl)
         {
-            spline::settings& s = spl->get_settings();
-            connection = connect(&s, &spline::settings::recomputed,
+            mem<spline::settings> s = spl->get_settings();
+            connection = connect(s.get(), &spline::settings::recomputed,
                                  this, [this]() { reload_spline(); },
                                  Qt::QueuedConnection);
         }

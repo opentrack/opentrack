@@ -373,16 +373,16 @@ void spline::recompute()
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
-spline::settings& spline::get_settings()
+mem<spline::settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
-    return *s;
+    return s;
 }
 
-const spline::settings& spline::get_settings() const
+mem<const spline::settings> spline::get_settings() const
 {
     QMutexLocker foo(&_mutex);
-    return *s;
+    return s;
 }
 
 int spline::precision(const QList<QPointF>& points) const
