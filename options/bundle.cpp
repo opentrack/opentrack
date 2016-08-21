@@ -28,6 +28,7 @@ void bundle::reload()
         connector::notify_all_values();
         emit reloading();
     }
+    emit changed();
 }
 
 void bundle::store_kv(const QString& name, const QVariant& datum)
@@ -38,6 +39,8 @@ void bundle::store_kv(const QString& name, const QVariant& datum)
 
     if (group_name.size())
         connector::notify_values(name);
+
+    emit changed();
 }
 
 bool bundle::contains(const QString &name) const

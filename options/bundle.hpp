@@ -40,6 +40,7 @@ private:
 signals:
     void reloading();
     void saving() const;
+    void changed() const;
 public:
     bundle(const QString& group_name);
     ~bundle() override {}
