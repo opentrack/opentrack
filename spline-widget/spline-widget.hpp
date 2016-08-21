@@ -12,14 +12,17 @@
 #include "spline.hpp"
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
+using namespace options;
+
+#include "export.hpp"
+
 #include <QWidget>
 #include <QtGui>
 #include <QMetaObject>
 #include <QPointF>
 #include <QDebug>
-using namespace options;
 
-class SPLINE_WIDGET_EXPORT spline_widget final : public QWidget
+class OPENTRACK_SPLINE_EXPORT spline_widget final : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
@@ -31,7 +34,7 @@ public:
 
     spline* config();
 
-    void setConfig(spline* config, bundle b);
+    void setConfig(spline* spl);
 
     QColor colorBezier() const
     {

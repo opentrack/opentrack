@@ -8,43 +8,39 @@
 
 #pragma once
 
-#include <QObject>
-#include <QPointF>
-#include <QString>
-#include <QMutex>
-#include <vector>
-#include <limits>
-#include <memory>
 #include "compat/qcopyable-mutex.hpp"
 #include "options/options.hpp"
 using namespace options;
 
-#ifdef BUILD_spline_widget
-#   define SPLINE_WIDGET_EXPORT Q_DECL_EXPORT
-#else
-#   define SPLINE_WIDGET_EXPORT Q_DECL_IMPORT
-#endif
+#include "export.hpp"
 
-class SPLINE_WIDGET_EXPORT spline final
+#include <vector>
+#include <limits>
+#include <memory>
+
+#include <QObject>
+#include <QPointF>
+#include <QString>
+#include <QMetaObject>
+
+namespace spline_detail {
+
+class OPENTRACK_SPLINE_EXPORT settings final : public QObject
+{
+    Q_OBJECT
+public:
+    bundle b;
+    value<QList<QPointF>> points;
+    settings(bundle b);
+signals:
+    void recomputed() const;
+};
+
+}
+
+class OPENTRACK_SPLINE_EXPORT spline final
 {
 private:
-    struct settings
-    {
-        bundle b;
-        value<QList<QPointF>> points;
-        settings(bundle b) :
-            b(b),
-            points(b, "points", QList<QPointF>())
-        {}
-    };
-
-    ptr<settings> s;
-
-    std::vector<float> data;
-    using interp_data_t = decltype(data);
-
-    static constexpr int value_count = 10000;
-
     int precision(const QList<QPointF>& points) const;
     void update_interp_data();
     float getValueInternal(int x);
@@ -52,11 +48,6 @@ private:
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
-
-    MyMutex _mutex;
-    QPointF last_input_value;
-    qreal max_x, max_y;
-    volatile bool activep;
 
     template<typename t, typename u, typename w>
     static inline auto clamp(t val, u min, w max) -> decltype (val * min * max)
@@ -68,7 +59,22 @@ private:
         return val;
     }
 
+    mem<spline_detail::settings> s;
+    QMetaObject::Connection connection;
+
+    std::vector<float> data;
+    using interp_data_t = decltype(data);
+
+    static constexpr int value_count = 10000;
+
+    MyMutex _mutex;
+    QPointF last_input_value;
+    qreal max_x, max_y;
+    volatile bool activep;
+
 public:
+    using settings = spline_detail::settings;
+
     void reload();
     void save(QSettings& s);
     void save();
@@ -78,6 +84,10 @@ public:
     qreal maxOutput() const;
     spline();
     spline(qreal maxx, qreal maxy, const QString& name);
+    ~spline();
+
+    spline& operator=(const spline&) = default;
+    spline(const spline&) = default;
 
     float getValue(double x);
     bool getLastPoint(QPointF& point);
@@ -91,7 +101,11 @@ public:
     void setMaxOutput(qreal MaxOutput);
 
     void setTrackingActive(bool blnActive);
-    bundle get_bundle() { return s->b; }
+    bundle get_bundle();
+    void recompute();
+
+    settings& get_settings();
+    const settings& get_settings() const;
 
     using points_t = decltype(s->points.get());
 };

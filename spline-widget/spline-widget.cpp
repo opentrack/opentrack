@@ -10,6 +10,8 @@
 #include <QPaintEvent>
 #include <QPen>
 #include <QPixmap>
+#include <QList>
+#include <QPointF>
 #include <cmath>
 #include <algorithm>
 
@@ -26,23 +28,27 @@ spline_widget::spline_widget(QWidget *parent) :
     setMouseTracking(true);
 }
 
-void spline_widget::setConfig(spline* config, bundle b)
+void spline_widget::setConfig(spline* spl)
 {
-    if (config && config->get_bundle() && config->get_bundle() != b)
+    if (spl != _config)
     {
-        QObject::disconnect(connection);
-        connection = QMetaObject::Connection();
-    }
+        if (connection)
+        {
+            QObject::disconnect(connection);
+            //connection = QMetaObject::Connection();
+        }
 
-    if (config && config->get_bundle() != b)
-        config->set_bundle(b);
-    _config = config;
-    if (b)
-        connection = connect(b.get(), &bundle_type::reloading,
-                             this, &spline_widget::reload_spline,
-                             Qt::QueuedConnection);
-    update_range();
-    update();
+        if (spl)
+        {
+            spline::settings& s = spl->get_settings();
+            connection = connect(&s, &spline::settings::recomputed,
+                                 this, [this]() { reload_spline(); },
+                                 Qt::QueuedConnection);
+        }
+
+        _config = spl;
+        update_range();
+    }
 }
 
 void spline_widget::set_preview_only(bool val)
@@ -417,9 +423,9 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 
 void spline_widget::reload_spline()
 {
-    if (_config && _config->get_bundle() != nullptr)
+    if (_config)
     {
-        _config->set_bundle(_config->get_bundle());
+        // don't recompute here as the value's just been recomputed
         update_range();
     }
 }
