@@ -84,9 +84,6 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton();
 using bundle_type = detail::bundle;
 using bundle = std::shared_ptr<bundle_type>;
 
-inline bundle make_bundle(const QString& name)
-{
-    return detail::singleton().make_bundle(name);
-}
+OPENTRACK_OPTIONS_EXPORT bundle make_bundle(const QString& name);
 
 }

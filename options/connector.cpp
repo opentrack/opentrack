@@ -36,6 +36,9 @@ bool connector::on_value_destructed_impl(const QString& name, const base_value* 
 
 void connector::on_value_destructed(const QString& name, const base_value* val)
 {
+    if (!name.size())
+        return;
+
     const bool ok = on_value_destructed_impl(name, val);
 
     if (!ok)
@@ -48,6 +51,9 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
 
 void connector::on_value_created(const QString& name, const base_value* val)
 {
+    if (!name.size())
+        return;
+
     QMutexLocker l(get_mtx());
 
     if (on_value_destructed_impl(name, val))

@@ -19,14 +19,15 @@ bundle::bundle(const QString& group_name)
 
 void bundle::reload()
 {
+    if (group_name.size())
     {
         QMutexLocker l(&mtx);
         saved = group(group_name);
         transient = saved;
 
         connector::notify_all_values();
+        emit reloading();
     }
-    emit reloading();
 }
 
 void bundle::store_kv(const QString& name, const QVariant& datum)
@@ -35,7 +36,8 @@ void bundle::store_kv(const QString& name, const QVariant& datum)
 
     transient.put(name, datum);
 
-    connector::notify_values(name);
+    if (group_name.size())
+        connector::notify_values(name);
 }
 
 bool bundle::contains(const QString &name) const
@@ -46,7 +48,7 @@ bool bundle::contains(const QString &name) const
 
 void bundle::save_deferred(QSettings& s)
 {
-    if (group_name == "")
+    if (group_name.size() == 0)
         return;
 
     bool modified_ = false;
@@ -146,7 +148,17 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton()
     return ret;
 }
 
-} // end options::detail
+}
+
+// end options::detail
+
+OPENTRACK_OPTIONS_EXPORT bundle make_bundle(const QString& name)
+{
+    if (name.size())
+        return detail::singleton().make_bundle(name);
+    else
+        return std::make_shared<bundle_type>(QStringLiteral(""));
+}
 
 } // end options
 
