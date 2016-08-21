@@ -59,10 +59,9 @@ void MapWidget::reload()
 
             Map& axis = m(qfcs[i].axis);
             spline& conf = altp ? axis.spline_alt : axis.spline_main;
-            const QString& name = altp ? axis.name2 : axis.name1;
-            bundle b = make_bundle(name);
-            conf.set_bundle(b);
-            qfcs[i].qfc->setConfig(&conf, b);
+            //const QString& name = altp ? axis.name2 : axis.name1;
+            //conf.set_bundle(make_bundle(name));
+            qfcs[i].qfc->setConfig(&conf);
 
             if (altp)
             {
