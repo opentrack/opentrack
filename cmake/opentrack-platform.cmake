@@ -4,6 +4,7 @@ endif()
 
 if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0)
 endif()
 
 if(WIN32)
