@@ -27,7 +27,7 @@ class OPENTRACK_OPTIONS_EXPORT connector
 protected:
     void notify_values(const QString& name) const;
     void notify_all_values() const;
-    virtual QMutex* get_mtx() = 0;
+    virtual QMutex* get_mtx() const = 0;
 
 public:
     connector();
