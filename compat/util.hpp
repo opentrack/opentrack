@@ -34,11 +34,16 @@ public:
         if (operate_p)
             val.blockSignals(true);
     }
+
     ~inhibit_qt_signals()
     {
         if (operate_p)
             val.blockSignals(false);
     }
+
+    inhibit_qt_signals(QObject* val) : inhibit_qt_signals(*val) {}
+    inhibit_qt_signals(std::unique_ptr<QObject> val) : inhibit_qt_signals(*val.get()) {}
+    inhibit_qt_signals(std::shared_ptr<QObject> val) : inhibit_qt_signals(*val.get()) {}
 };
 
 namespace detail {
