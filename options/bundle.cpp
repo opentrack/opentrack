@@ -23,12 +23,16 @@ void bundle::reload()
     {
         QMutexLocker l(&mtx);
         saved = group(group_name);
+        const bool has_changes = transient != saved;
         transient = saved;
 
-        connector::notify_all_values();
-        emit reloading();
+        if (has_changes)
+        {
+            connector::notify_all_values();
+            emit reloading();
+            emit changed();
+        }
     }
-    emit changed();
 }
 
 void bundle::store_kv(const QString& name, const QVariant& datum)
