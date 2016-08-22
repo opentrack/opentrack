@@ -42,8 +42,9 @@ set(lto "-flto -fuse-linker-plugin -flto-compression-level=9 -flto-partition=non
 set(bloat "-fno-exceptions -fno-rtti")
 set(sections "-ffunction-sections -fdata-sections")
 
-set(_CFLAGS "-fvisibility=hidden -pipe")
-set(_CXXFLAGS "${bloat} ${_CFLAGS} -std=c++11")
+set(ccflags-common "-fvisibility=hidden -pipe")
+set(_CXXFLAGS "${bloat} ${ccflags-common} -std=c++11")
+set(_CFLAGS "${ccflags-common} -std=c11")
 set(_CFLAGS_RELEASE "-s ${cpu} ${fpu} ${lto} ${sections}")
 set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
