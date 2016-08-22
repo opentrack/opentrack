@@ -113,7 +113,7 @@
   <customwidget>
    <class>FancyTable</class>
    <extends>QTableWidget</extends>
-   <header>process_detector.h</header>
+   <header>process-detector-fancy-table.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

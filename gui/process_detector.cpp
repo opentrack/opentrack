@@ -15,6 +15,7 @@
 #include <QString>
 #include <QHash>
 #include <QPushButton>
+#include <QSettings>
 
 void settings::set_game_list(const QString &game_list)
 {

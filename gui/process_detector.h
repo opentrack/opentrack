@@ -13,25 +13,9 @@
 #include <QTableWidget>
 #include <QResizeEvent>
 
+#include "ui_process_widget.h"
+#include "process-detector-fancy-table.hpp"
 #include "options/options.hpp"
-using namespace options;
-
-class FancyTable : public QTableWidget
-{
-    Q_OBJECT
-public:
-    void resizeEvent(QResizeEvent* e) override
-    {
-        QTableView::resizeEvent(e);
-        int w = width();
-        setColumnWidth(2, 32);
-        w -= 48;
-        setColumnWidth(0, w / 2);
-        setColumnWidth(1, w / 2);
-    }
-public:
-    FancyTable(QWidget* parent = nullptr) : QTableWidget(parent) {}
-};
 
 struct settings
 {
@@ -42,9 +26,7 @@ struct settings
     void set_is_enabled(bool enabled);
 };
 
-#include "ui_process_widget.h"
-
-class process_detector : public QWidget
+class process_detector final : public QWidget
 {
     Q_OBJECT
 
