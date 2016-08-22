@@ -17,8 +17,8 @@ constexpr double settings_accela::mult_rot_dz;
 constexpr double settings_accela::mult_trans_dz;
 constexpr double settings_accela::mult_ewma;
 
-constexpr double settings_accela::rot_gains[][2];
-constexpr double settings_accela::trans_gains[][2];
+constexpr double settings_accela::rot_gains[16][2];
+constexpr double settings_accela::trans_gains[16][2];
 
 FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
 {

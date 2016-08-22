@@ -18,7 +18,8 @@ using namespace options;
 
 struct settings_accela : opts
 {
-    static constexpr double rot_gains[][2] = {
+    static constexpr double rot_gains[16][2] =
+    {
         { 6, 200 },
         { 2.66, 50 },
         { 1.66, 17 },
@@ -28,7 +29,8 @@ struct settings_accela : opts
         { -1, 0 }
     };
 
-    static constexpr double trans_gains[][2] = {
+    static constexpr double trans_gains[16][2] =
+    {
         { 2.33, 40 },
         { 1.66, 13 },
         { 1.33, 5 },
