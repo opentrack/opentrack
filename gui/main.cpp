@@ -1,5 +1,4 @@
 #ifdef _WIN32
-#   define MINGW_HAS_SECURE_API 1
 #   include "opentrack-library-path.h"
 #   include <stdlib.h>
 #   include <vector>
