@@ -8,16 +8,17 @@
 
 #pragma once
 
-#ifdef _WIN32
-
 #include "export.hpp"
 
+#ifdef Q_MOC_RUN
+typedef void* LPDIRECTINPUT8;
+#else
 #ifndef DIRECTINPUT_VERSION
 #   define DIRECTINPUT_VERSION 0x800
-#endif
 #include <dinput.h>
-
+#endif
 #include <atomic>
+#endif
 
 class OPENTRACK_DINPUT_EXPORT dinput_handle final
 {
@@ -53,5 +54,3 @@ public:
     static di_t make_di();
     dinput_handle() = delete;
 };
-
-#endif

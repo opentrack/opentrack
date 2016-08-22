@@ -1,5 +1,3 @@
-#ifdef _WIN32
-
 #include "dinput.hpp"
 #include "compat/win32-com.hpp"
 #include <QDebug>
@@ -89,5 +87,3 @@ dinput_handle::di_t::~di_t()
     if (handle)
         unref_di();
 }
-
-#endif
