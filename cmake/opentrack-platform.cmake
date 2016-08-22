@@ -31,7 +31,6 @@ set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(${CMAKE_SOURCE_DIR})
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
@@ -54,7 +53,7 @@ if(APPLE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
-    set(CMAKE_CXX_FLAGS " -std=c++14 ${CMAKE_CXX_FLAGS} ")
+    set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
