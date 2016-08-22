@@ -31,7 +31,7 @@ set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # note, hatire supports both ftnoir and opentrack
 # don't remove without being sure as hell -sh 20140922
