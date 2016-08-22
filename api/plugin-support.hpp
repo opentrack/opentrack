@@ -63,7 +63,7 @@ struct dylib final {
             return;
 
         handle = new QLibrary(filename);
-        handle->setLoadHints(QLibrary::PreventUnloadHint | handle->loadHints());
+        //handle->setLoadHints(QLibrary::PreventUnloadHint | handle->loadHints());
 
         struct _foo {
             static bool die(QLibrary*& l, bool failp)
