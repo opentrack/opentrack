@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ui_ftnoir_hydra_clientcontrols.h"
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"

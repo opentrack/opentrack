@@ -1,3 +1,5 @@
+#pragma once
+
 #include "api/plugin-api.hpp"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_tracker_hat.h"

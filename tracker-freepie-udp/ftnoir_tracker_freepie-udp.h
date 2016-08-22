@@ -4,7 +4,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-
+#pragma once
 #include <cinttypes>
 #include <QUdpSocket>
 #include <QThread>
