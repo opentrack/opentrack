@@ -23,7 +23,7 @@
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
 
 #define BUILD_compat
-#include "../opentrack-compat/export.hpp"
+#include "compat/export.hpp"
 
 enum Axis {
         TX = 0, TY, TZ, Yaw, Pitch, Roll
