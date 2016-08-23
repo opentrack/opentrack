@@ -41,8 +41,8 @@ void dinput_handle::di_t::free_di()
 
 void dinput_handle::di_t::ref_di()
 {
-    const int refcnt_ = refcnt.fetch_add(1) + 1;
-    qDebug() << "start: dinput refcount now" << refcnt_;
+    //const int refcnt_ = refcnt.fetch_add(1) + 1;
+    (void) refcnt.fetch_add(1);
 }
 
 dinput_handle::di_t& dinput_handle::di_t::operator=(const di_t& new_di)
@@ -61,8 +61,6 @@ dinput_handle::di_t& dinput_handle::di_t::operator=(const di_t& new_di)
 void dinput_handle::di_t::unref_di()
 {
     const int refcnt_ = refcnt.fetch_sub(1) - 1;
-
-    qDebug() << "exit: dinput refcount now" << refcnt_;
 
     if (refcnt_ == 0)
     {

@@ -25,7 +25,7 @@ bool Key::should_process()
 
 KeybindingWorker::~KeybindingWorker()
 {
-    qDebug() << "exit: destroying keybinding worker";
+    qDebug() << "exit: keybinding worker";
 
     should_quit = true;
     wait();
