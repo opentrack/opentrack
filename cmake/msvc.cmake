@@ -13,9 +13,8 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(cc "/Ox /arch:SSE2 /EHscr /fp:fast /GS- /GF /GL /GR- /Gy /MD /Y- /Zi /MP /W1")
-set(link "/DEBUG /LTCG /OPT:REF,ICF=10 /DYNAMICBASE /NXCOMPAT")
 
-set(silly "-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
+set(silly "/bigobj -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
@@ -24,9 +23,17 @@ set(_CFLAGS_DEBUG "/Zi /GS")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "/Zi /GS")
 
+set(ldflags-shared-release "/OPT:REF,ICF=10")
+set(ldflags-shared "/DEBUG /DYNAMICBASE /NXCOMPAT")
+
+foreach (i MODULE EXE SHARED)
+    set(_LDFLAGS_${i} "${ldflags-shared}")
+    set(_LDFLAGS_${i}_RELEASE "${ldflags-shared-release}")
+endforeach()
+
 set(_LDFLAGS "")
-set(_LDFLAGS_RELEASE "${link}")
-set(_LDFLAGS_DEBUG "/DEBUG /DYNAMICBASE /NXCOMPAT")
+set(_LDFLAGS_RELEASE "/LTCG")
+set(_LDFLAGS_DEBUG "")
 
 foreach(j C CXX)
     foreach(i "" _DEBUG _RELEASE)
@@ -39,7 +46,7 @@ endforeach()
 foreach(j "" _DEBUG _RELEASE)
     foreach(i MODULE EXE SHARED STATIC)
         set(OVERRIDE_LDFLAGS${j} "" CACHE STRING "")
-        set(CMAKE_${i}_LINKER_FLAGS${j} "${_LDFLAGS${j}} ${OVERRIDE_LDFLAGS${j}}" CACHE STRING "" FORCE)
+        set(CMAKE_${i}_LINKER_FLAGS${j} "${_LDFLAGS${j}} ${_LDFLAGS_${i}} ${_LDFLAGS_${i}_${j}} ${OVERRIDE_LDFLAGS${j}}" CACHE STRING "" FORCE)
     endforeach()
 endforeach()
 
