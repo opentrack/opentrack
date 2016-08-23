@@ -108,7 +108,11 @@ static void add_program_library_path()
 }
 #endif
 
-int main(int argc, char** argv)
+int
+#ifdef _MSC_VER
+WINAPI
+#endif
+main(int argc, char** argv)
 {
 #ifdef _WIN32
     init_com_threading();
@@ -156,3 +160,15 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+#ifdef _MSC_VER
+int WINAPI
+WinMain (struct HINSTANCE__ *hInstance,
+         struct HINSTANCE__ *hPrevInstance,
+         char               *lpszCmdLine,
+         int                 nCmdShow)
+{
+  return main (__argc, __argv);
+}
+
+#endif
