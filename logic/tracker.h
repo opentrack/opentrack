@@ -43,7 +43,7 @@ private:
     Timer t;
     Pose output_pose, raw_6dof, last_mapped, last_raw;
 
-    double newpose[6];
+    Pose newpose;
     SelectedLibraries const& libs;
     // The owner of the reference is the main window.
     // This design might be usefull if we decide later on to swap out

@@ -25,7 +25,6 @@
 
 Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
-    newpose {0,0,0, 0,0,0},
     libs(libs),
     logger(logger),
     centerp(s.center_at_startup),
@@ -117,8 +116,8 @@ void Tracker::logic()
         if (k < 0 || k >= 6)
             value(i) = 0;
         else
-            value(i) = newpose[k];
-        raw(i) = newpose[i];
+            value(i) = newpose(k);
+        raw(i) = newpose(i);
     }
 
     logger.write_pose(raw); // raw
@@ -149,8 +148,10 @@ void Tracker::logic()
 
         if (centerp && !nanp)
         {
+            using std::fabs;
+
             for (int i = 0; i < 6; i++)
-                if (fabs(newpose[i]) != 0)
+                if (fabs(newpose(i)) != 0)
                 {
                     can_center = true;
                     break;
@@ -159,7 +160,6 @@ void Tracker::logic()
 
         if (can_center)
         {
-
             centerp = false;
 
             if (libs.pFilter)
@@ -250,12 +250,11 @@ void Tracker::logic()
     }
     else
     {
-        {
-            Pose tmp = value;
+        Pose tmp(value);
 
-            if (libs.pFilter)
-                libs.pFilter->filter(tmp, value);
-        }
+        if (libs.pFilter)
+            libs.pFilter->filter(tmp, value);
+
         logger.write_pose(value); // "filtered"
 
         // CAVEAT rotation only, due to tcomp
@@ -346,12 +345,12 @@ void Tracker::run()
 
     while (!should_quit)
     {
-        double tmp[6] {0,0,0, 0,0,0};
+        Pose tmp;
         libs.pTracker->data(tmp);
 
         if (enabledp)
             for (int i = 0; i < 6; i++)
-                newpose[i] = elide_nan(tmp[i], newpose[i]);
+                newpose[i] = elide_nan(tmp(i), newpose(i));
 
         logic();
 
