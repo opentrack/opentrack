@@ -46,6 +46,16 @@ public:
     inhibit_qt_signals(std::shared_ptr<QObject> val) : inhibit_qt_signals(*val.get()) {}
 };
 
+template<typename t, typename u, typename w>
+auto clamp(t val, u min, w max) -> decltype (val * min * max)
+{
+    if (val > max)
+        return max;
+    if (val < min)
+        return min;
+    return val;
+}
+
 namespace detail {
 
 template<typename t>

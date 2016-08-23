@@ -10,6 +10,7 @@
 
 #include "compat/qcopyable-mutex.hpp"
 #include "options/options.hpp"
+#include "compat/util.hpp"
 using namespace options;
 
 #include "export.hpp"
@@ -47,16 +48,6 @@ class OPENTRACK_SPLINE_EXPORT spline final
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
-
-    template<typename t, typename u, typename w>
-    static inline auto clamp(t val, u min, w max) -> decltype (val * min * max)
-    {
-        if (val > max)
-            return max;
-        if (val < min)
-            return min;
-        return val;
-    }
 
     mem<spline_detail::settings> s;
     QMetaObject::Connection connection;

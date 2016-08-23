@@ -1,5 +1,6 @@
 #include "vjoystick.h"
 #include "api/plugin-api.hpp"
+#include "compat/util.hpp"
 
 #include <cstring>
 #include <QDebug>
@@ -17,16 +18,6 @@
 #include <vjoyinterface.h>
 
 #define OPENTRACK_VJOYSTICK_ID 1
-
-template<typename t, typename u, typename v>
-static t clamp(t val, u min, v max)
-{
-    if (val < min)
-        return t(min);
-    if (val > max)
-        return t(max);
-    return val;
-}
 
 const unsigned char handle::axis_ids[6] =
 {
