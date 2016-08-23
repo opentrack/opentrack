@@ -30,7 +30,7 @@ protected:
     void run() override;
 private:
     QUdpSocket sock;
-    double last_recv_pose[6];
+    double last_recv_pose[6], last_recv_pose2[6];
     QMutex mutex;
     settings s;
     volatile bool should_quit;

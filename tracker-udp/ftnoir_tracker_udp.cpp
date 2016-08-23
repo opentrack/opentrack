@@ -8,8 +8,14 @@
 
 #include "ftnoir_tracker_udp.h"
 #include "api/plugin-api.hpp"
+#include "compat/nan.hpp"
+#include "compat/util.hpp"
 
-FTNoIR_Tracker::FTNoIR_Tracker() : last_recv_pose { 0,0,0, 0,0,0 }, should_quit(false) {}
+FTNoIR_Tracker::FTNoIR_Tracker() :
+    last_recv_pose { 0,0,0, 0,0,0 },
+    last_recv_pose2 { 0,0,0, 0,0,0 },
+    should_quit(false)
+{}
 
 FTNoIR_Tracker::~FTNoIR_Tracker()
 {
@@ -26,19 +32,44 @@ void FTNoIR_Tracker::run()
 
     while (!should_quit)
     {
+        if (sock.hasPendingDatagrams())
         {
             QMutexLocker foo(&mutex);
 
-            while (sock.hasPendingDatagrams())
-                sock.readDatagram(reinterpret_cast<char*>(last_recv_pose), sizeof(double[6]));
+            bool ok = false;
+
+            do
+            {
+                const qint64 sz = sock.readDatagram(reinterpret_cast<char*>(last_recv_pose2), sizeof(double[6]));
+                if (sz > 0)
+                    ok = true;
+            }
+            while (sock.hasPendingDatagrams());
+
+            if (ok &&
+                progn(
+                    for (unsigned i = 0; i < 6; i++)
+                    {
+                        if (nanp(last_recv_pose2[i]))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+               ))
+            {
+                for (unsigned i = 0; i < 6; i++)
+                    last_recv_pose[i] = last_recv_pose2[i];
+            }
         }
-        msleep(1);
+
+        (void) sock.waitForReadyRead(73);
     }
 }
 
 void FTNoIR_Tracker::start_tracker(QFrame*)
 {
-        start();
+    start();
     sock.moveToThread(this);
 }
 
@@ -63,7 +94,7 @@ void FTNoIR_Tracker::data(double *data)
 
     for (int i = 0; i < 3; i++)
     {
-        int k = std::min<unsigned>(sizeof(values)/sizeof(values[0]), std::max(0, indices[i]));
+        const unsigned k = clamp(unsigned(indices[i]), 0u, sizeof(values)/sizeof(*values) - 1u);
         data[Yaw + i] += values[k];
     }
 }
