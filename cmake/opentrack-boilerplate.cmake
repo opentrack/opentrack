@@ -67,10 +67,13 @@ function(opentrack_fixup_subsystem n)
             message(FATAL_ERROR "no vcvars.bat run; probably no editbin in PATH")
         endif()
         set(loc "$<TARGET_FILE:${n}>")
-        add_custom_command(TARGET "${n}"
-                           POST_BUILD
-                           COMMAND editbin -nologo -SUBSYSTEM:${subsystem},5.01 -OSVERSION:5.1 \"${loc}\"
-                           COMMENT "Fixing up Windows XP support for target ${n}")
+        get_property(type TARGET "${n}" PROPERTY TYPE)
+        if (NOT type STREQUAL "STATIC_LIBRARY")
+            add_custom_command(TARGET "${n}"
+                               POST_BUILD
+                               COMMAND editbin -nologo -SUBSYSTEM:${subsystem},5.01 -OSVERSION:5.1 \"${loc}\"
+                               COMMENT "Fixing up Windows XP support for target ${n}")
+        endif()
     endif()
 endfunction()
 
@@ -138,6 +141,8 @@ function(opentrack_boilerplate n)
     opentrack_is_target_c_only(is-c-only "${${n}-all}")
     if(NOT is-c-only)
         opentrack_qt(${n})
+    else()
+        set(arg_NO-QT TRUE)
     endif()
 
     if(arg_NO-QT)
