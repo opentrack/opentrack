@@ -28,7 +28,15 @@ extern "C" const char* opentrack_version;
 MainWindow::MainWindow() :
     State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
     pose_update_timer(this),
-    kbd_quit(QKeySequence("Ctrl+Q"), this)
+    kbd_quit(QKeySequence("Ctrl+Q"), this),
+    menu_action_header(&tray_menu),
+    menu_action_show(&tray_menu),
+    menu_action_exit(&tray_menu),
+    menu_action_tracker(&tray_menu),
+    menu_action_filter(&tray_menu),
+    menu_action_proto(&tray_menu),
+    menu_action_options(&tray_menu),
+    menu_action_mappings(&tray_menu)
 {
     ui.setupUi(this);
     setFixedSize(size());

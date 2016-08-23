@@ -19,6 +19,8 @@
 #include "logic/state.hpp"
 #include "options/options.hpp"
 
+#include <QObject>
+#include <QWidget>
 #include <QMainWindow>
 #include <QKeySequence>
 #include <QShortcut>
