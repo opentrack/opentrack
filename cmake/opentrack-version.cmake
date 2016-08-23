@@ -43,6 +43,6 @@ endif()
 
 add_library(opentrack-version STATIC ${CMAKE_BINARY_DIR}/version.c)
 if(NOT MSVC)
-    SET_TARGET_PROPERTIES(opentrack-version PROPERTIES COMPILE_FLAGS "-fno-lto")
+    set_property(TARGET opentrack-version APPEND_STRING PROPERTY COMPILE_FLAGS "-fno-lto")
 endif()
 opentrack_compat(opentrack-version)

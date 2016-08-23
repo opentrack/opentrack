@@ -33,6 +33,9 @@ file(GLOB opentrack-subprojects
     "macosx/${C}"
     "cv/${C}"
 )
+
+list(SORT opentrack-subprojects)
+
 foreach(i ${opentrack-subprojects})
     get_filename_component(i ${i} DIRECTORY)
     add_subdirectory(${i})

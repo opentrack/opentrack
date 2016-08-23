@@ -1,31 +1,28 @@
-
 if(LINUX OR APPLE)
-    opentrack_boilerplate(opentrack-xplane-plugin NO-LIBRARY)
     set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
+    opentrack_boilerplate(opentrack-xplane-plugin NO-QT)
+
     if(SDK_XPLANE)
         # probably librt already included
-        add_library(opentrack-xplane-plugin SHARED ${opentrack-xplane-plugin-c})
         install(FILES ${opentrack-xplane-plugin-c} DESTINATION "${opentrack-doc-src-pfx}/opentrack-xplane-plugin")
         target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders ${SDK_XPLANE}/CHeaders/XPLM)
-        set(vis "-fvisibility=hidden")
+        set(begin TARGET opentrack-xplane-plugin APPEND_STRING PROPERTY)
+
         if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-            SET_TARGET_PROPERTIES(opentrack-xplane-plugin
-                PROPERTIES LINK_FLAGS
-                "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC"
-                COMPILE_FLAGS "${vis} -Wall -O2 -pipe -fPIC -DLIN -DXPLM200 -DXPLM210"
-                LIBRARY_OUTPUT_NAME "opentrack.xpl"
-                PREFIX "" SUFFIX "")
+            set_property(${begin} COMPILE_FLAGS "-O2 -pipe -fPIC -DLIN -DXPLM200 -DXPLM210")
+            set_property(${begin} LINK_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC")
+        elseif(APPLE)
+            set_property(${begin} COMPILE_FLAGS "-iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM200 -DXPLM210 -framework XPLM -framework XPWidgets")
+            set_property(${begin} LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets")
         endif()
-        if(APPLE)
-            SET_TARGET_PROPERTIES(opentrack-xplane-plugin PROPERTIES
-                                  COMPILE_FLAGS "${vis} -iframework ${SDK_XPLANE}/Libraries/Mac/ -DAPL -DXPLM200 -DXPLM210 -framework XPLM -framework XPWidgets"
-                                  LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets"
-                                  LIBRARY_OUTPUT_NAME "opentrack.xpl"
-                                  PREFIX "" SUFFIX "")
-        endif()
+
+        set_target_properties(opentrack-xplane-plugin PROPERTIES
+            LIBRARY_OUTPUT_NAME "opentrack.xpl"
+            PREFIX ""
+            SUFFIX "")
+
         if(UNIX AND NOT APPLE)
             target_link_libraries(opentrack-xplane-plugin rt)
         endif()
-        install(TARGETS opentrack-xplane-plugin RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx} )
     endif()
 endif()
