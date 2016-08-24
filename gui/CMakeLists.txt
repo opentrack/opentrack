@@ -8,7 +8,7 @@ if(WIN32)
     SET(SDK_CONSOLE_DEBUG FALSE CACHE BOOL "Console window visible at runtime")
 endif()
 
-opentrack_boilerplate(opentrack EXECUTABLE ${console})
+opentrack_boilerplate(opentrack EXECUTABLE BIN ${console})
 
 set_target_properties(opentrack PROPERTIES SUFFIX "${opentrack-binary-suffix}")
 
