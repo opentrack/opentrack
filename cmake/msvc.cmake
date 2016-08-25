@@ -12,7 +12,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/Ox /arch:SSE2 /EHscr /fp:fast /GS- /GF /GL /GR- /Gy /MD /Y- /Zi /MP /W1")
+set(cc "/Ox /arch:SSE2 /EHscr /fp:fast /GS- /GF /GL /GR- /Gy /MT /Y- /Zi /W1")
 
 set(silly "-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
 
