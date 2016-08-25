@@ -5,6 +5,8 @@
 #include "bundle.hpp"
 #include "slider.hpp"
 #include <type_traits>
+#include <typeinfo>
+#include <typeindex>
 #include <QString>
 #include <QPointF>
 #include <QList>
@@ -28,9 +30,16 @@ class OPENTRACK_OPTIONS_EXPORT base_value : public QObject
 {
     Q_OBJECT
     friend class ::options::detail::connector;
+
+    using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
+
 public:
     QString name() const { return self_name; }
-    base_value(bundle b, const QString& name) : b(b), self_name(name)
+    base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx) :
+        b(b),
+        self_name(name),
+        cmp(cmp),
+        type_index(type_idx)
     {
         b->on_value_created(name, this);
     }
@@ -57,16 +66,13 @@ signals:
 protected:
     bundle b;
     QString self_name;
+    comparator cmp;
+    std::type_index type_index;
 
     template<typename t>
     void store(const t& datum)
     {
         b->store_kv(self_name, QVariant::fromValue(datum));
-    }
-
-    void store(float datum)
-    {
-        store(double(datum));
     }
 
 public slots:
@@ -122,6 +128,8 @@ struct value_element_type<t, typename std::enable_if<std::is_enum<t>::value>::ty
     using type = int;
 };
 
+template<> struct value_element_type<float, void> { using type = double; };
+
 template<typename t> using value_element_type_t = typename value_element_type<t>::type;
 
 }
@@ -132,16 +140,24 @@ class value final : public base_value
 public:
     using element_type = detail::value_element_type_t<t>;
 
+    // XXX pointer comparison is wrong, need typeid since is_equal in one module doesn't equal in another!
+    static bool is_equal(const QVariant& val1, const QVariant& val2)
+    {
+        return val1.value<element_type>() == val2.value<element_type>();
+    }
+
     t operator=(const t& datum)
     {
-        store(static_cast<element_type>(datum));
+        const element_type tmp = static_cast<element_type>(datum);
+        if (tmp != get())
+            store(tmp);
         return datum;
     }
 
     static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::AutoConnection;
     static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    value(bundle b, const QString& name, t def) : base_value(b, name), def(def)
+    value(bundle b, const QString& name, t def) : base_value(b, name, &is_equal, std::type_index(typeid(element_type))), def(def)
     {
         QObject::connect(b.get(), SIGNAL(reloading()),
                          this, SLOT(reload()),

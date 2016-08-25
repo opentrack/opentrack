@@ -2,6 +2,10 @@
 
 #include <map>
 #include <vector>
+#include <tuple>
+#include <typeinfo>
+#include <typeindex>
+#include <QVariant>
 #include <QString>
 #include <QMutex>
 #include <QMutexLocker>
@@ -18,7 +22,10 @@ class OPENTRACK_OPTIONS_EXPORT connector
 {
     friend class ::options::base_value;
 
-    std::map<QString, std::vector<const base_value*>> connected_values;
+    using value_vec = std::vector<const base_value*>;
+    using comparator = bool(*)(const QVariant&, const QVariant&);
+    using tt = std::tuple<value_vec, comparator, std::type_index>;
+    std::map<QString, tt> connected_values;
 
     void on_value_destructed(const QString& name, const base_value* val);
     void on_value_created(const QString& name, const base_value* val);
@@ -32,6 +39,8 @@ protected:
 public:
     connector();
     virtual ~connector();
+
+    bool is_equal(const QString& name, const QVariant& val1, const QVariant& val2) const;
 
     connector(const connector&) = default;
     connector& operator=(const connector&) = default;

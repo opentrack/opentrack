@@ -91,28 +91,4 @@ const std::shared_ptr<QSettings> group::ini_file()
     return std::make_shared<QSettings>();
 }
 
-bool group::operator==(const group& other) const
-{
-    for (const auto& kv : kvs)
-    {
-        const QVariant val = other.get<QVariant>(kv.first);
-        if (!other.contains(kv.first) || kv.second != val)
-        {
-            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "-" << val << "<>" << kv.second;
-            return false;
-        }
-    }
-
-    for (const auto& kv : other.kvs)
-    {
-        const QVariant val = get<QVariant>(kv.first);
-        if (!contains(kv.first) || kv.second != val)
-        {
-            qDebug() << "bundle" << name << "modified" << "key" << kv.first << "-" << kv.second << "<>" << val;
-            return false;
-        }
-    }
-    return true;
-}
-
 }
