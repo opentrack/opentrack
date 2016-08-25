@@ -140,7 +140,6 @@ class value final : public base_value
 public:
     using element_type = detail::value_element_type_t<t>;
 
-    // XXX pointer comparison is wrong, need typeid since is_equal in one module doesn't equal in another!
     static bool is_equal(const QVariant& val1, const QVariant& val2)
     {
         return val1.value<element_type>() == val2.value<element_type>();
