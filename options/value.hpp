@@ -155,7 +155,7 @@ public:
     }
 
     static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::AutoConnection;
-    static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
+    static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::AutoConnection;
 
     value(bundle b, const QString& name, t def) : base_value(b, name, &is_equal, std::type_index(typeid(element_type))), def(def)
     {
