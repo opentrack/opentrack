@@ -17,6 +17,7 @@
 using mat33 = pt_types::mat33;
 using vec3 = pt_types::vec3;
 using f = pt_types::f;
+constexpr unsigned PointModel::N_POINTS;
 
 static void get_row(const mat33& m, int i, vec3& v)
 {
