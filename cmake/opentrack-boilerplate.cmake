@@ -71,7 +71,7 @@ function(opentrack_fixup_subsystem n)
             add_custom_command(TARGET "${n}"
                                POST_BUILD
                                COMMAND editbin -nologo -SUBSYSTEM:${subsystem},5.01 -OSVERSION:5.1 \"${loc}\"
-                               COMMENT "Fixing up Windows XP support for target ${n}")
+                               COMMENT "[MSVC] Fixing up Windows XP support for target ${n}")
         endif()
     endif()
 endfunction()
@@ -128,7 +128,7 @@ function(opentrack_boilerplate n)
     cmake_parse_arguments(arg
         "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE"
         "LINK;COMPILE"
-        ""
+        "SOURCES"
         ${ARGN}
         )
     if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
@@ -138,11 +138,12 @@ function(opentrack_boilerplate n)
     project(${n})
     opentrack_glob_sources(${n})
     opentrack_is_target_c_only(is-c-only "${${n}-all}")
-    if(NOT is-c-only)
+    if(NOT (is-c-only OR arg_NO-QT))
         opentrack_qt(${n})
     else()
         set(arg_NO-QT TRUE)
     endif()
+    list(APPEND ${n}-all ${arg_SOURCES})
 
     if(arg_NO-QT)
         set(arg_NO-COMPAT TRUE)
