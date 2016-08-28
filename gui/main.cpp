@@ -96,14 +96,18 @@ void add_win32_path()
 // workaround QTBUG-38598, allow for launching from another directory
 static void add_program_library_path()
 {
-    char* p = _pgmptr;
-    char path[MAX_PATH+1];
-    strcpy(path, p);
+    // Windows 10 allows for paths longer than MAX_PATH via fsutil and friends, shit
+    const char* p = _pgmptr;
+    char path[4096+1];
+
+    strncpy(path, p, sizeof(path)-1);
+    path[sizeof(path)-1] = '\0';
+
     char* ptr = strrchr(path, '\\');
     if (ptr)
     {
         *ptr = '\0';
-        QCoreApplication::addLibraryPath(path);
+        QCoreApplication::setLibraryPaths({ path });
     }
 }
 #endif
