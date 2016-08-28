@@ -20,6 +20,10 @@ typedef void* LPDIRECTINPUT8;
 #include <atomic>
 #endif
 
+#ifdef _MSC_VER
+    extern template struct OPENTRACK_DINPUT_EXPORT std::atomic<int>;
+#endif
+
 class OPENTRACK_DINPUT_EXPORT dinput_handle final
 {
 public:
