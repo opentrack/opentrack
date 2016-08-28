@@ -77,3 +77,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 # Licensing information
 
 Almost all code is licensed under the [ISC license](https://en.wikipedia.org/wiki/ISC_license). There are very few proprietary dependencies. There is no copyleft code. See individual files for licensing and authorship information.
+
+# Building opentrack from source
+
+On Windows, use either mingw-w64 MS Visual Studio 2015 Update 3 or newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C------2015).
