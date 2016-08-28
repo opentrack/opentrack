@@ -37,8 +37,7 @@ if(MSVC)
         add_custom_command(TARGET fixup-qt-subsystem
             POST_BUILD
             COMMAND editbin -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 "${i}.dll"
-            WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}"
-            COMMENT "Fixing up Windows XP support for ${i}.dll")
+            WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}")
     endforeach()
 endif()
 
