@@ -70,8 +70,7 @@ function(opentrack_fixup_subsystem n)
         if (NOT type STREQUAL "STATIC_LIBRARY")
             add_custom_command(TARGET "${n}"
                                POST_BUILD
-                               COMMAND editbin -nologo -SUBSYSTEM:${subsystem},5.01 -OSVERSION:5.1 \"${loc}\"
-                               COMMENT "[MSVC] Fixing up Windows XP support for target ${n}")
+                               COMMAND editbin -nologo -SUBSYSTEM:${subsystem},5.01 -OSVERSION:5.1 \"${loc}\")
         endif()
     endif()
 endfunction()
