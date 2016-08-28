@@ -112,7 +112,6 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
             int m10 = 0;
             int m01 = 0;
             int cnt = 0;
-            int vals = 0;
 
             for (int i=rect.y; i < (rect.y+rect.height); i++)
             {
@@ -126,7 +125,6 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                     m00 += val;
                     m01 += i * val;
                     m10 += j * val;
-                    vals += val;
                     cnt++;
                 }
             }
@@ -136,7 +134,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::
                 if (radius > region_size_max || radius < region_size_min)
                     continue;
                 const double norm = double(m00);
-                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), vals/sqrt(double(cnt)));
+                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), m00/sqrt(double(cnt)));
                 blobs.push_back(b);
                 {
                     char buf[64];
