@@ -56,13 +56,13 @@ public:
      * @param distorsionCoeff 4x1 matrix (k1,k2,p1,p2)
      * @param size image size
      */
-    CameraParameters(cv::Mat cameraMatrix,cv::Mat distorsionCoeff,cv::Size size) throw(cv::Exception);
+    CameraParameters(cv::Mat cameraMatrix,cv::Mat distorsionCoeff,cv::Size size) noexcept;
     /**Sets the parameters
      * @param cameraMatrix 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
      * @param distorsionCoeff 4x1 matrix (k1,k2,p1,p2)
      * @param size image size
      */
-    void setParams(cv::Mat cameraMatrix,cv::Mat distorsionCoeff,cv::Size size) throw(cv::Exception);
+    void setParams(cv::Mat cameraMatrix,cv::Mat distorsionCoeff,cv::Size size) noexcept;
     /**Copy constructor
      */
     CameraParameters(const CameraParameters &CI) ;
@@ -77,18 +77,18 @@ public:
     CameraParameters & operator=(const CameraParameters &CI);
     /**Reads the camera parameters from a file generated using saveToFile.
      */
-    void readFromFile(string path)throw(cv::Exception);
+    void readFromFile(string path)noexcept;
     /**Saves this to a file
      */
-    void saveToFile(string path,bool inXML=true)throw(cv::Exception);
+    void saveToFile(string path,bool inXML=true)noexcept;
 
     /**Reads from a YAML file generated with the opencv2.2 calibration utility
      */
-    void readFromXMLFile(string filePath)throw(cv::Exception);
+    void readFromXMLFile(string filePath)noexcept;
 
     /**Adjust the parameters to the size of the image indicated
      */
-    void resize(cv::Size size)throw(cv::Exception);
+    void resize(cv::Size size)noexcept;
 
     /**Returns the location of the camera in the reference system given by the rotation and translation vectors passed
      * NOT TESTED
@@ -105,7 +105,7 @@ public:
     * @param gnear,gfar: visible rendering range
     * @param invert: indicates if the output projection matrix has to yield a horizontally inverted image because image data has not been stored in the order of glDrawPixels: bottom-to-top.
     */
-    void glGetProjectionMatrix( cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )throw(cv::Exception);
+    void glGetProjectionMatrix( cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )noexcept;
 
     /**
      * setup camera for an Ogre project.
@@ -117,14 +117,14 @@ public:
      * ...
      * As in OpenGL, it assumes no camera distorsion
      */
-    void OgreGetProjectionMatrix( cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )throw(cv::Exception);
+    void OgreGetProjectionMatrix( cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )noexcept;
 
 
 private:
     //GL routines
 
-    static void argConvGLcpara2( double cparam[3][4], int width, int height, double gnear, double gfar, double m[16], bool invert )throw(cv::Exception);
-    static int  arParamDecompMat( double source[3][4], double cpara[3][4], double trans[3][4] )throw(cv::Exception);
+    static void argConvGLcpara2( double cparam[3][4], int width, int height, double gnear, double gfar, double m[16], bool invert )noexcept;
+    static int  arParamDecompMat( double source[3][4], double cpara[3][4], double trans[3][4] )noexcept;
     static double norm( double a, double b, double c );
     static double dot(  double a1, double a2, double a3,
                         double b1, double b2, double b3 );

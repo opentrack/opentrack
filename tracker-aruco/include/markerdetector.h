@@ -83,7 +83,7 @@ public:
      * @param markerSizeMeters size of the marker sides expressed in meters
      * @param setYPerperdicular If set the Y axis will be perpendicular to the surface. Otherwise, it will be the Z axis
      */
-    void detect(const cv::Mat &input,std::vector<Marker> &detectedMarkers,cv::Mat camMatrix=cv::Mat(),cv::Mat distCoeff=cv::Mat(),float markerSizeMeters=-1,bool setYPerperdicular=true) throw (cv::Exception);
+    void detect(const cv::Mat &input,std::vector<Marker> &detectedMarkers,cv::Mat camMatrix=cv::Mat(),cv::Mat distCoeff=cv::Mat(),float markerSizeMeters=-1,bool setYPerperdicular=true) noexcept;
     /**Detects the markers in the image passed
      *
      * If you provide information about the camera parameters and the size of the marker, then, the extrinsics of the markers are detected
@@ -94,7 +94,7 @@ public:
      * @param markerSizeMeters size of the marker sides expressed in meters
      * @param setYPerperdicular If set the Y axis will be perpendicular to the surface. Otherwise, it will be the Z axis
      */
-    void detect(const cv::Mat &input,std::vector<Marker> &detectedMarkers, CameraParameters camParams,float markerSizeMeters=-1,bool setYPerperdicular=true) throw (cv::Exception);
+    void detect(const cv::Mat &input,std::vector<Marker> &detectedMarkers, CameraParameters camParams,float markerSizeMeters=-1,bool setYPerperdicular=true) noexcept;
 
     /**This set the type of thresholding methods available
      */
@@ -160,7 +160,7 @@ public:
      * @param max size of the contour to consider a possible marker as valid [0,1)
      *
      */
-    void setMinMaxSize(float min=0.03,float max=0.5)throw(cv::Exception);
+    void setMinMaxSize(float min=0.03,float max=0.5)noexcept;
 
     /**reads the min and max sizes employed
      * @param min output size of the contour to consider a possible marker as valid (0,1]
@@ -223,7 +223,7 @@ public:
     /**
      * Thesholds the passed image with the specified method.
      */
-    void thresHold(int method,const cv::Mat &grey,cv::Mat &thresImg,double param1=-1,double param2=-1)throw(cv::Exception);
+    void thresHold(int method,const cv::Mat &grey,cv::Mat &thresImg,double param1=-1,double param2=-1)noexcept;
     /**
     * Detection of candidates to be markers, i.e., rectangles.
     * This function returns in candidates all the rectangles found in a thresolded image
@@ -243,7 +243,7 @@ public:
      * @param points 4 corners of the marker in the image in
      * @return true if the operation succeed
      */
-    bool warp(cv::Mat &in,cv::Mat &out,cv::Size size, std::vector<cv::Point2f> points)throw (cv::Exception);
+    bool warp(cv::Mat &in,cv::Mat &out,cv::Size size, std::vector<cv::Point2f> points)noexcept;
 
 
 
@@ -266,12 +266,12 @@ public:
      * @param gnear,gfar: visible rendering range
      * @param invert: indicates if the output projection matrix has to yield a horizontally inverted image because image data has not been stored in the order of glDrawPixels: bottom-to-top.
      */
-    static void glGetProjectionMatrix( CameraParameters &  CamMatrix,cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )throw(cv::Exception);
+    static void glGetProjectionMatrix( CameraParameters &  CamMatrix,cv::Size orgImgSize, cv::Size size,double proj_matrix[16],double gnear,double gfar,bool invert=false   )noexcept;
 
 private:
 
     bool _enableCylinderWarp;
-    bool warp_cylinder ( cv::Mat &in,cv::Mat &out,cv::Size size, MarkerCandidate& mc ) throw ( cv::Exception );
+    bool warp_cylinder ( cv::Mat &in,cv::Mat &out,cv::Size size, MarkerCandidate& mc ) noexcept;
     /**
     * Detection of candidates to be markers, i.e., rectangles.
     * This function returns in candidates all the rectangles found in a thresolded image
@@ -309,8 +309,8 @@ private:
 
 //     //GL routines
 //
-//     static void argConvGLcpara2( double cparam[3][4], int width, int height, double gnear, double gfar, double m[16], bool invert )throw(cv::Exception);
-//     static int  arParamDecompMat( double source[3][4], double cpara[3][4], double trans[3][4] )throw(cv::Exception);
+//     static void argConvGLcpara2( double cparam[3][4], int width, int height, double gnear, double gfar, double m[16], bool invert )noexcept;
+//     static int  arParamDecompMat( double source[3][4], double cpara[3][4], double trans[3][4] )noexcept;
 //     static double norm( double a, double b, double c );
 //     static double dot(  double a1, double a2, double a3,
 //                         double b1, double b2, double b3 );
