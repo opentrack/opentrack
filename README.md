@@ -80,4 +80,4 @@ Almost all code is licensed under the [ISC license](https://en.wikipedia.org/wik
 
 # Building opentrack from source
 
-On Windows, use either mingw-w64 MS Visual Studio 2015 Update 3 or newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C------2015).
+On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C------2015).
