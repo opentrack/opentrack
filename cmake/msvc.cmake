@@ -14,22 +14,26 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(cc "/Ox /arch:SSE2 /EHscr /fp:fast /GS- /GF /GL /GR- /Gy /MT /Y- /Zi")
 
-#C4263 - member function does not override any base class virtual member function
-#C4264 - no override available for virtual member function from base class, function is hidden
-#C4265 - class has virtual functions, but destructor is not virtual
-#C4266 - no override available for virtual member function from base type, function is hidden
-#C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
+set(warns_ "")
 
-set(warns 4263 4264 4266 4928)
-set(warns-noerr 4265)
+if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
+    #C4263 - member function does not override any base class virtual member function
+    #C4264 - no override available for virtual member function from base class, function is hidden
+    #C4265 - class has virtual functions, but destructor is not virtual
+    #C4266 - no override available for virtual member function from base type, function is hidden
+    #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
 
-foreach(i ${warns})
-    set(warns_ "${warns_} /w1${i} /we${i}")
-endforeach()
+    set(warns 4263 4264 4266 4928)
+    set(warns-noerr 4265)
 
-foreach(i ${warns-noerr})
-    set(warns_ "${warns_} /w1${i}")
-endforeach()
+    foreach(i ${warns})
+        set(warns_ "${warns_} /w1${i} /we${i}")
+    endforeach()
+
+    foreach(i ${warns-noerr})
+        set(warns_ "${warns_} /w1${i}")
+    endforeach()
+endif()
 
 set(silly "${warns_} -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
 
@@ -85,13 +89,15 @@ if((CMAKE_GENERATOR STREQUAL "NMake Makefiles") OR (CMAKE_GENERATOR STREQUAL "NM
         message("\n--")
         message(FATAL_ERROR "cannot continue.")
     endif()
-    set(warn-flag-found FALSE)
-    foreach (i CMAKE_CXX_FLAGS CMAKE_C_FLAGS)
-        string(REGEX MATCH "((^| )/[wW][^ ]*)" ret "${${i}}")
-        if(ret STREQUAL "")
-            set(${i} "-W3 ${${i}}" CACHE STRING "" FORCE)
-        endif()
-    endforeach()
+    if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
+        set(warn-flag-found FALSE)
+        foreach (i CMAKE_CXX_FLAGS CMAKE_C_FLAGS)
+            string(REGEX MATCH "((^| )/[W][0-9]( |\$))" ret "${${i}}")
+            if(ret STREQUAL "")
+                set(${i} "-W3 ${${i}}" CACHE STRING "" FORCE)
+            endif()
+        endforeach()
+    endif()
 
     set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -nologo")
 endif()
