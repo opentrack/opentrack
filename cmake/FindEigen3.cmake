@@ -79,3 +79,6 @@ else (EIGEN3_INCLUDE_DIR)
 
 endif(EIGEN3_INCLUDE_DIR)
 
+if(EIGEN3_FOUND)
+    add_definitions(-DEIGEN_MPL2_ONLY)
+endif()
