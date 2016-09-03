@@ -157,10 +157,10 @@ main(int argc, char** argv)
 
         app.exec();
 
-        qDebug() << "exit: now deleting main control";
+        qDebug() << "exit: main control";
     }
 
-    qDebug() << "exit: main() now exits";
+    qDebug() << "exit: main()";
 
     return 0;
 }

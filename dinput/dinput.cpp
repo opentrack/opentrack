@@ -66,7 +66,7 @@ void dinput_handle::di_t::unref_di()
     {
         while (init_lock.test_and_set()) { /* busy loop */ }
 
-        qDebug() << "exit: deleting di handle";
+        qDebug() << "exit: di handle";
         free_di();
 
         init_lock.clear();
