@@ -264,9 +264,6 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             value(i) += m(i).opts.zero;
 
-        for (int i = 0; i < 6; i++)
-            value(i) *= int(m(i).opts.invert) * -2 + 1;
-
         if (zero_)
             for (int i = 0; i < 6; i++)
                 value(i) = 0;
@@ -291,6 +288,9 @@ void Tracker::logic()
     // CAVEAT translation only, due to tcomp
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
+
+    for (int i = 0; i < 6; i++)
+        value(i) *= int(m(i).opts.invert) * -2 + 1;
 
     logger.write_pose(value); // "mapped"
 
