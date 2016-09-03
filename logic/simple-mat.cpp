@@ -74,7 +74,7 @@ void OPENTRACK_LOGIC_EXPORT tait_bryan_to_matrices(const euler_t& input,
     }
 
     {
-        const double theta = -input(1);
+        const double theta = input(1);
         const double sin_theta = sin(theta);
         const double cos_theta = cos(theta);
 
