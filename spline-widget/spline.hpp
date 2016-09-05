@@ -41,7 +41,7 @@ signals:
 
 class OPENTRACK_SPLINE_EXPORT spline final
 {
-    int precision(const QList<QPointF>& points) const;
+    double precision(const QList<QPointF>& points) const;
     void update_interp_data();
     float getValueInternal(int x);
     void add_lone_point();
@@ -98,4 +98,5 @@ public:
     mem<const settings> get_settings() const;
 
     using points_t = decltype(s->points.get());
+    int get_point_count() const;
 };

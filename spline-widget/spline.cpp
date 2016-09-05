@@ -269,6 +269,12 @@ QList<QPointF> spline::getPoints() const
     return s->points;
 }
 
+int spline::get_point_count() const
+{
+    QMutexLocker foo(&_mutex);
+    return s->points.get().size();
+}
+
 void spline::reload()
 {
     QMutexLocker foo(&_mutex);
