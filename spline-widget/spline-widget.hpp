@@ -17,9 +17,13 @@ using namespace options;
 #include "export.hpp"
 
 #include <QWidget>
-#include <QtGui>
-#include <QMetaObject>
+#include <QRect>
+#include <QPoint>
 #include <QPointF>
+#include <QToolTip>
+#include <QShowEvent>
+#include <QMetaObject>
+
 #include <QDebug>
 
 class OPENTRACK_SPLINE_EXPORT spline_widget final : public QWidget
@@ -62,30 +66,31 @@ protected slots:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void reload_spline();
 private:
+    void show_tooltip(const QPoint& pos, const QPointF& value = QPointF(0, 0), const QString& prefix = QStringLiteral(""));
+    bool is_in_bounds(const QPoint& pos) const;
+
     void drawBackground();
     void drawFunction();
-    void drawPoint(QPainter *painter, const QPointF &pt, QColor colBG, QColor border = QColor(50, 100, 120, 200));
-    void drawLine(QPainter *painter, const QPointF &start, const QPointF &end, QPen& pen);
-    bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
+    void drawPoint(QPainter& painter, const QPointF& pt, const QColor& colBG, const QColor& border = QColor(50, 100, 120, 200));
+    void drawLine(QPainter& painter, const QPoint& start, const QPoint& end, const QPen& pen);
+    bool point_within_pixel(const QPointF& pt, const QPoint& pixel);
 protected:
     void resizeEvent(QResizeEvent *) override;
 private:
+    bool is_on_pt(const QPoint& pos, int* pt = nullptr);
     void update_range();
-
-    QPointF pixel_coord_to_point (const QPointF& point);
+    QPointF pixel_coord_to_point(const QPoint& point);
     QPointF point_to_pixel(const QPointF& point);
 
-    spline* _config;
-
-    // bounds of the rectangle user can interact with
-    QRectF  pixel_bounds;
-
     QPointF c;
-
-    QColor spline_color;
+    spline* _config;
 
     QPixmap _background;
     QPixmap _function;
+    QColor spline_color;
+
+    // bounds of the rectangle user can interact with
+    QRect pixel_bounds;
 
     QMetaObject::Connection connection;
 
@@ -95,5 +100,5 @@ private:
 
     static constexpr int line_length_pixels = 3;
     static constexpr int point_size = 4;
-    static constexpr int point_closeness_limit = 5;
+    static constexpr int point_closeness_limit = 7;
 };
