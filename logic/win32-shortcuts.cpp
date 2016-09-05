@@ -164,7 +164,7 @@ bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     // CAVEAT don't use QVariant::toUInt() or conversion fails
     const unsigned qt = static_cast<unsigned>(QVariant(qt_).toInt());
-    const unsigned our_mods = qt & Qt::KeyboardModifierMask;
+    const unsigned our_mods = unsigned(qt & Qt::KeyboardModifierMask);
 
     {
         const auto key_ = qt;

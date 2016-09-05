@@ -88,8 +88,8 @@ KeybindingWorker& KeybindingWorker::make()
 
 void KeybindingWorker::run()
 {
-    BYTE keystate[256] = {0};
-    BYTE old_keystate[256] = {0};
+    unsigned char keystate[256] = {0};
+    unsigned char old_keystate[256] = {0};
 
     while (!should_quit)
     {
@@ -101,7 +101,8 @@ void KeybindingWorker::run()
                 {
                     const HRESULT hr = dinkeyboard->GetDeviceState(256, (LPVOID)keystate);
 
-                    if (hr != DI_OK) {
+                    if (hr != DI_OK)
+                    {
                         qDebug() << "Tracker::run GetDeviceState function failed!" << GetLastError();
                         Sleep(25);
                         continue;

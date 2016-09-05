@@ -23,8 +23,8 @@
 
 struct OPENTRACK_DINPUT_EXPORT Key
 {
-    BYTE keycode;
     QString guid;
+    int keycode;
     bool shift;
     bool ctrl;
     bool alt;

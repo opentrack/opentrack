@@ -37,11 +37,11 @@ struct settings : opts {
     {}
 };
 
-#pragma pack(push,1)            // All fields in structure must be byte aligned.
+#pragma pack(push,1) // All fields in structure must be unaligned
 typedef struct
 {
-    int Control;                                // Control identifier
-    int Value;                                  // Value of DOF
+    int Control; // Control identifier
+    int Value;   // Value of DOF
 } TFSState;
 #pragma pack(pop)
 
