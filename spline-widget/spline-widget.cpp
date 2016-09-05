@@ -33,6 +33,8 @@ spline_widget::spline_widget(QWidget *parent) :
 {
     update_range();
     setMouseTracking(true);
+    setFocusPolicy(Qt::ClickFocus);
+    setCursor(Qt::ArrowCursor);
 }
 
 spline_widget::~spline_widget()
@@ -280,7 +282,6 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
     points_t points = _config->getPoints();
     if (e->button() == Qt::LeftButton)
     {
-        setFocus();
         bool bTouchingPoint = false;
         moving_control_point_idx = -1;
         if (_config)
@@ -314,7 +315,6 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 {
                     _config->addPoint(pixel_coord_to_point(e->pos()));
                     show_tooltip(e->pos());
-                    setFocus();
                 }
             }
         }
@@ -322,7 +322,6 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
     if (e->button() == Qt::RightButton)
     {
-        clearFocus();
         if (_config)
         {
             int found_pt = -1;
@@ -348,22 +347,15 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
 void spline_widget::mouseMoveEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled())
-        return;
-
-    const bool has_focus = hasFocus();
-
-    if (!has_focus)
+    if (!_config || !isEnabled() || !hasFocus() || !isActiveWindow())
     {
-        moving_control_point_idx = -1;
-        setCursor(Qt::ArrowCursor);
+        clearFocus();
+        return;
     }
 
     points_t points = _config->getPoints();
 
-    if (hasFocus() &&
-        moving_control_point_idx >= 0 &&
-        moving_control_point_idx < points.size())
+    if (moving_control_point_idx >= 0 && moving_control_point_idx < points.size())
     {
         const int idx = moving_control_point_idx;
 
@@ -419,8 +411,6 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
     }
     else
     {
-        moving_control_point_idx = -1;
-
         int i;
         bool is_on_point = is_on_pt(e->pos(), &i);
 
@@ -442,10 +432,11 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
 void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled())
+    if (!_config || !isEnabled() || !isActiveWindow() || !hasFocus())
+    {
+        clearFocus();
         return;
-
-    clearFocus();
+    }
 
     if (e->button() == Qt::LeftButton)
     {
@@ -540,6 +531,16 @@ bool spline_widget::point_within_pixel(const QPointF& pt, const QPoint &pixel)
 {
     QPointF tmp = pixel - point_to_pixel(pt);
     return sqrt(QPointF::dotProduct(tmp, tmp)) < point_size;
+}
+
+void spline_widget::focusOutEvent(QFocusEvent* e)
+{
+    if (moving_control_point_idx != -1)
+        QToolTip::hideText();
+    moving_control_point_idx = -1;
+    lower();
+    setCursor(Qt::ArrowCursor);
+    e->accept();
 }
 
 QPointF spline_widget::pixel_coord_to_point(const QPoint& point)

@@ -22,6 +22,7 @@ using namespace options;
 #include <QPointF>
 #include <QToolTip>
 #include <QShowEvent>
+#include <QFocusEvent>
 #include <QMetaObject>
 
 #include <QDebug>
@@ -74,7 +75,8 @@ private:
     void drawPoint(QPainter& painter, const QPointF& pt, const QColor& colBG, const QColor& border = QColor(50, 100, 120, 200));
     void drawLine(QPainter& painter, const QPoint& start, const QPoint& end, const QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPoint& pixel);
-protected:
+
+    void focusOutEvent(QFocusEvent*e) override;
     void resizeEvent(QResizeEvent *) override;
 private:
     bool is_on_pt(const QPoint& pos, int* pt = nullptr);
