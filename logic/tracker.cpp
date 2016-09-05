@@ -15,6 +15,7 @@
 #include "compat/sleep.hpp"
 
 #include "tracker.h"
+
 #include <cmath>
 #include <algorithm>
 #include <cstdio>
@@ -26,17 +27,14 @@
 Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
     libs(libs),
-    logger(logger),
-    centerp(s.center_at_startup),
-    enabledp(true),
-    zero_(false),
-    should_quit(false)
+    logger(logger)
 {
+    set(f_center, s.center_at_startup);
 }
 
 Tracker::~Tracker()
 {
-    should_quit = true;
+    set(f_should_quit, true);
     wait();
 }
 
@@ -58,7 +56,7 @@ double Tracker::map(double pos, Map& axis)
     axis.spline_main.setTrackingActive( !altp );
     axis.spline_alt.setTrackingActive( altp );
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
-    return fc.getValue(pos);
+    return double(fc.getValue(pos));
 }
 
 void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz_, euler_t& output, bool rz)
@@ -146,7 +144,7 @@ void Tracker::logic()
     {
         bool can_center = false;
 
-        if (centerp && !nanp)
+        if (get(f_center) && !nanp)
         {
             using std::fabs;
 
@@ -160,7 +158,7 @@ void Tracker::logic()
 
         if (can_center)
         {
-            centerp = false;
+            set(f_center, false);
 
             if (libs.pFilter)
                 libs.pFilter->center();
@@ -264,7 +262,7 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             value(i) += m(i).opts.zero;
 
-        if (zero_)
+        if (get(f_zero))
             for (int i = 0; i < 6; i++)
                 value(i) = 0;
 
@@ -272,7 +270,7 @@ void Tracker::logic()
             nanp = true;
     }
 
-    if (s.tcomp_p)
+    if (s.tcomp_p && !get(f_tcomp_disabled))
     {
         euler_t value_(value(TX), value(TY), value(TZ));
         t_compensate(euler_to_rmat(euler_t(value(Yaw) * d2r, value(Pitch) * d2r, value(Roll) * d2r)),
@@ -343,12 +341,12 @@ void Tracker::run()
     t.start();
     logger.reset_dt();
 
-    while (!should_quit)
+    while (!get(f_should_quit))
     {
         Pose tmp;
         libs.pTracker->data(tmp);
 
-        if (enabledp)
+        if (get(f_enabled))
             for (int i = 0; i < 6; i++)
                 newpose[i] = elide_nan(tmp(i), newpose(i));
 

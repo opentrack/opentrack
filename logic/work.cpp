@@ -53,7 +53,8 @@ Work::Work(Mappings& m, SelectedLibraries& libs, WId handle) :
         key_tuple(s.key_zero, [&](bool) -> void { tracker->zero(); }, true),
         key_tuple(s.key_toggle_press, [&](bool x) -> void { tracker->set_toggle(!x); }, false),
         key_tuple(s.key_zero_press, [&](bool x) -> void { tracker->set_zero(x); }, false),
-        }
+        key_tuple(s.key_disable_tcomp_press, [&](bool x) { tracker->set_tcomp_disabled(x); }, false),
+    }
 {
     reload_shortcuts();
     tracker->start();
@@ -66,8 +67,8 @@ void Work::reload_shortcuts()
 
 Work::~Work()
 {
-    sc = nullptr;
     // order matters, otherwise use-after-free -sh
+    sc = nullptr;
     tracker = nullptr;
     libs = SelectedLibraries();
 }

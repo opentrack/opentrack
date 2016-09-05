@@ -92,7 +92,8 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
         { main.key_start_tracking, ui.start_tracking_text, ui.bind_start },
         { main.key_stop_tracking, ui.stop_tracking_text , ui.bind_stop},
         { main.key_toggle_tracking, ui.toggle_tracking_text, ui.bind_toggle_tracking },
-        { main.key_restart_tracking, ui.restart_tracking_text, ui.bind_restart_tracking }
+        { main.key_restart_tracking, ui.restart_tracking_text, ui.bind_restart_tracking },
+        { main.key_disable_tcomp_press, ui.tcomp_off_held_text, ui.bind_tcomp_off_held },
     };
 
     for (const tmp& val_ : tuples)

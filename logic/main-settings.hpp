@@ -76,6 +76,7 @@ struct main_settings
     key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
     key_opts key_center, key_toggle, key_zero;
     key_opts key_toggle_press, key_zero_press;
+    key_opts key_disable_tcomp_press;
     value<bool> tracklogging_enabled;
     value<QString> tracklogging_filename;
     main_settings() :
@@ -105,6 +106,7 @@ struct main_settings
         key_zero(b, "zero"),
         key_toggle_press(b, "toggle-press"),
         key_zero_press(b, "zero-press"),
+        key_disable_tcomp_press(b, "disable-translation-compensation-while-held"),
         tracklogging_enabled(b, "tracklogging-enabled", false),
         tracklogging_filename(b, "tracklogging-filename", QString())
     {

@@ -25,11 +25,63 @@
 #include <QMutex>
 #include <QThread>
 
+#include <atomic>
+
 #include "export.hpp"
 
 using Pose = Mat<double, 6, 1>;
 
-class OPENTRACK_LOGIC_EXPORT Tracker : private QThread
+struct bits
+{
+    enum flags {
+        f_center         = 1 << 0,
+        f_enabled        = 1 << 1,
+        f_zero           = 1 << 2,
+        f_tcomp_disabled = 1 << 3,
+        f_should_quit    = 1 << 4,
+    };
+
+    std::atomic<unsigned> b;
+
+    void set(flags flag_, bool val_)
+    {
+        unsigned b_(b);
+        const unsigned flag = unsigned(flag_);
+        const unsigned val = unsigned(!!val_);
+        while (!b.compare_exchange_weak(b_,
+                                        unsigned((b_ & ~flag) | (flag * val)),
+                                        std::memory_order_seq_cst,
+                                        std::memory_order_seq_cst))
+        { /* empty */ }
+    }
+
+    void negate(flags flag_)
+    {
+        unsigned b_(b);
+        const unsigned flag = unsigned(flag_);
+        while (!b.compare_exchange_weak(b_,
+                                        (b_ & ~flag) | (flag & ~b_),
+                                        std::memory_order_seq_cst,
+                                        std::memory_order_seq_cst))
+        { /* empty */ }
+    }
+
+    bool get(flags flag)
+    {
+        return !!(b & flag);
+    }
+
+    bits() : b(0u)
+    {
+        set(f_center, true);
+        set(f_enabled, true);
+        set(f_zero, false);
+        set(f_tcomp_disabled, false);
+        set(f_should_quit, false);
+    }
+};
+
+class OPENTRACK_LOGIC_EXPORT Tracker : private QThread, private bits
 {
     Q_OBJECT
 private:
@@ -64,11 +116,6 @@ private:
     state real_rotation, scaled_rotation;
     euler_t t_center;
 
-    volatile bool centerp;
-    volatile bool enabledp;
-    volatile bool zero_;
-    volatile bool should_quit;
-
     double map(double pos, Map& axis);
     void logic();
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output, bool rz);
@@ -88,9 +135,13 @@ public:
     rmat get_camera_offset_matrix(double c);
     void get_raw_and_mapped_poses(double* mapped, double* raw) const;
     void start() { QThread::start(); }
-    void toggle_enabled() { enabledp = !enabledp; }
-    void set_toggle(bool value) { enabledp = value; }
-    void set_zero(bool value) { zero_ = value; }
-    void center() { centerp = !centerp; }
-    void zero() { zero_ = !zero_; }
+
+    void center() { set(f_center, true); }
+
+    void set_toggle(bool value) { set(f_enabled, value); }
+    void set_zero(bool value) { set(f_zero, value); }
+    void set_tcomp_disabled(bool x) { set(f_tcomp_disabled, x); }
+
+    void zero() { negate(f_zero); }
+    void toggle_enabled() { negate(f_enabled); }
 };

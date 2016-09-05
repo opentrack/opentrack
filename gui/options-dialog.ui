@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
+    <width>546</width>
     <height>622</height>
    </rect>
   </property>
@@ -68,6 +68,68 @@
              <string notr="true">QGroupBox { border: 0; }</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_8">
+             <property name="horizontalSpacing">
+              <number>20</number>
+             </property>
+             <item row="8" column="1">
+              <widget class="QLabel" name="zero_held_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="2">
+              <widget class="QPushButton" name="bind_toggle_held">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="QPushButton" name="bind_zero_held">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="0">
+              <widget class="QLabel" name="textLabel2_10">
+               <property name="text">
+                <string>Restart tracking</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLabel" name="toggle_held_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="1">
+              <widget class="QLabel" name="restart_tracking_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="2">
+              <widget class="QPushButton" name="bind_restart_tracking">
+               <property name="text">
+                <string>Bind</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_27">
+               <property name="text">
+                <string>Toggle while held</string>
+               </property>
+              </widget>
+             </item>
              <item row="11" column="2">
               <widget class="QPushButton" name="bind_toggle_tracking">
                <property name="text">
@@ -85,17 +147,10 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_27">
+             <item row="5" column="2">
+              <widget class="QPushButton" name="bind_toggle">
                <property name="text">
-                <string>Toggle while held</string>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QLabel" name="start_tracking_text">
-               <property name="text">
-                <string/>
+                <string>Bind</string>
                </property>
               </widget>
              </item>
@@ -106,10 +161,10 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="2">
-              <widget class="QPushButton" name="bind_toggle">
+             <item row="9" column="1">
+              <widget class="QLabel" name="start_tracking_text">
                <property name="text">
-                <string>Bind</string>
+                <string/>
                </property>
               </widget>
              </item>
@@ -144,6 +199,13 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="center_text">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
              <item row="10" column="0">
               <widget class="QLabel" name="textLabel2_8">
                <property name="text">
@@ -151,13 +213,6 @@
                </property>
                <property name="wordWrap">
                 <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="center_text">
-               <property name="text">
-                <string/>
                </property>
               </widget>
              </item>
@@ -178,13 +233,6 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
-              <widget class="QLabel" name="toggle_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
              <item row="7" column="0">
               <widget class="QLabel" name="textLabel2_6">
                <property name="text">
@@ -192,6 +240,13 @@
                </property>
                <property name="wordWrap">
                 <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLabel" name="toggle_text">
+               <property name="text">
+                <string/>
                </property>
               </widget>
              </item>
@@ -226,53 +281,22 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
-              <widget class="QPushButton" name="bind_toggle_held">
+             <item row="13" column="0">
+              <widget class="QLabel" name="label_30">
                <property name="text">
-                <string>Bind</string>
+                <string>Translation compensation off while held</string>
                </property>
               </widget>
              </item>
-             <item row="8" column="1">
-              <widget class="QLabel" name="zero_held_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="2">
-              <widget class="QPushButton" name="bind_zero_held">
-               <property name="text">
-                <string>Bind</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QLabel" name="toggle_held_text">
+             <item row="13" column="1">
+              <widget class="QLabel" name="tcomp_off_held_text">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="12" column="0">
-              <widget class="QLabel" name="textLabel2_10">
-               <property name="text">
-                <string>Restart tracking</string>
-               </property>
-               <property name="wordWrap">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="1">
-              <widget class="QLabel" name="restart_tracking_text">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="2">
-              <widget class="QPushButton" name="bind_restart_tracking">
+             <item row="13" column="2">
+              <widget class="QPushButton" name="bind_tcomp_off_held">
                <property name="text">
                 <string>Bind</string>
                </property>
@@ -1383,6 +1407,7 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>bind_stop</tabstop>
   <tabstop>bind_toggle_tracking</tabstop>
   <tabstop>bind_restart_tracking</tabstop>
+  <tabstop>bind_tcomp_off_held</tabstop>
   <tabstop>center_at_startup</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>camera_yaw</tabstop>
@@ -1412,7 +1437,6 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
   <tabstop>tracklogging_fileselectbtn</tabstop>
-  <tabstop>tracklogging_filenameedit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
