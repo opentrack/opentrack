@@ -53,7 +53,7 @@ if(APPLE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
-    set(CMAKE_CXX_FLAGS " -std=c++11 ${CMAKE_CXX_FLAGS} ")
+    set(CMAKE_CXX_FLAGS " -std=c++14 ${CMAKE_CXX_FLAGS} ")
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
