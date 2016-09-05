@@ -11,11 +11,11 @@
 #include "api/plugin-api.hpp"
 #include "include/markerdetector.h"
 
-#include "cv/camera-dialog.hpp"
 #include "cv/video-widget.hpp"
 #include "cv/translation-calibrator.hpp"
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
 
 #include <QObject>
 #include <QThread>
@@ -106,7 +106,7 @@ private:
     static constexpr double alpha_ = .95;
 };
 
-class TrackerControls : public ITrackerDialog, protected camera_dialog
+class TrackerControls : public ITrackerDialog
 {
     Q_OBJECT
 public:
@@ -125,7 +125,6 @@ private slots:
     void toggleCalibrate();
     void cleanupCalib();
     void update_tracker_calibration();
-    void camera_settings();
 };
 
 class TrackerDll : public Metadata

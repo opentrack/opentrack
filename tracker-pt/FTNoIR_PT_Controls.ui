@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>424</width>
-    <height>579</height>
+    <height>568</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -83,25 +83,16 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="res_y_spin">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_36">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="toolTip">
-             <string>Desired capture height</string>
-            </property>
-            <property name="suffix">
-             <string> px</string>
-            </property>
-            <property name="maximum">
-             <number>2000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
+            <property name="text">
+             <string>Width</string>
             </property>
            </widget>
           </item>
@@ -115,19 +106,6 @@
             </property>
             <property name="text">
              <string>Diagonal field of view</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_36">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Width</string>
             </property>
            </widget>
           </item>
@@ -147,23 +125,25 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="dynamic_pose">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_5">
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="res_y_spin">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string>Dynamic pose resolution</string>
+            <property name="toolTip">
+             <string>Desired capture height</string>
+            </property>
+            <property name="suffix">
+             <string> px</string>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -190,6 +170,26 @@
             </property>
             <property name="maximum">
              <number>2000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="dynamic_pose">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Dynamic pose resolution</string>
             </property>
            </widget>
           </item>
@@ -241,19 +241,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="camdevice_combo">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumContentsLength">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_2">
             <property name="sizePolicy">
@@ -270,23 +257,16 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Camera settings dialog</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QPushButton" name="camera_settings">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="camdevice_combo">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string>Open</string>
+            <property name="minimumContentsLength">
+             <number>10</number>
             </property>
            </widget>
           </item>

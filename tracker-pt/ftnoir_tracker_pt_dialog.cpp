@@ -72,19 +72,10 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
-    connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
     timer.start(250);
 
     connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
     calib_timer.setInterval(100);
-}
-
-void TrackerDialog_PT::camera_settings()
-{
-    if (tracker)
-        open_camera_settings(static_cast<cv::VideoCapture*>(tracker->camera), s.camera_name, &tracker->camera_mtx);
-    else
-        open_camera_settings(nullptr, s.camera_name, nullptr);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)

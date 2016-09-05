@@ -426,7 +426,6 @@ TrackerControls::TrackerControls()
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
-    connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 }
 
 void TrackerControls::toggleCalibrate()
@@ -476,11 +475,6 @@ void TrackerControls::doOK()
 void TrackerControls::doCancel()
 {
     close();
-}
-
-void TrackerControls::camera_settings()
-{
-    open_camera_settings(tracker ? &tracker->camera : nullptr, s.camera_name, tracker ? &tracker->camera_mtx : nullptr);
 }
 
 OPENTRACK_DECLARE_TRACKER(Tracker, TrackerControls, TrackerDll)

@@ -15,7 +15,6 @@
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "compat/timer.hpp"
-#include "cv/camera-dialog.hpp"
 #include "cv/video-widget.hpp"
 #include "compat/pi-constant.hpp"
 

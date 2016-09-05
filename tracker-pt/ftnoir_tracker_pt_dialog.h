@@ -12,15 +12,12 @@
 #include "ftnoir_tracker_pt_settings.h"
 #include "ftnoir_tracker_pt.h"
 #include "ui_FTNoIR_PT_Controls.h"
-#include "cv/camera-dialog.hpp"
 #include "cv/translation-calibrator.hpp"
 #include "cv/video-widget.hpp"
 
 #include <QTimer>
 
-//-----------------------------------------------------------------------------
-// The dialog that shows up when the user presses "Settings"
-class TrackerDialog_PT : public ITrackerDialog, protected camera_dialog
+class TrackerDialog_PT : public ITrackerDialog
 {
     Q_OBJECT
 public:
@@ -35,7 +32,6 @@ public slots:
     void startstop_trans_calib(bool start);
     void trans_calib_step();
     void poll_tracker_info();
-    void camera_settings();
 private:
     settings_pt s;
     Tracker_PT* tracker;
