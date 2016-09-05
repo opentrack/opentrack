@@ -1,7 +1,12 @@
 #pragma once
-#include <QWidget>
+
 #include "logic/mappings.hpp"
 #include "ui_mapping-window.h"
+
+#include <QWidget>
+#include <QShowEvent>
+#include <QCloseEvent>
+#include <QCheckBox>
 
 class MapWidget final : public QWidget
 {
@@ -13,6 +18,7 @@ private:
     Ui::mapping_window ui;
     Mappings& m;
     main_settings s;
+
 
     void closeEvent(QCloseEvent*) override;
 

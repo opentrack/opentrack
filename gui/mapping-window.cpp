@@ -29,56 +29,56 @@ MapWidget::MapWidget(Mappings& m) :
 
 void MapWidget::reload()
 {
+
+    struct {
+        spline_widget* qfc;
+        Axis axis;
+        QCheckBox* checkbox;
+        bool altp;
+    } qfcs[] =
     {
-        struct {
-            spline_widget* qfc;
-            Axis axis;
-            QCheckBox* checkbox;
-            bool altp;
-        } qfcs[] =
+    { ui.rxconfig, Yaw,   nullptr, false },
+    { ui.ryconfig, Pitch, nullptr, false },
+    { ui.rzconfig, Roll,  nullptr, false },
+    { ui.txconfig, TX,    nullptr, false },
+    { ui.tyconfig, TY,    nullptr, false },
+    { ui.tzconfig, TZ,    nullptr, false },
+
+    { ui.rxconfig_alt, Yaw,   ui.rx_altp, true },
+    { ui.ryconfig_alt, Pitch, ui.ry_altp, true },
+    { ui.rzconfig_alt, Roll,  ui.rz_altp, true },
+    { ui.txconfig_alt, TX,    ui.tx_altp, true },
+    { ui.tyconfig_alt, TY,    ui.ty_altp, true },
+    { ui.tzconfig_alt, TZ,    ui.tz_altp, true },
+    { nullptr, Yaw, nullptr, false }
+};
+
+    for (int i = 0; qfcs[i].qfc; i++)
+    {
+        const bool altp = qfcs[i].altp;
+
+        Map& axis = m(qfcs[i].axis);
+        spline& conf = altp ? axis.spline_alt : axis.spline_main;
+        //const QString& name = altp ? axis.name2 : axis.name1;
+        //conf.set_bundle(make_bundle(name));
+        qfcs[i].qfc->setConfig(&conf);
+
+        if (altp)
         {
-            { ui.rxconfig, Yaw,   nullptr, false },
-            { ui.ryconfig, Pitch, nullptr, false },
-            { ui.rzconfig, Roll,  nullptr, false },
-            { ui.txconfig, TX,    nullptr, false },
-            { ui.tyconfig, TY,    nullptr, false },
-            { ui.tzconfig, TZ,    nullptr, false },
-
-            { ui.rxconfig_alt, Yaw,   ui.rx_altp, true },
-            { ui.ryconfig_alt, Pitch, ui.ry_altp, true },
-            { ui.rzconfig_alt, Roll,  ui.rz_altp, true },
-            { ui.txconfig_alt, TX,    ui.tx_altp, true },
-            { ui.tyconfig_alt, TY,    ui.ty_altp, true },
-            { ui.tzconfig_alt, TZ,    ui.tz_altp, true },
-            { nullptr, Yaw, nullptr, false }
-        };
-
-        for (int i = 0; qfcs[i].qfc; i++)
-        {
-            const bool altp = qfcs[i].altp;
-
-            Map& axis = m(qfcs[i].axis);
-            spline& conf = altp ? axis.spline_alt : axis.spline_main;
-            //const QString& name = altp ? axis.name2 : axis.name1;
-            //conf.set_bundle(make_bundle(name));
-            qfcs[i].qfc->setConfig(&conf);
-
-            if (altp)
-            {
-                spline_widget& qfc = *qfcs[i].qfc;
-                connect(qfcs[i].checkbox, &QCheckBox::toggled,
-                        this,
-                        [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
-                qfc.setEnabled(qfcs[i].checkbox->isChecked());
-                qfc.force_redraw();
-            }
-
-            if (qfcs[i].axis >= 3)
-                qfcs[i].qfc->set_snap(1, 5);
-            else
-                qfcs[i].qfc->set_snap(1, 1);
+            spline_widget& qfc = *qfcs[i].qfc;
+            connect(qfcs[i].checkbox, &QCheckBox::toggled,
+                    this,
+                    [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
+            qfc.setEnabled(qfcs[i].checkbox->isChecked());
+            qfc.force_redraw();
         }
+
+        if (qfcs[i].axis >= 3)
+            qfcs[i].qfc->set_snap(1, 5);
+        else
+            qfcs[i].qfc->set_snap(.5, 2.5);
     }
+
 }
 
 void MapWidget::closeEvent(QCloseEvent*)
