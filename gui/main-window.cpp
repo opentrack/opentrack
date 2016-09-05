@@ -41,7 +41,6 @@ MainWindow::MainWindow() :
     ui.setupUi(this);
     setFixedSize(size());
     updateButtonState(false, false);
-    ui.btnStartTracker->setFocus();
 
     refresh_config_list();
 

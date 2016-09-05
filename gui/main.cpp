@@ -154,7 +154,6 @@ main(int argc, char** argv)
         }
 
         app.setQuitOnLastWindowClosed(false);
-
         app.exec();
 
         qDebug() << "exit: main control";

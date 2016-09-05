@@ -22,6 +22,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <column>
       <property name="text">
        <string>Executable</string>
@@ -116,6 +119,12 @@
    <header>process-detector-fancy-table.hpp</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>add</tabstop>
+  <tabstop>remove</tabstop>
+  <tabstop>enabled</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -26,7 +26,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -961,6 +961,9 @@
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Profile</string>
                   </property>
@@ -980,6 +983,9 @@
                 </item>
                 <item>
                  <widget class="QComboBox" name="iconcomboProfile">
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
                   <property name="maxVisibleItems">
                    <number>20</number>
                   </property>
@@ -1161,6 +1167,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
@@ -1173,6 +1182,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::ClickFocus</enum>
                   </property>
                   <property name="text">
                    <string>🔨</string>
@@ -1217,6 +1229,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
@@ -1229,6 +1244,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::ClickFocus</enum>
                   </property>
                   <property name="text">
                    <string>🔨</string>
@@ -1273,6 +1291,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
@@ -1285,6 +1306,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::ClickFocus</enum>
                   </property>
                   <property name="text">
                    <string>🔨</string>
@@ -1317,19 +1341,12 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>btnStartTracker</tabstop>
   <tabstop>btnStopTracker</tabstop>
-  <tabstop>iconcomboTrackerSource</tabstop>
-  <tabstop>btnShowEngineControls</tabstop>
-  <tabstop>iconcomboProtocol</tabstop>
-  <tabstop>btnShowServerControls</tabstop>
-  <tabstop>iconcomboFilter</tabstop>
-  <tabstop>btnShowFilterControls</tabstop>
   <tabstop>profile_button</tabstop>
   <tabstop>iconcomboProfile</tabstop>
   <tabstop>btnShortcuts</tabstop>
   <tabstop>btnEditCurves</tabstop>
-  <tabstop>profile_button</tabstop>
-  <tabstop>iconcomboProfile</tabstop>
  </tabstops>
  <resources>
   <include location="opentrack-res.qrc"/>

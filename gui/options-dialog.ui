@@ -24,7 +24,7 @@
    <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
-   <item alignment="Qt::AlignTop">
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1273,10 +1273,10 @@ It won't work properly with translation compensation enabled.</string>
              <item>
               <widget class="QLineEdit" name="tracklogging_filenameedit">
                <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="acceptDrops">
                 <bool>true</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
                </property>
                <property name="inputMask">
                 <string notr="true"/>
@@ -1374,17 +1374,28 @@ It won't work properly with translation compensation enabled.</string>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>bind_center</tabstop>
+  <tabstop>bind_toggle</tabstop>
+  <tabstop>bind_toggle_held</tabstop>
+  <tabstop>bind_zero</tabstop>
+  <tabstop>bind_zero_held</tabstop>
+  <tabstop>bind_start</tabstop>
+  <tabstop>bind_stop</tabstop>
+  <tabstop>bind_toggle_tracking</tabstop>
+  <tabstop>bind_restart_tracking</tabstop>
   <tabstop>center_at_startup</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>
+  <tabstop>use_center_as_translation_camera_offset</tabstop>
   <tabstop>pos_rx</tabstop>
   <tabstop>pos_ry</tabstop>
   <tabstop>pos_rz</tabstop>
   <tabstop>pos_tx</tabstop>
   <tabstop>pos_ty</tabstop>
   <tabstop>pos_tz</tabstop>
+  <tabstop>center_method</tabstop>
   <tabstop>tcomp_enable</tabstop>
   <tabstop>tcomp_rz</tabstop>
   <tabstop>src_yaw</tabstop>
@@ -1399,6 +1410,9 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>invert_y</tabstop>
   <tabstop>src_z</tabstop>
   <tabstop>invert_z</tabstop>
+  <tabstop>tracklogging_enabled</tabstop>
+  <tabstop>tracklogging_fileselectbtn</tabstop>
+  <tabstop>tracklogging_filenameedit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

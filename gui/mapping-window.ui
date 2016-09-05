@@ -387,14 +387,13 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>rx_altp</tabstop>
   <tabstop>ry_altp</tabstop>
   <tabstop>rz_altp</tabstop>
   <tabstop>tx_altp</tabstop>
   <tabstop>ty_altp</tabstop>
   <tabstop>tz_altp</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>buttonBox</tabstop>
-  <tabstop>rx_altp</tabstop>
  </tabstops>
  <resources/>
  <connections/>
