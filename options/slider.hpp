@@ -41,28 +41,9 @@ namespace options
 
 QT_BEGIN_NAMESPACE
 
-inline QDebug operator << (QDebug dbg, const options::slider_value& val)
-{
-    return dbg << val.cur();
-}
-
-inline QDataStream& operator << (QDataStream& out, const options::slider_value& v)
-{
-    out << float(v.cur())
-        << float(v.min())
-        << float(v.max());
-    return out;
-}
-
-inline QDataStream& operator >> (QDataStream& in, options::slider_value& v)
-{
-    float cur, min, max;
-    in >> cur;
-    in >> min;
-    in >> max;
-    v = options::slider_value(cur, min, max);
-    return in;
-}
+QDebug operator << (QDebug dbg, const options::slider_value& val);
+QDataStream& operator << (QDataStream& out, const options::slider_value& v);
+QDataStream& operator >> (QDataStream& in, options::slider_value& v);
 
 QT_END_NAMESPACE
 

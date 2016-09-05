@@ -20,8 +20,6 @@ slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(
 {
 }
 
-
-
 slider_value::slider_value() : slider_value(0.f, 0.f, 0.f)
 {
 }
@@ -40,11 +38,15 @@ bool slider_value::operator==(const slider_value& v) const
 {
     using std::fabs;
 
-    static constexpr float eps = 1e-3f;
+    static constexpr float eps = float(1e-2 + 2.5e-3);
 
+#if 1
     return (fabs(v.cur_ - cur_) < eps &&
             fabs(v.min_ - min_) < eps &&
             fabs(v.max_ - max_) < eps);
+#else
+    return (fabs(v.cur_ - cur_) < eps);
+#endif
 }
 
 slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
@@ -73,3 +75,28 @@ int slider_value::to_slider_pos(int q_min, int q_max) const
 }
 
 } // end ns options
+
+QT_BEGIN_NAMESPACE
+
+QDataStream& operator << (QDataStream& out, const options::slider_value& v)
+{
+    out << float(v.cur())
+        << float(v.min())
+        << float(v.max());
+    return out;
+}
+
+QDebug operator << (QDebug dbg, const options::slider_value& val)
+{
+    return dbg << val.cur();
+}
+
+QDataStream& operator >> (QDataStream& in, options::slider_value& v)
+{
+    float cur = 0, min = 0, max = 0;
+    in >> cur >> min >> max;
+    v = options::slider_value(cur, min, max);
+    return in;
+}
+
+QT_END_NAMESPACE
