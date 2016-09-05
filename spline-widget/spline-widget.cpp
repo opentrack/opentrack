@@ -347,7 +347,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
 void spline_widget::mouseMoveEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled() || !hasFocus() || !isActiveWindow())
+    if (!_config || !isEnabled() || !isActiveWindow() || (moving_control_point_idx != -1 && !hasFocus()))
     {
         clearFocus();
         return;
