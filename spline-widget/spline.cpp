@@ -391,13 +391,13 @@ mem<const spline::settings> spline::get_settings() const
     return s;
 }
 
-int spline::precision(const QList<QPointF>& points) const
+double spline::precision(const QList<QPointF>& points) const
 {
     // this adjusts the memoized range to the largest X value. empty space doesn't take value_count discrete points.
     if (points.size())
-        return clamp(value_count / clamp(int(points[points.size() - 1].x()), 1, int(max_x)), 0, value_count);
+        return clamp(value_count / clamp(points[points.size() - 1].x(), 1., max_x), 0., double(value_count));
 
-    return value_count / clamp(int(max_x), 1, value_count);
+    return value_count / clamp(max_x, 1., double(value_count));
 }
 
 namespace spline_detail {
