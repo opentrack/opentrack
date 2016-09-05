@@ -19,9 +19,9 @@
 spline_widget::spline_widget(QWidget *parent) :
     QWidget(parent),
     _config(nullptr),
-    moving_control_point_idx(-1),
     snap_x(0),
     snap_y(0),
+    moving_control_point_idx(-1),
     _draw_function(true),
     _preview_only(false)
 {
@@ -472,10 +472,12 @@ QPointF spline_widget::pixel_coord_to_point(const QPointF& point)
     qreal x = round((point.x() - pixel_bounds.x()) / c.x());
     qreal y = round((pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y());
 
+    const volatile int c = 8192;
+
     if (snap_x > 0)
-        x -= int(x) % snap_x;
+        x = std::nearbyint(x * c - (int(x * c) % int(snap_x * c))) / double(c);
     if (snap_y > 0)
-        y -= int(y) % snap_y;
+        y = std::nearbyint(y * c - (int(y * c) % int(snap_y * c))) / double(c);
 
     if (x < 0)
         x = 0;

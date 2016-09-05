@@ -53,8 +53,8 @@ public:
     }
     void set_preview_only(bool val);
     bool is_preview_only() const;
-    void set_snap(int x, int y) { snap_x = x; snap_y = y; }
-    void get_snap(int& x, int& y) const { x = snap_x; y = snap_y; }
+    void set_snap(double x, double y) { snap_x = x; snap_y = y; }
+    void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
 protected slots:
     void paintEvent(QPaintEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
@@ -89,9 +89,8 @@ private:
 
     QMetaObject::Connection connection;
 
+    double snap_x, snap_y;
     int moving_control_point_idx;
-
-    int snap_x, snap_y;
     bool _draw_function, _preview_only;
 
     static constexpr int line_length_pixels = 3;
