@@ -173,7 +173,6 @@ void TrackerDialog_PT::doCancel()
 
 void TrackerDialog_PT::register_tracker(ITracker *t)
 {
-    qDebug()<<"TrackerDialog:: Tracker registered";
     tracker = static_cast<Tracker_PT*>(t);
     ui.tcalib_button->setEnabled(true);
     //ui.center_button->setEnabled(true);
@@ -181,7 +180,6 @@ void TrackerDialog_PT::register_tracker(ITracker *t)
 
 void TrackerDialog_PT::unregister_tracker()
 {
-    qDebug()<<"TrackerDialog:: Tracker un-registered";
     tracker = NULL;
     ui.tcalib_button->setEnabled(false);
     //ui.center_button->setEnabled(false);
