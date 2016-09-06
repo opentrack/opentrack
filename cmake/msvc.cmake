@@ -12,15 +12,22 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/Ox /arch:SSE2 /EHsc /fp:fast /GS- /GF /GL /GR- /Gy /MT /Zi")
+set(cc "/O2it /Ob2 /arch:SSE2 /fp:fast /GS- /GF /GL /Gw /GR- /Gy")
 
 set(warns_ "")
+
+set(warns-disable 4530 4577 4789)
+
+foreach(i ${warns-disable})
+    set(warns_ "${warns_} /wd${i}")
+endforeach()
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #C4263 - member function does not override any base class virtual member function
     #C4264 - no override available for virtual member function from base class, function is hidden
     #C4265 - class has virtual functions, but destructor is not virtual
     #C4266 - no override available for virtual member function from base type, function is hidden
+
     #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
 
     set(warns 4263 4264 4266 4928)
@@ -35,12 +42,12 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     endforeach()
 endif()
 
-set(silly "${warns_} -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
+set(silly "${warns_} /MT /Zi /std:c++14 /Gm -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
 set(_CFLAGS_RELEASE "${cc}")
-set(_CFLAGS_DEBUG "/Zi /GS /sdl /Gs /guard:cf /RTCsu")
+set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf /RTCsu -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
@@ -53,7 +60,7 @@ foreach (i MODULE EXE SHARED)
 endforeach()
 
 set(_LDFLAGS "")
-set(_LDFLAGS_RELEASE "/LTCG")
+set(_LDFLAGS_RELEASE "/LTCG:INCREMENTAL")
 set(_LDFLAGS_DEBUG "")
 
 foreach(j C CXX)
