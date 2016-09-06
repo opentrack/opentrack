@@ -90,8 +90,8 @@ struct settings : opts {
     value<slider_value> noise_rot_slider_value;
     value<slider_value> noise_pos_slider_value;
 
-    static constexpr double adaptivity_window_length = 0.5; // seconds
-    static constexpr double deadzone_scale = 2;
+    static constexpr double adaptivity_window_length = 0.25; // seconds
+    static constexpr double deadzone_scale = 8;
     static constexpr double deadzone_exponent = 2.0;
     static constexpr double process_sigma_pos = 0.5;
     static constexpr double process_simga_rot = 0.5;
