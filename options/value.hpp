@@ -32,21 +32,10 @@ class OPENTRACK_OPTIONS_EXPORT base_value : public QObject
     friend class ::options::detail::connector;
 
     using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
-
 public:
     QString name() const { return self_name; }
-    base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx) :
-        b(b),
-        self_name(name),
-        cmp(cmp),
-        type_index(type_idx)
-    {
-        b->on_value_created(name, this);
-    }
-    ~base_value() override
-    {
-        b->on_value_destructed(self_name, this);
-    }
+    base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx);
+    ~base_value() override;
 signals:
     OPENTRACK_DEFINE_SIGNAL(double);
     OPENTRACK_DEFINE_SIGNAL(float);
@@ -90,9 +79,9 @@ public slots:
     OPENTRACK_DEFINE_SLOT(const QList<QString>&)
     OPENTRACK_DEFINE_SLOT(const QList<slider_value>&)
     OPENTRACK_DEFINE_SLOT(const QList<QPointF>&)
-    public slots:
-        virtual void reload() = 0;
-        virtual void bundle_value_changed() const = 0;
+
+    virtual void reload() = 0;
+    virtual void bundle_value_changed() const = 0;
 };
 
 namespace detail {
