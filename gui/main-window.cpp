@@ -336,8 +336,6 @@ void MainWindow::refresh_config_list()
         return;
     }
 
-    set_title();
-
     QString current = group::ini_filename();
 
     {
@@ -358,6 +356,7 @@ void MainWindow::refresh_config_list()
         ui.iconcomboProfile->setCurrentText(current);
     }
 
+    set_title();
     warn_on_config_not_writable();
 }
 
@@ -521,9 +520,6 @@ void MainWindow::set_title(const QString& game_title_)
 
 void MainWindow::showHeadPose()
 {
-    if (!ui.video_frame->isEnabled())
-        return;
-
     double mapped[6], raw[6];
 
     work->tracker->get_raw_and_mapped_poses(mapped, raw);
