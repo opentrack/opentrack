@@ -9,6 +9,8 @@
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
 
+#include <QString>
+
 void Shortcuts::free_binding(K& key)
 {
 #ifndef _WIN32
@@ -51,6 +53,7 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, unused_on_unix(bool, he
     {
         key.guid = k.guid;
         key.keycode = k.button & ~Qt::KeyboardModifierMask;
+        key.held = held;
         key.ctrl = !!(k.button & Qt::ControlModifier);
         key.alt = !!(k.button & Qt::AltModifier);
         key.shift = !!(k.button & Qt::ShiftModifier);
@@ -65,11 +68,13 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, unused_on_unix(bool, he
         Qt::KeyboardModifiers mods = Qt::NoModifier;
         if (code != Qt::Key_unknown)
             win_key::from_qt(code, idx, mods);
-        key.shift = !!(mods & Qt::ShiftModifier);
-        key.alt = !!(mods & Qt::AltModifier);
-        key.ctrl = !!(mods & Qt::ControlModifier);
+
+        key.guid = QStringLiteral("");
         key.keycode = idx;
         key.held = held;
+        key.ctrl = !!(mods & Qt::ControlModifier);
+        key.alt = !!(mods & Qt::AltModifier);
+        key.shift = !!(mods & Qt::ShiftModifier);
     }
 }
 #endif
@@ -81,11 +86,11 @@ void Shortcuts::receiver(const Key& k)
     for (unsigned i = 0; i < sz; i++)
     {
         K& k_ = std::get<0>(keys[i]);
-        auto& fun = std::get<1>(keys[i]);
         if (k.guid != k_.guid)
             continue;
         if (k.keycode != k_.keycode)
             continue;
+
         if (k_.held && !k.held) continue;
         if (k_.alt != k.alt) continue;
         if (k_.ctrl != k.ctrl) continue;
@@ -93,7 +98,8 @@ void Shortcuts::receiver(const Key& k)
         if (!k_.should_process())
             continue;
 
-        fun(k.held);
+        fun& f = std::get<1>(keys[i]);
+        f(k.held);
     }
 }
 #endif

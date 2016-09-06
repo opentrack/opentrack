@@ -122,7 +122,7 @@ void KeybindingWorker::run()
                         k.held = held;
 
                         for (auto& r : receivers)
-                            r->operator()(k);
+                            (*r)(k);
                     };
 
                     joy_ctx.poll(f);
