@@ -161,8 +161,18 @@ main(int argc, char** argv)
 
     qDebug() << "exit: main()";
 
+    // msvc crashes again in some destructor
+#if defined(_MSC_VER)
+    qDebug() << "exit: terminating";
+    TerminateProcess(GetCurrentProcess(), 0);
+#endif
+
     return 0;
 }
+
+#if defined(Q_CREATOR_RUN)
+#   pragma clang diagnostic ignored "-Wmain"
+#endif
 
 #ifdef _MSC_VER
 int WINAPI
