@@ -1,4 +1,4 @@
-find_package(OpenCV 3.0 QUIET)
+find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
 if(OpenCV_FOUND)
     opentrack_boilerplate(opentrack-tracker-pt)
     target_link_libraries(opentrack-tracker-pt opentrack-cv ${OpenCV_LIBS})

@@ -1,4 +1,4 @@
-find_package(OpenCV 3.0 QUIET)
+find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
 set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
 if(SDK_ARUCO_LIBPATH)
     opentrack_boilerplate(opentrack-tracker-aruco)
