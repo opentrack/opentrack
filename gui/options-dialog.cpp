@@ -75,7 +75,6 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.center_method, ui.center_method);
 
     tie_setting(main.tracklogging_enabled, ui.tracklogging_enabled);
-    tie_setting(main.tracklogging_filename, ui.tracklogging_filenameedit);
 
     struct tmp
     {
@@ -108,8 +107,6 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
             connect(val.button, &QPushButton::clicked, this, [=]() -> void { bind_key(val.opt, val.label); });
         }
     }
-
-    connect(ui.tracklogging_fileselectbtn, SIGNAL(clicked()), this, SLOT(browse_datalogging_file()));
 }
 
 void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
@@ -172,26 +169,6 @@ void OptionsDialog::doCancel()
     emit closing();
 }
 
-void OptionsDialog::browse_datalogging_file()
-{
-    QString filename = ui.tracklogging_filenameedit->text();
-    if (filename.isEmpty())
-        filename = OPENTRACK_BASE_PATH;
-    /* Sometimes this function freezes the app before opening the dialog.
-       Might be related to https://forum.qt.io/topic/49209/qfiledialog-getopenfilename-hangs-in-windows-when-using-the-native-dialog/8
-       and be a known problem. Possible solution is to use the QFileDialog::DontUseNativeDialog flag.
-       Since the freeze is apparently random, I'm not sure it helped.
-    */
-    QString newfilename = QFileDialog::getSaveFileName(this, tr("Select Filename"), filename, tr("CSV File (*.csv)"), nullptr, QFileDialog::DontUseNativeDialog);
-    if (!newfilename.isEmpty())
-        ui.tracklogging_filenameedit->setText(newfilename);
-
-    // dialog likes to mess with current directory
-    QDir::setCurrent(OPENTRACK_BASE_PATH);
-}
-
 void OptionsDialog::update_widgets_states(bool tracker_is_running)
 {
-    ui.tracklogging_enabled->setEnabled(!tracker_is_running);
-    ui.tracklogging_fileselectbtn->setEnabled(!tracker_is_running);
 }

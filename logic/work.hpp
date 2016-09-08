@@ -39,5 +39,5 @@ struct OPENTRACK_LOGIC_EXPORT Work
     void reload_shortcuts();
 
 private:
-    static std::shared_ptr<TrackLogger> make_logger(const main_settings &s);
+    static std::shared_ptr<TrackLogger> make_logger(main_settings &s);
 };

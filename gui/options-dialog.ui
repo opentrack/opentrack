@@ -33,7 +33,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -1237,7 +1237,7 @@ It won't work properly with translation compensation enabled.</string>
        <item>
         <widget class="QGroupBox" name="groupBox_10">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1245,75 +1245,21 @@ It won't work properly with translation compensation enabled.</string>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>20</height>
+           <height>50</height>
           </size>
          </property>
          <property name="title">
-          <string>Data Logging</string>
+          <string>CSV Data Logging</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_211">
           <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="tracklogging_label">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Record pose data in a csv file. WARNING: overwrites file contents without warning every time the tracker is started.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QCheckBox" name="tracklogging_enabled">
             <property name="text">
-             <string>Enable</string>
+             <string>Enable - You will be asked for a filename whenever the tracker starts</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>1</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="tracklogging_fileselectbtn">
-               <property name="text">
-                <string>Select File ...</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="tracklogging_filenameedit">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="inputMask">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
          </layout>
@@ -1436,7 +1382,6 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>src_z</tabstop>
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
-  <tabstop>tracklogging_fileselectbtn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

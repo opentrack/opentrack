@@ -1,18 +1,38 @@
 #include "work.hpp"
+#include "opentrack-library-path.h"
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 
-std::shared_ptr<TrackLogger> Work::make_logger(const main_settings &s)
+static QString browse_datalogging_file(main_settings &s)
+{
+    QString filename = s.tracklogging_filename;
+    if (filename.isEmpty())
+        filename = OPENTRACK_BASE_PATH;
+    /* Sometimes this function freezes the app before opening the dialog.
+       Might be related to https://forum.qt.io/topic/49209/qfiledialog-getopenfilename-hangs-in-windows-when-using-the-native-dialog/8
+       and be a known problem. Possible solution is to use the QFileDialog::DontUseNativeDialog flag.
+       Since the freeze is apparently random, I'm not sure it helped.
+    */
+    QString newfilename = QFileDialog::getSaveFileName(nullptr, QFileDialog::tr("Select Filename"), filename, QFileDialog::tr("CSV File (*.csv)"), nullptr); //, QFileDialog::DontUseNativeDialog);
+    if (!newfilename.isEmpty())
+    {
+      s.tracklogging_filename = newfilename;
+    }
+    // dialog likes to mess with current directory
+    QDir::setCurrent(OPENTRACK_BASE_PATH);
+    return newfilename;
+}
+
+std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
 {
     if (s.tracklogging_enabled)
     {
+        QString filename = browse_datalogging_file(s);
         if (static_cast<QString>(s.tracklogging_filename).isEmpty())
         {
-            QMessageBox::warning(nullptr, "Logging Error",
-                "No filename given for track logging. Proceeding without logging.",
-                QMessageBox::Ok,
-                QMessageBox::NoButton);
+          // The user probably canceled the file dialog. In this case we don't want to do anything.
         }
         else
         {
@@ -27,12 +47,6 @@ std::shared_ptr<TrackLogger> Work::make_logger(const main_settings &s)
             }
             else
             {
-                /* As this function has the potential to fill up the hard drive
-                   of the unwary with junk data, a warning is in order. */
-                QMessageBox::warning(nullptr, "Logging Active",
-                    "Just a heads up. You are recoding pose data to " + s.tracklogging_filename + "!",
-                    QMessageBox::Ok,
-                    QMessageBox::NoButton);
                 return logger;
             }
         }

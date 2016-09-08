@@ -24,5 +24,4 @@ private slots:
     void doOK();
     void doCancel();
     void bind_key(key_opts &kopts, QLabel* label);
-    void browse_datalogging_file();
 };
