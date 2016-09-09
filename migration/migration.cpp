@@ -73,8 +73,6 @@ std::vector<QString> migrator::run()
 
     const QString last_migration = last_migration_time();
 
-    qDebug() << "migration: config" << options::group::ini_filename() << "time" << last_migration;
-
     for (migration* m_ : migrations)
     {
         migration& m(*m_);
@@ -95,10 +93,8 @@ std::vector<QString> migrator::run()
 
     if (done.size())
     {
-        qDebug() << "migration: done" << done.size() << "units";
         for (const QString& name : done)
             qDebug() << "--" << name;
-        qDebug() << "";
     }
 
     return done;
