@@ -407,4 +407,8 @@ settings::settings(bundle b):
     points(b, "points", QList<QPointF>())
 {}
 
+settings::~settings()
+{
+}
+
 }

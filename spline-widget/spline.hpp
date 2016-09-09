@@ -33,6 +33,7 @@ public:
     bundle b;
     value<QList<QPointF>> points;
     settings(bundle b);
+    ~settings() override;
 signals:
     void recomputed() const;
 };
