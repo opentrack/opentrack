@@ -23,6 +23,7 @@ namespace detail {
         static void set_last_migration_time(const QString& val);
         migrator() = delete;
         static vec sorted_migrations();
+        static int to_int(const QString& str, bool& ok);
     public:
         static vstr run();
         static void register_migration(migration* m);
