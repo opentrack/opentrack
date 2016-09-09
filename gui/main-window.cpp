@@ -97,7 +97,8 @@ MainWindow::MainWindow() :
     else
         set_profile(group::ini_filename());
 
-    // only tie and connect main screen options after migrations are done.
+    // only tie and connect main screen options after migrations are done
+    // below is fine, set_profile() is called already
 
     // dylibs
     {
@@ -363,10 +364,21 @@ void MainWindow::refresh_config_list(bool warn)
                 ui.iconcomboProfile->setItemIcon(i, icon);
         }
 
+        {
+            const QString pathname = group::ini_pathname();
+
+            if (!QFile(pathname).exists())
+            {
+                QFile file(pathname);
+                (void) file.open(QFile::ReadWrite);
+            }
+        }
+
         ui.iconcomboProfile->setCurrentText(current);
     }
 
     set_title();
+
     if (warn)
         warn_on_config_not_writable();
 }
@@ -374,11 +386,11 @@ void MainWindow::refresh_config_list(bool warn)
 void MainWindow::updateButtonState(bool running, bool inertialp)
 {
     bool not_running = !running;
-    ui.iconcomboProfile->setEnabled ( not_running );
-    ui.btnStartTracker->setEnabled ( not_running );
-    ui.btnStopTracker->setEnabled ( running );
-    ui.iconcomboProtocol->setEnabled ( not_running );
-    ui.iconcomboFilter->setEnabled ( not_running );
+    ui.iconcomboProfile->setEnabled(not_running);
+    ui.btnStartTracker->setEnabled(not_running);
+    ui.btnStopTracker->setEnabled(running);
+    ui.iconcomboProtocol->setEnabled(not_running);
+    ui.iconcomboFilter->setEnabled(not_running);
     ui.iconcomboTrackerSource->setEnabled(not_running);
     ui.profile_button->setEnabled(not_running);
     ui.video_frame_label->setVisible(not_running || inertialp);
