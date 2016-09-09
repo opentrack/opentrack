@@ -20,7 +20,8 @@ bool OPENTRACK_COMPAT_EXPORT init_com_threading(com_type t_)
                            if (qApp->thread() == QThread::currentThread())
                                return com_apartment;
                            else
-                               return com_multithreaded;
+                               //return com_multithreaded;
+                               return com_apartment;
                        );
 
     HRESULT ret = CoInitializeEx(0, t);
