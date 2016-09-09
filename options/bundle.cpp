@@ -26,7 +26,7 @@ void bundle::reload(std::shared_ptr<QSettings> settings)
     {
         QMutexLocker l(&mtx);
         saved = group(group_name, settings);
-        const bool has_changes = is_modified(false);
+        const bool has_changes = is_modified();
         transient = saved;
 
         if (has_changes)
@@ -65,9 +65,9 @@ void bundle::save_deferred(QSettings& s)
 
     {
         QMutexLocker l(&mtx);
-        if (is_modified(true))
+        if (is_modified())
         {
-            qDebug() << "bundle" << group_name << "changed, saving";
+            //qDebug() << "bundle" << group_name << "changed, saving";
             modified_ = true;
             saved = transient;
             saved.save_deferred(s);
@@ -83,7 +83,7 @@ void bundle::save()
     save_deferred(*group::ini_file());
 }
 
-bool bundle::is_modified(bool logspam) const
+bool bundle::is_modified() const
 {
     QMutexLocker l(mtx);
 
@@ -92,8 +92,8 @@ bool bundle::is_modified(bool logspam) const
         const QVariant other = saved.get<QVariant>(kv.first);
         if (!saved.contains(kv.first) || !is_equal(kv.first, kv.second, other))
         {
-            if (logspam)
-                qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
+            //if (logspam)
+            //    qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
             return true;
         }
     }
@@ -103,8 +103,8 @@ bool bundle::is_modified(bool logspam) const
         const QVariant other = transient.get<QVariant>(kv.first);
         if (!transient.contains(kv.first) || !is_equal(kv.first, kv.second, other))
         {
-            if (logspam)
-                qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
+            //if (logspam)
+            //    qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
             return true;
         }
     }
