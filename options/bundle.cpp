@@ -23,7 +23,7 @@ void bundle::reload()
     {
         QMutexLocker l(&mtx);
         saved = group(group_name);
-        const bool has_changes = is_modified();
+        const bool has_changes = is_modified(false);
         transient = saved;
 
         if (has_changes)
@@ -58,12 +58,11 @@ void bundle::save_deferred(QSettings& s)
     if (group_name.size() == 0)
         return;
 
-    bool modified_ = is_modified();
+    bool modified_ = false;
 
-    if (modified_)
     {
         QMutexLocker l(&mtx);
-        if (is_modified())
+        if (is_modified(true))
         {
             qDebug() << "bundle" << group_name << "changed, saving";
             modified_ = true;
@@ -81,7 +80,7 @@ void bundle::save()
     save_deferred(*group::ini_file());
 }
 
-bool bundle::is_modified() const
+bool bundle::is_modified(bool logspam) const
 {
     QMutexLocker l(mtx);
 
@@ -90,7 +89,8 @@ bool bundle::is_modified() const
         const QVariant other = saved.get<QVariant>(kv.first);
         if (!saved.contains(kv.first) || !is_equal(kv.first, kv.second, other))
         {
-            qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
+            if (logspam)
+                qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
             return true;
         }
     }
@@ -100,7 +100,8 @@ bool bundle::is_modified() const
         const QVariant other = transient.get<QVariant>(kv.first);
         if (!transient.contains(kv.first) || !is_equal(kv.first, kv.second, other))
         {
-            qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
+            if (logspam)
+                qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
             return true;
         }
     }

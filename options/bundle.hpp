@@ -57,7 +57,7 @@ public:
     bool contains(const QString& name) const;
     void save();
     void save_deferred(QSettings& s);
-    bool is_modified() const;
+    bool is_modified(bool logspam) const;
 
     template<typename t>
     t get(const QString& name) const
