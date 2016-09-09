@@ -2,6 +2,9 @@
 #include "ftnoir_tracker_rift_042.h"
 #include "api/plugin-api.hpp"
 #include "compat/pi-constant.hpp"
+
+#include <QString>
+
 #include <OVR_CAPI.h>
 #include <Kernel/OVR_Math.h>
 #include <cstdio>
@@ -30,9 +33,11 @@ void Rift_Tracker::start_tracker(QFrame*)
     }
     else
     {
-        // XXX need change ITracker et al api to allow for failure reporting
-        // this qmessagebox doesn't give any relevant details either -sh 20141012
-        QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(nullptr,
+                             "Error",
+                             QStringLiteral("Unable to start Rift tracker: %1").arg(ovrHmd_GetLastError(nullptr)),
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
     }
 }
 
@@ -53,7 +58,7 @@ void Rift_Tracker::data(double *data)
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-            double yaw_ = yaw;
+            double yaw_ = double(yaw);
             if (s.useYawSpring)
             {
                 yaw_ = old_yaw*s.persistence + (yaw_ - old_yaw);

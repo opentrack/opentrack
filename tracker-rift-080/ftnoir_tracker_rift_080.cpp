@@ -2,9 +2,13 @@
 #include "ftnoir_tracker_rift_080.h"
 #include "api/plugin-api.hpp"
 #include "compat/pi-constant.hpp"
+
+#include <QString>
+
 #include <OVR_CAPI.h>
 #include <Extras/OVR_Math.h>
 #include <OVR_CAPI_0_8_0.h>
+
 #include <cstdio>
 
 using namespace OVR;
@@ -22,30 +26,36 @@ Rift_Tracker::~Rift_Tracker()
 
 void Rift_Tracker::start_tracker(QFrame*)
 {
-    QString reason;
     ovrResult code;
+    ovrGraphicsLuid luid = {{0}};
 
     if (!OVR_SUCCESS(code = ovr_Initialize(nullptr)))
-    {
-        reason = "initialize failed";
         goto error;
-    }
-    {
-        ovrGraphicsLuid luid = {0};
-        ovrResult res = ovr_Create(&hmd, &luid);
-        if (OVR_SUCCESS(code = res))
-        {
-            ovr_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
-        }
-        else
-        {
-            reason = "can't open hmd";
-            goto error;
-        }
-    }
+
+    code = ovr_Create(&hmd, &luid);
+    if (!OVR_SUCCESS(code))
+        goto error;
+
+    ovr_ConfigureTracking(hmd,
+                          ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position,
+                          ovrTrackingCap_Orientation);
+
     return;
 error:
-    QMessageBox::warning(0,"Error", QString("Unable to start Rift tracker: %1 (%2)").arg(reason, code), QMessageBox::Ok,QMessageBox::NoButton);
+    ovrErrorInfo err;
+    err.Result = code;
+    err.ErrorString[0] = '\0';
+    ovr_GetLastErrorInfo(&err);
+
+    QString strerror(err.ErrorString);
+    if (strerror.size() == 0)
+        strerror = "Unknown reason";
+
+    QMessageBox::warning(nullptr,
+                         "Error",
+                         QStringLiteral("Unable to start Rift tracker: %1").arg(strerror),
+                         QMessageBox::Ok,
+                         QMessageBox::NoButton);
 }
 
 void Rift_Tracker::data(double *data)
@@ -59,7 +69,7 @@ void Rift_Tracker::data(double *data)
             Quatf quat = pose.Orientation;
             float yaw, pitch, roll;
             quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
-            double yaw_ = yaw;
+            double yaw_ = double(yaw);
             if (s.useYawSpring)
             {
                 yaw_ = old_yaw*s.persistence + (yaw_-old_yaw);

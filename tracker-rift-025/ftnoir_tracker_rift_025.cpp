@@ -73,7 +73,7 @@ void Rift_Tracker::data(double *data)
 
         hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
 
-        double yaw_ = yaw;
+        double yaw_ = double(yaw);
 
         if (s.useYawSpring)
         {
