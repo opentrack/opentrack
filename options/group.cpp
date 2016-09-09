@@ -72,7 +72,7 @@ QString group::ini_pathname()
     return dir + "/" + ini_filename();
 }
 
-const QStringList group::ini_list()
+QStringList group::ini_list()
 {
     const auto dirname = ini_directory();
     if (dirname == "")
@@ -83,7 +83,7 @@ const QStringList group::ini_list()
     return list;
 }
 
-const std::shared_ptr<QSettings> group::ini_file()
+std::shared_ptr<QSettings> group::ini_file()
 {
     const auto pathname = ini_pathname();
     if (pathname != "")

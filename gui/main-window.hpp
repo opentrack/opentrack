@@ -112,7 +112,7 @@ private slots:
     void make_empty_config();
     void make_copied_config();
     void open_config_directory();
-    void refresh_config_list();
+    void refresh_config_list(bool warn);
 
     void startTracker();
     void stopTracker();
@@ -128,6 +128,6 @@ public:
     MainWindow();
     ~MainWindow();
     static void set_working_directory();
-    void warn_on_config_not_writable();
+    bool warn_on_config_not_writable();
     bool is_tray_enabled();
 };

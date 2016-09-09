@@ -17,6 +17,7 @@ class OPENTRACK_OPTIONS_EXPORT group final
     QString name;
 public:
     std::map<QString, QVariant> kvs;
+    group(const QString& name, mem<QSettings> s);
     group(const QString& name);
     void save() const;
     void save_deferred(QSettings& s) const;
@@ -25,8 +26,8 @@ public:
     static QString ini_directory();
     static QString ini_filename();
     static QString ini_pathname();
-    static const QStringList ini_list();
-    static const std::shared_ptr<QSettings> ini_file();
+    static QStringList ini_list();
+    static std::shared_ptr<QSettings> ini_file();
 
     template<typename t>
     t get(const QString& k) const

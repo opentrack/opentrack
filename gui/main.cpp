@@ -7,6 +7,7 @@
 #   include <QString>
 #endif
 
+#include "migration/migration.hpp"
 #include "main-window.hpp"
 #include "options/options.hpp"
 #include "compat/win32-com.hpp"
@@ -23,8 +24,7 @@ using namespace options;
 void set_qt_style()
 {
 #if defined(_WIN32) || defined(__APPLE__)
-    // qt5 designer-made controls look like shit on 'doze -sh 20140921
-    // also our OSX look leaves a lot to be desired -sh 20150726
+    // our layouts on OSX make some control wrongly sized -sh 20160908
     {
         const QStringList preferred { "fusion", "windowsvista", "macintosh" };
         for (const auto& style_name : preferred)
@@ -176,10 +176,7 @@ main(int argc, char** argv)
 
 #ifdef _MSC_VER
 int WINAPI
-WinMain (struct HINSTANCE__ *hInstance,
-         struct HINSTANCE__ *hPrevInstance,
-         char               *lpszCmdLine,
-         int                 nCmdShow)
+WinMain (struct HINSTANCE__*, struct HINSTANCE__*, char*, int)
 {
   return main (__argc, __argv);
 }

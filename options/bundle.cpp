@@ -16,6 +16,10 @@ bundle::bundle(const QString& group_name)
 {
 }
 
+bundle::~bundle()
+{
+}
+
 void bundle::reload()
 {
     if (group_name.size())
@@ -114,7 +118,7 @@ void bundler::bundle_decf(const bundler::k& key)
 
     if (--std::get<0>(implsgl_data[key]) == 0)
     {
-        qDebug() << "bundle -" << key;
+        //qDebug() << "bundle -" << key;
 
         implsgl_data.erase(key);
     }
@@ -132,7 +136,7 @@ void bundler::after_profile_changed_()
         mem<v> bundle_ = bundle.lock();
         if (bundle_)
         {
-            qDebug() << "bundle: reverting" << kv.first << "due to profile change";
+            //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
             bundle_->reload();
         }
     }
@@ -163,7 +167,7 @@ std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k &key)
             return shared;
     }
 
-    qDebug() << "bundle +" << key;
+    //qDebug() << "bundle +" << key;
 
     std::shared_ptr<v> shr(new v(key), [this](v* val) { bundle_decf(val->name()); });
 

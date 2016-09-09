@@ -24,6 +24,8 @@ namespace options {
 
 namespace detail {
 
+struct bundler;
+
 class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public virtual connector
 {
     class OPENTRACK_OPTIONS_EXPORT mutex final : public QMutex
@@ -35,6 +37,8 @@ class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public virtual con
 
     Q_OBJECT
 private:
+    friend bundler;
+
     mutex mtx;
     const QString group_name;
     group saved;
@@ -50,7 +54,7 @@ signals:
     void changed() const;
 public:
     bundle(const QString& group_name);
-    ~bundle() override {}
+    ~bundle() override;
     QString name() { return group_name; }
     void reload();
     void store_kv(const QString& name, const QVariant& datum);

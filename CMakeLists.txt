@@ -32,6 +32,7 @@ file(GLOB opentrack-subprojects
     "qxt-mini/${C}"
     "macosx/${C}"
     "cv/${C}"
+    "migration/${C}"
 )
 
 list(SORT opentrack-subprojects)

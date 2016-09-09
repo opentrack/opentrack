@@ -11,6 +11,7 @@
 #include "options/options.hpp"
 #include "opentrack-library-path.h"
 #include "new_file_dialog.h"
+#include "migration/migration.hpp"
 #include <QFile>
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -42,7 +43,7 @@ MainWindow::MainWindow() :
     setFixedSize(size());
     updateButtonState(false, false);
 
-    refresh_config_list();
+    refresh_config_list(true);
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
@@ -87,7 +88,7 @@ MainWindow::MainWindow() :
     }
 
     // timers
-    connect(&config_list_timer, SIGNAL(timeout()), this, SLOT(refresh_config_list()));
+    connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(false); });
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
@@ -112,6 +113,8 @@ MainWindow::MainWindow() :
             (void) file.open(QFile::ReadWrite);
         }
     }
+    else
+        set_profile(group::ini_filename());
 
     connect(this, &MainWindow::emit_start_tracker,
             this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
@@ -228,7 +231,7 @@ void MainWindow::register_shortcuts()
         work->reload_shortcuts();
 }
 
-void MainWindow::warn_on_config_not_writable()
+bool MainWindow::warn_on_config_not_writable()
 {
     QString current_file = group::ini_pathname();
     QFile f(current_file);
@@ -237,7 +240,10 @@ void MainWindow::warn_on_config_not_writable()
     if (!f.isOpen())
     {
         QMessageBox::warning(this, "Something went wrong", "Check permissions and ownership for your .ini file!", QMessageBox::Ok, QMessageBox::NoButton);
+        return false;
     }
+
+    return true;
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
@@ -273,8 +279,9 @@ void MainWindow::make_empty_config()
     {
         QFile filename(dir + "/" + name);
         (void) filename.open(QFile::ReadWrite);
-        refresh_config_list();
+        refresh_config_list(true);
         ui.iconcomboProfile->setCurrentText(name);
+        mark_config_as_not_needing_migration();
     }
 }
 
@@ -288,8 +295,9 @@ void MainWindow::make_copied_config()
         const QString new_name = dir + "/" + name;
         (void) QFile::remove(new_name);
         (void) QFile::copy(cur, new_name);
-        refresh_config_list();
+        refresh_config_list(true);
         ui.iconcomboProfile->setCurrentText(name);
+        mark_config_as_not_needing_migration();
     }
 }
 
@@ -302,7 +310,7 @@ void MainWindow::open_config_directory()
     }
 }
 
-void MainWindow::refresh_config_list()
+void MainWindow::refresh_config_list(bool warn)
 {
     if (work)
         return;
@@ -357,7 +365,8 @@ void MainWindow::refresh_config_list()
     }
 
     set_title();
-    warn_on_config_not_writable();
+    if (warn)
+        warn_on_config_not_writable();
 }
 
 void MainWindow::updateButtonState(bool running, bool inertialp)
@@ -776,7 +785,13 @@ bool MainWindow::is_tray_enabled()
 
 void MainWindow::set_profile(const QString &profile)
 {
-    QSettings settings(OPENTRACK_ORG);
-    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
-    warn_on_config_not_writable();
+    {
+        QSettings settings(OPENTRACK_ORG);
+        settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
+    }
+    const bool ok = warn_on_config_not_writable();
+    if (ok)
+        // migrations are for config layout changes and other user-visible
+        // incompatibilities in future versions
+        run_migrations();
 }

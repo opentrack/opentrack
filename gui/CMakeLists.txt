@@ -13,6 +13,7 @@ opentrack_boilerplate(opentrack EXECUTABLE BIN ${console})
 set_target_properties(opentrack PROPERTIES SUFFIX "${opentrack-binary-suffix}")
 
 target_link_libraries(opentrack
+    opentrack-migration
     opentrack-logic
     opentrack-spline-widget
     opentrack-pose-widget
