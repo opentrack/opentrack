@@ -68,25 +68,6 @@ MainWindow::MainWindow() :
             ui.iconcomboFilter->addItem(x->icon, x->name);
     }
 
-    // dylibs
-    {
-        tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
-        tie_setting(m.protocol_dll, ui.iconcomboProtocol);
-        tie_setting(m.filter_dll, ui.iconcomboFilter);
-
-        connect(ui.iconcomboTrackerSource,
-                &QComboBox::currentTextChanged,
-                [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
-
-        connect(ui.iconcomboProtocol,
-                &QComboBox::currentTextChanged,
-                [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
-
-        connect(ui.iconcomboFilter,
-                &QComboBox::currentTextChanged,
-                [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
-    }
-
     // timers
     connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(false); });
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
@@ -115,6 +96,27 @@ MainWindow::MainWindow() :
     }
     else
         set_profile(group::ini_filename());
+
+    // only tie and connect main screen options after migrations are done.
+
+    // dylibs
+    {
+        connect(ui.iconcomboTrackerSource,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
+
+        connect(ui.iconcomboProtocol,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
+
+        connect(ui.iconcomboFilter,
+                &QComboBox::currentTextChanged,
+                [&](QString) -> void { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
+    }
+
+    tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
+    tie_setting(m.protocol_dll, ui.iconcomboProtocol);
+    tie_setting(m.filter_dll, ui.iconcomboFilter);
 
     connect(this, &MainWindow::emit_start_tracker,
             this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
