@@ -1,5 +1,3 @@
-// TODO XXX write migration for axis sign going to mappings bundle
-
 #include "migration.hpp"
 #include "options/options.hpp"
 #include "logic/main-settings.hpp"
@@ -24,7 +22,7 @@ struct axis_signs_split_rc11 : migration
 
     QString name() const override
     {
-        return "asymmetric axis sign to another .ini section";
+        return "asymmetric axis option to other section";
     }
 
     bool should_run() const override
