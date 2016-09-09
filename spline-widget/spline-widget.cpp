@@ -153,6 +153,7 @@ void spline_widget::drawFunction()
                          (
                              if (!isEnabled() && !_preview_only)
                              {
+                                 QColor color(spline_color);
                                  const int avg = int(float(color.red() + color.green() + color.blue())/3);
                                  return QColor(int(float(color.red() + avg) * .5f),
                                                int(float(color.green() + avg) * .5f),
