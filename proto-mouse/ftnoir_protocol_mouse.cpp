@@ -16,8 +16,6 @@
 
 void FTNoIR_Protocol::pose(const double *headpose)
 {
-    // XXX TODO remove axis selector, use mapping window's
-    // axis selection. Mention in UI axis used. -sh 20140920
     const int axis_x = s.Mouse_X - 1;
     const int axis_y = s.Mouse_Y - 1;
 
