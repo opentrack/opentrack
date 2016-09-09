@@ -169,6 +169,3 @@ void OptionsDialog::doCancel()
     emit closing();
 }
 
-void OptionsDialog::update_widgets_states(bool tracker_is_running)
-{
-}

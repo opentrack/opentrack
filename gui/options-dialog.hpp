@@ -13,8 +13,6 @@ signals:
     void closing();
 public:
     OptionsDialog(std::function<void(bool)> pause_keybindings);
-public slots:
-    void update_widgets_states(bool tracker_is_running);
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;
