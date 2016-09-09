@@ -56,7 +56,7 @@ struct module_settings
     value<QString> tracker_dll, filter_dll, protocol_dll;
     module_settings() :
         b(make_bundle("modules")),
-        tracker_dll(b, "tracker-dll", ""),
+        tracker_dll(b, "tracker-dll", "PointTracker 1.1"),
         filter_dll(b, "filter-dll", "Accela"),
         protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced")
     {
