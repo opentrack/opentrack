@@ -163,7 +163,7 @@ void spline_widget::drawFunction()
                              else
                              {
                                  QColor color(spline_color);
-                                 color.setAlphaF(std::min(.9, color.alphaF()));
+                                 color.setAlphaF(color.alphaF() * .9);
                                  return color;
                              }
                          );
