@@ -94,7 +94,10 @@ std::vector<QString> migrator::run()
     if (done.size())
     {
         for (const QString& name : done)
-            qDebug() << "--" << name;
+        {
+            const QByteArray data = name.toUtf8();
+            qDebug() << "migrate:" << data.constData();
+        }
     }
 
     return done;

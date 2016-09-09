@@ -56,7 +56,7 @@ struct mappings_from_2_3_0_rc11 : migration
     }
 
     QString unique_date() const override { return "20160909_00"; }
-    QString name() const override { return "Migrate mappings to 2.3.0-rc12"; }
+    QString name() const override { return "mappings to 2.3.0-rc12"; }
 
     static Mappings get_new_mappings()
     {
