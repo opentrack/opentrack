@@ -26,7 +26,7 @@ OPENTRACK_API_EXPORT bool is_window_visible(const QWidget* widget)
 }
 
 #else
-OPENTRACK_API_EXPORT bool is_window_visible(const QWidget* widget)
+OPENTRACK_API_EXPORT bool is_window_visible(const QWidget*)
 {
     return true;
 }
