@@ -13,19 +13,15 @@ class registrator;
 namespace detail {
     class migrator final
     {
-        using mm = migration*;
-        template<typename t> using vec_ = std::vector<t>;
-        using vstr = vec_<QString>;
-        using vec = vec_<mm>;
-        static vec& migrations();
+        static std::vector<migration*>& migrations();
         static QString last_migration_time();
         static QString time_after_migrations();
         static void set_last_migration_time(const QString& val);
         migrator() = delete;
-        static vec sorted_migrations();
+        static std::vector<migration*> sorted_migrations();
         static int to_int(const QString& str, bool& ok);
     public:
-        static vstr run();
+        static std::vector<QString> run();
         static void register_migration(migration* m);
         static void mark_config_as_not_needing_migration();
     };

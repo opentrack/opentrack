@@ -60,9 +60,9 @@ void migrator::register_migration(migration* m)
     migrations().push_back(m);
 }
 
-migrator::vec& migrator::migrations()
+std::vector<migration*>& migrator::migrations()
 {
-    static vec ret;
+    static std::vector<migration*> ret;
     return ret;
 }
 
@@ -81,7 +81,7 @@ QString migrator::last_migration_time()
 
 QString migrator::time_after_migrations()
 {
-    const vec list = sorted_migrations();
+    const std::vector<migration*> list = sorted_migrations();
 
     if (list.size() == 0u)
         return QStringLiteral("19700101_00");
@@ -101,9 +101,12 @@ void migrator::set_last_migration_time(const QString& val)
     s->endGroup();
 }
 
-migrator::vec migrator::sorted_migrations()
+std::vector<migration*> migrator::sorted_migrations()
 {
-    vec list(migrations());
+    std::vector<migration*> list(migrations());
+
+    using mm = migration*;
+
     std::sort(list.begin(), list.end(), [](const mm x, const mm y) { return x->unique_date() < y->unique_date(); });
     return list;
 }
@@ -118,8 +121,8 @@ int migrator::to_int(const QString& str, bool& ok)
 
 std::vector<QString> migrator::run()
 {
-    vec migrations = sorted_migrations();
-    vstr done;
+    std::vector<migration*> migrations = sorted_migrations();
+    std::vector<QString> done;
 
     const QString last_migration = last_migration_time();
 
