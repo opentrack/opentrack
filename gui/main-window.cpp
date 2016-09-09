@@ -349,34 +349,59 @@ void MainWindow::refresh_config_list(bool warn)
         return;
     }
 
+    bool file_ok = false;
+
     QString current = group::ini_filename();
+    QIcon icon(":/images/settings16.png");
 
     {
-        inhibit_qt_signals l(*ui.iconcomboProfile);
-
-        ui.iconcomboProfile->clear();
-        ui.iconcomboProfile->addItems(ini_list);
-
-        QIcon icon(":/images/settings16.png");
-
         {
-            const int sz = ini_list.size();
+            inhibit_qt_signals l(*ui.iconcomboProfile);
 
-            for (int i = 0; i < sz; i++)
-                ui.iconcomboProfile->setItemIcon(i, icon);
+            ui.iconcomboProfile->clear();
+            ui.iconcomboProfile->addItems(ini_list);
+
+            {
+                const int sz = ini_list.size();
+
+                for (int i = 0; i < sz; i++)
+                    ui.iconcomboProfile->setItemIcon(i, icon);
+            }
+
+            ui.iconcomboProfile->setCurrentText(current);
         }
 
-        {
-            const QString pathname = group::ini_pathname();
+        const QString pathname = group::ini_pathname();
 
-            if (!QFile(pathname).exists())
+        if (!QFile(pathname).exists())
+        {
             {
                 QFile file(pathname);
                 (void) file.open(QFile::ReadWrite);
             }
-        }
 
-        ui.iconcomboProfile->setCurrentText(current);
+            const QStringList ini_list = group::ini_list();
+
+            if (ini_list.contains(current))
+            {
+                {
+                    inhibit_qt_signals q(ui.iconcomboProfile);
+
+                    ui.iconcomboProfile->clear();
+                    ui.iconcomboProfile->addItems(ini_list);
+                    for (int i = 0; i < ini_list.size(); i++)
+                        ui.iconcomboProfile->setItemIcon(i, icon);
+                    ui.iconcomboProfile->setCurrentText(current);
+                }
+
+                options::detail::bundler::refresh_all_bundles(true);
+            }
+        }
+        else
+        {
+            file_ok = true;
+            ui.iconcomboProfile->setCurrentText(current);
+        }
     }
 
     set_title();
