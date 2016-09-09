@@ -9,8 +9,7 @@ namespace options
 namespace detail {
 
 bundle::bundle(const QString& group_name)
-    :
-      mtx(QMutex::Recursive),
+    : mtx(QMutex::Recursive),
       group_name(group_name),
       saved(group_name),
       transient(saved)
