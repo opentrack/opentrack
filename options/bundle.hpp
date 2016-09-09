@@ -56,7 +56,7 @@ public:
     bundle(const QString& group_name);
     ~bundle() override;
     QString name() { return group_name; }
-    void reload();
+    void reload(std::shared_ptr<QSettings> settings = group::ini_file());
     void store_kv(const QString& name, const QVariant& datum);
     bool contains(const QString& name) const;
     void save();

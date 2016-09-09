@@ -6,12 +6,11 @@
 
 namespace options {
 
-group::group(const QString& name) : name(name)
+group::group(const QString& name, std::shared_ptr<QSettings> conf) : name(name)
 {
     if (name == "")
         return;
 
-    auto conf = ini_file();
     conf->beginGroup(name);
     for (auto& k_ : conf->childKeys())
     {
@@ -20,6 +19,10 @@ group::group(const QString& name) : name(name)
         kvs[k] = conf->value(k_);
     }
     conf->endGroup();
+}
+
+group::group(const QString& name) : group(name, ini_file())
+{
 }
 
 void group::save() const

@@ -20,12 +20,12 @@ bundle::~bundle()
 {
 }
 
-void bundle::reload()
+void bundle::reload(std::shared_ptr<QSettings> settings)
 {
     if (group_name.size())
     {
         QMutexLocker l(&mtx);
-        saved = group(group_name);
+        saved = group(group_name, settings);
         const bool has_changes = is_modified(false);
         transient = saved;
 
@@ -128,6 +128,8 @@ void bundler::after_profile_changed_()
 {
     QMutexLocker l(&implsgl_mtx);
 
+    std::shared_ptr<QSettings> s = group::ini_file();
+
     for (auto& kv : implsgl_data)
     {
         tt& tuple = kv.second;
@@ -137,7 +139,7 @@ void bundler::after_profile_changed_()
         if (bundle_)
         {
             //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
-            bundle_->reload();
+            bundle_->reload(s);
         }
     }
 }
