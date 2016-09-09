@@ -41,7 +41,7 @@ namespace detail {
 #   error "oops, need __COUNTER__ extension for preprocessor"
 #endif
 
-#define OPENTRACK_MIGRATION(type) static ::migrations::detail::registrator<type> opentrack_migration_registrator__ ## __COUNTER__ ## _gensym;
+#define OPENTRACK_MIGRATION(type) static ::migrations::detail::registrator<type> opentrack_migration_registrator__ ## __COUNTER__ ## _gensym
 
 #ifdef Q_CREATOR_RUN
 #   pragma clang diagnostic ignored "-Wweak-vtables"
