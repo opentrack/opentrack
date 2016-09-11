@@ -48,10 +48,10 @@ extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib final {
-    enum Type { Filter, Tracker, Protocol };
+    enum Type : unsigned { Filter, Tracker, Protocol, Invalid = 0xcafebabeU };
 
     dylib(const QString& filename, Type t) :
-        type(t),
+        type(Invalid),
         filename(filename),
         Dialog(nullptr),
         Constructor(nullptr),
@@ -62,46 +62,36 @@ struct dylib final {
         if (filename.size() == 0)
             return;
 
-        handle = new QLibrary(filename);
-        //handle->setLoadHints(QLibrary::PreventUnloadHint | handle->loadHints());
+        handle.setFileName(filename);
+        handle.setLoadHints(QLibrary::DeepBindHint | QLibrary::LoadHint::ResolveAllSymbolsHint);
 
-        struct _foo {
-            static bool die(QLibrary*& l, bool failp)
-            {
-                if (failp)
-                {
-                    qDebug() << "failed" << l->errorString();
-                    delete l;
-                    l = nullptr;
-                }
-                return failp;
-            }
-        };
-
-        if (_foo::die(handle, !handle->load()))
+        if (check(!handle.load()))
             return;
 
-        Dialog = (OPENTRACK_CTOR_FUNPTR) handle->resolve("GetDialog");
-        if (_foo::die(handle, !Dialog))
+        if (check((Dialog = (OPENTRACK_CTOR_FUNPTR) handle.resolve("GetDialog"), !Dialog)))
             return;
 
-        Constructor = (OPENTRACK_CTOR_FUNPTR) handle->resolve("GetConstructor");
-        if (_foo::die(handle, !Constructor))
+        if (check((Constructor = (OPENTRACK_CTOR_FUNPTR) handle.resolve("GetConstructor"), !Constructor)))
             return;
 
-        Meta = (OPENTRACK_METADATA_FUNPTR) handle->resolve("GetMetadata");
-        if (_foo::die(handle, !Meta))
+        if (check((Meta = (OPENTRACK_METADATA_FUNPTR) handle.resolve("GetMetadata"), !Meta)))
             return;
 
         auto m = mem<Metadata>(Meta());
 
         icon = m->icon();
         name = m->name();
+
+        type = t;
     }
     ~dylib()
     {
-        if (handle)
-            delete handle;
+        if (handle.isLoaded())
+        {
+            const bool success = handle.unload();
+            if (!success)
+                qDebug() << "can't unload dylib" << filename << handle.errorString();
+        }
     }
 
     static QList<mem<dylib>> enum_libraries(const QString& library_path)
@@ -127,14 +117,11 @@ struct dylib final {
                 QIcon icon;
                 QString longName;
                 auto lib = std::make_shared<dylib>(library_path + filename, t);
-                qDebug() << "Loading" << filename;
-                std::cout.flush();
                 if (!get_metadata(lib, longName, icon))
                     continue;
-                using d = const mem<dylib>&;
                 if (std::any_of(ret.cbegin(),
                                 ret.cend(),
-                                [&](d a) {return a->type == lib->type && a->name == lib->name;}))
+                                [&](mem<dylib> a) {return a->type == lib->type && a->name == lib->name;}))
                 {
                     qDebug() << "Duplicate lib" << lib->filename;
                     continue;
@@ -156,7 +143,24 @@ struct dylib final {
     OPENTRACK_CTOR_FUNPTR Constructor;
     OPENTRACK_METADATA_FUNPTR Meta;
 private:
-    QLibrary* handle;
+    QLibrary handle;
+
+    bool check(bool fail)
+    {
+        if (fail)
+        {
+            if (handle.isLoaded())
+                (void) handle.unload();
+
+            Constructor = nullptr;
+            Dialog = nullptr;
+            Meta = nullptr;
+
+            type = Invalid;
+        }
+
+        return fail;
+    }
 
     static bool get_metadata(mem<dylib> lib, QString& name, QIcon& icon)
     {
@@ -170,7 +174,7 @@ private:
     }
 };
 
-struct Modules
+struct Modules final
 {
     Modules(const QString& library_path) :
         module_list(dylib::enum_libraries(library_path)),
