@@ -42,7 +42,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     endforeach()
 endif()
 
-set(silly "${warns_} /MT /Zi /std:c++14 /Gm -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS")
+set(silly "${warns_} /MT /Zi /Gm")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
@@ -52,7 +52,7 @@ set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
 set(ldflags-shared-release "/OPT:REF /OPT:ICF=10")
-set(ldflags-shared "/DEBUG /DYNAMICBASE /NXCOMPAT")
+set(ldflags-shared "/DEBUG")
 
 foreach (i MODULE EXE SHARED)
     set(_LDFLAGS_${i} "${ldflags-shared}")
