@@ -1,3 +1,18 @@
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_COMPILER_IS_GNUCXX TRUE)
+    set(CMAKE_COMPILER_IS_CLANG TRUE)
+endif()
+
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_COMPILER_IS_GNUCC TRUE)
+    set(CMAKE_COMPILER_IS_GNUC TRUE)
+    set(CMAKE_COMPILER_IS_CLANG TRUE)
+endif()
+
+if((NOT CMAKE_COMPILER_IS_GNUCXX) EQUAL (NOT (NOT CMAKE_COMPILER_IS_GNUCC)))
+    message(FATAL_ERROR "cannot use GNU C xor GNU C++")
+endif()
+
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(LINUX TRUE)
 endif()
@@ -5,10 +20,16 @@ endif()
 if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0)
+    set(CMAKE_CXX_FLAGS " /std:c++14 -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_CXX_FLAGS} ")
+    set(CMAKE_C_FLAGS " -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_C_FLAGS} ")
+
+    foreach (i SHARED MODULE EXE)
+        set(CMAKE_${i}_LINKER_FLAGS " /DYNAMICBASE /NXCOMPAT ${CMAKE_${i}_LINKER_FLAGS} ")
+    endforeach()
 endif()
 
 if(WIN32)
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+  if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> --use-temp-file -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
   endif()
@@ -32,16 +53,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-# note, hatire supports both ftnoir and opentrack
-# don't remove without being sure as hell -sh 20140922
-add_definitions(-DOPENTRACK_API)
-
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-    set(CMAKE_COMPILER_IS_GNUCC TRUE)
-    set(CMAKE_COMPILER_IS_GNUCXX TRUE)
-    set(CMAKE_COMPILER_IS_CLANG TRUE)
-endif()
-
 if(APPLE)
     set(CMAKE_MACOSX_RPATH OFF)
     set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
@@ -52,7 +63,7 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
+if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS " -std=c++14 ${CMAKE_CXX_FLAGS} ")
 endif()
 
