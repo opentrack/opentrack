@@ -23,29 +23,6 @@ void run_in_thread_async(QObject* obj, F&& fun)
     QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
 }
 
-class inhibit_qt_signals final
-{
-    QObject& val;
-    bool operate_p;
-
-public:
-    inhibit_qt_signals(QObject& val) : val(val), operate_p(!val.signalsBlocked())
-    {
-        if (operate_p)
-            val.blockSignals(true);
-    }
-
-    ~inhibit_qt_signals()
-    {
-        if (operate_p)
-            val.blockSignals(false);
-    }
-
-    inhibit_qt_signals(QObject* val) : inhibit_qt_signals(*val) {}
-    inhibit_qt_signals(std::unique_ptr<QObject> val) : inhibit_qt_signals(*val.get()) {}
-    inhibit_qt_signals(std::shared_ptr<QObject> val) : inhibit_qt_signals(*val.get()) {}
-};
-
 template<typename t, typename u, typename w>
 auto clamp(t val, u min, w max) -> decltype (val * min * max)
 {
