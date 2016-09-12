@@ -209,7 +209,7 @@ win32_joy_ctx::enum_state::enum_state(std::unordered_map<QString, std::shared_pt
     joys = this->joys;
 }
 
-win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
 {
     enum_state& state = *reinterpret_cast<enum_state*>(pContext);
     const QString guid = guid_to_string(pdidInstance->guidInstance);
@@ -256,7 +256,7 @@ end:
     return DIENUM_CONTINUE;
 }
 
-win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdidoi, void *ctx)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdidoi, void *ctx)
 {
     if (pdidoi->dwType & DIDFT_AXIS)
     {
