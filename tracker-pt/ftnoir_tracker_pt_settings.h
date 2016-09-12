@@ -33,7 +33,7 @@ struct settings_pt : opts
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
-        fov(b, "camera-fov", 0),
+        fov(b, "camera-fov", 1),
         camera_mode(b, "camera-mode", 0),
         model_used(b, "model-used", 0),
         dynamic_pose(b, "dynamic-pose-resolution", true),
