@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 #include <memory>
-#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 #include <string>
 
 struct CamInfo
