@@ -1,4 +1,4 @@
-function(cleanup_install_dir)
+function(cleanup_build_dir)
     if(NOT $ENV{USERNAME} STREQUAL "sthalik")
         message(WARNING "you can't run this potentially destructive function")
         message(FATAL_ERROR "if you're sure, remove this line")
@@ -13,19 +13,7 @@ function(cleanup_install_dir)
     set(got-cache FALSE)
 
     foreach(i ${files})
-        if (i STREQUAL "install")
-            set(got-install TRUE)
-            continue()
-        endif()
-
-        string(FIND "${i}" "install/" pos)
-
-        if(pos GREATER -1)
-            set(got-install-file TRUE)
-            continue()
-        endif()
-
-        if(i STREQUAL "CMakeCache.txt")
+          if(i STREQUAL "CMakeCache.txt")
             set(got-cache TRUE)
             continue()
         endif()
@@ -35,7 +23,7 @@ function(cleanup_install_dir)
 
     unset(files)
 
-    if(NOT got-cache OR NOT got-install OR NOT got-install-file)
+    if(NOT got-cache)
         message(FATAL_ERROR "")
     endif()
 
@@ -45,4 +33,5 @@ function(cleanup_install_dir)
     execute_process(COMMAND cmake . WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" OUTPUT_QUIET)
 endfunction()
 
-cleanup_install_dir()
+cleanup_build_dir()
+
