@@ -394,7 +394,7 @@ void MainWindow::refresh_config_list(bool warn)
                     ui.iconcomboProfile->setCurrentText(current);
                 }
 
-                options::detail::bundler::refresh_all_bundles(true);
+                options::detail::bundler::refresh_all_bundles();
             }
         }
         else
