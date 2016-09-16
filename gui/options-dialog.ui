@@ -334,7 +334,7 @@
           <item>
            <widget class="QCheckBox" name="tray_start">
             <property name="text">
-             <string>Start in tray when enabled</string>
+             <string>Minimize to tray on startup</string>
             </property>
            </widget>
           </item>
