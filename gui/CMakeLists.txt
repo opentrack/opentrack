@@ -31,15 +31,3 @@ if(LINUX)
     target_link_libraries(opentrack procps)
 endif()
 
-add_custom_target(fixup-qt-subsystem)
-
-if(MSVC)
-    foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets platforms/qwindows)
-        add_custom_command(TARGET fixup-qt-subsystem
-            POST_BUILD
-            COMMAND editbin -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 "${i}.dll"
-            WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}")
-    endforeach()
-endif()
-
-add_dependencies(opentrack fixup-qt-subsystem)
