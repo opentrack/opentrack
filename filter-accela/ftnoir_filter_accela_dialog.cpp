@@ -44,6 +44,7 @@ FilterControls::FilterControls()
 
     {
 //#define SPLINE_ROT_DEBUG
+//#define SPLINE_TRANS_DEBUG
 #if defined(SPLINE_ROT_DEBUG) || defined(SPLINE_TRANS_DEBUG)
     spline rot, trans;
     s.make_splines(rot, trans);
@@ -55,8 +56,12 @@ FilterControls::FilterControls()
     r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 #if defined(SPLINE_TRANS_DEBUG)
+#   if defined(SPLINE_ROT_DEBUG)
+#       error "rot xor trans"
+#   endif
     r.setConfig(&trans);
 #else
+
     r.setConfig(&rot);
 #endif
     r.setFixedSize(1024, 600);
