@@ -36,29 +36,19 @@ constexpr double handle::val_minmax[6];
 
 void handle::init()
 {
-#if 0
-    bool ret = true;
-
     for (unsigned i = 0; i < axis_count; i++)
     {
-        ret &= GetVJDAxisExist(OPENTRACK_VJOYSTICK_ID, axis_ids[i]);
-        if (!ret) { qDebug() << "axis" << i << "doesn't exist"; break; }
-        ret &= GetVJDAxisMin(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_min[i]);
-        if (!ret) { qDebug() << "axis" << i << "can't get min value"; break; };
-        ret &= GetVJDAxisMax(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_max[i]);
-        if (!ret) { qDebug() << "axis" << i << "can't get max value"; break; };
+        if (!GetVJDAxisExist(OPENTRACK_VJOYSTICK_ID, axis_ids[i]))
+        {
+            // avoid floating point division by zero
+            axis_min[i] = 0;
+            axis_max[i] = 1;
+            continue;
+        }
+        GetVJDAxisMin(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_min[i]);
+        GetVJDAxisMax(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_max[i]);
     }
-
-    if (!ret)
-    {
-        (void) RelinquishVJD(OPENTRACK_VJOYSTICK_ID);
-        joy_state = state_fail;
-    }
-    else
-        (void) ResetVJD(OPENTRACK_VJOYSTICK_ID);
-#else
     (void) ResetVJD(OPENTRACK_VJOYSTICK_ID);
-#endif
 }
 
 handle::handle()
