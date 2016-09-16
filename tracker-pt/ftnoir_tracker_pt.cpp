@@ -66,6 +66,10 @@ bool Tracker_PT::get_focal_length(f& ret)
     const bool res = camera.get_info(info);
     if (res)
     {
+        using std::tan;
+        using std::atan;
+        using std::sqrt;
+
         const int w = info.res_x, h = info.res_y;
         const double diag = sqrt(1. + h/(double)w * h/(double)w);
         const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
