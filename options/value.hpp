@@ -178,6 +178,12 @@ public:
         emit valueChanged(static_cast<detail::value_type_t<t>>(get()));
     }
 
+    element_type const* operator->() const
+    {
+        static thread_local element_type last;
+        last = get();
+        return &last;
+    }
 private:
     t def;
 };
