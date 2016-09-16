@@ -177,36 +177,26 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
     // we can't get these at runtime since signals cross threads
     const int q_min = w->minimum();
     const int q_max = w->maximum();
-    const int q_diff = q_max - q_min;
 
-    slider_value sv(v);
+    {
+        const int q_diff = q_max - q_min;
+        slider_value sv(v);
+        const double sv_c = sv.max() - sv.min();
 
-    const double sv_c = sv.max() - sv.min();
-
-    using std::round;
-
-    w->setValue(int((sv.cur() - sv.min()) / sv_c * q_diff + q_min));
-    v = slider_value(q_diff <= 0 ? 0 : (w->value() - q_min) * sv_c / (double)q_diff + sv.min(), sv.min(), sv.max());
+        w->setValue(int((sv.cur() - sv.min()) / sv_c * q_diff + q_min));
+        v = slider_value(q_diff <= 0 ? 0 : (w->value() - q_min) * sv_c / (double)q_diff + sv.min(), sv.min(), sv.max());
+    }
 
     base_value::connect(w,
                         &QSlider::valueChanged,
                         &v,
-                        [=, &v](int pos) {
-                                const int q_diff = q_max - q_min;
-                                if (q_diff <= 0 || pos <= 0)
-                                    v = slider_value(sv.min(), sv.min(), sv.max());
-                                else
-                                {
-                                    const float c = float(sv.max()-sv.min());
-                                    v = slider_value((pos - q_min) * c / (float)q_diff + float(sv.min()), sv.min(), sv.max());
-                                }
-                        },
+                        [=, &v](int pos) { v = v->update_from_slider(pos, q_min, q_max); },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
                         static_cast<void(base_value::*)(double) const>(&base_value::valueChanged),
                         w,
-                        [=](double value) { w->setValue(int(round(value * q_diff) + q_min)); },
-    v.SAFE_CONNTYPE);
+                        [=, &v](double) { w->setValue(v->to_slider_pos(q_min, q_max)); },
+                        v.SAFE_CONNTYPE);
 }
 
 }
