@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>546</width>
-    <height>622</height>
+    <height>594</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -316,10 +316,29 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="trayp">
-         <property name="text">
+        <widget class="QGroupBox" name="groupBox_11">
+         <property name="title">
           <string>Minimize to tray</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="trayp">
+            <property name="text">
+             <string>Enable</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tray_start">
+            <property name="text">
+             <string>Start in tray when enabled</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -332,7 +351,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
+           <width>0</width>
            <height>0</height>
           </size>
          </property>
@@ -1355,7 +1374,6 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>bind_restart_tracking</tabstop>
   <tabstop>bind_tcomp_off_held</tabstop>
   <tabstop>center_at_startup</tabstop>
-  <tabstop>trayp</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>

@@ -132,4 +132,5 @@ public:
     bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
     void die_on_config_not_writable();
     bool is_tray_enabled();
+    bool start_in_tray();
 };

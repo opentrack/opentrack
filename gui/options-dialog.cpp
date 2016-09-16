@@ -40,6 +40,7 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(main.tray_enabled, ui.trayp);
+    tie_setting(main.tray_start, ui.tray_start);
 
     tie_setting(main.center_at_startup, ui.center_at_startup);
 

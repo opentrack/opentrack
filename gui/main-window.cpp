@@ -687,13 +687,16 @@ void MainWindow::ensure_tray()
     }
     else
     {
-        if (isHidden())
+        const bool is_hidden = isHidden() || !isVisible();
+
+        if (is_hidden)
+        {
             show();
-        if (!isVisible())
             setVisible(true);
 
-        raise(); // for OSX
-        activateWindow(); // for Windows
+            raise(); // for OSX
+            activateWindow(); // for Windows
+        }
 
         if (tray)
             tray->hide();
@@ -822,6 +825,11 @@ void MainWindow::closeEvent(QCloseEvent*)
 bool MainWindow::is_tray_enabled()
 {
     return s.tray_enabled && QSystemTrayIcon::isSystemTrayAvailable();
+}
+
+bool MainWindow::start_in_tray()
+{
+    return s.tray_enabled && s.tray_start && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
 void MainWindow::set_profile_in_registry(const QString &profile)

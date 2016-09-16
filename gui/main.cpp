@@ -144,7 +144,7 @@ main(int argc, char** argv)
         if (!w->isEnabled())
             break;
 
-        if (!w->is_tray_enabled())
+        if (!w->start_in_tray())
         {
             w->setVisible(true);
             w->show();
