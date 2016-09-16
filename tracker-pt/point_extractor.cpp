@@ -19,12 +19,14 @@
 #include <algorithm>
 #include <cinttypes>
 
+constexpr double PointExtractor::pi;
+
 PointExtractor::PointExtractor()
 {
     blobs.reserve(max_blobs);
 }
 
-void PointExtractor::extract_points(cv::Mat& frame, std::vector<PointExtractor::vec2>& points)
+void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
 {
     using std::sqrt;
     using std::max;

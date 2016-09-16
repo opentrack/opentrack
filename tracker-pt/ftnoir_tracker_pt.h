@@ -11,12 +11,13 @@
 
 #include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
+using namespace pt_types;
+
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "compat/timer.hpp"
 #include "cv/video-widget.hpp"
-#include "compat/pi-constant.hpp"
 
 #include <QThread>
 #include <QMutex>
@@ -30,9 +31,9 @@ class TrackerDialog_PT;
 
 //-----------------------------------------------------------------------------
 // Constantly processes the tracking chain in a separate thread
-class Tracker_PT : public QThread, public ITracker, private pt_types
+class Tracker_PT : public QThread, public ITracker
 {
-    static constexpr double pi = OPENTRACK_PI;
+    static constexpr f pi = constants::pi;
 
     Q_OBJECT
     friend class camera_dialog;

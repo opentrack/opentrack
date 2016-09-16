@@ -13,11 +13,12 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
-#include "compat/pi-constant.hpp"
 
 #include <vector>
 
-class PointExtractor final : private pt_types
+using namespace pt_types;
+
+class PointExtractor final
 {
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
@@ -28,7 +29,7 @@ public:
 
     settings_pt s;
 private:
-    static constexpr double pi = OPENTRACK_PI;
+    static constexpr double pi = constants::pi;
     static constexpr int max_blobs = 16;
 
     cv::Mat frame_gray;

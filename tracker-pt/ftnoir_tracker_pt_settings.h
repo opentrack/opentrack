@@ -12,12 +12,15 @@
 #include <limits>
 #include <opencv2/core.hpp>
 
-struct pt_types
-{
+namespace pt_types {
     using f = double;
 
-    static constexpr f eps = std::numeric_limits<f>::epsilon();
-    static constexpr f pi = f(OPENTRACK_PI);
+    struct constants final
+    {
+        constants() = delete;
+        static constexpr f eps = std::numeric_limits<f>::epsilon();
+        static constexpr f pi = OPENTRACK_PI;
+    };
 
     template<int n> using vec = cv::Vec<f, n>;
     using vec2 = vec<2>;
@@ -26,7 +29,7 @@ struct pt_types
     template<int y, int x> using mat = cv::Matx<f, y, x>;
     using mat33 = mat<3, 3>;
     using mat22 = mat<2, 2>;
-};
+}
 
 #include "options/options.hpp"
 using namespace options;

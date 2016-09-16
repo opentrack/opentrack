@@ -6,6 +6,10 @@
  */
 
 #include "point_tracker.h"
+
+#include "ftnoir_tracker_pt_settings.h"
+using namespace pt_types;
+
 #include "compat/nan.hpp"
 
 #include <vector>
@@ -14,9 +18,6 @@
 
 #include <QDebug>
 
-using mat33 = pt_types::mat33;
-using vec3 = pt_types::vec3;
-using f = pt_types::f;
 constexpr unsigned PointModel::N_POINTS;
 
 static void get_row(const mat33& m, int i, vec3& v)
@@ -206,6 +207,9 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
     // In every iteration step the rotation closer to R_expected is taken
     mat33 R_expected = mat33::eye();
 
+    static constexpr f pi = constants::pi;
+    static constexpr f eps = constants::eps;
+
     // initial pose = last (predicted) pose
     vec3 k;
     get_row(R_expected, 2, k);
@@ -349,7 +353,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
     return i;
 }
 
-pt_types::vec2 PointTracker::project(const vec3& v_M, f focal_length)
+vec2 PointTracker::project(const vec3& v_M, f focal_length)
 {
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);

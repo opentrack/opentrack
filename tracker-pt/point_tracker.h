@@ -9,13 +9,16 @@
 #define POINTTRACKER_H
 
 #include "compat/timer.hpp"
+
 #include "ftnoir_tracker_pt_settings.h"
+using namespace pt_types;
+
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <vector>
 #include <QObject>
 
-class Affine final : private pt_types
+class Affine final
 {
 public:
     Affine() : R(mat33::eye()), t(0,0,0) {}
@@ -30,17 +33,17 @@ inline Affine operator*(const Affine& X, const Affine& Y)
     return Affine(X.R*Y.R, X.R*Y.t + X.t);
 }
 
-inline Affine operator*(const pt_types::mat33& X, const Affine& Y)
+inline Affine operator*(const mat33& X, const Affine& Y)
 {
     return Affine(X*Y.R, X*Y.t);
 }
 
-inline Affine operator*(const Affine& X, const pt_types::mat33& Y)
+inline Affine operator*(const Affine& X, const mat33& Y)
 {
     return Affine(X.R*Y, X.t);
 }
 
-inline pt_types::vec3 operator*(const Affine& X, const pt_types::vec3& v)
+inline vec3 operator*(const Affine& X, const vec3& v)
 {
     return X.R*v + X.t;
 }
@@ -49,7 +52,7 @@ inline pt_types::vec3 operator*(const Affine& X, const pt_types::vec3& v)
 // Describes a 3-point model
 // nomenclature as in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointModel final : private pt_types
+class PointModel final
 {
     friend class PointTracker;
 public:
@@ -73,7 +76,7 @@ public:
 // Tracks a 3-point model
 // implementing the POSIT algorithm for coplanar points as presented in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointTracker final : private pt_types
+class PointTracker final
 {
 public:
     PointTracker();
@@ -82,7 +85,7 @@ public:
     // dt : time since last call
     void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout, int w, int h);
     Affine pose() { return X_CM; }
-    vec2 project(const vec3& v_M, PointTracker::f focal_length);
+    vec2 project(const vec3& v_M, f focal_length);
 
 private:
     // the points in model order

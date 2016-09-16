@@ -18,6 +18,8 @@
 
 //#define PT_PERF_LOG	//log performance
 
+constexpr f Tracker_PT::pi;
+
 //-----------------------------------------------------------------------------
 Tracker_PT::Tracker_PT() :
       video_widget(nullptr),
