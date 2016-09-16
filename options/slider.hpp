@@ -16,21 +16,21 @@ namespace options
 {
     class OPENTRACK_OPTIONS_EXPORT slider_value final
     {
-        float cur_, min_, max_;
+        double cur_, min_, max_;
     public:
         slider_value(float cur, float min, float max);
 
         template<typename t, typename u, typename v> slider_value(t cur, u min, v max) :
-            cur_(float(cur)),
-            min_(float(min)),
-            max_(float(max))
+            cur_(double(cur)),
+            min_(double(min)),
+            max_(double(max))
         {}
 
         slider_value(const slider_value& v);
         slider_value();
         slider_value& operator=(const slider_value& v);
         bool operator==(const slider_value& v) const;
-        operator float() const { return cur_; }
+        operator double() const { return cur_; }
         double cur() const { return double(cur_); }
         double min() const { return double(min_); }
         double max() const { return double(max_); }
