@@ -85,9 +85,10 @@ class MainWindow : public QMainWindow, private State
     void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
     static bool get_new_config_name_from_dialog(QString &ret);
-    void set_profile(const QString& profile);
+    void set_profile_in_registry(const QString& profile);
     void register_shortcuts();
     void set_keys_enabled(bool flag);
+    bool is_config_listed(const QString& name);
 
     void init_tray_menu();
 
@@ -98,7 +99,7 @@ class MainWindow : public QMainWindow, private State
 private slots:
     void save_modules();
     void exit();
-    void profile_selected(const QString& name);
+    bool set_profile(const QString& new_name);
 
     void showTrackerSettings();
     void showProtocolSettings();
@@ -112,7 +113,7 @@ private slots:
     void make_empty_config();
     void make_copied_config();
     void open_config_directory();
-    void refresh_config_list(bool warn);
+    bool refresh_config_list();
 
     void startTracker();
     void stopTracker();
@@ -128,6 +129,7 @@ public:
     MainWindow();
     ~MainWindow();
     static void set_working_directory();
-    bool warn_on_config_not_writable();
+    bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
+    void die_on_config_not_writable();
     bool is_tray_enabled();
 };

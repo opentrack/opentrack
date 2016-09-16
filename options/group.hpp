@@ -26,6 +26,7 @@ public:
     static QString ini_directory();
     static QString ini_filename();
     static QString ini_pathname();
+    static QString ini_combine(const QString& filename);
     static QStringList ini_list();
     static std::shared_ptr<QSettings> ini_file();
 

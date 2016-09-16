@@ -16,9 +16,11 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QIcon>
 #include <QString>
 #include <QChar>
+#include <QSignalBlocker>
 
 #ifdef _WIN32
 #   include <windows.h>
@@ -43,7 +45,14 @@ MainWindow::MainWindow() :
     setFixedSize(size());
     updateButtonState(false, false);
 
-    refresh_config_list(true);
+    if (group::ini_directory().size() == 0)
+    {
+        die_on_config_not_writable();
+        return;
+    }
+
+    if (!refresh_config_list())
+        return;
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
@@ -52,7 +61,7 @@ MainWindow::MainWindow() :
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
-    connect(ui.iconcomboProfile, SIGNAL(currentTextChanged(QString)), this, SLOT(profile_selected(QString)));
+    connect(ui.iconcomboProfile, &QComboBox::currentTextChanged, this, [&](const QString& x) { set_profile(x); });
 
     // fill dylib comboboxen
     {
@@ -69,7 +78,7 @@ MainWindow::MainWindow() :
     }
 
     // timers
-    connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(false); });
+    connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(); });
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
@@ -84,18 +93,14 @@ MainWindow::MainWindow() :
         ui.profile_button->setMenu(&profile_menu);
     }
 
-    if (!QFile(group::ini_pathname()).exists())
-    {
-        set_profile(OPENTRACK_DEFAULT_CONFIG);
-        const auto pathname = group::ini_pathname();
-        if (!QFile(pathname).exists())
-        {
-            QFile file(pathname);
-            (void) file.open(QFile::ReadWrite);
-        }
-    }
-    else
-        set_profile(group::ini_filename());
+    if (!progn(
+        const QString cur = group::ini_filename();
+        if (is_config_listed(cur))
+            return set_profile(cur);
+        else
+            return set_profile(OPENTRACK_DEFAULT_CONFIG);
+    ))
+        return;
 
     // only tie and connect main screen options after migrations are done
     // below is fine, set_profile() is called already
@@ -148,12 +153,6 @@ MainWindow::MainWindow() :
                 [&](bool) { ensure_tray(); });
         ensure_tray();
     }
-
-    if (group::ini_directory() == "")
-        QMessageBox::warning(this,
-                             "Configuration not saved.",
-                             "Can't create configuration directory! Expect major malfunction.",
-                             QMessageBox::Ok, QMessageBox::NoButton);
 
     register_shortcuts();
     det_timer.start(1000);
@@ -237,19 +236,44 @@ void MainWindow::register_shortcuts()
         work->reload_shortcuts();
 }
 
-bool MainWindow::warn_on_config_not_writable()
+void MainWindow::die_on_config_not_writable()
 {
-    QString current_file = group::ini_pathname();
-    QFile f(current_file);
-    f.open(QFile::ReadWrite);
+    stopTracker();
 
-    if (!f.isOpen())
+    static const QString pad(16, QChar(' '));
+
+    QMessageBox::critical(this,
+                          "The Octopus is sad",
+                          QStringLiteral("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
+                          QMessageBox::Close, QMessageBox::NoButton);
+
+    // signals main() to short-circuit
+    if (!isVisible())
+        setEnabled(false);
+
+    setVisible(false);
+
+    // tray related
+    qApp->setQuitOnLastWindowClosed(true);
+
+    close();
+}
+
+bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
+{
+    const bool open = QFile(group::ini_combine(current)).open(QFile::ReadWrite);
+    const QStringList ini_list = group::ini_list();
+
+    if (!ini_list.contains(current) || !open)
     {
-        QMessageBox::warning(this, "Something went wrong", "Check permissions and ownership for your .ini file!", QMessageBox::Ok, QMessageBox::NoButton);
-        return false;
+        die_on_config_not_writable();
+        return true;
     }
 
-    return true;
+    if (ini_list_ != nullptr)
+        *ini_list_ = ini_list;
+
+    return false;
 }
 
 bool MainWindow::get_new_config_name_from_dialog(QString& ret)
@@ -279,135 +303,101 @@ void MainWindow::save_modules()
 void MainWindow::make_empty_config()
 {
     QString name;
-    const QString dir = group::ini_directory();
-    if (dir != "" && get_new_config_name_from_dialog(name))
+    if (get_new_config_name_from_dialog(name))
     {
-        QFile filename(dir + "/" + name);
-        (void) filename.open(QFile::ReadWrite);
-        refresh_config_list(true);
-        ui.iconcomboProfile->setCurrentText(name);
-        mark_config_as_not_needing_migration();
+        QFile(group::ini_combine(name)).open(QFile::ReadWrite);
+
+        if (!refresh_config_list())
+            return;
+
+        if (is_config_listed(name))
+        {
+            QSignalBlocker q(ui.iconcomboProfile);
+
+            if (!set_profile(name))
+                return;
+            mark_config_as_not_needing_migration();
+        }
     }
 }
 
 void MainWindow::make_copied_config()
 {
-    const QString dir = group::ini_directory();
     const QString cur = group::ini_pathname();
     QString name;
-    if (cur != "" && dir != "" && get_new_config_name_from_dialog(name))
+    if (cur != "" && get_new_config_name_from_dialog(name))
     {
-        const QString new_name = dir + "/" + name;
+        const QString new_name = group::ini_combine(name);
         (void) QFile::remove(new_name);
-        (void) QFile::copy(cur, new_name);
-        refresh_config_list(true);
-        ui.iconcomboProfile->setCurrentText(name);
-        mark_config_as_not_needing_migration();
+        QFile::copy(cur, new_name);
+
+        if (!refresh_config_list())
+            return;
+
+        if (is_config_listed(name))
+        {
+            QSignalBlocker q(ui.iconcomboProfile);
+
+            if (!set_profile(name))
+                return;
+            mark_config_as_not_needing_migration();
+        }
     }
+
 }
 
 void MainWindow::open_config_directory()
 {
-    const QString path = group::ini_directory();
-    if (path != "")
-    {
-        QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(path));
-    }
+    QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(group::ini_directory()));
 }
 
-void MainWindow::refresh_config_list(bool warn)
+bool MainWindow::refresh_config_list()
 {
     if (work)
-        return;
+        return true;
 
     QStringList ini_list = group::ini_list();
 
-    if (ini_list.size() == 0)
-    {
-        QFile filename(group::ini_directory() + "/" OPENTRACK_DEFAULT_CONFIG);
-        (void) filename.open(QFile::ReadWrite);
-        ini_list.append(OPENTRACK_DEFAULT_CONFIG);
-    }
+    // check for sameness
+    const bool exact_same = ini_list.size() > 0 && progn(
+        if (ini_list.size() == ui.iconcomboProfile->count())
+        {
+            const int sz = ini_list.size();
+            for (int i = 0; i < sz; i++)
+            {
+                if (ini_list[i] != ui.iconcomboProfile->itemText(i))
+                    return false;
+            }
+            return true;
+        }
 
-    if (progn(
-                if (ini_list.size() == ui.iconcomboProfile->count())
-                {
-                    const int sz = ini_list.size();
-                    for (int i = 0; i < sz; i++)
-                    {
-                        if (ini_list[i] != ui.iconcomboProfile->itemText(i))
-                            return false;
-                    }
-                    return true;
-                }
-
-                return false;
-             ))
-    {
-        // don't even warn on non-writable.
-        // it'd happen all the time since refresh is on a timer.
-        return;
-    }
-
-    bool file_ok = false;
+        return false;
+    );
 
     QString current = group::ini_filename();
-    QIcon icon(":/images/settings16.png");
 
-    {
-        {
-            inhibit_qt_signals l(*ui.iconcomboProfile);
+    if (!ini_list.contains(current))
+        current = OPENTRACK_DEFAULT_CONFIG_Q;
 
-            ui.iconcomboProfile->clear();
-            ui.iconcomboProfile->addItems(ini_list);
+    if (maybe_die_on_config_not_writable(current, &ini_list))
+        return false;
 
-            {
-                const int sz = ini_list.size();
+    if (exact_same)
+        return true;
 
-                for (int i = 0; i < sz; i++)
-                    ui.iconcomboProfile->setItemIcon(i, icon);
-            }
+    const QIcon icon(":/images/settings16.png");
 
-            ui.iconcomboProfile->setCurrentText(current);
-        }
+    QSignalBlocker l(ui.iconcomboProfile);
 
-        const QString pathname = group::ini_pathname();
+    ui.iconcomboProfile->clear();
+    ui.iconcomboProfile->addItems(ini_list);
 
-        if (!QFile(pathname).exists())
-        {
-            {
-                QFile file(pathname);
-                (void) file.open(QFile::ReadWrite);
-            }
+    for (int i = 0; i < ini_list.size(); i++)
+        ui.iconcomboProfile->setItemIcon(i, icon);
 
-            const QStringList ini_list = group::ini_list();
+    ui.iconcomboProfile->setCurrentText(current);
 
-            if (ini_list.contains(current))
-            {
-                {
-                    inhibit_qt_signals q(ui.iconcomboProfile);
-
-                    ui.iconcomboProfile->clear();
-                    ui.iconcomboProfile->addItems(ini_list);
-                    for (int i = 0; i < ini_list.size(); i++)
-                        ui.iconcomboProfile->setItemIcon(i, icon);
-                    ui.iconcomboProfile->setCurrentText(current);
-                }
-
-                options::detail::bundler::refresh_all_bundles();
-            }
-        }
-        else
-        {
-            file_ok = true;
-            ui.iconcomboProfile->setCurrentText(current);
-        }
-    }
-
-    set_title();
-
-    if (warn)
-        warn_on_config_not_writable();
+    return true;
 }
 
 void MainWindow::updateButtonState(bool running, bool inertialp)
@@ -649,21 +639,30 @@ void MainWindow::exit()
     QCoreApplication::exit(0);
 }
 
-void MainWindow::profile_selected(const QString& name)
+bool MainWindow::set_profile(const QString& new_name_)
 {
-    const auto old_name = group::ini_filename();
-    const auto new_name = name;
+    if (!refresh_config_list())
+        return false;
 
-    if (name == "")
-        return;
+    QString new_name = new_name_;
 
-    if (old_name != new_name)
-    {
-        save_modules();
-        set_profile(new_name);
-        set_title();
-        options::detail::bundler::refresh_all_bundles();
-    }
+    if (!is_config_listed(new_name))
+        new_name = OPENTRACK_DEFAULT_CONFIG_Q;
+
+    if (maybe_die_on_config_not_writable(new_name, nullptr))
+        return false;
+
+    ui.iconcomboProfile->setCurrentText(new_name);
+    set_profile_in_registry(new_name);
+
+    // migrations are for config layout changes and other user-visible
+    // incompatibilities in future versions
+    run_migrations();
+
+    set_title();
+    options::detail::bundler::refresh_all_bundles();
+
+    return true;
 }
 
 void MainWindow::ensure_tray()
@@ -704,17 +703,20 @@ void MainWindow::ensure_tray()
 
 void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 {
-    if (progn(switch (e)
-              {
-              // if we enable double click also then it causes
-              // toggle back to the original state
-              //case QSystemTrayIcon::DoubleClick:
-              case QSystemTrayIcon::Trigger: // single click
-                  return false;
-              default:
-                  return true;
-              }))
+    if (progn(
+        switch (e)
+        {
+        // if we enable double click also then it causes
+        // toggle back to the original state
+        //case QSystemTrayIcon::DoubleClick:
+        case QSystemTrayIcon::Trigger: // single click
+            return false;
+        default:
+            return true;
+    }))
+    {
         return;
+    }
 
     ensure_tray();
 
@@ -731,7 +733,7 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
                            return ws(windowState() & (~Qt::WindowMinimized));
                        else
                            return ws(Qt::WindowNoState);
-                       ));
+    ));
 
     if (is_minimized)
     {
@@ -791,7 +793,15 @@ void MainWindow::set_keys_enabled(bool flag)
     {
         register_shortcuts();
     }
-    qDebug() << "keybindings set to" << flag;
+}
+
+bool MainWindow::is_config_listed(const QString& name)
+{
+    const int sz = ui.iconcomboProfile->count();
+    for (int i = 0; i < sz; i++)
+        if (ui.iconcomboProfile->itemText(i) == name)
+            return true;
+    return false;
 }
 
 void MainWindow::changeEvent(QEvent* e)
@@ -814,15 +824,8 @@ bool MainWindow::is_tray_enabled()
     return s.tray_enabled && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
-void MainWindow::set_profile(const QString &profile)
+void MainWindow::set_profile_in_registry(const QString &profile)
 {
-    {
-        QSettings settings(OPENTRACK_ORG);
-        settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
-    }
-    const bool ok = warn_on_config_not_writable();
-    if (ok)
-        // migrations are for config layout changes and other user-visible
-        // incompatibilities in future versions
-        run_migrations();
+    QSettings settings(OPENTRACK_ORG);
+    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
 }

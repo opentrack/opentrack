@@ -137,33 +137,35 @@ main(int argc, char** argv)
     add_win32_path();
 #endif
 
-    {
+     do
+     {
         mem<MainWindow> w = std::make_shared<MainWindow>();
+
+        if (!w->isEnabled())
+            break;
 
         if (!w->is_tray_enabled())
         {
-            w->setHidden(false);
+            w->setVisible(true);
             w->show();
         }
         else
-        {
             w->setVisible(false);
-            w->setHidden(true);
-        }
 
         app.setQuitOnLastWindowClosed(false);
         app.exec();
 
         qDebug() << "exit: window";
     }
+    while (false);
 
-    qDebug() << "exit: main()";
-
-    // msvc crashes again in some destructor
+    // msvc crashes in some destructor
 #if defined(_MSC_VER)
     qDebug() << "exit: terminating";
     TerminateProcess(GetCurrentProcess(), 0);
 #endif
+
+    qDebug() << "exit: main()";
 
     return 0;
 }

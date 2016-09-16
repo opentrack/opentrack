@@ -1,6 +1,9 @@
 #include "bundle.hpp"
 #include "value.hpp"
 
+#include <QThread>
+#include <QApplication>
+
 using options::base_value;
 
 namespace options
@@ -58,6 +61,9 @@ bool bundle::contains(const QString &name) const
 
 void bundle::save_deferred(QSettings& s)
 {
+    if (QThread::currentThread() != qApp->thread())
+        qCritical() << "group::save - current thread not ui thread";
+
     if (group_name.size() == 0)
         return;
 

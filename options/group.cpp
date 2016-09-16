@@ -2,6 +2,7 @@
 #include "defs.hpp"
 #include <QStandardPaths>
 #include <QDir>
+
 #include <QDebug>
 
 namespace options {
@@ -48,7 +49,7 @@ void group::put(const QString &s, const QVariant &d)
 
 bool group::contains(const QString &s) const
 {
-    return kvs.count(s) != 0;
+    return kvs.find(s) != kvs.cend();
 }
 
 QString group::ini_directory()
@@ -64,7 +65,10 @@ QString group::ini_directory()
 QString group::ini_filename()
 {
     QSettings settings(OPENTRACK_ORG);
-    return settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+    const QString ret = settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+    if (ret.size() == 0)
+        return OPENTRACK_DEFAULT_CONFIG;
+    return ret;
 }
 
 QString group::ini_pathname()
@@ -73,6 +77,11 @@ QString group::ini_pathname()
     if (dir == "")
         return "";
     return dir + "/" + ini_filename();
+}
+
+QString group::ini_combine(const QString& filename)
+{
+    return ini_directory() + QStringLiteral("/") + filename;
 }
 
 QStringList group::ini_list()
