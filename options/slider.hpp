@@ -18,7 +18,7 @@ namespace options
     {
         double cur_, min_, max_;
     public:
-        slider_value(float cur, float min, float max);
+        slider_value(double cur, double min, double max);
 
         template<typename t, typename u, typename v> slider_value(t cur, u min, v max) :
             cur_(double(cur)),
@@ -31,9 +31,9 @@ namespace options
         slider_value& operator=(const slider_value& v);
         bool operator==(const slider_value& v) const;
         operator double() const { return cur_; }
-        double cur() const { return double(cur_); }
-        double min() const { return double(min_); }
-        double max() const { return double(max_); }
+        double cur() const { return cur_; }
+        double min() const { return min_; }
+        double max() const { return max_; }
         slider_value update_from_slider(int pos, int q_min, int q_max) const;
         int to_slider_pos(int q_min, int q_max) const;
     };

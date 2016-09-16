@@ -3,7 +3,7 @@
 
 namespace options {
 
-slider_value::slider_value(float cur, float min, float max) :
+slider_value::slider_value(double cur, double min, double max) :
     cur_(cur),
     min_(min),
     max_(max)
