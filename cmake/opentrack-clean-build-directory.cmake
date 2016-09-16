@@ -1,5 +1,6 @@
 function(cleanup_build_dir)
-    if(NOT $ENV{USERNAME} STREQUAL "sthalik")
+    set(user "$ENV{USERNAME}")
+    if(NOT user STREQUAL "sthalik")
         message(WARNING "you can't run this potentially destructive function")
         message(FATAL_ERROR "if you're sure, remove this line")
     endif()
@@ -13,18 +14,15 @@ function(cleanup_build_dir)
     set(got-cache FALSE)
 
     foreach(i ${files})
-          if(i STREQUAL "CMakeCache.txt")
+        if(i STREQUAL "CMakeCache.txt")
             set(got-cache TRUE)
-            continue()
+        else()
+            list(APPEND files_ "${CMAKE_BINARY_DIR}/${i}")
         endif()
-
-        list(APPEND files_ "${CMAKE_BINARY_DIR}/${i}")
     endforeach()
 
-    unset(files)
-
     if(NOT got-cache)
-        message(FATAL_ERROR "")
+        message(FATAL_ERROR "sanity check failed")
     endif()
 
     # let's hope nothing bad happens
