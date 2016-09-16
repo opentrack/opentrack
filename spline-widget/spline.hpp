@@ -81,6 +81,7 @@ public:
     spline(const spline&) = default;
 
     float getValue(double x);
+    float get_value_no_save(double x);
     bool getLastPoint(QPointF& point);
     void removePoint(int i);
     void removeAllPoints();

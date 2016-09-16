@@ -39,23 +39,12 @@ public:
     ~spline_widget();
 
     spline* config();
-
     void setConfig(spline* spl);
 
-    QColor colorBezier() const
-    {
-        return spline_color;
-    }
-    void setColorBezier(QColor color)
-    {
-        spline_color = color;
-        update();
-    }
-    void force_redraw()
-    {
-        _background = QPixmap();
-        update();
-    }
+    QColor colorBezier() const;
+    void setColorBezier(QColor color);
+
+    void force_redraw();
     void set_preview_only(bool val);
     bool is_preview_only() const;
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }

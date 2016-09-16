@@ -31,7 +31,6 @@ spline_widget::spline_widget(QWidget *parent) :
     _draw_function(true),
     _preview_only(false)
 {
-    update_range();
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
     setCursor(Qt::ArrowCursor);
@@ -62,8 +61,26 @@ void spline_widget::setConfig(spline* spl)
         }
 
         _config = spl;
+        _background = QPixmap();
         update_range();
     }
+}
+
+QColor spline_widget::colorBezier() const
+{
+    return spline_color;
+}
+
+void spline_widget::setColorBezier(QColor color)
+{
+    spline_color = color;
+    update();
+}
+
+void spline_widget::force_redraw()
+{
+    _background = QPixmap();
+    update();
 }
 
 void spline_widget::set_preview_only(bool val)
@@ -78,8 +95,6 @@ bool spline_widget::is_preview_only() const
 
 void spline_widget::drawBackground()
 {
-    if (!_config)
-        return;
     _background = QPixmap(width(), height());
 
     QPainter painter(&_background);
@@ -140,14 +155,26 @@ void spline_widget::drawBackground()
 
 void spline_widget::drawFunction()
 {
-    if (!_config)
-        return;
-
     _function = _background;
     QPainter painter(&_function);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    points_t points = _config->getPoints();
+    const points_t points = _config->getPoints();
+
+    if (moving_control_point_idx >= 0 &&
+        moving_control_point_idx < points.size())
+    {
+        const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
+        const QPointF prev_ = point_to_pixel(QPointF(0, 0));
+        QPoint prev(int(std::round(prev_.x())), int(std::round(prev_.y())));
+        for (int i = 0; i < points.size(); i++)
+        {
+            const QPointF tmp_ = point_to_pixel(points[i]);
+            const QPoint tmp(int(std::round(tmp_.x())), int(std::round(tmp_.y())));
+            drawLine(painter, prev, tmp, pen);
+            prev = tmp;
+        }
+    }
 
     const QColor color = progn
                          (
@@ -177,14 +204,14 @@ void spline_widget::drawFunction()
     QPointF prev = point_to_pixel(QPoint(0, 0));
     for (qreal i = 0; i < max; i += step)
     {
-        const qreal val = qreal(_config->getValue(i));
+        const qreal val = qreal(_config->get_value_no_save(i));
         const QPointF cur = point_to_pixel(QPointF(i, val));
         painter.drawLine(prev, cur);
         prev = cur;
     }
 
     {
-        const qreal val = qreal(_config->getValue(max));
+        const qreal val = qreal(_config->get_value_no_save(max));
         const QPointF last = point_to_pixel(QPointF(max, val));
         painter.drawLine(prev, last);
     }
@@ -204,6 +231,9 @@ void spline_widget::drawFunction()
 
 void spline_widget::paintEvent(QPaintEvent *e)
 {
+    if (!_config)
+        return;
+
     QPainter p(this);
 
     if (_background.isNull())
@@ -220,36 +250,12 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     p.drawPixmap(e->rect(), _function);
 
-    if (_config)
-    {
-        const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
-        points_t points = _config->getPoints();
-        if (points.size() &&
-            moving_control_point_idx >= 0 &&
-            moving_control_point_idx < points.size())
-        {
-            if (points[0].x() > 1e-2)
-                points.push_front(QPoint(0, 0));
-            const QPointF prev_ = point_to_pixel(points[0]);
-            QPoint prev(int(std::round(prev_.x())), int(std::round(prev_.y())));
-            for (int i = 1; i < points.size(); i++)
-            {
-                const QPointF tmp_ = point_to_pixel(points[i]);
-                const QPoint tmp(int(std::round(tmp_.x())), int(std::round(tmp_.y())));
-                drawLine(p, prev, tmp, pen);
-                prev = tmp;
-            }
-        }
-
-        // If the Tracker is active, the 'Last Point' it requested is recorded.
-        // Show that point on the graph, with some lines to assist.
-        // This new feature is very handy for tweaking the curves!
-        QPointF last;
-        if (_config->getLastPoint(last) && isEnabled())
-        {
-            drawPoint(p, point_to_pixel(last), QColor(255, 0, 0, 120));
-        }
-    }
+    // If the Tracker is active, the 'Last Point' it requested is recorded.
+    // Show that point on the graph, with some lines to assist.
+    // This new feature is very handy for tweaking the curves!
+    QPointF last;
+    if (_config->getLastPoint(last) && isEnabled())
+        drawPoint(p, point_to_pixel(last), QColor(255, 0, 0, 120));
 }
 
 void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColor& colBG, const QColor& border)
@@ -402,8 +408,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
         if (!overlap)
         {
-            points[idx] = new_pt;
-            _config->movePoint(int(idx), new_pt);
+            _config->movePoint(idx, new_pt);
             _draw_function = true;
 
             show_tooltip(pix, new_pt);
@@ -444,18 +449,14 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
         //mouseMoveEvent(e);
 
         {
-            int i;
-
-            if (is_on_pt(e->pos(), &i))
-            {
+            if (is_on_pt(e->pos(), nullptr))
                 setCursor(Qt::CrossCursor);
-            }
             else
                 setCursor(Qt::ArrowCursor);
         }
         moving_control_point_idx = -1;
-
         _draw_function = true;
+
         if (is_in_bounds(e->pos()))
             show_tooltip(e->pos());
         else
@@ -467,11 +468,8 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 
 void spline_widget::reload_spline()
 {
-    if (_config)
-    {
-        // don't recompute here as the value's just been recomputed
-        update_range();
-    }
+    // don't recompute here as the value's about to be recomputed in the callee
+    update_range();
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_, const QString& prefix)
@@ -539,6 +537,7 @@ void spline_widget::focusOutEvent(QFocusEvent* e)
     if (moving_control_point_idx != -1)
         QToolTip::hideText();
     moving_control_point_idx = -1;
+    _draw_function = true;
     lower();
     setCursor(Qt::ArrowCursor);
     e->accept();
@@ -546,9 +545,6 @@ void spline_widget::focusOutEvent(QFocusEvent* e)
 
 QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
 {
-    if (!_config)
-        return QPoint(-1, -1);
-
     using std::round;
 
     qreal x = (point.x() - pixel_bounds.x()) / c.x();

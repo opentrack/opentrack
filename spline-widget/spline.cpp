@@ -94,18 +94,27 @@ qreal spline::maxOutput() const
 float spline::getValue(double x)
 {
     QMutexLocker foo(&_mutex);
+
+    const float ret = get_value_no_save(x);
+    last_input_value.setX(std::fabs(x));
+    last_input_value.setY(double(std::fabs(ret)));
+    return ret;
+}
+
+float spline::get_value_no_save(double x)
+{
+    QMutexLocker foo(&_mutex);
+
     float q  = float(x * precision(s->points));
     int    xi = (int)q;
     float  yi = getValueInternal(xi);
     float  yiplus1 = getValueInternal(xi+1);
     float  f = (q-xi);
     float  ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
-    last_input_value.setX(std::fabs(x));
-    last_input_value.setY(double(std::fabs(ret)));
     return ret;
 }
 
-bool spline::getLastPoint(QPointF& point )
+bool spline::getLastPoint(QPointF& point)
 {
     QMutexLocker foo(&_mutex);
     point = last_input_value;
@@ -115,7 +124,7 @@ bool spline::getLastPoint(QPointF& point )
 float spline::getValueInternal(int x)
 {
     float sign = x < 0 ? -1 : 1;
-    x = abs(x);
+    x = std::abs(x);
     float ret;
         ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
     return ret * sign;
