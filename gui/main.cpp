@@ -10,7 +10,6 @@
 #include "migration/migration.hpp"
 #include "main-window.hpp"
 #include "options/options.hpp"
-#include "compat/win32-com.hpp"
 using namespace options;
 #include <QApplication>
 #include <QCommandLineParser>
@@ -119,7 +118,6 @@ WINAPI
 main(int argc, char** argv)
 {
 #ifdef _WIN32
-    init_com_threading();
     add_program_library_path();
 #elif !defined(__linux)
     // workaround QTBUG-38598

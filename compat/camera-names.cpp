@@ -3,7 +3,6 @@
 #ifdef _WIN32
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
-#   include "win32-com.hpp"
 #   include <cwchar>
 #elif defined(__unix) || defined(__linux) || defined(__APPLE__)
 #   include <unistd.h>
@@ -33,7 +32,7 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
 #if defined(_WIN32)
     // Create the System Device Enumerator.
     HRESULT hr;
-    init_com_threading();
+    CoInitialize(nullptr);
     ICreateDevEnum *pSysDevEnum = NULL;
     hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
@@ -49,7 +48,8 @@ OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names()
         // Enumerate the monikers.
         IMoniker *pMoniker = NULL;
         ULONG cFetched;
-        while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) {
+        while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK)
+        {
             IPropertyBag *pPropBag;
             hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
             if (SUCCEEDED(hr))	{
