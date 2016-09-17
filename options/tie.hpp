@@ -26,75 +26,37 @@ tie_setting(value<t>& v, QComboBox* cb)
     cb->setCurrentIndex(cb->findData((unsigned)static_cast<t>(v)));
     v = static_cast<t>(cb->currentData().toInt());
 
-    // QObject::connect plays badly with std::bind of std::shared_ptr. Data seems to get freed.
-    // Direct accesses of cb->currentData within arbitrary thread context cause crashes as well.
-    // Hence we go for a verbose implementation.
-
-    std::vector<int> enum_cases;
-    enum_cases.reserve(unsigned(cb->count()));
+    std::vector<int> enum_cases(unsigned(cb->count()));
 
     for (int i = 0; i < cb->count(); i++)
-        enum_cases.push_back(cb->itemData(i).toInt());
-
-    struct fn1
-    {
-        value<t>& v;
-        QComboBox* cb;
-        std::vector<int> enum_cases;
-
-        fn1(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) :
-            v(v),
-            cb(cb),
-            enum_cases(enum_cases)
-        {
-        }
-
-        void operator()(int idx)
-        {
-            if (idx < 0 || idx >= (int)enum_cases.size())
-                v = static_cast<t>(-1);
-            else
-                v = static_cast<t>(t(std::intptr_t(enum_cases[idx])));
-        }
-    };
-
-    struct fn2
-    {
-        value<t>& v;
-        QComboBox* cb;
-        std::vector<int> enum_cases;
-
-        fn2(value<t>& v, QComboBox* cb, const std::vector<int>& enum_cases) :
-            v(v),
-            cb(cb),
-            enum_cases(enum_cases)
-        {
-        }
-
-        void operator()(int val)
-        {
-            for (unsigned i = 0; i < enum_cases.size(); i++)
-            {
-                if (val == enum_cases[i])
-                {
-                    cb->setCurrentIndex(i);
-                    return;
-                }
-            }
-            cb->setCurrentIndex(-1);
-        }
-    };
+        enum_cases[i] = cb->itemData(i).toInt();
 
     base_value::connect(cb,
                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v,
-                        fn1(v, cb, enum_cases),
+                        [&, enum_cases](int idx) {
+                            if (idx < 0 || idx >= (int)enum_cases.size())
+                                v = static_cast<t>(-1);
+                            else
+                                v = static_cast<t>(enum_cases[idx]);
+                        },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
                         static_cast<void (base_value::*)(int) const>(&base_value::valueChanged),
                         cb,
-                        fn2(v, cb, enum_cases),
-                        v.DIRECT_CONNTYPE);
+                        [&, enum_cases](int val) {
+                            for (unsigned i = 0; i < enum_cases.size(); i++)
+                            {
+                                if (val == enum_cases[i])
+                                {
+                                    cb->setCurrentIndex(i);
+                                    return;
+                                }
+                            }
+                            cb->setCurrentIndex(-1);
+                        },
+                        // don't change or else hatire crashes -sh 20160917
+                        Qt::QueuedConnection);
 }
 
 template<>
