@@ -1,102 +1,26 @@
-#if 0
-#if 0
+/* Copyright (c) 2016 Stanislaw Halik
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 #include "video-property-page.hpp"
-#else
-#include <windows.h>
-#include <dshow.h>
 
-struct video_property_page final
-{
-    video_property_page() = delete;
-    static bool show(int id);
-
-private:
-    static HRESULT ShowFilterPropertyPages(IBaseFilter* filter);
-    static IBaseFilter* get_device(int id);
-};
-#endif
-// above is the header, for completeness
-// OleInitialize, CoCreateInstance et al. don't help with ps3 eye.
+#ifdef _WIN32
 
 #include <cstring>
-
 #include <QString>
 #include <QDebug>
-
-#if 0
-DEFINE_GUID(CLSID_SampleGrabber,0xc1f400a0,0x3f08,0x11d3,0x9f,0x0b,0x00,0x60,0x08,0x03,0x9e,0x37);
-DEFINE_GUID(IID_ISampleGrabber,0x6b652fff,0x11fe,0x4fce,0x92,0xad,0x02,0x66,0xb5,0xd7,0xc7,0x8f);
-
-struct ISampleGrabberCB : public IUnknown
-{
-    virtual HRESULT STDMETHODCALLTYPE SampleCB(
-        double SampleTime,
-        IMediaSample *pSample) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE BufferCB(
-        double SampleTime,
-        BYTE *pBuffer,
-        LONG BufferLen) = 0;
-};
-
-struct ISampleGrabber : public IUnknown
-{
-    virtual HRESULT STDMETHODCALLTYPE SetOneShot(
-        BOOL OneShot) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetMediaType(
-        const AM_MEDIA_TYPE *pType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(
-        AM_MEDIA_TYPE *pType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(
-        BOOL BufferThem) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(
-        LONG *pBufferSize,
-        LONG *pBuffer) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(
-        IMediaSample **ppSample) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetCallback(
-        ISampleGrabberCB *pCallback,
-        LONG WhichMethodToCallback) = 0;
-};
-#endif
 
 #define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QStringLiteral(#expr) << hr; goto done; }
 #define CHECK2(expr) if (!(expr)) { qDebug() << QStringLiteral(#expr); goto done; }
 
-#if 0
-static IPin* GetPin(IBaseFilter *pFilter, PIN_DIRECTION dir_)
+bool video_property_page::show_from_capture(cv::VideoCapture& cap, int)
 {
-    IPin* ret = NULL;
-    IEnumPins* pin_enum = NULL;
-    PIN_DIRECTION dir;
-    HRESULT hr;
-
-    CHECK(pFilter->EnumPins(&pin_enum));
-
-    while (SUCCEEDED(pin_enum->Next(1, &ret, NULL)))
-    {
-        CHECK(ret->QueryDirection(&dir));
-        if (dir == dir_)
-            goto done;
-        ret->Release();
-        ret = NULL;
-    }
-
-    ret = NULL;
-
-done:
-    if (pin_enum)
-        pin_enum->Release();
-
-    return ret;
+    cap.set(cv::CAP_PROP_SETTINGS, 0);
+    return true;
 }
-#endif
 
 bool video_property_page::show(int id)
 {
@@ -127,6 +51,8 @@ HRESULT video_property_page::ShowFilterPropertyPages(IBaseFilter* filter)
     CHECK(filter->QueryFilterInfo(&FilterInfo));
 
     filter->QueryInterface(IID_IUnknown, (void**)&unk);
+
+    // OleInitialize, CoCreateInstance et al. don't help with ps3 eye.
 
     // cl-eye uses this
     // perhaps more than IBaseFilter* -> IUnknown* needs be passed to lplpUnk
@@ -205,4 +131,25 @@ done:
     return filter;
 }
 
+#elif defined(__linux)
+#   include <QProcess>
+#   include "compat/camera-names.hpp"
+
+bool video_property_page::show(int idx)
+{
+    const QList<QString> camera_names(get_camera_names());
+
+    if (idx >= 0 && idx < camera_names.size())
+        return QProcess::startDetached("qv4l2", QStringList() << "-d" << camera_names[idx]);
+    else
+        return false;
+}
+
+bool video_property_page::show_from_capture(cv::VideoCapture&, int idx)
+{
+    return show(idx);
+}
+#else
+bool video_property_page::show(int) { return false; }
+bool video_property_page::show_from_capture(cv::VideoCapture&, int) { return false; }
 #endif
