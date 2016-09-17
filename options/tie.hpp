@@ -140,14 +140,8 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
     const int q_min = w->minimum();
     const int q_max = w->maximum();
 
-    {
-        const int q_diff = q_max - q_min;
-        slider_value sv(v);
-        const double sv_c = sv.max() - sv.min();
-
-        w->setValue(int((sv.cur() - sv.min()) / sv_c * q_diff + q_min));
-        v = slider_value(q_diff <= 0 ? 0 : (w->value() - q_min) * sv_c / (double)q_diff + sv.min(), sv.min(), sv.max());
-    }
+    w->setValue(v->to_slider_pos(q_min, q_max));
+    v = v->update_from_slider(w->value(), q_min, q_max);
 
     base_value::connect(w,
                         &QSlider::valueChanged,
