@@ -45,6 +45,8 @@ private:
     group transient;
 
     bundle(const bundle&) = delete;
+    bundle(bundle&&) = delete;
+    bundle& operator=(bundle&&) = delete;
     bundle& operator=(const bundle&) = delete;
     QMutex* get_mtx() const override;
 
@@ -55,7 +57,7 @@ signals:
 public:
     bundle(const QString& group_name);
     ~bundle() override;
-    QString name() { return group_name; }
+    QString name() const { return group_name; }
     void reload(std::shared_ptr<QSettings> settings = group::ini_file());
     void store_kv(const QString& name, const QVariant& datum);
     bool contains(const QString& name) const;
