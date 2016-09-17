@@ -71,7 +71,7 @@ int slider_value::to_slider_pos(int q_min, int q_max) const
 {
     const int q_diff = q_max - q_min;
 
-    return int(std::round(((cur() - min() * q_diff) / (max() - min())) + q_min));
+    return int(std::round(((cur() - min()) * q_diff / (max() - min())) + q_min));
 }
 
 } // end ns options
