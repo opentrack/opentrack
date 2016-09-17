@@ -572,10 +572,12 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
     {
         t* dialog = reinterpret_cast<t*>(lib->Dialog());
         dialog->setWindowFlags(Qt::Dialog);
-        dialog->setFixedSize(dialog->size());
+        // HACK: prevent stderr whining by adding a few pixels
+        dialog->setFixedSize(dialog->size() + QSize(4, 4));
+        dialog->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        dialog->show();
 
         orig.reset(dialog);
-        dialog->show();
 
         QObject::connect(dialog, &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
 
@@ -616,6 +618,9 @@ static bool mk_window(ptr<t>* place, Args&&... params)
     {
         *place = make_unique<t>(std::forward<Args>(params)...);
         (*place)->setWindowFlags(Qt::Dialog);
+        // HACK: prevent stderr whining by adding a few pixels
+        (*place)->setFixedSize((*place)->size() + QSize(4, 4));
+        (*place)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         (*place)->show();
         return true;
     }
