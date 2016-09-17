@@ -7,6 +7,7 @@
  */
 
 #include "ftnoir_tracker_pt_dialog.h"
+#include "cv/video-property-page.hpp"
 
 #include "compat/camera-names.hpp"
 #include <opencv2/core/core.hpp>
@@ -71,6 +72,10 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
+    connect(ui.camdevice_combo, &QComboBox::currentTextChanged, this, &TrackerDialog_PT::set_camera_settings_available);
+    set_camera_settings_available(ui.camdevice_combo->currentText());
+    connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerDialog_PT::show_camera_settings);
+
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     timer.start(250);
 
@@ -97,9 +102,9 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         trans_calib_running = false;
         {
             auto tmp = trans_calib.get_estimate();
-            s.t_MH_x = tmp[0];
-            s.t_MH_y = tmp[1];
-            s.t_MH_z = tmp[2];
+            s.t_MH_x = int(tmp[0]);
+            s.t_MH_y = int(tmp[1]);
+            s.t_MH_z = int(tmp[2]);
         }
     }
     ui.tx_spin->setEnabled(!start);
@@ -142,6 +147,34 @@ void TrackerDialog_PT::poll_tracker_info()
         ui.caminfo_label->setText("Tracker offline");
         ui.pointinfo_label->setText("");
     }
+}
+
+void TrackerDialog_PT::set_camera_settings_available(const QString& camera_name)
+{
+#ifdef _WIN32
+    const bool avail = camera_name != QStringLiteral("PS3Eye Camera");
+    ui.camera_settings->setEnabled(avail);
+#elif defined(__linux)
+    (void)camera_name;
+#else
+    (void)camera_name;
+    ui.camera_settings->setEnabled(false);
+#endif
+}
+
+void TrackerDialog_PT::show_camera_settings()
+{
+    const int idx = ui.camdevice_combo->currentIndex();
+    if (tracker)
+    {
+        cv::VideoCapture* cap = tracker->camera;
+        if (cap && cap->isOpened())
+        {
+            video_property_page::show_from_capture(*cap, idx);
+        }
+    }
+    else
+        video_property_page::show(idx);
 }
 
 void TrackerDialog_PT::trans_calib_step()

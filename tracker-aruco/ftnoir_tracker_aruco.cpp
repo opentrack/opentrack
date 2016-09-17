@@ -7,13 +7,15 @@
 
 #include "ftnoir_tracker_aruco.h"
 #include "api/plugin-api.hpp"
+#include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
+#include "compat/pi-constant.hpp"
+#include "cv/video-property-page.hpp"
+
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
-#include "compat/camera-names.hpp"
-#include "compat/sleep.hpp"
-#include "compat/pi-constant.hpp"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -425,7 +427,38 @@ TrackerControls::TrackerControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
+
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
+    connect(ui.cameraName, &QComboBox::currentTextChanged, this, &TrackerControls::set_camera_settings_available);
+    set_camera_settings_available(ui.cameraName->currentText());
+    connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerControls::show_camera_settings);
+}
+
+
+void TrackerControls::set_camera_settings_available(const QString& camera_name)
+{
+#ifdef _WIN32
+    const bool avail = camera_name != QStringLiteral("PS3Eye Camera");
+    ui.camera_settings->setEnabled(avail);
+#elif defined(__linux)
+    (void)camera_name;
+#else
+    (void)camera_name;
+    ui.camera_settings->setEnabled(false);
+#endif
+}
+
+void TrackerControls::show_camera_settings()
+{
+    const int idx = ui.cameraName->currentIndex();
+    if (tracker)
+    {
+        cv::VideoCapture& cap = tracker->camera;
+        if (cap.isOpened())
+            video_property_page::show_from_capture(cap, idx);
+    }
+    else
+        video_property_page::show(idx);
 }
 
 void TrackerControls::toggleCalibrate()

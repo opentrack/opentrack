@@ -125,6 +125,8 @@ private slots:
     void toggleCalibrate();
     void cleanupCalib();
     void update_tracker_calibration();
+    void set_camera_settings_available(const QString& camera_name);
+    void show_camera_settings();
 };
 
 class TrackerDll : public Metadata
