@@ -20,7 +20,7 @@ slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(
 {
 }
 
-slider_value::slider_value() : slider_value(0.f, 0.f, 0.f)
+slider_value::slider_value() : slider_value(0, 0, 0)
 {
 }
 
