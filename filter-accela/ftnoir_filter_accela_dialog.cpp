@@ -20,26 +20,26 @@ FilterControls::FilterControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
-    connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
-    connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
-    connect(ui.rot_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_dz_display(int)));
-    connect(ui.trans_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_dz_display(int)));
+    connect(&s.rot_sensitivity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_display(const slider_value&)));
+    connect(&s.trans_sensitivity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_trans_display(const slider_value&)));
+    connect(&s.ewma, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_ewma_display(const slider_value&)));
+    connect(&s.rot_deadzone, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_dz_display(const slider_value&)));
+    connect(&s.trans_deadzone, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_trans_dz_display(const slider_value&)));
     connect(&s.rot_nonlinearity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_nl_slider(const slider_value&)));
 
-    tie_setting(s.rot_threshold, ui.rotation_slider);
-    tie_setting(s.trans_threshold, ui.translation_slider);
+    tie_setting(s.rot_sensitivity, ui.rotation_slider);
+    tie_setting(s.trans_sensitivity, ui.translation_slider);
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.trans_deadzone, ui.trans_dz_slider);
 
     tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
 
-    update_rot_display(ui.rotation_slider->value());
-    update_trans_display(ui.translation_slider->value());
-    update_ewma_display(ui.ewma_slider->value());
-    update_rot_dz_display(ui.rot_dz_slider->value());
-    update_trans_dz_display(ui.trans_dz_slider->value());
+    update_rot_display(s.rot_sensitivity);
+    update_trans_display(s.trans_sensitivity);
+    update_ewma_display(s.ewma);
+    update_rot_dz_display(s.rot_deadzone);
+    update_trans_dz_display(s.trans_deadzone);
     update_rot_nl_slider(s.rot_nonlinearity);
 
     {
@@ -87,29 +87,29 @@ void FilterControls::save()
     s.b->save();
 }
 
-void FilterControls::update_rot_display(int value)
+void FilterControls::update_rot_display(const slider_value& val)
 {
-    ui.rot_gain->setText(QString::number((value + 1) * s.mult_rot) + "°");
+    ui.rot_gain->setText(QString::number(val.cur()) + "°");
 }
 
-void FilterControls::update_trans_display(int value)
+void FilterControls::update_trans_display(const slider_value& val)
 {
-    ui.trans_gain->setText(QString::number((value + 1) * s.mult_trans) + "mm");
+    ui.trans_gain->setText(QString::number(val.cur()) + "mm");
 }
 
-void FilterControls::update_ewma_display(int value)
+void FilterControls::update_ewma_display(const slider_value& val)
 {
-    ui.ewma_label->setText(QString::number(value * s.mult_ewma) + "ms");
+    ui.ewma_label->setText(QString::number(val.cur()) + "ms");
 }
 
-void FilterControls::update_rot_dz_display(int value)
+void FilterControls::update_rot_dz_display(const slider_value& val)
 {
-    ui.rot_dz->setText(QString::number(value * s.mult_rot_dz) + "°");
+    ui.rot_dz->setText(QString::number(val.cur()) + "°");
 }
 
-void FilterControls::update_trans_dz_display(int value)
+void FilterControls::update_trans_dz_display(const slider_value& val)
 {
-    ui.trans_dz->setText(QString::number(value * s.mult_trans_dz) + "mm");
+    ui.trans_dz->setText(QString::number(val.cur()) + "mm");
 }
 
 void FilterControls::update_rot_nl_slider(const slider_value& sl)

@@ -5,75 +5,14 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
-#include "ui_ftnoir_accela_filtercontrols.h"
+#include "accela-settings.hpp"
 #include "api/plugin-api.hpp"
-#include "spline-widget/spline.hpp"
+#include "compat/timer.hpp"
+#include "ui_ftnoir_accela_filtercontrols.h"
+
 #include <atomic>
 #include <QMutex>
 #include <QTimer>
-
-#include "options/options.hpp"
-using namespace options;
-#include "compat/timer.hpp"
-
-struct settings_accela : opts
-{
-    static constexpr double rot_gains[16][2] =
-    {
-        { 12, 500 },
-        { 11, 450 },
-        { 10, 400 },
-        { 9, 350 },
-        { 8, 300 },
-        { 7, 250 },
-        { 6, 200 },
-        { 2.66, 50 },
-        { 1.66, 17 },
-        { 1, 4 },
-        { .5, .53 },
-        { 0, 0 },
-        { -1, 0 }
-    };
-
-    static constexpr double trans_gains[16][2] =
-    {
-        { 12, 400 },
-        { 11, 350 },
-        { 10, 300 },
-        { 9, 250 },
-        { 8, 200 },
-        { 7, 150 },
-        { 5, 80 },
-        { 3, 32 },
-        { 2, 10 },
-        { 1.66, 6 },
-        { 1.33, 3 },
-        { .66, 1 },
-        { .33, .5 },
-        { 0, 0 },
-        { -1, 0 }
-    };
-
-    static void make_splines(spline& rot, spline& trans);
-
-    value<int> rot_threshold, trans_threshold, ewma, rot_deadzone, trans_deadzone;
-    value<slider_value> rot_nonlinearity;
-    static constexpr double mult_rot = 4. / 100.;
-    static constexpr double mult_trans = 4. / 100.;
-    static constexpr double mult_rot_dz = 2. / 100.;
-    static constexpr double mult_trans_dz = 2. / 100.;
-    static constexpr double mult_ewma = 1.25;
-    static constexpr double max_rot_nl = 1.33;
-    settings_accela() :
-        opts("Accela"),
-        rot_threshold(b, "rotation-threshold", 45),
-        trans_threshold(b, "translation-threshold", 50),
-        ewma(b, "ewma", 2),
-        rot_deadzone(b, "rotation-deadzone", 0),
-        trans_deadzone(b, "translation-deadzone", 0),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 2))
-    {}
-};
 
 class FTNoIR_Filter : public IFilter
 {
@@ -122,11 +61,11 @@ private:
 private slots:
     void doOK();
     void doCancel();
-    void update_ewma_display(int value);
-    void update_rot_display(int value);
-    void update_trans_display(int value);
-    void update_rot_dz_display(int value);
-    void update_trans_dz_display(int value);
+    void update_ewma_display(const slider_value& value);
+    void update_rot_display(const slider_value& value);
+    void update_trans_display(const slider_value& value);
+    void update_rot_dz_display(const slider_value& value);
+    void update_trans_dz_display(const slider_value&);
     void update_rot_nl_slider(const slider_value& sl);
 };
 

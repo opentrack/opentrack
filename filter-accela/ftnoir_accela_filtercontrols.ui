@@ -14,10 +14,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Accela filter settings</string>
+   <string>Filter settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../gui/ui-res.qrc">
+   <iconset resource="../gui/opentrack-res.qrc">
     <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -116,14 +116,14 @@
       </item>
       <item>
        <widget class="QSlider" name="ewma_slider">
-        <property name="maximum">
-         <number>100</number>
+        <property name="minimum">
+         <number>0</number>
         </property>
-        <property name="singleStep">
-         <number>10</number>
+        <property name="maximum">
+         <number>30</number>
         </property>
         <property name="pageStep">
-         <number>25</number>
+         <number>3</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -185,11 +185,14 @@
       </item>
       <item row="0" column="2">
        <widget class="QSlider" name="rotation_slider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
-         <number>99</number>
+         <number>295</number>
         </property>
         <property name="pageStep">
-         <number>5</number>
+         <number>15</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -224,8 +227,14 @@
       </item>
       <item row="1" column="2">
        <widget class="QSlider" name="rot_dz_slider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
-         <number>100</number>
+         <number>50</number>
+        </property>
+        <property name="pageStep">
+         <number>5</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -281,11 +290,14 @@
       </item>
       <item row="0" column="2">
        <widget class="QSlider" name="translation_slider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
-         <number>99</number>
+         <number>295</number>
         </property>
         <property name="pageStep">
-         <number>5</number>
+         <number>15</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -320,8 +332,14 @@
       </item>
       <item row="1" column="2">
        <widget class="QSlider" name="trans_dz_slider">
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
-         <number>100</number>
+         <number>50</number>
+        </property>
+        <property name="pageStep">
+         <number>5</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -349,10 +367,13 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>15</number>
+        </property>
+        <property name="pageStep">
+         <number>2</number>
         </property>
         <property name="value">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -393,7 +414,7 @@
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../gui/ui-res.qrc"/>
+  <include location="../gui/opentrack-res.qrc"/>
  </resources>
  <connections/>
  <slots>
