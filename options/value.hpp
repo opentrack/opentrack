@@ -166,6 +166,11 @@ public:
         return detail::value_get_traits<t>::get(val, def);
     }
 
+    t default_value() const
+    {
+        return def;
+    }
+
     operator t() const { return get(); }
 
     void reload() override
@@ -185,7 +190,7 @@ public:
         return &last;
     }
 private:
-    t def;
+    const t def;
 };
 
 
