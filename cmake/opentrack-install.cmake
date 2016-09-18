@@ -23,6 +23,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/cmake" DESTINATION "${opentrack-doc-src-p
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin" DESTINATION "${opentrack-doc-src-pfx}")
 install(FILES "${CMAKE_SOURCE_DIR}/README.md" DESTINATION "${opentrack-doc-src-pfx}")
 install(FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md" DESTINATION "${opentrack-doc-src-pfx}")
+install(FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt" DESTINATION "${opentrack-doc-src-pfx}")
 
 function(opentrack_install_sources n)
     opentrack_sources(${n} sources)
