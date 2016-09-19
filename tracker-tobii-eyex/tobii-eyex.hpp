@@ -11,12 +11,12 @@
 #include <EyeX.h>
 
 #include "ui_tobii-eyex-dialog.h"
-#include "opentrack/plugin-api.hpp"
-#include "opentrack-compat/options.hpp"
+#include "api/plugin-api.hpp"
+#include "options/options.hpp"
 using namespace options;
-#include "opentrack-compat/timer.hpp"
-#include "spline-widget/functionconfig.h"
-#include "qfunctionconfigurator.h"
+#include "compat/timer.hpp"
+#include "spline-widget/spline.hpp"
+#include "spline-widget/spline-widget.hpp"
 
 #include <atomic>
 #include <QObject>
@@ -34,7 +34,7 @@ class rel_settings final : public QObject, public opts
 public:
     using s = slider_value;
     value<slider_value> speed, dz_end_pt, expt_slope, expt_norm, lin_norm;
-    Map acc_mode_spline;
+    spline acc_mode_spline;
     rel_settings();
 private slots:
     void draw_spline();

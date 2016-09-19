@@ -44,14 +44,14 @@ static constexpr t clamp(t datum, t min, t max)
 
 void rel_settings::draw_spline()
 {
-    Map& spline = acc_mode_spline;
+    spline& spline = acc_mode_spline;
 
     spline.removeAllPoints();
 
     static constexpr float std_norm_expt = 1.f/3;
-    const float norm_expt = std_norm_expt * float(expt_norm.get());
+    const float norm_expt = std_norm_expt * float(expt_norm->cur());
     static constexpr float std_norm_lin = 2.f/3;
-    const float norm_lin = clamp<float>((1-norm_expt) * lin_norm.get() * std_norm_lin, 0, 1);
+    const float norm_lin = clamp((1-norm_expt) * lin_norm->cur() * std_norm_lin, 0., 1.);
 
 }
 
@@ -62,22 +62,22 @@ rel_settings::rel_settings() :
     expt_slope(b, "exponent-slope", s(1.5, 1.25, 3)),
     expt_norm(b, "exponent-norm", s(1, .25, 4)),
     lin_norm(b, "linear-norm", s(1, .25, 4)),
-    acc_mode_spline(100, 100)
+    acc_mode_spline(100, 100, "")
 {
     QObject::connect(&dz_end_pt,
-                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                      this,
                      &rel_settings::draw_spline);
     QObject::connect(&expt_slope,
-                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                      this,
                      &rel_settings::draw_spline);
     QObject::connect(&expt_norm,
-                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                      this,
                      &rel_settings::draw_spline);
     QObject::connect(&lin_norm,
-                     static_cast<void(base_value::*)(const slider_value&)>(&base_value::valueChanged),
+                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                      this,
                      &rel_settings::draw_spline);
     draw_spline();
