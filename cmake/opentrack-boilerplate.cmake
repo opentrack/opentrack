@@ -116,7 +116,7 @@ endfunction()
 function(opentrack_boilerplate n)
     message(STATUS "module ${n}")
     cmake_parse_arguments(arg
-        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE"
+        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL"
         "LINK;COMPILE"
         "SOURCES"
         ${ARGN}
@@ -169,7 +169,9 @@ function(opentrack_boilerplate n)
         target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
     endif()
 
-    opentrack_install_sources(${n})
+    if(NOT arg_NO-INSTALL)
+        opentrack_install_sources(${n})
+    endif()
     opentrack_compat(${n})
 
     if(CMAKE_COMPILER_IS_GNUCXX)
@@ -192,10 +194,12 @@ function(opentrack_boilerplate n)
         string(REPLACE "-" "_" n_ ${n_})
         target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
 
-        if(arg_BIN AND WIN32)
-            install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
-        else()
-            install(TARGETS ${n} ${opentrack-hier-str})
+        if(NOT arg_NO-INSTALL)
+            if(arg_BIN AND WIN32)
+                install(TARGETS ${n} RUNTIME DESTINATION . LIBRARY DESTINATION .)
+            else()
+                install(TARGETS ${n} ${opentrack-hier-str})
+            endif()
         endif()
     endif()
 endfunction()
