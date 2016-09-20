@@ -11,7 +11,7 @@ function(cleanup_build_dir)
     set(user "$ENV{USERNAME}")
     if(NOT user STREQUAL "sthalik")
         message(WARNING "you can't run this potentially destructive function")
-        message(FATAL_ERROR "if you're sure, remove this line")
+        message(FATAL_ERROR "if you're sure, remove this line and submit a pull request")
     endif()
 
     file(GLOB_RECURSE files LIST_DIRECTORIES TRUE RELATIVE "${CMAKE_BINARY_DIR}" "*")
