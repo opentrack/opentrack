@@ -1,3 +1,5 @@
+set(opentrack-perms PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+
 set(new-hier-path "#pragma once
 #ifndef OPENTRACK_NO_QT_PATH
 
@@ -95,9 +97,9 @@ function(opentrack_install_sources n)
     opentrack_sources(${n} sources)
     file(RELATIVE_PATH subdir "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
     foreach (i ${sources})
-        install(FILES "${i}" DESTINATION "${opentrack-doc-src-pfx}/${subdir}")
+        install(FILES "${i}" DESTINATION "${opentrack-doc-src-pfx}/${subdir}" ${opentrack-perms})
     endforeach()
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}/${subdir}")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}/${subdir}" ${opentrack-perms})
 endfunction()
 
 function(opentrack_is_target_c_only ret srcs)
