@@ -136,7 +136,7 @@ void Tracker_PT::run()
                 ever_success = true;
             }
 
-            std::function<void(const vec2&, const cv::Scalar)> fun = [&](const vec2& p, const cv::Scalar color)
+            auto fun = [&](const vec2& p, const cv::Scalar& color)
             {
                 using std::round;
                 cv::Point p2(round(p[0] * frame_.cols + frame_.cols/2),
