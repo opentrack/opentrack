@@ -67,7 +67,7 @@ MainWindow::MainWindow() :
     ui.profile_button->setMenu(&profile_menu);
 
     kbd_quit.setEnabled(true);
-    
+
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
     det_timer.start(1000);
 
@@ -90,23 +90,23 @@ MainWindow::MainWindow() :
                              "Configuration not saved.",
                              "Can't create configuration directory! Expect major malfunction.",
                              QMessageBox::Ok, QMessageBox::NoButton);
-    
+
     connect(this, &MainWindow::emit_start_tracker,
             this, [&]() -> void { if (keys_paused) return; qDebug() << "start tracker"; startTracker(); },
             Qt::QueuedConnection);
-    
+
     connect(this, &MainWindow::emit_stop_tracker,
             this, [&]() -> void { if (keys_paused) return; qDebug() << "stop tracker"; stopTracker(); },
             Qt::QueuedConnection);
-    
+
     connect(this, &MainWindow::emit_toggle_tracker,
             this, [&]() -> void { if (keys_paused) return; qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
             Qt::QueuedConnection);
-    
+
     register_shortcuts();
-    
+
     connect(this, &MainWindow::emit_minimized, this, &MainWindow::mark_minimized, Qt::QueuedConnection);
-    
+
     ui.btnStartTracker->setFocus();
 
     update_query.maybe_show_dialog();
@@ -123,15 +123,15 @@ void MainWindow::closeEvent(QCloseEvent *e)
 void MainWindow::register_shortcuts()
 {
     using t_shortcut = std::tuple<key_opts&, Shortcuts::fun>;
-    
+
     std::vector<t_shortcut> keys {
         t_shortcut(s.key_start_tracking, [&]() -> void { emit_start_tracker(); }),
         t_shortcut(s.key_stop_tracking, [&]() -> void { emit_stop_tracker(); }),
         t_shortcut(s.key_toggle_tracking, [&]() -> void { emit_toggle_tracker(); }),
     };
-    
+
     global_shortcuts.reload(keys);
-    
+
     if (work)
         work->reload_shortcuts();
 }
@@ -285,7 +285,7 @@ void MainWindow::reload_options()
 void MainWindow::startTracker() {
     if (work)
         return;
-    
+
     // tracker dtor needs run first
     work = nullptr;
 
@@ -305,14 +305,14 @@ void MainWindow::startTracker() {
         libs = SelectedLibraries();
         return;
     }
-    
+
     work = std::make_shared<Work>(s, pose, libs, winId());
-    
+
     reload_options();
 
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(libs.pProtocol.get());
-    
+
     pose_update_timer.start(50);
 
     // NB check valid since SelectedLibraries ctor called
@@ -328,7 +328,7 @@ void MainWindow::startTracker() {
 void MainWindow::stopTracker() {
     if (!work)
         return;
-    
+
     //ui.game_name->setText("Not connected");
 
     pose_update_timer.stop();
@@ -353,7 +353,7 @@ void MainWindow::stopTracker() {
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], mapped[Roll],
+    ui.pose_display->rotateBy(mapped[Yaw], -mapped[Pitch], -mapped[Roll],
                               mapped[TX], mapped[TY], mapped[TZ]);
 
     if (mapping_widget)
@@ -528,17 +528,17 @@ void MainWindow::changeEvent(QEvent* e)
     if (e->type() == QEvent::WindowStateChange)
     {
         const bool is_minimized = windowState() & Qt::WindowMinimized;
-        
+
         if (s.tray_enabled && is_minimized)
         {
             if (!tray)
                 ensure_tray();
             hide();
         }
-        
+
         emit_minimized(is_minimized);
     }
-    
+
     QMainWindow::changeEvent(e);
 }
 
