@@ -20,11 +20,11 @@
 class Affine
 {
 public:
-    Affine() : R(cv::Matx33f::eye()), t(0,0,0) {}
-    Affine(const cv::Matx33f& R, const cv::Vec3f& t) : R(R),t(t) {}
+    Affine() : R(cv::Matx33d::eye()), t(0,0,0) {}
+    Affine(const cv::Matx33d& R, const cv::Vec3d& t) : R(R),t(t) {}
 
-    cv::Matx33f R;
-    cv::Vec3f t;
+    cv::Matx33d R;
+    cv::Vec3d t;
 };
 
 inline Affine operator*(const Affine& X, const Affine& Y)
@@ -32,17 +32,17 @@ inline Affine operator*(const Affine& X, const Affine& Y)
     return Affine(X.R*Y.R, X.R*Y.t + X.t);
 }
 
-inline Affine operator*(const cv::Matx33f& X, const Affine& Y)
+inline Affine operator*(const cv::Matx33d& X, const Affine& Y)
 {
     return Affine(X*Y.R, X*Y.t);
 }
 
-inline Affine operator*(const Affine& X, const cv::Matx33f& Y)
+inline Affine operator*(const Affine& X, const cv::Matx33d& Y)
 {
     return Affine(X.R*Y, X.t);
 }
 
-inline cv::Vec3f operator*(const Affine& X, const cv::Vec3f& v)
+inline cv::Vec3d operator*(const Affine& X, const cv::Vec3d& v)
 {
     return X.R*v + X.t;
 }
@@ -58,12 +58,12 @@ class PointModel
 public:
     static constexpr int N_POINTS = 3;
 
-    cv::Vec3f M01;      // M01 in model frame
-    cv::Vec3f M02;      // M02 in model frame
+    cv::Vec3d M01;      // M01 in model frame
+    cv::Vec3d M02;      // M02 in model frame
 
-    cv::Vec3f u;        // unit vector perpendicular to M01,M02-plane
+    cv::Vec3d u;        // unit vector perpendicular to M01,M02-plane
 
-    cv::Matx22f P;
+    cv::Matx22d P;
 
     PointModel(settings_pt& s)
     {
@@ -73,10 +73,10 @@ public:
         u /= norm(u);
 
         // calculate projection matrix on M01,M02 plane
-        float s11 = M01.dot(M01);
-        float s12 = M01.dot(M02);
-        float s22 = M02.dot(M02);
-        P = 1.0/(s11*s22-s12*s12) * cv::Matx22f(s22, -s12, -s12,  s11);
+        double s11 = M01.dot(M01);
+        double s12 = M01.dot(M02);
+        double s22 = M02.dot(M02);
+        P = 1.0/(s11*s22-s12*s12) * cv::Matx22d(s22, -s12, -s12,  s11);
     }
 
     void set_model(settings_pt& s)
@@ -89,29 +89,29 @@ public:
         case Cap:
         {
             const double x = 60, y = 90, z = 95;
-            M01 = cv::Vec3f(-x, -y, z);
-            M02 = cv::Vec3f(x, -y, z);
+            M01 = cv::Vec3d(-x, -y, z);
+            M02 = cv::Vec3d(x, -y, z);
             break;
         }
         case ClipLeft:
         case ClipRight:
         {
             const double a = 27, b = 43, c = 62, d = 74;
-            M01 = cv::Vec3f(0, b, -a);
-            M02 = cv::Vec3f(0, -c, -d);
+            M01 = cv::Vec3d(0, b, -a);
+            M02 = cv::Vec3d(0, -c, -d);
             break;
         }
         }
     }
 
-    void get_d_order(const std::vector<cv::Vec2f>& points, int* d_order, cv::Vec2f d) const;
+    void get_d_order(const std::vector<cv::Vec2d>& points, int* d_order, const cv::Vec2d& d) const;
 };
 
 // ----------------------------------------------------------------------------
 // Tracks a 3-point model
 // implementing the POSIT algorithm for coplanar points as presented in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointTracker
+class PointTracker final
 {
 public:
     PointTracker();
@@ -125,17 +125,17 @@ private:
     // the points in model order
     struct PointOrder
     {
-        cv::Vec2f points[PointModel::N_POINTS];
+        cv::Vec2d points[PointModel::N_POINTS];
         PointOrder()
         {
             for (int i = 0; i < PointModel::N_POINTS; i++)
-                points[i] = cv::Vec2f(0, 0);
+                points[i] = cv::Vec2d(0, 0);
         }
     };
 
-    PointOrder find_correspondences(const std::vector<cv::Vec2f>& projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const std::vector<cv::Vec2f>& points, const PointModel &model, float f);
-    int POSIT(const PointModel& point_model, const PointOrder& order, float focal_length);  // The POSIT algorithm, returns the number of iterations
+    PointOrder find_correspondences(const std::vector<cv::Vec2d>& projected_points, const PointModel &model);
+    bool POSIT(const PointModel& point_model, const PointOrder& order, double focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera
 

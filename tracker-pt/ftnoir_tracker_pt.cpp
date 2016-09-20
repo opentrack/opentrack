@@ -19,11 +19,11 @@
 //#define PT_PERF_LOG	//log performance
 
 //-----------------------------------------------------------------------------
-Tracker_PT::Tracker_PT()
-    : commands(0),
-      video_widget(NULL),
-      video_frame(NULL),
-      ever_success(false)
+Tracker_PT::Tracker_PT() :
+    video_widget(NULL),
+    video_frame(NULL),
+    commands(0),
+    ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
 }
@@ -56,7 +56,7 @@ void Tracker_PT::reset_command(Command command)
     commands &= ~command;
 }
 
-bool Tracker_PT::get_focal_length(float& ret)
+bool Tracker_PT::get_focal_length(double& ret)
 {
     static constexpr float pi = 3.1415926;
     float fov_;
@@ -115,7 +115,7 @@ void Tracker_PT::run()
         {
             const auto& points = point_extractor.extract_points(frame_);
 
-            float fx;
+            double fx;
             if (!get_focal_length(fx))
                 continue;
             
@@ -126,12 +126,12 @@ void Tracker_PT::run()
                 point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
                 ever_success = true;
             }
-            
+
             Affine X_CM = pose();
 
-            std::function<void(const cv::Vec2f&, const cv::Scalar)> fun = [&](const cv::Vec2f& p, const cv::Scalar color)
+            std::function<void(const cv::Vec2d&, const cv::Scalar&)> fun = [&](const cv::Vec2d& p, const cv::Scalar& color)
             {
-                auto p2 = cv::Point(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
+                cv::Point p2(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
                 cv::line(frame_,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
@@ -141,19 +141,19 @@ void Tracker_PT::run()
                          cv::Point(p2.x, p2.y - 20),
                          cv::Point(p2.x, p2.y + 20),
                          color,
-                         4);                
+                         4);
             };
 
             for (unsigned i = 0; i < points.size(); i++)
             {
                 fun(points[i], cv::Scalar(0, 255, 0));
             }
-            
+
             {
-                Affine X_MH(cv::Matx33f::eye(), get_model_offset()); // just copy pasted these lines from below
+                Affine X_MH(cv::Matx33d::eye(), get_model_offset()); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
-                cv::Vec3f p = X_GH.t; // head (center?) position in global space
-                cv::Vec2f p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
+                cv::Vec3d p = X_GH.t; // head (center?) position in global space
+                cv::Vec2d p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
                 fun(p_, cv::Scalar(0, 0, 255));
             }
 
@@ -163,9 +163,9 @@ void Tracker_PT::run()
     qDebug()<<"Tracker:: Thread stopping";
 }
 
-cv::Vec3f Tracker_PT::get_model_offset()
+cv::Vec3d Tracker_PT::get_model_offset()
 {
-    cv::Vec3f offset(s.t_MH_x, s.t_MH_y, s.t_MH_z);
+    cv::Vec3d offset(s.t_MH_x, s.t_MH_y, s.t_MH_z);
     if (offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
     {
         int m = s.model_used;
@@ -242,21 +242,24 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM = pose();
 
-        Affine X_MH(cv::Matx33f::eye(), get_model_offset());
+        Affine X_MH(cv::Matx33d::eye(), get_model_offset());
         Affine X_GH = X_CM * X_MH;
 
-        cv::Matx33f R = X_GH.R;
-        cv::Vec3f   t = X_GH.t;
+        cv::Matx33d R = X_GH.R;
+        cv::Vec3d   t = X_GH.t;
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
         // -z -> x, y -> z, x -> -y
-        cv::Matx33f R_EG(0, 0,-1,
+        cv::Matx33d R_EG(0, 0,-1,
                          -1, 0, 0,
                          0, 1, 0);
         R = R_EG * R * R_EG.t();
 
+        using std::atan2;
+        using std::sqrt;
+
         // extract rotation angles
-        float alpha, beta, gamma;
+        double alpha, beta, gamma;
         beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
         alpha = atan2( R(1,0), R(0,0));
         gamma = atan2( R(2,1), R(2,2));

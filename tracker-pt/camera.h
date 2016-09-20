@@ -40,7 +40,7 @@ public:
         void set_res(int x_res, int y_res);
 
         // gets a frame from the camera, dt: time since last call in seconds
-        bool get_frame(float dt, cv::Mat* frame);
+        bool get_frame(double dt, cv::Mat* frame);
 
         // WARNING: returned references are valid as long as object
         bool get_info(CamInfo &ret);
@@ -55,8 +55,7 @@ protected:
         virtual void _set_fps() = 0;
         virtual void _set_res() = 0;
 private:
-        float dt_valid;
-        float dt_mean;
+        double dt_valid, dt_mean;
 protected:
         int desired_index;
         int active_index;

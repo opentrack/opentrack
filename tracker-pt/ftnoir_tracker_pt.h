@@ -54,13 +54,11 @@ private:
     };
     void set_command(Command command);
     void reset_command(Command command);
-    cv::Vec3f get_model_offset();
-    
-    bool get_focal_length(float &ret);
-    
-    volatile int commands;
+    cv::Vec3d get_model_offset();
 
     QMutex camera_mtx;
+    bool get_focal_length(double& ret);
+
     CVCamera       camera;
     PointExtractor point_extractor;
     PointTracker   point_tracker;
