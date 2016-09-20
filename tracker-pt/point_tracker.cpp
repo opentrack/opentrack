@@ -6,6 +6,7 @@
  */
 
 #include "point_tracker.h"
+#include "opentrack-compat/nan.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -285,15 +286,19 @@ bool PointTracker::POSIT(const PointModel& model, const PointOrder& order_, doub
         old_epsilon_2 = epsilon_2;
     }
 
-    // apply results
-    X_CM.R = R_current;
-    X_CM.t[0] = order[0][0] * Z0/focal_length;
-    X_CM.t[1] = order[0][1] * Z0/focal_length;
-    X_CM.t[2] = Z0;
+    if (!nanp(R_current) && !nanp(order[0]) && !nanp(order[1]) && !nanp(focal_length) && !nanp(Z0))
+    {
+        //qDebug() << "iter:" << i;
 
-    //qDebug() << "iter:" << i;
-
-    return i;
+        // apply results
+        X_CM.R = R_current;
+        X_CM.t[0] = order[0][0] * Z0/focal_length;
+        X_CM.t[1] = order[0][1] * Z0/focal_length;
+        X_CM.t[2] = Z0;
+        return false;
+    }
+    else
+        return true;
 }
 
 cv::Vec2d PointTracker::project(const cv::Vec3d& v_M, double f)
