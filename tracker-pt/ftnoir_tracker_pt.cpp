@@ -104,7 +104,7 @@ void Tracker_PT::run()
 
     while((commands & ABORT) == 0)
     {
-        const double dt = time.elapsed() * 1e-9;
+        const double dt = time.elapsed_seconds();
         time.start();
         bool new_frame;
 
