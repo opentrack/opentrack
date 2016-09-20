@@ -61,9 +61,17 @@ void FTNoIR_Filter::filter(const double* input, double *output)
         const double vec_ = std::max(0., fabs(vec) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double out_ = vec_ / thres;
-        const double out = i >= 3 && std::fabs(rot_nl - 1) > 5e-3 && vec_ < rot_nl_.max()
-                               ? (std::pow(out_/rot_nl_.max(), rot_nl))
-                               : out_;
+        const double out = progn(
+                               const bool should_apply_rot_nonlinearity =
+                                   i >= 3 &&
+                                   std::fabs(rot_nl - 1) > 5e-3 &&
+                                   vec_ < rot_nl_.max();
+
+                               if (should_apply_rot_nonlinearity)
+                                   return std::pow(out_/rot_nl_.max(), rot_nl);
+                               else
+                                   return out_;
+        );
         const double val = double(m.getValue(out));
         last_output[i] = output[i] = last_output[i] + signum(vec) * dt * val;
     }
