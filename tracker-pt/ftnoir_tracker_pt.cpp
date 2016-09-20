@@ -229,11 +229,18 @@ void Tracker_PT::apply_settings()
         break;
     }
 
-    camera.set_res(res_x, res_y);
-    camera.set_fps(cam_fps);
-    qDebug() << "camera start";
-    camera.start();
-    frame = cv::Mat();
+    const CamInfo cur = camera.get_desired();
+
+    if (cur.fps != cam_fps ||
+        cur.res_x != res_x ||
+        cur.res_y != res_y)
+    {
+        camera.set_res(res_x, res_y);
+        camera.set_fps(cam_fps);
+        qDebug() << "camera start";
+        camera.start();
+        frame = cv::Mat();
+    }
     qDebug()<<"Tracker::apply ends";
 }
 
