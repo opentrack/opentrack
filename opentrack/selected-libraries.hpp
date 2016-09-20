@@ -12,13 +12,9 @@
 #include <QFrame>
 
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
-struct OPENTRACK_EXPORT SelectedLibraries {
+struct OPENTRACK_API_EXPORT SelectedLibraries {
     using dylibptr = mem<dylib>;
     mem<ITracker> pTracker;
     mem<IFilter> pFilter;

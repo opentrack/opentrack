@@ -31,18 +31,14 @@ struct hash<QString>
 };
 }
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
-struct OPENTRACK_EXPORT win32_joy_ctx
+struct OPENTRACK_API_EXPORT win32_joy_ctx
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
-    
+
     enum { joy_axis_size = 65535 };
-    
+
     struct joy_info
     {
         QString name, guid;
@@ -51,10 +47,10 @@ struct OPENTRACK_EXPORT win32_joy_ctx
     void poll(fn f);
     bool poll_axis(const QString& guid, int axes[8]);
     std::vector<joy_info> get_joy_info();
-    
+
     win32_joy_ctx(const win32_joy_ctx&) = delete;
     win32_joy_ctx& operator=(const win32_joy_ctx&) = delete;
-    
+
     win32_joy_ctx();
     ~win32_joy_ctx();
     void refresh();
@@ -62,10 +58,10 @@ private:
     QMutex mtx;
     QMainWindow fake_main_window;
     LPDIRECTINPUT8 di;
-    
+
     static QString guid_to_string(const GUID guid);
     void release();
-    
+
     struct joy
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
@@ -80,7 +76,7 @@ private:
         void release();
         bool poll(fn f);
     };
-    
+
     std::unordered_map<QString, std::shared_ptr<joy>> joys;
 
     class enum_state
@@ -88,7 +84,7 @@ private:
         std::unordered_map<QString, std::shared_ptr<joy>> joys;
         QMainWindow& fake_main_window;
         LPDIRECTINPUT8 di;
-        
+
         std::vector<QString> all;
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);

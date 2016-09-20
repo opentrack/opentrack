@@ -37,11 +37,7 @@
 
 #include <memory>
 
-#ifdef BUILD_compat
-#   include "compat-export.hpp"
-#else
-#   include "compat-import.hpp"
-#endif
+#include "export.hpp"
 
 template<typename t> using mem = std::shared_ptr<t>;
 
@@ -131,7 +127,7 @@ namespace options {
         bool contains(const QString& name);
         void save();
         bool modifiedp();
-        
+
         template<typename t>
         t get(const QString& name)
         {
@@ -160,12 +156,12 @@ namespace options {
             pbundle bundle(const k& key);
             void bundle_decf(const k& key);
         };
-        
+
         OPENTRACK_COMPAT_EXPORT opt_singleton& singleton();
     }
-    
+
     using pbundle = std::shared_ptr<opt_bundle>;
-    
+
     static inline pbundle bundle(const QString name) { return detail::singleton().bundle(name); }
 
     class OPENTRACK_COMPAT_EXPORT opt_bundle : public impl_bundle
@@ -238,7 +234,7 @@ namespace options {
     private:
         t def;
     };
-    
+
     struct OPENTRACK_COMPAT_EXPORT opts
     {
         pbundle b;
@@ -314,7 +310,7 @@ namespace options {
         lb->setText(v);
         base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.SAFE_CONNTYPE);
     }
-    
+
     template<>
     inline void tie_setting(value<int>& v, QTabWidget* t)
     {

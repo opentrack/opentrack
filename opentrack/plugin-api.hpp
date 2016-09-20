@@ -13,11 +13,7 @@
 #include <QFrame>
 #include <QIcon>
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
 #ifndef OPENTRACK_PLUGIN_EXPORT
 #   ifdef _WIN32
@@ -39,7 +35,7 @@ enum Axis {
 namespace plugin_api {
 namespace detail {
 
-class OPENTRACK_EXPORT BaseDialog : public QWidget
+class OPENTRACK_API_EXPORT BaseDialog : public QWidget
 {
     Q_OBJECT
 public:

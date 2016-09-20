@@ -8,11 +8,7 @@
 
 #pragma once
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
 #include "opentrack-compat/timer.hpp"
 #include "opentrack/win32-joystick.hpp"
@@ -41,7 +37,7 @@ public:
     bool should_process();
 };
 
-struct OPENTRACK_EXPORT KeybindingWorker : private QThread
+struct OPENTRACK_API_EXPORT KeybindingWorker : private QThread
 {
 private:
     LPDIRECTINPUT8 din;

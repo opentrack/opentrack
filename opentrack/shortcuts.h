@@ -12,11 +12,7 @@
 #include <vector>
 #include <functional>
 
-#ifdef BUILD_api
-#   include "opentrack-compat/export.hpp"
-#else
-#   include "opentrack-compat/import.hpp"
-#endif
+#include "export.hpp"
 
 #include "qxt-mini/QxtGlobalShortcut"
 #include "opentrack-compat/options.hpp"
@@ -28,7 +24,7 @@
 
 using namespace options;
 
-struct OPENTRACK_EXPORT Shortcuts : public QObject {
+struct OPENTRACK_API_EXPORT Shortcuts : public QObject {
     Q_OBJECT
 
 public:
@@ -39,7 +35,7 @@ public:
     Key
 #endif
     ;
-    
+
     using fun = std::function<void(void)>;
     using tt = std::tuple<K, fun>;
     std::vector<tt> keys;
