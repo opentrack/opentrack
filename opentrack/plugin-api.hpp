@@ -43,7 +43,7 @@ class OPENTRACK_EXPORT BaseDialog : public QWidget
 {
     Q_OBJECT
 public:
-    void closeEvent(QCloseEvent *) override { emit closing(); }
+    void closeEvent(QCloseEvent *) override;
 signals:
     void closing();
 };
