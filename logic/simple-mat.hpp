@@ -263,7 +263,6 @@ Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
 
 namespace euler {
 
-template<int y, int x> using dmat = Mat<double, y, x>;
 using rmat = dmat<3, 3>;
 using euler_t = dmat<3, 1>;
 
