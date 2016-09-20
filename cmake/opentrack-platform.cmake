@@ -3,7 +3,7 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(MSVC)
-    add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES)
 endif()
 
 if(WIN32)
