@@ -69,7 +69,7 @@ public:
 
     PointModel(settings_pt& s);
     void set_model(settings_pt& s);
-    void get_d_order(const std::vector<vec2>& points, int* d_order, vec2 d) const;
+    void get_d_order(const std::vector<vec2>& points, int* d_order, const vec2& d) const;
 };
 
 // ----------------------------------------------------------------------------
