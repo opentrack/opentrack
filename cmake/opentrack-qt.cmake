@@ -16,13 +16,13 @@ install(CODE "
             message(FATAL_ERROR \"configure qt at least a:${Qt5_DIR} b:\${qt-dir}\")
         endif()
 
-        if(EXISTS \"${CMAKE_INSTALL_PREFIX}/opentrack.exe\")
-            file(REMOVE_RECURSE \"${CMAKE_INSTALL_PREFIX}\")
+        if(EXISTS \"\${CMAKE_INSTALL_PREFIX}/opentrack.exe\")
+            file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}\")
         endif()
 
-        file(MAKE_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\")
+        file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}\")
 
-        if(NOT EXISTS \"${CMAKE_INSTALL_PREFIX}\")
+        if(NOT EXISTS \"\${CMAKE_INSTALL_PREFIX}\")
             message(FATAL_ERROR \"make sure install dir exists at least\")
         endif()
 
@@ -30,16 +30,16 @@ install(CODE "
         set(platforms-path \"${Qt5_DIR}/../../../plugins/platforms\")
 
         foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets)
-            configure_file(\"\${bin-path}/\${i}.dll\" \"${CMAKE_INSTALL_PREFIX}/\${i}.dll\" COPYONLY)
+            configure_file(\"\${bin-path}/\${i}.dll\" \"\${CMAKE_INSTALL_PREFIX}/\${i}.dll\" COPYONLY)
         endforeach()
 
-        file(MAKE_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/platforms\")
-        configure_file(\"\${platforms-path}/qwindows.dll\" \"${CMAKE_INSTALL_PREFIX}/platforms/qwindows.dll\" COPYONLY)
+        file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/platforms\")
+        configure_file(\"\${platforms-path}/qwindows.dll\" \"\${CMAKE_INSTALL_PREFIX}/platforms/qwindows.dll\" COPYONLY)
     endif()
 
     if(MSVC)
         foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets platforms/qwindows)
-            execute_process(COMMAND editbin -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 \"\${i}.dll\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\")
+            execute_process(COMMAND editbin -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 \"\${i}.dll\" WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}\")
         endforeach()
     endif()
 
