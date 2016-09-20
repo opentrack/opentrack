@@ -41,7 +41,7 @@ public:
     void data(double* data) override;
 
     Affine pose() { return point_tracker.pose(); }
-    int  get_n_points() { return point_extractor.get_n_points(); }
+    int  get_n_points() { QMutexLocker l(&points_mtx); return int(points.size()); }
     bool get_cam_info(CamInfo* info) { QMutexLocker lock(&camera_mtx); return camera.get_info(*info); }
 public slots:
     void apply_settings();
@@ -56,9 +56,9 @@ private:
     void reset_command(Command command);
     cv::Vec3d get_model_offset();
 
-    QMutex camera_mtx;
     bool get_focal_length(double& ret);
 
+    QMutex camera_mtx, points_mtx;
     CVCamera       camera;
     PointExtractor point_extractor;
     PointTracker   point_tracker;
@@ -67,13 +67,17 @@ private:
     QFrame*      video_frame;
 
     settings_pt s;
-    Timer time;
     cv::Mat frame;
-    
+    Timer time;
+
+    std::vector<cv::Vec2d> points;
+
+    volatile int commands;
+
     volatile bool ever_success;
 
-    static constexpr double rad2deg = 180.0/3.14159265;
-    static constexpr double deg2rad = 3.14159265/180.0;
+    static constexpr double rad2deg = 180/M_PI;
+    //static constexpr float deg2rad = float(M_PI/180);
 };
 
 class TrackerDll : public Metadata

@@ -1,4 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2015-2016 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -12,44 +13,39 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
-#include <QMutex>
 
+#include <cmath>
 #include <vector>
 
-class PointExtractor
+class PointExtractor final
 {
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
     // WARNING: returned reference is valid as long as object
-    const std::vector<cv::Vec2f> &extract_points(cv::Mat &frame);
-    int get_n_points() { QMutexLocker l(&mtx); return points.size(); }
+    void extract_points(cv::Mat& frame, std::vector<cv::Vec2d>& points);
     PointExtractor();
-    
+
     settings_pt s;
 private:
-    enum { hist_c = 2 };
-    std::vector<cv::Vec2f> points;
-    QMutex mtx;
+    static constexpr int max_blobs = 16;
+
     cv::Mat frame_gray;
     cv::Mat frame_bin;
     cv::Mat hist;
-
-    enum { max_blobs = 16 };
+    cv::Mat frame_blobs;
 
     struct blob
     {
-        double radius;
+        double radius, brightness;
         cv::Vec2d pos;
-        double confid;
-        blob(double radius, const cv::Vec2d& pos, double confid) : radius(radius), pos(pos), confid(confid)
+        blob(double radius, const cv::Vec2d& pos, double brightness) : radius(radius), brightness(brightness), pos(pos)
         {
-            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1] << "confid" << confid;
+            //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
         }
     };
 
     std::vector<blob> blobs;
-    std::vector<std::vector<cv::Point>> contours;
 };
 
 #endif //POINTEXTRACTOR_H

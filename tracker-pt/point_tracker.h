@@ -15,7 +15,6 @@
 #include "ftnoir_tracker_pt_settings.h"
 
 #include <QObject>
-#include <QMutex>
 
 class Affine
 {
@@ -118,9 +117,9 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<cv::Vec2f>& projected_points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout);
-    Affine pose() { QMutexLocker l(&mtx); return X_CM; }
-    cv::Vec2f project(const cv::Vec3f& v_M, float f);
+    void track(const std::vector<cv::Vec2d>& projected_points, const PointModel& model, double focal_length, bool dynamic_pose, int init_phase_timeout, int w, int h);
+    Affine pose() { return X_CM; }
+    cv::Vec2d project(const cv::Vec3d& v_M, double focal_length);
 private:
     // the points in model order
     struct PointOrder
@@ -133,15 +132,14 @@ private:
         }
     };
 
-    PointOrder find_correspondences_previous(const std::vector<cv::Vec2f>& points, const PointModel &model, float f);
     PointOrder find_correspondences(const std::vector<cv::Vec2d>& projected_points, const PointModel &model);
+    PointOrder find_correspondences_previous(const std::vector<cv::Vec2d>& points, const PointModel &model, double focal_length, int w, int h);
     bool POSIT(const PointModel& point_model, const PointOrder& order, double focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera
 
     Timer t;
     bool init_phase;
-    QMutex mtx;
 };
 
 #endif //POINTTRACKER_H

@@ -58,8 +58,7 @@ void Tracker_PT::reset_command(Command command)
 
 bool Tracker_PT::get_focal_length(double& ret)
 {
-    static constexpr float pi = 3.1415926;
-    float fov_;
+    int fov_;
     switch (s.fov)
     {
     default:
@@ -71,14 +70,18 @@ bool Tracker_PT::get_focal_length(double& ret)
         break;
     }
 
-    const double diag_fov = static_cast<int>(fov_) * pi / 180.f;
     QMutexLocker l(&camera_mtx);
     CamInfo info;
     const bool res = camera.get_info(info);
     if (res)
     {
+        using std::tan;
+        using std::atan;
+        using std::sqrt;
+
         const int w = info.res_x, h = info.res_y;
         const double diag = sqrt(1. + h/(double)w * h/(double)w);
+        const double diag_fov = fov_ * M_PI / 180.;
         const double fov = 2.*atan(tan(diag_fov/2.0)/diag);
         ret = .5 / tan(.5 * fov);
         return true;
@@ -88,6 +91,8 @@ bool Tracker_PT::get_focal_length(double& ret)
 
 void Tracker_PT::run()
 {
+    cv::setNumThreads(0);
+
 #ifdef PT_PERF_LOG
     QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
     if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
@@ -113,17 +118,27 @@ void Tracker_PT::run()
 
         if (new_frame && !frame_.empty())
         {
-            const auto& points = point_extractor.extract_points(frame_);
+            QMutexLocker l(&points_mtx);
+
+            point_extractor.extract_points(frame_, points);
 
             double fx;
             if (!get_focal_length(fx))
                 continue;
-            
+
             const bool success = points.size() >= PointModel::N_POINTS;
 
             if (success)
             {
-                point_tracker.track(points, PointModel(s), fx, s.dynamic_pose, s.init_phase_timeout);
+                const CamInfo info = camera.get_desired();
+
+                point_tracker.track(points,
+                                    PointModel(s),
+                                    fx,
+                                    s.dynamic_pose,
+                                    s.init_phase_timeout,
+                                    info.res_x,
+                                    info.res_y);
                 ever_success = true;
             }
 
@@ -131,7 +146,7 @@ void Tracker_PT::run()
 
             std::function<void(const cv::Vec2d&, const cv::Scalar&)> fun = [&](const cv::Vec2d& p, const cv::Scalar& color)
             {
-                cv::Point p2(p[0] * frame_.cols + frame_.cols/2, -p[1] * frame_.cols + frame_.rows/2);
+                cv::Point p2(int(p[0]) * frame_.cols + frame_.cols/2, -int(p[1]) * frame_.cols + frame_.rows/2);
                 cv::line(frame_,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),

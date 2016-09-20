@@ -13,8 +13,6 @@
 
 #include <QDebug>
 
-const float PI = 3.14159265358979323846f;
-
 static void get_row(const cv::Matx33d& m, int i, cv::Vec3d& v)
 {
     v[0] = m(i,0);
@@ -56,12 +54,20 @@ PointTracker::PointTracker() : init_phase(true)
 {
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<cv::Vec2f>& points, const PointModel& model, float f)
+PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<cv::Vec2d>& points,
+                                                                     const PointModel& model,
+                                                                     double focal_length,
+                                                                     int w,
+                                                                     int h)
 {
     PointTracker::PointOrder p;
-    p.points[0] = project(cv::Vec3f(0,0,0), f);
-    p.points[1] = project(model.M01, f);
-    p.points[2] = project(model.M02, f);
+    p.points[0] = project(cv::Vec3d(0,0,0), focal_length);
+    p.points[1] = project(model.M01, focal_length);
+    p.points[2] = project(model.M02, focal_length);
+
+    const int diagonal = int(std::sqrt(w*w + h*h));
+    static constexpr int div = 100;
+    const int max_dist = diagonal / div; // 8 pixels for 640x480
 
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
@@ -73,7 +79,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
         double min_sdist = 0;
         unsigned min_idx = 0;
         // find closest point to projected model point i
-        for (int j=0; j<PointModel::N_POINTS; ++j)
+        for (unsigned j=0; j<PointModel::N_POINTS; ++j)
         {
             cv::Vec2d d = p.points[i]-points[j];
             double sdist = d.dot(d);
@@ -83,6 +89,9 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
                 min_sdist = sdist;
             }
         }
+        if (min_sdist > max_dist)
+            return find_correspondences(points, model);
+
         // if one point is closest to more than one model point, fallback
         if (point_taken[min_idx])
         {
@@ -95,7 +104,13 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
     return p;
 }
 
-void PointTracker::track(const std::vector<cv::Vec2f>& points, const PointModel& model, float f, bool dynamic_pose, int init_phase_timeout)
+void PointTracker::track(const std::vector<cv::Vec2d>& points,
+                         const PointModel& model,
+                         double focal_length,
+                         bool dynamic_pose,
+                         int init_phase_timeout,
+                         int w,
+                         int h)
 {
     PointOrder order;
 
@@ -108,9 +123,11 @@ void PointTracker::track(const std::vector<cv::Vec2f>& points, const PointModel&
     if (!dynamic_pose || init_phase)
         order = find_correspondences(points, model);
     else
-        order = find_correspondences_previous(points, model, f);
+    {
+        order = find_correspondences_previous(points, model, focal_length, w, h);
+    }
 
-    POSIT(model, order, f);
+    POSIT(model, order, focal_length);
     init_phase = false;
     t.start();
 }
@@ -139,7 +156,16 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<cv
     return p;
 }
 
-int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, float focal_length)
+template<typename t, int h, int w>
+bool nanp(const cv::Matx<t, h, w>& m)
+{
+    for (int i = 0; i < h; i++)
+        for (int j = 0; j < w; j++)
+            if (nanp(m(i, j)))
+                return true;
+    return false;
+}
+
 bool PointTracker::POSIT(const PointModel& model, const PointOrder& order_, double focal_length)
 {
     // POSIT algorithm for coplanar points as presented in
@@ -171,6 +197,11 @@ bool PointTracker::POSIT(const PointModel& model, const PointOrder& order_, doub
     static constexpr double eps = 1e-6;
 
     const cv::Vec2d* order = order_.points;
+    using std::sqrt;
+    using std::atan;
+    using std::cos;
+    using std::sin;
+    using std::fabs;
 
     int i=1;
     for (; i<MAX_ITER; ++i)
@@ -254,7 +285,6 @@ bool PointTracker::POSIT(const PointModel& model, const PointOrder& order_, doub
         old_epsilon_2 = epsilon_2;
     }
 
-    QMutexLocker l(&mtx);
     // apply results
     X_CM.R = R_current;
     X_CM.t[0] = order[0][0] * Z0/focal_length;
