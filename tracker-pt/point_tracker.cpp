@@ -72,7 +72,7 @@ void PointModel::set_model(settings_pt& s)
     }
 }
 
-void PointModel::get_d_order(const std::vector<vec2>& points, int* d_order, vec2 d) const
+void PointModel::get_d_order(const std::vector<vec2>& points, int* d_order, const vec2& d) const
 {
     // fit line to orthographically projected points
     std::vector<std::pair<f,int>> d_vals;
