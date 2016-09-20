@@ -9,8 +9,6 @@
 #pragma once
 #include <ctime>
 
-#include "export.hpp"
-
 #if defined (_WIN32)
 #   include <windows.h>
 #	ifndef CLOCK_MONOTONIC
