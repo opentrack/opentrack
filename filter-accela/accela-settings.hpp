@@ -50,11 +50,11 @@ struct settings_accela : opts
     value<slider_value> rot_nonlinearity;
     settings_accela() :
         opts("accela-sliders"),
-        rot_sensitivity(b, "rotation-sensitivity", slider_value(1.8, .05, 3)),
-        trans_sensitivity(b, "translation-sensitivity", slider_value(1.8, .05, 3)),
-        rot_deadzone(b, "rotation-deadzone", slider_value(0, 0, .5)),
-        trans_deadzone(b, "translation-deadzone", slider_value(0, 0, .5)),
-        ewma(b, "ewma", slider_value(0, 0, 15)),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 1.75))
+        rot_sensitivity(b, "rotation-sensitivity", slider_value(1.8, .05, 5)),
+        trans_sensitivity(b, "translation-sensitivity", slider_value(1.8, .05, 4)),
+        rot_deadzone(b, "rotation-deadzone", slider_value(0, 0, 2)),
+        trans_deadzone(b, "translation-deadzone", slider_value(0, 0, 1)),
+        ewma(b, "ewma", slider_value(0, 0, 30)),
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 2))
     {}
 };

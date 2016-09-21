@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>408</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -126,7 +126,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>30</number>
+         <number>60</number>
         </property>
         <property name="pageStep">
          <number>3</number>
@@ -138,7 +138,7 @@
          <enum>QSlider::TicksAbove</enum>
         </property>
         <property name="tickInterval">
-         <number>25</number>
+         <number>5</number>
         </property>
        </widget>
       </item>
@@ -195,7 +195,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>295</number>
+         <number>495</number>
         </property>
         <property name="pageStep">
          <number>15</number>
@@ -207,7 +207,7 @@
          <enum>QSlider::TicksAbove</enum>
         </property>
         <property name="tickInterval">
-         <number>25</number>
+         <number>50</number>
         </property>
        </widget>
       </item>
@@ -237,7 +237,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>50</number>
+         <number>200</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -294,32 +294,19 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QSlider" name="translation_slider">
+      <item row="1" column="2">
+       <widget class="QSlider" name="trans_dz_slider">
         <property name="minimum">
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>295</number>
+         <number>100</number>
         </property>
         <property name="pageStep">
-         <number>15</number>
+         <number>5</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
-        </property>
-        <property name="tickInterval">
-         <number>25</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Deadzone</string>
         </property>
        </widget>
       </item>
@@ -336,19 +323,32 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QSlider" name="trans_dz_slider">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Deadzone</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSlider" name="translation_slider">
         <property name="minimum">
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>50</number>
+         <number>395</number>
         </property>
         <property name="pageStep">
-         <number>5</number>
+         <number>15</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>40</number>
         </property>
        </widget>
       </item>
@@ -373,7 +373,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>15</number>
+         <number>20</number>
         </property>
         <property name="pageStep">
          <number>2</number>
@@ -383,6 +383,12 @@
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksAbove</enum>
+        </property>
+        <property name="tickInterval">
+         <number>3</number>
         </property>
        </widget>
       </item>
