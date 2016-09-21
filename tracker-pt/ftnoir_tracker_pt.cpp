@@ -144,19 +144,23 @@ void Tracker_PT::run()
 
             Affine X_CM = pose();
 
-            std::function<void(const cv::Vec2d&, const cv::Scalar&)> fun = [&](const cv::Vec2d& p, const cv::Scalar& color)
+            auto fun = [&](const cv::Vec2d& p, const cv::Scalar& color)
             {
-                cv::Point p2(int(p[0]) * frame_.cols + frame_.cols/2, -int(p[1]) * frame_.cols + frame_.rows/2);
+                using std::round;
+
+                cv::Point p2(round(p[0] * frame_.cols + frame_.cols/2),
+                             round(-p[1] * frame_.cols + frame_.rows/2));
+
                 cv::line(frame_,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
                          color,
-                         4);
+                         2);
                 cv::line(frame_,
                          cv::Point(p2.x, p2.y - 20),
                          cv::Point(p2.x, p2.y + 20),
                          color,
-                         4);
+                         2);
             };
 
             for (unsigned i = 0; i < points.size(); i++)
