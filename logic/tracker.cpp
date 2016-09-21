@@ -24,6 +24,9 @@
 #   include <windows.h>
 #endif
 
+constexpr double Tracker::r2d;
+constexpr double Tracker::d2r;
+
 Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
     libs(libs),

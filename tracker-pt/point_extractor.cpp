@@ -19,8 +19,6 @@
 #include <algorithm>
 #include <cinttypes>
 
-constexpr double PointExtractor::pi;
-
 PointExtractor::PointExtractor()
 {
     blobs.reserve(max_blobs);
@@ -132,7 +130,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
             }
             if (m00 > 0)
             {
-                const double radius = sqrt(cnt / pi);
+                const double radius = sqrt(cnt / M_PI);
                 if (radius > region_size_max || radius < region_size_min)
                     continue;
                 const double norm = double(m00);

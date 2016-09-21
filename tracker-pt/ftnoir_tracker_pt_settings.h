@@ -8,9 +8,10 @@
 
 #pragma once
 
-#include "compat/pi-constant.hpp"
 #include <limits>
 #include <opencv2/core.hpp>
+
+#include <cmath>
 
 namespace pt_types {
     using f = double;
@@ -19,7 +20,6 @@ namespace pt_types {
     {
         constants() = delete;
         static constexpr f eps = std::numeric_limits<f>::epsilon();
-        static constexpr f pi = OPENTRACK_PI;
     };
 
     template<int n> using vec = cv::Vec<f, n>;

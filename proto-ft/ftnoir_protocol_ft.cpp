@@ -9,7 +9,8 @@
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 #include "opentrack-library-path.h"
-#include "compat/pi-constant.hpp"
+
+#include <cmath>
 
 check_for_first_run FTNoIR_Protocol::runonce_check = check_for_first_run();
 
@@ -96,8 +97,7 @@ void FTNoIR_Protocol::pose(const double* headpose)
 
 float FTNoIR_Protocol::degrees_to_rads(double degrees)
 {
-    static constexpr double pi = OPENTRACK_PI;
-    return float(degrees*pi/180);
+    return float(degrees*M_PI/180);
 }
 
 void FTNoIR_Protocol::start_tirviews()

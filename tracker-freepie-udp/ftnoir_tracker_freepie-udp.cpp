@@ -1,6 +1,5 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "api/plugin-api.hpp"
-#include "compat/pi-constant.hpp"
 
 #include <cinttypes>
 #include <algorithm>
@@ -90,7 +89,7 @@ void TrackerImpl::run() {
             };
             int indices[] = { s.add_yaw, s.add_pitch, s.add_roll };
             QMutexLocker foo(&mtx);
-            static constexpr double r2d = 180 / OPENTRACK_PI;
+            static constexpr double r2d = 180 / M_PI;
             for (int i = 0; i < 3; i++)
             {
                 int val = 0;

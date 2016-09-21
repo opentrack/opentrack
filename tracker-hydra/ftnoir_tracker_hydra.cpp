@@ -1,7 +1,6 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_hydra.h"
 #include "api/plugin-api.hpp"
-#include "compat/pi-constant.hpp"
 #include <cstdio>
 #include <cmath>
 #ifdef _WIN32
@@ -39,7 +38,7 @@ void Hydra_Tracker::data(double *data)
     data[TX] = double(acd.controllers[0].pos[0])/50;
     data[TY] = double(acd.controllers[0].pos[1])/50;
     data[TZ] = double(acd.controllers[0].pos[2])/50;
-    static constexpr double r2d = 180/OPENTRACK_PI;
+    static constexpr double r2d = 180/M_PI;
     data[Yaw] = double(ypr[0]) * r2d;
     data[Pitch] = double(ypr[1]) * r2d;
     data[Roll] = double(ypr[2]) * r2d;

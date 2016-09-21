@@ -1,7 +1,6 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift_042.h"
 #include "api/plugin-api.hpp"
-#include "compat/pi-constant.hpp"
 
 #include <QString>
 
@@ -68,7 +67,7 @@ void Rift_Tracker::data(double *data)
                     yaw_ += s.constant_drift;
                 old_yaw = yaw_;
             }
-            static constexpr double d2r = 180 / OPENTRACK_PI;
+            static constexpr double d2r = 180 / M_PI;
             data[Yaw] = yaw_ * -d2r;
             data[Pitch] = double(pitch) * d2r;
             data[Roll] = double(roll) * d2r;

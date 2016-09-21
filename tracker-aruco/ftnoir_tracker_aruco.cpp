@@ -9,7 +9,6 @@
 #include "api/plugin-api.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/sleep.hpp"
-#include "compat/pi-constant.hpp"
 #include "cv/video-property-page.hpp"
 
 #include <opencv2/core.hpp>
@@ -89,7 +88,7 @@ void Tracker::start_tracker(QFrame* videoframe)
     layout = layout_;
 }
 
-#define HT_PI OPENTRACK_PI
+#define HT_PI M_PI
 
 void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 {
@@ -186,9 +185,8 @@ bool Tracker::open_camera()
 
 void Tracker::set_intrinsics()
 {
-    static constexpr double pi = OPENTRACK_PI;
     const int w = grayscale.cols, h = grayscale.rows;
-    const double diag_fov = static_cast<int>(s.fov) * pi / 180.;
+    const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
     const double focal_length_w = .5 * w / tan(.5 * fov_w);

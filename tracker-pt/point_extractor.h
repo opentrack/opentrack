@@ -29,7 +29,6 @@ public:
 
     settings_pt s;
 private:
-    static constexpr double pi = constants::pi;
     static constexpr int max_blobs = 16;
 
     cv::Mat frame_gray;

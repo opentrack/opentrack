@@ -3,6 +3,5 @@
 namespace pt_types {
 
 constexpr f constants::eps;
-constexpr f constants::pi;
 
 }

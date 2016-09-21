@@ -2,7 +2,8 @@
 #include "ui_test.h"
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
-#include "compat/pi-constant.hpp"
+
+#include <cmath>
 
 class FTNoIR_Tracker : public ITracker
 {
@@ -13,9 +14,8 @@ public:
     void data(double *data) override;
 
 private:
-    static constexpr double pi = OPENTRACK_PI;
-    static constexpr double r2d = 180 / pi;
-    static constexpr double d2r = pi / 180;
+    static constexpr double r2d = 180 / M_PI;
+    static constexpr double d2r = M_PI / 180;
 
     static const double incr[6];
     double last_x[6];

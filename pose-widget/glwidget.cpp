@@ -7,7 +7,6 @@
 
 #include "glwidget.h"
 #include "api/is-window-visible.hpp"
-#include "compat/pi-constant.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>
@@ -52,7 +51,7 @@ void GLWidget::rotateBy_real(double xAngle, double yAngle, double zAngle, double
     using std::sin;
     using std::cos;
 
-    static constexpr double d2r = OPENTRACK_PI / 180;
+    static constexpr double d2r = M_PI / 180;
 
     translation = vec3(x, y, z);
 

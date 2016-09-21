@@ -1,5 +1,4 @@
 #include "simple-mat.hpp"
-#include "compat/pi-constant.hpp"
 #include <cmath>
 
 namespace euler {

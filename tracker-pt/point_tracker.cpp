@@ -207,9 +207,6 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
     // In every iteration step the rotation closer to R_expected is taken
     mat33 R_expected = mat33::eye();
 
-    static constexpr f pi = constants::pi;
-    static constexpr f eps = constants::eps;
-
     // initial pose = last (predicted) pose
     vec3 k;
     get_row(R_expected, 2, k);
@@ -263,14 +260,14 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
         // CAVEAT don't change to comparison with an epsilon -sh 20160423
         if (JJ0 == II0) {
             rho = sqrt(fabs(2*IJ0));
-            theta = -pi/4;
+            theta = -M_PI/4;
             if (IJ0<0) theta *= -1;
         }
         else {
             rho = sqrt(sqrt( (JJ0-II0)*(JJ0-II0) + 4*IJ0*IJ0 ));
             theta = atan( -2*IJ0 / (JJ0-II0) );
             // avoid branch misprediction
-            theta += (JJ0 - II0 < 0) * pi;
+            theta += (JJ0 - II0 < 0) * M_PI;
             theta *= f(.5);
         }
 
@@ -313,7 +310,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
         // check for convergence condition
         const f delta = fabs(epsilon_1 - old_epsilon_1) + fabs(epsilon_2 - old_epsilon_2);
 
-        if (!(delta > eps))
+        if (!(delta > constants::eps))
             break;
 
         old_epsilon_1 = epsilon_1;

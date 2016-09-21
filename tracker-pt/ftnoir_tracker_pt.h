@@ -33,8 +33,6 @@ class TrackerDialog_PT;
 // Constantly processes the tracking chain in a separate thread
 class Tracker_PT : public QThread, public ITracker
 {
-    static constexpr f pi = constants::pi;
-
     Q_OBJECT
     friend class camera_dialog;
     friend class TrackerDialog_PT;
@@ -80,8 +78,8 @@ private:
     volatile unsigned char commands;
     volatile bool ever_success;
 
-    static constexpr f rad2deg = f(180/OPENTRACK_PI);
-    //static constexpr float deg2rad = float(OPENTRACK_PI/180);
+    static constexpr f rad2deg = f(180/M_PI);
+    //static constexpr float deg2rad = float(M_PI/180);
 };
 
 class TrackerDll : public Metadata

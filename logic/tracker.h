@@ -10,7 +10,6 @@
 
 #include <vector>
 
-#include "compat/pi-constant.hpp"
 #include "compat/timer.hpp"
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
@@ -26,6 +25,7 @@
 #include <QThread>
 
 #include <atomic>
+#include <cmath>
 
 #include "export.hpp"
 
@@ -121,9 +121,8 @@ private:
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output, bool rz);
     void run() override;
 
-    static constexpr double pi = OPENTRACK_PI;
-    static constexpr double r2d = 180. / OPENTRACK_PI;
-    static constexpr double d2r = OPENTRACK_PI / 180.;
+    static constexpr double r2d = 180. / M_PI;
+    static constexpr double d2r = M_PI / 180.;
 
     // note: float exponent base is 2
     static constexpr double c_mult = 4;
