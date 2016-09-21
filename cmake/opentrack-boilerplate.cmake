@@ -116,7 +116,7 @@ function(opentrack_is_target_c_only ret srcs)
 endfunction()
 
 function(opentrack_install_pdb_current_project)
-    if(MSVC)
+    if(MSVC AND FALSE)
         file(GLOB_RECURSE pdbs "${CMAKE_CURRENT_BINARY_DIR}/*.pdb")
         install(FILES ${pdbs} DESTINATION "${subdir}" ${opentrack-perms})
     endif()
