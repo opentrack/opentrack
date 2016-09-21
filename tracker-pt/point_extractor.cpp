@@ -64,15 +64,15 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
         const int sz = hist.cols * hist.rows;
         int thres = 255;
         int cnt = 0;
-        constexpr double min_radius = 4;
+        constexpr double min_radius = 2.5;
         constexpr double max_radius = 15;
         const double radius = max(0., (max_radius-min_radius) * s.threshold / 256);
-        const int pixels_to_include = int((min_radius + radius)*(min_radius+radius) * 3);
+        const int area = int(round(3 * M_PI * (min_radius + radius)*(min_radius+radius)));
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
         for (int i = sz-1; i > 0; i--)
         {
             cnt += ptr[i];
-            if (cnt >= pixels_to_include)
+            if (cnt >= area)
             {
                 thres = i;
                 break;
