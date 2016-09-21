@@ -90,12 +90,12 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
     unsigned idx = 0;
     for (int y=0; y < frame_blobs.rows; y++)
     {
-        if (idx > max_blobs) break;
+        if (idx >= max_blobs) break;
 
         const unsigned char* ptr_bin = frame_blobs.ptr(y);
         for (int x=0; x < frame_blobs.cols; x++)
         {
-            if (idx > max_blobs) break;
+            if (idx >= max_blobs) break;
 
             if (ptr_bin[x] != 255)
                 continue;
