@@ -873,7 +873,7 @@ It won't work properly with translation compensation enabled.</string>
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Disable Z compensation</string>
+             <string>Disable Z compensation (for using zoom on Z axis)</string>
             </property>
            </widget>
           </item>
