@@ -65,23 +65,26 @@ double Tracker::map(double pos, Map& axis)
 void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
                            bool disable_tx, bool disable_ty, bool disable_tz)
 {
+    enum { tb_Z, tb_X, tb_Y };
+
     // TY is really yaw axis. need swapping accordingly.
+    // sign changes are due to right-vs-left handedness of coordinate system used
     const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
 
     if (disable_tz)
         output(TZ) = xyz(TZ);
     else
-        output(TZ) = ret(0);
+        output(TZ) = ret(tb_Z);
 
     if (disable_ty)
         output(TY) = xyz(TY);
     else
-        output(TY) = -ret(2);
+        output(TY) = -ret(tb_Y);
 
     if (disable_tx)
         output(TX) = xyz(TX);
     else
-        output(TX) = -ret(1);
+        output(TX) = -ret(tb_X);
 }
 
 #include "compat/nan.hpp"
