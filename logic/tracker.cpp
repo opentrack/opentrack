@@ -69,19 +69,19 @@ void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output
     const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
 
     if (disable_tz)
-        output(2) = xyz(TZ);
+        output(TZ) = xyz(TZ);
     else
-        output(2) = ret(0);
+        output(TZ) = ret(0);
 
     if (disable_ty)
-        output(1) = xyz(TY);
+        output(TY) = xyz(TY);
     else
-        output(1) = -ret(2);
+        output(TY) = -ret(2);
 
     if (disable_tx)
-        output(0) = xyz(TX);
+        output(TX) = xyz(TX);
     else
-        output(0) = -ret(1);
+        output(TX) = -ret(1);
 }
 
 #include "compat/nan.hpp"
