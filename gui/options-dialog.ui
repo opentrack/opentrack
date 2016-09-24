@@ -701,53 +701,80 @@ It won't work properly with translation compensation enabled.</string>
          <property name="title">
           <string>Centering method</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_26">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>2</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Method</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="center_method">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>3</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <item>
-             <property name="text">
-              <string>Relative (inertial device)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Absolute (camera device)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Experimental (camera device)</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="1">
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
            <widget class="QLabel" name="label_25">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>4</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Try changing this if centering doesn't perform correctly for your input device.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>1</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>1</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_26">
+               <property name="text">
+                <string>Method</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="center_method">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Relative (inertial device)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Absolute (camera device)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Experimental (camera device)</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -1394,6 +1421,8 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>bind_restart_tracking</tabstop>
   <tabstop>bind_tcomp_off_held</tabstop>
   <tabstop>center_at_startup</tabstop>
+  <tabstop>trayp</tabstop>
+  <tabstop>tray_start</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>
@@ -1406,7 +1435,9 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>pos_tz</tabstop>
   <tabstop>center_method</tabstop>
   <tabstop>tcomp_enable</tabstop>
-  <tabstop>tcomp_rz</tabstop>
+  <tabstop>tcomp_tx_disable</tabstop>
+  <tabstop>tcomp_ty_disable</tabstop>
+  <tabstop>tcomp_tz_disable</tabstop>
   <tabstop>src_yaw</tabstop>
   <tabstop>invert_yaw</tabstop>
   <tabstop>src_pitch</tabstop>
