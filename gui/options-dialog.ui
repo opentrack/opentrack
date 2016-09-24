@@ -821,12 +821,32 @@ It won't work properly with translation compensation enabled.</string>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="tcomp_rz">
+           <widget class="QCheckBox" name="tcomp_tx_disable">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Disable Z axis compensation</string>
+             <string>Disable X compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tcomp_ty_disable">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Disable Y compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tcomp_tz_disable">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Disable Z compensation</string>
             </property>
            </widget>
           </item>

@@ -45,7 +45,10 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.center_at_startup, ui.center_at_startup);
 
     tie_setting(main.tcomp_p, ui.tcomp_enable);
-    tie_setting(main.tcomp_tz, ui.tcomp_rz);
+
+    tie_setting(main.tcomp_disable_tx, ui.tcomp_tx_disable);
+    tie_setting(main.tcomp_disable_ty, ui.tcomp_ty_disable);
+    tie_setting(main.tcomp_disable_tz, ui.tcomp_tz_disable);
 
     tie_setting(main.a_x.zero, ui.pos_tx);
     tie_setting(main.a_y.zero, ui.pos_ty);

@@ -62,16 +62,26 @@ double Tracker::map(double pos, Map& axis)
     return double(fc.getValue(pos));
 }
 
-void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz_, euler_t& output, bool rz)
+void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
+                           bool disable_tx, bool disable_ty, bool disable_tz)
 {
     // TY is really yaw axis. need swapping accordingly.
-    const euler_t ret = rmat * euler_t(xyz_(TZ), -xyz_(TX), -xyz_(TY));
-    if (!rz)
-        output(2) = ret(0);
+    const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
+
+    if (disable_tz)
+        output(2) = xyz(TZ);
     else
-        output(2) = xyz_(2);
-    output(1) = -ret(2);
-    output(0) = -ret(1);
+        output(2) = ret(0);
+
+    if (disable_ty)
+        output(1) = xyz(TY);
+    else
+        output(1) = -ret(2);
+
+    if (disable_tx)
+        output(0) = xyz(TX);
+    else
+        output(0) = -ret(1);
 }
 
 #include "compat/nan.hpp"
@@ -230,9 +240,9 @@ void Tracker::logic()
         euler_t pos = euler_t(&value[TX]) - t_center;
 
         if (s.use_camera_offset_from_centering)
-            t_compensate(real_rotation.rot_center.t() * real_rotation.camera.t(), pos, pos, false);
+            t_compensate(real_rotation.rot_center.t() * real_rotation.camera.t(), pos, pos, false, false, false);
         else
-            t_compensate(real_rotation.camera.t(), pos, pos, false);
+            t_compensate(real_rotation.camera.t(), pos, pos, false, false, false);
 
         for (int i = 0; i < 3; i++)
         {
@@ -279,7 +289,9 @@ void Tracker::logic()
         t_compensate(euler_to_rmat(euler_t(value(Yaw) * d2r, value(Pitch) * d2r, value(Roll) * d2r)),
                      value_,
                      value_,
-                     s.tcomp_tz);
+                     s.tcomp_disable_tx,
+                     s.tcomp_disable_ty,
+                     s.tcomp_disable_tz);
         if (is_nan(value_))
             nanp = true;
         for (int i = 0; i < 3; i++)

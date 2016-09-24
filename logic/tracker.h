@@ -118,7 +118,8 @@ private:
 
     double map(double pos, Map& axis);
     void logic();
-    void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output, bool rz);
+    void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
+                      bool disable_tx, bool disable_ty, bool disable_tz);
     void run() override;
 
     static constexpr double r2d = 180. / M_PI;
