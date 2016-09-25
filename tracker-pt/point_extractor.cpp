@@ -108,9 +108,13 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                           cv::Scalar(0),
                           cv::Scalar(0),
                           8);
-            int m00 = 0;
-            int m10 = 0;
-            int m01 = 0;
+
+            // these are doubles since m10 and m01 could overflow theoretically
+            // log2(255^2 * 640^2 * pi) > 36
+            double m10 = 0;
+            double m01 = 0;
+            // norm can't overflow since there's no 640^2 component
+            int norm = 0;
             int cnt = 0;
 
             for (int i=rect.y; i < (rect.y+rect.height); i++)
@@ -119,22 +123,26 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                 const unsigned char* ptr_gray = frame_gray.ptr(i);
                 for (int j=rect.x; j < (rect.x+rect.width); j++)
                 {
-                    if (ptr_blobs[j] != idx) continue;
+                    if (ptr_blobs[j] != idx)
+                        continue;
+
                     ptr_blobs[j] = 0;
-                    const int val = int(ptr_gray[j]);
-                    m00 += val;
+
+                    // square as a weight gives better results
+                    const int val(int(ptr_gray[j]) * int(ptr_gray[j]));
+
+                    norm += val;
                     m01 += i * val;
                     m10 += j * val;
                     cnt++;
                 }
             }
-            if (m00 > 0)
+            if (norm > 1e0)
             {
                 const double radius = sqrt(cnt / M_PI);
                 if (radius > region_size_max || radius < region_size_min)
                     continue;
-                const double norm = double(m00);
-                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), m00/sqrt(double(cnt)));
+                blob b(radius, cv::Vec2d(m10 / norm, m01 / norm), norm/sqrt(double(cnt)));
                 blobs.push_back(b);
                 {
                     char buf[64];
