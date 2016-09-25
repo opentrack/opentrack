@@ -29,7 +29,9 @@
 #endif
 
 enum Axis {
-    TX, TY, TZ, Yaw, Pitch, Roll
+    TX = 0, TY = 1, TZ = 2, Yaw = 3, Pitch = 4, Roll = 5,
+    // for indexing in general
+    rYaw = 0, rPitch = 1, rRoll = 2,
 };
 
 namespace plugin_api {
@@ -38,8 +40,10 @@ namespace detail {
 class OPENTRACK_API_EXPORT BaseDialog : public QWidget
 {
     Q_OBJECT
+protected:
+    BaseDialog();
 public:
-    void closeEvent(QCloseEvent *) override { emit closing(); }
+    void closeEvent(QCloseEvent *) override;
 signals:
     void closing();
 };
@@ -72,7 +76,7 @@ struct OPENTRACK_API_EXPORT Metadata
     Metadata(const Metadata&) = delete;
     Metadata(Metadata&&) = delete;
     Metadata& operator=(const Metadata&) = delete;
-    inline Metadata() {}
+    Metadata();
 
     // plugin name to be displayed in the interface
     virtual QString name() = 0;
@@ -88,7 +92,7 @@ struct OPENTRACK_API_EXPORT IFilter
     IFilter(const IFilter&) = delete;
     IFilter(IFilter&&) = delete;
     IFilter& operator=(const IFilter&) = delete;
-    inline IFilter() {}
+    IFilter();
 
     // optional destructor
     virtual ~IFilter();
@@ -101,6 +105,8 @@ struct OPENTRACK_API_EXPORT IFilter
 
 struct OPENTRACK_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 {
+    IFilterDialog();
+
     // optional destructor
     virtual ~IFilterDialog();
     // receive a pointer to the filter from ui thread
@@ -116,10 +122,11 @@ struct OPENTRACK_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialo
 // implement this in protocols
 struct OPENTRACK_API_EXPORT IProtocol
 {
+    IProtocol();
+
     IProtocol(const IProtocol&) = delete;
     IProtocol(IProtocol&&) = delete;
     IProtocol& operator=(const IProtocol&) = delete;
-    inline IProtocol() {}
 
     // optional destructor
     virtual ~IProtocol();
@@ -140,6 +147,8 @@ struct OPENTRACK_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDia
     virtual void register_protocol(IProtocol *protocol) = 0;
     // received protocol pointer is about to get deleted
     virtual void unregister_protocol() = 0;
+
+    IProtocolDialog();
 };
 
 // call once with your chosen class names in the plugin
@@ -152,7 +161,7 @@ struct OPENTRACK_API_EXPORT ITracker
     ITracker(const ITracker&) = delete;
     ITracker(ITracker&&) = delete;
     ITracker& operator=(const ITracker&) = delete;
-    inline ITracker() {}
+    ITracker();
 
     // optional destructor
     virtual ~ITracker();
@@ -173,6 +182,8 @@ struct OPENTRACK_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDial
     virtual void register_tracker(ITracker *tracker) = 0;
     // received tracker pointer is about to get deleted
     virtual void unregister_tracker() = 0;
+
+    ITrackerDialog();
 };
 
 // call once with your chosen class names in the plugin
