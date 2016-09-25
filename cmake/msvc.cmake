@@ -52,7 +52,7 @@ set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
 set(ldflags-shared-release "/OPT:REF /OPT:ICF=10")
-set(ldflags-shared "/DEBUG")
+set(ldflags-shared "/DEBUG:FASTLINK")
 
 foreach (i MODULE EXE SHARED)
     set(_LDFLAGS_${i} "${ldflags-shared}")
