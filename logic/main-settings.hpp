@@ -68,6 +68,7 @@ struct main_settings
     bundle b, b_map;
     axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_disable_tx, tcomp_disable_ty, tcomp_disable_tz;
+    value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
     value<bool> tray_enabled, tray_start;
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> use_camera_offset_from_centering;
@@ -92,6 +93,9 @@ struct main_settings
         tcomp_disable_tx(b, "compensate-translation-disable-x-axis", false),
         tcomp_disable_ty(b, "compensate-translation-disable-y-axis", false),
         tcomp_disable_tz(b, "compensate-translation-disable-z-axis", false),
+        tcomp_disable_src_yaw(b, "compensate-translation-disable-source-yaw", false),
+        tcomp_disable_src_pitch(b, "compensate-translation-disable-source-pitch", false),
+        tcomp_disable_src_roll(b, "compensate-translation-disable-source-roll", false),
         tray_enabled(b, "use-system-tray", false),
         tray_start(b, "start-in-tray", false),
         camera_yaw(b, "camera-yaw", 0),

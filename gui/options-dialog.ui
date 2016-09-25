@@ -322,7 +322,13 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
-           <number>3</number>
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
           </property>
           <item>
            <widget class="QCheckBox" name="trayp">
@@ -334,7 +340,7 @@
           <item>
            <widget class="QCheckBox" name="tray_start">
             <property name="text">
-             <string>Minimize to tray on startup</string>
+             <string>Minimize to tray on startup when enabled</string>
             </property>
            </widget>
           </item>
@@ -848,33 +854,117 @@ It won't work properly with translation compensation enabled.</string>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="tcomp_tx_disable">
-            <property name="styleSheet">
-             <string notr="true"/>
+           <widget class="QFrame" name="frame_2">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="text">
-             <string>Disable X compensation</string>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="tcomp_ty_disable">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>Disable Y compensation</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="tcomp_tz_disable">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>Disable Z compensation (for using zoom on Z axis)</string>
-            </property>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="tcomp_tx_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable X compensation</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="tcomp_ty_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable Y compensation</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QCheckBox" name="tcomp_tz_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable Z compensation (for zoom on Z axis)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="tcomp_src_yaw_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable compensation by yaw</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="tcomp_src_pitch_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable compensation by pitch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="tcomp_src_roll_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable compensation by roll</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -1324,7 +1414,7 @@ It won't work properly with translation compensation enabled.</string>
           <item>
            <widget class="QCheckBox" name="tracklogging_enabled">
             <property name="text">
-             <string>Enable - You will be asked for a filename whenever the tracker starts</string>
+             <string>Enable - You will be asked for a filename whenever tracking starts</string>
             </property>
            </widget>
           </item>
@@ -1434,10 +1524,6 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>pos_ty</tabstop>
   <tabstop>pos_tz</tabstop>
   <tabstop>center_method</tabstop>
-  <tabstop>tcomp_enable</tabstop>
-  <tabstop>tcomp_tx_disable</tabstop>
-  <tabstop>tcomp_ty_disable</tabstop>
-  <tabstop>tcomp_tz_disable</tabstop>
   <tabstop>src_yaw</tabstop>
   <tabstop>invert_yaw</tabstop>
   <tabstop>src_pitch</tabstop>
