@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>586</height>
+    <width>457</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="modal">
@@ -52,14 +52,14 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>120</width>
-           <height>108</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>120</width>
-           <height>108</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="text">
@@ -69,7 +69,7 @@
           <pixmap resource="ui-res.qrc">:/images/trackhat-hat.png</pixmap>
          </property>
          <property name="scaledContents">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -83,14 +83,14 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>130</width>
-           <height>130</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>130</width>
-           <height>130</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="text">
@@ -100,7 +100,7 @@
           <pixmap resource="ui-res.qrc">:/images/trackhat-clip-right.png</pixmap>
          </property>
          <property name="scaledContents">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -114,14 +114,14 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>130</width>
-           <height>130</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>130</width>
-           <height>130</height>
+           <width>192</width>
+           <height>192</height>
           </size>
          </property>
          <property name="text">
@@ -131,7 +131,7 @@
           <pixmap resource="ui-res.qrc">:/images/trackhat-clip-left.png</pixmap>
          </property>
          <property name="scaledContents">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
