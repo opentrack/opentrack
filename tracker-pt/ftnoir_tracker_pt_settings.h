@@ -18,11 +18,8 @@ struct settings_pt : opts
     value<double> min_point_size, max_point_size;
 
     value<int> t_MH_x, t_MH_y, t_MH_z;
-    value<int> fov, camera_mode;
-    value<int> model_used;
+    value<int> camera_mode, model_used;
 
-    value<bool> dynamic_pose;
-    value<int> init_phase_timeout;
     value<bool> auto_threshold;
 
     settings_pt() :
@@ -33,11 +30,8 @@ struct settings_pt : opts
         t_MH_x(b, "model-centroid-x", 0),
         t_MH_y(b, "model-centroid-y", 0),
         t_MH_z(b, "model-centroid-z", 0),
-        fov(b, "camera-fov", 1),
         camera_mode(b, "camera-mode", 0),
         model_used(b, "model-used", 0),
-        dynamic_pose(b, "dynamic-pose-resolution", true),
-        init_phase_timeout(b, "init-phase-timeout", 500),
         auto_threshold(b, "automatic-threshold", false)
     {}
 };

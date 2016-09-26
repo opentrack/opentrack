@@ -12,7 +12,7 @@ class Wizard : public QWizard
     Q_OBJECT
     Ui_wizard ui;
 public:
-    Wizard();
+    Wizard(QWidget* parent = nullptr);
 
     enum Model { Cap = 0, ClipRight = 1, ClipLeft = 2 };
     enum { ClipRightX = 135, ClipLeftX = -135 };

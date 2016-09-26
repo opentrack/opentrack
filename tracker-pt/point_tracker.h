@@ -55,6 +55,8 @@ class PointModel
 {
     friend class PointTracker;
 public:
+    enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
+
     static constexpr int N_POINTS = 3;
 
     cv::Vec3d M01;      // M01 in model frame
@@ -80,8 +82,6 @@ public:
 
     void set_model(settings_pt& s)
     {
-        enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
-
         switch (s.model_used)
         {
         default:

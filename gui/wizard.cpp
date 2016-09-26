@@ -3,7 +3,7 @@
 #include "tracker-pt/ftnoir_tracker_pt_settings.h"
 #include "filter-accela/ftnoir_filter_accela.h"
 
-Wizard::Wizard() : QWizard(nullptr)
+Wizard::Wizard(QWidget* parent) : QWizard(parent)
 {
     ui.setupUi(this);
     connect(this, SIGNAL(accepted()), this, SLOT(set_data()));
@@ -66,7 +66,6 @@ void Wizard::set_data()
     pt.threshold = 31;
     pt.min_point_size = 1.5;
     pt.max_point_size = 50;
-    pt.fov = 1;
     pt.camera_mode = 0;
     pt.model_used = m;
     pt.b->save();

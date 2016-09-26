@@ -58,17 +58,7 @@ void Tracker_PT::reset_command(Command command)
 
 bool Tracker_PT::get_focal_length(double& ret)
 {
-    int fov_;
-    switch (s.fov)
-    {
-    default:
-    case 0:
-        fov_ = 56;
-        break;
-    case 1:
-        fov_ = 75;
-        break;
-    }
+    static constexpr const double fov_ = 75;
 
     QMutexLocker l(&camera_mtx);
     CamInfo info;
@@ -135,8 +125,8 @@ void Tracker_PT::run()
                 point_tracker.track(points,
                                     PointModel(s),
                                     fx,
-                                    s.dynamic_pose,
-                                    s.init_phase_timeout,
+                                    s.model_used == PointModel::Cap,
+                                    500,
                                     info.res_x,
                                     info.res_y);
                 ever_success = true;

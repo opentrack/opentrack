@@ -45,9 +45,9 @@ OptionsDialog::OptionsDialog(main_settings& main,
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(main.tray_enabled, ui.trayp);
-    
+
     tie_setting(main.center_at_startup, ui.center_at_startup);
-    
+
     tie_setting(pt.camera_mode, ui.camera_mode);
 
     tie_setting(pt.threshold, ui.threshold_slider);
@@ -58,36 +58,32 @@ OptionsDialog::OptionsDialog(main_settings& main,
     tie_setting(pt.t_MH_x, ui.tx_spin);
     tie_setting(pt.t_MH_y, ui.ty_spin);
     tie_setting(pt.t_MH_z, ui.tz_spin);
-    
-    tie_setting(pt.fov, ui.camera_fov);
-    
+
     tie_setting(pt.model_used, ui.model_used);
-    
+
     connect(ui.ewma_slider, SIGNAL(valueChanged(int)), this, SLOT(update_ewma_display(int)));
     connect(ui.rotation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_display(int)));
     connect(ui.rot_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_rot_dz_display(int)));
     connect(ui.translation_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_display(int)));
     connect(ui.trans_dz_slider, SIGNAL(valueChanged(int)), this, SLOT(update_trans_dz_display(int)));
-    
+
     tie_setting(acc.rot_threshold, ui.rotation_slider);
     tie_setting(acc.trans_threshold, ui.translation_slider);
     tie_setting(acc.ewma, ui.ewma_slider);
     tie_setting(acc.rot_deadzone, ui.rot_dz_slider);
     tie_setting(acc.trans_deadzone, ui.trans_dz_slider);
-    
+
     update_rot_display(ui.rotation_slider->value());
     update_trans_display(ui.translation_slider->value());
     update_ewma_display(ui.ewma_slider->value());
     update_rot_dz_display(ui.rot_dz_slider->value());
     update_trans_dz_display(ui.trans_dz_slider->value());
-    
-    tie_setting(pt.dynamic_pose, ui.dynamic_pose);
-    tie_setting(pt.init_phase_timeout, ui.init_phase_timeout);
+
     tie_setting(pt.auto_threshold, ui.auto_threshold);
-    
+
     connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
-    
+
     timer.start(100);
 
     tie_setting(main.tcomp_p, ui.tcomp_enable);
@@ -106,7 +102,7 @@ OptionsDialog::OptionsDialog(main_settings& main,
     tie_setting(main.a_x.src, ui.src_x);
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
-    
+
     tie_setting(main.camera_yaw, ui.camera_yaw);
     tie_setting(main.camera_pitch, ui.camera_pitch);
     tie_setting(main.camera_roll, ui.camera_roll);
@@ -121,7 +117,7 @@ OptionsDialog::OptionsDialog(main_settings& main,
     ui.center_text->setText(kopts_to_string(main.key_center));
     ui.toggle_text->setText(kopts_to_string(main.key_toggle));
     ui.zero_text->setText(kopts_to_string(main.key_zero));
-    
+
     ui.start_tracking_text->setText(kopts_to_string(main.key_start_tracking));
     ui.stop_tracking_text->setText(kopts_to_string(main.key_stop_tracking));
     ui.toggle_tracking_text->setText(kopts_to_string(main.key_toggle_tracking));
@@ -190,7 +186,7 @@ void OptionsDialog::startstop_trans_calib(bool start)
         ui.tcalib_button->setChecked(false);
         return;
     }
-        
+
     if (start)
     {
         qDebug()<<"TrackerDialog:: Starting translation calibration";
