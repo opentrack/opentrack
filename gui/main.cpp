@@ -65,10 +65,12 @@ int main(int argc, char** argv)
         QSettings s(OPENTRACK_ORG);
         if (!s.contains("wizard-run-once"))
         {
-            s.setValue("wizard-run-once", true);
             auto w = std::make_shared<Wizard>();
             w->show();
             app.exec();
+            if (w->result() != QDialog::Accepted)
+                goto end;
+            s.setValue("wizard-run-once", true);
         }
     }
 
@@ -92,6 +94,7 @@ int main(int argc, char** argv)
         Dialog().exec();
     }
 
+end:
     // on MSVC crashes in atexit
 #ifdef _MSC_VER
     TerminateProcess(GetCurrentProcess(), 0);
