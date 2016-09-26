@@ -474,7 +474,7 @@ void MainWindow::stopTracker()
     if (!work)
         return;
 
-    //ui.game_name->setText("Not connected");
+    opts::set_teardown_flag(true); // XXX hack -sh 20160926
 
     pose_update_timer.stop();
     ui.pose_display->rotateBy_real(0, 0, 0, 0, 0, 0);
@@ -488,8 +488,6 @@ void MainWindow::stopTracker()
     if (pFilterDialog)
         pFilterDialog->unregister_filter();
 
-    save_modules();
-
     work = nullptr;
     libs = SelectedLibraries();
 
@@ -497,10 +495,11 @@ void MainWindow::stopTracker()
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
     }
+
+    opts::set_teardown_flag(false); // XXX hack -sh 20160926
+
     updateButtonState(false, false);
-
     set_title();
-
     ui.btnStartTracker->setFocus();
 }
 
