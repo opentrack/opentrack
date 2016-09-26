@@ -12,6 +12,7 @@
 #include "filter-accela/ftnoir_filter_accela.h"
 #include "opentrack-compat/options.hpp"
 #include "new_file_dialog.h"
+#include "wizard.h"
 #include <QFileDialog>
 #include <QDesktopServices>
 
@@ -207,12 +208,24 @@ void MainWindow::make_empty_config()
 {
     QString name;
     const QString dir = group::ini_directory();
+    const QString old_name = group::ini_filename();
+
     if (dir != "" && get_new_config_name_from_dialog(name))
     {
-        QFile filename(dir + "/" + name);
-        (void) filename.open(QFile::ReadWrite);
-        refresh_config_list();
-        ui.iconcomboProfile->setCurrentText(name);
+        // don't create the file until wizard is done. only create the registry entry.
+        save();
+        QSettings(OPENTRACK_ORG).setValue(OPENTRACK_CONFIG_FILENAME_KEY, name);
+
+        const int code = Wizard(this).exec();
+
+        if (code == QWizard::Accepted)
+        {
+            QFile(dir + "/" + name).open(QFile::ReadWrite);
+            refresh_config_list();
+            ui.iconcomboProfile->setCurrentText(name);
+        }
+        else
+            QSettings(OPENTRACK_ORG).setValue(OPENTRACK_CONFIG_FILENAME_KEY, old_name);
     }
 }
 
@@ -480,8 +493,6 @@ void MainWindow::exit() {
 
 void MainWindow::profileSelected(QString name)
 {
-    maybe_save();
-
     if (name == "" || is_refreshing_profiles)
         return;
 
@@ -490,7 +501,8 @@ void MainWindow::profileSelected(QString name)
 
     if (old_name != new_name)
     {
-        save();
+        save_timer.stop();
+        _save();
 
         {
             QSettings settings(OPENTRACK_ORG);
