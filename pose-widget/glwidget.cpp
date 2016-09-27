@@ -7,6 +7,7 @@
 
 #include "glwidget.h"
 #include "api/is-window-visible.hpp"
+#include "compat/util.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>
@@ -142,98 +143,106 @@ bool Triangle::barycentric_coords(const Triangle::vec2& px, Triangle::vec2& uv, 
 
 void GLWidget::project_quad_texture()
 {
-    const int sx = width(), sy = height();
-    const int ow = front.width(), oh = front.height();
-    const vec3 corners[] = {
-        vec3(-ow/2., -oh/2, 0),
-        vec3(ow/2, -oh/2, 0),
-        vec3(-ow/2, oh/2, 0),
-        vec3(ow/2, oh/2, 0.)
-    };
-
+    num dir;
     vec2 pt[4];
-    vec2 sz((sx-ow)/2, (sy-oh)/2);
-    for (int i = 0; i < 4; i++)
-        pt[i] = project(corners[i]) + vec2(sx/2, sy/2);
+    const int sx = width() - 1, sy = height() - 1;
+    vec2 projected[3];
 
-    vec3 normal1(0, 0, 1);
-    vec3 normal2;
     {
-        vec3 foo[3];
-        for (int i = 0; i < 3; i++)
-            foo[i] = project2(corners[i]);
-        normal2 = normal(foo[0], foo[1], foo[2]);
+        const int sx_ = (sx - std::max(0, (sx - sy)/2)) * 5/9;
+        const int sy_ = (sy - std::max(0, (sy - sx)/2)) * 5/9;
+
+        const vec3 dst_corners[] =
+        {
+            vec3(-sx_/2., -sy_/2, 0),
+            vec3(sx_/2, -sy_/2, 0),
+            vec3(-sx_/2, sy_/2, 0),
+            vec3(sx_/2, sy_/2, 0.)
+        };
+
+        for (int i = 0; i < 4; i++)
+            pt[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
+
+        vec3 normal1(0, 0, 1);
+        vec3 normal2;
+        {
+            vec3 foo[3];
+            for (int i = 0; i < 3; i++)
+            {
+                foo[i] = project2(dst_corners[i]);
+                projected[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
+            }
+            normal2 = normal(foo[0], foo[1], foo[2]);
+        }
+        dir = normal1.dot(normal2);
     }
 
-    num dir = normal1.dot(normal2);
+    const QImage& tex = dir < 0 ? back : front;
 
-    QImage& tex = dir < 0 ? back : front;
+    if (image.size() != size())
+        image = QImage(QSize(sx, sy), QImage::Format_RGBA8888);
 
-    QImage texture(QSize(sx, sy), QImage::Format_RGBA8888);
-    QColor bgColor = palette().color(QPalette::Current, QPalette::Window);
-    texture.fill(bgColor);
+    image.fill(palette().color(QPalette::Current, QPalette::Window));
 
-    const vec2 projected[2][3] =
-    {
-        { pt[0], pt[1], pt[2] },
-        { pt[3], pt[1], pt[2] }
-    };
+    const int ow = tex.width(), oh = tex.height();
 
-    const vec2 origs[2][3] =
+    vec2 origs[2][3] =
     {
         {
             vec2(0, 0),
             vec2(ow-1, 0),
-            vec2(0, oh-1) },
+            vec2(0, oh-1)
+        },
         {
             vec2(ow-1, oh-1),
-            vec2(0, oh-1),
-            vec2(ow-1, 0)
+            vec2(0, oh-1) - vec2(ow-1, oh-1),
+            vec2(ow-1, 0) - vec2(ow-1, oh-1),
         }
     };
 
-    const Triangle triangles[2] =
-    {
-        Triangle(projected[0][0], projected[0][1], projected[0][2]),
-        Triangle(projected[1][0], projected[1][1], projected[1][2])
-    };
+    Triangle t(projected[0], projected[1], projected[2]);
 
     const int orig_pitch = tex.bytesPerLine();
-    const int dest_pitch = texture.bytesPerLine();
+    const int dest_pitch = image.bytesPerLine();
 
     const unsigned char* orig = tex.bits();
-    unsigned char* dest = texture.bits();
+    unsigned char* dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
-    const int dest_depth = texture.depth() / 8;
+    const int dest_depth = image.depth() / 8;
 
     /* image breakage? */
-    if (orig_depth < 3)
+    if (orig_depth != 4)
+    {
+        qDebug() << "pose-widget: octopus must be saved as .png with 32-bit depth";
         return;
+    }
 
-    for (int y = 0; y < sy; y++)
-        for (int x = 0; x < sx; x++)
+    const vec3 half = rotation * vec3(.5f, .5f, 0);
+
+    for (int y = 1; y < sy; y++)
+        for (int x = 1; x < sx; x++)
         {
             vec2 pos(x, y);
             vec2 uv;
             int i;
-            if (triangles[0].barycentric_coords(pos, uv, i))
+            if (t.barycentric_coords(pos, uv, i))
             {
                 const float fx = origs[i][0].x()
-                                 + uv.x() * (origs[i][2].x() - origs[i][0].x())
-                                 + uv.y() * (origs[i][1].x() - origs[i][0].x());
+                                 + uv.x() * origs[i][2].x()
+                                 + uv.y() * origs[i][1].x();
                 const float fy = origs[i][0].y()
-                                 + uv.x() * (origs[i][2].y() - origs[i][0].y())
-                                 + uv.y() * (origs[i][1].y() - origs[i][0].y());
+                                 + uv.x() * origs[i][2].y()
+                                 + uv.y() * origs[i][1].y();
 
-                const int px_ = fx + .5f;
-                const int py_ = fy + .5f;
+                const int px_ = fx + half.x();
+                const int py_ = fy + half.y();
                 const int px = fx;
                 const int py = fy;
                 const float ax_ = fx - px;
                 const float ay_ = fy - py;
-                const float ax = 1.f - ax_;
-                const float ay = 1.f - ay_;
+                const float ax = 1 - ax_;
+                const float ay = 1 - ay_;
 
                 // 0, 0 -- ax, ay
                 const int orig_pos = py * orig_pitch + px * orig_depth;
@@ -272,7 +281,6 @@ void GLWidget::project_quad_texture()
                 dest[pos + 3] = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
             }
         }
-    image = texture;
 }
 
 GLWidget::vec2 GLWidget::project(const vec3 &point)
