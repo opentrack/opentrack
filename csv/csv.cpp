@@ -167,7 +167,7 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
                         table[i] = t(tmp[i]);
                     }
                 }
-                qDebug() << "game-id" << id_str << "proto" << proto;
+                qDebug() << "csv: game-id" << id_str << "proto" << proto;
                 gamename = move(name);
                 return true;
             }
