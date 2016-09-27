@@ -13,6 +13,7 @@
  */
 
 #include "compat/sleep.hpp"
+#include "compat/util.hpp"
 
 #include "tracker.h"
 
@@ -30,7 +31,8 @@ constexpr double Tracker::d2r;
 Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
     m(m),
     libs(libs),
-    logger(logger)
+    logger(logger),
+    backlog_time(0)
 {
     set(f_center, s.center_at_startup);
 }
@@ -385,13 +387,21 @@ void Tracker::run()
         using std::min;
 
         const long elapsed_usecs = t.elapsed_usecs();
-        const long sleep_us = const_sleep_us * 2 - elapsed_usecs;
 
-        const unsigned sleep_time = unsigned(max(1l, min(const_sleep_us * 4, max(1l, (sleep_us + 200l)/1000l))));
+        backlog_time += elapsed_usecs - const_sleep_us;
+
+        if (std::fabs(backlog_time) > 10000l * 1000)
+        {
+            qDebug() << "tracker: backlog interval overflow" << backlog_time;
+            backlog_time = 0;
+        }
+
+        const unsigned sleep_time = unsigned(std::round(clamp((const_sleep_us - backlog_time)/1000., 0., const_sleep_us*3/1000.)));
 
         t.start();
 
-        portable::sleep(unsigned(max(1u, sleep_time)));
+        if (sleep_time > 0)
+            portable::sleep(sleep_time);
     }
 
     {

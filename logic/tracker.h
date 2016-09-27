@@ -116,6 +116,8 @@ private:
     state real_rotation, scaled_rotation;
     euler_t t_center;
 
+    long backlog_time;
+
     double map(double pos, Map& axis);
     void logic();
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
