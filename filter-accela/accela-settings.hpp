@@ -55,6 +55,6 @@ struct settings_accela : opts
         rot_deadzone(b, "rotation-deadzone", slider_value(0, 0, 2)),
         trans_deadzone(b, "translation-deadzone", slider_value(0, 0, 1)),
         ewma(b, "ewma", slider_value(0, 0, 30)),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 2))
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.05, 1, 1.5))
     {}
 };
