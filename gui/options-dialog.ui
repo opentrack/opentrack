@@ -821,7 +821,7 @@ It won't work properly with translation compensation enabled.</string>
           <string notr="true"/>
          </property>
          <property name="title">
-          <string>Translation compensation</string>
+          <string>Relative translation</string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -830,7 +830,7 @@ It won't work properly with translation compensation enabled.</string>
           <item>
            <widget class="QLabel" name="label_16">
             <property name="text">
-             <string>With compensation on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</string>
+             <string>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -889,7 +889,7 @@ It won't work properly with translation compensation enabled.</string>
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Disable X compensation</string>
+                <string>Disable for X</string>
                </property>
               </widget>
              </item>
@@ -905,7 +905,7 @@ It won't work properly with translation compensation enabled.</string>
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Disable Y compensation</string>
+                <string>Disable for Y</string>
                </property>
               </widget>
              </item>
@@ -921,7 +921,7 @@ It won't work properly with translation compensation enabled.</string>
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Disable Z compensation (for zoom on Z axis)</string>
+                <string>Disable for Z (for zoom on Z axis)</string>
                </property>
               </widget>
              </item>
@@ -934,7 +934,7 @@ It won't work properly with translation compensation enabled.</string>
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Disable compensation by yaw</string>
+                <string>Disable effect by yaw</string>
                </property>
               </widget>
              </item>
@@ -947,7 +947,7 @@ It won't work properly with translation compensation enabled.</string>
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Disable compensation by pitch</string>
+                <string>Disable effect by pitch</string>
                </property>
               </widget>
              </item>
@@ -960,7 +960,7 @@ It won't work properly with translation compensation enabled.</string>
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Disable compensation by roll</string>
+                <string>Disable effect by roll</string>
                </property>
               </widget>
              </item>
