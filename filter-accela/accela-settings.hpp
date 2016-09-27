@@ -51,9 +51,9 @@ struct settings_accela : opts
     settings_accela() :
         opts("accela-sliders"),
         rot_sensitivity(b, "rotation-sensitivity", slider_value(1.8, .05, 5)),
-        trans_sensitivity(b, "translation-sensitivity", slider_value(1.8, .05, 4)),
-        rot_deadzone(b, "rotation-deadzone", slider_value(0, 0, 2)),
-        trans_deadzone(b, "translation-deadzone", slider_value(0, 0, 1)),
+        trans_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
+        rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, 2)),
+        trans_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
         ewma(b, "ewma", slider_value(0, 0, 30)),
         rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.05, 1, 1.5))
     {}
