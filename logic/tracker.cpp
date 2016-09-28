@@ -136,6 +136,16 @@ void Tracker::logic()
         raw(i) = newpose(i);
     }
 
+    // hatire, udp, and freepie trackers can mess up here
+    for (unsigned i = 3; i < 6; i++)
+    {
+        using std::fmod;
+        using std::copysign;
+
+        const double x = value(i);
+        value(i) = fmod(x + copysign(180, x), 360) - copysign(180, x);
+    }
+
     logger.write_pose(raw); // raw
 
     if (is_nan(raw))
