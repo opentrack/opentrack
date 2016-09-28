@@ -90,16 +90,13 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
     unsigned idx = 0;
     for (int y=0; y < frame_blobs.rows; y++)
     {
-        if (idx >= max_blobs) break;
-
         const unsigned char* ptr_bin = frame_blobs.ptr(y);
         for (int x=0; x < frame_blobs.cols; x++)
         {
-            if (idx >= max_blobs) break;
-
             if (ptr_bin[x] != 255)
                 continue;
             idx = blobs.size() + 1;
+
             cv::Rect rect;
             cv::floodFill(frame_blobs,
                           cv::Point(x,y),
@@ -155,9 +152,12 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                                 cv::Scalar(0, 0, 255),
                                 1);
                 }
+
+                if (idx >= max_blobs) goto end;
             }
         }
     }
+end:
 
     sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
 
