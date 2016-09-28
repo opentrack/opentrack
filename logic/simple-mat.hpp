@@ -70,6 +70,18 @@ public:
     template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
     inline operator()(int i) { return data[0][i]; }
 
+    template<int Q = w_> typename std::enable_if<equals<Q, 1, 0>::value, num>::type
+    inline operator()(unsigned i) const { return data[i][0]; }
+
+    template<int P = h_> typename std::enable_if<equals<P, 1, 1>::value, num>::type
+    inline operator()(unsigned i) const { return data[0][i]; }
+
+    template<int Q = w_> typename std::enable_if<equals<Q, 1, 2>::value, num&>::type
+    inline operator()(unsigned i) { return data[i][0]; }
+
+    template<int P = h_> typename std::enable_if<equals<P, 1, 3>::value, num&>::type
+    inline operator()(unsigned i) { return data[0][i]; }
+
 #define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_, "")
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 1>::value, num>::type
@@ -175,6 +187,9 @@ public:
 
     inline num operator()(int j, int i) const { return data[j][i]; }
     inline num& operator()(int j, int i) { return data[j][i]; }
+
+    inline num operator()(unsigned j, unsigned i) const { return data[j][i]; }
+    inline num& operator()(unsigned j, unsigned i) { return data[j][i]; }
 
     template<typename... ts, int h__ = h_, int w__ = w_,
              typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
