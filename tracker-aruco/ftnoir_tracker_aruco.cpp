@@ -435,15 +435,8 @@ TrackerControls::TrackerControls()
 
 void TrackerControls::set_camera_settings_available(const QString& camera_name)
 {
-#ifdef _WIN32
-    const bool avail = camera_name != QStringLiteral("PS3Eye Camera");
+    const bool avail = video_property_page::should_show_dialog(camera_name);
     ui.camera_settings->setEnabled(avail);
-#elif defined(__linux)
-    (void)camera_name;
-#else
-    (void)camera_name;
-    ui.camera_settings->setEnabled(false);
-#endif
 }
 
 void TrackerControls::show_camera_settings()

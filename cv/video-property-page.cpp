@@ -10,7 +10,7 @@
 #ifdef _WIN32
 
 #include <cstring>
-#include <QString>
+#include <QRegularExpression>
 #include <QDebug>
 
 #define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QStringLiteral(#expr) << hr; goto done; }
@@ -20,6 +20,24 @@ bool video_property_page::show_from_capture(cv::VideoCapture& cap, int)
 {
     cap.set(cv::CAP_PROP_SETTINGS, 0);
     return true;
+}
+
+bool video_property_page::should_show_dialog(const QString& camera_name)
+{
+    using re = QRegularExpression;
+    static const re regexen[] =
+    {
+        re("^PS3Eye Camera$"),
+        re("^A4 TECH "),
+    };
+    bool avail = true;
+    for (const re& r : regexen)
+    {
+        avail &= !r.match(camera_name).hasMatch();
+        if (!avail)
+            break;
+    }
+    return avail;
 }
 
 bool video_property_page::show(int id)
@@ -135,6 +153,11 @@ done:
 #   include <QProcess>
 #   include "compat/camera-names.hpp"
 
+bool video_property_page::should_show_dialog(const QString& camera_name)
+{
+    return true;
+}
+
 bool video_property_page::show(int idx)
 {
     const QList<QString> camera_names(get_camera_names());
@@ -152,4 +175,8 @@ bool video_property_page::show_from_capture(cv::VideoCapture&, int idx)
 #else
 bool video_property_page::show(int) { return false; }
 bool video_property_page::show_from_capture(cv::VideoCapture&, int) { return false; }
+bool video_property_page::should_show_dialog(const QString& camera_name)
+{
+    return false;
+}
 #endif
