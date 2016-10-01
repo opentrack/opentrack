@@ -66,11 +66,19 @@ void Rift_Tracker::data(double *data)
 {
     if (pSFusion != NULL && pSensor != NULL)
     {
-        Quatf hmdOrient = pSFusion->GetOrientation();
+        Quatf rot = pSFusion->GetOrientation();
 
-        float yaw = 0, pitch = 0, roll = 0;
+        static constexpr float c_mult = 8;
+        static constexpr float c_div = 1/c_mult;
 
-        hmdOrient.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch , &roll);
+        Vector3f axis;
+        float angle;
+
+        rot.GetAxisAngle(&axis, &angle);
+        angle *= c_div;
+
+        float yaw, pitch, roll;
+        Quatf(axis, angle).GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
 
         double yaw_ = double(yaw);
 

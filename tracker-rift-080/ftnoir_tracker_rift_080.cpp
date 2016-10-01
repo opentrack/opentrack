@@ -1,15 +1,12 @@
 /* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "ftnoir_tracker_rift_080.h"
 #include "api/plugin-api.hpp"
+#include "compat/util.hpp"
 
 #include <QString>
 
-#include <OVR_CAPI.h>
 #include <Extras/OVR_Math.h>
 #include <OVR_CAPI_0_8_0.h>
-
-#include <cstdio>
-#include <cmath>
 
 using namespace OVR;
 
@@ -65,10 +62,23 @@ void Rift_Tracker::data(double *data)
         ovrTrackingState ss = ovr_GetTrackingState(hmd, 0, false);
         if (ss.StatusFlags & ovrStatus_OrientationTracked)
         {
-            auto pose = ss.HeadPose.ThePose;
-            Quatf quat = pose.Orientation;
+            static constexpr float c_mult = 8;
+            static constexpr float c_div = 1/c_mult;
+
+            Vector3f axis;
+            float angle;
+
+            const Posef pose(ss.HeadPose.ThePose);
+            pose.Rotation.GetAxisAngle(&axis, &angle);
+            angle *= c_div;
+
             float yaw, pitch, roll;
-            quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+            Quatf(axis, angle).GetYawPitchRoll(&yaw, &pitch, &roll);
+
+            yaw *= c_mult;
+            pitch *= c_mult;
+            roll *= c_mult;
+
             double yaw_ = double(yaw);
             if (s.useYawSpring)
             {
@@ -83,9 +93,9 @@ void Rift_Tracker::data(double *data)
             data[Yaw] = yaw_                   * -d2r;
             data[Pitch] = double(pitch)        *  d2r;
             data[Roll] = double(roll)          *  d2r;
-            data[TX] = double(pose.Position.x) * -1e2;
-            data[TY] = double(pose.Position.y) *  1e2;
-            data[TZ] = double(pose.Position.z) *  1e2;
+            data[TX] = double(pose.Translation.x) * -1e2;
+            data[TY] = double(pose.Translation.y) *  1e2;
+            data[TZ] = double(pose.Translation.z) *  1e2;
         }
     }
 }

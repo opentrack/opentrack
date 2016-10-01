@@ -53,10 +53,19 @@ void Rift_Tracker::data(double *data)
         ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, 0);
         if (ss.StatusFlags & ovrStatus_OrientationTracked)
         {
-            auto pose = ss.HeadPose.ThePose;
-            Quatf quat = pose.Orientation;
+            static constexpr float c_mult = 8;
+            static constexpr float c_div = 1/c_mult;
+
+            Vector3f axis;
+            float angle;
+
+            const Posef pose(ss.HeadPose.ThePose);
+            pose.Rotation.GetAxisAngle(&axis, &angle);
+            angle *= c_div;
+
             float yaw, pitch, roll;
-            quat.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+            Quatf(axis, angle).GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+
             double yaw_ = double(yaw);
             if (s.useYawSpring)
             {
@@ -71,9 +80,9 @@ void Rift_Tracker::data(double *data)
             data[Yaw] = yaw_ * -d2r;
             data[Pitch] = double(pitch) * d2r;
             data[Roll] = double(roll) * d2r;
-            data[TX] = double(pose.Position.x) * -1e2;
-            data[TY] = double(pose.Position.y) *  1e2;
-            data[TZ] = double(pose.Position.z) *  1e2;
+            data[TX] = double(pose.Translation.x) * -1e2;
+            data[TY] = double(pose.Translation.y) *  1e2;
+            data[TZ] = double(pose.Translation.z) *  1e2;
         }
     }
 }
