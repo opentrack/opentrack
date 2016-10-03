@@ -172,7 +172,7 @@ void Tracker::logic()
     {
         bool can_center = false;
 
-        if (get(f_center) && !nanp)
+        if (get(f_center))
         {
             using std::fabs;
 
