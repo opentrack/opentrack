@@ -327,7 +327,8 @@ void Tracker::logic()
         value(i) = map(value(i), m(i));
 
     for (int i = 0; i < 6; i++)
-        value(i) *= int(m(i).opts.invert) * -2 + 1;
+        if (m(i).opts.invert)
+            value(i) = -value(i);
 
     logger.write_pose(value); // "mapped"
 
