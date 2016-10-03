@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>588</height>
+    <width>459</width>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -376,10 +376,19 @@
           <string>Camera offset</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
-          <item row="2" column="0">
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="use_center_as_translation_camera_offset">
+            <property name="text">
+             <string>Use camera center as translation offset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect. Also see &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/choosing-camera-offset&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;description on wiki&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.&lt;/p&gt;
+
+&lt;p&gt;You can derive it from the center pose as per the checkbox or specify it manually. Using both also works, as in cases when moving toward the screen applies moving upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -395,28 +404,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="use_center_as_translation_camera_offset">
-            <property name="text">
-             <string>Use camera center as translation offset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>This option is experimental. Please report your findings on the github issue tracker.
-It won't work properly with translation compensation enabled.</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" alignment="Qt::AlignLeft">
+          <item row="6" column="0" alignment="Qt::AlignLeft">
            <widget class="QGroupBox" name="groupBox_3">
             <property name="styleSheet">
              <string notr="true">QGroupBox
@@ -501,19 +489,6 @@ It won't work properly with translation compensation enabled.</string>
               </widget>
              </item>
             </layout>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="Line" name="line">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="lineWidth">
-             <number>1</number>
-            </property>
            </widget>
           </item>
          </layout>
@@ -1513,10 +1488,10 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>center_at_startup</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
+  <tabstop>use_center_as_translation_camera_offset</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>
-  <tabstop>use_center_as_translation_camera_offset</tabstop>
   <tabstop>pos_rx</tabstop>
   <tabstop>pos_ry</tabstop>
   <tabstop>pos_rz</tabstop>
@@ -1537,6 +1512,13 @@ It won't work properly with translation compensation enabled.</string>
   <tabstop>src_z</tabstop>
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
+  <tabstop>tcomp_enable</tabstop>
+  <tabstop>tcomp_tx_disable</tabstop>
+  <tabstop>tcomp_ty_disable</tabstop>
+  <tabstop>tcomp_tz_disable</tabstop>
+  <tabstop>tcomp_src_yaw_disable</tabstop>
+  <tabstop>tcomp_src_pitch_disable</tabstop>
+  <tabstop>tcomp_src_roll_disable</tabstop>
  </tabstops>
  <resources/>
  <connections/>
