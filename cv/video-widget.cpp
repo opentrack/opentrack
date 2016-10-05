@@ -9,12 +9,9 @@
 #include "video-widget.hpp"
 #include <opencv2/imgproc.hpp>
 
-#include "api/is-window-visible.hpp"
-
 cv_video_widget::cv_video_widget(QWidget* parent) :
     QWidget(parent),
-    freshp(false),
-    visible(true)
+    freshp(false)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
     timer.start(50);
@@ -27,10 +24,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     if (!freshp)
     {
         if (_frame.cols != frame.cols || _frame.rows != frame.rows)
-        {
-            _frame = cv::Mat(frame.rows, frame.cols, CV_8U);
-            _frame2 = cv::Mat(frame.rows, frame.cols, CV_8U);
-        }
+            _frame = cv::Mat(frame.rows, frame.cols, CV_8UC3);
         frame.copyTo(_frame);
         freshp = true;
     }
@@ -47,17 +41,19 @@ void cv_video_widget::update_and_repaint()
 {
     QMutexLocker l(&mtx);
 
+    if (_frame.empty() || !freshp)
+        return;
 
-        if (_frame.empty() || !freshp)
-            return;
-        cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
+    if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
+        _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC3);
 
-        if (_frame3.cols != width() || _frame3.rows != height())
-            _frame3 = cv::Mat(height(), width(), CV_8U);
+    if (_frame3.cols != width() || _frame3.rows != height())
+        _frame3 = cv::Mat(height(), width(), CV_8UC3);
 
-        cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
+    cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
+    cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
 
-        texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
-        freshp = false;
-        update();
+    texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
+    freshp = false;
+    update();
 }
