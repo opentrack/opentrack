@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "compat/timer.hpp"
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <QObject>
@@ -33,7 +32,6 @@ private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
-    Timer window_check_timer;
     cv::Mat _frame, _frame2, _frame3;
-    bool freshp, visible;
+    bool freshp;
 };

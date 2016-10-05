@@ -477,7 +477,7 @@ void MainWindow::stopTracker()
     opts::set_teardown_flag(true); // XXX hack -sh 20160926
 
     pose_update_timer.stop();
-    ui.pose_display->rotateBy_real(0, 0, 0, 0, 0, 0);
+    ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
 
     if (pTrackerDialog)
         pTrackerDialog->unregister_tracker();

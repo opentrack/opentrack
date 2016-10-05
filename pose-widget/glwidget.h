@@ -12,7 +12,6 @@
 #include <QPixmap>
 #include "api/plugin-api.hpp"
 #include "logic/simple-mat.hpp"
-#include "compat/timer.hpp"
 
 #ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -31,9 +30,8 @@ public:
     GLWidget(QWidget *parent);
     ~GLWidget();
     void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
-    void rotateBy_real(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 protected:
-    void paintEvent (QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 private:
     vec2 project(const vec3& point);
     vec3 project2(const vec3& point);
@@ -45,6 +43,4 @@ private:
     QImage front;
     QImage back;
     QImage image;
-    Timer visible_timer;
-    bool visible;
 };

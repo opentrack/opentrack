@@ -47,14 +47,7 @@ void cv_video_widget::update_and_repaint()
 {
     QMutexLocker l(&mtx);
 
-    if (window_check_timer.elapsed_ms() > 250)
-    {
-        visible = is_window_visible(this);
-        window_check_timer.start();
-    }
 
-    if (visible)
-    {
         if (_frame.empty() || !freshp)
             return;
         cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
@@ -67,5 +60,4 @@ void cv_video_widget::update_and_repaint()
         texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
         freshp = false;
         update();
-    }
 }

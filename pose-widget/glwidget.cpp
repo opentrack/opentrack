@@ -6,7 +6,6 @@
  */
 
 #include "glwidget.h"
-#include "api/is-window-visible.hpp"
 #include "compat/util.hpp"
 #include <cmath>
 #include <algorithm>
@@ -15,20 +14,20 @@
 
 #include <QDebug>
 
-GLWidget::GLWidget(QWidget *parent) : QWidget(parent), visible(true)
+GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
     Q_INIT_RESOURCE(posewidget);
 
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
-    rotateBy_real(0, 0, 0, 0, 0, 0);
+    rotateBy(0, 0, 0, 0, 0, 0);
 }
 
 GLWidget::~GLWidget()
 {
 }
 
-void GLWidget::paintEvent (QPaintEvent * event)
+void GLWidget::paintEvent(QPaintEvent * event)
 {
     QPainter p(this);
     project_quad_texture();
@@ -36,18 +35,6 @@ void GLWidget::paintEvent (QPaintEvent * event)
 }
 
 void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
-{
-    if (visible_timer.elapsed_ms() > 250)
-    {
-        visible = is_window_visible(this);
-        visible_timer.start();
-    }
-
-    if (visible)
-        rotateBy_real(xAngle, yAngle, zAngle, x, y, z);
-}
-
-void GLWidget::rotateBy_real(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
     using std::sin;
     using std::cos;
