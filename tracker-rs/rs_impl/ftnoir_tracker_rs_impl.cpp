@@ -173,10 +173,10 @@ int rs_tracker_impl_update_pose(double *data) {//TODO: add bool preview activate
                         pose = face->QueryPose();
                         if (pose == NULL) continue;
 
-                        poseAnglesAvailable = pose->QueryPoseAngles(&angles);
+                        poseAnglesAvailable = !!pose->QueryPoseAngles(&angles);
                         if (!poseAnglesAvailable) continue;
 
-                        headPositionAvailable = pose->QueryHeadPosition(&headPosition);
+                        headPositionAvailable = !!pose->QueryHeadPosition(&headPosition);
                         if (!headPositionAvailable) continue;
 
                         //TODO: use pxcI32 pose->QueryConfidence() ?
