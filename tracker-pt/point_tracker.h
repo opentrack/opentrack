@@ -16,6 +16,7 @@ using namespace pt_types;
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <vector>
+#include <array>
 #include <QObject>
 
 class Affine final
@@ -89,15 +90,7 @@ public:
 
 private:
     // the points in model order
-    struct PointOrder
-    {
-        vec2 points[PointModel::N_POINTS];
-        PointOrder()
-        {
-            for (unsigned i = 0; i < PointModel::N_POINTS; i++)
-                points[i] = vec2(0, 0);
-        }
-    };
+    using PointOrder = std::array<vec2, 3>;
 
     PointOrder find_correspondences(const std::vector<vec2>& projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const std::vector<vec2>& points, const PointModel &model, f focal_length, int w, int h);

@@ -34,11 +34,6 @@ static void set_row(mat33& m, int i, const vec3& v)
     m(i,2) = v[2];
 }
 
-static bool d_vals_sort(const std::pair<f,int> a, const std::pair<f,int> b)
-{
-    return a.first < b.first;
-}
-
 PointModel::PointModel(settings_pt& s)
 {
     set_model(s);
@@ -75,15 +70,15 @@ void PointModel::set_model(settings_pt& s)
 void PointModel::get_d_order(const std::vector<vec2>& points, int* d_order, const vec2& d) const
 {
     // fit line to orthographically projected points
-    std::vector<std::pair<f,int>> d_vals;
+    using t = std::pair<f,int>;
+    std::vector<t> d_vals;
     // get sort indices with respect to d scalar product
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
         d_vals.push_back(std::pair<f, int>(d.dot(points[i]), i));
 
     std::sort(d_vals.begin(),
               d_vals.end(),
-              d_vals_sort
-              );
+              [](const t& a, const t& b) { return a.first < b.first; });
 
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
         d_order[i] = d_vals[i].second;
@@ -101,9 +96,9 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
                                                                      int h)
 {
     PointTracker::PointOrder p;
-    p.points[0] = project(vec3(0,0,0), focal_length);
-    p.points[1] = project(model.M01, focal_length);
-    p.points[2] = project(model.M02, focal_length);
+    p[0] = project(vec3(0,0,0), focal_length);
+    p[1] = project(model.M01, focal_length);
+    p[2] = project(model.M02, focal_length);
 
     const int diagonal = int(std::sqrt(w*w + h*h));
     static constexpr int div = 100;
@@ -121,7 +116,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
         // find closest point to projected model point i
         for (unsigned j=0; j<PointModel::N_POINTS; ++j)
         {
-            vec2 d = p.points[i]-points[j];
+            vec2 d = p[i]-points[j];
             f sdist = d.dot(d);
             if (sdist < min_sdist || j==0)
             {
@@ -139,7 +134,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::
             return find_correspondences(points, model);
         }
         point_taken[min_idx] = true;
-        p.points[i] = points[min_idx];
+        p[i] = points[min_idx];
     }
 
     return p;
@@ -192,12 +187,12 @@ PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<ve
     // set correspondences
     PointOrder p;
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
-        p.points[model_d_order[i]] = points[point_d_order[i]];
+        p[model_d_order[i]] = points[point_d_order[i]];
 
     return p;
 }
 
-int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f focal_length)
+int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f focal_length)
 {
     // POSIT algorithm for coplanar points as presented in
     // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
@@ -225,8 +220,6 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order_, f foc
     mat33* R_current = &R_1;
 
     static constexpr int max_iter = 100;
-
-    const vec2* order = order_.points;
 
     using std::sqrt;
     using std::atan;
