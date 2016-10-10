@@ -15,6 +15,7 @@ using namespace pt_types;
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 
 #include <QDebug>
 
@@ -67,17 +68,17 @@ void PointModel::set_model(settings_pt& s)
     }
 }
 
-void PointModel::get_d_order(const std::vector<vec2>& points, int* d_order, const vec2& d) const
+void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const
 {
     // fit line to orthographically projected points
-    using t = std::pair<f,int>;
-    std::vector<t> d_vals;
+    using t = std::pair<f,unsigned>;
+    t d_vals[3];
     // get sort indices with respect to d scalar product
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
-        d_vals.push_back(std::pair<f, int>(d.dot(points[i]), i));
+        d_vals[i] = t(d.dot(points[i]), i);
 
-    std::sort(d_vals.begin(),
-              d_vals.end(),
+    std::sort(d_vals,
+              d_vals + 3u,
               [](const t& a, const t& b) { return a.first < b.first; });
 
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
@@ -89,7 +90,7 @@ PointTracker::PointTracker() : init_phase(true)
 {
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences_previous(const std::vector<vec2>& points,
+PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2* points,
                                                                      const PointModel& model,
                                                                      f focal_length,
                                                                      int w,
@@ -157,33 +158,33 @@ void PointTracker::track(const std::vector<vec2>& points,
     }
 
     if (!dynamic_pose || init_phase)
-        order = find_correspondences(points, model);
+        order = find_correspondences(points.data(), model);
     else
-    {
-        order = find_correspondences_previous(points, model, focal_length, w, h);
-    }
+        order = find_correspondences_previous(points.data(), model, focal_length, w, h);
 
-    POSIT(model, order, focal_length);
-    init_phase = false;
-    t.start();
+    if (POSIT(model, order, focal_length) != -1)
+    {
+        init_phase = false;
+        t.start();
+    }
 }
 
-PointTracker::PointOrder PointTracker::find_correspondences(const std::vector<vec2>& points, const PointModel& model)
+PointTracker::PointOrder PointTracker::find_correspondences(const vec2* points, const PointModel& model)
 {
+    static const Affine a(mat33::eye(), vec3(0, 0, 1));
     // We do a simple freetrack-like sorting in the init phase...
+    unsigned point_d_order[PointModel::N_POINTS];
+    unsigned model_d_order[PointModel::N_POINTS];
     // sort points
-    int point_d_order[PointModel::N_POINTS];
-    int model_d_order[PointModel::N_POINTS];
     vec2 d(model.M01[0]-model.M02[0], model.M01[1]-model.M02[1]);
     model.get_d_order(points, point_d_order, d);
     // calculate d and d_order for simple freetrack-like point correspondence
-    model.get_d_order(std::vector<vec2> {
-                          vec2{0,0},
-                          vec2(model.M01[0], model.M01[1]),
-                          vec2(model.M02[0], model.M02[1])
-                      },
-                      model_d_order,
-                      d);
+    vec2 pts[3] = {
+        vec2(0, 0),
+        vec2(model.M01[0], model.M01[1]),
+        vec2(model.M02[0], model.M02[1])
+    };
+    model.get_d_order(pts, model_d_order, d);
     // set correspondences
     PointOrder p;
     for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
@@ -200,7 +201,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     // The expected rotation used for resolving the ambiguity in POSIT:
     // In every iteration step the rotation closer to R_expected is taken
-    mat33 R_expected = mat33::eye();
+    static const mat33 R_expected(mat33::eye());
 
     // initial pose = last (predicted) pose
     vec3 k;
@@ -344,6 +345,11 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 }
 
 vec2 PointTracker::project(const vec3& v_M, f focal_length)
+{
+    return project(v_M, focal_length, X_CM);
+}
+
+vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
 {
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);

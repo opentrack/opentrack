@@ -70,7 +70,7 @@ public:
 
     PointModel(settings_pt& s);
     void set_model(settings_pt& s);
-    void get_d_order(const std::vector<vec2>& points, int* d_order, const vec2& d) const;
+    void get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const;
 };
 
 // ----------------------------------------------------------------------------
@@ -87,13 +87,14 @@ public:
     void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout, int w, int h);
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
+    vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
 
 private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
-    PointOrder find_correspondences(const std::vector<vec2>& projected_points, const PointModel &model);
-    PointOrder find_correspondences_previous(const std::vector<vec2>& points, const PointModel &model, f focal_length, int w, int h);
+    PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
+    PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, f focal_length, int w, int h);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera

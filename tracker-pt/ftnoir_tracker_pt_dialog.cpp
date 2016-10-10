@@ -10,10 +10,7 @@
 #include "cv/video-property-page.hpp"
 
 #include "compat/camera-names.hpp"
-#include <opencv2/core/core.hpp>
-#include <memory>
-#include <vector>
-#include <QMessageBox>
+#include <opencv2/core.hpp>
 #include <QString>
 #include <QDebug>
 
