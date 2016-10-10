@@ -68,10 +68,10 @@ bool Tracker_PT::get_focal_length(f& ret)
         using std::atan;
         using std::sqrt;
 
-        const int w = info.res_x, h = info.res_y;
-        const double diag = sqrt(1. + h/(double)w * h/(double)w);
+        const double w = info.res_x, h = info.res_y;
+        const double diag = sqrt(w/h*w/h + h/w*h/w);
         const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
-        const double fov = 2.*atan(tan(diag_fov/2.0)/diag);
+        const double fov = 2.*atan(tan(diag_fov/2.)/diag);
         ret = .5 / tan(.5 * fov);
         return true;
     }
