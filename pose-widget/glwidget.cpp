@@ -139,12 +139,14 @@ void GLWidget::project_quad_texture()
         const int sx_ = (sx - std::max(0, (sx - sy)/2)) * 5/9;
         const int sy_ = (sy - std::max(0, (sy - sx)/2)) * 5/9;
 
+        static constexpr const double c = 85/100.;
+
         const vec3 dst_corners[] =
         {
-            vec3(-sx_/2., -sy_/2, 0),
-            vec3(sx_/2, -sy_/2, 0),
-            vec3(-sx_/2, sy_/2, 0),
-            vec3(sx_/2, sy_/2, 0.)
+            vec3(-sx_/2. * c, -sy_/2, 0),
+            vec3(sx_/2 * c, -sy_/2, 0),
+            vec3(-sx_/2 * c, sy_/2, 0),
+            vec3(sx_/2 * c, sy_/2, 0.)
         };
 
         for (int i = 0; i < 4; i++)
