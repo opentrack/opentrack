@@ -71,7 +71,7 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
     if (!ok)
         qWarning() << "options/connector: value destructed without creating;"
                    << "bundle"
-                   << (val && val->b ? val->b->name() : "<NULL>")
+                   << val->b->name()
                    << "value-name" << name
                    << "value-ptr" << quintptr(val);
 }
@@ -87,7 +87,7 @@ void connector::on_value_created(const QString& name, const base_value* val)
     {
         qWarning() << "options/connector: value created twice;"
                    << "bundle"
-                   << (val->b ? val->b->name() : "<NULL>")
+                   << val->b->name()
                    << "value-name" << name
                    << "value-ptr" << quintptr(val);
     }
