@@ -87,7 +87,7 @@ void connector::on_value_created(const QString& name, const base_value* val)
     {
         qWarning() << "options/connector: value created twice;"
                    << "bundle"
-                   << (val && val->b ? val->b->name() : "<NULL>")
+                   << (val->b ? val->b->name() : "<NULL>")
                    << "value-name" << name
                    << "value-ptr" << quintptr(val);
     }
