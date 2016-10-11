@@ -5,15 +5,15 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef POINTTRACKER_H
-#define POINTTRACKER_H
+#pragma once
 
 #include "compat/timer.hpp"
 
 #include "ftnoir_tracker_pt_settings.h"
 using namespace pt_types;
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
+#include <cstddef>
 #include <memory>
 #include <vector>
 #include <array>
@@ -102,5 +102,3 @@ private:
     Timer t;
     bool init_phase;
 };
-
-#endif //POINTTRACKER_H
