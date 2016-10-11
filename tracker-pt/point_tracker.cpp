@@ -15,7 +15,6 @@ using namespace pt_types;
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <iterator>
 
 #include <QDebug>
 
