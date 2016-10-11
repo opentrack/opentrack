@@ -6,11 +6,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef POINTEXTRACTOR_H
-#define POINTEXTRACTOR_H
+#pragma once
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include "ftnoir_tracker_pt_settings.h"
 
@@ -48,5 +47,3 @@ private:
 
     std::vector<blob> blobs;
 };
-
-#endif //POINTEXTRACTOR_H

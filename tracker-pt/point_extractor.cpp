@@ -9,9 +9,7 @@
 #include "point_extractor.h"
 #include <QDebug>
 
-#ifdef DEBUG_EXTRACTION
-#   include "compat/timer.hpp"
-#endif
+#include "compat/util.hpp"
 
 #include <opencv2/videoio.hpp>
 
@@ -61,15 +59,16 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                      std::vector<int> { 256 },
                      std::vector<float> { 0, 256 },
                      false);
-        const int sz = hist.cols * hist.rows;
-        int thres = 255;
-        int cnt = 0;
-        constexpr double min_radius = 6;
-        constexpr double max_radius = 15;
-        const double radius = max(0., (max_radius-min_radius) * s.threshold / 256);
-        const int area = int(round(3 * M_PI * (min_radius + radius)*(min_radius+radius)));
-        auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
-        for (int i = sz-1; i > 1; i--)
+
+        static constexpr double min_radius = 2.5;
+        static constexpr double max_radius = 15;
+
+        const double radius = max(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
+        const float* ptr = reinterpret_cast<const float*>(hist.ptr(0));
+        const unsigned area = unsigned(round(3 * M_PI * radius*radius));
+        const unsigned sz = unsigned(hist.cols * hist.rows);
+        unsigned thres = 1;
+        for (unsigned i = sz-1, cnt = 0; i > 1; i--)
         {
             cnt += ptr[i];
             if (cnt >= area)
