@@ -18,7 +18,7 @@ TrackerDialog_PT::TrackerDialog_PT()
     : tracker(nullptr),
       timer(this)
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
     ui.camdevice_combo->addItems(get_camera_names());
 
@@ -76,6 +76,8 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
     calib_timer.setInterval(100);
+
+    poll_tracker_info();
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)
