@@ -14,11 +14,9 @@
 #include <QString>
 #include <QDebug>
 
-//-----------------------------------------------------------------------------
 TrackerDialog_PT::TrackerDialog_PT()
-    : tracker(NULL),
-      timer(this),
-      trans_calib_running(false)
+    : tracker(nullptr),
+      timer(this)
 {
     ui.setupUi( this );
 
@@ -87,7 +85,6 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         qDebug()<<"TrackerDialog:: Starting translation calibration";
         calib_timer.start();
         trans_calib.reset();
-        trans_calib_running = true;
         s.t_MH_x = 0;
         s.t_MH_y = 0;
         s.t_MH_z = 0;
@@ -96,7 +93,6 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     {
         calib_timer.stop();
         qDebug()<<"TrackerDialog:: Stopping translation calibration";
-        trans_calib_running = false;
         {
             auto tmp = trans_calib.get_estimate();
             s.t_MH_x = int(tmp[0]);
@@ -135,14 +131,11 @@ void TrackerDialog_PT::poll_tracker_info()
         else
             to_print += " BAD!";
         ui.pointinfo_label->setText(to_print);
-
-        // update calibration
-        if (trans_calib_running) trans_calib_step();
     }
     else
     {
-        ui.caminfo_label->setText("Tracker offline");
-        ui.pointinfo_label->setText("");
+        ui.caminfo_label->setText(QStringLiteral("Tracker offline"));
+        ui.pointinfo_label->setText(QStringLiteral(""));
     }
 }
 

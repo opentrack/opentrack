@@ -41,7 +41,6 @@ private:
     QTimer timer, calib_timer;
 
     TranslationCalibrator trans_calib;
-    bool trans_calib_running;
 
     Ui::UICPTClientControls ui;
 };
