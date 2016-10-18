@@ -31,15 +31,15 @@ public slots:
 
     void startstop_trans_calib(bool start);
     void trans_calib_step();
-    void poll_tracker_info();
+    void poll_tracker_info_impl();
     void set_camera_settings_available(const QString& camera_name);
     void show_camera_settings();
-
+signals:
+    void poll_tracker_info();
 private:
     settings_pt s;
     Tracker_PT* tracker;
     QTimer timer, calib_timer;
-
     TranslationCalibrator trans_calib;
 
     Ui::UICPTClientControls ui;

@@ -62,7 +62,7 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     tie_setting(s.auto_threshold, ui.auto_threshold);
 
-    connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
+    connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)));
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -71,13 +71,15 @@ TrackerDialog_PT::TrackerDialog_PT()
     set_camera_settings_available(ui.camdevice_combo->currentText());
     connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerDialog_PT::show_camera_settings);
 
-    connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
-    timer.start(250);
+    connect(&timer, &QTimer::timeout, this, &TrackerDialog_PT::poll_tracker_info_impl);
+    timer.setInterval(250);
 
     connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
     calib_timer.setInterval(100);
 
-    poll_tracker_info();
+    poll_tracker_info_impl();
+
+    connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::QueuedConnection);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)
@@ -193,13 +195,15 @@ void TrackerDialog_PT::register_tracker(ITracker *t)
 {
     tracker = static_cast<Tracker_PT*>(t);
     ui.tcalib_button->setEnabled(true);
-    //ui.center_button->setEnabled(true);
+    poll_tracker_info();
+    timer.start();
 }
 
 void TrackerDialog_PT::unregister_tracker()
 {
     tracker = NULL;
     ui.tcalib_button->setEnabled(false);
-    //ui.center_button->setEnabled(false);
+    poll_tracker_info();
+    timer.stop();
 }
 
