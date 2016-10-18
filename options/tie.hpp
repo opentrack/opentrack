@@ -154,12 +154,18 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
     base_value::connect(w,
                         &QSlider::valueChanged,
                         &v,
-                        [=, &v](int pos) { v = v->update_from_slider(pos, q_min, q_max); },
+                        [=, &v](int pos) {
+                            v = v->update_from_slider(pos, q_min, q_max);
+                            w->setValue(v->to_slider_pos(q_min, q_max));
+                        },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
                         static_cast<void(base_value::*)(double) const>(&base_value::valueChanged),
                         w,
-                        [=, &v](double) { w->setValue(v->to_slider_pos(q_min, q_max)); },
+                        [=, &v](double) {
+                            w->setValue(v->to_slider_pos(q_min, q_max));
+                            v = v->update_from_slider(w->value(), q_min, q_max);
+                        },
                         v.SAFE_CONNTYPE);
 }
 
