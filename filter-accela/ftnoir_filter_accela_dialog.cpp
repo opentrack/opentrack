@@ -32,7 +32,6 @@ FilterControls::FilterControls()
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.trans_deadzone, ui.trans_dz_slider);
-
     tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
 
     update_rot_display(s.rot_sensitivity);
@@ -87,35 +86,43 @@ void FilterControls::save()
     s.b->save();
 }
 
+#define FIELD(x, a) ((a).arg(((x).cur()), 0, 'g', 4))
+#define LIT(x) QStringLiteral(x)
+
 void FilterControls::update_rot_display(const slider_value& val)
 {
-    ui.rot_gain->setText(QString::number(val.cur()) + "°");
+    static const QString str(QString::fromUtf8("%1°"));
+    ui.rot_gain->setText(FIELD(val, str));
 }
 
 void FilterControls::update_trans_display(const slider_value& val)
 {
-    ui.trans_gain->setText(QString::number(val.cur()) + "mm");
+    ui.trans_gain->setText(FIELD(val, LIT("%1mm")));
 }
 
 void FilterControls::update_ewma_display(const slider_value& val)
 {
-    ui.ewma_label->setText(QString::number(val.cur()) + "ms");
+    ui.ewma_label->setText(FIELD(val, LIT("%1ms")));
 }
 
 void FilterControls::update_rot_dz_display(const slider_value& val)
 {
-    ui.rot_dz->setText(QString::number(val.cur()) + "°");
+    static const QString str(QString::fromUtf8("%1°"));
+    ui.rot_dz->setText(FIELD(val, str));
 }
 
 void FilterControls::update_trans_dz_display(const slider_value& val)
 {
-    ui.trans_dz->setText(QString::number(val.cur()) + "mm");
+    ui.trans_dz->setText(FIELD(val, LIT("%1mm")));
 }
 
-void FilterControls::update_rot_nl_slider(const slider_value& sl)
+void FilterControls::update_rot_nl_slider(const slider_value& val)
 {
-    ui.rot_nl->setText("<html><head/><body><p>x<span style='vertical-align:super;'>" +
-                       QString::number(sl.cur()) +
-                       "</span></p></body></html>");
+    ui.rot_nl->setText(FIELD(val, LIT(
+                        "<html><head/><body>"
+                        "<p>x<span style='vertical-align:super;'>"
+                        "%1"
+                        "</span></p>"
+                        "</body></html>")));
 }
 
