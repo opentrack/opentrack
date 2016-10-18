@@ -86,7 +86,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
 {
     if (start)
     {
-        qDebug()<<"TrackerDialog:: Starting translation calibration";
+        qDebug() << "pt: starting translation calibration";
         calib_timer.start();
         trans_calib.reset();
         s.t_MH_x = 0;
@@ -96,7 +96,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     else
     {
         calib_timer.stop();
-        qDebug()<<"TrackerDialog:: Stopping translation calibration";
+        qDebug() << "pt: stopping translation calibration";
         {
             auto tmp = trans_calib.get_estimate();
             s.t_MH_x = int(tmp[0]);
@@ -115,26 +115,16 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
                                   ));
 }
 
-void TrackerDialog_PT::poll_tracker_info()
+void TrackerDialog_PT::poll_tracker_info_impl()
 {
     CamInfo info;
     if (tracker && tracker->get_cam_info(&info))
     {
-        QString to_print;
-        {
-            // display caminfo
-            to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ "+QString::number(info.fps)+" FPS";
-        }
-        ui.caminfo_label->setText(to_print);
+        ui.caminfo_label->setText(QStringLiteral("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(info.fps));
 
-        // display pointinfo
-        int n_points = tracker->get_n_points();
-        to_print = QString::number(n_points);
-        if (n_points == 3)
-            to_print += " OK!";
-        else
-            to_print += " BAD!";
-        ui.pointinfo_label->setText(to_print);
+        // display point info
+        const int n_points = tracker->get_n_points();
+        ui.pointinfo_label->setText((n_points == 3 ? QStringLiteral("%1 OK!") : QStringLiteral("%1 BAD!")).arg(n_points));
     }
     else
     {
