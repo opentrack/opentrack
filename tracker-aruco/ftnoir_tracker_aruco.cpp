@@ -8,7 +8,6 @@
 #include "ftnoir_tracker_aruco.h"
 #include "api/plugin-api.hpp"
 #include "compat/camera-names.hpp"
-#include "compat/sleep.hpp"
 #include "cv/video-property-page.hpp"
 
 #include <opencv2/core.hpp>
@@ -66,8 +65,6 @@ Tracker::~Tracker()
         delete videoWidget;
     if(layout)
         delete layout;
-    // fast start/stop causes breakage
-    portable::sleep(1000);
     camera.release();
 }
 
@@ -390,9 +387,6 @@ fail:
         if (frame.rows > 0)
             videoWidget->update_image(frame);
     }
-
-    // give opencv time to exit camera threads, etc.
-    portable::sleep(500);
 }
 
 void Tracker::data(double *data)

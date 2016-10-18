@@ -13,7 +13,6 @@
 #include <QFile>
 #include <QCoreApplication>
 #include "compat/camera-names.hpp"
-#include "compat/sleep.hpp"
 #include <functional>
 
 //#define PT_PERF_LOG	//log performance
@@ -41,7 +40,6 @@ Tracker_PT::~Tracker_PT()
         if (video_frame->layout()) delete video_frame->layout();
     }
     // fast start/stop causes breakage
-    portable::sleep(1000);
     camera.stop();
 }
 

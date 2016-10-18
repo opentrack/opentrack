@@ -6,7 +6,6 @@
  */
 
 #include "camera.h"
-#include "compat/sleep.hpp"
 #include "compat/camera-names.hpp"
 #include <string>
 #include <QDebug>
@@ -109,9 +108,6 @@ void CVCamera::stop()
         }
         delete cap;
         cap = nullptr;
-        // give opencv time to exit camera threads, etc.
-        if (opened)
-            portable::sleep(500);
         qDebug() << "pt camera: stopped";
     }
 }
