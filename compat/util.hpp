@@ -23,14 +23,24 @@ void run_in_thread_async(QObject* obj, F&& fun)
     QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
 }
 
-template<typename t, typename u, typename w>
-auto clamp(t val, u min, w max) -> decltype (val * min * max)
+namespace detail {
+
+template<typename t, typename u, typename w, typename n>
+inline auto clamp_(n val, n min, n max) -> n
 {
     if (val > max)
         return max;
     if (val < min)
         return min;
     return val;
+}
+
+}
+
+template<typename t, typename u, typename w>
+inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * min * max)
+{
+    return ::detail::clamp_<t, u, w, decltype(val * min * max)>(val, min, max);
 }
 
 namespace detail {
