@@ -11,30 +11,33 @@ sub get_games_1
     my @games;
 
     open my $fd, "<", $ARGV[1] or die "open: $!";
+    binmode $fd;
     <$fd>;
 
     while (defined(my $line = <$fd>))
     {
-        chomp $line;
-        if ($line !~ /^(\d+)\s+"([^"]+)"(?:\s+\(([0-9A-F]{16})\))?$/)
+        $line =~ s/[\r\n]+$//s;
+        if ($line !~ /^(\d+)\s+"([^;"]+)"(?:\s+\(([0-9A-F]{16})\))?$/)
         {
             warn "Broken line";
             next;
         }
-        push @games, +{ id => $1, name => $2, key => defined $3 ? (sprintf "%04X", $1) . $3 . '00' : undef};
+        next if $1 <= 0;
+        push @games, +{ id => $1, name => $2, key => $3 }
     }
-
-    [@games];
+    [sort { lc($a->{name}) cmp lc($b->{name}) } @games]
 }
 
 sub get_games_2
 {
     open my $fd, "<", $ARGV[0] or die "open: $!";
+    binmode $fd;
     <$fd>;
     my @games;
+    my %ids;
     while (defined(my $line = <$fd>))
     {
-        chomp $line;
+        $line =~ s/[\r\n]+$//s;
         my @line = split/;/, $line;
         if (@line != 8)
         {
@@ -42,7 +45,11 @@ sub get_games_2
             next;
         }
         my @cols = qw'no name proto since verified by id key';
-        push @games, +{ map { $cols[$_] => $line[$_] } 0..$#cols };
+        my $h = +{ map { $cols[$_] => $line[$_] } 0..$#cols };
+        next if exists $ids{$h->{id}};
+        $ids{$h->{id}} = undef;
+        next if $h->{id} <= 0;
+        push @games, $h;
     }
     [@games];
 }
@@ -51,27 +58,29 @@ sub merge
 {
     my ($new_games, $old_games) = @_;
     my $no = (reduce { $a->{no} > $b->{no} ? $a : $b } +{id=>0}, @$old_games)->{no} + 1;
-    my %game_hash = map { $_->{name} => $_ } @$old_games;
-    my %ids = map { $_->{id} => 1 } @$old_games;
+    my %ids = map { $_->{id} => $_ } @$old_games;
+    binmode \*STDOUT;
     for my $g (@$new_games)
     {
-        if (!exists $ids{$g->{id}} || defined $g->{key})
-        {
-            $game_hash{$g->{name}} =
+        my $id = $g->{id};
+        my $no_ = $ids{$id} ? $ids{$id}->{no} : $no;
+        next if (exists($ids{$id}) && $ids{$id}->{verified} ne '');
+        my $old = $ids{$id} || do { $no++; +{} };
+        $ids{$id} =
             +{
-                no => $no++,
+                no => $no_,
                 name => $g->{name},
                 proto => 'FreeTrack20',
-                since => (defined $g->{key} ? 'V170' : 'V160'),
                 verified => '',
                 by => '',
                 id => $g->{id},
-                key => $g->{key}
+                %$old,
+                since => $g->{key} ? 'V170' : 'V160',
+                key => $g->{key} ? (sprintf "%04X", $no_) . $g->{key} . '00' : $old->{key}
             };
-        }
     }
     print "No;Game Name;Game protocol;Supported since;Verified;By;INTERNATIONAL_ID;FTN_ID\n";
-    for (sort { $a->{name} cmp $b->{name} } values %game_hash)
+    for (sort { $a->{no} <=> $b->{no} } values %ids)
     {
         my $g = {%$_};
         if (!defined $g->{key})
