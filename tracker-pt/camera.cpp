@@ -10,6 +10,8 @@
 #include <string>
 #include <QDebug>
 
+Camera::~Camera() {}
+
 void Camera::set_device(const QString& name)
 {
     const int index = camera_name_to_index(name);
@@ -52,7 +54,7 @@ void Camera::set_res(int x_res, int y_res)
     }
 }
 
-bool Camera::get_info(CamInfo& ret)
+DEFUN_WARN_UNUSED bool Camera::get_info(CamInfo& ret)
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
     {
@@ -66,12 +68,16 @@ bool Camera::get_frame(double dt, cv::Mat* frame)
 {
     bool new_frame = _get_frame(frame);
     // measure fps of valid frames
-    static constexpr double dt_smoothing_const = 0.95;
+    static constexpr double RC = 1; // second
+    const double alpha = dt/(dt + RC);
     dt_valid += dt;
     if (new_frame)
     {
-        dt_mean = dt_smoothing_const * dt_mean + (1 - dt_smoothing_const) * dt_valid;
-        cam_info.fps = int(std::round(dt_mean > 1e-3 ? 1 / dt_mean : 0));
+        if (dt_mean < 2e-3)
+            dt_mean = dt;
+        else
+            dt_mean = alpha * dt_mean + (1 - alpha) * dt_valid;
+        cam_info.fps = int(std::round(dt_mean > 2e-3 ? 1 / dt_mean : 0));
         dt_valid = 0;
     }
     else

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "compat/util.hpp"
+
 #include <opencv2/core/core.hpp>
 #include <memory>
 #include <opencv2/videoio.hpp>
@@ -41,16 +43,15 @@ public:
         void set_res(int x_res, int y_res);
 
         // gets a frame from the camera, dt: time since last call in seconds
-        bool get_frame(double dt, cv::Mat* frame);
+        DEFUN_WARN_UNUSED bool get_frame(double dt, cv::Mat* frame);
 
         // WARNING: returned references are valid as long as object
-        bool get_info(CamInfo &ret);
+        DEFUN_WARN_UNUSED bool get_info(CamInfo &ret);
         CamInfo get_desired() const { return cam_desired; }
-
         QString get_desired_name() const;
 protected:
         // get a frame from the camera
-        virtual bool _get_frame(cv::Mat* frame) = 0;
+        DEFUN_WARN_UNUSED virtual bool _get_frame(cv::Mat* frame) = 0;
 
         // update the camera using cam_desired, write res and f to cam_info if successful
         virtual void _set_device_index() = 0;
@@ -66,11 +67,10 @@ protected:
         int desired_index;
         int active_index;
 };
-inline Camera::~Camera() {}
 
 // ----------------------------------------------------------------------------
 // camera based on OpenCV's videoCapture
-class CVCamera : public Camera
+class CVCamera final : public Camera
 {
 public:
     CVCamera() : cap(NULL) {}
@@ -80,7 +80,6 @@ public:
     void stop() override;
 
     operator cv::VideoCapture*() { return cap; }
-
 protected:
     bool _get_frame(cv::Mat* frame) override;
     void _set_fps() override;

@@ -112,3 +112,9 @@ auto run_in_thread_sync(QObject* obj, F&& fun)
         cvar.wait(guard);
     return traits::pass(std::move(ret));
 }
+
+#if defined(_MSC_VER) && !defined(Q_CREATOR_RUN)
+#   define DEFUN_WARN_UNUSED _Check_return_
+#else
+#   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
+#endif
