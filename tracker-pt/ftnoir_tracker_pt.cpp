@@ -7,12 +7,12 @@
  */
 
 #include "ftnoir_tracker_pt.h"
+#include "compat/camera-names.hpp"
 #include <QHBoxLayout>
 #include <cmath>
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
-#include "compat/camera-names.hpp"
 #include <functional>
 
 //#define PT_PERF_LOG	//log performance
@@ -135,8 +135,8 @@ void Tracker_PT::run()
             auto fun = [&](const vec2& p, const cv::Scalar& color)
             {
                 using std::round;
-                cv::Point p2(round(p[0] * frame_.cols + frame_.cols/2),
-                             round(-p[1] * frame_.cols + frame_.rows/2));
+                cv::Point p2(int(round(p[0] * frame_.cols + frame_.cols/2)),
+                             int(round(-p[1] * frame_.cols + frame_.rows/2)));
                 cv::line(frame_,
                          cv::Point(p2.x - 20, p2.y),
                          cv::Point(p2.x + 20, p2.y),
@@ -171,12 +171,13 @@ void Tracker_PT::run()
             video_widget->update_image(frame_);
         }
     }
-    qDebug()<<"Tracker:: Thread stopping";
+    qDebug() << "pt: Thread stopping";
 }
 
 void Tracker_PT::apply_settings()
 {
-    qDebug() << "Tracker:: Applying settings";
+    qDebug() << "pt: applying settings";
+
     QMutexLocker l(&camera_mtx);
 
     CamInfo info = camera.get_desired();
@@ -187,7 +188,7 @@ void Tracker_PT::apply_settings()
         s.cam_res_y != info.res_y ||
         s.camera_name != name)
     {
-        qDebug() << "pt: camera reset needed";
+        qDebug() << "pt: starting camera";
         camera.stop();
         camera.set_device(s.camera_name);
         camera.set_res(s.cam_res_x, s.cam_res_y);
@@ -195,10 +196,8 @@ void Tracker_PT::apply_settings()
         frame = cv::Mat();
         camera.start();
     }
-    else
-        qDebug() << "pt: camera not needing reset";
 
-    qDebug() << "Tracker::apply ends";
+    qDebug() << "pt: done applying settings";
 }
 
 void Tracker_PT::start_tracker(QFrame *parent_window)

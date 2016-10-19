@@ -21,7 +21,7 @@ typedef void* LPDIRECTINPUT8;
 #endif
 
 #ifdef _MSC_VER
-    extern template struct OPENTRACK_DINPUT_EXPORT std::atomic<int>;
+    template struct __declspec(dllimport) std::atomic<int>;
 #endif
 
 class OPENTRACK_DINPUT_EXPORT dinput_handle final
