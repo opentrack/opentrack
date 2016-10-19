@@ -78,8 +78,12 @@ slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) con
 int slider_value::to_slider_pos(int q_min, int q_max) const
 {
     const int q_diff = q_max - q_min;
+    const double div = max() - min();
 
-    return int(std::round(((cur() - min()) * q_diff / (max() - min())) + q_min));
+    if (std::fabs(div) < 1e-4)
+        return q_min;
+    else
+        return int(std::round(((cur() - min()) * q_diff / div) + q_min));
 }
 
 } // end ns options
