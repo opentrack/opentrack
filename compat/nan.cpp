@@ -1,17 +1,16 @@
-#include <cmath>
 #include "export.hpp"
 
-#if defined(__GNUC__)
-extern "C" OPENTRACK_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double value)
-#elif defined(_WIN32)
-extern "C" OPENTRACK_COMPAT_EXPORT __declspec(noinline) bool nanp(double value)
+#if defined(_MSC_VER)
+#   include <cmath>
+#   define my_isnan std::isnan
+#   define my_isinf std::isinf
+extern "C" OPENTRACK_COMPAT_EXPORT __declspec(noinline) bool nanp(double x)
 #else
-extern "C" OPENTRACK_COMPAT_EXPORT bool nanp(double value)
+int my_isnan(double)__asm__("isnan");
+int my_isinf(double)__asm__("isinf");
+
+extern "C" OPENTRACK_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #endif
 {
-    using std::isnan;
-    using std::isinf;
-
-    const volatile double x = value;
-    return isnan(x) || isinf(x);
+    return my_isnan(x) || my_isinf(x);
 }
