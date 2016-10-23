@@ -25,7 +25,7 @@ void run_in_thread_async(QObject* obj, F&& fun)
 
 namespace detail {
 
-template<typename t, typename u, typename w, typename n>
+template<typename n>
 inline auto clamp_(n val, n min, n max) -> n
 {
     if (val > max)
@@ -40,7 +40,7 @@ inline auto clamp_(n val, n min, n max) -> n
 template<typename t, typename u, typename w>
 inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * min * max)
 {
-    return ::detail::clamp_<t, u, w, decltype(val * min * max)>(val, min, max);
+    return ::detail::clamp_<decltype(val * min * max)>(val, min, max);
 }
 
 namespace detail {
