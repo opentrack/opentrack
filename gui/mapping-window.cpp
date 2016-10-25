@@ -74,9 +74,9 @@ void MapWidget::reload()
         }
 
         if (qfcs[i].axis >= 3)
-            qfcs[i].qfc->set_snap(1, 1);
+            qfcs[i].qfc->set_snap(1, 2.5);
         else
-            qfcs[i].qfc->set_snap(.5, .5);
+            qfcs[i].qfc->set_snap(.5, 1);
     }
 
 }
