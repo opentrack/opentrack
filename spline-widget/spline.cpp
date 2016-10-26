@@ -151,7 +151,7 @@ QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
 
 bool spline::sort_fn(const QPointF& one, const QPointF& two)
 {
-    return one.x() < two.x();
+    return one.x() <= two.x();
 }
 
 void spline::update_interp_data()
@@ -161,7 +161,7 @@ void spline::update_interp_data()
     if (points.size() == 0)
         points.append(QPointF(max_x, max_y));
 
-    std::sort(points.begin(), points.end(), sort_fn);
+    std::stable_sort(points.begin(), points.end(), sort_fn);
 
     const double mult = precision(points);
     const double mult_ = mult * 30;
@@ -251,7 +251,7 @@ void spline::addPoint(QPointF pt)
 
     points_t points = s->points;
     points.push_back(pt);
-    std::sort(points.begin(), points.end(), sort_fn);
+    std::stable_sort(points.begin(), points.end(), sort_fn);
     s->points = points;
     update_interp_data();
 }
@@ -266,7 +266,7 @@ void spline::movePoint(int idx, QPointF pt)
     {
         points[idx] = pt;
         // we don't allow points to be reordered, but sort due to possible caller logic error
-        std::sort(points.begin(), points.end(), sort_fn);
+        std::stable_sort(points.begin(), points.end(), sort_fn);
         s->points = points;
         update_interp_data();
     }
@@ -345,7 +345,7 @@ void spline::recompute()
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
     // only store if we can't help it
-    std::sort(list.begin(), list.end(), sort_fn);
+    std::stable_sort(list.begin(), list.end(), sort_fn);
 
     if (list != s->points)
     {
