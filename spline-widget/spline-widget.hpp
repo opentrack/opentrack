@@ -56,6 +56,7 @@ protected slots:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void reload_spline();
 private:
+    int get_closeness_limit();
     void show_tooltip(const QPoint& pos, const QPointF& value = QPointF(0, 0), const QString& prefix = QStringLiteral(""));
     bool is_in_bounds(const QPoint& pos) const;
 
@@ -67,7 +68,7 @@ private:
 
     void focusOutEvent(QFocusEvent*e) override;
     void resizeEvent(QResizeEvent *) override;
-private:
+
     bool is_on_pt(const QPoint& pos, int* pt = nullptr);
     void update_range();
     QPointF pixel_coord_to_point(const QPoint& point);
@@ -91,5 +92,4 @@ private:
 
     static constexpr int line_length_pixels = 3;
     static constexpr int point_size = 4;
-    static constexpr int point_closeness_limit = 7;
 };
