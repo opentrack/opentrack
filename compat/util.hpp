@@ -15,13 +15,11 @@
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
 
-template<typename F>
-void run_in_thread_async(QObject* obj, F&& fun)
-{
-    QObject src;
-    src.moveToThread(obj->thread());
-    QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
-}
+#if defined(_MSC_VER) && !defined(Q_CREATOR_RUN)
+#   define DEFUN_WARN_UNUSED _Check_return_
+#else
+#   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
+#endif
 
 namespace detail {
 
@@ -113,8 +111,11 @@ auto run_in_thread_sync(QObject* obj, F&& fun)
     return traits::pass(std::move(ret));
 }
 
-#if defined(_MSC_VER) && !defined(Q_CREATOR_RUN)
-#   define DEFUN_WARN_UNUSED _Check_return_
-#else
-#   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
-#endif
+template<typename F>
+void run_in_thread_async(QObject* obj, F&& fun)
+{
+    QObject src;
+    src.moveToThread(obj->thread());
+    QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
+}
+
