@@ -3,6 +3,7 @@
 #include "make-unique.hpp"
 
 #include <memory>
+#include <cmath>
 #include <utility>
 #include <type_traits>
 #include <thread>
@@ -20,6 +21,12 @@ template<typename t> using ptr = std::unique_ptr<t>;
 #else
 #   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
 #endif
+
+template<typename t>
+int iround(const t& val)
+{
+    return int(std::round(val));
+}
 
 namespace detail {
 
