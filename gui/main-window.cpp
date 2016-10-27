@@ -515,8 +515,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
 
     for (int i = 0; i < 6; i++)
     {
-        mapped_[i] = int(mapped[i]);
-        raw_[i] = int(raw[i]);
+        mapped_[i] = iround(mapped[i]);
+        raw_[i] = iround(raw[i]);
     }
 
     ui.raw_x->display(raw_[TX]);
