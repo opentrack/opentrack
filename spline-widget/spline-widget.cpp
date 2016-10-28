@@ -379,7 +379,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
             return QPoint(int(pix_.x()), int(pix_.y()));
         );
 
-        QPointF new_pt = pixel_coord_to_point(pix);
+        QPointF new_pt = pixel_coord_to_point(e->pos());
 
         if (i + 1 < points.size())
         {
