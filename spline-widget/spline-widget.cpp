@@ -8,6 +8,7 @@
 #include "compat/util.hpp"
 #include "spline-widget.hpp"
 #include <QPainter>
+#include <QPainterPath>
 #include <QPaintEvent>
 #include <QPen>
 #include <QPixmap>
@@ -197,12 +198,37 @@ void spline_widget::drawFunction()
                              }
                          );
 
-    const qreal step_ = line_length_pixels / c.x();
-    const qreal step = std::max(5e-2, step_);
-    const qreal max = _config->maxInput();
-
     painter.setPen(QPen(color, 1.75, Qt::SolidLine, Qt::FlatCap));
 
+//#define DEBUG_SPLINE
+#ifndef DEBUG_SPLINE
+    static constexpr double step_ = 3./3;
+
+    const double maxx = _config->maxInput();
+    const double step = step_ / c.x();
+
+    QPainterPath path;
+
+    path.moveTo(point_to_pixel(QPointF(0, 0)));
+
+    for (double k = 0; k < maxx; k += step*3)
+    {
+        const float next_1(_config->get_value_no_save(k + step*1));
+        const float next_2(_config->get_value_no_save(k + step*2));
+        const float next_3(_config->get_value_no_save(k + step*3));
+
+        const QPointF b(point_to_pixel_(QPointF(k + step*1, qreal(next_1)))),
+                      c(point_to_pixel_(QPointF(k + step*2, qreal(next_2)))),
+                      d(point_to_pixel_(QPointF(k + step*3, qreal(next_3))));
+
+        path.cubicTo(b, c, d);
+    }
+
+    painter.drawPath(path);
+#else
+    static constexpr int line_length_pixels = 3;
+    const qreal max = _config->maxInput();
+    const qreal step = clamp(line_length_pixels / c.x(), 5e-2, max);
     QPointF prev = point_to_pixel(QPoint(0, 0));
     for (qreal i = 0; i < max; i += step)
     {
@@ -211,12 +237,12 @@ void spline_widget::drawFunction()
         painter.drawLine(prev, cur);
         prev = cur;
     }
-
     {
-        const qreal val = qreal(_config->get_value_no_save(max));
-        const QPointF last = point_to_pixel(QPointF(max, val));
-        painter.drawLine(prev, last);
+        const qreal maxx = _config->maxInput();
+        const qreal maxy = qreal(_config->get_value_no_save(maxx));
+        painter.drawLine(QPointF(prev), point_to_pixel_(QPointF(maxx, maxy)));
     }
+#endif
 
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
@@ -570,10 +596,17 @@ QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
     return QPointF(x, y);
 }
 
-QPointF spline_widget::point_to_pixel(const QPointF& point)
+QPointF spline_widget::point_to_pixel_(const QPointF& point)
 {
-    return QPoint(iround(pixel_bounds.x() + point.x() * c.x()),
-                  iround(pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y()));
+    return QPointF(pixel_bounds.x() + point.x() * c.x(),
+                   pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y());
+}
+
+QPoint spline_widget::point_to_pixel(const QPointF& point)
+{
+    QPointF pt(point_to_pixel_(point));
+
+    return QPoint(iround(pt.x()), iround(pt.y()));
 }
 
 void spline_widget::resizeEvent(QResizeEvent *)

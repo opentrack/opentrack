@@ -72,7 +72,9 @@ private:
     bool is_on_pt(const QPoint& pos, int* pt = nullptr);
     void update_range();
     QPointF pixel_coord_to_point(const QPoint& point);
-    QPointF point_to_pixel(const QPointF& point);
+
+    QPointF point_to_pixel_(const QPointF& point);
+    QPoint point_to_pixel(const QPointF& point);
 
     QPointF c;
     spline* _config;
@@ -90,6 +92,5 @@ private:
     int moving_control_point_idx;
     bool _draw_function, _preview_only;
 
-    static constexpr int line_length_pixels = 3;
     static constexpr int point_size = 4;
 };
