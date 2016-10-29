@@ -519,8 +519,8 @@ void spline_widget::update_range()
 
 bool spline_widget::point_within_pixel(const QPointF& pt, const QPoint &pixel)
 {
-    QPointF tmp = pixel - point_to_pixel(pt);
-    return sqrt(QPointF::dotProduct(tmp, tmp)) < point_size;
+    const QPointF tmp = pixel - point_to_pixel(pt);
+    return QPointF::dotProduct(tmp, tmp) < point_size * point_size;
 }
 
 void spline_widget::focusOutEvent(QFocusEvent* e)
