@@ -543,17 +543,18 @@ QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
 
     if (snap_x > 0)
     {
-        x += snap_x / 2.;
+        x += snap_x * .5;
         x -= std::fmod(x, snap_x);
-        const volatile int x_ = int(x * c);
-        x = x_ / double(c);
+        // truncate after few decimal places to reduce rounding errors.
+        // round upward to nearest.
+        x = int(x * c + .5/c) / double(c);
     }
     if (snap_y > 0)
     {
-        y += snap_y / 2.;
+        y += snap_y * .5;
         y -= std::fmod(y, snap_y);
-        const volatile int y_ = int(y * c);
-        y = y_ / double(c);
+        // idem
+        y = int(y * c + .5/c) / double(c);
     }
 
     if (x < 0)
