@@ -188,12 +188,26 @@ void spline::update_interp_data()
         for (int i = 0; i < points.size(); i++)
         {
             const QPointF p0 = ensure_in_bounds(points, i - 1);
-            const QPointF p1 = ensure_in_bounds(points, i);
+            const QPointF p1 = ensure_in_bounds(points, i + 0);
             const QPointF p2 = ensure_in_bounds(points, i + 1);
             const QPointF p3 = ensure_in_bounds(points, i + 2);
-
             const double p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
             const double p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
+
+            const double cx[4] = {
+                2 * p1_x, // 1
+                -p0_x + p2_x, // t
+                2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x, // t^2
+                -p0_x + 3 * p1_x - 3 * p2_x + p3_x, // t3
+            };
+
+            const double cy[4] =
+            {
+                2 * p1_y, // 1
+                -p0_y + p2_y, // t
+                2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y, // t^2
+                -p0_y + 3 * p1_y - 3 * p2_y + p3_y, // t3
+            };
 
             // multiplier helps fill in all the x's needed
             const unsigned end = std::min(unsigned(value_count), unsigned(p2_x * mult_));
@@ -205,16 +219,8 @@ void spline::update_interp_data()
                 const double t2 = t*t;
                 const double t3 = t*t*t;
 
-                const int x = int(.5 * ((2 * p1_x) +
-                                        (-p0_x + p2_x) * t +
-                                        (2 * p0_x - 5 * p1_x + 4 * p2_x - p3_x) * t2 +
-                                        (-p0_x + 3 * p1_x - 3 * p2_x + p3_x) * t3)
-                                  * mult);
-
-                const float y = float(.5 * ((2 * p1_y) +
-                                            (-p0_y + p2_y) * t +
-                                            (2 * p0_y - 5 * p1_y + 4 * p2_y - p3_y) * t2 +
-                                            (-p0_y + 3 * p1_y - 3 * p2_y + p3_y) * t3));
+                const int x = iround(.5 * mult * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
+                const float y = float(.5 * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
                 if (x >= 0 && x < value_count)
                     data[unsigned(x)] = y;
