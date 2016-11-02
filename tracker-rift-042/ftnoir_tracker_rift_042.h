@@ -13,7 +13,7 @@ struct settings : opts {
     value<bool> useYawSpring;
     value<double> constant_drift, persistence, deadzone;
     settings() :
-        opts("Rift"),
+        opts("Rift-042"),
         useYawSpring(b, "yaw-spring", false),
         constant_drift(b, "constant-drift", 0.000005),
         persistence(b, "persistence", 0.99999),
