@@ -56,7 +56,7 @@ class OPENTRACK_SPLINE_EXPORT spline final
     std::vector<float> data;
     using interp_data_t = decltype(data);
 
-    static constexpr int value_count = 500;
+    static constexpr int value_count = 2048;
 
     MyMutex _mutex;
     QPointF last_input_value;
