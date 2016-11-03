@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QPixmap>
 #include "api/plugin-api.hpp"
-#include "logic/simple-mat.hpp"
+#include "compat/simple-mat.hpp"
 
 #ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT

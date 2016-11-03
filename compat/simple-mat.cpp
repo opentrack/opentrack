@@ -3,7 +3,7 @@
 
 namespace euler {
 
-euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const rmat& R)
+euler_t OPENTRACK_COMPAT_EXPORT rmat_to_euler(const rmat& R)
 {
     using std::atan2;
     using std::sqrt;
@@ -21,7 +21,7 @@ euler_t OPENTRACK_LOGIC_EXPORT rmat_to_euler(const rmat& R)
 }
 
 // tait-bryan angles, not euler
-rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input)
+rmat OPENTRACK_COMPAT_EXPORT euler_to_rmat(const euler_t& input)
 {
     const double H = -input(0);
     const double P = -input(1);
@@ -54,7 +54,7 @@ rmat OPENTRACK_LOGIC_EXPORT euler_to_rmat(const euler_t& input)
 }
 
 // https://en.wikipedia.org/wiki/Davenport_chained_rotations#Tait.E2.80.93Bryan_chained_rotations
-void OPENTRACK_LOGIC_EXPORT tait_bryan_to_matrices(const euler_t& input,
+void OPENTRACK_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
                                                    rmat& r_roll,
                                                    rmat& r_pitch,
                                                    rmat& r_yaw)

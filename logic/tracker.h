@@ -13,7 +13,7 @@
 #include "compat/timer.hpp"
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
-#include "simple-mat.hpp"
+#include "compat/simple-mat.hpp"
 #include "selected-libraries.hpp"
 
 #include "spline-widget/spline.hpp"
