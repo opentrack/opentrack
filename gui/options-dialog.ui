@@ -499,13 +499,13 @@
        <item>
         <widget class="QGroupBox" name="groupBox_6">
          <property name="title">
-          <string>Center pose offset</string>
+          <string>Custom center pose</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
            <widget class="QLabel" name="label_22">
             <property name="text">
-             <string>Alter the centered position sent to games by a fixed amount.</string>
+             <string>Alter the centered position sent to games.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
