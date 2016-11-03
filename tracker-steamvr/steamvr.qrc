@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/steamvr.png</file>
+    </qresource>
+</RCC>
