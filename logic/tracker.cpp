@@ -141,9 +141,13 @@ void Tracker::logic()
     {
         using std::fmod;
         using std::copysign;
+        using std::fabs;
 
         const double x = value(i);
-        value(i) = fmod(x + copysign(180, x), 360) - copysign(180, x);
+        if (fabs(x) - 1e-2 > 180)
+            value(i) = fmod(x - copysign(180, -x), 360) + copysign(180, x);
+        else
+            value(i) = clamp(x, -180, 180);
     }
 
     logger.write_pose(raw); // raw

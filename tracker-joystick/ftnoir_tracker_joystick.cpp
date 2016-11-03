@@ -5,6 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_tracker_joystick.h"
+#include "compat/util.hpp"
 #include "api/plugin-api.hpp"
 #include <QMutexLocker>
 
@@ -48,11 +49,11 @@ void FTNoIR_Tracker::data(double *data)
         180,
         180
     };
-    
+
     const QString guid = s.guid;
     int axes[8];
     const bool ret = joy_ctx.poll_axis(guid, axes);
-    
+
     if (ret)
     {
         for (int i = 0; i < 6; i++)
@@ -61,7 +62,8 @@ void FTNoIR_Tracker::data(double *data)
             if (k < 0 || k >= 8)
                 data[i] = 0;
             else
-                data[i] = axes[k] * limits[i] / AXIS_MAX;
+                data[i] = clamp(axes[k] * limits[i] / AXIS_MAX,
+                                -limits[i], limits[i]);
         }
     }
 }
