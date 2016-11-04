@@ -12,9 +12,9 @@
 
 #include <cmath>
 
-check_for_first_run FTNoIR_Protocol::runonce_check = check_for_first_run();
+check_for_first_run freetrack::runonce_check = check_for_first_run();
 
-FTNoIR_Protocol::FTNoIR_Protocol() :
+freetrack::freetrack() :
     shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
     pMemData((FTHeap*) shm.ptr()),
     viewsStart(nullptr),
@@ -28,7 +28,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() :
     runonce_check.try_runonce();
 }
 
-FTNoIR_Protocol::~FTNoIR_Protocol()
+freetrack::~freetrack()
 {
     if (viewsStop != NULL) {
         viewsStop();
@@ -38,7 +38,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     dummyTrackIR.close();
 }
 
-void FTNoIR_Protocol::pose(const double* headpose)
+void freetrack::pose(const double* headpose)
 {
     const float yaw = -degrees_to_rads(headpose[Yaw]);
     const float pitch = -degrees_to_rads(headpose[Pitch]);
@@ -95,12 +95,12 @@ void FTNoIR_Protocol::pose(const double* headpose)
     data->DataID += 1;
 }
 
-float FTNoIR_Protocol::degrees_to_rads(double degrees)
+float freetrack::degrees_to_rads(double degrees)
 {
     return float(degrees*M_PI/180);
 }
 
-void FTNoIR_Protocol::start_tirviews()
+void freetrack::start_tirviews()
 {
     QString aFileName = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll";
     if ( QFile::exists( aFileName )) {
@@ -126,13 +126,13 @@ void FTNoIR_Protocol::start_tirviews()
     }
 }
 
-void FTNoIR_Protocol::start_dummy() {
+void freetrack::start_dummy() {
     QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
 }
 
-void FTNoIR_Protocol::set_protocols(bool ft, bool npclient)
+void freetrack::set_protocols(bool ft, bool npclient)
 {
     const QString program_dir = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
 
@@ -151,7 +151,7 @@ void FTNoIR_Protocol::set_protocols(bool ft, bool npclient)
         settings_npclient.setValue("Path", "");
 }
 
-bool FTNoIR_Protocol::correct()
+bool freetrack::correct()
 {
     if (!shm.success())
         return false;
@@ -192,4 +192,4 @@ bool FTNoIR_Protocol::correct()
     return true;
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FTControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(freetrack, FTControls, freetrackDll)
