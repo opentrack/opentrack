@@ -12,11 +12,11 @@
 #include "compat/shm.h"
 #include "wine-shm.h"
 
-class FTNoIR_Protocol : public IProtocol
+class wine : public IProtocol
 {
 public:
-    FTNoIR_Protocol();
-    ~FTNoIR_Protocol() override;
+    wine();
+    ~wine() override;
 
     bool correct() override;
     void pose(const double* headpose) override;
@@ -49,7 +49,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class wineDll : public Metadata
 {
 public:
     QString name() override { return QString("Wine -- Windows layer for Unix"); }

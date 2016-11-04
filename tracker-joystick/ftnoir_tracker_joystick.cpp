@@ -9,7 +9,7 @@
 #include "api/plugin-api.hpp"
 #include <QMutexLocker>
 
-FTNoIR_Tracker::FTNoIR_Tracker()
+joystick::joystick()
 {
     if (static_cast<QString>(s.guid) == "")
     {
@@ -22,15 +22,15 @@ FTNoIR_Tracker::FTNoIR_Tracker()
     }
 }
 
-FTNoIR_Tracker::~FTNoIR_Tracker()
+joystick::~joystick()
 {
 }
 
-void FTNoIR_Tracker::start_tracker(QFrame*)
+void joystick::start_tracker(QFrame*)
 {
 }
 
-void FTNoIR_Tracker::data(double *data)
+void joystick::data(double *data)
 {
     int map[6] = {
         s.joy_1 - 1,
@@ -68,4 +68,4 @@ void FTNoIR_Tracker::data(double *data)
     }
 }
 
-OPENTRACK_DECLARE_TRACKER(FTNoIR_Tracker, TrackerControls, FTNoIR_TrackerDll)
+OPENTRACK_DECLARE_TRACKER(joystick, dialog_joystick, joystickDll)

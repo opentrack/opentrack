@@ -9,11 +9,11 @@
 
 #include "ftnoir_tracker_rs.h"
 
-class RSTrackerControls : public ITrackerDialog
+class RSdialog_realsense : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    RSTrackerControls();
+    RSdialog_realsense();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 private:

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UICFilterControls</class>
- <widget class="QWidget" name="UICFilterControls">
+ <class>UICdialog_ewma</class>
+ <widget class="QWidget" name="UICdialog_ewma">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>

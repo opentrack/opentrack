@@ -55,6 +55,6 @@ void check_for_first_run::try_exit()
     if (is_first_instance && enabled)
     {
         qDebug() << "ft runonce: removing registry keys";
-        FTNoIR_Protocol::set_protocols(false, false);
+        freetrack::set_protocols(false, false);
     }
 }

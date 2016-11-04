@@ -24,11 +24,11 @@ private:
     QMutex mutex;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog_hydra: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
+    dialog_hydra();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 private:
@@ -39,7 +39,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class hydraDll : public Metadata
 {
 public:
     QString name() { return QString("Razer Hydra -- inertial device"); }

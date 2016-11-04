@@ -12,12 +12,12 @@
 #include <QMetaType>
 
 // Widget that has controls for FTNoIR protocol client-settings.
-class TrackerControls: public ITrackerDialog
+class dialog_hatire: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    explicit TrackerControls();
-    ~TrackerControls() override;
+    explicit dialog_hatire();
+    ~dialog_hatire() override;
     void Initialize(QWidget *parent) ; // unused
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;

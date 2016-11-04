@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_udp.h"
 #include "api/plugin-api.hpp"
 
-TrackerControls::TrackerControls()
+dialog_udp::dialog_udp()
 {
     ui.setupUi( this );
 
@@ -14,12 +14,12 @@ TrackerControls::TrackerControls()
     tie_setting(s.add_roll, ui.add_roll);
 }
 
-void TrackerControls::doOK() {
+void dialog_udp::doOK() {
     s.b->save();
     close();
 }
 
-void TrackerControls::doCancel() {
+void dialog_udp::doCancel() {
     close();
 }
 

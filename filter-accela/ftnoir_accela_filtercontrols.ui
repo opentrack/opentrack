@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AccelaUICFilterControls</class>
- <widget class="QWidget" name="AccelaUICFilterControls">
+ <class>AccelaUICdialog_accela</class>
+ <widget class="QWidget" name="AccelaUICdialog_accela">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>

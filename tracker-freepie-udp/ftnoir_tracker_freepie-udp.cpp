@@ -6,11 +6,11 @@
 #include <cmath>
 
 
-TrackerImpl::TrackerImpl() : pose { 0,0,0, 0,0,0 }, should_quit(false)
+tracker_freepie::tracker_freepie() : pose { 0,0,0, 0,0,0 }, should_quit(false)
 {
 }
 
-TrackerImpl::~TrackerImpl()
+tracker_freepie::~tracker_freepie()
 {
     should_quit = true;
     wait();
@@ -26,7 +26,7 @@ static const t bound(t datum, t least, t max)
     return datum;
 }
 
-void TrackerImpl::run() {
+void tracker_freepie::run() {
 #pragma pack(push, 1)
     struct {
         uint8_t pad1;
@@ -103,13 +103,13 @@ void TrackerImpl::run() {
     }
 }
 
-void TrackerImpl::start_tracker(QFrame*)
+void tracker_freepie::start_tracker(QFrame*)
 {
     start();
     sock.moveToThread(this);
 }
 
-void TrackerImpl::data(double *data)
+void tracker_freepie::data(double *data)
 {
     QMutexLocker foo(&mtx);
 
@@ -118,4 +118,4 @@ void TrackerImpl::data(double *data)
     data[Roll] = pose[Roll];
 }
 
-OPENTRACK_DECLARE_TRACKER(TrackerImpl, TrackerDialog, TrackerMeta)
+OPENTRACK_DECLARE_TRACKER(tracker_freepie, dialog_freepie, meta_freepie)

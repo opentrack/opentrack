@@ -12,11 +12,11 @@
 #include <QFile>
 #include "api/plugin-api.hpp"
 
-FTNoIR_Protocol::FTNoIR_Protocol()
+udp::udp()
 {
 }
 
-void FTNoIR_Protocol::pose(const double *headpose) {
+void udp::pose(const double *headpose) {
     int destPort = s.port;
     QHostAddress destIP(QString("%1.%2.%3.%4").arg(
                             QString::number(static_cast<int>(s.ip1)),
@@ -26,9 +26,9 @@ void FTNoIR_Protocol::pose(const double *headpose) {
     outSocket.writeDatagram((const char *) headpose, sizeof( double[6] ), destIP, destPort);
 }
 
-bool FTNoIR_Protocol::correct()
+bool udp::correct()
 {   
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FTNControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(udp, FTNControls, udpDll)

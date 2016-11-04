@@ -31,7 +31,7 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Protocol : public IProtocol
+class flightgear : public IProtocol
 {
 public:
     bool correct();
@@ -61,7 +61,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class flightgearDll : public Metadata
 {
 public:
     QString name() { return QString("FlightGear"); }

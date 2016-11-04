@@ -12,7 +12,7 @@ static const int max_input = 65535;
 static const int mid_input = 32767;
 static const int min_input = 0;
 
-FTNoIR_Protocol::FTNoIR_Protocol() : dev(NULL), uidev(NULL)
+evdev::evdev() : dev(NULL), uidev(NULL)
 {
     int error = 0;
 
@@ -61,7 +61,7 @@ error:
     dev = NULL;
 }
 
-FTNoIR_Protocol::~FTNoIR_Protocol()
+evdev::~evdev()
 {
     if (uidev)
         libevdev_uinput_destroy(uidev);
@@ -69,7 +69,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
         libevdev_free(dev);
 }
 
-void FTNoIR_Protocol::pose(const double* headpose) {
+void evdev::pose(const double* headpose) {
     static const int axes[] = {
         /* translation goes first */
         ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ
@@ -94,4 +94,4 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, LibevdevControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(evdev, LibevdevControls, evdevDll)

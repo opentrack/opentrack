@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_rift_042.h"
 #include "api/plugin-api.hpp"
 
-TrackerControls::TrackerControls()
+dialog_rift_042::dialog_rift_042()
 {
     ui.setupUi( this );
 
@@ -14,12 +14,12 @@ TrackerControls::TrackerControls()
     tie_setting(s.useYawSpring, ui.yawSpring);
 }
 
-void TrackerControls::doOK() {
+void dialog_rift_042::doOK() {
     s.b->save();
     close();
 }
 
-void TrackerControls::doCancel() {
+void dialog_rift_042::doCancel() {
     close();
 }
 

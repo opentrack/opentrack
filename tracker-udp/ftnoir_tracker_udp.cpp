@@ -11,19 +11,19 @@
 #include "compat/nan.hpp"
 #include "compat/util.hpp"
 
-FTNoIR_Tracker::FTNoIR_Tracker() :
+udp::udp() :
     last_recv_pose { 0,0,0, 0,0,0 },
     last_recv_pose2 { 0,0,0, 0,0,0 },
     should_quit(false)
 {}
 
-FTNoIR_Tracker::~FTNoIR_Tracker()
+udp::~udp()
 {
     should_quit = true;
     wait();
 }
 
-void FTNoIR_Tracker::run()
+void udp::run()
 {
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
@@ -67,13 +67,13 @@ void FTNoIR_Tracker::run()
     }
 }
 
-void FTNoIR_Tracker::start_tracker(QFrame*)
+void udp::start_tracker(QFrame*)
 {
     start();
     sock.moveToThread(this);
 }
 
-void FTNoIR_Tracker::data(double *data)
+void udp::data(double *data)
 {
     QMutexLocker foo(&mutex);
     for (int i = 0; i < 6; i++)
@@ -100,4 +100,4 @@ void FTNoIR_Tracker::data(double *data)
 }
 
 
-OPENTRACK_DECLARE_TRACKER(FTNoIR_Tracker, TrackerControls, FTNoIR_TrackerDll)
+OPENTRACK_DECLARE_TRACKER(udp, dialog_udp, udpDll)

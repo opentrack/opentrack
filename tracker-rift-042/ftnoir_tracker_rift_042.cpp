@@ -87,4 +87,4 @@ void Rift_Tracker::data(double *data)
     }
 }
 
-OPENTRACK_DECLARE_TRACKER(Rift_Tracker, TrackerControls, FTNoIR_TrackerDll)
+OPENTRACK_DECLARE_TRACKER(Rift_Tracker, dialog_rift_042, rift_042Dll)

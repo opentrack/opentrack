@@ -14,10 +14,10 @@
 #include <QMutex>
 #include <QTimer>
 
-class FTNoIR_Filter : public IFilter
+class accela : public IFilter
 {
 public:
-    FTNoIR_Filter();
+    accela();
     void filter(const double* input, double *output) override;
     void center() override { first_run = true; }
     spline rot, trans;
@@ -35,15 +35,15 @@ private:
     }
 };
 
-class FilterControls: public IFilterDialog
+class dialog_accela: public IFilterDialog
 {
     Q_OBJECT
 public:
-    FilterControls();
+    dialog_accela();
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
 private:
-    Ui::AccelaUICFilterControls ui;
+    Ui::AccelaUICdialog_accela ui;
     void save();
     settings_accela s;
 private slots:
@@ -57,7 +57,7 @@ private slots:
     void update_rot_nl_slider(const slider_value& sl);
 };
 
-class FTNoIR_FilterDll : public Metadata
+class accelaDll : public Metadata
 {
 public:
     QString name() { return QString("Accela"); }

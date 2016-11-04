@@ -14,12 +14,12 @@
 constexpr double settings_accela::rot_gains[16][2];
 constexpr double settings_accela::trans_gains[16][2];
 
-FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
+accela::accela() : first_run(true)
 {
     s.make_splines(rot, trans);
 }
 
-void FTNoIR_Filter::filter(const double* input, double *output)
+void accela::filter(const double* input, double *output)
 {
     if (first_run)
     {
@@ -96,5 +96,5 @@ void settings_accela::make_splines(spline& rot, spline& trans)
         trans.addPoint(QPointF(trans_gains[i][0], trans_gains[i][1]));
 }
 
-OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)
+OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)
 

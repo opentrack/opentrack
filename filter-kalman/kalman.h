@@ -131,13 +131,13 @@ struct settings : opts {
 
 };
 
-class FTNoIR_Filter : public IFilter
+class kalman : public IFilter
 {
     PoseVector do_kalman_filter(const PoseVector &input, double dt, bool new_input);
     void fill_transition_matrix(double dt);
     void fill_process_noise_cov_matrix(StateMatrix &target, double dt) const;
 public:
-    FTNoIR_Filter();
+    kalman();
     void reset();
     void filter(const double *input, double *output);
     PoseVector last_input;
@@ -153,23 +153,23 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-class FTNoIR_FilterDll : public Metadata
+class kalmanDll : public Metadata
 {
 public:
     QString name() { return QString("Kalman"); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
 
-class FilterControls: public IFilterDialog
+class dialog_kalman: public IFilterDialog
 {
     Q_OBJECT
 public:
-    FilterControls();
-    Ui::KalmanUICFilterControls ui;
+    dialog_kalman();
+    Ui::KalmanUICdialog_kalman ui;
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
     settings s;
-    FTNoIR_Filter *filter;
+    kalman *filter;
 public slots:
     void doOK();
     void doCancel();

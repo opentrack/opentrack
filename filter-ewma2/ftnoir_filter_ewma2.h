@@ -20,10 +20,10 @@ struct settings : opts {
 };
 
 
-class FTNoIR_Filter : public IFilter
+class ewma : public IFilter
 {
 public:
-    FTNoIR_Filter();
+    ewma();
     void filter(const double *input, double *output);
 private:
     // Deltas are smoothed over the last 1/60sec.
@@ -38,16 +38,16 @@ private:
     bool first_run;
 };
 
-class FilterControls: public IFilterDialog
+class dialog_ewma: public IFilterDialog
 {
     Q_OBJECT
 public:
-    FilterControls();
+    dialog_ewma();
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
 
 private:
-    Ui::UICFilterControls ui;
+    Ui::UICdialog_ewma ui;
     settings s;
 
 private slots:
@@ -56,7 +56,7 @@ private slots:
     void update_labels(int);
 };
 
-class FTNoIR_FilterDll : public Metadata
+class ewmaDll : public Metadata
 {
 public:
     QString name() { return QString("EWMA"); }

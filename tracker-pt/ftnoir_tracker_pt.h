@@ -82,7 +82,7 @@ private:
     //static constexpr float deg2rad = float(M_PI/180);
 };
 
-class TrackerDll : public Metadata
+class PT_metadata : public Metadata
 {
     QString name() { return QString("PointTracker 1.1"); }
     QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }

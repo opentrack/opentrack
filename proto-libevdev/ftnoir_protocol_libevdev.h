@@ -15,11 +15,11 @@ extern "C" {
 #   include <libevdev/libevdev-uinput.h>
 }
 
-class FTNoIR_Protocol : public IProtocol
+class evdev : public IProtocol
 {
 public:
-    FTNoIR_Protocol();
-    ~FTNoIR_Protocol() override;
+    evdev();
+    ~evdev() override;
     bool correct() {
         return dev != NULL;
     }
@@ -49,7 +49,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class evdevDll : public Metadata
 {
 public:
     QString name() { return QString("libevdev joystick receiver"); }

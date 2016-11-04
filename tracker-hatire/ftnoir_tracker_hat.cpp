@@ -14,17 +14,17 @@
 
 hatire::hatire()
 {
-	HAT.Rot[0]=0;
-	HAT.Rot[1]=0;
-	HAT.Rot[2]=0;
-	HAT.Trans[0]=0;
-	HAT.Trans[1]=0;
-	HAT.Trans[2]=0;
+        HAT.Rot[0]=0;
+        HAT.Rot[1]=0;
+        HAT.Rot[2]=0;
+        HAT.Trans[0]=0;
+        HAT.Trans[1]=0;
+        HAT.Trans[2]=0;
 
-	Begin.append((char) 0xAA);
-	Begin.append((char) 0xAA);
-	End.append((char) 0x55);
-	End.append((char) 0x55);
+        Begin.append((char) 0xAA);
+        Begin.append((char) 0xAA);
+        End.append((char) 0x55);
+        End.append((char) 0x55);
 }
 
 hatire::~hatire()
@@ -37,16 +37,16 @@ void hatire::reset()
     t.sendcmd_str(s.CmdReset);
 }
 
-// return FPS 
+// return FPS
 void hatire::get_info( int *tps )
 {
-	*tps=frame_cnt;
-	frame_cnt=0;
+        *tps=frame_cnt;
+        frame_cnt=0;
 }
 void hatire::start_tracker(QFrame*)
 {
-	CptError=0;
-	frame_cnt=0;
+        CptError=0;
+        frame_cnt=0;
     t.Log("Starting Tracker");
 
     serial_result ret = t.init_serial_port();
@@ -136,14 +136,14 @@ void hatire::data(double *data)
     if (CptError > 50)
     {
         emit t.serial_debug_info("Can't find HAT frame");
-		CptError=0;
-	}
+                CptError=0;
+        }
 
-	// Need to handle this differently in opentrack as opposed to tracknoir
-    //if  (new_frame) { 
-	// in open track always populate the data, it seems opentrack always gives us a zeroed data structure to populate with pose data.
-	// if we have no new data, we don't populate it and so 0 pose gets handed back which is wrong. By always running the code below, if we 
-	// have no new data, we will just give it the previous pose data which is the best thing we can do really.
+        // Need to handle this differently in opentrack as opposed to tracknoir
+    //if  (new_frame) {
+        // in open track always populate the data, it seems opentrack always gives us a zeroed data structure to populate with pose data.
+        // if we have no new data, we don't populate it and so 0 pose gets handed back which is wrong. By always running the code below, if we
+        // have no new data, we will just give it the previous pose data which is the best thing we can do really.
 
     const struct
     {
@@ -167,11 +167,11 @@ void hatire::data(double *data)
         k.place = (k.sign ? -1.f : 1.f) * (k.enable ? k.input : 0.f);
     }
 
-	// For debug
-	//data->x=dataRead.length();
-	//data->y=CptError;
+    // For debug
+    //data->x=dataRead.length();
+    //data->y=CptError;
 }
 
 #include "ftnoir_tracker_hat_dialog.h"
-OPENTRACK_DECLARE_TRACKER(hatire, TrackerControls, TrackerDll)
+OPENTRACK_DECLARE_TRACKER(hatire, dialog_hatire, hatire_metadata)
 

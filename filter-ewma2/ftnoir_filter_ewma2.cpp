@@ -22,11 +22,11 @@
 // to minSmooth at a rate controlled by the powCurve setting.
 
 
-FTNoIR_Filter::FTNoIR_Filter() : first_run(true)
+ewma::ewma() : first_run(true)
 {
 }
 
-void FTNoIR_Filter::filter(const double *input, double *output)
+void ewma::filter(const double *input, double *output)
 {
     // Start the timer and initialise filter state if it's not running.
     if (first_run)
@@ -76,4 +76,4 @@ void FTNoIR_Filter::filter(const double *input, double *output)
     }
 }
 
-OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)
+OPENTRACK_DECLARE_FILTER(ewma, dialog_ewma, ewmaDll)

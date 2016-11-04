@@ -48,7 +48,7 @@ private:
     static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 };
 
-class TrackerDll : public Metadata
+class hatire_metadata : public Metadata
 {
     QString name() { return QString("Hatire Arduino"); }
     QIcon icon() { return QIcon(":/images/hat.png"); }

@@ -28,11 +28,11 @@ struct settings : opts {
     {}
 };
 
-class TrackerImpl : public ITracker, private QThread
+class tracker_freepie : public ITracker, private QThread
 {
 public:
-    TrackerImpl();
-    ~TrackerImpl() override;
+    tracker_freepie();
+    ~tracker_freepie() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 protected:
@@ -45,11 +45,11 @@ private:
     volatile bool should_quit;
 };
 
-class TrackerDialog : public ITrackerDialog
+class dialog_freepie : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerDialog();
+    dialog_freepie();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
 private:
@@ -60,7 +60,7 @@ private slots:
     void doCancel();
 };
 
-class TrackerMeta : public Metadata
+class meta_freepie : public Metadata
 {
 public:
     QString name() { return QString("FreePIE UDP receiver"); }

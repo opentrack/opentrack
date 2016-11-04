@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_hydra.h"
 #include "api/plugin-api.hpp"
 
-TrackerControls::TrackerControls()
+dialog_hydra::dialog_hydra()
 {
     ui.setupUi(this);
 
@@ -9,12 +9,12 @@ TrackerControls::TrackerControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
-void TrackerControls::doOK() {
+void dialog_hydra::doOK() {
     s.b->save();
     close();
 }
 
-void TrackerControls::doCancel()
+void dialog_hydra::doCancel()
 {
     close();
 }

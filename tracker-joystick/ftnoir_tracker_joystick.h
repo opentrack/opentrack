@@ -36,11 +36,11 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Tracker : public ITracker
+class joystick : public ITracker
 {
 public:
-    FTNoIR_Tracker();
-    ~FTNoIR_Tracker();
+    joystick();
+    ~joystick();
     void start_tracker(QFrame *);
     void data(double *data);
     settings s;
@@ -49,15 +49,15 @@ public:
     win32_joy_ctx joy_ctx;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog_joystick: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
+    dialog_joystick();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
     Ui::UIJoystickControls ui;
-    FTNoIR_Tracker* tracker;
+    joystick* tracker;
     settings s;
     struct joys {
         QString name;
@@ -69,7 +69,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class joystickDll : public Metadata
 {
 public:
     QString name() { return QString("Joystick input"); }

@@ -37,24 +37,24 @@ private:
     OVR::SensorFusion* pSFusion;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog_rift_025: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
+    dialog_rift_025();
 
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 
 private:
-    Ui::UIRiftControls ui;
+    Ui::dialog_rift_025 ui;
     settings s;
 private slots:
     void doOK();
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class rift_025Dll : public Metadata
 {
 public:
     QString name() { return QString("Oculus Rift runtime 0.2.5 -- HMD"); }

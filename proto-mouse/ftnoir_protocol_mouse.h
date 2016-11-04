@@ -25,10 +25,10 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Protocol : public IProtocol
+class mouse : public IProtocol
 {
 public:
-    FTNoIR_Protocol() : last_pos_x(0), last_pos_y(0), last_x(0), last_y(0) {}
+    mouse() : last_pos_x(0), last_pos_y(0), last_x(0), last_y(0) {}
     bool correct() override;
     void pose( const double *headpose) override;
     QString game_name() override;
@@ -57,7 +57,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class mouseDll : public Metadata
 {
 public:
     QString name() { return QString("mouse emulation"); }

@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-FTNoIR_Protocol::FTNoIR_Protocol()
+fsuipc::fsuipc()
 {
     prevPosX = 0.0f;
     prevPosY = 0.0f;
@@ -23,14 +23,14 @@ FTNoIR_Protocol::FTNoIR_Protocol()
     prevRotZ = 0.0f;
 }
 
-FTNoIR_Protocol::~FTNoIR_Protocol()
+fsuipc::~fsuipc()
 {
     FSUIPC_Close();
     FSUIPCLib.unload();
 }
 
 template<typename t>
-int FTNoIR_Protocol::scale2AnalogLimits(t x, t min_x, t max_x)
+int fsuipc::scale2AnalogLimits(t x, t min_x, t max_x)
 {
     t local_x = x;
 
@@ -55,7 +55,7 @@ static inline bool check_float_fresh(t x, t y)
     return std::fabs(x - y) >= eps;
 }
 
-void FTNoIR_Protocol::pose(const double *headpose ) {
+void fsuipc::pose(const double *headpose ) {
     DWORD result;
     TFSState pitch;
     TFSState yaw;
@@ -144,7 +144,7 @@ void FTNoIR_Protocol::pose(const double *headpose ) {
     prevRotZ = virtRotZ;
 }
 
-bool FTNoIR_Protocol::correct()
+bool fsuipc::correct()
 {
     qDebug() << "correct says: Starting Function";
 
@@ -163,4 +163,4 @@ bool FTNoIR_Protocol::correct()
     return true;
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FSUIPCControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(fsuipc, FSUIPCControls, fsuipcDll)

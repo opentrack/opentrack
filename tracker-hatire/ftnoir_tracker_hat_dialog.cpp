@@ -13,7 +13,7 @@
 
 #include <QScrollBar>
 
-TrackerControls::TrackerControls() : theTracker(nullptr), timer(this)
+dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
 {
     ui.setupUi(this);
 
@@ -118,10 +118,10 @@ TrackerControls::TrackerControls() : theTracker(nullptr), timer(this)
     //connect(ui.lineSend,SIGNAL(keyPressEvent),this,SLOT(on_lineSend_returnPressed()) );
 }
 
-TrackerControls::~TrackerControls() {
+dialog_hatire::~dialog_hatire() {
 }
 
-void TrackerControls::Initialize(QWidget *parent)
+void dialog_hatire::Initialize(QWidget *parent)
 {
     QPoint offsetpos(100, 100);
     if (parent)
@@ -132,14 +132,14 @@ void TrackerControls::Initialize(QWidget *parent)
 //
 // Zero asked to ARDUINO
 //
-void TrackerControls::doZero() {
+void dialog_hatire::doZero() {
     //if (theTracker) theTracker->notifyZeroed();
 }
 
 //
 // Reset asked to ARDUINO
 //
-void TrackerControls::doReset() {
+void dialog_hatire::doReset() {
     if (theTracker) theTracker->reset();
 }
 
@@ -147,14 +147,14 @@ void TrackerControls::doReset() {
 //
 // Serial Info debug
 //
-void TrackerControls::doSerialInfo() {
+void dialog_hatire::doSerialInfo() {
     if (theTracker) theTracker->serial_info();
 }
 
 //
 // Send command to ARDUINO
 //
-void TrackerControls::doSend() {
+void dialog_hatire::doSend() {
     if (theTracker) {
         if (!ui.lineSend->text().isEmpty()) {
             theTracker->send_serial_command(ui.lineSend->text().toLatin1());
@@ -165,7 +165,7 @@ void TrackerControls::doSend() {
 //
 // Enter on lineSend for send to ARDUINO
 //
-void TrackerControls::on_lineSend_returnPressed()
+void dialog_hatire::on_lineSend_returnPressed()
 {
     doSend();
 }
@@ -173,7 +173,7 @@ void TrackerControls::on_lineSend_returnPressed()
 //
 // Display FPS  of Arduino.
 //
-void TrackerControls::poll_tracker_info()
+void dialog_hatire::poll_tracker_info()
 {
     if (theTracker)
     {
@@ -185,7 +185,7 @@ void TrackerControls::poll_tracker_info()
     }
 }
 
-void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
+void dialog_hatire::WriteMsgInfo(const QByteArray &MsgInfo)
 {
     QApplication::beep();
     ui.pteINFO->moveCursor(QTextCursor::End);
@@ -194,18 +194,18 @@ void TrackerControls::WriteMsgInfo(const QByteArray &MsgInfo)
     bar->setValue(bar->maximum());
 }
 
-void TrackerControls::doOK()
+void dialog_hatire::doOK()
 {
     s.b->save();
     close();
 }
 
-void TrackerControls::doCancel()
+void dialog_hatire::doCancel()
 {
     close();
 }
 
-void TrackerControls::register_tracker(ITracker *tracker)
+void dialog_hatire::register_tracker(ITracker *tracker)
 {
     theTracker = static_cast<hatire*>(tracker);
     connect(&theTracker->t, SIGNAL(serial_debug_info(QByteArray)), this, SLOT(WriteMsgInfo(QByteArray)));
@@ -220,7 +220,7 @@ void TrackerControls::register_tracker(ITracker *tracker)
     timer.start(250);
 }
 
-void TrackerControls::unregister_tracker()
+void dialog_hatire::unregister_tracker()
 {
     timer.stop();
     theTracker = nullptr;

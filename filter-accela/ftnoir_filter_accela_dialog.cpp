@@ -13,7 +13,7 @@
 #include "spline-widget/spline-widget.hpp"
 #include <QDialog>
 
-FilterControls::FilterControls()
+dialog_accela::dialog_accela()
 {
     ui.setupUi(this);
 
@@ -70,18 +70,18 @@ FilterControls::FilterControls()
     }
 }
 
-void FilterControls::doOK()
+void dialog_accela::doOK()
 {
     save();
     close();
 }
 
-void FilterControls::doCancel()
+void dialog_accela::doCancel()
 {
     close();
 }
 
-void FilterControls::save()
+void dialog_accela::save()
 {
     s.b->save();
 }
@@ -89,34 +89,34 @@ void FilterControls::save()
 #define FIELD(x, a) ((a).arg(((x).cur()), 0, 'g', 4))
 #define LIT(x) QStringLiteral(x)
 
-void FilterControls::update_rot_display(const slider_value& val)
+void dialog_accela::update_rot_display(const slider_value& val)
 {
     static const QString str(QString::fromUtf8("%1°"));
     ui.rot_gain->setText(FIELD(val, str));
 }
 
-void FilterControls::update_trans_display(const slider_value& val)
+void dialog_accela::update_trans_display(const slider_value& val)
 {
     ui.trans_gain->setText(FIELD(val, LIT("%1mm")));
 }
 
-void FilterControls::update_ewma_display(const slider_value& val)
+void dialog_accela::update_ewma_display(const slider_value& val)
 {
     ui.ewma_label->setText(FIELD(val, LIT("%1ms")));
 }
 
-void FilterControls::update_rot_dz_display(const slider_value& val)
+void dialog_accela::update_rot_dz_display(const slider_value& val)
 {
     static const QString str(QString::fromUtf8("%1°"));
     ui.rot_dz->setText(FIELD(val, str));
 }
 
-void FilterControls::update_trans_dz_display(const slider_value& val)
+void dialog_accela::update_trans_dz_display(const slider_value& val)
 {
     ui.trans_dz->setText(FIELD(val, LIT("%1mm")));
 }
 
-void FilterControls::update_rot_nl_slider(const slider_value& val)
+void dialog_accela::update_rot_nl_slider(const slider_value& val)
 {
     ui.rot_nl->setText(FIELD(val, LIT(
                         "<html><head/><body>"

@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>UIRiftControls</name>
+    <name>dialog_rift_140</name>
     <message>
         <location filename="../dialog.ui" line="+23"/>
         <source>Oculus Rift tracker settings FaceTrackNoIR</source>

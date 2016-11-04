@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UIRiftControls</class>
- <widget class="QWidget" name="UIRiftControls">
+ <class>dialog_rift_080</class>
+ <widget class="QWidget" name="dialog_rift_080">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>

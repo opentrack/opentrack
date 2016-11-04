@@ -14,7 +14,7 @@
 #   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
 #endif
 
-void FTNoIR_Protocol::pose(const double *headpose)
+void mouse::pose(const double *headpose)
 {
     const int axis_x = s.Mouse_X - 1;
     const int axis_y = s.Mouse_Y - 1;
@@ -59,12 +59,12 @@ void FTNoIR_Protocol::pose(const double *headpose)
     last_y = mouse_y;
 }
 
-QString FTNoIR_Protocol::game_name()
+QString mouse::game_name()
 {
     return "Mouse tracker";
 }
 
-double FTNoIR_Protocol::get_rotation(double val, double last_pos)
+double mouse::get_rotation(double val, double last_pos)
 {
     using std::fmod;
     using std::fabs;
@@ -81,7 +81,7 @@ double FTNoIR_Protocol::get_rotation(double val, double last_pos)
         return x_1;
 }
 
-int FTNoIR_Protocol::get_value(double val, double& last_pos, int& last_px, bool is_rotation, double sensitivity)
+int mouse::get_value(double val, double& last_pos, int& last_px, bool is_rotation, double sensitivity)
 {
     static constexpr double c = 1e-1;
 
@@ -103,9 +103,9 @@ int FTNoIR_Protocol::get_value(double val, double& last_pos, int& last_px, bool 
     return last_px;
 }
 
-bool FTNoIR_Protocol::correct()
+bool mouse::correct()
 {
     return true;
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, MOUSEControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(mouse, MOUSEControls, mouseDll)

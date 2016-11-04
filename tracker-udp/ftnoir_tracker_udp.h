@@ -19,11 +19,11 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Tracker : public ITracker, protected QThread
+class udp : public ITracker, protected QThread
 {
 public:
-    FTNoIR_Tracker();
-    ~FTNoIR_Tracker() override;
+    udp();
+    ~udp() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 protected:
@@ -36,11 +36,11 @@ private:
     volatile bool should_quit;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog_udp: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
+    dialog_udp();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
 private:
@@ -51,7 +51,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class udpDll : public Metadata
 {
 public:
     QString name() { return QString("UDP sender"); }

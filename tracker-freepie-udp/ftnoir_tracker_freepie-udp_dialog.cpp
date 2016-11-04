@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_freepie-udp.h"
 #include "api/plugin-api.hpp"
 
-TrackerDialog::TrackerDialog()
+dialog_freepie::dialog_freepie()
 {
     ui.setupUi(this);
 
@@ -18,12 +18,12 @@ TrackerDialog::TrackerDialog()
     tie_setting(s.add_roll, ui.add_roll);
 }
 
-void TrackerDialog::doOK() {
+void dialog_freepie::doOK() {
     s.b->save();
     close();
 }
 
-void TrackerDialog::doCancel()
+void dialog_freepie::doCancel()
 {
     close();
 }

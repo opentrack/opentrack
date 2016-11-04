@@ -104,7 +104,7 @@ PoseVector DeadzoneFilter::filter(const PoseVector &input)
 }
 
 
-void FTNoIR_Filter::fill_transition_matrix(double dt)
+void kalman::fill_transition_matrix(double dt)
 {
     for (int i = 0; i < 6; ++i)
     {
@@ -112,7 +112,7 @@ void FTNoIR_Filter::fill_transition_matrix(double dt)
     }
 }
 
-void FTNoIR_Filter::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
+void kalman::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
 {
     // This model is like movement at fixed velocity plus superimposed
     // brownian motion. Unlike standard models for tracking of objects
@@ -141,7 +141,7 @@ void FTNoIR_Filter::fill_process_noise_cov_matrix(StateMatrix &target, double dt
 }
 
 
-PoseVector FTNoIR_Filter::do_kalman_filter(const PoseVector &input, double dt, bool new_input)
+PoseVector kalman::do_kalman_filter(const PoseVector &input, double dt, bool new_input)
 {
     if (new_input)
     {
@@ -157,13 +157,13 @@ PoseVector FTNoIR_Filter::do_kalman_filter(const PoseVector &input, double dt, b
 
 
 
-FTNoIR_Filter::FTNoIR_Filter() {
+kalman::kalman() {
     reset();
 }
 
 // The original code was written by Donovan Baarda <abo@minkirri.apana.org.au>
 // https://sourceforge.net/p/facetracknoir/discussion/1150909/thread/418615e1/?limit=25#af75/084b
-void FTNoIR_Filter::reset()
+void kalman::reset()
 {
     kf.init();
     kf_adaptive_process_noise_cov.init();
@@ -203,7 +203,7 @@ void FTNoIR_Filter::reset()
 }
 
 
-void FTNoIR_Filter::filter(const double* input_, double *output_)
+void kalman::filter(const double* input_, double *output_)
 {
     // almost non-existent cost, so might as well ...
     Eigen::Map<const PoseVector> input(input_, PoseVector::RowsAtCompileTime, 1);
@@ -257,7 +257,7 @@ void FTNoIR_Filter::filter(const double* input_, double *output_)
 
 
 
-FilterControls::FilterControls()
+dialog_kalman::dialog_kalman()
     : filter(nullptr)
 {
     ui.setupUi(this);
@@ -274,7 +274,7 @@ FilterControls::FilterControls()
 }
 
 
-void FilterControls::updateLabels(const slider_value&)
+void dialog_kalman::updateLabels(const slider_value&)
 {
     // M$ hates unicode! (M$ autoconverts source code of one kind of utf-8 format, 
     // the one without BOM, to another kind that QT does not like)
@@ -288,16 +288,16 @@ void FilterControls::updateLabels(const slider_value&)
 }
 
 
-void FilterControls::doOK() {
+void dialog_kalman::doOK() {
     s.b->save();
     close();
 }
 
 
-void FilterControls::doCancel()
+void dialog_kalman::doCancel()
 {
     close();
 }
 
 
-OPENTRACK_DECLARE_FILTER(FTNoIR_Filter, FilterControls, FTNoIR_FilterDll)
+OPENTRACK_DECLARE_FILTER(kalman, dialog_kalman, kalmanDll)

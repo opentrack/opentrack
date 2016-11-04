@@ -7,7 +7,7 @@
 
 #include "ftnoir_tracker_rs_controls.h"
 
-RSTrackerControls::RSTrackerControls()
+RSdialog_realsense::RSdialog_realsense()
 {
     ui.setupUi(this);
     connect(ui.triggerSDKInstallButton, SIGNAL(clicked(bool)), this, SLOT(doInstallRSRuntime()));
@@ -15,19 +15,19 @@ RSTrackerControls::RSTrackerControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
 }
 
-void RSTrackerControls::doInstallRSRuntime()
+void RSdialog_realsense::doInstallRSRuntime()
 {
     bool pStarted = RSTracker::startSdkInstallationProcess();
     if(pStarted == true)
         close();
 }
 
-void RSTrackerControls::doOK()
+void RSdialog_realsense::doOK()
 {
     close();
 }
 
-void RSTrackerControls::doCancel()
+void RSdialog_realsense::doCancel()
 {
     close();
 }

@@ -287,5 +287,5 @@ bool Tracker_PT::get_cam_info(CamInfo* info)
 }
 
 #include "ftnoir_tracker_pt_dialog.h"
-OPENTRACK_DECLARE_TRACKER(Tracker_PT, TrackerDialog_PT, TrackerDll)
+OPENTRACK_DECLARE_TRACKER(Tracker_PT, TrackerDialog_PT, PT_metadata)
 

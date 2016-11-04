@@ -46,16 +46,16 @@ struct settings : opts {
     {}
 };
 
-class TrackerControls;
+class dialog_aruco;
 
-class Tracker : protected QThread, public ITracker
+class tracker_aruco : protected QThread, public ITracker
 {
     Q_OBJECT
-    friend class TrackerControls;
+    friend class dialog_aruco;
     static constexpr float c_search_window = 1.3f;
 public:
-    Tracker();
-    ~Tracker() override;
+    tracker_aruco();
+    ~tracker_aruco() override;
     void start_tracker(QFrame* frame) override;
     void data(double *data) override;
     void run() override;
@@ -106,16 +106,16 @@ private:
     static constexpr double alpha_ = .95;
 };
 
-class TrackerControls : public ITrackerDialog
+class dialog_aruco : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
-    void register_tracker(ITracker * x) override { tracker = static_cast<Tracker*>(x); }
+    dialog_aruco();
+    void register_tracker(ITracker * x) override { tracker = static_cast<tracker_aruco*>(x); }
     void unregister_tracker() override { tracker = nullptr; }
 private:
-    Ui::Form ui;
-    Tracker* tracker;
+    Ui::dialog_aruco ui;
+    tracker_aruco* tracker;
     settings s;
     TranslationCalibrator calibrator;
     QTimer calib_timer;
@@ -129,7 +129,7 @@ private slots:
     void show_camera_settings();
 };
 
-class TrackerDll : public Metadata
+class aruco_metadata : public Metadata
 {
     QString name() { return QString("aruco -- paper marker tracker"); }
     QIcon icon() { return QIcon(":/images/aruco.png"); }

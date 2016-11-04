@@ -1,7 +1,7 @@
 #include "ftnoir_tracker_joystick.h"
 #include "api/plugin-api.hpp"
 
-TrackerControls::TrackerControls() : tracker(nullptr)
+dialog_joystick::dialog_joystick() : tracker(nullptr)
 {
     ui.setupUi( this );
 
@@ -39,7 +39,7 @@ TrackerControls::TrackerControls() : tracker(nullptr)
     tie_setting(s.joy_6, ui.joy_6);
 }
 
-void TrackerControls::doOK() {
+void dialog_joystick::doOK() {
     int idx = ui.joylist->currentIndex();
     joys def { "", "" };
     auto val = _joys.value(idx, def);
@@ -48,6 +48,6 @@ void TrackerControls::doOK() {
     close();
 }
 
-void TrackerControls::doCancel() {
+void dialog_joystick::doCancel() {
     close();
 }

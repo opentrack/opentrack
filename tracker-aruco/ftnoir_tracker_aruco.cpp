@@ -38,7 +38,7 @@ static resolution_tuple resolution_choices[] =
     { 0, 0 }
 };
 
-Tracker::Tracker() :
+tracker_aruco::tracker_aruco() :
     stop(false),
     layout(nullptr),
     videoWidget(nullptr),
@@ -57,7 +57,7 @@ Tracker::Tracker() :
     detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
 }
 
-Tracker::~Tracker()
+tracker_aruco::~tracker_aruco()
 {
     stop = true;
     wait();
@@ -68,7 +68,7 @@ Tracker::~Tracker()
     camera.release();
 }
 
-void Tracker::start_tracker(QFrame* videoframe)
+void tracker_aruco::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new cv_video_widget(videoframe);
@@ -87,7 +87,7 @@ void Tracker::start_tracker(QFrame* videoframe)
 
 #define HT_PI M_PI
 
-void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
+void tracker_aruco::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 {
     QMutexLocker l(&mtx);
 
@@ -95,7 +95,7 @@ void Tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
     t_ = t;
 }
 
-bool Tracker::detect_with_roi()
+bool tracker_aruco::detect_with_roi()
 {
     if (last_roi.width > 1 && last_roi.height > 1)
     {
@@ -124,14 +124,14 @@ bool Tracker::detect_with_roi()
     return false;
 }
 
-bool Tracker::detect_without_roi()
+bool tracker_aruco::detect_without_roi()
 {
     detector.setMinMaxSize(size_min, size_max);
     detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
     return markers.size() == 1 && markers[0].size() == 4;
 }
 
-bool Tracker::open_camera()
+bool tracker_aruco::open_camera()
 {
     int rint = s.resolution;
     if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
@@ -180,7 +180,7 @@ bool Tracker::open_camera()
     return true;
 }
 
-void Tracker::set_intrinsics()
+void tracker_aruco::set_intrinsics()
 {
     const int w = grayscale.cols, h = grayscale.rows;
     const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
@@ -195,7 +195,7 @@ void Tracker::set_intrinsics()
     intrinsics(1, 2) = grayscale.rows/2;
 }
 
-void Tracker::update_fps(double alpha)
+void tracker_aruco::update_fps(double alpha)
 {
     std::uint64_t time = std::uint64_t(cv::getTickCount());
     const double dt = std::max(0., (time - last_time) / freq);
@@ -204,7 +204,7 @@ void Tracker::update_fps(double alpha)
     cur_fps = cur_fps * alpha + (1-alpha) * (fabs(dt) < 1e-6 ? 0 : 1./dt);
 }
 
-void Tracker::draw_ar(bool ok)
+void tracker_aruco::draw_ar(bool ok)
 {
     if (ok)
     {
@@ -219,7 +219,7 @@ void Tracker::draw_ar(bool ok)
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 
-void Tracker::clamp_last_roi()
+void tracker_aruco::clamp_last_roi()
 {
     if (last_roi.x < 0)
         last_roi.x = 0;
@@ -242,7 +242,7 @@ void Tracker::clamp_last_roi()
     last_roi.height -= last_roi.y;
 }
 
-void Tracker::set_points()
+void tracker_aruco::set_points()
 {
     using f = float;
     const f hx = f(s.headpos_x), hy = f(s.headpos_y), hz = f(s.headpos_z);
@@ -257,7 +257,7 @@ void Tracker::set_points()
     obj_points[x4] = cv::Point3f(-size + hx, size + hy, 0 + hz);
 }
 
-void Tracker::draw_centroid()
+void tracker_aruco::draw_centroid()
 {
     repr2.clear();
 
@@ -269,7 +269,7 @@ void Tracker::draw_centroid()
     cv::circle(frame, repr2[0], 4, s, -1);
 }
 
-void Tracker::set_last_roi()
+void tracker_aruco::set_last_roi()
 {
     roi_projection.clear();
 
@@ -286,7 +286,7 @@ void Tracker::set_last_roi()
     set_roi_from_projection();
 }
 
-void Tracker::set_rmat()
+void tracker_aruco::set_rmat()
 {
     cv::Rodrigues(rvec, rmat);
 
@@ -305,7 +305,7 @@ void Tracker::set_rmat()
     t = cv::Vec3d(tvec[0], -tvec[1], tvec[2]);
 }
 
-void Tracker::set_roi_from_projection()
+void tracker_aruco::set_roi_from_projection()
 {
     last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
 
@@ -328,7 +328,7 @@ void Tracker::set_roi_from_projection()
     clamp_last_roi();
 }
 
-void Tracker::run()
+void tracker_aruco::run()
 {
     cv::setNumThreads(0);
 
@@ -389,7 +389,7 @@ fail:
     }
 }
 
-void Tracker::data(double *data)
+void tracker_aruco::data(double *data)
 {
     QMutexLocker lck(&mtx);
 
@@ -401,7 +401,7 @@ void Tracker::data(double *data)
     data[TZ] = pose[TZ];
 }
 
-TrackerControls::TrackerControls()
+dialog_aruco::dialog_aruco()
 {
     tracker = nullptr;
     calib_timer.setInterval(250);
@@ -421,19 +421,19 @@ TrackerControls::TrackerControls()
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
 
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
-    connect(ui.cameraName, &QComboBox::currentTextChanged, this, &TrackerControls::set_camera_settings_available);
+    connect(ui.cameraName, &QComboBox::currentTextChanged, this, &dialog_aruco::set_camera_settings_available);
     set_camera_settings_available(ui.cameraName->currentText());
-    connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerControls::show_camera_settings);
+    connect(ui.camera_settings, &QPushButton::clicked, this, &dialog_aruco::show_camera_settings);
 }
 
 
-void TrackerControls::set_camera_settings_available(const QString& camera_name)
+void dialog_aruco::set_camera_settings_available(const QString& camera_name)
 {
     const bool avail = video_property_page::should_show_dialog(camera_name);
     ui.camera_settings->setEnabled(avail);
 }
 
-void TrackerControls::show_camera_settings()
+void dialog_aruco::show_camera_settings()
 {
     const int idx = ui.cameraName->currentIndex();
     if (tracker)
@@ -446,7 +446,7 @@ void TrackerControls::show_camera_settings()
         video_property_page::show(idx);
 }
 
-void TrackerControls::toggleCalibrate()
+void dialog_aruco::toggleCalibrate()
 {
     if (!calib_timer.isActive())
     {
@@ -467,13 +467,13 @@ void TrackerControls::toggleCalibrate()
     }
 }
 
-void TrackerControls::cleanupCalib()
+void dialog_aruco::cleanupCalib()
 {
     if (calib_timer.isActive())
         calib_timer.stop();
 }
 
-void TrackerControls::update_tracker_calibration()
+void dialog_aruco::update_tracker_calibration()
 {
     if (calib_timer.isActive() && tracker)
     {
@@ -484,15 +484,15 @@ void TrackerControls::update_tracker_calibration()
     }
 }
 
-void TrackerControls::doOK()
+void dialog_aruco::doOK()
 {
     s.b->save();
     close();
 }
 
-void TrackerControls::doCancel()
+void dialog_aruco::doCancel()
 {
     close();
 }
 
-OPENTRACK_DECLARE_TRACKER(Tracker, TrackerControls, TrackerDll)
+OPENTRACK_DECLARE_TRACKER(tracker_aruco, dialog_aruco, aruco_metadata)

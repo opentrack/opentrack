@@ -12,22 +12,22 @@
 
 #include <QDebug>
 
-const double FTNoIR_Tracker::incr[6] =
+const double test_tracker::incr[6] =
 {
     50, 40, 80,
     70, 5, 3
 };
 
-FTNoIR_Tracker::FTNoIR_Tracker() :
+test_tracker::test_tracker() :
     last_x { 0, 0, 0, 0, 0, 0 }
 {
 }
 
-FTNoIR_Tracker::~FTNoIR_Tracker()
+test_tracker::~test_tracker()
 {
 }
 
-void FTNoIR_Tracker::start_tracker(QFrame*)
+void test_tracker::start_tracker(QFrame*)
 {
     t.start();
 }
@@ -36,7 +36,7 @@ void FTNoIR_Tracker::start_tracker(QFrame*)
 #   include <cstdlib>
 #endif
 
-void FTNoIR_Tracker::data(double *data)
+void test_tracker::data(double *data)
 {
     using std::fmod;
     using std::sin;
@@ -77,7 +77,7 @@ void FTNoIR_Tracker::data(double *data)
         }
 }
 
-TrackerControls::TrackerControls()
+dialog::dialog()
 {
     ui.setupUi(this);
 
@@ -85,15 +85,15 @@ TrackerControls::TrackerControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
-void TrackerControls::doOK()
+void dialog::doOK()
 {
     //s.b->save();
     close();
 }
 
-void TrackerControls::doCancel()
+void dialog::doCancel()
 {
     close();
 }
 
-OPENTRACK_DECLARE_TRACKER(FTNoIR_Tracker, TrackerControls, FTNoIR_TrackerDll)
+OPENTRACK_DECLARE_TRACKER(test_tracker, dialog, metadata)

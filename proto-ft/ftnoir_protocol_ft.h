@@ -40,11 +40,11 @@ struct settings : opts {
 typedef void (__stdcall *importTIRViewsStart)(void);
 typedef void (__stdcall *importTIRViewsStop)(void);
 
-class FTNoIR_Protocol : public IProtocol
+class freetrack : public IProtocol
 {
 public:
-    FTNoIR_Protocol();
-    ~FTNoIR_Protocol() override;
+    freetrack();
+    ~freetrack() override;
     bool correct();
     void pose( const double *headpose );
     QString game_name() override {
@@ -90,7 +90,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class freetrackDll : public Metadata
 {
 public:
     QString name() { return QString("freetrack 2.0 Enhanced"); }

@@ -5,7 +5,7 @@
 #include "api/plugin-api.hpp"
 #include "ui_ftnoir_ewma_filtercontrols.h"
 
-FilterControls::FilterControls()
+dialog_ewma::dialog_ewma()
 {
     ui.setupUi(this);
 
@@ -16,9 +16,9 @@ FilterControls::FilterControls()
     tie_setting(s.kMinSmoothing, ui.minSmooth);
     tie_setting(s.kSmoothingScaleCurve, ui.powCurve);
 
-    connect(ui.powCurve, &QSlider::valueChanged, this, &FilterControls::update_labels);
-    connect(ui.minSmooth, &QSlider::valueChanged, this, &FilterControls::update_labels);
-    connect(ui.maxSmooth, &QSlider::valueChanged, this, &FilterControls::update_labels);
+    connect(ui.powCurve, &QSlider::valueChanged, this, &dialog_ewma::update_labels);
+    connect(ui.minSmooth, &QSlider::valueChanged, this, &dialog_ewma::update_labels);
+    connect(ui.maxSmooth, &QSlider::valueChanged, this, &dialog_ewma::update_labels);
 
     using std::min;
     using std::max;
@@ -32,18 +32,18 @@ FilterControls::FilterControls()
     update_labels(0);
 }
 
-void FilterControls::doOK()
+void dialog_ewma::doOK()
 {
     s.b->save();
     close();
 }
 
-void FilterControls::doCancel()
+void dialog_ewma::doCancel()
 {
     close();
 }
 
-void FilterControls::update_labels(int)
+void dialog_ewma::update_labels(int)
 {
     ui.curve_label->setText(QString::number(static_cast<slider_value>(s.kSmoothingScaleCurve).cur() * 100, 'f', 2) + "%");
     ui.min_label->setText(QString::number(static_cast<slider_value>(s.kMinSmoothing).cur() * 100, 'f', 2) + "%");

@@ -9,7 +9,7 @@
 #include <fcntl.h>           /* For O_* constants */
 #include "csv/csv.h"
 
-FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
+wine::wine() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
     if (lck_shm.success()) {
         shm = (WineSHM*) lck_shm.ptr();
@@ -20,7 +20,7 @@ FTNoIR_Protocol::FTNoIR_Protocol() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeo
     wrapper.start("wine", QStringList() << (library_path + "opentrack-wrapper-wine.exe.so"));
 }
 
-FTNoIR_Protocol::~FTNoIR_Protocol()
+wine::~wine()
 {
     if (shm) {
         shm->stop = true;
@@ -31,7 +31,7 @@ FTNoIR_Protocol::~FTNoIR_Protocol()
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
-void FTNoIR_Protocol::pose( const double *headpose )
+void wine::pose( const double *headpose )
 {
     if (shm)
     {
@@ -54,9 +54,9 @@ void FTNoIR_Protocol::pose( const double *headpose )
     }
 }
 
-bool FTNoIR_Protocol::correct()
+bool wine::correct()
 {
     return lck_shm.success();
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FTControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wineDll)

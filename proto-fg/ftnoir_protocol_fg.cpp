@@ -13,7 +13,7 @@
 
 // For Todd and Arda Kutlu
 
-void FTNoIR_Protocol::pose(const double* headpose) {
+void flightgear::pose(const double* headpose) {
     FlightData.x = headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;
@@ -30,9 +30,9 @@ void FTNoIR_Protocol::pose(const double* headpose) {
     (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(destPort));
 }
 
-bool FTNoIR_Protocol::correct()
+bool flightgear::correct()
 {   
     return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-OPENTRACK_DECLARE_PROTOCOL(FTNoIR_Protocol, FGControls, FTNoIR_ProtocolDll)
+OPENTRACK_DECLARE_PROTOCOL(flightgear, FGControls, flightgearDll)

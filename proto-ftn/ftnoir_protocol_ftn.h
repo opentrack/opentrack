@@ -31,10 +31,10 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Protocol : public IProtocol
+class udp : public IProtocol
 {
 public:
-    FTNoIR_Protocol();
+    udp();
     bool correct();
     void pose(const double *headpose);
     QString game_name() {
@@ -61,7 +61,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class udpDll : public Metadata
 {
 public:
     QString name() { return QString("UDP receiver"); }

@@ -44,4 +44,4 @@ void Hydra_Tracker::data(double *data)
     data[Roll] = double(ypr[2]) * r2d;
 }
 
-OPENTRACK_DECLARE_TRACKER(Hydra_Tracker, TrackerControls, FTNoIR_TrackerDll)
+OPENTRACK_DECLARE_TRACKER(Hydra_Tracker, dialog_hydra, hydraDll)

@@ -5,11 +5,11 @@
 
 #include <cmath>
 
-class FTNoIR_Tracker : public ITracker
+class test_tracker : public ITracker
 {
 public:
-    FTNoIR_Tracker();
-    ~FTNoIR_Tracker() override;
+    test_tracker();
+    ~test_tracker() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 
@@ -22,13 +22,13 @@ private:
     Timer t;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog: public ITrackerDialog
 {
     Q_OBJECT
 
     Ui::test_ui ui;
 public:
-    TrackerControls();
+    dialog();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
 private slots:
@@ -36,7 +36,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class metadata : public Metadata
 {
 public:
     QString name() { return QString("Testing - sine wave"); }

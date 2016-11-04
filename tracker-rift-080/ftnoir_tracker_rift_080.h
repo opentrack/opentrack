@@ -33,24 +33,24 @@ private:
     settings s;
 };
 
-class TrackerControls: public ITrackerDialog
+class dialog_rift_080: public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerControls();
+    dialog_rift_080();
 
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
 
 private:
-    Ui::UIRiftControls ui;
+    Ui::dialog_rift_080 ui;
     settings s;
 private slots:
     void doOK();
     void doCancel();
 };
 
-class FTNoIR_TrackerDll : public Metadata
+class rift_080Dll : public Metadata
 {
 public:
     QString name() { return QString("Oculus Rift runtime 0.8.0 -- HMD"); }

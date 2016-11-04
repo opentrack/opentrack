@@ -45,11 +45,11 @@ typedef struct
 } TFSState;
 #pragma pack(pop)
 
-class FTNoIR_Protocol : public IProtocol
+class fsuipc : public IProtocol
 {
 public:
-    FTNoIR_Protocol();
-    ~FTNoIR_Protocol() override;
+    fsuipc();
+    ~fsuipc() override;
     bool correct();
     void pose(const double* headpose);
     QString game_name()
@@ -81,7 +81,7 @@ private slots:
     void getLocationOfDLL();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class fsuipcDll : public Metadata
 {
 public:
     QString name() { return QString("FSUIPC -- Microsoft FS2002/FS2004"); }

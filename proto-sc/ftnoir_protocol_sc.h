@@ -32,11 +32,11 @@ struct settings : opts {
     {}
 };
 
-class FTNoIR_Protocol : public IProtocol, private QThread
+class simconnect : public IProtocol, private QThread
 {
 public:
-    FTNoIR_Protocol();
-    ~FTNoIR_Protocol() override;
+    simconnect();
+    ~simconnect() override;
     bool correct();
     void pose(const double* headpose);
     void handle();
@@ -100,7 +100,7 @@ private slots:
     void doCancel();
 };
 
-class FTNoIR_ProtocolDll : public Metadata
+class simconnectDll : public Metadata
 {
 public:
     QString name() { return QString("Microsoft FSX SimConnect"); }

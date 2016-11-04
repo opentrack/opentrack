@@ -149,4 +149,4 @@ QIcon RSTrackerMetaData::icon() {
     return QIcon(":/images/intel-16x16.png");
 }
 
-OPENTRACK_DECLARE_TRACKER(RSTracker, RSTrackerControls, RSTrackerMetaData)
+OPENTRACK_DECLARE_TRACKER(RSTracker, RSdialog_realsense, RSTrackerMetaData)
