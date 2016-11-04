@@ -113,6 +113,6 @@ if((CMAKE_GENERATOR STREQUAL "NMake Makefiles") OR (CMAKE_GENERATOR STREQUAL "NM
             endif()
         endforeach()
     endif()
-
-    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -nologo")
 endif()
+
+set(CMAKE_RC_FLAGS "-nologo -DWIN32" CACHE STRING "" FORCE)
