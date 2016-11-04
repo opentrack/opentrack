@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>459</width>
-    <height>616</height>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,9 @@
        <string>Shortcuts</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
@@ -68,6 +71,12 @@
              <string notr="true">QGroupBox { border: 0; }</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_8">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
              <property name="horizontalSpacing">
               <number>20</number>
              </property>
@@ -201,6 +210,12 @@
              </item>
              <item row="0" column="1">
               <widget class="QLabel" name="center_text">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -218,6 +233,12 @@
              </item>
              <item row="0" column="0">
               <widget class="QLabel" name="textLabel2_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>7</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Center</string>
                </property>
@@ -333,7 +354,7 @@
           <item>
            <widget class="QCheckBox" name="trayp">
             <property name="text">
-             <string>Enable</string>
+             <string>Enable tray</string>
             </property>
            </widget>
           </item>
@@ -538,10 +559,10 @@
              <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="pos_rz">
                <property name="suffix">
-                <string> deg.</string>
+                <string>°</string>
                </property>
                <property name="decimals">
-                <number>3</number>
+                <number>2</number>
                </property>
                <property name="minimum">
                 <double>-180.000000000000000</double>
@@ -607,10 +628,10 @@
              <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="pos_ry">
                <property name="suffix">
-                <string> deg.</string>
+                <string>°</string>
                </property>
                <property name="decimals">
-                <number>3</number>
+                <number>2</number>
                </property>
                <property name="minimum">
                 <double>-180.000000000000000</double>
@@ -660,10 +681,10 @@
              <item row="0" column="1">
               <widget class="QDoubleSpinBox" name="pos_rx">
                <property name="suffix">
-                <string> deg.</string>
+                <string>°</string>
                </property>
                <property name="decimals">
-                <number>3</number>
+                <number>2</number>
                </property>
                <property name="minimum">
                 <double>-180.000000000000000</double>
@@ -1384,12 +1405,18 @@
          <property name="title">
           <string>CSV Data Logging</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_211">
+         <layout class="QVBoxLayout" name="verticalLayout_11">
           <property name="bottomMargin">
-           <number>0</number>
+           <number>11</number>
           </property>
           <item>
            <widget class="QCheckBox" name="tracklogging_enabled">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Enable - You will be asked for a filename whenever tracking starts</string>
             </property>

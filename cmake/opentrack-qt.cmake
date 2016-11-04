@@ -22,3 +22,4 @@ if(MSVC AND NOT is-msvc EQUAL 0)
         endforeach()
     ")
 endif()
+

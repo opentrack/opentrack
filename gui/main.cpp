@@ -5,6 +5,8 @@
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
+#   include <QLocale>
+#   include <QTranslator>
 #endif
 
 #include "migration/migration.hpp"
@@ -128,6 +130,8 @@ main(int argc, char** argv)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
+
+    QTranslator t;
     QApplication app(argc, argv);
 
     set_qt_style();
@@ -136,6 +140,11 @@ main(int argc, char** argv)
 #ifdef _WIN32
     add_win32_path();
 #endif
+
+    // QLocale::setDefault(QLocale("pl_PL")); // force i18n for testing
+
+    (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/i18n", ".qm");
+    (void) QCoreApplication::installTranslator(&t);
 
      do
      {

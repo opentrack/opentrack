@@ -37,7 +37,7 @@ function(cleanup_build_dir)
     # let's hope nothing bad happens
     file(REMOVE_RECURSE ${files_})
 
-    execute_process(COMMAND cmake . WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" OUTPUT_QUIET)
+    #execute_process(COMMAND cmake . WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" OUTPUT_QUIET)
 endfunction()
 
 cleanup_build_dir()

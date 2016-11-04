@@ -214,4 +214,24 @@ function(opentrack_boilerplate n)
             opentrack_install_pdb_current_project()
         endif()
     endif()
+
+    set(langs "")
+    foreach(i ${opentrack-all-translations})
+        set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
+        list(APPEND langs "${t}")
+        get_property(tt GLOBAL PROPERTY opentrack-${i}-ts)
+        set(tt ${tt} ${t})
+        set_property(GLOBAL PROPERTY opentrack-${i}-ts ${tt})
+    endforeach()
+
+    get_property(modules GLOBAL PROPERTY opentrack-all-modules)
+    list(APPEND modules "${n}")
+    set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
+
+    add_custom_target(${n}-i18n
+        COMMAND cmake -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
+        COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        SOURCES ${langs})
 endfunction()
+

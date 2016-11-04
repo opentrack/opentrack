@@ -45,3 +45,31 @@ function(opentrack_install_sources n)
     endforeach()
     opentrack_inst2("${opentrack-doc-src-pfx}/${subdir}" FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
 endfunction()
+
+function(merge_translations)
+    set(all-deps "")
+
+    install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/i18n\")")
+
+    get_property(modules GLOBAL PROPERTY opentrack-all-modules)
+
+    foreach(i ${opentrack-all-translations})
+        get_property(ts GLOBAL PROPERTY opentrack-${i}-ts)
+
+        set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
+
+        set(deps "")
+        foreach(k ${modules})
+            list(APPEND deps "${k}-i18n")
+        endforeach()
+
+        add_custom_target(i18n-lang-${i}
+            COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
+            DEPENDS ${deps}
+        )
+        list(APPEND all-deps "i18n-lang-${i}")
+        install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
+    endforeach()
+    add_custom_target(i18n ALL DEPENDS ${all-deps})
+endfunction()
+
