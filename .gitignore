@@ -8,3 +8,4 @@
 *.obj
 *.exp
 *.pdb
+/*/lang/*.ts
