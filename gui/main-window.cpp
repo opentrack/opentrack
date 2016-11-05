@@ -165,10 +165,13 @@ void MainWindow::init_tray_menu()
     tray_menu.clear();
 
     QString display_name(opentrack_version);
+    qDebug() << display_name;
     if (display_name.startsWith("opentrack-"))
-        display_name.replace(sizeof("opentrack") - 1, 1, QChar(' '));
+    {
+        display_name = tr("opentrack") + " " + display_name.mid(sizeof("opentrack-") - 1);
+    }
     if (display_name.endsWith("-DEBUG"))
-        display_name.replace(display_name.size() - int(sizeof("DEBUG")), display_name.size(), " (debug)");
+        display_name.replace(display_name.size() - int(sizeof("DEBUG")), display_name.size(), tr(" (debug)"));
 
     menu_action_header.setEnabled(false);
     menu_action_header.setText(display_name);
@@ -543,9 +546,11 @@ void MainWindow::set_title(const QString& game_title_)
 {
     QString game_title;
     if (game_title_ != "")
-        game_title = " :: " + game_title_;
+        game_title = tr(" :: ") + game_title_;
     QString current = group::ini_filename();
-    setWindowTitle(opentrack_version + QStringLiteral(" :: ") + current + game_title);
+    QString version(opentrack_version);
+    version = tr("opentrack") + " " + version.mid(sizeof("opentrack-") - 1);
+    setWindowTitle(version + tr(" :: ") + current + game_title);
 }
 
 void MainWindow::showHeadPose()
