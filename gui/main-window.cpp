@@ -165,7 +165,6 @@ void MainWindow::init_tray_menu()
     tray_menu.clear();
 
     QString display_name(opentrack_version);
-    qDebug() << display_name;
     if (display_name.startsWith("opentrack-"))
     {
         display_name = tr("opentrack") + " " + display_name.mid(sizeof("opentrack-") - 1);
