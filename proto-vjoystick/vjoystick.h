@@ -74,6 +74,6 @@ private:
 class vjoystick_metadata : public Metadata
 {
 public:
-    QString name() { return QString("Joystick emulation -- vjoystick"); }
+    QString name() { return QString(QCoreApplication::translate("vjoystick_metadata", "Joystick emulation -- vjoystick")); }
     QIcon icon() { return QIcon(":/images/vjoystick.png"); }
 };

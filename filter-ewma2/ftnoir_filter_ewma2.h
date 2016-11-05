@@ -59,6 +59,6 @@ private slots:
 class ewmaDll : public Metadata
 {
 public:
-    QString name() { return QString("EWMA"); }
+    QString name() { return QString(QCoreApplication::translate("ewmaDll", "EWMA")); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

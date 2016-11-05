@@ -1,11 +1,12 @@
 #include "work.hpp"
 #include "opentrack-library-path.h"
 
+#include <QObject>
 #include <QMessageBox>
 #include <QFileDialog>
 
 
-static QString browse_datalogging_file(main_settings &s)
+QString Work::browse_datalogging_file(main_settings &s)
 {
     QString filename = s.tracklogging_filename;
     if (filename.isEmpty())
@@ -15,7 +16,11 @@ static QString browse_datalogging_file(main_settings &s)
        and be a known problem. Possible solution is to use the QFileDialog::DontUseNativeDialog flag.
        Since the freeze is apparently random, I'm not sure it helped.
     */
-    QString newfilename = QFileDialog::getSaveFileName(nullptr, QFileDialog::tr("Select Filename"), filename, QFileDialog::tr("CSV File (*.csv)"), nullptr); //, QFileDialog::DontUseNativeDialog);
+    QString newfilename = QFileDialog::getSaveFileName(nullptr,
+                                                       QCoreApplication::translate("Work", "Select filename"),
+                                                       filename,
+                                                       QCoreApplication::translate("Work", "CSV File (*.csv)"),
+                                                       nullptr);
     if (!newfilename.isEmpty())
     {
       s.tracklogging_filename = newfilename;
@@ -30,7 +35,7 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
     if (s.tracklogging_enabled)
     {
         QString filename = browse_datalogging_file(s);
-        if (static_cast<QString>(s.tracklogging_filename).isEmpty())
+        if (filename.isEmpty())
         {
           // The user probably canceled the file dialog. In this case we don't want to do anything.
         }
@@ -40,8 +45,8 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
             if (!logger->is_open())
             {
                 logger = nullptr;
-                QMessageBox::warning(nullptr, "Logging Error",
-                    "Unable to open file: " + s.tracklogging_filename + ". Proceeding  without logging.",
+                QMessageBox::warning(nullptr, QCoreApplication::translate("Work", "Logging error"),
+                    QCoreApplication::translate("Work", "Unable to open file '%1'. Proceeding without logging.").arg(s.tracklogging_filename),
                     QMessageBox::Ok,
                     QMessageBox::NoButton);
             }

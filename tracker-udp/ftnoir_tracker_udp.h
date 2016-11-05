@@ -54,7 +54,7 @@ private slots:
 class udpDll : public Metadata
 {
 public:
-    QString name() { return QString("UDP sender"); }
+    QString name() { return QString(QCoreApplication::translate("udpDll", "UDP sender")); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

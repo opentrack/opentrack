@@ -37,7 +37,7 @@ public:
     bool correct();
     void pose(const double *headpose);
     QString game_name() {
-        return "FlightGear";
+        return QCoreApplication::translate("flightgear", "FlightGear");
     }
 private:
     settings s;
@@ -64,6 +64,6 @@ private slots:
 class flightgearDll : public Metadata
 {
 public:
-    QString name() { return QString("FlightGear"); }
+    QString name() { return QString(QCoreApplication::translate("flightgearDll", "FlightGear")); }
     QIcon icon() { return QIcon(":/images/flightgear.png"); }
 };

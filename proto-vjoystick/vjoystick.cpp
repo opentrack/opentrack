@@ -99,11 +99,11 @@ vjoystick_proto::vjoystick_proto()
     {
         QMessageBox msgbox;
         msgbox.setIcon(QMessageBox::Critical);
-        msgbox.setText("vjoystick driver missing");
-        msgbox.setInformativeText("vjoystick won't work without the driver installed.");
+        msgbox.setText(QCoreApplication::translate("vjoystick_proto", "vjoystick driver missing"));
+        msgbox.setInformativeText(QCoreApplication::translate("vjoystick_proto", "vjoystick won't work without the driver installed."));
 
-        QPushButton* driver_button = msgbox.addButton("Download the driver", QMessageBox::ActionRole);
-        QPushButton* project_site_button = msgbox.addButton("Visit project site", QMessageBox::ActionRole);
+        QPushButton* driver_button = msgbox.addButton(QCoreApplication::translate("vjoystick_proto", "Download the driver"), QMessageBox::ActionRole);
+        QPushButton* project_site_button = msgbox.addButton(QCoreApplication::translate("vjoystick_proto", "Visit project site"), QMessageBox::ActionRole);
         msgbox.addButton(QMessageBox::Close);
 
         (void) msgbox.exec();

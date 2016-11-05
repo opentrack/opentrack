@@ -84,7 +84,7 @@ private:
 
 class PT_metadata : public Metadata
 {
-    QString name() { return QString("PointTracker 1.1"); }
+    QString name() { return QString(QCoreApplication::translate("PT_metadata", "PointTracker 1.1")); }
     QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
 };
 

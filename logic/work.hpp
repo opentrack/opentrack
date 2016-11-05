@@ -40,4 +40,5 @@ struct OPENTRACK_LOGIC_EXPORT Work
 
 private:
     static std::shared_ptr<TrackLogger> make_logger(main_settings &s);
+    static QString browse_datalogging_file(main_settings &s);
 };

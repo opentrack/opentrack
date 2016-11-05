@@ -72,7 +72,7 @@ private slots:
 class joystickDll : public Metadata
 {
 public:
-    QString name() { return QString("Joystick input"); }
+    QString name() { return QString(QCoreApplication::translate("joystickDll", "Joystick input")); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

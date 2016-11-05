@@ -93,6 +93,6 @@ private slots:
 class freetrackDll : public Metadata
 {
 public:
-    QString name() { return QString("freetrack 2.0 Enhanced"); }
+    QString name() { return QString(QCoreApplication::translate("freetrackDll", "freetrack 2.0 Enhanced")); }
     QIcon icon() { return QIcon(":/images/freetrack.png"); }
 };

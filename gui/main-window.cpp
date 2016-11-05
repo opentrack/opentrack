@@ -87,9 +87,9 @@ MainWindow::MainWindow() :
 
     // profile menu
     {
-        profile_menu.addAction("Create new empty config", this, SLOT(make_empty_config()));
-        profile_menu.addAction("Create new copied config", this, SLOT(make_copied_config()));
-        profile_menu.addAction("Open configuration directory", this, SLOT(open_config_directory()));
+        profile_menu.addAction(tr("Create new empty config"), this, SLOT(make_empty_config()));
+        profile_menu.addAction(tr("Create new copied config"), this, SLOT(make_copied_config()));
+        profile_menu.addAction(tr("Open configuration directory"), this, SLOT(open_config_directory()));
         ui.profile_button->setMenu(&profile_menu);
     }
 
@@ -176,24 +176,24 @@ void MainWindow::init_tray_menu()
     tray_menu.addAction(&menu_action_header);
 
     menu_action_show.setIconVisibleInMenu(true);
-    menu_action_show.setText(isHidden() ? "Show the Octopus" : "Hide the Octopus");
+    menu_action_show.setText(isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
     menu_action_show.setIcon(QIcon(":/images/facetracknoir.png"));
     QObject::connect(&menu_action_show, &QAction::triggered, this, [&]() { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
     tray_menu.addAction(&menu_action_show);
 
     tray_menu.addSeparator();
 
-    menu_action_tracker.setText("Tracker settings");
+    menu_action_tracker.setText(tr("Tracker settings"));
     menu_action_tracker.setIcon(QIcon(":/images/tools.png"));
     QObject::connect(&menu_action_tracker, &QAction::triggered, this, &MainWindow::showTrackerSettings);
     tray_menu.addAction(&menu_action_tracker);
 
-    menu_action_filter.setText("Filter settings");
+    menu_action_filter.setText(tr("Filter settings"));
     menu_action_filter.setIcon(QIcon(":/images/filter-16.png"));
     QObject::connect(&menu_action_filter, &QAction::triggered, this, &MainWindow::showFilterSettings);
     tray_menu.addAction(&menu_action_filter);
 
-    menu_action_proto.setText("Protocol settings");
+    menu_action_proto.setText(tr("Protocol settings"));
     menu_action_proto.setIcon(QIcon(":/images/settings16.png"));
     QObject::connect(&menu_action_proto, &QAction::triggered, this, &MainWindow::showProtocolSettings);
     tray_menu.addAction(&menu_action_proto);
@@ -201,18 +201,18 @@ void MainWindow::init_tray_menu()
     tray_menu.addSeparator();
 
     menu_action_mappings.setIcon(QIcon(":/images/curves.png"));
-    menu_action_mappings.setText("Mappings");
+    menu_action_mappings.setText(tr("Mappings"));
     QObject::connect(&menu_action_mappings, &QAction::triggered, this, &MainWindow::showCurveConfiguration);
     tray_menu.addAction(&menu_action_mappings);
 
     menu_action_options.setIcon(QIcon(":/images/tools.png"));
-    menu_action_options.setText("Options");
+    menu_action_options.setText(tr("Options"));
     QObject::connect(&menu_action_options, &QAction::triggered, this, &MainWindow::show_options_dialog);
     tray_menu.addAction(&menu_action_options);
 
     tray_menu.addSeparator();
 
-    menu_action_exit.setText("Exit");
+    menu_action_exit.setText(tr("Exit"));
     QObject::connect(&menu_action_exit, &QAction::triggered, this, &MainWindow::exit);
     tray_menu.addAction(&menu_action_exit);
 }
@@ -243,8 +243,8 @@ void MainWindow::die_on_config_not_writable()
     static const QString pad(16, QChar(' '));
 
     QMessageBox::critical(this,
-                          "The Octopus is sad",
-                          QStringLiteral("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
+                          tr("The Octopus is sad"),
+                          tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
                           QMessageBox::Close, QMessageBox::NoButton);
 
     // signals main() to short-circuit
@@ -437,8 +437,8 @@ void MainWindow::startTracker()
 
     if (!libs.correct)
     {
-        QMessageBox::warning(this, "Library load error",
-                             "One of libraries failed to load. Check installation.",
+        QMessageBox::warning(this, tr("Library load error"),
+                             tr("One of libraries failed to load. Check installation."),
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
         libs = SelectedLibraries();
@@ -729,7 +729,7 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 
     const bool is_minimized = isHidden() || !is_tray_enabled();
 
-    menu_action_show.setText(!isHidden() ? "Show the Octopus" : "Hide the Octopus");
+    menu_action_show.setText(!isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
 
     setVisible(is_minimized);
     setHidden(!is_minimized);

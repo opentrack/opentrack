@@ -156,7 +156,7 @@ public:
 class kalmanDll : public Metadata
 {
 public:
-    QString name() { return QString("Kalman"); }
+    QString name() { return QString(QCoreApplication::translate("kalmanDll", "Kalman")); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
 

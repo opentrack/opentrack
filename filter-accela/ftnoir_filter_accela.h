@@ -60,6 +60,6 @@ private slots:
 class accelaDll : public Metadata
 {
 public:
-    QString name() { return QString("Accela"); }
+    QString name() { return QString(QCoreApplication::translate("accelaDll", "Accela")); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

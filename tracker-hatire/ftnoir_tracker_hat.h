@@ -14,8 +14,6 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QSettings>
 
-#define VER_FILEVERSION_STR         "Version 2.1.1"
-
 class hatire : public QObject, public ITracker
 {
     Q_OBJECT
@@ -50,6 +48,6 @@ private:
 
 class hatire_metadata : public Metadata
 {
-    QString name() { return QString("Hatire Arduino"); }
+    QString name() { return QString(QCoreApplication::translate("hatire_metadata", "Hatire Arduino")); }
     QIcon icon() { return QIcon(":/images/hat.png"); }
 };

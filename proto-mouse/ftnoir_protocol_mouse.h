@@ -60,6 +60,6 @@ private slots:
 class mouseDll : public Metadata
 {
 public:
-    QString name() { return QString("mouse emulation"); }
+    QString name() { return QString(QCoreApplication::translate("mouseDll", "mouse emulation")); }
     QIcon icon() { return QIcon(":/images/mouse.png"); }
 };

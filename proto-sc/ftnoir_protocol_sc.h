@@ -103,6 +103,6 @@ private slots:
 class simconnectDll : public Metadata
 {
 public:
-    QString name() { return QString("Microsoft FSX SimConnect"); }
+    QString name() { return QString(QCoreApplication::translate("simconnectDll", "Microsoft FSX SimConnect")); }
     QIcon icon() { return QIcon(":/images/fsx.png"); }
 };

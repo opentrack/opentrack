@@ -46,7 +46,7 @@ void RSTracker::configurePreviewFrame()
 
 void RSTracker::start_tracker(QFrame* previewFrame)
 {
-	qDebug() << "tracker_rs: starting tracker";
+        qDebug() << "tracker_rs: starting tracker";
 
     mPreviewFrame = previewFrame;
 
@@ -58,20 +58,20 @@ void RSTracker::start_tracker(QFrame* previewFrame)
 }
 
 void RSTracker::startPreview(){
-	qDebug() << "tracker_rs: starting preview";
+        qDebug() << "tracker_rs: starting preview";
     mPreviewUpdateTimer.start(kPreviewUpdateInterval);
 }
 
 void RSTracker::updatePreview(){
-	if (mImageWidget != nullptr && mImageWidget->isEnabled() && mTrackerWorkerThread.isRunning())
-		mImageWidget->setImage(mTrackerWorkerThread.getPreview());
-	else
-		qDebug() << "tracker_rs: not updating preview. worker thread running: " << mTrackerWorkerThread.isRunning();
+        if (mImageWidget != nullptr && mImageWidget->isEnabled() && mTrackerWorkerThread.isRunning())
+                mImageWidget->setImage(mTrackerWorkerThread.getPreview());
+        else
+                qDebug() << "tracker_rs: not updating preview. worker thread running: " << mTrackerWorkerThread.isRunning();
 }
 
 void RSTracker::stopPreview(){
-	mPreviewUpdateTimer.stop();
-	qDebug() << "tracker_rs: stopped preview";
+        mPreviewUpdateTimer.stop();
+        qDebug() << "tracker_rs: stopped preview";
 }
 
 void RSTracker::handleTrackingEnded(int exitCode){
@@ -98,17 +98,17 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.setText("RealSense Tracking Error");
 
-	switch(exitCode){
-	case -101: //The implementation got an invalid handle from the RealSense SDK session/modules
+        switch(exitCode){
+        case -101: //The implementation got an invalid handle from the RealSense SDK session/modules
         msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R2 is installed.");
-		break;
-	case -301: //RealSense SDK runtime execution aborted.
-		msgBox.setInformativeText("Tracking stopped after the RealSense SDK Runtime execution has aborted.");
-		break;
-	case -601: //RealSense Camera stream configuration has changed.
-		msgBox.setInformativeText("Tracking stopped after another program changed camera streams configuration.");
-		break;
-	default:
+                break;
+        case -301: //RealSense SDK runtime execution aborted.
+                msgBox.setInformativeText("Tracking stopped after the RealSense SDK Runtime execution has aborted.");
+                break;
+        case -601: //RealSense Camera stream configuration has changed.
+                msgBox.setInformativeText("Tracking stopped after another program changed camera streams configuration.");
+                break;
+        default:
         msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R2 to be installed.");
     }
 
@@ -126,7 +126,7 @@ void RSTracker::data(double *data)
 }
 
 RSTracker::~RSTracker() {
-	qDebug() << "tracker is being destroyed.";
+        qDebug() << "tracker is being destroyed.";
 
     stopPreview();
 
@@ -142,7 +142,7 @@ RSTracker::~RSTracker() {
 }
 
 QString RSTrackerMetaData::name() {
-    return QString("Intel® RealSense™ Technology");
+    return QString(QCoreApplication::translate("RSTrackerMetaData", "Intel® RealSense™ Technology"));
 }
 
 QIcon RSTrackerMetaData::icon() {

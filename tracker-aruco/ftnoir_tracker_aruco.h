@@ -131,6 +131,6 @@ private slots:
 
 class aruco_metadata : public Metadata
 {
-    QString name() { return QString("aruco -- paper marker tracker"); }
+    QString name() { return QString(QCoreApplication::translate("aruco_metadata", "aruco -- paper marker tracker")); }
     QIcon icon() { return QIcon(":/images/aruco.png"); }
 };

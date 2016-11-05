@@ -54,7 +54,7 @@ public:
     void pose(const double* headpose);
     QString game_name()
     {
-        return "Microsoft Flight Simulator X";
+        return QCoreApplication::translate("fsuipc", "Microsoft Flight Simulator X");
     }
 private:
     QLibrary FSUIPCLib;
@@ -84,7 +84,7 @@ private slots:
 class fsuipcDll : public Metadata
 {
 public:
-    QString name() { return QString("FSUIPC -- Microsoft FS2002/FS2004"); }
+    QString name() { return QString(QCoreApplication::translate("fsuipcDll", "FSUIPC -- Microsoft FS2002/FS2004")); }
     QIcon icon() { return QIcon(":/images/fs9.png"); }
 };
 
