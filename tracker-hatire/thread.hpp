@@ -56,6 +56,8 @@ class hatire_thread : public QThread
     void run() override;
     static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 
+    void serial_debug_info_str(const QString& str);
+
 private slots:
     void on_serial_read();
     void teardown_serial();

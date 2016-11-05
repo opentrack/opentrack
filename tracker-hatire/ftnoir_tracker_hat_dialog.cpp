@@ -17,7 +17,7 @@ dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
 {
     ui.setupUi(this);
 
-    ui.label_version->setText(VER_FILEVERSION_STR);
+    ui.label_version->setText(tr("Version %1").arg("2.1.1"));
 
     // make SerialPort list
     ui.cbSerialPort->clear();
@@ -215,7 +215,7 @@ void dialog_hatire::register_tracker(ITracker *tracker)
     //ui.btnCenter->setEnabled(true);
     ui.btnReset->setEnabled(true);
     ui.pteINFO->clear();
-    ui.lab_vstatus->setText("HAT START");
+    ui.lab_vstatus->setText(tr("HAT START"));
     last_time.start();
     timer.start(250);
 }
@@ -228,6 +228,6 @@ void dialog_hatire::unregister_tracker()
     ui.btnZero->setEnabled(false);
     //ui.btnCenter->setEnabled(false);
     ui.btnReset->setEnabled(false);
-    ui.lab_vstatus->setText("HAT STOPPED");
+    ui.lab_vstatus->setText(tr("HAT STOPPED"));
     ui.lab_vtps->setText("");
 }

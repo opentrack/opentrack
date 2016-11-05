@@ -19,6 +19,7 @@ using namespace pt_types;
 #include "compat/timer.hpp"
 #include "cv/video-widget.hpp"
 
+#include <QCoreApplication>
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>

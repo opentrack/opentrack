@@ -24,7 +24,7 @@ void hatire_thread::sendcmd_impl(const QByteArray &cmd)
             Log(logMess);
             com_port.write(cmd);
             if (!com_port.waitForBytesWritten(1000)) {
-                emit serial_debug_info("TimeOut in writing CMD");
+                emit serial_debug_info_str(tr("Timeout during writing command"));
             } else
             {
                 Msg.append("\r\n");
@@ -42,7 +42,7 @@ void hatire_thread::sendcmd_impl(const QByteArray &cmd)
             emit serial_debug_info(Msg);
 #endif
         } else {
-            emit serial_debug_info("ComPort not open")  ;
+            emit serial_debug_info_str(tr("COM port not open"));
         }
     }
 #endif
@@ -143,6 +143,11 @@ void hatire_thread::run()
 #ifdef HATIRE_DEBUG_LOGFILE
     read_timer.stop();
 #endif
+}
+
+void hatire_thread::serial_debug_info_str(const QString& str)
+{
+    serial_debug_info(str.toUtf8());
 }
 
 serial_result hatire_thread::init_serial_port_impl()
