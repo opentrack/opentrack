@@ -232,6 +232,6 @@ function(opentrack_boilerplate n)
         COMMAND cmake -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
         COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        SOURCES ${langs})
+    )
 endfunction()
 
