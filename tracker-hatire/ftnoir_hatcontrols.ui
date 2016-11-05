@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>341</width>
-    <height>525</height>
+    <width>389</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -80,13 +80,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string/>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
+        <widget class="QFrame" name="frame_2">
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="spacing">
            <number>4</number>
@@ -95,7 +89,7 @@
            <widget class="QComboBox" name="cbSerialPort">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
+              <horstretch>6</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -119,8 +113,8 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_5">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -137,6 +131,12 @@
           </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="serial_bug_workaround">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Buggy serial port uses too much CPU</string>
             </property>
@@ -145,8 +145,8 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -207,6 +207,12 @@
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="2" column="2">
            <widget class="QComboBox" name="cb_pitch">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -267,6 +273,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_pitch">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Pitch:</string>
             </property>
@@ -300,6 +312,12 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_yaw">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Yaw:</string>
             </property>
@@ -314,6 +332,12 @@
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_y">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Y:</string>
             </property>
@@ -343,6 +367,12 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_x">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>X:</string>
             </property>
@@ -394,6 +424,12 @@
           </item>
           <item row="6" column="2">
            <widget class="QComboBox" name="cb_z">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -435,6 +471,12 @@
           </item>
           <item row="5" column="2">
            <widget class="QComboBox" name="cb_y">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -457,6 +499,12 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_roll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Roll:</string>
             </property>
@@ -486,6 +534,12 @@
           </item>
           <item row="4" column="2">
            <widget class="QComboBox" name="cb_x">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -530,6 +584,12 @@
           </item>
           <item row="6" column="0">
            <widget class="QLabel" name="label_z">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Z:</string>
             </property>
@@ -537,6 +597,12 @@
           </item>
           <item row="3" column="2">
            <widget class="QComboBox" name="cb_roll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -622,6 +688,12 @@
           </item>
           <item row="1" column="2">
            <widget class="QComboBox" name="cb_yaw">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>7</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Associate Axis</string>
             </property>
@@ -685,7 +757,7 @@
              <string>Trame per seconde</string>
             </property>
             <property name="text">
-             <string>tps :</string>
+             <string>tps</string>
             </property>
            </widget>
           </item>
@@ -726,7 +798,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Info :</string>
+             <string>Info:</string>
             </property>
            </widget>
           </item>
@@ -755,6 +827,22 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_cmds">
@@ -762,65 +850,6 @@
        <string>Command</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="parametersBox">
-         <property name="title">
-          <string>Serial Parameters</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="1">
-           <widget class="QComboBox" name="QCB_Serial_baudRate"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="QCB_Serial_stopBits"/>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="flowControlLabel">
-            <property name="text">
-             <string>Flow control:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="QCB_Serial_parity"/>
-          </item>
-          <item row="4" column="1">
-           <widget class="QComboBox" name="QCB_Serial_flowControl"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="stopBitsLabel">
-            <property name="text">
-             <string>Stop bits:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="parityLabel">
-            <property name="text">
-             <string>Parity:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="baudRateLabel">
-            <property name="text">
-             <string>BaudRate:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="QCB_Serial_dataBits"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="dataBitsLabel">
-            <property name="text">
-             <string>Data bits:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -829,6 +858,12 @@
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="0">
            <widget class="QLabel" name="lab_cmd_init">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Init</string>
             </property>
@@ -836,13 +871,25 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="lab_cmd_start">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Start:</string>
+             <string>Start</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
            <widget class="QLineEdit" name="le_cmd_start">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for Start send sequence</string>
             </property>
@@ -850,6 +897,12 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="le_cmd_init">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for Initialising Arduino</string>
             </property>
@@ -857,6 +910,12 @@
           </item>
           <item row="5" column="1">
            <widget class="QLineEdit" name="le_cmd_stop">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for Stop send sequence</string>
             </property>
@@ -864,27 +923,51 @@
           </item>
           <item row="6" column="0">
            <widget class="QLabel" name="lab_cmd_center">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Center:</string>
+             <string>Center</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="lab_cmd_stop">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Stop:</string>
+             <string>Stop</string>
             </property>
            </widget>
           </item>
           <item row="8" column="0">
            <widget class="QLabel" name="lab_cmd_reset">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Reset:</string>
+             <string>Reset</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
            <widget class="QLineEdit" name="le_cmd_center">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for read Center  Gyro arduino</string>
             </property>
@@ -892,6 +975,12 @@
           </item>
           <item row="8" column="1">
            <widget class="QLineEdit" name="le_cmd_reset">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for Reset Arduino</string>
             </property>
@@ -899,13 +988,25 @@
           </item>
           <item row="7" column="0">
            <widget class="QLabel" name="lab_cmd_zero">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>3</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Zero:</string>
+             <string>Zero</string>
             </property>
            </widget>
           </item>
           <item row="7" column="1">
            <widget class="QLineEdit" name="le_cmd_zero">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Command for reset Center  Gyro arduino</string>
             </property>
@@ -913,6 +1014,12 @@
           </item>
           <item row="8" column="2">
            <widget class="QCheckBox" name="cb_Endian">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -928,6 +1035,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="7" column="2">
            <widget class="QSpinBox" name="spb_Fps">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>51</width>
@@ -947,6 +1060,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="1" column="2">
            <widget class="QSpinBox" name="spb_BeforeInit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>60</width>
@@ -970,6 +1089,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spb_BeforeStart">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -1000,6 +1125,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="4" column="2">
            <widget class="QSpinBox" name="spb_AfterStart">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -1017,6 +1148,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="lab_cmd_init_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>6</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Delay after startup</string>
             </property>
@@ -1024,6 +1161,116 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="parametersBox">
+         <property name="title">
+          <string>Serial Parameters</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="QCB_Serial_baudRate">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="QCB_Serial_stopBits">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="flowControlLabel">
+            <property name="text">
+             <string>Flow control</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="QCB_Serial_parity">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="QCB_Serial_flowControl">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="stopBitsLabel">
+            <property name="text">
+             <string>Stop bits</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="parityLabel">
+            <property name="text">
+             <string>Parity</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="baudRateLabel">
+            <property name="text">
+             <string>BaudRate:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="QCB_Serial_dataBits">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="dataBitsLabel">
+            <property name="text">
+             <string>Data bits</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
