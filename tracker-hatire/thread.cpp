@@ -153,13 +153,13 @@ void hatire_thread::serial_debug_info_str(const QString& str)
 serial_result hatire_thread::init_serial_port_impl()
 {
 #ifndef HATIRE_DEBUG_LOGFILE
-    Log("Setting serial port name");
+    Log(tr("Setting serial port name"));
     com_port.setPortName(s.QSerialPortName);
 
-    Log("Opening serial port");
+    Log(tr("Opening serial port"));
     if (com_port.open(QIODevice::ReadWrite))
     {
-        Log("Port Open");
+        Log(tr("Port Open"));
         if (
             com_port.setBaudRate((QSerialPort::BaudRate)s.pBaudRate)
             && com_port.setDataBits((QSerialPort::DataBits)s.pDataBits)
@@ -170,18 +170,25 @@ serial_result hatire_thread::init_serial_port_impl()
             && com_port.setDataErrorPolicy(QSerialPort::IgnorePolicy)
            )
         {
-            Log("Port Parameters set");
-            qDebug()  << QTime::currentTime()  << " HAT OPEN   on " << com_port.portName() <<  com_port.baudRate() <<  com_port.dataBits() <<  com_port.parity() <<  com_port.stopBits() <<  com_port.flowControl();
+            Log(tr("Port Parameters set"));
+            qDebug()  << QTime::currentTime()
+                      << " HAT OPEN on"
+                      << com_port.portName()
+                      << com_port.baudRate()
+                      << com_port.dataBits()
+                      << com_port.parity()
+                      << com_port.stopBits()
+                      << com_port.flowControl();
 
             if (com_port.flowControl() == QSerialPort::HardwareControl)
             {
                 // Raise DTR
-                Log("Raising DTR");
+                Log(tr("Raising DTR"));
                 if (!com_port.setDataTerminalReady(true))
                     Log("Couldn't set DTR");
 
                 // Raise RTS/CTS
-                Log("Raising RTS");
+                Log(tr("Raising RTS"));
                 if (!com_port.setRequestToSend(true))
                     Log("Couldn't set RTS");
             }
@@ -190,7 +197,7 @@ serial_result hatire_thread::init_serial_port_impl()
             {
                 if (com_port.waitForReadyRead(50)) break;
             }
-            Log("Waiting on init");
+            Log(tr("Waiting on init"));
             qDebug()  << QTime::currentTime()  << " HAT send INIT ";
             sendcmd_str(s.CmdInit);
             // Wait init MPU sequence
@@ -207,7 +214,7 @@ serial_result hatire_thread::init_serial_port_impl()
             {
                 if (com_port.waitForReadyRead(50)) break;
             }
-            Log("Port setup, waiting for HAT frames to process");
+            Log(tr("Port setup, waiting for HAT frames to process"));
             qDebug()  << QTime::currentTime()  << " HAT wait MPU ";
 
             return serial_result();
