@@ -1459,11 +1459,8 @@
          <property name="title">
           <string>Game detection</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="0" alignment="Qt::AlignTop">
-           <widget class="process_detector" name="game_detector" native="true"/>
-          </item>
-          <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
            <widget class="QLabel" name="label_24">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -1478,6 +1475,9 @@
              <bool>true</bool>
             </property>
            </widget>
+          </item>
+          <item>
+           <widget class="process_detector" name="game_detector" native="true"/>
           </item>
          </layout>
         </widget>
