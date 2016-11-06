@@ -1037,7 +1037,7 @@
                 </sizepolicy>
                </property>
                <property name="title">
-                <string notr="true">Tracking</string>
+                <string>Tracking</string>
                </property>
                <property name="flat">
                 <bool>true</bool>
