@@ -8,9 +8,9 @@
 #pragma once
 
 #include "compat/timer.hpp"
-
 #include "ftnoir_tracker_pt_settings.h"
-using namespace pt_types;
+#include "affine.hpp"
+#include "numeric.hpp"
 
 #include <opencv2/core.hpp>
 #include <cstddef>
@@ -19,44 +19,17 @@ using namespace pt_types;
 #include <array>
 #include <QObject>
 
-class Affine final
-{
-public:
-    Affine() : R(mat33::eye()), t(0,0,0) {}
-    Affine(const mat33& R, const vec3& t) : R(R),t(t) {}
-
-    mat33 R;
-    vec3 t;
-};
-
-inline Affine operator*(const Affine& X, const Affine& Y)
-{
-    return Affine(X.R*Y.R, X.R*Y.t + X.t);
-}
-
-inline Affine operator*(const mat33& X, const Affine& Y)
-{
-    return Affine(X*Y.R, X*Y.t);
-}
-
-inline Affine operator*(const Affine& X, const mat33& Y)
-{
-    return Affine(X.R*Y, X.t);
-}
-
-inline vec3 operator*(const Affine& X, const vec3& v)
-{
-    return X.R*v + X.t;
-}
+namespace impl {
 
 // ----------------------------------------------------------------------------
 // Describes a 3-point model
 // nomenclature as in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
-class PointModel final
+
+using namespace types;
+
+struct PointModel final
 {
-    friend class PointTracker;
-public:
     static constexpr unsigned N_POINTS = 3;
 
     vec3 M01;      // M01 in model frame
@@ -102,3 +75,8 @@ private:
     Timer t;
     bool init_phase;
 };
+
+} // ns types
+
+using impl::PointTracker;
+using impl::PointModel;

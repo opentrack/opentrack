@@ -8,14 +8,17 @@
 
 #pragma once
 
+#include "ftnoir_tracker_pt_settings.h"
+#include "numeric.hpp"
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include "ftnoir_tracker_pt_settings.h"
-
 #include <vector>
 
-using namespace pt_types;
+namespace impl {
+
+using namespace types;
 
 class PointExtractor final
 {
@@ -47,3 +50,7 @@ private:
 
     std::vector<blob> blobs;
 };
+
+} // ns impl
+
+using impl::PointExtractor;

@@ -7,8 +7,6 @@
  */
 
 #include "point_extractor.h"
-#include <QDebug>
-
 #include "compat/util.hpp"
 
 #include <opencv2/videoio.hpp>
@@ -16,6 +14,10 @@
 #include <cmath>
 #include <algorithm>
 #include <cinttypes>
+
+#include <QDebug>
+
+using namespace types;
 
 PointExtractor::PointExtractor()
 {

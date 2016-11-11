@@ -1,6 +1,6 @@
-#include "ftnoir_tracker_pt_settings.h"
+#include "numeric.hpp"
 
-namespace pt_types {
+namespace types {
 
 constexpr f constants::eps;
 

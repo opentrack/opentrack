@@ -6,12 +6,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_PT_H
-#define FTNOIR_TRACKER_PT_H
+#pragma once
 
 #include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
-using namespace pt_types;
+
+#include "numeric.hpp"
 
 #include "camera.h"
 #include "point_extractor.h"
@@ -28,10 +28,12 @@ using namespace pt_types;
 #include <memory>
 #include <vector>
 
+namespace impl {
+
+using namespace types;
+
 class TrackerDialog_PT;
 
-//-----------------------------------------------------------------------------
-// Constantly processes the tracking chain in a separate thread
 class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
@@ -83,10 +85,13 @@ private:
     //static constexpr float deg2rad = float(M_PI/180);
 };
 
+} // ns impl
+
 class PT_metadata : public Metadata
 {
     QString name() { return QString(QCoreApplication::translate("PT_metadata", "PointTracker 1.1")); }
     QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
 };
 
-#endif // FTNOIR_TRACKER_PT_H
+using impl::Tracker_PT;
+using impl::TrackerDialog_PT;

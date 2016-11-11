@@ -6,11 +6,9 @@
  */
 
 #include "point_tracker.h"
-
-#include "ftnoir_tracker_pt_settings.h"
-using namespace pt_types;
-
 #include "compat/nan.hpp"
+
+using namespace types;
 
 #include <vector>
 #include <algorithm>
@@ -353,3 +351,4 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);
 }
+
