@@ -30,7 +30,7 @@ using namespace euler;
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
 
-Tracker::Tracker(Mappings &m, SelectedLibraries &libs, TrackLogger &logger) :
+Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
     m(m),
     libs(libs),
     logger(logger),
@@ -449,3 +449,40 @@ void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const
     }
 }
 
+
+void bits::set(bits::flags flag_, bool val_)
+{
+    unsigned b_(b);
+    const unsigned flag = unsigned(flag_);
+    const unsigned val = unsigned(!!val_);
+    while (!b.compare_exchange_weak(b_,
+                                    unsigned((b_ & ~flag) | (flag * val)),
+                                    std::memory_order_seq_cst,
+                                    std::memory_order_seq_cst))
+    { /* empty */ }
+}
+
+void bits::negate(bits::flags flag_)
+{
+    unsigned b_(b);
+    const unsigned flag = unsigned(flag_);
+    while (!b.compare_exchange_weak(b_,
+                                    (b_ & ~flag) | (flag & ~b_),
+                                    std::memory_order_seq_cst,
+                                    std::memory_order_seq_cst))
+    { /* empty */ }
+}
+
+bool bits::get(bits::flags flag)
+{
+    return !!(b & flag);
+}
+
+bits::bits() : b(0u)
+{
+    set(f_center, true);
+    set(f_enabled, true);
+    set(f_zero, false);
+    set(f_tcomp_disabled, false);
+    set(f_should_quit, false);
+}

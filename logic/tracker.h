@@ -43,42 +43,10 @@ struct bits
 
     std::atomic<unsigned> b;
 
-    void set(flags flag_, bool val_)
-    {
-        unsigned b_(b);
-        const unsigned flag = unsigned(flag_);
-        const unsigned val = unsigned(!!val_);
-        while (!b.compare_exchange_weak(b_,
-                                        unsigned((b_ & ~flag) | (flag * val)),
-                                        std::memory_order_seq_cst,
-                                        std::memory_order_seq_cst))
-        { /* empty */ }
-    }
-
-    void negate(flags flag_)
-    {
-        unsigned b_(b);
-        const unsigned flag = unsigned(flag_);
-        while (!b.compare_exchange_weak(b_,
-                                        (b_ & ~flag) | (flag & ~b_),
-                                        std::memory_order_seq_cst,
-                                        std::memory_order_seq_cst))
-        { /* empty */ }
-    }
-
-    bool get(flags flag)
-    {
-        return !!(b & flag);
-    }
-
-    bits() : b(0u)
-    {
-        set(f_center, true);
-        set(f_enabled, true);
-        set(f_zero, false);
-        set(f_tcomp_disabled, false);
-        set(f_should_quit, false);
-    }
+    void set(flags flag_, bool val_);
+    void negate(flags flag_);
+    bool get(flags flag);
+    bits();
 };
 
 class OPENTRACK_LOGIC_EXPORT Tracker : private QThread, private bits
@@ -100,7 +68,7 @@ private:
     // The owner of the reference is the main window.
     // This design might be usefull if we decide later on to swap out
     // the logger while the tracker is running.
-    TrackLogger &logger;
+    TrackLogger& logger;
 
     struct state
     {
@@ -131,7 +99,7 @@ private:
     static constexpr double c_mult = 4;
     static constexpr double c_div = 1./c_mult;
 public:
-    Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger &logger);
+    Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger);
     ~Tracker();
 
     rmat get_camera_offset_matrix(double c);
