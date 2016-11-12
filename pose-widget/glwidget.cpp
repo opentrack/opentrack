@@ -14,6 +14,9 @@
 
 #include <QDebug>
 
+using namespace euler;
+using namespace impl;
+
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
     Q_INIT_RESOURCE(posewidget);
@@ -54,19 +57,14 @@ void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, d
 }
 
 class Triangle {
-    using num = GLWidget::num;
-    using vec2 = GLWidget::vec2;
-    using vec3 = GLWidget::vec3;
+    num dot00, dot01, dot11, invDenom;
+    vec2 v0, v1, origin;
 public:
     Triangle(const vec2& p1, const vec2& p2, const vec2& p3);
     bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
-
-private:
-    num dot00, dot01, dot11, invDenom;
-    vec2 v0, v1, origin;
 };
 
-inline GLWidget::vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec3& p3)
+inline vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
     using std::sqrt;
 
@@ -80,7 +78,7 @@ inline GLWidget::vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec
     return tmp * i;
 }
 
-Triangle::Triangle(const Triangle::vec2& p1, const Triangle::vec2& p2, const Triangle::vec2& p3)
+Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
 {
     using std::fabs;
 
@@ -107,7 +105,7 @@ Triangle::Triangle(const Triangle::vec2& p1, const Triangle::vec2& p2, const Tri
         invDenom = 1 / denom;
 }
 
-bool Triangle::barycentric_coords(const Triangle::vec2& px, Triangle::vec2& uv, int& i) const
+bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
 {
     i = 0;
     const vec2 v2 = px - origin;
@@ -272,7 +270,7 @@ void GLWidget::project_quad_texture()
         }
 }
 
-GLWidget::vec2 GLWidget::project(const vec3 &point)
+vec2 GLWidget::project(const vec3 &point)
 {
     vec3 ret = rotation * point;
     num z = std::max<num>(.75f, 1 + translation.z()/-60);
@@ -286,7 +284,7 @@ GLWidget::vec2 GLWidget::project(const vec3 &point)
     return vec2(z * (ret.x() + x), z * (ret.y() + y));
 }
 
-GLWidget::vec3 GLWidget::project2(const vec3 &point)
+vec3 GLWidget::project2(const vec3 &point)
 {
     return rotation * point;
 }

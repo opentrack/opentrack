@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QPixmap>
 #include "api/plugin-api.hpp"
-#include "compat/simple-mat.hpp"
+#include "compat/euler.hpp"
 
 #ifdef BUILD_pose_widget
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -19,12 +19,17 @@
 #   define POSE_WIDGET_EXPORT Q_DECL_IMPORT
 #endif
 
+namespace impl {
+
+using num = float;
+using vec3 = Mat<num, 3, 1>;
+using vec2 = Mat<num, 2, 1>;
+
+using namespace euler;
+
 class POSE_WIDGET_EXPORT GLWidget : public QWidget
 {
 public:
-    using num = float;
-    using vec2 = Mat<num, 2, 1>;
-    using vec3 = Mat<num, 3, 1>;
     using rmat = Mat<num, 3, 3>;
 
     GLWidget(QWidget *parent);
@@ -36,7 +41,7 @@ private:
     vec2 project(const vec3& point);
     vec3 project2(const vec3& point);
     void project_quad_texture();
-    static inline vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
+    static vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
 
     rmat rotation;
     vec3 translation;
@@ -44,3 +49,7 @@ private:
     QImage back;
     QImage image;
 };
+
+}
+
+using impl::GLWidget;

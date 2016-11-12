@@ -25,6 +25,8 @@
 #   include <windows.h>
 #endif
 
+using namespace euler;
+
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
 
