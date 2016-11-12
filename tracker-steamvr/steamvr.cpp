@@ -2,7 +2,7 @@
 #include "steamvr.hpp"
 #include "api/plugin-api.hpp"
 #include "compat/util.hpp"
-#include "compat/simple-mat.hpp"
+#include "compat/euler.hpp"
 
 #include <cstdlib>
 #include <cmath>
