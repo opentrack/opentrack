@@ -258,8 +258,6 @@ public:
     }
 };
 
-template<int h_, int w_> using dmat = Mat<double, h_, w_>;
-
 template<typename num, int h, int w>
 Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
 {
@@ -276,18 +274,3 @@ Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
     return ret;
 }
 
-namespace euler {
-
-using rmat = dmat<3, 3>;
-using euler_t = dmat<3, 1>;
-
-rmat OPENTRACK_COMPAT_EXPORT euler_to_rmat(const euler_t& input);
-
-euler_t OPENTRACK_COMPAT_EXPORT rmat_to_euler(const rmat& R);
-
-void OPENTRACK_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
-                                                   rmat& r_roll,
-                                                   rmat& r_pitch,
-                                                   rmat& r_yaw);
-
-} // end ns euler
