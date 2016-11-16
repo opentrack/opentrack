@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.1" language="nl_NL">
 <context>
     <name>BrowseButton</name>
     <message>
         <location filename="../process_detector.cpp" line="+66"/>
         <source>Set executable name</source>
-        <translation>Укажите исполняемый файл</translation>
+        <translation>Toepassingsnaam instellen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Executable (*.exe);;All Files (*)</source>
-        <translation></translation>
+        <translation>Toepassing (*.exe);; Alle bestanden (*)</translation>
     </message>
 </context>
 <context>
@@ -19,17 +19,17 @@
     <message>
         <location filename="../process_widget.ui" line="+14"/>
         <source>Game detector</source>
-        <translation>Захват игр</translation>
+        <translation>Speldetector</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Executable</source>
-        <translation>Файл</translation>
+        <translation>Toepassing</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Profile</source>
-        <translation>Профиль</translation>
+        <translation>Profiel</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -44,7 +44,7 @@
     <message>
         <location line="+10"/>
         <source>Start profiles from game executable names in this list</source>
-        <translation>Запускать opentrack при старте игры</translation>
+        <translation>Profielen vanuit de spelbestandsnaam in deze lijst starten</translation>
     </message>
 </context>
 <context>
@@ -52,17 +52,17 @@
     <message>
         <location filename="../main-window.cpp" line="+90"/>
         <source>Create new empty config</source>
-        <translation>Создать новый пустой профиль</translation>
+        <translation>Nieuwe lege configuratie aanmaken</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create new copied config</source>
-        <translation>Создать новый профиль на основе текущего</translation>
+        <translation>Bestaande configuratie kopiëren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open configuration directory</source>
-        <translation>Открыть каталог с профилями</translation>
+        <translation>Locatie van configuratiebestanden openen</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -73,54 +73,54 @@
     <message>
         <location line="-378"/>
         <source> (debug)</source>
-        <translation></translation>
+        <translation> (debuggen)</translation>
     </message>
     <message>
         <location line="+8"/>
         <location line="+555"/>
         <source>Show the Octopus</source>
-        <translation>Показать осьминожка</translation>
+        <translation>Inktvis weergeven</translation>
     </message>
     <message>
         <location line="-555"/>
         <location line="+555"/>
         <source>Hide the Octopus</source>
-        <translation>Спрятать осьминожка</translation>
+        <translation>Inktvis verbergen</translation>
     </message>
     <message>
         <location line="-548"/>
         <source>Tracker settings</source>
-        <translation>Настройка источника данных</translation>
+        <translation>Tracker-instellingen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Filter settings</source>
-        <translation>Настройка фильтрации/сглаживания</translation>
+        <translation>Filter-instellingen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Protocol settings</source>
-        <translation>Настройка выходного интерфейса</translation>
+        <translation>Protocol-instellingen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Mappings</source>
-        <translation>Настройка кривых</translation>
+        <translation>Verwijzingen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Options</source>
-        <translation>Настройки</translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Exit</source>
-        <translation>Закрыть</translation>
+        <translation>Afsluiten</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>The Octopus is sad</source>
-        <translation>Осьминожек опечален</translation>
+        <translation>De inktvis is verdrietig</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -129,21 +129,21 @@
 &quot;%1&quot;%2
 
 Exiting now.</source>
-        <translation>Проверьте права доступа на Вашу .ini папку:
+        <translation>Controleer de schrijfrechten voor de configuratie-locatie:
 
 &quot;%1&quot;%2
 
-Закрытие программы.</translation>
+Programma wordt afgesloten.</translation>
     </message>
     <message>
         <location line="+193"/>
         <source>Library load error</source>
-        <translation>Ошибка загрузки библиотеки</translation>
+        <translation>Fout met het laden van de library</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>One of libraries failed to load. Check installation.</source>
-        <translation>Одна из библиотек загрузилась неудачно. Проверьте инсталлятор.</translation>
+        <translation>Een van de libraries kon niet worden geladen. Controleer de installatie.</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -157,12 +157,12 @@ Exiting now.</source>
     <message>
         <location filename="../new_config.ui" line="+17"/>
         <source>Config filename</source>
-        <translation>Создание профиля</translation>
+        <translation>Bestandsnaam van de configuratie</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New file name:</source>
-        <translation>Новое имя профиля:</translation>
+        <translation>Nieuwe bestandsnaam</translation>
     </message>
 </context>
 <context>
@@ -170,12 +170,12 @@ Exiting now.</source>
     <message>
         <location filename="../keyboard_listener.ui" line="+23"/>
         <source>Bind a shortcut</source>
-        <translation>Назначение горячих клавиш</translation>
+        <translation>Koppel een sneltoets</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press a key or close this window to remove the keybinding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Нажмите нужную клавишу или закройте окно для сброса.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Druk op een toets of sluit dit venster om de huidige koppeling to verwijderen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -183,83 +183,83 @@ Exiting now.</source>
     <message>
         <location filename="../main-window.ui" line="+278"/>
         <source>Raw tracker data</source>
-        <translation>Исходные данные</translation>
+        <translation>Ongefilterde tracker-data</translation>
     </message>
     <message>
         <location line="+67"/>
         <location line="+479"/>
         <source>TZ</source>
-        <translation>Смещение по Z</translation>
+        <translation>TZ</translation>
     </message>
     <message>
         <location line="-463"/>
         <location line="+409"/>
         <source>pitch</source>
-        <translation>тангаж</translation>
+        <translation>pitch</translation>
     </message>
     <message>
         <location line="-356"/>
         <location line="+315"/>
         <source>TY</source>
-        <translation>Смещение по Y</translation>
+        <translation>TY</translation>
     </message>
     <message>
         <location line="-299"/>
         <location line="+277"/>
         <source>TX</source>
-        <translation>Смещение по X</translation>
+        <translation>TX</translation>
     </message>
     <message>
         <location line="-230"/>
         <location line="+309"/>
         <source>roll</source>
-        <translation>крен</translation>
+        <translation>rol</translation>
     </message>
     <message>
         <location line="-293"/>
         <location line="+309"/>
         <source>yaw</source>
-        <translation>рысканье</translation>
+        <translation>yaw</translation>
     </message>
     <message>
         <location line="-200"/>
         <source>Game data</source>
-        <translation>Игровые данные</translation>
+        <translation>Speldata</translation>
     </message>
     <message>
         <location line="+366"/>
         <source>Profile</source>
-        <translation>Профиль</translation>
+        <translation>Profiel</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Options</source>
-        <translation>Настройки</translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Mapping</source>
-        <translation> Кривые</translation>
+        <translation>Verwijziging</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Tracking</source>
-        <translation>Статус работы трекера</translation>
+        <translation>Tracken</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Start</source>
-        <translation>Запустить</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stop</source>
-        <translation>Остановить</translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Input</source>
-        <translation>Источник данных</translation>
+        <translation>Invoer</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -271,12 +271,12 @@ Exiting now.</source>
     <message>
         <location line="-111"/>
         <source>Output</source>
-        <translation>Выходной интерфейс</translation>
+        <translation>Uitvoer</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Filter</source>
-        <translation>Фильтрация/сглаживание</translation>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -284,12 +284,12 @@ Exiting now.</source>
     <message>
         <location filename="../mapping-window.ui" line="+32"/>
         <source>Mapping properties</source>
-        <translation>Настройка кривых</translation>
+        <translation>Verwijzings-instellingen</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Yaw</source>
-        <translation>Рысканье</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -299,32 +299,32 @@ Exiting now.</source>
         <location line="+53"/>
         <location line="+53"/>
         <source>Asymmetric mapping below</source>
-        <translation>Ассиметричная настройка кривых</translation>
+        <translation>Assymetrische verwijzingen hieronder</translation>
     </message>
     <message>
         <location line="-236"/>
         <source>Pitch</source>
-        <translation>Тангаж</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Roll</source>
-        <translation>Крен</translation>
+        <translation>Rollen</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>X</source>
-        <translation>Смещение по оси X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Y</source>
-        <translation>Смещение по оси Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Z</source>
-        <translation>Смещение по оси Z</translation>
+        <translation>Z</translation>
     </message>
 </context>
 <context>
@@ -332,23 +332,23 @@ Exiting now.</source>
     <message>
         <location filename="../options-dialog.ui" line="+14"/>
         <source>Options</source>
-        <translation>Настройки</translation>
+        <translation>Opties</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Shortcuts</source>
-        <translation>Горячие клавиши</translation>
+        <translation>Sneltoetsen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global shortcuts</source>
-        <translation>Глобальные горячие клавиши</translation>
+        <translation>Algehele sneltoetsen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>использовать текущую позу как позу вперед</translatorcomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центрирование&lt;/span&gt; - использовать текущую позу в качестве центра.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Фиксация обзора&lt;/span&gt; - фиксация обзора до следующего нажатия клавиши.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центр&lt;/span&gt; - фиксирует взгляд в нулевой точке до следующего нажатия клавиши.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translatorcomment></translatorcomment>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Centreren&lt;/span&gt; - gebruik de huidige kijkrichting als ijkpunt voor het centreren.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центр&lt;/span&gt; - фиксирует взгляд в нулевой точке до следующего нажатия клавиши.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -362,67 +362,67 @@ Exiting now.</source>
         <location line="+17"/>
         <location line="+21"/>
         <source>Bind</source>
-        <translation>Назначить</translation>
+        <translation>Koppelen</translation>
     </message>
     <message>
         <location line="-215"/>
         <source>Restart tracking</source>
-        <translation>Перезапустить трекер</translation>
+        <translation>Tracken opnieuw starten</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Toggle while held</source>
-        <translation>Фиксация обзора при удержании</translation>
+        <translation>Wisselen zolang knop is ingedrukt</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Toggle tracking</source>
-        <translation>Запустить/Остановить трекер</translation>
+        <translation>Schakelen tussen tracken en niet-tracken</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Start tracking</source>
-        <translation>Запустить трекер</translation>
+        <translation>Tracken starten</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Stop tracking</source>
-        <translation>Остановить трекер</translation>
+        <translation>Tracken stoppen</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Center</source>
-        <translation>Центрирование</translation>
+        <translation>Centreren</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Zero</source>
-        <translation>Центр</translation>
+        <translation>Weergave forceren naar perfect horizontale weergave</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Zero while held</source>
-        <translation>Центр при удержании</translation>
+        <translation>Weergave forceren naar perfect horizontale weergave (zolang knop is ingedrukt)</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Toggle</source>
-        <translation>Фиксация обзора</translation>
+        <translation>Wisselen</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Relative translation off while held</source>
-        <translation>Выкл. относительного сдвига при удержании</translation>
+        <translation>Relatieve omzetting uit zolang knop is ingedrukt</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Center at startup</source>
-        <translation>Центрирование при запуске</translation>
+        <translation>Automatisch centreren bij starten van tracking</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Minimize to tray</source>
-        <translation>Настройка трея</translation>
+        <translation>Minimaliseren naar taakbalk</translation>
     </message>
     <message>
         <location line="+220"/>
@@ -434,32 +434,32 @@ Exiting now.</source>
     <message>
         <location line="+166"/>
         <source>Enable</source>
-        <translation>Включить</translation>
+        <translation>Inschakelen</translation>
     </message>
     <message>
         <location line="-486"/>
         <source>Minimize to tray on startup when enabled</source>
-        <translation>Сворачивать в трей при запуске</translation>
+        <translation>Programma geminimaliseerd starten (indien minimaliseren is ingeschakeld)</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Enable tray</source>
-        <translation>Добавлять opentrack в трей</translation>
+        <translation>Taakbalk inschakelen</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Camera</source>
-        <translation>Камера</translation>
+        <translation>Camera</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Camera offset</source>
-        <translation>Смещение камеры</translation>
+        <translation>Camera-afwijking</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Use camera center as translation offset</source>
-        <translation>Использование функции коррекции камеры</translation>
+        <translation>Het midden van de camera gebruiken als afwijking</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -468,9 +468,9 @@ Exiting now.</source>
 &lt;p&gt;You can derive it from the center pose as per the checkbox or specify it manually.&lt;/p&gt;
 
 &lt;p&gt;You can specify both, and it can be helpful to specify pitch when moving toward the screen results in translating upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы.&lt;/p&gt;
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.&lt;/p&gt;
 
-&lt;p&gt;Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз добавьте тангажа.&lt;/p&gt;
+&lt;p&gt;You can derive it from the center pose as per the checkbox or specify it manually.&lt;/p&gt;
 
 &lt;p&gt;You can specify both, and it can be helpful to specify pitch when moving toward the screen results in translating upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -485,7 +485,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Roll</source>
-        <translation>Крен</translation>
+        <translation>Rollen</translation>
     </message>
     <message>
         <location line="-860"/>
@@ -498,7 +498,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Pitch</source>
-        <translation>Тангаж</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="-832"/>
@@ -511,29 +511,29 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Yaw</source>
-        <translation>Рысканье</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="-814"/>
         <source>Custom center pose</source>
-        <translation>Настройка центральной позиции</translation>
+        <translation>Aangepaste neutrale positie</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alter the centered position sent to games.</source>
-        <translation>Значения ниже вносят правки в выходные (игровые) данные трекера по осям смещения и вращения.</translation>
+        <translation>De neutrale positie die naar spellen wordt gestuurd aanpassen.</translation>
     </message>
     <message>
         <location line="+49"/>
         <location line="+23"/>
         <location line="+60"/>
         <source> cm</source>
-        <translation> см</translation>
+        <translation> cm</translation>
     </message>
     <message>
         <location line="-67"/>
         <source>TX</source>
-        <translation>Смещение по X</translation>
+        <translation>TX</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -543,92 +543,92 @@ Exiting now.</source>
     <message>
         <location line="+23"/>
         <source>TZ</source>
-        <translation>Смещение по Z</translation>
+        <translation>TZ</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Centering method</source>
-        <translation>Режим центрирования</translation>
+        <translation>Centreermethode</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Try changing this if centering doesn&apos;t perform correctly for your input device.</source>
-        <translation>Если для Вашего трекера текущий режим центрирования отрабатывает некорректно, то попробуйте изменить его на другой.</translation>
+        <translation>Verander deze instelling als het centreren een incorrect resultaat geeft.</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Method</source>
-        <translation>Метод центрирования</translation>
+        <translation>Methode</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Relative (inertial device)</source>
-        <translation>Относит-ный (инерционники)</translation>
+        <translation>Relatief (tracking met bewegingsmeting)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Absolute (camera device)</source>
-        <translation>Абсолютный (камеры)</translation>
+        <translation>Absoluut (tracking met optische meting)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Experimental (camera device)</source>
-        <translation>Экспериментальный (камеры)</translation>
+        <translation>Experimenteel (tracking met optische meting)</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Output</source>
-        <translation>Выходной интерфейс</translation>
+        <translation>Uitvoer</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Relative translation</source>
-        <translation>Относительный сдвиг</translation>
+        <translation>Relatieve omzetting</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</source>
-        <translation>Настройка относительных сдвигов после поворота на 180 градусов, перемещения по осям X и Z будут инвертированными. Пример: если Вам необходимо при повороте головы на 180 градусов смещаться в противоположную сторону по оси X от Вашего реального смещения, тогда необходимо включить данную настройку.</translation>
+        <translation>Met de relatieve modus aan, wordt de relatieve omzetting toegepast ná rotatie. Zo zal een draaiing van 180 graden op de yaw-as gevolgd door een achterwaartse beweging effectief resulteren in een voorwaartse beweging omdat de draaiing eerst is toegepast.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Disable for X</source>
-        <translation>Откл. по оси X</translation>
+        <translation>Uitschakelen voor de X-as</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Disable for Y</source>
-        <translation>Откл. по оси Y</translation>
+        <translation>Uitschakelen voor de Y-as</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Disable for Z (for zoom on Z axis)</source>
-        <translation>Откл. по оси Z (Ось приближения)</translation>
+        <translation>Uitschakelen voor de Z-as (voor het zoomen met de Z-as)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disable effect by yaw</source>
-        <translation>Откл. по оси рысканья</translation>
+        <translation>Effect uitschakelen bij yaw</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disable effect by pitch</source>
-        <translation>Откл. по оси тангажа</translation>
+        <translation>Effect uitschakelen bij pitch</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disable effect by roll</source>
-        <translation>Откл. по оси крена</translation>
+        <translation>Effect uitschakelen bij rol</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Output remap</source>
-        <translation>Переназначение осей</translation>
+        <translation>Uitvoer aanpassen</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Assign input axis to output axis.</source>
-        <translation>Сопостовление исходных и игровых осей.</translation>
+        <translation>Ingangs-as toewijzen aan uitgangs-as.</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -639,12 +639,12 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>X</source>
-        <translation>Смещение по оси X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="-273"/>
         <source>Invert</source>
-        <translation>Инвертировать</translation>
+        <translation>Omkeren</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -655,7 +655,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Y</source>
-        <translation>Смещение по оси Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location line="-260"/>
@@ -666,7 +666,7 @@ Exiting now.</source>
         <location line="+28"/>
         <location line="+18"/>
         <source>Z</source>
-        <translation>Смещение по оси Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location line="-245"/>
@@ -676,38 +676,38 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Disabled</source>
-        <translation>Отключена</translation>
+        <translation>Uitgeschakeld</translation>
     </message>
     <message>
         <location line="-158"/>
         <source>Destination</source>
-        <translation>Игровая ось:</translation>
+        <translation>Doel</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Source</source>
-        <translation>Исходная ось:</translation>
+        <translation>Bron</translation>
     </message>
     <message>
         <location line="+184"/>
         <source>CSV Data Logging</source>
-        <translation>Логирование в формат CSV</translation>
+        <translation>CSV-data loggen</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enable - You will be asked for a filename whenever tracking starts</source>
-        <translation>Включить - необходимо будет указать имя файла при запуске трекера</translation>
+        <translation>Inschakalen - Er zal worden gevraagd naar een bestandsnaam wanneer het tracken start</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+12"/>
         <source>Game detection</source>
-        <translation>Захват игр</translation>
+        <translation>Speldetectie</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Start tracking automatically when a game starts with selected profile, and stop when the game exits.</source>
-        <translation>Данное меню позволяет автоматизировать запуск opentrack&apos;а. Как только программа определит Вашу игру - opentrack начнет отслеживать Ваши движения с выбранным профилем, а по закрытию игры - остановит его. На практике это нажатие кнопки &quot;Запустить&quot; и &quot;Остановить&quot; в автоматическом режиме.</translation>
+        <translation>Tracken automatisch starten en stoppen wanneer een spel wordt gestart en gestopt, op basis van het ingestelde profiel.</translation>
     </message>
 </context>
 </TS>
