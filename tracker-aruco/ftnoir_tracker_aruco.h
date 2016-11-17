@@ -8,14 +8,13 @@
 #pragma once
 
 #include "ui_aruco-trackercontrols.h"
+#include "options/options.hpp"
+#include "trans_calib.h"
 #include "api/plugin-api.hpp"
-#include "include/markerdetector.h"
-
 #include "cv/video-widget.hpp"
-#include "cv/translation-calibrator.hpp"
+#include "compat/timer.hpp"
 
-#include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
+#include "include/markerdetector.h"
 
 #include <QObject>
 #include <QThread>
@@ -26,7 +25,9 @@
 
 #include <cinttypes>
 
-#include "options/options.hpp"
+#include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
+
 using namespace options;
 
 struct settings : opts {
@@ -46,16 +47,16 @@ struct settings : opts {
     {}
 };
 
-class dialog_aruco;
+class aruco_dialog;
 
-class tracker_aruco : protected QThread, public ITracker
+class aruco_tracker : protected QThread, public ITracker
 {
     Q_OBJECT
-    friend class dialog_aruco;
+    friend class aruco_dialog;
     static constexpr float c_search_window = 1.3f;
 public:
-    tracker_aruco();
-    ~tracker_aruco() override;
+    aruco_tracker();
+    ~aruco_tracker() override;
     void start_tracker(QFrame* frame) override;
     void data(double *data) override;
     void run() override;
@@ -65,7 +66,7 @@ private:
     bool detect_without_roi();
     bool open_camera();
     void set_intrinsics();
-    void update_fps(double dt);
+    void update_fps();
     void draw_ar(bool ok);
     void clamp_last_roi();
     void set_points();
@@ -77,16 +78,14 @@ private:
     cv::VideoCapture camera;
     QMutex camera_mtx;
     QMutex mtx;
-    volatile bool stop;
     QHBoxLayout* layout;
     cv_video_widget* videoWidget;
     settings s;
-    double pose[6];
+    double pose[6], fps;
     cv::Mat frame, grayscale, color;
     cv::Matx33d r;
     std::vector<cv::Point3f> obj_points;
     cv::Matx33d intrinsics;
-    cv::Matx14f dist_coeffs;
     aruco::MarkerDetector detector;
     std::vector<aruco::Marker> markers;
     cv::Vec3d t;
@@ -97,25 +96,26 @@ private:
     cv::Vec3d euler;
     std::vector<cv::Point3f> roi_points;
     cv::Rect last_roi;
-    double freq, cur_fps;
-    std::uint64_t last_time;
+    Timer fps_timer;
 
-    static constexpr float size_min = 0.05f;
-    static constexpr float size_max = 0.3f;
+    volatile bool stop;
 
-    static constexpr double alpha_ = .95;
+    static constexpr const double size_min = 0.05f;
+    static constexpr const double size_max = 0.3f;
+
+    static constexpr const double RC = .25;
 };
 
-class dialog_aruco : public ITrackerDialog
+class aruco_dialog : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    dialog_aruco();
-    void register_tracker(ITracker * x) override { tracker = static_cast<tracker_aruco*>(x); }
+    aruco_dialog();
+    void register_tracker(ITracker * x) override { tracker = static_cast<aruco_tracker*>(x); }
     void unregister_tracker() override { tracker = nullptr; }
 private:
-    Ui::dialog_aruco ui;
-    tracker_aruco* tracker;
+    Ui::Form ui;
+    aruco_tracker* tracker;
     settings s;
     TranslationCalibrator calibrator;
     QTimer calib_timer;
@@ -125,12 +125,12 @@ private slots:
     void toggleCalibrate();
     void cleanupCalib();
     void update_tracker_calibration();
-    void set_camera_settings_available(const QString& camera_name);
-    void show_camera_settings();
+    void camera_settings();
+    void update_camera_settings_state(const QString& name);
 };
 
 class aruco_metadata : public Metadata
 {
-    QString name() { return QString(QCoreApplication::translate("aruco_metadata", "aruco -- paper marker tracker")); }
+    QString name() { return QString("aruco -- paper marker tracker"); }
     QIcon icon() { return QIcon(":/images/aruco.png"); }
 };

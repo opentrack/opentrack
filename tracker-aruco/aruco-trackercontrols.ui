@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>dialog_aruco</class>
- <widget class="QWidget" name="dialog_aruco">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -145,10 +145,10 @@
             <locale language="English" country="UnitedStates"/>
            </property>
            <property name="minimum">
-            <number>10</number>
+            <number>35</number>
            </property>
            <property name="maximum">
-            <number>180</number>
+            <number>90</number>
            </property>
           </widget>
          </item>
@@ -168,11 +168,6 @@
            <item>
             <property name="text">
              <string>320x240</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>320x200</string>
             </property>
            </item>
            <item>

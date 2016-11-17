@@ -5,13 +5,13 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#include "cv/video-widget.hpp"
 #include "ftnoir_tracker_aruco.h"
-#include "api/plugin-api.hpp"
-#include "compat/camera-names.hpp"
 #include "cv/video-property-page.hpp"
+#include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
 
 #include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 
@@ -30,34 +30,35 @@ struct resolution_tuple
     int height;
 };
 
-static resolution_tuple resolution_choices[] =
+static constexpr const resolution_tuple resolution_choices[] =
 {
     { 640, 480 },
     { 320, 240 },
-    { 320, 200 },
     { 0, 0 }
 };
 
-tracker_aruco::tracker_aruco() :
+constexpr const double aruco_tracker::RC;
+constexpr const double aruco_tracker::size_min;
+constexpr const double aruco_tracker::size_max;
+
+aruco_tracker::aruco_tracker() :
     stop(false),
     layout(nullptr),
     videoWidget(nullptr),
+    fps(0),
     obj_points(4),
-    intrinsics(decltype(intrinsics)::eye()),
-    dist_coeffs(decltype(dist_coeffs)::zeros()),
-    rmat(decltype(rmat)::eye()),
+    intrinsics(cv::Matx33d::eye()),
+    rmat(cv::Matx33d::eye()),
     roi_points(4),
-    last_roi(65535, 65535, 0, 0),
-    freq(cv::getTickFrequency()), // XXX change to timer.hpp
-    cur_fps(0)
+    last_roi(65535, 65535, 0, 0)
 {
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
-    detector.setThresholdParams(5, -1);
+    detector.setThresholdParams(7, -1);
     detector.setDesiredSpeed(3);
     detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
 }
 
-tracker_aruco::~tracker_aruco()
+aruco_tracker::~aruco_tracker()
 {
     stop = true;
     wait();
@@ -65,10 +66,12 @@ tracker_aruco::~tracker_aruco()
         delete videoWidget;
     if(layout)
         delete layout;
+    // fast start/stop causes breakage
+    portable::sleep(1000);
     camera.release();
 }
 
-void tracker_aruco::start_tracker(QFrame* videoframe)
+void aruco_tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = new cv_video_widget(videoframe);
@@ -85,9 +88,7 @@ void tracker_aruco::start_tracker(QFrame* videoframe)
     layout = layout_;
 }
 
-#define HT_PI M_PI
-
-void tracker_aruco::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
+void aruco_tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
 {
     QMutexLocker l(&mtx);
 
@@ -95,17 +96,14 @@ void tracker_aruco::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
     t_ = t;
 }
 
-bool tracker_aruco::detect_with_roi()
+bool aruco_tracker::detect_with_roi()
 {
     if (last_roi.width > 1 && last_roi.height > 1)
     {
-        float min = std::min(1.f, std::max(.01f, size_min * grayscale.cols / last_roi.width));
-        float max = std::max(.01f, std::min(1.f, size_max * grayscale.cols / last_roi.width));
-        detector.setMinMaxSize(min, max);
+        detector.setMinMaxSize(std::min(1., std::max(.01, size_min * grayscale.cols / last_roi.width)),
+                               std::max(.01, std::min(1., size_max * grayscale.cols / last_roi.width)));
 
-        cv::Mat grayscale_ = grayscale(last_roi);
-
-        detector.detect(grayscale_, markers, cv::Mat(), cv::Mat(), -1, false);
+        detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false);
 
         if (markers.size() == 1 && markers[0].size() == 4)
         {
@@ -124,14 +122,14 @@ bool tracker_aruco::detect_with_roi()
     return false;
 }
 
-bool tracker_aruco::detect_without_roi()
+bool aruco_tracker::detect_without_roi()
 {
     detector.setMinMaxSize(size_min, size_max);
     detector.detect(grayscale, markers, cv::Mat(), cv::Mat(), -1, false);
     return markers.size() == 1 && markers[0].size() == 4;
 }
 
-bool tracker_aruco::open_camera()
+bool aruco_tracker::open_camera()
 {
     int rint = s.resolution;
     if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
@@ -180,7 +178,7 @@ bool tracker_aruco::open_camera()
     return true;
 }
 
-void tracker_aruco::set_intrinsics()
+void aruco_tracker::set_intrinsics()
 {
     const int w = grayscale.cols, h = grayscale.rows;
     const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
@@ -195,16 +193,20 @@ void tracker_aruco::set_intrinsics()
     intrinsics(1, 2) = grayscale.rows/2;
 }
 
-void tracker_aruco::update_fps(double alpha)
+void aruco_tracker::update_fps()
 {
-    std::uint64_t time = std::uint64_t(cv::getTickCount());
-    const double dt = std::max(0., (time - last_time) / freq);
-    last_time = time;
+    const double dt = fps_timer.elapsed_seconds();
+    fps_timer.start();
+    const double alpha = dt/(dt + RC);
 
-    cur_fps = cur_fps * alpha + (1-alpha) * (fabs(dt) < 1e-6 ? 0 : 1./dt);
+    if (dt > 1e-3)
+    {
+        fps *= 1 - alpha;
+        fps += alpha * (1./dt + .8);
+    }
 }
 
-void tracker_aruco::draw_ar(bool ok)
+void aruco_tracker::draw_ar(bool ok)
 {
     if (ok)
     {
@@ -213,13 +215,13 @@ void tracker_aruco::draw_ar(bool ok)
             cv::line(frame, m[i], m[(i+1)%4], cv::Scalar(0, 0, 255), 2, 8);
     }
 
-    char buf[32];
-    ::snprintf(buf, sizeof(buf)-1, "Hz: %d", (int)(unsigned short)cur_fps);
+    char buf[9];
+    ::snprintf(buf, sizeof(buf)-1, "Hz: %d", clamp(int(fps), 0, 9999));
     buf[sizeof(buf)-1] = '\0';
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 
-void tracker_aruco::clamp_last_roi()
+void aruco_tracker::clamp_last_roi()
 {
     if (last_roi.x < 0)
         last_roi.x = 0;
@@ -242,7 +244,7 @@ void tracker_aruco::clamp_last_roi()
     last_roi.height -= last_roi.y;
 }
 
-void tracker_aruco::set_points()
+void aruco_tracker::set_points()
 {
     using f = float;
     const f hx = f(s.headpos_x), hy = f(s.headpos_y), hz = f(s.headpos_z);
@@ -257,19 +259,18 @@ void tracker_aruco::set_points()
     obj_points[x4] = cv::Point3f(-size + hx, size + hy, 0 + hz);
 }
 
-void tracker_aruco::draw_centroid()
+void aruco_tracker::draw_centroid()
 {
     repr2.clear();
 
     static const std::vector<cv::Point3f> centroid { cv::Point3f(0, 0, 0) };
 
-    cv::projectPoints(centroid, rvec, tvec, intrinsics, dist_coeffs, repr2);
+    cv::projectPoints(centroid, rvec, tvec, intrinsics, cv::noArray(), repr2);
 
-    auto s = cv::Scalar(255, 0, 255);
-    cv::circle(frame, repr2[0], 4, s, -1);
+    cv::circle(frame, repr2[0], 4, cv::Scalar(255, 0, 255), -1);
 }
 
-void tracker_aruco::set_last_roi()
+void aruco_tracker::set_last_roi()
 {
     roi_projection.clear();
 
@@ -281,12 +282,12 @@ void tracker_aruco::set_last_roi()
         roi_points[i] = pt * c_search_window;
     }
 
-    cv::projectPoints(roi_points, rvec, tvec, intrinsics, dist_coeffs, roi_projection);
+    cv::projectPoints(roi_points, rvec, tvec, intrinsics, cv::noArray(), roi_projection);
 
     set_roi_from_projection();
 }
 
-void tracker_aruco::set_rmat()
+void aruco_tracker::set_rmat()
 {
     cv::Rodrigues(rvec, rmat);
 
@@ -305,7 +306,7 @@ void tracker_aruco::set_rmat()
     t = cv::Vec3d(tvec[0], -tvec[1], tvec[2]);
 }
 
-void tracker_aruco::set_roi_from_projection()
+void aruco_tracker::set_roi_from_projection()
 {
     last_roi = cv::Rect(color.cols-1, color.rows-1, 0, 0);
 
@@ -328,7 +329,7 @@ void tracker_aruco::set_roi_from_projection()
     clamp_last_roi();
 }
 
-void tracker_aruco::run()
+void aruco_tracker::run()
 {
     cv::setNumThreads(0);
 
@@ -340,7 +341,7 @@ void tracker_aruco::run()
     if (!open_camera())
         return;
 
-    last_time = std::uint64_t(cv::getTickCount());
+    fps_timer.start();
 
     while (!stop)
     {
@@ -357,7 +358,7 @@ void tracker_aruco::run()
 
         set_intrinsics();
 
-        update_fps(alpha_);
+        update_fps();
 
         markers.clear();
 
@@ -367,10 +368,7 @@ void tracker_aruco::run()
         {
             set_points();
 
-            if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_DLS))
-                goto fail;
-
-            if (!cv::solvePnP(obj_points, markers[0], intrinsics, dist_coeffs, rvec, tvec, true, cv::SOLVEPNP_ITERATIVE))
+            if (!cv::solvePnP(obj_points, markers[0], intrinsics, cv::noArray(), rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
                 goto fail;
 
             set_last_roi();
@@ -389,19 +387,19 @@ fail:
     }
 }
 
-void tracker_aruco::data(double *data)
+void aruco_tracker::data(double *data)
 {
     QMutexLocker lck(&mtx);
 
     data[Yaw] = pose[Yaw];
     data[Pitch] = pose[Pitch];
     data[Roll] = pose[Roll];
-    data[TX] = pose[TX] * .5;
-    data[TY] = pose[TY] * .5;
+    data[TX] = pose[TX];
+    data[TY] = pose[TY];
     data[TZ] = pose[TZ];
 }
 
-dialog_aruco::dialog_aruco()
+aruco_dialog::aruco_dialog()
 {
     tracker = nullptr;
     calib_timer.setInterval(250);
@@ -419,34 +417,15 @@ dialog_aruco::dialog_aruco()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));
     connect(this, SIGNAL(destroyed()), this, SLOT(cleanupCalib()));
-
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
-    connect(ui.cameraName, &QComboBox::currentTextChanged, this, &dialog_aruco::set_camera_settings_available);
-    set_camera_settings_available(ui.cameraName->currentText());
-    connect(ui.camera_settings, &QPushButton::clicked, this, &dialog_aruco::show_camera_settings);
+    connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
+
+    connect(&s.camera_name, SIGNAL(valueChanged(const QString&)), this, SLOT(update_camera_settings_state(const QString&)));
+
+    update_camera_settings_state(s.camera_name);
 }
 
-
-void dialog_aruco::set_camera_settings_available(const QString& camera_name)
-{
-    const bool avail = video_property_page::should_show_dialog(camera_name);
-    ui.camera_settings->setEnabled(avail);
-}
-
-void dialog_aruco::show_camera_settings()
-{
-    const int idx = ui.cameraName->currentIndex();
-    if (tracker)
-    {
-        cv::VideoCapture& cap = tracker->camera;
-        if (cap.isOpened())
-            video_property_page::show_from_capture(cap, idx);
-    }
-    else
-        video_property_page::show(idx);
-}
-
-void dialog_aruco::toggleCalibrate()
+void aruco_dialog::toggleCalibrate()
 {
     if (!calib_timer.isActive())
     {
@@ -467,13 +446,13 @@ void dialog_aruco::toggleCalibrate()
     }
 }
 
-void dialog_aruco::cleanupCalib()
+void aruco_dialog::cleanupCalib()
 {
     if (calib_timer.isActive())
         calib_timer.stop();
 }
 
-void dialog_aruco::update_tracker_calibration()
+void aruco_dialog::update_tracker_calibration()
 {
     if (calib_timer.isActive() && tracker)
     {
@@ -484,15 +463,31 @@ void dialog_aruco::update_tracker_calibration()
     }
 }
 
-void dialog_aruco::doOK()
+void aruco_dialog::doOK()
 {
     s.b->save();
     close();
 }
 
-void dialog_aruco::doCancel()
+void aruco_dialog::doCancel()
 {
     close();
 }
 
-OPENTRACK_DECLARE_TRACKER(tracker_aruco, dialog_aruco, aruco_metadata)
+void aruco_dialog::camera_settings()
+{
+    if (tracker)
+    {
+        QMutexLocker l(&tracker->camera_mtx);
+        video_property_page::show_from_capture(tracker->camera, camera_name_to_index(s.camera_name));
+    }
+    else
+        video_property_page::show(camera_name_to_index(s.camera_name));
+}
+
+void aruco_dialog::update_camera_settings_state(const QString& name)
+{
+    ui.camera_settings->setEnabled(video_property_page::should_show_dialog(name));
+}
+
+OPENTRACK_DECLARE_TRACKER(aruco_tracker, aruco_dialog, aruco_metadata)
