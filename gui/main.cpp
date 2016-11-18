@@ -17,6 +17,7 @@ using namespace options;
 #include <QCommandLineParser>
 #include <QStyleFactory>
 #include <QStringList>
+#include <QMessageBox>
 #include <QDebug>
 #include <memory>
 #include <cstring>
