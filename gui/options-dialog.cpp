@@ -20,7 +20,7 @@ QString OptionsDialog::kopts_to_string(const key_opts& kopts)
     if (!str.isEmpty())
     {
         if (str.startsWith("Num+"))
-            return tr("Num+") + str.left(4);
+            return tr("Num+") + str.mid(4);
 
         const int btn = kopts.button & ~Qt::KeyboardModifierMask;
         const int mods = kopts.button & Qt::KeyboardModifierMask;
