@@ -42,6 +42,7 @@ MainWindow::MainWindow() :
     menu_action_mappings(&tray_menu)
 {
     ui.setupUi(this);
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     setFixedSize(size());
     updateButtonState(false, false);
 
@@ -574,7 +575,7 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
     if (lib && lib->Dialog)
     {
         t* dialog = reinterpret_cast<t*>(lib->Dialog());
-        dialog->setWindowFlags(Qt::Dialog);
+        dialog->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
         // HACK: prevent stderr whining by adding a few pixels
         dialog->setFixedSize(dialog->size() + QSize(4, 4));
         dialog->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -620,7 +621,7 @@ static bool mk_window(ptr<t>* place, Args&&... params)
     else
     {
         *place = make_unique<t>(std::forward<Args>(params)...);
-        (*place)->setWindowFlags(Qt::Dialog);
+        (*place)->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
         // HACK: prevent stderr whining by adding a few pixels
         (*place)->setFixedSize((*place)->size() + QSize(4, 4));
         (*place)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
