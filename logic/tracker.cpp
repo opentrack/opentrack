@@ -449,25 +449,34 @@ void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const
 
 void bits::set(bits::flags flag_, bool val_)
 {
-    unsigned b_(b);
     const unsigned flag = unsigned(flag_);
-    const unsigned val = unsigned(!!val_);
-    while (!b.compare_exchange_weak(b_,
+    const unsigned val = unsigned(val_);
+
+    for (;;)
+    {
+        unsigned b_(b);
+        if (b.compare_exchange_weak(b_,
                                     unsigned((b_ & ~flag) | (flag * val)),
                                     std::memory_order_seq_cst,
                                     std::memory_order_seq_cst))
-    { /* empty */ }
+            break;
+    }
 }
 
 void bits::negate(bits::flags flag_)
 {
-    unsigned b_(b);
     const unsigned flag = unsigned(flag_);
-    while (!b.compare_exchange_weak(b_,
-                                    (b_ & ~flag) | (flag & ~b_),
+
+    for (;;)
+    {
+        unsigned b_(b);
+
+        if (b.compare_exchange_weak(b_,
+                                    b_ ^ flag,
                                     std::memory_order_seq_cst,
                                     std::memory_order_seq_cst))
-    { /* empty */ }
+            break;
+    }
 }
 
 bool bits::get(bits::flags flag)
