@@ -29,6 +29,8 @@
 
 #include "export.hpp"
 
+namespace gui_tracker_impl {
+
 using Pose = Mat<double, 6, 1>;
 
 struct bits
@@ -115,3 +117,7 @@ public:
     void zero() { negate(f_zero); }
     void toggle_enabled() { negate(f_enabled); }
 };
+
+} // ns impl
+
+using gui_tracker_impl::Tracker;

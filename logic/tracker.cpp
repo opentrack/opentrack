@@ -26,6 +26,7 @@
 #endif
 
 using namespace euler;
+using namespace gui_tracker_impl;
 
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
