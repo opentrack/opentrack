@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>615</height>
+    <width>510</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -407,11 +407,7 @@
           <item row="5" column="0">
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.&lt;/p&gt;
-
-&lt;p&gt;You can derive it from the center pose as per the checkbox or specify it manually.&lt;/p&gt;
-
-&lt;p&gt;You can specify both, and it can be helpful to specify pitch when moving toward the screen results in translating upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn't mounted perfectly in front of the model, but above or below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
