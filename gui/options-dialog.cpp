@@ -14,21 +14,26 @@
 #include <QDialog>
 #include <QFileDialog>
 
-static QString kopts_to_string(const key_opts& kopts)
+QString OptionsDialog::kopts_to_string(const key_opts& kopts)
 {
-    if (static_cast<QString>(kopts.guid) != "")
+    const QString str = kopts.keycode;
+    if (!str.isEmpty())
     {
+        if (str.startsWith("Num+"))
+            return tr("Num+") + str.left(4);
+
         const int btn = kopts.button & ~Qt::KeyboardModifierMask;
         const int mods = kopts.button & Qt::KeyboardModifierMask;
         QString mm;
-        if (mods & Qt::ControlModifier) mm += "Control+";
-        if (mods & Qt::AltModifier) mm += "Alt+";
-        if (mods & Qt::ShiftModifier) mm += "Shift+";
-        return mm + "Joy button " + QString::number(btn);
+
+        if (mods & Qt::ControlModifier) mm += tr("Control+");
+        if (mods & Qt::AltModifier) mm += tr("Alt+");
+        if (mods & Qt::ShiftModifier) mm += tr("Shift+");
+
+        return mm + tr("Joy button %1").arg(QString::number(btn));
     }
-    if (static_cast<QString>(kopts.keycode) == "")
-        return "None";
-    return kopts.keycode;
+    else
+        return tr("None");
 }
 
 OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :

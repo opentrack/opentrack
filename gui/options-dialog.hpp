@@ -18,6 +18,7 @@ private:
     std::function<void(bool)> pause_keybindings;
     Ui::options_dialog ui;
     void closeEvent(QCloseEvent *) override { doCancel(); }
+    static QString kopts_to_string(const key_opts& opts);
 private slots:
     void doOK();
     void doCancel();
