@@ -21,6 +21,7 @@
 #include <QString>
 #include <QChar>
 #include <QSignalBlocker>
+#include <QStatusBar>
 
 #ifdef _WIN32
 #   include <windows.h>
@@ -42,7 +43,10 @@ MainWindow::MainWindow() :
     menu_action_mappings(&tray_menu)
 {
     ui.setupUi(this);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    adjustSize();
     setFixedSize(size());
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     updateButtonState(false, false);
 
     if (group::ini_directory().size() == 0)
@@ -575,9 +579,10 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
     {
         t* dialog = reinterpret_cast<t*>(lib->Dialog());
         dialog->setWindowFlags(Qt::Dialog);
-        // HACK: prevent stderr whining by adding a few pixels
-        dialog->setFixedSize(dialog->size() + QSize(4, 4));
-        dialog->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        dialog->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        dialog->adjustSize();
+        dialog->setFixedSize(dialog->size());
+        dialog->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | dialog->windowFlags());
         dialog->show();
 
         orig.reset(dialog);
@@ -620,11 +625,12 @@ static bool mk_window(ptr<t>* place, Args&&... params)
     else
     {
         *place = make_unique<t>(std::forward<Args>(params)...);
-        (*place)->setWindowFlags(Qt::Dialog);
-        // HACK: prevent stderr whining by adding a few pixels
-        (*place)->setFixedSize((*place)->size() + QSize(4, 4));
-        (*place)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        (*place)->show();
+        auto& dialog = *place;
+        dialog->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        dialog->adjustSize();
+        dialog->setFixedSize(dialog->size());
+        dialog->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | dialog->windowFlags());
+        dialog->show();
         return true;
     }
 }
