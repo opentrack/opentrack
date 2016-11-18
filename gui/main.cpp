@@ -143,8 +143,11 @@ main(int argc, char** argv)
 
     // QLocale::setDefault(QLocale("pl_PL")); // force i18n for testing
 
-    (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/i18n", ".qm");
-    (void) QCoreApplication::installTranslator(&t);
+    if (!QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool())
+    {
+        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/i18n", ".qm");
+        (void) QCoreApplication::installTranslator(&t);
+    }
 
      do
      {

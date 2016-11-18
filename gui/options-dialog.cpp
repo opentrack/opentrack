@@ -36,6 +36,11 @@ QString OptionsDialog::kopts_to_string(const key_opts& kopts)
         return tr("None");
 }
 
+void OptionsDialog::set_disable_translation_state(bool value)
+{
+    QSettings(OPENTRACK_ORG).setValue("disable-translation", value);
+}
+
 OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     pause_keybindings(pause_keybindings)
 {
@@ -88,6 +93,8 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.center_method, ui.center_method);
 
     tie_setting(main.tracklogging_enabled, ui.tracklogging_enabled);
+
+    ui.disable_translation->setChecked(QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool());
 
     struct tmp
     {
@@ -170,6 +177,7 @@ void OptionsDialog::doOK()
 {
     main.b->save();
     ui.game_detector->save();
+    set_disable_translation_state(ui.disable_translation->isChecked());
     close();
     emit closing();
 }

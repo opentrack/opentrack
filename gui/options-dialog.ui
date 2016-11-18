@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>621</height>
+    <width>525</width>
+    <height>603</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -337,6 +337,53 @@
         </widget>
        </item>
        <item>
+        <widget class="QFrame" name="frame_3">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="disable_translation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Never translate the application interface</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_29">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="opentrack-res.qrc">:/images/english.png</pixmap>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_11">
          <property name="title">
           <string>Minimize to tray</string>
@@ -353,6 +400,12 @@
           </property>
           <item>
            <widget class="QCheckBox" name="trayp">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Enable tray</string>
             </property>
@@ -360,6 +413,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="tray_start">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Minimize to tray on startup when enabled</string>
             </property>
@@ -378,7 +437,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>0</width>
+           <width>10</width>
            <height>0</height>
           </size>
          </property>
@@ -1510,7 +1569,6 @@
   <tabstop>bind_toggle_tracking</tabstop>
   <tabstop>bind_restart_tracking</tabstop>
   <tabstop>bind_tcomp_off_held</tabstop>
-  <tabstop>center_at_startup</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
   <tabstop>use_center_as_translation_camera_offset</tabstop>
@@ -1545,7 +1603,9 @@
   <tabstop>tcomp_src_pitch_disable</tabstop>
   <tabstop>tcomp_src_roll_disable</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="opentrack-res.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>startEngineClicked()</slot>
