@@ -260,10 +260,7 @@ void Tracker::logic()
         const euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
         euler_t pos = euler_t(&value[TX]) - t_center;
 
-        if (s.use_camera_offset_from_centering)
-            t_compensate((real_rotation.camera * real_rotation.rot_center).t(), pos, pos, false, false, false);
-        else
-            t_compensate(real_rotation.camera.t(), pos, pos, false, false, false);
+        t_compensate(real_rotation.camera.t(), pos, pos, false, false, false);
 
         for (int i = 0; i < 3; i++)
         {
