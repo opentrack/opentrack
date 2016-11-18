@@ -21,11 +21,11 @@ struct settings : opts {
     {}
 };
 
-class Rift_Tracker : public ITracker
+class rift_tracker_042 : public ITracker
 {
 public:
-    Rift_Tracker();
-    virtual ~Rift_Tracker() override;
+    rift_tracker_042();
+    virtual ~rift_tracker_042() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 private:

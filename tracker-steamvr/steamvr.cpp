@@ -54,7 +54,9 @@ void steamvr::start_tracker(QFrame*)
 
     if (!vr)
     {
-        QMessageBox::warning(nullptr, "Valve SteamVR init error", strerror(e), QMessageBox::Close, QMessageBox::NoButton);
+        QMessageBox::warning(nullptr,
+                             QCoreApplication::translate("steamvr", "Valve SteamVR init error"), strerror(e),
+                             QMessageBox::Close, QMessageBox::NoButton);
         return;
     }
 
@@ -69,7 +71,10 @@ void steamvr::start_tracker(QFrame*)
 
     if (!ok)
     {
-        QMessageBox::warning(nullptr, "Valve SteamVR init warning", "No HMD connected", QMessageBox::Close, QMessageBox::NoButton);
+        QMessageBox::warning(nullptr,
+                             QCoreApplication::translate("steamvr", "Valve SteamVR init warning"),
+                             QCoreApplication::translate("steamvr", "No HMD connected"),
+                             QMessageBox::Close, QMessageBox::NoButton);
         return;
     }
 }

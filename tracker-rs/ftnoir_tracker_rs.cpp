@@ -87,7 +87,10 @@ bool RSTracker::startSdkInstallationProcess()
 
     bool pStarted = QProcess::startDetached(contrib_path + "intel_rs_sdk_runtime_websetup_10.0.26.0396.exe --finstall=core,face3d --fnone=all");
     if(!pStarted){
-        QMessageBox::warning(0, "Intel® RealSense™ Runtime Installation", "Installation process failed to start.", QMessageBox::Ok);
+        QMessageBox::warning(nullptr,
+                             tr("Intel® RealSense™ Runtime Installation"),
+                             tr("Installation process failed to start."),
+                             QMessageBox::Ok);
     }
     return pStarted;
 }
@@ -100,19 +103,19 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
 
         switch(exitCode){
         case -101: //The implementation got an invalid handle from the RealSense SDK session/modules
-        msgBox.setInformativeText("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R2 is installed.");
+        msgBox.setInformativeText(tr("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R2 is installed."));
                 break;
         case -301: //RealSense SDK runtime execution aborted.
-                msgBox.setInformativeText("Tracking stopped after the RealSense SDK Runtime execution has aborted.");
+                msgBox.setInformativeText(tr("Tracking stopped after the RealSense SDK Runtime execution has aborted."));
                 break;
         case -601: //RealSense Camera stream configuration has changed.
-                msgBox.setInformativeText("Tracking stopped after another program changed camera streams configuration.");
+                msgBox.setInformativeText(tr("Tracking stopped after another program changed camera streams configuration."));
                 break;
         default:
         msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R2 to be installed.");
     }
 
-    QPushButton* triggerSdkInstallation = msgBox.addButton("Install Runtime", QMessageBox::ActionRole);
+    QPushButton* triggerSdkInstallation = msgBox.addButton(tr("Install Runtime"), QMessageBox::ActionRole);
     msgBox.addButton(QMessageBox::Ok);
     msgBox.exec();
 

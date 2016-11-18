@@ -342,7 +342,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TZ</string>
+                <string>Z</string>
                </property>
               </widget>
              </item>
@@ -358,7 +358,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>pitch</string>
+                <string>Pitch</string>
                </property>
               </widget>
              </item>
@@ -411,7 +411,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TY</string>
+                <string>Y</string>
                </property>
               </widget>
              </item>
@@ -427,7 +427,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TX</string>
+                <string>X</string>
                </property>
               </widget>
              </item>
@@ -474,7 +474,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>roll</string>
+                <string>Roll</string>
                </property>
               </widget>
              </item>
@@ -490,7 +490,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>yaw</string>
+                <string>Yaw</string>
                </property>
               </widget>
              </item>
@@ -704,7 +704,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TX</string>
+                <string>X</string>
                </property>
               </widget>
              </item>
@@ -726,7 +726,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TY</string>
+                <string>Y</string>
                </property>
               </widget>
              </item>
@@ -767,7 +767,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>pitch</string>
+                <string>Pitch</string>
                </property>
               </widget>
              </item>
@@ -783,7 +783,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>roll</string>
+                <string>Roll</string>
                </property>
               </widget>
              </item>
@@ -799,7 +799,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>yaw</string>
+                <string>Yaw</string>
                </property>
               </widget>
              </item>
@@ -821,7 +821,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="text">
-                <string>TZ</string>
+                <string>Z</string>
                </property>
               </widget>
              </item>

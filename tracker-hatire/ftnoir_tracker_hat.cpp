@@ -56,10 +56,10 @@ void hatire::start_tracker(QFrame*)
     case result_ok:
         break;
     case result_error:
-        QMessageBox::warning(0,"Error", ret.error, QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(0, tr("Error"), ret.error, QMessageBox::Ok,QMessageBox::NoButton);
         break;
     case result_open_error:
-        QMessageBox::warning(0,"Error", "Unable to open ComPort: " + ret.error, QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(0, tr("Error"), tr("Unable to open ComPort: %1").arg(ret.error), QMessageBox::Ok,QMessageBox::NoButton);
         break;
     }
 

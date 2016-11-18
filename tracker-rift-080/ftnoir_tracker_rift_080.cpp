@@ -10,18 +10,18 @@
 
 using namespace OVR;
 
-Rift_Tracker::Rift_Tracker() : old_yaw(0), hmd(nullptr)
+rift_tracker_080::rift_tracker_080() : old_yaw(0), hmd(nullptr)
 {
 }
 
-Rift_Tracker::~Rift_Tracker()
+rift_tracker_080::~rift_tracker_080()
 {
     if (hmd)
         ovr_Destroy(hmd);
     ovr_Shutdown();
 }
 
-void Rift_Tracker::start_tracker(QFrame*)
+void rift_tracker_080::start_tracker(QFrame*)
 {
     ovrResult code;
     ovrGraphicsLuid luid = {{0}};
@@ -55,7 +55,7 @@ error:
                          QMessageBox::NoButton);
 }
 
-void Rift_Tracker::data(double *data)
+void rift_tracker_080::data(double *data)
 {
     if (hmd)
     {
@@ -100,4 +100,4 @@ void Rift_Tracker::data(double *data)
     }
 }
 
-OPENTRACK_DECLARE_TRACKER(Rift_Tracker, dialog_rift_080, rift_080Dll)
+OPENTRACK_DECLARE_TRACKER(rift_tracker_080, dialog_rift_080, rift_080Dll)

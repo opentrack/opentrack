@@ -8,11 +8,11 @@
 
 using namespace OVR;
 
-Rift_Tracker::Rift_Tracker() : old_yaw(0), hmd(nullptr)
+rift_tracker_140::rift_tracker_140() : old_yaw(0), hmd(nullptr)
 {
 }
 
-Rift_Tracker::~Rift_Tracker()
+rift_tracker_140::~rift_tracker_140()
 {
     if (hmd)
     {
@@ -21,7 +21,7 @@ Rift_Tracker::~Rift_Tracker()
     }
 }
 
-void Rift_Tracker::start_tracker(QFrame*)
+void rift_tracker_140::start_tracker(QFrame*)
 {
     if (OVR_FAILURE(ovr_Initialize(nullptr)))
         goto error;
@@ -44,12 +44,12 @@ error:
 
     QMessageBox::warning(nullptr,
                          "Error",
-                         QStringLiteral("Unable to start Rift tracker: %1").arg(strerror),
+                         QCoreApplication::translate("rift_tracker_140", "Unable to start Rift tracker: %1").arg(strerror),
                          QMessageBox::Ok,
                          QMessageBox::NoButton);
 }
 
-void Rift_Tracker::data(double *data)
+void rift_tracker_140::data(double *data)
 {
     if (hmd)
     {
@@ -94,4 +94,4 @@ void Rift_Tracker::data(double *data)
     }
 }
 
-OPENTRACK_DECLARE_TRACKER(Rift_Tracker, dialog_rift_140, rift_140Dll)
+OPENTRACK_DECLARE_TRACKER(rift_tracker_140, dialog_rift_140, rift_140Dll)

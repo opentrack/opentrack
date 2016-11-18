@@ -142,6 +142,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     d.setLayout(&l);
     d.setFixedSize(QSize(500, 300));
     d.setWindowFlags(Qt::Dialog);
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     d.setWindowModality(Qt::ApplicationModal);
     connect(&k,
             &KeyboardListener::key_pressed,

@@ -8,7 +8,7 @@
 
 using namespace OVR;
 
-Rift_Tracker::Rift_Tracker()
+rift_tracker_025::rift_tracker_025()
 {
     pManager = NULL;
     pSensor = NULL;
@@ -16,7 +16,7 @@ Rift_Tracker::Rift_Tracker()
     old_yaw = 0;
 }
 
-Rift_Tracker::~Rift_Tracker()
+rift_tracker_025::~rift_tracker_025()
 {
     if (pSensor)
         pSensor->Release();
@@ -27,7 +27,7 @@ Rift_Tracker::~Rift_Tracker()
     System::Destroy();
 }
 
-void Rift_Tracker::start_tracker(QFrame*)
+void rift_tracker_025::start_tracker(QFrame*)
 {
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
     pManager = DeviceManager::Create();
@@ -46,23 +46,32 @@ void Rift_Tracker::start_tracker(QFrame*)
             }
             else
             {
-                QMessageBox::warning(0,"Error", "Unable to create Rift sensor",QMessageBox::Ok,QMessageBox::NoButton);
+                QMessageBox::warning(nullptr,
+                                     QCoreApplication::translate("rift_tracker_025", "Error"),
+                                     QCoreApplication::translate("rift_tracker_025", "Unable to create Rift sensor"),
+                                     QMessageBox::Ok,QMessageBox::NoButton);
             }
 
         }
         else
         {
-            QMessageBox::warning(0,"Error", "Unable to enumerate Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+            QMessageBox::warning(nullptr,
+                                 QCoreApplication::translate("rift_tracker_025", "Error"),
+                                 QCoreApplication::translate("rift_tracker_025", "Unable to enumerate Rift tracker"),
+                                 QMessageBox::Ok,QMessageBox::NoButton);
         }
     }
     else
     {
-        QMessageBox::warning(0,"Error", "Unable to start Rift tracker",QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::warning(nullptr,
+                             QCoreApplication::translate("rift_tracker_025", "Error"),
+                             QCoreApplication::translate("rift_tracker_025", "Unable to start Rift tracker"),
+                             QMessageBox::Ok,QMessageBox::NoButton);
     }
 }
 
 
-void Rift_Tracker::data(double *data)
+void rift_tracker_025::data(double *data)
 {
     if (pSFusion != NULL && pSensor != NULL)
     {
@@ -100,4 +109,4 @@ void Rift_Tracker::data(double *data)
     }
 }
 
-OPENTRACK_DECLARE_TRACKER(Rift_Tracker, dialog_rift_025, rift_025Dll)
+OPENTRACK_DECLARE_TRACKER(rift_tracker_025, dialog_rift_025, rift_025Dll)

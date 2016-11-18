@@ -39,7 +39,8 @@ private slots:
         if (text == "" || text == ".ini" || QFile(options::group::ini_directory() + "/" + text).exists())
         {
             QMessageBox::warning(this,
-                                 "File exists", "This file already exists. Pick another name.",
+                                 tr("File exists"),
+                                 tr("This file already exists. Pick another name."),
                                  QMessageBox::Ok, QMessageBox::NoButton);
             return;
         }

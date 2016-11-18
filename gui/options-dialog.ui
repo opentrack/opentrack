@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>603</height>
+    <width>450</width>
+    <height>599</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>450</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Options</string>
@@ -465,6 +471,12 @@
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_17">
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn't mounted perfectly in front of the model, but above or below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -865,7 +877,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
