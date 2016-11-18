@@ -51,13 +51,7 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.tcomp_p, ui.tcomp_enable);
 
-    tie_setting(main.tcomp_disable_tx, ui.tcomp_tx_disable);
-    tie_setting(main.tcomp_disable_ty, ui.tcomp_ty_disable);
     tie_setting(main.tcomp_disable_tz, ui.tcomp_tz_disable);
-
-    tie_setting(main.tcomp_disable_src_yaw, ui.tcomp_src_yaw_disable);
-    tie_setting(main.tcomp_disable_src_pitch, ui.tcomp_src_pitch_disable);
-    tie_setting(main.tcomp_disable_src_roll, ui.tcomp_src_roll_disable);
 
     tie_setting(main.a_x.zero, ui.pos_tx);
     tie_setting(main.a_y.zero, ui.pos_ty);
@@ -83,7 +77,6 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.camera_yaw, ui.camera_yaw);
     tie_setting(main.camera_pitch, ui.camera_pitch);
     tie_setting(main.camera_roll, ui.camera_roll);
-    tie_setting(main.use_camera_offset_from_centering, ui.use_center_as_translation_camera_offset);
 
     tie_setting(main.center_method, ui.center_method);
 

@@ -300,21 +300,15 @@ void Tracker::logic()
 
     if (s.tcomp_p && !get(f_tcomp_disabled))
     {
-        const double tcomp_c[] =
-        {
-            double(!s.tcomp_disable_src_yaw),
-            double(!s.tcomp_disable_src_pitch),
-            double(!s.tcomp_disable_src_roll),
-        };
         euler_t value_(value(TX), value(TY), value(TZ));
         t_compensate(euler_to_rmat(
-                         euler_t(value(Yaw)   * d2r * tcomp_c[0],
-                                 value(Pitch) * d2r * tcomp_c[1],
-                                 value(Roll)  * d2r * tcomp_c[2])),
+                         euler_t(value(Yaw)   * d2r,
+                                 value(Pitch) * d2r,
+                                 value(Roll)  * d2r)),
                      value_,
                      value_,
-                     s.tcomp_disable_tx,
-                     s.tcomp_disable_ty,
+                     false,
+                     false,
                      s.tcomp_disable_tz);
         if (is_nan(value_))
             nanp = true;
