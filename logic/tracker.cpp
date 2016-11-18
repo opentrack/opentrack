@@ -35,7 +35,8 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
     m(m),
     libs(libs),
     logger(logger),
-    backlog_time(0)
+    backlog_time(0),
+    tracking_started(false)
 {
     set(f_center, s.center_at_startup);
 }
@@ -170,28 +171,23 @@ void Tracker::logic()
     scaled_rotation.camera = get_camera_offset_matrix(c_div);
     real_rotation.camera = get_camera_offset_matrix(1);
 
-    scaled_rotation.rotation = scaled_rotation.camera * scaled_rotation.rotation;
-    real_rotation.rotation = real_rotation.camera * real_rotation.rotation;
-
     bool nanp = is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
 
     if (!nanp)
     {
-        bool can_center = false;
-
-        if (get(f_center))
+        if (!tracking_started)
         {
             using std::fabs;
 
             for (int i = 0; i < 6; i++)
                 if (fabs(newpose(i)) != 0)
                 {
-                    can_center = true;
+                    tracking_started = true;
                     break;
                 }
         }
 
-        if (can_center)
+        if (get(f_center) && tracking_started)
         {
             set(f_center, false);
 

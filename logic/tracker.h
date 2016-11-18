@@ -88,6 +88,8 @@ private:
 
     long backlog_time;
 
+    bool tracking_started;
+
     double map(double pos, Map& axis);
     void logic();
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
