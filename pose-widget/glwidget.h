@@ -19,7 +19,7 @@
 #   define POSE_WIDGET_EXPORT Q_DECL_IMPORT
 #endif
 
-namespace impl {
+namespace pose_widget_impl {
 
 using num = float;
 using vec3 = Mat<num, 3, 1>;
@@ -52,4 +52,4 @@ private:
 
 }
 
-using impl::GLWidget;
+using pose_widget_impl::GLWidget;

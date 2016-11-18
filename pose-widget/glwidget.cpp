@@ -15,7 +15,7 @@
 #include <QDebug>
 
 using namespace euler;
-using namespace impl;
+using namespace pose_widget_impl;
 
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
