@@ -40,11 +40,11 @@ private:
     static QString strerror(error_t error);
 };
 
-class dialog : public ITrackerDialog
+class steamvr_dialog : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    dialog();
+    steamvr_dialog();
 
     void register_tracker(ITracker *) override;
     void unregister_tracker() override;
@@ -57,10 +57,10 @@ private slots:
     void doCancel();
 };
 
-class metadata : public Metadata
+class steamvr_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("metadata", "Valve SteamVR")); }
+    QString name() { return QString(QCoreApplication::translate("steamvr_metadata", "Valve SteamVR")); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

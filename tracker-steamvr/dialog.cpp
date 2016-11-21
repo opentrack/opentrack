@@ -1,7 +1,7 @@
 #include "steamvr.hpp"
 #include "api/plugin-api.hpp"
 
-dialog::dialog()
+steamvr_dialog::steamvr_dialog()
 {
     ui.setupUi(this);
 
@@ -9,13 +9,13 @@ dialog::dialog()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
-void dialog::doOK()
+void steamvr_dialog::doOK()
 {
     s.b->save();
     close();
 }
 
-void dialog::doCancel()
+void steamvr_dialog::doCancel()
 {
     close();
 }

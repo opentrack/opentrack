@@ -22,13 +22,13 @@ private:
     Timer t;
 };
 
-class dialog: public ITrackerDialog
+class test_dialog : public ITrackerDialog
 {
     Q_OBJECT
 
     Ui::test_ui ui;
 public:
-    dialog();
+    test_dialog();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
 private slots:
@@ -36,10 +36,10 @@ private slots:
     void doCancel();
 };
 
-class metadata : public Metadata
+class test_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("metadata", "Testing - sine wave")); }
+    QString name() { return QString(QCoreApplication::translate("test_metadata", "Testing - sine wave")); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

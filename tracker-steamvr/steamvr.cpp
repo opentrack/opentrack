@@ -130,7 +130,7 @@ done:
     }
 }
 
-void dialog::register_tracker(ITracker*) {}
-void dialog::unregister_tracker() {}
+void steamvr_dialog::register_tracker(ITracker*) {}
+void steamvr_dialog::unregister_tracker() {}
 
-OPENTRACK_DECLARE_TRACKER(steamvr, dialog, metadata)
+OPENTRACK_DECLARE_TRACKER(steamvr, steamvr_dialog, steamvr_metadata)

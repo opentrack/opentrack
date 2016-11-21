@@ -77,7 +77,7 @@ void test_tracker::data(double *data)
         }
 }
 
-dialog::dialog()
+test_dialog::test_dialog()
 {
     ui.setupUi(this);
 
@@ -85,15 +85,15 @@ dialog::dialog()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
-void dialog::doOK()
+void test_dialog::doOK()
 {
     //s.b->save();
     close();
 }
 
-void dialog::doCancel()
+void test_dialog::doCancel()
 {
     close();
 }
 
-OPENTRACK_DECLARE_TRACKER(test_tracker, dialog, metadata)
+OPENTRACK_DECLARE_TRACKER(test_tracker, test_dialog, test_metadata)
