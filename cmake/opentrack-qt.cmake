@@ -1,5 +1,5 @@
 find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets Gui QUIET)
-find_package(Qt5 COMPONENTS SerialPort QUIET)
+find_package(Qt5 COMPONENTS SerialPort Gamepad QUIET)
 include_directories(SYSTEM ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
 add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
