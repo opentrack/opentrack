@@ -103,7 +103,7 @@
            </property>
            <item>
             <property name="text">
-             <string notr="true">Default</string>
+             <string>Default</string>
             </property>
            </item>
            <item>
