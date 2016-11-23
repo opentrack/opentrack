@@ -35,45 +35,46 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_t = s.rot_sensitivity->cur();
-    const double trans_t = s.trans_sensitivity->cur();
+#define cast(x) (static_cast<slider_value&&>((x)))
+
+    const double rot_t = cast(s.rot_sensitivity).cur();
+    const double trans_t = cast(s.trans_sensitivity).cur();
 
     const double dt = t.elapsed_seconds();
     t.start();
 
-    const double RC = s.ewma->cur() / 1000.; // seconds
+    const double RC = cast(s.ewma).cur() / 1000.; // seconds
     const double alpha = dt/(dt+RC);
-    const double rot_dz = s.rot_deadzone->cur();
-    const double trans_dz = s.trans_deadzone->cur();
-    const slider_value rot_nl_ = s.rot_nonlinearity;
-    const double rot_nl = rot_nl_.cur();
+    const double rot_dz = cast(s.rot_deadzone).cur();
+    const double trans_dz = cast(s.trans_deadzone).cur();
+    const slider_value nl = s.rot_nonlinearity;
 
     for (int i = 0; i < 6; i++)
     {
         spline& m = i >= 3 ? rot : trans;
 
-        smoothed_input[i] = smoothed_input[i] * (1.-alpha) + input[i] * alpha;
+        smoothed_input[i] = smoothed_input[i] * (1-alpha) + input[i] * alpha;
 
         const double in = smoothed_input[i];
 
-        const double vec = in - last_output[i];
+        const double vec_ = in - last_output[i];
         const double dz = i >= 3 ? rot_dz : trans_dz;
-        const double vec_ = std::max(0., fabs(vec) - dz);
+        const double vec = std::max(0., fabs(vec_) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
-        const double out_ = vec_ / thres;
+        const double out_ = vec / thres;
         const double out = progn(
                                const bool should_apply_rot_nonlinearity =
                                    i >= 3 &&
-                                   std::fabs(rot_nl - 1) > 5e-3 &&
-                                   vec_ < rot_nl_.max();
+                                   std::fabs(nl.cur() - 1) > 5e-3 &&
+                                   vec < nl.max();
 
                                if (should_apply_rot_nonlinearity)
-                                   return std::pow(out_/rot_nl_.max(), rot_nl);
+                                   return std::pow(out_/nl.max(), nl.cur());
                                else
                                    return out_;
         );
         const double val = double(m.getValue(out));
-        last_output[i] = output[i] = last_output[i] + signum(vec) * dt * val;
+        last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val;
     }
 }
 
