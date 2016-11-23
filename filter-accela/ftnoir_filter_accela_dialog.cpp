@@ -41,33 +41,36 @@ dialog_accela::dialog_accela()
     update_trans_dz_display(s.trans_deadzone);
     update_rot_nl_slider(s.rot_nonlinearity);
 
-    {
 //#define SPLINE_ROT_DEBUG
 //#define SPLINE_TRANS_DEBUG
-#if defined(SPLINE_ROT_DEBUG) || defined(SPLINE_TRANS_DEBUG)
-    spline rot, trans;
-    s.make_splines(rot, trans);
-    QDialog d;
 
-    spline_widget r(&d);
-    r.set_preview_only(true);
-    r.setEnabled(false);
-    r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+#if defined SPLINE_ROT_DEBUG || defined SPLINE_TRANS_DEBUG
+    {
+        spline rot, trans;
+        s.make_splines(rot, trans);
+        QDialog dr, dt;
+        spline_widget r(&dr);
+        spline_widget t(&dt);
+        dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(false);
+        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.setConfig(&rot);
+        dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(false);
+        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.setConfig(&trans);
+        r.setFixedSize(1024, 600); t.setFixedSize(1024, 600);
 
-#if defined(SPLINE_TRANS_DEBUG)
-#   if defined(SPLINE_ROT_DEBUG)
-#       error "rot xor trans"
-#   endif
-    r.setConfig(&trans);
-#else
-
-    r.setConfig(&rot);
+#ifdef SPLINE_ROT_DEBUG
+        dr.show();
 #endif
-    r.setFixedSize(1024, 600);
-    d.show();
-    d.exec();
+
+#ifdef SPLINE_TRANS_DEBUG
+        dt.show();
 #endif
+
+        if (dr.isVisible())
+            dr.exec();
+        if (dt.isVisible())
+            dt.exec();
     }
+#endif
 }
 
 void dialog_accela::doOK()
