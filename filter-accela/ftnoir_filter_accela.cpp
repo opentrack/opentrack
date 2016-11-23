@@ -69,7 +69,7 @@ void accela::filter(const double* input, double *output)
                                    vec < nl.max();
 
                                if (should_apply_rot_nonlinearity)
-                                   return std::pow(out_/nl.max(), nl.cur());
+                                   return std::pow(out_/nl.max(), nl.cur()) * nl.max();
                                else
                                    return out_;
         );
