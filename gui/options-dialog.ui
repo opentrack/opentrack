@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>593</height>
+    <height>599</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -463,6 +463,13 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="4" column="0">
+           <widget class="QCheckBox" name="use_center_as_translation_camera_offset">
+            <property name="text">
+             <string>Use camera center as translation offset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QLabel" name="label_17">
             <property name="minimumSize">
              <size>
@@ -487,7 +494,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0" alignment="Qt::AlignLeft">
+          <item row="6" column="0" alignment="Qt::AlignLeft">
            <widget class="QGroupBox" name="groupBox_3">
             <property name="styleSheet">
              <string notr="true">QGroupBox
@@ -936,6 +943,38 @@
               <number>0</number>
              </property>
              <item row="2" column="0">
+              <widget class="QCheckBox" name="tcomp_tx_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable for X</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="tcomp_ty_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable for Y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
               <widget class="QCheckBox" name="tcomp_tz_disable">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -948,6 +987,45 @@
                </property>
                <property name="text">
                 <string>Disable for Z (for zoom on Z axis)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="tcomp_src_yaw_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable effect by yaw</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="tcomp_src_pitch_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable effect by pitch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="tcomp_src_roll_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable effect by roll</string>
                </property>
               </widget>
              </item>
@@ -1505,6 +1583,7 @@
   <tabstop>bind_tcomp_off_held</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
+  <tabstop>use_center_as_translation_camera_offset</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>
@@ -1529,7 +1608,12 @@
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
   <tabstop>tcomp_enable</tabstop>
+  <tabstop>tcomp_tx_disable</tabstop>
+  <tabstop>tcomp_ty_disable</tabstop>
   <tabstop>tcomp_tz_disable</tabstop>
+  <tabstop>tcomp_src_yaw_disable</tabstop>
+  <tabstop>tcomp_src_pitch_disable</tabstop>
+  <tabstop>tcomp_src_roll_disable</tabstop>
  </tabstops>
  <resources>
   <include location="opentrack-res.qrc"/>
