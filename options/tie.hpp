@@ -144,25 +144,34 @@ inline void tie_setting(value<int>& v, QTabWidget* t)
 template<>
 inline void tie_setting(value<slider_value>& v, QSlider* w)
 {
-    // we can't get these at runtime since signals cross threads
-    const int q_min = w->minimum();
-    const int q_max = w->maximum();
+    {
+        const int q_min = w->minimum();
+        const int q_max = w->maximum();
 
-    w->setValue(v->to_slider_pos(q_min, q_max));
-    v = v->update_from_slider(w->value(), q_min, q_max);
+        w->setValue(v->to_slider_pos(q_min, q_max));
+        v = v->update_from_slider(w->value(), q_min, q_max);
+    }
 
     base_value::connect(w,
                         &QSlider::valueChanged,
                         &v,
-                        [=, &v](int pos) {
-                            v = v->update_from_slider(pos, q_min, q_max);
-                            w->setValue(v->to_slider_pos(q_min, q_max));
+                        [=, &v](int pos)
+                        {
+                            run_in_thread_sync(w, [&]()
+                            {
+                                const int q_min = w->minimum();
+                                const int q_max = w->maximum();
+                                v = v->update_from_slider(pos, q_min, q_max);
+                                w->setValue(v->to_slider_pos(q_min, q_max));
+                            });
                         },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
                         static_cast<void(base_value::*)(double) const>(&base_value::valueChanged),
                         w,
                         [=, &v](double) {
+                            const int q_min = w->minimum();
+                            const int q_max = w->maximum();
                             w->setValue(v->to_slider_pos(q_min, q_max));
                             v = v->update_from_slider(w->value(), q_min, q_max);
                         },
