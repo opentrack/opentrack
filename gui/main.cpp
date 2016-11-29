@@ -141,7 +141,7 @@ main(int argc, char** argv)
     add_win32_path();
 #endif
 
-    // QLocale::setDefault(QLocale("pl_PL")); // force i18n for testing
+    // QLocale::setDefault(QLocale("ru_RU")); // force i18n for testing
 
     if (!QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool())
     {
