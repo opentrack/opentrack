@@ -5,8 +5,16 @@ The following modules are  licensed as part of the opentrack project. See
 
 # Lack of warranty
 
-Unless a warranty disclaimer is specified in particular licensing terms, the
-warranty disclaimer specified in WARRANTY.TXT applies.
+Unless warranty terms are specified in particular licensing terms, the
+following warranty disclaimer terms apply:
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 # core, various modules
 
@@ -65,6 +73,6 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
-## EOF
+# EOF
 
-[modeline]: # vim: noai:ts=4:sw=4:tw=79
+# vim: noai:ts=4:sw=4:tw=79
