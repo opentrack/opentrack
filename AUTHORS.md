@@ -8,5 +8,3 @@ chronological order:
 - Michael Welter <<mw.pub@welter-4d.de>>
 
 See OPENTRACK-LICENSING.txt for licensing information.
-
-# vim: noai:ts=4:sw=4:tw=79
