@@ -31,40 +31,23 @@ inline
 typename std::enable_if<std::is_enum<t>::value>::type
 tie_setting(value<t>& v, QComboBox* cb)
 {
-    cb->setCurrentIndex(cb->findData((unsigned)static_cast<t>(v)));
+    cb->setCurrentIndex(cb->findData(int(static_cast<t>(v))));
     v = static_cast<t>(cb->currentData().toInt());
-
-    std::vector<int> enum_cases(unsigned(cb->count()));
-
-    for (int i = 0; i < cb->count(); i++)
-        enum_cases[i] = cb->itemData(i).toInt();
 
     base_value::connect(cb,
                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v,
-                        [&, enum_cases](int idx) {
-                            if (idx < 0 || idx >= (int)enum_cases.size())
-                                v = static_cast<t>(-1);
-                            else
-                                v = static_cast<t>(enum_cases[idx]);
+                        [&v, cb](int idx)
+                        {
+                            run_in_thread_sync(cb,
+                                               [&]() {
+                                                    v = static_cast<t>(cb->itemData(idx).toInt());
+                                               });
                         },
                         v.DIRECT_CONNTYPE);
-    base_value::connect(&v,
-                        static_cast<void (base_value::*)(int) const>(&base_value::valueChanged),
-                        cb,
-                        [&, enum_cases](int val) {
-                            for (unsigned i = 0; i < enum_cases.size(); i++)
-                            {
-                                if (val == enum_cases[i])
-                                {
-                                    cb->setCurrentIndex(i);
-                                    return;
-                                }
-                            }
-                            cb->setCurrentIndex(-1);
-                        },
-                        // don't change or else hatire crashes -sh 20160917
-                        Qt::QueuedConnection);
+    base_value::connect(&v, static_cast<void (base_value::*)(int) const>(&base_value::valueChanged),
+                        cb, [cb](int x) { cb->setCurrentIndex(cb->findData(x)); },
+                        v.SAFE_CONNTYPE);
 }
 
 template<>
