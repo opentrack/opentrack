@@ -6,7 +6,7 @@
 #include <condition_variable>
 #include <utility>
 
-namespace detail {
+namespace qt_impl_detail {
 
 template<typename t>
 struct run_in_thread_traits
@@ -25,14 +25,14 @@ struct run_in_thread_traits<void>
     using ret_type = void;
     static inline void assign(unsigned char&, unsigned char&&) {}
     static inline void pass(type&&) {}
-    template<typename F> static type&& call(F& fun) { fun(); return std::move(type(0)); }
+    template<typename F> static type call(F& fun) { fun(); return type(0); }
 };
 
 }
 
 template<typename F>
 auto run_in_thread_sync(QObject* obj, F&& fun)
-    -> typename detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>::ret_type
+    -> typename qt_impl_detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>::ret_type
 {
     using lock_guard = std::unique_lock<std::mutex>;
 
@@ -42,7 +42,7 @@ auto run_in_thread_sync(QObject* obj, F&& fun)
 
     std::thread::id waiting_thread = std::this_thread::get_id();
 
-    using traits = detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>;
+    using traits = qt_impl_detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>;
 
     typename traits::type ret;
 
