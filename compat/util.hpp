@@ -22,7 +22,7 @@ int iround(const t& val)
     return int(std::round(val));
 }
 
-namespace detail {
+namespace util_detail {
 
 template<typename n>
 inline auto clamp_(n val, n min, n max) -> n
@@ -39,5 +39,5 @@ inline auto clamp_(n val, n min, n max) -> n
 template<typename t, typename u, typename w>
 inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * min * max)
 {
-    return ::detail::clamp_<decltype(val * min * max)>(val, min, max);
+    return ::util_detail::clamp_<decltype(val * min * max)>(val, min, max);
 }
