@@ -1,10 +1,15 @@
 #pragma once
 
+#include "ndebug-guard.hpp"
+
 #include "make-unique.hpp"
 #include "run-in-thread.hpp"
 
 #include <memory>
 #include <cmath>
+#include <utility>
+
+#include <QSharedPointer>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
 template<typename t> using mem = std::shared_ptr<t>;
@@ -41,3 +46,11 @@ inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * mi
 {
     return ::util_detail::clamp_<decltype(val * min * max)>(val, min, max);
 }
+
+template<typename t, typename... xs>
+auto qptr(xs... args)
+{
+    return QSharedPointer<t>(new t(std::forward<xs>(args)...));
+}
+
+template<typename t> using qshared = QSharedPointer<t>;
