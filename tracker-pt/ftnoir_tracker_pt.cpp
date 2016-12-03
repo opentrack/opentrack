@@ -19,8 +19,6 @@
 
 //-----------------------------------------------------------------------------
 Tracker_PT::Tracker_PT() :
-      video_widget(nullptr),
-      video_frame(nullptr),
       point_count(0),
       commands(0),
       ever_success(false)
@@ -32,13 +30,7 @@ Tracker_PT::~Tracker_PT()
 {
     set_command(ABORT);
     wait();
-    if (video_widget)
-        delete video_widget;
-    video_widget = NULL;
-    if (video_frame)
-    {
-        if (video_frame->layout()) delete video_frame->layout();
-    }
+
     // fast start/stop causes breakage
     camera.stop();
 }
@@ -180,7 +172,7 @@ void Tracker_PT::run()
             video_widget->update_image(frame_);
         }
     }
-    qDebug() << "pt: Thread stopping";
+    qDebug() << "pt: thread stopped";
 }
 
 void Tracker_PT::apply_settings()
@@ -209,17 +201,16 @@ void Tracker_PT::apply_settings()
     qDebug() << "pt: done applying settings";
 }
 
-void Tracker_PT::start_tracker(QFrame *parent_window)
+void Tracker_PT::start_tracker(QFrame* video_frame)
 {
-    video_frame = parent_window;
     video_frame->setAttribute(Qt::WA_NativeWindow);
-    video_frame->show();
-    video_widget = new cv_video_widget(video_frame);
-    QHBoxLayout* video_layout = new QHBoxLayout(parent_window);
-    video_layout->setContentsMargins(0, 0, 0, 0);
-    video_layout->addWidget(video_widget);
-    video_frame->setLayout(video_layout);
+    video_widget = qptr<cv_video_widget>(video_frame);
+    layout = qptr<QHBoxLayout>(video_frame);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(video_widget.data());
+    video_frame->setLayout(layout.data());
     video_widget->resize(video_frame->width(), video_frame->height());
+    video_frame->show();
     start();
 }
 

@@ -78,8 +78,8 @@ private:
     cv::VideoCapture camera;
     QMutex camera_mtx;
     QMutex mtx;
-    QHBoxLayout* layout;
-    cv_video_widget* videoWidget;
+    qshared<cv_video_widget> videoWidget;
+    qshared<QHBoxLayout> layout;
     settings s;
     double pose[6], fps;
     cv::Mat frame, grayscale, color;

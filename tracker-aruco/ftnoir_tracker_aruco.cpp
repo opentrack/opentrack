@@ -42,15 +42,13 @@ constexpr const double aruco_tracker::size_min;
 constexpr const double aruco_tracker::size_max;
 
 aruco_tracker::aruco_tracker() :
-    stop(false),
-    layout(nullptr),
-    videoWidget(nullptr),
     fps(0),
     obj_points(4),
     intrinsics(cv::Matx33d::eye()),
     rmat(cv::Matx33d::eye()),
     roi_points(4),
-    last_roi(65535, 65535, 0, 0)
+    last_roi(65535, 65535, 0, 0),
+    stop(false)
 {
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
     detector.setThresholdParams(7, -1);
@@ -62,10 +60,6 @@ aruco_tracker::~aruco_tracker()
 {
     stop = true;
     wait();
-    if (videoWidget)
-        delete videoWidget;
-    if(layout)
-        delete layout;
     // fast start/stop causes breakage
     portable::sleep(1000);
     camera.release();
@@ -74,18 +68,15 @@ aruco_tracker::~aruco_tracker()
 void aruco_tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = new cv_video_widget(videoframe);
-    QHBoxLayout* layout_ = new QHBoxLayout();
-    layout_->setContentsMargins(0, 0, 0, 0);
-    layout_->addWidget(videoWidget);
-    if (videoframe->layout())
-        delete videoframe->layout();
-    videoframe->setLayout(layout_);
+    videoWidget = qptr<cv_video_widget>(videoframe);
+    layout = qptr<QHBoxLayout>();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(videoWidget.data());
+    videoframe->setLayout(layout.data());
     videoWidget->show();
     start();
     for (int i = 0; i < 6; i++)
         pose[i] = 0;
-    layout = layout_;
 }
 
 void aruco_tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)

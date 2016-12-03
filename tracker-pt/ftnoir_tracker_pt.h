@@ -18,12 +18,14 @@
 #include "point_tracker.h"
 #include "compat/timer.hpp"
 #include "cv/video-widget.hpp"
+#include "compat/util.hpp"
 
 #include <QCoreApplication>
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QTime>
+#include <QLayout>
 #include <atomic>
 #include <memory>
 #include <vector>
@@ -65,12 +67,12 @@ private:
 
     QMutex camera_mtx;
     QMutex data_mtx;
-    CVCamera       camera;
+    Camera       camera;
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
-    cv_video_widget* video_widget;
-    QFrame*      video_frame;
+    qshared<cv_video_widget> video_widget;
+    qshared<QLayout> layout;
 
     settings_pt s;
     Timer time;
