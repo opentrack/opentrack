@@ -100,8 +100,8 @@ private:
 
     volatile bool stop;
 
-    static constexpr const double size_min = 0.05f;
-    static constexpr const double size_max = 0.3f;
+    static constexpr const float size_min = 0.05;
+    static constexpr const float size_max = 0.3;
 
     static constexpr const double RC = .25;
 };

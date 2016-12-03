@@ -38,8 +38,8 @@ static constexpr const resolution_tuple resolution_choices[] =
 };
 
 constexpr const double aruco_tracker::RC;
-constexpr const double aruco_tracker::size_min;
-constexpr const double aruco_tracker::size_max;
+constexpr const float aruco_tracker::size_min;
+constexpr const float aruco_tracker::size_max;
 
 aruco_tracker::aruco_tracker() :
     fps(0),
@@ -91,8 +91,8 @@ bool aruco_tracker::detect_with_roi()
 {
     if (last_roi.width > 1 && last_roi.height > 1)
     {
-        detector.setMinMaxSize(std::min(1., std::max(.01, size_min * grayscale.cols / last_roi.width)),
-                               std::max(.01, std::min(1., size_max * grayscale.cols / last_roi.width)));
+        detector.setMinMaxSize(clamp(size_min * grayscale.cols / last_roi.width, .01f, 1.f),
+                               clamp(size_max * grayscale.cols / last_roi.width, .01f, 1.f));
 
         detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false);
 
