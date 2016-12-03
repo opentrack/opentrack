@@ -6,6 +6,10 @@
  */
 #pragma once
 
+#include "compat/ndebug-guard.hpp"
+
+#include "compat/util.hpp"
+
 #include "defs.hpp"
 #include "bundle.hpp"
 #include "group.hpp"
