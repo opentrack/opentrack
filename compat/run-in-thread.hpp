@@ -1,10 +1,14 @@
 #pragma once
 
-#include <QObject>
+#include "ndebug-guard.hpp"
 
+#include <cassert>
 #include <thread>
 #include <condition_variable>
 #include <utility>
+
+#include <QObject>
+#include <QThread>
 
 namespace qt_impl_detail {
 
@@ -50,7 +54,9 @@ auto run_in_thread_sync(QObject* obj, F&& fun)
 
     {
         QObject src;
-        src.moveToThread(obj->thread());
+        QThread* t(obj->thread());
+        assert(t);
+        src.moveToThread(t);
         QObject::connect(&src,
                          &QObject::destroyed,
                          obj,
@@ -80,6 +86,8 @@ template<typename F>
 void run_in_thread_async(QObject* obj, F&& fun)
 {
     QObject src;
-    src.moveToThread(obj->thread());
+    QThread* t(obj->thread());
+    assert(t);
+    src.moveToThread(t);
     QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
 }
