@@ -10,7 +10,10 @@
 #include <string>
 #include <QDebug>
 
-Camera::~Camera() {}
+Camera::~Camera()
+{
+    stop();
+}
 
 void Camera::set_device(const QString& name)
 {
@@ -18,15 +21,14 @@ void Camera::set_device(const QString& name)
 
     desired_name = name;
 
-    if (desired_index != index)
+    if (index != cam_desired.idx || desired_name != active_name)
     {
-        desired_index = index;
-        _set_device_index();
+        stop();
+        cam_desired.idx = index;
 
         // reset fps
         dt_valid = 0;
         dt_mean = 0;
-        active_index = index;
     }
 }
 
@@ -35,12 +37,18 @@ QString Camera::get_desired_name() const
     return desired_name;
 }
 
+QString Camera::get_active_name() const
+{
+    return active_name;
+}
+
 void Camera::set_fps(int fps)
 {
     if (cam_desired.fps != fps)
     {
         cam_desired.fps = fps;
-        _set_fps();
+        if (cap)
+            cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
     }
 }
 
@@ -50,16 +58,18 @@ void Camera::set_res(int x_res, int y_res)
     {
         cam_desired.res_x = x_res;
         cam_desired.res_y = y_res;
-        _set_res();
+        if (cap)
+        {
+            cap->set(cv::CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
+            cap->set(cv::CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
+        }
     }
 }
 
 DEFUN_WARN_UNUSED bool Camera::get_info(CamInfo& ret)
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
-    {
         return false;
-    }
     ret = cam_info;
     return true;
 }
@@ -68,7 +78,7 @@ bool Camera::get_frame(double dt, cv::Mat* frame)
 {
     bool new_frame = _get_frame(frame);
     // measure fps of valid frames
-    static constexpr double RC = 1; // second
+    static constexpr double RC = 1; // seconds
     const double alpha = dt/(dt + RC);
     dt_valid += dt;
     if (new_frame)
@@ -85,40 +95,33 @@ bool Camera::get_frame(double dt, cv::Mat* frame)
     return new_frame;
 }
 
-void CVCamera::start()
+void Camera::start()
 {
-    stop();
-    cap = new cv::VideoCapture(desired_index);
-    _set_res();
-    _set_fps();
-    // extract camera info
+    cap = camera_ptr(new cv::VideoCapture(cam_desired.idx));
+
+    set_res(cam_desired.res_x, cam_desired.res_y);
+    set_fps(cam_desired.fps);
+
     if (cap->isOpened())
     {
-        active_index = desired_index;
+        cam_info.idx = cam_desired.idx;
         cam_info.res_x = 0;
         cam_info.res_y = 0;
-    } else {
+        active_name = desired_name;
+    }
+    else
         stop();
-    }
 }
 
-void CVCamera::stop()
+void Camera::stop()
 {
-    if (cap)
-    {
-        const bool opened = cap->isOpened();
-        if (opened)
-        {
-            qDebug() << "pt: freeing camera";
-            cap->release();
-        }
-        delete cap;
-        cap = nullptr;
-        qDebug() << "pt camera: stopped";
-    }
+    cap = nullptr;
+    desired_name = QString();
+    active_name = QString();
+    cam_info = CamInfo();
 }
 
-bool CVCamera::_get_frame(cv::Mat* frame)
+bool Camera::_get_frame(cv::Mat* frame)
 {
     if (cap && cap->isOpened())
     {
@@ -133,23 +136,4 @@ bool CVCamera::_get_frame(cv::Mat* frame)
         return true;
     }
     return false;
-}
-
-void CVCamera::_set_fps()
-{
-    if (cap) cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
-}
-
-void CVCamera::_set_res()
-{
-    if (cap)
-    {
-        cap->set(cv::CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
-        cap->set(cv::CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
-    }
-}
-void CVCamera::_set_device_index()
-{
-    if (desired_index != active_index)
-        stop();
 }

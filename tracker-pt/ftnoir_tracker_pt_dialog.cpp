@@ -142,12 +142,16 @@ void TrackerDialog_PT::set_camera_settings_available(const QString& camera_name)
 void TrackerDialog_PT::show_camera_settings()
 {
     const int idx = ui.camdevice_combo->currentIndex();
+
     if (tracker)
     {
-        cv::VideoCapture* cap = tracker->camera;
-        if (cap && cap->isOpened())
+        if (tracker->camera)
         {
-            video_property_page::show_from_capture(*cap, idx);
+            cv::VideoCapture& cap = *tracker->camera;
+
+            CamInfo info;
+            if (tracker->camera.get_info(info))
+                video_property_page::show_from_capture(cap, info.idx);
         }
     }
     else

@@ -17,24 +17,22 @@
 
 struct CamInfo
 {
-    CamInfo() : res_x(0), res_y(0), fps(0) {}
+    CamInfo() : res_x(0), res_y(0), fps(0), idx(-1) {}
 
     int res_x;
     int res_y;
     int fps;
+    int idx;
 };
 
-// ----------------------------------------------------------------------------
-// Base class for cameras, calculates the frame rate
-class Camera
+class Camera final
 {
 public:
-        Camera() : dt_valid(0), dt_mean(0), desired_index(0), active_index(-1) {}
-        virtual ~Camera() = 0;
+        Camera() : dt_valid(0), dt_mean(0) {}
+        ~Camera();
 
-        // start/stop capturing
-        virtual void start() = 0;
-        virtual void stop() = 0;
+        void start();
+        void stop();
         void restart() { stop(); start(); }
 
         // calls corresponding template methods and reinitializes frame rate calculation
@@ -42,56 +40,44 @@ public:
         void set_fps(int fps);
         void set_res(int x_res, int y_res);
 
-        // gets a frame from the camera, dt: time since last call in seconds
         DEFUN_WARN_UNUSED bool get_frame(double dt, cv::Mat* frame);
-
-        // WARNING: returned references are valid as long as object
         DEFUN_WARN_UNUSED bool get_info(CamInfo &ret);
+
         CamInfo get_desired() const { return cam_desired; }
         QString get_desired_name() const;
-protected:
-        // get a frame from the camera
-        DEFUN_WARN_UNUSED virtual bool _get_frame(cv::Mat* frame) = 0;
+        QString get_active_name() const;
 
-        // update the camera using cam_desired, write res and f to cam_info if successful
-        virtual void _set_device_index() = 0;
-        virtual void _set_fps() = 0;
-        virtual void _set_res() = 0;
+        cv::VideoCapture& operator*() { return *cap; }
+        const cv::VideoCapture& operator*() const { return *cap; }
+        cv::VideoCapture* operator->() { return cap.get(); }
+        const cv::VideoCapture* operator->() const { return cap.get(); }
+        operator bool() const { return cap && cap->isOpened(); }
+
 private:
+        DEFUN_WARN_UNUSED bool _get_frame(cv::Mat* frame);
+
         double dt_valid;
         double dt_mean;
-protected:
+
         CamInfo cam_info;
         CamInfo cam_desired;
-        QString desired_name;
-        int desired_index;
-        int active_index;
-};
+        QString desired_name, active_name;
 
-// ----------------------------------------------------------------------------
-// camera based on OpenCV's videoCapture
-class CVCamera final : public Camera
-{
-public:
-    CVCamera() : cap(NULL) {}
-    ~CVCamera() { stop(); }
+        struct camera_deleter final
+        {
+            void operator()(cv::VideoCapture* cap)
+            {
+                if (cap)
+                {
+                    if (cap->isOpened())
+                        cap->release();
+                    static const std::default_delete<cv::VideoCapture> deleter;
+                    deleter(cap);
+                }
+            }
+        };
 
-    void start() override;
-    void stop() override;
+        using camera_ptr = std::unique_ptr<cv::VideoCapture, camera_deleter>;
 
-    operator cv::VideoCapture*() { return cap; }
-protected:
-    bool _get_frame(cv::Mat* frame) override;
-    void _set_fps() override;
-    void _set_res() override;
-    void _set_device_index() override;
-private:
-    cv::VideoCapture* cap;
-};
-
-enum RotationType
-{
-    CLOCKWISE = 0,
-    ZERO = 1,
-    COUNTER_CLOCKWISE = 2
+        std::unique_ptr<cv::VideoCapture, camera_deleter> cap;
 };
