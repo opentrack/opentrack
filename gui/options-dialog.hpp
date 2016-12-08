@@ -3,10 +3,11 @@
 #include "ui_options-dialog.h"
 #include "logic/shortcuts.h"
 #include <QObject>
+#include <QDialog>
 #include <QWidget>
 #include <functional>
 
-class OptionsDialog : public QWidget
+class OptionsDialog : public QDialog
 {
     Q_OBJECT
 signals:

@@ -4,11 +4,12 @@
 #include "ui_mapping-window.h"
 
 #include <QWidget>
+#include <QDialog>
 #include <QShowEvent>
 #include <QCloseEvent>
 #include <QCheckBox>
 
-class MapWidget final : public QWidget
+class MapWidget final : public QDialog
 {
     Q_OBJECT
 public:

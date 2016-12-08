@@ -12,6 +12,8 @@
 #include <QWidget>
 #include <QFrame>
 #include <QIcon>
+#include <QWidget>
+#include <QDialog>
 
 #include "export.hpp"
 
@@ -37,7 +39,7 @@ enum Axis {
 namespace plugin_api {
 namespace detail {
 
-class OPENTRACK_API_EXPORT BaseDialog : public QWidget
+class OPENTRACK_API_EXPORT BaseDialog : public QDialog
 {
     Q_OBJECT
 protected:

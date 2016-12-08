@@ -33,7 +33,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -478,7 +478,7 @@
              </size>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn't mounted perfectly in front of the model, but above or below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn't mounted perfectly in front of the model, but above or below.</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>

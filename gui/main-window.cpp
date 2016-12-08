@@ -42,8 +42,14 @@ MainWindow::MainWindow() :
     menu_action_mappings(&tray_menu)
 {
     ui.setupUi(this);
-    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
-    setFixedSize(size());
+
+    {
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        adjustSize();
+        setFixedSize(size());
+        setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
+    }
+
     updateButtonState(false, false);
 
     if (group::ini_directory().size() == 0)
@@ -567,19 +573,21 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
 {
     if (orig && orig->isVisible())
     {
-        orig->show();
-        orig->raise();
+        QDialog& d = *orig;
+        d.show();
+        d.raise();
         return false;
     }
 
     if (lib && lib->Dialog)
     {
         t* dialog = reinterpret_cast<t*>(lib->Dialog());
-        dialog->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
-        // HACK: prevent stderr whining by adding a few pixels
-        dialog->setFixedSize(dialog->size() + QSize(4, 4));
-        dialog->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        dialog->show();
+        QDialog& d = *dialog;
+        d.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        d.adjustSize();
+        d.setFixedSize(d.size());
+        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
+        d.show();
 
         orig.reset(dialog);
 
@@ -614,18 +622,20 @@ static bool mk_window(ptr<t>* place, Args&&... params)
 {
     if (*place && (*place)->isVisible())
     {
-        (*place)->show();
-        (*place)->raise();
+        QDialog& d = **place;
+        d.show();
+        d.raise();
         return false;
     }
     else
     {
         *place = make_unique<t>(std::forward<Args>(params)...);
-        (*place)->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
-        // HACK: prevent stderr whining by adding a few pixels
-        (*place)->setFixedSize((*place)->size() + QSize(4, 4));
-        (*place)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        (*place)->show();
+        QDialog& d = **place;
+        d.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        d.adjustSize();
+        d.setFixedSize(d.size());
+        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
+        d.show();
         return true;
     }
 }
