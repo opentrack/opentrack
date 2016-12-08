@@ -101,7 +101,8 @@ void spline_widget::drawBackground()
     _background = QPixmap(width(), height());
 
     QPainter painter(&_background);
-    painter.fillRect(rect(), QColor::fromRgb(204, 204, 204));
+
+    painter.fillRect(rect(), QWidget::palette().color(QWidget::backgroundRole()));
 
     QColor bg_color(112, 154, 209);
     if (!isEnabled() && !_preview_only)
@@ -308,11 +309,11 @@ void spline_widget::drawLine(QPainter& painter, const QPoint& start, const QPoin
 
 void spline_widget::mousePressEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled())
+    if (!_config || !isEnabled() || !is_in_bounds(e->pos()))
+    {
+        clearFocus();
         return;
-
-    if (!is_in_bounds(e->pos()))
-        return;
+    }
 
     const int point_pixel_closeness_limit = get_closeness_limit();
 
@@ -384,6 +385,13 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
 void spline_widget::mouseMoveEvent(QMouseEvent *e)
 {
+    if (_preview_only && _config)
+    {
+        show_tooltip(e->pos());
+        clearFocus();
+        return;
+    }
+
     if (!_config || !isEnabled() || !isActiveWindow() || (moving_control_point_idx != -1 && !hasFocus()))
     {
         clearFocus();
@@ -488,11 +496,15 @@ int spline_widget::get_closeness_limit()
     return std::max(iround(snap_x * c.x()), 1);
 }
 
-void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_, const QString& prefix)
+void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 {
     const QPointF value = QPoint(0, 0) == value_ ? pixel_coord_to_point(pos) : value_;
 
     double x = value.x(), y = value.y();
+
+    if (_preview_only)
+        y = _config->get_value_no_save(x);
+
     const int x_ = iround(x), y_ = iround(y);
 
     using std::fabs;
@@ -508,7 +520,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_, const
     const QPoint pix(int(pos.x()) + add_x, int(pos.y()) + add_y);
 
     QToolTip::showText(mapToGlobal(pix),
-                       QStringLiteral("value: %1%2x%3").arg(prefix).arg(x).arg(y),
+                       QStringLiteral("value: %1x%2").arg(x).arg(y),
                        this,
                        rect(),
                        0);
