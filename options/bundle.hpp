@@ -103,9 +103,9 @@ public:
 OPENTRACK_OPTIONS_EXPORT bundler& singleton();
 }
 
-using bundle_type = detail::bundle;
-using bundle = std::shared_ptr<bundle_type>;
+using bundle_ = detail::bundle;
+using bundle = std::shared_ptr<bundle_>;
 
-OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_type> make_bundle(const QString& name);
+OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name);
 
 }

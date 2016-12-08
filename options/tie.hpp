@@ -131,8 +131,8 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
         const int q_min = w->minimum();
         const int q_max = w->maximum();
 
-        w->setValue(v->to_slider_pos(q_min, q_max));
-        v = v->update_from_slider(w->value(), q_min, q_max);
+        w->setValue(v().to_slider_pos(q_min, q_max));
+        v = v().update_from_slider(w->value(), q_min, q_max);
     }
 
     base_value::connect(w,
@@ -144,8 +144,8 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
                             {
                                 const int q_min = w->minimum();
                                 const int q_max = w->maximum();
-                                v = v->update_from_slider(pos, q_min, q_max);
-                                w->setValue(v->to_slider_pos(q_min, q_max));
+                                v = v().update_from_slider(pos, q_min, q_max);
+                                w->setValue(v().to_slider_pos(q_min, q_max));
                             });
                         },
                         v.DIRECT_CONNTYPE);
@@ -155,8 +155,8 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
                         [=, &v](double) {
                             const int q_min = w->minimum();
                             const int q_max = w->maximum();
-                            w->setValue(v->to_slider_pos(q_min, q_max));
-                            v = v->update_from_slider(w->value(), q_min, q_max);
+                            w->setValue(v().to_slider_pos(q_min, q_max));
+                            v = v().update_from_slider(w->value(), q_min, q_max);
                         },
                         v.SAFE_CONNTYPE);
 }

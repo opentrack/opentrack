@@ -166,14 +166,6 @@ public:
     {
     }
 
-    t get() const
-    {
-        t val = b->contains(self_name)
-                ? static_cast<t>(b->get<element_type>(self_name))
-                : def;
-        return detail::value_get_traits<t>::get(val, def);
-    }
-
     t default_value() const
     {
         return def;
@@ -191,13 +183,20 @@ public:
         emit valueChanged(static_cast<detail::value_type_t<t>>(get()));
     }
 
-    element_type const* operator->() const
+    element_type operator()() const
     {
-        static thread_local element_type last;
-        last = get();
-        return &last;
+        return get();
     }
+
 private:
+    t get() const
+    {
+        t val = b->contains(self_name)
+                ? static_cast<t>(b->get<element_type>(self_name))
+                : def;
+        return detail::value_get_traits<t>::get(val, def);
+    }
+
     const t def;
 };
 

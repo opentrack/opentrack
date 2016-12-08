@@ -199,12 +199,12 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton()
 
 } // end options::detail
 
-OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_type> make_bundle(const QString& name)
+OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
     if (name.size())
         return detail::singleton().make_bundle(name);
     else
-        return std::make_shared<bundle_type>(QStringLiteral(""));
+        return std::make_shared<bundle_>(QStringLiteral(""));
 }
 
 QMutex* options::detail::bundle::get_mtx() const { return mtx; }
