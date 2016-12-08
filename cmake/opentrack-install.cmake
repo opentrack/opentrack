@@ -65,10 +65,13 @@ function(merge_translations)
             list(APPEND deps "i18n-module-${k}")
         endforeach()
 
-        add_custom_target(i18n-lang-${i}
-            COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
-            DEPENDS ${deps}
-        )
+        if(NOT "${ts}" STREQUAL "")
+            add_custom_target(i18n-lang-${i}
+                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
+                DEPENDS ${deps})
+        else()
+            add_custom_target(i18n-lang-${i} DEPENDS ${deps})
+        endif()
         list(APPEND all-deps "i18n-lang-${i}")
         install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
     endforeach()
