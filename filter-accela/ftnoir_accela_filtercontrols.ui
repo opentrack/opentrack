@@ -10,11 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>435</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -64,6 +64,12 @@
       </item>
       <item>
        <widget class="QSlider" name="ewma_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -133,6 +139,12 @@
       </item>
       <item row="1" column="2">
        <widget class="QSlider" name="trans_dz_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -169,6 +181,12 @@
       </item>
       <item row="0" column="2">
        <widget class="QSlider" name="translation_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -244,6 +262,12 @@
       </item>
       <item row="0" column="2">
        <widget class="QSlider" name="rotation_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -286,6 +310,12 @@
       </item>
       <item row="1" column="2">
        <widget class="QSlider" name="rot_dz_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -367,6 +397,12 @@
          </item>
          <item>
           <widget class="QSlider" name="rot_nl_slider">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimum">
             <number>0</number>
            </property>
