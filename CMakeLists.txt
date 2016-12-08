@@ -46,7 +46,7 @@ if(WIN32)
     enable_language(RC)
 endif()
 
-add_custom_target(mrproper COMMAND cmake -P "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake" WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+add_custom_target(mrproper COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake" WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 set(C CMakeLists.txt)
 file(GLOB opentrack-subprojects
