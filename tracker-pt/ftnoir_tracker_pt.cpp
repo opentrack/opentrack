@@ -57,20 +57,19 @@ bool Tracker_PT::get_focal_length(f& ret)
         using std::tan;
         using std::atan;
         using std::sqrt;
-#if 1
+
         const double w = info.res_x, h = info.res_y;
+#if 0
         const double diag = sqrt(w/h*w/h + h/w*h/w);
         const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
         const double fov = 2.*atan(tan(diag_fov/2.)/diag);
         ret = .5 / tan(.5 * fov);
 #else
-        // the formula looks correct but doesn't work right regardless
-
         const double diag_fov = s.fov * M_PI/180;
         const double aspect = w / sqrt(w*w + h*h);
         const double fov = 2*atan(tan(diag_fov*.5) * aspect);
         ret = .5 / tan(fov * .5);
-        static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
+        //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
 #endif
         return true;
     }
