@@ -18,9 +18,11 @@ using namespace options;
 #include "spline-widget/spline.hpp"
 #include "spline-widget/spline-widget.hpp"
 
+#include <functional>
 #include <atomic>
 #include <QObject>
 #include <QMutex>
+#include <QTimer>
 
 enum tobii_mode
 {
@@ -31,13 +33,27 @@ enum tobii_mode
 class rel_settings final : public QObject, public opts
 {
     Q_OBJECT
+
+    using functor = std::function<double(double)>;
+
+    struct part
+    {
+        int nparts;
+        double len, norm;
+        functor f;
+    };
+
+    void make_spline_(part* functors, unsigned len);
+
 public:
     using s = slider_value;
-    value<slider_value> speed, dz_end_pt, expt_slope, expt_norm, lin_norm;
+    value<slider_value> speed, dz_len, expt_slope, expt_len, expt_norm, log_slope, log_len, log_norm;
     spline acc_mode_spline;
     rel_settings();
-private slots:
-    void draw_spline();
+    double gain(double value);
+
+public slots:
+    void make_spline();
 };
 
 struct settings final : public opts

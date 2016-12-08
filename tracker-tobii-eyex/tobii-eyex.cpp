@@ -6,6 +6,8 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <utility>
+#include <numeric>
 #include <QDebug>
 #include <QMutexLocker>
 #include <QMessageBox>
@@ -36,51 +38,80 @@ static inline tobii_eyex_tracker& to_self(TX_USERPARAM param)
     return *reinterpret_cast<tobii_eyex_tracker*>(param);
 }
 
-template<typename t>
-static constexpr t clamp(t datum, t min, t max)
+// there's an underflow in spline code, can't use 1e0
+static constexpr const double spline_max = 1e2;
+
+void rel_settings::make_spline_(part* functors, unsigned len)
 {
-    return ((datum > max) ? max : ((datum < min) ? min : datum));
+    acc_mode_spline.removeAllPoints();
+
+    double lastx = 0, lasty = 0;
+
+    using std::accumulate;
+
+    const double inv_norm_y = 1./accumulate(functors, functors + len, 1e-4, [](double acc, const part& functor) { return acc + functor.norm; });
+    const double inv_norm_x = 1./accumulate(functors, functors + len, 1e-4, [](double acc, const part& functor) { return acc + functor.len; });
+
+    for (unsigned k = 0; k < len; k++)
+    {
+        part& fun = functors[k];
+
+        const double xscale = fun.len * spline_max * inv_norm_x;
+        const double maxx = fun.f(1);
+        const double yscale = fun.norm * spline_max * inv_norm_y * (maxx < 1e-3 ? 0 : 1./maxx);
+
+        for (unsigned i = 0; i <= fun.nparts; i++)
+        {
+            const double x = lastx + (fun.nparts == 0 ? 1 : i) / (1.+fun.nparts) * xscale;
+            const double y = lasty + clamp(fun.f(x) * yscale, 0, spline_max);
+            qDebug() << k << i << x << y;
+            acc_mode_spline.addPoint(x, y);
+        }
+
+        lastx += xscale;
+        lasty += yscale;
+    }
 }
 
-void rel_settings::draw_spline()
+/*
+  def plot(f):
+    rng = arange(-1 + .01, 1, 1e-4)
+    plt.plot(rng, map(f, rng))
+*/
+
+double rel_settings::gain(double value)
 {
-    spline& spline = acc_mode_spline;
+    return acc_mode_spline.get_value_no_save(value * spline_max) / spline_max;
+}
 
-    spline.removeAllPoints();
+void rel_settings::make_spline()
+{
+    const double log_c = 1./std::log(log_slope());
 
-    static constexpr float std_norm_expt = 1.f/3;
-    const float norm_expt = std_norm_expt * float(expt_norm->cur());
-    static constexpr float std_norm_lin = 2.f/3;
-    const float norm_lin = clamp((1-norm_expt) * lin_norm->cur() * std_norm_lin, 0., 1.);
+    part functors[]
+    {
+        { 1, dz_len(), 0, [](double) { return 0; } },
+        { 5, expt_len(), expt_norm(), [=](double x) { return std::pow(x, expt_slope()); } },
+        { 7, 1 - dz_len() - expt_len() - log_len(), std::max(0., 1 - expt_norm() - log_norm()), [](double x) { return x; } },
+        { 7, log_len(), log_norm(), [=](double x) { return std::log(1+x)*log_c; } },
+    };
 
+    make_spline_(functors, std::distance(std::begin(functors), std::end(functors)));
 }
 
 rel_settings::rel_settings() :
     opts("tobii-eyex-relative-mode"),
-    speed(b, "speed", s(5, .1, 10)),
-    dz_end_pt(b, "deadzone-length", s(4, 0, 15)),
-    expt_slope(b, "exponent-slope", s(1.5, 1.25, 3)),
-    expt_norm(b, "exponent-norm", s(1, .25, 4)),
-    lin_norm(b, "linear-norm", s(1, .25, 4)),
+    speed(b, "speed", s(3, .1, 10)),
+    dz_len(b, "deadzone-length", s(.04, 0, .2)),
+    expt_slope(b, "exponent-slope", s(1.75, 1.25, 3)),
+    expt_len(b, "exponent-length", s(.25, 0, .5)),
+    expt_norm(b, "exponent-norm", s(.3, .1, .5)),
+    log_slope(b, "log-slope", s(2.75, 1.25, 10)),
+    log_len(b, "log-len", s(.1, 0, .2)),
+    log_norm(b, "log-norm", s(.1, .05, .3)),
     acc_mode_spline(100, 100, "")
 {
-    QObject::connect(&dz_end_pt,
-                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
-                     this,
-                     &rel_settings::draw_spline);
-    QObject::connect(&expt_slope,
-                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
-                     this,
-                     &rel_settings::draw_spline);
-    QObject::connect(&expt_norm,
-                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
-                     this,
-                     &rel_settings::draw_spline);
-    QObject::connect(&lin_norm,
-                     static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
-                     this,
-                     &rel_settings::draw_spline);
-    draw_spline();
+    make_spline();
 }
 
 tobii_eyex_tracker::tobii_eyex_tracker() :
@@ -287,65 +318,14 @@ void tobii_eyex_tracker::start_tracker(QFrame*)
         dbg_verbose("api initialized");
 }
 
-// the gain function was prototyped in python with jupyter qtconsole.
-// you can use qtconsole's inline matplotlib support to see the gain function.
-// the `piecewise' function assumes monotonic growth or constant value for all functions.
-/*
-
-from math import *
-from itertools import izip
-import matplotlib
-import matplotlib.pyplot as plt
-
-try:
-    import IPython
-    IPython.get_ipython().magic(u'matplotlib inline')
-except:
-    pass
-
-def frange(from_, to_, step_=1e-4):
-    i = from_
-    while True:
-        yield i
-        i += step_
-        if i >= to_:
-            break
-
-def plot_fn(fn, from_=0., to_=1., step=None):
-    if step is None:
-        step = max(1e-4, (to_-from_)*1e-4)
-    xs = [i for i in frange(from_, to_, step)]
-    plt.plot(xs, map(fn, xs))
-
-def piecewise(x, funs, bounds):
-    y = 0.
-    last_bound = 0.
-    norm = 0.
-    for fun in funs:
-        norm += fun(1.)
-    for fun, bound in izip(funs, bounds):
-        if x > bound:
-            y += fun(1.)
-        else:
-            b = bound - last_bound
-            x_ = (x - last_bound) / b
-            y += fun(x_)
-            break
-        last_bound = bound
-    return y / norm
-
-def f(x): return x**1.75
-def g(x): return 1.75*1.75*x
-def h(x): return log(1+x)/log(2.5)
-def zero(x): return 0.
-
-plot_fn(lambda x: piecewise(x, [zero, f, g, h], [.05, .25, .7, 1.]))
-
-*/
-
 tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x_)
 {
     return 1;
+}
+
+static inline double signum(double x)
+{
+    return !(x < 0) - (x < 0);
 }
 
 void tobii_eyex_tracker::data(double* data)
@@ -378,20 +358,21 @@ void tobii_eyex_tracker::data(double* data)
     {
         const double dt = t.elapsed_seconds();
         t.start();
-        // XXX TODO make slider
-        static constexpr double v = 300;
 
-        const double x = gain(x_);
-        const double y = gain(y_);
+        using std::fabs;
 
-        const double yaw_delta = (x * v) * dt;
-        const double pitch_delta = (y * -v) * dt;
+        static constexpr double max_yaw = 45, max_pitch = 30;
+        static constexpr double c_yaw = 3;
+        static constexpr double c_pitch = c_yaw * max_pitch / max_yaw;
+
+        const double yaw_delta = gain(fabs(x_)) * signum(x_) * c_yaw * dt;
+        const double pitch_delta = gain(fabs(y_)) * signum(y_) * c_pitch * dt;
 
         yaw += yaw_delta;
         pitch += pitch_delta;
 
-        yaw = clamp(yaw, -180., 180.);
-        pitch = clamp(pitch, -60., 60.);
+        yaw = clamp(yaw, -max_yaw, max_yaw);
+        pitch = clamp(pitch, -max_pitch, max_pitch);
     }
 
     if (do_center)
