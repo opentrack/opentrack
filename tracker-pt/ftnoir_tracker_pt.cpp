@@ -181,22 +181,12 @@ void Tracker_PT::apply_settings()
 
     QMutexLocker l(&camera_mtx);
 
-    CamInfo info = camera.get_desired();
-    const QString name = camera.get_desired_name();
+    CamInfo info;
 
-    if (s.cam_fps != info.fps ||
-        s.cam_res_x != info.res_x ||
-        s.cam_res_y != info.res_y ||
-        s.camera_name != name)
-    {
-        qDebug() << "pt: starting camera";
-        camera.stop();
-        camera.set_device(s.camera_name);
-        camera.set_res(s.cam_res_x, s.cam_res_y);
-        camera.set_fps(s.cam_fps);
+    if (!camera.get_info(info) || frame.rows != info.res_y || frame.cols != info.res_x)
         frame = cv::Mat();
-        camera.start();
-    }
+
+    camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
 
     qDebug() << "pt: done applying settings";
 }
