@@ -29,7 +29,8 @@ spline::spline(qreal maxx, qreal maxy, const QString& name) :
     _mutex(QMutex::Recursive),
     max_x(maxx),
     max_y(maxy),
-    activep(false)
+    activep(false),
+    validp(false)
 {
     set_bundle(options::make_bundle(name));
 }
@@ -62,7 +63,7 @@ void spline::removeAllPoints()
 {
     QMutexLocker l(&_mutex);
     s->points = points_t();
-    update_interp_data();
+    validp = false;
 }
 
 void spline::setMaxInput(qreal max_input)
@@ -123,6 +124,12 @@ bool spline::getLastPoint(QPointF& point)
 
 float spline::getValueInternal(int x)
 {
+    if (!validp)
+    {
+        update_interp_data();
+        validp = true;
+    }
+
     float sign = x < 0 ? -1 : 1;
     x = std::abs(x);
     float ret;
@@ -247,7 +254,7 @@ void spline::removePoint(int i)
     {
         points.erase(points.begin() + i);
         s->points = points;
-        update_interp_data();
+        validp = false;
     }
 }
 
@@ -259,7 +266,12 @@ void spline::addPoint(QPointF pt)
     points.push_back(pt);
     std::stable_sort(points.begin(), points.end(), sort_fn);
     s->points = points;
-    update_interp_data();
+    validp = false;
+}
+
+void spline::addPoint(double x, double y)
+{
+    addPoint(QPointF(x, y));
 }
 
 void spline::movePoint(int idx, QPointF pt)
@@ -274,7 +286,7 @@ void spline::movePoint(int idx, QPointF pt)
         // we don't allow points to be reordered, but sort due to possible caller logic error
         std::stable_sort(points.begin(), points.end(), sort_fn);
         s->points = points;
-        update_interp_data();
+        validp = false;
     }
 }
 
@@ -287,7 +299,7 @@ QList<QPointF> spline::getPoints() const
 int spline::get_point_count() const
 {
     QMutexLocker foo(&_mutex);
-    return s->points.get().size();
+    return s->points().size();
 }
 
 void spline::reload()
@@ -322,7 +334,7 @@ void spline::set_bundle(bundle b)
 
         if (b)
         {
-            connection = QObject::connect(b.get(), &bundle_type::changed,
+            connection = QObject::connect(b.get(), &bundle_::changed,
                                           s.get(), [&]() {
                                               // we're holding the mutex to allow signal disconnection in spline dtor
                                               // before this slot gets called for the next time
@@ -389,8 +401,7 @@ void spline::recompute()
 
     last_input_value = QPointF(0, 0);
     activep = false;
-
-    update_interp_data();
+    validp = false;
 }
 
 // the return value is only safe to use with no spline::set_bundle calls

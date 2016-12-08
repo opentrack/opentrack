@@ -62,6 +62,7 @@ class OPENTRACK_SPLINE_EXPORT spline final
     QPointF last_input_value;
     qreal max_x, max_y;
     volatile bool activep;
+    bool validp;
 
 public:
     using settings = spline_detail::settings;
@@ -87,6 +88,7 @@ public:
     void removeAllPoints();
 
     void addPoint(QPointF pt);
+    void addPoint(double x, double y);
     void movePoint(int idx, QPointF pt);
     QList<QPointF> getPoints() const;
     void setMaxInput(qreal MaxInput);
@@ -99,6 +101,6 @@ public:
     mem<settings> get_settings();
     mem<const settings> get_settings() const;
 
-    using points_t = decltype(s->points.get());
+    using points_t = decltype(s->points());
     int get_point_count() const;
 };
