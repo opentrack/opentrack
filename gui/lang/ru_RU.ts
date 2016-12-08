@@ -50,7 +50,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../main-window.cpp" line="+90"/>
+        <location filename="../main-window.cpp" line="+97"/>
         <source>Create new empty config</source>
         <translation>Создать новый пустой профиль</translation>
     </message>
@@ -77,18 +77,18 @@
     </message>
     <message>
         <location line="+8"/>
-        <location line="+555"/>
+        <location line="+559"/>
         <source>Show the Octopus</source>
         <translation>Показать осьминожка</translation>
     </message>
     <message>
-        <location line="-555"/>
-        <location line="+555"/>
+        <location line="-559"/>
+        <location line="+559"/>
         <source>Hide the Octopus</source>
         <translation>Спрятать осьминожка</translation>
     </message>
     <message>
-        <location line="-548"/>
+        <location line="-552"/>
         <source>Tracker settings</source>
         <translation>Настройка источника данных</translation>
     </message>
@@ -153,6 +153,19 @@ Exiting now.</source>
     </message>
 </context>
 <context>
+    <name>OptionsDialog</name>
+    <message>
+        <location filename="../options-dialog.cpp" line="+27"/>
+        <source>Joy button %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UI_new_config</name>
     <message>
         <location filename="../new_config.ui" line="+17"/>
@@ -188,38 +201,38 @@ Exiting now.</source>
     <message>
         <location line="+67"/>
         <location line="+479"/>
-        <source>TZ</source>
-        <translation>Смещение по Z</translation>
+        <source>Z</source>
+        <translation>Смещение по оси Z</translation>
     </message>
     <message>
         <location line="-463"/>
         <location line="+409"/>
-        <source>pitch</source>
-        <translation>тангаж</translation>
+        <source>Pitch</source>
+        <translation>Тангаж</translation>
     </message>
     <message>
         <location line="-356"/>
         <location line="+315"/>
-        <source>TY</source>
-        <translation>Смещение по Y</translation>
+        <source>Y</source>
+        <translation>Смещение по оси Y</translation>
     </message>
     <message>
         <location line="-299"/>
         <location line="+277"/>
-        <source>TX</source>
-        <translation>Смещение по X</translation>
+        <source>X</source>
+        <translation>Смещение по оси X</translation>
     </message>
     <message>
         <location line="-230"/>
         <location line="+309"/>
-        <source>roll</source>
-        <translation>крен</translation>
+        <source>Roll</source>
+        <translation>Крен</translation>
     </message>
     <message>
         <location line="-293"/>
         <location line="+309"/>
-        <source>yaw</source>
-        <translation>рысканье</translation>
+        <source>Yaw</source>
+        <translation>Рысканье</translation>
     </message>
     <message>
         <location line="-200"/>
@@ -328,9 +341,22 @@ Exiting now.</source>
     </message>
 </context>
 <context>
+    <name>new_file_dialog</name>
+    <message>
+        <location filename="../new_file_dialog.h" line="+42"/>
+        <source>File exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This file already exists. Pick another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>options_dialog</name>
     <message>
-        <location filename="../options-dialog.ui" line="+14"/>
+        <location filename="../options-dialog.ui" line="+20"/>
         <source>Options</source>
         <translation>Настройки</translation>
     </message>
@@ -420,12 +446,17 @@ Exiting now.</source>
         <translation>Центрирование при запуске</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+34"/>
+        <source>Never translate the application interface</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Minimize to tray</source>
         <translation>Настройка трея</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+234"/>
         <location line="+69"/>
         <location line="+53"/>
         <source>°</source>
@@ -437,17 +468,17 @@ Exiting now.</source>
         <translation>Включить</translation>
     </message>
     <message>
-        <location line="-486"/>
+        <location line="-488"/>
         <source>Minimize to tray on startup when enabled</source>
         <translation>Сворачивать в трей при запуске</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-13"/>
         <source>Enable tray</source>
         <translation>Добавлять opentrack в трей</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+40"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
@@ -462,20 +493,12 @@ Exiting now.</source>
         <translation>Использование функции коррекции камеры</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify an angle for off-center camera as a basis for which direction is which, avoiding axis interconnect.&lt;/p&gt;
-
-&lt;p&gt;You can derive it from the center pose as per the checkbox or specify it manually.&lt;/p&gt;
-
-&lt;p&gt;You can specify both, and it can be helpful to specify pitch when moving toward the screen results in translating upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы.&lt;/p&gt;
-
-&lt;p&gt;Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз добавьте тангажа.&lt;/p&gt;
-
-&lt;p&gt;You can specify both, and it can be helpful to specify pitch when moving toward the screen results in translating upward.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location line="+13"/>
+        <source>Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn&apos;t mounted perfectly in front of the model, but above or below.</source>
+        <translation>Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы. Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз добавьте тангажа.</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+34"/>
         <location line="+206"/>
         <location line="+381"/>
         <location line="+47"/>
@@ -681,12 +704,12 @@ Exiting now.</source>
     <message>
         <location line="-158"/>
         <source>Destination</source>
-        <translation>Игровая ось:</translation>
+        <translation>Игровая ось</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Source</source>
-        <translation>Исходная ось:</translation>
+        <translation>Исходная ось</translation>
     </message>
     <message>
         <location line="+184"/>
