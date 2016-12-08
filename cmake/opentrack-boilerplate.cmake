@@ -215,23 +215,30 @@ function(opentrack_boilerplate n)
         endif()
     endif()
 
+    set(SDK_REGEN_TRANSLATIONS FALSE CACHE BOOL "Regenerate translation files on build")
+
     set(langs "")
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        list(APPEND langs "${t}")
-        get_property(tt GLOBAL PROPERTY opentrack-${i}-ts)
-        set(tt ${tt} ${t})
-        set_property(GLOBAL PROPERTY opentrack-${i}-ts ${tt})
+        if(SDK_REGEN_TRANSLATIONS OR NOT EXISTS t)
+            list(APPEND langs "${t}")
+            get_property(tt GLOBAL PROPERTY opentrack-${i}-ts)
+            set(tt ${tt} ${t})
+            set_property(GLOBAL PROPERTY opentrack-${i}-ts ${tt})
+        endif()
     endforeach()
 
     get_property(modules GLOBAL PROPERTY opentrack-all-modules)
     list(APPEND modules "${n}")
     set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
 
-    add_custom_target(${n}-i18n
-        COMMAND cmake -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-        COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    )
+    if(NOT langs STREQUAL "")
+        add_custom_target(i18n-module-${n}
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
+            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    else()
+        add_custom_target(i18n-module-${n})
+    endif()
 endfunction()
 

@@ -62,7 +62,7 @@ function(merge_translations)
 
         set(deps "")
         foreach(k ${modules})
-            list(APPEND deps "${k}-i18n")
+            list(APPEND deps "i18n-module-${k}")
         endforeach()
 
         add_custom_target(i18n-lang-${i}
@@ -72,12 +72,6 @@ function(merge_translations)
         list(APPEND all-deps "i18n-lang-${i}")
         install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
     endforeach()
-    set(SDK_REGEN_TRANSLATIONS TRUE CACHE BOOL "Regenerate translation files on build")
-    if(SDK_REGEN_TRANSLATIONS)
-        set(param ALL)
-    else()
-        set(param "")
-    endif()
-    add_custom_target(i18n ${param} DEPENDS ${all-deps})
+    add_custom_target(i18n ALL DEPENDS ${all-deps})
 endfunction()
 

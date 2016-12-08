@@ -38,6 +38,7 @@ include(opentrack-hier)
 include(opentrack-qt)
 include(opentrack-platform)
 include(opentrack-boilerplate)
+
 include(opentrack-version)
 include(opentrack-install)
 
