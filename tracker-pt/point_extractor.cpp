@@ -233,14 +233,16 @@ end:
         for (int iter = 0; iter < 10; ++iter)
         {
             cv::Vec2d com_new = MeanShiftIteration(frame_roi, pos, kernel_radius);
-            cv::Vec2d delta = com_new - b.pos;
+            cv::Vec2d delta = com_new - pos;
             pos = com_new;
-            if (delta.dot(delta) < 1.0e-2) break;
+            if (delta.dot(delta) < 1e-3)
+                break;
         }
 
         b.pos[0] = pos[0] + rect.x;
         b.pos[1] = pos[1] + rect.y;
     }
+
     // End of mean shift code. At this point, blob positions are updated which hopefully less noisy less biased values.
     points.reserve(max_blobs);
     points.clear();
