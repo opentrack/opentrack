@@ -568,35 +568,56 @@ void MainWindow::showHeadPose()
     display_pose(mapped, raw);
 }
 
-template<typename t>
-bool mk_dialog(mem<dylib> lib, ptr<t>& orig)
+template<typename t, typename F>
+static bool mk_window_common(ptr<t>& d, F&& ctor)
 {
-    if (orig && orig->isVisible())
+    if (d)
     {
-        QDialog& d = *orig;
-        d.show();
-        d.raise();
+        d->show();
+        d->raise();
+
         return false;
     }
-
-    if (lib && lib->Dialog)
+    else if ((d = ptr<t>(ctor())))
     {
-        t* dialog = reinterpret_cast<t*>(lib->Dialog());
-        QDialog& d = *dialog;
-        d.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        d.adjustSize();
-        d.setFixedSize(d.size());
-        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
-        d.show();
+        QEventLoop e(QThread::currentThread());
 
-        orig.reset(dialog);
+        d->adjustSize();
+        e.processEvents();
 
-        QObject::connect(dialog, &plugin_api::detail::BaseDialog::closing, [&]() -> void { orig = nullptr; });
+        // drain the event loop to reflow properly
+        d->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d->windowFlags()); e.processEvents();
+        d->show(); e.processEvents();
 
         return true;
     }
 
     return false;
+}
+
+template<typename t, typename... Args>
+static bool mk_window(ptr<t>& place, Args&&... params)
+{
+    return mk_window_common(place, [&]() { return new t(std::forward<Args>(params)...); });
+}
+
+template<typename t>
+bool mk_dialog(mem<dylib> lib, ptr<t>& d)
+{
+    const bool just_created = mk_window_common(d, [&]() -> t* {
+        if (lib)
+            return reinterpret_cast<t*>(lib->Dialog());
+        return nullptr;
+    });
+
+    if (just_created)
+    {
+        using plugin_api::detail::BaseDialog;
+        QObject::connect(static_cast<BaseDialog*>(d.get()), &BaseDialog::closing,
+                         qApp->instance(), [&d]() { d = nullptr; });
+    }
+
+    return just_created;
 }
 
 void MainWindow::showTrackerSettings()
@@ -617,32 +638,9 @@ void MainWindow::showFilterSettings()
         pFilterDialog->register_filter(libs.pFilter.get());
 }
 
-template<typename t, typename... Args>
-static bool mk_window(ptr<t>* place, Args&&... params)
-{
-    if (*place && (*place)->isVisible())
-    {
-        QDialog& d = **place;
-        d.show();
-        d.raise();
-        return false;
-    }
-    else
-    {
-        *place = make_unique<t>(std::forward<Args>(params)...);
-        QDialog& d = **place;
-        d.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        d.adjustSize();
-        d.setFixedSize(d.size());
-        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
-        d.show();
-        return true;
-    }
-}
-
 void MainWindow::show_options_dialog()
 {
-    if (mk_window(&options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
+    if (mk_window(options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), &OptionsDialog::closing, this, &MainWindow::register_shortcuts);
     }
@@ -650,7 +648,7 @@ void MainWindow::show_options_dialog()
 
 void MainWindow::showCurveConfiguration()
 {
-    mk_window(&mapping_widget, pose);
+    mk_window(mapping_widget, pose);
 }
 
 void MainWindow::exit()
