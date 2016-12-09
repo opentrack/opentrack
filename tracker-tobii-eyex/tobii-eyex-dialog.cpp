@@ -1,4 +1,4 @@
-#include "tobii-eyex.hpp"
+#include "tobii-eyex-dialog.hpp"
 
 tobii_eyex_dialog::tobii_eyex_dialog()
 {

@@ -2,12 +2,6 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
-#include <functional>
-#include <vector>
-#include <algorithm>
-#include <iterator>
-#include <utility>
-#include <numeric>
 #include <QDebug>
 #include <QMutexLocker>
 #include <QMessageBox>
@@ -36,82 +30,6 @@ std::atomic_flag tobii_eyex_tracker::atexit_done = ATOMIC_FLAG_INIT;
 static inline tobii_eyex_tracker& to_self(TX_USERPARAM param)
 {
     return *reinterpret_cast<tobii_eyex_tracker*>(param);
-}
-
-// there's an underflow in spline code, can't use 1e0
-static constexpr const double spline_max = 1e2;
-
-void rel_settings::make_spline_(part* functors, unsigned len)
-{
-    acc_mode_spline.removeAllPoints();
-
-    double lastx = 0, lasty = 0;
-
-    using std::accumulate;
-
-    const double inv_norm_y = 1./accumulate(functors, functors + len, 1e-4, [](double acc, const part& functor) { return acc + functor.norm; });
-    const double inv_norm_x = 1./accumulate(functors, functors + len, 1e-4, [](double acc, const part& functor) { return acc + functor.len; });
-
-    for (unsigned k = 0; k < len; k++)
-    {
-        part& fun = functors[k];
-
-        const double xscale = fun.len * spline_max * inv_norm_x;
-        const double maxx = fun.f(1);
-        const double yscale = fun.norm * spline_max * inv_norm_y * (maxx < 1e-3 ? 0 : 1./maxx);
-
-        for (unsigned i = 0; i <= fun.nparts; i++)
-        {
-            const double x = lastx + (fun.nparts == 0 ? 1 : i) / (1.+fun.nparts) * xscale;
-            const double y = lasty + clamp(fun.f(x) * yscale, 0, spline_max);
-            qDebug() << k << i << x << y;
-            acc_mode_spline.addPoint(x, y);
-        }
-
-        lastx += xscale;
-        lasty += yscale;
-    }
-}
-
-/*
-  def plot(f):
-    rng = arange(-1 + .01, 1, 1e-4)
-    plt.plot(rng, map(f, rng))
-*/
-
-double rel_settings::gain(double value)
-{
-    return acc_mode_spline.get_value_no_save(value * spline_max) / spline_max;
-}
-
-void rel_settings::make_spline()
-{
-    const double log_c = 1./std::log(log_slope());
-
-    part functors[]
-    {
-        { 1, dz_len(), 0, [](double) { return 0; } },
-        { 5, expt_len(), expt_norm(), [=](double x) { return std::pow(x, expt_slope()); } },
-        { 7, 1 - dz_len() - expt_len() - log_len(), std::max(0., 1 - expt_norm() - log_norm()), [](double x) { return x; } },
-        { 7, log_len(), log_norm(), [=](double x) { return std::log(1+x)*log_c; } },
-    };
-
-    make_spline_(functors, std::distance(std::begin(functors), std::end(functors)));
-}
-
-rel_settings::rel_settings() :
-    opts("tobii-eyex-relative-mode"),
-    speed(b, "speed", s(3, .1, 10)),
-    dz_len(b, "deadzone-length", s(.04, 0, .2)),
-    expt_slope(b, "exponent-slope", s(1.75, 1.25, 3)),
-    expt_len(b, "exponent-length", s(.25, 0, .5)),
-    expt_norm(b, "exponent-norm", s(.3, .1, .5)),
-    log_slope(b, "log-slope", s(2.75, 1.25, 10)),
-    log_len(b, "log-len", s(.1, 0, .2)),
-    log_norm(b, "log-norm", s(.1, .05, .3)),
-    acc_mode_spline(100, 100, "")
-{
-    make_spline();
 }
 
 tobii_eyex_tracker::tobii_eyex_tracker() :
@@ -390,5 +308,7 @@ void tobii_eyex_tracker::data(double* data)
     // tan(x) in 0->.7 is almost linear. we don't need to adjust.
     // .7 is 40 degrees which is already quite a lot from the monitor.
 }
+
+#include "tobii-eyex-dialog.hpp"
 
 OPENTRACK_DECLARE_TRACKER(tobii_eyex_tracker, tobii_eyex_dialog, tobii_eyex_metadata)
