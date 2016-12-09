@@ -74,6 +74,7 @@ struct main_settings
     value<bool> use_camera_offset_from_centering;
     value<bool> center_at_startup;
     value<int> center_method;
+    value<int> neck_y, neck_z;
     key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
     key_opts key_center, key_toggle, key_zero;
     key_opts key_toggle_press, key_zero_press;
@@ -104,6 +105,8 @@ struct main_settings
         use_camera_offset_from_centering(b, "use-camera-offset-from-centering", false),
         center_at_startup(b, "center-at-startup", true),
         center_method(b, "centering-method", true),
+        neck_y(b, "neck-height", 0),
+        neck_z(b, "neck-depth", 0),
         key_start_tracking(b, "start-tracking"),
         key_stop_tracking(b, "stop-tracking"),
         key_toggle_tracking(b, "toggle-tracking"),

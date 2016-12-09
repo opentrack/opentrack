@@ -59,6 +59,9 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.tcomp_disable_src_pitch, ui.tcomp_src_pitch_disable);
     tie_setting(main.tcomp_disable_src_roll, ui.tcomp_src_roll_disable);
 
+    tie_setting(main.neck_y, ui.neck_y);
+    tie_setting(main.neck_z, ui.neck_z);
+
     tie_setting(main.a_x.zero, ui.pos_tx);
     tie_setting(main.a_y.zero, ui.pos_ty);
     tie_setting(main.a_z.zero, ui.pos_tz);

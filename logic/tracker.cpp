@@ -156,8 +156,7 @@ void Tracker::logic()
 
     logger.write_pose(raw); // raw
 
-    if (is_nan(raw))
-        raw = last_raw;
+    bool nanp = is_nan(raw) | is_nan(value);
 
     // TODO split this function, it's too big
 
@@ -171,58 +170,57 @@ void Tracker::logic()
     scaled_rotation.camera = get_camera_offset_matrix(c_div);
     real_rotation.camera = get_camera_offset_matrix(1);
 
-    bool nanp = is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
+    nanp |= is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
 
-    if (!nanp)
+    if (!tracking_started)
     {
-        if (!tracking_started)
-        {
-            using std::fabs;
+        using std::fabs;
 
-            for (int i = 0; i < 6; i++)
-                if (fabs(newpose(i)) != 0)
-                {
-                    tracking_started = true;
-                    break;
-                }
-        }
-
-        if (get(f_center) && tracking_started)
-        {
-            set(f_center, false);
-
-            if (libs.pFilter)
-                libs.pFilter->center();
-
-            if (libs.pTracker->center())
+        for (int i = 0; i < 6; i++)
+            if (fabs(newpose(i)) != 0)
             {
-                scaled_rotation.rotation = scaled_rotation.camera.t();
-                real_rotation.rotation = real_rotation.camera.t();
-
-                scaled_rotation.rotation = rmat::eye();
-                real_rotation.rotation = rmat::eye();
-                scaled_rotation.center_roll = rmat::eye();
-                scaled_rotation.center_yaw = rmat::eye();
-                scaled_rotation.center_pitch = rmat::eye();
+                tracking_started = true;
+                break;
             }
-            else
-            {
-                euler::tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation),
-                                              scaled_rotation.center_roll,
-                                              scaled_rotation.center_pitch,
-                                              scaled_rotation.center_yaw);
+
+        tracking_started &= !nanp;
+    }
+
+    if (get(f_center) && tracking_started)
+    {
+        set(f_center, false);
+
+        if (libs.pFilter)
+            libs.pFilter->center();
+
+        if (libs.pTracker->center())
+        {
+            scaled_rotation.rotation = scaled_rotation.camera.t();
+            real_rotation.rotation = real_rotation.camera.t();
+
+            scaled_rotation.rotation = rmat::eye();
+            real_rotation.rotation = rmat::eye();
+            scaled_rotation.center_roll = rmat::eye();
+            scaled_rotation.center_yaw = rmat::eye();
+            scaled_rotation.center_pitch = rmat::eye();
+        }
+        else
+        {
+            euler::tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation),
+                                          scaled_rotation.center_roll,
+                                          scaled_rotation.center_pitch,
+                                          scaled_rotation.center_yaw);
 #if 0
-                euler::tait_bryan_to_matrices(rmat_to_euler(real_rotation.rotation),
-                                              real_rotation.center_roll,
-                                              real_rotation.center_pitch,
-                                              real_rotation.center_yaw);
+            euler::tait_bryan_to_matrices(rmat_to_euler(real_rotation.rotation),
+                                          real_rotation.center_roll,
+                                          real_rotation.center_pitch,
+                                          real_rotation.center_yaw);
 #endif
-                real_rotation.rot_center = real_rotation.rotation.t();
-                scaled_rotation.rot_center = scaled_rotation.rotation.t();
-            }
-
-            t_center = euler_t(&value(TX));
+            real_rotation.rot_center = real_rotation.rotation.t();
+            scaled_rotation.rot_center = scaled_rotation.rotation.t();
         }
+
+        t_center = euler_t(&value(TX));
     }
 
     {
@@ -268,20 +266,37 @@ void Tracker::logic()
 
     logger.write_pose(value); // "corrected" - after various transformations to account for camera position
 
-    // whenever something can corrupt its internal state due to nan/inf, elide the call
-    if (is_nan(value))
-    {
-        nanp = true;
-        logger.write_pose(value); // "filtered"
-    }
-    else
-    {
-        Pose tmp(value);
+    nanp |= is_nan(value);
 
-        if (libs.pFilter)
-            libs.pFilter->filter(tmp, value);
+    {
+        {
+            Pose tmp(value);
 
-        logger.write_pose(value); // "filtered"
+            // nan/inf values will corrupt filter internal state
+            if (!nanp && libs.pFilter)
+                libs.pFilter->filter(tmp, value);
+
+            logger.write_pose(value); // "filtered"
+        }
+
+        euler_t neck, rel;
+
+        {
+            double ny = s.neck_y, nz = -s.neck_z;
+
+            if (ny != 0 || nz != 0)
+            {
+                const rmat R = euler_to_rmat(
+                                   euler_t(value(Yaw)   * d2r,
+                                           value(Pitch) * d2r,
+                                           value(Roll)  * d2r));
+                euler_t xyz(0, ny, nz);
+                t_compensate(R, xyz, xyz, false, false, false);
+                neck(TX) = xyz(TX);
+                neck(TY) = xyz(TY) - ny;
+                neck(TZ) = xyz(TZ) - nz;
+            }
+        }
 
         // CAVEAT rotation only, due to tcomp
         for (int i = 3; i < 6; i++)
@@ -294,37 +309,44 @@ void Tracker::logic()
             for (int i = 0; i < 6; i++)
                 value(i) = 0;
 
-        if (is_nan(value))
-            nanp = true;
-    }
+        const bool reltrans = !get(f_tcomp_disabled);
 
-    if (s.tcomp_p && !get(f_tcomp_disabled))
-    {
-        const double tcomp_c[] =
+        if (s.tcomp_p && reltrans)
         {
-            double(!s.tcomp_disable_src_yaw),
-            double(!s.tcomp_disable_src_pitch),
-            double(!s.tcomp_disable_src_roll),
-        };
-        euler_t value_(value(TX), value(TY), value(TZ));
-        t_compensate(euler_to_rmat(
-                         euler_t(value(Yaw)   * d2r * tcomp_c[0],
-                                 value(Pitch) * d2r * tcomp_c[1],
-                                 value(Roll)  * d2r * tcomp_c[2])),
-                     value_,
-                     value_,
-                     s.tcomp_disable_tx,
-                     s.tcomp_disable_ty,
-                     s.tcomp_disable_tz);
-        if (is_nan(value_))
-            nanp = true;
+            const double tcomp_c[] =
+            {
+                double(!s.tcomp_disable_src_yaw),
+                double(!s.tcomp_disable_src_pitch),
+                double(!s.tcomp_disable_src_roll),
+            };
+            const rmat R = euler_to_rmat(
+                       euler_t(value(Yaw)   * d2r * tcomp_c[0],
+                               value(Pitch) * d2r * tcomp_c[1],
+                               value(Roll)  * d2r * tcomp_c[2]));
+            euler_t ret;
+            t_compensate(R,
+                         euler_t(value(TX), value(TY), value(TZ)),
+                         ret,
+                         s.tcomp_disable_tx,
+                         s.tcomp_disable_ty,
+                         s.tcomp_disable_tz);
+
+            for (int i = 0; i < 3; i++)
+                rel(i) = ret(i) - value(i);
+        }
+
+        // don't t_compensate existing compensated values
         for (int i = 0; i < 3; i++)
-            value(i) = value_(i);
+            value(i) += neck(i) + rel(i);
+
+        nanp |= is_nan(neck) | is_nan(rel) | is_nan(value);
     }
 
     // CAVEAT translation only, due to tcomp
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
+
+    nanp |= is_nan(value);
 
     for (int i = 0; i < 6; i++)
         if (m(i).opts.invert)
@@ -334,17 +356,18 @@ void Tracker::logic()
 
     if (nanp)
     {
-        value = last_mapped;
+        QMutexLocker foo(&mtx);
+
+        value = output_pose;
+        raw = raw_6dof;
 
         // for widget last value display
         for (int i = 0; i < 6; i++)
-            (void) map(value(i), m(i));
+            (void) map(raw_6dof(i), m(i));
     }
 
-    libs.pProtocol->pose(value);
-
-    last_mapped = value;
-    last_raw = raw;
+    if (!nanp)
+        libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
     output_pose = value;
