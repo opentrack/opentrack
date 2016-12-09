@@ -135,16 +135,23 @@ void Tracker_PT::run()
             auto fun = [&](const vec2& p, const cv::Scalar& color)
             {
                 using std::round;
+                using std::sqrt;
+                using std::max;
+
+                static constexpr int frame_size = 400;
+                const int size = max(1, iround(sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
+                const int len = size * 10;
+
                 cv::Point p2(int(round(p[0] * frame_.cols + frame_.cols/2)),
                              int(round(-p[1] * frame_.cols + frame_.rows/2)));
                 cv::line(frame_,
-                         cv::Point(p2.x - 20, p2.y),
-                         cv::Point(p2.x + 20, p2.y),
+                         cv::Point(p2.x - len, p2.y),
+                         cv::Point(p2.x + len, p2.y),
                          color,
                          2);
                 cv::line(frame_,
-                         cv::Point(p2.x, p2.y - 20),
-                         cv::Point(p2.x, p2.y + 20),
+                         cv::Point(p2.x, p2.y - len),
+                         cv::Point(p2.x, p2.y + len),
                          color,
                          2);
             };

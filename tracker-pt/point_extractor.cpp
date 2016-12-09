@@ -195,16 +195,20 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
 
                 blob b(radius, cv::Vec2d(m10 / N, m01 / N), N/sqrt(double(cnt)), rect);
                 blobs.push_back(b);
+
+                static constexpr int frame_size = 400;
+                const int size = std::max(1, iround(std::sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
+
                 {
                     char buf[64];
                     sprintf(buf, "%.2fpx", radius);
                     cv::putText(frame,
                                 buf,
-                                cv::Point((int)round(b.pos[0]+30), (int)round(b.pos[1]+20)),
-                                cv::FONT_HERSHEY_DUPLEX,
-                                1,
+                                cv::Point((int)round(b.pos[0]+15*size), (int)round(b.pos[1]+10*size)),
+                                cv::FONT_HERSHEY_PLAIN,
+                                size,
                                 cv::Scalar(0, 0, 255),
-                                1);
+                                2);
                 }
 
                 if (idx >= max_blobs) goto end;
