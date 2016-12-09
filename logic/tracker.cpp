@@ -281,15 +281,16 @@ void Tracker::logic()
 
         euler_t neck, rel;
 
+        if (s.neck_enable)
         {
             double ny = s.neck_y, nz = -s.neck_z;
 
             if (ny != 0 || nz != 0)
             {
                 const rmat R = euler_to_rmat(
-                                   euler_t(value(Yaw)   * d2r,
-                                           value(Pitch) * d2r,
-                                           value(Roll)  * d2r));
+                       euler_t(value(Yaw)   * d2r,
+                               value(Pitch) * d2r,
+                               value(Roll)  * d2r));
                 euler_t xyz(0, ny, nz);
                 t_compensate(R, xyz, xyz, false, false, false);
                 neck(TX) = xyz(TX);

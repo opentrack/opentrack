@@ -92,6 +92,8 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.tracklogging_enabled, ui.tracklogging_enabled);
 
+    tie_setting(main.neck_enable, ui.neck_enable);
+
     ui.disable_translation->setChecked(QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool());
 
     struct tmp
