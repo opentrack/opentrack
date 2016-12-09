@@ -6,21 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>599</height>
+    <width>404</width>
+    <height>597</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>450</width>
-    <height>0</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Options</string>
@@ -53,7 +41,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="bottomMargin">
-        <number>2</number>
+        <number>9</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox_8">
@@ -451,7 +439,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
