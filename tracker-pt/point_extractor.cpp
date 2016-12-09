@@ -42,14 +42,6 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
     // Most amazingling this function runs faster with doubles than with floats.
     const double s = 1.0 / filter_width;
 
-    auto EvalFilter = [&current_center, s](int row, int col)
-    {
-        double dx = (col - current_center[0])*s;
-        double dy = (row - current_center[1])*s;
-        double f = std::max(0.0, 1.0 - dx*dx - dy*dy);
-        return f;
-    };
-
     double m = 0;
     cv::Vec2d com(0.0, 0.0);
     for (int i = 0; i < frame_gray.rows; i++)
@@ -59,7 +51,12 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
         {
             double val = frame_ptr[j];
             val = val * val; // taking the square wights brighter parts of the image stronger.
-            val *= EvalFilter(i, j);
+            {
+                double dx = (j - current_center[0])*s;
+                double dy = (i - current_center[1])*s;
+                double f = std::max(0.0, 1.0 - dx*dx - dy*dy);
+                val *= f;
+            }
             m += val;
             com[0] += j * val;
             com[1] += i * val;
