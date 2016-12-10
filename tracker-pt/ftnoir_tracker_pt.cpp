@@ -139,8 +139,8 @@ void Tracker_PT::run()
                 using std::max;
 
                 static constexpr int frame_size = 400;
-                const int size = max(1, iround(sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
-                const int len = size * 10;
+                const double size = max(1., 1.5*sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size);
+                const int len = std::max(1, iround(size * 7.5));
 
                 cv::Point p2(int(round(p[0] * frame_.cols + frame_.cols/2)),
                              int(round(-p[1] * frame_.cols + frame_.rows/2)));
@@ -148,12 +148,12 @@ void Tracker_PT::run()
                          cv::Point(p2.x - len, p2.y),
                          cv::Point(p2.x + len, p2.y),
                          color,
-                         2);
+                         iround(size/2));
                 cv::line(frame_,
                          cv::Point(p2.x, p2.y - len),
                          cv::Point(p2.x, p2.y + len),
                          color,
-                         2);
+                         iround(size/2));
             };
 
             for (unsigned i = 0; i < points.size(); i++)

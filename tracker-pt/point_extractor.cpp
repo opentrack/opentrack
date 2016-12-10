@@ -197,7 +197,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                 blobs.push_back(b);
 
                 static constexpr int frame_size = 400;
-                const int size = std::max(1, iround(std::sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
+                const double size = std::max(1, iround(std::sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
 
                 {
                     char buf[64];
@@ -208,7 +208,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                                 cv::FONT_HERSHEY_PLAIN,
                                 size,
                                 cv::Scalar(0, 0, 255),
-                                2);
+                                iround(size));
                 }
 
                 if (idx >= max_blobs) goto end;
