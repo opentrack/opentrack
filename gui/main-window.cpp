@@ -580,6 +580,7 @@ static bool mk_window_common(ptr<t>& d, F&& ctor)
     }
     else if ((d = ptr<t>(ctor())))
     {
+        qDebug() << d.get();
         QEventLoop e(QThread::currentThread());
 
         d->adjustSize();
@@ -605,7 +606,7 @@ template<typename t>
 bool mk_dialog(mem<dylib> lib, ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
-        if (lib)
+        if (lib && lib->Dialog)
             return reinterpret_cast<t*>(lib->Dialog());
         return nullptr;
     });
