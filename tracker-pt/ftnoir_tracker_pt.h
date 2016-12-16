@@ -63,8 +63,6 @@ private:
     void set_command(Command command);
     void reset_command(Command command);
 
-    bool get_focal_length(f& ret);
-
     QMutex camera_mtx;
     QMutex data_mtx;
     Camera       camera;

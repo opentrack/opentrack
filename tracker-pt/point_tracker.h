@@ -11,6 +11,7 @@
 #include "ftnoir_tracker_pt_settings.h"
 #include "affine.hpp"
 #include "numeric.hpp"
+#include "camera.h"
 
 #include <opencv2/core.hpp>
 #include <cstddef>
@@ -57,7 +58,7 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<vec2>& projected_points, const PointModel& model, f focal_length, bool dynamic_pose, int init_phase_timeout, int w, int h);
+    void track(const std::vector<vec2>& projected_points, const PointModel& model, const CamInfo& info, int init_phase_timeout);
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
@@ -67,7 +68,7 @@ private:
     using PointOrder = std::array<vec2, 3>;
 
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
-    PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, f focal_length, int w, int h);
+    PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const CamInfo& info);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // trafo from model to camera

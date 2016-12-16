@@ -83,9 +83,6 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
     using std::round;
     using std::sort;
 
-    const int W = frame.cols;
-    const int H = frame.rows;
-
     if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
     {
         frame_gray = cv::Mat(frame.rows, frame.cols, CV_8U);
@@ -219,6 +216,9 @@ end:
 
     sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
 
+    const int W = frame.cols;
+    const int H = frame.rows;
+
     for (idx = 0; idx < std::min(PointModel::N_POINTS, unsigned(blobs.size())); ++idx)
     {
         blob &b = blobs[idx];
@@ -253,6 +253,8 @@ end:
 
     for (auto& b : blobs)
     {
+        // note: H/W is equal to fx/fy
+
         vec2 p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
         points.push_back(p);
     }

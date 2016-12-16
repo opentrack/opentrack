@@ -6,8 +6,8 @@
  */
 
 #include "camera.h"
-#include <string>
-#include <QDebug>
+
+namespace impl {
 
 QString Camera::get_desired_name() const
 {
@@ -19,7 +19,24 @@ QString Camera::get_active_name() const
     return active_name;
 }
 
-DEFUN_WARN_UNUSED bool Camera::get_info(CamInfo& ret)
+void CamInfo::get_focal_length(f& fx) const
+{
+    using std::tan;
+    using std::atan;
+    using std::sqrt;
+
+    const double diag_len = sqrt(double(res_x*res_x + res_y*res_y));
+    const double aspect_x = res_x / diag_len;
+    //const double aspect_y = res_y / diag_len;
+    const double diag_fov = fov * M_PI/180;
+    const double fov_x = 2*atan(tan(diag_fov*.5) * aspect_x);
+    //const double fov_y = 2*atan(tan(diag_fov*.5) * aspect_y);
+    fx = .5 / tan(fov_x * .5);
+    //fy = .5 / tan(fov_y * .5);
+    //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
+}
+
+DEFUN_WARN_UNUSED bool Camera::get_info(CamInfo& ret) const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
         return false;
@@ -27,20 +44,29 @@ DEFUN_WARN_UNUSED bool Camera::get_info(CamInfo& ret)
     return true;
 }
 
-bool Camera::get_frame(double dt, cv::Mat* frame)
+DEFUN_WARN_UNUSED bool Camera::get_frame(double dt, cv::Mat& frame, CamInfo& info)
 {
     bool new_frame = _get_frame(frame);
+
     // measure fps of valid frames
     static constexpr double RC = .1; // seconds
     const double alpha = dt/(dt + RC);
     dt_valid += dt;
+
     if (new_frame)
     {
         if (dt_mean < 2e-3)
             dt_mean = dt;
         else
             dt_mean = (1-alpha) * dt_mean + alpha * dt_valid;
+
         cam_info.fps = dt_mean > 2e-3 ? int(1 / dt_mean + .65) : 0;
+        cam_info.res_x = frame.cols;
+        cam_info.res_y = frame.rows;
+        cam_info.fov = s.fov;
+
+        info = cam_info;
+
         dt_valid = 0;
     }
     else
@@ -58,6 +84,8 @@ DEFUN_WARN_UNUSED bool Camera::start(int idx, int fps, int res_x, int res_y)
             cam_desired.res_x != res_x ||
             cam_desired.res_y != res_y)
         {
+            qDebug() << "pt: opening camera";
+
             cam_desired.idx = idx;
             cam_desired.fps = fps;
             cam_desired.res_x = res_x;
@@ -71,9 +99,8 @@ DEFUN_WARN_UNUSED bool Camera::start(int idx, int fps, int res_x, int res_y)
 
             if (cap->isOpened())
             {
+                cam_info = CamInfo();
                 cam_info.idx = cam_desired.idx;
-                cam_info.res_x = 0;
-                cam_info.res_y = 0;
                 active_name = desired_name;
 
                 return true;
@@ -93,18 +120,16 @@ void Camera::stop()
     cam_desired = CamInfo();
 }
 
-bool Camera::_get_frame(cv::Mat* frame)
+DEFUN_WARN_UNUSED bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {
-        for (int i = 0; i < 100 && !cap->read(*frame); i++)
+        for (int i = 0; i < 100 && !cap->read(frame); i++)
             ;;
 
-        if (frame->empty())
+        if (frame.empty())
             return false;
 
-        cam_info.res_x = frame->cols;
-        cam_info.res_y = frame->rows;
         return true;
     }
     return false;
@@ -119,3 +144,5 @@ void Camera::camera_deleter::operator()(cv::VideoCapture* cap)
         std::default_delete<cv::VideoCapture>()(cap);
     }
 }
+
+} // ns impl

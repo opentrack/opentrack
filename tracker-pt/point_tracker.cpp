@@ -89,16 +89,15 @@ PointTracker::PointTracker() : init_phase(true)
 
 PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2* points,
                                                                      const PointModel& model,
-                                                                     f focal_length,
-                                                                     int w,
-                                                                     int h)
+                                                                     const CamInfo& info)
 {
+    f fx; info.get_focal_length(fx);
     PointTracker::PointOrder p;
-    p[0] = project(vec3(0,0,0), focal_length);
-    p[1] = project(model.M01, focal_length);
-    p[2] = project(model.M02, focal_length);
+    p[0] = project(vec3(0,0,0), fx);
+    p[1] = project(model.M01, fx);
+    p[2] = project(model.M02, fx);
 
-    const int diagonal = int(std::sqrt(w*w + h*h));
+    const int diagonal = int(std::sqrt(double(info.res_x*info.res_x + info.res_y*info.res_y)));
     static constexpr int div = 100;
     const int max_dist = diagonal / div; // 8 pixels for 640x480
 
@@ -140,26 +139,25 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
 
 void PointTracker::track(const std::vector<vec2>& points,
                          const PointModel& model,
-                         f focal_length,
-                         bool dynamic_pose,
-                         int init_phase_timeout,
-                         int w,
-                         int h)
+                         const CamInfo& info,
+                         int init_phase_timeout)
 {
+    f fx;
+    info.get_focal_length(fx);
     PointOrder order;
 
-    if (t.elapsed_ms() > init_phase_timeout)
+    if (init_phase_timeout > 0 && t.elapsed_ms() > init_phase_timeout)
     {
         t.start();
         init_phase = true;
     }
 
-    if (!dynamic_pose || init_phase)
+    if (!(init_phase_timeout > 0 && !init_phase))
         order = find_correspondences(points.data(), model);
     else
-        order = find_correspondences_previous(points.data(), model, focal_length, w, h);
+        order = find_correspondences_previous(points.data(), model, info);
 
-    if (POSIT(model, order, focal_length) != -1)
+    if (POSIT(model, order, fx) != -1)
     {
         init_phase = false;
         t.start();
@@ -351,4 +349,3 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);
 }
-

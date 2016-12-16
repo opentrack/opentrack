@@ -23,7 +23,7 @@ Tracker_PT::Tracker_PT() :
       commands(0),
       ever_success(false)
 {
-    connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()));
+    connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()), Qt::DirectConnection);
 }
 
 Tracker_PT::~Tracker_PT()
@@ -47,35 +47,6 @@ void Tracker_PT::reset_command(Command command)
     commands &= ~command;
 }
 
-bool Tracker_PT::get_focal_length(f& ret)
-{
-    QMutexLocker l(&camera_mtx);
-    CamInfo info;
-    const bool res = camera.get_info(info);
-    if (res)
-    {
-        using std::tan;
-        using std::atan;
-        using std::sqrt;
-
-        const double w = info.res_x, h = info.res_y;
-#if 0
-        const double diag = sqrt(w/h*w/h + h/w*h/w);
-        const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
-        const double fov = 2.*atan(tan(diag_fov/2.)/diag);
-        ret = .5 / tan(.5 * fov);
-#else
-        const double diag_fov = s.fov * M_PI/180;
-        const double aspect = w / sqrt(w*w + h*h);
-        const double fov = 2*atan(tan(diag_fov*.5) * aspect);
-        ret = .5 / tan(fov * .5);
-        //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
-#endif
-        return true;
-    }
-    return false;
-}
-
 void Tracker_PT::run()
 {
     cv::setNumThreads(0);
@@ -93,30 +64,27 @@ void Tracker_PT::run()
     {
         const double dt = time.elapsed_seconds();
         time.start();
+        CamInfo cam_info;
         bool new_frame;
 
         {
             QMutexLocker l(&camera_mtx);
-            new_frame = camera.get_frame(dt, &frame);
-            if (frame.rows != frame_.rows || frame.cols != frame_.cols)
-                frame_ = cv::Mat(frame.rows, frame.cols, CV_8UC3);
+            new_frame = camera.get_frame(dt, frame, cam_info);
+            if (new_frame)
+            {
+                if (frame.rows != frame_.rows || frame.cols != frame_.cols)
+                    frame_ = cv::Mat(frame.rows, frame.cols, CV_8UC3);
+            }
             frame.copyTo(frame_);
         }
 
         if (new_frame && !frame_.empty())
         {
-            CamInfo cam_info;
-
-            if (!camera.get_info(cam_info))
-                continue;
-
             point_extractor.extract_points(frame_, points);
             point_count = points.size();
 
             f fx;
-
-            if (!get_focal_length(fx))
-                continue;
+            cam_info.get_focal_length(fx);
 
             const bool success = points.size() >= PointModel::N_POINTS;
 
@@ -124,11 +92,8 @@ void Tracker_PT::run()
             {
                 point_tracker.track(points,
                                     PointModel(s),
-                                    fx,
-                                    s.dynamic_pose,
-                                    s.init_phase_timeout,
-                                    cam_info.res_x,
-                                    cam_info.res_y);
+                                    cam_info,
+                                    s.dynamic_pose ? s.init_phase_timeout : 0);
                 ever_success = true;
             }
 
