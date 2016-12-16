@@ -14,7 +14,6 @@ endif()
 string(FIND "${CMAKE_GENERATOR}" "Visual Studio " is-msvc)
 
 # on .sln generator we have no editbin path ready
-
 if(MSVC AND NOT is-msvc EQUAL 0)
     install(CODE "
         foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets platforms/qwindows)

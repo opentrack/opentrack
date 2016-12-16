@@ -59,5 +59,4 @@ if(NOT opentrack-hier-included)
     elseif(WIN32)
         set(opentrack-binary-suffix ".exe")
     endif()
-
 endif() # include guard

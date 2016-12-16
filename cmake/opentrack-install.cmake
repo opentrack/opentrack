@@ -56,7 +56,7 @@ function(merge_translations)
     get_property(modules GLOBAL PROPERTY opentrack-all-modules)
 
     foreach(i ${opentrack-all-translations})
-        get_property(ts GLOBAL PROPERTY opentrack-${i}-ts)
+        get_property(ts GLOBAL PROPERTY "opentrack-ts-${i}")
 
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
@@ -65,15 +65,16 @@ function(merge_translations)
             list(APPEND deps "i18n-module-${k}")
         endforeach()
 
-        if(NOT "${ts}" STREQUAL "")
+        if(NOT ts STREQUAL "")
             add_custom_target(i18n-lang-${i}
                 COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
                 DEPENDS ${deps})
+            list(APPEND all-deps "i18n-lang-${i}")
+            install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         else()
-            add_custom_target(i18n-lang-${i} DEPENDS ${deps})
+            #add_custom_target(i18n-lang-${i} DEPENDS ${deps})
+            message(FATAL_ERROR "build logic error: no translations for language ${i}")
         endif()
-        list(APPEND all-deps "i18n-lang-${i}")
-        install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
     endforeach()
     add_custom_target(i18n ALL DEPENDS ${all-deps})
 endfunction()
