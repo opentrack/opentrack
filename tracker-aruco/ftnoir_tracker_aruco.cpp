@@ -214,25 +214,7 @@ void aruco_tracker::draw_ar(bool ok)
 
 void aruco_tracker::clamp_last_roi()
 {
-    if (last_roi.x < 0)
-        last_roi.x = 0;
-    if (last_roi.y < 0)
-        last_roi.y = 0;
-    if (last_roi.width < 1)
-        last_roi.width = 1;
-    if (last_roi.height < 1)
-        last_roi.height = 1;
-    if (last_roi.x >= color.cols-1)
-        last_roi.x = color.cols-1;
-    if (last_roi.width >= color.cols-1)
-        last_roi.width = color.cols-1;
-    if (last_roi.y >= color.rows-1)
-        last_roi.y = color.rows-1;
-    if (last_roi.height >= color.rows-1)
-        last_roi.height = color.rows-1;
-
-    last_roi.width -= last_roi.x;
-    last_roi.height -= last_roi.y;
+    last_roi &= cv::Rect(0, 0, color.cols, color.rows);
 }
 
 void aruco_tracker::set_points()
