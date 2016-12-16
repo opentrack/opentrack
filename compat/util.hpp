@@ -10,12 +10,15 @@
 #include <utility>
 
 #include <QSharedPointer>
+#include <QDebug>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
 
-#if defined(_MSC_VER) && !defined(Q_CREATOR_RUN)
+#ifdef Q_CREATOR_RUN
+#   define DEFUN_WARN_UNUSED
+#elif defined(_MSC_VER)
 #   define DEFUN_WARN_UNUSED _Check_return_
 #else
 #   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
