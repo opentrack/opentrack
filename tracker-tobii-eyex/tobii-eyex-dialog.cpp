@@ -20,9 +20,7 @@ tobii_eyex_dialog::tobii_eyex_dialog()
     tie_setting(rs.expt_len, ui.exponent_len);
     tie_setting(rs.expt_norm, ui.exponent_norm);
 
-    tie_setting(rs.log_slope, ui.log_base);
     tie_setting(rs.log_len, ui.log_len);
-    tie_setting(rs.log_norm, ui.log_norm);
 
     connect(rs.b.get(), &bundle_::changed, this, [this]() { rs.make_spline(); }, Qt::QueuedConnection);
 

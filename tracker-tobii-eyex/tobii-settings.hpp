@@ -24,8 +24,7 @@ class rel_settings final : public QObject, public opts
 
     struct part
     {
-        int nparts;
-        double len, norm;
+        double len;
         functor f;
     };
 
@@ -33,7 +32,7 @@ class rel_settings final : public QObject, public opts
 
 public:
     using s = slider_value;
-    value<slider_value> speed, dz_len, expt_slope, expt_len, expt_norm, log_slope, log_len, log_norm;
+    value<slider_value> speed, dz_len, expt_slope, expt_len, expt_norm, log_len;
     spline acc_mode_spline;
     rel_settings();
     double gain(double value);
