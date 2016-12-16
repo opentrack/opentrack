@@ -1,7 +1,7 @@
 if(WIN32)
     set(SDK_TOBII_EYEX "" CACHE PATH "")
     if(SDK_TOBII_EYEX)
-        opentrack_boilerplate(opentrack-tracker-tobii-eyex)
+        opentrack_boilerplate(opentrack-tracker-tobii-eyex NO-INSTALL)
         target_link_libraries(opentrack-tracker-tobii-eyex opentrack-spline-widget)
         set(tobii-libdir ${SDK_TOBII_EYEX}/lib/x86/)
         set(tobii-dll ${tobii-libdir}/Tobii.EyeX.Client.dll)
