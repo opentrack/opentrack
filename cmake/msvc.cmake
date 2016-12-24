@@ -43,7 +43,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(cc "${cc} /GR-")
 endif()
 
-set(silly "${warns_} /MT /Zi /Gm")
+set(silly "${warns_} /MD /Zi /Gm")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
