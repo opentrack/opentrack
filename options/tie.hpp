@@ -148,17 +148,21 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
                                 w->setValue(v().to_slider_pos(q_min, q_max));
                             });
                         },
-                        v.DIRECT_CONNTYPE);
+                        Qt::DirectConnection);
     base_value::connect(&v,
                         static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                         w,
                         [=, &v](double) {
-                            const int q_min = w->minimum();
-                            const int q_max = w->maximum();
-                            w->setValue(v().to_slider_pos(q_min, q_max));
-                            v = v().update_from_slider(w->value(), q_min, q_max);
+                            run_in_thread_sync(w, [=, &v]()
+                            {
+                                const int q_min = w->minimum();
+                                const int q_max = w->maximum();
+                                const int pos = v().to_slider_pos(q_min, q_max);
+                                w->setValue(pos);
+                                v = v().update_from_slider(w->value(), q_min, q_max);
+                            });
                         },
-                        v.SAFE_CONNTYPE);
+                        Qt::DirectConnection);
 }
 
 }
