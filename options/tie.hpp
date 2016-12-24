@@ -150,7 +150,7 @@ inline void tie_setting(value<slider_value>& v, QSlider* w)
                         },
                         v.DIRECT_CONNTYPE);
     base_value::connect(&v,
-                        static_cast<void(base_value::*)(double) const>(&base_value::valueChanged),
+                        static_cast<void(base_value::*)(const slider_value&) const>(&base_value::valueChanged),
                         w,
                         [=, &v](double) {
                             const int q_min = w->minimum();
