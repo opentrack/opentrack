@@ -580,7 +580,6 @@ static bool mk_window_common(ptr<t>& d, F&& ctor)
     }
     else if ((d = ptr<t>(ctor())))
     {
-        qDebug() << d.get();
         QEventLoop e(QThread::currentThread());
 
         d->adjustSize();
