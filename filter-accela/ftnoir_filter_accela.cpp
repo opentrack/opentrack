@@ -35,7 +35,7 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-#define cast(x) (static_cast<slider_value&&>((x)))
+#define cast(x) (static_cast<const slider_value&>((x)))
 
     const double rot_t = cast(s.rot_sensitivity).cur();
     const double trans_t = cast(s.trans_sensitivity).cur();
