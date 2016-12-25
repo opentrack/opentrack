@@ -158,7 +158,7 @@ bool win32_joy_ctx::joy::poll(fn f)
 
     if (!ok)
     {
-        qDebug() << "joy acquire failed" << guid << hr;
+        //qDebug() << "joy acquire failed" << guid << hr;
         (void) joy_handle->Unacquire();
         return false;
     }
@@ -168,7 +168,7 @@ bool win32_joy_ctx::joy::poll(fn f)
 
     if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
     {
-        qDebug() << "joy get state failed" << guid << hr;
+        //qDebug() << "joy get state failed" << guid << hr;
         return false;
     }
 
