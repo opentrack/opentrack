@@ -15,8 +15,6 @@
 using namespace migrations;
 using namespace options;
 
-#define s (settings_accela())
-
 struct move_accela_to_sliders : migration
 {
     struct map
@@ -27,28 +25,39 @@ struct move_accela_to_sliders : migration
         value<slider_value>* new_slider;
     };
 
-    const map settings[8];
     static constexpr const char* old_bundle_name = "Accela";
     static constexpr const char* new_bundle_name = "accela-sliders";
     static constexpr const char* slider_name = "rotation-nonlinearity";
 
-    move_accela_to_sliders() :
-        settings {
-            { "rotation-threshold", 4, 1, &s.rot_sensitivity },
-            { "translation-threshold", 4, 1, &s.trans_sensitivity },
-            { "rotation-deadzone", 4, 0, &s.rot_deadzone },
-            { "translation-deadzone", 4, 0, &s.trans_deadzone },
-            { "ewma", 1.25, 0, &s.ewma },
-            { nullptr, 0, 0, nullptr },
-        }
+    using map_ = struct { map s[8]; };
+
+    static map_ make_settings(settings_accela& s)
     {
+        map_ ret
+        {
+            {
+                { "rotation-threshold", 4, 1, &s.rot_sensitivity },
+                { "translation-threshold", 4, 1, &s.trans_sensitivity },
+                { "rotation-deadzone", 4, 0, &s.rot_deadzone },
+                { "translation-deadzone", 4, 0, &s.trans_deadzone },
+                { "ewma", 1.25, 0, &s.ewma },
+                { nullptr, 0, 0, nullptr },
+            }
+        };
+        return ret;
     }
+
+    move_accela_to_sliders() = default;
 
     QString unique_date() const override { return "20160917_00"; }
     QString name() const override { return "move accela to .ini sliders"; }
 
     bool should_run() const override
     {
+        settings_accela s;
+        map_ ss = make_settings(s);
+        map* settings = ss.s;
+
         const bundle old_b = make_bundle(old_bundle_name);
         const bundle new_b = make_bundle(new_bundle_name);
 
@@ -71,6 +80,10 @@ struct move_accela_to_sliders : migration
 
     void run() override
     {
+        settings_accela s;
+        map_ ss = make_settings(s);
+        map* settings = ss.s;
+
         bundle old_b = make_bundle(old_bundle_name);
         bundle new_b = make_bundle(new_bundle_name);
 
