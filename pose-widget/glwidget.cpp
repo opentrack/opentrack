@@ -17,7 +17,7 @@
 using namespace euler;
 using namespace pose_widget_impl;
 
-static struct POSE_WIDGET_EXPORT qrc_initializer
+static struct qrc_initializer
 {
     qrc_initializer()
     {
