@@ -14,6 +14,7 @@ set(new-hier-path "#pragma once
 #define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
 #define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
 #define OPENTRACK_CONTRIB_PATH \"${opentrack-hier-doc}contrib/\"
+#define OPENTRACK_I18N_PATH \"${opentrack-i18n-path}\"
 ")
 
 set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.h")

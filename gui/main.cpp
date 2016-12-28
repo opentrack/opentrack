@@ -11,6 +11,7 @@
 #include "main-window.hpp"
 #include "options/options.hpp"
 using namespace options;
+#include "opentrack-library-path.h"
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QStyleFactory>
@@ -144,7 +145,7 @@ main(int argc, char** argv)
 
     if (!QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool())
     {
-        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/i18n", ".qm");
+        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/" + OPENTRACK_I18N_PATH, ".qm");
         (void) QCoreApplication::installTranslator(&t);
     }
 
