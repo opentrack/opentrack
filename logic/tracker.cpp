@@ -43,6 +43,7 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
 
 Tracker::~Tracker()
 {
+    qDebug() << "dtor";
     set(f_should_quit, true);
     wait();
 }
@@ -111,7 +112,7 @@ static bool is_nan(const dmat<u,w>& r)
 {
     for (int i = 0; i < u; i++)
         for (int j = 0; j < w; j++)
-            if (nanp(r(u, w)))
+            if (nanp(r(i, j)))
                 return true;
 
     return false;
