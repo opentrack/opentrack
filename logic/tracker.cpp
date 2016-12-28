@@ -43,7 +43,6 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
 
 Tracker::~Tracker()
 {
-    qDebug() << "dtor";
     set(f_should_quit, true);
     wait();
 }
