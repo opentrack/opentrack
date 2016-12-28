@@ -52,7 +52,7 @@ void spline_widget::setConfig(spline* spl)
         if (connection)
         {
             QObject::disconnect(connection);
-            //connection = QMetaObject::Connection();
+            connection = QMetaObject::Connection();
         }
 
         if (spl)
