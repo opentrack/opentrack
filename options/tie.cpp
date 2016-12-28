@@ -10,7 +10,7 @@
 
 namespace options {
 
-OPENTRACK_OPTIONS_EXPORT void options::tie_setting(value<int>& v, QComboBox* cb)
+OPENTRACK_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb)
 {
     cb->setCurrentIndex(v);
     v = cb->currentIndex();
