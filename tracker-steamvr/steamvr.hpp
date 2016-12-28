@@ -4,6 +4,8 @@
 #include "compat/util.hpp"
 #include "options/options.hpp"
 
+#include "compat/euler.hpp"
+
 #include <openvr.h>
 
 #include <atomic>
@@ -15,6 +17,8 @@
 #include <QMutexLocker>
 
 using namespace options;
+
+using quat = Mat<float, 4, 1>;
 
 struct settings : opts
 {
@@ -29,12 +33,15 @@ public:
     void start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
+
     using error_t = vr::EVRInitError;
     using vr_t = vr::IVRSystem*;
 
     vr_t vr;
 
     settings s;
+
+    static quat get_quaternion(const vr::HmdMatrix34_t& r);
     static void vr_deleter();
     static vr_t vr_init(error_t& error);
     static QString strerror(error_t error);

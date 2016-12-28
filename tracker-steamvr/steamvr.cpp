@@ -2,10 +2,10 @@
 #include "steamvr.hpp"
 #include "api/plugin-api.hpp"
 #include "compat/util.hpp"
-#include "compat/euler.hpp"
 
 #include <cstdlib>
 #include <cmath>
+#include <algorithm>
 
 #include <QMessageBox>
 #include <QDebug>
@@ -79,15 +79,38 @@ void steamvr::start_tracker(QFrame*)
     }
 }
 
+quat steamvr::get_quaternion(const vr::HmdMatrix34_t& r)
+{
+    using std::max;
+    using std::sqrt;
+    using std::acos;
+
+    const auto& m = r.m;
+
+    float qw = sqrt(max(0.f, 1 + m[0][0] + m[1][1] + m[2][2])) / 2;
+    float qx = sqrt(max(0.f, 1 + m[0][0] - m[1][1] - m[2][2])) / 2;
+    float qy = sqrt(max(0.f, 1 - m[0][0] + m[1][1] - m[2][2])) / 2;
+    float qz = sqrt(max(0.f, 1 - m[0][0] - m[1][1] + m[2][2])) / 2;
+    qx = (m[1][2] - m[2][1]) < 0 ? -qx : qx;
+    qy = (m[2][0] - m[0][2]) < 0 ? -qy : qy;
+    qz = (m[0][1] - m[1][0]) < 0 ? -qz : qz;
+
+    float s = sqrt(1 - qw * qw);
+    s = s < .001 ? 1 : s;
+
+    return quat(2 * acos(qw), qx/s, qy/s, qz/s);
+}
+
 void steamvr::data(double* data)
 {
     if (vr)
     {
-        using m = float[3][4];
         vr::TrackedDevicePose_t devices[vr::k_unMaxTrackedDeviceCount] = {};
 
         vr->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
                                             devices, vr::k_unMaxTrackedDeviceCount);
+
+        bool done = false;
 
         for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
         {
@@ -99,34 +122,29 @@ void steamvr::data(double* data)
             if (vr->GetTrackedDeviceClass(k) != vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
                 continue;
 
-            const m& M = devices[k].mDeviceToAbsoluteTracking.m;
+            const auto& result = devices[k].mDeviceToAbsoluteTracking;
 
             static constexpr double c[3] { -1, 1, -1 };
 
             for (unsigned i = 0; i < 3; i++)
-                data[i] = double(M[i][3]) * c[i] * 100;
+                data[i] = double(result.m[i][3]) * c[i] * 100;
 
-            static constexpr unsigned indices[3] = {Roll, Yaw, Pitch};
+            const quat q = get_quaternion(result);
+            static constexpr double r2d = 180/M_PI;
 
-            rmat r(M[0][0], M[1][0], M[2][0],
-                   M[0][1], M[1][1], M[2][1],
-                   M[0][2], M[1][2], M[2][2]);
+            using std::atan2;
+            using std::asin;
 
-            euler_t ypr(rmat_to_euler(r));
+            data[Roll]  = r2d * atan2(2*(q(0)*q(1) + q(2)*q(3)), 1 - 2*(q(1)*q(1) + q(2)*q(2)));
+            data[Pitch] = r2d * asin(2*(q(0)*q(2) - q(3)*q(1)));
+            data[Yaw]   = r2d * atan2(2*(q(0)*q(3) + q(1)*q(2)), 1 - 2*(q(2)*q(2) + q(3)*q(3)));
 
-            for (unsigned i = 0; i < 3; i++)
-                data[indices[i]] = 180/M_PI * ypr(i);
-
-            for (unsigned i = 0; i < 3; i++)
-                data[i+3] *= c[i];
-
-            goto done;
+            done = true;
+            break;
         }
 
-        qDebug() << "steamvr: no device with pose found";
-
-done:
-        (void)0; // expects statement after label
+        if (!done)
+            qDebug() << "steamvr: no device with pose found";
     }
 }
 
