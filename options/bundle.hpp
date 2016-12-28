@@ -34,7 +34,7 @@ namespace detail {
 
 struct bundler;
 
-class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public virtual connector
+class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
     class OPENTRACK_OPTIONS_EXPORT mutex final : public QMutex
     {
