@@ -31,7 +31,7 @@ Tracker_PT::~Tracker_PT()
     set_command(ABORT);
     wait();
 
-    // fast start/stop causes breakage
+    QMutexLocker l(&camera_mtx);
     camera.stop();
 }
 
