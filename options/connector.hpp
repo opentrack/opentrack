@@ -26,7 +26,7 @@ class base_value;
 
 namespace detail {
 
-class OPENTRACK_OPTIONS_EXPORT connector
+class connector
 {
     friend class ::options::base_value;
 
