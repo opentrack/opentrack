@@ -17,10 +17,16 @@
 using namespace euler;
 using namespace pose_widget_impl;
 
+static struct POSE_WIDGET_EXPORT qrc_initializer
+{
+    qrc_initializer()
+    {
+        Q_INIT_RESOURCE(posewidget);
+    }
+} initializer;
+
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
-    Q_INIT_RESOURCE(posewidget);
-
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
     rotateBy(0, 0, 0, 0, 0, 0);
