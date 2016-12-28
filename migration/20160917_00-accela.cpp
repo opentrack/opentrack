@@ -12,10 +12,10 @@
 
 #include "filter-accela/accela-settings.hpp"
 
-static settings_accela s;
-
 using namespace migrations;
 using namespace options;
+
+#define s (settings_accela())
 
 struct move_accela_to_sliders : migration
 {
