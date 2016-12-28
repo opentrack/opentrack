@@ -5,8 +5,6 @@
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
-#   include <QLocale>
-#   include <QTranslator>
 #endif
 
 #include "migration/migration.hpp"
@@ -17,7 +15,8 @@ using namespace options;
 #include <QCommandLineParser>
 #include <QStyleFactory>
 #include <QStringList>
-#include <QMessageBox>
+#include <QLocale>
+#include <QTranslator>
 #include <QDebug>
 #include <memory>
 #include <cstring>
