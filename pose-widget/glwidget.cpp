@@ -17,14 +17,6 @@
 using namespace euler;
 using namespace pose_widget_impl;
 
-static struct qrc_initializer
-{
-    qrc_initializer()
-    {
-        Q_INIT_RESOURCE(posewidget);
-    }
-} initializer;
-
 GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
 {
     front = QImage(QString(":/images/side1.png"));
