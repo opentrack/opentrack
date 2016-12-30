@@ -13,10 +13,9 @@ std::atomic_bool opts::teardown_flag(false);
 
 void opts::set_teardown_flag(bool value)
 {
+    // flag being set means "opts" is about to go out of scope due to tracker stop
+    // in this case we don't reload options. we only want to reload when cancel is pressed.
     ensure_thread();
-
-    // we don't use exceptions in the whole project so no need for unwind protection
-    // also the calls aren't nested so no need for CAS either
     teardown_flag = value;
 }
 
