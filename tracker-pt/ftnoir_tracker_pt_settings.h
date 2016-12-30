@@ -63,6 +63,6 @@ struct settings_pt : opts
         fov(b, "camera-fov", 56),
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 500),
-        auto_threshold(b, "automatic-threshold", false)
+        auto_threshold(b, "automatic-threshold", true)
     {}
 };
