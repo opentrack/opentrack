@@ -157,7 +157,8 @@ void Tracker_PT::apply_settings()
     if (!camera.get_info(info) || frame.rows != info.res_y || frame.cols != info.res_x)
         frame = cv::Mat();
 
-    camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
+    if (!camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y))
+        qDebug() << "can't start camera" << s.camera_name;
 
     qDebug() << "pt: done applying settings";
 }
