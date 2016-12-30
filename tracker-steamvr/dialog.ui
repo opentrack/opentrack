@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>184</width>
-    <height>58</height>
+    <width>243</width>
+    <height>67</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,6 +33,9 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QComboBox" name="rotation_order"/>
+   </item>
    <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
@@ -43,13 +46,6 @@
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>No options so far</string>
      </property>
     </widget>
    </item>

@@ -18,11 +18,13 @@
 
 using namespace options;
 
-using quat = Mat<float, 4, 1>;
-
 struct settings : opts
 {
-    settings() : opts("valve-steamvr") {}
+    value<int> order;
+    settings() :
+        opts("valve-steamvr"),
+        order(b, "rotation-order", 0)
+    {}
 };
 
 class steamvr : public ITracker
@@ -41,7 +43,9 @@ private:
 
     settings s;
 
-    static quat get_quaternion(const vr::HmdMatrix34_t& r);
+    using rmat = euler::rmat;
+    using euler_t = euler::euler_t;
+
     static void vr_deleter();
     static vr_t vr_init(error_t& error);
     static QString strerror(error_t error);

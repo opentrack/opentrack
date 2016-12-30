@@ -79,35 +79,13 @@ void steamvr::start_tracker(QFrame*)
     }
 }
 
-quat steamvr::get_quaternion(const vr::HmdMatrix34_t& r)
-{
-    using std::max;
-    using std::sqrt;
-    using std::acos;
-
-    const auto& m = r.m;
-
-    float qw = sqrt(max(0.f, 1 + m[0][0] + m[1][1] + m[2][2])) / 2;
-    float qx = sqrt(max(0.f, 1 + m[0][0] - m[1][1] - m[2][2])) / 2;
-    float qy = sqrt(max(0.f, 1 - m[0][0] + m[1][1] - m[2][2])) / 2;
-    float qz = sqrt(max(0.f, 1 - m[0][0] - m[1][1] + m[2][2])) / 2;
-    qx = (m[1][2] - m[2][1]) < 0 ? -qx : qx;
-    qy = (m[2][0] - m[0][2]) < 0 ? -qy : qy;
-    qz = (m[0][1] - m[1][0]) < 0 ? -qz : qz;
-
-    float s = sqrt(1 - qw * qw);
-    s = s < .001 ? 1 : s;
-
-    return quat(2 * acos(qw), qx/s, qy/s, qz/s);
-}
-
 void steamvr::data(double* data)
 {
     if (vr)
     {
         vr::TrackedDevicePose_t devices[vr::k_unMaxTrackedDeviceCount] = {};
 
-        vr->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseStanding, 0,
+        vr->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseSeated, 0,
                                             devices, vr::k_unMaxTrackedDeviceCount);
 
         bool done = false;
@@ -129,15 +107,15 @@ void steamvr::data(double* data)
             for (unsigned i = 0; i < 3; i++)
                 data[i] = double(result.m[i][3]) * c[i] * 100;
 
-            const quat q = get_quaternion(result);
-            static constexpr double r2d = 180/M_PI;
-
             using std::atan2;
             using std::asin;
 
-            data[Roll]  = r2d * atan2(2*(q(0)*q(1) + q(2)*q(3)), 1 - 2*(q(1)*q(1) + q(2)*q(2)));
-            data[Pitch] = r2d * asin(2*(q(0)*q(2) - q(3)*q(1)));
-            data[Yaw]   = r2d * atan2(2*(q(0)*q(3) + q(1)*q(2)), 1 - 2*(q(2)*q(2) + q(3)*q(3)));
+            //const euler_t rot = get_ypr(s.order);
+
+            static constexpr double r2d = 180/M_PI;
+
+            //for (unsigned i = 3; i < 6; i++)
+            //    data[i] = r2d * rot[i];
 
             done = true;
             break;
