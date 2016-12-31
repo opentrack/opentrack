@@ -217,6 +217,22 @@ void aruco_tracker::clamp_last_roi()
     last_roi &= cv::Rect(0, 0, color.cols, color.rows);
 }
 
+cv::Point3f aruco_tracker::rotate_model(float x, float y, settings::rot mode)
+{
+    cv::Point3f pt(x, y, 0);
+
+    if (mode)
+    {
+        using std::cos;
+        using std::sin;
+
+        const float theta = int(mode) * 90/4. * M_PI/180;
+        pt.x = x * cos(theta) - y * sin(theta);
+        pt.y = y * cos(theta) + x * sin(theta);
+    }
+    return pt;
+}
+
 void aruco_tracker::set_points()
 {
     using f = float;
@@ -226,10 +242,15 @@ void aruco_tracker::set_points()
 
     const int x1=1, x2=2, x3=3, x4=0;
 
-    obj_points[x1] = cv::Point3f(-size + hx, -size + hy, 0 + hz);
-    obj_points[x2] = cv::Point3f(size + hx, -size + hy, 0 + hz);
-    obj_points[x3] = cv::Point3f(size + hx, size + hy, 0 + hz);
-    obj_points[x4] = cv::Point3f(-size + hx, size + hy, 0 + hz);
+    settings::rot mode = s.model_rotation;
+
+    obj_points[x1] = rotate_model(-size, -size, mode);
+    obj_points[x2] = rotate_model(size, -size, mode);
+    obj_points[x3] = rotate_model(size, size, mode);
+    obj_points[x4] = rotate_model(-size, size, mode);
+
+    for (unsigned i = 0; i < 4; i++)
+        obj_points[i] += cv::Point3f(hx, hy, hz);
 }
 
 void aruco_tracker::draw_centroid()
@@ -386,6 +407,12 @@ aruco_dialog::aruco_dialog()
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
+
+    ui.model_rotation->addItem("0", int(settings::rot_zero));
+    ui.model_rotation->addItem("+22.5", int(settings::rot_plus));
+    ui.model_rotation->addItem("-22.5", int(settings::rot_neg));
+    tie_setting(s.model_rotation, ui.model_rotation);
+
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.btn_calibrate, SIGNAL(clicked()), this, SLOT(toggleCalibrate()));

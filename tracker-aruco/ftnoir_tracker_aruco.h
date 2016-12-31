@@ -31,10 +31,18 @@
 using namespace options;
 
 struct settings : opts {
+    enum rot
+    {
+        rot_zero = 0,
+        rot_neg = -1,
+        rot_plus = +1,
+    };
+
     value<int> fov;
     value<double> headpos_x, headpos_y, headpos_z;
     value<QString> camera_name;
     value<int> force_fps, resolution;
+    value<rot> model_rotation;
     settings() :
         opts("aruco-tracker"),
         fov(b, "field-of-view", 56),
@@ -43,7 +51,8 @@ struct settings : opts {
         headpos_z(b, "headpos-z", 0),
         camera_name(b, "camera-name", ""),
         force_fps(b, "force-fps", 0),
-        resolution(b, "force-resolution", 0)
+        resolution(b, "force-resolution", 0),
+        model_rotation(b, "model-rotation", rot_zero)
     {}
 };
 
