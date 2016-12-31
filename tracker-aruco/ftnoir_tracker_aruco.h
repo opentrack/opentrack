@@ -28,6 +28,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
+
 using namespace options;
 
 struct settings : opts {
@@ -83,6 +84,10 @@ private:
     void set_last_roi();
     void set_rmat();
     void set_roi_from_projection();
+    void set_detector_params();
+    void cycle_detection_params();
+
+    cv::Point3f rotate_model(float x, float y, settings::rot mode);
 
     cv::VideoCapture camera;
     QMutex camera_mtx;
@@ -90,7 +95,7 @@ private:
     qshared<cv_video_widget> videoWidget;
     qshared<QHBoxLayout> layout;
     settings s;
-    double pose[6], fps;
+    double pose[6], fps, no_detection_timeout;
     cv::Mat frame, grayscale, color;
     cv::Matx33d r;
     std::vector<cv::Point3f> obj_points;
@@ -105,9 +110,37 @@ private:
     cv::Vec3d euler;
     std::vector<cv::Point3f> roi_points;
     cv::Rect last_roi;
-    Timer fps_timer;
-
+    Timer fps_timer, last_detection_timer;
+    unsigned adaptive_size_pos;
     volatile bool stop;
+    bool use_otsu;
+
+    struct resolution_tuple
+    {
+        int width;
+        int height;
+    };
+
+    static constexpr const int adaptive_sizes[] =
+    {
+        7,
+        9,
+        //11,
+        13,
+        //5,
+    };
+
+    static constexpr int adaptive_thres = 6;
+
+    static constexpr const resolution_tuple resolution_choices[] =
+    {
+        { 640, 480 },
+        { 320, 240 },
+        { 0, 0 }
+    };
+
+    static constexpr double timeout = 1;
+    static constexpr double timeout_backoff_c = 4./11;
 
     static constexpr const float size_min = 0.05;
     static constexpr const float size_max = 0.3;

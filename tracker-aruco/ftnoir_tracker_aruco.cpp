@@ -24,36 +24,31 @@
 #include <algorithm>
 #include <iterator>
 
-struct resolution_tuple
-{
-    int width;
-    int height;
-};
+constexpr double aruco_tracker::timeout;
+constexpr double aruco_tracker::timeout_backoff_c;
+constexpr const int aruco_tracker::adaptive_sizes[];
 
-static constexpr const resolution_tuple resolution_choices[] =
-{
-    { 640, 480 },
-    { 320, 240 },
-    { 0, 0 }
-};
+constexpr const aruco_tracker::resolution_tuple aruco_tracker::resolution_choices[];
 
 constexpr const double aruco_tracker::RC;
 constexpr const float aruco_tracker::size_min;
 constexpr const float aruco_tracker::size_max;
 
 aruco_tracker::aruco_tracker() :
+    pose{0,0,0, 0,0,0},
     fps(0),
+    no_detection_timeout(0),
     obj_points(4),
     intrinsics(cv::Matx33d::eye()),
     rmat(cv::Matx33d::eye()),
     roi_points(4),
     last_roi(65535, 65535, 0, 0),
-    stop(false)
+    adaptive_size_pos(0),
+    stop(false),
+    use_otsu(false)
 {
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
-    detector.setThresholdParams(7, -1);
-    detector.setDesiredSpeed(3);
-    detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
+    set_detector_params();
 }
 
 aruco_tracker::~aruco_tracker()
@@ -75,8 +70,6 @@ void aruco_tracker::start_tracker(QFrame* videoframe)
     videoframe->setLayout(layout.data());
     videoWidget->show();
     start();
-    for (int i = 0; i < 6; i++)
-        pose[i] = 0;
 }
 
 void aruco_tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)
@@ -323,6 +316,35 @@ void aruco_tracker::set_roi_from_projection()
     clamp_last_roi();
 }
 
+void aruco_tracker::set_detector_params()
+{
+    detector.setDesiredSpeed(3);
+    detector.setThresholdParams(adaptive_sizes[adaptive_size_pos], adaptive_thres);
+    if (use_otsu)
+        detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
+    else
+        detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
+}
+
+void aruco_tracker::cycle_detection_params()
+{
+    if (!use_otsu)
+        use_otsu = true;
+    else
+    {
+        use_otsu = false;
+
+        adaptive_size_pos++;
+        adaptive_size_pos %= sizeof(adaptive_sizes)/sizeof(*adaptive_sizes);
+    }
+
+    set_detector_params();
+
+    qDebug() << "aruco: switched thresholding params"
+             << "otsu:" << use_otsu
+             << "size:" << adaptive_sizes[adaptive_size_pos];
+}
+
 void aruco_tracker::run()
 {
     cv::setNumThreads(0);
@@ -336,6 +358,7 @@ void aruco_tracker::run()
         return;
 
     fps_timer.start();
+    last_detection_timer.start();
 
     while (!stop)
     {
@@ -365,14 +388,32 @@ void aruco_tracker::run()
             if (!cv::solvePnP(obj_points, markers[0], intrinsics, cv::noArray(), rvec, tvec, false, cv::SOLVEPNP_ITERATIVE))
                 goto fail;
 
+            {
+                const double dt = last_detection_timer.elapsed_seconds();
+                last_detection_timer.start();
+                no_detection_timeout -= dt * timeout_backoff_c;
+                no_detection_timeout = std::max(0., no_detection_timeout);
+            }
+
             set_last_roi();
             draw_centroid();
             set_rmat();
         }
         else
+        {
 fail:
             // no marker found, reset search region
             last_roi = cv::Rect(65535, 65535, 0, 0);
+
+            const double dt = last_detection_timer.elapsed_seconds();
+            last_detection_timer.start();
+            no_detection_timeout += dt;
+            if (no_detection_timeout > timeout)
+            {
+                no_detection_timeout = 0;
+                cycle_detection_params();
+            }
+        }
 
         draw_ar(ok);
 
