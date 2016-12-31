@@ -28,6 +28,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
+// value 0->1
+//#define DEBUG_UNSHARP_MASKING .75
 
 using namespace options;
 
@@ -98,6 +100,9 @@ private:
     double pose[6], fps, no_detection_timeout;
     cv::Mat frame, grayscale, color;
     cv::Matx33d r;
+#ifdef DEBUG_UNSHARP_MASKING
+    cv::Mat blurred;
+#endif
     std::vector<cv::Point3f> obj_points;
     cv::Matx33d intrinsics;
     aruco::MarkerDetector detector;
@@ -138,6 +143,10 @@ private:
         { 320, 240 },
         { 0, 0 }
     };
+
+#ifdef DEBUG_UNSHARP_MASKING
+    static constexpr double gauss_kernel_size = 3;
+#endif
 
     static constexpr double timeout = 1;
     static constexpr double timeout_backoff_c = 4./11;

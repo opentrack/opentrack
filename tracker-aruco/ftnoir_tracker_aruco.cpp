@@ -15,6 +15,10 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 
+#ifdef DEBUG_UNSHARP_MASKING
+#   include <opencv2/highgui.hpp>
+#endif
+
 #include <QMutexLocker>
 #include <QDebug>
 
@@ -33,6 +37,10 @@ constexpr const aruco_tracker::resolution_tuple aruco_tracker::resolution_choice
 constexpr const double aruco_tracker::RC;
 constexpr const float aruco_tracker::size_min;
 constexpr const float aruco_tracker::size_max;
+
+#ifdef DEBUG_UNSHARP_MASKING
+constexpr double aruco_tracker::gauss_kernel_size;
+#endif
 
 aruco_tracker::aruco_tracker() :
     pose{0,0,0, 0,0,0},
@@ -370,6 +378,16 @@ void aruco_tracker::run()
         }
 
         cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
+
+#ifdef DEBUG_UNSHARP_MASKING
+        {
+            static constexpr double strength = double(DEBUG_UNSHARP_MASKING);
+            cv::GaussianBlur(grayscale, blurred, cv::Size(0, 0), gauss_kernel_size);
+            cv::addWeighted(grayscale, 1 + strength, blurred, -strength, 0, grayscale);
+            cv::imshow("capture", grayscale);
+            cv::waitKey(1);
+        }
+#endif
 
         color.copyTo(frame);
 
