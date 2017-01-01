@@ -1,8 +1,0 @@
-if(MSVC)
-    set(SDK_WIN32_CRT "" CACHE PATH "Path to dynamically linked CRT libraries")
-    if(SDK_WIN32_CRT)
-        file(GLOB crt-libs "${SDK_WIN32_CRT}/*.dll")
-        install(FILES ${crt-libs} DESTINATION . ${opentrack-perms})
-        install(FILES "${SDK_WIN32_CRT}/LICENSE.TXT" RENAME "MSVCRT-LICENSE.txt" DESTINATION "./${opentrack-hier-doc}/3rdparty-notices")
-    endif()
-endif()

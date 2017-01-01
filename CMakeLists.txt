@@ -41,7 +41,6 @@ include(opentrack-boilerplate)
 
 include(opentrack-version)
 include(opentrack-install)
-include(opentrack-win32-crt)
 
 if(WIN32)
     enable_language(RC)
