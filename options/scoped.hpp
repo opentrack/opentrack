@@ -19,9 +19,9 @@ struct OPENTRACK_OPTIONS_EXPORT opts
 
     // XXX hack: the flag shouldn't be here as action at distance -sh 20160926
     static void set_teardown_flag(bool value);
+    static bool is_tracker_teardown();
 private:
     static std::atomic_bool teardown_flag;
-    static bool is_tracker_teardown();
     static void ensure_thread();
 };
 
