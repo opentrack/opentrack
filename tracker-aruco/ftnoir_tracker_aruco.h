@@ -152,7 +152,7 @@ private:
     static constexpr double timeout_backoff_c = 4./11;
 
     static constexpr const float size_min = 0.05;
-    static constexpr const float size_max = 0.3;
+    static constexpr const float size_max = 0.5;
 
     static constexpr const double RC = .25;
 };
