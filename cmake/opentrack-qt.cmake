@@ -12,12 +12,28 @@ if(WIN32)
 endif()
 
 string(FIND "${CMAKE_GENERATOR}" "Visual Studio " is-msvc)
+if(is-msvc EQUAL 0)
+    set(is-msvc TRUE)
+else()
+    set(is-msvc FALSE)
+endif()
 
-# on .sln generator we have no editbin path ready
-if(MSVC AND NOT is-msvc EQUAL 0)
+if(MSVC)
+    # on .sln generator we have no editbin in path
+    if(is-msvc)
+        # this is bad but what can we do? searching for vcvarsall.bat
+        # would be easier, but then we'd have to differentiate x86/amd64
+        # cross tools, etc. which is a can of worms and if/else branches.
+        get_filename_component(linker-dir "${CMAKE_LINKER}" DIRECTORY)
+        find_file(editbin-executable-filepath "editbin.exe" "${linker-dir}" "${linker-dir}/.." "${linker-dir}/../..")
+        opentrack_escape_string("${editbin-executable-filepath}" editbin-executable)
+    else()
+        set(editbin-executable "editbin")
+    endif()
+
     install(CODE "
         foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets platforms/qwindows)
-           execute_process(COMMAND editbin -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 \"\${i}.dll\" WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}\")
+           execute_process(COMMAND \"${editbin-executable}\" -nologo -SUBSYSTEM:WINDOWS,5.01 -OSVERSION:5.1 \"\${i}.dll\" WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}\")
         endforeach()
     ")
 endif()
