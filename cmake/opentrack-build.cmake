@@ -22,8 +22,6 @@ function(cleanup_build_dir)
 
     set(files_ "")
 
-    set(got-install FALSE)
-    set(got-install-file FALSE)
     set(got-cache FALSE)
 
     foreach(i ${files})
