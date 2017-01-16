@@ -35,18 +35,16 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-#define cast(x) ((x)())
-
-    const double rot_t = cast(s.rot_sensitivity).cur();
-    const double trans_t = cast(s.trans_sensitivity).cur();
+    const double rot_t = s.rot_sensitivity().cur();
+    const double trans_t = s.trans_sensitivity().cur();
 
     const double dt = t.elapsed_seconds();
     t.start();
 
-    const double RC = cast(s.ewma).cur() / 1000.; // seconds
+    const double RC = s.ewma().cur() / 1000.; // seconds
     const double alpha = dt/(dt+RC);
-    const double rot_dz = cast(s.rot_deadzone).cur();
-    const double trans_dz = cast(s.trans_deadzone).cur();
+    const double rot_dz = s.rot_deadzone().cur();
+    const double trans_dz = s.trans_deadzone().cur();
     const slider_value nl = s.rot_nonlinearity;
 
     for (int i = 0; i < 6; i++)
