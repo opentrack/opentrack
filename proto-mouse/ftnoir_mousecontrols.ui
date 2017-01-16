@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>280</width>
-    <height>280</height>
+    <width>413</width>
+    <height>155</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>413</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Mouse protocol settings</string>
@@ -30,7 +36,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="textLabel2_2">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -49,7 +55,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="textLabel2_3">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -67,6 +73,12 @@
    </item>
    <item row="0" column="1" colspan="2">
     <widget class="QComboBox" name="cbxSelectMouse_X">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="maximumSize">
       <size>
        <width>80</width>
@@ -118,6 +130,12 @@
    </item>
    <item row="1" column="1" colspan="2">
     <widget class="QComboBox" name="cbxSelectMouse_Y">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="maximumSize">
       <size>
        <width>80</width>
@@ -177,7 +195,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="textLabel2_4">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -196,7 +214,7 @@
    <item row="2" column="1">
     <widget class="QSlider" name="sensitivity_x">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -212,7 +230,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="textLabel2_5">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -231,7 +249,7 @@
    <item row="3" column="1">
     <widget class="QSlider" name="sensitivity_y">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
