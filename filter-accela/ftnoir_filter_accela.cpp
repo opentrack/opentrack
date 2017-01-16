@@ -19,6 +19,21 @@ accela::accela() : first_run(true)
     s.make_splines(rot, trans);
 }
 
+// can't use it since filtering's done before mapping
+#if 0
+double accela::get_delta(double val, double prev)
+{
+    using std::fabs;
+
+    const double a = fabs(val - prev), b = fabs(val + prev), c = fabs(val);
+    if (c < a && c < b)
+        return val;
+    if (b < a && b < c)
+        return val + prev;
+    return val - prev;
+}
+#endif
+
 void accela::filter(const double* input, double *output)
 {
     if (first_run)
@@ -55,7 +70,11 @@ void accela::filter(const double* input, double *output)
 
         const double in = smoothed_input[i];
 
+#if 0
+        const double vec_ = get_delta(in, last_output[i]);
+#else
         const double vec_ = in - last_output[i];
+#endif
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec = std::max(0., fabs(vec_) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
@@ -75,8 +94,6 @@ void accela::filter(const double* input, double *output)
         last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val;
     }
 }
-
-
 
 void settings_accela::make_splines(spline& rot, spline& trans)
 {
