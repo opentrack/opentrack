@@ -149,7 +149,7 @@ void Tracker::logic()
 
         const double x = value(i);
         if (fabs(x) - 1e-2 > 180)
-            value(i) = fmod(x - copysign(180, -x), 360) + copysign(180, x);
+            value(i) = fmod(x + copysign(180, x), 360) - copysign(180, x);
         else
             value(i) = clamp(x, -180, 180);
     }
