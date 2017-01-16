@@ -56,23 +56,21 @@ void test_tracker::data(double *data)
 #endif
         for (int i = 0; i < 6; i++)
         {
-            double x = fmod(last_x[i] + incr[i] * d2r * dt, 2 * M_PI);
+            double x = last_x[i] + incr[i] * dt;
+            if (x > 180)
+                x = -360 + x;
+            else if (x < -180)
+                x = 360 + x;
+            x = copysign(fmod(fabs(x), 360), x);
             last_x[i] = x;
 
             if (i >= 3)
             {
-#ifdef DISCONTINUITY
-                if (x > pi + pi/2)
-                    x -= M_PI;
-                else if (x > pi/2 && x < pi)
-                    x += M_PI;
-#endif
-
-                data[i] = sin(x) * 180;
+                data[i] = x;
             }
             else
             {
-                data[i] = sin(x) * 100;
+                data[i] = x * 100/180.;
             }
         }
 }

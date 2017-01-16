@@ -14,9 +14,6 @@ public:
     void data(double *data) override;
 
 private:
-    static constexpr double r2d = 180 / M_PI;
-    static constexpr double d2r = M_PI / 180;
-
     static const double incr[6];
     double last_x[6];
     Timer t;
