@@ -20,24 +20,23 @@ struct settings : opts {
         opts("mouse-proto"),
         Mouse_X(b, "mouse-x", 0),
         Mouse_Y(b, "mouse-y", 0),
-        sensitivity_x(b, "mouse-sensitivity-x", slider_value(200, 100, 500)),
-        sensitivity_y(b, "mouse-sensitivity-y", slider_value(200, 100, 500))
+        sensitivity_x(b, "mouse-sensitivity-x", slider_value(200, 25, 500)),
+        sensitivity_y(b, "mouse-sensitivity-y", slider_value(200, 25, 500))
     {}
 };
 
 class mouse : public IProtocol
 {
 public:
-    mouse() : last_pos_x(0), last_pos_y(0), last_x(0), last_y(0) {}
+    mouse();
     bool correct() override;
     void pose( const double *headpose) override;
     QString game_name() override;
 
-    double last_pos_x, last_pos_y;
     int last_x, last_y;
 private:
-    static double get_rotation(double val, double last_val);
-    static int get_value(double val, double& last_pos, int& last_px, bool is_rotation, double sensitivity);
+    static int get_delta(int val, int prev);
+    static int get_value(double val, double sensitivity, bool is_rotation);
 
     struct settings s;
 };

@@ -30,22 +30,18 @@ void mouse::pose(const double *headpose)
     if (axis_x >= 0 && axis_x < 6)
     {
         mouse_x = get_value(headpose[axis_x] * invert[axis_x],
-                            last_pos_x,
-                            last_x,
-                            axis_x >= 3,
-                            static_cast<slider_value>(s.sensitivity_x));
+                            s.sensitivity_x(),
+                            axis_x >= 3);
     }
 
     if (axis_y >= 0 && axis_y < 6)
         mouse_y = get_value(headpose[axis_y] * invert[axis_y],
-                            last_pos_y,
-                            last_y,
-                            axis_y >= 3,
-                            static_cast<slider_value>(s.sensitivity_y));
+                            s.sensitivity_y(),
+                            axis_y >= 3);
 
     MOUSEINPUT mi;
-    mi.dx = mouse_x;
-    mi.dy = mouse_y;
+    mi.dx = get_delta(mouse_x, last_x);
+    mi.dy = get_delta(mouse_y, last_y);
     mi.mouseData = 0;
     mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
     mi.time = 0;
@@ -64,44 +60,27 @@ QString mouse::game_name()
     return "Mouse tracker";
 }
 
-double mouse::get_rotation(double val, double last_pos)
+int mouse::get_delta(int val, int prev)
 {
-    using std::fmod;
-    using std::fabs;
-    using std::copysign;
-    using std::min;
+    using std::abs;
 
-    const double x_1 = val - last_pos;
-
-    if (x_1 > 180)
-        return 360 - x_1;
-    else if (x_1 < -180)
-        return 360 + x_1;
-    else
-        return x_1;
+    const int a = abs(val - prev), b = abs(val + prev), c = abs(val);
+    if (c < a && c < b)
+        return val;
+    if (b < a && b < c)
+        return val + prev;
+    return val - prev;
 }
 
-int mouse::get_value(double val, double& last_pos, int& last_px, bool is_rotation, double sensitivity)
+int mouse::get_value(double val, double sensitivity, bool is_rotation)
 {
     static constexpr double c = 1e-1;
+    static constexpr double sgn[] = { 1e-2, 1 };
 
-    if (is_rotation)
-    {
-        const double rot_delta = get_rotation(val, last_pos);
-
-        last_pos = val;
-        last_px = int(rot_delta * c * sensitivity);
-    }
-    else
-    {
-        val -= last_pos;
-
-        last_pos = val;
-        last_px = int(val * c * sensitivity / 100 - last_px);
-    }
-
-    return last_px;
+    return iround(val * c * sensitivity * sgn[unsigned(is_rotation)]);
 }
+
+mouse::mouse() : last_x(0), last_y(0) {}
 
 bool mouse::correct()
 {
