@@ -172,7 +172,7 @@ main(int argc, char** argv)
     while (false);
 
     // msvc crashes in some destructor
-#if defined(_MSC_VER) && 0 && I_DONT_HURT_ANYMORE
+#if defined(_MSC_VER)
     qDebug() << "exit: terminating";
     TerminateProcess(GetCurrentProcess(), 0);
 #endif
