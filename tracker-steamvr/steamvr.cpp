@@ -1,4 +1,3 @@
-/* Copyright: "i couldn't care less what anyone does with the 5 lines of code i wrote" - mm0zct */
 #include "steamvr.hpp"
 #include "api/plugin-api.hpp"
 #include "compat/util.hpp"
