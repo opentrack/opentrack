@@ -149,38 +149,30 @@ void spline::add_lone_point()
 
 QPointF spline::ensure_in_bounds(const QList<QPointF>& points, double max_x, int i)
 {
-    const int sz = points.size();
+    const int sz = element_count(points, max_x);
 
+    if (i < 0 || sz == 0)
+        return QPointF(0, 0);
+
+    if (i < sz)
+        return points[i];
+
+    return points[sz - 1];
+}
+
+int spline::element_count(const QList<QPointF>& points, double max_x)
+{
     if (!(max_x > 0))
-    {
-        if (i < 0 || sz == 0)
-            return QPointF(0, 0);
-
-        if (i < sz)
-            return points[i];
-
-        return points[sz - 1];
-    }
+        return points.size();
     else
     {
-        do
+        const unsigned sz = points.size();
+        for (unsigned i = 0; i < sz; i++)
         {
-            QPointF ret;
-
-            if (i < 0 || sz == 0)
-                return QPointF(0, 0);
-
-            if (i < sz)
-                ret = points[i];
-            else
-                ret = points[sz - 1];
-
-            if (!(ret.x() > max_x))
-                return ret;
-            else
-                i--;
+            if (points[i].x() > max_x)
+                return i;
         }
-        while (1);
+        return points.size();
     }
 }
 
@@ -193,10 +185,12 @@ void spline::update_interp_data()
 {
     points_t points = s->points;
 
-    if (points.size() == 0)
+    int sz = element_count(points, max_x);
+
+    if (sz == 0)
         points.append(QPointF(max_x, max_y));
 
-    std::stable_sort(points.begin(), points.end(), sort_fn);
+    std::stable_sort(points.begin(), points.begin() + sz, sort_fn);
 
     const double mult = precision(points);
     const double mult_ = mult * 30;
@@ -204,7 +198,7 @@ void spline::update_interp_data()
     for (unsigned i = 0; i < value_count; i++)
         data[i] = -1;
 
-    if (points.size() == 1)
+    if (sz < 2)
     {
         const double x = points[0].x();
         const double y = points[0].y();
@@ -220,7 +214,7 @@ void spline::update_interp_data()
         if (points[0].x() > 1e-2)
             points.push_front(QPointF(0, 0));
 
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i < sz; i++)
         {
             const QPointF p0 = ensure_in_bounds(points, max_x, i - 1);
             const QPointF p1 = ensure_in_bounds(points, max_x, i + 0);
@@ -277,8 +271,9 @@ void spline::remove_point(int i)
     QMutexLocker foo(&_mutex);
 
     points_t points = s->points;
+    const int sz = element_count(points, max_x);
 
-    if (i >= 0 && i < points.size())
+    if (i >= 0 && i < sz)
     {
         points.erase(points.begin() + i);
         s->points = points;
@@ -308,7 +303,9 @@ void spline::move_point(int idx, QPointF pt)
 
     points_t points = s->points;
 
-    if (idx >= 0 && idx < points.size())
+    const int sz = element_count(points, max_x);
+
+    if (idx >= 0 && idx < sz)
     {
         points[idx] = pt;
         // we don't allow points to be reordered, but sort due to possible caller logic error
@@ -327,7 +324,7 @@ QList<QPointF> spline::get_points() const
 int spline::get_point_count() const
 {
     QMutexLocker foo(&_mutex);
-    return s->points().size();
+    return element_count(s->points, max_x);;
 }
 
 void spline::reload()
@@ -387,16 +384,15 @@ void spline::recompute()
     QMutexLocker foo(&_mutex);
 
     QList<QPointF> list = s->points;
-    const int sz = list.size();
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
     // only store if we can't help it
     std::stable_sort(list.begin(), list.end(), sort_fn);
 
     if (list != s->points)
-    {
         s->points = list;
-    }
+
+    const int sz = element_count(list, max_x);
 
     QList<QPointF> ret_list;
     ret_list.reserve(sz);
@@ -445,8 +441,9 @@ mem<const spline::settings> spline::get_settings() const
 double spline::precision(const QList<QPointF>& points) const
 {
     // this adjusts the memoized range to the largest X value. empty space doesn't take value_count discrete points.
-    if (points.size())
-        return clamp(value_count / clamp(points[points.size() - 1].x(), 1., max_x), 0., double(value_count));
+    const int sz = element_count(points, max_x);
+    if (sz)
+        return clamp(value_count / clamp(points[sz - 1].x(), 1., max_x), 0., double(value_count));
 
     return value_count / clamp(max_x, 1., double(value_count));
 }

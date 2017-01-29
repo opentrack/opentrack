@@ -49,6 +49,7 @@ class OPENTRACK_SPLINE_EXPORT spline final
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, double max_x, int i);
+    static int element_count(const QList<QPointF>& points, double max_x);
 
     mem<spline_detail::settings> s;
     QMetaObject::Connection connection;
