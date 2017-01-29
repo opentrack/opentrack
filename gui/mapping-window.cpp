@@ -72,7 +72,8 @@ void MapWidget::load()
 
         if (altp)
         {
-            connect(qfcs[i].checkbox, &QCheckBox::toggled,
+            connect(&axis.opts.altp,
+                    static_cast<void(base_value::*)(bool) const>(&base_value::valueChanged),
                     this,
                     [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
             qfc.setEnabled(qfcs[i].checkbox->isChecked());
@@ -80,13 +81,16 @@ void MapWidget::load()
         }
 
         connect(&axis.opts.clamp, static_cast<void(base_value::*)(int) const>(&base_value::valueChanged),
-                &qfc, [&conf, &qfc](int value) { conf.set_max_input(value); qfc.reload_spline(); });
-        conf.set_max_input(axis.opts.clamp);
+                &qfc, [&conf, &qfc](int value) {
+            conf.set_max_input(value);
+            qfc.reload_spline();
+            qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
+        });
+        // force signal to avoid duplicating the slot's logic
+        axis.opts.clamp.valueChanged(axis.opts.clamp);
 
         if (qfcs[i].axis >= 3)
-        {
             qfcs[i].qfc->set_snap(1, 2.5);
-        }
         else
             qfcs[i].qfc->set_snap(.5, 1);
 
