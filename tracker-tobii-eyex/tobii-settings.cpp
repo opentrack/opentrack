@@ -95,7 +95,7 @@ double rel_settings::gain(double value)
 
 void rel_settings::make_spline_(part* functors, unsigned len)
 {
-    acc_mode_spline.removeAllPoints();
+    acc_mode_spline.clear();
 
     double lastx = 0;
 
@@ -111,7 +111,7 @@ void rel_settings::make_spline_(part* functors, unsigned len)
             const double y = clamp(fun.f(x), 0, 1);
             if (i == nparts/2)
                 qDebug() << k << i << x << y;
-            acc_mode_spline.addPoint((lastx + x) * spline_max, y * spline_max);
+            acc_mode_spline.add_point((lastx + x) * spline_max, y * spline_max);
         }
 
         lastx += fun.len;
