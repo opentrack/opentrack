@@ -392,7 +392,7 @@ void spline::recompute()
     if (list != s->points)
         s->points = list;
 
-    const int sz = element_count(list, max_x);
+    const int sz = list.size();
 
     QList<QPointF> ret_list;
     ret_list.reserve(sz);
