@@ -90,7 +90,7 @@ void accela::filter(const double* input, double *output)
                                else
                                    return out_;
         );
-        const double val = double(m.getValue(out));
+        const double val = double(m.get_value(out));
         last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val;
     }
 }
@@ -100,16 +100,16 @@ void settings_accela::make_splines(spline& rot, spline& trans)
     rot = spline();
     trans = spline();
 
-    rot.setMaxInput(rot_gains[0][0]);
-    trans.setMaxInput(trans_gains[0][0]);
-    rot.setMaxOutput(rot_gains[0][1]);
-    trans.setMaxOutput(trans_gains[0][1]);
+    rot.set_max_input(rot_gains[0][0]);
+    trans.set_max_input(trans_gains[0][0]);
+    rot.set_max_output(rot_gains[0][1]);
+    trans.set_max_output(trans_gains[0][1]);
 
     for (int i = 0; rot_gains[i][0] >= 0; i++)
-        rot.addPoint(QPointF(rot_gains[i][0], rot_gains[i][1]));
+        rot.add_point(QPointF(rot_gains[i][0], rot_gains[i][1]));
 
     for (int i = 0; trans_gains[i][0] >= 0; i++)
-        trans.addPoint(QPointF(trans_gains[i][0], trans_gains[i][1]));
+        trans.add_point(QPointF(trans_gains[i][0], trans_gains[i][1]));
 }
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)

@@ -62,10 +62,10 @@ Tracker::rmat Tracker::get_camera_offset_matrix(double c)
 double Tracker::map(double pos, Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
-    axis.spline_main.setTrackingActive( !altp );
-    axis.spline_alt.setTrackingActive( altp );
+    axis.spline_main.set_tracking_active( !altp );
+    axis.spline_alt.set_tracking_active( altp );
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
-    return double(fc.getValue(pos));
+    return double(fc.get_value(pos));
 }
 
 void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
@@ -451,8 +451,8 @@ void Tracker::run()
 
     for (int i = 0; i < 6; i++)
     {
-        m(i).spline_main.setTrackingActive(false);
-        m(i).spline_alt.setTrackingActive(false);
+        m(i).spline_main.set_tracking_active(false);
+        m(i).spline_alt.set_tracking_active(false);
     }
 }
 

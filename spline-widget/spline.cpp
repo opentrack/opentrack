@@ -42,16 +42,15 @@ spline::~spline()
     if (connection)
     {
         QObject::disconnect(connection);
+        connection = QMetaObject::Connection();
     }
 }
 
-spline::spline() : spline(0, 0, "")
-{
-}
+spline::spline() : spline(0, 0, "") {}
 
-void spline::setTrackingActive(bool blnActive)
+void spline::set_tracking_active(bool value)
 {
-    activep = blnActive;
+    activep = value;
 }
 
 bundle spline::get_bundle()
@@ -59,40 +58,40 @@ bundle spline::get_bundle()
     return s->b;
 }
 
-void spline::removeAllPoints()
+void spline::clear()
 {
     QMutexLocker l(&_mutex);
     s->points = points_t();
     validp = false;
 }
 
-void spline::setMaxInput(qreal max_input)
+void spline::set_max_input(qreal max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
     recompute();
 }
 
-void spline::setMaxOutput(qreal max_output)
+void spline::set_max_output(qreal max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
     recompute();
 }
 
-qreal spline::maxInput() const
+qreal spline::max_input() const
 {
     QMutexLocker l(&_mutex);
     return max_x;
 }
 
-qreal spline::maxOutput() const
+qreal spline::max_output() const
 {
     QMutexLocker l(&_mutex);
     return max_y;
 }
 
-float spline::getValue(double x)
+float spline::get_value(double x)
 {
     QMutexLocker foo(&_mutex);
 
@@ -106,23 +105,26 @@ float spline::get_value_no_save(double x)
 {
     QMutexLocker foo(&_mutex);
 
+    if (max_x > 0)
+        x = std::min(max_x, x);
+
     float q  = float(x * precision(s->points));
     int    xi = (int)q;
-    float  yi = getValueInternal(xi);
-    float  yiplus1 = getValueInternal(xi+1);
+    float  yi = get_value_internal(xi);
+    float  yiplus1 = get_value_internal(xi+1);
     float  f = (q-xi);
     float  ret = yiplus1 * f + yi * (1.0f - f); // at least do a linear interpolation.
     return ret;
 }
 
-bool spline::getLastPoint(QPointF& point)
+DEFUN_WARN_UNUSED bool spline::get_last_value(QPointF& point)
 {
     QMutexLocker foo(&_mutex);
     point = last_input_value;
     return activep;
 }
 
-float spline::getValueInternal(int x)
+float spline::get_value_internal(int x)
 {
     if (!validp)
     {
@@ -148,11 +150,27 @@ void spline::add_lone_point()
 QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
 {
     const int sz = points.size();
+start:
 
     if (i < 0 || sz == 0)
         return QPointF(0, 0);
+
     if (i < sz)
+    {
+        if (max_x > 0 && max_x < points[i])
+        {
+            i--;
+            goto start;
+        }
         return points[i];
+    }
+
+    if (max_x > 0 && max_x < points[sz - 1])
+    {
+        i = sz - 2;
+        goto start;
+    }
+
     return points[sz - 1];
 }
 
@@ -244,7 +262,7 @@ void spline::update_interp_data()
     }
 }
 
-void spline::removePoint(int i)
+void spline::remove_point(int i)
 {
     QMutexLocker foo(&_mutex);
 
@@ -258,7 +276,7 @@ void spline::removePoint(int i)
     }
 }
 
-void spline::addPoint(QPointF pt)
+void spline::add_point(QPointF pt)
 {
     QMutexLocker foo(&_mutex);
 
@@ -269,12 +287,12 @@ void spline::addPoint(QPointF pt)
     validp = false;
 }
 
-void spline::addPoint(double x, double y)
+void spline::add_point(double x, double y)
 {
-    addPoint(QPointF(x, y));
+    add_point(QPointF(x, y));
 }
 
-void spline::movePoint(int idx, QPointF pt)
+void spline::move_point(int idx, QPointF pt)
 {
     QMutexLocker foo(&_mutex);
 
@@ -290,7 +308,7 @@ void spline::movePoint(int idx, QPointF pt)
     }
 }
 
-QList<QPointF> spline::getPoints() const
+QList<QPointF> spline::get_points() const
 {
     QMutexLocker foo(&_mutex);
     return s->points;

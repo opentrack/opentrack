@@ -44,7 +44,7 @@ class OPENTRACK_SPLINE_EXPORT spline final
 {
     double precision(const QList<QPointF>& points) const;
     void update_interp_data();
-    float getValueInternal(int x);
+    float get_value_internal(int x);
     void add_lone_point();
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
@@ -72,8 +72,8 @@ public:
     void save();
     void set_bundle(bundle b);
 
-    qreal maxInput() const;
-    qreal maxOutput() const;
+    qreal max_input() const;
+    qreal max_output() const;
     spline();
     spline(qreal maxx, qreal maxy, const QString& name);
     ~spline();
@@ -81,20 +81,20 @@ public:
     spline& operator=(const spline&) = default;
     spline(const spline&) = default;
 
-    float getValue(double x);
+    float get_value(double x);
     float get_value_no_save(double x);
-    bool getLastPoint(QPointF& point);
-    void removePoint(int i);
-    void removeAllPoints();
+    DEFUN_WARN_UNUSED bool get_last_value(QPointF& point);
+    void remove_point(int i);
+    void clear();
 
-    void addPoint(QPointF pt);
-    void addPoint(double x, double y);
-    void movePoint(int idx, QPointF pt);
-    QList<QPointF> getPoints() const;
-    void setMaxInput(qreal MaxInput);
-    void setMaxOutput(qreal MaxOutput);
+    void add_point(QPointF pt);
+    void add_point(double x, double y);
+    void move_point(int idx, QPointF pt);
+    QList<QPointF> get_points() const;
+    void set_max_input(qreal MaxInput);
+    void set_max_output(qreal MaxOutput);
 
-    void setTrackingActive(bool blnActive);
+    void set_tracking_active(bool value);
     bundle get_bundle();
     void recompute();
 

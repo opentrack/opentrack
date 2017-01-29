@@ -9,12 +9,12 @@
 #include "mapping-window.hpp"
 #include "logic/main-settings.hpp"
 #include "spline-widget/spline-widget.hpp"
-MapWidget::MapWidget(Mappings& m) :
-    m(m)
+
+MapWidget::MapWidget(Mappings& m) : m(m)
 {
     ui.setupUi(this);
 
-    reload();
+    load();
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -27,9 +27,8 @@ MapWidget::MapWidget(Mappings& m) :
     tie_setting(s.a_roll.altp, ui.rz_altp);
 }
 
-void MapWidget::reload()
+void MapWidget::load()
 {
-
     struct {
         spline_widget* qfc;
         Axis axis;
@@ -37,21 +36,20 @@ void MapWidget::reload()
         bool altp;
     } qfcs[] =
     {
-    { ui.rxconfig, Yaw,   nullptr, false },
-    { ui.ryconfig, Pitch, nullptr, false },
-    { ui.rzconfig, Roll,  nullptr, false },
-    { ui.txconfig, TX,    nullptr, false },
-    { ui.tyconfig, TY,    nullptr, false },
-    { ui.tzconfig, TZ,    nullptr, false },
-
-    { ui.rxconfig_alt, Yaw,   ui.rx_altp, true },
-    { ui.ryconfig_alt, Pitch, ui.ry_altp, true },
-    { ui.rzconfig_alt, Roll,  ui.rz_altp, true },
-    { ui.txconfig_alt, TX,    ui.tx_altp, true },
-    { ui.tyconfig_alt, TY,    ui.ty_altp, true },
-    { ui.tzconfig_alt, TZ,    ui.tz_altp, true },
+    { ui.rxconfig, Yaw,   nullptr, false, },
+    { ui.ryconfig, Pitch, nullptr, false, },
+    { ui.rzconfig, Roll,  nullptr, false, },
+    { ui.txconfig, TX,    nullptr, false, },
+    { ui.tyconfig, TY,    nullptr, false, },
+    { ui.tzconfig, TZ,    nullptr, false, },
+    { ui.rxconfig_alt, Yaw,   ui.rx_altp, true, },
+    { ui.ryconfig_alt, Pitch, ui.ry_altp, true, },
+    { ui.rzconfig_alt, Roll,  ui.rz_altp, true, },
+    { ui.txconfig_alt, TX,    ui.tx_altp, true, },
+    { ui.tyconfig_alt, TY,    ui.ty_altp, true, },
+    { ui.tzconfig_alt, TZ,    ui.tz_altp, true, },
     { nullptr, Yaw, nullptr, false }
-};
+    };
 
     for (int i = 0; qfcs[i].qfc; i++)
     {

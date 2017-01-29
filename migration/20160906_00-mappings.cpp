@@ -100,10 +100,10 @@ struct mappings_from_2_3_0_rc11 : migration
         for (int i = 0; i < 12; i++)
         {
             spline& spl = (i % 2) == 0 ? m(i / 2).spline_main : m(i / 2).spline_alt;
-            spl.removeAllPoints();
+            spl.clear();
             const QList<QPointF>& points = old_mappings[i];
             for (const QPointF& pt : points)
-                spl.addPoint(pt);
+                spl.add_point(pt);
             spl.save(s);
         }
     }

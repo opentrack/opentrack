@@ -122,8 +122,8 @@ void spline_widget::drawBackground()
     const QPen pen(color__, 1, Qt::SolidLine, Qt::FlatCap);
 
     const int xstep = 10, ystep = 10;
-    const qreal maxx = _config->maxInput();
-    const qreal maxy = _config->maxOutput();
+    const qreal maxx = _config->max_input();
+    const qreal maxy = _config->max_output();
 
     // horizontal grid
     for (int i = 0; i <= maxy; i += xstep)
@@ -163,7 +163,7 @@ void spline_widget::drawFunction()
     QPainter painter(&_function);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const points_t points = _config->getPoints();
+    const points_t points = _config->get_points();
 
     if (moving_control_point_idx >= 0 &&
         moving_control_point_idx < points.size())
@@ -205,7 +205,7 @@ void spline_widget::drawFunction()
 #ifndef DEBUG_SPLINE
     static constexpr double step_ = 3./3;
 
-    const double maxx = _config->maxInput();
+    const double maxx = _config->max_input();
     const double step = step_ / c.x();
 
     QPainterPath path;
@@ -283,7 +283,7 @@ void spline_widget::paintEvent(QPaintEvent *e)
     // Show that point on the graph, with some lines to assist.
     // This new feature is very handy for tweaking the curves!
     QPointF last;
-    if (_config->getLastPoint(last) && isEnabled())
+    if (_config->get_last_value(last) && isEnabled())
         drawPoint(p, point_to_pixel(last), QColor(255, 0, 0, 120));
 }
 
@@ -317,7 +317,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
     const int point_pixel_closeness_limit = get_closeness_limit();
 
-    points_t points = _config->getPoints();
+    points_t points = _config->get_points();
     if (e->button() == Qt::LeftButton)
     {
         bool bTouchingPoint = false;
@@ -351,7 +351,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
                 if (!too_close)
                 {
-                    _config->addPoint(pixel_coord_to_point(e->pos()));
+                    _config->add_point(pixel_coord_to_point(e->pos()));
                     show_tooltip(e->pos());
                 }
             }
@@ -374,7 +374,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
             if (found_pt != -1)
             {
-                _config->removePoint(found_pt);
+                _config->remove_point(found_pt);
             }
             moving_control_point_idx = -1;
         }
@@ -399,7 +399,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
     }
 
     const int i = moving_control_point_idx;
-    const points_t points = _config->getPoints();
+    const points_t points = _config->get_points();
     const int sz = points.size();
 
     if (i >= 0 && i < sz)
@@ -429,7 +429,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         if (overlap)
             new_pt.setX(points[i].x());
 
-        _config->movePoint(i, new_pt);
+        _config->move_point(i, new_pt);
         _draw_function = true;
 
         setCursor(Qt::ClosedHandCursor);
@@ -546,7 +546,7 @@ void spline_widget::update_range()
     const int mwr = 15, mhr = 35;
 
     pixel_bounds = QRect(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
-    c = QPointF(pixel_bounds.width() / _config->maxInput(), pixel_bounds.height() / _config->maxOutput());
+    c = QPointF(pixel_bounds.width() / _config->max_input(), pixel_bounds.height() / _config->max_output());
     _draw_function = true;
 
     _background = QPixmap();
@@ -597,13 +597,13 @@ QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
 
     if (x < 0)
         x = 0;
-    if (x > _config->maxInput())
-        x = _config->maxInput();
+    if (x > _config->max_input())
+        x = _config->max_input();
 
     if (y < 0)
         y = 0;
-    if (y > _config->maxOutput())
-        y = _config->maxOutput();
+    if (y > _config->max_output())
+        y = _config->max_output();
 
     return QPointF(x, y);
 }
@@ -635,7 +635,7 @@ bool spline_widget::is_on_pt(const QPoint& pos, int* pt)
         return false;
     }
 
-    const points_t points = _config->getPoints();
+    const points_t points = _config->get_points();
 
     for (int i = 0; i < points.size(); i++)
     {

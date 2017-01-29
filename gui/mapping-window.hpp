@@ -14,14 +14,14 @@ class MapWidget final : public QDialog
     Q_OBJECT
 public:
     MapWidget(Mappings& m);
-    void reload();
 private:
     Ui::mapping_window ui;
     Mappings& m;
     main_settings s;
 
-
     void closeEvent(QCloseEvent*) override;
+
+    void load();
 
     void save_dialog();
     void invalidate_dialog();
