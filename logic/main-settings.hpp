@@ -41,7 +41,7 @@ struct axis_opts final
         src(b_settings_window, n(pfx, "source-index"), idx),
         invert(b_settings_window, n(pfx, "invert-sign"), false),
         altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
-        clamp(b_mapping_window, n(pfx, "max-value"), idx == Pitch ? r90 : r180)
+        clamp(b_mapping_window, n(pfx, "max-value"), r180)
     {}
 private:
     static inline QString n(QString pfx, QString name)
