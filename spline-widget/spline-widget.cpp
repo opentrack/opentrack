@@ -126,7 +126,7 @@ void spline_widget::drawBackground()
     const qreal maxy = _config->max_output();
 
     // horizontal grid
-    for (int i = 0; i <= maxy; i += xstep)
+    for (int i = 0; i <= maxy; i += ystep)
     {
         const int y = int(pixel_bounds.height() - i * c.y() + pixel_bounds.y());
         drawLine(painter,
@@ -141,7 +141,7 @@ void spline_widget::drawBackground()
     }
 
     // vertical grid
-    for (int i = 0; i <= maxx; i += ystep)
+    for (int i = 0; i <= maxx; i += xstep)
     {
         const int x = iround(pixel_bounds.x() + i * c.x());
         drawLine(painter,
