@@ -147,31 +147,41 @@ void spline::add_lone_point()
     s->points = points;
 }
 
-QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
+QPointF spline::ensure_in_bounds(const QList<QPointF>& points, double max_x, int i)
 {
     const int sz = points.size();
-start:
 
-    if (i < 0 || sz == 0)
-        return QPointF(0, 0);
-
-    if (i < sz)
+    if (!(max_x > 0))
     {
-        if (max_x > 0 && max_x < points[i])
+        if (i < 0 || sz == 0)
+            return QPointF(0, 0);
+
+        if (i < sz)
+            return points[i];
+
+        return points[sz - 1];
+    }
+    else
+    {
+        do
         {
-            i--;
-            goto start;
+            QPointF ret;
+
+            if (i < 0 || sz == 0)
+                return QPointF(0, 0);
+
+            if (i < sz)
+                ret = points[i];
+            else
+                ret = points[sz - 1];
+
+            if (!(ret.x() > max_x))
+                return ret;
+            else
+                i--;
         }
-        return points[i];
+        while (1);
     }
-
-    if (max_x > 0 && max_x < points[sz - 1])
-    {
-        i = sz - 2;
-        goto start;
-    }
-
-    return points[sz - 1];
 }
 
 bool spline::sort_fn(const QPointF& one, const QPointF& two)
@@ -212,10 +222,10 @@ void spline::update_interp_data()
 
         for (int i = 0; i < points.size(); i++)
         {
-            const QPointF p0 = ensure_in_bounds(points, i - 1);
-            const QPointF p1 = ensure_in_bounds(points, i + 0);
-            const QPointF p2 = ensure_in_bounds(points, i + 1);
-            const QPointF p3 = ensure_in_bounds(points, i + 2);
+            const QPointF p0 = ensure_in_bounds(points, max_x, i - 1);
+            const QPointF p1 = ensure_in_bounds(points, max_x, i + 0);
+            const QPointF p2 = ensure_in_bounds(points, max_x, i + 1);
+            const QPointF p3 = ensure_in_bounds(points, max_x, i + 2);
             const double p0_x = p0.x(), p1_x = p1.x(), p2_x = p2.x(), p3_x = p3.x();
             const double p0_y = p0.y(), p1_y = p1.y(), p2_y = p2.y(), p3_y = p3.y();
 
@@ -394,9 +404,6 @@ void spline::recompute()
     for (int i = 0; i < sz; i++)
     {
         QPointF& pt(list[i]);
-
-        pt.setX(clamp(pt.x(), 0, max_x));
-        pt.setY(clamp(pt.y(), 0, max_y));
 
         const bool overlap = progn(
                                 for (int j = 0; j < i; j++)

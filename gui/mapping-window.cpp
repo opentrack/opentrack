@@ -25,6 +25,10 @@ MapWidget::MapWidget(Mappings& m) : m(m)
     tie_setting(s.a_yaw.altp, ui.rx_altp);
     tie_setting(s.a_pitch.altp, ui.ry_altp);
     tie_setting(s.a_roll.altp, ui.rz_altp);
+
+    tie_setting(s.a_yaw.clamp, ui.max_yaw_rotation);
+    tie_setting(s.a_pitch.clamp, ui.max_pitch_rotation);
+    tie_setting(s.a_roll.clamp, ui.max_roll_rotation);
 }
 
 void MapWidget::load()
@@ -51,19 +55,23 @@ void MapWidget::load()
     { nullptr, Yaw, nullptr, false }
     };
 
+    for (QComboBox* x : { ui.max_yaw_rotation, ui.max_pitch_rotation, ui.max_roll_rotation })
+    {
+        using a = axis_opts::max_rotation;
+        for (a y : { a::r180, a::r90, a::r60, a::r45, a::r30, a::r20 })
+            x->addItem(QString::number(y) + "°", y);
+    }
+
     for (int i = 0; qfcs[i].qfc; i++)
     {
         const bool altp = qfcs[i].altp;
 
         Map& axis = m(qfcs[i].axis);
         spline& conf = altp ? axis.spline_alt : axis.spline_main;
-        //const QString& name = altp ? axis.name2 : axis.name1;
-        //conf.set_bundle(make_bundle(name));
-        qfcs[i].qfc->setConfig(&conf);
+        spline_widget& qfc = *qfcs[i].qfc;
 
         if (altp)
         {
-            spline_widget& qfc = *qfcs[i].qfc;
             connect(qfcs[i].checkbox, &QCheckBox::toggled,
                     this,
                     [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
@@ -71,10 +79,18 @@ void MapWidget::load()
             qfc.force_redraw();
         }
 
+        connect(&axis.opts.clamp, static_cast<void(base_value::*)(int) const>(&base_value::valueChanged),
+                &qfc, [&conf, &qfc](int value) { conf.set_max_input(value); qfc.reload_spline(); });
+        conf.set_max_input(axis.opts.clamp);
+
         if (qfcs[i].axis >= 3)
+        {
             qfcs[i].qfc->set_snap(1, 2.5);
+        }
         else
             qfcs[i].qfc->set_snap(.5, 1);
+
+        qfcs[i].qfc->setConfig(&conf);
     }
 
 }

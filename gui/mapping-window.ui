@@ -11,18 +11,12 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
-   <size>
-    <width>970</width>
-    <height>664</height>
-   </size>
-  </property>
-  <property name="maximumSize">
    <size>
     <width>970</width>
     <height>664</height>
@@ -41,9 +35,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
@@ -51,13 +42,48 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabWidgetPage1">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>Yaw</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max rotation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_yaw_rotation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="spline_widget" name="rxconfig" native="true">
          <property name="colorBezier" stdset="0">
@@ -104,13 +130,48 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage2">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>Pitch</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QFrame" name="frame_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max rotation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_pitch_rotation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="spline_widget" name="ryconfig" native="true">
          <property name="colorBezier" stdset="0">
@@ -157,13 +218,48 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage3">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>Roll</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QFrame" name="frame_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max rotation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_roll_rotation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="spline_widget" name="rzconfig" native="true">
          <property name="colorBezier" stdset="0">
@@ -208,11 +304,12 @@
         </widget>
        </item>
       </layout>
+      <zorder>rzconfig</zorder>
+      <zorder>rz_altp</zorder>
+      <zorder>rzconfig_alt</zorder>
+      <zorder>frame_3</zorder>
      </widget>
      <widget class="QWidget" name="tabWidgetPage4">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>X</string>
       </attribute>
@@ -263,9 +360,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage5">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>Y</string>
       </attribute>
@@ -316,9 +410,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabWidgetPage6">
-      <property name="styleSheet">
-       <string notr="true">background-color: #ccc;</string>
-      </property>
       <attribute name="title">
        <string>Z</string>
       </attribute>

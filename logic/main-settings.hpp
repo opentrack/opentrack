@@ -18,18 +18,30 @@ using namespace options;
 
 struct axis_opts final
 {
+    enum max_rotation : int
+    {
+        r180 = 180,
+        r90 = 90,
+        r60 = 60,
+        r45 = 45,
+        r30 = 30,
+        r20 = 25,
+    };
+
     // note, these two bundles can be the same value with no issues
     bundle b_settings_window, b_mapping_window;
     value<double> zero;
     value<int> src;
     value<bool> invert, altp;
+    value<max_rotation> clamp;
     axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, int idx) :
         b_settings_window(b_settings_window),
         b_mapping_window(b_mapping_window),
         zero(b_settings_window, n(pfx, "zero-pos"), 0),
         src(b_settings_window, n(pfx, "source-index"), idx),
         invert(b_settings_window, n(pfx, "invert-sign"), false),
-        altp(b_mapping_window, n(pfx, "alt-axis-sign"), false)
+        altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
+        clamp(b_mapping_window, n(pfx, "max-value"), idx == Pitch ? r90 : r180)
     {}
 private:
     static inline QString n(QString pfx, QString name)

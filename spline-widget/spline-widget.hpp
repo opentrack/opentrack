@@ -57,12 +57,13 @@ public:
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
+public slots:
+    void reload_spline();
 protected slots:
     void paintEvent(QPaintEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
-    void reload_spline();
 private:
     int get_closeness_limit();
     void show_tooltip(const QPoint& pos, const QPointF& value = QPointF(0, 0));
