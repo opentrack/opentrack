@@ -30,6 +30,8 @@ spline_widget::spline_widget(QWidget *parent) :
     _config(nullptr),
     snap_x(0),
     snap_y(0),
+    _x_step(10),
+    _y_step(10),
     moving_control_point_idx(-1),
     _draw_function(true),
     _preview_only(false)
@@ -121,7 +123,7 @@ void spline_widget::drawBackground()
 
     const QPen pen(color__, 1, Qt::SolidLine, Qt::FlatCap);
 
-    const int xstep = 10, ystep = 10;
+    const int ystep = _y_step, xstep = _x_step;
     const qreal maxx = _config->max_input();
     const qreal maxy = _config->max_output();
 
