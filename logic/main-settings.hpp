@@ -16,16 +16,29 @@ using namespace options;
 
 #include "export.hpp"
 
+namespace axis_clamp_opts
+{
+
+} // ns axis-clamp-opts
+
 struct axis_opts final
 {
-    enum max_rotation : int
+    enum max_clamp
     {
         r180 = 180,
         r90 = 90,
         r60 = 60,
         r45 = 45,
         r30 = 30,
-        r20 = 25,
+        r25 = 25,
+        r20 = 20,
+        r15 = 15,
+        r10 = 10,
+
+        t30 = 30,
+        t20 = 20,
+        t15 = 15,
+        t10 = 10,
     };
 
     // note, these two bundles can be the same value with no issues
@@ -33,15 +46,15 @@ struct axis_opts final
     value<double> zero;
     value<int> src;
     value<bool> invert, altp;
-    value<max_rotation> clamp;
-    axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, int idx) :
+    value<max_clamp> clamp;
+    axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, Axis idx) :
         b_settings_window(b_settings_window),
         b_mapping_window(b_mapping_window),
         zero(b_settings_window, n(pfx, "zero-pos"), 0),
         src(b_settings_window, n(pfx, "source-index"), idx),
         invert(b_settings_window, n(pfx, "invert-sign"), false),
         altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
-        clamp(b_mapping_window, n(pfx, "max-value"), r180)
+        clamp(b_mapping_window, n(pfx, "max-value"), idx >= Yaw ? r180 : t30)
     {}
 private:
     static inline QString n(QString pfx, QString name)
@@ -78,7 +91,8 @@ struct module_settings
 struct main_settings
 {
     bundle b, b_map;
-    axis_opts a_x, a_y, a_z, a_yaw, a_pitch, a_roll;
+    axis_opts a_x, a_y, a_z;
+    axis_opts a_yaw, a_pitch, a_roll;
     value<bool> tcomp_p, tcomp_disable_tx, tcomp_disable_ty, tcomp_disable_tz;
     value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
     value<bool> tray_enabled, tray_start;

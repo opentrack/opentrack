@@ -55,12 +55,15 @@ void MapWidget::load()
     { nullptr, Yaw, nullptr, false }
     };
 
+    using a = axis_opts::max_clamp;
+
     for (QComboBox* x : { ui.max_yaw_rotation, ui.max_pitch_rotation, ui.max_roll_rotation })
-    {
-        using a = axis_opts::max_rotation;
-        for (a y : { a::r180, a::r90, a::r60, a::r45, a::r30, a::r20 })
+        for (a y : { a::r180, a::r90, a::r60, a::r45, a::r30, a::r25, a::r20, a::r15, a::r10 })
             x->addItem(QString::number(y) + "°", y);
-    }
+
+    for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
+        for (a y : { a::t30, a::t20, a::t15, a::t10 })
+            x->addItem(QStringLiteral("%1 mm").arg(int(y)), y);
 
     for (int i = 0; qfcs[i].qfc; i++)
     {
@@ -76,7 +79,7 @@ void MapWidget::load()
                     static_cast<void(base_value::*)(bool) const>(&base_value::valueChanged),
                     this,
                     [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
-            qfc.setEnabled(qfcs[i].checkbox->isChecked());
+            qfc.setEnabled(axis.opts.altp);
             qfc.force_redraw();
         }
 
