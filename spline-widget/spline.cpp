@@ -169,7 +169,7 @@ int spline::element_count(const QList<QPointF>& points, double max_x)
         const unsigned sz = points.size();
         for (unsigned i = 0; i < sz; i++)
         {
-            if (points[i].x() > max_x)
+            if (!(points[i].x() <= max_x))
                 return i;
         }
         return points.size();
@@ -200,13 +200,16 @@ void spline::update_interp_data()
 
     if (sz < 2)
     {
-        const double x = points[0].x();
-        const double y = points[0].y();
-        const int max = clamp(int(x * precision(points)), 0, value_count-1);
-        for (int k = 0; k <= max; k++)
+        if (points[0].x() - 1e-2 <= max_x)
         {
-            if (k < value_count)
-                data[unsigned(k)] = float(y * k / max);
+            const double x = points[0].x();
+            const double y = points[0].y();
+            const int max = clamp(int(x * precision(points)), 0, value_count-1);
+            for (int k = 0; k <= max; k++)
+            {
+                if (k < value_count)
+                    data[unsigned(k)] = float(y * k / max);
+            }
         }
     }
     else
