@@ -19,16 +19,19 @@ MapWidget::MapWidget(Mappings& m) : m(m)
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.a_x.altp, ui.tx_altp);
-    tie_setting(s.a_y.altp, ui.ty_altp);
-    tie_setting(s.a_z.altp, ui.tz_altp);
     tie_setting(s.a_yaw.altp, ui.rx_altp);
     tie_setting(s.a_pitch.altp, ui.ry_altp);
     tie_setting(s.a_roll.altp, ui.rz_altp);
+    tie_setting(s.a_x.altp, ui.tx_altp);
+    tie_setting(s.a_y.altp, ui.ty_altp);
+    tie_setting(s.a_z.altp, ui.tz_altp);
 
     tie_setting(s.a_yaw.clamp, ui.max_yaw_rotation);
     tie_setting(s.a_pitch.clamp, ui.max_pitch_rotation);
     tie_setting(s.a_roll.clamp, ui.max_roll_rotation);
+    tie_setting(s.a_x.clamp, ui.max_x_translation);
+    tie_setting(s.a_y.clamp, ui.max_y_translation);
+    tie_setting(s.a_z.clamp, ui.max_z_translation);
 }
 
 void MapWidget::load()
