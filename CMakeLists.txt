@@ -30,6 +30,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
+set_property(GLOBAL PROPERTY opentrack-force-i18n-regen FALSE)
 set(opentrack-all-translations nl_NL ru_RU stub)
 
 include(opentrack-policy)
