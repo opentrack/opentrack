@@ -188,7 +188,7 @@ void spline::update_interp_data()
     int sz = element_count(points, max_x);
 
     if (sz == 0)
-        points.append(QPointF(max_x, max_y));
+        points.prepend(QPointF(max_x, max_y));
 
     std::stable_sort(points.begin(), points.begin() + sz, sort_fn);
 
@@ -214,7 +214,7 @@ void spline::update_interp_data()
     }
     else
     {
-        if (points[0].x() > 1e-2)
+        if (points[0].x() > 1e-2 && points[0].x() <= max_x)
             points.push_front(QPointF(0, 0));
 
         for (int i = 0; i < sz; i++)
