@@ -65,7 +65,7 @@ void simconnect::pose( const double *headpose ) {
     virtSCRotZ = float(headpose[Roll]);
 
     // cm to meters
-    virtSCPosX = float(headpose[TX]/100);
+    virtSCPosX = float(-headpose[TX]/100);
     virtSCPosY = float(headpose[TY]/100);
     virtSCPosZ = float(-headpose[TZ]/100);
 }
