@@ -1594,6 +1594,9 @@
                <property name="suffix">
                 <string> cm</string>
                </property>
+               <property name="minimum">
+                <number>-50</number>
+               </property>
                <property name="maximum">
                 <number>50</number>
                </property>
@@ -1612,6 +1615,9 @@
                </property>
                <property name="suffix">
                 <string> cm</string>
+               </property>
+               <property name="minimum">
+                <number>-50</number>
                </property>
                <property name="maximum">
                 <number>50</number>
