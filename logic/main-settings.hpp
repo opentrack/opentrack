@@ -117,7 +117,7 @@ struct main_settings
         a_yaw(b, b_map, "yaw", Yaw),
         a_pitch(b, b_map, "pitch", Pitch),
         a_roll(b, b_map, "roll", Roll),
-        tcomp_p(b, "compensate-translation", true),
+        tcomp_p(b, "compensate-translation", false),
         tcomp_disable_tx(b, "compensate-translation-disable-x-axis", false),
         tcomp_disable_ty(b, "compensate-translation-disable-y-axis", false),
         tcomp_disable_tz(b, "compensate-translation-disable-z-axis", false),
