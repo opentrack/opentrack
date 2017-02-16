@@ -409,10 +409,9 @@ void spline::recompute()
                                 {
                                     QPointF& pt2(list[j]);
                                     const double dist_sq = (pt.x() - pt2.x())*(pt.x() - pt2.x());
-                                    if (dist_sq < .35)
-                                    {
+                                    static constexpr double overlap = .6;
+                                    if (dist_sq < overlap * overlap)
                                         return true;
-                                    }
                                 }
                                 return false;
                              );
