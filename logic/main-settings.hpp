@@ -131,7 +131,7 @@ struct main_settings
         camera_roll(b, "camera-roll", 0),
         use_camera_offset_from_centering(b, "use-camera-offset-from-centering", false),
         center_at_startup(b, "center-at-startup", true),
-        center_method(b, "centering-method", true),
+        center_method(b, "centering-method", 0),
         neck_y(b, "neck-height", 0),
         neck_z(b, "neck-depth", 0),
         neck_enable(b, "neck-enable", false),

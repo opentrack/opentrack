@@ -838,11 +838,6 @@
                  <string>Absolute (camera device)</string>
                 </property>
                </item>
-               <item>
-                <property name="text">
-                 <string>Experimental (camera device)</string>
-                </property>
-               </item>
               </widget>
              </item>
             </layout>

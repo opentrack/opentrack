@@ -238,18 +238,6 @@ void Tracker::logic()
         case 1:
             rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
             break;
-        // alternative camera
-        case 2:
-            rmat cy, cp, cr;
-            tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation), cr, cp, cy);
-
-            rmat ry = cy * scaled_rotation.center_yaw.t();
-            rmat rp = cp * scaled_rotation.center_pitch.t();
-            rmat rr = cr * scaled_rotation.center_roll.t();
-
-            // roll yaw pitch
-            rotation = rr * ry * rp;
-            break;
         }
 
         const euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
