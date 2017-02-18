@@ -22,7 +22,7 @@
         <translation>Захват игр</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+34"/>
         <source>Executable</source>
         <translation>Файл</translation>
     </message>
@@ -202,37 +202,37 @@ Exiting now.</source>
         <location line="+67"/>
         <location line="+479"/>
         <source>Z</source>
-        <translation>Смещение по оси Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location line="-463"/>
         <location line="+409"/>
         <source>Pitch</source>
-        <translation>Тангаж</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="-356"/>
         <location line="+315"/>
         <source>Y</source>
-        <translation>Смещение по оси Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location line="-299"/>
         <location line="+277"/>
         <source>X</source>
-        <translation>Смещение по оси X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="-230"/>
         <location line="+309"/>
         <source>Roll</source>
-        <translation>Крен</translation>
+        <translation>Roll</translation>
     </message>
     <message>
         <location line="-293"/>
         <location line="+309"/>
         <source>Yaw</source>
-        <translation>Рысканье</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="-200"/>
@@ -302,7 +302,7 @@ Exiting now.</source>
     <message>
         <location line="+20"/>
         <source>Yaw</source>
-        <translation>Рысканье</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -324,17 +324,17 @@ Exiting now.</source>
     <message>
         <location line="-418"/>
         <source>Pitch</source>
-        <translation>Тангаж</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Roll</source>
-        <translation>Крен</translation>
+        <translation>Roll</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>X</source>
-        <translation>Смещение по оси X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -346,12 +346,12 @@ Exiting now.</source>
     <message>
         <location line="-112"/>
         <source>Y</source>
-        <translation>Смещение по оси Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Z</source>
-        <translation>Смещение по оси Z</translation>
+        <translation>Z</translation>
     </message>
 </context>
 <context>
@@ -503,17 +503,17 @@ Exiting now.</source>
     <message>
         <location line="+6"/>
         <source>Camera offset</source>
-        <translation>Смещение камеры</translation>
+        <translation>Коррекция расположения камеры</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Use camera center as translation offset</source>
-        <translation>Использование функции коррекции камеры</translation>
+        <translation>Включить</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn&apos;t mounted perfectly in front of the model, but above or below.</source>
-        <translation>Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы. Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз добавьте тангажа.</translation>
+        <translation>Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы. Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз скорректируйте ось Pitch.</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -526,7 +526,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Roll</source>
-        <translation>Крен</translation>
+        <translation>Roll</translation>
     </message>
     <message>
         <location line="-675"/>
@@ -539,7 +539,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Pitch</source>
-        <translation>Тангаж</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="-647"/>
@@ -552,17 +552,17 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Yaw</source>
-        <translation>Рысканье</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="-629"/>
         <source>Custom center pose</source>
-        <translation>Настройка центральной позиции</translation>
+        <translation>Пользовательское положение центральной позиции</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alter the centered position sent to games.</source>
-        <translation>Значения ниже вносят правки в выходные (игровые) данные трекера по осям смещения и вращения.</translation>
+        <translation>Данная настройка позволяет изменить изначальную точку нахождения в вашей любимой игре. Например: если вам хочется сидеть подальше от лобового стекла внесите поправку в ось Z. И каждый раз при центрировании Вы будете находиться в данном позиции.</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -574,22 +574,7 @@ Exiting now.</source>
         <translation> см</translation>
     </message>
     <message>
-        <location line="-951"/>
-        <source>TX</source>
-        <translation>Смещение по X</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>TY</source>
-        <translation>Смещение по Y</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>TZ</source>
-        <translation>Смещение по Z</translation>
-    </message>
-    <message>
-        <location line="+59"/>
+        <location line="-839"/>
         <source>Centering method</source>
         <translation>Режим центрирования</translation>
     </message>
@@ -606,7 +591,7 @@ Exiting now.</source>
     <message>
         <location line="+14"/>
         <source>Relative (inertial device)</source>
-        <translation>Относит-ный (инерционники)</translation>
+        <translation>Относительный (инерционники)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -627,7 +612,9 @@ Exiting now.</source>
     <message>
         <location line="+12"/>
         <source>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</source>
-        <translation>Настройка относительных сдвигов после поворота на 180 градусов, перемещения по осям X и Z будут инвертированными. Пример: если Вам необходимо при повороте головы на 180 градусов смещаться в противоположную сторону по оси X от Вашего реального смещения, тогда необходимо включить данную настройку.</translation>
+        <translation>Другой режим интерпритации поворотов.
+
+При активированном режиме смещения по осям применяются после поворота. Важно! В этом режиме сначала выполняется поворот по оси YAW и только потом смещение по осям X, Y, Z, в противном случае у вас будут неверно интерпритироваться движения. Например: при повороте на 180 градусов по оси YAW и движении вперед, камера будет приближаться, а пилот &quot;отдаляться в спинку кресла&quot;.</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -647,20 +634,25 @@ Exiting now.</source>
     <message>
         <location line="+13"/>
         <source>Disable effect by yaw</source>
-        <translation>Откл. по оси рысканья</translation>
+        <translation>Откл. по оси Yaw</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disable effect by pitch</source>
-        <translation>Откл. по оси тангажа</translation>
+        <translation>Откл. по оси Pitch</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disable effect by roll</source>
-        <translation>Откл. по оси крена</translation>
+        <translation>Откл. по оси Roll</translation>
     </message>
     <message>
-        <location line="-626"/>
+        <location line="+28"/>
+        <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. It also works with relative translation disabled.</source>
+        <translation>Смещение точки взгляда относительно оси вращения. Работает вместе с относительным сдвигом</translation>
+    </message>
+    <message>
+        <location line="-654"/>
         <source>Output remap</source>
         <translation>Переназначение осей</translation>
     </message>
@@ -670,7 +662,8 @@ Exiting now.</source>
         <translation>Сопостовление исходных и игровых осей.</translation>
     </message>
     <message>
-        <location line="-349"/>
+        <location line="-612"/>
+        <location line="+263"/>
         <location line="+15"/>
         <location line="+46"/>
         <location line="+39"/>
@@ -678,7 +671,7 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>X</source>
-        <translation>Смещение по оси X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="-273"/>
@@ -686,7 +679,8 @@ Exiting now.</source>
         <translation>Инвертировать</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-240"/>
+        <location line="+253"/>
         <location line="+46"/>
         <location line="+39"/>
         <location line="+40"/>
@@ -694,10 +688,11 @@ Exiting now.</source>
         <location line="+46"/>
         <location line="+46"/>
         <source>Y</source>
-        <translation>Смещение по оси Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
-        <location line="-260"/>
+        <location line="-495"/>
+        <location line="+235"/>
         <location line="+46"/>
         <location line="+39"/>
         <location line="+88"/>
@@ -705,7 +700,7 @@ Exiting now.</source>
         <location line="+28"/>
         <location line="+18"/>
         <source>Z</source>
-        <translation>Смещение по оси Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location line="-245"/>
@@ -740,22 +735,17 @@ Exiting now.</source>
     <message>
         <location line="+209"/>
         <source>Neck displacement</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройка смещения шеи, как смещения оси поворота</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. Set to zeros in order to disable. It also works with relative translation disabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+40"/>
+        <location line="+49"/>
         <source>Height from center of rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Выше/ниже</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Forward from center of rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Вперед/назад</translation>
     </message>
     <message>
         <location line="+43"/>
