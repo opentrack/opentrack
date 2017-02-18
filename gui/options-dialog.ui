@@ -1843,7 +1843,7 @@
           <item>
            <widget class="QLabel" name="label_33">
             <property name="text">
-             <string>Eyes will be offset from the pivot of rotation, assumed to be the neck. Set to zeros in order to disable. It also works with relative translation disabled.</string>
+             <string>Eyes will be offset from the pivot of rotation, assumed to be the neck. It also works with relative translation disabled.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
