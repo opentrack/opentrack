@@ -85,8 +85,10 @@ void accela::filter(const double* input, double *output)
                                    std::fabs(nl.cur() - 1) > 5e-3 &&
                                    vec < nl.max();
 
+                               static constexpr double nl_end = 1.5;
+
                                if (should_apply_rot_nonlinearity)
-                                   return std::pow(out_/nl.max(), nl.cur()) * nl.max();
+                                   return std::pow(out_/nl_end, nl.cur()) * nl_end;
                                else
                                    return out_;
         );
