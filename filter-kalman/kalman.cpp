@@ -12,7 +12,7 @@ constexpr double settings::adaptivity_window_length;
 constexpr double settings::deadzone_scale;
 constexpr double settings::deadzone_exponent;
 constexpr double settings::process_sigma_pos;
-constexpr double settings::process_simga_rot;
+constexpr double settings::process_sigma_rot;
 
 void KalmanFilter::init()
 {
@@ -119,7 +119,7 @@ void kalman::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
     // with a very well predictable trajectory (e.g.
     // https://en.wikipedia.org/wiki/Kalman_filter#Example_application.2C_technical)
     double sigma_pos = s.process_sigma_pos;
-    double sigma_angle = s.process_simga_rot;
+    double sigma_angle = s.process_sigma_rot;
     double a_pos = sigma_pos * sigma_pos * dt;
     double a_ang = sigma_angle * sigma_angle * dt;
     static constexpr double b = 20;
