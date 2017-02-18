@@ -610,13 +610,6 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& d)
         return nullptr;
     });
 
-    if (just_created)
-    {
-        using plugin_api::detail::BaseDialog;
-        QObject::connect(static_cast<BaseDialog*>(d.get()), &BaseDialog::closing,
-                         qApp->instance(), [&d]() { d = nullptr; });
-    }
-
     return just_created;
 }
 
