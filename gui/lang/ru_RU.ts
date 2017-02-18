@@ -66,29 +66,29 @@
     </message>
     <message>
         <location line="+78"/>
-        <location line="+381"/>
+        <location line="+388"/>
         <source>opentrack</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-378"/>
+        <location line="-385"/>
         <source> (debug)</source>
         <translation></translation>
     </message>
     <message>
         <location line="+8"/>
-        <location line="+559"/>
+        <location line="+557"/>
         <source>Show the Octopus</source>
         <translation>Показать осьминожка</translation>
     </message>
     <message>
-        <location line="-559"/>
-        <location line="+559"/>
+        <location line="-557"/>
+        <location line="+557"/>
         <source>Hide the Octopus</source>
         <translation>Спрятать осьминожка</translation>
     </message>
     <message>
-        <location line="-552"/>
+        <location line="-550"/>
         <source>Tracker settings</source>
         <translation>Настройка источника данных</translation>
     </message>
@@ -118,7 +118,7 @@
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+38"/>
         <source>The Octopus is sad</source>
         <translation>Осьминожек опечален</translation>
     </message>
@@ -157,12 +157,12 @@ Exiting now.</source>
     <message>
         <location filename="../options-dialog.cpp" line="+27"/>
         <source>Joy button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите кнопку %</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Не назначена</translation>
     </message>
 </context>
 <context>
@@ -295,47 +295,61 @@ Exiting now.</source>
 <context>
     <name>mapping_window</name>
     <message>
-        <location filename="../mapping-window.ui" line="+32"/>
+        <location filename="../mapping-window.ui" line="+26"/>
         <source>Mapping properties</source>
         <translation>Настройка кривых</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+20"/>
         <source>Yaw</source>
         <translation>Рысканье</translation>
     </message>
     <message>
         <location line="+24"/>
-        <location line="+53"/>
-        <location line="+53"/>
-        <location line="+53"/>
-        <location line="+53"/>
-        <location line="+53"/>
+        <location line="+88"/>
+        <location line="+88"/>
+        <source>Max rotation</source>
+        <translation>Максимальный угол</translation>
+    </message>
+    <message>
+        <location line="-138"/>
+        <location line="+88"/>
+        <location line="+88"/>
+        <location line="+92"/>
+        <location line="+88"/>
+        <location line="+88"/>
         <source>Asymmetric mapping below</source>
         <translation>Ассиметричная настройка кривых</translation>
     </message>
     <message>
-        <location line="-236"/>
+        <location line="-418"/>
         <source>Pitch</source>
         <translation>Тангаж</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+88"/>
         <source>Roll</source>
         <translation>Крен</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+92"/>
         <source>X</source>
         <translation>Смещение по оси X</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+24"/>
+        <location line="+88"/>
+        <location line="+88"/>
+        <source>Max translation</source>
+        <translation>Максимальное смещение</translation>
+    </message>
+    <message>
+        <location line="-112"/>
         <source>Y</source>
         <translation>Смещение по оси Y</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+88"/>
         <source>Z</source>
         <translation>Смещение по оси Z</translation>
     </message>
@@ -345,12 +359,12 @@ Exiting now.</source>
     <message>
         <location filename="../new_file_dialog.h" line="+42"/>
         <source>File exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл создан</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file already exists. Pick another name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Данный файл уже создан. Пожалуйста выберите другое имя.</translation>
     </message>
 </context>
 <context>
@@ -361,7 +375,7 @@ Exiting now.</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+20"/>
         <source>Shortcuts</source>
         <translation>Горячие клавиши</translation>
     </message>
@@ -371,77 +385,80 @@ Exiting now.</source>
         <translation>Глобальные горячие клавиши</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>использовать текущую позу как позу вперед</translatorcomment>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центрирование&lt;/span&gt; - использовать текущую позу в качестве центра.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Фиксация обзора&lt;/span&gt; - фиксация обзора до следующего нажатия клавиши.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центр&lt;/span&gt; - фиксирует взгляд в нулевой точке до следующего нажатия клавиши.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+32"/>
-        <location line="+7"/>
-        <location line="+31"/>
-        <location line="+14"/>
-        <location line="+17"/>
-        <location line="+7"/>
-        <location line="+38"/>
-        <location line="+77"/>
-        <location line="+17"/>
-        <location line="+21"/>
+        <location line="+54"/>
+        <location line="+99"/>
+        <location line="+39"/>
+        <location line="+23"/>
+        <location line="+33"/>
+        <location line="+23"/>
+        <location line="+13"/>
+        <location line="+13"/>
+        <location line="+52"/>
+        <location line="+26"/>
+        <location line="+13"/>
+        <location line="+13"/>
+        <location line="+39"/>
+        <location line="+26"/>
+        <location line="+26"/>
+        <location line="+26"/>
+        <location line="+26"/>
+        <location line="+26"/>
         <source>Bind</source>
         <translation>Назначить</translation>
     </message>
     <message>
-        <location line="-215"/>
+        <location line="-371"/>
         <source>Restart tracking</source>
         <translation>Перезапустить трекер</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+36"/>
         <source>Toggle while held</source>
         <translation>Фиксация обзора при удержании</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+20"/>
         <source>Toggle tracking</source>
         <translation>Запустить/Остановить трекер</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="-217"/>
         <source>Start tracking</source>
         <translation>Запустить трекер</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+36"/>
         <source>Stop tracking</source>
         <translation>Остановить трекер</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+10"/>
         <source>Center</source>
         <translation>Центрирование</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+23"/>
         <source>Zero</source>
         <translation>Центр</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+23"/>
         <source>Zero while held</source>
         <translation>Центр при удержании</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
         <source>Toggle</source>
         <translation>Фиксация обзора</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <source>Relative translation off while held</source>
-        <translation>Выкл. относительного сдвига при удержании</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+452"/>
         <source>Center at startup</source>
         <translation>Центрирование при запуске</translation>
     </message>
@@ -463,12 +480,13 @@ Exiting now.</source>
         <translation>°</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+638"/>
+        <location line="+258"/>
         <source>Enable</source>
         <translation>Включить</translation>
     </message>
     <message>
-        <location line="-488"/>
+        <location line="-1218"/>
         <source>Minimize to tray on startup when enabled</source>
         <translation>Сворачивать в трей при запуске</translation>
     </message>
@@ -500,7 +518,7 @@ Exiting now.</source>
     <message>
         <location line="+34"/>
         <location line="+206"/>
-        <location line="+381"/>
+        <location line="+196"/>
         <location line="+47"/>
         <location line="+46"/>
         <location line="+39"/>
@@ -511,9 +529,9 @@ Exiting now.</source>
         <translation>Крен</translation>
     </message>
     <message>
-        <location line="-860"/>
+        <location line="-675"/>
         <location line="+130"/>
-        <location line="+460"/>
+        <location line="+275"/>
         <location line="+18"/>
         <location line="+28"/>
         <location line="+39"/>
@@ -524,9 +542,9 @@ Exiting now.</source>
         <translation>Тангаж</translation>
     </message>
     <message>
-        <location line="-832"/>
+        <location line="-647"/>
         <location line="+167"/>
-        <location line="+395"/>
+        <location line="+210"/>
         <location line="+46"/>
         <location line="+39"/>
         <location line="+51"/>
@@ -537,7 +555,7 @@ Exiting now.</source>
         <translation>Рысканье</translation>
     </message>
     <message>
-        <location line="-814"/>
+        <location line="-629"/>
         <source>Custom center pose</source>
         <translation>Настройка центральной позиции</translation>
     </message>
@@ -550,11 +568,13 @@ Exiting now.</source>
         <location line="+49"/>
         <location line="+23"/>
         <location line="+60"/>
+        <location line="+862"/>
+        <location line="+22"/>
         <source> cm</source>
         <translation> см</translation>
     </message>
     <message>
-        <location line="-67"/>
+        <location line="-951"/>
         <source>TX</source>
         <translation>Смещение по X</translation>
     </message>
@@ -594,27 +614,23 @@ Exiting now.</source>
         <translation>Абсолютный (камеры)</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Experimental (camera device)</source>
-        <translation>Экспериментальный (камеры)</translation>
-    </message>
-    <message>
         <location line="+31"/>
         <source>Output</source>
         <translation>Выходной интерфейс</translation>
     </message>
     <message>
+        <location line="+474"/>
         <location line="+15"/>
         <source>Relative translation</source>
         <translation>Относительный сдвиг</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+12"/>
         <source>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</source>
         <translation>Настройка относительных сдвигов после поворота на 180 градусов, перемещения по осям X и Z будут инвертированными. Пример: если Вам необходимо при повороте головы на 180 градусов смещаться в противоположную сторону по оси X от Вашего реального смещения, тогда необходимо включить данную настройку.</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+65"/>
         <source>Disable for X</source>
         <translation>Откл. по оси X</translation>
     </message>
@@ -644,17 +660,17 @@ Exiting now.</source>
         <translation>Откл. по оси крена</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="-626"/>
         <source>Output remap</source>
         <translation>Переназначение осей</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+393"/>
         <source>Assign input axis to output axis.</source>
         <translation>Сопостовление исходных и игровых осей.</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-349"/>
         <location line="+15"/>
         <location line="+46"/>
         <location line="+39"/>
@@ -712,7 +728,7 @@ Exiting now.</source>
         <translation>Исходная ось</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+197"/>
         <source>CSV Data Logging</source>
         <translation>Логирование в формат CSV</translation>
     </message>
@@ -722,7 +738,27 @@ Exiting now.</source>
         <translation>Включить - необходимо будет указать имя файла при запуске трекера</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+209"/>
+        <source>Neck displacement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. Set to zeros in order to disable. It also works with relative translation disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Height from center of rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Forward from center of rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <location line="+12"/>
         <source>Game detection</source>
         <translation>Захват игр</translation>
