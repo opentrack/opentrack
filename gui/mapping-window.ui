@@ -59,7 +59,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -327,7 +327,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout444">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label4">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -415,7 +415,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout555">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label5">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -503,7 +503,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout666">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label6">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
