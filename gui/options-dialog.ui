@@ -970,7 +970,7 @@
              <item row="0" column="2">
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>TX</string>
+                <string>X</string>
                </property>
               </widget>
              </item>
@@ -1000,7 +1000,7 @@
              <item row="1" column="2">
               <widget class="QLabel" name="label_5">
                <property name="text">
-                <string>TY</string>
+                <string>Y</string>
                </property>
               </widget>
              </item>
@@ -1023,7 +1023,7 @@
              <item row="2" column="2">
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>TZ</string>
+                <string>Z</string>
                </property>
               </widget>
              </item>
