@@ -125,6 +125,7 @@ public:
         }
 
         if (errorHandler.error) {
+            qWarning() << "grab key error for" << "keycode" << keycode;
             ungrabKey(keycode, modifiers, window);
             return false;
         }
