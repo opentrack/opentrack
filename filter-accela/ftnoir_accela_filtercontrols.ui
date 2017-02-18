@@ -344,6 +344,9 @@
         <property name="text">
          <string>Setting it higher will filter out rotation noise but may cause sudden jumps on very high settings.</string>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
