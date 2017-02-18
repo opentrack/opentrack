@@ -102,10 +102,15 @@ struct main_settings
     value<int> center_method;
     value<int> neck_y, neck_z;
     value<bool> neck_enable;
-    key_opts key_start_tracking, key_stop_tracking, key_toggle_tracking, key_restart_tracking;
-    key_opts key_center, key_toggle, key_zero;
-    key_opts key_toggle_press, key_zero_press;
-    key_opts key_disable_tcomp_press;
+    key_opts key_start_tracking1, key_start_tracking2;
+    key_opts key_stop_tracking1, key_stop_tracking2;
+    key_opts key_toggle_tracking1, key_toggle_tracking2;
+    key_opts key_restart_tracking1, key_restart_tracking2;
+    key_opts key_center1, key_center2;
+    key_opts key_toggle1, key_toggle2;
+    key_opts key_zero1, key_zero2;
+    key_opts key_toggle_press1, key_toggle_press2;
+    key_opts key_zero_press1, key_zero_press2;
     value<bool> tracklogging_enabled;
     value<QString> tracklogging_filename;
     main_settings() :
@@ -135,16 +140,24 @@ struct main_settings
         neck_y(b, "neck-height", 0),
         neck_z(b, "neck-depth", 0),
         neck_enable(b, "neck-enable", false),
-        key_start_tracking(b, "start-tracking"),
-        key_stop_tracking(b, "stop-tracking"),
-        key_toggle_tracking(b, "toggle-tracking"),
-        key_restart_tracking(b, "restart-tracking"),
-        key_center(b, "center"),
-        key_toggle(b, "toggle"),
-        key_zero(b, "zero"),
-        key_toggle_press(b, "toggle-press"),
-        key_zero_press(b, "zero-press"),
-        key_disable_tcomp_press(b, "disable-translation-compensation-while-held"),
+        key_start_tracking1(b, "start-tracking"),
+        key_start_tracking2(b, "start-tracking-alt"),
+        key_stop_tracking1(b, "stop-tracking"),
+        key_stop_tracking2(b, "stop-tracking-alt"),
+        key_toggle_tracking1(b, "toggle-tracking"),
+        key_toggle_tracking2(b, "toggle-tracking-alt"),
+        key_restart_tracking1(b, "restart-tracking"),
+        key_restart_tracking2(b, "restart-tracking-alt"),
+        key_center1(b, "center"),
+        key_center2(b, "center-alt"),
+        key_toggle1(b, "toggle"),
+        key_toggle2(b, "toggle-alt"),
+        key_zero1(b, "zero"),
+        key_zero2(b, "zero-alt"),
+        key_toggle_press1(b, "toggle-press"),
+        key_toggle_press2(b, "toggle-press-alt"),
+        key_zero_press1(b, "zero-press"),
+        key_zero_press2(b, "zero-press-alt"),
         tracklogging_enabled(b, "tracklogging-enabled", false),
         tracklogging_filename(b, "tracklogging-filename", QString())
     {

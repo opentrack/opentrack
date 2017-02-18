@@ -103,16 +103,32 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
         QPushButton* button;
     } tuples[] =
     {
-        { main.key_center, ui.center_text, ui.bind_center },
-        { main.key_toggle, ui.toggle_text, ui.bind_toggle },
-        { main.key_toggle_press, ui.toggle_held_text, ui.bind_toggle_held },
-        { main.key_zero, ui.zero_text, ui.bind_zero },
-        { main.key_zero_press, ui.zero_held_text, ui.bind_zero_held },
-        { main.key_start_tracking, ui.start_tracking_text, ui.bind_start },
-        { main.key_stop_tracking, ui.stop_tracking_text , ui.bind_stop},
-        { main.key_toggle_tracking, ui.toggle_tracking_text, ui.bind_toggle_tracking },
-        { main.key_restart_tracking, ui.restart_tracking_text, ui.bind_restart_tracking },
-        { main.key_disable_tcomp_press, ui.tcomp_off_held_text, ui.bind_tcomp_off_held },
+        { main.key_center1, ui.center_text, ui.bind_center },
+        { main.key_center2, ui.center_text_2, ui.bind_center_2 },
+
+        { main.key_toggle1, ui.toggle_text, ui.bind_toggle },
+        { main.key_toggle2, ui.toggle_text_2, ui.bind_toggle_2 },
+
+        { main.key_toggle_press1, ui.toggle_held_text, ui.bind_toggle_held },
+        { main.key_toggle_press2, ui.toggle_held_text_2, ui.bind_toggle_held_2 },
+
+        { main.key_zero1, ui.zero_text, ui.bind_zero },
+        { main.key_zero2, ui.zero_text_2, ui.bind_zero_2 },
+
+        { main.key_zero_press1, ui.zero_held_text, ui.bind_zero_held },
+        { main.key_zero_press2, ui.zero_held_text_2, ui.bind_zero_held_2 },
+
+        { main.key_start_tracking1, ui.start_tracking_text, ui.bind_start },
+        { main.key_start_tracking2, ui.start_tracking_text_2, ui.bind_start_2 },
+
+        { main.key_stop_tracking1, ui.stop_tracking_text , ui.bind_stop },
+        { main.key_stop_tracking2, ui.stop_tracking_text_2 , ui.bind_stop_2 },
+
+        { main.key_toggle_tracking1, ui.toggle_tracking_text, ui.bind_toggle_tracking },
+        { main.key_toggle_tracking2, ui.toggle_tracking_text_2, ui.bind_toggle_tracking_2 },
+
+        { main.key_restart_tracking1, ui.restart_tracking_text, ui.bind_restart_tracking },
+        { main.key_restart_tracking2, ui.restart_tracking_text_2, ui.bind_restart_tracking_2 },
     };
 
     for (const tmp& val_ : tuples)

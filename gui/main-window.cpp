@@ -233,10 +233,17 @@ void MainWindow::register_shortcuts()
 
     t_keys keys
     {
-        t_key(s.key_start_tracking, [&](bool) -> void { emit_start_tracker(); }, true),
-        t_key(s.key_stop_tracking, [&](bool) -> void { emit_stop_tracker(); }, true),
-        t_key(s.key_toggle_tracking, [&](bool) -> void { emit_toggle_tracker(); }, true),
-        t_key(s.key_restart_tracking, [&](bool) -> void { emit_restart_tracker(); }, true),
+        t_key(s.key_start_tracking1, [&](bool) -> void { emit_start_tracker(); }, true),
+        t_key(s.key_start_tracking2, [&](bool) -> void { emit_start_tracker(); }, true),
+
+        t_key(s.key_stop_tracking1, [&](bool) -> void { emit_stop_tracker(); }, true),
+        t_key(s.key_stop_tracking2, [&](bool) -> void { emit_stop_tracker(); }, true),
+
+        t_key(s.key_toggle_tracking1, [&](bool) -> void { emit_toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking2, [&](bool) -> void { emit_toggle_tracker(); }, true),
+
+        t_key(s.key_restart_tracking1, [&](bool) -> void { emit_restart_tracker(); }, true),
+        t_key(s.key_restart_tracking2, [&](bool) -> void { emit_restart_tracker(); }, true),
     };
 
     global_shortcuts.reload(keys);
