@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SimConnect settings FaceTrackNoIR</string>
+   <string>Protocol settings</string>
   </property>
   <property name="windowIcon">
    <iconset>
