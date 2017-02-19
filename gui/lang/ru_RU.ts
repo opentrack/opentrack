@@ -157,7 +157,7 @@ Exiting now.</source>
     <message>
         <location filename="../options-dialog.cpp" line="+27"/>
         <source>Joy button %1</source>
-        <translation>Нажмите кнопку %</translation>
+        <translation>Нажмите кнопку %1</translation>
     </message>
     <message>
         <location line="+3"/>
