@@ -29,7 +29,7 @@ For the latest releases visit: <<https://github.com/opentrack/opentrack/releases
 - Relaying via UDP from a different computer
 - Relaying UDP via FreePIE-specific Android app
 - Joystick analog axes (Windows, Linux)
-- Windows Phone [tracker](http://www.windowsphone.com/en-us/store/app/opentrack-head-tracking/1c604f32-6d68-40ef-aa44-3163e30f547f) over opentrack UDP protocol
+- Windows Phone [tracker](https://github.com/ZanderAdam/OpenTrack.WindowsPhone/wiki) over opentrack UDP protocol
 - Arduino with custom firmware
 - Intel RealSense 3D cameras (Windows)
 
