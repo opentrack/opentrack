@@ -67,12 +67,14 @@ function(merge_translations)
         endforeach()
 
         if(NOT ts STREQUAL "")
-            add_custom_target(i18n-lang-${i} ALL
-                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}")
+            add_custom_command(OUTPUT "${qm-output}"
+                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
+                DEPENDS ${ts}
+                COMMENT "Running lrelease for ${i}")
+            add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")
             list(APPEND all-deps "i18n-lang-${i}")
             install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         else()
-            #add_custom_target(i18n-lang-${i} DEPENDS ${deps})
             message(FATAL_ERROR "build logic error: no translations for language ${i}")
         endif()
     endforeach()
