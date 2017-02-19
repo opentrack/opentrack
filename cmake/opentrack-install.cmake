@@ -55,20 +55,20 @@ function(merge_translations)
 
     get_property(modules GLOBAL PROPERTY opentrack-all-modules)
 
+    set(deps "")
+
     foreach(i ${opentrack-all-translations})
         get_property(ts GLOBAL PROPERTY "opentrack-ts-${i}")
 
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
-        set(deps "")
         foreach(k ${modules})
             list(APPEND deps "i18n-module-${k}")
         endforeach()
 
         if(NOT ts STREQUAL "")
-            add_custom_target(i18n-lang-${i}
-                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
-                DEPENDS ${deps})
+            add_custom_target(i18n-lang-${i} ALL
+                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}")
             list(APPEND all-deps "i18n-lang-${i}")
             install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         else()
@@ -81,6 +81,6 @@ function(merge_translations)
     if(SDK_REGEN_TRANSLATIONS OR maybe-force-i18n)
         set(maybe-all ALL)
     endif()
-    add_custom_target(i18n ${maybe-all} DEPENDS ${all-deps})
+    add_custom_target(i18n ${maybe-all} DEPENDS ${all-deps} ${deps})
 endfunction()
 
