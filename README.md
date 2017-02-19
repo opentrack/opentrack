@@ -42,7 +42,7 @@ For the latest releases visit: <<https://github.com/opentrack/opentrack/releases
 - Wine freetrack glue protocol (Linux, OSX)
 - X-Plane plugin (Linux)
 - Tablet-like mouse output (Windows)
-- FlightGear Nasal script
+- FlightGear
 - FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
 
 ***
