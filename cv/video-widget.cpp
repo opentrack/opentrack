@@ -24,7 +24,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     {
         const int w = preview_size.width(), h = preview_size.height();
 
-        if (!w || !h)
+        if (w < 1 || h < 1)
             return;
 
         if (_frame.cols != frame.cols || _frame.rows != frame.rows)
