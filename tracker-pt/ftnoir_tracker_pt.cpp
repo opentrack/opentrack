@@ -94,7 +94,7 @@ void Tracker_PT::run()
 
             auto fun = [&](const vec2& p, const cv::Scalar& color)
             {
-                static constexpr f len = 9;
+                static constexpr int len = 9;
 
                 cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols/2),
                              iround(-p[1] * preview_frame.cols + preview_frame.rows/2));
