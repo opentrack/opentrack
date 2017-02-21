@@ -22,6 +22,11 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
     if (!freshp)
     {
+        const int w = preview_size.width(), h = preview_size.height();
+
+        if (!w || !h)
+            return;
+
         if (_frame.cols != frame.cols || _frame.rows != frame.rows)
             _frame = cv::Mat(frame.rows, frame.cols, CV_8UC3);
         frame.copyTo(_frame);
@@ -29,8 +34,6 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
         if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
             _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC3);
-
-        const int w = preview_size.width(), h = preview_size.height();
 
         if (_frame3.cols != w || _frame3.rows != h)
             _frame3 = cv::Mat(h, w, CV_8UC3);
@@ -50,7 +53,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
         const cv::Mat& img = *img_;
 
-        texture = QImage((const unsigned char*) img.data, img.cols, img.rows, QImage::Format_RGB888);
+        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_RGB888);
     }
 }
 
