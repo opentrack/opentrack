@@ -10,16 +10,15 @@
 #include <opencv2/imgproc.hpp>
 
 cv_video_widget::cv_video_widget(QWidget* parent) :
-    QWidget(parent),
-    freshp(false)
+    QWidget(parent), freshp(false)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
-    timer.start(50);
+    timer.start(65);
 }
 
 void cv_video_widget::update_image(const cv::Mat& frame)
 {
-    QMutexLocker foo(&mtx);
+    QMutexLocker l(&mtx);
 
     if (!freshp)
     {
