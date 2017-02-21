@@ -621,7 +621,8 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& d)
     {
         using plugin_api::detail::BaseDialog;
         QObject::connect(static_cast<BaseDialog*>(d.get()), &BaseDialog::closing,
-                         qApp->instance(), [&d]() { d = nullptr; });
+                         qApp->instance(), [&d]() { d = nullptr; },
+                         Qt::QueuedConnection);
     }
 
     return just_created;
