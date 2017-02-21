@@ -31,14 +31,27 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
             _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC3);
 
-        if (_frame3.cols != width() || _frame3.rows != height())
-            _frame3 = cv::Mat(height(), width(), CV_8UC3);
+        const int w = preview_size.width(), h = preview_size.height();
+
+        if (_frame3.cols != w || _frame3.rows != h)
+            _frame3 = cv::Mat(h, w, CV_8UC3);
 
         cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
-        if (_frame.cols != width() || _frame.rows || height())
-            cv::resize(_frame2, _frame3, cv::Size(width(), height()), 0, 0, cv::INTER_NEAREST);
 
-        texture = QImage((const unsigned char*) _frame3.data, _frame3.cols, _frame3.rows, QImage::Format_RGB888);
+        const cv::Mat* img_;
+
+        if (_frame.cols != w || _frame.rows != h)
+        {
+            cv::resize(_frame2, _frame3, cv::Size(w, h), 0, 0, cv::INTER_NEAREST);
+
+            img_ = &_frame3;
+        }
+        else
+            img_ = &_frame2;
+
+        const cv::Mat& img = *img_;
+
+        texture = QImage((const unsigned char*) img.data, img.cols, img.rows, QImage::Format_RGB888);
     }
 }
 
@@ -52,6 +65,8 @@ void cv_video_widget::paintEvent(QPaintEvent*)
 void cv_video_widget::update_and_repaint()
 {
     QMutexLocker l(&mtx);
+
+    preview_size = size();
 
     if (freshp)
     {

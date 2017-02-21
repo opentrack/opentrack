@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QSize>
 #include <QDebug>
 
 class cv_video_widget final : public QWidget
@@ -32,6 +33,7 @@ private:
     QMutex mtx;
     QImage texture;
     QTimer timer;
+    QSize preview_size;
     cv::Mat _frame, _frame2, _frame3;
     bool freshp;
 };
