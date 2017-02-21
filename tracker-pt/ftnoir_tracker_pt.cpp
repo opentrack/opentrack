@@ -58,7 +58,6 @@ void Tracker_PT::run()
 #endif
 
     apply_settings();
-    cv::Mat frame_;
 
     while((commands & ABORT) == 0)
     {
@@ -70,17 +69,13 @@ void Tracker_PT::run()
         {
             QMutexLocker l(&camera_mtx);
             new_frame = camera.get_frame(dt, frame, cam_info);
-            if (new_frame)
-            {
-                if (frame.rows != frame_.rows || frame.cols != frame_.cols)
-                    frame_ = cv::Mat(frame.rows, frame.cols, CV_8UC3);
-            }
-            frame.copyTo(frame_);
         }
 
-        if (new_frame && !frame_.empty())
+        cv::resize(frame, preview_frame, cv::Size(preview_size.width(), preview_size.height()), 0, 0, cv::INTER_NEAREST);
+
+        if (new_frame && !frame.empty())
         {
-            point_extractor.extract_points(frame_, points);
+            point_extractor.extract_points(frame, preview_frame, points);
             point_count = points.size();
 
             f fx;
@@ -99,26 +94,20 @@ void Tracker_PT::run()
 
             auto fun = [&](const vec2& p, const cv::Scalar& color)
             {
-                using std::round;
-                using std::sqrt;
-                using std::max;
+                static constexpr f len = 9;
 
-                static constexpr int frame_size = 400;
-                const double size = max(1., 1.5*sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size);
-                const int len = std::max(1, iround(size * 7.5));
-
-                cv::Point p2(int(round(p[0] * frame_.cols + frame_.cols/2)),
-                             int(round(-p[1] * frame_.cols + frame_.rows/2)));
-                cv::line(frame_,
+                cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols/2),
+                             iround(-p[1] * preview_frame.cols + preview_frame.rows/2));
+                cv::line(preview_frame,
                          cv::Point(p2.x - len, p2.y),
                          cv::Point(p2.x + len, p2.y),
                          color,
-                         iround(size/2));
-                cv::line(frame_,
+                         1);
+                cv::line(preview_frame,
                          cv::Point(p2.x, p2.y - len),
                          cv::Point(p2.x, p2.y + len),
                          color,
-                         iround(size/2));
+                         1);
             };
 
             for (unsigned i = 0; i < points.size(); i++)
@@ -140,7 +129,7 @@ void Tracker_PT::run()
                 fun(p_, cv::Scalar(0, 0, 255));
             }
 
-            video_widget->update_image(frame_);
+            video_widget->update_image(preview_frame);
         }
     }
     qDebug() << "pt: thread stopped";
@@ -166,12 +155,13 @@ void Tracker_PT::apply_settings()
 void Tracker_PT::start_tracker(QFrame* video_frame)
 {
     video_frame->setAttribute(Qt::WA_NativeWindow);
+    preview_size = video_frame->size();
     video_widget = qptr<cv_video_widget>(video_frame);
     layout = qptr<QHBoxLayout>(video_frame);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(video_widget.data());
     video_frame->setLayout(layout.data());
-    video_widget->resize(video_frame->width(), video_frame->height());
+    //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
     start();
 }

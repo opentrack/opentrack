@@ -26,6 +26,7 @@
 #include <QMutexLocker>
 #include <QTime>
 #include <QLayout>
+#include <QSize>
 #include <atomic>
 #include <memory>
 #include <vector>
@@ -74,8 +75,10 @@ private:
 
     settings_pt s;
     Timer time;
-    cv::Mat frame;
+    cv::Mat frame, preview_frame;
     std::vector<vec2> points;
+
+    QSize preview_size;
 
     volatile unsigned point_count;
     volatile unsigned char commands;

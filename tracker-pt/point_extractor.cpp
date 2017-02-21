@@ -76,7 +76,7 @@ PointExtractor::PointExtractor()
     blobs.reserve(max_blobs);
 }
 
-void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
+void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     using std::sqrt;
     using std::max;
@@ -193,19 +193,19 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<vec2>& points)
                 blob b(radius, cv::Vec2d(m10 / N, m01 / N), N/sqrt(double(cnt)), rect);
                 blobs.push_back(b);
 
-                static constexpr int frame_size = 400;
-                const double size = std::max(1, iround(std::sqrt(frame.rows*frame.rows + frame.cols*frame.cols) / frame_size));
-
                 {
                     char buf[64];
                     sprintf(buf, "%.2fpx", radius);
-                    cv::putText(frame,
+                    static const vec2 off(10, 7.5);
+                    const f cx = preview_frame.cols / f(frame.cols),
+                            cy = preview_frame.rows / f(frame.rows);
+                    cv::putText(preview_frame,
                                 buf,
-                                cv::Point((int)round(b.pos[0]+15*size), (int)round(b.pos[1]+10*size)),
+                                cv::Point(iround(b.pos[0]*cx+off[0]), iround(b.pos[1]*cy+off[1])),
                                 cv::FONT_HERSHEY_PLAIN,
-                                size,
+                                1,
                                 cv::Scalar(0, 0, 255),
-                                iround(size));
+                                1);
                 }
 
                 if (idx >= max_blobs) goto end;
@@ -251,7 +251,7 @@ end:
     points.reserve(max_blobs);
     points.clear();
 
-    for (auto& b : blobs)
+    for (const auto& b : blobs)
     {
         // note: H/W is equal to fx/fy
 
@@ -260,7 +260,8 @@ end:
     }
 }
 
-PointExtractor::blob::blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect& rect) : radius(radius), brightness(brightness), pos(pos), rect(rect)
+PointExtractor::blob::blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect& rect) :
+    radius(radius), brightness(brightness), pos(pos), rect(rect)
 {
     //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
 }
