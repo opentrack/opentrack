@@ -252,6 +252,13 @@ void Tracker::logic()
         }
     }
 
+    // don't invert after t_compensate
+    // inverting here doesn't break centering
+
+    for (int i = 0; i < 6; i++)
+        if (m(i).opts.invert)
+            value(i) = -value(i);
+
     logger.write_pose(value); // "corrected" - after various transformations to account for camera position
 
     nanp |= is_nan(value);
@@ -336,10 +343,6 @@ void Tracker::logic()
         value(i) = map(value(i), m(i));
 
     nanp |= is_nan(value);
-
-    for (int i = 0; i < 6; i++)
-        if (m(i).opts.invert)
-            value(i) = -value(i);
 
     logger.write_pose(value); // "mapped"
 
