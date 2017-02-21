@@ -223,6 +223,7 @@ end:
     {
         blob &b = blobs[idx];
         cv::Rect rect = b.rect;
+
         rect.x -= rect.width / 2;
         rect.y -= rect.height / 2;
         rect.width *= 2;
@@ -231,7 +232,11 @@ end:
 
         cv::Mat frame_roi = frame_gray(rect);
 
-        const double kernel_radius = b.radius * 1.5;
+        // smaller values mean more changes. 1 makes too many changes while 1.5 makes about .1
+        // seems values close to 1.3 reduce noise best with about .15->.2 changes
+        static constexpr double radius_c = 1.3;
+
+        const double kernel_radius = b.radius * radius_c;
         cv::Vec2d pos(b.pos[0] - rect.x, b.pos[1] - rect.y); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
