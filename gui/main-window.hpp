@@ -60,6 +60,7 @@ class MainWindow : public QMainWindow, private State
     ptr<IFilterDialog> pFilterDialog;
     ptr<IProtocolDialog> pProtocolDialog;
     ptr<ITrackerDialog> pTrackerDialog;
+
     process_detector_worker det;
     QMenu profile_menu;
 
@@ -95,6 +96,18 @@ class MainWindow : public QMainWindow, private State
     void changeEvent(QEvent* e) override;
     void closeEvent(QCloseEvent*) override;
     bool maybe_hide_to_tray(QEvent* e);
+
+    // only use in impl file since no definition in header!
+    template<typename t>
+    bool mk_dialog(mem<dylib> lib, ptr<t>& d);
+
+    // idem
+    template<typename t, typename... Args>
+    inline bool mk_window(ptr<t>& place, Args&&... params);
+
+    // idem
+    template<typename t, typename F>
+    bool mk_window_common(ptr<t>& d, F&& ctor);
 
 private slots:
     void save_modules();

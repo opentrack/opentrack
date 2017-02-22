@@ -527,27 +527,21 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     if (mapping_widget)
         mapping_widget->update();
 
-    double mapped_[6], raw_[6];
+    QLCDNumber* raw_[] = {
+        ui.raw_x, ui.raw_y, ui.raw_z,
+        ui.raw_yaw, ui.raw_pitch, ui.raw_roll,
+    };
 
-    for (int i = 0; i < 6; i++)
+    QLCDNumber* mapped_[] = {
+        ui.pose_x, ui.pose_y, ui.pose_z,
+        ui.pose_yaw, ui.pose_pitch, ui.pose_roll,
+    };
+
+    for (int k = 0; k < 6; k++)
     {
-        mapped_[i] = iround(mapped[i]);
-        raw_[i] = iround(raw[i]);
+        raw_[k]->display(iround(raw[k]));
+        mapped_[k]->display(iround(mapped[k]));
     }
-
-    ui.raw_x->display(raw_[TX]);
-    ui.raw_y->display(raw_[TY]);
-    ui.raw_z->display(raw_[TZ]);
-    ui.raw_yaw->display(raw_[Yaw]);
-    ui.raw_pitch->display(raw_[Pitch]);
-    ui.raw_roll->display(raw_[Roll]);
-
-    ui.pose_x->display(mapped_[TX]);
-    ui.pose_y->display(mapped_[TY]);
-    ui.pose_z->display(mapped_[TZ]);
-    ui.pose_yaw->display(mapped_[Yaw]);
-    ui.pose_pitch->display(mapped_[Pitch]);
-    ui.pose_roll->display(mapped_[Roll]);
 
     QString game_title;
     if (libs.pProtocol)
@@ -576,7 +570,7 @@ void MainWindow::showHeadPose()
 }
 
 template<typename t, typename F>
-static bool mk_window_common(ptr<t>& d, F&& ctor)
+bool MainWindow::mk_window_common(ptr<t>& d, F&& ctor)
 {
     if (d)
     {
@@ -587,14 +581,13 @@ static bool mk_window_common(ptr<t>& d, F&& ctor)
     }
     else if ((d = ptr<t>(ctor())))
     {
-        QEventLoop e(QThread::currentThread());
+        QEventLoop e(d.get());
 
-        d->adjustSize();
-        e.processEvents();
+        e.processEvents(); d->adjustSize(); e.processEvents();
 
         // drain the event loop to reflow properly
         d->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d->windowFlags()); e.processEvents();
-        d->show(); e.processEvents();
+        d->show();
 
         return true;
     }
@@ -603,13 +596,13 @@ static bool mk_window_common(ptr<t>& d, F&& ctor)
 }
 
 template<typename t, typename... Args>
-static bool mk_window(ptr<t>& place, Args&&... params)
+inline bool MainWindow::mk_window(ptr<t>& place, Args&&... params)
 {
     return mk_window_common(place, [&]() { return new t(std::forward<Args>(params)...); });
 }
 
 template<typename t>
-bool mk_dialog(mem<dylib> lib, ptr<t>& d)
+bool MainWindow::mk_dialog(mem<dylib> lib, ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)
@@ -621,7 +614,7 @@ bool mk_dialog(mem<dylib> lib, ptr<t>& d)
     {
         using plugin_api::detail::BaseDialog;
         QObject::connect(static_cast<BaseDialog*>(d.get()), &BaseDialog::closing,
-                         qApp->instance(), [&d]() { d = nullptr; },
+                         this, [&d]() { d = nullptr; },
                          Qt::QueuedConnection);
     }
 
@@ -741,7 +734,8 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
             return false;
         default:
             return true;
-    }))
+        }
+    ))
     {
         return;
     }
@@ -756,11 +750,11 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     setHidden(!is_minimized);
 
     setWindowState(progn(
-                       using ws = Qt::WindowStates;
-                       if (is_minimized)
-                           return ws(windowState() & (~Qt::WindowMinimized));
-                       else
-                           return ws(Qt::WindowNoState);
+        using ws = Qt::WindowStates;
+        if (is_minimized)
+           return ws(windowState() & (~Qt::WindowMinimized));
+        else
+           return ws(Qt::WindowNoState);
     ));
 
     if (is_minimized)
