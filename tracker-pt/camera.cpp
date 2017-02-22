@@ -6,6 +6,7 @@
  */
 
 #include "camera.h"
+#include "compat/sleep.hpp"
 
 namespace impl {
 
@@ -124,8 +125,8 @@ DEFUN_WARN_UNUSED bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {
-        for (int i = 0; i < 100 && !cap->read(frame); i++)
-            ;;
+        for (int i = 0; i < 5 && !cap->read(frame); i++)
+            portable::sleep(100);
 
         if (frame.empty())
             return false;
