@@ -57,8 +57,18 @@ function(merge_translations)
 
     set(deps "")
 
+    get_property(maybe-force-i18n GLOBAL PROPERTY opentrack-force-i18n-regen)
+
+    if(SDK_REGEN_TRANSLATIONS OR maybe-force-i18n)
+        set(maybe-all ALL)
+    endif()
+
     foreach(i ${opentrack-all-translations})
-        get_property(ts GLOBAL PROPERTY "opentrack-ts-${i}")
+        get_property(ts_ GLOBAL PROPERTY "opentrack-ts-${i}")
+        set(ts "")
+        foreach(i ${ts_})
+            list(APPEND ts "${i}")
+        endforeach()
 
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
@@ -79,10 +89,6 @@ function(merge_translations)
         endif()
     endforeach()
     set(maybe-all "")
-    get_property(maybe-force-i18n GLOBAL PROPERTY opentrack-force-i18n-regen)
-    if(SDK_REGEN_TRANSLATIONS OR maybe-force-i18n)
-        set(maybe-all ALL)
-    endif()
     add_custom_target(i18n ${maybe-all} DEPENDS ${all-deps} ${deps})
 endfunction()
 

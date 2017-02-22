@@ -221,9 +221,6 @@ function(opentrack_boilerplate n)
     set(langs "")
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        if (NOT EXISTS "${t}")
-            set_property(GLOBAL PROPERTY opentrack-force-i18n-regen TRUE)
-        endif()
         list(APPEND langs "${t}")
         get_property(tt GLOBAL PROPERTY "opentrack-ts-${i}")
         list(APPEND tt "${t}")
@@ -235,10 +232,12 @@ function(opentrack_boilerplate n)
     set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
 
     if(NOT langs STREQUAL "")
-        add_custom_target(i18n-module-${n}
+        add_custom_command(OUTPUT ${langs}
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
-            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            COMMENT "Running lupdate for ${n}")
+        add_custom_target(i18n-module-${n} DEPENDS ${langs})
     else()
         add_custom_target(i18n-module-${n})
     endif()
