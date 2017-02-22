@@ -55,40 +55,27 @@ function(merge_translations)
 
     get_property(modules GLOBAL PROPERTY opentrack-all-modules)
 
-    set(deps "")
-
-    get_property(maybe-force-i18n GLOBAL PROPERTY opentrack-force-i18n-regen)
-
-    if(SDK_REGEN_TRANSLATIONS OR maybe-force-i18n)
-        set(maybe-all ALL)
-    endif()
-
     foreach(i ${opentrack-all-translations})
-        get_property(ts_ GLOBAL PROPERTY "opentrack-ts-${i}")
-        set(ts "")
-        foreach(i ${ts_})
-            list(APPEND ts "${i}")
-        endforeach()
+        get_property(ts GLOBAL PROPERTY "opentrack-ts-${i}")
 
-        set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
+        set(deps "")
 
         foreach(k ${modules})
             list(APPEND deps "i18n-module-${k}")
         endforeach()
 
-        if(NOT ts STREQUAL "")
-            add_custom_command(OUTPUT "${qm-output}"
-                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
-                DEPENDS ${ts}
-                COMMENT "Running lrelease for ${i}")
-            add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")
-            list(APPEND all-deps "i18n-lang-${i}")
-            install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
-        else()
-            message(FATAL_ERROR "build logic error: no translations for language ${i}")
-        endif()
+        set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
+
+        add_custom_command(OUTPUT "${qm-output}"
+            COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
+            DEPENDS ${ts} ${deps}
+            COMMENT "Running lrelease for ${i}")
+
+        add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")
+
+        list(APPEND all-deps "i18n-lang-${i}")
+        install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
     endforeach()
-    set(maybe-all "")
-    add_custom_target(i18n ${maybe-all} DEPENDS ${all-deps} ${deps})
+    add_custom_target(i18n DEPENDS ${all-deps} ${deps})
 endfunction()
 

@@ -216,30 +216,29 @@ function(opentrack_boilerplate n)
         endif()
     endif()
 
-    set(SDK_REGEN_TRANSLATIONS FALSE CACHE BOOL "Regenerate translation files on build")
-
     set(langs "")
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
+
         list(APPEND langs "${t}")
+
         get_property(tt GLOBAL PROPERTY "opentrack-ts-${i}")
         list(APPEND tt "${t}")
         set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
     endforeach()
 
-    get_property(modules GLOBAL PROPERTY opentrack-all-modules)
     list(APPEND modules "${n}")
     set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
 
-    if(NOT langs STREQUAL "")
-        add_custom_command(OUTPUT ${langs}
+    foreach(i ${langs})
+        add_custom_command(OUTPUT ${i}
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts ${langs}
+            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            COMMENT "Running lupdate for ${n}")
-        add_custom_target(i18n-module-${n} DEPENDS ${langs})
-    else()
-        add_custom_target(i18n-module-${n})
-    endif()
+            DEPENDS ${${n}-all}
+            COMMENT "Running lupdate for ${i}")
+    endforeach()
+
+    add_custom_target(i18n-module-${n} DEPENDS ${langs})
 endfunction()
 
