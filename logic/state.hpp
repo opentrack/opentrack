@@ -13,7 +13,6 @@ using namespace options;
 #include "api/plugin-support.hpp"
 #include "main-settings.hpp"
 #include "mappings.hpp"
-#include "selected-libraries.hpp"
 #include "work.hpp"
 #include <vector>
 #include <QString>
@@ -25,7 +24,6 @@ struct State
         pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll})
     {}
     Modules modules;
-    SelectedLibraries libs;
     main_settings s;
     Mappings pose;
     mem<Work> work;

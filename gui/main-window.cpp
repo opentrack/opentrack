@@ -441,39 +441,31 @@ void MainWindow::startTracker()
     if (work)
         return;
 
-    // tracker dtor needs run first
-    work = nullptr;
-
-    libs = SelectedLibraries(ui.video_frame, current_tracker(), current_protocol(), current_filter());
-
     {
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
     }
 
-    if (!libs.correct)
+    work = std::make_shared<Work>(pose, ui.video_frame, current_tracker(), current_protocol(), current_filter());
+
+    if (!work->is_ok())
     {
         QMessageBox::warning(this, tr("Library load error"),
                              tr("One of libraries failed to load. Check installation."),
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
-        libs = SelectedLibraries();
+        work = nullptr;
         return;
     }
 
-    save_modules();
-
-    work = std::make_shared<Work>(pose, libs, winId());
-    work->reload_shortcuts();
-
     if (pTrackerDialog)
-        pTrackerDialog->register_tracker(libs.pTracker.get());
+        pTrackerDialog->register_tracker(work->libs.pTracker.get());
 
     if (pFilterDialog)
-        pFilterDialog->register_filter(libs.pFilter.get());
+        pFilterDialog->register_filter(work->libs.pFilter.get());
 
     if (pProtocolDialog)
-        pProtocolDialog->register_protocol(libs.pProtocol.get());
+        pProtocolDialog->register_protocol(work->libs.pProtocol.get());
 
     pose_update_timer.start(50);
 
@@ -505,7 +497,6 @@ void MainWindow::stopTracker()
         pFilterDialog->unregister_filter();
 
     work = nullptr;
-    libs = SelectedLibraries();
 
     {
         double p[6] = {0,0,0, 0,0,0};
@@ -521,6 +512,9 @@ void MainWindow::stopTracker()
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
+    if (!work)
+        return;
+
     ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                               mapped[TX], mapped[TY], mapped[TZ]);
 
@@ -544,8 +538,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     }
 
     QString game_title;
-    if (libs.pProtocol)
-        game_title = libs.pProtocol->game_name();
+    if (work->libs.pProtocol)
+        game_title = work->libs.pProtocol->game_name();
     set_title(game_title);
 }
 
@@ -623,20 +617,20 @@ bool MainWindow::mk_dialog(mem<dylib> lib, ptr<t>& d)
 
 void MainWindow::showTrackerSettings()
 {
-    if (mk_dialog(current_tracker(), pTrackerDialog) && libs.pTracker)
-        pTrackerDialog->register_tracker(libs.pTracker.get());
+    if (mk_dialog(current_tracker(), pTrackerDialog) && work && work->libs.pTracker)
+        pTrackerDialog->register_tracker(work->libs.pTracker.get());
 }
 
 void MainWindow::showProtocolSettings()
 {
-    if (mk_dialog(current_protocol(), pProtocolDialog) && libs.pProtocol)
-        pProtocolDialog->register_protocol(libs.pProtocol.get());
+    if (mk_dialog(current_protocol(), pProtocolDialog) && work && work->libs.pProtocol)
+        pProtocolDialog->register_protocol(work->libs.pProtocol.get());
 }
 
 void MainWindow::showFilterSettings()
 {
-    if (mk_dialog(current_filter(), pFilterDialog) && libs.pFilter)
-        pFilterDialog->register_filter(libs.pFilter.get());
+    if (mk_dialog(current_filter(), pFilterDialog) && work && work->libs.pFilter)
+        pFilterDialog->register_filter(work->libs.pFilter.get());
 }
 
 void MainWindow::show_options_dialog()

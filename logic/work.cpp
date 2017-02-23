@@ -60,12 +60,11 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
 }
 
 
-Work::Work(Mappings& m, SelectedLibraries& libs, WId handle) :
-    libs(libs),
+Work::Work(Mappings& m, QFrame* frame, mem<dylib>& tracker_, mem<dylib>& filter_, mem<dylib>& proto_) :
+    libs(frame, tracker_, filter_, proto_),
     logger(make_logger(s)),
     tracker(std::make_shared<Tracker>(m, libs, *logger)),
     sc(std::make_shared<Shortcuts>()),
-    handle(handle),
     keys {
         key_tuple(s.key_center1, [&](bool) -> void { tracker->center(); }, true),
         key_tuple(s.key_center2, [&](bool) -> void { tracker->center(); }, true),
@@ -83,6 +82,8 @@ Work::Work(Mappings& m, SelectedLibraries& libs, WId handle) :
         key_tuple(s.key_zero_press2, [&](bool x) -> void { tracker->set_zero(x); }, false),
     }
 {
+    if (!is_ok())
+        return;
     reload_shortcuts();
     tracker->start();
 }
@@ -90,6 +91,11 @@ Work::Work(Mappings& m, SelectedLibraries& libs, WId handle) :
 void Work::reload_shortcuts()
 {
     sc->reload(keys);
+}
+
+bool Work::is_ok() const
+{
+    return libs.correct;
 }
 
 Work::~Work()
