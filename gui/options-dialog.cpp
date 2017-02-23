@@ -150,42 +150,44 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = "";
     kopts.keycode = "";
-    QDialog d;
-    QHBoxLayout l;
-    l.setMargin(0);
-    KeyboardListener k;
-    l.addWidget(&k);
-    d.setLayout(&l);
-    d.setFixedSize(QSize(500, 300));
-    d.setWindowFlags(Qt::Dialog);
-    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
-    d.setWindowModality(Qt::ApplicationModal);
-    connect(&k,
+    auto d = new QDialog(this, Qt::MSWindowsFixedSizeDialogHint);
+    auto l = new QHBoxLayout;
+    l->setMargin(0);
+    auto k = new KeyboardListener;
+    l->addWidget(k);
+    d->setLayout(l);
+    d->setFixedSize(QSize(500, 300));
+    d->setWindowModality(Qt::ApplicationModal);
+
+    d->deleteLater();
+    l->deleteLater();
+    k->deleteLater();
+
+    connect(k,
             &KeyboardListener::key_pressed,
-            &d,
-            [&](QKeySequence s) -> void
+            d,
+            [&](QKeySequence s)
             {
                 kopts.keycode = s.toString(QKeySequence::PortableText);
                 kopts.guid = "";
                 kopts.button = -1;
-                d.close();
+                d->close();
             });
-    connect(&k, &KeyboardListener::joystick_button_pressed,
-            &d,
-            [&](QString guid, int idx, bool held) -> void
+    connect(k, &KeyboardListener::joystick_button_pressed,
+            d,
+            [&](QString guid, int idx, bool held)
             {
                 if (!held)
                 {
                     kopts.guid = guid;
                     kopts.keycode = "";
                     kopts.button = idx;
-                    d.close();
+                    d->close();
                 }
             });
-    connect(main.b.get(), &options::detail::bundle::reloading, &d, &QDialog::close);
+    connect(main.b.get(), &options::detail::bundle::reloading, d, &QDialog::close);
     pause_keybindings(true);
-    d.show();
-    d.exec();
+    d->exec();
     pause_keybindings(false);
     label->setText(kopts_to_string(kopts));
 }
