@@ -30,6 +30,7 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
+#include <QDebug>
 #include <QVector>
 #include <QApplication>
 // include private header for great justice -sh 20131015

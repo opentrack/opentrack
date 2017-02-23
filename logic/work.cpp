@@ -60,7 +60,7 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
 }
 
 
-Work::Work(Mappings& m, QFrame* frame, mem<dylib>& tracker_, mem<dylib>& filter_, mem<dylib>& proto_) :
+Work::Work(Mappings& m, QFrame* frame, mem<dylib> tracker_, mem<dylib> filter_, mem<dylib> proto_) :
     libs(frame, tracker_, filter_, proto_),
     logger(make_logger(s)),
     tracker(std::make_shared<Tracker>(m, libs, *logger)),
