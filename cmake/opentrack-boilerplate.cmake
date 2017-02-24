@@ -79,29 +79,7 @@ function(opentrack_compat target)
     opentrack_fixup_subsystem(${target})
 endfunction()
 
-function(opentrack_sources n ret)
-    get_target_property(srcs ${n} SOURCES)
-    if(srcs)
-        foreach(f ${srcs})
-            get_source_file_property(autogen "${f}" GENERATED)
-            if(NOT autogen)
-                list(APPEND ${ret} "${f}")
-            endif()
-        endforeach()
-    endif()
-    set(${ret} "${${ret}}" PARENT_SCOPE)
-endfunction()
-
 include(CMakeParseArguments)
-
-function(opentrack_install_sources n)
-    opentrack_sources(${n} sources)
-    file(RELATIVE_PATH subdir "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
-    foreach (i ${sources})
-        install(FILES "${i}" DESTINATION "${opentrack-doc-src-pfx}/${subdir}" ${opentrack-perms})
-    endforeach()
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" DESTINATION "${opentrack-doc-src-pfx}/${subdir}" ${opentrack-perms})
-endfunction()
 
 function(opentrack_is_target_c_only ret srcs)
     set(val TRUE)
@@ -179,9 +157,6 @@ function(opentrack_boilerplate n)
         target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
     endif()
 
-    if(NOT arg_NO-INSTALL)
-        opentrack_install_sources(${n})
-    endif()
     opentrack_compat(${n})
 
     if(CMAKE_COMPILER_IS_GNUCXX)
@@ -227,9 +202,7 @@ function(opentrack_boilerplate n)
         set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
     endforeach()
 
-    get_property(modules GLOBAL PROPERTY opentrack-all-modules)
-    list(APPEND modules "${n}")
-    set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
+    set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
 
     foreach(i ${langs})
         add_custom_command(OUTPUT "${i}"
@@ -241,5 +214,9 @@ function(opentrack_boilerplate n)
     endforeach()
 
     add_custom_target(i18n-module-${n} DEPENDS ${langs})
+
+    if(NOT arg_NO-INSTALL)
+        set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
 endfunction()
 

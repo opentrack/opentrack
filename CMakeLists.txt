@@ -77,3 +77,4 @@ foreach(i ${opentrack-subprojects})
 endforeach()
 
 merge_translations()
+install_sources()
