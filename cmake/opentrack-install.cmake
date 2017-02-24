@@ -68,7 +68,7 @@ function(merge_translations)
 
         add_custom_command(OUTPUT "${qm-output}"
             COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
-            DEPENDS ${ts} ${deps}
+            DEPENDS ${deps}
             COMMENT "Running lrelease for ${i}")
 
         add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")

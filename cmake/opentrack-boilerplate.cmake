@@ -227,11 +227,12 @@ function(opentrack_boilerplate n)
         set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
     endforeach()
 
+    get_property(modules GLOBAL PROPERTY opentrack-all-modules)
     list(APPEND modules "${n}")
     set_property(GLOBAL PROPERTY opentrack-all-modules "${modules}")
 
     foreach(i ${langs})
-        add_custom_command(OUTPUT ${i}
+        add_custom_command(OUTPUT "${i}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
