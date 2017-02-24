@@ -27,12 +27,12 @@ include(opentrack-build)
 
 project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
+include(opentrack-policy NO_POLICY_SCOPE)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
 set(opentrack-all-translations nl_NL ru_RU stub)
 
-include(opentrack-policy)
 include(opentrack-word-size)
 include(opentrack-hier)
 include(opentrack-qt)
