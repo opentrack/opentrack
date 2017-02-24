@@ -29,8 +29,8 @@ struct OPENTRACK_LOGIC_EXPORT Work
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
     main_settings s; // tracker needs settings, so settings must come before it
-    std::shared_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
     SelectedLibraries libs; // idem
+    std::shared_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
     std::shared_ptr<Tracker> tracker;
     std::shared_ptr<Shortcuts> sc;
     std::vector<key_tuple> keys;
