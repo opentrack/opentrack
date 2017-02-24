@@ -150,31 +150,22 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = "";
     kopts.keycode = "";
-    auto d = new QDialog(this, Qt::MSWindowsFixedSizeDialogHint);
-    auto l = new QHBoxLayout;
-    l->setMargin(0);
     auto k = new KeyboardListener;
-    l->addWidget(k);
-    d->setLayout(l);
-    d->setFixedSize(QSize(500, 300));
-    d->setWindowModality(Qt::ApplicationModal);
-
-    d->deleteLater();
-    l->deleteLater();
+    k->setWindowModality(Qt::ApplicationModal);
     k->deleteLater();
 
     connect(k,
             &KeyboardListener::key_pressed,
-            d,
+            this,
             [&](QKeySequence s)
             {
                 kopts.keycode = s.toString(QKeySequence::PortableText);
                 kopts.guid = "";
                 kopts.button = -1;
-                d->close();
+                k->close();
             });
     connect(k, &KeyboardListener::joystick_button_pressed,
-            d,
+            this,
             [&](QString guid, int idx, bool held)
             {
                 if (!held)
@@ -182,12 +173,12 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
                     kopts.guid = guid;
                     kopts.keycode = "";
                     kopts.button = idx;
-                    d->close();
+                    k->close();
                 }
             });
-    connect(main.b.get(), &options::detail::bundle::reloading, d, &QDialog::close);
+    connect(main.b.get(), &options::detail::bundle::reloading, k, &QDialog::close);
     pause_keybindings(true);
-    d->exec();
+    k->exec();
     pause_keybindings(false);
     label->setText(kopts_to_string(kopts));
 }

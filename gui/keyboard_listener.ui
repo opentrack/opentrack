@@ -1,36 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>keyboard_listener</class>
- <widget class="QLabel" name="keyboard_listener">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
+ <widget class="QDialog" name="keyboard_listener">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>33</height>
+    <width>587</width>
+    <height>273</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
-   <string>Bind a shortcut</string>
+   <string>Dialog</string>
   </property>
-  <property name="text">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press a key or close this window to remove the keybinding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
-  <property name="textFormat">
-   <enum>Qt::RichText</enum>
-  </property>
-  <property name="margin">
-   <number>10</number>
-  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Press a key or close this window to remove the keybinding.</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

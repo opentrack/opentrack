@@ -4,11 +4,11 @@
 #include "logic/win32-shortcuts.h"
 #include "dinput/keybinding-worker.hpp"
 #endif
-#include <QLabel>
+#include <QDialog>
 #include <QKeyEvent>
 #include <QDebug>
 
-class KeyboardListener : public QLabel
+class KeyboardListener : public QDialog
 {
     Q_OBJECT
     Ui_keyboard_listener ui;
@@ -16,7 +16,7 @@ class KeyboardListener : public QLabel
     KeybindingWorker::Token token;
 #endif
 public:
-    KeyboardListener(QWidget* parent = nullptr) : QLabel(parent)
+    KeyboardListener(QWidget* parent = nullptr) : QDialog(parent)
 #ifdef _WIN32
       , token([&](const Key& k) {
         if(k.guid != "")
