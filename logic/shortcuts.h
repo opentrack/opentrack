@@ -7,26 +7,22 @@
  */
 
 #pragma once
-#include <QObject>
-#include <tuple>
-#include <vector>
-#include <functional>
-
 #include "export.hpp"
 
-#include "qxt-mini/QxtGlobalShortcut"
 #include "options/options.hpp"
 #include "main-settings.hpp"
 
 #ifdef _WIN32
 #   include "dinput/keybinding-worker.hpp"
+#else
+#   include "qxt-mini/QxtGlobalShortcut"
 #endif
 
-#if defined(__GNUC__) && !defined(_WIN32)
-#   define unused_on_unix(t, i) t __attribute__((unused)) i
-#else
-#   define unused_on_unix(t, i) t i
-#endif
+#include <QObject>
+
+#include <tuple>
+#include <vector>
+#include <functional>
 
 using namespace options;
 
