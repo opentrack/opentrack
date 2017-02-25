@@ -174,7 +174,6 @@ public:
         qxt_p_ptr = pub;
     }
 
-protected:
     inline PUB& qxt_p()
     {
         return *qxt_p_ptr;
