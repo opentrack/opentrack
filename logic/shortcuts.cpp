@@ -11,15 +11,17 @@
 
 #include <QString>
 
+#include <tuple>
+
 void Shortcuts::free_binding(K& key)
 {
 #ifndef _WIN32
     if (key)
     {
-        key->setEnabled(false);
-        key->setShortcut(QKeySequence::UnknownKey);
-        std::shared_ptr<QxtGlobalShortcut> tmp(nullptr);
-        key.swap(tmp);
+        //key->setEnabled(false);
+        //key->setShortcut(QKeySequence());
+        delete key;
+        key = nullptr;
     }
 #else
     key.keycode = 0;
@@ -36,7 +38,7 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, unused_on_unix(bool, he
         free_binding(key);
     }
 
-    key = std::make_shared<sh>();
+    key = new sh;
 
     if (k.keycode != "")
     {
@@ -107,6 +109,14 @@ void Shortcuts::receiver(const Key& k)
 void Shortcuts::reload(const t_keys& keys_)
 {
     const unsigned sz = keys_.size();
+#ifndef _WIN32
+    for (tt& tuple : keys)
+    {
+        K k;
+        std::tie(k, std::ignore, std::ignore) = tuple;
+        delete k;
+    }
+#endif
     keys = std::vector<tt>();
 
     for (unsigned i = 0; i < sz; i++)
@@ -115,22 +125,19 @@ void Shortcuts::reload(const t_keys& keys_)
         const key_opts& opts = std::get<0>(kk);
         const bool held = std::get<2>(kk);
         auto fun = std::get<1>(kk);
-        K k;
-        bind_shortcut(k, opts, held);
-        keys.push_back(tt(k, [=](unused_on_unix(bool, flag)) -> void
-        {
 #ifdef _WIN32
-            fun(flag);
+        K k;
 #else
-            fun(true);
+        K k(nullptr);
 #endif
-        },
-        held));
+        bind_shortcut(k, opts, held);
+        keys.push_back(tt(k, [=](bool flag) { fun(flag); }, held));
+
 #ifndef _WIN32
         const int idx = keys.size() - 1;
         tt& kk_ = keys[idx];
         auto& fn = std::get<1>(kk_);
-        connect(k.get(), &QxtGlobalShortcut::activated, [=]() -> void { fn(true); });
+        connect(k, &QxtGlobalShortcut::activated, [=]() { fn(true); });
 #endif
     }
 }

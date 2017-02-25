@@ -11,6 +11,7 @@
 
 #include "options/options.hpp"
 #include "main-settings.hpp"
+#include "compat/util.hpp"
 
 #ifdef _WIN32
 #   include "dinput/keybinding-worker.hpp"
@@ -33,7 +34,7 @@ struct OPENTRACK_LOGIC_EXPORT Shortcuts final : public QObject
 public:
     using K =
 #ifndef _WIN32
-    mem<QxtGlobalShortcut>
+    QxtGlobalShortcut*
 #else
     Key
 #endif
