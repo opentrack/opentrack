@@ -24,6 +24,18 @@ template<typename t> using ptr = std::unique_ptr<t>;
 #   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
 #endif
 
+#if defined(__GNUG__)
+#   define unused(t, i) t __attribute__((unused)) i
+#else
+#   define unused(t, i) t
+#endif
+
+#if !defined(_WIN32)
+#   define unused_on_unix(t, i) unused(t, i)
+#else
+#   define unused_on_unix(t, i) t i
+#endif
+
 template<typename t>
 int iround(const t& val)
 {
