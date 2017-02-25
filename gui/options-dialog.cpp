@@ -180,7 +180,21 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     pause_keybindings(true);
     k->exec();
     pause_keybindings(false);
-    label->setText(kopts_to_string(kopts));
+    const bool is_crap = progn(
+        for (const QChar& c : kopts.keycode())
+            if (!c.isPrint())
+                return true;
+        return false;
+    );
+    if (is_crap)
+    {
+        kopts.keycode = QStringLiteral("");
+        kopts.guid = QStringLiteral("");
+        kopts.button = -1;
+        label->setText(tr("None"));
+    }
+    else
+        label->setText(kopts_to_string(kopts));
 }
 
 void OptionsDialog::doOK()
