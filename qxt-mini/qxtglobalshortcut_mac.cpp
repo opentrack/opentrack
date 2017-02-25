@@ -53,9 +53,9 @@ OSStatus qxt_mac_handle_hot_key(EventHandlerCallRef nextHandler, EventRef event,
     {
         EventHotKeyID keyID;
         GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(keyID), NULL, &keyID);
-	Identifier id = keyIDs.key(keyID.id);
-	if(id != Identifier())
-		QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first);
+        Identifier id = keyIDs.key(keyID.id);
+        if(id != Identifier())
+            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first);
     }
     return noErr;
 }
@@ -232,7 +232,7 @@ bool QxtGlobalShortcutPrivate::registerShortcut(quint32 nativeKey, quint32 nativ
 {
     if (!qxt_mac_handler_installed)
     {
-	qxt_mac_handler_installed = true;
+        qxt_mac_handler_installed = true;
         EventTypeSpec t;
         t.eventClass = kEventClassKeyboard;
         t.eventKind = kEventHotKeyPressed;
