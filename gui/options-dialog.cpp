@@ -157,7 +157,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
     connect(k,
             &KeyboardListener::key_pressed,
             this,
-            [&](QKeySequence s)
+            [&](const QKeySequence& s)
             {
                 kopts.keycode = s.toString(QKeySequence::PortableText);
                 kopts.guid = "";
@@ -166,7 +166,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
             });
     connect(k, &KeyboardListener::joystick_button_pressed,
             this,
-            [&](QString guid, int idx, bool held)
+            [&](const QString& guid, int idx, bool held)
             {
                 if (!held)
                 {
