@@ -23,6 +23,7 @@ private:
 private slots:
     void doOK();
     void doCancel();
+    void done(int res) override;
     void bind_key(key_opts &kopts, QLabel* label);
     void set_disable_translation_state(bool value);
 };

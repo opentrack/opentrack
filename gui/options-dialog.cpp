@@ -200,3 +200,10 @@ void OptionsDialog::doCancel()
     emit closing();
 }
 
+void OptionsDialog::done(int res)
+{
+    if (res == QDialog::Accepted)
+        doOK();
+    else
+        doCancel();
+}
