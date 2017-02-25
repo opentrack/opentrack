@@ -30,36 +30,50 @@
 *****************************************************************************/
 
 #include "qxtglobalshortcut_p.h"
-#include <QAbstractEventDispatcher>
-#include <QtDebug>
-#include <QApplication>
 
-#ifndef Q_OS_MAC
-int QxtGlobalShortcutPrivate::ref = 0;
-#endif // Q_OS_MAC
+#include "compat/util.hpp"
+
+#include <QAbstractEventDispatcher>
+#include <QApplication>
+#include <QtDebug>
+#include <QtGlobal>
+
 QHash<QPair<quint32, quint32>, QxtGlobalShortcut*> QxtGlobalShortcutPrivate::shortcuts;
 
-QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate() : enabled(true), key(Qt::Key(0)), mods(Qt::NoModifier)
+struct QxtGlobalShortcutPrivate::event_filter_installer
+{
+    static void ensure_event_filter();
+};
+
+void QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter()
 {
 #ifndef Q_OS_MAC
-    if (ref == 0) {
-        QAbstractEventDispatcher::instance()->installNativeEventFilter(this);
+    QAbstractEventDispatcher* instance = QAbstractEventDispatcher::instance();
+    if (instance)
+    {
+        static QxtGlobalShortcutPrivate filter(QxtGlobalShortcutPrivate::tag {});
+        static bool installed =
+            (instance->installNativeEventFilter(&filter),
+             true);
+        Q_UNUSED(installed);
     }
-    ++ref;
-#endif // Q_OS_MAC
+#endif
+}
+
+QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate(QxtGlobalShortcutPrivate::tag) :
+    enabled(false), key(Qt::Key(0)), mods(Qt::NoModifier)
+{
+    qDebug() << "qxt-mini: adding event filter";
+}
+
+QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate() :
+    enabled(true), key(Qt::Key(0)), mods(Qt::NoModifier)
+{
+    QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter();
 }
 
 QxtGlobalShortcutPrivate::~QxtGlobalShortcutPrivate()
 {
-#ifndef Q_OS_MAC
-    --ref;
-    if (ref == 0) {
-        QAbstractEventDispatcher *ed = QAbstractEventDispatcher::instance(qApp->thread());
-        if (ed != 0) {
-            ed->removeNativeEventFilter(this);
-        }
-    }
-#endif // Q_OS_MAC
     unsetShortcut();
 }
 
@@ -76,11 +90,13 @@ bool QxtGlobalShortcutPrivate::setShortcut(const QKeySequence& shortcut)
     const quint32 nativeMods = nativeModifiers(mods);
     const bool res = registerShortcut(nativeKey, nativeMods);
     if (res)
+    {
 #ifndef Q_OS_MAC
         shortcuts.insertMulti(qMakePair(nativeKey, nativeMods), &qxt_p());
 #else
         shortcuts.insert(qMakePair(nativeKey, nativeMods), &qxt_p());
 #endif
+    }
     else
         qWarning() << "QxtGlobalShortcut failed to register:" << QKeySequence(key + mods).toString();
     return res;
@@ -102,10 +118,14 @@ bool QxtGlobalShortcutPrivate::unsetShortcut()
     else
         qWarning() << "QxtGlobalShortcut failed to unregister:" << QKeySequence(key + mods).toString();
 #else
-    auto list = shortcuts.values(qMakePair(nativeKey, nativeMods));
+    using IT = decltype(shortcuts.end());
+    const auto pair = qMakePair(nativeKey, nativeMods);
+    IT it = shortcuts.find(pair);
     bool found = false;
-    for (auto it = list.begin(); it != list.end(); it++)
+    for (; it != shortcuts.end(); it++)
     {
+        if (it.key() != pair) // DO NOT REMOVE
+            break;
         if (*it == &qxt_p())
         {
             found = true;
@@ -126,13 +146,17 @@ bool QxtGlobalShortcutPrivate::unsetShortcut()
 void QxtGlobalShortcutPrivate::activateShortcut(quint32 nativeKey, quint32 nativeMods)
 {
 #ifndef Q_OS_MAC
-    auto list = shortcuts.values(qMakePair(nativeKey, nativeMods));
+    using IT = decltype(shortcuts.end());
+    const auto pair = qMakePair(nativeKey, nativeMods);
+    IT it = shortcuts.find(pair);
 
-    for (auto it = list.begin(); it != list.end(); it++)
+    for (; it != shortcuts.end(); it++)
     {
+        if (it.key() != pair) // DO NOT REMOVE
+            break;
         auto ptr = *it;
         if (ptr->isEnabled())
-            ptr->activated();
+            emit ptr->activated();
     }
 #else
     QxtGlobalShortcut* shortcut = shortcuts.value(qMakePair(nativeKey, nativeMods));
