@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QWidget" name="Dialog">
+ <class>process_detector</class>
+ <widget class="QWidget" name="process_detector">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
+    <width>366</width>
     <height>325</height>
    </rect>
   </property>

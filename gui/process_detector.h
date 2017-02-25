@@ -30,7 +30,7 @@ class process_detector final : public QWidget
 {
     Q_OBJECT
 
-    Ui_Dialog ui;
+    Ui_process_detector ui;
     settings s;
 
     int add_row(QString exe_name = "...", QString profile = "");
