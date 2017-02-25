@@ -153,7 +153,7 @@ done:
 #   include <QProcess>
 #   include "compat/camera-names.hpp"
 
-bool video_property_page::should_show_dialog(const QString& camera_name)
+bool video_property_page::should_show_dialog(const QString&)
 {
     return true;
 }
