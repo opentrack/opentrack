@@ -124,7 +124,7 @@ Exiting now.</source>
     <message>
         <location filename="../options-dialog.cpp" line="+27"/>
         <source>Joy button %1</source>
-        <translation>Нажмите кнопку %1</translation>
+        <translation>Джойстик #%1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -151,12 +151,12 @@ Exiting now.</source>
     <message>
         <location filename="../keyboard_listener.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Назначение клавиши</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Press a key or close this window to remove the keybinding.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите любую клавишу или закройте окно для сброса текущего значения</translation>
     </message>
 </context>
 <context>
