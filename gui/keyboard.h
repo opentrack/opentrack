@@ -43,9 +43,20 @@ public:
 #ifndef _WIN32
     void keyPressEvent(QKeyEvent* event) override
     {
-        //qDebug() << "k" << (event->key() | event->modifiers());
-        switch (event->key() | event->modifiers())
+        switch (event->key())
         {
+        case Qt::Key_Control:
+        case Qt::Key_Shift:
+        case Qt::Key_Meta:
+        case Qt::Key_Alt:
+        case Qt::Key_AltGr:
+        case Qt::Key_CapsLock:
+        case Qt::Key_NumLock:
+            break;
+        case Qt::Key_Escape:
+            close();
+            break;
+
         default:
             emit key_pressed(QKeySequence(event->key() | event->modifiers()));
             break;
