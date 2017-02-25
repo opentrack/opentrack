@@ -31,17 +31,17 @@
 #include <memory>
 #include <vector>
 
+class TrackerDialog_PT;
+
 namespace impl {
 
 using namespace types;
-
-class TrackerDialog_PT;
 
 class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
     friend class camera_dialog;
-    friend class TrackerDialog_PT;
+    friend class ::TrackerDialog_PT;
 public:
     Tracker_PT();
     ~Tracker_PT() override;
@@ -97,4 +97,3 @@ class PT_metadata : public Metadata
 };
 
 using impl::Tracker_PT;
-using impl::TrackerDialog_PT;
