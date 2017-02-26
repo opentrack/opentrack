@@ -164,7 +164,6 @@ void Tracker::logic()
         euler_t tmp = d2r * euler_t(&value[Yaw]);
         scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
         real_rotation.rotation = euler_to_rmat(tmp);
-        tait_bryan_to_matrices(c_div * tmp, scaled_rotation.rr, scaled_rotation.ry, scaled_rotation.rp);
     }
 
     scaled_rotation.camera = get_camera_offset_matrix(c_div);
@@ -200,22 +199,9 @@ void Tracker::logic()
 
             scaled_rotation.rotation = rmat::eye();
             real_rotation.rotation = rmat::eye();
-            scaled_rotation.center_roll = rmat::eye();
-            scaled_rotation.center_yaw = rmat::eye();
-            scaled_rotation.center_pitch = rmat::eye();
         }
         else
         {
-            euler::tait_bryan_to_matrices(rmat_to_euler(scaled_rotation.rotation),
-                                          scaled_rotation.center_roll,
-                                          scaled_rotation.center_pitch,
-                                          scaled_rotation.center_yaw);
-#if 0
-            euler::tait_bryan_to_matrices(rmat_to_euler(real_rotation.rotation),
-                                          real_rotation.center_roll,
-                                          real_rotation.center_pitch,
-                                          real_rotation.center_yaw);
-#endif
             real_rotation.rot_center = real_rotation.rotation.t();
             scaled_rotation.rot_center = scaled_rotation.rotation.t();
         }

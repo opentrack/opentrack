@@ -74,12 +74,11 @@ private:
 
     struct state
     {
-        rmat center_yaw, center_pitch, center_roll;
         rmat rot_center;
         rmat camera;
-        rmat rotation, ry, rp, rr;
+        rmat rotation;
 
-        state() : center_yaw(rmat::eye()), center_pitch(rmat::eye()), center_roll(rmat::eye()), rot_center(rmat::eye())
+        state() : rot_center(rmat::eye())
         {}
     };
 
