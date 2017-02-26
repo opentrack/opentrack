@@ -15,7 +15,10 @@ plugin_api::detail::BaseDialog::BaseDialog() {}
 void plugin_api::detail::BaseDialog::closeEvent(QCloseEvent*)
 {
     if (isVisible())
+    {
+        hide();
         emit closing();
+    }
 }
 
 Metadata::Metadata() {}
