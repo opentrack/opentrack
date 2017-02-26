@@ -48,6 +48,8 @@ public:
     void closeEvent(QCloseEvent *) override;
 signals:
     void closing();
+private slots:
+    void done(int) override;
 };
 
 } // ns

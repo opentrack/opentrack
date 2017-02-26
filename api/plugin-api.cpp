@@ -11,7 +11,13 @@ ITracker::~ITracker() {}
 ITrackerDialog::~ITrackerDialog() {}
 
 plugin_api::detail::BaseDialog::BaseDialog() {}
-void plugin_api::detail::BaseDialog::closeEvent(QCloseEvent*) { emit closing(); }
+
+void plugin_api::detail::BaseDialog::closeEvent(QCloseEvent*)
+{
+    if (isVisible())
+        emit closing();
+}
+
 Metadata::Metadata() {}
 IFilter::IFilter() {}
 IFilterDialog::IFilterDialog() {}
@@ -19,3 +25,5 @@ IProtocol::IProtocol() {}
 IProtocolDialog::IProtocolDialog() {}
 ITracker::ITracker() {}
 ITrackerDialog::ITrackerDialog() {}
+
+void plugin_api::detail::BaseDialog::done(int) { close(); hide(); }

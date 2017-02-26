@@ -199,18 +199,28 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
 
 void OptionsDialog::doOK()
 {
+    if (!close()) // dialog was closed already
+        return;
+    if (isHidden()) // close() can return true twice in a row it seems
+        return;
+    hide();
+
     main.b->save();
     ui.game_detector->save();
     set_disable_translation_state(ui.disable_translation->isChecked());
-    close();
     emit closing();
 }
 
 void OptionsDialog::doCancel()
 {
+    if (!close()) // dialog was closed already
+        return;
+    if (isHidden()) // close() can return true twice in a row it seems
+        return;
+    hide();
+
     main.b->reload();
     ui.game_detector->revert();
-    close();
     emit closing();
 }
 
