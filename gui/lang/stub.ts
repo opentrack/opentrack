@@ -451,12 +451,7 @@ Exiting now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Camera offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="+21"/>
         <source>Use camera center as translation offset</source>
         <translation type="unfinished"></translation>
     </message>
@@ -541,7 +536,12 @@ Exiting now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-329"/>
+        <source>Camera angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+344"/>
         <source>Try changing this if centering doesn&apos;t perform correctly for your input device.</source>
         <translation type="unfinished"></translation>
     </message>

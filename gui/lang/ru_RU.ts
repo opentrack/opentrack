@@ -470,7 +470,7 @@ Exiting now.</source>
     </message>
     <message>
         <location line="+12"/>
-        <source>Camera offset</source>
+        <source>Camera angle</source>
         <translation>Коррекция расположения камеры</translation>
     </message>
     <message>

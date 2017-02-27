@@ -980,7 +980,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Camera offset</string>
+          <string>Camera angle</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

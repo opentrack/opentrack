@@ -464,7 +464,7 @@ Programma wordt afgesloten.</translation>
     </message>
     <message>
         <location line="+12"/>
-        <source>Camera offset</source>
+        <source>Camera angle</source>
         <translation>Camera-afwijking</translation>
     </message>
     <message>
