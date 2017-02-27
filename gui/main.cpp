@@ -151,25 +151,27 @@ main(int argc, char** argv)
         (void) QCoreApplication::installTranslator(&t);
     }
 
-     do
-     {
-        mem<MainWindow> w = std::make_shared<MainWindow>();
+    do
+    {
+       mem<MainWindow> w = std::make_shared<MainWindow>();
 
-        if (!w->isEnabled())
-            break;
+       if (!w->isEnabled())
+           break;
 
-        if (!w->start_in_tray())
-        {
-            w->setVisible(true);
-            w->show();
-        }
-        else
-            w->setVisible(false);
+       if (!w->start_in_tray())
+       {
+           w->setVisible(true);
+           w->show();
+       }
+       else
+           w->setVisible(false);
 
-        app.setQuitOnLastWindowClosed(false);
-        app.exec();
+       app.setQuitOnLastWindowClosed(false);
+       app.exec();
 
-        qDebug() << "exit: window";
+       app.exit(0);
+
+       qDebug() << "exit: window";
     }
     while (false);
 
