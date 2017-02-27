@@ -126,18 +126,6 @@ bool bundle::is_modified() const
     return false;
 }
 
-void bundler::bundle_decf(const bundler::k& key)
-{
-    QMutexLocker l(&implsgl_mtx);
-
-    if (--std::get<0>(implsgl_data[key]) == 0)
-    {
-        //qDebug() << "bundle -" << key;
-
-        implsgl_data.erase(key);
-    }
-}
-
 void bundler::after_profile_changed_()
 {
     QMutexLocker l(&implsgl_mtx);
@@ -146,10 +134,8 @@ void bundler::after_profile_changed_()
 
     for (auto& kv : implsgl_data)
     {
-        tt& tuple = kv.second;
-        std::weak_ptr<v>& bundle = std::get<1>(tuple);
-
-        mem<v> bundle_ = bundle.lock();
+        weak bundle = kv.second;
+        shared bundle_ = bundle.lock();
         if (bundle_)
         {
             //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
@@ -169,25 +155,36 @@ bundler::bundler() : implsgl_mtx(QMutex::Recursive)
 
 bundler::~bundler()
 {
-    qDebug() << "exit: bundle singleton";
+    //qDebug() << "exit: bundle singleton";
 }
 
-std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k &key)
+std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k& key)
 {
     QMutexLocker l(&implsgl_mtx);
 
-    if (implsgl_data.count(key) != 0)
+    auto it = implsgl_data.find(key);
+
+    if (it != implsgl_data.end())
     {
-        auto shared = std::get<1>(implsgl_data[key]).lock();
-        if (shared != nullptr)
-            return shared;
+        std::shared_ptr<v> ptr = it->second.lock();
+        if (ptr != nullptr)
+            return ptr;
+        else
+            qDebug() << "ERROR: nonexistent bundle" << key;
     }
 
-    //qDebug() << "bundle +" << key;
+    auto shr = shared(new v(key), [this, key](v* ptr) {
+        QMutexLocker l(&implsgl_mtx);
 
-    std::shared_ptr<v> shr(new v(key), [this](v* val) { bundle_decf(val->name()); });
 
-    implsgl_data[key] = tt(1, shr);
+        auto it = implsgl_data.find(key);
+        if (it != implsgl_data.end())
+            implsgl_data.erase(it);
+        else
+            qDebug() << "ERROR: can't find self-bundle!";
+        delete ptr;
+    });
+    implsgl_data[key] = weak(shr);
     return shr;
 }
 
@@ -204,7 +201,7 @@ OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& nam
     if (name.size())
         return detail::singleton().make_bundle(name);
     else
-        return std::make_shared<bundle_>(QStringLiteral(""));
+        return std::make_shared<bundle_>(QString());
 }
 
 QMutex* options::detail::bundle::get_mtx() const { return mtx; }

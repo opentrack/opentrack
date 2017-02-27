@@ -5,6 +5,8 @@
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
+#else
+#   include <unistd.h>
 #endif
 
 #include "migration/migration.hpp"
@@ -175,8 +177,10 @@ main(int argc, char** argv)
 #if defined(_MSC_VER)
     qDebug() << "exit: terminating";
     TerminateProcess(GetCurrentProcess(), 0);
+#else
+    // we have some atexit issues when not leaking bundles
+    //_exit(0);
 #endif
-
     qDebug() << "exit: main()";
 
     return 0;

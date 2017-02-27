@@ -81,22 +81,23 @@ public:
     }
 };
 
+OPENTRACK_OPTIONS_EXPORT bundler& singleton();
+
 struct OPENTRACK_OPTIONS_EXPORT bundler
 {
 public:
     using k = QString;
     using v = bundle;
-    using cnt = int;
-    using tt = std::tuple<cnt, std::weak_ptr<v>>;
+    using weak = std::weak_ptr<v>;
+    using shared = std::shared_ptr<v>;
 private:
     QMutex implsgl_mtx;
-    std::map<k, tt> implsgl_data;
+    std::map<k, weak> implsgl_data;
     void after_profile_changed_();
 public:
     bundler();
     ~bundler();
     std::shared_ptr<v> make_bundle(const k& key);
-    void bundle_decf(const k& key);
     static void refresh_all_bundles();
 };
 
