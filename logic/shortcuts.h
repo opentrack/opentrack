@@ -54,6 +54,7 @@ public:
         : key_token([&](const Key& k) { receiver(k); })
 #endif
     {}
+    ~Shortcuts();
 
     void reload(const t_keys& keys_);
 private:

@@ -106,6 +106,11 @@ void Shortcuts::receiver(const Key& k)
 }
 #endif
 
+Shortcuts::~Shortcuts()
+{
+    reload({});
+}
+
 void Shortcuts::reload(const t_keys& keys_)
 {
     const unsigned sz = keys_.size();
