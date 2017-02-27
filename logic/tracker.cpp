@@ -226,15 +226,19 @@ void Tracker::logic()
             break;
         }
 
-        const euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
+        euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
         euler_t pos = euler_t(&value[TX]) - t_center;
 
-        // don't invert after t_compensate
-        // inverting here doesn't break centering
+        for (int i = 0; i < 3; i++)
+        {
+            // don't invert after t_compensate
+            // inverting here doesn't break centering
 
-        for (int i = 0; i < 6; i++)
+            if (m(i+3).opts.invert)
+                rot(i) = -rot(i);
             if (m(i).opts.invert)
-                value(i) = -value(i);
+                pos(i) = -pos(i);
+        }
 
         t_compensate(real_rotation.camera.t(), pos, pos, false, false, false);
 
