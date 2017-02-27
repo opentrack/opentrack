@@ -145,6 +145,11 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     }
 }
 
+void OptionsDialog::closeEvent(QCloseEvent *)
+{
+    done(int(result()));
+}
+
 void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
 {
     kopts.button = -1;
@@ -199,11 +204,11 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
 
 void OptionsDialog::doOK()
 {
-    if (!close()) // dialog was closed already
-        return;
     if (isHidden()) // close() can return true twice in a row it seems
         return;
     hide();
+    if (!close()) // dialog was closed already
+        return;
 
     main.b->save();
     ui.game_detector->save();
@@ -213,11 +218,11 @@ void OptionsDialog::doOK()
 
 void OptionsDialog::doCancel()
 {
-    if (!close()) // dialog was closed already
-        return;
     if (isHidden()) // close() can return true twice in a row it seems
         return;
     hide();
+    if (!close()) // dialog was closed already
+        return;
 
     main.b->reload();
     ui.game_detector->revert();
@@ -226,8 +231,11 @@ void OptionsDialog::doCancel()
 
 void OptionsDialog::done(int res)
 {
-    if (res == QDialog::Accepted)
-        doOK();
-    else
-        doCancel();
+    if (isVisible())
+    {
+        if (res == QDialog::Accepted)
+            doOK();
+        else
+            doCancel();
+    }
 }

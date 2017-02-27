@@ -1,5 +1,7 @@
 #include "plugin-api.hpp"
 
+using namespace plugin_api::detail;
+
 // these exist so that vtable is emitted in a single compilation unit, not all of them.
 
 Metadata::~Metadata() {}
@@ -10,9 +12,9 @@ IProtocolDialog::~IProtocolDialog() {}
 ITracker::~ITracker() {}
 ITrackerDialog::~ITrackerDialog() {}
 
-plugin_api::detail::BaseDialog::BaseDialog() {}
+BaseDialog::BaseDialog() {}
 
-void plugin_api::detail::BaseDialog::closeEvent(QCloseEvent*)
+void BaseDialog::closeEvent(QCloseEvent*)
 {
     if (isVisible())
     {
@@ -29,4 +31,11 @@ IProtocolDialog::IProtocolDialog() {}
 ITracker::ITracker() {}
 ITrackerDialog::ITrackerDialog() {}
 
-void plugin_api::detail::BaseDialog::done(int) { close(); hide(); }
+void BaseDialog::done(int)
+{
+    if (isVisible())
+    {
+        hide();
+        close();
+    }
+}
