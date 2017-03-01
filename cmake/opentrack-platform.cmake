@@ -106,4 +106,4 @@ if(MINGW)
     add_definitions(-DMINGW_HAS_SECURE_API)
 endif()
 
-set(opencv-modules opencv_calib3d opencv_core opencv_features2d opencv_imgcodecs opencv_imgproc opencv_objdetect opencv_video opencv_videoio)
+set(opencv-modules opencv_calib3d opencv_core opencv_features2d opencv_imgcodecs opencv_imgproc opencv_objdetect opencv_videoio)
