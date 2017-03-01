@@ -66,7 +66,7 @@ void MapWidget::load()
 
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
         for (a y : { a::t30, a::t20, a::t15, a::t10 })
-            x->addItem(QStringLiteral("%1 mm").arg(int(y)), y);
+            x->addItem(QStringLiteral("%1 cm").arg(int(y)), y);
 
     for (int i = 0; qfcs[i].qfc; i++)
     {
