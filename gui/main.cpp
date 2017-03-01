@@ -181,7 +181,7 @@ main(int argc, char** argv)
     TerminateProcess(GetCurrentProcess(), 0);
 #else
     // we have some atexit issues when not leaking bundles
-    //_exit(0);
+    _exit(0);
 #endif
     qDebug() << "exit: main()";
 
