@@ -125,13 +125,12 @@ DEFUN_WARN_UNUSED bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {
-        for (int i = 0; i < 5 && !cap->read(frame); i++)
+        for (int i = 0; i < 5; i++)
+        {
+            if (cap->read(frame))
+                return true;
             portable::sleep(100);
-
-        if (frame.empty())
-            return false;
-
-        return true;
+        }
     }
     return false;
 }
