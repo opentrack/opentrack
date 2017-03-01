@@ -71,10 +71,10 @@ void Tracker_PT::run()
             new_frame = camera.get_frame(dt, frame, cam_info);
         }
 
-        cv::resize(frame, preview_frame, cv::Size(preview_size.width(), preview_size.height()), 0, 0, cv::INTER_NEAREST);
-
-        if (new_frame && !frame.empty())
+        if (new_frame)
         {
+            cv::resize(frame, preview_frame, cv::Size(preview_size.width(), preview_size.height()), 0, 0, cv::INTER_NEAREST);
+
             point_extractor.extract_points(frame, preview_frame, points);
             point_count = points.size();
 
@@ -154,8 +154,12 @@ void Tracker_PT::apply_settings()
 
 void Tracker_PT::start_tracker(QFrame* video_frame)
 {
-    video_frame->setAttribute(Qt::WA_NativeWindow);
+    //video_frame->setAttribute(Qt::WA_NativeWindow);
     preview_size = video_frame->size();
+
+    preview_frame = cv::Mat(video_frame->height(), video_frame->width(), CV_8UC3);
+    preview_frame.setTo(cv::Scalar(0, 0, 0));
+
     video_widget = qptr<cv_video_widget>(video_frame);
     layout = qptr<QHBoxLayout>(video_frame);
     layout->setContentsMargins(0, 0, 0, 0);
