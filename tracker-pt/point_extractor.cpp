@@ -194,14 +194,33 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                 blobs.push_back(b);
 
                 {
-                    char buf[64];
-                    sprintf(buf, "%.2fpx", radius);
-                    static const vec2 off(10, 7.5);
+                    static const f offx = 10, offy = 7.5;
                     const f cx = preview_frame.cols / f(frame.cols),
                             cy = preview_frame.rows / f(frame.rows);
+                    cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
+
+                    static const cv::Scalar color(0, 255, 0);
+
+                    cv::circle(preview_frame, p, b.radius, color);
+
+                    {
+                        const int len = iround(b.radius * 1.25) + 1;
+                        cv::line(preview_frame,
+                                 cv::Point(p.x - len, p.y),
+                                 cv::Point(p.x + len, p.y),
+                                 color);
+                        cv::line(preview_frame,
+                                 cv::Point(p.x, p.y - len),
+                                 cv::Point(p.x, p.y + len),
+                                 color);
+                    }
+
+                    char buf[64];
+                    sprintf(buf, "%.2fpx", radius);
+
                     cv::putText(preview_frame,
                                 buf,
-                                cv::Point(iround(b.pos[0]*cx+off[0]), iround(b.pos[1]*cy+off[1])),
+                                cv::Point(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy)),
                                 cv::FONT_HERSHEY_PLAIN,
                                 1,
                                 cv::Scalar(0, 0, 255),

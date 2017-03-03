@@ -92,29 +92,6 @@ void Tracker_PT::run()
                 ever_success = true;
             }
 
-            auto fun = [&](const vec2& p, const cv::Scalar& color)
-            {
-                static constexpr int len = 9;
-
-                cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols/2),
-                             iround(-p[1] * preview_frame.cols + preview_frame.rows/2));
-                cv::line(preview_frame,
-                         cv::Point(p2.x - len, p2.y),
-                         cv::Point(p2.x + len, p2.y),
-                         color,
-                         1);
-                cv::line(preview_frame,
-                         cv::Point(p2.x, p2.y - len),
-                         cv::Point(p2.x, p2.y + len),
-                         color,
-                         1);
-            };
-
-            for (unsigned i = 0; i < points.size(); i++)
-            {
-                fun(points[i], cv::Scalar(0, 255, 0));
-            }
-
             {
                 Affine X_CM;
                 {
@@ -126,7 +103,23 @@ void Tracker_PT::run()
                 Affine X_GH = X_CM * X_MH;
                 vec3 p = X_GH.t; // head (center?) position in global space
                 vec2 p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
-                fun(p_, cv::Scalar(0, 0, 255));
+
+                static constexpr int len = 9;
+                static const cv::Scalar(0, 0, 255);
+
+                cv::Point p2(iround(p_[0] * preview_frame.cols + preview_frame.cols/2),
+                             iround(-p_[1] * preview_frame.cols + preview_frame.rows/2));
+                static const cv::Scalar color(0, 0, 255);
+                cv::line(preview_frame,
+                         cv::Point(p2.x - len, p2.y),
+                         cv::Point(p2.x + len, p2.y),
+                         color,
+                         1);
+                cv::line(preview_frame,
+                         cv::Point(p2.x, p2.y - len),
+                         cv::Point(p2.x, p2.y + len),
+                         color,
+                         1);
             }
 
             video_widget->update_image(preview_frame);
