@@ -6,22 +6,22 @@
     <message>
         <location filename="../ftnoir_accela_filtercontrols.ui" line="+29"/>
         <source>Filter settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filter-instellingen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Algemeen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verzachten</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>0 ms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">0 ms</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -32,19 +32,19 @@
         <location line="+24"/>
         <location line="+123"/>
         <source>Sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gevoeligheid</translation>
     </message>
     <message>
         <location line="-110"/>
         <location line="+35"/>
         <source>0mm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">0mm</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+116"/>
         <source>Deadzone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Deadzone</translation>
     </message>
     <message>
         <location line="-72"/>
