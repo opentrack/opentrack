@@ -6,107 +6,107 @@
     <message>
         <location filename="../aruco-trackercontrols.ui" line="+17"/>
         <source>Tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracker-instellingen</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>Frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>Frames per seconde</translation>
     </message>
     <message>
         <location line="-84"/>
         <source>640x480</source>
-        <translation type="unfinished"></translation>
+        <translation>640x480</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>320x240</source>
-        <translation type="unfinished"></translation>
+        <translation>320x240</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Camera name</source>
-        <translation type="unfinished"></translation>
+        <translation>Cameranaam</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Resolutie</translation>
     </message>
     <message>
         <location line="-115"/>
         <source>Diagonal FOV</source>
-        <translation type="unfinished"></translation>
+        <translation>Diagonale FOV</translation>
     </message>
     <message>
         <location line="-47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Read the &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Aruco-tracker&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiki page&lt;/span&gt;&lt;/a&gt; and especially the last paragraph before printing markers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lees de &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Aruco-tracker&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiki-pagina&lt;/span&gt;&lt;/a&gt; en voornamelijk de laatste paragraaf voordat u de markering uitprint.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+96"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>30</source>
-        <translation type="unfinished"></translation>
+        <translation>30</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>60</source>
-        <translation type="unfinished"></translation>
+        <translation>30</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>75</source>
-        <translation type="unfinished"></translation>
+        <translation>75</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>125</source>
-        <translation type="unfinished"></translation>
+        <translation>125</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>200</source>
-        <translation type="unfinished"></translation>
+        <translation>200</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Default (not recommended!)</source>
-        <translation type="unfinished"></translation>
+        <translation>Standaard (niet aanbevolen)</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Camera settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera-instellingen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Model rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelrotatie</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Head X</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoofd-X</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Head Z </source>
-        <translation type="unfinished"></translation>
+        <translation>Hoofd-Z</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Head Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoofd-Y</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Toggle calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Schakel tussen kalibratie</translation>
     </message>
 </context>
 </TS>
