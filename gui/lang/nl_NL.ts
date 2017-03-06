@@ -124,13 +124,13 @@ Programma wordt afgesloten.</translation>
     <message>
         <location filename="../options-dialog.cpp" line="+27"/>
         <source>Joy button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Joystick-knop %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+164"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen</translation>
     </message>
 </context>
 <context>
@@ -151,12 +151,12 @@ Programma wordt afgesloten.</translation>
     <message>
         <location filename="../keyboard_listener.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialoogvenster</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Press a key or close this window to remove the keybinding.</source>
-        <translation type="unfinished"></translation>
+        <translation>Druk op een toets of sluit dit venster om de toewijzing ongedaan te maken.</translation>
     </message>
 </context>
 <context>
@@ -170,37 +170,37 @@ Programma wordt afgesloten.</translation>
         <location line="+67"/>
         <location line="+479"/>
         <source>Z</source>
-        <translation type="unfinished">Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <location line="-463"/>
         <location line="+409"/>
         <source>Pitch</source>
-        <translation type="unfinished">Pitch</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <location line="-356"/>
         <location line="+315"/>
         <source>Y</source>
-        <translation type="unfinished">Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location line="-299"/>
         <location line="+277"/>
         <source>X</source>
-        <translation type="unfinished">X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location line="-230"/>
         <location line="+309"/>
         <source>Roll</source>
-        <translation type="unfinished">Rollen</translation>
+        <translation>Rollen</translation>
     </message>
     <message>
         <location line="-293"/>
         <location line="+309"/>
         <source>Yaw</source>
-        <translation type="unfinished">Yaw</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <location line="-200"/>
@@ -220,7 +220,7 @@ Programma wordt afgesloten.</translation>
     <message>
         <location line="+17"/>
         <source>Mapping</source>
-        <translation>Verwijziging</translation>
+        <translation>Verwijzing</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -247,7 +247,7 @@ Programma wordt afgesloten.</translation>
         <location line="+62"/>
         <location line="+62"/>
         <source>🔨</source>
-        <translation></translation>
+        <translation>🔨</translation>
     </message>
     <message>
         <location line="-111"/>
@@ -277,7 +277,7 @@ Programma wordt afgesloten.</translation>
         <location line="+88"/>
         <location line="+88"/>
         <source>Max rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale rotatie</translation>
     </message>
     <message>
         <location line="-138"/>
@@ -309,7 +309,7 @@ Programma wordt afgesloten.</translation>
         <location line="+88"/>
         <location line="+88"/>
         <source>Max translation</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale translatie</translation>
     </message>
     <message>
         <location line="-112"/>
@@ -327,12 +327,12 @@ Programma wordt afgesloten.</translation>
     <message>
         <location filename="../new_file_dialog.h" line="+42"/>
         <source>File exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestand aanwezig</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This file already exists. Pick another name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dit bestand is reeds aanwezig. Kies een andere naam.</translation>
     </message>
 </context>
 <context>
@@ -643,7 +643,7 @@ Programma wordt afgesloten.</translation>
     <message>
         <location line="-1010"/>
         <source>Never translate the application interface</source>
-        <translation type="unfinished"></translation>
+        <translation>De applicatie nooit vertaald weergeven</translation>
     </message>
     <message>
         <location line="+114"/>
@@ -695,7 +695,7 @@ Programma wordt afgesloten.</translation>
     <message>
         <location line="+202"/>
         <source>Neck displacement</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschuiven van de nekpositie</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -705,7 +705,7 @@ Programma wordt afgesloten.</translation>
     <message>
         <location line="+40"/>
         <source>Height from center of rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoogte vanaf het midden van de rotatie</translation>
     </message>
     <message>
         <location line="+57"/>
