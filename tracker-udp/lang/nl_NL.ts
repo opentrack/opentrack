@@ -6,67 +6,67 @@
     <message>
         <location filename="../ftnoir_ftnclientcontrols.ui" line="+23"/>
         <source>UDP tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP tracker-instellingen</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Poort</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Add to axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Aan as toevoegen</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>yaw</translation>
     </message>
     <message>
         <location line="+8"/>
         <location line="+43"/>
         <location line="+29"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-67"/>
         <location line="+43"/>
         <location line="+29"/>
         <source>+90</source>
-        <translation type="unfinished"></translation>
+        <translation>+90</translation>
     </message>
     <message>
         <location line="-67"/>
         <location line="+43"/>
         <location line="+29"/>
         <source>-90</source>
-        <translation type="unfinished"></translation>
+        <translation>-90</translation>
     </message>
     <message>
         <location line="-67"/>
         <location line="+43"/>
         <location line="+29"/>
         <source>+180</source>
-        <translation type="unfinished"></translation>
+        <translation>+180</translation>
     </message>
     <message>
         <location line="-67"/>
         <location line="+43"/>
         <location line="+29"/>
         <source>-180</source>
-        <translation type="unfinished"></translation>
+        <translation>-180</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>pitch</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>roll</source>
-        <translation type="unfinished"></translation>
+        <translation>rol</translation>
     </message>
 </context>
 <context>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../ftnoir_tracker_udp.h" line="+57"/>
         <source>UDP sender</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP-zender</translation>
     </message>
 </context>
 </TS>
