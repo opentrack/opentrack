@@ -45,7 +45,7 @@ class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
 
     Q_OBJECT
 private:
-    friend bundler;
+    friend struct bundler;
 
     mutex mtx;
     const QString group_name;
