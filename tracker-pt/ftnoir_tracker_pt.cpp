@@ -105,7 +105,6 @@ void Tracker_PT::run()
                 vec2 p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
 
                 static constexpr int len = 9;
-                static const cv::Scalar(0, 0, 255);
 
                 cv::Point p2(iround(p_[0] * preview_frame.cols + preview_frame.cols/2),
                              iround(-p_[1] * preview_frame.cols + preview_frame.rows/2));
