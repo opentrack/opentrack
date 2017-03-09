@@ -212,7 +212,7 @@ public:
         {
             QxtX11ErrorHandler errorHandler;
 
-            XGrabKey(display(), keycode, AllMods, window, True,
+            XGrabKey(display(), keycode, AnyModifier, window, True,
                      GrabModeAsync, GrabModeAsync);
 
             if (errorHandler.error) {
@@ -229,7 +229,7 @@ public:
         if (keybinding::decf(keycode))
         {
             QxtX11ErrorHandler errorHandler;
-            XUngrabKey(display(), keycode, AllMods, window);
+            XUngrabKey(display(), keycode, AnyModifier, window);
             return !errorHandler.error;
         }
         return true;
