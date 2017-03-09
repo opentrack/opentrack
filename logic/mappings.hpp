@@ -25,6 +25,8 @@ struct Map final
         spline_main(max_x, max_y, primary),
         spline_alt(max_x, max_y, secondary)
     {
+        spline_main.set_max_input(opts.clamp);
+        spline_alt.set_max_input(opts.clamp);
     }
 
     void save(QSettings& s)
