@@ -79,14 +79,12 @@ DEFUN_WARN_UNUSED bool Camera::start(int idx, int fps, int res_x, int res_y)
 {
     if (idx >= 0 && fps >= 0 && res_x > 0 && res_y > 0)
     {
-        if (!cap || cap->isOpened() ||
+        if (!cap || !cap->isOpened() ||
             cam_desired.idx != idx ||
             cam_desired.fps != fps ||
             cam_desired.res_x != res_x ||
             cam_desired.res_y != res_y)
         {
-            qDebug() << "pt: opening camera";
-
             cam_desired.idx = idx;
             cam_desired.fps = fps;
             cam_desired.res_x = res_x;
@@ -100,16 +98,23 @@ DEFUN_WARN_UNUSED bool Camera::start(int idx, int fps, int res_x, int res_y)
 
             if (cap->isOpened())
             {
+                qDebug() << "pt: opening camera";
+
                 cam_info = CamInfo();
                 cam_info.idx = cam_desired.idx;
                 active_name = desired_name;
 
                 return true;
             }
+            else
+            {
+                stop();
+                return false;
+            }
         }
     }
 
-    return stop(), false;
+    return true;
 }
 
 void Camera::stop()
@@ -141,7 +146,7 @@ void Camera::camera_deleter::operator()(cv::VideoCapture* cap)
     {
         if (cap->isOpened())
             cap->release();
-        std::default_delete<cv::VideoCapture>()(cap);
+        delete cap;
     }
 }
 
