@@ -9,7 +9,7 @@
 
 #include "ui_aruco-trackercontrols.h"
 #include "options/options.hpp"
-#include "trans_calib.h"
+#include "cv/translation-calibrator.hpp"
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
 #include "compat/timer.hpp"
