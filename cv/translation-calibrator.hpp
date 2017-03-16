@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 // Calibrates the translation from head to model = t_MH
@@ -19,7 +20,7 @@
 class TranslationCalibrator
 {
 public:
-    TranslationCalibrator();
+    TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof);
 
     // reset the calibration process
     void reset();
@@ -31,6 +32,18 @@ public:
     cv::Vec3f get_estimate();
 
 private:
+    bool check_bucket(const cv::Matx33d& R_CM_k);
+
     cv::Matx66f P;  // normalized precision matrix = inverse covariance
     cv::Vec6f y;    // P*(-t_MH, t_CH)
+
+    // note, bin count's so small we don't need a bloom filter
+    std::vector<bool> used_poses;
+
+    static constexpr int spacing_in_degrees = 3;
+
+    // this allows allows us up to +-180 for yaw and pitch
+    static constexpr int bin_count = 361*360 / (spacing_in_degrees*spacing_in_degrees) + 1;
+
+    unsigned yaw_rdof, pitch_rdof, nsamples;
 };

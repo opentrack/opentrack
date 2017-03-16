@@ -6,8 +6,13 @@
  */
 
 #include "translation-calibrator.hpp"
+#include "compat/euler.hpp"
+#include "compat/util.hpp"
 
-TranslationCalibrator::TranslationCalibrator()
+#include <cmath>
+
+TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof) :
+    yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof)
 {
     reset();
 }
@@ -16,10 +21,18 @@ void TranslationCalibrator::reset()
 {
     P = cv::Matx66f::zeros();
     y = cv::Vec6f(0,0,0, 0,0,0);
+
+    used_poses = std::vector<bool>(bin_count, false);
+    nsamples = 0;
 }
 
 void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t_CM_k)
 {
+    if (!check_bucket(R_CM_k))
+        return;
+
+    nsamples++;
+
     cv::Matx<double, 6,3> H_k_T = cv::Matx<double, 6,3>::zeros();
     for (int i=0; i<3; ++i) {
         for (int j=0; j<3; ++j) {
@@ -37,5 +50,42 @@ void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t
 cv::Vec3f TranslationCalibrator::get_estimate()
 {
     cv::Vec6f x = P.inv() * y;
+
+    qDebug() << "calibrator:" << nsamples << "samples total";
+
     return cv::Vec3f(-x[0], -x[1], -x[2]);
+}
+
+bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
+{
+    const int idx = progn(
+        using namespace euler;
+        static constexpr double r2d = 180/M_PI;
+
+        rmat r;
+        for (unsigned j = 0; j < 3; j++)
+            for (unsigned i = 0; i < 3; i++)
+                r(j, i) = R_CM_k(j, i);
+
+        const euler_t ypr = rmat_to_euler(r) * r2d;
+
+        const int yaw = iround(ypr(yaw_rdof) + 180)/spacing_in_degrees;
+        const int pitch = iround(ypr(pitch_rdof) + 180)/spacing_in_degrees;
+        return pitch * 360/spacing_in_degrees + yaw;
+    );
+
+    if (idx >= 0 && idx < bin_count)
+    {
+        if (used_poses[idx])
+        {
+            return false;
+        }
+        else
+        {
+            used_poses[idx] = true;
+            return true;
+        }
+    }
+
+    return false;
 }
