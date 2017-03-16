@@ -20,6 +20,7 @@ accela::accela() : first_run(true)
 }
 
 // can't use it since filtering's done before mapping
+// XXX but it only happens when input's sign changes so maybe?
 #if 0
 double accela::get_delta(double val, double prev)
 {
