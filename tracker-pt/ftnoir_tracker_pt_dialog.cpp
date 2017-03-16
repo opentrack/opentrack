@@ -16,7 +16,8 @@
 
 TrackerDialog_PT::TrackerDialog_PT()
     : tracker(nullptr),
-      timer(this)
+      timer(this),
+      trans_calib(1, 2)
 {
     ui.setupUi(this);
 

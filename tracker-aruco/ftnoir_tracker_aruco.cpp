@@ -452,10 +452,11 @@ void aruco_tracker::data(double *data)
     data[TZ] = pose[TZ];
 }
 
-aruco_dialog::aruco_dialog()
+aruco_dialog::aruco_dialog() :
+    calibrator(1, 0)
 {
     tracker = nullptr;
-    calib_timer.setInterval(250);
+    calib_timer.setInterval(100);
     ui.setupUi(this);
     setAttribute(Qt::WA_NativeWindow, true);
     ui.cameraName->addItems(get_camera_names());
