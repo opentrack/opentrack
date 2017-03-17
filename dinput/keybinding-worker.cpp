@@ -168,7 +168,7 @@ void KeybindingWorker::run()
 KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
 {
     QMutexLocker l(&mtx);
-    receivers.push_back(std::unique_ptr<fun>(new fun(receiver)));
+    receivers.push_back(std::make_unique<fun>(receiver));
     fun* f = receivers[receivers.size() - 1].get();
     //qDebug() << "add receiver" << (long) f;
     joy_ctx.refresh();

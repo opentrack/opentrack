@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ndebug-guard.hpp"
-
-#include "make-unique.hpp"
 #include "run-in-thread.hpp"
 
 #include <memory>

@@ -686,7 +686,7 @@ void MainWindow::ensure_tray()
     {
         if (!tray)
         {
-            tray = make_unique<QSystemTrayIcon>(this);
+            tray = std::make_unique<QSystemTrayIcon>(this);
             tray->setIcon(QIcon(":/images/facetracknoir.png"));
             tray->setContextMenu(&tray_menu);
             tray->show();
