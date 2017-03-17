@@ -20,8 +20,8 @@ typedef void* LPDIRECTINPUT8;
 #include <atomic>
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1910
-    template struct __declspec(dllimport) std::atomic<int>;
+#if defined(_MSC_VER)
+    template struct __declspec(dllexport) std::atomic<int>;
 #endif
 
 class OPENTRACK_DINPUT_EXPORT dinput_handle final
