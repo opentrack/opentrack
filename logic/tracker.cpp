@@ -288,9 +288,6 @@ void Tracker::logic()
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
 
-        for (int i = 0; i < 6; i++)
-            value(i) += m(i).opts.zero;
-
         if (get(f_zero))
             for (int i = 0; i < 6; i++)
                 value(i) = 0;
@@ -347,6 +344,10 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             (void) map(raw_6dof(i), m(i));
     }
+
+    // custom zero position
+    for (int i = 0; i < 6; i++)
+        value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
 
     if (!nanp)
         libs.pProtocol->pose(value);
