@@ -16,7 +16,8 @@ set(cc "/O2it /Ob2 /arch:SSE2 /fp:fast /GS- /GF /GL /Gw /Gy")
 
 set(warns_ "")
 
-set(warns-disable 4530 4577 4789)
+#C4244: 'return': conversion from '__int64' to 'long', possible loss of data
+set(warns-disable 4530 4577 4789 4244)
 
 foreach(i ${warns-disable})
     set(warns_ "${warns_} /wd${i}")
@@ -100,7 +101,7 @@ if((CMAKE_GENERATOR STREQUAL "NMake Makefiles") OR (CMAKE_GENERATOR STREQUAL "NM
     if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
         set(warn-flag-found FALSE)
         foreach (i CMAKE_CXX_FLAGS CMAKE_C_FLAGS)
-            string(REGEX MATCH "((^| )/[W][0-9]( |\$))" ret "${${i}}")
+            string(REGEX MATCH "((^| )[-/][W][0-9]( |\$))" ret "${${i}}")
             if(ret STREQUAL "")
                 set(${i} "-W3 ${${i}}" CACHE STRING "" FORCE)
             endif()
