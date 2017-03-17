@@ -27,9 +27,8 @@ private:
     double last_output[6];
     double smoothed_input[6];
     Timer t;
-#if 0
-    static double get_delta(double val, double prev);
-#endif
+
+    static double get_delta(double val, double prev, double& degen);
 
     template <typename T>
     static inline int signum(T x)

@@ -19,21 +19,31 @@ accela::accela() : first_run(true)
     s.make_splines(rot, trans);
 }
 
-// can't use it since filtering's done before mapping
-// XXX but it only happens when input's sign changes so maybe?
-#if 0
-double accela::get_delta(double val, double prev)
+double accela::get_delta(double val, double prev, double& degen)
 {
     using std::fabs;
+    using std::copysign;
 
-    const double a = fabs(val - prev), b = fabs(val + prev), c = fabs(val);
-    if (c < a && c < b)
-        return val;
-    if (b < a && b < c)
+    // HACK: don't set degen to 180 on startup
+    if (fabs(prev) < 128)
+    {
+        degen = 0;
+        return val - prev;
+    }
+
+    const double a = fabs(val - prev), b = fabs(val + prev);
+
+    if (b < a)
+    {
+        degen = copysign(360, -b);
         return val + prev;
-    return val - prev;
+    }
+    else
+    {
+        degen = 0;
+        return val - prev;
+    }
 }
-#endif
 
 void accela::filter(const double* input, double *output)
 {
@@ -71,30 +81,27 @@ void accela::filter(const double* input, double *output)
 
         const double in = smoothed_input[i];
 
-#if 0
-        const double vec_ = get_delta(in, last_output[i]);
-#else
-        const double vec_ = in - last_output[i];
-#endif
+        double degen;
+        const double vec_ = get_delta(in, last_output[i], degen);
         const double dz = i >= 3 ? rot_dz : trans_dz;
         const double vec = std::max(0., fabs(vec_) - dz);
         const double thres = i >= 3 ? rot_t : trans_t;
         const double out_ = vec / thres;
         const double out = progn(
-                               const bool should_apply_rot_nonlinearity =
-                                   i >= 3 &&
-                                   std::fabs(nl.cur() - 1) > 5e-3 &&
-                                   vec < nl.max();
+            const bool should_apply_rot_nonlinearity =
+               i >= 3 &&
+               std::fabs(nl.cur() - 1) > 5e-3 &&
+               vec < nl.max();
 
-                               static constexpr double nl_end = 1.5;
+            static constexpr double nl_end = 1.5;
 
-                               if (should_apply_rot_nonlinearity)
-                                   return std::pow(out_/nl_end, nl.cur()) * nl_end;
-                               else
-                                   return out_;
+            if (should_apply_rot_nonlinearity)
+               return std::pow(out_/nl_end, nl.cur()) * nl_end;
+            else
+               return out_;
         );
         const double val = double(m.get_value(out));
-        last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val;
+        last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val + degen;
     }
 }
 
