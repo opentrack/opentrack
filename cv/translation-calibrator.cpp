@@ -58,21 +58,19 @@ cv::Vec3f TranslationCalibrator::get_estimate()
 
 bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 {
-    const int idx = progn(
-        using namespace euler;
-        static constexpr double r2d = 180/M_PI;
+    using namespace euler;
+    static constexpr double r2d = 180/M_PI;
 
-        rmat r;
-        for (unsigned j = 0; j < 3; j++)
-            for (unsigned i = 0; i < 3; i++)
-                r(j, i) = R_CM_k(j, i);
+    rmat r;
+    for (unsigned j = 0; j < 3; j++)
+        for (unsigned i = 0; i < 3; i++)
+            r(j, i) = R_CM_k(j, i);
 
-        const euler_t ypr = rmat_to_euler(r) * r2d;
+    const euler_t ypr = rmat_to_euler(r) * r2d;
 
-        const int yaw = iround(ypr(yaw_rdof) + 180)/spacing_in_degrees;
-        const int pitch = iround(ypr(pitch_rdof) + 180)/spacing_in_degrees;
-        return pitch * 360/spacing_in_degrees + yaw;
-    );
+    const int yaw = iround(ypr(yaw_rdof) + 180)/spacing_in_degrees;
+    const int pitch = iround(ypr(pitch_rdof) + 180)/spacing_in_degrees;
+    const int idx = pitch * 360/spacing_in_degrees + yaw;
 
     if (idx >= 0 && idx < bin_count)
     {
