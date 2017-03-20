@@ -9,14 +9,16 @@
 namespace portable
 {
 #ifdef _WIN32
-    inline void sleep(unsigned milliseconds)
+    inline void sleep(int milliseconds)
     {
-        Sleep(milliseconds);
+        if (milliseconds > 0)
+            Sleep(milliseconds);
     }
 #else
-    inline void sleep(unsigned milliseconds)
+    inline void sleep(int milliseconds)
     {
-        usleep(milliseconds * 1000U); // takes microseconds
+        if (milliseconds > 0)
+            usleep(unsigned(milliseconds) * 1000U); // takes microseconds
     }
 #endif
 }
