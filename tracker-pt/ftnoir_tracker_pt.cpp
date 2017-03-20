@@ -23,7 +23,7 @@ Tracker_PT::Tracker_PT() :
       commands(0),
       ever_success(false)
 {
-    connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()), Qt::DirectConnection);
+    connect(s.b.get(), SIGNAL(saving()), this, SLOT(maybe_reopen_camera()), Qt::DirectConnection);
     connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
     set_fov(s.fov);
 }
@@ -59,7 +59,7 @@ void Tracker_PT::run()
     QTextStream log_stream(&log_file);
 #endif
 
-    apply_settings();
+    maybe_reopen_camera();
 
     while((commands & ABORT) == 0)
     {
@@ -127,10 +127,8 @@ void Tracker_PT::run()
     qDebug() << "pt: thread stopped";
 }
 
-void Tracker_PT::apply_settings()
+void Tracker_PT::maybe_reopen_camera()
 {
-    qDebug() << "pt: applying settings";
-
     QMutexLocker l(&camera_mtx);
 
     Camera::open_status status = camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
@@ -139,15 +137,13 @@ void Tracker_PT::apply_settings()
     {
     case Camera::open_error:
         qDebug() << "can't start camera" << s.camera_name;
-        return;
+        break;
     case Camera::open_ok_change:
         frame = cv::Mat();
         break;
     case Camera::open_ok_no_change:
         break;
     }
-
-    qDebug() << "pt: done applying settings";
 }
 
 void Tracker_PT::set_fov(int value)

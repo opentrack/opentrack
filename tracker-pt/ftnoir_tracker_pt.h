@@ -51,7 +51,7 @@ public:
     int  get_n_points();
     bool get_cam_info(CamInfo* info);
 public slots:
-    void apply_settings();
+    void maybe_reopen_camera();
     void set_fov(int value);
 protected:
     void run() override;
