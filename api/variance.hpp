@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cinttypes>
 
 // no copyright information other than the attribution below.
 
@@ -20,12 +21,16 @@
 class variance
 {
     double m_old, m_new, s_old, s_new;
-    unsigned long cnt;
+    std::uintptr_t cnt;
 
 public:
+    using size_type = std::uintptr_t;
+
     variance() : cnt(0) {}
 
     void clear() { *this = variance(); }
+
+    size_type count() { return cnt; }
 
     void input(double x)
     {
