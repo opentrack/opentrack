@@ -1,9 +1,13 @@
 if(APPLE)
+    opentrack_escape_string(srcdir "${CMAKE_SOURCE_DIR}")
+    opentrack_escape_string(bindir "${CMAKE_BINARY_DIR}")
+    opentrack_escape_string(instdir "${CMAKE_INSTALL_PREFIX}")
+    opentrack_escape_string(commit "${OPENTRACK_COMMIT}")
     install(CODE "
-        execute_process(COMMAND /bin/sh \"${CMAKE_SOURCE_DIR}/macosx/make-app-bundle.sh\"
-                                        \"${CMAKE_SOURCE_DIR}/macosx\"
-                                        \"${CMAKE_INSTALL_PREFIX}\"
-                                        \"${CMAKE_BINARY_DIR}\"
-                                        \"${OPENTRACK_COMMIT}\")
+        execute_process(COMMAND /bin/sh \"${srcdir}/macosx/make-app-bundle.sh\"
+                                        \"${srcdir}/macosx\"
+                                        \"${instdir}\"
+                                        \"${bindir}\"
+                                        \"${commit}\")
     ")
 endif()
