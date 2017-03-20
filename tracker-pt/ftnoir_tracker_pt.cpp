@@ -24,6 +24,8 @@ Tracker_PT::Tracker_PT() :
       ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(apply_settings()), Qt::DirectConnection);
+    connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
+    set_fov(s.fov);
 }
 
 Tracker_PT::~Tracker_PT()
@@ -61,14 +63,12 @@ void Tracker_PT::run()
 
     while((commands & ABORT) == 0)
     {
-        const double dt = time.elapsed_seconds();
-        time.start();
         CamInfo cam_info;
         bool new_frame;
 
         {
             QMutexLocker l(&camera_mtx);
-            new_frame = camera.get_frame(dt, frame, cam_info);
+            std::tie(new_frame, cam_info) = camera.get_frame(frame);
         }
 
         if (new_frame)
@@ -133,15 +133,27 @@ void Tracker_PT::apply_settings()
 
     QMutexLocker l(&camera_mtx);
 
-    CamInfo info;
+    Camera::open_status status = camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
 
-    if (!camera.get_info(info) || frame.rows != info.res_y || frame.cols != info.res_x)
-        frame = cv::Mat();
-
-    if (!camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y))
+    switch (status)
+    {
+    case Camera::open_error:
         qDebug() << "can't start camera" << s.camera_name;
+        return;
+    case Camera::open_ok_change:
+        frame = cv::Mat();
+        break;
+    case Camera::open_ok_no_change:
+        break;
+    }
 
     qDebug() << "pt: done applying settings";
+}
+
+void Tracker_PT::set_fov(int value)
+{
+    QMutexLocker l(&camera_mtx);
+    camera.set_fov(value);
 }
 
 void Tracker_PT::start_tracker(QFrame* video_frame)
@@ -230,8 +242,10 @@ int Tracker_PT::get_n_points()
 bool Tracker_PT::get_cam_info(CamInfo* info)
 {
     QMutexLocker lock(&camera_mtx);
+    bool ret;
 
-    return camera.get_info(*info);
+    std::tie(ret, *info) = camera.get_info();
+    return ret;
 }
 
 #include "ftnoir_tracker_pt_dialog.h"

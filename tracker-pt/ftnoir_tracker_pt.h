@@ -16,7 +16,6 @@
 #include "camera.h"
 #include "point_extractor.h"
 #include "point_tracker.h"
-#include "compat/timer.hpp"
 #include "cv/video-widget.hpp"
 #include "compat/util.hpp"
 
@@ -53,6 +52,7 @@ public:
     bool get_cam_info(CamInfo* info);
 public slots:
     void apply_settings();
+    void set_fov(int value);
 protected:
     void run() override;
 private:
@@ -74,7 +74,6 @@ private:
     qshared<QLayout> layout;
 
     settings_pt s;
-    Timer time;
     cv::Mat frame, preview_frame;
     std::vector<vec2> points;
 

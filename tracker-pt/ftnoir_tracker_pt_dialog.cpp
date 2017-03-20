@@ -121,7 +121,7 @@ void TrackerDialog_PT::poll_tracker_info_impl()
     CamInfo info;
     if (tracker && tracker->get_cam_info(&info))
     {
-        ui.caminfo_label->setText(QStringLiteral("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(info.fps));
+        ui.caminfo_label->setText(QStringLiteral("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
 
         // display point info
         const int n_points = tracker->get_n_points();
@@ -151,7 +151,9 @@ void TrackerDialog_PT::show_camera_settings()
             cv::VideoCapture& cap = *tracker->camera;
 
             CamInfo info;
-            if (tracker->camera.get_info(info))
+            bool status;
+            std::tie(status, info) = tracker->camera.get_info();
+            if (status)
                 video_property_page::show_from_capture(cap, info.idx);
         }
     }

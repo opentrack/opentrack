@@ -7,47 +7,47 @@
 
 #pragma once
 
+#include "compat/ndebug-guard.hpp"
+
 #undef NDEBUG
 #include <cassert>
 
-#include "numeric.hpp"
-#include "ftnoir_tracker_pt_settings.h"
-
 #include "compat/util.hpp"
+#include "compat/timer.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/videoio.hpp>
 
 #include <memory>
+#include <tuple>
 #include <QString>
-
-namespace impl {
-
-using namespace types;
 
 struct CamInfo final
 {
-    CamInfo() : fov(0), res_x(0), res_y(0), fps(-1), idx(-1) {}
-    void get_focal_length(f& fx) const;
+    CamInfo() : fov(0), fps(0), res_x(0), res_y(0), idx(-1) {}
+    void get_focal_length(double& fx) const;
 
     double fov;
+    double fps;
 
     int res_x;
     int res_y;
-    int fps;
     int idx;
 };
 
-class Camera final
+struct Camera final
 {
-public:
-    Camera() : dt_valid(0), dt_mean(0) {}
+    enum open_status : unsigned { open_error, open_ok_no_change, open_ok_change };
 
-    DEFUN_WARN_UNUSED bool start(int idx, int fps, int res_x, int res_y);
+    using result = std::tuple<bool, CamInfo>;
+
+    Camera() : dt_mean(0), fov(0) {}
+
+    DEFUN_WARN_UNUSED open_status start(int idx, int fps, int res_x, int res_y);
     void stop();
 
-    DEFUN_WARN_UNUSED bool get_frame(double dt, cv::Mat& frame, CamInfo& info);
-    DEFUN_WARN_UNUSED bool get_info(CamInfo &ret) const;
+    DEFUN_WARN_UNUSED result get_frame(cv::Mat& frame);
+    DEFUN_WARN_UNUSED result get_info() const;
 
     CamInfo get_desired() const { return cam_desired; }
     QString get_desired_name() const;
@@ -59,13 +59,15 @@ public:
     const cv::VideoCapture* operator->() const { return cap.get(); }
     operator bool() const { return cap && cap->isOpened(); }
 
+    void set_fov(double value) { fov = value; }
+
 private:
     DEFUN_WARN_UNUSED bool _get_frame(cv::Mat& frame);
 
-    settings_pt s;
-
-    double dt_valid;
     double dt_mean;
+    double fov;
+
+    Timer t;
 
     CamInfo cam_info;
     CamInfo cam_desired;
@@ -79,9 +81,6 @@ private:
     using camera_ptr = std::unique_ptr<cv::VideoCapture, camera_deleter>;
 
     camera_ptr cap;
+
+    static constexpr double dt_eps = 1./384;
 };
-
-} // ns impl
-
-using impl::Camera;
-using impl::CamInfo;
