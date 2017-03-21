@@ -21,7 +21,6 @@ target_link_libraries(opentrack-user-interface
     opentrack-migration
     opentrack-logic
     opentrack-spline-widget
-    opentrack-pose-widget
     opentrack-version
 )
 
