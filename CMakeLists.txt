@@ -50,18 +50,16 @@ add_custom_target(mrproper COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmak
 
 set(C CMakeLists.txt)
 file(GLOB opentrack-subprojects
-    "tracker-*/${C}"
-    "proto-*/${C}"
-    "filter-*/${C}"
+    "tracker-pt/${C}"
+    "proto-mouse/${C}"
+    "filter-accela/${C}"
+    "filter-kalman/${C}"
     "options/${C}"
     "api/${C}"
     "compat/${C}"
     "logic/${C}"
     "dinput/${C}"
     "gui/${C}"
-    "x-plane-plugin/${C}"
-    "csv/${C}"
-    "pose-widget/${C}"
     "spline-widget/${C}"
     "qxt-mini/${C}"
     "macosx/${C}"
