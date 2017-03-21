@@ -21,17 +21,21 @@ TrackerDialog_PT::TrackerDialog_PT()
 {
     ui.setupUi(this);
 
+#if 0
     ui.camdevice_combo->addItems(get_camera_names());
 
     tie_setting(s.camera_name, ui.camdevice_combo);
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
+#endif
 
     tie_setting(s.threshold, ui.threshold_slider);
 
     tie_setting(s.min_point_size, ui.mindiam_spin);
     tie_setting(s.max_point_size, ui.maxdiam_spin);
+
+#if 0
 
     tie_setting(s.clip_by, ui.clip_bheight_spin);
     tie_setting(s.clip_bz, ui.clip_blength_spin);
@@ -50,9 +54,13 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.m02_y, ui.m2y_spin);
     tie_setting(s.m02_z, ui.m2z_spin);
 
+#endif
+
     tie_setting(s.t_MH_x, ui.tx_spin);
     tie_setting(s.t_MH_y, ui.ty_spin);
     tie_setting(s.t_MH_z, ui.tz_spin);
+
+#if 0
 
     tie_setting(s.fov, ui.fov);
 
@@ -63,15 +71,20 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     tie_setting(s.auto_threshold, ui.auto_threshold);
 
+#endif
+
     tie_setting(s.active_model_panel, ui.model_used);
+
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)));
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
+#if 0
     connect(ui.camdevice_combo, &QComboBox::currentTextChanged, this, &TrackerDialog_PT::set_camera_settings_available);
     set_camera_settings_available(ui.camdevice_combo->currentText());
     connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerDialog_PT::show_camera_settings);
+#endif
 
     connect(&timer, &QTimer::timeout, this, &TrackerDialog_PT::poll_tracker_info_impl);
     timer.setInterval(250);
@@ -137,12 +150,15 @@ void TrackerDialog_PT::poll_tracker_info_impl()
 
 void TrackerDialog_PT::set_camera_settings_available(const QString& camera_name)
 {
+#if 0
     const bool avail = video_property_page::should_show_dialog(camera_name);
     ui.camera_settings->setEnabled(avail);
+#endif
 }
 
 void TrackerDialog_PT::show_camera_settings()
 {
+#if 0
     const int idx = ui.camdevice_combo->currentIndex();
 
     if (tracker)
@@ -160,6 +176,7 @@ void TrackerDialog_PT::show_camera_settings()
     }
     else
         video_property_page::show(idx);
+#endif
 }
 
 void TrackerDialog_PT::trans_calib_step()
