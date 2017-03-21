@@ -61,7 +61,7 @@ MainWindow::MainWindow() :
     if (!refresh_config_list())
         return;
 
-    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
+    //connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
     connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
@@ -130,8 +130,10 @@ MainWindow::MainWindow() :
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
     }
 
+#if 0
     tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
     tie_setting(m.protocol_dll, ui.iconcomboProtocol);
+#endif
     tie_setting(m.filter_dll, ui.iconcomboFilter);
 
     connect(this, &MainWindow::emit_start_tracker,
@@ -162,7 +164,7 @@ MainWindow::MainWindow() :
     }
 
     register_shortcuts();
-    det_timer.start(1000);
+    //det_timer.start(1000);
     config_list_timer.start(1000 * 5);
     kbd_quit.setEnabled(true);
 }
@@ -422,9 +424,9 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     ui.iconcomboProfile->setEnabled(not_running);
     ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
-    ui.iconcomboProtocol->setEnabled(not_running);
+    //ui.iconcomboProtocol->setEnabled(not_running);
     ui.iconcomboFilter->setEnabled(not_running);
-    ui.iconcomboTrackerSource->setEnabled(not_running);
+    //ui.iconcomboTrackerSource->setEnabled(not_running);
     ui.profile_button->setEnabled(not_running);
     ui.video_frame_label->setVisible(not_running || inertialp);
     if(not_running)
@@ -643,7 +645,7 @@ void MainWindow::show_options_dialog()
 
 void MainWindow::showCurveConfiguration()
 {
-    mk_window(mapping_widget, pose);
+    //mk_window(mapping_widget, pose);
 }
 
 void MainWindow::exit()
