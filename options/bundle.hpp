@@ -38,6 +38,8 @@ struct bundler;
 
 class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
+    Q_OBJECT
+
     class OPENTRACK_OPTIONS_EXPORT mutex final : public QMutex
     {
     public:
@@ -45,7 +47,6 @@ class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
         operator QMutex*() const { return const_cast<QMutex*>(static_cast<const QMutex*>(this)); }
     };
 
-    Q_OBJECT
 private:
     friend struct bundler;
 
