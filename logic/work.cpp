@@ -8,6 +8,7 @@
 
 QString Work::browse_datalogging_file(main_settings &s)
 {
+#if 0
     QString filename = s.tracklogging_filename;
     if (filename.isEmpty())
         filename = OPENTRACK_BASE_PATH;
@@ -28,10 +29,14 @@ QString Work::browse_datalogging_file(main_settings &s)
     // dialog likes to mess with current directory
     QDir::setCurrent(OPENTRACK_BASE_PATH);
     return newfilename;
+#else
+    return QString();
+#endif
 }
 
 std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
 {
+#if 0
     if (s.tracklogging_enabled)
     {
         QString filename = browse_datalogging_file(s);
@@ -57,6 +62,9 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
         }
     }
     return std::make_shared<TrackLogger>();
+#else
+    return std::make_shared<TrackLogger>();
+#endif
 }
 
 
@@ -72,6 +80,7 @@ Work::Work(Mappings& m, QFrame* frame, mem<dylib> tracker_, mem<dylib> filter_, 
         key_tuple(s.key_toggle1, [&](bool) -> void { tracker->toggle_enabled(); }, true),
         key_tuple(s.key_toggle2, [&](bool) -> void { tracker->toggle_enabled(); }, true),
 
+#if 0
         key_tuple(s.key_zero1, [&](bool) -> void { tracker->zero(); }, true),
         key_tuple(s.key_zero2, [&](bool) -> void { tracker->zero(); }, true),
 
@@ -80,6 +89,7 @@ Work::Work(Mappings& m, QFrame* frame, mem<dylib> tracker_, mem<dylib> filter_, 
 
         key_tuple(s.key_zero_press1, [&](bool x) -> void { tracker->set_zero(x); }, false),
         key_tuple(s.key_zero_press2, [&](bool x) -> void { tracker->set_zero(x); }, false),
+#endif
     }
 {
     if (!is_ok())
