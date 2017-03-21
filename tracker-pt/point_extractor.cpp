@@ -96,7 +96,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
 
-    if (!s.auto_threshold)
+    if (false)
     {
         const int thres = s.threshold;
         cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);

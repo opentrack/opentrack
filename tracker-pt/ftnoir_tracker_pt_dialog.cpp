@@ -63,6 +63,7 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     tie_setting(s.auto_threshold, ui.auto_threshold);
 
+    tie_setting(s.active_model_panel, ui.model_used);
     connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)));
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

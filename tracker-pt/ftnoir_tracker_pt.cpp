@@ -24,8 +24,13 @@ Tracker_PT::Tracker_PT() :
       ever_success(false)
 {
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(maybe_reopen_camera()), Qt::DirectConnection);
+#if 0
     connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
     set_fov(s.fov);
+#endif
+
+    static constexpr int fov = 75;
+    set_fov(fov);
 }
 
 Tracker_PT::~Tracker_PT()
@@ -85,10 +90,13 @@ void Tracker_PT::run()
 
             if (success)
             {
+                const bool dynamic_pose = s.active_model_panel == settings_pt::model::cap;
+                static constexpr int init_phase_timeout = 1500;
+
                 point_tracker.track(points,
                                     PointModel(s),
                                     cam_info,
-                                    s.dynamic_pose ? s.init_phase_timeout : 0);
+                                    dynamic_pose ? init_phase_timeout : 0);
                 ever_success = true;
             }
 
@@ -131,12 +139,15 @@ void Tracker_PT::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    Camera::open_status status = camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
+    static constexpr int cam_fps = 60, cam_res_x = 640, cam_res_y = 480;
+    static const QString camera_name = "PS3Eye Camera";
+
+    Camera::open_status status = camera.start(camera_name_to_index(camera_name), cam_fps, cam_res_x, cam_res_y);
 
     switch (status)
     {
     case Camera::open_error:
-        qDebug() << "can't start camera" << s.camera_name;
+        qDebug() << "can't start camera" << camera_name;
         break;
     case Camera::open_ok_change:
         frame = cv::Mat();

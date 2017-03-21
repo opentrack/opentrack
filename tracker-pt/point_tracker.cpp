@@ -48,20 +48,26 @@ PointModel::PointModel(settings_pt& s)
 
 void PointModel::set_model(settings_pt& s)
 {
-    switch (s.active_model_panel)
+    using m = settings_pt::model;
+
+    switch (m(s.active_model_panel()))
     {
-    case Clip:
-        M01 = vec3(0, static_cast<f>(s.clip_ty), -static_cast<f>(s.clip_tz));
-        M02 = vec3(0, -static_cast<f>(s.clip_by), -static_cast<f>(s.clip_bz));
+    default:
+    case m::cap:
+    {
+        const double x = 60, y = 90, z = 95;
+        M01 = cv::Vec3d(-x, -y, z);
+        M02 = cv::Vec3d(x, -y, z);
         break;
-    case Cap:
-        M01 = vec3(-static_cast<f>(s.cap_x), -static_cast<f>(s.cap_y), -static_cast<f>(s.cap_z));
-        M02 = vec3(static_cast<f>(s.cap_x), -static_cast<f>(s.cap_y), -static_cast<f>(s.cap_z));
+    }
+    case m::clip_left:
+    case m::clip_right:
+    {
+        const double a = 27, b = 43, c = 62, d = 74;
+        M01 = cv::Vec3d(0, b, -a);
+        M02 = cv::Vec3d(0, -c, -d);
         break;
-    case Custom:
-        M01 = vec3(s.m01_x, s.m01_y, s.m01_z);
-        M02 = vec3(s.m02_x, s.m02_y, s.m02_z);
-        break;
+    }
     }
 }
 
