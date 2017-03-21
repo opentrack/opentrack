@@ -6,6 +6,8 @@
  * notice appear in all copies.
  */
 
+#if 0
+
 #include "mapping-window.hpp"
 #include "logic/main-settings.hpp"
 #include "spline-widget/spline-widget.hpp"
@@ -151,3 +153,5 @@ void MapWidget::doCancel()
     invalidate_dialog();
     close();
 }
+
+#endif

@@ -1,5 +1,7 @@
 #pragma once
 
+#if 0
+
 #include "logic/mappings.hpp"
 #include "ui_mapping-window.h"
 
@@ -30,3 +32,5 @@ private slots:
     void doOK();
     void doCancel();
 };
+
+#endif
