@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>326</width>
-    <height>481</height>
+    <width>320</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -37,10 +37,10 @@
      <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>6</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>6</number>
+     <number>0</number>
     </property>
     <item>
      <widget class="QFrame" name="frame">
@@ -280,13 +280,7 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <property name="leftMargin">
-           <number>6</number>
-          </property>
           <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
            <number>0</number>
           </property>
           <property name="bottomMargin">
