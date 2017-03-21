@@ -55,7 +55,7 @@ class MainWindow : public QMainWindow, private State
     QTimer det_timer;
     QTimer config_list_timer;
     ptr<OptionsDialog> options_widget;
-    ptr<MapWidget> mapping_widget;
+    //ptr<MapWidget> mapping_widget;
     QShortcut kbd_quit;
     ptr<IFilterDialog> pFilterDialog;
     ptr<IProtocolDialog> pProtocolDialog;
@@ -70,11 +70,11 @@ class MainWindow : public QMainWindow, private State
 
     mem<dylib> current_tracker()
     {
-        return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
+        return modules.trackers().value(0, nullptr);
     }
     mem<dylib> current_protocol()
     {
-        return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
+        return modules.protocols().value(0, nullptr);
     }
     mem<dylib> current_filter()
     {
