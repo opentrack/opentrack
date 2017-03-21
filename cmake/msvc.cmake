@@ -54,14 +54,14 @@ set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
 set(ldflags-shared-release "/OPT:REF /OPT:ICF=10")
-set(ldflags-shared "/DEBUG /WX")
+set(ldflags-shared "/DEBUG")
 
 foreach (i MODULE EXE SHARED)
     set(_LDFLAGS_${i} "${ldflags-shared}")
     set(_LDFLAGS_${i}_RELEASE "${ldflags-shared-release}")
 endforeach()
 
-set(_LDFLAGS "")
+set(_LDFLAGS "/WX")
 set(_LDFLAGS_RELEASE "/LTCG:INCREMENTAL")
 set(_LDFLAGS_DEBUG "")
 
