@@ -386,7 +386,8 @@ void spline::recompute()
 {
     QMutexLocker foo(&_mutex);
 
-    QList<QPointF> list = s->points;
+    //QList<QPointF> list = s->points;
+    QList<QPointF> list;
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
     // only store if we can't help it
