@@ -30,19 +30,34 @@ class connector
 {
     friend class ::options::base_value;
 
-    using value_vec = std::vector<const base_value*>;
+    using value_type = base_value*;
+    using value_vec = std::vector<value_type>;
     using comparator = bool(*)(const QVariant&, const QVariant&);
     using tt = std::tuple<value_vec, comparator, std::type_index>;
     std::map<QString, tt> connected_values;
 
-    void on_value_destructed(const QString& name, const base_value* val);
-    void on_value_created(const QString& name, const base_value* val);
-    bool on_value_destructed_impl(const QString& name, const base_value* val);
+    void on_value_destructed(const QString& name, value_type val);
+    void on_value_created(const QString& name, value_type val);
+    bool on_value_destructed_impl(const QString& name, value_type val);
 
 protected:
     void notify_values(const QString& name) const;
     void notify_all_values() const;
     virtual QMutex* get_mtx() const = 0;
+
+    template<typename F>
+    void forall(F&& fun)
+    {
+        QMutexLocker l(get_mtx());
+
+        for (auto& pair : connected_values)
+        {
+            for (auto& val : std::get<0>(pair.second))
+            {
+                fun(pair.first, val);
+            }
+        }
+    }
 
 public:
     connector();
@@ -56,5 +71,5 @@ public:
     connector& operator=(connector&&) = default;
 };
 
-}
-}
+} // ns detail
+} // ns options

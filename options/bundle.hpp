@@ -32,6 +32,8 @@ namespace options {
 
 namespace detail {
 
+void set_base_value_to_default(base_value* val);
+
 struct bundler;
 
 class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
@@ -66,11 +68,8 @@ public:
     bundle(const QString& group_name);
     ~bundle() override;
     QString name() const { return group_name; }
-    void reload(std::shared_ptr<QSettings> settings = group::ini_file());
     void store_kv(const QString& name, const QVariant& datum);
     bool contains(const QString& name) const;
-    void save();
-    void save_deferred(QSettings& s);
     bool is_modified() const;
 
     template<typename t>
@@ -79,6 +78,11 @@ public:
         QMutexLocker l(mtx);
         return transient.get<t>(name);
     }
+public slots:
+    void save();
+    void reload(std::shared_ptr<QSettings> settings = group::ini_file());
+    void save_deferred(QSettings& s);
+    void set_all_to_default();
 };
 
 OPENTRACK_OPTIONS_EXPORT bundler& singleton();

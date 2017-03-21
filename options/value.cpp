@@ -24,4 +24,12 @@ base_value::~base_value()
     b->on_value_destructed(self_name, this);
 }
 
+namespace detail
+{
+    void set_base_value_to_default(base_value* val)
+    {
+        val->set_to_default();
+    }
+}
+
 }

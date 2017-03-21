@@ -34,7 +34,7 @@ bool connector::is_equal(const QString& name, const QVariant& val1, const QVaria
         return generic_is_equal(val1, val2);
 }
 
-bool connector::on_value_destructed_impl(const QString& name, const base_value* val)
+bool connector::on_value_destructed_impl(const QString& name, value_type val)
 {
     QMutexLocker l(get_mtx());
 
@@ -43,7 +43,7 @@ bool connector::on_value_destructed_impl(const QString& name, const base_value* 
 
         if (it != connected_values.end())
         {
-            std::vector<const base_value*>& values = std::get<0>((*it).second);
+            std::vector<value_type>& values = std::get<0>((*it).second);
             for (auto it = values.begin(); it != values.end(); it++)
             {
                 if (*it == val)
@@ -61,7 +61,7 @@ bool connector::on_value_destructed_impl(const QString& name, const base_value* 
 
 
 
-void connector::on_value_destructed(const QString& name, const base_value* val)
+void connector::on_value_destructed(const QString& name, value_type val)
 {
     if (!name.size())
         return;
@@ -76,7 +76,7 @@ void connector::on_value_destructed(const QString& name, const base_value* val)
                    << "value-ptr" << quintptr(val);
 }
 
-void connector::on_value_created(const QString& name, const base_value* val)
+void connector::on_value_created(const QString& name, value_type val)
 {
     if (!name.size())
         return;
@@ -98,7 +98,7 @@ void connector::on_value_created(const QString& name, const base_value* val)
     {
         tt& tmp = (*it).second;
         std::type_index& typeidx = std::get<2>(tmp);
-        std::vector<const base_value*>& values = std::get<0>(tmp);
+        std::vector<value_type>& values = std::get<0>(tmp);
 
         if (typeidx != val->type_index)
             std::get<1>((*it).second) = generic_is_equal;
@@ -106,7 +106,7 @@ void connector::on_value_created(const QString& name, const base_value* val)
     }
     else
     {
-        std::vector<const base_value*> vec;
+        std::vector<value_type> vec;
         vec.push_back(val);
         connected_values.emplace(name, tt(vec, val->cmp, val->type_index));
     }
@@ -117,7 +117,7 @@ void connector::notify_values(const QString& name) const
     auto it = connected_values.find(name);
     if (it != connected_values.cend())
     {
-        for (const base_value* val : std::get<0>((*it).second))
+        for (value_type val : std::get<0>((*it).second))
         {
             val->bundle_value_changed();
         }
@@ -127,7 +127,7 @@ void connector::notify_values(const QString& name) const
 void connector::notify_all_values() const
 {
     for (auto& pair : connected_values)
-        for (const base_value* val : std::get<0>(pair.second))
+        for (value_type val : std::get<0>(pair.second))
             val->bundle_value_changed();
 }
 

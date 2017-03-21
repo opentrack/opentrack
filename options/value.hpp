@@ -90,6 +90,7 @@ public slots:
 
     virtual void reload() = 0;
     virtual void bundle_value_changed() const = 0;
+    virtual void set_to_default() = 0;
 };
 
 namespace detail {
@@ -169,6 +170,11 @@ public:
     t default_value() const
     {
         return def;
+    }
+
+    void set_to_default() override
+    {
+        *this = def;
     }
 
     operator t() const { return get(); }

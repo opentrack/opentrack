@@ -49,6 +49,11 @@ void bundle::reload(std::shared_ptr<QSettings> settings)
     }
 }
 
+void bundle::set_all_to_default()
+{
+    forall([](const QString&, base_value* val) { set_base_value_to_default(val); });
+}
+
 void bundle::store_kv(const QString& name, const QVariant& datum)
 {
     QMutexLocker l(&mtx);
