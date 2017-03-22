@@ -204,7 +204,7 @@ void spline::update_interp_data()
         {
             const double x = points[0].x();
             const double y = points[0].y();
-            const int max = clamp(int(x * precision(points)), 0, value_count-1);
+            const int max = clamp(int(x * precision(points)), 1, value_count-1);
             for (int k = 0; k <= max; k++)
             {
                 if (k < value_count)
