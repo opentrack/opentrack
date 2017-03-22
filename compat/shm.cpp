@@ -93,11 +93,8 @@ struct secattr
         attrs.lpSecurityDescriptor = pSD;
         attrs.nLength = sizeof(SECURITY_ATTRIBUTES);
 
-        fflush(stderr);
-
         return;
 cleanup:
-        fflush(stderr);
         cleanup();
     }
 
