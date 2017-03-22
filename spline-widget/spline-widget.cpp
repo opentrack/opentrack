@@ -324,38 +324,35 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
     {
         bool bTouchingPoint = false;
         moving_control_point_idx = -1;
-        if (_config)
+        for (int i = 0; i < points.size(); i++)
         {
+            if (point_within_pixel(points[i], e->pos()))
+            {
+                bTouchingPoint = true;
+                moving_control_point_idx = int(i);
+                break;
+            }
+        }
+        if (!bTouchingPoint)
+        {
+            bool too_close = false;
+            const QPoint pos = e->pos();
+
             for (int i = 0; i < points.size(); i++)
             {
-                if (point_within_pixel(points[i], e->pos()))
+                const QPointF pt = point_to_pixel(points[i]);
+                const qreal x = std::fabs(pt.x() - pos.x());
+                if (point_pixel_closeness_limit >= x)
                 {
-                    bTouchingPoint = true;
-                    moving_control_point_idx = int(i);
+                    too_close = true;
                     break;
                 }
             }
-            if (!bTouchingPoint)
+
+            if (!too_close)
             {
-                bool too_close = false;
-                const QPoint pos = e->pos();
-
-                for (int i = 0; i < points.size(); i++)
-                {
-                    const QPointF pt = point_to_pixel(points[i]);
-                    const qreal x = std::fabs(pt.x() - pos.x());
-                    if (point_pixel_closeness_limit >= x)
-                    {
-                        too_close = true;
-                        break;
-                    }
-                }
-
-                if (!too_close)
-                {
-                    _config->add_point(pixel_coord_to_point(e->pos()));
-                    show_tooltip(e->pos());
-                }
+                _config->add_point(pixel_coord_to_point(e->pos()));
+                show_tooltip(e->pos());
             }
         }
     }
