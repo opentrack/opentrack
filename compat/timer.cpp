@@ -6,8 +6,6 @@
  * notice appear in all copies.
  */
 
-#pragma once
-
 #include "timer.hpp"
 
 Timer::Timer()
