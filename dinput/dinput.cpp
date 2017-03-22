@@ -33,8 +33,10 @@ dinput_handle::di_t dinput_handle::make_di()
 void dinput_handle::di_t::free_di()
 {
     if (handle && *handle)
+    {
         (*handle)->Release();
-    *handle = nullptr;
+        *handle = nullptr;
+    }
     handle = nullptr;
 }
 
