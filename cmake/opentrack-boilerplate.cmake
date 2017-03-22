@@ -175,7 +175,6 @@ function(opentrack_boilerplate n)
 
     if(NOT arg_STATIC)
         string(REGEX REPLACE "^opentrack-" "" n_ "${n}")
-        string(REGEX REPLACE "^(tracker|filter|proto)-" "" n_ "${n_}")
         string(REPLACE "-" "_" n_ ${n_})
         target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
 
