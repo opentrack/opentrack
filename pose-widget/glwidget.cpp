@@ -139,10 +139,10 @@ void GLWidget::project_quad_texture()
 
         const vec3 dst_corners[] =
         {
-            vec3(-sx_/2. * c, -sy_/2, 0),
-            vec3(sx_/2 * c, -sy_/2, 0),
-            vec3(-sx_/2 * c, sy_/2, 0),
-            vec3(sx_/2 * c, sy_/2, 0.)
+            vec3(-sx_/2. * c, -sy_/2., 0),
+            vec3(sx_/2. * c, -sy_/2., 0),
+            vec3(-sx_/2. * c, sy_/2., 0),
+            vec3(sx_/2. * c, sy_/2., 0.)
         };
 
         for (int i = 0; i < 4; i++)
@@ -272,7 +272,7 @@ vec2 GLWidget::project(const vec3 &point)
 {
     vec3 ret = rotation * point;
     num z = std::max<num>(.75f, 1 + translation.z()/-60);
-    int w = width(), h = height();
+    num w = width(), h = height();
     num x = w * translation.x() / 2 / -40;
     if (std::abs(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
