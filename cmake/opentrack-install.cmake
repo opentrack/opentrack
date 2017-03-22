@@ -65,15 +65,15 @@ function(merge_translations)
 
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
-        add_custom_command(OUTPUT "${qm-output}"
-            COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
-            DEPENDS ${deps} ${ts}
-            COMMENT "Running lrelease for ${i}")
-
-        add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")
-
-        list(APPEND all-deps "i18n-lang-${i}")
-        install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
+        if("${ts}")
+            add_custom_command(OUTPUT "${qm-output}"
+                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts} -qm "${qm-output}"
+                DEPENDS ${deps} ${ts}
+                COMMENT "Running lrelease for ${i}")
+            add_custom_target(i18n-lang-${i} ALL DEPENDS "${qm-output}")
+            list(APPEND all-deps "i18n-lang-${i}")
+            install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
+        endif()
     endforeach()
     add_custom_target(i18n DEPENDS ${all-deps})
 endfunction()

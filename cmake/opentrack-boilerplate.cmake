@@ -204,24 +204,21 @@ function(opentrack_boilerplate n)
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
     set(SDK_SKIP_TRANSLATION_UPDATE FALSE CACHE BOOL "Don't touch existing .ts files")
 
+    set(langs_ "")
+
     foreach(i ${langs})
-        if(SDK_SKIP_TRANSLATION_UPDATE AND EXISTS "${i}")
-            add_custom_command(OUTPUT "${i}"
-                COMMAND ${CMAKE_COMMAND} -E touch_nocreate "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-                DEPENDS ${${n}-all}
-                COMMENT "Fake lupdate for ${i}")
-        else()
+        if((NOT SDK_SKIP_TRANSLATION_UPDATE) OR (NOT EXISTS "${i}"))
             add_custom_command(OUTPUT "${i}"
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
                 COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
                 WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
                 DEPENDS ${${n}-all}
                 COMMENT "Running lupdate for ${i}")
+            list(APPEND langs_ "${i}")
         endif()
     endforeach()
 
-    add_custom_target(i18n-module-${n} DEPENDS ${langs})
+    add_custom_target(i18n-module-${n} DEPENDS ${langs_})
 
     if(NOT arg_NO-INSTALL)
         set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
