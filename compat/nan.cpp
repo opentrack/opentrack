@@ -5,6 +5,20 @@
 #   define my_isnan std::isnan
 #   define my_isinf std::isinf
 extern "C" OPENTRACK_COMPAT_EXPORT __declspec(noinline) bool nanp(double x)
+#elif defined __MINGW32__
+
+int __cdecl my_isnan(double)__asm__("__isnan");
+int __cdecl my_fpclassify(double)__asm__("___fpclassify");
+
+#define FP_NAN          0x0100
+#define FP_NORMAL       0x0400
+#define FP_INFINITE     (FP_NAN | FP_NORMAL)
+#define FP_ZERO         0x4000
+#define FP_SUBNORMAL    (FP_NORMAL | FP_ZERO)
+
+#define my_isinf(x) (my_fpclassify(x) == FP_INFINITE)
+
+extern "C" OPENTRACK_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #else
 int my_isnan(double)__asm__("isnan");
 int my_isinf(double)__asm__("isinf");
