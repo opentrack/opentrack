@@ -8,6 +8,7 @@
 
 #include "bundle.hpp"
 #include "value.hpp"
+#include "defs.hpp"
 
 #include <QThread>
 #include <QApplication>
@@ -76,6 +77,11 @@ void bundle::save_deferred(QSettings& s)
 {
     if (QThread::currentThread() != qApp->thread())
         qCritical() << "group::save - current thread not ui thread";
+
+    if (group::ini_filename() == OPENTRACK_DEFAULT_CONFIG_Q)
+    {
+        set_all_to_default();
+    }
 
     if (group_name.size() == 0)
         return;
