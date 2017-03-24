@@ -8,8 +8,11 @@
 
 #pragma once
 
-#include "connector.hpp"
+#include "export.hpp"
 
+#include "compat/util.hpp"
+
+#include "connector.hpp"
 #include "bundle.hpp"
 #include "slider.hpp"
 #include <type_traits>
@@ -135,13 +138,13 @@ template<typename t> using value_element_type_t = typename value_element_type<t>
 template<typename t>
 class value final : public base_value
 {
-public:
-    using element_type = detail::value_element_type_t<t>;
-
     static bool is_equal(const QVariant& val1, const QVariant& val2)
     {
         return val1.value<element_type>() == val2.value<element_type>();
     }
+
+public:
+    using element_type = detail::value_element_type_t<t>;
 
     t operator=(const t& datum)
     {
@@ -206,5 +209,19 @@ private:
     const t def;
 };
 
+#ifdef OTR_OPTIONS_VALUE_TEMPLATE_UNIT
+#   define OTR_OPTIONS_VALUE_TEMPLATE_EXTERN
+#   define OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC OPENTRACK_OPTIONS_EXPORT
+#else
+#   define OTR_OPTIONS_VALUE_TEMPLATE_EXTERN extern
+#   define OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC
+#endif
 
-}
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<int>;
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<double>;
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<bool>;
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<QString>;
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<slider_value>;
+OTR_OPTIONS_VALUE_TEMPLATE_EXTERN template class OTR_OPTIONS_VALUE_TEMPLATE_DECLSPEC value<QList<QPointF>>;
+
+} // ns options

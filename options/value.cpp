@@ -6,6 +6,7 @@
  * notice appear in all copies.
  */
 
+#define OTR_OPTIONS_VALUE_TEMPLATE_UNIT
 #include "value.hpp"
 
 namespace options {
@@ -32,4 +33,4 @@ namespace detail
     }
 }
 
-}
+} // ns options
