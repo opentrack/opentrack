@@ -86,7 +86,7 @@ void Tracker_PT::run()
             f fx;
             cam_info.get_focal_length(fx);
 
-            const bool success = points.size() >= PointModel::N_POINTS;
+            const bool success = points.size() == PointModel::N_POINTS;
 
             if (success)
             {
