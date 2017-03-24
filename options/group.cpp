@@ -10,6 +10,7 @@
 #include "defs.hpp"
 #include <QStandardPaths>
 #include <QDir>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -81,10 +82,13 @@ QString group::ini_filename()
 
 QString group::ini_pathname()
 {
-    const auto dir = ini_directory();
+    const QString filename = ini_filename();
+    const QString dir = filename == OPENTRACK_DEFAULT_CONFIG
+                        ? QCoreApplication::applicationDirPath()
+                        : ini_directory();
     if (dir == "")
         return "";
-    return dir + "/" + ini_filename();
+    return dir + "/" + filename;
 }
 
 QString group::ini_combine(const QString& filename)
@@ -99,7 +103,10 @@ QStringList group::ini_list()
         return QStringList();
     QDir settings_dir(dirname);
     QStringList list = settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+    if (list.contains(OPENTRACK_DEFAULT_CONFIG))
+        list.removeOne(OPENTRACK_DEFAULT_CONFIG);
     std::sort(list.begin(), list.end());
+    list.prepend(OPENTRACK_DEFAULT_CONFIG);
     return list;
 }
 
@@ -107,7 +114,7 @@ std::shared_ptr<QSettings> group::ini_file()
 {
     const auto pathname = ini_pathname();
     if (pathname != "")
-        return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
+        return std::make_shared<QSettings>(pathname, QSettings::IniFormat);
     return std::make_shared<QSettings>();
 }
 
