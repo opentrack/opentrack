@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #include "../build-msvc15/opentrack-version.h"
-#define MyAppName "opentrack"
+#define MyAppName "trackmouse prototype"
 #define MyAppVersion OPENTRACK_VERSION
-#define MyAppPublisher "opentrack"
-#define MyAppURL "http://github.com/opentrack/opentrack"
+#define MyAppPublisher "trackhat"
+#define MyAppURL ""
 #define MyAppExeName "opentrack.exe"
 
 #include "non-ui-blocking-exec.iss"
@@ -14,7 +14,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{63F53541-A29E-4B53-825A-9B6F876A2BD6}
+AppId={{9BEDAD92-E291-42B5-8882-20242C264113}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
