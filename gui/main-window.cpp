@@ -281,6 +281,9 @@ void MainWindow::die_on_config_not_writable()
 
 bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
 {
+    if (current == OPENTRACK_DEFAULT_CONFIG_Q)
+        return false;
+
     const bool open = QFile(group::ini_combine(current)).open(QFile::ReadWrite);
     const QStringList ini_list = group::ini_list();
 
