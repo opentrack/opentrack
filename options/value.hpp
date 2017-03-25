@@ -146,6 +146,7 @@ class value final : public base_value
 public:
     using element_type = detail::value_element_type_t<t>;
 
+    OTR_NEVER_INLINE
     t operator=(const t& datum)
     {
         const element_type tmp = static_cast<element_type>(datum);
@@ -157,7 +158,9 @@ public:
     static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    value(bundle b, const QString& name, t def) : base_value(b, name, &is_equal, std::type_index(typeid(element_type))), def(def)
+    OTR_NEVER_INLINE
+    value(bundle b, const QString& name, t def) :
+        base_value(b, name, &is_equal, std::type_index(typeid(element_type))), def(def)
     {
         QObject::connect(b.get(), SIGNAL(reloading()),
                          this, SLOT(reload()),
@@ -166,6 +169,7 @@ public:
             *this = def;
     }
 
+    OTR_NEVER_INLINE
     value(bundle b, const char* name, t def) : value(b, QString(name), def)
     {
     }
@@ -175,13 +179,16 @@ public:
         return def;
     }
 
+    OTR_NEVER_INLINE
     void set_to_default() override
     {
         *this = def;
     }
 
+    OTR_NEVER_INLINE
     operator t() const { return get(); }
 
+    OTR_NEVER_INLINE
     void reload() override
     {
         *this = static_cast<t>(*this);
@@ -192,12 +199,21 @@ public:
         emit valueChanged(static_cast<detail::value_type_t<t>>(get()));
     }
 
-    element_type operator()() const
+    OTR_NEVER_INLINE
+    t operator()() const
     {
-        return get();
+        return static_cast<t>(get());
+    }
+
+    template<typename u>
+    OTR_NEVER_INLINE
+    u to()
+    {
+        return static_cast<u>(get());
     }
 
 private:
+    OTR_NEVER_INLINE
     t get() const
     {
         t val = b->contains(self_name)

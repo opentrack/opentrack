@@ -51,12 +51,8 @@ protected:
         QMutexLocker l(get_mtx());
 
         for (auto& pair : connected_values)
-        {
             for (auto& val : std::get<0>(pair.second))
-            {
                 fun(pair.first, val);
-            }
-        }
     }
 
 public:
