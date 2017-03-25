@@ -199,6 +199,8 @@ OPENTRACK_OPTIONS_EXPORT bundler& singleton()
     return ret;
 }
 
+QMutex* bundle::get_mtx() const { return mtx; }
+
 } // end options::detail
 
 OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
@@ -208,7 +210,5 @@ OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& nam
     else
         return std::make_shared<bundle_>(QString());
 }
-
-QMutex* options::detail::bundle::get_mtx() const { return mtx; }
 
 } // end options
