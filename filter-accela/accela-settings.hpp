@@ -44,17 +44,17 @@ struct settings_accela : opts
 
     static void make_splines(spline& rot, spline& trans);
 
-    value<slider_value> rot_sensitivity, trans_sensitivity;
-    value<slider_value> rot_deadzone, trans_deadzone;
+    value<slider_value> rot_sensitivity, pos_sensitivity;
+    value<slider_value> rot_deadzone, pos_deadzone;
     value<slider_value> ewma;
     value<slider_value> rot_nonlinearity;
     settings_accela() :
         opts("accela-sliders"),
-        rot_sensitivity(b, "rotation-sensitivity", slider_value(1.5, .05, 5)),
-        trans_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
-        rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, 2)),
-        trans_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
-        ewma(b, "ewma", slider_value(0, 0, 30)),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.2, 1, 1.5))
+        rot_sensitivity(b, "rotation-sensitivity", slider_value(1.5, .1, 2)),
+        pos_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
+        rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .1)),
+        pos_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
+        ewma(b, "ewma", slider_value(0, 0, 15)),
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.2, 1, 1.3))
     {}
 };

@@ -80,7 +80,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>60</number>
+         <number>15</number>
         </property>
         <property name="pageStep">
          <number>3</number>
@@ -155,7 +155,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>20</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -197,7 +197,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>145</number>
+         <number>29</number>
         </property>
         <property name="pageStep">
          <number>15</number>
@@ -278,10 +278,10 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>495</number>
+         <number>38</number>
         </property>
         <property name="pageStep">
-         <number>15</number>
+         <number>5</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -326,7 +326,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>200</number>
+         <number>10</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -416,7 +416,7 @@
             <number>0</number>
            </property>
            <property name="maximum">
-            <number>20</number>
+            <number>12</number>
            </property>
            <property name="pageStep">
             <number>2</number>
