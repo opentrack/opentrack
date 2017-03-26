@@ -21,24 +21,24 @@ dialog_accela::dialog_accela()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     connect(&s.rot_sensitivity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_display(const slider_value&)));
-    connect(&s.trans_sensitivity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_trans_display(const slider_value&)));
+    connect(&s.pos_sensitivity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_pos_display(const slider_value&)));
     connect(&s.ewma, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_ewma_display(const slider_value&)));
     connect(&s.rot_deadzone, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_dz_display(const slider_value&)));
-    connect(&s.trans_deadzone, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_trans_dz_display(const slider_value&)));
+    connect(&s.pos_deadzone, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_pos_dz_display(const slider_value&)));
     connect(&s.rot_nonlinearity, SIGNAL(valueChanged(const slider_value&)), this, SLOT(update_rot_nl_slider(const slider_value&)));
 
     tie_setting(s.rot_sensitivity, ui.rotation_slider);
-    tie_setting(s.trans_sensitivity, ui.translation_slider);
+    tie_setting(s.pos_sensitivity, ui.translation_slider);
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
-    tie_setting(s.trans_deadzone, ui.trans_dz_slider);
+    tie_setting(s.pos_deadzone, ui.trans_dz_slider);
     tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
 
     update_rot_display(s.rot_sensitivity);
-    update_trans_display(s.trans_sensitivity);
+    update_pos_display(s.pos_sensitivity);
     update_ewma_display(s.ewma);
     update_rot_dz_display(s.rot_deadzone);
-    update_trans_dz_display(s.trans_deadzone);
+    update_pos_dz_display(s.pos_deadzone);
     update_rot_nl_slider(s.rot_nonlinearity);
 
 //#define SPLINE_ROT_DEBUG
@@ -89,7 +89,7 @@ void dialog_accela::save()
     s.b->save();
 }
 
-#define FIELD(x, a) ((a).arg(((x).cur()), 0, 'g', 4))
+#define FIELD(x, a) ((a).arg(double((x)), 0, 'g', 4))
 #define LIT(x) QStringLiteral(x)
 
 void dialog_accela::update_rot_display(const slider_value& val)
@@ -98,7 +98,7 @@ void dialog_accela::update_rot_display(const slider_value& val)
     ui.rot_gain->setText(FIELD(val, str));
 }
 
-void dialog_accela::update_trans_display(const slider_value& val)
+void dialog_accela::update_pos_display(const slider_value& val)
 {
     ui.trans_gain->setText(FIELD(val, LIT("%1mm")));
 }
@@ -114,7 +114,7 @@ void dialog_accela::update_rot_dz_display(const slider_value& val)
     ui.rot_dz->setText(FIELD(val, str));
 }
 
-void dialog_accela::update_trans_dz_display(const slider_value& val)
+void dialog_accela::update_pos_dz_display(const slider_value& val)
 {
     ui.trans_dz->setText(FIELD(val, LIT("%1mm")));
 }

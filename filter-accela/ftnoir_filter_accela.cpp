@@ -12,14 +12,14 @@
 #include "api/plugin-api.hpp"
 
 constexpr double settings_accela::rot_gains[16][2];
-constexpr double settings_accela::trans_gains[16][2];
+constexpr double settings_accela::pos_gains[16][2];
 
 accela::accela() : first_run(true)
 {
-    s.make_splines(rot, trans);
+    s.make_splines(spline_rot, spline_pos);
 }
 
-double accela::get_delta(double val, double prev, double& degen)
+double accela::get_rot_delta(double val, double prev, double& degen)
 {
     using std::fabs;
     using std::copysign;
@@ -45,6 +45,61 @@ double accela::get_delta(double val, double prev, double& degen)
     }
 }
 
+template <typename T>
+static inline constexpr T signum(T x)
+{
+    return T((T(0) < x) - (x < T(0)));
+}
+
+using std::fabs;
+using std::sqrt;
+using std::pow;
+using std::copysign;
+using std::max;
+
+template<int N = 3, typename F>
+static void do_deltas(const double* deltas, double* output, F&& fun)
+{
+    double norm[N];
+
+    const double dist = progn(
+        double ret = 0;
+        for (unsigned k = 0; k < N; k++)
+            ret += deltas[k]*deltas[k];
+        return sqrt(ret);
+    );
+
+    const double value = double(fun(dist));
+
+    for (unsigned k = 0; k < N; k++)
+    {
+        const double c = dist > 1e-6 ? clamp((fabs(deltas[k]) / dist), 0., 1.) : 0;
+        norm[k] = c;
+    }
+
+    progn(
+        double n = 0;
+        for (unsigned k = 0; k < N; k++)
+            n += norm[k];
+
+        if (n > 1e-6)
+        {
+            const double ret = 1./n;
+            for (unsigned k = 0; k < N; k++)
+                norm[k] *= ret;
+        }
+        else
+            for (unsigned k = 0; k < N; k++)
+                norm[k] = 0;
+    );
+
+    for (unsigned k = 0; k < N; k++)
+    {
+        const double d = norm[k] * value;
+        output[k] = signum(deltas[k]) * d;
+    }
+}
+
 void accela::filter(const double* input, double *output)
 {
     if (first_run)
@@ -61,47 +116,64 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_t = s.rot_sensitivity().cur();
-    const double trans_t = s.trans_sensitivity().cur();
+    const double rot_thres = s.rot_sensitivity.to<double>();
+    const double pos_thres = s.pos_sensitivity.to<double>();
 
     const double dt = t.elapsed_seconds();
     t.start();
 
-    const double RC = s.ewma().cur() / 1000.; // seconds
+    const double RC = s.ewma.to<double>() / 1000.; // seconds
     const double alpha = dt/(dt+RC);
-    const double rot_dz = s.rot_deadzone().cur();
-    const double trans_dz = s.trans_deadzone().cur();
-    const slider_value nl = s.rot_nonlinearity;
+    const double rot_dz = s.rot_deadzone.to<double>();
+    const double pos_dz = s.pos_deadzone.to<double>();
+    const double nl = s.rot_nonlinearity.to<double>();
+    double deltas[6];
 
-    for (int i = 0; i < 6; i++)
-    {
-        spline& m = i >= 3 ? rot : trans;
-
+    for (unsigned i = 0; i < 6; i++)
         smoothed_input[i] = smoothed_input[i] * (1-alpha) + input[i] * alpha;
 
-        const double in = smoothed_input[i];
+    // rot
 
+    for (unsigned i = 3; i < 6; i++)
+    {
         double degen;
-        const double vec_ = get_delta(in, last_output[i], degen);
-        const double dz = i >= 3 ? rot_dz : trans_dz;
-        const double vec = std::max(0., fabs(vec_) - dz);
-        const double thres = i >= 3 ? rot_t : trans_t;
-        const double out_ = vec / thres;
-        const double out = progn(
-            const bool should_apply_rot_nonlinearity =
-               i >= 3 &&
-               std::fabs(nl.cur() - 1) > 5e-3 &&
-               vec < nl.max();
+        double d = get_rot_delta(smoothed_input[i], last_output[i], degen);
+        d += copysign(rot_dz, -d);
+        deltas[i] = d / rot_thres;
+        last_output[i] += degen;
+    }
 
+    if (nl > 1.)
+    {
+        for (unsigned k = 3; k < 6; k++)
+        {
             static constexpr double nl_end = 1.5;
 
-            if (should_apply_rot_nonlinearity)
-               return std::pow(out_/nl_end, nl.cur()) * nl_end;
-            else
-               return out_;
-        );
-        const double val = double(m.get_value(out));
-        last_output[i] = output[i] = last_output[i] + signum(vec_) * dt * val + degen;
+            if (deltas[k] <= nl_end)
+                deltas[k] = copysign(pow(fabs(deltas[k]/nl_end), nl) * nl_end, deltas[k]);
+        }
+    }
+
+    do_deltas(&deltas[Yaw], &output[Yaw], [this](double x) { return spline_rot.get_value_no_save(x); });
+
+    // pos
+
+    for (unsigned i = 0; i < 3; i++)
+    {
+        double d = smoothed_input[i] - last_output[i];
+        d += copysign(pos_dz, -d);
+        deltas[i] = d / pos_thres;
+    }
+
+    do_deltas(&deltas[TX], &output[TX], [this](double x) { return spline_pos.get_value_no_save(x); });
+
+    // end
+
+    for (unsigned k = 0; k < 6; k++)
+    {
+        output[k] *= dt;
+        output[k] += last_output[k];
+        last_output[k] = output[k];
     }
 }
 
@@ -111,15 +183,15 @@ void settings_accela::make_splines(spline& rot, spline& trans)
     trans = spline();
 
     rot.set_max_input(rot_gains[0][0]);
-    trans.set_max_input(trans_gains[0][0]);
+    trans.set_max_input(pos_gains[0][0]);
     rot.set_max_output(rot_gains[0][1]);
-    trans.set_max_output(trans_gains[0][1]);
+    trans.set_max_output(pos_gains[0][1]);
 
     for (int i = 0; rot_gains[i][0] >= 0; i++)
         rot.add_point(QPointF(rot_gains[i][0], rot_gains[i][1]));
 
-    for (int i = 0; trans_gains[i][0] >= 0; i++)
-        trans.add_point(QPointF(trans_gains[i][0], trans_gains[i][1]));
+    for (int i = 0; pos_gains[i][0] >= 0; i++)
+        trans.add_point(QPointF(pos_gains[i][0], pos_gains[i][1]));
 }
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)

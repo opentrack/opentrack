@@ -20,7 +20,7 @@ public:
     accela();
     void filter(const double* input, double *output) override;
     void center() override { first_run = true; }
-    spline rot, trans;
+    spline spline_rot, spline_pos;
 private:
     settings_accela s;
     bool first_run;
@@ -28,13 +28,7 @@ private:
     double smoothed_input[6];
     Timer t;
 
-    static double get_delta(double val, double prev, double& degen);
-
-    template <typename T>
-    static inline int signum(T x)
-    {
-        return (T(0) < x) - (x < T(0));
-    }
+    static double get_rot_delta(double val, double prev, double& degen);
 };
 
 class dialog_accela: public IFilterDialog
@@ -53,9 +47,9 @@ private slots:
     void doCancel();
     void update_ewma_display(const slider_value& value);
     void update_rot_display(const slider_value& value);
-    void update_trans_display(const slider_value& value);
+    void update_pos_display(const slider_value& value);
     void update_rot_dz_display(const slider_value& value);
-    void update_trans_dz_display(const slider_value&);
+    void update_pos_dz_display(const slider_value&);
     void update_rot_nl_slider(const slider_value& sl);
 };
 
