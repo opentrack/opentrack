@@ -37,9 +37,9 @@ struct move_accela_to_sliders : migration
         {
             {
                 { "rotation-threshold", 4, 1, &s.rot_sensitivity },
-                { "translation-threshold", 4, 1, &s.trans_sensitivity },
+                { "translation-threshold", 4, 1, &s.pos_sensitivity },
                 { "rotation-deadzone", 4, 0, &s.rot_deadzone },
-                { "translation-deadzone", 4, 0, &s.trans_deadzone },
+                { "translation-deadzone", 4, 0, &s.pos_deadzone },
                 { "ewma", 1.25, 0, &s.ewma },
                 { nullptr, 0, 0, nullptr },
             }
@@ -118,7 +118,7 @@ struct move_accela_to_sliders : migration
 
 // odr
 constexpr double settings_accela::rot_gains[16][2];
-constexpr double settings_accela::trans_gains[16][2];
+constexpr double settings_accela::pos_gains[16][2];
 
 constexpr const char* move_accela_to_sliders::old_bundle_name;
 constexpr const char* move_accela_to_sliders::new_bundle_name;
