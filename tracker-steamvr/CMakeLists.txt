@@ -27,7 +27,7 @@ endif()
 if(steamvr-dll)
     SET(SDK_VALVE_STEAMVR "" CACHE PATH "Valve's SteamVR")
     if(SDK_VALVE_STEAMVR)
-        opentrack_boilerplate(opentrack-tracker-steamvr NO-INSTALL)
+        otr_module(tracker-steamvr NO-INSTALL)
         #install(FILES "${SDK_VALVE_STEAMVR}/bin/${steamvr-dir}/${steamvr-dll}" DESTINATION "${opentrack-hier-pfx}")
 
         target_include_directories(opentrack-tracker-steamvr SYSTEM PUBLIC "${SDK_VALVE_STEAMVR}/headers")

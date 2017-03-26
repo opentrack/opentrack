@@ -1,6 +1,6 @@
 set(SDK_HYDRA "" CACHE PATH "libSixense path for Razer Hydra")
 if(SDK_HYDRA)
-    opentrack_boilerplate(opentrack-tracker-hydra)
+    otr_module(tracker-hydra)
     target_include_directories(opentrack-tracker-hydra SYSTEM PUBLIC ${SDK_HYDRA}/include ${SDK_HYDRA}/include/sixense_utils)
     if(opentrack-64bit)
         set(six4 _x64)

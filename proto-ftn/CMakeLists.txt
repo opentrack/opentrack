@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-proto-udp)
+otr_module(proto-udp)

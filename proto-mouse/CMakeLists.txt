@@ -1,3 +1,3 @@
 if(WIN32)
-    opentrack_boilerplate(opentrack-proto-win32-mouse)
+    otr_module(proto-win32-mouse)
 endif()

@@ -1,11 +1,11 @@
 set(opentrack-perms_ WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 set(opentrack-perms PERMISSIONS ${opentrack-perms_})
 
-macro(opentrack_inst2 path)
+macro(otr_inst2 path)
     install(${ARGN} DESTINATION "${path}" ${opentrack-perms})
 endmacro()
 
-macro(opentrack_inst_dir path)
+macro(otr_inst_dir path)
     install(
         DIRECTORY ${ARGN} DESTINATION "${path}"
         FILE_PERMISSIONS ${opentrack-perms_}
@@ -17,35 +17,35 @@ function(install_sources)
     get_property(source-dirs GLOBAL PROPERTY opentrack-all-source-dirs)
     foreach(k ${source-dirs})
         file(RELATIVE_PATH dest "${CMAKE_SOURCE_DIR}" "${k}")
-        opentrack_inst_dir("${opentrack-doc-src-pfx}" "${dest}")
+        otr_inst_dir("${opentrack-doc-src-pfx}" "${dest}")
     endforeach()
 endfunction()
 
-opentrack_inst_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
-opentrack_inst_dir("${opentrack-doc-pfx}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
-opentrack_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/cmake")
-opentrack_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/bin")
+otr_inst_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
+otr_inst_dir("${opentrack-doc-pfx}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
+otr_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/cmake")
+otr_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/bin")
 
 if(WIN32)
-    opentrack_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")
-    opentrack_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
-    opentrack_inst2(${opentrack-hier-pfx} FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
+    otr_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")
+    otr_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
+    otr_inst2(${opentrack-hier-pfx} FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
 endif()
 
-opentrack_inst2("${opentrack-doc-pfx}" FILES ${CMAKE_SOURCE_DIR}/README.md)
+otr_inst2("${opentrack-doc-pfx}" FILES ${CMAKE_SOURCE_DIR}/README.md)
 
-opentrack_inst2("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
-opentrack_inst2("${opentrack-hier-pfx}" FILES
+otr_inst2("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
+otr_inst2("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")
 
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
-opentrack_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
+otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
 
 function(merge_translations)
     set(all-deps "")

@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-tracker-freepie-udp)
+otr_module(tracker-freepie-udp)

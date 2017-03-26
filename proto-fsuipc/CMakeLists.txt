@@ -1,7 +1,7 @@
 if(WIN32)
     set(SDK_FSUIPC "" CACHE PATH "FSUIPC for older MS FSX path")
     if(SDK_FSUIPC)
-        opentrack_boilerplate(opentrack-proto-fsuipc)
+        otr_module(proto-fsuipc)
         target_link_libraries(opentrack-proto-fsuipc ${SDK_FSUIPC}/FSUIPC_User.lib)
         target_include_directories(opentrack-proto-fsuipc SYSTEM PUBLIC ${SDK_FSUIPC})
         if(MSVC)

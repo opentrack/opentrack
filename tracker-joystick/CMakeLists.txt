@@ -1,5 +1,5 @@
 if(WIN32)
-    opentrack_boilerplate(opentrack-tracker-joystick)
+    otr_module(tracker-joystick)
     target_link_libraries(opentrack-tracker-joystick opentrack-dinput)
 endif()
 

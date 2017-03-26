@@ -1,5 +1,5 @@
 if(Qt5SerialPort_FOUND)
-    opentrack_boilerplate(opentrack-tracker-hatire)
+    otr_module(tracker-hatire)
     target_link_libraries(opentrack-tracker-hatire ${Qt5SerialPort_LIBRARIES})
     target_include_directories(opentrack-tracker-hatire SYSTEM PUBLIC ${Qt5SerialPort_INCLUDE_DIRS})
 endif()

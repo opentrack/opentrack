@@ -26,7 +26,7 @@ if(MSVC)
         # cross tools, etc. which is a can of worms and if/else branches.
         get_filename_component(linker-dir "${CMAKE_LINKER}" DIRECTORY)
         find_file(editbin-executable-filepath "editbin.exe" "${linker-dir}" "${linker-dir}/.." "${linker-dir}/../..")
-        opentrack_escape_string("${editbin-executable-filepath}" editbin-executable)
+        otr_escape_string("${editbin-executable-filepath}" editbin-executable)
     else()
         set(editbin-executable "editbin")
     endif()

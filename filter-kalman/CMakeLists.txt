@@ -1,5 +1,5 @@
 find_package(Eigen3 QUIET)
 if(EIGEN3_FOUND)
-    opentrack_boilerplate(opentrack-filter-kalman)
+    otr_module(filter-kalman)
     target_include_directories(opentrack-filter-kalman SYSTEM PUBLIC ${EIGEN3_INCLUDE_DIR})
 endif()

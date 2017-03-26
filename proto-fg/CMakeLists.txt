@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-proto-fgfs)
+otr_module(proto-fgfs)

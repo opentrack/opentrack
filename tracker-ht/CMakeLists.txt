@@ -4,7 +4,7 @@ set(SDK_HT_FLANDMARK "" CACHE FILEPATH "Path to flandmark library for headtracke
 find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
 if(OpenCV_FOUND)
     if(SDK_HT AND SDK_HT_FLANDMARK)
-        opentrack_boilerplate(opentrack-tracker-ht)
+        otr_module(tracker-ht)
         target_link_libraries(opentrack-tracker-ht ${SDK_HT} ${SDK_HT_FLANDMARK} ${OpenCV_LIBS})
         target_include_directories(opentrack-tracker-ht SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     endif()

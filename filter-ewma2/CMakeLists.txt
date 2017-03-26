@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-filter-ewma)
+otr_module(filter-ewma)

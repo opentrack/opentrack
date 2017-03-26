@@ -1,1 +1,1 @@
-opentrack_boilerplate(opentrack-tracker-udp)
+otr_module(tracker-udp)

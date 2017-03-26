@@ -41,7 +41,7 @@
 #ifdef _MSC_VER
 #   define OPENTRACK_SOLIB_PREFIX ""
 #else
-#   define OPENTRACK_SOLIB_PREFIX "lib"
+#   define OPENTRACK_SOLIB_PREFIX ""
 #endif
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
