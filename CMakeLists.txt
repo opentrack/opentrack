@@ -78,3 +78,7 @@ endforeach()
 
 merge_translations()
 install_sources()
+
+foreach(k C CXX)
+    fix_flags(${k} "DNDEBUG" "")
+endforeach()
