@@ -49,7 +49,7 @@ set(silly "${warns_} /MT /Zi /Gm")
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
 set(_CFLAGS_RELEASE "${cc}")
-set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf -D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0")
+set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
