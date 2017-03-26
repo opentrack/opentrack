@@ -43,11 +43,11 @@ endif()
 if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_HAS_ITERATOR_DEBUGGING=0 -D_SECURE_SCL=0)
-    set(CMAKE_CXX_FLAGS " /GR- /std:c++14 -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_CXX_FLAGS} ")
-    set(CMAKE_C_FLAGS " -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_C_FLAGS} ")
+    set(CMAKE_CXX_FLAGS "-std:c++14 ${CMAKE_CXX_FLAGS}")
+    #set(CMAKE_C_FLAGS " -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_C_FLAGS} ")
 
     foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS " /DYNAMICBASE /NXCOMPAT ${CMAKE_${i}_LINKER_FLAGS} ")
+        set(CMAKE_${i}_LINKER_FLAGS "-DYNAMICBASE -NXCOMPAT ${CMAKE_${i}_LINKER_FLAGS} ")
     endforeach()
 endif()
 
@@ -119,6 +119,7 @@ function(fix_flags lang flag replacement)
         endif()
     endforeach()
 endfunction()
+
 # nix -rdynamic passed from Linux-GNU.cmake
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(__LINUX_COMPILER_GNU 1)
