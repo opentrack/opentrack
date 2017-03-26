@@ -46,6 +46,7 @@ class OPENTRACK_SPLINE_EXPORT spline final
     void update_interp_data();
     float get_value_internal(int x);
     void add_lone_point();
+    float get_value_no_save_internal(double x);
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, double max_x, int i);
@@ -83,7 +84,7 @@ public:
     spline(const spline&) = default;
 
     float get_value(double x);
-    float get_value_no_save(double x);
+    float get_value_no_save(double x) const;
     DEFUN_WARN_UNUSED bool get_last_value(QPointF& point);
     void remove_point(int i);
     void clear();

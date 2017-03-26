@@ -101,14 +101,19 @@ float spline::get_value(double x)
     return ret;
 }
 
-float spline::get_value_no_save(double x)
+float spline::get_value_no_save(double x) const
+{
+    return const_cast<spline&>(*this).get_value_no_save_internal(x);
+}
+
+float spline::get_value_no_save_internal(double x)
 {
     QMutexLocker foo(&_mutex);
 
     if (max_x > 0)
         x = std::min(max_x, x);
 
-    float q  = float(x * precision(s->points));
+    float  q  = float(x * precision(s->points));
     int    xi = (int)q;
     float  yi = get_value_internal(xi);
     float  yiplus1 = get_value_internal(xi+1);
