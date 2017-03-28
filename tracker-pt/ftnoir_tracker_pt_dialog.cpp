@@ -93,27 +93,38 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         s.t_MH_x = 0;
         s.t_MH_y = 0;
         s.t_MH_z = 0;
+
+        ui.sample_count_display->setText(QString());
     }
     else
     {
         calib_timer.stop();
         qDebug() << "pt: stopping translation calibration";
         {
-            auto tmp = trans_calib.get_estimate();
+            cv::Vec3f tmp;
+            unsigned nsamples;
+            std::tie(tmp, nsamples) = trans_calib.get_estimate();
             s.t_MH_x = int(tmp[0]);
             s.t_MH_y = int(tmp[1]);
             s.t_MH_z = int(tmp[2]);
+
+            static constexpr unsigned min_samples = 80;
+            const QString sample_feedback = nsamples >= min_samples
+                ? tr("%1 samples. Over %2, good!").arg(nsamples).arg(min_samples)
+                : tr("%1 samples. Try for at least %2 for a precise calibration.").arg(nsamples).arg(min_samples);
+
+            ui.sample_count_display->setText(sample_feedback);
         }
     }
     ui.tx_spin->setEnabled(!start);
     ui.ty_spin->setEnabled(!start);
     ui.tz_spin->setEnabled(!start);
     ui.tcalib_button->setText(progn(
-                                  if (start)
-                                      return QStringLiteral("Stop calibration");
-                                  else
-                                      return QStringLiteral("Start calibration");
-                                  ));
+        if (start)
+          return tr("Stop calibration");
+        else
+          return tr("Start calibration");
+    ));
 }
 
 void TrackerDialog_PT::poll_tracker_info_impl()
@@ -121,16 +132,16 @@ void TrackerDialog_PT::poll_tracker_info_impl()
     CamInfo info;
     if (tracker && tracker->get_cam_info(&info))
     {
-        ui.caminfo_label->setText(QStringLiteral("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
+        ui.caminfo_label->setText(tr("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
 
         // display point info
         const int n_points = tracker->get_n_points();
-        ui.pointinfo_label->setText((n_points == 3 ? QStringLiteral("%1 OK!") : QStringLiteral("%1 BAD!")).arg(n_points));
+        ui.pointinfo_label->setText((n_points == 3 ? tr("%1 OK!") : tr("%1 BAD!")).arg(n_points));
     }
     else
     {
-        ui.caminfo_label->setText(QStringLiteral("Tracker offline"));
-        ui.pointinfo_label->setText(QStringLiteral(""));
+        ui.caminfo_label->setText(tr("Tracker offline"));
+        ui.pointinfo_label->setText(QString());
     }
 }
 
@@ -203,4 +214,3 @@ void TrackerDialog_PT::unregister_tracker()
     poll_tracker_info();
     timer.stop();
 }
-
