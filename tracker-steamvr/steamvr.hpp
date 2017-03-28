@@ -20,15 +20,14 @@ using namespace options;
 
 struct settings : opts
 {
-    value<int> order;
     settings() :
-        opts("valve-steamvr"),
-        order(b, "rotation-order", 0)
+        opts("valve-steamvr")
     {}
 };
 
-class steamvr : public ITracker
+class steamvr : public QObject, public ITracker
 {
+    Q_OBJECT
 public:
     steamvr();
     ~steamvr() override;

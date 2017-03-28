@@ -4,7 +4,6 @@
 
 #include <cstdlib>
 #include <cmath>
-#include <algorithm>
 
 #include <QMessageBox>
 #include <QDebug>
@@ -54,7 +53,7 @@ void steamvr::start_tracker(QFrame*)
     if (!vr)
     {
         QMessageBox::warning(nullptr,
-                             QCoreApplication::translate("steamvr", "Valve SteamVR init error"), strerror(e),
+                             tr("Valve SteamVR init error"), strerror(e),
                              QMessageBox::Close, QMessageBox::NoButton);
         return;
     }
@@ -71,8 +70,8 @@ void steamvr::start_tracker(QFrame*)
     if (!ok)
     {
         QMessageBox::warning(nullptr,
-                             QCoreApplication::translate("steamvr", "Valve SteamVR init warning"),
-                             QCoreApplication::translate("steamvr", "No HMD connected"),
+                             tr("Valve SteamVR init warning"),
+                             tr("No HMD connected"),
                              QMessageBox::Close, QMessageBox::NoButton);
         return;
     }
@@ -87,41 +86,47 @@ void steamvr::data(double* data)
         vr->GetDeviceToAbsoluteTrackingPose(vr::ETrackingUniverseOrigin::TrackingUniverseSeated, 0,
                                             devices, vr::k_unMaxTrackedDeviceCount);
 
-        bool done = false;
-
         for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
         {
-            using namespace euler;
-
             if (!devices[k].bPoseIsValid)
                 continue;
 
             if (vr->GetTrackedDeviceClass(k) != vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
                 continue;
 
-            const auto& result = devices[k].mDeviceToAbsoluteTracking;
+            const vr::HmdMatrix34_t& result = devices[k].mDeviceToAbsoluteTracking;
 
-            static constexpr double c[3] { -1, 1, -1 };
+            int c = 10;
 
-            for (unsigned i = 0; i < 3; i++)
-                data[i] = double(result.m[i][3]) * c[i] * 100;
+            data[TX] = -result.m[0][3] * c;
+            data[TY] = result.m[1][3] * c;
+            data[TZ] = result.m[2][3] * c;
 
             using std::atan2;
             using std::asin;
 
-            //const euler_t rot = get_ypr(s.order);
+            // transformation matrix to euler angles
+            if (result.m[0][0] == 1.0f || result.m[0][0] == -1.0f)
+            {
+                data[Yaw] = -atan2(result.m[0][2], result.m[2][3]);
+                data[Pitch] = 0;
+                data[Roll] = 0;
+            }
+            else
+            {
+                data[Yaw] = -atan2(-result.m[2][0], result.m[0][0]);
+                data[Pitch] = atan2(-result.m[1][2], result.m[1][1]);
+                data[Roll] = asin(result.m[1][0]);
+            }
 
-            static constexpr double r2d = 180/M_PI;
+            static constexpr double r2d = 180 / M_PI;
 
-            //for (unsigned i = 3; i < 6; i++)
-            //    data[i] = r2d * rot[i];
+            data[Yaw] *= r2d;
+            data[Pitch] *= r2d;
+            data[Roll] *= r2d;
 
-            done = true;
             break;
         }
-
-        if (!done)
-            qDebug() << "steamvr: no device with pose found";
     }
 }
 
