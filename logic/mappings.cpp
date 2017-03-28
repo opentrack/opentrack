@@ -1,5 +1,3 @@
-#pragma once
-
 #include "mappings.hpp"
 
 Map::Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& opts) :
@@ -33,5 +31,5 @@ Mappings::Mappings(std::vector<axis_opts*> opts) :
         Map("spline-yaw", "alt-spline-yaw", 180, 180, *opts[Yaw]),
         Map("spline-pitch", "alt-spline-pitch", 180, 180, *opts[Pitch]),
         Map("spline-roll", "alt-spline-roll", 180, 180, *opts[Roll])
-        }
+    }
 {}

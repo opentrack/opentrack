@@ -59,6 +59,7 @@ set(_LDFLAGS_DEBUG "")
 
 set(_LDFLAGS_STATIC "/WX")
 set(_LDFLAGS_STATIC_RELEASE "/LTCG:INCREMENTAL")
+set(_LDFLAGS_STATIC_DEBUG "")
 
 foreach(j C CXX)
     foreach(i "" _DEBUG _RELEASE)
