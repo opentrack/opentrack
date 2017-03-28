@@ -113,7 +113,7 @@ function(otr_module n)
         message(FATAL_ERROR "otr_module bad formals: ${arg_UNPARSED_ARGUMENTS}")
     endif()
 
-    set(n_ "${n}")
+    set(n_orig "${n}")
     set(n "opentrack-${n}")
 
     project(${n})
@@ -197,32 +197,21 @@ function(otr_module n)
         target_compile_definitions(${n} PRIVATE "STATIC_LIBRARY=1")
     endif()
 
-    set(langs "")
-    foreach(i ${opentrack-all-translations})
-        set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        list(APPEND langs "${t}")
-    endforeach()
-
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
 
-    set(ts-deps)
-
-    foreach(i ${langs})
-        set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "")
-        add_custom_command(OUTPUT "${i}"
+    foreach(i ${opentrack-all-translations})
+        set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
+        add_custom_command(OUTPUT "${t}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
+            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            DEPENDS ${${n}-c} ${${n}-rcc} ${${n}-uih}
-            COMMENT "Running lupdate for ${i}"
-        )
-        list(APPEND ts-deps "${i}")
-        get_property(tt GLOBAL PROPERTY "opentrack-ts-${i}")
-        list(APPEND tt "${i}")
-        set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
+            DEPENDS ${${n}-c} ${${n}-ui} ${${n}-rc}
+            COMMENT "Running lupdate for ${n}/${i}")
+        set(target-name "i18n-lang-${i}-module-${n_orig}")
+        add_custom_target(${target-name} DEPENDS "${t}")
+        set_property(GLOBAL APPEND PROPERTY "opentrack-ts-targets-${i}" "${target-name}")
+        set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t}")
     endforeach()
-
-    add_custom_target(i18n-module-${n} DEPENDS ${ts-deps})
 
     if(NOT arg_NO-INSTALL)
         set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
