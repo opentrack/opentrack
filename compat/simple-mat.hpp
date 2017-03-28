@@ -273,18 +273,3 @@ Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
             ret(j, i) = self(j, i) * other;
     return ret;
 }
-
-#ifdef OTR_SIMPLE_MAT_TEMPLATE_UNIT
-#   define OTR_SIMPLE_MAT_TEMPLATE_EXTERN
-#   define OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC OPENTRACK_COMPAT_EXPORT
-#else
-#   define OTR_SIMPLE_MAT_TEMPLATE_EXTERN extern
-#   define OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC
-#endif
-
-OTR_SIMPLE_MAT_TEMPLATE_EXTERN template class OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC Mat<double, 6, 1>;
-OTR_SIMPLE_MAT_TEMPLATE_EXTERN template class OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC Mat<double, 3, 1>;
-OTR_SIMPLE_MAT_TEMPLATE_EXTERN template class OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC Mat<double, 1, 6>;
-OTR_SIMPLE_MAT_TEMPLATE_EXTERN template class OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC Mat<double, 1, 3>;
-OTR_SIMPLE_MAT_TEMPLATE_EXTERN template class OTR_SIMPLE_MAT_TEMPLATE_DECLSPEC Mat<double, 3, 3>;
-
