@@ -11,6 +11,12 @@
 #include <QMutexLocker>
 #include "api/plugin-api.hpp"
 
+using std::fabs;
+using std::sqrt;
+using std::pow;
+using std::copysign;
+using std::max;
+
 constexpr double settings_accela::rot_gains[16][2];
 constexpr double settings_accela::pos_gains[16][2];
 
@@ -50,12 +56,6 @@ static inline constexpr T signum(T x)
 {
     return T((T(0) < x) - (x < T(0)));
 }
-
-using std::fabs;
-using std::sqrt;
-using std::pow;
-using std::copysign;
-using std::max;
 
 template<int N = 3, typename F>
 static void do_deltas(const double* deltas, double* output, F&& fun)
