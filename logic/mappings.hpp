@@ -10,7 +10,7 @@
 #include "export.hpp"
 #include "options/options.hpp"
 using namespace options;
-#include "spline-widget/spline.hpp"
+#include "spline/spline.hpp"
 #include "main-settings.hpp"
 
 struct OPENTRACK_LOGIC_EXPORT Map final

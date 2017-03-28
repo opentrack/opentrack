@@ -62,7 +62,7 @@ file(GLOB opentrack-subprojects
     "x-plane-plugin/${C}"
     "csv/${C}"
     "pose-widget/${C}"
-    "spline-widget/${C}"
+    "spline/${C}"
     "qxt-mini/${C}"
     "macosx/${C}"
     "cv/${C}"

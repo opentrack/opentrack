@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <QDoubleSpinBox>
 #include "api/plugin-api.hpp"
-#include "spline-widget/spline-widget.hpp"
+#include "spline/spline-widget.hpp"
 #include <QDialog>
 
 dialog_accela::dialog_accela()

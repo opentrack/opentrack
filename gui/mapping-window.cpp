@@ -8,7 +8,7 @@
 
 #include "mapping-window.hpp"
 #include "logic/main-settings.hpp"
-#include "spline-widget/spline-widget.hpp"
+#include "spline/spline-widget.hpp"
 
 MapWidget::MapWidget(Mappings& m) : m(m)
 {

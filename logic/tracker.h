@@ -16,7 +16,7 @@
 #include "compat/euler.hpp"
 #include "selected-libraries.hpp"
 
-#include "spline-widget/spline.hpp"
+#include "spline/spline.hpp"
 #include "main-settings.hpp"
 #include "options/options.hpp"
 #include "tracklogger.hpp"

@@ -3,8 +3,8 @@
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
 using namespace options;
-#include "spline-widget/spline.hpp"
-#include "spline-widget/spline-widget.hpp"
+#include "spline/spline.hpp"
+#include "spline/spline-widget.hpp"
 
 #include <functional>
 

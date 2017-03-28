@@ -20,7 +20,7 @@ set_target_properties(opentrack-user-interface PROPERTIES
 target_link_libraries(opentrack-user-interface
     opentrack-migration
     opentrack-logic
-    opentrack-spline-widget
+    opentrack-spline
     opentrack-pose-widget
     opentrack-version
 )

@@ -1,5 +1,5 @@
 otr_module(logic BIN)
-target_link_libraries(opentrack-logic opentrack-spline-widget)
+target_link_libraries(opentrack-logic opentrack-spline)
 if(NOT WIN32)
     target_link_libraries(opentrack-logic opentrack-qxt-mini)
 else()

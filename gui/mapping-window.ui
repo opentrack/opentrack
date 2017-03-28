@@ -588,7 +588,7 @@
   <customwidget>
    <class>spline_widget</class>
    <extends>QWidget</extends>
-   <header>spline-widget/spline-widget.hpp</header>
+   <header>spline/spline-widget.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

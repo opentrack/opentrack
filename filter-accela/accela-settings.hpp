@@ -2,7 +2,7 @@
 
 #include "options/options.hpp"
 using namespace options;
-#include "spline-widget/spline.hpp"
+#include "spline/spline.hpp"
 
 struct settings_accela : opts
 {
