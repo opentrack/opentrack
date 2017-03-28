@@ -149,7 +149,7 @@ void accela::filter(const double* input, double *output)
         {
             static constexpr double nl_end = 1.5;
 
-            if (deltas[k] <= nl_end)
+            if (fabs(deltas[k]) <= nl_end)
                 deltas[k] = copysign(pow(fabs(deltas[k]/nl_end), nl) * nl_end, deltas[k]);
         }
     }
