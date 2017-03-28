@@ -9,7 +9,10 @@
 #include "compat/euler.hpp"
 #include "compat/util.hpp"
 
-#include <cmath>
+#include <tuple>
+
+constexpr double TranslationCalibrator::pitch_spacing_in_degrees;
+constexpr double TranslationCalibrator::yaw_spacing_in_degrees;
 
 TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof) :
     yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof)
@@ -47,13 +50,13 @@ void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t
     y += H_k_T * t_CM_k;
 }
 
-cv::Vec3f TranslationCalibrator::get_estimate()
+std::tuple<cv::Vec3f, unsigned> TranslationCalibrator::get_estimate()
 {
     cv::Vec6f x = P.inv() * y;
 
     qDebug() << "calibrator:" << nsamples << "samples total";
 
-    return cv::Vec3f(-x[0], -x[1], -x[2]);
+    return std::make_tuple(cv::Vec3f(-x[0], -x[1], -x[2]), nsamples);
 }
 
 bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
@@ -68,9 +71,9 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 
     const euler_t ypr = rmat_to_euler(r) * r2d;
 
-    const int yaw = iround(ypr(yaw_rdof) + 180)/spacing_in_degrees;
-    const int pitch = iround(ypr(pitch_rdof) + 180)/spacing_in_degrees;
-    const int idx = pitch * 360/spacing_in_degrees + yaw;
+    const int yaw = iround(ypr(yaw_rdof) + 180/yaw_spacing_in_degrees);
+    const int pitch = iround(ypr(pitch_rdof) + 180/pitch_spacing_in_degrees);
+    const int idx = pitch * 360/pitch_spacing_in_degrees + yaw;
 
     if (idx >= 0 && idx < bin_count)
     {
@@ -84,6 +87,8 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
             return true;
         }
     }
+    else
+        qDebug() << "calibrator: index out of range" << "yaw" << yaw << "pitch" << pitch << "max" << bin_count;
 
     return false;
 }

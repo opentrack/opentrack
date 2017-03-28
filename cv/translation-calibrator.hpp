@@ -29,7 +29,7 @@ public:
     void update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t_CM_k);
 
     // get the current estimate for t_MH
-    cv::Vec3f get_estimate();
+    std::tuple<cv::Vec3f, unsigned> get_estimate();
 
 private:
     bool check_bucket(const cv::Matx33d& R_CM_k);
@@ -40,10 +40,11 @@ private:
     // note, bin count's so small we don't need a bloom filter
     std::vector<bool> used_poses;
 
-    static constexpr int spacing_in_degrees = 3;
+    static constexpr double yaw_spacing_in_degrees = 2.5;
+    static constexpr double pitch_spacing_in_degrees = 1.5;
 
     // this allows allows us up to +-180 for yaw and pitch
-    static constexpr int bin_count = 361*360 / (spacing_in_degrees*spacing_in_degrees) + 1;
+    static constexpr int bin_count = 361*360 / (yaw_spacing_in_degrees*pitch_spacing_in_degrees) + 1;
 
     unsigned yaw_rdof, pitch_rdof, nsamples;
 };

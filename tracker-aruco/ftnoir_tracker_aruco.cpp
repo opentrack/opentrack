@@ -499,7 +499,8 @@ void aruco_dialog::toggleCalibrate()
     {
         cleanupCalib();
 
-        auto pos = calibrator.get_estimate();
+        cv::Vec3d pos;
+        std::tie(pos, std::ignore) = calibrator.get_estimate();
         s.headpos_x = -pos(0);
         s.headpos_y = -pos(1);
         s.headpos_z = -pos(2);
