@@ -37,7 +37,7 @@ template<typename u> struct value_type_traits<QList<u>>
 template<typename t> using value_type_t = typename value_type_traits<t>::type;
 }
 
-class OPENTRACK_OPTIONS_EXPORT base_value : public QObject
+class OTR_OPTIONS_EXPORT base_value : public QObject
 {
     Q_OBJECT
     friend class ::options::detail::connector;

@@ -36,11 +36,11 @@ void set_base_value_to_default(base_value* val);
 
 struct bundler;
 
-class OPENTRACK_OPTIONS_EXPORT bundle final : public QObject, public connector
+class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
     Q_OBJECT
 
-    class OPENTRACK_OPTIONS_EXPORT mutex final : public QMutex
+    class OTR_OPTIONS_EXPORT mutex final : public QMutex
     {
     public:
         mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
@@ -86,9 +86,9 @@ public slots:
     void set_all_to_default();
 };
 
-OPENTRACK_OPTIONS_EXPORT bundler& singleton();
+OTR_OPTIONS_EXPORT bundler& singleton();
 
-struct OPENTRACK_OPTIONS_EXPORT bundler
+struct OTR_OPTIONS_EXPORT bundler
 {
 public:
     using k = QString;
@@ -106,12 +106,12 @@ public:
     static void refresh_all_bundles();
 };
 
-OPENTRACK_OPTIONS_EXPORT bundler& singleton();
+OTR_OPTIONS_EXPORT bundler& singleton();
 }
 
 using bundle_ = detail::bundle;
 using bundle = std::shared_ptr<bundle_>;
 
-OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name);
+OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name);
 
 }

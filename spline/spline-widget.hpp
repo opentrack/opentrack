@@ -27,7 +27,7 @@ using namespace options;
 
 #include <QDebug>
 
-class OPENTRACK_SPLINE_EXPORT spline_widget final : public QWidget
+class OTR_SPLINE_EXPORT spline_widget final : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)

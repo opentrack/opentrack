@@ -13,7 +13,7 @@ using namespace options;
 #include "spline/spline.hpp"
 #include "main-settings.hpp"
 
-struct OPENTRACK_LOGIC_EXPORT Map final
+struct OTR_LOGIC_EXPORT Map final
 {
     Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& opts);
 
@@ -25,7 +25,7 @@ struct OPENTRACK_LOGIC_EXPORT Map final
     spline spline_main, spline_alt;
 };
 
-class OPENTRACK_LOGIC_EXPORT Mappings final
+class OTR_LOGIC_EXPORT Mappings final
 {
 private:
     Map axes[6];

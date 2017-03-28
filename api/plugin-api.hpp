@@ -17,19 +17,6 @@
 
 #include "export.hpp"
 
-#ifndef OPENTRACK_PLUGIN_EXPORT
-#   ifdef _WIN32
-#       define OPENTRACK_PLUGIN_LINKAGE __declspec(dllexport)
-#   else
-#       define OPENTRACK_PLUGIN_LINKAGE
-#   endif
-#   ifndef _MSC_VER
-#       define OPENTRACK_PLUGIN_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_PLUGIN_LINKAGE
-#   else
-#       define OPENTRACK_PLUGIN_EXPORT OPENTRACK_PLUGIN_LINKAGE
-#   endif
-#endif
-
 enum Axis {
     TX = 0, TY = 1, TZ = 2, Yaw = 3, Pitch = 4, Roll = 5,
     // for indexing in general
@@ -39,7 +26,7 @@ enum Axis {
 namespace plugin_api {
 namespace detail {
 
-class OPENTRACK_API_EXPORT BaseDialog : public QDialog
+class OTR_API_EXPORT BaseDialog : public QDialog
 {
     Q_OBJECT
 protected:
@@ -55,27 +42,29 @@ private slots:
 } // ns
 } // ns
 
+#define OTR_PLUGIN_EXPORT OTR_GENERIC_EXPORT
+
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
-    extern "C" OPENTRACK_PLUGIN_EXPORT ctor_ret_class* GetConstructor(); \
-    extern "C" OPENTRACK_PLUGIN_EXPORT Metadata* GetMetadata(); \
-    extern "C" OPENTRACK_PLUGIN_EXPORT dialog_ret_class* GetDialog(); \
+    extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(); \
+    extern "C" OTR_PLUGIN_EXPORT Metadata* GetMetadata(); \
+    extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(); \
     \
-    extern "C" OPENTRACK_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
+    extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
     { \
         return new ctor_class; \
     } \
-    extern "C" OPENTRACK_PLUGIN_EXPORT Metadata* GetMetadata() \
+    extern "C" OTR_PLUGIN_EXPORT Metadata* GetMetadata() \
     { \
         return new metadata_class; \
     } \
-    extern "C" OPENTRACK_PLUGIN_EXPORT dialog_ret_class* GetDialog() \
+    extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog() \
     { \
         return new dialog_class; \
     }
 
 // implement this in all plugins
 // also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
-struct OPENTRACK_API_EXPORT Metadata
+struct OTR_API_EXPORT Metadata
 {
     Metadata(const Metadata&) = delete;
     Metadata(Metadata&&) = delete;
@@ -91,7 +80,7 @@ struct OPENTRACK_API_EXPORT Metadata
 };
 
 // implement this in filters
-struct OPENTRACK_API_EXPORT IFilter
+struct OTR_API_EXPORT IFilter
 {
     IFilter(const IFilter&) = delete;
     IFilter(IFilter&&) = delete;
@@ -107,7 +96,7 @@ struct OPENTRACK_API_EXPORT IFilter
     virtual void center() {}
 };
 
-struct OPENTRACK_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
+struct OTR_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 {
     IFilterDialog();
 
@@ -124,7 +113,7 @@ struct OPENTRACK_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialo
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(filter_class, IFilter, metadata_class, dialog_class, IFilterDialog)
 
 // implement this in protocols
-struct OPENTRACK_API_EXPORT IProtocol
+struct OTR_API_EXPORT IProtocol
 {
     IProtocol();
 
@@ -143,7 +132,7 @@ struct OPENTRACK_API_EXPORT IProtocol
     virtual QString game_name() = 0;
 };
 
-struct OPENTRACK_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
+struct OTR_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~IProtocolDialog();
@@ -160,7 +149,7 @@ struct OPENTRACK_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDia
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(protocol_class, IProtocol, metadata_class, dialog_class, IProtocolDialog)
 
 // implement this in trackers
-struct OPENTRACK_API_EXPORT ITracker
+struct OTR_API_EXPORT ITracker
 {
     ITracker(const ITracker&) = delete;
     ITracker(ITracker&&) = delete;
@@ -178,7 +167,7 @@ struct OPENTRACK_API_EXPORT ITracker
     virtual bool center() { return false; }
 };
 
-struct OPENTRACK_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
+struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
     virtual ~ITrackerDialog();

@@ -13,7 +13,7 @@
 #include "api/plugin-api.hpp"
 #include "compat/euler.hpp"
 
-#ifdef BUILD_pose_widget
+#ifdef BUILD_POSE_WIDGET
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
 #else
 #   define POSE_WIDGET_EXPORT Q_DECL_IMPORT

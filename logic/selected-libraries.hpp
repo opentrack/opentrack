@@ -13,7 +13,7 @@
 
 #include "export.hpp"
 
-struct OPENTRACK_LOGIC_EXPORT SelectedLibraries
+struct OTR_LOGIC_EXPORT SelectedLibraries
 {
     using dylibptr = mem<dylib>;
     mem<ITracker> pTracker;

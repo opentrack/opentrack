@@ -9,7 +9,7 @@
 
 namespace options {
 
-struct OPENTRACK_OPTIONS_EXPORT opts
+struct OTR_OPTIONS_EXPORT opts
 {
     bundle b;
     opts(const QString& name);

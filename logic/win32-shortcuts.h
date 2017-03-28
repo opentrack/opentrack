@@ -12,7 +12,7 @@ extern QList<win_key> windows_key_sequences;
 
 #include "export.hpp"
 
-struct OPENTRACK_LOGIC_EXPORT win_key
+struct OTR_LOGIC_EXPORT win_key
 {
     win_key(int win, Qt::Key qt) : win(win), qt(qt) {}
     int win;

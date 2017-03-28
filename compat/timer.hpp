@@ -20,7 +20,7 @@
 #include <ctime>
 #include <tuple>
 
-class OPENTRACK_COMPAT_EXPORT Timer
+class OTR_COMPAT_EXPORT Timer
 {
     struct timespec state;
     long long conv_nsecs(const struct timespec& cur) const;

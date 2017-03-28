@@ -21,7 +21,7 @@
 #include <functional>
 #include <vector>
 
-struct OPENTRACK_DINPUT_EXPORT Key
+struct OTR_DINPUT_EXPORT Key
 {
     QString guid;
     int keycode;
@@ -37,7 +37,7 @@ public:
     bool should_process();
 };
 
-struct OPENTRACK_DINPUT_EXPORT KeybindingWorker : private QThread
+struct OTR_DINPUT_EXPORT KeybindingWorker : private QThread
 {
     using fun = std::function<void(const Key&)>;
 

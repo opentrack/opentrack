@@ -13,6 +13,6 @@
 
 #include "export.hpp"
 
-OPENTRACK_COMPAT_EXPORT QList<QString> get_camera_names();
-OPENTRACK_COMPAT_EXPORT int camera_name_to_index(const QString &name);
+OTR_COMPAT_EXPORT QList<QString> get_camera_names();
+OTR_COMPAT_EXPORT int camera_name_to_index(const QString &name);
 

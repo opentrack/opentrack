@@ -14,7 +14,7 @@
 
 namespace options
 {
-    class OPENTRACK_OPTIONS_EXPORT slider_value final
+    class OTR_OPTIONS_EXPORT slider_value final
     {
         double cur_, min_, max_;
     public:

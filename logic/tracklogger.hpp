@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QWidget>
 
-class OPENTRACK_LOGIC_EXPORT TrackLogger
+class OTR_LOGIC_EXPORT TrackLogger
 {
     TrackLogger(TrackLogger&&) = delete;
     TrackLogger(const TrackLogger&) = delete;
@@ -46,7 +46,7 @@ public:
 };
 
 
-class OPENTRACK_LOGIC_EXPORT TrackLoggerCSV : public TrackLogger
+class OTR_LOGIC_EXPORT TrackLoggerCSV : public TrackLogger
 {
     std::ofstream out;
     bool first_col;

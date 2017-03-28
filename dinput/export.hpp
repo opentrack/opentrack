@@ -1,28 +1,11 @@
+// generates export.hpp for each module from compat/linkage.hpp
+
 #pragma once
 
-#ifdef BUILD_dinput
-#   ifdef _WIN32
-#       define OPENTRACK_DINPUT_LINKAGE __declspec(dllexport)
-#   else
-#       define OPENTRACK_DINPUT_LINKAGE
-#   endif
+#include "compat/linkage-macros.hpp"
 
-#   ifndef _MSC_VER
-#       define OPENTRACK_DINPUT_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_DINPUT_LINKAGE
-#   else
-#       define OPENTRACK_DINPUT_EXPORT OPENTRACK_DINPUT_LINKAGE
-#   endif
-
+#ifdef BUILD_DINPUT
+#   define OTR_DINPUT_EXPORT OTR_GENERIC_EXPORT
 #else
-#ifdef _WIN32
-#    define OPENTRACK_DINPUT_LINKAGE __declspec(dllimport)
-#else
-#    define OPENTRACK_DINPUT_LINKAGE
-#endif
-
-#ifndef _MSC_VER
-#    define OPENTRACK_DINPUT_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_DINPUT_LINKAGE
-#else
-#    define OPENTRACK_DINPUT_EXPORT OPENTRACK_DINPUT_LINKAGE
-#endif
+#   define OTR_DINPUT_EXPORT OTR_GENERIC_IMPORT
 #endif

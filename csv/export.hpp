@@ -1,28 +1,11 @@
+// generates export.hpp for each module from compat/linkage.hpp
+
 #pragma once
 
-#ifdef BUILD_csv
-#   ifdef _WIN32
-#       define OPENTRACK_CSV_LINKAGE __declspec(dllexport)
-#   else
-#       define OPENTRACK_CSV_LINKAGE
-#   endif
+#include "compat/linkage-macros.hpp"
 
-#   ifndef _MSC_VER
-#       define OPENTRACK_CSV_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_CSV_LINKAGE
-#   else
-#       define OPENTRACK_CSV_EXPORT OPENTRACK_CSV_LINKAGE
-#   endif
-
+#ifdef BUILD_CSV
+#   define OTR_CSV_EXPORT OTR_GENERIC_EXPORT
 #else
-    #ifdef _WIN32
-    #    define OPENTRACK_CSV_LINKAGE __declspec(dllimport)
-    #else
-    #    define OPENTRACK_CSV_LINKAGE
-    #endif
-
-    #ifndef _MSC_VER
-    #    define OPENTRACK_CSV_EXPORT __attribute__ ((visibility ("default"))) OPENTRACK_CSV_LINKAGE
-    #else
-    #    define OPENTRACK_CSV_EXPORT OPENTRACK_CSV_LINKAGE
-    #endif
+#   define OTR_CSV_EXPORT OTR_GENERIC_IMPORT
 #endif

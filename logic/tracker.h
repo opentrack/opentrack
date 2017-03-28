@@ -51,7 +51,7 @@ struct bits
     bits();
 };
 
-class OPENTRACK_LOGIC_EXPORT Tracker : private QThread, private bits
+class OTR_LOGIC_EXPORT Tracker : private QThread, private bits
 {
     Q_OBJECT
 private:

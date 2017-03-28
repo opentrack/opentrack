@@ -21,7 +21,7 @@ namespace axis_clamp_opts
 
 } // ns axis-clamp-opts
 
-struct OPENTRACK_LOGIC_EXPORT axis_opts final
+struct OTR_LOGIC_EXPORT axis_opts final
 {
     enum max_clamp
     {
@@ -52,7 +52,7 @@ private:
     static inline QString n(QString pfx, QString name);
 };
 
-struct OPENTRACK_LOGIC_EXPORT key_opts
+struct OTR_LOGIC_EXPORT key_opts
 {
     value<QString> keycode, guid;
     value<int> button;
@@ -60,14 +60,14 @@ struct OPENTRACK_LOGIC_EXPORT key_opts
     key_opts(bundle b, const QString& name);
 };
 
-struct OPENTRACK_LOGIC_EXPORT module_settings
+struct OTR_LOGIC_EXPORT module_settings
 {
     bundle b;
     value<QString> tracker_dll, filter_dll, protocol_dll;
     module_settings();
 };
 
-struct OPENTRACK_LOGIC_EXPORT main_settings final
+struct OTR_LOGIC_EXPORT main_settings final
 {
     bundle b, b_map;
     axis_opts a_x, a_y, a_z;

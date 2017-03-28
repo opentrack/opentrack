@@ -26,7 +26,7 @@ using namespace options;
 
 namespace spline_detail {
 
-class OPENTRACK_SPLINE_EXPORT settings final : public QObject
+class OTR_SPLINE_EXPORT settings final : public QObject
 {
     Q_OBJECT
 public:
@@ -40,7 +40,7 @@ signals:
 
 }
 
-class OPENTRACK_SPLINE_EXPORT spline final
+class OTR_SPLINE_EXPORT spline final
 {
     double precision(const QList<QPointF>& points) const;
     void update_interp_data();

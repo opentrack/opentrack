@@ -47,15 +47,15 @@ tie_setting(value<t>& v, QComboBox* cb)
                         v.SAFE_CONNTYPE);
 }
 
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<int>& v, QSlider* sl);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t);
-OPENTRACK_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w);
+OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
+OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
+OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb);
+OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb);
+OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb);
+OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSlider* sl);
+OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le);
+OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb);
+OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t);
+OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w);
 
 } // ns options

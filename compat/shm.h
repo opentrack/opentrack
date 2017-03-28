@@ -26,7 +26,7 @@
 
 #include "export.hpp"
 
-class OPENTRACK_COMPAT_EXPORT PortableLockedShm {
+class OTR_COMPAT_EXPORT PortableLockedShm {
 public:
     PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
     ~PortableLockedShm();

@@ -12,7 +12,7 @@
 namespace options {
 
 // snapshot of qsettings group at given time
-class OPENTRACK_OPTIONS_EXPORT group final
+class OTR_OPTIONS_EXPORT group final
 {
     QString name;
 public:

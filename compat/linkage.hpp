@@ -4,8 +4,8 @@
 
 #include "compat/linkage-macros.hpp"
 
-#ifdef BUILD_SPLINE
-#   define OTR_SPLINE_EXPORT OTR_GENERIC_EXPORT
+#ifdef BUILD_${module}
+#   define OTR_${module}_EXPORT OTR_GENERIC_EXPORT
 #else
-#   define OTR_SPLINE_EXPORT OTR_GENERIC_IMPORT
+#   define OTR_${module}_EXPORT OTR_GENERIC_IMPORT
 #endif

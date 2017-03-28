@@ -193,7 +193,7 @@ std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k& key)
     return shr;
 }
 
-OPENTRACK_OPTIONS_EXPORT bundler& singleton()
+OTR_OPTIONS_EXPORT bundler& singleton()
 {
     static bundler ret;
     return ret;
@@ -203,7 +203,7 @@ QMutex* bundle::get_mtx() const { return mtx; }
 
 } // end options::detail
 
-OPENTRACK_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
+OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
     if (name.size())
         return detail::singleton().make_bundle(name);

@@ -35,7 +35,7 @@ struct hash<QString>
 };
 }
 
-struct OPENTRACK_DINPUT_EXPORT win32_joy_ctx
+struct OTR_DINPUT_EXPORT win32_joy_ctx
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
@@ -77,7 +77,7 @@ struct OPENTRACK_DINPUT_EXPORT win32_joy_ctx
 private:
     static QString guid_to_string(const GUID& guid);
 
-    class OPENTRACK_DINPUT_EXPORT enum_state final
+    class OTR_DINPUT_EXPORT enum_state final
     {
         std::vector<QString> all;
         joys_t joys;

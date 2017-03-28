@@ -24,7 +24,7 @@ typedef void* LPDIRECTINPUT8;
     template struct __declspec(dllexport) std::atomic<int>;
 #endif
 
-class OPENTRACK_DINPUT_EXPORT dinput_handle final
+class OTR_DINPUT_EXPORT dinput_handle final
 {
 public:
     class di_t;

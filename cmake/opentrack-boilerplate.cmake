@@ -113,6 +113,7 @@ function(otr_module n)
         message(FATAL_ERROR "otr_module bad formals: ${arg_UNPARSED_ARGUMENTS}")
     endif()
 
+    set(n_ "${n}")
     set(n "opentrack-${n}")
 
     project(${n})
@@ -179,7 +180,8 @@ function(otr_module n)
     if(NOT arg_STATIC)
         string(REGEX REPLACE "^opentrack-" "" n_ "${n}")
         string(REPLACE "-" "_" n_ ${n_})
-        target_compile_definitions(${n} PRIVATE "BUILD_${n_}")
+        string(TOUPPER "${n_}" n__)
+        target_compile_definitions(${n} PRIVATE "BUILD_${n__}")
 
         if(NOT arg_NO-INSTALL)
             if(arg_BIN AND WIN32)
@@ -191,37 +193,36 @@ function(otr_module n)
             endif()
             otr_install_pdb_current_project()
         endif()
+    else()
+        target_compile_definitions(${n} PRIVATE "STATIC_LIBRARY=1")
     endif()
 
     set(langs "")
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-
         list(APPEND langs "${t}")
-
-        get_property(tt GLOBAL PROPERTY "opentrack-ts-${i}")
-        list(APPEND tt "${t}")
-        set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
     endforeach()
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
-    set(SDK_SKIP_TRANSLATION_UPDATE FALSE CACHE BOOL "Don't touch existing .ts files")
 
-    set(langs_ "")
+    set(ts-deps)
 
     foreach(i ${langs})
-        if((NOT SDK_SKIP_TRANSLATION_UPDATE) OR (NOT EXISTS "${i}"))
-            add_custom_command(OUTPUT "${i}"
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-                COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
-                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-                DEPENDS ${${n}-all}
-                COMMENT "Running lupdate for ${i}")
-            list(APPEND langs_ "${i}")
-        endif()
+        set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "")
+        add_custom_command(OUTPUT "${i}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
+            COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${i}"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            DEPENDS ${${n}-c} ${${n}-rcc} ${${n}-uih}
+            COMMENT "Running lupdate for ${i}"
+        )
+        list(APPEND ts-deps "${i}")
+        get_property(tt GLOBAL PROPERTY "opentrack-ts-${i}")
+        list(APPEND tt "${i}")
+        set_property(GLOBAL PROPERTY "opentrack-ts-${i}" "${tt}")
     endforeach()
 
-    add_custom_target(i18n-module-${n} DEPENDS ${langs_})
+    add_custom_target(i18n-module-${n} DEPENDS ${ts-deps})
 
     if(NOT arg_NO-INSTALL)
         set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")

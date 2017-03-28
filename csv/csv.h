@@ -9,7 +9,7 @@
 
 #include "export.hpp"
 
-class OPENTRACK_CSV_EXPORT CSV
+class OTR_CSV_EXPORT CSV
 {
 public:
     QString readLine();

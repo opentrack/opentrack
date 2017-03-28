@@ -73,5 +73,5 @@ public:
 
 }
 
-OPENTRACK_MIGRATION_EXPORT std::vector<QString> run_migrations();
-OPENTRACK_MIGRATION_EXPORT void mark_config_as_not_needing_migration();
+OTR_MIGRATION_EXPORT std::vector<QString> run_migrations();
+OTR_MIGRATION_EXPORT void mark_config_as_not_needing_migration();
