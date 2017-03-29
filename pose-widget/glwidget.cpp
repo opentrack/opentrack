@@ -7,6 +7,7 @@
 
 #include "glwidget.h"
 #include "compat/util.hpp"
+#include "compat/timer.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>
@@ -14,44 +15,94 @@
 
 #include <QDebug>
 
-using namespace euler;
 using namespace pose_widget_impl;
 
-GLWidget::GLWidget(QWidget *parent) : QWidget(parent)
+pose_transform::pose_transform(QWidget* dst) :
+    dst(dst),
+    image(w, h, QImage::Format_ARGB32),
+    image2(w, h, QImage::Format_ARGB32),
+    width(w), height(h)
 {
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
-    rotateBy(0, 0, 0, 0, 0, 0);
+
+    image.fill(Qt::transparent);
+    image2.fill(Qt::transparent);
+
+    rotateBy(0, 0, 0, 0, 0, 0, QSize(w, h));
+
+    project_quad_texture();
+
+    start();
 }
 
-GLWidget::~GLWidget()
+pose_transform::~pose_transform()
 {
+    requestInterruption();
+    wait();
 }
 
-void GLWidget::paintEvent(QPaintEvent * event)
+void pose_widget::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
-    project_quad_texture();
-    p.drawImage(event->rect(), image);
+    xform.with_image_lock([&](const QImage& image) {
+        p.drawImage(event->rect(), image);
+    });
 }
 
-void GLWidget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+void pose_transform::run()
+{
+    for (;;)
+    {
+        if (isInterruptionRequested())
+            break;
+
+        static struct cruft
+        {
+            void lock() {}
+            void unlock() {}
+        } not_a_mutex;
+
+        const cv_status st = cvar.wait_for(not_a_mutex, std::chrono::milliseconds(2000));
+        if (st == cv_status::timeout)
+            continue;
+
+        project_quad_texture();
+    }
+}
+
+pose_widget::pose_widget(QWidget* parent) : QWidget(parent), xform(this)
+{
+}
+
+pose_widget::~pose_widget()
+{
+}
+
+void pose_widget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+{
+    xform.rotateBy(xAngle, yAngle, zAngle, x, y, z, size());
+}
+
+void pose_transform::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z, const QSize& size)
 {
     using std::sin;
     using std::cos;
 
     static constexpr double d2r = M_PI / 180;
 
-    translation = vec3(x, y, z);
-
     euler::euler_t euler(-zAngle * d2r, xAngle * d2r, -yAngle * d2r);
     euler::rmat r = euler::euler_to_rmat(euler);
+
+    lock_guard l(mtx);
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
             rotation(i, j) = num(r(i, j));
 
-    update();
+    translation = vec3(x, y, z);
+
+    cvar.notify_one();
 }
 
 class Triangle {
@@ -62,7 +113,7 @@ public:
     bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
 };
 
-inline vec3 GLWidget::normal(const vec3& p1, const vec3& p2, const vec3& p3)
+inline vec3 pose_transform::normal(const vec3& p1, const vec3& p2, const vec3& p3)
 {
     using std::sqrt;
 
@@ -124,12 +175,14 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     return u >= 0 && v >= 0 && u + v <= 1;
 }
 
-void GLWidget::project_quad_texture()
+void pose_transform::project_quad_texture()
 {
     num dir;
     vec2 pt[4];
-    const int sx = width() - 1, sy = height() - 1;
+    const int sx = width - 1, sy = height - 1;
     vec2 projected[3];
+
+    lock_guard l(mtx);
 
     {
         const int sx_ = (sx - std::max(0, (sx - sy)/2)) * 5/9;
@@ -163,12 +216,6 @@ void GLWidget::project_quad_texture()
     }
 
     const QImage& tex = dir < 0 ? back : front;
-
-    if (image.size() != size())
-        image = QImage(QSize(sx, sy), QImage::Format_RGBA8888);
-
-    image.fill(palette().color(QPalette::Current, QPalette::Window));
-
     const int ow = tex.width(), oh = tex.height();
 
     vec2 origs[2][3] =
@@ -260,19 +307,27 @@ void GLWidget::project_quad_texture()
 
                 const int pos = y * dest_pitch + x * dest_depth;
 
-                dest[pos + 0] = (r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_;
+                dest[pos + 2] = (r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_;
                 dest[pos + 1] = (g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_;
-                dest[pos + 2] = (b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_;
+                dest[pos + 0] = (b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_;
                 dest[pos + 3] = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
             }
         }
+
+    {
+        lock_guard l2(mtx2);
+        image2.fill(Qt::transparent);
+        std::swap(image, image2);
+    }
+
+    run_in_thread_async(dst->thread(), [this]() { dst->update(); });
 }
 
-vec2 GLWidget::project(const vec3 &point)
+vec2 pose_transform::project(const vec3 &point)
 {
     vec3 ret = rotation * point;
     num z = std::max<num>(.75f, 1 + translation.z()/-60);
-    num w = width(), h = height();
+    num w = width, h = height;
     num x = w * translation.x() / 2 / -40;
     if (std::abs(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
@@ -282,8 +337,16 @@ vec2 GLWidget::project(const vec3 &point)
     return vec2(z * (ret.x() + x), z * (ret.y() + y));
 }
 
-vec3 GLWidget::project2(const vec3 &point)
+vec3 pose_transform::project2(const vec3 &point)
 {
     return rotation * point;
 }
 
+
+template<typename F>
+inline void pose_transform::with_image_lock(F&& fun)
+{
+    lock_guard l(mtx2);
+
+    fun(image2);
+}

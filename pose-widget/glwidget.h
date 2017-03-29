@@ -9,9 +9,13 @@
 
 #include <QtGlobal>
 #include <QWidget>
+#include <QThread>
 #include <QPixmap>
 #include "api/plugin-api.hpp"
 #include "compat/euler.hpp"
+
+#include <mutex>
+#include <condition_variable>
 
 #ifdef BUILD_POSE_WIDGET
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -25,31 +29,67 @@ using num = float;
 using vec3 = Mat<num, 3, 1>;
 using vec2 = Mat<num, 2, 1>;
 
+using rmat = Mat<num, 3, 3>;
+
 using namespace euler;
 
-class POSE_WIDGET_EXPORT GLWidget : public QWidget
-{
-public:
-    using rmat = Mat<num, 3, 3>;
+using lock_guard = std::unique_lock<std::mutex>;
 
-    GLWidget(QWidget *parent);
-    ~GLWidget();
-    void rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z);
-protected:
-    void paintEvent(QPaintEvent *event) override;
-private:
+using cv_status = std::cv_status;
+
+class pose_widget;
+
+class pose_transform final : private QThread
+{
+    pose_transform(QWidget* dst);
+    ~pose_transform();
+
+    friend class pose_widget;
+
+    void rotateBy(double xAngle, double yAngle, double zAngle,
+                  double x, double y, double z,
+                  const QSize& size);
+
+    void run() override;
+
     vec2 project(const vec3& point);
     vec3 project2(const vec3& point);
     void project_quad_texture();
+
+    template<typename F>
+    inline void with_image_lock(F&& fun);
+
     static vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
 
     rmat rotation;
     vec3 translation;
-    QImage front;
-    QImage back;
-    QImage image;
+
+    std::condition_variable_any cvar;
+    std::mutex mtx, mtx2;
+
+    QWidget* dst;
+
+    QImage front, back;
+    QImage image, image2;
+
+    int width, height;
+
+    static constexpr int w = 320, h = 240;
+};
+
+class POSE_WIDGET_EXPORT pose_widget final : public QWidget
+{
+public:
+    pose_widget(QWidget *parent = nullptr);
+    ~pose_widget();
+    void rotateBy(double xAngle, double yAngle, double zAngle,
+                  double x, double y, double z);
+
+private:
+    pose_transform xform;
+    void paintEvent(QPaintEvent *event) override;
 };
 
 }
 
-using pose_widget_impl::GLWidget;
+using pose_widget_impl::pose_widget;

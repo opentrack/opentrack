@@ -236,7 +236,7 @@
            </widget>
           </item>
           <item>
-           <widget class="GLWidget" name="pose_display" native="true">
+           <widget class="pose_widget" name="pose_display" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -1353,7 +1353,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GLWidget</class>
+   <class>pose_widget</class>
    <extends>QWidget</extends>
    <header>pose-widget/glwidget.h</header>
   </customwidget>
