@@ -65,6 +65,6 @@ function(merge_translations)
             install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         endif()
     endforeach()
-    add_custom_target(i18n DEPENDS ${all-deps})
+    add_custom_target(i18n ALL DEPENDS ${all-deps})
 endfunction()
 
