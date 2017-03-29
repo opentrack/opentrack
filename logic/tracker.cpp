@@ -38,7 +38,6 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
     backlog_time(0),
     tracking_started(false)
 {
-    set(f_center, s.center_at_startup);
 }
 
 Tracker::~Tracker()
@@ -127,6 +126,10 @@ void Tracker::logic()
     logger.write_dt();
     logger.reset_dt();
 
+    const bool center_ordered = get(f_center) && tracking_started;
+    set(f_center, false);
+    const bool own_center_logic = center_ordered && libs.pTracker->center();
+
     Pose value, raw;
 
     for (int i = 0; i < 6; i++)
@@ -183,16 +186,16 @@ void Tracker::logic()
             }
 
         tracking_started &= !nanp;
+
+        if (tracking_started && s.center_at_startup)
+        {
+            set(f_center, true);
+        }
     }
 
-    if (get(f_center) && tracking_started)
+    if (center_ordered)
     {
-        set(f_center, false);
-
-        if (libs.pFilter)
-            libs.pFilter->center();
-
-        if (libs.pTracker->center())
+        if (own_center_logic)
         {
             scaled_rotation.rotation = scaled_rotation.camera.t();
             real_rotation.rotation = real_rotation.camera.t();
