@@ -172,9 +172,9 @@ struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
     // optional destructor
     virtual ~ITrackerDialog();
     // receive a pointer to the tracker from ui thread
-    virtual void register_tracker(ITracker *tracker) = 0;
+    virtual void register_tracker(ITracker *tracker);
     // received tracker pointer is about to get deleted
-    virtual void unregister_tracker() = 0;
+    virtual void unregister_tracker();
 
     ITrackerDialog();
 };

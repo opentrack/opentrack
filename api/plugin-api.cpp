@@ -12,6 +12,9 @@ IProtocolDialog::~IProtocolDialog() {}
 ITracker::~ITracker() {}
 ITrackerDialog::~ITrackerDialog() {}
 
+void ITrackerDialog::register_tracker(ITracker*) {}
+void ITrackerDialog::unregister_tracker() {}
+
 BaseDialog::BaseDialog() {}
 
 void BaseDialog::closeEvent(QCloseEvent*)
