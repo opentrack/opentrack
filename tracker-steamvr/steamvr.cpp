@@ -187,6 +187,7 @@ void steamvr::start_tracker(QFrame*)
             QMessageBox::warning(nullptr,
                                  tr("Valve SteamVR init error"), strerror(e),
                                  QMessageBox::Close, QMessageBox::NoButton);
+            return;
         }
 
         const QString serial = s.device_serial;
@@ -200,6 +201,7 @@ void steamvr::start_tracker(QFrame*)
                                  tr("Valve SteamVR init error"),
                                  tr("No HMD connected"),
                                  QMessageBox::Close, QMessageBox::NoButton);
+            return;
         }
 
         for (const device_spec& spec : specs)
