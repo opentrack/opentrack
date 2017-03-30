@@ -159,7 +159,7 @@ tt device_list::vr_init_()
     if (v)
         std::atexit(vr::VR_Shutdown);
     else
-        once_only(qDebug() << "steamvr: init failure" << error << device_list::strerror(error));
+        qDebug() << "steamvr: init failure" << error << device_list::strerror(error);
 
     return tt(v, error);
 }
