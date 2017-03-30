@@ -27,10 +27,10 @@ using origin = vr::ETrackingUniverseOrigin;
 
 struct settings : opts
 {
-    value<QString> device_serial;
+    value<QVariant> device_serial;
     settings() :
         opts("valve-steamvr"),
-        device_serial(b, "serial", "")
+        device_serial(b, "serial", QVariant(QVariant::String))
     {}
 };
 

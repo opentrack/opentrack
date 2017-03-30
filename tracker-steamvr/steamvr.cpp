@@ -54,7 +54,7 @@ void device_list::fill_device_specs(QList<device_spec>& list)
                                                device_states, vr::k_unMaxTrackedDeviceCount);
 
             static constexpr unsigned bufsiz = vr::k_unTrackingStringSize;
-            char str[bufsiz] {};
+            static char str[bufsiz] {}; // vr_lock prevents reentrancy
 
             for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
             {
@@ -176,7 +176,7 @@ void steamvr::start_tracker(QFrame*)
             return;
         }
 
-        const QString serial = s.device_serial;
+        const QString serial = s.device_serial().toString();
         device_list d;
         const QList<device_spec>& specs = d.devices();
         const int sz = specs.count();
@@ -250,11 +250,11 @@ steamvr_dialog::steamvr_dialog()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     ui.device->clear();
-    ui.device->addItem("");
+    ui.device->addItem("First available", QVariant(QVariant::String));
 
     device_list list;
     for (const device_spec& spec : list.devices())
-        ui.device->addItem(spec.serial);
+        ui.device->addItem(QStringLiteral("%1 [%2]").arg(spec.model).arg(spec.serial), QVariant(spec.serial));
 
     tie_setting(s.device_serial, ui.device);
 }
