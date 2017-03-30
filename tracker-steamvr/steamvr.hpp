@@ -54,7 +54,7 @@ struct device_list final
     static constexpr int max_devices = int(vr::k_unMaxTrackedDeviceCount);
 
     template<typename F>
-    friend static auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()));
+    friend auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()));
 
 private:
     QList<device_spec> device_specs;
