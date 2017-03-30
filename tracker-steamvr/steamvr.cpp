@@ -159,7 +159,7 @@ tt device_list::vr_init_()
     if (v)
         std::atexit(vr::VR_Shutdown);
     else
-        once_only(qDebug() << "steamvr: init failure" << error << strerror(error));
+        once_only(qDebug() << "steamvr: init failure" << error << device_list::strerror(error));
 
     return tt(v, error);
 }
@@ -185,7 +185,7 @@ void steamvr::start_tracker(QFrame*)
         if (!v)
         {
             QMessageBox::warning(nullptr,
-                                 tr("Valve SteamVR init error"), strerror(e),
+                                 tr("Valve SteamVR init error"), device_list::strerror(e),
                                  QMessageBox::Close, QMessageBox::NoButton);
             return;
         }
