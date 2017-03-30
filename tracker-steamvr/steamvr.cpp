@@ -131,20 +131,6 @@ device_list::maybe_pose device_list::get_pose(int k)
     });
 }
 
-bool device_list::get_all_poses(pose_t* poses)
-{
-    with_vr_lock([poses](vr_t v, error_t)
-    {
-        if (v)
-        {
-            v->GetDeviceToAbsoluteTrackingPose(origin::TrackingUniverseSeated, 0,
-                                               poses, max_devices);
-        }
-        return v != nullptr;
-    });
-
-}
-
 tt device_list::vr_init()
 {
     static tt t = vr_init_();
