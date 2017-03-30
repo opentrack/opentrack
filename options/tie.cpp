@@ -26,6 +26,44 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb)
     base_value::connect(&v, SIGNAL(valueChanged(QString)), cb, SLOT(setCurrentText(QString)), v.SAFE_CONNTYPE);
 }
 
+OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
+{
+    auto set_idx = [cb](const QVariant& var) {
+        const int sz = cb->count();
+        int idx = -1;
+
+        for (int k = 0; k < sz; k++)
+        {
+            if (cb->itemData(k) == var)
+            {
+                idx = k;
+                break;
+            }
+        }
+        cb->setCurrentIndex(idx);
+        return idx;
+    };
+
+    const int idx = set_idx(v);
+
+    if (idx != -1)
+        v = cb->itemData(idx);
+    else
+        v = QVariant(QVariant::Invalid);
+
+    base_value::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                        &v, [cb, &v](int idx) {
+        v = cb->itemData(idx);
+    }, v.DIRECT_CONNTYPE);
+    base_value::connect(&v, static_cast<void(base_value::*)(const QVariant&) const>(&base_value::valueChanged),
+                        cb,
+                        [cb, set_idx](const QVariant& var) {
+        run_in_thread_sync(cb, [&]() {
+            set_idx(var);
+        });
+    }, v.DIRECT_CONNTYPE);
+}
+
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
@@ -115,7 +153,5 @@ OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w)
     },
     v.DIRECT_CONNTYPE);
 }
-
-
 
 } // ns options

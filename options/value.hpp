@@ -55,6 +55,7 @@ signals:
     OPENTRACK_DEFINE_SIGNAL(const QString&);
     OPENTRACK_DEFINE_SIGNAL(const slider_value&);
     OPENTRACK_DEFINE_SIGNAL(const QPointF&);
+    OPENTRACK_DEFINE_SIGNAL(const QVariant&);
 
     OPENTRACK_DEFINE_SIGNAL(const QList<double>&);
     OPENTRACK_DEFINE_SIGNAL(const QList<float>&);
@@ -69,6 +70,11 @@ protected:
     comparator cmp;
     std::type_index type_index;
 
+    void store(const QVariant& datum)
+    {
+        b->store_kv(self_name, datum);
+    }
+
     template<typename t>
     void store(const t& datum)
     {
@@ -82,6 +88,7 @@ public slots:
     OPENTRACK_DEFINE_SLOT(const QString&)
     OPENTRACK_DEFINE_SLOT(const slider_value&)
     OPENTRACK_DEFINE_SLOT(const QPointF&)
+    OPENTRACK_DEFINE_SLOT(const QVariant&)
 
     OPENTRACK_DEFINE_SLOT(const QList<double>&)
     OPENTRACK_DEFINE_SLOT(const QList<float>&)
