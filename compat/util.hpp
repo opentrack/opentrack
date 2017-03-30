@@ -11,6 +11,9 @@
 #include <QDebug>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
+
+#define once_only(...) progn(static bool once = false; if (!once) { once = true; __VA_ARGS__; })
+
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
 
