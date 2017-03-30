@@ -83,9 +83,9 @@ void RSTracker::handleTrackingEnded(int exitCode){
 
 bool RSTracker::startSdkInstallationProcess()
 {
-    static const QString contrib_path(OPENTRACK_BASE_PATH + QString(OPENTRACK_CONTRIB_PATH));
+    static const QString contrib_path(OPENTRACK_BASE_PATH + OPENTRACK_CONTRIB_PATH);
 
-    bool pStarted = QProcess::startDetached(contrib_path + "intel_rs_sdk_runtime_websetup_10.0.26.0396.exe --finstall=core,face3d --fnone=all");
+	bool pStarted = QProcess::startDetached("intel_rs_sdk_runtime_websetup_10.0.26.0396.exe", QStringList({ "--finstall=core,face3d","--fnone=all" }), contrib_path);
     if(!pStarted){
         QMessageBox::warning(nullptr,
                              tr("Intel® RealSense™ Runtime Installation"),
