@@ -1355,7 +1355,7 @@
   <customwidget>
    <class>pose_widget</class>
    <extends>QWidget</extends>
-   <header>pose-widget/glwidget.h</header>
+   <header>pose-widget/pose-widget.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

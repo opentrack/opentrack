@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "glwidget.h"
+#include "pose-widget.hpp"
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
 #include <cmath>
