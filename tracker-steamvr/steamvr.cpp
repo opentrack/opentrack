@@ -133,7 +133,7 @@ void steamvr::data(double* data)
             {
                 data[Yaw] = -atan2(-result.m[2][0], result.m[0][0]);
                 data[Pitch] = atan2(-result.m[1][2], result.m[1][1]);
-                data[Roll] = asin(result.m[1][0]);
+                data[Roll] = atan2(result.m[1][1], result.m[0][1]);
             }
 
             static constexpr double r2d = 180 / M_PI;
