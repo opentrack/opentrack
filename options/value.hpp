@@ -214,7 +214,7 @@ public:
 
     template<typename u>
     OTR_NEVER_INLINE
-    u to()
+    u to() const
     {
         return static_cast<u>(get());
     }
