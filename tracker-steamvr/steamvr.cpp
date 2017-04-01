@@ -147,6 +147,13 @@ void steamvr::data(double* data)
     }
 }
 
+bool steamvr::center()
+{
+    if (vr)
+        vr->ResetSeatedZeroPose();
+    return false;
+}
+
 void steamvr_dialog::register_tracker(ITracker*) {}
 void steamvr_dialog::unregister_tracker() {}
 

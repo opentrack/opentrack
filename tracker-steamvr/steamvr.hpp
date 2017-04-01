@@ -33,6 +33,7 @@ public:
     ~steamvr() override;
     void start_tracker(QFrame *) override;
     void data(double *data) override;
+    bool center() override;
 private:
 
     using error_t = vr::EVRInitError;
