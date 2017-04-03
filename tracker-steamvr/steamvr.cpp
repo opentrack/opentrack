@@ -85,6 +85,16 @@ void device_list::fill_device_specs(QList<device_spec>& list)
                    continue;
                }
 
+               switch (v->GetTrackedDeviceClass(k))
+               {
+               case vr::ETrackedDeviceClass::TrackedDeviceClass_HMD:
+                   dev.type = "HMD"; break;
+               case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
+                   dev.type = "Controller"; break;
+               default:
+                   dev.type = "Unknown"; break;
+               }
+
                dev.model = str;
                dev.pose = device_states[k];
                dev.k = k;
@@ -254,7 +264,8 @@ steamvr_dialog::steamvr_dialog()
 
     device_list list;
     for (const device_spec& spec : list.devices())
-        ui.device->addItem(QStringLiteral("%1 [%2]").arg(spec.model).arg(spec.serial), QVariant(spec.serial));
+        ui.device->addItem(QStringLiteral("<%3> %1 [%2]").arg(spec.model).arg(spec.serial).arg(spec.type),
+                           QVariant(spec.serial));
 
     tie_setting(s.device_serial, ui.device);
 }

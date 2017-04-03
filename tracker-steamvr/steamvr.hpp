@@ -37,7 +37,7 @@ struct settings : opts
 struct device_spec
 {
     vr::TrackedDevicePose_t pose;
-    QString model, serial;
+    QString model, serial, type;
     unsigned k;
 };
 
@@ -98,7 +98,6 @@ public:
 private:
     Ui::dialog ui;
     settings s;
-    device_list devices;
 
 private slots:
     void doOK();
