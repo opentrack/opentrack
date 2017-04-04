@@ -1,12 +1,12 @@
 set(CMAKE_BUILD_TYPE_INIT RELEASE)
 
-set(CMAKE_CXX_FLAGS "-arch x86_64 -std=c++11 -stdlib=libc++" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-arch x86_64 -stdlib=libc++" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS "-arch x86_64" CACHE STRING "" FORCE)
 
 set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -fvisibility=hidden -g" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE " ${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
 
-set(cmake-link-common "-stdlib=libc++ -std=c++11 -arch x86_64")
+set(cmake-link-common "-stdlib=libc++ -arch x86_64")
 set(CMAKE_EXE_LINKER_FLAGS "${cmake-link-common} -Wl,-stack_size,0x4000000" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)

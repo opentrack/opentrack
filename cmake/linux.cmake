@@ -1,6 +1,6 @@
 set(CMAKE_BUILD_TYPE_INIT RELEASE)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-fPIC" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS "-fPIC" CACHE STRING "" FORCE)
 
 set(CMAKE_AR "gcc-ar" CACHE STRING "" FORCE)
@@ -10,7 +10,7 @@ set(CMAKE_RANLIB "gcc-ranlib" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -fuse-linker-plugin -fvisibility=hidden -fPIC" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE " ${CMAKE_C_FLAGS_RELEASE} " CACHE STRING "" FORCE)
 
-set(cmake-link-common "-std=c++11")
+set(cmake-link-common "")
 set(CMAKE_EXE_LINKER_FLAGS "${cmake-link-common}" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)

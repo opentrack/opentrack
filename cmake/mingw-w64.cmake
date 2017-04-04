@@ -43,7 +43,7 @@ set(bloat "-fno-exceptions -fno-rtti")
 set(sections "-ffunction-sections -fdata-sections")
 
 set(ccflags-common "-fvisibility=hidden -pipe")
-set(_CXXFLAGS "${bloat} ${ccflags-common} -std=c++11")
+set(_CXXFLAGS "${bloat} ${ccflags-common}")
 set(_CFLAGS "${ccflags-common} -std=c11")
 set(_CFLAGS_RELEASE "-s ${cpu} ${fpu} ${lto} ${sections}")
 set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
