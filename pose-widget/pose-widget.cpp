@@ -23,15 +23,13 @@ pose_transform::pose_transform(QWidget* dst) :
     image2(w, h, QImage::Format_ARGB32),
     width(w), height(h)
 {
+    fresh.clear(std::memory_order_seq_cst);
+
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
 
     image.fill(Qt::transparent);
     image2.fill(Qt::transparent);
-
-    rotateBy(0, 0, 0, 0, 0, 0, QSize(w, h));
-
-    project_quad_texture();
 
     start();
 }
@@ -57,15 +55,15 @@ void pose_transform::run()
         if (isInterruptionRequested())
             break;
 
-        static struct cruft
         {
-            void lock() {}
-            void unlock() {}
-        } not_a_mutex;
+            lock_guard l(mtx);
+            const cv_status st = cvar.wait_for(l, std::chrono::milliseconds(2000));
+            if (st == cv_status::timeout)
+                continue;
 
-        const cv_status st = cvar.wait_for(not_a_mutex, std::chrono::milliseconds(2000));
-        if (st == cv_status::timeout)
-            continue;
+            rotation = rotation_;
+            translation = translation_;
+        }
 
         project_quad_texture();
     }
@@ -73,18 +71,22 @@ void pose_transform::run()
 
 pose_widget::pose_widget(QWidget* parent) : QWidget(parent), xform(this)
 {
+    rotate_sync(0,0,0, 0,0,0);
 }
 
 pose_widget::~pose_widget()
 {
 }
 
-void pose_widget::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
-    xform.rotateBy(xAngle, yAngle, zAngle, x, y, z, size());
+    if (!xform.fresh.test_and_set(std::memory_order_seq_cst))
+        update();
+    xform.rotate_async(xAngle, yAngle, zAngle, x, y, z);
 }
 
-void pose_transform::rotateBy(double xAngle, double yAngle, double zAngle, double x, double y, double z, const QSize& size)
+template<typename F>
+void pose_transform::with_rotate(F&& fun, double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
     using std::sin;
     using std::cos;
@@ -98,11 +100,31 @@ void pose_transform::rotateBy(double xAngle, double yAngle, double zAngle, doubl
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-            rotation(i, j) = num(r(i, j));
+            rotation_(i, j) = num(r(i, j));
 
-    translation = vec3(x, y, z);
+    translation_ = vec3(x, y, z);
 
-    cvar.notify_one();
+    fun();
+}
+
+void pose_widget::rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+{
+    xform.rotate_sync(xAngle, yAngle, zAngle, x, y, z);
+}
+
+void pose_transform::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+{
+    with_rotate([this]() { cvar.notify_one(); }, xAngle, yAngle, zAngle, x, y, z);
+}
+
+void pose_transform::rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z)
+{
+    with_rotate([this]() {
+        rotation = rotation_;
+        translation = translation_;
+        project_quad_texture();
+        dst->repaint();
+    }, xAngle, yAngle, zAngle, x, y, z);
 }
 
 class Triangle {
@@ -181,8 +203,6 @@ void pose_transform::project_quad_texture()
     vec2 pt[4];
     const int sx = width - 1, sy = height - 1;
     vec2 projected[3];
-
-    lock_guard l(mtx);
 
     {
         const int sx_ = (sx - std::max(0, (sx - sy)/2)) * 5/9;
@@ -318,21 +338,22 @@ void pose_transform::project_quad_texture()
         lock_guard l2(mtx2);
         image2.fill(Qt::transparent);
         std::swap(image, image2);
+        fresh.clear();
     }
-
-    run_in_thread_async(dst->thread(), [this]() { dst->update(); });
 }
 
 vec2 pose_transform::project(const vec3 &point)
 {
+    using std::fabsf;
+
     vec3 ret = rotation * point;
-    num z = std::max<num>(.75f, 1 + translation.z()/-60);
+    num z = std::max<num>(.5, 1 + translation.z()/-80);
     num w = width, h = height;
-    num x = w * translation.x() / 2 / -40;
-    if (std::abs(x) > w/2)
+    num x = w * translation.x() / 2 / -80;
+    if (fabsf(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
-    num y = h * translation.y() / 2 / -40;
-    if (std::abs(y) > h/2)
+    num y = h * translation.y() / 2 / -80;
+    if (fabsf(y) > h/2)
         y = y > 0 ? h/2 : h/-2;
     return vec2(z * (ret.x() + x), z * (ret.y() + y));
 }

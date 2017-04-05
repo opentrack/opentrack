@@ -16,6 +16,7 @@
 
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 #ifdef BUILD_POSE_WIDGET
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -46,9 +47,11 @@ class pose_transform final : private QThread
 
     friend class pose_widget;
 
-    void rotateBy(double xAngle, double yAngle, double zAngle,
-                  double x, double y, double z,
-                  const QSize& size);
+    void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
+    void rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z);
+
+    template<typename F>
+    void with_rotate(F&& fun, double xAngle, double yAngle, double zAngle, double x, double y, double z);
 
     void run() override;
 
@@ -61,10 +64,10 @@ class pose_transform final : private QThread
 
     static vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
 
-    rmat rotation;
-    vec3 translation;
+    rmat rotation, rotation_;
+    vec3 translation, translation_;
 
-    std::condition_variable_any cvar;
+    std::condition_variable cvar;
     std::mutex mtx, mtx2;
 
     QWidget* dst;
@@ -74,6 +77,8 @@ class pose_transform final : private QThread
 
     int width, height;
 
+    std::atomic_flag fresh;
+
     static constexpr int w = 320, h = 240;
 };
 
@@ -82,8 +87,8 @@ class POSE_WIDGET_EXPORT pose_widget final : public QWidget
 public:
     pose_widget(QWidget *parent = nullptr);
     ~pose_widget();
-    void rotateBy(double xAngle, double yAngle, double zAngle,
-                  double x, double y, double z);
+    void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
+    void rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 
 private:
     pose_transform xform;

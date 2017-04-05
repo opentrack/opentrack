@@ -485,7 +485,7 @@ void MainWindow::stopTracker()
     opts::set_teardown_flag(true); // XXX hack -sh 20160926
 
     pose_update_timer.stop();
-    ui.pose_display->rotateBy(0, 0, 0, 0, 0, 0);
+    ui.pose_display->rotate_sync(0,0,0, 0,0,0);
 
     if (pTrackerDialog)
         pTrackerDialog->unregister_tracker();
@@ -515,8 +515,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     if (!work)
         return;
 
-    ui.pose_display->rotateBy(mapped[Yaw], mapped[Pitch], -mapped[Roll],
-                              mapped[TX], mapped[TY], mapped[TZ]);
+    ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
+                                  mapped[TX], mapped[TY], mapped[TZ]);
 
     if (mapping_widget)
         mapping_widget->update();
