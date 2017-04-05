@@ -28,21 +28,25 @@ endif()
 
 function(otr_glob_sources var)
     set(dir "${CMAKE_CURRENT_SOURCE_DIR}")
-    file(GLOB ${var}-c ${dir}/*.cpp ${dir}/*.c ${dir}/*.h ${dir}/*.hpp)
+    file(GLOB ${var}-cc ${dir}/*.cpp ${dir}/*.c)
+    file(GLOB ${var}-hh ${dir}/*.h ${dir}/*.hpp)
     file(GLOB ${var}-res ${dir}/*.rc)
     foreach(f ${var}-res)
         set_source_files_properties(${f} PROPERTIES LANGUAGE RC)
     endforeach()
     file(GLOB ${var}-ui ${dir}/*.ui)
     file(GLOB ${var}-rc ${dir}/*.qrc)
-    set(${var}-all ${${var}-c} ${${var}-rc} ${${var}-rcc} ${${var}-uih} ${${var}-moc} ${${var}-res})
-    foreach(i ui rc res c all)
+    set(${var}-all ${${var}-cc} ${${var}-hh} ${${var}-rc} ${${var}-res})
+    foreach(i ui rc res cc hh all)
         set(${var}-${i} "${${var}-${i}}" PARENT_SCOPE)
     endforeach()
 endfunction()
 
 function(otr_qt n)
-    qt5_wrap_cpp(${n}-moc ${${n}-c} OPTIONS --no-notes)
+    if(".${${n}-hh}" STREQUAL ".")
+        message(FATAL_ERROR "project ${n} not globbed")
+    endif()
+    qt5_wrap_cpp(${n}-moc ${${n}-hh} OPTIONS --no-notes)
     qt5_wrap_ui(${n}-uih ${${n}-ui})
     qt5_add_resources(${n}-rcc ${${n}-rc})
     foreach(i moc uih rcc)
@@ -101,8 +105,13 @@ function(otr_install_pdb_current_project)
     endif()
 endfunction()
 
-function(otr_module n)
+macro(otr_module n)
     message(STATUS "module ${n}")
+    project("opentrack-${n}")
+    otr_module_("${n}" ${ARGN})
+endmacro()
+
+function(otr_module_ n)
     cmake_parse_arguments(arg
         "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL"
         "LINK;COMPILE"
@@ -116,7 +125,6 @@ function(otr_module n)
     set(n_orig "${n}")
     set(n "opentrack-${n}")
 
-    project(${n})
     otr_glob_sources(${n})
     otr_is_target_c_only(is-c-only "${${n}-all}")
     if(NOT (is-c-only OR arg_NO-QT))
@@ -205,7 +213,7 @@ function(otr_module n)
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            DEPENDS ${${n}-c} ${${n}-ui} ${${n}-rc}
+            DEPENDS ${${n}-cc} ${${n}-hh} ${${n}-ui} ${${n}-rc}
             COMMENT "Running lupdate for ${n}/${i}")
         set(target-name "i18n-lang-${i}-module-${n_orig}")
         add_custom_target(${target-name} DEPENDS "${t}")

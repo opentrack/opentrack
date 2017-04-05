@@ -1,5 +1,3 @@
-project(opentrack-user-interface)
-
 if(MSVC OR (NOT SDK_CONSOLE_DEBUG AND WIN32))
     set(console "")
 else()
