@@ -24,7 +24,8 @@ class ewma : public IFilter
 {
 public:
     ewma();
-    void filter(const double *input, double *output);
+    void filter(const double *input, double *output) override;
+    void center() override { first_run = true; }
 private:
     // Deltas are smoothed over the last 1/60sec.
     const double delta_RC = 1./60;

@@ -139,7 +139,8 @@ class kalman : public IFilter
 public:
     kalman();
     void reset();
-    void filter(const double *input, double *output);
+    void filter(const double *input, double *output) override;
+    void center() override { reset(); }
     PoseVector last_input;
     Timer timer;
     bool first_run;

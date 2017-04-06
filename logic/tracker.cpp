@@ -195,6 +195,9 @@ void Tracker::logic()
 
     if (center_ordered)
     {
+        if (libs.pFilter)
+            libs.pFilter->center();
+
         if (own_center_logic)
         {
             scaled_rotation.rotation = scaled_rotation.camera.t();
