@@ -512,9 +512,6 @@ void MainWindow::stopTracker()
 
 void MainWindow::display_pose(const double *mapped, const double *raw)
 {
-    if (!work)
-        return;
-
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
 
@@ -538,7 +535,7 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     }
 
     QString game_title;
-    if (work->libs.pProtocol)
+    if (work && work->libs.pProtocol)
         game_title = work->libs.pProtocol->game_name();
     set_title(game_title);
 }
