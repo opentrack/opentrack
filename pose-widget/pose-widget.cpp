@@ -8,6 +8,7 @@
 #include "pose-widget.hpp"
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
+#include "compat/sleep.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>
@@ -21,10 +22,9 @@ pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
     image(w, h, QImage::Format_ARGB32),
     image2(w, h, QImage::Format_ARGB32),
-    width(w), height(h)
+    width(w), height(h),
+    fresh(false)
 {
-    fresh.clear(std::memory_order_seq_cst);
-
     front = QImage(QString(":/images/side1.png"));
     back = QImage(QString(":/images/side6.png"));
 
@@ -57,15 +57,18 @@ void pose_transform::run()
 
         {
             lock_guard l(mtx);
-            const cv_status st = cvar.wait_for(l, std::chrono::milliseconds(2000));
-            if (st == cv_status::timeout)
-                continue;
+
+            if (fresh)
+                goto end;
 
             rotation = rotation_;
             translation = translation_;
         }
 
         project_quad_texture();
+
+end:
+        portable::sleep(9);
     }
 }
 
@@ -80,9 +83,12 @@ pose_widget::~pose_widget()
 
 void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
-    if (!xform.fresh.test_and_set(std::memory_order_seq_cst))
+    bool expected = true;
+    if (xform.fresh.compare_exchange_weak(expected, false))
+    {
         update();
-    xform.rotate_async(xAngle, yAngle, zAngle, x, y, z);
+        xform.rotate_async(xAngle, yAngle, zAngle, x, y, z);
+    }
 }
 
 template<typename F>
@@ -114,7 +120,7 @@ void pose_widget::rotate_sync(double xAngle, double yAngle, double zAngle, doubl
 
 void pose_transform::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
-    with_rotate([this]() { cvar.notify_one(); }, xAngle, yAngle, zAngle, x, y, z);
+    with_rotate([this]() {}, xAngle, yAngle, zAngle, x, y, z);
 }
 
 void pose_transform::rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z)
@@ -338,7 +344,7 @@ void pose_transform::project_quad_texture()
         lock_guard l2(mtx2);
         image2.fill(Qt::transparent);
         std::swap(image, image2);
-        fresh.clear();
+        fresh = true;
     }
 }
 

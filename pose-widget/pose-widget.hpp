@@ -15,7 +15,6 @@
 #include "compat/euler.hpp"
 
 #include <mutex>
-#include <condition_variable>
 #include <atomic>
 
 #ifdef BUILD_POSE_WIDGET
@@ -67,7 +66,6 @@ class pose_transform final : private QThread
     rmat rotation, rotation_;
     vec3 translation, translation_;
 
-    std::condition_variable cvar;
     std::mutex mtx, mtx2;
 
     QWidget* dst;
@@ -77,7 +75,7 @@ class pose_transform final : private QThread
 
     int width, height;
 
-    std::atomic_flag fresh;
+    std::atomic<bool> fresh;
 
     static constexpr int w = 320, h = 240;
 };
