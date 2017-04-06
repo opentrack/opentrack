@@ -181,7 +181,7 @@ void steamvr::start_tracker(QFrame*)
         if (!v)
         {
             QMessageBox::warning(nullptr,
-                                 tr("Valve SteamVR init error"), device_list::strerror(e),
+                                 tr("SteamVR init error"), device_list::strerror(e),
                                  QMessageBox::Close, QMessageBox::NoButton);
             return;
         }
@@ -194,19 +194,29 @@ void steamvr::start_tracker(QFrame*)
         if (sz == 0)
         {
             QMessageBox::warning(nullptr,
-                                 tr("Valve SteamVR init error"),
+                                 tr("SteamVR init error"),
                                  tr("No HMD connected"),
                                  QMessageBox::Close, QMessageBox::NoButton);
             return;
         }
 
+        device_index = -1;
+
         for (const device_spec& spec : specs)
         {
-            if (serial == "" || serial == spec.serial)
+            if (serial == "" || serial == spec.to_string())
             {
                 device_index = int(spec.k);
                 break;
             }
+        }
+
+        if (device_index == -1)
+        {
+            QMessageBox::warning(nullptr,
+                                 tr("SteamVR init error"),
+                                 tr("Can't find device with that serial"),
+                                 QMessageBox::Close, QMessageBox::NoButton);
         }
     });
 }
@@ -267,8 +277,7 @@ steamvr_dialog::steamvr_dialog()
 
     device_list list;
     for (const device_spec& spec : list.devices())
-        ui.device->addItem(QStringLiteral("<%3> %1 [%2]").arg(spec.model).arg(spec.serial).arg(spec.type),
-                           QVariant(spec.serial));
+        ui.device->addItem(spec.to_string(), spec.to_string());
 
     tie_setting(s.device_serial, ui.device);
 }
@@ -282,6 +291,13 @@ void steamvr_dialog::doOK()
 void steamvr_dialog::doCancel()
 {
     close();
+}
+
+
+
+QString device_spec::to_string() const
+{
+    return QStringLiteral("<%1> %2 [%3]").arg(type).arg(model).arg(serial);
 }
 
 OPENTRACK_DECLARE_TRACKER(steamvr, steamvr_dialog, steamvr_metadata)

@@ -39,6 +39,7 @@ struct device_spec
     vr::TrackedDevicePose_t pose;
     QString model, serial, type;
     unsigned k;
+    QString to_string() const;
 };
 
 struct device_list final
