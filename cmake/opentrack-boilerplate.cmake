@@ -105,13 +105,8 @@ function(otr_install_pdb_current_project)
     endif()
 endfunction()
 
-macro(otr_module n)
+function(otr_module n)
     message(STATUS "module ${n}")
-    project("opentrack-${n}")
-    otr_module_("${n}" ${ARGN})
-endmacro()
-
-function(otr_module_ n)
     cmake_parse_arguments(arg
         "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL"
         "LINK;COMPILE"
