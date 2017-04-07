@@ -14,20 +14,15 @@
 // For Todd and Arda Kutlu
 
 void flightgear::pose(const double* headpose) {
-    FlightData.x = headpose[TX] * 1e-2;
+    FlightData.x = -headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;
     FlightData.p = headpose[Pitch];
-    FlightData.h = headpose[Yaw];
-    FlightData.r = headpose[Roll];
+    FlightData.h = -headpose[Yaw];
+    FlightData.r = -headpose[Roll];
     FlightData.status = 1;
-    QHostAddress destIP(QString("%1.%2.%3.%4").arg(
-                            QString::number(static_cast<int>(s.ip1)),
-                            QString::number(static_cast<int>(s.ip2)),
-                            QString::number(static_cast<int>(s.ip3)),
-                            QString::number(static_cast<int>(s.ip4))));
-    int destPort = s.port;
-    (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(destPort));
+    QHostAddress destIP(quint32(s.ip1 << 24 | s.ip2 << 16 | s.ip3 << 8 | s.ip4));
+    (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(s.port));
 }
 
 bool flightgear::correct()

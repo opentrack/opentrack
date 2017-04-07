@@ -10,7 +10,6 @@
  */
 #pragma once
 #include "ui_ftnoir_fgcontrols.h"
-#include "fgtypes.h"
 #include <QThread>
 #include <QUdpSocket>
 #include <QMessageBox>
@@ -18,15 +17,23 @@
 #include "options/options.hpp"
 using namespace options;
 
+// x,y,z position in meters, heading, pitch and roll in degrees
+#pragma pack(push, 1)
+struct flightgear_datagram {
+    double x, y, z, h, p, r;
+    int status;
+};
+#pragma pack(pop)
+
 struct settings : opts {
     value<int> ip1, ip2, ip3, ip4;
     value<int> port;
     settings() :
         opts("flightgear-proto"),
-        ip1(b, "ip1", 192),
-        ip2(b, "ip2", 168),
+        ip1(b, "ip1", 127),
+        ip2(b, "ip2", 0),
         ip3(b, "ip3", 0),
-        ip4(b, "ip4", 2),
+        ip4(b, "ip4", 1),
         port(b, "port", 5542)
     {}
 };
@@ -41,7 +48,7 @@ public:
     }
 private:
     settings s;
-    TFlightGearData FlightData;
+    flightgear_datagram FlightData;
     QUdpSocket outSocket;
 };
 
