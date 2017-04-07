@@ -9,9 +9,13 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_fg.h"
-#include <QObject>
-#include <QFile>
 #include "api/plugin-api.hpp"
+#include "opentrack-library-path.h"
+
+#include <QString>
+#include <QUrl>
+#include <QDir>
+#include <QDesktopServices>
 
 //*******************************************************************************************************
 // FaceTrackNoIR Client Settings-dialog.
@@ -32,14 +36,23 @@ FGControls::FGControls()
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, &QDialogButtonBox::helpRequested,
+            ui.buttonBox, []()
+    {
+        static const QString contrib_dir = "file:///" + QDir::toNativeSeparators(QStringLiteral("%1/%2/%3").
+            arg(OPENTRACK_BASE_PATH, OPENTRACK_CONTRIB_PATH, "FlightGear"));
+        QDesktopServices::openUrl(contrib_dir);
+    });
 }
 
-void FGControls::doOK() {
+void FGControls::doOK()
+{
     s.b->save();
     close();
 }
 
-void FGControls::doCancel() {
+void FGControls::doCancel()
+{
     close();
 }
 
