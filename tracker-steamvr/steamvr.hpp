@@ -81,7 +81,7 @@ public:
     bool center() override;
 
 private:
-    void matrix_to_euler(double &yaw, double &pitch, double &roll, const vr::HmdMatrix34_t& result);
+    static void matrix_to_euler(double &yaw, double &pitch, double &roll, const vr::HmdMatrix34_t& result);
 
     settings s;
     int device_index;
@@ -108,7 +108,6 @@ private slots:
 class steamvr_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("steamvr_metadata", "Valve SteamVR")); }
-    QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
+    QString name() override { return QString(QCoreApplication::translate("steamvr_metadata", "Valve SteamVR")); }
+    QIcon icon() override { return QIcon(":/images/rift_tiny.png"); }
 };
-
