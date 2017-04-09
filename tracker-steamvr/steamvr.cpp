@@ -250,19 +250,24 @@ bool steamvr::center()
     with_vr_lock([&](vr_t v, error_t)
     {
         if (v)
+            // Reset yaw and position
             v->ResetSeatedZeroPose();
     });
-    return false;
+    // Use chaperone universe real world up instead of OpenTrack's initial pose centering
+    // Note: Controllers will be centered based on initial headset position.
+    // TODO: may want to center controller/tracker yaw and position (only) when used alone
+    return true;
 }
 
 void steamvr::matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result)
 {
     using std::atan2;
-    using std::asin;
 
-    yaw = atan2(double(result.m[2][0]), double(result.m[0][0]));
-    pitch = atan2(double(result.m[1][1]), double(result.m[1][2]));
-    roll = asin(double(result.m[1][0]));
+    yaw = atan2((double)-result.m[2][0], sqrt((double)result.m[2][1] * result.m[2][1] + result.m[2][2] * result.m[2][2]));
+    pitch = atan2((double)result.m[2][1], (double)result.m[2][2]);
+    roll = atan2((double)result.m[1][0], (double)result.m[0][0]);
+
+    // TODO: gimbal lock avoidance?
 }
 
 steamvr_dialog::steamvr_dialog()
