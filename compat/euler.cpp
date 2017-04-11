@@ -93,4 +93,43 @@ void OTR_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
     }
 }
 
+// from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+Quat matrix_to_quat(const rmat& M)
+{
+    Quat q(1, 0, 0, 0);
+
+    using std::sqrt;
+
+    double trace = M(0, 0) + M(1, 1) + M(2, 2); // I removed + 1.0; see discussion with Ethan
+    if( trace > 0 ) {// I changed M_EPSILON to 0
+        double s = .5 / std::sqrt(trace + 1);
+        q.w() = .25 / s;
+        q.x() = ( M(2, 1) - M(1, 2) ) * s;
+        q.y() = ( M(0, 2) - M(2, 0) ) * s;
+        q.z() = ( M(1, 0) - M(0, 1) ) * s;
+    } else {
+        if ( M(0, 0) > M(1, 1) && M(0, 0) > M(2, 2) ) {
+            double s = 2.0 * sqrt( 1.0 + M(0, 0) - M(1, 1) - M(2, 2));
+            q.w() = (M(2, 1) - M(1, 2) ) / s;
+            q.x() = .25 * s;
+            q.y() = (M(0, 1) + M(1, 0) ) / s;
+            q.z() = (M(0, 2) + M(2, 0) ) / s;
+        } else if (M(1, 1) > M(2, 2)) {
+            double s = 2.0 * sqrt( 1.0 + M(1, 1) - M(0, 0) - M(2, 2));
+            q.w() = (M(0, 2) - M(2, 0) ) / s;
+            q.x() = (M(0, 1) + M(1, 0) ) / s;
+            q.y() = .25 * s;
+            q.z() = (M(1, 2) + M(2, 1) ) / s;
+        } else {
+            double s = 2.0 * sqrt( 1.0 + M(2, 2) - M(0, 0) - M(1, 1) );
+            q.w() = (M(1, 0) - M(0, 1) ) / s;
+            q.x() = (M(0, 2) + M(2, 0) ) / s;
+            q.y() = (M(1, 2) + M(2, 1) ) / s;
+            q.z() = .25 * s;
+        }
+    }
+
+    return q;
+}
+
 } // end ns euler

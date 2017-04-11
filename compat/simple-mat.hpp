@@ -273,3 +273,66 @@ Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
             ret(j, i) = self(j, i) * other;
     return ret;
 }
+
+template<typename num>
+class Quat : Mat<num, 4, 1>
+{
+    using quat = Quat<num>;
+
+    enum idx { qw, qx, qy, qz };
+
+    static quat _from_array(const num* data)
+    {
+        return quat(data[qw], data[qx], data[qy], data[qz]);
+    }
+
+    inline num elt(idx k) const { return operator()(k); }
+    inline num& elt(idx k) { return operator()(k); }
+public:
+    Quat(num w, num x, num y, num z) : Mat<num, 4, 1>(w, x, y, z)
+    {
+    }
+
+    Quat() : quat(1, 0, 0, 0) {}
+
+    static quat from_vector(const Mat<num, 4, 1>& data)
+    {
+        return _from_array(data);
+    }
+
+    static quat from_vector(const Mat<num, 1, 4>& data)
+    {
+        return _from_array(data);
+    }
+
+    quat normalized() const
+    {
+        const num x = elt(qx), y = elt(qy), z = elt(qz), w = elt(qw);
+        const num inv_n = 1./std::sqrt(x*x + y*y + z*z + w*w);
+
+        return Quat<num>(elt(qw) * inv_n,
+                         elt(qx) * inv_n,
+                         elt(qy) * inv_n,
+                         elt(qz) * inv_n);
+    }
+
+    quat operator*(const quat& q2)
+    {
+        const quat& OTR_RESTRICT q1 = *this;
+        return quat(-q1.x() * q2.x() - q1.y() * q2.y() - q1.z() * q2.z() + q1.w() * q2.w(),
+                     q1.x() * q2.w() + q1.y() * q2.z() - q1.z() * q2.y() + q1.w() * q2.x(),
+                    -q1.x() * q2.z() + q1.y() * q2.w() + q1.z() * q2.x() + q1.w() * q2.y(),
+                     q1.x() * q2.y() - q1.y() * q2.x() + q1.z() * q2.w() + q1.w() * q2.z());
+    }
+
+
+    inline num w() const { return elt(qw); }
+    inline num x() const { return elt(qx); }
+    inline num y() const { return elt(qy); }
+    inline num z() const { return elt(qz); }
+
+    inline num& w() { return elt(qw); }
+    inline num& x() { return elt(qx); }
+    inline num& y() { return elt(qy); }
+    inline num& z() { return elt(qz); }
+};
