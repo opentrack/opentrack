@@ -13,9 +13,10 @@
 
 constexpr double TranslationCalibrator::pitch_spacing_in_degrees;
 constexpr double TranslationCalibrator::yaw_spacing_in_degrees;
+constexpr double TranslationCalibrator::roll_spacing_in_degrees;
 
-TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof) :
-    yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof)
+TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof, unsigned roll_rdof) :
+    yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof), roll_rdof(roll_rdof)
 {
     reset();
 }
@@ -25,7 +26,10 @@ void TranslationCalibrator::reset()
     P = cv::Matx66f::zeros();
     y = cv::Vec6f(0,0,0, 0,0,0);
 
-    used_poses = std::vector<bool>(bin_count, false);
+    used_yaw_poses = vec(1 + iround(360 / yaw_spacing_in_degrees), 0);
+    used_pitch_poses = vec(1 + iround(360 / pitch_spacing_in_degrees), 0);
+    used_roll_poses = vec(1 + iround(360 / roll_spacing_in_degrees), 0);
+
     nsamples = 0;
 }
 
@@ -56,6 +60,22 @@ std::tuple<cv::Vec3f, unsigned> TranslationCalibrator::get_estimate()
 
     qDebug() << "calibrator:" << nsamples << "samples total";
 
+    unsigned values[3] {};
+    vec* in[] { &used_yaw_poses, &used_pitch_poses, &used_roll_poses };
+
+    for (unsigned k = 0; k < 3; k++)
+    {
+        const vec& data = *in[k];
+        for (unsigned i = 0; i < data.size(); i++)
+            if (data[i])
+                values[k]++;
+    }
+
+    qDebug() << "samples"
+             << "yaw" << values[0]
+             << "pitch" << values[1]
+             << "roll" << values[2];
+
     return std::make_tuple(cv::Vec3f(-x[0], -x[1], -x[2]), nsamples);
 }
 
@@ -71,24 +91,28 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 
     const euler_t ypr = rmat_to_euler(r) * r2d;
 
-    const int yaw = iround(ypr(yaw_rdof) + 180/yaw_spacing_in_degrees);
-    const int pitch = iround(ypr(pitch_rdof) + 180/pitch_spacing_in_degrees);
-    const int idx = pitch * 360/pitch_spacing_in_degrees + yaw;
+    const unsigned yaw_k = iround((ypr(yaw_rdof) + 180)/yaw_spacing_in_degrees);
+    const unsigned pitch_k = iround((ypr(pitch_rdof) + 180)/pitch_spacing_in_degrees);
+    const unsigned roll_k = iround((ypr(roll_rdof) + 180)/roll_spacing_in_degrees);
 
-    if (idx >= 0 && idx < bin_count)
+    if (yaw_k < used_yaw_poses.size() &&
+        pitch_k < used_pitch_poses.size() &&
+        roll_k < used_roll_poses.size())
+
     {
-        if (used_poses[idx])
-        {
-            return false;
-        }
-        else
-        {
-            used_poses[idx] = true;
-            return true;
-        }
+        used_yaw_poses[yaw_k]++;
+        used_pitch_poses[pitch_k]++;
+        used_roll_poses[roll_k]++;
+
+        return used_yaw_poses[yaw_k] == 1 ||
+               used_pitch_poses[pitch_k] == 1 ||
+               used_roll_poses[roll_k] == 1;
     }
     else
-        qDebug() << "calibrator: index out of range" << "yaw" << yaw << "pitch" << pitch << "max" << bin_count;
+        qDebug() << "calibrator: index out of range"
+                 << "yaw" << yaw_k
+                 << "pitch" << pitch_k
+                 << "roll" << roll_k;
 
     return false;
 }

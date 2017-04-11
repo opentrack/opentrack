@@ -20,7 +20,7 @@
 class TranslationCalibrator
 {
 public:
-    TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof);
+    TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof, unsigned roll_rdof);
 
     // reset the calibration process
     void reset();
@@ -33,18 +33,20 @@ public:
 
 private:
     bool check_bucket(const cv::Matx33d& R_CM_k);
+    static int get_index(int yaw, int pitch, int roll);
 
     cv::Matx66f P;  // normalized precision matrix = inverse covariance
     cv::Vec6f y;    // P*(-t_MH, t_CH)
 
-    // note, bin count's so small we don't need a bloom filter
-    std::vector<bool> used_poses;
+    using vec = std::vector<unsigned>;
+
+    vec used_yaw_poses;
+    vec used_pitch_poses;
+    vec used_roll_poses;
 
     static constexpr double yaw_spacing_in_degrees = 2.5;
     static constexpr double pitch_spacing_in_degrees = 1.5;
+    static constexpr double roll_spacing_in_degrees = 3.5;
 
-    // this allows allows us up to +-180 for yaw and pitch
-    static constexpr int bin_count = 361*360 / (yaw_spacing_in_degrees*pitch_spacing_in_degrees) + 1;
-
-    unsigned yaw_rdof, pitch_rdof, nsamples;
+    unsigned yaw_rdof, pitch_rdof, roll_rdof, nsamples;
 };
