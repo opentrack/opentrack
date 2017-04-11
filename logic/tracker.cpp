@@ -21,10 +21,6 @@
 #include <algorithm>
 #include <cstdio>
 
-#if defined(_WIN32)
-#   include <windows.h>
-#endif
-
 using namespace euler;
 using namespace gui_tracker_impl;
 
@@ -269,7 +265,11 @@ void Tracker::logic()
 
             logger.write_pose(value); // "filtered"
         }
+    }
 
+    nanp |= is_nan(value);
+
+    {
         euler_t neck, rel;
 
         if (s.neck_enable)
@@ -335,10 +335,6 @@ void Tracker::logic()
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
 
-    nanp |= is_nan(value);
-
-    logger.write_pose(value); // "mapped"
-
     if (nanp)
     {
         QMutexLocker foo(&mtx);
@@ -362,16 +358,14 @@ void Tracker::logic()
     output_pose = value;
     raw_6dof = raw;
 
+    logger.write_pose(value); // "mapped"
+
     logger.reset_dt();
     logger.next_line();
 }
 
 void Tracker::run()
 {
-#if defined(_WIN32)
-    (void) timeBeginPeriod(1);
-#endif
-
     setPriority(QThread::HighPriority);
 
     {
@@ -390,8 +384,9 @@ void Tracker::run()
         logger.next_line();
     }
 
-    t.start();
     logger.reset_dt();
+
+    t.start();
 
     while (!get(f_should_quit))
     {
@@ -405,26 +400,20 @@ void Tracker::run()
         logic();
 
         static constexpr long const_sleep_us = 4000;
-
-        using std::max;
-        using std::min;
-
         const long elapsed_usecs = t.elapsed_usecs();
+        t.start();
 
         backlog_time += elapsed_usecs - const_sleep_us;
 
-        if (std::fabs(backlog_time) > 10000l * 1000)
+        if (std::fabs(backlog_time) > 3000 * 1000)
         {
             qDebug() << "tracker: backlog interval overflow" << backlog_time;
             backlog_time = 0;
         }
 
-        const unsigned sleep_time = unsigned(std::round(clamp((const_sleep_us - backlog_time)/1000., 0., const_sleep_us*3/1000.)));
+        const unsigned sleep_time = unsigned(std::round(clamp((const_sleep_us - backlog_time)/1000., 0, const_sleep_us*2.5/1000)));
 
-        t.start();
-
-        if (sleep_time > 0)
-            portable::sleep(sleep_time);
+        portable::sleep(sleep_time);
     }
 
     {
@@ -432,10 +421,6 @@ void Tracker::run()
         Pose p;
         libs.pProtocol->pose(p);
     }
-
-#if defined(_WIN32)
-    (void) timeEndPeriod(1);
-#endif
 
     for (int i = 0; i < 6; i++)
     {
