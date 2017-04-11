@@ -65,7 +65,7 @@ void MapWidget::load()
             x->addItem(QString::number(y) + "°", y);
 
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
-        for (a y : { a::t30, a::t20, a::t15, a::t10 })
+        for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
             x->addItem(QStringLiteral("%1 cm").arg(int(y)), y);
 
     for (int i = 0; qfcs[i].qfc; i++)
@@ -87,20 +87,22 @@ void MapWidget::load()
         }
 
         connect(&axis.opts.clamp, static_cast<void(base_value::*)(int) const>(&base_value::valueChanged),
-                &qfc, [&conf, &qfc](int value) {
+                &qfc, [i, &conf, &qfc](int value) {
             conf.set_max_input(value);
             qfc.reload_spline();
             qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
+
+            if (i >= 3)
+                qfc.set_snap(1, 2.5);
+            else
+            {
+                const double x_snap = std::max(.5, conf.max_input() / 100.);
+                qfc.set_snap(x_snap, 1);
+            }
         });
         // force signal to avoid duplicating the slot's logic
-        axis.opts.clamp.valueChanged(axis.opts.clamp);
-
-        if (qfcs[i].axis >= 3)
-            qfcs[i].qfc->set_snap(1, 2.5);
-        else
-            qfcs[i].qfc->set_snap(.5, 1);
-
         qfcs[i].qfc->setConfig(&conf);
+        axis.opts.clamp.valueChanged(axis.opts.clamp);
     }
 
 }

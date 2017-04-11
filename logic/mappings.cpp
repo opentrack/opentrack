@@ -25,9 +25,9 @@ void Map::load()
 
 Mappings::Mappings(std::vector<axis_opts*> opts) :
     axes {
-        Map("spline-X", "alt-spline-X", 30, 75, *opts[TX]),
-        Map("spline-Y", "alt-spline-Y", 30, 75, *opts[TY]),
-        Map("spline-Z", "alt-spline-Z", 30, 75, *opts[TZ]),
+        Map("spline-X", "alt-spline-X", 100, 75, *opts[TX]),
+        Map("spline-Y", "alt-spline-Y", 100, 75, *opts[TY]),
+        Map("spline-Z", "alt-spline-Z", 100, 75, *opts[TZ]),
         Map("spline-yaw", "alt-spline-yaw", 180, 180, *opts[Yaw]),
         Map("spline-pitch", "alt-spline-pitch", 180, 180, *opts[Pitch]),
         Map("spline-roll", "alt-spline-roll", 180, 180, *opts[Roll])

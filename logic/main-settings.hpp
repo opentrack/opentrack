@@ -35,6 +35,7 @@ struct OTR_LOGIC_EXPORT axis_opts final
         r15 = 15,
         r10 = 10,
 
+        t100 = 100,
         t30 = 30,
         t20 = 20,
         t15 = 15,
