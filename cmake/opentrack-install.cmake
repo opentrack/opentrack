@@ -56,7 +56,17 @@ function(merge_translations)
 
     foreach(i ${opentrack-all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
-        get_property(ts-deps GLOBAL PROPERTY "opentrack-ts-targets-${i}")
+        #get_property(ts-deps GLOBAL PROPERTY "opentrack-ts-targets-${i}")
+
+        set(ts-files_ "")
+
+        foreach(k ${ts-files})
+            if(EXISTS "${k}")
+                list(APPEND ts-files_ "${k}")
+            endif()
+        endforeach()
+
+        set(ts-files "${ts-files_}")
 
         foreach(k ${ts-files})
             list(APPEND all-ts-files "${k}")
