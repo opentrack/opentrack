@@ -78,3 +78,23 @@ template<typename t> using qshared = QSharedPointer<t>;
 #else
 #   define OTR_NEVER_INLINE
 #endif
+
+#if defined _MSC_VER || defined __GNUG__
+#   define OTR_RESTRICT __restrict
+#else
+#   define OTR_RESTRICT
+#endif
+
+#if defined _MSC_VER
+#   define OTR_ALWAYS_INLINE __forceinline
+#elif defined __GNUG__
+#   define OTR_ALWAYS_INLINE __attribute__((always_inline))
+#else
+#   define OTR_ALWAYS_INLINE inline
+#endif
+
+#if defined __GNUG__
+#   define OTR_FLATTEN __attribute__((flatten))
+#else
+#   define OTR_FLATTEN OTR_ALWAYS_INLINE
+#endif
