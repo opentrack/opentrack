@@ -350,16 +350,16 @@ void pose_transform::project_quad_texture()
 
 vec2 pose_transform::project(const vec3 &point)
 {
-    using std::fabsf;
+    using std::fabs;
 
     vec3 ret = rotation * point;
     num z = std::max<num>(.5, 1 + translation.z()/-80);
     num w = width, h = height;
     num x = w * translation.x() / 2 / -80;
-    if (fabsf(x) > w/2)
+    if (fabs(x) > w/2)
         x = x > 0 ? w/2 : w/-2;
     num y = h * translation.y() / 2 / -80;
-    if (fabsf(y) > h/2)
+    if (fabs(y) > h/2)
         y = y > 0 ? h/2 : h/-2;
     return vec2(z * (ret.x() + x), z * (ret.y() + y));
 }
