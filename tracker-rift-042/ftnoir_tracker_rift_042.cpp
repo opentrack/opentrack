@@ -67,7 +67,7 @@ void rift_tracker_042::data(double *data)
         ovrTrackingState ss = ovrHmd_GetTrackingState(hmd, 0);
         if (ss.StatusFlags & ovrStatus_OrientationTracked)
         {
-            static constexpr float c_mult = 8;
+            static constexpr float c_mult = 16;
             static constexpr float c_div = 1/c_mult;
 
             Vector3f axis;

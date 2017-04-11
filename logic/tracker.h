@@ -99,7 +99,7 @@ private:
     static constexpr double d2r = M_PI / 180.;
 
     // note: float exponent base is 2
-    static constexpr double c_mult = 4;
+    static constexpr double c_mult = 16;
     static constexpr double c_div = 1./c_mult;
 public:
     Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger);
