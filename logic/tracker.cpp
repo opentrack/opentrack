@@ -294,10 +294,6 @@ void Tracker::logic()
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
 
-        if (get(f_zero))
-            for (int i = 0; i < 6; i++)
-                value(i) = 0;
-
         const bool reltrans = !get(f_tcomp_disabled);
 
         if (s.tcomp_p && reltrans)
@@ -346,6 +342,10 @@ void Tracker::logic()
         for (int i = 0; i < 6; i++)
             (void) map(raw_6dof(i), m(i));
     }
+
+    if (get(f_zero))
+        for (int i = 0; i < 6; i++)
+            value(i) = 0;
 
     // custom zero position
     for (int i = 0; i < 6; i++)
