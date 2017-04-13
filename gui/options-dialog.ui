@@ -42,7 +42,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -1158,6 +1158,12 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="pos_rz">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string>°</string>
                </property>
@@ -1174,6 +1180,12 @@
              </item>
              <item row="2" column="3">
               <widget class="QDoubleSpinBox" name="pos_tz">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string> cm</string>
                </property>
@@ -1181,10 +1193,10 @@
                 <number>3</number>
                </property>
                <property name="minimum">
-                <double>-100.000000000000000</double>
+                <double>-500.000000000000000</double>
                </property>
                <property name="maximum">
-                <double>100.000000000000000</double>
+                <double>500.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -1197,6 +1209,12 @@
              </item>
              <item row="0" column="3">
               <widget class="QDoubleSpinBox" name="pos_tx">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string> cm</string>
                </property>
@@ -1204,10 +1222,10 @@
                 <number>3</number>
                </property>
                <property name="minimum">
-                <double>-100.000000000000000</double>
+                <double>-500.000000000000000</double>
                </property>
                <property name="maximum">
-                <double>100.000000000000000</double>
+                <double>500.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -1227,6 +1245,12 @@
              </item>
              <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="pos_ry">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string>°</string>
                </property>
@@ -1257,6 +1281,12 @@
              </item>
              <item row="1" column="3">
               <widget class="QDoubleSpinBox" name="pos_ty">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string> cm</string>
                </property>
@@ -1264,10 +1294,10 @@
                 <number>3</number>
                </property>
                <property name="minimum">
-                <double>-100.000000000000000</double>
+                <double>-500.000000000000000</double>
                </property>
                <property name="maximum">
-                <double>100.000000000000000</double>
+                <double>500.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -1280,6 +1310,12 @@
              </item>
              <item row="0" column="1">
               <widget class="QDoubleSpinBox" name="pos_rx">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="suffix">
                 <string>°</string>
                </property>
