@@ -205,9 +205,6 @@ void Tracker::logic()
 
         if (own_center_logic)
         {
-            scaled_rotation.rotation = scaled_rotation.camera.t();
-            real_rotation.rotation = real_rotation.camera.t();
-
             scaled_rotation.rotation = rmat::eye();
             real_rotation.rotation = rmat::eye();
         }
