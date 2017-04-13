@@ -2,6 +2,7 @@
 #   include "opentrack-library-path.h"
 #   include <stdlib.h>
 #   include <vector>
+#   include <cstring>
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
@@ -99,23 +100,7 @@ void add_win32_path()
             qDebug() << "can't set win32 path";
     }
 }
-// workaround QTBUG-38598, allow for launching from another directory
-static void add_program_library_path()
-{
-    // Windows 10 allows for paths longer than MAX_PATH via fsutil and friends, shit
-    const char* p = _pgmptr;
-    char path[4096+1];
 
-    strncpy(path, p, sizeof(path)-1);
-    path[sizeof(path)-1] = '\0';
-
-    char* ptr = strrchr(path, '\\');
-    if (ptr)
-    {
-        *ptr = '\0';
-        QCoreApplication::setLibraryPaths({ path });
-    }
-}
 #endif
 
 int
@@ -124,13 +109,6 @@ WINAPI
 #endif
 main(int argc, char** argv)
 {
-#ifdef _WIN32
-    add_program_library_path();
-#elif !defined(__linux)
-    // workaround QTBUG-38598
-    QCoreApplication::addLibraryPath(".");
-#endif
-
 #if QT_VERSION >= 0x050600 // flag introduced in QT 5.6. It is non-essential so might as well allow compilation on older systems.
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -138,6 +116,11 @@ main(int argc, char** argv)
 
     QTranslator t;
     QApplication app(argc, argv);
+
+#if !defined(__linux) && !defined _WIN32
+    // workaround QTBUG-38598
+    QCoreApplication::addLibraryPath(".");
+#endif
 
     set_qt_style();
     MainWindow::set_working_directory();
