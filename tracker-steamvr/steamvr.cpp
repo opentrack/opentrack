@@ -248,16 +248,26 @@ void steamvr::data(double* data)
 
 bool steamvr::center()
 {
-    with_vr_lock([&](vr_t v, error_t)
+    return with_vr_lock([&](vr_t v, error_t)
     {
         if (v)
+        {
             // Reset yaw and position
             v->ResetSeatedZeroPose();
+
+            if (v->GetTrackedDeviceClass(device_index) == vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
+            {
+                // Use chaperone universe real world up instead of opentrack's initial pose centering
+                // Note: Controllers will be centered based on initial headset position.
+                // TODO: may want to center controller/tracker yaw and position (only) when used alone
+                return true;
+            }
+            else
+                // with controllers, resetting the seated pose does nothing
+                return false;
+        }
+        return false;
     });
-    // Use chaperone universe real world up instead of OpenTrack's initial pose centering
-    // Note: Controllers will be centered based on initial headset position.
-    // TODO: may want to center controller/tracker yaw and position (only) when used alone
-    return true;
 }
 
 void steamvr::matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result)
