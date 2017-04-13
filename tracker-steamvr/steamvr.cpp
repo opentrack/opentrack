@@ -263,8 +263,9 @@ bool steamvr::center()
 void steamvr::matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result)
 {
     using std::atan2;
+    using std::sqrt;
 
-    yaw = atan2((double)-result.m[2][0], sqrt((double)result.m[2][1] * result.m[2][1] + result.m[2][2] * result.m[2][2]));
+    yaw = atan2((double)-result.m[2][0], sqrt(double(result.m[2][1]) * result.m[2][1] + result.m[2][2] * result.m[2][2]));
     pitch = atan2((double)result.m[2][1], (double)result.m[2][2]);
     roll = atan2((double)result.m[1][0], (double)result.m[0][0]);
 
