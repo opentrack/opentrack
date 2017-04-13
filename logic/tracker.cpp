@@ -126,6 +126,15 @@ void Tracker::logic()
     set(f_center, false);
     const bool own_center_logic = center_ordered && libs.pTracker->center();
 
+    {
+        Pose tmp;
+        libs.pTracker->data(tmp);
+
+        if (get(f_enabled))
+            for (int i = 0; i < 6; i++)
+                newpose[i] = elide_nan(tmp(i), newpose(i));
+    }
+
     Pose value, raw;
 
     for (int i = 0; i < 6; i++)
@@ -390,13 +399,6 @@ void Tracker::run()
 
     while (!get(f_should_quit))
     {
-        Pose tmp;
-        libs.pTracker->data(tmp);
-
-        if (get(f_enabled))
-            for (int i = 0; i < 6; i++)
-                newpose[i] = elide_nan(tmp(i), newpose(i));
-
         logic();
 
         static constexpr long const_sleep_us = 4000;
