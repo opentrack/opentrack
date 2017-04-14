@@ -252,11 +252,11 @@ bool steamvr::center()
     {
         if (v)
         {
-            // Reset yaw and position
-            v->ResetSeatedZeroPose();
-
             if (v->GetTrackedDeviceClass(device_index) == vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
             {
+                // Reset yaw and position
+                v->ResetSeatedZeroPose();
+
                 // Use chaperone universe real world up instead of opentrack's initial pose centering
                 // Note: Controllers will be centered based on initial headset position.
                 // TODO: may want to center controller/tracker yaw and position (only) when used alone
