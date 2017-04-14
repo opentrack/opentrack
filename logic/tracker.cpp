@@ -205,16 +205,18 @@ void Tracker::logic()
 
         if (own_center_logic)
         {
-            scaled_rotation.rotation = rmat::eye();
-            real_rotation.rotation = rmat::eye();
+            scaled_rotation.rot_center = rmat::eye();
+            real_rotation.rot_center = rmat::eye();
+
+            t_center = euler_t();
         }
         else
         {
             real_rotation.rot_center = real_rotation.rotation.t();
             scaled_rotation.rot_center = scaled_rotation.rotation.t();
-        }
 
-        t_center = euler_t(&value(TX));
+            t_center = euler_t(&value(TX));
+        }
     }
 
     {
