@@ -275,9 +275,11 @@ void steamvr::matrix_to_euler(double& yaw, double& pitch, double& roll, const vr
     using std::atan2;
     using std::sqrt;
 
-    yaw = atan2((double)-result.m[2][0], sqrt(double(result.m[2][1]) * result.m[2][1] + result.m[2][2] * result.m[2][2]));
-    pitch = atan2((double)result.m[2][1], (double)result.m[2][2]);
-    roll = atan2((double)result.m[1][0], (double)result.m[0][0]);
+    using d = double;
+
+    yaw = atan2(d(-result.m[2][0]), sqrt(d(result.m[2][1]) * d(result.m[2][1]) + d(result.m[2][2]) * d(result.m[2][2])));
+    pitch = atan2(d(result.m[2][1]), d(result.m[2][2]));
+    roll = atan2(d(result.m[1][0]), d(result.m[0][0]));
 
     // TODO: gimbal lock avoidance?
 }
