@@ -5,10 +5,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #pragma once
+
+#include "ui_ftnoir_accela_filtercontrols.h"
+
 #include "accela-settings.hpp"
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
-#include "ui_ftnoir_accela_filtercontrols.h"
 
 #include <atomic>
 #include <QMutex>
@@ -24,11 +26,9 @@ public:
 private:
     settings_accela s;
     bool first_run;
-    double last_output[6];
+    double last_output[6], deltas[6];
     double smoothed_input[6];
     Timer t;
-
-    static double get_rot_delta(double val, double prev, double& degen);
 };
 
 class dialog_accela: public IFilterDialog

@@ -25,32 +25,6 @@ accela::accela() : first_run(true)
     s.make_splines(spline_rot, spline_pos);
 }
 
-double accela::get_rot_delta(double val, double prev, double& degen)
-{
-    using std::fabs;
-    using std::copysign;
-
-    // HACK: don't set degen to 180 on startup
-    if (fabs(prev) < 128)
-    {
-        degen = 0;
-        return val - prev;
-    }
-
-    const double a = fabs(val - prev), b = fabs(val + prev);
-
-    if (b < a)
-    {
-        degen = copysign(360, -b);
-        return val + prev;
-    }
-    else
-    {
-        degen = 0;
-        return val - prev;
-    }
-}
-
 template <typename T>
 static inline constexpr T signum(T x)
 {
@@ -127,7 +101,6 @@ void accela::filter(const double* input, double *output)
     const double rot_dz = s.rot_deadzone.to<double>();
     const double pos_dz = s.pos_deadzone.to<double>();
     const double nl = s.rot_nonlinearity.to<double>();
-    double deltas[6];
 
     for (unsigned i = 0; i < 6; i++)
         smoothed_input[i] = smoothed_input[i] * (1-alpha) + input[i] * alpha;
@@ -136,11 +109,14 @@ void accela::filter(const double* input, double *output)
 
     for (unsigned i = 3; i < 6; i++)
     {
-        double degen;
-        double d = get_rot_delta(smoothed_input[i], last_output[i], degen);
-        d += copysign(rot_dz, -d);
+        double d = smoothed_input[i] - last_output[i];
+
+        if (fabs(d) > rot_dz)
+            d -= copysign(rot_dz, d);
+        else
+            d = 0;
+
         deltas[i] = d / rot_thres;
-        last_output[i] += degen;
     }
 
     if (nl > 1.)
@@ -161,7 +137,11 @@ void accela::filter(const double* input, double *output)
     for (unsigned i = 0; i < 3; i++)
     {
         double d = smoothed_input[i] - last_output[i];
-        d += copysign(pos_dz, -d);
+        if (fabs(d) > pos_dz)
+            d -= copysign(pos_dz, d);
+        else
+            d = 0;
+
         deltas[i] = d / pos_thres;
     }
 
