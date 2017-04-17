@@ -86,7 +86,7 @@ MainWindow::MainWindow() :
 
     // timers
     connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(); });
-    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()));
+    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()), Qt::DirectConnection);
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
     // ctrl+q exits
@@ -515,8 +515,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
 
-    if (mapping_widget)
-        mapping_widget->update();
+    if (mapping_widget && mapping_widget->isVisible())
+        mapping_widget->repaint();
 
     QLCDNumber* raw_[] = {
         ui.raw_x, ui.raw_y, ui.raw_z,

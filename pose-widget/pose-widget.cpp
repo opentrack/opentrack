@@ -86,7 +86,7 @@ void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, doub
     bool expected = true;
     if (xform.fresh.compare_exchange_weak(expected, false))
     {
-        update();
+        repaint();
         xform.rotate_async(xAngle, yAngle, zAngle, x, y, z);
     }
 }

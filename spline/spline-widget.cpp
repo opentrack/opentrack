@@ -379,7 +379,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
         }
     }
     _draw_function = true;
-    update();
+    repaint();
 }
 
 void spline_widget::mouseMoveEvent(QMouseEvent *e)
@@ -433,7 +433,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
         setCursor(Qt::ClosedHandCursor);
         show_tooltip(pix, new_pt);
-        update();
+        repaint();
     }
     else if (sz)
     {
@@ -480,7 +480,7 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
         else
             QToolTip::hideText();
 
-        update();
+        repaint();
     }
 }
 
@@ -551,7 +551,7 @@ void spline_widget::update_range()
     _background = QPixmap();
     _function = QPixmap();
 
-    update();
+    repaint();
 }
 
 bool spline_widget::point_within_pixel(const QPointF& pt, const QPoint &pixel)

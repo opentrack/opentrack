@@ -9,8 +9,9 @@
 #include "video-widget.hpp"
 #include <opencv2/imgproc.hpp>
 
-cv_video_widget::cv_video_widget(QWidget* parent) :
-    QWidget(parent), freshp(false)
+cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent),
+    mtx(QMutex::Recursive),
+    freshp(false)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()), Qt::DirectConnection);
     timer.start(65);
@@ -73,6 +74,6 @@ void cv_video_widget::update_and_repaint()
     if (freshp)
     {
         freshp = false;
-        update();
+        repaint();
     }
 }
