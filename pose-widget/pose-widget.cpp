@@ -20,8 +20,8 @@ using namespace pose_widget_impl;
 
 pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
-    image(w, h, QImage::Format_ARGB32),
-    image2(w, h, QImage::Format_ARGB32),
+    image(w, h, QImage::Format_ARGB32_Premultiplied),
+    image2(w, h, QImage::Format_ARGB32_Premultiplied),
     width(w), height(h),
     fresh(false)
 {
@@ -260,8 +260,8 @@ void pose_transform::project_quad_texture()
 
     Triangle t(projected[0], projected[1], projected[2]);
 
-    const int orig_pitch = tex.bytesPerLine();
-    const int dest_pitch = image.bytesPerLine();
+    const unsigned orig_pitch = tex.bytesPerLine();
+    const unsigned dest_pitch = image.bytesPerLine();
 
     const unsigned char* orig = tex.bits();
     unsigned char* dest = image.bits();
@@ -272,11 +272,17 @@ void pose_transform::project_quad_texture()
     /* image breakage? */
     if (orig_depth != 4)
     {
-        qDebug() << "pose-widget: octopus must be saved as .png with 32-bit depth";
+        qDebug() << "pose-widget: octopus must be saved as .png with 32 bits pixel";
         return;
     }
 
-    const vec3 half = rotation * vec3(.5f, .5f, 0);
+    if (dest_depth != 4)
+    {
+        qDebug() << "pose-widget: target texture must be ARGB32";
+        return;
+    }
+
+    const vec3 next = rotation * vec3(1, 1, 0);
 
     for (int y = 1; y < sy; y++)
         for (int x = 1; x < sx; x++)
@@ -293,8 +299,8 @@ void pose_transform::project_quad_texture()
                                  + uv.x() * origs[i][2].y()
                                  + uv.y() * origs[i][1].y();
 
-                const int px_ = fx + half.x();
-                const int py_ = fy + half.y();
+                const int px_ = fx + next.x();
+                const int py_ = fy + next.y();
                 const int px = fx;
                 const int py = fy;
                 const float ax_ = fx - px;
@@ -303,40 +309,43 @@ void pose_transform::project_quad_texture()
                 const float ay = 1 - ay_;
 
                 // 0, 0 -- ax, ay
-                const int orig_pos = py * orig_pitch + px * orig_depth;
-                const unsigned char r = orig[orig_pos + 2];
-                const unsigned char g = orig[orig_pos + 1];
-                const unsigned char b = orig[orig_pos + 0];
+                const unsigned orig_pos = py * orig_pitch + px * orig_depth;
+                const unsigned r = orig[orig_pos + 2];
+                const unsigned g = orig[orig_pos + 1];
+                const unsigned b = orig[orig_pos + 0];
 
                 // 1, 1 -- ax_, ay_
-                const int orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
-                const unsigned char r_ = orig[orig_pos_ + 2];
-                const unsigned char g_ = orig[orig_pos_ + 1];
-                const unsigned char b_ = orig[orig_pos_ + 0];
+                const unsigned orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
+                const unsigned r_ = orig[orig_pos_ + 2];
+                const unsigned g_ = orig[orig_pos_ + 1];
+                const unsigned b_ = orig[orig_pos_ + 0];
 
                 // 1, 0 -- ax_, ay
-                const int orig_pos__ = py * orig_pitch + px_ * orig_depth;
-                const unsigned char r__ = orig[orig_pos__ + 2];
-                const unsigned char g__ = orig[orig_pos__ + 1];
-                const unsigned char b__ = orig[orig_pos__ + 0];
+                const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
+                const unsigned r__ = orig[orig_pos__ + 2];
+                const unsigned g__ = orig[orig_pos__ + 1];
+                const unsigned b__ = orig[orig_pos__ + 0];
 
                 // 0, 1 -- ax, ay_
-                const int orig_pos___ = py_ * orig_pitch + px * orig_depth;
-                const unsigned char r___ = orig[orig_pos___ + 2];
-                const unsigned char g___ = orig[orig_pos___ + 1];
-                const unsigned char b___ = orig[orig_pos___ + 0];
+                const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
+                const unsigned r___ = orig[orig_pos___ + 2];
+                const unsigned g___ = orig[orig_pos___ + 1];
+                const unsigned b___ = orig[orig_pos___ + 0];
 
-                const unsigned char a1 = orig[orig_pos + 3];
-                const unsigned char a2 = orig[orig_pos_ + 3];
-                const unsigned char a3 = orig[orig_pos__ + 3];
-                const unsigned char a4 = orig[orig_pos___ + 3];
+                const unsigned a1 = orig[orig_pos + 3];
+                const unsigned a2 = orig[orig_pos_ + 3];
+                const unsigned a3 = orig[orig_pos__ + 3];
+                const unsigned a4 = orig[orig_pos___ + 3];
 
-                const int pos = y * dest_pitch + x * dest_depth;
+                const unsigned pos = y * dest_pitch + x * dest_depth;
 
-                dest[pos + 2] = (r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_;
-                dest[pos + 1] = (g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_;
-                dest[pos + 0] = (b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_;
-                dest[pos + 3] = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
+                const unsigned alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
+
+                dest[pos + 2] = unsigned((r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_)*alpha / 255;
+                dest[pos + 1] = unsigned((g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_)*alpha / 255;
+                dest[pos + 0] = unsigned((b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_)*alpha / 255;
+
+                dest[pos + 3] = alpha;
             }
         }
 

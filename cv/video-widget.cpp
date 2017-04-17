@@ -12,7 +12,7 @@
 cv_video_widget::cv_video_widget(QWidget* parent) :
     QWidget(parent), freshp(false)
 {
-    connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()), Qt::DirectConnection);
     timer.start(65);
 }
 
@@ -33,12 +33,12 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         freshp = true;
 
         if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
-            _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC3);
+            _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC4);
 
         if (_frame3.cols != w || _frame3.rows != h)
-            _frame3 = cv::Mat(h, w, CV_8UC3);
+            _frame3 = cv::Mat(h, w, CV_8UC4);
 
-        cv::cvtColor(_frame, _frame2, cv::COLOR_RGB2BGR);
+        cv::cvtColor(_frame, _frame2, cv::COLOR_BGR2BGRA);
 
         const cv::Mat* img_;
 
@@ -53,7 +53,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
         const cv::Mat& img = *img_;
 
-        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_RGB888);
+        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_ARGB32_Premultiplied);
     }
 }
 
