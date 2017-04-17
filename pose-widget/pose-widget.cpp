@@ -288,6 +288,7 @@ void pose_transform::project_quad_texture()
             vec2 pos(x, y);
             vec2 uv;
             int i;
+
             if (t.barycentric_coords(pos, uv, i))
             {
                 const float fx = origs[i][0].x()
@@ -297,51 +298,45 @@ void pose_transform::project_quad_texture()
                                  + uv.x() * origs[i][2].y()
                                  + uv.y() * origs[i][1].y();
 
-                const int px_ = fx + 1;
-                const int py_ = fy + 1;
-                const int px = fx;
-                const int py = fy;
-                const float ax_ = fx - px;
-                const float ay_ = fy - py;
+                using uc = unsigned char;
+
+                const float ax_ = fx - unsigned(fx);
+                const float ay_ = fy - unsigned(fy);
                 const float ax = 1 - ax_;
                 const float ay = 1 - ay_;
 
-                // 0, 0 -- ax, ay
-                const unsigned orig_pos = py * orig_pitch + px * orig_depth;
-                const unsigned r = orig[orig_pos + 2];
-                const unsigned g = orig[orig_pos + 1];
-                const unsigned b = orig[orig_pos + 0];
+                const unsigned px_ = fx + 1;
+                const unsigned py_ = fy + 1;
+                const unsigned px = fx;
+                const unsigned py = fy;
 
-                // 1, 1 -- ax_, ay_
+                const unsigned orig_pos = py * orig_pitch + px * orig_depth;
                 const unsigned orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
-                const unsigned r_ = orig[orig_pos_ + 2];
-                const unsigned g_ = orig[orig_pos_ + 1];
-                const unsigned b_ = orig[orig_pos_ + 0];
+                const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
+                const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
+
+                const uc a1 = orig[orig_pos + 3];
+                const uc a2 = orig[orig_pos_ + 3];
+                const uc a3 = orig[orig_pos__ + 3];
+                const uc a4 = orig[orig_pos___ + 3];
 
                 // 1, 0 -- ax_, ay
-                const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
-                const unsigned r__ = orig[orig_pos__ + 2];
-                const unsigned g__ = orig[orig_pos__ + 1];
-                const unsigned b__ = orig[orig_pos__ + 0];
-
                 // 0, 1 -- ax, ay_
-                const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
-                const unsigned r___ = orig[orig_pos___ + 2];
-                const unsigned g___ = orig[orig_pos___ + 1];
-                const unsigned b___ = orig[orig_pos___ + 0];
-
-                const unsigned a1 = orig[orig_pos + 3];
-                const unsigned a2 = orig[orig_pos_ + 3];
-                const unsigned a3 = orig[orig_pos__ + 3];
-                const unsigned a4 = orig[orig_pos___ + 3];
+                // 1, 1 -- ax_, ay_
+                // 0, 0 -- ax, ay
+                const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
 
                 const unsigned pos = y * dest_pitch + x * dest_depth;
 
-                const unsigned alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
+                for (unsigned k = 0; k < 3; k++)
+                {
+                    const uc i = orig[orig_pos + k];
+                    const uc i_ = orig[orig_pos_ + k];
+                    const uc i__ = orig[orig_pos__ + k];
+                    const uc i___ = orig[orig_pos___ + k];
 
-                dest[pos + 2] = unsigned((r * ax + r__ * ax_) * ay + (r___ * ax + r_ * ax_) * ay_)*alpha / 255;
-                dest[pos + 1] = unsigned((g * ax + g__ * ax_) * ay + (g___ * ax + g_ * ax_) * ay_)*alpha / 255;
-                dest[pos + 0] = unsigned((b * ax + b__ * ax_) * ay + (b___ * ax + b_ * ax_) * ay_)*alpha / 255;
+                    dest[pos + k] = unsigned((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_)*alpha / 255;
+                }
 
                 dest[pos + 3] = alpha;
             }
