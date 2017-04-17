@@ -282,8 +282,6 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    const vec3 next = rotation * vec3(1, 1, 0);
-
     for (int y = 1; y < sy; y++)
         for (int x = 1; x < sx; x++)
         {
@@ -299,8 +297,8 @@ void pose_transform::project_quad_texture()
                                  + uv.x() * origs[i][2].y()
                                  + uv.y() * origs[i][1].y();
 
-                const int px_ = fx + next.x();
-                const int py_ = fy + next.y();
+                const int px_ = fx + 1;
+                const int py_ = fy + 1;
                 const int px = fx;
                 const int py = fy;
                 const float ax_ = fx - px;
