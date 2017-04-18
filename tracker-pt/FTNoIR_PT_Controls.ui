@@ -1240,15 +1240,21 @@ Don't roll or change position.</string>
   <tabstop>res_y_spin</tabstop>
   <tabstop>fps_spin</tabstop>
   <tabstop>fov</tabstop>
+  <tabstop>dynamic_pose</tabstop>
+  <tabstop>init_phase_timeout</tabstop>
+  <tabstop>camera_settings</tabstop>
+  <tabstop>auto_threshold</tabstop>
   <tabstop>threshold_slider</tabstop>
+  <tabstop>mindiam_spin</tabstop>
+  <tabstop>maxdiam_spin</tabstop>
   <tabstop>model_tabs</tabstop>
   <tabstop>clip_tlength_spin</tabstop>
   <tabstop>clip_theight_spin</tabstop>
   <tabstop>clip_bheight_spin</tabstop>
   <tabstop>clip_blength_spin</tabstop>
   <tabstop>cap_length_spin</tabstop>
-  <tabstop>cap_width_spin</tabstop>
   <tabstop>cap_height_spin</tabstop>
+  <tabstop>cap_width_spin</tabstop>
   <tabstop>m1x_spin</tabstop>
   <tabstop>m1y_spin</tabstop>
   <tabstop>m1z_spin</tabstop>
@@ -1258,6 +1264,7 @@ Don't roll or change position.</string>
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>
+  <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_tracker_pt.qrc"/>
