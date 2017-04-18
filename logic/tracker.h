@@ -94,6 +94,7 @@ private:
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
                       bool disable_tx, bool disable_ty, bool disable_tz);
     void run() override;
+    rmat camera_offset(double c);
 
     static constexpr double r2d = 180. / M_PI;
     static constexpr double d2r = M_PI / 180.;
@@ -105,8 +106,7 @@ public:
     Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger);
     ~Tracker();
 
-    rmat get_camera_offset_matrix(double c);
-    void get_raw_and_mapped_poses(double* mapped, double* raw) const;
+    void raw_and_mapped_pose(double* mapped, double* raw) const;
     void start() { QThread::start(); }
 
     void center() { set(f_center, true); }

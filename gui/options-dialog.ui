@@ -987,13 +987,6 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="4" column="0">
-           <widget class="QCheckBox" name="use_center_as_translation_camera_offset">
-            <property name="text">
-             <string>Use camera center as translation offset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
            <widget class="QLabel" name="label_17">
             <property name="minimumSize">
              <size>
@@ -1018,7 +1011,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0" alignment="Qt::AlignLeft">
+          <item row="5" column="0" alignment="Qt::AlignLeft">
            <widget class="QGroupBox" name="groupBox_3">
             <property name="styleSheet">
              <string notr="true">QGroupBox
@@ -2506,7 +2499,6 @@
   <tabstop>bind_restart_tracking</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
-  <tabstop>use_center_as_translation_camera_offset</tabstop>
   <tabstop>camera_yaw</tabstop>
   <tabstop>camera_pitch</tabstop>
   <tabstop>camera_roll</tabstop>

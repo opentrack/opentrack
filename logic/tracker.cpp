@@ -42,7 +42,7 @@ Tracker::~Tracker()
     wait();
 }
 
-Tracker::rmat Tracker::get_camera_offset_matrix(double c)
+Tracker::rmat Tracker::camera_offset(double c)
 {
     const double off[] =
     {
@@ -174,8 +174,8 @@ void Tracker::logic()
         real_rotation.rotation = euler_to_rmat(tmp);
     }
 
-    scaled_rotation.camera = get_camera_offset_matrix(c_div);
-    real_rotation.camera = get_camera_offset_matrix(1);
+    scaled_rotation.camera = camera_offset(c_div);
+    real_rotation.camera = camera_offset(1);
 
     nanp |= is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
 
@@ -226,11 +226,11 @@ void Tracker::logic()
         {
         // inertial
         case 0:
-        default:
             //scaled_rotation.rotation = scaled_rotation
             rotation = scaled_rotation.rot_center * scaled_rotation.rotation;
             break;
         // camera
+        default:
         case 1:
             rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
             break;
@@ -430,7 +430,7 @@ void Tracker::run()
     }
 }
 
-void Tracker::get_raw_and_mapped_poses(double* mapped, double* raw) const
+void Tracker::raw_and_mapped_pose(double* mapped, double* raw) const
 {
     QMutexLocker foo(&const_cast<Tracker&>(*this).mtx);
 

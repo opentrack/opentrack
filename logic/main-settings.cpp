@@ -21,7 +21,6 @@ main_settings::main_settings() :
     camera_yaw(b, "camera-yaw", 0),
     camera_pitch(b, "camera-pitch", 0),
     camera_roll(b, "camera-roll", 0),
-    use_camera_offset_from_centering(b, "use-camera-offset-from-centering", false),
     center_at_startup(b, "center-at-startup", true),
     center_method(b, "centering-method", 1),
     neck_y(b, "neck-height", 0),

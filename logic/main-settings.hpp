@@ -77,7 +77,6 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
     value<bool> tray_enabled, tray_start;
     value<int> camera_yaw, camera_pitch, camera_roll;
-    value<bool> use_camera_offset_from_centering;
     value<bool> center_at_startup;
     value<int> center_method;
     value<int> neck_y, neck_z;

@@ -555,7 +555,7 @@ void MainWindow::showHeadPose()
 {
     double mapped[6], raw[6];
 
-    work->tracker->get_raw_and_mapped_poses(mapped, raw);
+    work->tracker->raw_and_mapped_pose(mapped, raw);
 
     display_pose(mapped, raw);
 }
