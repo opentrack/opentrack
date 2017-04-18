@@ -48,7 +48,6 @@ otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENS
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
 
 function(merge_translations)
-    set(SDK_SKIP_TRANSLATION_UPDATE FALSE CACHE BOOL "")
     install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/i18n\")")
 
     set(all-ts-files "")
@@ -73,11 +72,7 @@ function(merge_translations)
         endforeach()
 
         if(NOT ".${ts-files}" STREQUAL ".")
-            if(SDK_SKIP_TRANSLATION_UPDATE)
-                set(lrelease-deps "")
-            else()
-                set(lrelease-deps "${ts-files}")
-            endif()
+            set(lrelease-deps "${ts-files}")
 
             set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
             list(APPEND all-qm-files "${qm-output}")
