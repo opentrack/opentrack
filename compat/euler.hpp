@@ -22,7 +22,4 @@ void OTR_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
                                                    rmat& r_pitch,
                                                    rmat& r_yaw);
 
-Quat OTR_COMPAT_EXPORT matrix_to_quat(const rmat& M);
-//XXX TODO rmat OTR_COMPAT_EXPORT quat_to_matrix(const Quat<double>& Q);
-
 } // end ns euler
