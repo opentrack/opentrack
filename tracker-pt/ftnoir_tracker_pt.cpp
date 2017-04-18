@@ -108,7 +108,7 @@ void Tracker_PT::run()
 
                 cv::Point p2(iround(p_[0] * preview_frame.cols + preview_frame.cols/2),
                              iround(-p_[1] * preview_frame.cols + preview_frame.rows/2));
-                static const cv::Scalar color(0, 0, 255);
+                static const cv::Scalar color(0, 255, 255);
                 cv::line(preview_frame,
                          cv::Point(p2.x - len, p2.y),
                          cv::Point(p2.x + len, p2.y),
