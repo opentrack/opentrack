@@ -318,30 +318,27 @@ void pose_transform::project_quad_texture()
                 const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
                 const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
 
-                const uc a1 = orig[orig_pos + 3];
-                const uc a2 = orig[orig_pos_ + 3];
-                const uc a3 = orig[orig_pos__ + 3];
-                const uc a4 = orig[orig_pos___ + 3];
-
                 // 1, 0 -- ax_, ay
                 // 0, 1 -- ax, ay_
                 // 1, 1 -- ax_, ay_
                 // 0, 0 -- ax, ay
-                const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
+                //const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
 
                 const unsigned pos = y * dest_pitch + x * dest_depth;
 
-                for (unsigned k = 0; k < 3; k++)
+                for (int k = 0; k < 4; k++)
                 {
                     const uc i = orig[orig_pos + k];
                     const uc i_ = orig[orig_pos_ + k];
                     const uc i__ = orig[orig_pos__ + k];
                     const uc i___ = orig[orig_pos___ + k];
 
-                    dest[pos + k] = unsigned((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_)*alpha / 255;
+                    dest[pos + k] = uc((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
                 }
 
-                dest[pos + 3] = alpha;
+                // premultiply alpha
+                for (int k = 0; k < 3; k++)
+                    dest[pos + k] = (dest[pos+k]*num(dest[pos + 3]))/255;
             }
         }
 
