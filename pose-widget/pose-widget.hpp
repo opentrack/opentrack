@@ -35,8 +35,6 @@ using namespace euler;
 
 using lock_guard = std::unique_lock<std::mutex>;
 
-using cv_status = std::cv_status;
-
 class pose_widget;
 
 class pose_transform final : private QThread
