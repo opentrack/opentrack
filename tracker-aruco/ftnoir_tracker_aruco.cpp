@@ -410,7 +410,7 @@ void aruco_tracker::run()
                 const double dt = last_detection_timer.elapsed_seconds();
                 last_detection_timer.start();
                 no_detection_timeout -= dt * timeout_backoff_c;
-                no_detection_timeout = std::max(0., no_detection_timeout);
+                no_detection_timeout = std::fmax(0., no_detection_timeout);
             }
 
             set_last_roi();

@@ -51,7 +51,7 @@ void ewma::filter(const double *input, double *output)
     const double smoothing_scale_curve = static_cast<slider_value>(s.kSmoothingScaleCurve);
     // min/max smoothing .01->1
     const double min_smoothing = static_cast<slider_value>(s.kMinSmoothing);
-    const double max_smoothing = std::max(min_smoothing, static_cast<slider_value>(s.kMaxSmoothing).cur());
+    const double max_smoothing = std::fmax(min_smoothing, static_cast<slider_value>(s.kMaxSmoothing));
 
     // Calculate the new camera position.
     for (int i=0;i<6;i++)
@@ -65,7 +65,7 @@ void ewma::filter(const double *input, double *output)
         double noise = last_delta[i]*last_delta[i];
         last_noise[i] = noise_alpha*noise + (1.0-noise_alpha)*last_noise[i];
         // Normalise the noise between 0->1 for 0->9 variances (0->3 stddevs).
-        double norm_noise = last_noise[i] < 1e-10 ? 0 : std::min<double>(noise/(9.0*last_noise[i]), 1.0);
+        double norm_noise = last_noise[i] < 1e-10 ? 0 : std::fmin(noise/(9.0*last_noise[i]), 1.0);
         // Calculate the smoothing 0.0->1.0 from the normalized noise.
         double smoothing = 1.0 - pow(norm_noise, smoothing_scale_curve);
         double RC = (min_smoothing + smoothing*(max_smoothing - min_smoothing));

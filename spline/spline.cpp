@@ -111,7 +111,7 @@ float spline::get_value_no_save_internal(double x)
     QMutexLocker foo(&_mutex);
 
     if (max_x > 0)
-        x = std::min(max_x, x);
+        x = std::fmin(max_x, x);
 
     float  q  = float(x * precision(s->points));
     int    xi = (int)q;

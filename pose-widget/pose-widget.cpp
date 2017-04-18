@@ -355,7 +355,7 @@ vec2 pose_transform::project(const vec3 &point)
     using std::fabs;
 
     vec3 ret = rotation * point;
-    num z = std::max<num>(.5, 1 + translation.z()/-80);
+    num z = std::fmax(num(.5), 1 + translation.z()/-80);
     num w = width, h = height;
     num x = w * translation.x() / 2 / -80;
     if (fabs(x) > w/2)

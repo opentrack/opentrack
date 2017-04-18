@@ -76,7 +76,7 @@ void KalmanProcessNoiseScaler::update(KalmanFilter &kf, double dt)
     {
         alpha = T1 / T2;
         alpha = std::sqrt(alpha);
-        alpha = std::min(1000., std::max(0.001, alpha));
+        alpha = std::fmin(1000., std::fmax(0.001, alpha));
     }
     kf.process_noise_cov = alpha * base_cov;
     //qDebug() << "alpha = " << alpha;

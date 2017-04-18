@@ -54,7 +54,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
             {
                 double dx = (j - current_center[0])*s;
                 double dy = (i - current_center[1])*s;
-                double f = std::max(0.0, 1.0 - dx*dx - dy*dy);
+                double f = std::fmax(0.0, 1.0 - dx*dx - dy*dy);
                 val *= f;
             }
             m += val;
@@ -79,7 +79,7 @@ PointExtractor::PointExtractor()
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     using std::sqrt;
-    using std::max;
+    using std::fmax;
     using std::round;
     using std::sort;
 
@@ -114,7 +114,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         static constexpr double min_radius = 2.5;
         static constexpr double max_radius = 15;
 
-        const double radius = max(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
+        const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
         const float* ptr = reinterpret_cast<const float*>(hist.ptr(0));
         const unsigned area = unsigned(round(3 * M_PI * radius*radius));
         const unsigned sz = unsigned(hist.cols * hist.rows);
@@ -196,15 +196,14 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                 {
                     static const f offx = 10, offy = 7.5;
                     const f cx = preview_frame.cols / f(frame.cols),
-                            cy = preview_frame.rows / f(frame.rows);
+                            cy = preview_frame.rows / f(frame.rows),
+                            c_ = (cx+cy)/2;
                     cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
                     static const cv::Scalar color(0, 255, 0);
 
-                    cv::circle(preview_frame, p, b.radius, color);
-
                     {
-                        const int len = iround(b.radius * 1.25) + 1;
+                        const int len = iround(b.radius * 1.25 * c_) + 1;
                         cv::line(preview_frame,
                                  cv::Point(p.x - len, p.y),
                                  cv::Point(p.x + len, p.y),

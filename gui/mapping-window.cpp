@@ -96,7 +96,7 @@ void MapWidget::load()
                 qfc.set_snap(1, 2.5);
             else
             {
-                const double x_snap = std::max(.5, conf.max_input() / 100.);
+                const double x_snap = std::fmax(.5, conf.max_input() / 100.);
                 qfc.set_snap(x_snap, 1);
             }
         });

@@ -20,9 +20,6 @@ dialog_ewma::dialog_ewma()
     connect(ui.minSmooth, &QSlider::valueChanged, this, &dialog_ewma::update_labels);
     connect(ui.maxSmooth, &QSlider::valueChanged, this, &dialog_ewma::update_labels);
 
-    using std::min;
-    using std::max;
-
     connect(ui.minSmooth, &QSlider::valueChanged, this,
             [&](int v) -> void { if (ui.maxSmooth->value() < v) ui.maxSmooth->setValue(v); });
 
