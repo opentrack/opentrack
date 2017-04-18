@@ -157,8 +157,6 @@ inline vec3 pose_transform::normal(const vec3& p1, const vec3& p2, const vec3& p
 
 Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
 {
-    using std::fabs;
-
     origin = p1;
 
     v0 = vec2(p3 - p1);
@@ -169,14 +167,17 @@ Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
     dot11 = v1.dot(v1);
 
     const num denom = dot00 * dot11 - dot01 * dot01;
+    const num area = std::fabs(v0.x() * v1.y() - v0.y() * v1.x()) * .5;
 
-    if (fabs(denom) < num(1e3))
+    static constexpr num min_area = 2;
+
+    if (area < min_area*min_area)
     {
         // for perpendicular plane, ensure u and v don't come out right
-        // this is done here to avoid branching below, in a hot loop
-        invDenom = 0;
-        dot00 = dot01 = dot11 = 0;
-        v0 = v1 = vec2(0, 0);
+        origin = vec2(-1e6, -1e6);
+        invDenom = -1;
+        dot00 = dot01 = dot11 = 1;
+        v0 = v1 = vec2(1, 1);
     }
     else
         invDenom = 1 / denom;
@@ -191,7 +192,9 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     num u = (dot11 * dot02 - dot01 * dot12) * invDenom;
     num v = (dot00 * dot12 - dot01 * dot02) * invDenom;
     if (!(u >= 0 && v >= 0))
+    {
         return false;
+    }
     if (u + v > 1)
     {
         i = 1;
