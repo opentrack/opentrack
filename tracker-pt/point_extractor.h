@@ -38,13 +38,11 @@ private:
     cv::Mat hist;
     cv::Mat frame_blobs;
 
-    struct blob
+    struct blob final
     {
-        double radius, brightness;
+        double radius;
         vec2 pos;
         cv::Rect rect;
-
-        blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
     };
 
     std::vector<blob> blobs;
