@@ -73,17 +73,13 @@ void add_win32_path()
 
         for (const char* ptr : contents)
         {
-            if (ptr == nullptr)
-                continue;
+            if (ptr)
+                strcat_s(env_path, sizeof(env_path), ptr);
 
-            strcat_s(env_path, sizeof(env_path), ptr);
-
-            if (ptr[0] == '\0' || env_path[0] == '\0')
+            if (!ptr || ptr[0] == '\0' || env_path[0] == '\0')
             {
-                qDebug() << "bad path element, debug info:"
-                         << (ptr == nullptr ? "<null>" : ptr)
-                         << (ptr != nullptr && ptr[0] == '\0')
-                         << (env_path[0] == '\0');
+                qDebug() << "bad path element"
+                         << (ptr == nullptr ? "<null>" : ptr);
                 ok = false;
                 break;
             }
