@@ -1,7 +1,9 @@
 #!/bin/sh
 
 function cleanup() {
-    killall cc1 cc1plus collect2 lto1 lto-wrapper gcc g++ i686-w64-mingw32-gcc i686-w64-mingw32-{c++,g++} 2>/dev/null
+    for i in cmake cov-build ninja cc1 cc1plus collect2 lto1 lto-wrapper gcc g++; do
+        taskkill -f -im "$i.exe" >/dev/null 2>&1 && echo "$i killed" 1>&2
+    done
     rm -f "$myfile"
 }
 
@@ -10,11 +12,12 @@ function signal() {
     trap '' EXIT
     echo "error: $1" 1>&2
     cleanup
-    exit 1
 }
 
+export PATH="/d/dev/cov-analysis-win64-8.7.0/bin:/mingw32/bin:/bin:$PATH"
+
 for k in HUP INT QUIT ILL BUS FPE SEGV PIPE; do
-    trap "signal 'got fatal signal SIG'$k" SIG"$k"
+    trap "signal 'got fatal signal SIG'$k; exit 1" SIG"$k"
 done
 
 trap 'signal "fatal return $?"' EXIT
@@ -30,13 +33,11 @@ for k in opencv aruco libovr-025  libovr-042  libovr-080; do
     ninja -C "./$k"
 done
 
-ninja -C ./libovr-140 install
-
 cd "./opentrack"
 
 cmake .
 ninja clean
 cov-build --dir cov-int ninja
-tar Jcf ../opentrack-"$mydate".tar.xz cov-int
+bsdtar Jcf ../opentrack-"$mydate".tar.xz cov-int
 trap '' EXIT
 exit 0
