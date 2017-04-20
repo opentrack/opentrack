@@ -38,7 +38,7 @@ public:
     bool correct();
     void pose(const double *headpose);
     QString game_name() {
-        return QCoreApplication::translate("udp", "UDP Tracker");
+        return QCoreApplication::translate("udp_proto", "UDP tracker");
     }
 private:
     QUdpSocket outSocket;
@@ -64,6 +64,6 @@ private slots:
 class udpDll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("udpDll", "UDP receiver")); }
+    QString name() { return QString(QCoreApplication::translate("udp_proto", "UDP over network")); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
