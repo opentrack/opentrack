@@ -70,10 +70,10 @@
     </message>
 </context>
 <context>
-    <name>udpDll</name>
+    <name>udp_tracker</name>
     <message>
         <location filename="../ftnoir_tracker_udp.h" line="+57"/>
-        <source>UDP sender</source>
+        <source>UDP over network</source>
         <translation>UDP-zender</translation>
     </message>
 </context>
