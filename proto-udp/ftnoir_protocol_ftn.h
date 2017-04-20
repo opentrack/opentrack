@@ -38,7 +38,7 @@ public:
     bool correct();
     void pose(const double *headpose);
     QString game_name() {
-        return QCoreApplication::translate("udp_proto", "UDP tracker");
+        return QCoreApplication::translate("udp_proto", "UDP over network");
     }
 private:
     QUdpSocket outSocket;
