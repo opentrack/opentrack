@@ -627,7 +627,7 @@ Exiting now.</source>
     <message>
         <location line="+537"/>
         <source>Assign input axis to output axis.</source>
-        <translation type="unfinished">Сопоставление исходных и игровых осей.</translation>
+        <translation>Сопоставление исходных и игровых осей.</translation>
     </message>
     <message>
         <location line="-777"/>
