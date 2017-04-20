@@ -1,8 +1,8 @@
 #!/bin/sh
 
 function cleanup() {
-    for i in cmake cov-build ninja cc1 cc1plus collect2 lto1 lto-wrapper gcc g++; do
-        taskkill -f -im "$i.exe" >/dev/null 2>&1 && echo "$i killed" 1>&2
+    for i in cov-build ninja; do
+        taskkill -f -t -im "$i.exe" 2>/dev/null 1>&2
     done
     rm -f "$myfile"
 }
@@ -12,12 +12,13 @@ function signal() {
     trap '' EXIT
     echo "error: $1" 1>&2
     cleanup
+    exit 1
 }
 
-export PATH="/d/dev/cov-analysis-win64-8.7.0/bin:/mingw32/bin:/bin:$PATH"
+export PATH="/d/dev/cov-analysis-win64-8.7.0/bin:/c/msys64/bin:/c/msys64/mingw32/bin:/usr/bin:$PATH"
 
 for k in HUP INT QUIT ILL BUS FPE SEGV PIPE; do
-    trap "signal 'got fatal signal SIG'$k; exit 1" SIG"$k"
+    trap "signal 'got fatal signal SIG'$k" SIG"$k"
 done
 
 trap 'signal "fatal return $?"' EXIT
@@ -26,18 +27,19 @@ set -e
 
 mydate="$(date --iso-8601=minutes)"
 mydir="$(dirname -- "$0")"
-myfile="$(pwd)/opentrack-"$mydate".tar.xz"
+myfile="$mydir/opentrack-"$mydate".7z"
 
 cd "$mydir"
-for k in opencv aruco libovr-025  libovr-042  libovr-080; do
+for k in opencv aruco libovr-025  libovr-042 libovr-080; do
     ninja -C "./$k"
 done
 
 cd "./opentrack"
 
 cmake .
-ninja clean
+ninja32 clean
 cov-build --dir cov-int ninja
-bsdtar Jcf ../opentrack-"$mydate".tar.xz cov-int
+rm -f "$myfile" || true
+7za -mx a "$myfile" cov-int
 trap '' EXIT
 exit 0
