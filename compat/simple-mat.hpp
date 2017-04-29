@@ -193,13 +193,9 @@ public:
 
     template<typename... ts, int h__ = h_, int w__ = w_,
              typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
-    Mat(const ts... xs)
+    Mat(const ts... xs) : data{static_cast<num>(xs)...}
     {
         static_assert(h__ == h_ && w__ == w_, "");
-
-        std::initializer_list<num> init = { static_cast<num>(xs)... };
-
-        *this = Mat(std::move(init));
     }
 
     Mat()
@@ -214,14 +210,6 @@ public:
         for (int j = 0; j < h_; j++)
             for (int i = 0; i < w_; i++)
                 data[j][i] = mem[i*h_+j];
-    }
-
-    Mat(std::initializer_list<num>&& init)
-    {
-        auto iter = init.begin();
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
-                data[j][i] = *iter++;
     }
 
     operator num*() { return reinterpret_cast<num*>(data); }
