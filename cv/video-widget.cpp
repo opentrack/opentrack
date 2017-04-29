@@ -54,7 +54,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
         const cv::Mat& img = *img_;
 
-        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_ARGB32_Premultiplied);
+        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_ARGB32);
     }
 }
 

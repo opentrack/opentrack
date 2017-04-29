@@ -20,8 +20,8 @@ using namespace pose_widget_impl;
 
 pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
-    image(w, h, QImage::Format_ARGB32_Premultiplied),
-    image2(w, h, QImage::Format_ARGB32_Premultiplied),
+    image(w, h, QImage::Format_ARGB32),
+    image2(w, h, QImage::Format_ARGB32),
     width(w), height(h),
     fresh(false)
 {
@@ -303,11 +303,6 @@ void pose_transform::project_quad_texture()
 
                 using uc = unsigned char;
 
-                const float ax_ = fx - unsigned(fx);
-                const float ay_ = fy - unsigned(fy);
-                const float ax = 1 - ax_;
-                const float ay = 1 - ay_;
-
                 const unsigned px_ = fx + 1;
                 const unsigned py_ = fy + 1;
                 const unsigned px = fx;
@@ -324,6 +319,11 @@ void pose_transform::project_quad_texture()
                 // 0, 0 -- ax, ay
                 //const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
 
+                const float ax_ = fx - unsigned(fx);
+                const float ay_ = fy - unsigned(fy);
+                const float ax = 1 - ax_;
+                const float ay = 1 - ay_;
+
                 const unsigned pos = y * dest_pitch + x * dest_depth;
 
                 for (int k = 0; k < 4; k++)
@@ -335,10 +335,6 @@ void pose_transform::project_quad_texture()
 
                     dest[pos + k] = uc((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
                 }
-
-                // premultiply alpha
-                for (int k = 0; k < 3; k++)
-                    dest[pos + k] = (dest[pos+k]*num(dest[pos + 3]))/255;
             }
         }
 
