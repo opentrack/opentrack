@@ -12,7 +12,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/O2it /Ob2 /arch:SSE2 /fp:fast /GS- /GF /GL /Gw /Gy")
+set(cc "/O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy")
 
 set(warns_ "")
 
@@ -41,10 +41,10 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     foreach(i ${warns-noerr})
         set(warns_ "${warns_} /w1${i}")
     endforeach()
-    set(cc "${cc} /GR-")
+    set(cc "${cc} /GR- /arch:SSE2")
 endif()
 
-set(silly "${warns_} /MT /Zi /Gm")
+set(silly "${warns_} /MT /Zi /Gm -source-charset:UTF-8")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
