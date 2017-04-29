@@ -2,6 +2,7 @@
 
 #include "ndebug-guard.hpp"
 #include "run-in-thread.hpp"
+#include "meta.hpp"
 
 #include <memory>
 #include <cmath>
