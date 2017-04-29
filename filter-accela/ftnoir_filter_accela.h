@@ -45,12 +45,6 @@ private:
 private slots:
     void doOK();
     void doCancel();
-    void update_ewma_display(const slider_value& value);
-    void update_rot_display(const slider_value& value);
-    void update_pos_display(const slider_value& value);
-    void update_rot_dz_display(const slider_value& value);
-    void update_pos_dz_display(const slider_value&);
-    void update_rot_nl_slider(const slider_value& sl);
 };
 
 class accelaDll : public Metadata
