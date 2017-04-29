@@ -2,7 +2,7 @@ set(SDK_REALSENSE "$ENV{RSSDK_DIR}" CACHE PATH "Intel RealSense SDK dir")
 
 if(WIN32 AND SDK_REALSENSE)
     if(CMAKE_COMPILER_IS_GNUCC)
-        add_definitions(-fpermissive) # for SDK headers
+        add_definitions(-fpermissive -Wno-error) # for SDK headers
     endif()
     otr_module(tracker-rs)
     install(FILES "${CMAKE_SOURCE_DIR}/tracker-rs/redist/intel_rs_sdk_runtime_websetup_10.0.26.0396.exe" DESTINATION ${opentrack-contrib-pfx} ${opentrack-perms})
