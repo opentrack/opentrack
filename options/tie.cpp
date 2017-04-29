@@ -103,7 +103,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le)
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb)
 {
     lb->setText(v);
-    base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.DIRECT_CONNTYPE);
+    base_value::connect(&v, SIGNAL(valueChanged(QString)), lb, SLOT(setText(QString)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t)

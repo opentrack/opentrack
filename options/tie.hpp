@@ -47,6 +47,17 @@ tie_setting(value<t>& v, QComboBox* cb)
                         v.SAFE_CONNTYPE);
 }
 
+template<typename t, typename... xs>
+void tie_setting(value<t>& v, QLabel* lb, const QString& format, const xs&... args)
+{
+    auto closure = [=](const t& x) { lb->setText(format.arg(x, args...)); };
+
+    closure(v());
+    base_value::connect(&v, static_cast<void(base_value::*)(const t&) const>(&base_value::valueChanged),
+                        lb, closure,
+                        v.SAFE_CONNTYPE);
+}
+
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb);
