@@ -15,6 +15,7 @@ using std::fabs;
 using std::sqrt;
 using std::pow;
 using std::copysign;
+using std::fmin;
 
 constexpr double settings_accela::rot_gains[16][2];
 constexpr double settings_accela::pos_gains[16][2];
@@ -42,7 +43,7 @@ static void do_deltas(const double* deltas, double* output, double alpha, double
         return sqrt(ret);
     );
 
-    const double dist = alpha*dist_ + (1-alpha)*smoothed;
+    const double dist = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
     smoothed = dist;
 
     const double value = double(fun(dist));
