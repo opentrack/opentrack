@@ -15,6 +15,8 @@
 
 #define once_only(...) progn(static bool once = false; if (!once) { once = true; __VA_ARGS__; })
 
+#define load_time_value(x) progn(static const auto _value132((x)); return _value132;)
+
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
 
