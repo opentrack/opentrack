@@ -80,10 +80,10 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>15</number>
+         <number>10</number>
         </property>
         <property name="pageStep">
-         <number>3</number>
+         <number>5</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

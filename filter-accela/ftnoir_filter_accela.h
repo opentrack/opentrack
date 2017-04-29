@@ -27,7 +27,7 @@ private:
     settings_accela s;
     bool first_run;
     double last_output[6], deltas[6];
-    double smoothed_input[6];
+    double smoothed_input[2];
     Timer t;
 };
 

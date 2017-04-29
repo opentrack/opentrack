@@ -31,16 +31,19 @@ static inline constexpr T signum(T x)
 }
 
 template<int N = 3, typename F>
-static void do_deltas(const double* deltas, double* output, F&& fun)
+static void do_deltas(const double* deltas, double* output, double alpha, double& smoothed, F&& fun)
 {
     double norm[N];
 
-    const double dist = progn(
+    const double dist_ = progn(
         double ret = 0;
         for (unsigned k = 0; k < N; k++)
             ret += deltas[k]*deltas[k];
         return sqrt(ret);
     );
+
+    const double dist = alpha*dist_ + (1-alpha)*smoothed;
+    smoothed = dist;
 
     const double value = double(fun(dist));
 
@@ -82,9 +85,10 @@ void accela::filter(const double* input, double *output)
             const double f = input[i];
             output[i] = f;
             last_output[i] = f;
-            smoothed_input[i] = f;
         }
         first_run = false;
+        smoothed_input[0] = 0;
+        smoothed_input[1] = 0;
         t.start();
         return;
     }
@@ -101,14 +105,11 @@ void accela::filter(const double* input, double *output)
     const double pos_dz = s.pos_deadzone.to<double>();
     const double nl = s.rot_nonlinearity.to<double>();
 
-    for (unsigned i = 0; i < 6; i++)
-        smoothed_input[i] = smoothed_input[i] * (1-alpha) + input[i] * alpha;
-
     // rot
 
     for (unsigned i = 3; i < 6; i++)
     {
-        double d = smoothed_input[i] - last_output[i];
+        double d = input[i] - last_output[i];
 
         if (fabs(d) > rot_dz)
             d -= copysign(rot_dz, d);
@@ -129,13 +130,13 @@ void accela::filter(const double* input, double *output)
         }
     }
 
-    do_deltas(&deltas[Yaw], &output[Yaw], [this](double x) { return spline_rot.get_value_no_save(x); });
+    do_deltas(&deltas[Yaw], &output[Yaw], alpha, smoothed_input[0], [this](double x) { return spline_rot.get_value_no_save(x); });
 
     // pos
 
     for (unsigned i = 0; i < 3; i++)
     {
-        double d = smoothed_input[i] - last_output[i];
+        double d = input[i] - last_output[i];
         if (fabs(d) > pos_dz)
             d -= copysign(pos_dz, d);
         else
@@ -144,7 +145,7 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / pos_thres;
     }
 
-    do_deltas(&deltas[TX], &output[TX], [this](double x) { return spline_pos.get_value_no_save(x); });
+    do_deltas(&deltas[TX], &output[TX], alpha, smoothed_input[1], [this](double x) { return spline_pos.get_value_no_save(x); });
 
     // end
 
