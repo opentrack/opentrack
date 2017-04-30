@@ -80,7 +80,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>10</number>
+         <number>6</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -502,7 +502,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>ewma_slider</tabstop>
+  <tabstop>rotation_slider</tabstop>
+  <tabstop>rot_dz_slider</tabstop>
+  <tabstop>translation_slider</tabstop>
+  <tabstop>trans_dz_slider</tabstop>
+  <tabstop>rot_nl_slider</tabstop>
  </tabstops>
  <resources>
   <include location="../gui/opentrack-res.qrc"/>
