@@ -62,7 +62,7 @@ void MapWidget::load()
 
     for (QComboBox* x : { ui.max_yaw_rotation, ui.max_pitch_rotation, ui.max_roll_rotation })
         for (a y : { a::r180, a::r90, a::r60, a::r45, a::r30, a::r25, a::r20, a::r15, a::r10 })
-            x->addItem(QString::number(y) + "°", y);
+            x->addItem(tr(u8"%1°").arg(y), y);
 
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
         for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
