@@ -8,15 +8,14 @@ struct settings_accela : opts
 {
     static constexpr double rot_gains[16][2] =
     {
-        { 12, 500 },
-        { 11, 450 },
-        { 10, 400 },
-        { 9, 350 },
-        { 8, 300 },
-        { 7, 250 },
-        { 6, 200 },
-        { 2.66, 50 },
-        { 1.66, 17 },
+        { 8, 700 },
+        { 7, 300 },
+        { 6, 160 },
+        { 5, 95 },
+
+        { 4, 55 },
+        { 3, 25 },
+        { 1.66, 10 },
         { 1, 4 },
         { .5, .53 },
         { 0, 0 },
@@ -51,7 +50,7 @@ struct settings_accela : opts
         pos_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
         rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .1)),
         pos_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
-        ewma(b, "ewma", slider_value(0, 0, 300)),
+        ewma(b, "ewma", slider_value(0, 0, 200)),
         rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.2, 1, 1.3))
     {}
 };

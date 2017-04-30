@@ -43,9 +43,7 @@ static void do_deltas(const double* deltas, double* output, double alpha, double
         return sqrt(ret);
     );
 
-    const double dist = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
-    smoothed = dist;
-
+    const double dist = smoothed = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
     const double value = double(fun(dist));
 
     for (unsigned k = 0; k < N; k++)
