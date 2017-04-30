@@ -134,14 +134,14 @@ public:
 
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>::type
-    cross(const Mat<num, R, S>& p2) const
+    cross(const Mat<num, R, S>& b) const
     {
         static_assert(P == h_ && Q == w_, "");
-        decltype(*this)& p1 = *this;
+        decltype(*this)& a = *this;
 
-        return Mat<num, R, S>(p1.y() * p2.z() - p1.y() * p2.z(),
-                              p1.x() * p2.z() - p1.x() * p2.z(),
-                              p1.x() * p2.y() - p1.y() * p2.x());
+        return Mat<num, R, S>(a.y()*b.z() - a.z()*b.y(),
+                              a.z()*b.x() - a.x()*b.z(),
+                              a.x()*b.y() - a.y()*b.x());
     }
 
     Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
