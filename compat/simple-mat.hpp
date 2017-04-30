@@ -10,9 +10,9 @@
 
 #include "export.hpp"
 
-#include <initializer_list>
 #include <type_traits>
 #include <utility>
+#include <cmath>
 
 namespace {
     // last param to fool SFINAE into overloading
@@ -112,6 +112,15 @@ public:
 
     template<int R, int S, int P = h_, int Q = w_>
     typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
+    norm() const
+    {
+        static_assert(P == h_ && Q == w_, "");
+
+        return std::sqrt(dot(*this));
+    }
+
+    template<int R, int S, int P = h_, int Q = w_>
+    typename std::enable_if<is_vector_pair<R, S, P, Q>::value, num>::type
     dot(const Mat<num, R, S>& p2) const
     {
         static_assert(P == h_ && Q == w_, "");
@@ -130,8 +139,8 @@ public:
         static_assert(P == h_ && Q == w_, "");
         decltype(*this)& p1 = *this;
 
-        return Mat<num, R, S>(p1.y() * p2.z() - p2.y() * p1.z(),
-                              p2.x() * p1.z() - p1.x() * p2.z(),
+        return Mat<num, R, S>(p1.y() * p2.z() - p1.y() * p2.z(),
+                              p1.x() * p2.z() - p1.x() * p2.z(),
                               p1.x() * p2.y() - p1.y() * p2.x());
     }
 
