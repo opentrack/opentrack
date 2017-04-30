@@ -317,7 +317,7 @@ void spline::move_point(int idx, QPointF pt)
     {
         points[idx] = pt;
         // we don't allow points to be reordered, but sort due to possible caller logic error
-        std::stable_sort(points.begin(), points.end(), sort_fn);
+        //std::stable_sort(points.begin(), points.end(), sort_fn);
         s->points = points;
         validp = false;
     }

@@ -403,30 +403,27 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
     if (i >= 0 && i < sz)
     {
-        const int point_pixel_closeness_limit = get_closeness_limit();
+        const int point_closeness_limit = get_closeness_limit();
         bool overlap = false;
 
-        const QPoint pix = progn(
-            // takes snap into account
-            const QPointF pix_ = point_to_pixel(pixel_coord_to_point(e->pos()));
-            return QPoint(int(pix_.x()), int(pix_.y()));
-        );
+        const QPointF pix_ = point_to_pixel(pixel_coord_to_point(e->pos()));
+        const QPoint pix(int(pix_.x()), int(pix_.y()));
 
         QPointF new_pt = pixel_coord_to_point(e->pos());
 
         if (i + 1 < points.size())
         {
-            const QPointF other_pix = point_to_pixel(points[i+1]);
-            overlap |= other_pix.x() - pix.x() < point_pixel_closeness_limit;
+            overlap |= points[i+1].x() - new_pt.x() < point_closeness_limit;
         }
-        if (i != 0)
+        if (i > 0)
         {
-            const QPointF other_pix = point_to_pixel(points[i-1]);
-            overlap |= pix.x() - other_pix.x() < point_pixel_closeness_limit;
+            overlap |= new_pt.x() - points[i-1].x() < point_closeness_limit;
         }
 
-        if (!overlap)
-            _config->move_point(i, new_pt);
+        if (overlap)
+            new_pt = QPointF(points[i].x(), new_pt.y());
+
+        _config->move_point(i, new_pt);
         _draw_function = true;
 
         setCursor(Qt::ClosedHandCursor);
@@ -490,7 +487,7 @@ void spline_widget::reload_spline()
 
 int spline_widget::get_closeness_limit()
 {
-    return std::max(iround(snap_x * c.x()), 1);
+    return std::fmax(snap_x, 1);
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
