@@ -17,7 +17,8 @@ set(cc "/O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy")
 set(warns_ "")
 
 #C4244: 'return': conversion from '__int64' to 'long', possible loss of data
-set(warns-disable 4530 4577 4789 4244)
+#C4828: The file contains a character starting at offset 0x2763 that is illegal in the current source character set (codepage 65001).
+set(warns-disable 4530 4577 4789 4244 4828)
 
 foreach(i ${warns-disable})
     set(warns_ "${warns_} /wd${i}")
@@ -28,7 +29,6 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #C4264 - no override available for virtual member function from base class, function is hidden
     #C4265 - class has virtual functions, but destructor is not virtual
     #C4266 - no override available for virtual member function from base type, function is hidden
-
     #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
 
     set(warns 4263 4264 4266 4928)
