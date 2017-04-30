@@ -59,8 +59,6 @@ class pose_transform final : private QThread
     template<typename F>
     inline void with_image_lock(F&& fun);
 
-    static vec3 normal(const vec3& p1, const vec3& p2, const vec3& p3);
-
     rmat rotation, rotation_;
     vec3 translation, translation_;
 

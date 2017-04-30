@@ -141,20 +141,6 @@ public:
     bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
 };
 
-inline vec3 pose_transform::normal(const vec3& p1, const vec3& p2, const vec3& p3)
-{
-    using std::sqrt;
-
-    vec3 u = p2 - p1;
-    vec3 v = p3 - p1;
-
-    vec3 tmp = u.cross(v);
-
-    num i = 1/sqrt(tmp.dot(tmp));
-
-    return tmp * i;
-}
-
 Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
 {
     origin = p1;
@@ -167,20 +153,8 @@ Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
     dot11 = v1.dot(v1);
 
     const num denom = dot00 * dot11 - dot01 * dot01;
-    const num area = std::fabs(v0.x() * v1.y() - v0.y() * v1.x()) * .5;
 
-    static constexpr num min_area = 2;
-
-    if (area < min_area*min_area)
-    {
-        // for perpendicular plane, ensure u and v don't come out right
-        origin = vec2(-1e6, -1e6);
-        invDenom = -1;
-        dot00 = dot01 = dot11 = 1;
-        v0 = v1 = vec2(1, 1);
-    }
-    else
-        invDenom = 1 / denom;
+    invDenom = 1 / denom;
 }
 
 bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
@@ -208,6 +182,8 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
 
 void pose_transform::project_quad_texture()
 {
+    image.fill(Qt::transparent);
+
     num dir;
     vec2 pt[4];
     const int sx = width - 1, sy = height - 1;
@@ -230,8 +206,6 @@ void pose_transform::project_quad_texture()
         for (int i = 0; i < 4; i++)
             pt[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
 
-        vec3 normal1(0, 0, 1);
-        vec3 normal2;
         {
             vec3 foo[3];
             for (int i = 0; i < 3; i++)
@@ -239,9 +213,20 @@ void pose_transform::project_quad_texture()
                 foo[i] = project2(dst_corners[i]);
                 projected[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
             }
-            normal2 = normal(foo[0], foo[1], foo[2]);
+
+            vec3 p1 = foo[1] - foo[0];
+            vec3 p2 = foo[2] - foo[0];
+            dir = p1.x() * p2.y() - p1.y() * p2.x(); // Z part of the cross product
         }
-        dir = normal1.dot(normal2);
+    }
+
+    // rotation of (0, 90, 0) makes it numerically unstable
+    if (std::fabs(dir) < 1e-3)
+    {
+        lock_guard l(mtx2);
+        std::swap(image, image2);
+        fresh = true;
+        return;
     }
 
     const QImage& tex = dir < 0 ? back : front;
@@ -340,7 +325,6 @@ void pose_transform::project_quad_texture()
 
     {
         lock_guard l2(mtx2);
-        image2.fill(Qt::transparent);
         std::swap(image, image2);
         fresh = true;
     }
