@@ -425,10 +425,8 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
             overlap |= pix.x() - other_pix.x() < point_pixel_closeness_limit;
         }
 
-        if (overlap)
-            new_pt.setX(points[i].x());
-
-        _config->move_point(i, new_pt);
+        if (!overlap)
+            _config->move_point(i, new_pt);
         _draw_function = true;
 
         setCursor(Qt::ClosedHandCursor);
