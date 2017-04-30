@@ -50,9 +50,9 @@ dialog_accela::dialog_accela()
         QDialog dr, dt;
         spline_widget r(&dr);
         spline_widget t(&dt);
-        dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(false);
+        dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(true);
         r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.setConfig(&rot);
-        dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(false);
+        dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(true);
         r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.setConfig(&trans);
         r.setFixedSize(1024, 600); t.setFixedSize(1024, 600);
 

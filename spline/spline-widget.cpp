@@ -311,7 +311,7 @@ void spline_widget::drawLine(QPainter& painter, const QPoint& start, const QPoin
 
 void spline_widget::mousePressEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled() || !is_in_bounds(e->pos()))
+    if (!_config || !isEnabled() || !is_in_bounds(e->pos()) || _preview_only)
     {
         clearFocus();
         return;
@@ -458,7 +458,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
 void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled() || !isActiveWindow() || !hasFocus())
+    if (!_config || !isEnabled() || !isActiveWindow() || !hasFocus() || _preview_only)
     {
         clearFocus();
         return;
@@ -519,7 +519,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     const QPoint pix(int(pos.x()) + add_x, int(pos.y()) + add_y);
 
     QToolTip::showText(mapToGlobal(pix),
-                       QStringLiteral("value: %1x%2").arg(x).arg(y),
+                       QStringLiteral("value: %1x%2").arg(x, 0, 'f', 2).arg(y, 0, 'f', 2),
                        this,
                        rect(),
                        0);
