@@ -107,6 +107,7 @@ public:
 
     template<int P = h_, int Q = w_> typename std::enable_if<maybe_add_swizzle<P, Q, 4>::value, num&>::type
     w() { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
+
     // parameters w_ and h_ are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
 
@@ -116,7 +117,12 @@ public:
     {
         static_assert(P == h_ && Q == w_, "");
 
-        return std::sqrt(dot(*this));
+        const num val = dot(*this);
+
+        if (std::fabs(val) < 1e-4)
+            return num(0);
+        else
+            return std::sqrt(val);
     }
 
     template<int R, int S, int P = h_, int Q = w_>
