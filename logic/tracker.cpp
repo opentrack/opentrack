@@ -14,6 +14,7 @@
 
 #include "compat/sleep.hpp"
 #include "compat/util.hpp"
+#include "compat/timer-resolution.hpp"
 
 #include "tracker.h"
 
@@ -375,6 +376,8 @@ void Tracker::logic()
 void Tracker::run()
 {
     setPriority(QThread::HighPriority);
+
+    timer_resolution res(1);
 
     {
         static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
