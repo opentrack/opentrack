@@ -17,8 +17,7 @@ set(cc "/O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy")
 set(warns_ "")
 
 #C4244: 'return': conversion from '__int64' to 'long', possible loss of data
-#C4828: The file contains a character starting at offset 0x2763 that is illegal in the current source character set (codepage 65001).
-set(warns-disable 4530 4577 4789 4244 4828)
+set(warns-disable 4530 4577 4789 4244)
 
 foreach(i ${warns-disable})
     set(warns_ "${warns_} /wd${i}")
@@ -44,7 +43,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(cc "${cc} /GR- /arch:SSE2")
 endif()
 
-set(silly "${warns_} /MT /Zi /Gm -source-charset:UTF-8")
+set(silly "${warns_} /MT /Zi /Gm")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
