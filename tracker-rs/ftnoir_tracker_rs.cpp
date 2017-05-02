@@ -145,7 +145,7 @@ RSTracker::~RSTracker() {
 }
 
 QString RSTrackerMetaData::name() {
-    return QString(QCoreApplication::translate("RSTrackerMetaData", "Intel® RealSense™ Technology"));
+    return QString(QCoreApplication::translate(u8"RSTrackerMetaData", u8"Intel® RealSense™ Technology"));
 }
 
 QIcon RSTrackerMetaData::icon() {
