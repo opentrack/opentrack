@@ -11,15 +11,18 @@ if(WIN32)
     install(FILES "${Qt5_DIR}/../../../plugins/platforms/qwindows.dll" DESTINATION "./platforms")
 endif()
 
-string(FIND "${CMAKE_GENERATOR}" "Visual Studio " is-msvc)
-if(is-msvc EQUAL 0)
-    set(is-msvc TRUE)
-else()
-    set(is-msvc FALSE)
-endif()
+function(is_msvc_sln_generator var)
+    string(FIND "${CMAKE_GENERATOR}" "Visual Studio " is-msvc)
+    if(is-msvc EQUAL 0)
+        set(${var} TRUE PARENT_SCOPE)
+    else()
+        set(${var} FALSE PARENT_SCOPE)
+    endif()
+endfunction()
 
 if(MSVC)
     # on .sln generator we have no editbin in path
+    is_msvc_sln_generator(is-msvc)
     if(is-msvc)
         # this is bad but what can we do? searching for vcvarsall.bat
         # would be easier, but then we'd have to differentiate x86/amd64
