@@ -27,10 +27,10 @@ dialog_accela::dialog_accela()
     tie_setting(s.pos_deadzone, ui.trans_dz_slider);
     tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
 
-    tie_setting(s.rot_sensitivity, ui.rot_gain, tr(u8"%1°"), 0, 'g', 4);
+    tie_setting(s.rot_sensitivity, ui.rot_gain, tr("%1°"), 0, 'g', 4);
     tie_setting(s.pos_sensitivity, ui.trans_gain, tr("%1mm"));
     tie_setting(s.ewma, ui.ewma_label, tr("%1ms"));
-    tie_setting(s.rot_deadzone, ui.rot_dz, tr(u8"%1°"), 0, 'g', 4);
+    tie_setting(s.rot_deadzone, ui.rot_dz, tr("%1°"), 0, 'g', 4);
     tie_setting(s.pos_deadzone, ui.trans_dz, tr("%1mm"));
     tie_setting(s.rot_nonlinearity, ui.rot_nl,
         tr("<html><head/><body>"

@@ -49,9 +49,6 @@ if(MSVC)
     foreach (i SHARED MODULE EXE)
         set(CMAKE_${i}_LINKER_FLAGS "-DYNAMICBASE -NXCOMPAT ${CMAKE_${i}_LINKER_FLAGS} ")
     endforeach()
-
-    #C4828: The file contains a character starting at offset 0x2763 that is illegal in the current source character set (codepage 65001).
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -source-charset:UTF-8 -wd4828")
 endif()
 
 if(WIN32)
