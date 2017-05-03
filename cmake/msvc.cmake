@@ -43,7 +43,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(cc "${cc} /GR- /arch:SSE2")
 endif()
 
-set(silly "${warns_} /MT /Zi /Gm")
+set(silly "${warns_} /MT /Gm")
 
 set(_CFLAGS "${silly}")
 set(_CXXFLAGS "${silly}")
@@ -52,7 +52,7 @@ set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "/WX /DEBUG")
+set(_LDFLAGS "/WX")
 set(_LDFLAGS_RELEASE "/LTCG:INCREMENTAL /OPT:REF /OPT:ICF=10")
 set(_LDFLAGS_DEBUG "")
 
