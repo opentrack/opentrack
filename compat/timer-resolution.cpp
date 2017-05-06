@@ -8,12 +8,11 @@
 #include "timer-resolution.hpp"
 
 #if defined _WIN32
-#   include <windows.h>
-
 #   include <QLibrary>
 #   include <QDebug>
 
-typedef LONG (__stdcall *funptr_NtSetTimerResolution) (ULONG, BOOLEAN, PULONG);
+using namespace timer_impl;
+
 static funptr_NtSetTimerResolution init_timer_resolution_funptr();
 static funptr_NtSetTimerResolution get_funptr();
 
@@ -41,62 +40,72 @@ static funptr_NtSetTimerResolution init_timer_resolution_funptr()
 
 static funptr_NtSetTimerResolution get_funptr()
 {
+    // starting with C++11 static initializers are fully
+    // thread-safe and run the first time function is called
+
+    // cf. http://stackoverflow.com/questions/8102125/is-local-static-variable-initialization-thread-safe-in-c11
+
     static auto ret = init_timer_resolution_funptr();
     return ret;
 }
 
-timer_resolution::timer_resolution(int msecs) : old_value(-1)
+timer_resolution::timer_resolution(int msecs) : old_value(fail_())
 {
-    if (msecs <= 0 || msecs > 30)
+    if (msecs <= 0 || msecs > 100)
     {
         qDebug() << "can't set timer resolution to" << msecs << "ms";
         return;
     }
 
-    funptr_NtSetTimerResolution f = get_funptr();
-    if (f == nullptr)
+    funptr_NtSetTimerResolution set_timer_res = get_funptr();
+    if (set_timer_res == nullptr)
         return;
 
     // hundredth of a nanosecond
-    const ULONG value = msecs * ULONG(10000);
-    NTSTATUS error = f(value, TRUE, &old_value);
-    ULONG old_value_ = -1;
+    const ulong_ value = msecs * ulong_(10000);
+    ntstatus_ res;
 
-    if (error != 0)
+    res = set_timer_res(value, true_(), &old_value);
+
+    if (res < 0)
     {
-        old_value = -1;
-        qDebug() << "NtSetTimerResolution erred with" << error;
+        old_value = fail_();
+        qDebug() << "NtSetTimerResolution erred with" << res;
         return;
     }
 
     // see if it stuck
 
-    error = f(value, TRUE, &old_value_);
-    if (error != 0)
+    ulong_ old_value_ = fail_();
+
+    res = set_timer_res(value, true_(), &old_value_);
+    if (res < 0)
     {
-        old_value = -1;
-        qDebug() << "NtSetTimerResolution check erred with" << error;
+        old_value = fail_();
+        qDebug() << "NtSetTimerResolution check erred with" << res;
         return;
     }
 
     if (old_value_ != old_value)
     {
+        using t = long long;
+
         qDebug() << "NtSetTimerResolution:"
                  << "old value didn't stick"
-                 << "current resolution" << old_value_
-                 << "* 100 ns";
-        old_value = -1;
+                 << "current resolution" << (t(old_value_) * t(100))
+                 << "ns";
+        old_value = fail_();
         return;
     }
 }
 
 timer_resolution::~timer_resolution()
 {
-    if (old_value != ULONG(-1))
+    if (old_value != fail_())
     {
         funptr_NtSetTimerResolution f = get_funptr();
-        ULONG fuzz = -1;
-        (void) f(old_value, TRUE, &fuzz);
+        ulong_ fuzz = fail_();
+        (void) f(old_value, true_(), &fuzz);
     }
 }
 
