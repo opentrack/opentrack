@@ -113,7 +113,7 @@ float spline::get_value_no_save_internal(double x)
     if (max_x > 0)
         x = std::fmin(max_x, x);
 
-    float  q  = float(x * precision(s->points));
+    float  q  = float(x * bucket_size_coefficient(s->points));
     int    xi = (int)q;
     float  yi = get_value_internal(xi);
     float  yiplus1 = get_value_internal(xi+1);
@@ -139,8 +139,7 @@ float spline::get_value_internal(int x)
 
     float sign = x < 0 ? -1 : 1;
     x = std::abs(x);
-    float ret;
-        ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
+    float ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
     return ret * sign;
 }
 
@@ -183,7 +182,7 @@ int spline::element_count(const QList<QPointF>& points, double max_x)
 
 bool spline::sort_fn(const QPointF& one, const QPointF& two)
 {
-    return one.x() <= two.x();
+    return one.x() < two.x();
 }
 
 void spline::update_interp_data()
@@ -197,11 +196,11 @@ void spline::update_interp_data()
 
     std::stable_sort(points.begin(), points.begin() + sz, sort_fn);
 
-    const double mult = precision(points);
-    const double mult_ = mult * 30;
+    const double c = bucket_size_coefficient(points);
+    const double c_interp = c * 30;
 
     for (unsigned i = 0; i < value_count; i++)
-        data[i] = -1;
+        data[i] = -16;
 
     if (sz < 2)
     {
@@ -209,7 +208,7 @@ void spline::update_interp_data()
         {
             const double x = points[0].x();
             const double y = points[0].y();
-            const int max = clamp(int(x * precision(points)), 1, value_count-1);
+            const int max = clamp(iround(x * c), 1, value_count-1);
             for (int k = 0; k <= max; k++)
             {
                 if (k < value_count)
@@ -247,20 +246,21 @@ void spline::update_interp_data()
             };
 
             // multiplier helps fill in all the x's needed
-            const unsigned end = std::min(unsigned(value_count), unsigned(p2_x * mult_));
-            const unsigned start = std::max(0u, unsigned(p1_x * mult));
+            const unsigned end = int(c_interp * (p2_x - p1_x)) + 1;
 
-            for (unsigned j = start; j < end; j++)
+            for (unsigned k = 0; k <= end; k++)
             {
-                const double t = (j - start) / (double) (end - start);
+                const double t = k / double(end);
                 const double t2 = t*t;
                 const double t3 = t*t*t;
 
-                const int x = iround(.5 * mult * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
+                const int x = int(.5 * c * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
                 const float y = float(.5 * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
                 if (x >= 0 && x < value_count)
-                    data[unsigned(x)] = y;
+                {
+                    data[x] = y;
+                }
             }
         }
     }
@@ -268,7 +268,7 @@ void spline::update_interp_data()
     float last = 0;
     for (unsigned i = 0; i < unsigned(value_count); i++)
     {
-        if (data[i] < 0)
+        if (data[i] == -16)
             data[i] = last;
         last = data[i];
     }
@@ -317,7 +317,7 @@ void spline::move_point(int idx, QPointF pt)
     {
         points[idx] = pt;
         // we don't allow points to be reordered, but sort due to possible caller logic error
-        //std::stable_sort(points.begin(), points.end(), sort_fn);
+        std::stable_sort(points.begin(), points.end(), sort_fn);
         s->points = points;
         validp = false;
     }
@@ -332,7 +332,7 @@ QList<QPointF> spline::get_points() const
 int spline::get_point_count() const
 {
     QMutexLocker foo(&_mutex);
-    return element_count(s->points, max_x);;
+    return element_count(s->points, max_x);
 }
 
 void spline::reload()
@@ -389,11 +389,8 @@ void spline::recompute()
     QList<QPointF> list = s->points;
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
-    // only store if we can't help it
+    // thus, only store if we can't help it
     std::stable_sort(list.begin(), list.end(), sort_fn);
-
-    if (list != s->points)
-        s->points = list;
 
     const int sz = list.size();
 
@@ -405,16 +402,16 @@ void spline::recompute()
         QPointF& pt(list[i]);
 
         const bool overlap = progn(
-                                for (int j = 0; j < i; j++)
-                                {
-                                    QPointF& pt2(list[j]);
-                                    const double dist_sq = (pt.x() - pt2.x())*(pt.x() - pt2.x());
-                                    static constexpr double overlap = .6;
-                                    if (dist_sq < overlap * overlap)
-                                        return true;
-                                }
-                                return false;
-                             );
+            for (int j = 0; j < i; j++)
+            {
+                const QPointF& pt2(list[j]);
+                const double dist_sq = QPointF::dotProduct(pt, pt2);
+                const double overlap = max_x / 360.;
+                if (dist_sq < overlap * overlap)
+                    return true;
+            }
+            return false;
+        );
         if (!overlap)
             ret_list.push_back(pt);
     }
@@ -440,14 +437,17 @@ std::shared_ptr<const spline::settings> spline::get_settings() const
     return s;
 }
 
-double spline::precision(const QList<QPointF>& points) const
+double spline::bucket_size_coefficient(const QList<QPointF>& points) const
 {
-    // this adjusts the memoized range to the largest X value. empty space doesn't take value_count discrete points.
-    const int sz = element_count(points, max_x);
-    if (sz)
-        return clamp(value_count / clamp(points[sz - 1].x(), 1., max_x), 0., double(value_count));
+    static constexpr double eps = 1e-4;
 
-    return value_count / clamp(max_x, 1., double(value_count));
+    if (unlikely(max_x < eps))
+        return 0;
+
+    const int sz = element_count(points, max_x);
+    const double last_x = sz ? points[sz - 1].x() : max_x;
+
+    return clamp((value_count-1) / clamp(last_x, eps, max_x), 0., (value_count-1));
 }
 
 namespace spline_detail {

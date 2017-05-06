@@ -42,7 +42,7 @@ signals:
 
 class OTR_SPLINE_EXPORT spline final
 {
-    double precision(const QList<QPointF>& points) const;
+    double bucket_size_coefficient(const QList<QPointF>& points) const;
     void update_interp_data();
     float get_value_internal(int x);
     void add_lone_point();
