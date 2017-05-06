@@ -428,13 +428,13 @@ void spline::recompute()
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
-mem<spline::settings> spline::get_settings()
+std::shared_ptr<spline::settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
     return s;
 }
 
-mem<const spline::settings> spline::get_settings() const
+std::shared_ptr<const spline::settings> spline::get_settings() const
 {
     QMutexLocker foo(&_mutex);
     return s;

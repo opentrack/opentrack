@@ -52,7 +52,7 @@ class OTR_SPLINE_EXPORT spline final
     static QPointF ensure_in_bounds(const QList<QPointF>& points, double max_x, int i);
     static int element_count(const QList<QPointF>& points, double max_x);
 
-    mem<spline_detail::settings> s;
+    std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection connection;
 
     std::vector<float> data;
@@ -99,8 +99,8 @@ public:
     bundle get_bundle();
     void recompute();
 
-    mem<settings> get_settings();
-    mem<const settings> get_settings() const;
+    std::shared_ptr<settings> get_settings();
+    std::shared_ptr<const settings> get_settings() const;
 
     using points_t = decltype(s->points());
     int get_point_count() const;

@@ -26,5 +26,5 @@ struct State
     Modules modules;
     main_settings s;
     Mappings pose;
-    mem<Work> work;
+    std::shared_ptr<Work> work;
 };

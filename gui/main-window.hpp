@@ -68,15 +68,15 @@ class MainWindow : public QMainWindow, private State
             menu_action_tracker, menu_action_filter, menu_action_proto,
             menu_action_options, menu_action_mappings;
 
-    mem<dylib> current_tracker()
+    std::shared_ptr<dylib> current_tracker()
     {
         return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
     }
-    mem<dylib> current_protocol()
+    std::shared_ptr<dylib> current_protocol()
     {
         return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
     }
-    mem<dylib> current_filter()
+    std::shared_ptr<dylib> current_filter()
     {
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
@@ -99,7 +99,7 @@ class MainWindow : public QMainWindow, private State
 
     // only use in impl file since no definition in header!
     template<typename t>
-    bool mk_dialog(mem<dylib> lib, ptr<t>& d);
+    bool mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d);
 
     // idem
     template<typename t, typename... Args>
