@@ -3,6 +3,7 @@
 #include "ndebug-guard.hpp"
 #include "run-in-thread.hpp"
 #include "meta.hpp"
+#include "functional.hpp"
 
 #include <memory>
 #include <cmath>
@@ -40,10 +41,24 @@ template<typename t> using ptr = std::unique_ptr<t>;
 #   define unused_on_unix(t, i) t i
 #endif
 
+#if defined __GNUC__
+#   define likely(x)       __builtin_expect((x),1)
+#   define unlikely(x)     __builtin_expect((x),0)
+#else
+#   define likely(x) (x)
+#   define unlikely(x) (x)
+#endif
+
 template<typename t>
-int iround(const t& val)
+inline int iround(const t& val)
 {
     return int(std::round(val));
+}
+
+template<typename t>
+inline unsigned uround(const t& val)
+{
+    return std::round(std::fmax(t(0), val));
 }
 
 namespace util_detail {
@@ -51,9 +66,9 @@ namespace util_detail {
 template<typename n>
 inline auto clamp_(n val, n min, n max) -> n
 {
-    if (val > max)
+    if (unlikely(val > max))
         return max;
-    if (val < min)
+    if (unlikely(val < min))
         return min;
     return val;
 }
