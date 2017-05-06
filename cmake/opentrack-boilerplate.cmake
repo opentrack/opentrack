@@ -84,9 +84,11 @@ function(otr_compat target)
 
     set(c-props)
     set(l-props)
+    get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
+
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(c-props "-fvisibility=hidden")
-        if(NOT is-c-only)
+        if(NOT linker-lang STREQUAL "C")
             set(c-props "${c-props} -fuse-cxa-atexit")
         endif()
     endif()
