@@ -8,8 +8,10 @@
 
 #include "test.h"
 #include "api/plugin-api.hpp"
-#include <cmath>
 
+#include <QPushButton>
+
+#include <cmath>
 #include <QDebug>
 
 const double test_tracker::incr[6] =
@@ -78,6 +80,8 @@ void test_tracker::data(double *data)
 test_dialog::test_dialog()
 {
     ui.setupUi(this);
+
+    connect(ui.buttonBox->button(QDialogButtonBox::Abort), &QPushButton::clicked, []() { *(volatile int*)0 = 0; });
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
