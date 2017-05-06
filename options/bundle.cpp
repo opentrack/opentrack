@@ -119,8 +119,7 @@ bool bundle::is_modified() const
 
     for (const auto& kv : saved.kvs)
     {
-        const QVariant other = transient.get<QVariant>(kv.first);
-        if (!transient.contains(kv.first) || !is_equal(kv.first, kv.second, other))
+        if (!transient.contains(kv.first))
         {
             //if (logspam)
             //    qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
