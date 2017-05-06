@@ -19,7 +19,6 @@ struct settings : opts {
     {}
 };
 
-
 class ewma : public IFilter
 {
 public:
@@ -54,7 +53,6 @@ private:
 private slots:
     void doOK();
     void doCancel();
-    void update_labels(int);
 };
 
 class ewmaDll : public Metadata
