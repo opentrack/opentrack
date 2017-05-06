@@ -8,46 +8,47 @@
 
 #include "group.hpp"
 #include "defs.hpp"
+
+#include "compat/timer.hpp"
+
+#include <cmath>
+
 #include <QStandardPaths>
 #include <QDir>
-
 #include <QDebug>
 
 namespace options {
 
-group::group(const QString& name, std::shared_ptr<QSettings> conf) : name(name)
+group::group(const QString& name) : name(name)
 {
     if (name == "")
         return;
 
-    conf->beginGroup(name);
-    for (auto& k_ : conf->childKeys())
-    {
-        auto tmp = k_.toUtf8();
-        QString k(tmp);
-        kvs[k] = conf->value(k_);
-    }
-    conf->endGroup();
-}
-
-group::group(const QString& name) : group(name, ini_file())
-{
+    with_settings_object([&](QSettings& conf) {
+        conf.beginGroup(name);
+        for (auto& k_ : conf.childKeys())
+        {
+            auto tmp = k_.toUtf8();
+            QString k(tmp);
+            kvs[k] = conf.value(k_);
+        }
+        conf.endGroup();
+    });
 }
 
 void group::save() const
 {
-    save_deferred(*ini_file());
-}
-
-void group::save_deferred(QSettings& s) const
-{
     if (name == "")
         return;
 
-    s.beginGroup(name);
-    for (auto& i : kvs)
-        s.setValue(i.first, i.second);
-    s.endGroup();
+    with_settings_object([&](QSettings& s) {
+        s.beginGroup(name);
+        for (auto& i : kvs)
+            s.setValue(i.first, i.second);
+        s.endGroup();
+
+        mark_ini_modified();
+    });
 }
 
 void group::put(const QString &s, const QVariant &d)
@@ -103,12 +104,52 @@ QStringList group::ini_list()
     return list;
 }
 
-std::shared_ptr<QSettings> group::ini_file()
+void group::mark_ini_modified()
 {
-    const auto pathname = ini_pathname();
-    if (pathname != "")
-        return std::make_shared<QSettings>(ini_pathname(), QSettings::IniFormat);
-    return std::make_shared<QSettings>();
+    QMutexLocker l(&cur_ini_mtx);
+    ini_modifiedp = true;
 }
 
+QString group::cur_ini_pathname;
+std::shared_ptr<QSettings> group::cur_ini;
+QMutex group::cur_ini_mtx(QMutex::Recursive);
+int group::ini_refcount = 0;
+bool group::ini_modifiedp = false;
+
+std::shared_ptr<QSettings> group::cur_settings_object()
+{
+    const QString pathname = ini_pathname();
+
+    if (pathname.isEmpty())
+        return std::make_shared<QSettings>();
+
+    QMutexLocker l(&cur_ini_mtx);
+
+    if (pathname != cur_ini_pathname)
+    {
+        cur_ini = std::make_shared<QSettings>(pathname, QSettings::IniFormat);
+        cur_ini_pathname = pathname;
+    }
+
+    return cur_ini;
 }
+
+group::saver_::~saver_()
+{
+    if (--ini_refcount == 0 && ini_modifiedp)
+    {
+        ini_modifiedp = false;
+        static Timer t;
+        const double tm = t.elapsed_seconds();
+        qDebug() << QStringLiteral("%1.%2").arg(int(tm)).arg(int(std::fmod(tm, 1.)*10))
+                 << "saving .ini file" << cur_ini_pathname;
+        s.sync();
+    }
+}
+
+group::saver_::saver_(QSettings& s, QMutex& mtx) : s(s), mtx(mtx), lck(&mtx)
+{
+    ini_refcount++;
+}
+
+} // ns options

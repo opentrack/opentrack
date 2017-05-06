@@ -31,12 +31,12 @@ bundle::~bundle()
 {
 }
 
-void bundle::reload(std::shared_ptr<QSettings> settings)
+void bundle::reload()
 {
     if (group_name.size())
     {
         QMutexLocker l(&mtx);
-        saved = group(group_name, settings);
+        saved = group(group_name);
         const bool has_changes = is_modified();
         transient = saved;
 
@@ -51,7 +51,12 @@ void bundle::reload(std::shared_ptr<QSettings> settings)
 
 void bundle::set_all_to_default()
 {
+    QMutexLocker l(&mtx);
+
     forall([](const QString&, base_value* val) { set_base_value_to_default(val); });
+
+    if (is_modified())
+        group::mark_ini_modified();
 }
 
 void bundle::store_kv(const QString& name, const QVariant& datum)
@@ -72,10 +77,10 @@ bool bundle::contains(const QString &name) const
     return transient.contains(name);
 }
 
-void bundle::save_deferred(QSettings& s)
+void bundle::save()
 {
     if (QThread::currentThread() != qApp->thread())
-        qCritical() << "group::save - current thread not ui thread";
+        qDebug() << "group::save - current thread not ui thread";
 
     if (group_name.size() == 0)
         return;
@@ -84,22 +89,18 @@ void bundle::save_deferred(QSettings& s)
 
     {
         QMutexLocker l(&mtx);
+
         if (is_modified())
         {
             //qDebug() << "bundle" << group_name << "changed, saving";
             modified_ = true;
             saved = transient;
-            saved.save_deferred(s);
+            saved.save();
         }
     }
 
     if (modified_)
         emit saving();
-}
-
-void bundle::save()
-{
-    save_deferred(*group::ini_file());
 }
 
 bool bundle::is_modified() const
@@ -134,8 +135,6 @@ void bundler::after_profile_changed_()
 {
     QMutexLocker l(&implsgl_mtx);
 
-    std::shared_ptr<QSettings> s = group::ini_file();
-
     for (auto& kv : implsgl_data)
     {
         weak bundle = kv.second;
@@ -143,7 +142,7 @@ void bundler::after_profile_changed_()
         if (bundle_)
         {
             //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
-            bundle_->reload(s);
+            bundle_->reload();
         }
     }
 }

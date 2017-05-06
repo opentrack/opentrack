@@ -341,15 +341,10 @@ void spline::reload()
     s->b->reload();
 }
 
-void spline::save(QSettings& settings)
-{
-    QMutexLocker foo(&_mutex);
-    s->b->save_deferred(settings);
-}
-
 void spline::save()
 {
-    save(*group::ini_file());
+    QMutexLocker foo(&_mutex);
+    s->b->save();
 }
 
 void spline::set_bundle(bundle b)

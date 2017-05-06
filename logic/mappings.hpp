@@ -17,7 +17,7 @@ struct OTR_LOGIC_EXPORT Map final
 {
     Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& opts);
 
-    void save(QSettings& s);
+    void save();
     void load();
 
     axis_opts& opts;

@@ -81,8 +81,7 @@ public:
     }
 public slots:
     void save();
-    void reload(std::shared_ptr<QSettings> settings = group::ini_file());
-    void save_deferred(QSettings& s);
+    void reload();
     void set_all_to_default();
 };
 

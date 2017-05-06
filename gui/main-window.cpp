@@ -277,6 +277,14 @@ void MainWindow::die_on_config_not_writable()
 
 bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
 {
+    const bool writable =
+        group::with_settings_object([&](QSettings& s) {
+            return s.isWritable();
+        });
+
+    if (writable)
+        return false;
+
     const bool open = QFile(group::ini_combine(current)).open(QFile::ReadWrite);
     const QStringList ini_list = group::ini_list();
 

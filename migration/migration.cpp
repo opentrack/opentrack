@@ -78,11 +78,11 @@ QString migrator::last_migration_time()
 {
     QString ret;
 
-    std::shared_ptr<QSettings> s(options::group::ini_file());
-
-    s->beginGroup("migrations");
-    ret = s->value("last-migration-at", "19700101_00").toString();
-    s->endGroup();
+    options::group::with_settings_object([&](QSettings& s) {
+        s.beginGroup("migrations");
+        ret = s.value("last-migration-at", "19700101_00").toString();
+        s.endGroup();
+    });
 
     return ret;
 }
@@ -102,11 +102,16 @@ QString migrator::time_after_migrations()
 
 void migrator::set_last_migration_time(const QString& val)
 {
-    std::shared_ptr<QSettings> s(options::group::ini_file());
-
-    s->beginGroup("migrations");
-    s->setValue("last-migration-at", val);
-    s->endGroup();
+    options::group::with_settings_object([&](QSettings& s) {
+        s.beginGroup("migrations");
+        const QString old_value = s.value("last-migration-at", "").toString();
+        if (val != old_value)
+        {
+            s.setValue("last-migration-at", val);
+            options::group::mark_ini_modified();
+        }
+        s.endGroup();
+    });
 }
 
 std::vector<migration*> migrator::sorted_migrations()
