@@ -81,7 +81,7 @@ public:
     bool center() override;
 
 private:
-    static void matrix_to_euler(double &yaw, double &pitch, double &roll, const vr::HmdMatrix34_t& result);
+    static void matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result);
 
     settings s;
     int device_index;
