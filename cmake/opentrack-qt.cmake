@@ -6,7 +6,11 @@ set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} 
 
 if(WIN32)
     foreach(i Qt5Core Qt5Gui Qt5Network Qt5SerialPort Qt5Widgets)
-        install(FILES "${Qt5_DIR}/../../../bin/${i}.dll" DESTINATION .)
+        set(path "${Qt5_DIR}/../../../bin/${i}")
+        install(FILES "${path}.dll" DESTINATION .)
+        if(EXISTS "${path}.pdb")
+            install(FILES "${path}.pdb" DESTINATION "${opentrack-hier-debug}")
+        endif()
     endforeach()
     install(FILES "${Qt5_DIR}/../../../plugins/platforms/qwindows.dll" DESTINATION "./platforms")
 endif()
