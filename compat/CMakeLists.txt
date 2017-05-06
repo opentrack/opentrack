@@ -5,5 +5,5 @@ if(NOT WIN32 AND NOT APPLE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set_property(SOURCE nan.cpp APPEND_STRING PROPERTY COMPILE_FLAGS "-fno-lto -fno-fast-math -fno-finite-math-only -O0")
+    set_property(SOURCE nan.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fno-lto -fno-fast-math -fno-finite-math-only -O0")
 endif()
