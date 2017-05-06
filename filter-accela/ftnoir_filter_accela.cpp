@@ -32,6 +32,7 @@ static inline constexpr T signum(T x)
 }
 
 template<int N = 3, typename F>
+OTR_NEVER_INLINE
 static void do_deltas(const double* deltas, double* output, double alpha, double& smoothed, F&& fun)
 {
     double norm[N];
@@ -152,6 +153,12 @@ void accela::filter(const double* input, double *output)
     {
         output[k] *= dt;
         output[k] += last_output[k];
+
+        if (signum(last_output[k] - output[k]) < 0)
+            output[k] = std::fmax(input[k], output[k]);
+        else
+            output[k] = std::fmin(input[k], output[k]);
+
         last_output[k] = output[k];
     }
 }
