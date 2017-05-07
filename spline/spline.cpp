@@ -25,7 +25,7 @@ constexpr int spline::value_count;
 
 spline::spline(qreal maxx, qreal maxy, const QString& name) :
     s(nullptr),
-    data(value_count, -1.f),
+    data(value_count, -16),
     _mutex(QMutex::Recursive),
     max_x(maxx),
     max_y(maxy),
@@ -50,6 +50,7 @@ spline::spline() : spline(0, 0, "") {}
 
 void spline::set_tracking_active(bool value)
 {
+    QMutexLocker l(&_mutex);
     activep = value;
 }
 
@@ -69,14 +70,14 @@ void spline::set_max_input(qreal max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
-    recompute();
+    validp = false;
 }
 
 void spline::set_max_output(qreal max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
-    recompute();
+    validp = false;
 }
 
 qreal spline::max_input() const
@@ -133,6 +134,7 @@ float spline::get_value_internal(int x)
 {
     if (!validp)
     {
+        recompute();
         update_interp_data();
         validp = true;
     }
@@ -371,15 +373,14 @@ void spline::set_bundle(bundle b)
                     // spline isn't a QObject and the connection context is incorrect
 
                     QMutexLocker l(&_mutex);
-                    recompute();
+                    validp = false;
+
                     emit s->recomputed();
                 },
             Qt::QueuedConnection);
         }
 
-        recompute();
-
-        emit s->recomputed();
+        validp = false;
     }
 }
 
@@ -423,7 +424,6 @@ void spline::recompute()
 
     last_input_value = QPointF(0, 0);
     activep = false;
-    validp = false;
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
