@@ -97,7 +97,7 @@ public:
 
     void set_tracking_active(bool value);
     bundle get_bundle();
-    void recompute();
+    void ensure_valid(const QList<QPointF>& the_points);
 
     std::shared_ptr<settings> get_settings();
     std::shared_ptr<const settings> get_settings() const;

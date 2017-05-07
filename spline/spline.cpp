@@ -134,7 +134,6 @@ float spline::get_value_internal(int x)
 {
     if (!validp)
     {
-        recompute();
         update_interp_data();
         validp = true;
     }
@@ -190,6 +189,8 @@ bool spline::sort_fn(const QPointF& one, const QPointF& two)
 void spline::update_interp_data()
 {
     points_t points = s->points;
+
+    ensure_valid(points);
 
     int sz = element_count(points, max_x);
 
@@ -384,11 +385,11 @@ void spline::set_bundle(bundle b)
     }
 }
 
-void spline::recompute()
+void spline::ensure_valid(const QList<QPointF>& the_points)
 {
     QMutexLocker foo(&_mutex);
 
-    QList<QPointF> list = s->points;
+    QList<QPointF> list = the_points;
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
     // thus, only store if we can't help it
@@ -419,7 +420,7 @@ void spline::recompute()
             ret_list.push_back(pt);
     }
 
-    if (ret_list != s->points)
+    if (ret_list != the_points)
         s->points = ret_list;
 
     last_input_value = QPointF(0, 0);
