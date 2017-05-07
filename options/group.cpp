@@ -141,7 +141,7 @@ group::saver_::~saver_()
         ini_modifiedp = false;
         static Timer t;
         const double tm = t.elapsed_seconds();
-        qDebug() << QStringLiteral("%1.%2").arg(int(tm)).arg(int(std::fmod(tm, 1.)*10))
+        qDebug() << QStringLiteral("%1.%2").arg(int(tm)).arg(int(std::fmod(tm, 1.)*10)).toLatin1().data()
                  << "saving .ini file" << cur_ini_pathname;
         s.sync();
     }
