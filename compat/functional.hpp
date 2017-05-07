@@ -4,13 +4,11 @@
 #include <iterator>
 #include <type_traits>
 
-namespace functools
-{
-
-constexpr void return_void();
-
 template<typename t>
 using remove_qualifiers = std::remove_reference_t<std::remove_cv_t<t>>;
+
+namespace functools
+{
 
 template<typename seq_, typename = void>
 struct reserver_
@@ -22,7 +20,7 @@ struct reserver_
 };
 
 template<typename seq_>
-struct reserver_<seq_, decltype(std::declval<seq_>().reserve(0u), return_void())>
+struct reserver_<seq_, decltype(std::declval<seq_>().reserve(0u), (void)0)>
 {
     static inline void maybe_reserve_space(seq_& seq, unsigned sz)
     {
@@ -54,7 +52,7 @@ struct constant final
 template<typename seq_, typename F>
 auto map(F&& fun, const seq_& seq)
 {
-    using seq_type = functools::remove_qualifiers<seq_>;
+    using seq_type = remove_qualifiers<seq_>;
 
     seq_type ret;
     std::back_insert_iterator<seq_type> it = std::back_inserter(ret);
