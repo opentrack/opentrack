@@ -447,6 +447,9 @@ double spline::bucket_size_coefficient(const QList<QPointF>& points) const
     if (unlikely(max_x < eps))
         return 0;
 
+    // needed to fill the buckets up to the last control point.
+    // space between that point and max_x doesn't matter.
+
     const int sz = element_count(points, max_x);
     const double last_x = sz ? points[sz - 1].x() : max_x;
 
