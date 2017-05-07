@@ -405,8 +405,9 @@ void spline::recompute()
             for (int j = 0; j < i; j++)
             {
                 const QPointF& pt2(list[j]);
-                const double dist_sq = QPointF::dotProduct(pt, pt2);
-                const double overlap = max_x / 360.;
+                const QPointF tmp(pt - pt2);
+                const double dist_sq = QPointF::dotProduct(tmp, tmp);
+                const double overlap = max_x / 500.;
                 if (dist_sq < overlap * overlap)
                     return true;
             }
