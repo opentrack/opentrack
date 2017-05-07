@@ -363,17 +363,18 @@ void spline::set_bundle(bundle b)
         if (b)
         {
             connection = QObject::connect(b.get(), &bundle_::changed,
-                                          s.get(), [&]() {
-                                              // we're holding the mutex to allow signal disconnection in spline dtor
-                                              // before this slot gets called for the next time
+            s.get(), [&]()
+            {
+                    // we're holding the mutex to allow signal disconnection in spline dtor
+                    // before this slot gets called for the next time
 
-                                              // spline isn't a QObject and the connection context is incorrect
+                    // spline isn't a QObject and the connection context is incorrect
 
-                                              QMutexLocker l(&_mutex);
-                                              recompute();
-                                              emit s->recomputed();
-                                          },
-                                          Qt::QueuedConnection);
+                    QMutexLocker l(&_mutex);
+                    recompute();
+                    emit s->recomputed();
+                },
+            Qt::QueuedConnection);
         }
 
         recompute();
