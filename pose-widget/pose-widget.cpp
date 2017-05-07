@@ -270,8 +270,8 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    for (int y = 1; y < sy; y++)
-        for (int x = 1; x < sx; x++)
+    for (int y = 0; y < sy; y++)
+        for (int x = 0; x < sx; x++)
         {
             vec2 pos(x, y);
             vec2 uv;
