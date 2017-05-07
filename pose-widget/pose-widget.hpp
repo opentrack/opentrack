@@ -69,8 +69,6 @@ class pose_transform final : private QThread
     QImage front, back;
     QImage image, image2;
 
-    int width, height;
-
     std::atomic<bool> fresh;
 
     static constexpr int w = 320, h = 240;
