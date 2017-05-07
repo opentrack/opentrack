@@ -38,6 +38,19 @@ inline void maybe_reserve_space(seq_& seq, unsigned sz)
 
 } // ns
 
+template<typename t, t value_>
+struct constant final
+{
+    using type = t;
+    constexpr type operator()() const noexcept
+    {
+        return value_;
+    }
+    static constexpr type value = value_;
+
+    constant() = delete;
+};
+
 template<typename seq_, typename F>
 auto map(F&& fun, const seq_& seq)
 {
