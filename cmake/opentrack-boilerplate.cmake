@@ -128,11 +128,12 @@ endfunction()
 function(otr_module n_)
     message(STATUS "module ${n_}")
     cmake_parse_arguments(arg
-        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL"
+        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL;RELINK"
         "LINK;COMPILE"
         "SOURCES"
         ${ARGN}
     )
+
     if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "otr_module bad formals: ${arg_UNPARSED_ARGUMENTS}")
     endif()
@@ -164,6 +165,12 @@ function(otr_module n_)
             set(link-mode STATIC)
         endif()
         add_library(${n} ${link-mode} "${${n}-all}")
+    endif()
+
+    if(NOT arg_RELINK)
+        set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
+    else()
+        set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED FALSE)
     endif()
 
     if(NOT arg_NO-QT)
