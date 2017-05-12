@@ -13,10 +13,14 @@
 #include <QDebug>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
+#define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
 
 #define once_only(...) progn(static bool once = false; if (!once) { once = true; __VA_ARGS__; })
-
-#define load_time_value(x) progn(static const auto _value132((x)); return _value132;)
+#define load_time_value(x) \
+    progn( \
+        static const auto _value132((x)); \
+        return static_cast<decltype(_value132)&>(value132); \
+    )
 
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
@@ -76,9 +80,9 @@ inline auto clamp_(n val, n min, n max) -> n
 }
 
 template<typename t, typename u, typename w>
-inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * min * max)
+inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val + min + max)
 {
-    return ::util_detail::clamp_<decltype(val * min * max)>(val, min, max);
+    return ::util_detail::clamp_<decltype(val + min + max)>(val, min, max);
 }
 
 template<typename t, typename... xs>
