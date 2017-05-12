@@ -1,0 +1,43 @@
+UNADDRESSABLE ACCESS
+name=false positive 1
+Qt5Gui.dll!qt_blend_argb32_on_argb32_ssse3
+
+INVALID HEAP ARGUMENT
+name=stfu qtcore
+Qt5Core.dll!*
+
+INVALID HEAP ARGUMENT
+name=stfu qwindows 1
+qwindows.dll!*
+
+LEAK
+name=stfu qwindows 2
+qwindows.dll!*
+
+INVALID HEAP ARGUMENT
+name=stfu qtgui
+Qt5Gui.dll!*
+
+INVALID HEAP ARGUMENT
+name=stfu sixense 1
+sixense.dll!*
+
+UNADDRESSABLE ACCESS
+name=stfu sixense 2
+sixense.dll!*
+
+UNINITIALIZED READ
+name=dinput
+system call NtUserGetRawInputDeviceInfo parameter value #2
+
+LEAK
+name=stfu leak qtcore 1
+Qt5Core.dll!*
+
+LEAK
+name=cv 1
+opentrack-tracker-pt.dll!cv::`dynamic initializer for '__initialization_mutex_initializer''
+
+LEAK
+name=cv 2
+opentrack-tracker-aruco.dll!cv::`dynamic initializer for '__initialization_mutex_initializer''
