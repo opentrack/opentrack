@@ -20,7 +20,9 @@
 #include <ctime>
 #include <tuple>
 
-class OTR_COMPAT_EXPORT Timer
+#include "time.hpp"
+
+class OTR_COMPAT_EXPORT Timer final
 {
     struct timespec state;
     long long conv_nsecs(const struct timespec& cur) const;
@@ -31,16 +33,22 @@ class OTR_COMPAT_EXPORT Timer
     static mach_timebase_info_data_t otr_get_mach_frequency();
 #endif
 
-    static void wrap_gettime(struct timespec* state);
+    static void gettime(struct timespec* state);
 
+    using ns = time_units::ns;
 public:
     Timer();
-
     void start();
+
+    template<typename t>
+    t elapsed() const
+    {
+        using namespace time_units;
+        return static_cast<const t&>(ns(elapsed_nsecs()));
+    }
+
     long long elapsed_nsecs() const;
     double elapsed_usecs() const;
     double elapsed_ms() const;
     double elapsed_seconds() const;
 };
-
-
