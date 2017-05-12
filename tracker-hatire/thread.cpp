@@ -89,6 +89,7 @@ hatire_thread::~hatire_thread()
 hatire_thread::hatire_thread()
 {
     data_read.reserve(65536);
+    com_port.setReadBufferSize(2048);
 
     connect(this, &QThread::finished, this, &hatire_thread::teardown_serial, Qt::DirectConnection);
     connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl, Qt::QueuedConnection);
@@ -303,34 +304,71 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
+    static char buf[256];
+    int sz;
+
+#if !defined HATIRE_DEBUG_LOGFILE
+    bool error = false, empty = false;
+#endif
+
     {
         QMutexLocker lck(&data_mtx);
+
 #ifndef HATIRE_DEBUG_LOGFILE
-        data_read += com_port.readAll();
+        sz = com_port.read(buf, sizeof(buf));
+        error |= sz < 0;
+        empty |= sz == 0;
 #else
-        QByteArray tmp = com_port.read(30);
-        data_read += tmp;
-        if (tmp.length() == 0 && read_timer.isActive())
+        const int sz = com_port.read(buf, sizeof(buf));
+
+        if (sz <= 0 && read_timer.isActive())
         {
+            if (sz < 0)
+                qDebug() << "hatire: debug file read error" << com_port.errorString();
             qDebug() << "eof";
             read_timer.stop();
+            return;
         }
 #endif
     }
 
-    stat.input(timer.elapsed_ms());
-    timer.start();
+#if !defined HATIRE_DEBUG_LOGFILE
+    if (error || com_port.error() != QSerialPort::NoError)
+    {
+        once_only(qDebug() << "hatire serial: error num" << com_port.error() << "num2" << error);
+        com_port.clearError(); // XXX must test it
+    }
+    else if (empty)
+        once_only(qDebug() << "hatire serial: empty");
+    else
+        goto ok;
+#endif
 
-    if (throttle_timer.elapsed_ms() >= 3000)
+    goto fail;
+
+ok:
+    data_read.append(buf, sz);
+
+    using namespace time_units;
+
+    stat.input(prog1(timer.elapsed<ms>().count(), timer.start()));
+
+    if (throttle_timer.elapsed_seconds() >= 1)
     {
         throttle_timer.start();
-        qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
+        qDebug() << "hatire stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
     }
 
-    if (s.serial_bug_workaround)
+    if (!s.serial_bug_workaround)
+        return;
+
+fail:
+    // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
+    // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
+
+    once_only(qDebug() << "hatire: sleeping due to error, pinout:" << int(com_port.pinoutSignals()));
+
     {
-        // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
-        // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
         constexpr int hz = 90;
         constexpr int ms = 1000/hz;
         portable::sleep(ms);
