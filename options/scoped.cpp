@@ -2,8 +2,8 @@
 #include <QApplication>
 #include <QThread>
 
-// for std::abort()
 #include <cstdlib>
+#include <atomic>
 
 #include <QDebug>
 

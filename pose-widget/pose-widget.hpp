@@ -37,7 +37,7 @@ using lock_guard = std::unique_lock<std::mutex>;
 
 class pose_widget;
 
-class pose_transform final : private QThread
+struct pose_transform final : private QThread
 {
     pose_transform(QWidget* dst);
     ~pose_transform();

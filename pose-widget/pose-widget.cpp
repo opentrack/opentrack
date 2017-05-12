@@ -47,7 +47,7 @@ void pose_widget::paintEvent(QPaintEvent* event)
 
     xform.with_image_lock([&](const QImage& image)
     {
-        p.drawImage(event->rect(), image, offset, offset);
+        p.drawImage(event->rect(), image, QRect(offset, offset, pose_transform::w, pose_transform::h));
     });
 }
 
@@ -71,7 +71,7 @@ void pose_transform::run()
         project_quad_texture();
 
 end:
-        portable::sleep(9);
+        portable::sleep(23);
     }
 }
 

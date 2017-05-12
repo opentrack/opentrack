@@ -9,6 +9,7 @@
 #ifdef _WIN32
 
 #include "keybinding-worker.hpp"
+#include "compat/util.hpp"
 #include <functional>
 #include <windows.h>
 #include <QDebug>
@@ -18,8 +19,8 @@ bool Key::should_process()
 {
     if (!enabled || (keycode == 0 && guid == ""))
         return false;
-    bool ret = !held || timer.elapsed_ms() > 100;
-    timer.start();
+    bool ret = prog1(!held || timer.elapsed_ms() > 100,
+                     timer.start());
     return ret;
 }
 

@@ -30,7 +30,9 @@ group::group(const QString& name) : name(name)
         {
             auto tmp = k_.toUtf8();
             QString k(tmp);
-            kvs[k] = conf.value(k_);
+            QVariant val = conf.value(k_);
+            if (val.type() != QVariant::Invalid)
+                kvs[k] = std::move(val);
         }
         conf.endGroup();
     });
