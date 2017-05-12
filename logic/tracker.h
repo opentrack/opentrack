@@ -85,7 +85,7 @@ private:
     state real_rotation, scaled_rotation;
     euler_t t_center;
 
-    long backlog_time;
+    time_units::ns backlog_time;
 
     bool tracking_started;
 
