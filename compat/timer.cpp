@@ -6,6 +6,9 @@
  * notice appear in all copies.
  */
 
+#include "ndebug-guard.hpp"
+#include <cassert>
+
 #include "timer.hpp"
 #include <cmath>
 
