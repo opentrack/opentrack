@@ -3,6 +3,7 @@
 #include "ndebug-guard.hpp"
 #include "run-in-thread.hpp"
 #include "meta.hpp"
+#include "functional.hpp"
 
 #include <memory>
 #include <cmath>
@@ -12,10 +13,14 @@
 #include <QDebug>
 
 #define progn(...) ([&]() { __VA_ARGS__ }())
+#define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
 
 #define once_only(...) progn(static bool once = false; if (!once) { once = true; __VA_ARGS__; })
-
-#define load_time_value(x) progn(static const auto _value132((x)); return _value132;)
+#define load_time_value(x) \
+    progn( \
+        static const auto _value132((x)); \
+        return static_cast<decltype(_value132)&>(value132); \
+    )
 
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
@@ -40,10 +45,24 @@ template<typename t> using ptr = std::unique_ptr<t>;
 #   define unused_on_unix(t, i) t i
 #endif
 
+#if defined __GNUC__
+#   define likely(x)       __builtin_expect((x),1)
+#   define unlikely(x)     __builtin_expect((x),0)
+#else
+#   define likely(x) (x)
+#   define unlikely(x) (x)
+#endif
+
 template<typename t>
-int iround(const t& val)
+inline int iround(const t& val)
 {
     return int(std::round(val));
+}
+
+template<typename t>
+inline unsigned uround(const t& val)
+{
+    return std::round(std::fmax(t(0), val));
 }
 
 namespace util_detail {
@@ -51,9 +70,9 @@ namespace util_detail {
 template<typename n>
 inline auto clamp_(n val, n min, n max) -> n
 {
-    if (val > max)
+    if (unlikely(val > max))
         return max;
-    if (val < min)
+    if (unlikely(val < min))
         return min;
     return val;
 }
@@ -61,9 +80,9 @@ inline auto clamp_(n val, n min, n max) -> n
 }
 
 template<typename t, typename u, typename w>
-inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val * min * max)
+inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val + min + max)
 {
-    return ::util_detail::clamp_<decltype(val * min * max)>(val, min, max);
+    return ::util_detail::clamp_<decltype(val + min + max)>(val, min, max);
 }
 
 template<typename t, typename... xs>

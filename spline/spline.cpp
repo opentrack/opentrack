@@ -25,7 +25,7 @@ constexpr int spline::value_count;
 
 spline::spline(qreal maxx, qreal maxy, const QString& name) :
     s(nullptr),
-    data(value_count, -1.f),
+    data(value_count, -16),
     _mutex(QMutex::Recursive),
     max_x(maxx),
     max_y(maxy),
@@ -50,6 +50,7 @@ spline::spline() : spline(0, 0, "") {}
 
 void spline::set_tracking_active(bool value)
 {
+    QMutexLocker l(&_mutex);
     activep = value;
 }
 
@@ -69,14 +70,14 @@ void spline::set_max_input(qreal max_input)
 {
     QMutexLocker l(&_mutex);
     max_x = max_input;
-    recompute();
+    validp = false;
 }
 
 void spline::set_max_output(qreal max_output)
 {
     QMutexLocker l(&_mutex);
     max_y = max_output;
-    recompute();
+    validp = false;
 }
 
 qreal spline::max_input() const
@@ -113,7 +114,7 @@ float spline::get_value_no_save_internal(double x)
     if (max_x > 0)
         x = std::fmin(max_x, x);
 
-    float  q  = float(x * precision(s->points));
+    float  q  = float(x * bucket_size_coefficient(s->points));
     int    xi = (int)q;
     float  yi = get_value_internal(xi);
     float  yiplus1 = get_value_internal(xi+1);
@@ -139,8 +140,7 @@ float spline::get_value_internal(int x)
 
     float sign = x < 0 ? -1 : 1;
     x = std::abs(x);
-    float ret;
-        ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
+    float ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
     return ret * sign;
 }
 
@@ -183,12 +183,14 @@ int spline::element_count(const QList<QPointF>& points, double max_x)
 
 bool spline::sort_fn(const QPointF& one, const QPointF& two)
 {
-    return one.x() <= two.x();
+    return one.x() < two.x();
 }
 
 void spline::update_interp_data()
 {
     points_t points = s->points;
+
+    ensure_valid(points);
 
     int sz = element_count(points, max_x);
 
@@ -197,11 +199,11 @@ void spline::update_interp_data()
 
     std::stable_sort(points.begin(), points.begin() + sz, sort_fn);
 
-    const double mult = precision(points);
-    const double mult_ = mult * 30;
+    const double c = bucket_size_coefficient(points);
+    const double c_interp = c * 30;
 
     for (unsigned i = 0; i < value_count; i++)
-        data[i] = -1;
+        data[i] = -16;
 
     if (sz < 2)
     {
@@ -209,7 +211,7 @@ void spline::update_interp_data()
         {
             const double x = points[0].x();
             const double y = points[0].y();
-            const int max = clamp(int(x * precision(points)), 1, value_count-1);
+            const int max = clamp(iround(x * c), 1, value_count-1);
             for (int k = 0; k <= max; k++)
             {
                 if (k < value_count)
@@ -247,20 +249,21 @@ void spline::update_interp_data()
             };
 
             // multiplier helps fill in all the x's needed
-            const unsigned end = std::min(unsigned(value_count), unsigned(p2_x * mult_));
-            const unsigned start = std::max(0u, unsigned(p1_x * mult));
+            const unsigned end = int(c_interp * (p2_x - p1_x)) + 1;
 
-            for (unsigned j = start; j < end; j++)
+            for (unsigned k = 0; k <= end; k++)
             {
-                const double t = (j - start) / (double) (end - start);
+                const double t = k / double(end);
                 const double t2 = t*t;
                 const double t3 = t*t*t;
 
-                const int x = iround(.5 * mult * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
+                const int x = int(.5 * c * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
                 const float y = float(.5 * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
                 if (x >= 0 && x < value_count)
-                    data[unsigned(x)] = y;
+                {
+                    data[x] = y;
+                }
             }
         }
     }
@@ -268,7 +271,7 @@ void spline::update_interp_data()
     float last = 0;
     for (unsigned i = 0; i < unsigned(value_count); i++)
     {
-        if (data[i] < 0)
+        if (data[i] == -16)
             data[i] = last;
         last = data[i];
     }
@@ -317,7 +320,7 @@ void spline::move_point(int idx, QPointF pt)
     {
         points[idx] = pt;
         // we don't allow points to be reordered, but sort due to possible caller logic error
-        //std::stable_sort(points.begin(), points.end(), sort_fn);
+        std::stable_sort(points.begin(), points.end(), sort_fn);
         s->points = points;
         validp = false;
     }
@@ -332,7 +335,7 @@ QList<QPointF> spline::get_points() const
 int spline::get_point_count() const
 {
     QMutexLocker foo(&_mutex);
-    return element_count(s->points, max_x);;
+    return element_count(s->points, max_x);
 }
 
 void spline::reload()
@@ -341,15 +344,10 @@ void spline::reload()
     s->b->reload();
 }
 
-void spline::save(QSettings& settings)
-{
-    QMutexLocker foo(&_mutex);
-    s->b->save_deferred(settings);
-}
-
 void spline::save()
 {
-    save(*group::ini_file());
+    QMutexLocker foo(&_mutex);
+    s->b->save();
 }
 
 void spline::set_bundle(bundle b)
@@ -368,37 +366,34 @@ void spline::set_bundle(bundle b)
         if (b)
         {
             connection = QObject::connect(b.get(), &bundle_::changed,
-                                          s.get(), [&]() {
-                                              // we're holding the mutex to allow signal disconnection in spline dtor
-                                              // before this slot gets called for the next time
+            s.get(), [&]()
+            {
+                    // we're holding the mutex to allow signal disconnection in spline dtor
+                    // before this slot gets called for the next time
 
-                                              // spline isn't a QObject and the connection context is incorrect
+                    // spline isn't a QObject and the connection context is incorrect
 
-                                              QMutexLocker l(&_mutex);
-                                              recompute();
-                                              emit s->recomputed();
-                                          },
-                                          Qt::QueuedConnection);
+                    QMutexLocker l(&_mutex);
+                    validp = false;
+
+                    emit s->recomputed();
+                },
+            Qt::QueuedConnection);
         }
 
-        recompute();
-
-        emit s->recomputed();
+        validp = false;
     }
 }
 
-void spline::recompute()
+void spline::ensure_valid(const QList<QPointF>& the_points)
 {
     QMutexLocker foo(&_mutex);
 
-    QList<QPointF> list = s->points;
+    QList<QPointF> list = the_points;
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
-    // only store if we can't help it
+    // thus, only store if we can't help it
     std::stable_sort(list.begin(), list.end(), sort_fn);
-
-    if (list != s->points)
-        s->points = list;
 
     const int sz = list.size();
 
@@ -410,49 +405,55 @@ void spline::recompute()
         QPointF& pt(list[i]);
 
         const bool overlap = progn(
-                                for (int j = 0; j < i; j++)
-                                {
-                                    QPointF& pt2(list[j]);
-                                    const double dist_sq = (pt.x() - pt2.x())*(pt.x() - pt2.x());
-                                    static constexpr double overlap = .6;
-                                    if (dist_sq < overlap * overlap)
-                                        return true;
-                                }
-                                return false;
-                             );
+            for (int j = 0; j < i; j++)
+            {
+                const QPointF& pt2(list[j]);
+                const QPointF tmp(pt - pt2);
+                const double dist_sq = QPointF::dotProduct(tmp, tmp);
+                const double overlap = max_x / 500.;
+                if (dist_sq < overlap * overlap)
+                    return true;
+            }
+            return false;
+        );
         if (!overlap)
             ret_list.push_back(pt);
     }
 
-    if (ret_list != s->points)
+    if (ret_list != the_points)
         s->points = ret_list;
 
     last_input_value = QPointF(0, 0);
     activep = false;
-    validp = false;
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
-mem<spline::settings> spline::get_settings()
+std::shared_ptr<spline::settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
     return s;
 }
 
-mem<const spline::settings> spline::get_settings() const
+std::shared_ptr<const spline::settings> spline::get_settings() const
 {
     QMutexLocker foo(&_mutex);
     return s;
 }
 
-double spline::precision(const QList<QPointF>& points) const
+double spline::bucket_size_coefficient(const QList<QPointF>& points) const
 {
-    // this adjusts the memoized range to the largest X value. empty space doesn't take value_count discrete points.
+    static constexpr double eps = 1e-4;
+
+    if (unlikely(max_x < eps))
+        return 0;
+
+    // needed to fill the buckets up to the last control point.
+    // space between that point and max_x doesn't matter.
+
     const int sz = element_count(points, max_x);
-    if (sz)
-        return clamp(value_count / clamp(points[sz - 1].x(), 1., max_x), 0., double(value_count));
+    const double last_x = sz ? points[sz - 1].x() : max_x;
 
-    return value_count / clamp(max_x, 1., double(value_count));
+    return clamp((value_count-1) / clamp(last_x, eps, max_x), 0., (value_count-1));
 }
 
 namespace spline_detail {

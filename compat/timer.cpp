@@ -7,6 +7,7 @@
  */
 
 #include "timer.hpp"
+#include <cmath>
 
 Timer::Timer()
 {
@@ -15,17 +16,20 @@ Timer::Timer()
 
 void Timer::start()
 {
-    wrap_gettime(&state);
+    gettime(&state);
 }
 
 // common
 
-void Timer::wrap_gettime(timespec* state)
+void Timer::gettime(timespec* state)
 {
 #if defined(_WIN32) || defined(__MACH__)
     otr_clock_gettime(state);
+#elif defined CLOCK_MONOTONIC
+    const int res = clock_gettime(CLOCK_MONOTONIC, state);
+    assert(res == 0 && "must support CLOCK_MONOTONIC");
 #else
-    (void) clock_gettime(CLOCK_MONOTONIC, state);
+#   error "timer query method not known"
 #endif
 }
 
@@ -33,14 +37,13 @@ void Timer::wrap_gettime(timespec* state)
 
 long long Timer::elapsed_nsecs() const
 {
-    struct timespec cur = {};
-    wrap_gettime(&cur);
+    timespec cur{};
+    gettime(&cur);
     return conv_nsecs(cur);
 }
 
 long long Timer::conv_nsecs(const timespec& cur) const
 {
-    // this can and will overflow
     return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
 }
 
@@ -48,8 +51,8 @@ long long Timer::conv_nsecs(const timespec& cur) const
 
 double Timer::elapsed_usecs() const
 {
-    struct timespec cur = {};
-    wrap_gettime(&cur);
+    timespec cur{};
+    gettime(&cur);
     const long long nsecs = conv_nsecs(cur);
     return nsecs * 1e-3;
 }
@@ -73,27 +76,26 @@ double Timer::elapsed_seconds() const
 #if defined _WIN32
 LARGE_INTEGER Timer::otr_get_clock_frequency()
 {
-    LARGE_INTEGER freq = {};
+    LARGE_INTEGER freq{};
     (void) QueryPerformanceFrequency(&freq);
     return freq;
 }
 
 void Timer::otr_clock_gettime(timespec* ts)
 {
-    static LARGE_INTEGER freq = otr_get_clock_frequency();
+    static const LARGE_INTEGER freq = otr_get_clock_frequency();
 
     LARGE_INTEGER d;
 
     (void) QueryPerformanceCounter(&d);
 
     using ll = long long;
-    using ld = long double;
-    const long long part = ll(d.QuadPart / ld(freq.QuadPart) * 1000000000.L);
+    const ll part = ll(std::roundl((d.QuadPart * 1000000000.L) / ll(freq.QuadPart)));
     using t_s = decltype(ts->tv_sec);
     using t_ns = decltype(ts->tv_nsec);
 
-    ts->tv_sec = t_s(part / 1000000000LL);
-    ts->tv_nsec = t_ns(part % 1000000000LL);
+    ts->tv_sec = t_s(part / 1000000000);
+    ts->tv_nsec = t_ns(part % 1000000000);
 }
 
 #elif defined __MACH__
@@ -106,7 +108,7 @@ mach_timebase_info_data_t Timer::otr_get_mach_frequency()
 
 double Timer::otr_clock_gettime(timespec* ts)
 {
-    static mach_timebase_info_data_t timebase_info = otr_get_mach_frequency();
+    static const mach_timebase_info_data_t timebase_info = otr_get_mach_frequency();
     uint64_t state, nsec;
     state = mach_absolute_time();
     nsec = state * timebase_info.numer / timebase_info.denom;

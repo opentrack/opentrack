@@ -36,31 +36,30 @@ struct mappings_from_2_3_0_rc11 : migration
             "rz", "rz_alt",
         };
 
-        std::shared_ptr<QSettings> settings_ = options::group::ini_file();
-        QSettings& settings(*settings_);
-
-        for (const char* name : names)
-        {
-            QList<QPointF> points;
-
-            settings.beginGroup(QString("Curves-%1").arg(name));
-
-            const int max = settings.value("point-count", 0).toInt();
-
-            for (int i = 0; i < max; i++)
+        return group::with_settings_object([&](QSettings& settings) {
+            for (const char* name : names)
             {
-                QPointF new_point(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
-                                  settings.value(QString("point-%1-y").arg(i), 0).toDouble());
+                QList<QPointF> points;
 
-                points.append(new_point);
+                settings.beginGroup(QString("Curves-%1").arg(name));
+
+                const int max = settings.value("point-count", 0).toInt();
+
+                for (int i = 0; i < max; i++)
+                {
+                    QPointF new_point(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
+                                      settings.value(QString("point-%1-y").arg(i), 0).toDouble());
+
+                    points.append(new_point);
+                }
+
+                settings.endGroup();
+
+                ret.append(points);
             }
 
-            settings.endGroup();
-
-            ret.append(points);
-        }
-
-        return ret;
+            return ret;
+        });
     }
 
     QString unique_date() const override { return "20160909_00"; }
@@ -94,9 +93,6 @@ struct mappings_from_2_3_0_rc11 : migration
         const QList<QList<QPointF>> old_mappings = get_old_splines();
         Mappings m = get_new_mappings();
 
-        std::shared_ptr<QSettings> s_ = options::group::ini_file();
-        QSettings& s = *s_;
-
         for (int i = 0; i < 12; i++)
         {
             spline& spl = (i % 2) == 0 ? m(i / 2).spline_main : m(i / 2).spline_alt;
@@ -104,7 +100,7 @@ struct mappings_from_2_3_0_rc11 : migration
             const QList<QPointF>& points = old_mappings[i];
             for (const QPointF& pt : points)
                 spl.add_point(pt);
-            spl.save(s);
+            spl.save();
         }
     }
 };

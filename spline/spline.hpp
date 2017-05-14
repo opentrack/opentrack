@@ -42,7 +42,7 @@ signals:
 
 class OTR_SPLINE_EXPORT spline final
 {
-    double precision(const QList<QPointF>& points) const;
+    double bucket_size_coefficient(const QList<QPointF>& points) const;
     void update_interp_data();
     float get_value_internal(int x);
     void add_lone_point();
@@ -52,7 +52,7 @@ class OTR_SPLINE_EXPORT spline final
     static QPointF ensure_in_bounds(const QList<QPointF>& points, double max_x, int i);
     static int element_count(const QList<QPointF>& points, double max_x);
 
-    mem<spline_detail::settings> s;
+    std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection connection;
 
     std::vector<float> data;
@@ -63,14 +63,13 @@ class OTR_SPLINE_EXPORT spline final
     MyMutex _mutex;
     QPointF last_input_value;
     qreal max_x, max_y;
-    volatile bool activep;
+    bool activep;
     bool validp;
 
 public:
     using settings = spline_detail::settings;
 
     void reload();
-    void save(QSettings& s);
     void save();
     void set_bundle(bundle b);
 
@@ -98,10 +97,10 @@ public:
 
     void set_tracking_active(bool value);
     bundle get_bundle();
-    void recompute();
+    void ensure_valid(const QList<QPointF>& the_points);
 
-    mem<settings> get_settings();
-    mem<const settings> get_settings() const;
+    std::shared_ptr<settings> get_settings();
+    std::shared_ptr<const settings> get_settings() const;
 
     using points_t = decltype(s->points());
     int get_point_count() const;

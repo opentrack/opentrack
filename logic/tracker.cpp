@@ -24,6 +24,7 @@
 
 using namespace euler;
 using namespace gui_tracker_impl;
+using namespace time_units;
 
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
@@ -32,7 +33,7 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
     m(m),
     libs(libs),
     logger(logger),
-    backlog_time(0),
+    backlog_time(ns(0)),
     tracking_started(false)
 {
 }
@@ -403,21 +404,22 @@ void Tracker::run()
     {
         logic();
 
-        static constexpr long const_sleep_us = 4000;
-        const long elapsed_usecs = t.elapsed_usecs();
-        t.start();
+        static constexpr ns const_sleep_ms(time_cast<ns>(ms(4)));
+        const ns elapsed_nsecs = prog1(t.elapsed<ns>(), t.start());
 
-        backlog_time += elapsed_usecs - const_sleep_us;
+        backlog_time += ns(elapsed_nsecs - const_sleep_ms);
 
-        if (std::fabs(backlog_time) > 3000 * 1000)
+        if (backlog_time > secs_(3) || backlog_time < secs_(-3))
         {
-            qDebug() << "tracker: backlog interval overflow" << backlog_time;
-            backlog_time = 0;
+            qDebug() << "tracker: backlog interval overflow"
+                     << time_cast<ms>(backlog_time).count() << "ms";
+            backlog_time = backlog_time.zero();
         }
 
-        const unsigned sleep_time = unsigned(std::round(clamp((const_sleep_us - backlog_time)/1000., 0, const_sleep_us*2.5/1000)));
+        const int sleep_time_ms = iround(clamp(const_sleep_ms - backlog_time,
+                                               ns(0), ms(50)).count());
 
-        portable::sleep(sleep_time);
+        portable::sleep(sleep_time_ms);
     }
 
     {

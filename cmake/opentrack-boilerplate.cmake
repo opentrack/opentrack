@@ -75,7 +75,7 @@ endfunction()
 
 function(otr_compat target)
     if(NOT MSVC)
-        set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS "-w -Wno-error")
+        set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS " -w -Wno-error")
     endif()
     if(WIN32)
         target_link_libraries(${target} dinput8 dxguid strmiids)
@@ -84,6 +84,8 @@ function(otr_compat target)
 
     set(c-props)
     set(l-props)
+    get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
+
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(c-props " -fvisibility=hidden")
         if(NOT is-c-only)
@@ -95,8 +97,8 @@ function(otr_compat target)
         set(l-props "-Wl,--as-needed")
     endif()
 
-    set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "${c-props} ${arg_COMPILE}")
-    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "${l-props} ${arg_LINK}")
+    set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${c-props} ${arg_COMPILE}")
+    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " ${l-props} ${arg_LINK}")
 endfunction()
 
 include(CMakeParseArguments)
@@ -126,11 +128,12 @@ endfunction()
 function(otr_module n_)
     message(STATUS "module ${n_}")
     cmake_parse_arguments(arg
-        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL"
+        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL;RELINK"
         "LINK;COMPILE"
         "SOURCES"
         ${ARGN}
     )
+
     if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "otr_module bad formals: ${arg_UNPARSED_ARGUMENTS}")
     endif()
@@ -162,6 +165,12 @@ function(otr_module n_)
             set(link-mode STATIC)
         endif()
         add_library(${n} ${link-mode} "${${n}-all}")
+    endif()
+
+    if(NOT arg_RELINK)
+        set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
+    else()
+        set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED FALSE)
     endif()
 
     if(NOT arg_NO-QT)

@@ -55,16 +55,21 @@ void device_list::fill_device_specs(QList<device_spec>& list)
                                                device_states, vr::k_unMaxTrackedDeviceCount);
 
             static constexpr unsigned bufsiz = vr::k_unTrackingStringSize;
-            static char str[bufsiz] {}; // vr_lock prevents reentrancy
+            static char str[bufsiz+1] {}; // vr_lock prevents reentrancy
 
             for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
             {
-               if (v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_Invalid ||
-                   v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference)
+               if (v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_Invalid)
+               {
+                   qDebug() << "no device with index";
                    continue;
+               }
 
                if (!device_states[k].bDeviceIsConnected)
+               {
+                   qDebug() << "device not connected but proceeding";
                    continue;
+               }
 
                unsigned len;
 
@@ -92,6 +97,8 @@ void device_list::fill_device_specs(QList<device_spec>& list)
                    dev.type = "HMD"; break;
                case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
                    dev.type = "Controller"; break;
+               case vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference:
+                   dev.type = "Tracker"; break;
                default:
                    dev.type = "Unknown"; break;
                }

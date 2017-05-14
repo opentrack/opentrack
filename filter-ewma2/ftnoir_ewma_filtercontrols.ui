@@ -23,7 +23,7 @@
    <string>EWMA filter settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../gui/ui-res.qrc">
+   <iconset resource="../gui/opentrack-res.qrc">
     <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -73,7 +73,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>1000</number>
+         <number>990</number>
         </property>
         <property name="singleStep">
          <number>5</number>
@@ -82,7 +82,7 @@
          <number>50</number>
         </property>
         <property name="value">
-         <number>1000</number>
+         <number>990</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -123,10 +123,10 @@
          </sizepolicy>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>1000</number>
+         <number>990</number>
         </property>
         <property name="singleStep">
          <number>5</number>
@@ -135,7 +135,7 @@
          <number>50</number>
         </property>
         <property name="value">
-         <number>1000</number>
+         <number>980</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -173,7 +173,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>1000</number>
+         <number>2450</number>
         </property>
         <property name="singleStep">
          <number>5</number>
@@ -182,7 +182,7 @@
          <number>50</number>
         </property>
         <property name="value">
-         <number>1000</number>
+         <number>490</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -287,7 +287,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../gui/ui-res.qrc"/>
+  <include location="../gui/opentrack-res.qrc"/>
  </resources>
  <connections/>
  <slots>

@@ -3,4 +3,12 @@ if(WIN32)
     target_compile_definitions(opentrack-tracker-rs-impl PRIVATE -DUNICODE -D_UNICODE)
     target_include_directories(opentrack-tracker-rs-impl PRIVATE SYSTEM "${SDK_REALSENSE}/include")
     target_link_libraries(opentrack-tracker-rs-impl advapi32)
+
+    # for SDK headers
+    if(CMAKE_COMPILER_IS_GNUCC)
+        add_definitions(-fpermissive -Wno-error -w
+                        #-Wno-missing-field-initializers -Wno-switch -Wno-sign-compare
+                        #-Wno-unknown-pragmas -Wno-attributes
+        )
+    endif()
 endif()

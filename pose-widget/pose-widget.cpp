@@ -18,11 +18,12 @@
 
 using namespace pose_widget_impl;
 
+static constexpr int offset = 2;
+
 pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
-    image(w, h, QImage::Format_ARGB32),
-    image2(w, h, QImage::Format_ARGB32),
-    width(w), height(h),
+    image(w+offset*2, h+offset*2, QImage::Format_ARGB32),
+    image2(w+offset*2, h+offset*2, QImage::Format_ARGB32),
     fresh(false)
 {
     front = QImage(QString(":/images/side1.png"));
@@ -43,8 +44,10 @@ pose_transform::~pose_transform()
 void pose_widget::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
-    xform.with_image_lock([&](const QImage& image) {
-        p.drawImage(event->rect(), image);
+
+    xform.with_image_lock([&](const QImage& image)
+    {
+        p.drawImage(event->rect(), image, QRect(offset, offset, pose_transform::w, pose_transform::h));
     });
 }
 
@@ -68,7 +71,7 @@ void pose_transform::run()
         project_quad_texture();
 
 end:
-        portable::sleep(9);
+        portable::sleep(23);
     }
 }
 
@@ -186,7 +189,7 @@ void pose_transform::project_quad_texture()
 
     num dir;
     vec2 pt[4];
-    const int sx = width - 1, sy = height - 1;
+    const int sx = w - 1, sy = h - 1;
     vec2 projected[3];
 
     {
@@ -252,7 +255,7 @@ void pose_transform::project_quad_texture()
     const unsigned dest_pitch = image.bytesPerLine();
 
     const unsigned char* orig = tex.bits();
-    unsigned char* dest = image.bits();
+    unsigned char* dest = image.bits() + offset*dest_pitch;
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
@@ -270,8 +273,8 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    for (int y = 1; y < sy; y++)
-        for (int x = 1; x < sx; x++)
+    for (int y = 0; y < sy; y++)
+        for (int x = 0; x < sx; x++)
         {
             vec2 pos(x, y);
             vec2 uv;
@@ -309,7 +312,7 @@ void pose_transform::project_quad_texture()
                 const float ax = 1 - ax_;
                 const float ay = 1 - ay_;
 
-                const unsigned pos = y * dest_pitch + x * dest_depth;
+                const unsigned pos = y * dest_pitch + (x+offset) * dest_depth;
 
                 for (int k = 0; k < 4; k++)
                 {
@@ -336,13 +339,13 @@ vec2 pose_transform::project(const vec3 &point)
 
     vec3 ret = rotation * point;
     num z = std::fmax(num(.5), 1 + translation.z()/-80);
-    num w = width, h = height;
-    num x = w * translation.x() / 2 / -80;
-    if (fabs(x) > w/2)
-        x = x > 0 ? w/2 : w/-2;
-    num y = h * translation.y() / 2 / -80;
-    if (fabs(y) > h/2)
-        y = y > 0 ? h/2 : h/-2;
+    num w_ = w, h_ = h;
+    num x = w_ * translation.x() / 2 / -80;
+    if (fabs(x) > w_/2)
+        x = x > 0 ? w_/2 : w_/-2;
+    num y = h_ * translation.y() / 2 / -80;
+    if (fabs(y) > h_/2)
+        y = y > 0 ? h_/2 : h_/-2;
     return vec2(z * (ret.x() + x), z * (ret.y() + y));
 }
 

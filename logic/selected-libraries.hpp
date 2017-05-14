@@ -15,11 +15,14 @@
 
 struct OTR_LOGIC_EXPORT SelectedLibraries
 {
-    using dylibptr = mem<dylib>;
-    mem<ITracker> pTracker;
-    mem<IFilter> pFilter;
-    mem<IProtocol> pProtocol;
+    using dylibptr = std::shared_ptr<dylib>;
+
+    std::shared_ptr<ITracker> pTracker;
+    std::shared_ptr<IFilter> pFilter;
+    std::shared_ptr<IProtocol> pProtocol;
+
     SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
     SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
+
     bool correct;
 };

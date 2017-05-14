@@ -8,25 +8,17 @@
 #pragma once
 
 #include "plugin-api.hpp"
-#include "options/options.hpp"
 
-#include <QWidget>
+#include <memory>
+#include <algorithm>
+
 #include <QDebug>
 #include <QString>
 #include <QLibrary>
-#include <QFrame>
 #include <QList>
-
-#include <cstdio>
-#include <cinttypes>
-#include <iostream>
-#include <algorithm>
-
-#include <QCoreApplication>
-#include <QFile>
 #include <QDir>
 #include <QList>
-#include <QStringList>
+#include <QIcon>
 
 #if defined(__APPLE__)
 #   define OPENTRACK_SOLIB_EXT "dylib"
@@ -36,27 +28,25 @@
 #   define OPENTRACK_SOLIB_EXT "so"
 #endif
 
-#include <iostream>
-
 #ifdef _MSC_VER
 #   define OPENTRACK_SOLIB_PREFIX ""
 #else
-#   define OPENTRACK_SOLIB_PREFIX ""
+#   define OPENTRACK_SOLIB_PREFIX "lib"
 #endif
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
-struct dylib final {
-    enum Type : unsigned { Filter, Tracker, Protocol, Invalid = 0xcafebabeU };
+struct dylib final
+{
+    enum Type { Filter = 0xdeadbabe, Tracker = 0xcafebeef, Protocol = 0xdeadf00d, Invalid = 0xcafebabe };
 
     dylib(const QString& filename, Type t) :
         type(Invalid),
         filename(filename),
         Dialog(nullptr),
         Constructor(nullptr),
-        Meta(nullptr),
-        handle(nullptr)
+        Meta(nullptr)
     {
         // otherwise dlopen opens the calling executable
         if (filename.size() == 0)
@@ -77,7 +67,7 @@ struct dylib final {
         if (check((Meta = (OPENTRACK_METADATA_FUNPTR) handle.resolve("GetMetadata"), !Meta)))
             return;
 
-        auto m = mem<Metadata>(Meta());
+        auto m = std::unique_ptr<Metadata>(Meta());
 
         icon = m->icon();
         name = m->name();
@@ -94,38 +84,42 @@ struct dylib final {
         }
     }
 
-    static QList<mem<dylib>> enum_libraries(const QString& library_path)
+    static QList<std::shared_ptr<dylib>> enum_libraries(const QString& library_path)
     {
-        const char* filters_n[] = { OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT,
-                                    OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT,
-                                    OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT,
-                                  };
-        const Type filters_t[] = { Filter, Tracker, Protocol };
+        QDir module_directory(library_path);
+        QList<std::shared_ptr<dylib>> ret;
 
-        QDir settingsDir(library_path);
+        static const struct filter_ {
+            Type type;
+            QString glob;
+        } filters[] = {
+            { Filter, OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT, },
+            { Tracker, OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT, },
+            { Protocol, OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT, },
+        };
 
-        QList<mem<dylib>> ret;
-
-        for (int i = 0; i < 3; i++)
+        for (const filter_& filter : filters)
         {
-            QString glob = filters_n[i];
-            Type t = filters_t[i];
-            QStringList filenames = settingsDir.entryList(QStringList { glob }, QDir::Files, QDir::Name);
-
-            for (const QString& filename : filenames)
+            for (const QString& filename : module_directory.entryList({ filter.glob }, QDir::Files, QDir::Name))
             {
-                QIcon icon;
-                QString longName;
-                auto lib = std::make_shared<dylib>(library_path + filename, t);
-                if (!get_metadata(lib, longName, icon))
-                    continue;
-                if (std::any_of(ret.cbegin(),
-                                ret.cend(),
-                                [&](mem<dylib> a) {return a->type == lib->type && a->name == lib->name;}))
+                std::shared_ptr<dylib> lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path).arg(filename), filter.type);
+
+                if (lib->type == Invalid)
                 {
-                    qDebug() << "Duplicate lib" << lib->filename;
+                    qDebug() << "can't load dylib" << filename;
                     continue;
                 }
+
+                if (std::any_of(ret.cbegin(),
+                                ret.cend(),
+                                [&lib](const std::shared_ptr<dylib>& a) {
+                                    return a->type == lib->type && a->name == lib->name;
+                                }))
+                {
+                    qDebug() << "duplicate lib" << filename << "ident" << lib->name;
+                    continue;
+                }
+
                 ret.push_back(lib);
             }
         }
@@ -161,60 +155,50 @@ private:
 
         return fail;
     }
-
-    static bool get_metadata(mem<dylib> lib, QString& name, QIcon& icon)
-    {
-        Metadata* meta;
-        if (!lib->Meta || ((meta = lib->Meta()), !meta))
-            return false;
-        name = meta->name();
-        icon = meta->icon();
-        delete meta;
-        return true;
-    }
 };
 
 struct Modules final
 {
+    using dylib_ptr = std::shared_ptr<dylib>;
+    using dylib_list = QList<dylib_ptr>;
+
     Modules(const QString& library_path) :
         module_list(dylib::enum_libraries(library_path)),
         filter_modules(filter(dylib::Filter)),
         tracker_modules(filter(dylib::Tracker)),
         protocol_modules(filter(dylib::Protocol))
     {}
-    QList<mem<dylib>>& filters() { return filter_modules; }
-    QList<mem<dylib>>& trackers() { return tracker_modules; }
-    QList<mem<dylib>>& protocols() { return protocol_modules; }
+    dylib_list& filters() { return filter_modules; }
+    dylib_list& trackers() { return tracker_modules; }
+    dylib_list& protocols() { return protocol_modules; }
 private:
-    QList<mem<dylib>> module_list;
-    QList<mem<dylib>> filter_modules;
-    QList<mem<dylib>> tracker_modules;
-    QList<mem<dylib>> protocol_modules;
+    dylib_list module_list;
+    dylib_list filter_modules;
+    dylib_list tracker_modules;
+    dylib_list protocol_modules;
 
-    template<typename t>
-    static void sort(QList<t>& xs)
+    static dylib_list& sorted(dylib_list& xs)
     {
-        std::sort(xs.begin(), xs.end(), [&](const t& a, const t& b) { return a->name.toLower() < b->name.toLower(); });
+        std::sort(xs.begin(), xs.end(), [&](const dylib_ptr& a, const dylib_ptr& b) { return a->name.toLower() < b->name.toLower(); });
+        return xs;
     }
 
-    QList<mem<dylib>> filter(dylib::Type t)
+    dylib_list filter(dylib::Type t)
     {
-        QList<mem<dylib>> ret;
+        QList<std::shared_ptr<dylib>> ret;
         for (auto x : module_list)
             if (x->type == t)
                 ret.push_back(x);
 
-        sort(ret);
-
-        return ret;
+        return sorted(ret);
     }
 };
 
 template<typename t>
-mem<t> make_dylib_instance(mem<dylib> lib)
+static inline std::shared_ptr<t> make_dylib_instance(const std::shared_ptr<dylib>& lib)
 {
-    mem<t> ret;
+    std::shared_ptr<t> ret;
     if (lib != nullptr && lib->Constructor)
-        ret = mem<t>(reinterpret_cast<t*>(reinterpret_cast<OPENTRACK_CTOR_FUNPTR>(lib->Constructor)()));
+        ret = std::shared_ptr<t>(reinterpret_cast<t*>(reinterpret_cast<OPENTRACK_CTOR_FUNPTR>(lib->Constructor)()));
     return ret;
 }

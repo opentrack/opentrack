@@ -35,7 +35,7 @@ struct OTR_LOGIC_EXPORT Work
     std::shared_ptr<Shortcuts> sc;
     std::vector<key_tuple> keys;
 
-    Work(Mappings& m, QFrame* frame, mem<dylib> tracker, mem<dylib> filter, mem<dylib> proto);
+    Work(Mappings& m, QFrame* frame, std::shared_ptr<dylib> tracker, std::shared_ptr<dylib> filter, std::shared_ptr<dylib> proto);
     ~Work();
     void reload_shortcuts();
     bool is_ok() const;

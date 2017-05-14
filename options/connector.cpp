@@ -83,11 +83,12 @@ void connector::on_value_created(const QString& name, value_type val)
 
     QMutexLocker l(get_mtx());
 
-    if (on_value_destructed_impl(name, val))
+    int i = 1;
+    while (on_value_destructed_impl(name, val))
     {
         qWarning() << "options/connector: value created twice;"
-                   << "bundle"
-                   << val->b->name()
+                   << "cnt" << i++
+                   << "bundle" << val->b->name()
                    << "value-name" << name
                    << "value-ptr" << quintptr(val);
     }

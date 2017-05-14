@@ -129,13 +129,13 @@ main(int argc, char** argv)
 
     if (!QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool())
     {
-        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/" + OPENTRACK_I18N_PATH, ".qm");
+        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/" OPENTRACK_I18N_PATH, ".qm");
         (void) QCoreApplication::installTranslator(&t);
     }
 
     do
     {
-       mem<MainWindow> w = std::make_shared<MainWindow>();
+       std::shared_ptr<MainWindow> w = std::make_shared<MainWindow>();
 
        if (!w->isEnabled())
            break;

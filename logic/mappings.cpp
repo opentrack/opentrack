@@ -11,10 +11,10 @@ Map::Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& op
     spline_alt.set_max_input(opts.clamp);
 }
 
-void Map::save(QSettings& s)
+void Map::save()
 {
-    spline_main.save(s);
-    spline_alt.save(s);
+    spline_main.save();
+    spline_alt.save();
 }
 
 void Map::load()

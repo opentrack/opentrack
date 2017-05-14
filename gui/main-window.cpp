@@ -74,13 +74,13 @@ MainWindow::MainWindow() :
     {
         modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
 
-        for (mem<dylib>& x : modules.trackers())
+        for (std::shared_ptr<dylib>& x : modules.trackers())
             ui.iconcomboTrackerSource->addItem(x->icon, x->name);
 
-        for (mem<dylib>& x : modules.protocols())
+        for (std::shared_ptr<dylib>& x : modules.protocols())
             ui.iconcomboProtocol->addItem(x->icon, x->name);
 
-        for (mem<dylib>& x : modules.filters())
+        for (std::shared_ptr<dylib>& x : modules.filters())
             ui.iconcomboFilter->addItem(x->icon, x->name);
     }
 
@@ -277,6 +277,14 @@ void MainWindow::die_on_config_not_writable()
 
 bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
 {
+    const bool writable =
+        group::with_settings_object([&](QSettings& s) {
+            return s.isWritable();
+        });
+
+    if (writable)
+        return false;
+
     const bool open = QFile(group::ini_combine(current)).open(QFile::ReadWrite);
     const QStringList ini_list = group::ini_list();
 
@@ -593,7 +601,7 @@ inline bool MainWindow::mk_window(ptr<t>& place, Args&&... params)
 }
 
 template<typename t>
-bool MainWindow::mk_dialog(mem<dylib> lib, ptr<t>& d)
+bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)
