@@ -65,7 +65,7 @@ void tie_setting(value<t>& v, QLabel* lb, const QString& format, const xs&... ar
 
 template<typename t, typename F, typename... xs>
 decltype((void)((std::declval<F>())(std::declval<const t&>())))
-tie_setting(value<t>& v, QLabel* lb, F&& fun, const QString& fmt = QStringLiteral("%1"), const xs&... args)
+tie_setting(value<t>& v, QLabel* lb, F&& fun, const QString& fmt, const xs&... args)
 {
     auto closure = [=](const t& x) { lb->setText(fmt.arg(fun(x), args...)); };
 
