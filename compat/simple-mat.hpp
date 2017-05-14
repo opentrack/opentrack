@@ -206,12 +206,21 @@ public:
     inline num operator()(unsigned j, unsigned i) const { return data[j][i]; }
     inline num& operator()(unsigned j, unsigned i) { return data[j][i]; }
 
+#ifdef __GNUG__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
+
     template<typename... ts, int h__ = h_, int w__ = w_,
              typename = typename std::enable_if<is_arglist_correct<num, h__, w__, ts...>::value>::type>
     Mat(const ts... xs) : data{static_cast<num>(xs)...}
     {
         static_assert(h__ == h_ && w__ == w_, "");
     }
+
+#ifdef __GNUG__
+#   pragma GCC diagnostic pop
+#endif
 
     Mat()
     {
