@@ -208,6 +208,7 @@ public:
 
     bool grabKey(quint32 keycode, quint32 modifiers, Window window)
     {
+        //TODO: search keybinding by code and modifiers, so keys can be assigned multiple times using different modifiers
         if (keybinding::incf(keycode))
         {
             QxtX11ErrorHandler errorHandler;
