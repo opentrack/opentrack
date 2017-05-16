@@ -112,6 +112,7 @@ endfunction()
 function(otr_i18n_for_target_directory n)
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
+        file(RELATIVE_PATH t "${CMAKE_SOURCE_DIR}" "${t}")
         add_custom_command(OUTPUT "${t}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
