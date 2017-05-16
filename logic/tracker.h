@@ -39,8 +39,7 @@ struct bits
         f_center         = 1 << 0,
         f_enabled        = 1 << 1,
         f_zero           = 1 << 2,
-        f_tcomp_disabled = 1 << 3,
-        f_should_quit    = 1 << 4,
+        f_should_quit    = 1 << 3,
     };
 
     std::atomic<unsigned> b;
@@ -113,7 +112,6 @@ public:
 
     void set_toggle(bool value) { set(f_enabled, value); }
     void set_zero(bool value) { set(f_zero, value); }
-    void set_tcomp_disabled(bool x) { set(f_tcomp_disabled, x); }
 
     void zero() { negate(f_zero); }
     void toggle_enabled() { negate(f_enabled); }

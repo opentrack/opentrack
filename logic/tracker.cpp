@@ -304,9 +304,7 @@ void Tracker::logic()
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
 
-        const bool reltrans = !get(f_tcomp_disabled);
-
-        if (s.tcomp_p && reltrans)
+        if (s.tcomp_p)
         {
             const double tcomp_c[] =
             {
@@ -490,6 +488,5 @@ bits::bits() : b(0u)
     set(f_center, true);
     set(f_enabled, true);
     set(f_zero, false);
-    set(f_tcomp_disabled, false);
     set(f_should_quit, false);
 }
