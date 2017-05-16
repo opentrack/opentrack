@@ -8,7 +8,7 @@ taskkill -f -im trackir.exe 2>%SystemDrive%\NUL
 call:check cmake .
 call:check ninja i18n
 call:check "d:/cygwin64/bin/dash.exe" -c "git checkout -f -- ../*/lang/ ../*/*/lang/"
-call:check ninja -j4 install
+call:check ninja -j6 install
 call:check "d:/cygwin64/bin/dash.exe" -c "git checkout -f -- ../*/lang/ ../*/*/lang/"
 
 exit /b 0

@@ -245,7 +245,7 @@ function(otr_prop type)
     endif()
     # must pass some properties at least
     list(LENGTH opts len)
-    if(NOT "${len}" GREATER 1)
+    if(NOT "${len}" GREATER 0)
         message(FATAL_ERROR "no properties given")
     endif()
 
