@@ -154,7 +154,7 @@ void accela::filter(const double* input, double *output)
         output[k] *= dt;
         output[k] += last_output[k];
 
-        if (signum(last_output[k] - output[k]) < 0)
+        if (signum(last_output[k] - output[k]) >= 0)
             output[k] = std::fmax(input[k], output[k]);
         else
             output[k] = std::fmin(input[k], output[k]);

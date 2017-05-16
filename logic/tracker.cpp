@@ -416,8 +416,9 @@ void Tracker::run()
             backlog_time = backlog_time.zero();
         }
 
-        const int sleep_time_ms = iround(clamp(const_sleep_ms - backlog_time,
-                                               ns(0), ms(50)).count());
+        const int sleep_time_ms = iround(time_cast<ms>(clamp(const_sleep_ms - backlog_time,
+                                                             ns(0), ms(50)))
+                                         .count());
 
         portable::sleep(sleep_time_ms);
     }

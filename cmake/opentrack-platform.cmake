@@ -49,7 +49,6 @@ if(MSVC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zi")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zi")
     endif()
-    #set(CMAKE_C_FLAGS " -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS ${CMAKE_C_FLAGS}")
 
     foreach (i SHARED MODULE EXE)
         set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT")

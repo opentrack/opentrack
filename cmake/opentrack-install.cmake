@@ -50,12 +50,10 @@ otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
 function(merge_translations)
     install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/i18n\")")
 
-    set(all-ts-files "")
     set(all-qm-files "")
 
     foreach(i ${opentrack-all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
-        #get_property(ts-deps GLOBAL PROPERTY "opentrack-ts-targets-${i}")
 
         set(ts-files_ "")
 
@@ -67,25 +65,20 @@ function(merge_translations)
 
         set(ts-files "${ts-files_}")
 
-        foreach(k ${ts-files})
-            list(APPEND all-ts-files "${k}")
-        endforeach()
-
         if(NOT ".${ts-files}" STREQUAL ".")
-            set(lrelease-deps "${ts-files}")
-
             set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
             list(APPEND all-qm-files "${qm-output}")
             add_custom_command(OUTPUT "${qm-output}"
                 COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts-files} -qm "${qm-output}"
-                DEPENDS ${lrelease-deps}
-                COMMENT "Running lrelease for ${i}")
+                DEPENDS ${ts-files}
+                COMMENT "Running lrelease for ${i}"
+            )
             set(lang-target "i18n-lang-${i}")
+            add_custom_target("${lang-target}" DEPENDS "${qm-output}")
 
             install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         endif()
     endforeach()
     add_custom_target(i18n ALL DEPENDS ${all-qm-files})
-    add_custom_target(force-i18n DEPENDS ${all-ts-files} ${all-qm-files} i18n)
 endfunction()
 
