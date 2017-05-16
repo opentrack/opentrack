@@ -206,19 +206,45 @@ public:
         return DefaultRootWindow(display());
     }
 
-    bool grabKey(quint32 keycode, Window window)
+    bool grabKey(quint32 keycode, quint32 modifiers, Window window)
     {
+        //TODO: search keybinding by code and modifiers, so keys can be assigned multiple times using different modifiers
         if (keybinding::incf(keycode))
         {
             QxtX11ErrorHandler errorHandler;
+            bool error = false;
 
-            XGrabKey(display(), keycode, AnyModifier, window, True,
+            XGrabKey(display(), keycode, modifiers, window, True,
                      GrabModeAsync, GrabModeAsync);
-
             if (errorHandler.error) {
+                error=true;
+            }
+            //Also grab key with num lock = on
+            XGrabKey(display(), keycode, modifiers | Mod2Mask, window, True,
+                     GrabModeAsync, GrabModeAsync);
+            if (errorHandler.error) {
+                error=true;
+            }
+
+            //...and with scroll lock = on
+            XGrabKey(display(), keycode, modifiers | Mod5Mask, window, True,
+                     GrabModeAsync, GrabModeAsync);
+            if (errorHandler.error) {
+                error=true;
+            }
+
+            //...and with bot = on
+            XGrabKey(display(), keycode, modifiers | Mod2Mask | Mod5Mask, window, True,
+                     GrabModeAsync, GrabModeAsync);
+            if (errorHandler.error) {
+                error=true;
+            }
+
+            if(error){
                 ungrabKey(keycode, window);
                 return false;
             }
+
         }
 
         return true;
@@ -262,8 +288,6 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
             keystate |= Mod4Mask;
         if(kev->state & XCB_MOD_MASK_SHIFT) //shift
             keystate |= ShiftMask;
-        if(kev->state & XCB_MOD_MASK_2) //numlock
-            keystate |= Mod2Mask;
 #if 0
         if(key->state & XCB_MOD_MASK_3) // alt gr aka right-alt or ctrl+left-alt -- what mask is it?
             keystate |= AltGrMask;
@@ -323,7 +347,7 @@ quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
 bool QxtGlobalShortcutPrivate::registerShortcut(quint32 nativeKey, unused(quint32, nativeMods))
 {
     QxtX11Data x11;
-    return x11.isValid() && x11.grabKey(nativeKey, x11.rootWindow());
+    return x11.isValid() && x11.grabKey(nativeKey, nativeMods, x11.rootWindow());
 }
 
 bool QxtGlobalShortcutPrivate::unregisterShortcut(quint32 nativeKey, unused(quint32, nativeMods))
