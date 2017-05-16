@@ -284,18 +284,18 @@ void Tracker::logic()
 
         if (s.neck_enable)
         {
-            double ny = s.neck_y, nz = -s.neck_z;
+            double nz = -s.neck_z;
 
-            if (ny != 0 || nz != 0)
+            if (nz != 0)
             {
                 const rmat R = euler_to_rmat(
                        euler_t(value(Yaw)   * d2r,
                                value(Pitch) * d2r,
                                value(Roll)  * d2r));
-                euler_t xyz(0, ny, nz);
+                euler_t xyz(0, 0, nz);
                 t_compensate(R, xyz, xyz, false, false, false);
                 neck(TX) = xyz(TX);
-                neck(TY) = xyz(TY) - ny;
+                neck(TY) = xyz(TY);
                 neck(TZ) = xyz(TZ) - nz;
             }
         }

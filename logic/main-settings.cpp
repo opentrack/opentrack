@@ -23,7 +23,6 @@ main_settings::main_settings() :
     camera_roll(b, "camera-roll", 0),
     center_at_startup(b, "center-at-startup", true),
     center_method(b, "centering-method", 1),
-    neck_y(b, "neck-height", 0),
     neck_z(b, "neck-depth", 0),
     neck_enable(b, "neck-enable", false),
     key_start_tracking1(b, "start-tracking"),

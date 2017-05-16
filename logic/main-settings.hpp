@@ -79,7 +79,7 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<int> camera_yaw, camera_pitch, camera_roll;
     value<bool> center_at_startup;
     value<int> center_method;
-    value<int> neck_y, neck_z;
+    value<int> neck_z;
     value<bool> neck_enable;
     key_opts key_start_tracking1, key_start_tracking2;
     key_opts key_stop_tracking1, key_stop_tracking2;
