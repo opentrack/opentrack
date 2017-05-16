@@ -110,18 +110,17 @@ function(otr_install_pdb_current_project target)
 endfunction()
 
 function(otr_i18n_for_target_directory n)
+    set(k "opentrack-${n}")
     foreach(i ${opentrack-all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        file(RELATIVE_PATH t "${CMAKE_SOURCE_DIR}" "${t}")
         add_custom_command(OUTPUT "${t}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            DEPENDS ${${n}-cc} ${${n}-hh} ${${n}-ui} ${${n}-rc}
+            DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-ui} ${${k}-rc}
             COMMENT "Running lupdate for ${n}/${i}")
         set(target-name "i18n-lang-${i}-module-${n}")
         add_custom_target(${target-name} DEPENDS "${t}")
-        set_property(GLOBAL APPEND PROPERTY "opentrack-ts-targets-${i}" "${target-name}")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t}")
     endforeach()
 endfunction()
