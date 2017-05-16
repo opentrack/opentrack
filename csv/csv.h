@@ -15,7 +15,6 @@ public:
     QString readLine();
     bool parseLine(QStringList& ret);
 
-    void setCodec(const char* codecName);
     static bool getGameData(int gameID, unsigned char* table, QString& gamename);
 private:
     CSV(QIODevice* device);
