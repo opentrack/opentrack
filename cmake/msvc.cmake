@@ -52,7 +52,7 @@ set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "/WX")
+set(_LDFLAGS "")
 set(_LDFLAGS_RELEASE "/LTCG:INCREMENTAL /OPT:REF /OPT:ICF=10")
 set(_LDFLAGS_DEBUG "")
 
