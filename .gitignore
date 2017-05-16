@@ -8,4 +8,4 @@
 *.obj
 *.exp
 *.pdb
-
+/.idea/
