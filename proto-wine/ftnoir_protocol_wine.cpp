@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QCoreApplication>
 #include <string.h>
+#include <math.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
@@ -37,7 +38,7 @@ void wine::pose( const double *headpose )
     {
         lck_shm.lock();
         for (int i = 3; i < 6; i++)
-            shm->data[i] = headpose[i] / 57.295781;
+            shm->data[i] = headpose[i] / (180 / M_PI );
         for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
         if (shm->gameid != gameid)
