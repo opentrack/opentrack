@@ -14,6 +14,7 @@
 #include <sys/mman.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 
 #include <XPLMPlugin.h>
 #include <XPLMDataAccess.h>
@@ -34,7 +35,7 @@
 #include "compat/export.hpp"
 
 enum Axis {
-        TX = 0, TY, TZ, Yaw, Pitch, Roll
+    TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
 typedef struct PortableLockedShm
@@ -53,7 +54,8 @@ typedef struct WineSHM
 
 static PortableLockedShm* lck_posix = NULL;
 static WineSHM* shm_posix = NULL;
-static void *view_x, *view_y, *view_z, *view_heading, *view_pitch;
+static WineSHM* data_last = NULL;
+static void *view_x, *view_y, *view_z, *view_heading, *view_pitch, *view_roll;
 static float offset_x, offset_y, offset_z;
 static XPLMCommandRef track_toggle = NULL, translation_disable_toggle = NULL;
 static int track_disabled = 1;
@@ -111,15 +113,29 @@ float write_head_position(
         void *               OT_UNUSED(inRefcon) )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
-        PortableLockedShm_lock(lck_posix);
-        if (!translation_disabled)
-        {
-            XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
-            XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
-            XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
+        if(data_last == NULL){
+            data_last = calloc(1, sizeof(WineSHM));
         }
-        XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / 3.141592654);
-        XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / 3.141592654);
+
+        //only set the view if tracking is running
+        if(memcmp(shm_posix, data_last, sizeof(shm_posix->data)) != 0){
+            PortableLockedShm_lock(lck_posix);
+            if (!translation_disabled)
+            {
+                XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
+                XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
+                XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
+            }
+            XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / M_PI);
+            XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / M_PI);
+            XPLMSetDataf(view_roll, shm_posix->data[Roll] * 180 / M_PI);
+        } else {
+            //reset roll, otherwise it would be stuck at last angle
+            XPLMSetDataf(view_roll, 0);
+        }
+
+        memcpy(&data_last, &shm_posix, sizeof(WineSHM));
+
         PortableLockedShm_unlock(lck_posix);
     }
     return -1.0;
@@ -166,6 +182,7 @@ PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignat
     view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
     view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
     view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
+    view_roll = XPLMFindDataRef("sim/graphics/view/field_of_view_roll_deg");
 
     track_toggle = XPLMCreateCommand("opentrack/toggle", "Disable/Enable head tracking");
     translation_disable_toggle = XPLMCreateCommand("opentrack/toggle_translation", "Disable/Enable input translation from opentrack");
