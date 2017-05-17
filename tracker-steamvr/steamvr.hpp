@@ -40,6 +40,7 @@ struct device_spec
     QString model, serial, type;
     unsigned k;
     QString to_string() const;
+    bool is_connected;
 };
 
 struct device_list final
@@ -48,7 +49,7 @@ struct device_list final
 
     device_list();
     void refresh_device_list();
-    const QList<device_spec>& devices() const & { return device_specs; }
+    const QList<device_spec>& devices() const { return device_specs; }
 
     static OTR_NEVER_INLINE maybe_pose get_pose(int k);
     static QString strerror(error_t error);
@@ -61,7 +62,6 @@ private:
     QList<device_spec> device_specs;
     static QMutex mtx;
     static tt vr_init_();
-    static void vr_deleter();
     static void fill_device_specs(QList<device_spec>& list);
     static tt vr_init();
 };

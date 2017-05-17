@@ -106,6 +106,7 @@ void device_list::fill_device_specs(QList<device_spec>& list)
                dev.model = str;
                dev.pose = device_states[k];
                dev.k = k;
+               dev.is_connected = device_states[k].bDeviceIsConnected;
 
                list.push_back(dev);
             }
@@ -303,7 +304,12 @@ steamvr_dialog::steamvr_dialog()
 
     device_list list;
     for (const device_spec& spec : list.devices())
-        ui.device->addItem(spec.to_string(), spec.to_string());
+    {
+        QString text = spec.to_string();
+        if (!spec.is_connected)
+            text = QStringLiteral("%1 [disconnected]").arg(text);
+        ui.device->addItem(text, spec.to_string());
+    }
 
     tie_setting(s.device_serial, ui.device);
 }
