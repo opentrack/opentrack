@@ -145,7 +145,7 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
 
 void OptionsDialog::closeEvent(QCloseEvent *)
 {
-    done(int(result()));
+    done(result());
 }
 
 void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
