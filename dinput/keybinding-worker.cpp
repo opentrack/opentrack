@@ -134,7 +134,7 @@ void KeybindingWorker::run()
                     Key k;
                     if (old_keystate[i] != keystate[i])
                     {
-                        const bool held = keystate[i] & 0x80;
+                        const bool held = !!(keystate[i] & 0x80);
                         switch (i)
                         {
                         case DIK_LCONTROL:
@@ -145,14 +145,14 @@ void KeybindingWorker::run()
                         case DIK_RALT:
                             break;
                         default:
-                            k.shift = !!(keystate[DIK_LSHIFT] & 0x80) || !!(keystate[DIK_RSHIFT] & 0x80);
-                            k.alt = !!(keystate[DIK_LALT] & 0x80) || !!(keystate[DIK_RALT] & 0x80);
-                            k.ctrl = !!(keystate[DIK_LCONTROL] & 0x80) || !!(keystate[DIK_RCONTROL] & 0x80);
+                            k.shift = !!((keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80));
+                            k.alt = !!((keystate[DIK_LALT] & 0x80) || (keystate[DIK_RALT] & 0x80));
+                            k.ctrl = !!((keystate[DIK_LCONTROL] & 0x80) || (keystate[DIK_RCONTROL] & 0x80));
                             k.keycode = i;
                             k.held = held;
 
                             for (auto& r : receivers)
-                                r->operator()(k);
+                                r(k);
                             break;
                         }
                     }
