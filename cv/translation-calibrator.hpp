@@ -33,7 +33,6 @@ public:
 
 private:
     bool check_bucket(const cv::Matx33d& R_CM_k);
-    static int get_index(int yaw, int pitch, int roll);
 
     cv::Matx66f P;  // normalized precision matrix = inverse covariance
     cv::Vec6f y;    // P*(-t_MH, t_CH)
