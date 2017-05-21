@@ -1048,7 +1048,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at OpenTrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at opentrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="minimum">
              <number>10</number>
