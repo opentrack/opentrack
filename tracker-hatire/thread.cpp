@@ -272,7 +272,6 @@ void hatire_thread::serial_info_impl()
 
         switch (com_port.stopBits())
         {
-        msg.append(QString::number(com_port.stopBits()));
         case 1:  msg.append("1 stop bit.");
             break;
         case 2:  msg.append("2 stop bits.");
