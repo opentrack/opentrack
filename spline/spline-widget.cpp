@@ -182,26 +182,25 @@ void spline_widget::drawFunction()
         }
     }
 
-    const QColor color = progn
-                         (
-                             if (!isEnabled() && !_preview_only)
-                             {
-                                 QColor color(spline_color);
-                                 const int avg = int(float(color.red() + color.green() + color.blue())/3);
-                                 return QColor(int(float(color.red() + avg) * .5f),
-                                               int(float(color.green() + avg) * .5f),
-                                               int(float(color.blue() + avg) * .5f),
-                                               96);
-                             }
-                             else
-                             {
-                                 QColor color(spline_color);
-                                 color.setAlphaF(color.alphaF() * .9);
-                                 return color;
-                             }
-                         );
+    const QColor color_ = progn(
+        if (!isEnabled() && !_preview_only)
+        {
+            QColor color(spline_color);
+            const int avg = int(float(color.red() + color.green() + color.blue())/3);
+            return QColor(int(float(color.red() + avg)*.5f),
+                          int(float(color.green() + avg)*.5f),
+                          int(float(color.blue() + avg)*.5f),
+                          96);
+        }
+        else
+        {
+            QColor color(spline_color);
+            color.setAlphaF(color.alphaF()*.9);
+            return color;
+        }
+    );
 
-    painter.setPen(QPen(color, 1.75, Qt::SolidLine, Qt::FlatCap));
+    painter.setPen(QPen(color_, 1.75, Qt::SolidLine, Qt::FlatCap));
 
 //#define DEBUG_SPLINE
 #ifndef DEBUG_SPLINE
@@ -329,7 +328,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             if (point_within_pixel(points[i], e->pos()))
             {
                 bTouchingPoint = true;
-                moving_control_point_idx = int(i);
+                moving_control_point_idx = i;
                 break;
             }
         }
@@ -487,7 +486,7 @@ void spline_widget::reload_spline()
 
 int spline_widget::get_closeness_limit()
 {
-    return std::fmax(snap_x, 1);
+    return iround(std::fmax(snap_x, 1));
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
