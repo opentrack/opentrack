@@ -152,7 +152,7 @@ void KeybindingWorker::run()
                             k.held = held;
 
                             for (auto& r : receivers)
-                                r(k);
+                                (*r)(k);
                             break;
                         }
                     }
