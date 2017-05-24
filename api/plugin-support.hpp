@@ -76,12 +76,7 @@ struct dylib final
     }
     ~dylib()
     {
-        if (handle.isLoaded())
-        {
-            const bool success = handle.unload();
-            if (!success)
-                qDebug() << "can't unload dylib" << filename << handle.errorString();
-        }
+        // QLibrary refcounts the .dll's so don't forcefully unload
     }
 
     static QList<std::shared_ptr<dylib>> enum_libraries(const QString& library_path)
