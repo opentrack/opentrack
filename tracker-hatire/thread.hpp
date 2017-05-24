@@ -10,7 +10,7 @@
 #include <QFile>
 #include <QCoreApplication>
 
-#include "api/variance.hpp"
+#include "compat/variance.hpp"
 #include "compat/timer.hpp"
 
 enum results
