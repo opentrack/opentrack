@@ -58,13 +58,12 @@ endfunction()
 
 function(otr_fixup_subsystem n)
     if(MSVC)
-        if(SDK_CONSOLE_DEBUG)
+        set(subsystem WINDOWS)
+        get_property(type TARGET "${n}" PROPERTY TYPE)
+        if(SDK_CONSOLE_DEBUG AND ".${type}" STREQUAL ".EXECUTABLE")
             set(subsystem CONSOLE)
-        else()
-            set(subsystem WINDOWS)
         endif()
         set(loc "$<TARGET_FILE:${n}>")
-        get_property(type TARGET "${n}" PROPERTY TYPE)
         if (NOT type STREQUAL "STATIC_LIBRARY")
             add_custom_command(TARGET "${n}"
                                POST_BUILD
