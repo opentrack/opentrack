@@ -64,6 +64,8 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
     }, v.DIRECT_CONNTYPE);
 }
 
+// XXX TODO need variant with setEnabled based on lambda retval -- sh 20170524
+
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
