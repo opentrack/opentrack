@@ -1,6 +1,7 @@
 #pragma once
 #include "api/plugin-api.hpp"
 #include "api/plugin-support.hpp"
+#include <QObject>
 #include <QFrame>
 #include <QCoreApplication>
 
@@ -9,35 +10,33 @@ using namespace options;
 
 struct fusion_settings final : opts
 {
-    value<QString> rot_tracker_name;
-    value<QString> pos_tracker_name;
+    value<QVariant> rot_tracker_name, pos_tracker_name;
 
     fusion_settings();
 };
 
-struct has_modules
+class fusion_tracker : public QObject, public ITracker
 {
-    Modules modules;
-    has_modules();
-};
-
-struct fusion_tracker : public ITracker, has_modules
-{
-    fusion_tracker();
-    ~fusion_tracker() override;
-    void start_tracker(QFrame *) override;
-    void data(double *data) override;
+    Q_OBJECT
 
     double rot_tracker_data[6], pos_tracker_data[6];
 
     std::unique_ptr<QFrame> other_frame;
     std::shared_ptr<dylib> rot_dylib, pos_dylib;
     std::shared_ptr<ITracker> rot_tracker, pos_tracker;
+
+public:
+    fusion_tracker();
+    ~fusion_tracker() override;
+    void start_tracker(QFrame*) override;
+    void data(double* data) override;
+
+    static const QString& caption();
 };
 
 #include "ui_fusion.h"
 
-class fusion_dialog : public ITrackerDialog, has_modules
+class fusion_dialog : public ITrackerDialog
 {
     Q_OBJECT
 

@@ -15,7 +15,12 @@
 #include <QMessageBox>
 #include <QApplication>
 
-static const QString own_name = fusion_metadata().name();
+static const QString own_name = QStringLiteral("fusion");
+
+static auto get_modules()
+{
+    return Modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+}
 
 fusion_tracker::fusion_tracker() :
     rot_tracker_data{},
@@ -26,17 +31,25 @@ fusion_tracker::fusion_tracker() :
 
 fusion_tracker::~fusion_tracker()
 {
+    // CAVEAT order matters
     rot_tracker = nullptr;
     pos_tracker = nullptr;
+
     rot_dylib = nullptr;
     pos_dylib = nullptr;
 
     if (other_frame)
     {
-        assert(other_frame->layout());
-        delete other_frame->layout();
+        if (other_frame->layout())
+            delete other_frame->layout();
         other_frame = nullptr;
     }
+}
+
+const QString& fusion_tracker::caption()
+{
+    static const QString caption = tr("Fusion tracker");
+    return caption;
 }
 
 void fusion_tracker::start_tracker(QFrame* frame)
@@ -45,43 +58,44 @@ void fusion_tracker::start_tracker(QFrame* frame)
     assert(!rot_dylib && !pos_dylib);
 
     fusion_settings s;
-    const QString rot_tracker_name = s.rot_tracker_name;
-    const QString pos_tracker_name = s.pos_tracker_name;
+    const QString rot_tracker_name = s.rot_tracker_name().toString();
+    const QString pos_tracker_name = s.pos_tracker_name().toString();
 
     assert(rot_tracker_name != own_name);
     assert(pos_tracker_name != own_name);
 
     if (rot_tracker_name.isEmpty() || pos_tracker_name.isEmpty())
-    {
-        QMessageBox::warning(nullptr,
-                             "Fusion tracker", "Select rotation and position trackers.",
-                             QMessageBox::Close);
-        other_frame = nullptr;
-        return;
-    }
+        goto fail;
 
     if (rot_tracker_name == pos_tracker_name)
     {
-        QMessageBox::warning(nullptr,
-                            "Fusion tracker", "Select different trackers for rotation and position.",
+        QMessageBox::warning(nullptr, caption(),
+                            tr("Select different trackers for rotation and position."),
                             QMessageBox::Close);
-        other_frame = nullptr;
-        return;
+        goto cleanup;
     }
 
-    for (auto& t : modules.trackers())
     {
-        if (t->name == rot_tracker_name)
+        Modules libs = get_modules();
+
+        for (auto& t : libs.trackers())
         {
-            assert(!rot_dylib);
-            rot_dylib = t;
-        }
-        if (t->name == pos_tracker_name)
-        {
-            assert(!pos_dylib);
-            pos_dylib = t;
+            if (t->module_name == rot_tracker_name)
+            {
+                assert(!rot_dylib);
+                rot_dylib = t;
+            }
+
+            if (t->module_name == pos_tracker_name)
+            {
+                assert(!pos_dylib);
+                pos_dylib = t;
+            }
         }
     }
+
+    if (!rot_dylib || !pos_dylib)
+        goto fail;
 
     rot_tracker = make_dylib_instance<ITracker>(rot_dylib);
     pos_tracker = make_dylib_instance<ITracker>(pos_dylib);
@@ -95,12 +109,26 @@ void fusion_tracker::start_tracker(QFrame* frame)
     }
     else
     {
+        other_frame->setVisible(false);
+        other_frame->setFixedSize(320, 240); // XXX magic frame size
+
         rot_tracker->start_tracker(other_frame.get());
-        if (!other_frame->layout())
+
+        if (other_frame->layout() == nullptr)
             other_frame = nullptr;
+        else
+            other_frame->hide();
+
     }
 
+    return;
 
+fail:
+    QMessageBox::warning(nullptr,
+                         caption(), tr("Select rotation and position trackers."),
+                         QMessageBox::Close);
+cleanup:
+    other_frame = nullptr;
 }
 
 void fusion_tracker::data(double *data)
@@ -127,13 +155,15 @@ fusion_dialog::fusion_dialog()
     ui.rot_tracker->addItem("");
     ui.pos_tracker->addItem("");
 
-    for (auto &m : modules.trackers())
+    Modules libs = get_modules();
+
+    for (auto& m : libs.trackers())
     {
-        if (m->name == own_name)
+        if (m->module_name == own_name)
             continue;
 
-        ui.rot_tracker->addItem(m->icon, m->name);
-        ui.pos_tracker->addItem(m->icon, m->name);
+        ui.rot_tracker->addItem(m->icon, m->name, QVariant(m->module_name));
+        ui.pos_tracker->addItem(m->icon, m->name, QVariant(m->module_name));
     }
 
     ui.rot_tracker->setCurrentIndex(0);
@@ -151,9 +181,9 @@ void fusion_dialog::doOK()
     if (rot_idx == -1 || pos_idx == -1 || rot_idx == pos_idx)
     {
         QMessageBox::warning(this,
-                             "Fusion tracker",
-                             "Fusion tracker only works when distinct trackers are selected "
-                             "for rotation and position.",
+                             fusion_tracker::caption(),
+                             tr("Fusion tracker only works when distinct trackers are selected "
+                                "for rotation and position."),
                              QMessageBox::Close);
     }
 
@@ -172,11 +202,5 @@ fusion_settings::fusion_settings() :
     pos_tracker_name(b, "pos-tracker", "")
 {
 }
-
-has_modules::has_modules() :
-    modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
-{
-}
-
 
 OPENTRACK_DECLARE_TRACKER(fusion_tracker, fusion_dialog, fusion_metadata)
