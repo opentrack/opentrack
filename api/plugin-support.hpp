@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <cstring>
 
 #include <QDebug>
 #include <QString>
@@ -41,18 +42,19 @@ struct dylib final
 {
     enum Type { Filter = 0xdeadbabe, Tracker = 0xcafebeef, Protocol = 0xdeadf00d, Invalid = 0xcafebabe };
 
-    dylib(const QString& filename, Type t) :
+    dylib(const QString& filename_, Type t) :
         type(Invalid),
-        filename(filename),
+        full_filename(filename_),
+        module_name(trim_filename(filename_)),
         Dialog(nullptr),
         Constructor(nullptr),
         Meta(nullptr)
     {
         // otherwise dlopen opens the calling executable
-        if (filename.size() == 0)
+        if (filename_.size() == 0 || module_name.size() == 0)
             return;
 
-        handle.setFileName(filename);
+        handle.setFileName(filename_);
         handle.setLoadHints(QLibrary::DeepBindHint | QLibrary::ResolveAllSymbolsHint);
 
         if (check(!handle.load()))
@@ -88,9 +90,9 @@ struct dylib final
             Type type;
             QString glob;
         } filters[] = {
-            { Filter, OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT, },
-            { Tracker, OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT, },
-            { Protocol, OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT, },
+            { Filter, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT), },
+            { Tracker, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT), },
+            { Protocol, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT), },
         };
 
         for (const filter_& filter : filters)
@@ -100,10 +102,7 @@ struct dylib final
                 std::shared_ptr<dylib> lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path).arg(filename), filter.type);
 
                 if (lib->type == Invalid)
-                {
-                    qDebug() << "can't load dylib" << filename;
                     continue;
-                }
 
                 if (std::any_of(ret.cbegin(),
                                 ret.cend(),
@@ -123,7 +122,8 @@ struct dylib final
     }
 
     Type type;
-    QString filename;
+    QString module_name;
+    QString full_filename;
 
     QIcon icon;
     QString name;
@@ -134,10 +134,48 @@ struct dylib final
 private:
     QLibrary handle;
 
+    static QString trim_filename(const QString& in_)
+    {
+        QStringRef in(&in_);
+
+        const int idx = in.lastIndexOf("/");
+
+        if (idx != -1)
+        {
+            in = in.mid(idx + 1);
+
+            if (in.startsWith(OPENTRACK_SOLIB_PREFIX) &&
+                in.endsWith("." OPENTRACK_SOLIB_EXT))
+            {
+                static constexpr unsigned pfx_len = sizeof(OPENTRACK_SOLIB_PREFIX) - 1;
+                static constexpr unsigned rst_len = sizeof("." OPENTRACK_SOLIB_EXT) - 1;
+
+                in = in.mid(pfx_len);
+                in = in.left(in.size() - rst_len);
+
+                static const char* names[] =
+                {
+                    "opentrack-tracker-",
+                    "opentrack-proto-",
+                    "opentrack-filter-",
+                };
+
+                for (auto name : names)
+                {
+                    if (in.startsWith(name))
+                        return in.mid(std::strlen(name)).toString();
+                }
+            }
+        }
+        return QStringLiteral("");
+    }
+
     bool check(bool fail)
     {
         if (fail)
         {
+            qDebug() << "library" << module_name << "failed:" << handle.errorString();
+
             if (handle.isLoaded())
                 (void) handle.unload();
 
