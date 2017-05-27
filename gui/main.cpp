@@ -1,11 +1,11 @@
 #ifdef _WIN32
-#   include "opentrack-library-path.h"
+#   include <cstdio>
 #   include <stdlib.h>
 #   include <vector>
-#   include <cstring>
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
+#   include <QtGlobal>
 #else
 #   include <unistd.h>
 #endif
@@ -45,6 +45,35 @@ void set_qt_style()
 }
 
 #ifdef _WIN32
+
+void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
+{
+    const unsigned short* const str_ = msg.utf16();
+    auto str = reinterpret_cast<const wchar_t* const>(str_);
+    static_assert(sizeof(*str_) == sizeof(*str), "");
+
+    std::fflush(stderr);
+    if (ctx.function)
+        std::fprintf(stderr, "[%s]: %ls\n", ctx.function, str);
+    else if (ctx.file)
+        std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, str);
+    else
+        std::fprintf(stderr, "%ls\n", str);
+    std::fflush(stderr);
+}
+
+void attach_parent_console()
+{
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        // XXX c++ iostreams aren't reopened
+
+        _wfreopen(L"CON", L"w", stdout);
+        _wfreopen(L"CON", L"w", stderr);
+        _wfreopen(L"CON", L"r", stdin);
+        qInstallMessageHandler(qdebug_to_console);
+    }
+}
 
 void add_win32_path()
 {
@@ -105,6 +134,10 @@ WINAPI
 #endif
 main(int argc, char** argv)
 {
+#ifdef _WIN32
+    attach_parent_console();
+#endif
+
 #if QT_VERSION >= 0x050600 // flag introduced in QT 5.6. It is non-essential so might as well allow compilation on older systems.
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
