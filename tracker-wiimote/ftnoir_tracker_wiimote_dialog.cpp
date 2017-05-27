@@ -1,0 +1,174 @@
+/* Copyright (c) 2012 Patrick Ruoff
+ * Copyright (c) 2014-2015 Stanislaw Halik <sthalik@misaki.pl>
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
+#include "ftnoir_tracker_wiimote_dialog.h"
+
+#include <QMessageBox>
+#include <QDebug>
+#include <opencv2/core/core.hpp>
+#include <memory>
+#include "opentrack-compat/camera-names.hpp"
+#include <vector>
+
+//-----------------------------------------------------------------------------
+TrackerDialog_WiiMote::TrackerDialog_WiiMote()
+    : tracker(NULL),
+      timer(this),
+      trans_calib_running(false)
+{
+    ui.setupUi( this );
+
+    tie_setting(s.camera_name, ui.camdevice_combo);
+    tie_setting(s.cam_res_x, ui.res_x_spin);
+    tie_setting(s.cam_res_y, ui.res_y_spin);
+
+
+    tie_setting(s.clip_by, ui.clip_bheight_spin);
+    tie_setting(s.clip_bz, ui.clip_blength_spin);
+    tie_setting(s.clip_ty, ui.clip_theight_spin);
+    tie_setting(s.clip_tz, ui.clip_tlength_spin);
+
+    tie_setting(s.cap_x, ui.cap_width_spin);
+    tie_setting(s.cap_y, ui.cap_height_spin);
+    tie_setting(s.cap_z, ui.cap_length_spin);
+
+    tie_setting(s.m01_x, ui.m1x_spin);
+    tie_setting(s.m01_y, ui.m1y_spin);
+    tie_setting(s.m01_z, ui.m1z_spin);
+
+    tie_setting(s.m02_x, ui.m2x_spin);
+    tie_setting(s.m02_y, ui.m2y_spin);
+    tie_setting(s.m02_z, ui.m2z_spin);
+
+    tie_setting(s.t_MH_x, ui.tx_spin);
+    tie_setting(s.t_MH_y, ui.ty_spin);
+    tie_setting(s.t_MH_z, ui.tz_spin);
+    
+    tie_setting(s.fov, ui.fov);
+    
+    tie_setting(s.active_model_panel, ui.model_tabs);
+    
+    tie_setting(s.dynamic_pose, ui.dynamic_pose);
+	tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
+
+
+    connect( ui.tcalib_button,SIGNAL(toggled(bool)), this,SLOT(startstop_trans_calib(bool)) );
+
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+
+    connect(&timer,SIGNAL(timeout()), this,SLOT(poll_tracker_info()));
+    connect(ui.camera_settings, SIGNAL(pressed()), this, SLOT(camera_settings()));
+    timer.start(100);
+}
+
+void TrackerDialog_WiiMote::camera_settings()
+{
+//    if (tracker)
+//        open_camera_settings(static_cast<cv::VideoCapture*>(tracker->camera), s.camera_name, &tracker->camera_mtx);
+//    else
+        open_camera_settings(nullptr, s.camera_name, nullptr);
+}
+
+void TrackerDialog_WiiMote::startstop_trans_calib(bool start)
+{
+    if (start)
+    {
+        qDebug()<<"TrackerDialog:: Starting translation calibration";
+        trans_calib.reset();
+        trans_calib_running = true;
+        s.t_MH_x = 0;
+        s.t_MH_y = 0;
+        s.t_MH_z = 0;
+    }
+    else
+    {
+        qDebug()<<"TrackerDialog:: Stopping translation calibration";
+        trans_calib_running = false;
+        {
+            auto tmp = trans_calib.get_estimate();
+            s.t_MH_x = tmp[0];
+            s.t_MH_y = tmp[1];
+            s.t_MH_z = tmp[2];
+        }
+    }
+}
+
+void TrackerDialog_WiiMote::poll_tracker_info()
+{
+    CamInfo info;
+    if (tracker && tracker->get_cam_info(&info))
+    {
+        QString to_print;
+        {
+            // display caminfo
+            to_print = QString::number(info.res_x)+"x"+QString::number(info.res_y)+" @ 100FPS";
+        }
+        ui.caminfo_label->setText(to_print);
+
+        // display pointinfo
+        int n_points = tracker->get_n_points();
+        to_print = QString::number(n_points);
+        if (n_points == 3)
+            to_print += " OK!";
+        else
+            to_print += " BAD!";
+        ui.pointinfo_label->setText(to_print);
+
+        // update calibration
+        if (trans_calib_running) trans_calib_step();
+    }
+    else
+    {
+        ui.caminfo_label->setText("Tracker offline");
+        ui.pointinfo_label->setText("");
+    }
+}
+
+void TrackerDialog_WiiMote::trans_calib_step()
+{
+    if (tracker)
+    {
+        Affine X_CM = tracker->pose();
+        trans_calib.update(X_CM.R, X_CM.t);
+    }
+}
+
+void TrackerDialog_WiiMote::save()
+{
+    s.b->save();
+}
+
+void TrackerDialog_WiiMote::doOK()
+{
+    save();
+    close();
+}
+
+void TrackerDialog_WiiMote::doCancel()
+{
+    s.b->reload();
+    close();
+}
+
+void TrackerDialog_WiiMote::register_tracker(ITracker *t)
+{
+    qDebug()<<"TrackerDialog:: Tracker registered";
+    tracker = static_cast<Tracker_WiiMote*>(t);
+    ui.tcalib_button->setEnabled(true);
+    //ui.center_button->setEnabled(true);
+}
+
+void TrackerDialog_WiiMote::unregister_tracker()
+{
+    qDebug()<<"TrackerDialog:: Tracker un-registered";
+    tracker = NULL;
+    ui.tcalib_button->setEnabled(false);
+    //ui.center_button->setEnabled(false);
+}
+
