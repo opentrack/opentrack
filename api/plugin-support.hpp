@@ -122,8 +122,8 @@ struct dylib final
     }
 
     Type type;
-    QString module_name;
     QString full_filename;
+    QString module_name;
 
     QIcon icon;
     QString name;
