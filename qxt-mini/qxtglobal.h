@@ -53,9 +53,17 @@
 
 #ifdef BUILD_qxt_mini
 #   define QXT_BUILD
-#   define BUILD_QXT_GUI
-#   define BUILD_QXT
 #endif
+
+#if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
+#    if defined(BUILD_QXT_GUI)
+#        define QXT_EXPORT Q_DECL_EXPORT
+#    else
+#        define QXT_EXPORT Q_DECL_IMPORT
+#    endif
+#else
+#    define QXT_EXPORT
+#endif // BUILD_QXT_GUI
 
 #ifdef QXT_BUILD
 #    if defined(BUILD_QXT_CORE)

@@ -144,9 +144,7 @@ make_powerset(const t& arg, const xs&... args)
     return ret;
 }
 
-static auto evil_mods = make_powerset(LockMask, Mod3Mask, Mod5Mask);
-
-static Qt::KeyboardModifiers evil_qt_mods = Qt::KeypadModifier;
+static auto evil_mods = make_powerset(LockMask, Mod5Mask, Mod2Mask);
 
 static inline quint32 filter_evil_mods(quint32 mods)
 {
@@ -485,35 +483,36 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
         if (keycode == 0)
             return false;
 
-        unsigned int keystate = 0;
-        if(kev->state & XCB_MOD_MASK_1) // alt
-            keystate |= Mod1Mask;
-        if(kev->state & XCB_MOD_MASK_CONTROL) // ctrl
-            keystate |= ControlMask;
-        if(kev->state & XCB_MOD_MASK_4) // super aka win key
-            keystate |= Mod4Mask;
-        if(kev->state & XCB_MOD_MASK_SHIFT) //shift
-            keystate |= ShiftMask;
-        if(kev->state & XCB_MOD_MASK_2) // numlock
-            keystate |= Mod2Mask;
+        quint32 keystate = xcb_mods_to_x11(kev->state);
 
         keystate = filter_evil_mods(keystate);
 
         QPair<KeySym, KeySym> sym_ = keycode_to_keysym(x11.display(), keycode, keystate, kev);
-        KeySym sym = sym_.first;
+        KeySym sym = sym_.first, sym2 = sym_.second;
 
         Qt::Key k; Qt::KeyboardModifiers mods;
-        std::tie(k, mods) = x11_key_to_qt(x11.display(), sym, keystate);
 
-        if (k != 0)
-            activateShortcut(k, mods, !is_release);
+
+        {
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym, keystate);
+
+            if (k != 0)
+                activateShortcut(k, mods, !is_release);
+        }
+
+        {
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym2, keystate);
+
+            if (k != 0)
+                activateShortcut(k, mods, !is_release);
+        }
     }
     return false;
 }
 
 quint32 QxtGlobalShortcutPrivate::nativeModifiers(Qt::KeyboardModifiers modifiers)
 {
-    modifiers &= ~evil_qt_mods;
+    modifiers = x11_mods_to_qt(filter_evil_mods(qt_mods_to_x11(modifiers)));
     return quint32(modifiers);
 }
 

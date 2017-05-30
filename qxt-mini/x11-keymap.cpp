@@ -143,24 +143,25 @@ static tt numpad_keymap[] = {
     { Qt::Key_7, XK_KP_7 },
     { Qt::Key_8, XK_KP_8 },
     { Qt::Key_9, XK_KP_9 },
-    { Qt::Key_5, XK_KP_Begin },
+
     { Qt::Key_Space, XK_KP_Space },
     { Qt::Key_Tab, XK_KP_Tab },
     { Qt::Key_F1, XK_KP_F1 },
     { Qt::Key_F2, XK_KP_F2 },
     { Qt::Key_F3, XK_KP_F3 },
     { Qt::Key_F4, XK_KP_F4 },
-    { Qt::Key_Home, XK_KP_Home },
-    { Qt::Key_End, XK_KP_End },
-    { Qt::Key_Left, XK_KP_Left },
-    { Qt::Key_Right, XK_KP_Right },
-    { Qt::Key_Up, XK_KP_Up },
-    { Qt::Key_Down, XK_KP_Down },
-    { Qt::Key_PageUp, XK_KP_Page_Up },
-    { Qt::Key_PageUp, XK_KP_Prior },
-    { Qt::Key_PageDown, XK_KP_Page_Down },
-    { Qt::Key_PageDown, XK_KP_Next },
-    { Qt::Key_Insert, XK_KP_Insert },
+
+    { Qt::Key_1, XK_KP_End },
+    { Qt::Key_2, XK_KP_Down },
+    { Qt::Key_3, XK_KP_Page_Down },
+    { Qt::Key_4, XK_KP_Left },
+    { Qt::Key_5, XK_KP_Begin },
+    { Qt::Key_6, XK_KP_Right },
+    { Qt::Key_7, XK_KP_Home },
+    { Qt::Key_8, XK_KP_Up },
+    { Qt::Key_9, XK_KP_Page_Up },
+    { Qt::Key_0, XK_KP_Insert },
+
     { Qt::Key_Delete, XK_KP_Delete },
     { Qt::Key_Equal, XK_KP_Equal },
     { Qt::Key_Asterisk, XK_KP_Multiply },
@@ -210,7 +211,7 @@ std::vector<quint32> qt_key_to_x11(Display*, Qt::Key k, Qt::KeyboardModifiers)
     return ret;
 }
 QXT_GUI_EXPORT
-static Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
+Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
 {
     Qt::KeyboardModifiers ret(0);
 
@@ -293,5 +294,24 @@ QPair<KeySym, KeySym> keycode_to_keysym(Display* disp,
     values[pair(keycode, keystate)] = ret;
 
     return ret;
+}
+
+QXT_GUI_EXPORT
+quint32 xcb_mods_to_x11(quint32 mods)
+{
+    unsigned int keystate = 0;
+
+    if(mods & XCB_MOD_MASK_1) // alt
+        keystate |= Mod1Mask;
+    if(mods & XCB_MOD_MASK_CONTROL) // ctrl
+        keystate |= ControlMask;
+    if(mods & XCB_MOD_MASK_4) // super aka win key
+        keystate |= Mod4Mask;
+    if(mods & XCB_MOD_MASK_SHIFT) //shift
+        keystate |= ShiftMask;
+    if(mods & XCB_MOD_MASK_2) // numlock
+        keystate |= Mod2Mask;
+
+    return keystate;
 }
 #endif
