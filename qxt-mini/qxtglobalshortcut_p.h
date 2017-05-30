@@ -45,6 +45,7 @@ public:
     QxtGlobalShortcutPrivate();
     ~QxtGlobalShortcutPrivate() override;
 
+    bool keystate;
     bool enabled;
     Qt::Key key;
     Qt::KeyboardModifiers mods;
@@ -56,7 +57,7 @@ public:
     static bool eventFilter(void* message);
     bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) override;
 
-    static void activateShortcut(quint32 nativeKey, quint32 nativeMods);
+    static void activateShortcut(quint32 nativeKey, quint32 nativeMods, bool is_down);
 
 private:
     struct event_filter_installer;

@@ -43,6 +43,8 @@ class QXT_GUI_EXPORT QxtGlobalShortcut : public QObject
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
     Q_PROPERTY(QKeySequence shortcut READ shortcut WRITE setShortcut)
 
+    bool keystate;
+
 public:
     explicit QxtGlobalShortcut(QObject* parent = 0);
     explicit QxtGlobalShortcut(const QKeySequence& shortcut, QObject* parent = 0);
@@ -58,7 +60,7 @@ public Q_SLOTS:
     void setDisabled(bool disabled = true);
 
 Q_SIGNALS:
-    void activated();
+    void activated(bool keydown = true);
 };
 
 #endif // QXTGLOBALSHORTCUT_H

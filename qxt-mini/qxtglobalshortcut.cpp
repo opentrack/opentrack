@@ -61,13 +61,13 @@ void QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter()
 }
 
 QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate(QxtGlobalShortcutPrivate::tag) :
-    enabled(false), key(Qt::Key(0)), mods(Qt::NoModifier)
+    keystate(false), enabled(false), key(Qt::Key(0)), mods(Qt::NoModifier)
 {
     qDebug() << "qxt-mini: adding event filter";
 }
 
 QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate() :
-    enabled(true), key(Qt::Key(0)), mods(Qt::NoModifier)
+    keystate(false), enabled(true), key(Qt::Key(0)), mods(Qt::NoModifier)
 {
     QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter();
 }
@@ -143,25 +143,49 @@ bool QxtGlobalShortcutPrivate::unsetShortcut()
     return res;
 }
 
-void QxtGlobalShortcutPrivate::activateShortcut(quint32 nativeKey, quint32 nativeMods)
+void QxtGlobalShortcutPrivate::activateShortcut(quint32 nativeKey, quint32 nativeMods, bool is_down)
 {
 #ifndef Q_OS_MAC
     using IT = decltype(shortcuts.end());
     const auto pair = qMakePair(nativeKey, nativeMods);
     IT it = shortcuts.find(pair);
 
+    bool once = false;
+
     for (; it != shortcuts.end(); it++)
     {
         if (it.key() != pair) // DO NOT REMOVE
             break;
+
         auto ptr = *it;
+        auto& priv = ptr->qxt_d();
+
+        if (priv.keystate == is_down)
+        {
+            continue;
+        }
+
+        if (!once)
+        {
+            once = true;
+            qDebug() << "qxt-mini:" << (is_down ? "keydown" : "keyup") << priv.key << priv.mods;
+        }
+
+        priv.keystate = is_down;
+
         if (ptr->isEnabled())
-            emit ptr->activated();
+            emit ptr->activated(is_down);
     }
 #else
     QxtGlobalShortcut* shortcut = shortcuts.value(qMakePair(nativeKey, nativeMods));
-    if (shortcut && shortcut->isEnabled())
-        emit shortcut->activated();
+
+    if (shortcut)
+    {
+        shortcut->qxt_d().keystate = false;
+
+        if (shortcut->isEnabled())
+            emit shortcut->activated(true);
+    }
 #endif
 }
 

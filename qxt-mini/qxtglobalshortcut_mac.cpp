@@ -55,7 +55,7 @@ OSStatus qxt_mac_handle_hot_key(EventHandlerCallRef nextHandler, EventRef event,
         GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(keyID), NULL, &keyID);
         Identifier id = keyIDs.key(keyID.id);
         if(id != Identifier())
-            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first);
+            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, true);
     }
     return noErr;
 }
@@ -76,7 +76,7 @@ quint32 QxtGlobalShortcutPrivate::nativeModifiers(Qt::KeyboardModifiers modifier
     return native;
 }
 
-quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
+quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key keys)
 {
     UTF16Char ch;
     // Constants found in NSEvent.h from AppKit.framework
