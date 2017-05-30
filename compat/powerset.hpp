@@ -1,5 +1,14 @@
 #pragma once
 
+#include <type_traits>
+#include <cinttypes>
+#include <vector>
+#include <array>
+#include <iterator>
+
+#include <QString>
+#include <QVariant>
+
 template<typename t, int M, typename size_type_ = std::uintptr_t>
 struct powerset final
 {
@@ -55,8 +64,7 @@ private:
 };
 
 template<typename t, typename... xs>
-static auto
-make_powerset(const t& arg, const xs&... args)
+auto make_powerset(const t& arg, const xs&... args)
 {
     using cnt = std::integral_constant<std::uintptr_t, sizeof...(xs)+1>;
     using p = powerset<t, cnt::value>;
