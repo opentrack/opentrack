@@ -35,11 +35,12 @@ using Pose = Mat<double, 6, 1>;
 
 struct bits
 {
-    enum flags {
+    enum flags : unsigned {
         f_center         = 1 << 0,
-        f_enabled        = 1 << 1,
-        f_zero           = 1 << 2,
-        f_should_quit    = 1 << 3,
+        f_enabled_h      = 1 << 1,
+        f_enabled_p      = 1 << 2,
+        f_zero           = 1 << 3,
+        f_should_quit    = 1 << 4,
     };
 
     std::atomic<unsigned> b;
@@ -108,13 +109,11 @@ public:
     void raw_and_mapped_pose(double* mapped, double* raw) const;
     void start() { QThread::start(); }
 
-    void center() { set(f_center, true); }
-
-    void set_toggle(bool value) { set(f_enabled, value); }
-    void set_zero(bool value) { set(f_zero, value); }
-
-    void zero() { negate(f_zero); }
-    void toggle_enabled() { negate(f_enabled); }
+    void center();
+    void set_toggle(bool value);
+    void set_zero(bool value);
+    void zero();
+    void toggle_enabled();
 };
 
 } // ns impl

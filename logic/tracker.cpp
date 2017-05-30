@@ -132,7 +132,7 @@ void Tracker::logic()
         Pose tmp;
         libs.pTracker->data(tmp);
 
-        if (get(f_enabled))
+        if (get(f_enabled_p) ^ !get(f_enabled_h))
             for (int i = 0; i < 6; i++)
                 newpose[i] = elide_nan(tmp(i), newpose(i));
     }
@@ -445,6 +445,14 @@ void Tracker::raw_and_mapped_pose(double* mapped, double* raw) const
     }
 }
 
+void Tracker::center() { set(f_center, true); }
+
+void Tracker::set_toggle(bool value) { set(f_enabled_h, value); }
+void Tracker::set_zero(bool value) { set(f_zero, value); }
+
+void Tracker::zero() { negate(f_zero); }
+void Tracker::toggle_enabled() { negate(f_enabled_p); }
+
 
 void bits::set(bits::flags flag_, bool val_)
 {
@@ -486,7 +494,8 @@ bool bits::get(bits::flags flag)
 bits::bits() : b(0u)
 {
     set(f_center, true);
-    set(f_enabled, true);
+    set(f_enabled_p, true);
+    set(f_enabled_h, true);
     set(f_zero, false);
     set(f_should_quit, false);
 }
