@@ -159,6 +159,8 @@ public:
         {
             int native_code = x.first, native_mods = x.second;
 
+            native_code = XKeysymToKeycode(display(), native_code);
+
             if (keybinding::incf(native_code, native_mods))
             {
                 QxtX11ErrorHandler errorHandler;
@@ -195,6 +197,7 @@ public:
         for (pair x : keycodes)
         {
             int native_code = x.first, native_mods = x.second;
+            native_code = XKeysymToKeycode(display(), native_code);
 
             if (keybinding::decf(native_code, native_mods))
             {
