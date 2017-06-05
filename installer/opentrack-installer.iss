@@ -35,6 +35,7 @@ DisableReadyMemo=True
 RestartIfNeededByRun=False
 InternalCompressLevel=ultra
 CompressionThreads=4
+LZMANumFastBytes=273
 MinVersion=0,5.01sp2
 
 [Languages]
