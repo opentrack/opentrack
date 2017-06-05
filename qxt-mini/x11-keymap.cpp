@@ -266,7 +266,7 @@ QPair<KeySym, KeySym> keycode_to_keysym(Display* disp,
     ev.serial = kev->sequence;
     ev.send_event = False;
     ev.display = disp;
-    ev.window = kev->root;
+    ev.root = kev->root;
     ev.subwindow = kev->child;
     ev.window = kev->event;
     ev.time = kev->time;
