@@ -130,6 +130,12 @@ DEFUN_WARN_UNUSED bool spline::get_last_value(QPointF& point)
     return activep;
 }
 
+template <typename T>
+static T signum(T val)
+{
+    return (T(0) < val) - (val < T(0));
+}
+
 float spline::get_value_internal(int x)
 {
     if (!validp)
@@ -138,10 +144,10 @@ float spline::get_value_internal(int x)
         validp = true;
     }
 
-    float sign = x < 0 ? -1 : 1;
+    const float sign = signum(x);
     x = std::abs(x);
-    float ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
-    return ret * sign;
+    const float ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
+    return sign * std::fmax(0, ret);
 }
 
 void spline::add_lone_point()
