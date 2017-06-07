@@ -44,7 +44,12 @@ public:
         return "FS2004/FSX";
     }
 private:
-    enum { SIMCONNECT_RECV_ID_EVENT_FRAME = 7 };
+    enum {
+        SIMCONNECT_RECV_ID_NULL,
+        SIMCONNECT_RECV_ID_EXCEPTION = 2,
+        SIMCONNECT_RECV_ID_QUIT = 3,
+        SIMCONNECT_RECV_ID_EVENT_FRAME = 7,
+    };
 
     #pragma pack(push, 1)
     struct SIMCONNECT_RECV
@@ -64,7 +69,6 @@ private:
     typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, DWORD EventID, const char * SystemEventName);
 
     void run() override;
-    volatile bool should_stop;
 
     volatile float virtSCPosX;
     volatile float virtSCPosY;
@@ -80,6 +84,7 @@ private:
     importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 
     HANDLE hSimConnect;
+    volatile bool should_stop, should_reconnect;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;
