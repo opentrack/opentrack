@@ -18,9 +18,7 @@
 #include "export.hpp"
 
 enum Axis {
-    TX = 0, TY = 1, TZ = 2, Yaw = 3, Pitch = 4, Roll = 5,
-    // for indexing in general
-    rYaw = 0, rPitch = 1, rRoll = 2,
+    TX, TY, TZ, Yaw, Pitch, Roll,
 };
 
 namespace plugin_api {
