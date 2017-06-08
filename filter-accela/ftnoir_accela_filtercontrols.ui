@@ -278,7 +278,7 @@
          <number>0</number>
         </property>
         <property name="maximum">
-         <number>23</number>
+         <number>46</number>
         </property>
         <property name="pageStep">
          <number>5</number>
