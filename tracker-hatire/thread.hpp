@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ftnoir_arduino_type.h"
 #include "ftnoir_tracker_hat_settings.h"
 
 #include <QSerialPort>
@@ -20,7 +21,7 @@ enum results
     result_error,
 };
 
-//#define HATIRE_DEBUG_LOGFILE "d:/putty-hatire.log"
+//#define HATIRE_DEBUG_LOGFILE "c:/users/sthalik/test-random"
 
 #ifdef HATIRE_DEBUG_LOGFILE
 #   include <QFile>
@@ -52,6 +53,7 @@ class hatire_thread : public QThread
     TrackerSettings s;
     variance stat;
     Timer timer, throttle_timer;
+    char buf[1024];
 
     void run() override;
     static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }

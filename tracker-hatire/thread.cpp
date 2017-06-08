@@ -88,8 +88,6 @@ hatire_thread::~hatire_thread()
 
 hatire_thread::hatire_thread()
 {
-    data_read.reserve(65536);
-
     connect(this, &QThread::finished, this, &hatire_thread::teardown_serial, Qt::DirectConnection);
     connect(this, &hatire_thread::init_serial_port, this, &hatire_thread::init_serial_port_impl, Qt::QueuedConnection);
     connect(this, &hatire_thread::serial_info, this, &hatire_thread::serial_info_impl, Qt::QueuedConnection);
@@ -135,8 +133,8 @@ void hatire_thread::run()
     com_port.setFileName(HATIRE_DEBUG_LOGFILE);
     com_port.open(QIODevice::ReadOnly);
 
-    read_timer.start(10);
     connect(&read_timer, &QTimer::timeout, this, &hatire_thread::on_serial_read, Qt::DirectConnection);
+    read_timer.start(5);
 #endif
     (void) exec();
 
@@ -302,37 +300,37 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
-    {
-        QMutexLocker lck(&data_mtx);
-#ifndef HATIRE_DEBUG_LOGFILE
-        data_read += com_port.readAll();
-#else
-        QByteArray tmp = com_port.read(30);
-        data_read += tmp;
-        if (tmp.length() == 0 && read_timer.isActive())
-        {
-            qDebug() << "eof";
-            read_timer.stop();
-        }
-#endif
-    }
+    const int sz = com_port.read(buf, sizeof(buf));
 
-    stat.input(timer.elapsed_ms());
-    timer.start();
+    if (sz > 0)
+    {
+        stat.input(timer.elapsed_ms());
+        timer.start();
+
+        QMutexLocker lck(&data_mtx);
+        data_read.append(buf, sz);
+    }
+#if defined HATIRE_DEBUG_LOGFILE
+    else
+    {
+        qDebug() << "eof";
+        read_timer.stop();
+    }
+#endif
+
+    if (s.serial_bug_workaround || sz <= 0)
+    {
+        // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
+        // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
+        static constexpr int hz = 90;
+        static constexpr int ms = 1000/hz;
+        portable::sleep(ms);
+    }
 
     if (throttle_timer.elapsed_ms() >= 3000)
     {
         throttle_timer.start();
         qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
-    }
-
-    if (s.serial_bug_workaround)
-    {
-        // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
-        // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
-        constexpr int hz = 90;
-        constexpr int ms = 1000/hz;
-        portable::sleep(ms);
     }
 }
 
