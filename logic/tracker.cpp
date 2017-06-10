@@ -16,10 +16,6 @@
 #include "compat/sleep.hpp"
 #include "compat/util.hpp"
 
-#if defined _WIN32
-#   include "compat/timer-resolution.hpp"
-#endif
-
 #include "tracker.h"
 
 #include <cmath>
@@ -386,11 +382,6 @@ void Tracker::run()
     logger.reset_dt();
 
     t.start();
-
-#if defined _WIN32
-    timer_resolution res;
-    (void) res;
-#endif
 
     while (!get(f_should_quit))
     {
