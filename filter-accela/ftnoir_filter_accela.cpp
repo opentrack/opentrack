@@ -17,8 +17,8 @@ using std::pow;
 using std::copysign;
 using std::fmin;
 
-constexpr double settings_accela::rot_gains[16][2];
-constexpr double settings_accela::pos_gains[16][2];
+constexpr settings_accela::gains settings_accela::rot_gains[16];
+constexpr settings_accela::gains settings_accela::pos_gains[16];
 
 accela::accela() : first_run(true)
 {
@@ -158,21 +158,21 @@ void accela::filter(const double* input, double *output)
     }
 }
 
-void settings_accela::make_splines(spline& rot, spline& trans)
+void settings_accela::make_splines(spline& rot, spline& pos)
 {
     rot = spline();
-    trans = spline();
+    pos = spline();
 
-    rot.set_max_input(rot_gains[0][0]);
-    trans.set_max_input(pos_gains[0][0]);
-    rot.set_max_output(rot_gains[0][1]);
-    trans.set_max_output(pos_gains[0][1]);
+    rot.set_max_input(rot_gains[0].x);
+    pos.set_max_input(pos_gains[0].x);
+    rot.set_max_output(rot_gains[0].y);
+    pos.set_max_output(pos_gains[0].y);
 
-    for (int i = 0; rot_gains[i][0] >= 0; i++)
-        rot.add_point(QPointF(rot_gains[i][0], rot_gains[i][1]));
+    for (const auto& val : rot_gains)
+        rot.add_point(QPointF(val.x, val.y));
 
-    for (int i = 0; pos_gains[i][0] >= 0; i++)
-        trans.add_point(QPointF(pos_gains[i][0], pos_gains[i][1]));
+    for (const auto& val : pos_gains)
+        pos.add_point(QPointF(val.x, val.y));
 }
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)

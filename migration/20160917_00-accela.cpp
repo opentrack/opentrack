@@ -117,8 +117,8 @@ struct move_accela_to_sliders : migration
 };
 
 // odr
-constexpr double settings_accela::rot_gains[16][2];
-constexpr double settings_accela::pos_gains[16][2];
+constexpr settings_accela::gains settings_accela::rot_gains[16];
+constexpr settings_accela::gains settings_accela::pos_gains[16];
 
 constexpr const char* move_accela_to_sliders::old_bundle_name;
 constexpr const char* move_accela_to_sliders::new_bundle_name;
