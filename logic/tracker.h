@@ -75,7 +75,6 @@ private:
     struct state
     {
         rmat rot_center;
-        rmat camera;
         rmat rotation;
 
         state() : rot_center(rmat::eye())
@@ -94,7 +93,6 @@ private:
     void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
                       bool disable_tx, bool disable_ty, bool disable_tz);
     void run() override;
-    rmat camera_offset(double c);
 
     static constexpr double r2d = 180. / M_PI;
     static constexpr double d2r = M_PI / 180.;

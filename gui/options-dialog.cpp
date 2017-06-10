@@ -82,10 +82,6 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
 
-    tie_setting(main.camera_yaw, ui.camera_yaw);
-    tie_setting(main.camera_pitch, ui.camera_pitch);
-    tie_setting(main.camera_roll, ui.camera_roll);
-
     tie_setting(main.center_method, ui.center_method);
 
     tie_setting(main.tracklogging_enabled, ui.tracklogging_enabled);

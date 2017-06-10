@@ -52,18 +52,6 @@ Tracker::~Tracker()
     wait();
 }
 
-Tracker::rmat Tracker::camera_offset(double c)
-{
-    const double off[] =
-    {
-        d2r * c * (double)-s.camera_yaw,
-        d2r * c * (double)-s.camera_pitch,
-        d2r * c * (double)-s.camera_roll
-    };
-
-    return euler::euler_to_rmat(off);
-}
-
 double Tracker::map(double pos, Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
@@ -182,9 +170,6 @@ void Tracker::logic()
         real_rotation.rotation = euler_to_rmat(tmp);
     }
 
-    scaled_rotation.camera = camera_offset(c_div);
-    real_rotation.camera = camera_offset(1);
-
     nanp |= is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
 
     if (!tracking_started)
@@ -244,8 +229,8 @@ void Tracker::logic()
             break;
         }
 
-        euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
         euler_t pos = euler_t(&value[TX]) - t_center;
+        euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
 
         for (int i = 0; i < 3; i++)
         {
@@ -257,8 +242,6 @@ void Tracker::logic()
             if (m(i).opts.invert)
                 pos(i) = -pos(i);
         }
-
-        t_compensate(real_rotation.camera.t(), pos, pos, false, false, false);
 
         for (int i = 0; i < 3; i++)
         {
@@ -381,6 +364,8 @@ void Tracker::logic()
 void Tracker::run()
 {
     setPriority(QThread::HighPriority);
+    setPriority(QThread::HighestPriority);
+    setPriority(QThread::TimeCriticalPriority);
 
     {
         static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
