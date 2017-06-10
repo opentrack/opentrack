@@ -35,10 +35,10 @@ set(opentrack-all-translations nl_NL ru_RU stub)
 
 include(opentrack-word-size)
 include(opentrack-hier)
-include(opentrack-qt)
 include(opentrack-platform)
 include(opentrack-boilerplate)
 
+include(opentrack-qt)
 include(opentrack-version)
 include(opentrack-install)
 
