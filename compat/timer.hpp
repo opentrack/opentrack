@@ -20,6 +20,7 @@
 #include <ctime>
 
 #include "time.hpp"
+#include "util.hpp"
 
 class OTR_COMPAT_EXPORT Timer final
 {
@@ -43,7 +44,20 @@ public:
     t elapsed() const
     {
         using namespace time_units;
-        return static_cast<const t&>(ns(elapsed_nsecs()));
+        return time_cast<t>(ns(elapsed_nsecs()));
+    }
+
+    template<typename t>
+    bool is_elapsed(const t& time_value)
+    {
+        using namespace time_units;
+
+        if (unlikely(elapsed<ns>() >= time_value))
+        {
+            start();
+            return true;
+        }
+        return false;
     }
 
     long long elapsed_nsecs() const;

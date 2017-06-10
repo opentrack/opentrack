@@ -7,6 +7,7 @@
 
 #include "camera.h"
 #include "compat/sleep.hpp"
+#include "compat/camera-names.hpp"
 
 constexpr double Camera::dt_eps;
 
@@ -46,7 +47,7 @@ DEFUN_WARN_UNUSED Camera::result Camera::get_info() const
 
 DEFUN_WARN_UNUSED Camera::result Camera::get_frame(cv::Mat& frame)
 {
-    bool new_frame = _get_frame(frame);
+    const bool new_frame = _get_frame(frame);
 
     if (new_frame)
     {
@@ -66,23 +67,26 @@ DEFUN_WARN_UNUSED Camera::result Camera::get_frame(cv::Mat& frame)
         cam_info.res_x = frame.cols;
         cam_info.res_y = frame.rows;
         cam_info.fov = fov;
+
+        return result(true, cam_info);
     }
     else
-        qDebug() << "pt camera: can't get frame";
-
-    return result(new_frame, cam_info);
+        return result(false, CamInfo());
 }
 
 DEFUN_WARN_UNUSED Camera::open_status Camera::start(int idx, int fps, int res_x, int res_y)
 {
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
-        if (!cap || !cap->isOpened() ||
-            cam_desired.idx != idx ||
+        if (cam_desired.idx != idx ||
             cam_desired.fps != fps ||
             cam_desired.res_x != res_x ||
-            cam_desired.res_y != res_y)
+            cam_desired.res_y != res_y ||
+            !cap || !cap->isOpened() || !cap->grab())
         {
+            stop();
+
+            desired_name = get_camera_names().value(idx);
             cam_desired.idx = idx;
             cam_desired.fps = fps;
             cam_desired.res_x = res_x;
@@ -98,15 +102,14 @@ DEFUN_WARN_UNUSED Camera::open_status Camera::start(int idx, int fps, int res_x,
             if (cam_desired.fps)
                 cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
 
-            if (cap->isOpened())
+            if (cap->isOpened() && cap->grab())
             {
-                qDebug() << "pt: opening camera";
-
                 cam_info = CamInfo();
                 active_name = QString();
                 cam_info.idx = -1;
                 dt_mean = 0;
                 active_name = desired_name;
+
                 t.start();
 
                 return open_ok_change;
@@ -117,14 +120,12 @@ DEFUN_WARN_UNUSED Camera::open_status Camera::start(int idx, int fps, int res_x,
                 return open_error;
             }
         }
-    }
-    else
-    {
-        stop();
-        return open_error;
+
+        return open_ok_no_change;
     }
 
-    return open_ok_no_change;
+    stop();
+    return open_error;
 }
 
 void Camera::stop()
@@ -144,7 +145,7 @@ DEFUN_WARN_UNUSED bool Camera::_get_frame(cv::Mat& frame)
         {
             if (cap->read(frame))
                 return true;
-            portable::sleep(14);
+            portable::sleep(1);
         }
     }
     return false;

@@ -59,16 +59,16 @@ void Tracker_PT::run()
     QTextStream log_stream(&log_file);
 #endif
 
-    maybe_reopen_camera();
-
     while((commands & ABORT) == 0)
     {
         CamInfo cam_info;
-        bool new_frame;
+        bool new_frame = false;
 
         {
             QMutexLocker l(&camera_mtx);
-            std::tie(new_frame, cam_info) = camera.get_frame(frame);
+
+            if (likely(camera))
+                std::tie(new_frame, cam_info) = camera.get_frame(frame);
         }
 
         if (new_frame)
@@ -136,7 +136,6 @@ void Tracker_PT::maybe_reopen_camera()
     switch (status)
     {
     case Camera::open_error:
-        qDebug() << "can't start camera" << s.camera_name;
         break;
     case Camera::open_ok_change:
         frame = cv::Mat();
@@ -167,7 +166,10 @@ void Tracker_PT::start_tracker(QFrame* video_frame)
     video_frame->setLayout(layout.data());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
-    start();
+
+    maybe_reopen_camera();
+
+    start(QThread::HighPriority);
 }
 
 void Tracker_PT::data(double *data)
