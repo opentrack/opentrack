@@ -12,15 +12,23 @@
  * originally written by Wim Vriend.
  */
 
+#include "compat/nan.hpp"
 #include "compat/sleep.hpp"
 #include "compat/util.hpp"
-#include "compat/timer-resolution.hpp"
+
+#if defined _WIN32
+#   include "compat/timer-resolution.hpp"
+#endif
 
 #include "tracker.h"
 
 #include <cmath>
 #include <algorithm>
 #include <cstdio>
+
+#ifdef _WIN32
+#   include <windows.h>
+#endif
 
 using namespace euler;
 using namespace gui_tracker_impl;
@@ -89,8 +97,6 @@ void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output
     else
         output(TX) = -ret(tb_X);
 }
-
-#include "compat/nan.hpp"
 
 static inline double elide_nan(double value, double def)
 {
@@ -376,8 +382,6 @@ void Tracker::run()
 {
     setPriority(QThread::HighPriority);
 
-    timer_resolution res(1);
-
     {
         static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
         static constexpr const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
@@ -398,14 +402,17 @@ void Tracker::run()
 
     t.start();
 
+#if defined _WIN32
+    timer_resolution res;
+    (void) res;
+#endif
+
     while (!get(f_should_quit))
     {
         logic();
 
-        static constexpr ns const_sleep_ms(time_cast<ns>(ms(4)));
+        static constexpr ns const_sleep_ms(time_cast<ns>(ms_(4)));
         const ns elapsed_nsecs = prog1(t.elapsed<ns>(), t.start());
-
-        backlog_time += ns(elapsed_nsecs - const_sleep_ms);
 
         if (backlog_time > secs_(3) || backlog_time < secs_(-3))
         {
@@ -414,23 +421,25 @@ void Tracker::run()
             backlog_time = backlog_time.zero();
         }
 
-        const int sleep_time_ms = iround(time_cast<ms>(clamp(const_sleep_ms - backlog_time,
-                                                             ns(0), ms(50)))
-                                         .count());
+        backlog_time += ns(elapsed_nsecs - const_sleep_ms);
+
+        const int sleep_time_ms = iround(std::fmax(0.,
+                                                   (time_cast<ms>(clamp(const_sleep_ms - backlog_time,
+                                                                        ms_::zero(), ms_(50)))).count()));
 
         portable::sleep(sleep_time_ms);
-    }
 
-    {
-        // filter may inhibit exact origin
-        Pose p;
-        libs.pProtocol->pose(p);
-    }
+        {
+            // filter may inhibit exact origin
+            Pose p;
+            libs.pProtocol->pose(p);
+        }
 
-    for (int i = 0; i < 6; i++)
-    {
-        m(i).spline_main.set_tracking_active(false);
-        m(i).spline_alt.set_tracking_active(false);
+        for (int i = 0; i < 6; i++)
+        {
+            m(i).spline_main.set_tracking_active(false);
+            m(i).spline_alt.set_tracking_active(false);
+        }
     }
 }
 

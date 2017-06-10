@@ -5,16 +5,21 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#ifdef _WIN32
+
 #include "timer-resolution.hpp"
+#include "time.hpp"
+#include "compat/util.hpp"
 
-#if defined _WIN32
-#   include <QLibrary>
-#   include <QDebug>
+#include <utility>
 
+#include <QLibrary>
+#include <QDebug>
+
+#include <windows.h>
+
+using namespace time_units;
 using namespace timer_impl;
-
-static funptr_NtSetTimerResolution init_timer_resolution_funptr();
-static funptr_NtSetTimerResolution get_funptr();
 
 static funptr_NtSetTimerResolution init_timer_resolution_funptr()
 {
@@ -49,37 +54,42 @@ static funptr_NtSetTimerResolution get_funptr()
     return ret;
 }
 
-timer_resolution::timer_resolution(int msecs) : old_value(fail_())
+timer_resolution::timer_resolution()
 {
-    if (msecs <= 0 || msecs > 100)
-    {
-        qDebug() << "can't set timer resolution to" << msecs << "ms";
-        return;
-    }
+    for (int k = 14; k > 0; k--)
+        if (unlikely(timeEndPeriod(k) == 0))
+        {
+            qDebug() << "removed mm timer for" << k << "ms";
+            k++;
+        }
 
-    funptr_NtSetTimerResolution set_timer_res = get_funptr();
-    if (set_timer_res == nullptr)
-        return;
+    static funptr_NtSetTimerResolution set_timer_res = get_funptr();
 
     // hundredth of a nanosecond
-    const ulong_ value = msecs * ulong_(10000);
+    //const ulong_ value = msecs * ulong_(10000);
+
+    const ulong_ value = 156250; // default win32 timer length
     ntstatus_ res;
+    ulong_ old_value = fail_();
 
     res = set_timer_res(value, true_(), &old_value);
 
-    if (res < 0)
+    if (unlikely(res != 0))
     {
         old_value = fail_();
         qDebug() << "NtSetTimerResolution erred with" << res;
         return;
     }
 
+    if (likely(std::abs(long(old_value) - long(value)) < 10000))
+        return;
+
     // see if it stuck
 
     ulong_ old_value_ = fail_();
 
     res = set_timer_res(value, true_(), &old_value_);
-    if (res < 0)
+    if (unlikely(res != 0))
     {
         old_value = fail_();
         qDebug() << "NtSetTimerResolution check erred with" << res;
@@ -92,20 +102,9 @@ timer_resolution::timer_resolution(int msecs) : old_value(fail_())
 
         qDebug() << "NtSetTimerResolution:"
                  << "old value didn't stick"
-                 << "current resolution" << (t(old_value_) * t(100))
-                 << "ns";
+                 << "current resolution" << time_cast<ms>(ns(t(old_value_) * t(100))).count() << "ms";
         old_value = fail_();
         return;
-    }
-}
-
-timer_resolution::~timer_resolution()
-{
-    if (old_value != fail_())
-    {
-        funptr_NtSetTimerResolution f = get_funptr();
-        ulong_ fuzz = fail_();
-        (void) f(old_value, true_(), &fuzz);
     }
 }
 

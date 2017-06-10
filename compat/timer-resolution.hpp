@@ -43,11 +43,11 @@ using funptr_NtSetTimerResolution = ntstatus_ (__stdcall *)(ulong_, boolean_, ul
 
 class OTR_COMPAT_EXPORT timer_resolution final
 {
-    ulong_ old_value;
-
 public:
-    timer_resolution(int msecs);
+    timer_resolution();
+#if 0
     ~timer_resolution();
+#endif
 };
 
 }
@@ -55,8 +55,5 @@ public:
 using timer_impl::timer_resolution;
 
 #else
-struct timer_resolution final
-{
-    inline timer_resolution(int) {}
-};
+#   error "this is win32-only header"
 #endif
