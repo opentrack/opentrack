@@ -423,23 +423,21 @@ void Tracker::run()
 
         backlog_time += ns(elapsed_nsecs - const_sleep_ms);
 
-        const int sleep_time_ms = iround(std::fmax(0.,
-                                                   (time_cast<ms>(clamp(const_sleep_ms - backlog_time,
-                                                                        ms_::zero(), ms_(50)))).count()));
+        const int sleep_time_ms = iround((time_cast<ms>(clamp(const_sleep_ms - backlog_time,
+                                                              ms_::zero(), ms_(50))))
+                                         .count());
 
         portable::sleep(sleep_time_ms);
+    }
 
-        {
-            // filter may inhibit exact origin
-            Pose p;
-            libs.pProtocol->pose(p);
-        }
+    // filter may inhibit exact origin
+    Pose p;
+    libs.pProtocol->pose(p);
 
-        for (int i = 0; i < 6; i++)
-        {
-            m(i).spline_main.set_tracking_active(false);
-            m(i).spline_alt.set_tracking_active(false);
-        }
+    for (int i = 0; i < 6; i++)
+    {
+        m(i).spline_main.set_tracking_active(false);
+        m(i).spline_alt.set_tracking_active(false);
     }
 }
 
