@@ -45,29 +45,28 @@ dialog_accela::dialog_accela()
 
 #if defined SPLINE_ROT_DEBUG || defined SPLINE_TRANS_DEBUG
     {
-        spline rot, trans;
-        s.make_splines(rot, trans);
-        QDialog dr, dt;
-        spline_widget r(&dr);
-        spline_widget t(&dt);
-        dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(true);
-        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.setConfig(&rot);
-        dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(true);
-        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.setConfig(&trans);
-        r.setFixedSize(1024, 600); t.setFixedSize(1024, 600);
+        spline rot, pos;
+        s.make_splines(rot, pos);
 
 #ifdef SPLINE_ROT_DEBUG
+        QDialog dr;
+        spline_widget r(&dr);
+        dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(true);
+        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.setConfig(&rot);
+        r.setFixedSize(1024, 600);
         dr.show();
+        dr.exec();
 #endif
 
 #ifdef SPLINE_TRANS_DEBUG
+        QDialog dt;
+        spline_widget t(&dt);
+        dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(true);
+        dt.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.setConfig(&pos);
+        t.setFixedSize(1024, 600);
         dt.show();
+        dt.exec();
 #endif
-
-        if (dr.isVisible())
-            dr.exec();
-        if (dt.isVisible())
-            dt.exec();
     }
 #endif
 }
