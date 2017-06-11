@@ -17,9 +17,12 @@
 #include <algorithm>
 #include <cinttypes>
 
-#include <QDebug>
-
 using namespace types;
+
+using std::sqrt;
+using std::fmax;
+using std::round;
+using std::min;
 
 /*
 http://en.wikipedia.org/wiki/Mean-shift
@@ -54,7 +57,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
             {
                 double dx = (j - current_center[0])*s;
                 double dy = (i - current_center[1])*s;
-                double f = std::fmax(0.0, 1.0 - dx*dx - dy*dy);
+                double f = fmax(0.0, 1.0 - dx*dx - dy*dy);
                 val *= f;
             }
             m += val;
@@ -62,7 +65,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
             com[1] += i * val;
         }
     }
-    if (m > 0.1)
+    if (m > .1)
     {
         com *= 1.0 / m;
         return com;
@@ -78,11 +81,6 @@ PointExtractor::PointExtractor()
 
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
-    using std::sqrt;
-    using std::fmax;
-    using std::round;
-    using std::sort;
-
     if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
     {
         frame_gray = cv::Mat(frame.rows, frame.cols, CV_8U);
@@ -200,22 +198,11 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                             c_ = (cx+cy)/2;
                     cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
-                    static const cv::Scalar color(0, 255, 0);
-
-                    {
-                        const int len = iround(b.radius * 1.25 * c_) + 1;
-                        cv::line(preview_frame,
-                                 cv::Point(p.x - len, p.y),
-                                 cv::Point(p.x + len, p.y),
-                                 color);
-                        cv::line(preview_frame,
-                                 cv::Point(p.x, p.y - len),
-                                 cv::Point(p.x, p.y + len),
-                                 color);
-                    }
+                    cv::circle(preview_frame, p, int(b.radius * c_ + 2.5), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
+                    cv::circle(preview_frame, p, 1, cv::Scalar(255, 255, 64), -1, cv::LINE_AA);
 
                     char buf[64];
-                    sprintf(buf, "%.2fpx", radius);
+                    sprintf(buf, "%.1fpx", radius);
 
                     cv::putText(preview_frame,
                                 buf,
@@ -232,12 +219,12 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     }
 end:
 
-    sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
+    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) -> bool { return b2.brightness < b1.brightness; });
 
     const int W = frame.cols;
     const int H = frame.rows;
 
-    for (idx = 0; idx < std::min(PointModel::N_POINTS, unsigned(blobs.size())); ++idx)
+    for (idx = 0; idx < min(PointModel::N_POINTS, unsigned(blobs.size())); ++idx)
     {
         blob &b = blobs[idx];
         cv::Rect rect = b.rect;
@@ -250,9 +237,7 @@ end:
 
         cv::Mat frame_roi = frame_gray(rect);
 
-        // smaller values mean more changes. 1 makes too many changes while 1.5 makes about .1
-        // seems values close to 1.3 reduce noise best with about .15->.2 changes
-        static constexpr double radius_c = 1.3;
+        static constexpr double radius_c = 1.5;
 
         const double kernel_radius = b.radius * radius_c;
         cv::Vec2d pos(b.pos[0] - rect.x, b.pos[1] - rect.y); // position relative to ROI.
@@ -270,7 +255,7 @@ end:
         b.pos[1] = pos[1] + rect.y;
     }
 
-    // End of mean shift code. At this point, blob positions are updated which hopefully less noisy less biased values.
+    // End of mean shift code. At this point, blob positions are updated with hopefully less noisy, less biased values.
     points.reserve(max_blobs);
     points.clear();
 
