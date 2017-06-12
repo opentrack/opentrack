@@ -198,7 +198,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                             c_ = (cx+cy)/2;
                     cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
-                    cv::circle(preview_frame, p, int(b.radius * c_ + 2.5), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
+                    cv::circle(preview_frame, p, int((b.radius-1) * c_), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
                     cv::circle(preview_frame, p, 1, cv::Scalar(255, 255, 64), -1, cv::LINE_AA);
 
                     char buf[64];
