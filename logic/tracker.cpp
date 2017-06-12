@@ -358,9 +358,9 @@ void Tracker::logic()
 
 void Tracker::run()
 {
-    setPriority(QThread::HighPriority);
-    setPriority(QThread::HighestPriority);
-    setPriority(QThread::TimeCriticalPriority);
+#if defined _WIN32
+    const MMRESULT mmres = timeBeginPeriod(1);
+#endif
 
     {
         static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
@@ -414,6 +414,11 @@ void Tracker::run()
         m(i).spline_main.set_tracking_active(false);
         m(i).spline_alt.set_tracking_active(false);
     }
+
+#if defined _WIN32
+    if (mmres == 0)
+        (void) timeEndPeriod(1);
+#endif
 }
 
 void Tracker::raw_and_mapped_pose(double* mapped, double* raw) const
