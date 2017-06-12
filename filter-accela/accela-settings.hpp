@@ -13,13 +13,15 @@ struct settings_accela : opts
 
     static constexpr gains rot_gains[16] =
     {
-        { 11, 500 },
-        { 9, 300 },
-        { 6, 150 },
-        { 2.66, 35 },
-        { 1.66, 8 },
-        { 1, 1.5 },
-        { .5, .4 },
+        { 8, 700 },
+        { 7, 300 },
+        { 6, 160 },
+        { 5, 95 },
+        { 4, 55 },
+        { 3, 25 },
+        { 1.66, 10 },
+        { 1, 4 },
+        { .5, .53 },
         { 0, 0 },
     };
 
@@ -38,7 +40,7 @@ struct settings_accela : opts
         { 0, 0 },
     };
 
-    static void make_splines(spline& rot, spline& trans);
+    static void make_splines(spline& rot, spline& pos);
 
     value<slider_value> rot_sensitivity, pos_sensitivity;
     value<slider_value> rot_deadzone, pos_deadzone;
@@ -51,6 +53,6 @@ struct settings_accela : opts
         rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .1)),
         pos_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
         ewma(b, "ewma", slider_value(0, 0, 200)),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.2, 1, 1.3))
+        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1.05, 1, 1.5))
     {}
 };
