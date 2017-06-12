@@ -225,6 +225,9 @@ void Tracker::logic()
         }
 
         euler_t pos = euler_t(&value[TX]) - t_center;
+
+        t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
+
         euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
 
         for (int i = 0; i < 3; i++)
@@ -398,9 +401,14 @@ void Tracker::run()
 
         backlog_time += ns(elapsed_nsecs - const_sleep_ms);
 
-        const int sleep_time_ms = iround((time_cast<ms>(clamp(const_sleep_ms - backlog_time,
-                                                              ms_::zero(), ms_(50))))
-                                         .count());
+        const int sleep_time_ms = time_cast<ms_>(clamp(const_sleep_ms - backlog_time,
+                                                       ms_::zero(), ms_(10))).count();
+
+#if 0
+        qDebug() << "sleepy time" << sleep_time_ms
+                 << "elapsed" << time_cast<ms>(elapsed_nsecs).count()
+                 << "backlog" << time_cast<ms>(backlog_time).count();
+#endif
 
         portable::sleep(sleep_time_ms);
     }
