@@ -215,7 +215,6 @@ void Tracker::logic()
         {
         // inertial
         case 0:
-            //scaled_rotation.rotation = scaled_rotation
             rotation = scaled_rotation.rot_center * scaled_rotation.rotation;
             break;
         // camera

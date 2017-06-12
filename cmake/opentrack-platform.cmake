@@ -33,7 +33,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
 endif()
 
 if((NOT CMAKE_COMPILER_IS_GNUCXX) EQUAL (NOT (NOT CMAKE_COMPILER_IS_GNUCC)))
-    message(FATAL_ERROR "cannot use GNU C xor GNU C++")
+    message(FATAL_ERROR "cannot use either use both gcc and g++ or neither")
 endif()
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")

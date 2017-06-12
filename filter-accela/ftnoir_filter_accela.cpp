@@ -164,8 +164,9 @@ void settings_accela::make_splines(spline& rot, spline& pos)
     pos = spline();
 
     rot.set_max_input(rot_gains[0].x);
-    pos.set_max_input(pos_gains[0].x);
     rot.set_max_output(rot_gains[0].y);
+
+    pos.set_max_input(pos_gains[0].x);
     pos.set_max_output(pos_gains[0].y);
 
     for (const auto& val : rot_gains)
