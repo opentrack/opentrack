@@ -123,7 +123,7 @@ void accela::filter(const double* input, double *output)
     {
         for (unsigned k = 3; k < 6; k++)
         {
-            static constexpr double nl_end = 1.5;
+            static constexpr double nl_end = 5;
 
             if (fabs(deltas[k]) <= nl_end)
                 deltas[k] = copysign(pow(fabs(deltas[k]/nl_end), nl) * nl_end, deltas[k]);
