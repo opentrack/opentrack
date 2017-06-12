@@ -17,9 +17,18 @@
 
 #include <vector>
 
-namespace impl {
+namespace pt_extractor_impl {
 
 using namespace types;
+
+struct blob
+{
+    double radius, brightness;
+    vec2 pos;
+    cv::Rect rect;
+
+    blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
+};
 
 class PointExtractor final
 {
@@ -38,18 +47,9 @@ private:
     cv::Mat hist;
     cv::Mat frame_blobs;
 
-    struct blob
-    {
-        double radius, brightness;
-        vec2 pos;
-        cv::Rect rect;
-
-        blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
-    };
-
     std::vector<blob> blobs;
 };
 
-} // ns impl
+} // ns pt_extractor_impl
 
-using impl::PointExtractor;
+using pt_extractor_impl::PointExtractor;

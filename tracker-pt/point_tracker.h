@@ -62,6 +62,7 @@ public:
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
+    void invalidate_pose() { X_CM = Affine(); }
 
 private:
     // the points in model order
@@ -71,7 +72,7 @@ private:
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const CamInfo& info);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
-    Affine X_CM; // trafo from model to camera
+    Affine X_CM; // transform from model to camera
 
     Timer t;
     bool init_phase;

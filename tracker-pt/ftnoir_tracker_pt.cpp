@@ -78,7 +78,7 @@ void Tracker_PT::run()
             point_extractor.extract_points(frame, preview_frame, points);
             point_count = points.size();
 
-            f fx;
+            double fx;
             cam_info.get_focal_length(fx);
 
             const bool success = points.size() >= PointModel::N_POINTS;
@@ -91,6 +91,8 @@ void Tracker_PT::run()
                                     s.dynamic_pose ? s.init_phase_timeout : 0);
                 ever_success = true;
             }
+            else
+                point_tracker.invalidate_pose();
 
             {
                 Affine X_CM;
@@ -102,7 +104,7 @@ void Tracker_PT::run()
                 Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
                 Affine X_GH = X_CM * X_MH;
                 vec3 p = X_GH.t; // head (center?) position in global space
-                vec2 p_(p[0] / p[2] * fx, p[1] / p[2] * fx);  // projected to screen
+                vec2 p_((p[0] * fx) / p[2], (p[1] * fx) / p[2]);  // projected to screen
 
                 static constexpr int len = 9;
 

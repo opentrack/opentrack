@@ -91,13 +91,13 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
                                                                      const PointModel& model,
                                                                      const CamInfo& info)
 {
-    f fx; info.get_focal_length(fx);
+    double fx; info.get_focal_length(fx);
     PointTracker::PointOrder p;
     p[0] = project(vec3(0,0,0), fx);
     p[1] = project(model.M01, fx);
     p[2] = project(model.M02, fx);
 
-    const int diagonal = int(std::sqrt(double(info.res_x*info.res_x + info.res_y*info.res_y)));
+    const int diagonal = int(std::sqrt(f(info.res_x*info.res_x + info.res_y*info.res_y)));
     static constexpr int div = 100;
     const int max_dist = diagonal / div; // 8 pixels for 640x480
 
@@ -142,7 +142,7 @@ void PointTracker::track(const std::vector<vec2>& points,
                          const CamInfo& info,
                          int init_phase_timeout)
 {
-    f fx;
+    double fx;
     info.get_focal_length(fx);
     PointOrder order;
 
@@ -196,12 +196,12 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     // The expected rotation used for resolving the ambiguity in POSIT:
     // In every iteration step the rotation closer to R_expected is taken
-    static const mat33 R_expected(mat33::eye());
+    static const mat33 R_expected(X_CM.R);
 
     // initial pose = last (predicted) pose
     vec3 k;
     get_row(R_expected, 2, k);
-    f Z0 = f(1000);
+    f Z0 = X_CM.t[2] < f(1e-4) ? f(1000) : X_CM.t[2];
 
     f old_epsilon_1 = 0;
     f old_epsilon_2 = 0;

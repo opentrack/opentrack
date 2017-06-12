@@ -17,12 +17,11 @@
 #include <algorithm>
 #include <cinttypes>
 
-using namespace types;
-
 using std::sqrt;
 using std::fmax;
-using std::round;
 using std::min;
+
+using namespace pt_extractor_impl;
 
 /*
 http://en.wikipedia.org/wiki/Mean-shift
@@ -40,24 +39,24 @@ corresponding location is a good candidate for the extracted point.
 The idea similar to the window scaling suggested in  Berglund et al. "Fast, bias-free 
 algorithm for tracking single particles with variable size and shape." (2008).
 */
-static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &current_center, double filter_width)
+static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &current_center, f filter_width)
 {
     // Most amazingling this function runs faster with doubles than with floats.
-    const double s = 1.0 / filter_width;
+    const f s = 1 / filter_width;
 
-    double m = 0;
-    cv::Vec2d com(0.0, 0.0);
+    f m = 0;
+    vec2 com(0, 0);
     for (int i = 0; i < frame_gray.rows; i++)
     {
-        auto frame_ptr = (uint8_t *)frame_gray.ptr(i);
+        const auto frame_ptr = (const std::uint8_t*)frame_gray.ptr(i);
         for (int j = 0; j < frame_gray.cols; j++)
         {
-            double val = frame_ptr[j];
+            f val = frame_ptr[j];
             val = val * val; // taking the square wights brighter parts of the image stronger.
             {
-                double dx = (j - current_center[0])*s;
-                double dy = (i - current_center[1])*s;
-                double f = fmax(0.0, 1.0 - dx*dx - dy*dy);
+                f dx = (j - current_center[0])*s;
+                f dy = (i - current_center[1])*s;
+                f f = fmax(0.0, 1 - dx*dx - dy*dy);
                 val *= f;
             }
             m += val;
@@ -65,9 +64,9 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
             com[1] += i * val;
         }
     }
-    if (m > .1)
+    if (m > f(.1))
     {
-        com *= 1.0 / m;
+        com *= 1 / m;
         return com;
     }
     else
@@ -114,7 +113,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 
         const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
         const float* ptr = reinterpret_cast<const float*>(hist.ptr(0));
-        const unsigned area = unsigned(round(3 * M_PI * radius*radius));
+        const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 1;
         for (unsigned i = sz-1, cnt = 0; i > 1; i--)
@@ -198,7 +197,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                             c_ = (cx+cy)/2;
                     cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
-                    cv::circle(preview_frame, p, int((b.radius-1) * c_), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
+                    cv::circle(preview_frame, p, iround((b.radius-2) * c_), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
                     cv::circle(preview_frame, p, 1, cv::Scalar(255, 255, 64), -1, cv::LINE_AA);
 
                     char buf[64];
@@ -237,9 +236,9 @@ end:
 
         cv::Mat frame_roi = frame_gray(rect);
 
-        static constexpr double radius_c = 1.5;
+        static constexpr f radius_c = 1.5;
 
-        const double kernel_radius = b.radius * radius_c;
+        const f kernel_radius = b.radius * radius_c;
         cv::Vec2d pos(b.pos[0] - rect.x, b.pos[1] - rect.y); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
@@ -247,7 +246,7 @@ end:
             cv::Vec2d com_new = MeanShiftIteration(frame_roi, pos, kernel_radius);
             cv::Vec2d delta = com_new - pos;
             pos = com_new;
-            if (delta.dot(delta) < 1e-3)
+            if (delta.dot(delta) < 1e-2 * 1e-2)
                 break;
         }
 
@@ -268,7 +267,7 @@ end:
     }
 }
 
-PointExtractor::blob::blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect& rect) :
+blob::blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect& rect) :
     radius(radius), brightness(brightness), pos(pos), rect(rect)
 {
     //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];

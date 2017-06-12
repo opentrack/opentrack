@@ -9,7 +9,7 @@ namespace types {
     struct constants final
     {
         constants() = delete;
-        static constexpr f eps = std::numeric_limits<f>::epsilon();
+        static constexpr f eps = f(1e-6);
     };
 
     template<int n> using vec = cv::Vec<f, n>;
