@@ -210,6 +210,7 @@ void Tracker::logic()
 
     {
         rmat rotation;
+        euler_t pos = euler_t(&value[TX]) - t_center;
 
         switch (s.center_method)
         {
@@ -221,12 +222,10 @@ void Tracker::logic()
         default:
         case 1:
             rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
+            t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
+
             break;
         }
-
-        euler_t pos = euler_t(&value[TX]) - t_center;
-
-        t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
 
         euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
 
