@@ -143,8 +143,13 @@ main(int argc, char** argv)
 #endif
     QApplication::setAttribute(Qt::AA_X11InitThreads, true);
 
-    QTranslator t;
     QApplication app(argc, argv);
+
+#ifdef _WIN32
+    add_win32_path();
+#endif
+
+    MainWindow::set_working_directory();
 
 #if !defined(__linux) && !defined _WIN32
     // workaround QTBUG-38598
@@ -152,11 +157,7 @@ main(int argc, char** argv)
 #endif
 
     set_qt_style();
-    MainWindow::set_working_directory();
-
-#ifdef _WIN32
-    add_win32_path();
-#endif
+    QTranslator t;
 
     // QLocale::setDefault(QLocale("ru_RU")); // force i18n for testing
 
