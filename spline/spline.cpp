@@ -146,8 +146,11 @@ float spline::get_value_internal(int x)
 
     const float sign = signum(x);
     x = std::abs(x);
-    const float ret = data[std::min(unsigned(x), unsigned(value_count)-1u)];
-    return sign * std::fmax(0, ret);
+    const float ret_ = data[std::min(unsigned(x), unsigned(value_count)-1u)];
+    float ret = sign * std::fmax(0, ret_);
+    if (max_y > 0)
+        ret = fmin(max_y, ret);
+    return ret;
 }
 
 void spline::add_lone_point()
