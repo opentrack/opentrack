@@ -83,7 +83,7 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
 }
 
 
-PointTracker::PointTracker() : init_phase(true)
+PointTracker::PointTracker() : init_phase(true), prev_order_valid(false)
 {
 }
 
@@ -137,6 +137,68 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     return p;
 }
 
+bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamInfo& info)
+{
+    static constexpr f std_width = 640, std_height = 480;
+
+    PointOrder scaled_order;
+
+    const f cx = std_width / info.res_x;
+    const f cy = std_height / info.res_y;
+
+    for (unsigned k = 0; k < 3; k++)
+    {
+        // note, the .y component is actually scaled by width
+        scaled_order[k][0] = std_width * cx * order[k][0];
+        scaled_order[k][1] = std_width * cy * order[k][1];
+    }
+
+    f sum = 0;
+
+    for (unsigned k = 0; k < 3; k++)
+    {
+        vec2 tmp = prev_scaled_order[k] - scaled_order[k];
+        sum += std::sqrt(tmp.dot(tmp));
+    }
+
+    // CAVEAT don't increase over .3
+    static constexpr f max_dist = f(.25);
+
+    const bool validp = sum < max_dist;
+
+    prev_order_valid &= validp;
+
+    if (!prev_order_valid)
+    {
+        prev_order = order;
+        prev_scaled_order = scaled_order;
+    }
+
+#if 0
+    {
+        static Timer tt;
+        static int cnt1 = 0, cnt2 = 0;
+        if (tt.elapsed_ms() >= 5000)
+        {
+            tt.start();
+            if (cnt1 + cnt2)
+            {
+                qDebug() << "old-order" << ((cnt1 * 100) / f(cnt1 + cnt2)) << "nsamples" << (cnt1 + cnt2);
+                cnt1 = 0, cnt2 = 0;
+            }
+        }
+        if (validp)
+            cnt1++;
+        else
+            cnt2++;
+    }
+#endif
+
+    prev_order_valid = validp;
+
+    return validp;
+}
+
 void PointTracker::track(const std::vector<vec2>& points,
                          const PointModel& model,
                          const CamInfo& info,
@@ -157,7 +219,8 @@ void PointTracker::track(const std::vector<vec2>& points,
     else
         order = find_correspondences_previous(points.data(), model, info);
 
-    if (POSIT(model, order, fx) != -1)
+    if (maybe_use_old_point_order(order, info) ||
+        POSIT(model, order, fx) != -1)
     {
         init_phase = false;
         t.start();
