@@ -10,7 +10,7 @@
 #include "logic/main-settings.hpp"
 #include "spline/spline-widget.hpp"
 
-MapWidget::MapWidget(Mappings& m) : m(m)
+MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);
 
@@ -43,19 +43,19 @@ void MapWidget::load()
         bool altp;
     } qfcs[] =
     {
-    { ui.rxconfig, Yaw,   nullptr, false, },
-    { ui.ryconfig, Pitch, nullptr, false, },
-    { ui.rzconfig, Roll,  nullptr, false, },
-    { ui.txconfig, TX,    nullptr, false, },
-    { ui.tyconfig, TY,    nullptr, false, },
-    { ui.tzconfig, TZ,    nullptr, false, },
-    { ui.rxconfig_alt, Yaw,   ui.rx_altp, true, },
-    { ui.ryconfig_alt, Pitch, ui.ry_altp, true, },
-    { ui.rzconfig_alt, Roll,  ui.rz_altp, true, },
-    { ui.txconfig_alt, TX,    ui.tx_altp, true, },
-    { ui.tyconfig_alt, TY,    ui.ty_altp, true, },
-    { ui.tzconfig_alt, TZ,    ui.tz_altp, true, },
-    { nullptr, Yaw, nullptr, false }
+        { ui.rxconfig, Yaw,   nullptr, false, },
+        { ui.ryconfig, Pitch, nullptr, false, },
+        { ui.rzconfig, Roll,  nullptr, false, },
+        { ui.txconfig, TX,    nullptr, false, },
+        { ui.tyconfig, TY,    nullptr, false, },
+        { ui.tzconfig, TZ,    nullptr, false, },
+        { ui.rxconfig_alt, Yaw,   ui.rx_altp, true, },
+        { ui.ryconfig_alt, Pitch, ui.ry_altp, true, },
+        { ui.rzconfig_alt, Roll,  ui.rz_altp, true, },
+        { ui.txconfig_alt, TX,    ui.tx_altp, true, },
+        { ui.tyconfig_alt, TY,    ui.ty_altp, true, },
+        { ui.tzconfig_alt, TZ,    ui.tz_altp, true, },
+        { nullptr, Yaw, nullptr, false }
     };
 
     using a = axis_opts::max_clamp;
@@ -100,9 +100,12 @@ void MapWidget::load()
                 qfc.set_snap(x_snap, 1);
             }
         });
+
         // force signal to avoid duplicating the slot's logic
-        qfcs[i].qfc->setConfig(&conf);
+        qfc.setConfig(&conf);
         axis.opts.clamp.valueChanged(axis.opts.clamp);
+
+        widgets[i % 6][altp ? 1 : 0] = &qfc;
     }
 
 }
@@ -110,6 +113,22 @@ void MapWidget::load()
 void MapWidget::closeEvent(QCloseEvent*)
 {
     invalidate_dialog();
+}
+
+void MapWidget::refresh_tab()
+{
+    if (!isVisible())
+        return;
+
+    const int idx = ui.tabWidget->currentIndex();
+
+    if (likely(idx >= 0 && idx < 6))
+    {
+        widgets[idx][0]->repaint();
+        widgets[idx][1]->repaint();
+    }
+    else
+        qDebug() << "map-widget: bad index" << idx;
 }
 
 void MapWidget::save_dialog()

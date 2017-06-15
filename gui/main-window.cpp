@@ -523,8 +523,8 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
 
-    if (mapping_widget && mapping_widget->isVisible())
-        mapping_widget->repaint();
+    if (mapping_widget)
+        mapping_widget->refresh_tab();
 
     QLCDNumber* raw_[] = {
         ui.raw_x, ui.raw_y, ui.raw_z,

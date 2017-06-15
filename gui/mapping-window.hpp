@@ -14,10 +14,13 @@ class MapWidget final : public QDialog
     Q_OBJECT
 public:
     MapWidget(Mappings& m);
+    void refresh_tab();
 private:
     Ui::mapping_window ui;
     Mappings& m;
     main_settings s;
+
+    spline_widget* widgets[6][2];
 
     void closeEvent(QCloseEvent*) override;
 
