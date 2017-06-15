@@ -41,11 +41,14 @@ freetrack::~freetrack()
 void freetrack::pose(const double* headpose)
 {
     const float yaw = -degrees_to_rads(headpose[Yaw]);
-    const float pitch = -degrees_to_rads(headpose[Pitch]);
     const float roll = degrees_to_rads(headpose[Roll]);
     const float tx = float(headpose[TX] * 10);
     const float ty = float(headpose[TY] * 10);
     const float tz = float(headpose[TZ] * 10);
+
+    // HACK: Falcon BMS makes a "bump" if pitch is over the value -sh 20170615
+    const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
+    const float pitch = -degrees_to_rads(is_crossing_90 ? 89.86 : headpose[Pitch]);
 
     FTHeap* ft = pMemData;
     FTData* data = &ft->data;
