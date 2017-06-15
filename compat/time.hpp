@@ -18,7 +18,6 @@ static inline constexpr auto time_cast(const u& in)
 using secs = duration<double>;
 using secs_ = duration<long>;
 using ms = duration<double, std::milli>;
-using ms_ = duration<long long, std::milli>;
 using us = duration<double, std::micro>;
 using us_ = duration<long long, std::micro>;
 using ns = duration<long long, std::nano>;

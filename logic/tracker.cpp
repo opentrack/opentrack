@@ -388,7 +388,7 @@ void Tracker::run()
     {
         logic();
 
-        static constexpr ns const_sleep_ms(time_cast<ns>(ms_(4)));
+        static constexpr ns const_sleep_ms(time_cast<ns>(ms(4)));
         const ns elapsed_nsecs = prog1(t.elapsed<ns>(), t.start());
 
         if (backlog_time > secs_(3) || backlog_time < secs_(-3))
@@ -400,8 +400,8 @@ void Tracker::run()
 
         backlog_time += ns(elapsed_nsecs - const_sleep_ms);
 
-        const int sleep_time_ms = time_cast<ms_>(clamp(const_sleep_ms - backlog_time,
-                                                       ms_::zero(), ms_(10))).count();
+        const int sleep_time_ms = time_cast<ms>(clamp(const_sleep_ms - backlog_time,
+                                                       ms::zero(), ms(10))).count();
 
 #if 0
         qDebug() << "sleepy time" << sleep_time_ms
