@@ -66,8 +66,8 @@ MainWindow::MainWindow() :
     connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
     connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
     connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
-    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(startTracker()));
-    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stopTracker()));
+    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
+    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged, this, [&](const QString& x) { set_profile(x); });
 
     // fill dylib comboboxen
@@ -134,20 +134,20 @@ MainWindow::MainWindow() :
     tie_setting(m.protocol_dll, ui.iconcomboProtocol);
     tie_setting(m.filter_dll, ui.iconcomboFilter);
 
-    connect(this, &MainWindow::emit_start_tracker,
-            this, [&]() -> void { qDebug() << "start tracker"; startTracker(); },
+    connect(this, &MainWindow::start_tracker,
+            this, [&]() -> void { qDebug() << "start tracker"; start_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::emit_stop_tracker,
-            this, [&]() -> void { qDebug() << "stop tracker"; stopTracker(); },
+    connect(this, &MainWindow::stop_tracker,
+            this, [&]() -> void { qDebug() << "stop tracker"; stop_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::emit_toggle_tracker,
-            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stopTracker(); else startTracker(); },
+    connect(this, &MainWindow::toggle_tracker,
+            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::emit_restart_tracker,
-            this, [&]() -> void { qDebug() << "restart tracker"; stopTracker(); startTracker(); },
+    connect(this, &MainWindow::restart_tracker,
+            this, [&]() -> void { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
     // tray
@@ -233,17 +233,17 @@ void MainWindow::register_shortcuts()
 
     t_keys keys
     {
-        t_key(s.key_start_tracking1, [&](bool) -> void { emit_start_tracker(); }, true),
-        t_key(s.key_start_tracking2, [&](bool) -> void { emit_start_tracker(); }, true),
+        t_key(s.key_start_tracking1, [&](bool) -> void { start_tracker(); }, true),
+        t_key(s.key_start_tracking2, [&](bool) -> void { start_tracker(); }, true),
 
-        t_key(s.key_stop_tracking1, [&](bool) -> void { emit_stop_tracker(); }, true),
-        t_key(s.key_stop_tracking2, [&](bool) -> void { emit_stop_tracker(); }, true),
+        t_key(s.key_stop_tracking1, [&](bool) -> void { stop_tracker(); }, true),
+        t_key(s.key_stop_tracking2, [&](bool) -> void { stop_tracker(); }, true),
 
-        t_key(s.key_toggle_tracking1, [&](bool) -> void { emit_toggle_tracker(); }, true),
-        t_key(s.key_toggle_tracking2, [&](bool) -> void { emit_toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking1, [&](bool) -> void { toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking2, [&](bool) -> void { toggle_tracker(); }, true),
 
-        t_key(s.key_restart_tracking1, [&](bool) -> void { emit_restart_tracker(); }, true),
-        t_key(s.key_restart_tracking2, [&](bool) -> void { emit_restart_tracker(); }, true),
+        t_key(s.key_restart_tracking1, [&](bool) -> void { restart_tracker(); }, true),
+        t_key(s.key_restart_tracking2, [&](bool) -> void { restart_tracker(); }, true),
     };
 
     global_shortcuts.reload(keys);
@@ -254,7 +254,7 @@ void MainWindow::register_shortcuts()
 
 void MainWindow::die_on_config_not_writable()
 {
-    stopTracker();
+    stop_tracker_();
 
     static const QString pad(16, QChar(' '));
 
@@ -311,7 +311,7 @@ MainWindow::~MainWindow()
 {
     if (tray)
         tray->hide();
-    stopTracker();
+    stop_tracker_();
 }
 
 void MainWindow::set_working_directory()
@@ -444,7 +444,7 @@ void MainWindow::updateButtonState(bool running, bool inertialp)
     }
 }
 
-void MainWindow::startTracker()
+void MainWindow::start_tracker_()
 {
     if (work)
         return;
@@ -485,7 +485,7 @@ void MainWindow::startTracker()
     ui.btnStopTracker->setFocus();
 }
 
-void MainWindow::stopTracker()
+void MainWindow::stop_tracker_()
 {
     if (!work)
         return;
@@ -792,13 +792,13 @@ void MainWindow::maybe_start_profile_from_executable()
         if (det.config_to_start(prof))
         {
             ui.iconcomboProfile->setCurrentText(prof);
-            startTracker();
+            start_tracker_();
         }
     }
     else
     {
         if (det.should_stop())
-            stopTracker();
+            stop_tracker_();
     }
 }
 

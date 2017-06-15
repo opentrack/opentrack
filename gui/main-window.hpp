@@ -128,16 +128,16 @@ private slots:
     void open_config_directory();
     bool refresh_config_list();
 
-    void startTracker();
-    void stopTracker();
+    void start_tracker_();
+    void stop_tracker_();
 
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
 
 signals:
-    void emit_start_tracker();
-    void emit_stop_tracker();
-    void emit_toggle_tracker();
-    void emit_restart_tracker();
+    void start_tracker();
+    void stop_tracker();
+    void toggle_tracker();
+    void restart_tracker();
 public:
     MainWindow();
     ~MainWindow();
