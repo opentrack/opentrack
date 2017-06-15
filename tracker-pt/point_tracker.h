@@ -68,6 +68,9 @@ private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
+    bool maybe_use_old_point_order(const PointOrder& order, const CamInfo& info);
+    PointOrder prev_order, prev_scaled_order;
+
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const CamInfo& info);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
@@ -75,7 +78,7 @@ private:
     Affine X_CM; // transform from model to camera
 
     Timer t;
-    bool init_phase;
+    bool init_phase, prev_order_valid;
 };
 
 } // ns types
