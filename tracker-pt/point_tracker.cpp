@@ -161,8 +161,8 @@ bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamI
         sum += std::sqrt(tmp.dot(tmp));
     }
 
-    // CAVEAT don't increase over .3
-    static constexpr f max_dist = f(.25);
+    // CAVEAT don't increase too much, it visibly loses precision
+    static constexpr f max_dist = f(.35);
 
     const bool validp = sum < max_dist;
 
@@ -412,3 +412,4 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);
 }
+
