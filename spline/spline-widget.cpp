@@ -204,7 +204,7 @@ void spline_widget::drawFunction()
 
 //#define DEBUG_SPLINE
 #ifndef DEBUG_SPLINE
-    static constexpr double step_ = 3./3;
+    static constexpr double step_ = 5;
 
     const double maxx = _config->max_input();
     const double step = step_ / c.x();
@@ -266,7 +266,15 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     QPainter p(this);
 
-    if (_background.isNull())
+    if (!_background.isNull())
+    {
+        if (_background.size() != size())
+        {
+            _background = QPixmap();
+            _function = QPixmap();
+        }
+    }
+    else
     {
         _draw_function = true;
         drawBackground();
