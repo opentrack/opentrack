@@ -112,7 +112,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         static constexpr double max_radius = 15;
 
         const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
-        const float* ptr = reinterpret_cast<const float*>(hist.ptr(0));
+        const float* OTR_RESTRICT ptr = reinterpret_cast<const float*>(hist.ptr(0));
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 1;
@@ -246,7 +246,7 @@ end:
             cv::Vec2d com_new = MeanShiftIteration(frame_roi, pos, kernel_radius);
             cv::Vec2d delta = com_new - pos;
             pos = com_new;
-            if (delta.dot(delta) < 1e-2 * 1e-2)
+            if (delta.dot(delta) < 1e-2)
                 break;
         }
 
