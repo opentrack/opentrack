@@ -757,7 +757,7 @@ Exiting now.</source>
     <message>
         <location line="+10"/>
         <source>Start profiles from game executable names in this list</source>
-        <translation>Запускать opentrack при старте игры</translation>
+        <translation>Включить захват игр</translation>
     </message>
 </context>
 </TS>
