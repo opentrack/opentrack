@@ -49,6 +49,7 @@ function(otr_qt n)
     qt5_wrap_cpp(${n}-moc ${${n}-hh} OPTIONS --no-notes)
     qt5_wrap_ui(${n}-uih ${${n}-ui})
     qt5_add_resources(${n}-rcc ${${n}-rc})
+
     foreach(i moc uih rcc)
         set(${n}-${i} "${${n}-${i}}" PARENT_SCOPE)
         list(APPEND ${n}-all ${${n}-${i}})
@@ -162,6 +163,8 @@ function(otr_module n_)
         endif()
         add_library(${n} ${link-mode} "${${n}-all}")
     endif()
+
+    set_property(SOURCE ${${n}-moc} ${${n}-uih} ${${n}-rcc} PROPERTY GENERATED TRUE)
 
     if(NOT arg_RELINK)
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)

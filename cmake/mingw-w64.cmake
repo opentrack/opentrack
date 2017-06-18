@@ -68,7 +68,7 @@ set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE} -std=c++14 ${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
 set(_LDFLAGS "-Wl,--dynamicbase,--no-seh,--nxcompat,--as-needed,--pic-executable")
-set(_LDFLAGS_RELEASE "-Wl,--gc-sections,--exclude-libs,ALL -ffunction-sections")
+set(_LDFLAGS_RELEASE "-Wl,--gc-sections,--exclude-libs,ALL -ffunction-sections -fdata-sections")
 set(_LDFLAGS_DEBUG "")
 
 set(enable-val FALSE)
